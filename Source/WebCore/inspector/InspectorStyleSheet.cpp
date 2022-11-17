@@ -1236,12 +1236,12 @@ static Ref<Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String
         .setText(selectorText)
         .release();
 
-    auto specificity = selector.computeSpecificity();
+    auto specificity = selector.computeSpecificityTuple();
 
     auto tuple = JSON::ArrayOf<int>::create();
-    tuple->addItem(static_cast<int>((specificity & CSSSelector::idMask) >> 16));
-    tuple->addItem(static_cast<int>((specificity & CSSSelector::classMask) >> 8));
-    tuple->addItem(static_cast<int>(specificity & CSSSelector::elementMask));
+    tuple->addItem(specificity[0]);
+    tuple->addItem(specificity[1]);
+    tuple->addItem(specificity[2]);
     inspectorSelector->setSpecificity(WTFMove(tuple));
 
     return inspectorSelector;

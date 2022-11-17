@@ -59,15 +59,9 @@ struct PossiblyQuotedIdentifier {
         // Check if the 2 selectors (including sub selectors) agree.
         bool operator==(const CSSSelector&) const;
 
-        // FIXME: Kind of silly to have these constants, but require callers to know how many bits to shift by.
-        static constexpr unsigned idMask = 0xff0000;
-        static constexpr unsigned classMask = 0xff00;
-        static constexpr unsigned elementMask = 0xff;
-
         unsigned computeSpecificity() const;
+        std::array<uint8_t, 3> computeSpecificityTuple() const;
         unsigned specificityForPage() const;
-        unsigned simpleSelectorSpecificity() const;
-        static unsigned addSpecificities(unsigned, unsigned);
 
         // How the attribute value has to match. Default is Exact.
         enum Match {
@@ -262,10 +256,10 @@ struct PossiblyQuotedIdentifier {
         const AtomString& serializingValue() const;
         const QualifiedName& attribute() const;
         const AtomString& attributeCanonicalLocalName() const;
-        const AtomString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom(); }
+        const AtomString& argument() const { return m_hasRareData ? m_data.rareData->argument : nullAtom(); }
         bool attributeValueMatchingIsCaseInsensitive() const;
-        const FixedVector<PossiblyQuotedIdentifier>* argumentList() const { return m_hasRareData ? &m_data.m_rareData->m_argumentList : nullptr; }
-        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
+        const FixedVector<PossiblyQuotedIdentifier>* argumentList() const { return m_hasRareData ? &m_data.rareData->argumentList : nullptr; }
+        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
 
         void setValue(const AtomString&, bool matchLowerCase = false);
 
@@ -338,7 +332,7 @@ struct PossiblyQuotedIdentifier {
 
         struct RareData : public RefCounted<RareData> {
             WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
-            static Ref<RareData> create(AtomString&& value) { return adoptRef(*new RareData(WTFMove(value))); }
+            static Ref<RareData> create(AtomString);
             ~RareData();
 
             bool matchNth(int count);
@@ -346,16 +340,16 @@ struct PossiblyQuotedIdentifier {
             // For quirks mode, class and id are case-insensitive. In the case where uppercase
             // letters are used in quirks mode, |m_matchingValue| holds the lowercase class/id
             // and |m_serializingValue| holds the original string.
-            AtomString m_matchingValue;
-            AtomString m_serializingValue;
+            AtomString matchingValue;
+            AtomString serializingValue;
 
-            int m_a; // Used for :nth-*
-            int m_b; // Used for :nth-*
-            QualifiedName m_attribute; // used for attribute selector
-            AtomString m_attributeCanonicalLocalName;
-            AtomString m_argument; // Used for :contains and :nth-*
-            FixedVector<PossiblyQuotedIdentifier> m_argumentList; // Used for :lang and ::part arguments.
-            std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :is(), :matches(), and :not().
+            int a { 0 }; // Used for :nth-*
+            int b { 0 }; // Used for :nth-*
+            QualifiedName attribute; // used for attribute selector
+            AtomString attributeCanonicalLocalName;
+            AtomString argument; // Used for :contains and :nth-*
+            FixedVector<PossiblyQuotedIdentifier> argumentList; // Used for :lang and ::part arguments.
+            std::unique_ptr<CSSSelectorList> selectorList; // Used for :is(), :matches(), and :not().
 
         private:
             RareData(AtomString&& value);
@@ -364,21 +358,21 @@ struct PossiblyQuotedIdentifier {
 
         struct NameWithCase : public RefCounted<NameWithCase> {
             NameWithCase(const QualifiedName& originalName, const AtomString& lowercaseName)
-                : m_originalName(originalName)
-                , m_lowercaseLocalName(lowercaseName)
+                : originalName(originalName)
+                , lowercaseLocalName(lowercaseName)
             {
                 ASSERT(originalName.localName() != lowercaseName);
             }
 
-            const QualifiedName m_originalName;
-            const AtomString m_lowercaseLocalName;
+            const QualifiedName originalName;
+            const AtomString lowercaseLocalName;
         };
 
         union DataUnion {
-            AtomStringImpl* m_value { nullptr };
-            QualifiedName::QualifiedNameImpl* m_tagQName;
-            RareData* m_rareData;
-            NameWithCase* m_nameWithCase;
+            AtomStringImpl* value { nullptr };
+            QualifiedName::QualifiedNameImpl* tagQName;
+            RareData* rareData;
+            NameWithCase* nameWithCase;
         } m_data;
     };
 
@@ -391,14 +385,14 @@ inline const QualifiedName& CSSSelector::attribute() const
 {
     ASSERT(isAttributeSelector());
     ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_attribute;
+    return m_data.rareData->attribute;
 }
 
 inline const AtomString& CSSSelector::attributeCanonicalLocalName() const
 {
     ASSERT(isAttributeSelector());
     ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_attributeCanonicalLocalName;
+    return m_data.rareData->attributeCanonicalLocalName;
 }
 
 inline bool CSSSelector::matchesPseudoElement() const
@@ -485,15 +479,15 @@ inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
     
     // Need to do ref counting manually for the union.
     if (!m_hasRareData) {
-        if (m_data.m_value)
-            m_data.m_value->deref();
-        m_data.m_value = value.impl();
-        m_data.m_value->ref();
+        if (m_data.value)
+            m_data.value->deref();
+        m_data.value = value.impl();
+        m_data.value->ref();
         return;
     }
 
-    m_data.m_rareData->m_matchingValue = WTFMove(matchingValue);
-    m_data.m_rareData->m_serializingValue = value;
+    m_data.rareData->matchingValue = WTFMove(matchingValue);
+    m_data.rareData->serializingValue = value;
 }
 
 inline CSSSelector::CSSSelector(const CSSSelector& o)
@@ -510,17 +504,17 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     , m_caseInsensitiveAttributeValueMatching(o.m_caseInsensitiveAttributeValueMatching)
 {
     if (o.m_hasRareData) {
-        m_data.m_rareData = o.m_data.m_rareData;
-        m_data.m_rareData->ref();
+        m_data.rareData = o.m_data.rareData;
+        m_data.rareData->ref();
     } else if (o.m_hasNameWithCase) {
-        m_data.m_nameWithCase = o.m_data.m_nameWithCase;
-        m_data.m_nameWithCase->ref();
+        m_data.nameWithCase = o.m_data.nameWithCase;
+        m_data.nameWithCase->ref();
     } if (o.match() == Tag) {
-        m_data.m_tagQName = o.m_data.m_tagQName;
-        m_data.m_tagQName->ref();
-    } else if (o.m_data.m_value) {
-        m_data.m_value = o.m_data.m_value;
-        m_data.m_value->ref();
+        m_data.tagQName = o.m_data.tagQName;
+        m_data.tagQName->ref();
+    } else if (o.m_data.value) {
+        m_data.value = o.m_data.value;
+        m_data.value->ref();
     }
 }
 
@@ -531,20 +525,20 @@ inline CSSSelector::~CSSSelector()
     m_destructorHasBeenCalled = true;
 #endif
     if (m_hasRareData) {
-        m_data.m_rareData->deref();
-        m_data.m_rareData = nullptr;
+        m_data.rareData->deref();
+        m_data.rareData = nullptr;
         m_hasRareData = false;
     } else if (m_hasNameWithCase) {
-        m_data.m_nameWithCase->deref();
-        m_data.m_nameWithCase = nullptr;
+        m_data.nameWithCase->deref();
+        m_data.nameWithCase = nullptr;
         m_hasNameWithCase = false;
     } else if (match() == Tag) {
-        m_data.m_tagQName->deref();
-        m_data.m_tagQName = nullptr;
+        m_data.tagQName->deref();
+        m_data.tagQName = nullptr;
         m_match = Unknown;
-    } else if (m_data.m_value) {
-        m_data.m_value->deref();
-        m_data.m_value = nullptr;
+    } else if (m_data.value) {
+        m_data.value->deref();
+        m_data.value = nullptr;
     }
 }
 
@@ -552,35 +546,35 @@ inline const QualifiedName& CSSSelector::tagQName() const
 {
     ASSERT(match() == Tag);
     if (m_hasNameWithCase)
-        return m_data.m_nameWithCase->m_originalName;
-    return *reinterpret_cast<const QualifiedName*>(&m_data.m_tagQName);
+        return m_data.nameWithCase->originalName;
+    return *reinterpret_cast<const QualifiedName*>(&m_data.tagQName);
 }
 
 inline const AtomString& CSSSelector::tagLowercaseLocalName() const
 {
     if (m_hasNameWithCase)
-        return m_data.m_nameWithCase->m_lowercaseLocalName;
-    return m_data.m_tagQName->m_localName;
+        return m_data.nameWithCase->lowercaseLocalName;
+    return m_data.tagQName->m_localName;
 }
 
 inline const AtomString& CSSSelector::value() const
 {
     ASSERT(match() != Tag);
     if (m_hasRareData)
-        return m_data.m_rareData->m_matchingValue;
+        return m_data.rareData->matchingValue;
 
     // AtomString is really just an AtomStringImpl* so the cast below is safe.
-    return *reinterpret_cast<const AtomString*>(&m_data.m_value);
+    return *reinterpret_cast<const AtomString*>(&m_data.value);
 }
 
 inline const AtomString& CSSSelector::serializingValue() const
 {
     ASSERT(match() != Tag);
     if (m_hasRareData)
-        return m_data.m_rareData->m_serializingValue;
+        return m_data.rareData->serializingValue;
     
     // AtomString is really just an AtomStringImpl* so the cast below is safe.
-    return *reinterpret_cast<const AtomString*>(&m_data.m_value);
+    return *reinterpret_cast<const AtomString*>(&m_data.value);
 }
 
 inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
