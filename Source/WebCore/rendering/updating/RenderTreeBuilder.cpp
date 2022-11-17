@@ -653,7 +653,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
                 }
             };
             clearDescendantFloats();
-            downcast<RenderBlockFlow>(renderer).removeFloatingObjects();
+            removeFloatingObjects(downcast<RenderBlock>(renderer));
             // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
             // It copies the logic of RenderBlock::addChildIgnoringContinuation
             if (renderer.previousSibling() && renderer.previousSibling()->isAnonymousBlock())
