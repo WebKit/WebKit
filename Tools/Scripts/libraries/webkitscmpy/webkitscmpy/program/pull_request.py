@@ -210,7 +210,10 @@ class PullRequest(Command):
         if not source_remote:
             source_remote = repository.default_remote
 
-        if repository.branch is None or repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
+        if repository.branch is None or repository.branch in repository.DEFAULT_BRANCHES or \
+                repository.PROD_BRANCHES.match(repository.branch) or \
+                repository.branch in repository.branches_for(remote=source_remote):
+
             if not args.issue:
                 head = repository.commit(include_log=True, include_identifier=False)
                 if run([
