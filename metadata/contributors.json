@@ -7476,6 +7476,13 @@
    },
    {
       "emails" : [
+         "yvlai@apple.com"
+      ],
+      "github" : "yvonne-lai1",
+      "name" : "Yvonne Lai"
+   },
+   {
+      "emails" : [
          "zack@kde.org"
       ],
       "expertise" : "Core KHTML contributor, The QtWebKit Port",
