@@ -82,7 +82,7 @@ assert.sameValue(obj.id, "two-based")
 
 // .id is not available in from()
 assert.throws(RangeError, () => Temporal.Calendar.from("two-based"));
-assert.throws(RangeError, () => Temporal.Calendar.from("2020-06-05T09:34-07:00[America/Vancouver][u-ca=two-based]"));
+assert.throws(RangeError, () => Temporal.Calendar.from("2020-06-05T09:34-00:00[UTC][u-ca=two-based]"));
 
 // Temporal.PlainDate.from()
 assert.sameValue(`${ date }`, "2020-04-05[u-ca=two-based]")

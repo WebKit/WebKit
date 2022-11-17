@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.protoype.tostring
-description: Should call 'toString' on the calendar once unless calendarName == 'never'.
+description: Number of observable 'toString' calls on the calendar for each value of calendarName
 features: [Temporal]
 ---*/
 
@@ -14,15 +14,16 @@ const customCalendar = {
     return "custom";
   }
 };
-const date = new Temporal.ZonedDateTime(3661_987_654_321n, "UTC", customCalendar);
+const date = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC", customCalendar);
 [
-  ["always", "1970-01-01T01:01:01.987654321+00:00[UTC][u-ca=custom]", 1],
-  ["auto", "1970-01-01T01:01:01.987654321+00:00[UTC][u-ca=custom]", 1],
-  ["never", "1970-01-01T01:01:01.987654321+00:00[UTC]", 0],
-  [undefined, "1970-01-01T01:01:01.987654321+00:00[UTC][u-ca=custom]", 1],
+  ["always", "2001-09-09T01:46:40.987654321+00:00[UTC][u-ca=custom]", 1],
+  ["auto", "2001-09-09T01:46:40.987654321+00:00[UTC][u-ca=custom]", 1],
+  ["critical", "2001-09-09T01:46:40.987654321+00:00[UTC][!u-ca=custom]", 1],
+  ["never", "2001-09-09T01:46:40.987654321+00:00[UTC]", 0],
+  [undefined, "2001-09-09T01:46:40.987654321+00:00[UTC][u-ca=custom]", 1],
 ].forEach(([calendarName, expectedResult, expectedCalls]) => {
   calls = 0;
   const result = date.toString({ calendarName });
-  assert.sameValue(result, expectedResult, `calendarName = ${calendarName}: expected ${expectedResult}`);
-  assert.sameValue(calls, expectedCalls, `calendarName = ${calendarName}: expected ${expectedCalls} call(s) to 'toString'`);
+  assert.sameValue(result, expectedResult, `toString output for calendarName = ${calendarName}`);
+  assert.sameValue(calls, expectedCalls, `calls to toString for calendarName = ${calendarName}`);
 });

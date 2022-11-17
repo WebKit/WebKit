@@ -8,18 +8,19 @@ info: |
     sec-getoption step 10:
       10. If _values_ is not *undefined* and _values_ does not contain an element equal to _value_, throw a *RangeError* exception.
     sec-temporal-toshowcalendaroption step 1:
-      1. Return ? GetOption(_normalizedOptions_, *"calendarName"*, « String », « *"auto"*, *"always"*, *"never"* », *"auto"*).
+      1. Return ? GetOption(_normalizedOptions_, *"calendarName"*, « *"string"* », « *"auto"*, *"always"*, *"never"*, *"critical"* », *"auto"*).
     sec-temporal.plaindatetime.protoype.tostring step 6:
       6. Let _showCalendar_ be ? ToShowCalendarOption(_options_).
 features: [Temporal]
 ---*/
 
 const datetime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
-const invalidCals = ["other string", "ALWAYS", "sometimes", "auto\0"];
+const invalidValues = ["ALWAYS", "sometimes", "other string", "auto\0"];
 
-invalidCals.forEach((cal) => {
+for (const calendarName of invalidValues) {
   assert.throws(
     RangeError,
-    () => datetime.toString({ calendarName: cal }),
-    `invalid calendar (${cal})`);
-});
+    () => datetime.toString({ calendarName }),
+    `${calendarName} is an invalid value for calendarName option`
+  );
+}

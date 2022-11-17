@@ -18,27 +18,11 @@ const expected = [
 ];
 
 const instant = Temporal.Instant.from("1975-02-02T14:25:36.123456Z");
-const timeZone = new Proxy({
-  name: "Custom/TimeZone",
-
-  toString() {
-    actual.push("call timeZone.toString");
-    return TemporalHelpers.toPrimitiveObserver(actual, "Custom/TimeZone", "name");
-  },
-
+const timeZone = TemporalHelpers.timeZoneObserver(actual, "timeZone", {
+  toString: TemporalHelpers.toPrimitiveObserver(actual, "Custom/TimeZone", "name"),
   getOffsetNanosecondsFor(instantArg) {
-    actual.push("call timeZone.getOffsetNanosecondsFor");
     assert.sameValue(instantArg.epochNanoseconds, instant.epochNanoseconds);
     return -8735135801679;
-  },
-}, {
-  has(target, property) {
-    actual.push(`has timeZone.${property}`);
-    return property in target;
-  },
-  get(target, property) {
-    actual.push(`get timeZone.${property}`);
-    return target[property];
   },
 });
 

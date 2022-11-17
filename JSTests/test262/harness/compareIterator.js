@@ -13,7 +13,7 @@ defines: [assert.compareIterator]
 //      yield 3;
 //    }
 //
-//    compareIterator(numbers(), [
+//    assert.compareIterator(numbers(), [
 //      v => assert.sameValue(v, 1),
 //      v => assert.sameValue(v, 2),
 //      v => assert.sameValue(v, 3),

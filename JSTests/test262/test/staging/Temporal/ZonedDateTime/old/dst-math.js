@@ -4,12 +4,13 @@
 /*---
 esid: sec-temporal-zoneddatetime-objects
 description: math around DST
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-var tz = new Temporal.TimeZone("America/Los_Angeles");
-var hourBeforeDstStart = new Temporal.PlainDateTime(2020, 3, 8, 1).toZonedDateTime(tz);
-var dayBeforeDstStart = new Temporal.PlainDateTime(2020, 3, 7, 2, 30).toZonedDateTime(tz);
+var tz = TemporalHelpers.springForwardFallBackTimeZone();
+var hourBeforeDstStart = new Temporal.PlainDateTime(2000, 4, 2, 1).toZonedDateTime(tz);
+var dayBeforeDstStart = new Temporal.PlainDateTime(2000, 4, 1, 2, 30).toZonedDateTime(tz);
 
 // add 1 hour to get to DST start
 var added = hourBeforeDstStart.add({ hours: 1 });
@@ -43,7 +44,7 @@ var undo = added.subtract(diff);
 assert.sameValue(`${ undo }`, `${ hourBeforeDstStart }`);
 
 // Samoa date line change (add): 10:00PM 29 Dec 2011 -> 11:00PM 31 Dec 2011
-var timeZone = Temporal.TimeZone.from("Pacific/Apia");
+var timeZone = TemporalHelpers.crossDateLineTimeZone();
 var dayBeforeSamoaDateLineChangeAbs = timeZone.getInstantFor(new Temporal.PlainDateTime(2011, 12, 29, 22));
 var start = dayBeforeSamoaDateLineChangeAbs.toZonedDateTimeISO(timeZone);
 var added = start.add({
@@ -59,7 +60,6 @@ var undo = added.subtract(diff);
 assert.sameValue(`${ undo }`, `${ start }`);
 
 // Samoa date line change (subtract): 11:00PM 31 Dec 2011 -> 10:00PM 29 Dec 2011
-var timeZone = Temporal.TimeZone.from("Pacific/Apia");
 var dayAfterSamoaDateLineChangeAbs = timeZone.getInstantFor(new Temporal.PlainDateTime(2011, 12, 31, 23));
 var start = dayAfterSamoaDateLineChangeAbs.toZonedDateTimeISO(timeZone);
 var skipped = start.subtract({
@@ -84,7 +84,7 @@ assert.sameValue(`${ undo }`, `${ end }`);
 // 3:30 day before DST start -> 3:30 day of DST start
 var start = dayBeforeDstStart.add({ hours: 1 });
 var added = start.add({ days: 1 });
-assert.sameValue(added.day, 8);
+assert.sameValue(added.day, 2);
 assert.sameValue(added.hour, 3);
 assert.sameValue(added.minute, 30);
 var diff = start.until(added, { largestUnit: "days" });
@@ -94,7 +94,7 @@ assert.sameValue(`${ undo }`, `${ start }`);
 
 // 2:30 day before DST start -> 3:30 day of DST start
 var added = dayBeforeDstStart.add({ days: 1 });
-assert.sameValue(added.day, 8);
+assert.sameValue(added.day, 2);
 assert.sameValue(added.hour, 3);
 assert.sameValue(added.minute, 30);
 var diff = dayBeforeDstStart.until(added, { largestUnit: "days" });
@@ -105,7 +105,7 @@ assert.sameValue(`${ undo }`, `${ added }`);
 // 1:30 day DST starts -> 4:30 day DST starts
 var start = dayBeforeDstStart.add({ hours: 23 });
 var added = start.add({ hours: 2 });
-assert.sameValue(added.day, 8);
+assert.sameValue(added.day, 2);
 assert.sameValue(added.hour, 4);
 assert.sameValue(added.minute, 30);
 var diff = start.until(added, { largestUnit: "days" });
@@ -116,7 +116,7 @@ assert.sameValue(`${ undo }`, `${ start }`);
 // 2:00 day before DST starts -> 3:00 day DST starts
 var start = hourBeforeDstStart.subtract({ days: 1 }).add({ hours: 1 });
 var added = start.add({ days: 1 });
-assert.sameValue(added.day, 8);
+assert.sameValue(added.day, 2);
 assert.sameValue(added.hour, 3);
 assert.sameValue(added.minute, 0);
 var diff = start.until(added, { largestUnit: "days" });
@@ -127,7 +127,7 @@ assert.sameValue(`${ undo }`, `${ added }`);
 // 1:00AM day DST starts -> (add 24 hours) -> 2:00AM day after DST starts
 var start = hourBeforeDstStart;
 var added = start.add({ hours: 24 });
-assert.sameValue(added.day, 9);
+assert.sameValue(added.day, 3);
 assert.sameValue(added.hour, 2);
 assert.sameValue(added.minute, 0);
 var diff = start.until(added, { largestUnit: "days" });
@@ -138,7 +138,7 @@ assert.sameValue(`${ undo }`, `${ start }`);
 // 12:00AM day DST starts -> (add 24 hours) -> 1:00AM day after DST starts
 var start = hourBeforeDstStart.subtract({ hours: 1 });
 var added = start.add({ hours: 24 });
-assert.sameValue(added.day, 9);
+assert.sameValue(added.day, 3);
 assert.sameValue(added.hour, 1);
 assert.sameValue(added.minute, 0);
 var diff = start.until(added, { largestUnit: "days" });
@@ -147,16 +147,16 @@ var undo = added.subtract(diff);
 assert.sameValue(`${ undo }`, `${ start }`);
 
 // Difference can return day length > 24 hours
-var start = Temporal.ZonedDateTime.from("2020-10-30T01:45-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-11-02T01:15-08:00[America/Los_Angeles]");
+var start = Temporal.PlainDateTime.from("2000-10-27T01:45").toZonedDateTime(tz);
+var end = Temporal.PlainDateTime.from("2000-10-30T01:15").toZonedDateTime(tz);
 var diff = start.until(end, { largestUnit: "days" });
 assert.sameValue(`${ diff }`, "P2DT24H30M");
 var undo = start.add(diff);
 assert.sameValue(`${ undo }`, `${ end }`);
 
 // Difference rounding (nearest day) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
+var start = Temporal.PlainDateTime.from("2000-04-04T02:30").toZonedDateTime(tz);
+var end = Temporal.PlainDateTime.from("2000-04-01T14:15").toZonedDateTime(tz);
 var diff = start.until(end, {
   smallestUnit: "days",
   roundingMode: "halfExpand"
@@ -164,8 +164,6 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P3D");
 
 // Difference rounding (ceil day) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
 var diff = start.until(end, {
   smallestUnit: "days",
   roundingMode: "ceil"
@@ -173,8 +171,6 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P2D");
 
 // Difference rounding (trunc day) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
 var diff = start.until(end, {
   smallestUnit: "days",
   roundingMode: "trunc"
@@ -182,8 +178,6 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P2D");
 
 // Difference rounding (floor day) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
 var diff = start.until(end, {
   smallestUnit: "days",
   roundingMode: "floor"
@@ -191,8 +185,6 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P3D");
 
 // Difference rounding (nearest hour) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
 var diff = start.until(end, {
   largestUnit: "days",
   smallestUnit: "hours",
@@ -201,8 +193,6 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P2DT12H");
 
 // Difference rounding (ceil hour) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
 var diff = start.until(end, {
   largestUnit: "days",
   smallestUnit: "hours",
@@ -211,8 +201,6 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P2DT12H");
 
 // Difference rounding (trunc hour) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
 var diff = start.until(end, {
   largestUnit: "days",
   smallestUnit: "hours",
@@ -221,8 +209,6 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P2DT12H");
 
 // Difference rounding (floor hour) is DST-aware
-var start = Temporal.ZonedDateTime.from("2020-03-10T02:30-07:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-07T14:15-08:00[America/Los_Angeles]");
 var diff = start.until(end, {
   largestUnit: "days",
   smallestUnit: "hours",
@@ -231,20 +217,20 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "-P2DT13H");
 
 // Difference when date portion ends inside a DST-skipped period
-var start = Temporal.ZonedDateTime.from("2020-03-07T02:30-08:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-03-08T03:15-07:00[America/Los_Angeles]");
+var start = Temporal.PlainDateTime.from("2000-04-01T02:30").toZonedDateTime(tz);
+var end = Temporal.PlainDateTime.from("2000-04-02T03:15").toZonedDateTime(tz);
 var diff = start.until(end, { largestUnit: "days" });
 assert.sameValue(`${ diff }`, "PT23H45M");
 
 // Difference when date portion ends inside day skipped by Samoa's 24hr 2011 transition
-var end = Temporal.ZonedDateTime.from("2011-12-31T05:00+14:00[Pacific/Apia]");
-var start = Temporal.ZonedDateTime.from("2011-12-28T10:00-10:00[Pacific/Apia]");
+var end = Temporal.PlainDateTime.from("2011-12-31T05:00").toZonedDateTime(timeZone);
+var start = Temporal.PlainDateTime.from("2011-12-28T10:00").toZonedDateTime(timeZone);
 var diff = start.until(end, { largestUnit: "days" });
 assert.sameValue(`${ diff }`, "P1DT19H");
 
 // Rounding up to hours causes one more day of overflow (positive)
-var start = Temporal.ZonedDateTime.from("2020-01-01T00:00-08:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-01-03T23:59-08:00[America/Los_Angeles]");
+var start = Temporal.ZonedDateTime.from("2020-01-01T00:00-08:00[-08:00]");
+var end = Temporal.ZonedDateTime.from("2020-01-03T23:59-08:00[-08:00]");
 var diff = start.until(end, {
   largestUnit: "days",
   smallestUnit: "hours",
@@ -253,8 +239,8 @@ var diff = start.until(end, {
 assert.sameValue(`${ diff }`, "P3D");
 
 // Rounding up to hours causes one more day of overflow (negative)
-var start = Temporal.ZonedDateTime.from("2020-01-01T00:00-08:00[America/Los_Angeles]");
-var end = Temporal.ZonedDateTime.from("2020-01-03T23:59-08:00[America/Los_Angeles]");
+var start = Temporal.ZonedDateTime.from("2020-01-01T00:00-08:00[-08:00]");
+var end = Temporal.ZonedDateTime.from("2020-01-03T23:59-08:00[-08:00]");
 var diff = end.until(start, {
   largestUnit: "days",
   smallestUnit: "hours",

@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal-timezone-objects
 description: Temporal.TimeZone.prototype.getPossibleInstantsFor() works as expected
-includes: [deepEqual.js]
+includes: [deepEqual.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
@@ -15,16 +15,15 @@ var dt = Temporal.PlainDateTime.from("2019-02-16T23:45");
 assert.deepEqual(zone.getPossibleInstantsFor(dt).map(a => `${ a }`), ["2019-02-16T20:15:00Z"]);
 
 // with clock moving forward
-var zone = Temporal.TimeZone.from("Europe/Berlin");
-var dt = Temporal.PlainDateTime.from("2019-03-31T02:45");
+var zone = TemporalHelpers.springForwardFallBackTimeZone();
+var dt = Temporal.PlainDateTime.from("2000-04-02T02:45");
 assert.deepEqual(zone.getPossibleInstantsFor(dt), []);
 
 // with clock moving backward
-var zone = Temporal.TimeZone.from("America/Sao_Paulo");
-var dt = Temporal.PlainDateTime.from("2019-02-16T23:45");
+var dt = Temporal.PlainDateTime.from("2000-10-29T01:45");
 assert.deepEqual(zone.getPossibleInstantsFor(dt).map(a => `${ a }`), [
-  "2019-02-17T01:45:00Z",
-  "2019-02-17T02:45:00Z"
+  "2000-10-29T08:45:00Z",
+  "2000-10-29T09:45:00Z"
 ]);
 
 // casts argument
@@ -40,5 +39,5 @@ assert.deepEqual(tz.getPossibleInstantsFor({
 assert.deepEqual(tz.getPossibleInstantsFor("2019-02-16T23:45:30").map(a => `${ a }`), ["2019-02-16T20:15:30Z"]);
 
 // object must contain at least the required properties
-var tz = Temporal.TimeZone.from("Europe/Amsterdam");
+var tz = Temporal.TimeZone.from("UTC");
 assert.throws(TypeError, () => tz.getPossibleInstantsFor({ year: 2019 }));

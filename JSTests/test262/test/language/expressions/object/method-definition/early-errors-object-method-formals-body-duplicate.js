@@ -8,6 +8,7 @@ description: It is a SyntaxError if BoundNames of FormalParameters also occurs i
 negative:
   phase: parse
   type: SyntaxError
+features: [async-functions]
 ---*/
 
 $DONOTEVALUATE();

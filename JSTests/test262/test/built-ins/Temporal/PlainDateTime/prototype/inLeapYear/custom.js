@@ -16,12 +16,12 @@ class CustomCalendar extends Temporal.Calendar {
   inLeapYear(...args) {
     ++calls;
     assert.compareArray(args, [pdt], "inLeapYear arguments");
-    return "7";
+    return true;
   }
 }
 
 const calendar = new CustomCalendar();
 const pdt = new Temporal.PlainDateTime(1830, 8, 25, 20, 0, 0, 0, 0, 0, calendar);
 const result = pdt.inLeapYear;
-assert.sameValue(result, "7", "result");
+assert.sameValue(result, true, "result");
 assert.sameValue(calls, 1, "calls");

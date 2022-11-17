@@ -14,11 +14,17 @@ features: [Temporal]
 
 const actual = [];
 const expected = [
+  // CopyDataProperties
   "ownKeys options",
+  "getOwnPropertyDescriptor options.overflow",
   "get options.overflow",
+  // Temporal.Calendar.prototype.dateAdd
   "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
+  // overwriting property in custom calendar dateAdd
+  "getOwnPropertyDescriptor options.overflow",
+  // Temporal.Calendar.prototype.yearMonthFromFields (toPrimitiveObserver copied but not options object)
   "get options.overflow.toString",
   "call options.overflow.toString",
 ];

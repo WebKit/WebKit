@@ -7,7 +7,7 @@ description: Temporal.ZonedDateTime.prototype.toPlainTime()
 features: [Temporal]
 ---*/
 
-var tz = new Temporal.TimeZone("America/Los_Angeles");
+var tz = new Temporal.TimeZone("-07:00");
 
 // works
 var zdt = Temporal.Instant.from("2019-10-29T09:46:38.271986102Z").toZonedDateTimeISO(tz);

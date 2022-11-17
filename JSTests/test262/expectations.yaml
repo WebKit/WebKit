@@ -1113,18 +1113,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/RegExp/named-groups/duplicate-names-group-property-enumeration-order.js:
-  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
-test/built-ins/RegExp/named-groups/duplicate-names-match-indices.js:
-  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
-test/built-ins/RegExp/named-groups/duplicate-names-replace.js:
-  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
-test/built-ins/RegExp/named-groups/duplicate-names.js:
-  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
 test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
   default: 'Test262Error: `\p{Alphabetic}` should match U+U+01B132 (`𛄲`)'
   strict mode: 'Test262Error: `\p{Alphabetic}` should match U+U+01B132 (`𛄲`)'
@@ -1359,6 +1347,192 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/Temporal/Duration/compare/order-of-operations.js:
+  default: 'Test262Error: Expected [get one.days, get one.days.valueOf, call one.days.valueOf, get one.hours, get one.hours.valueOf, call one.hours.valueOf, get one.microseconds, get one.microseconds.valueOf, call one.microseconds.valueOf, get one.milliseconds, get one.milliseconds.valueOf, call one.milliseconds.valueOf, get one.minutes, get one.minutes.valueOf, call one.minutes.valueOf, get one.months, get one.months.valueOf, call one.months.valueOf, get one.nanoseconds, get one.nanoseconds.valueOf, call one.nanoseconds.valueOf, get one.seconds, get one.seconds.valueOf, call one.seconds.valueOf, get one.weeks, get one.weeks.valueOf, call one.weeks.valueOf, get one.years, get one.years.valueOf, call one.years.valueOf, get two.days, get two.days.valueOf, call two.days.valueOf, get two.hours, get two.hours.valueOf, call two.hours.valueOf, get two.microseconds, get two.microseconds.valueOf, call two.microseconds.valueOf, get two.milliseconds, get two.milliseconds.valueOf, call two.milliseconds.valueOf, get two.minutes, get two.minutes.valueOf, call two.minutes.valueOf, get two.months, get two.months.valueOf, call two.months.valueOf, get two.nanoseconds, get two.nanoseconds.valueOf, call two.nanoseconds.valueOf, get two.seconds, get two.seconds.valueOf, call two.seconds.valueOf, get two.weeks, get two.weeks.valueOf, call two.weeks.valueOf, get two.years, get two.years.valueOf, call two.years.valueOf] and [get one.days, get one.days.valueOf, call one.days.valueOf, get one.hours, get one.hours.valueOf, call one.hours.valueOf, get one.microseconds, get one.microseconds.valueOf, call one.microseconds.valueOf, get one.milliseconds, get one.milliseconds.valueOf, call one.milliseconds.valueOf, get one.minutes, get one.minutes.valueOf, call one.minutes.valueOf, get one.months, get one.months.valueOf, call one.months.valueOf, get one.nanoseconds, get one.nanoseconds.valueOf, call one.nanoseconds.valueOf, get one.seconds, get one.seconds.valueOf, call one.seconds.valueOf, get one.weeks, get one.weeks.valueOf, call one.weeks.valueOf, get one.years, get one.years.valueOf, call one.years.valueOf, get two.days, get two.days.valueOf, call two.days.valueOf, get two.hours, get two.hours.valueOf, call two.hours.valueOf, get two.microseconds, get two.microseconds.valueOf, call two.microseconds.valueOf, get two.milliseconds, get two.milliseconds.valueOf, call two.milliseconds.valueOf, get two.minutes, get two.minutes.valueOf, call two.minutes.valueOf, get two.months, get two.months.valueOf, call two.months.valueOf, get two.nanoseconds, get two.nanoseconds.valueOf, call two.nanoseconds.valueOf, get two.seconds, get two.seconds.valueOf, call two.seconds.valueOf, get two.weeks, get two.weeks.valueOf, call two.weeks.valueOf, get two.years, get two.years.valueOf, call two.years.valueOf, get options.relativeTo, get options.relativeTo.calendar, has options.relativeTo.calendar.calendar, get options.relativeTo.calendar.fields, call options.relativeTo.calendar.fields, get options.relativeTo.day, get options.relativeTo.day.valueOf, call options.relativeTo.day.valueOf, get options.relativeTo.hour, get options.relativeTo.hour.valueOf, call options.relativeTo.hour.valueOf, get options.relativeTo.microsecond, get options.relativeTo.microsecond.valueOf, call options.relativeTo.microsecond.valueOf, get options.relativeTo.millisecond, get options.relativeTo.millisecond.valueOf, call options.relativeTo.millisecond.valueOf, get options.relativeTo.minute, get options.relativeTo.minute.valueOf, call options.relativeTo.minute.valueOf, get options.relativeTo.month, get options.relativeTo.month.valueOf, call options.relativeTo.month.valueOf, get options.relativeTo.monthCode, get options.relativeTo.monthCode.toString, call options.relativeTo.monthCode.toString, get options.relativeTo.nanosecond, get options.relativeTo.nanosecond.valueOf, call options.relativeTo.nanosecond.valueOf, get options.relativeTo.second, get options.relativeTo.second.valueOf, call options.relativeTo.second.valueOf, get options.relativeTo.year, get options.relativeTo.year.valueOf, call options.relativeTo.year.valueOf, get options.relativeTo.calendar.dateFromFields, call options.relativeTo.calendar.dateFromFields, get options.relativeTo.offset, get options.relativeTo.timeZone, has options.relativeTo.timeZone.timeZone, get options.relativeTo.timeZone.getPossibleInstantsFor, call options.relativeTo.timeZone.getPossibleInstantsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.calendar.dateAdd, call options.relativeTo.calendar.dateAdd, get options.relativeTo.timeZone.getPossibleInstantsFor, call options.relativeTo.timeZone.getPossibleInstantsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.calendar.dateAdd, call options.relativeTo.calendar.dateAdd, get options.relativeTo.timeZone.getPossibleInstantsFor, call options.relativeTo.timeZone.getPossibleInstantsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get one.days, get one.days.valueOf, call one.days.valueOf, get one.hours, get one.hours.valueOf, call one.hours.valueOf, get one.microseconds, get one.microseconds.valueOf, call one.microseconds.valueOf, get one.milliseconds, get one.milliseconds.valueOf, call one.milliseconds.valueOf, get one.minutes, get one.minutes.valueOf, call one.minutes.valueOf, get one.months, get one.months.valueOf, call one.months.valueOf, get one.nanoseconds, get one.nanoseconds.valueOf, call one.nanoseconds.valueOf, get one.seconds, get one.seconds.valueOf, call one.seconds.valueOf, get one.weeks, get one.weeks.valueOf, call one.weeks.valueOf, get one.years, get one.years.valueOf, call one.years.valueOf, get two.days, get two.days.valueOf, call two.days.valueOf, get two.hours, get two.hours.valueOf, call two.hours.valueOf, get two.microseconds, get two.microseconds.valueOf, call two.microseconds.valueOf, get two.milliseconds, get two.milliseconds.valueOf, call two.milliseconds.valueOf, get two.minutes, get two.minutes.valueOf, call two.minutes.valueOf, get two.months, get two.months.valueOf, call two.months.valueOf, get two.nanoseconds, get two.nanoseconds.valueOf, call two.nanoseconds.valueOf, get two.seconds, get two.seconds.valueOf, call two.seconds.valueOf, get two.weeks, get two.weeks.valueOf, call two.weeks.valueOf, get two.years, get two.years.valueOf, call two.years.valueOf] and [get one.days, get one.days.valueOf, call one.days.valueOf, get one.hours, get one.hours.valueOf, call one.hours.valueOf, get one.microseconds, get one.microseconds.valueOf, call one.microseconds.valueOf, get one.milliseconds, get one.milliseconds.valueOf, call one.milliseconds.valueOf, get one.minutes, get one.minutes.valueOf, call one.minutes.valueOf, get one.months, get one.months.valueOf, call one.months.valueOf, get one.nanoseconds, get one.nanoseconds.valueOf, call one.nanoseconds.valueOf, get one.seconds, get one.seconds.valueOf, call one.seconds.valueOf, get one.weeks, get one.weeks.valueOf, call one.weeks.valueOf, get one.years, get one.years.valueOf, call one.years.valueOf, get two.days, get two.days.valueOf, call two.days.valueOf, get two.hours, get two.hours.valueOf, call two.hours.valueOf, get two.microseconds, get two.microseconds.valueOf, call two.microseconds.valueOf, get two.milliseconds, get two.milliseconds.valueOf, call two.milliseconds.valueOf, get two.minutes, get two.minutes.valueOf, call two.minutes.valueOf, get two.months, get two.months.valueOf, call two.months.valueOf, get two.nanoseconds, get two.nanoseconds.valueOf, call two.nanoseconds.valueOf, get two.seconds, get two.seconds.valueOf, call two.seconds.valueOf, get two.weeks, get two.weeks.valueOf, call two.weeks.valueOf, get two.years, get two.years.valueOf, call two.years.valueOf, get options.relativeTo, get options.relativeTo.calendar, has options.relativeTo.calendar.calendar, get options.relativeTo.calendar.fields, call options.relativeTo.calendar.fields, get options.relativeTo.day, get options.relativeTo.day.valueOf, call options.relativeTo.day.valueOf, get options.relativeTo.hour, get options.relativeTo.hour.valueOf, call options.relativeTo.hour.valueOf, get options.relativeTo.microsecond, get options.relativeTo.microsecond.valueOf, call options.relativeTo.microsecond.valueOf, get options.relativeTo.millisecond, get options.relativeTo.millisecond.valueOf, call options.relativeTo.millisecond.valueOf, get options.relativeTo.minute, get options.relativeTo.minute.valueOf, call options.relativeTo.minute.valueOf, get options.relativeTo.month, get options.relativeTo.month.valueOf, call options.relativeTo.month.valueOf, get options.relativeTo.monthCode, get options.relativeTo.monthCode.toString, call options.relativeTo.monthCode.toString, get options.relativeTo.nanosecond, get options.relativeTo.nanosecond.valueOf, call options.relativeTo.nanosecond.valueOf, get options.relativeTo.second, get options.relativeTo.second.valueOf, call options.relativeTo.second.valueOf, get options.relativeTo.year, get options.relativeTo.year.valueOf, call options.relativeTo.year.valueOf, get options.relativeTo.calendar.dateFromFields, call options.relativeTo.calendar.dateFromFields, get options.relativeTo.offset, get options.relativeTo.timeZone, has options.relativeTo.timeZone.timeZone, get options.relativeTo.timeZone.getPossibleInstantsFor, call options.relativeTo.timeZone.getPossibleInstantsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.calendar.dateAdd, call options.relativeTo.calendar.dateAdd, get options.relativeTo.timeZone.getPossibleInstantsFor, call options.relativeTo.timeZone.getPossibleInstantsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor, get options.relativeTo.calendar.dateAdd, call options.relativeTo.calendar.dateAdd, get options.relativeTo.timeZone.getPossibleInstantsFor, call options.relativeTo.timeZone.getPossibleInstantsFor, get options.relativeTo.timeZone.getOffsetNanosecondsFor, call options.relativeTo.timeZone.getOffsetNanosecondsFor] to have the same contents. order of operations'
+test/built-ins/Temporal/Duration/compare/precision-exact-mathematical-values-1.js:
+  default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/compare/precision-exact-mathematical-values-2.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", cal)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", cal)')"
+test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string-datetime.js:
+  default: 'Test262Error: bare date-time string is not a time zone Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: bare date-time string is not a time zone Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string-leap-second.js:
+  default: 'Test262Error: leap second in time zone name not valid Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: leap second in time zone name not valid Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string-year-zero.js:
+  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-wrong-type.js:
+  default: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/prototype/add/nanoseconds-is-number-max-safe-integer.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+test/built-ins/Temporal/Duration/prototype/add/nanoseconds-is-number-max-value-2.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+test/built-ins/Temporal/Duration/prototype/add/precision-exact-mathematical-values.js:
+  default: 'Test262Error: duration1.add(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+  strict mode: 'Test262Error: duration1.add(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-calendar-fields-undefined.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-timezone-instance-does-not-get-timeZone-property.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-timezone-string-datetime.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-timezone-string-leap-second.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-timezone-string.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Duration/prototype/round/nanoseconds-to-days-precision-exact-mathematical-values-1.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", cal)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", cal)')"
+test/built-ins/Temporal/Duration/prototype/round/nanoseconds-to-days-precision-exact-mathematical-values-2.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", cal)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", cal)')"
+test/built-ins/Temporal/Duration/prototype/round/order-of-operations.js:
+  default: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.relativeTo, get options.relativeTo.calendar, has options.relativeTo.calendar.calendar, get options.relativeTo.calendar.fields, call options.relativeTo.calendar.fields, get options.relativeTo.day, get options.relativeTo.day.valueOf, call options.relativeTo.day.valueOf, get options.relativeTo.hour, get options.relativeTo.hour.valueOf, call options.relativeTo.hour.valueOf, get options.relativeTo.microsecond, get options.relativeTo.microsecond.valueOf, call options.relativeTo.microsecond.valueOf, get options.relativeTo.millisecond, get options.relativeTo.millisecond.valueOf, call options.relativeTo.millisecond.valueOf, get options.relativeTo.minute, get options.relativeTo.minute.valueOf, call options.relativeTo.minute.valueOf, get options.relativeTo.month, get options.relativeTo.month.valueOf, call options.relativeTo.month.valueOf, get options.relativeTo.monthCode, get options.relativeTo.monthCode.toString, call options.relativeTo.monthCode.toString, get options.relativeTo.nanosecond, get options.relativeTo.nanosecond.valueOf, call options.relativeTo.nanosecond.valueOf, get options.relativeTo.second, get options.relativeTo.second.valueOf, call options.relativeTo.second.valueOf, get options.relativeTo.year, get options.relativeTo.year.valueOf, call options.relativeTo.year.valueOf, get options.relativeTo.calendar.dateFromFields, call options.relativeTo.calendar.dateFromFields, get options.relativeTo.offset, get options.relativeTo.timeZone] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.relativeTo, get options.relativeTo.calendar, has options.relativeTo.calendar.calendar, get options.relativeTo.calendar.fields, call options.relativeTo.calendar.fields, get options.relativeTo.day, get options.relativeTo.day.valueOf, call options.relativeTo.day.valueOf, get options.relativeTo.hour, get options.relativeTo.hour.valueOf, call options.relativeTo.hour.valueOf, get options.relativeTo.microsecond, get options.relativeTo.microsecond.valueOf, call options.relativeTo.microsecond.valueOf, get options.relativeTo.millisecond, get options.relativeTo.millisecond.valueOf, call options.relativeTo.millisecond.valueOf, get options.relativeTo.minute, get options.relativeTo.minute.valueOf, call options.relativeTo.minute.valueOf, get options.relativeTo.month, get options.relativeTo.month.valueOf, call options.relativeTo.month.valueOf, get options.relativeTo.monthCode, get options.relativeTo.monthCode.toString, call options.relativeTo.monthCode.toString, get options.relativeTo.nanosecond, get options.relativeTo.nanosecond.valueOf, call options.relativeTo.nanosecond.valueOf, get options.relativeTo.second, get options.relativeTo.second.valueOf, call options.relativeTo.second.valueOf, get options.relativeTo.year, get options.relativeTo.year.valueOf, call options.relativeTo.year.valueOf, get options.relativeTo.calendar.dateFromFields, call options.relativeTo.calendar.dateFromFields, get options.relativeTo.offset, get options.relativeTo.timeZone] to have the same contents. order of operations'
+test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-balance-duration-relative-months.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-balance-duration-relative-weeks.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-balance-duration-relative-years-days.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-balance-duration-relative-years-months.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-balance-duration-relative-years-with-calendar.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-round-duration.js:
+  default: 'Test262Error:  hours result Expected SameValue(«100000», «100001») to be true'
+  strict mode: 'Test262Error:  hours result Expected SameValue(«100000», «100001») to be true'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-fields-undefined.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-instance-does-not-get-timeZone-property.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-string-datetime.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-string-leap-second.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-string.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-is-number-max-safe-integer.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-is-number-max-value-2.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
+test/built-ins/Temporal/Duration/prototype/subtract/precision-exact-mathematical-values.js:
+  default: 'Test262Error: duration1.subtract(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+  strict mode: 'Test262Error: duration1.subtract(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-calendar-fields-undefined.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-timezone-instance-does-not-get-timeZone-property.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-timezone-string-datetime.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-timezone-string-leap-second.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-timezone-string.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Duration/prototype/toString/precision-exact-mathematical-values.js:
+  default: 'Test262Error: Expected SameValue(«PT10000000000000.004096S», «PT10000000000000.004097S») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«PT10000000000000.004096S», «PT10000000000000.004097S») to be true'
+test/built-ins/Temporal/Duration/prototype/total/order-of-operations.js:
+  default: 'Test262Error: Expected [get options.unit, get options.unit.toString, call options.unit.toString] and [get options.relativeTo, get options.relativeTo.calendar, has options.relativeTo.calendar.calendar, get options.relativeTo.calendar.fields, call options.relativeTo.calendar.fields, get options.relativeTo.day, get options.relativeTo.day.valueOf, call options.relativeTo.day.valueOf, get options.relativeTo.hour, get options.relativeTo.hour.valueOf, call options.relativeTo.hour.valueOf, get options.relativeTo.microsecond, get options.relativeTo.microsecond.valueOf, call options.relativeTo.microsecond.valueOf, get options.relativeTo.millisecond, get options.relativeTo.millisecond.valueOf, call options.relativeTo.millisecond.valueOf, get options.relativeTo.minute, get options.relativeTo.minute.valueOf, call options.relativeTo.minute.valueOf, get options.relativeTo.month, get options.relativeTo.month.valueOf, call options.relativeTo.month.valueOf, get options.relativeTo.monthCode, get options.relativeTo.monthCode.toString, call options.relativeTo.monthCode.toString, get options.relativeTo.nanosecond, get options.relativeTo.nanosecond.valueOf, call options.relativeTo.nanosecond.valueOf, get options.relativeTo.second, get options.relativeTo.second.valueOf, call options.relativeTo.second.valueOf, get options.relativeTo.year, get options.relativeTo.year.valueOf, call options.relativeTo.year.valueOf, get options.relativeTo.calendar.dateFromFields, call options.relativeTo.calendar.dateFromFields, get options.relativeTo.offset, get options.relativeTo.timeZone, get options.unit, get options.unit.toString, call options.unit.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get options.unit, get options.unit.toString, call options.unit.toString] and [get options.relativeTo, get options.relativeTo.calendar, has options.relativeTo.calendar.calendar, get options.relativeTo.calendar.fields, call options.relativeTo.calendar.fields, get options.relativeTo.day, get options.relativeTo.day.valueOf, call options.relativeTo.day.valueOf, get options.relativeTo.hour, get options.relativeTo.hour.valueOf, call options.relativeTo.hour.valueOf, get options.relativeTo.microsecond, get options.relativeTo.microsecond.valueOf, call options.relativeTo.microsecond.valueOf, get options.relativeTo.millisecond, get options.relativeTo.millisecond.valueOf, call options.relativeTo.millisecond.valueOf, get options.relativeTo.minute, get options.relativeTo.minute.valueOf, call options.relativeTo.minute.valueOf, get options.relativeTo.month, get options.relativeTo.month.valueOf, call options.relativeTo.month.valueOf, get options.relativeTo.monthCode, get options.relativeTo.monthCode.toString, call options.relativeTo.monthCode.toString, get options.relativeTo.nanosecond, get options.relativeTo.nanosecond.valueOf, call options.relativeTo.nanosecond.valueOf, get options.relativeTo.second, get options.relativeTo.second.valueOf, call options.relativeTo.second.valueOf, get options.relativeTo.year, get options.relativeTo.year.valueOf, call options.relativeTo.year.valueOf, get options.relativeTo.calendar.dateFromFields, call options.relativeTo.calendar.dateFromFields, get options.relativeTo.offset, get options.relativeTo.timeZone, get options.unit, get options.unit.toString, call options.unit.toString] to have the same contents. order of operations'
+test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-1.js:
+  default: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
+  strict mode: 'Test262Error: return value of total() Expected SameValue(«4000», «4000.0000000000005») to be true'
+test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-2.js:
+  default: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-fields-undefined.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-instance-does-not-get-timeZone-property.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-string-datetime.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-string-leap-second.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-string.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Instant/compare/argument-string-calendar-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/compare/argument-string-time-zone-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/compare/argument-string-unknown-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/from/argument-string-calendar-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/from/argument-string-time-zone-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/from/argument-string-unknown-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/equals/argument-string-calendar-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/equals/argument-string-time-zone-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/equals/argument-string-unknown-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/since/argument-string-calendar-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/since/argument-string-time-zone-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/since/argument-string-unknown-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
@@ -1389,6 +1563,18 @@ test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfTrunc.js:
 test/built-ins/Temporal/Instant/prototype/since/roundingmode-trunc.js:
   default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
   strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
+test/built-ins/Temporal/Instant/prototype/toString/timezone-instance-does-not-get-timeZone-property.js:
+  default: 'Test262Error: timeZone.timeZone should not be accessed'
+  strict mode: 'Test262Error: timeZone.timeZone should not be accessed'
+test/built-ins/Temporal/Instant/prototype/until/argument-string-calendar-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!u-ca=hebrew]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/until/argument-string-time-zone-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[!Europe/Vienna]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/until/argument-string-unknown-annotation.js:
+  default: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
+  strict mode: "RangeError: '1970-01-01T00:00Z[foo=bar]' is not a valid Temporal.Instant string"
 test/built-ins/Temporal/Instant/prototype/until/roundingmode-ceil.js:
   default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
   strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
@@ -1416,15 +1602,324 @@ test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfTrunc.js:
 test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
   default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
   strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
+test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDate/compare/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/compare/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/compare/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDate/from/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/from/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/from/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/day/custom.js:
+  default: 'Test262Error: result Expected SameValue(«25», «7») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«25», «7») to be true'
+test/built-ins/Temporal/PlainDate/prototype/day/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/dayOfWeek/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/dayOfYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/daysInMonth/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/daysInWeek/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/daysInYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/inLeapYear/validate-calendar-value.js:
+  default: 'Test262Error: boolean converted to boolean true Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: boolean converted to boolean true Expected SameValue(«false», «true») to be true'
+test/built-ins/Temporal/PlainDate/prototype/month/custom.js:
+  default: 'Test262Error: result Expected SameValue(«8», «7») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«8», «7») to be true'
+test/built-ins/Temporal/PlainDate/prototype/month/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/monthCode/custom.js:
+  default: 'Test262Error: result Expected SameValue(«M08», «M01») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«M08», «M01») to be true'
+test/built-ins/Temporal/PlainDate/prototype/monthCode/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to string Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to string Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/monthsInYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDate/prototype/since/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/since/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/since/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/since/order-of-operations.js:
+  default: 'RangeError: unimplemented: from non-ISO8601 calendar'
+  strict mode: 'RangeError: unimplemented: from non-ISO8601 calendar'
+test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainDate/prototype/toString/calendarname-critical.js:
+  default: 'Test262Error: built-in ISO calendar for calendarName = critical Expected SameValue(«2000-05-02», «2000-05-02[!u-ca=iso8601]») to be true'
+  strict mode: 'Test262Error: built-in ISO calendar for calendarName = critical Expected SameValue(«2000-05-02», «2000-05-02[!u-ca=iso8601]») to be true'
+test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDate/prototype/until/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/until/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/until/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/until/order-of-operations.js:
+  default: 'RangeError: unimplemented: from non-ISO8601 calendar'
+  strict mode: 'RangeError: unimplemented: from non-ISO8601 calendar'
+test/built-ins/Temporal/PlainDate/prototype/weekOfYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/year/custom.js:
+  default: 'Test262Error: result Expected SameValue(«1830», «7») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«1830», «7») to be true'
+test/built-ins/Temporal/PlainDate/prototype/year/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDateTime/compare/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/compare/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/compare/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDateTime/from/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/from/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/from/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
 test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDateTime/prototype/day/custom.js:
+  default: 'Test262Error: result Expected SameValue(«25», «7») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«25», «7») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/day/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/dayOfWeek/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/dayOfYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/daysInMonth/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/daysInWeek/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/daysInYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/prototype/inLeapYear/validate-calendar-value.js:
+  default: 'Test262Error: boolean converted to boolean true Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: boolean converted to boolean true Expected SameValue(«false», «true») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/month/custom.js:
+  default: 'Test262Error: result Expected SameValue(«8», «7») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«8», «7») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/month/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/monthCode/custom.js:
+  default: 'Test262Error: result Expected SameValue(«M08», «M01») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«M08», «M01») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/monthCode/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to string Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to string Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/monthsInYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-critical.js:
+  default: 'Test262Error: built-in ISO calendar for calendarName = critical Expected SameValue(«1976-11-18T15:23:00», «1976-11-18T15:23:00[!u-ca=iso8601]») to be true'
+  strict mode: 'Test262Error: built-in ISO calendar for calendarName = critical Expected SameValue(«1976-11-18T15:23:00», «1976-11-18T15:23:00[!u-ca=iso8601]») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/weekOfYear/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to positive integer Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-wrong-type.js:
   default: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainDateTime/prototype/year/custom.js:
+  default: 'Test262Error: result Expected SameValue(«1830», «7») to be true'
+  strict mode: 'Test262Error: result Expected SameValue(«1830», «7») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/year/validate-calendar-value.js:
+  default: 'Test262Error: undefined not converted to integer Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: undefined not converted to integer Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainTime/compare/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/compare/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/compare/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/from/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/from/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/from/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js:
+  default: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
+  strict mode: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
+test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-2.js:
+  default: 'RangeError: hour is out of range'
+  strict mode: 'RangeError: hour is out of range'
+test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-3.js:
+  default: 'RangeError: hour is out of range'
+  strict mode: 'RangeError: hour is out of range'
+test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/since/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/since/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematical-values-1.js:
+  default: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
+  strict mode: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
+test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematical-values-2.js:
+  default: 'RangeError: hour is out of range'
+  strict mode: 'RangeError: hour is out of range'
+test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematical-values-3.js:
+  default: 'RangeError: hour is out of range'
+  strict mode: 'RangeError: hour is out of range'
+test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-propertybag-calendar-instance-does-not-get-calendar-property.js:
+  default: 'Test262Error: calendar.calendar should not be accessed'
+  strict mode: 'Test262Error: calendar.calendar should not be accessed'
+test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid date string'
+  strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainTime/prototype/until/argument-string-calendar-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-zone-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/until/argument-string-unknown-annotation.js:
+  default: 'RangeError: invalid time string'
+  strict mode: 'RangeError: invalid time string'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
@@ -1665,6 +2160,9 @@ test/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/integer-indexes-
 test/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/integer-indexes-resizable-array-buffer-fixed.js:
   default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/harness/temporalHelpers-cross-date-line-time-zone.js:
+  default: "TypeError: afterOffset.getOffsetNanosecondsFor is not a function. (In 'afterOffset.getOffsetNanosecondsFor(instant)', 'afterOffset.getOffsetNanosecondsFor' is undefined)"
+  strict mode: "TypeError: afterOffset.getOffsetNanosecondsFor is not a function. (In 'afterOffset.getOffsetNanosecondsFor(instant)', 'afterOffset.getOffsetNanosecondsFor' is undefined)"
 test/harness/temporalHelpers-one-shift-time-zone.js:
   default: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
   strict mode: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"

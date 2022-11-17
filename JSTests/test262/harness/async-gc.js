@@ -50,6 +50,7 @@ function resolveAsyncGC(err) {
   if (err === asyncGC.notCollected) {
     // Do not fail as GC can't provide necessary resources.
     $DONE();
+    return;
   }
 
   $DONE(err);
