@@ -82,6 +82,7 @@ void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObjec
 {
     auto& childToAdd = *child;
     m_builder.attachToRenderElement(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 #endif
@@ -164,18 +165,11 @@ RenderSVGViewportContainer& RenderTreeBuilder::SVG::createViewportContainer(Rend
     viewportContainerStyle.setTransformOriginX(Length(0, LengthType::Fixed));
     viewportContainerStyle.setTransformOriginY(Length(0, LengthType::Fixed));
 
-    auto viewportContainer = createRenderer<RenderSVGViewportContainer>(parent.document(), WTFMove(viewportContainerStyle));
+    auto viewportContainer = createRenderer<RenderSVGViewportContainer>(parent, WTFMove(viewportContainerStyle));
     viewportContainer->initializeStyle();
 
     auto* viewportContainerRenderer = viewportContainer.get();
     m_builder.attachToRenderElement(parent, WTFMove(viewportContainer), nullptr);
-    parent.setViewportContainer(*viewportContainerRenderer);
-
-    // updateFromStyle() needs access to the SVGSVGElement, which is only posssible
-    // after the newly created RenderSVGViewportContainer was inserted into the render tree.
-    // However updateFromStyle() was already called at this point. Therefore we have to
-    // call it again here.
-    viewportContainerRenderer->updateFromStyle();
     return *viewportContainerRenderer;
 }
 

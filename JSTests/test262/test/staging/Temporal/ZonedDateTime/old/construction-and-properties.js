@@ -7,7 +7,7 @@ description: Construction and properties
 features: [Temporal]
 ---*/
 
-var tz = new Temporal.TimeZone("America/Los_Angeles");
+var tz = new Temporal.TimeZone("-08:00");
 var epochMillis = Date.UTC(1976, 10, 18, 15, 23, 30, 123);
 var epochNanos = BigInt(epochMillis) * BigInt(1000000) + BigInt(456789);
 
@@ -50,10 +50,29 @@ assert.sameValue(zdt.offset, "+00:00");
 assert.sameValue(zdt.offsetNanoseconds, 0);
 assert.sameValue(`${ zdt }`, "1976-11-18T15:23:30.123456789+00:00[UTC]");
 
-// Temporal.ZonedDateTime with non-UTC time zone and non-ISO calendar"
-var zdt = new Temporal.ZonedDateTime(epochNanos, Temporal.TimeZone.from("Europe/Vienna"), Temporal.Calendar.from("gregory"));
-  
-// can be constructed"
+// Temporal.ZonedDateTime with non-UTC time zone and non-ISO calendar
+// can be constructed
+var fakeGregorian = {
+  era() { return "ce"; },
+  year(date) { return date.withCalendar("iso8601").year; },
+  month(date) { return date.withCalendar("iso8601").month; },
+  monthCode(date) { return date.withCalendar("iso8601").monthCode; },
+  day(date) { return date.withCalendar("iso8601").day; },
+  dayOfWeek(date) { return date.withCalendar("iso8601").dayOfWeek; },
+  dayOfYear(date) { return date.withCalendar("iso8601").dayOfYear; },
+  weekOfYear(date) { return date.withCalendar("iso8601").weekOfYear; },
+  daysInWeek(date) { return date.withCalendar("iso8601").daysInWeek; },
+  daysInMonth(date) { return date.withCalendar("iso8601").daysInMonth; },
+  daysInYear(date) { return date.withCalendar("iso8601").daysInYear; },
+  monthsInYear(date) { return date.withCalendar("iso8601").monthsInYear; },
+  inLeapYear(date) { return date.withCalendar("iso8601").inLeapYear; },
+  toString() { return "gregory"; },
+};
+var fakeVienna = {
+  getOffsetNanosecondsFor() { return 3600_000_000_000; },
+  toString() { return "Europe/Vienna"; },
+}
+var zdt = new Temporal.ZonedDateTime(epochNanos, fakeVienna, fakeGregorian);
 assert(zdt instanceof Temporal.ZonedDateTime);
 assert.sameValue(typeof zdt, "object");
 

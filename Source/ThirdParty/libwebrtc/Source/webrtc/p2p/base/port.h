@@ -390,10 +390,10 @@ class Port : public PortInterface,
   //   then the foundation will be different.  Two candidate pairs with
   //   the same foundation pairs are likely to have similar network
   //   characteristics. Foundations are used in the frozen algorithm.
-  static std::string ComputeFoundation(absl::string_view type,
-                                       absl::string_view protocol,
-                                       absl::string_view relay_protocol,
-                                       const rtc::SocketAddress& base_address);
+  std::string ComputeFoundation(absl::string_view type,
+                                absl::string_view protocol,
+                                absl::string_view relay_protocol,
+                                const rtc::SocketAddress& base_address);
 
  protected:
   enum { MSG_DESTROY_IF_DEAD = 0, MSG_FIRST_AVAILABLE };

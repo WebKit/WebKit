@@ -60,7 +60,12 @@ private:
 
     LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const final;
 
-    void updateFromStyle() override;
+    void updateFromStyle() final;
+
+    // Enforce <fO> to carry a transform: <fO> should behave as absolutely positioned container
+    // for CSS content. Thus it needs to become a rootPaintingLayer during paint() such that
+    // fixed position content uses the <fO> as ancestor layer (when computing offsets from the container).
+    bool needsHasSVGTransformFlags() const final { return true; }
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
 

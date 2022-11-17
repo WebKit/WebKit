@@ -16,12 +16,12 @@ class CustomCalendar extends Temporal.Calendar {
   monthsInYear(...args) {
     ++calls;
     assert.compareArray(args, [pd], "monthsInYear arguments");
-    return "7";
+    return 7;
   }
 }
 
 const calendar = new CustomCalendar();
 const pd = new Temporal.PlainDate(1830, 8, 25, calendar);
 const result = pd.monthsInYear;
-assert.sameValue(result, "7", "result");
+assert.sameValue(result, 7, "result");
 assert.sameValue(calls, 1, "calls");

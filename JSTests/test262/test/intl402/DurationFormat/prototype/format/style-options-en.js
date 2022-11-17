@@ -9,10 +9,10 @@ features: [Intl.DurationFormat]
 ---*/
 
 const testData = {
-  "long" : "1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, and 9 nanoseconds",
-  "short": "1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, and 9 ns",
-  "narrow":"1y, 2m, 3w, 3d, 4h, 5m, 6s, 7ms, 8μs, and 9ns",
-  "digital":"1y, 2m, 3w, 3d, and 4:05:06.007",
+  "long" : "1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, 9 nanoseconds",
+  "short": "1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns",
+  "narrow":"1y 2m 3w 3d 4h 5m 6s 7ms 8μs 9ns",
+  "digital":"1 yr 2 mths 3 wks 3 days 4:05:06",
 }
 
 const duration = {

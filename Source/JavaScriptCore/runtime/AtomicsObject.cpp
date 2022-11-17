@@ -103,7 +103,7 @@ EncodedJSValue atomicReadModifyWriteCase(JSGlobalObject* globalObject, VM& vm, c
         extraArgs[i] = value;
     }
 
-    if (typedArray->isDetached())
+    if (typedArray->isDetached() || !typedArray->inBounds(accessIndex))
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
     auto result = func(typedArray->typedVector() + accessIndex, extraArgs);
@@ -114,6 +114,7 @@ static unsigned validateAtomicAccess(JSGlobalObject* globalObject, VM& vm, JSArr
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned accessIndex = 0;
+    size_t length = typedArrayView->length();
     if (LIKELY(accessIndexValue.isUInt32()))
         accessIndex = accessIndexValue.asUInt32();
     else {
@@ -121,7 +122,7 @@ static unsigned validateAtomicAccess(JSGlobalObject* globalObject, VM& vm, JSArr
         RETURN_IF_EXCEPTION(scope, 0);
     }
 
-    if (accessIndex >= typedArrayView->length()) {
+    if (accessIndex >= length) {
         throwRangeError(globalObject, scope, "Access index out of bounds for atomic access."_s);
         return 0;
     }
@@ -337,7 +338,7 @@ EncodedJSValue atomicStoreCase(JSGlobalObject* globalObject, VM& vm, JSValue ope
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (typedArray->isDetached())
+    if (typedArray->isDetached() || !typedArray->inBounds(accessIndex))
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
     WTF::atomicStoreFullyFenced(typedArray->typedVector() + accessIndex, extraArg);

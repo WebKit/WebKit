@@ -61,10 +61,10 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     const AtomString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
 
     if (tagLocalName == tagLocalNameASCIILowercase) {
-        m_data.m_tagQName = tagQName.impl();
-        m_data.m_tagQName->ref();
+        m_data.tagQName = tagQName.impl();
+        m_data.tagQName->ref();
     } else {
-        m_data.m_nameWithCase = adoptRef(new NameWithCase(tagQName, tagLocalNameASCIILowercase)).leakRef();
+        m_data.nameWithCase = adoptRef(new NameWithCase(tagQName, tagLocalNameASCIILowercase)).leakRef();
         m_hasNameWithCase = true;
     }
 }
@@ -76,37 +76,76 @@ void CSSSelector::createRareData()
     if (m_hasRareData)
         return;
     // Move the value to the rare data stucture.
-    AtomString value { adoptRef(m_data.m_value) };
-    m_data.m_rareData = &RareData::create(WTFMove(value)).leakRef();
+    m_data.rareData = &RareData::create(adoptRef(m_data.value)).leakRef();
     m_hasRareData = true;
 }
 
-static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelector);
+struct SelectorSpecificity {
+    unsigned specificity { 0 };
 
-static unsigned selectorSpecificity(const CSSSelector& firstSimpleSelector)
+    SelectorSpecificity() = default;
+    SelectorSpecificity(unsigned);
+    SelectorSpecificity(SelectorSpecificityIncrement);
+    SelectorSpecificity& operator+=(SelectorSpecificity);
+};
+
+SelectorSpecificity::SelectorSpecificity(unsigned specificity)
+    : specificity(specificity)
 {
-    unsigned total = 0;
-    for (const CSSSelector* selector = &firstSimpleSelector; selector; selector = selector->tagHistory())
-        total = CSSSelector::addSpecificities(total, simpleSelectorSpecificityInternal(*selector));
+}
+
+SelectorSpecificity::SelectorSpecificity(SelectorSpecificityIncrement specificity)
+    : specificity(static_cast<unsigned>(specificity))
+{
+}
+
+SelectorSpecificity& SelectorSpecificity::operator+=(SelectorSpecificity other)
+{
+    auto addSaturating = [&](unsigned mask) {
+        unsigned otherValue = (other.specificity & mask);
+        if (((specificity & mask) + otherValue) & ~mask)
+            specificity |= mask;
+        else
+            specificity += otherValue;
+    };
+    addSaturating(0xFF0000);
+    addSaturating(0xFF00);
+    addSaturating(0xFF);
+    return *this;
+}
+
+static SelectorSpecificity operator+(SelectorSpecificity a, SelectorSpecificity b)
+{
+    return a += b;
+}
+
+static SelectorSpecificity simpleSelectorSpecificity(const CSSSelector&);
+
+static SelectorSpecificity selectorSpecificity(const CSSSelector& firstSimpleSelector)
+{
+    SelectorSpecificity total;
+    for (auto* selector = &firstSimpleSelector; selector; selector = selector->tagHistory())
+        total += simpleSelectorSpecificity(*selector);
     return total;
 }
 
-static unsigned maxSpecificity(const CSSSelectorList& selectorList)
+static SelectorSpecificity maxSpecificity(const CSSSelectorList* selectorList)
 {
-    unsigned maxSpecificity = 0;
-    for (const CSSSelector* subSelector = selectorList.first(); subSelector; subSelector = CSSSelectorList::next(subSelector))
-        maxSpecificity = std::max(maxSpecificity, selectorSpecificity(*subSelector));
-    return maxSpecificity;
+    unsigned max = 0;
+    if (selectorList) {
+        for (auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector))
+            max = std::max(max, selectorSpecificity(*selector).specificity);
+    }
+    return max;
 }
 
-static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelector)
+SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
 {
     ASSERT_WITH_MESSAGE(!simpleSelector.isForPage(), "At the time of this writing, page selectors are not treated as real selectors that are matched. The value computed here only account for real selectors.");
 
     switch (simpleSelector.match()) {
     case CSSSelector::Id:
-        return static_cast<unsigned>(SelectorSpecificityIncrement::ClassA);
-
+        return SelectorSpecificityIncrement::ClassA;
     case CSSSelector::PagePseudoClass:
         break;
     case CSSSelector::PseudoClass:
@@ -115,17 +154,17 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
         case CSSSelector::PseudoClassMatches:
         case CSSSelector::PseudoClassNot:
         case CSSSelector::PseudoClassHas:
-            return maxSpecificity(*simpleSelector.selectorList());
+            return maxSpecificity(simpleSelector.selectorList());
         case CSSSelector::PseudoClassWhere:
             return 0;
         case CSSSelector::PseudoClassNthChild:
         case CSSSelector::PseudoClassNthLastChild:
         case CSSSelector::PseudoClassHost:
-            return CSSSelector::addSpecificities(static_cast<unsigned>(SelectorSpecificityIncrement::ClassB), simpleSelector.selectorList() ? maxSpecificity(*simpleSelector.selectorList()) : 0);
+            return SelectorSpecificityIncrement::ClassB + maxSpecificity(simpleSelector.selectorList());
         case CSSSelector::PseudoClassRelativeScope:
             return 0;
         default:
-            return static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
+            return SelectorSpecificityIncrement::ClassB;
         }
     case CSSSelector::Exact:
     case CSSSelector::Class:
@@ -135,15 +174,17 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
     case CSSSelector::Contain:
     case CSSSelector::Begin:
     case CSSSelector::End:
-        return static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
+        return SelectorSpecificityIncrement::ClassB;
     case CSSSelector::Tag:
-        return (simpleSelector.tagQName().localName() != starAtom()) ? static_cast<unsigned>(SelectorSpecificityIncrement::ClassC) : 0;
+        if (simpleSelector.tagQName().localName() == starAtom())
+            return 0;
+        return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::PseudoElement:
         // Slotted only competes with other slotted selectors for specificity,
         // so whether we add the ClassC specificity shouldn't be observable.
         if (simpleSelector.pseudoElementType() == CSSSelector::PseudoElementSlotted)
-            return maxSpecificity(*simpleSelector.selectorList());
-        return static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
+            return maxSpecificity(simpleSelector.selectorList());
+        return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::Unknown:
         return 0;
     }
@@ -151,39 +192,18 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
     return 0;
 }
 
-unsigned CSSSelector::simpleSelectorSpecificity() const
-{
-    return simpleSelectorSpecificityInternal(*this);
-}
-
 unsigned CSSSelector::computeSpecificity() const
 {
-    return selectorSpecificity(*this);
+    return selectorSpecificity(*this).specificity;
 }
 
-unsigned CSSSelector::addSpecificities(unsigned a, unsigned b)
+std::array<uint8_t, 3> CSSSelector::computeSpecificityTuple() const
 {
-    unsigned total = a;
-
-    unsigned newIdValue = (b & idMask);
-    if (((total & idMask) + newIdValue) & ~idMask)
-        total |= idMask;
-    else
-        total += newIdValue;
-
-    unsigned newClassValue = (b & classMask);
-    if (((total & classMask) + newClassValue) & ~classMask)
-        total |= classMask;
-    else
-        total += newClassValue;
-
-    unsigned newElementValue = (b & elementMask);
-    if (((total & elementMask) + newElementValue) & ~elementMask)
-        total |= elementMask;
-    else
-        total += newElementValue;
-
-    return total;
+    auto integer = computeSpecificity();
+    uint8_t a = integer >> 16;
+    uint8_t b = integer >> 8;
+    uint8_t c = integer;
+    return { a, b, c };
 }
 
 unsigned CSSSelector::specificityForPage() const
@@ -330,8 +350,7 @@ static void appendPseudoClassFunctionTail(StringBuilder& builder, const CSSSelec
     case CSSSelector::PseudoClassNthLastChild:
     case CSSSelector::PseudoClassNthOfType:
     case CSSSelector::PseudoClassNthLastOfType:
-        builder.append(selector->argument());
-        builder.append(')');
+        builder.append(selector->argument(), ')');
         break;
     default:
         break;
@@ -841,80 +860,75 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 void CSSSelector::setAttribute(const QualifiedName& value, bool convertToLowercase, AttributeMatchType matchType)
 {
     createRareData();
-    m_data.m_rareData->m_attribute = value;
-    m_data.m_rareData->m_attributeCanonicalLocalName = convertToLowercase ? value.localName().convertToASCIILowercase() : value.localName();
+    m_data.rareData->attribute = value;
+    m_data.rareData->attributeCanonicalLocalName = convertToLowercase ? value.localName().convertToASCIILowercase() : value.localName();
     m_caseInsensitiveAttributeValueMatching = matchType == CaseInsensitive;
 }
     
 void CSSSelector::setArgument(const AtomString& value)
 {
     createRareData();
-    m_data.m_rareData->m_argument = value;
+    m_data.rareData->argument = value;
 }
 
 void CSSSelector::setArgumentList(FixedVector<PossiblyQuotedIdentifier> argumentList)
 {
     createRareData();
-    m_data.m_rareData->m_argumentList = WTFMove(argumentList);
+    m_data.rareData->argumentList = WTFMove(argumentList);
 }
 
 void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     createRareData();
-    m_data.m_rareData->m_selectorList = WTFMove(selectorList);
+    m_data.rareData->selectorList = WTFMove(selectorList);
 }
 
 void CSSSelector::setNth(int a, int b)
 {
     createRareData();
-    m_data.m_rareData->m_a = a;
-    m_data.m_rareData->m_b = b;
+    m_data.rareData->a = a;
+    m_data.rareData->b = b;
 }
 
 bool CSSSelector::matchNth(int count) const
 {
     ASSERT(m_hasRareData);
-    return m_data.m_rareData->matchNth(count);
+    return m_data.rareData->matchNth(count);
 }
 
 int CSSSelector::nthA() const
 {
     ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_a;
+    return m_data.rareData->a;
 }
 
 int CSSSelector::nthB() const
 {
     ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_b;
+    return m_data.rareData->b;
 }
 
 CSSSelector::RareData::RareData(AtomString&& value)
-    : m_matchingValue(value)
-    , m_serializingValue(value)
-    , m_a(0)
-    , m_b(0)
-    , m_attribute(anyQName())
-    , m_argument(nullAtom())
+    : matchingValue(value)
+    , serializingValue(WTFMove(value))
+    , attribute(anyQName())
 {
 }
 
 CSSSelector::RareData::~RareData() = default;
 
-// a helper function for checking nth-arguments
+auto CSSSelector::RareData::create(AtomString value) -> Ref<RareData>
+{
+    return adoptRef(*new RareData(WTFMove(value)));
+}
+
 bool CSSSelector::RareData::matchNth(int count)
 {
-    if (!m_a)
-        return count == m_b;
-    else if (m_a > 0) {
-        if (count < m_b)
-            return false;
-        return (count - m_b) % m_a == 0;
-    } else {
-        if (count > m_b)
-            return false;
-        return (m_b - count) % (-m_a) == 0;
-    }
+    if (a > 0)
+        return count >= b && !((count - b) % a);
+    if (a < 0)
+        return count <= b && !((b - count) % -a);
+    return count == b;
 }
 
 } // namespace WebCore

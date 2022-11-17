@@ -22,6 +22,7 @@
 #include "RegExp.h"
 
 #include "InitializeThreading.h"
+#include "JSArrayBufferViewInlines.h"
 #include "JSCInlines.h"
 #include "YarrFlags.h"
 #include <stdio.h>

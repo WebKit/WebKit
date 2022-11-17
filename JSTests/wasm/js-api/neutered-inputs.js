@@ -10,18 +10,18 @@ let neuteredArray = new Uint8Array(1);
 transferArrayBuffer(neuteredArray.buffer);
 
 const testAsyncFunction = func => {
-    func(neuteredArray).then(fail).catch(catcher(TypeError, "underlying TypedArray has been detatched from the ArrayBuffer"));
-    func(neuteredArray.buffer).then(fail).catch(catcher(TypeError, "underlying TypedArray has been detatched from the ArrayBuffer"));
+    func(neuteredArray).then(fail).catch(catcher(TypeError, "Underlying ArrayBuffer has been detached from the view or out-of-bounds"));
+    func(neuteredArray.buffer).then(fail).catch(catcher(TypeError, "Underlying ArrayBuffer has been detached from the view or out-of-bounds"));
 };
 
 const testFunction = func => {
-    assert.throws(() => func(neuteredArray), TypeError, "underlying TypedArray has been detatched from the ArrayBuffer");
-    assert.throws(() => func(neuteredArray.buffer), TypeError, "underlying TypedArray has been detatched from the ArrayBuffer");
+    assert.throws(() => func(neuteredArray), TypeError, "Underlying ArrayBuffer has been detached from the view or out-of-bounds");
+    assert.throws(() => func(neuteredArray.buffer), TypeError, "Underlying ArrayBuffer has been detached from the view or out-of-bounds");
 };
 
 const testConstructor = func => {
-    assert.throws(() => new func(neuteredArray), TypeError, "underlying TypedArray has been detatched from the ArrayBuffer");
-    assert.throws(() => new func(neuteredArray.buffer), TypeError, "underlying TypedArray has been detatched from the ArrayBuffer");
+    assert.throws(() => new func(neuteredArray), TypeError, "Underlying ArrayBuffer has been detached from the view or out-of-bounds");
+    assert.throws(() => new func(neuteredArray.buffer), TypeError, "Underlying ArrayBuffer has been detached from the view or out-of-bounds");
 };
 
 testConstructor(WebAssembly.Module);

@@ -68,7 +68,7 @@ assert.throws(TypeError, function() {
 });
 assert.sameValue(count, 5);
 
-nextItem = Symbol('a');
+nextItem = Symbol.for('a');
 assert.throws(TypeError, function() {
   new WeakMap(iterable);
 });

@@ -145,7 +145,12 @@ void SVGSVGElement::updateCurrentTranslate()
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        renderer->updateFromElement();
+        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
+            ASSERT(svgRoot->viewportContainer());
+            svgRoot->viewportContainer()->updateHasSVGTransformFlags();
+        }
+
+        // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
         updateSVGRendererForElementChange();
         return;
     }
@@ -248,17 +253,22 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        if (auto* renderer = this->renderer()) {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-            if (document().settings().layerBasedSVGEngineEnabled()) {
-                renderer->updateFromElement();
-                updateSVGRendererForElementChange();
-                return;
-            }
+        if (document().settings().layerBasedSVGEngineEnabled()) {
+            if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer())) {
+                ASSERT(svgRoot->viewportContainer());
+                svgRoot->viewportContainer()->updateHasSVGTransformFlags();
+            } else if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer()))
+                viewportContainer->updateHasSVGTransformFlags();
+
+            // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
+            updateSVGRendererForElementChange();
+            return;
+        }
 #endif
 
+        if (auto* renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
-        }
 
         updateSVGRendererForElementChange();
         return;
@@ -822,14 +832,6 @@ Element* SVGSVGElement::getElementById(const AtomString& id)
 bool SVGSVGElement::isValid() const
 {
     return SVGTests::isValid();
-}
-
-void SVGSVGElement::didAttachRenderers()
-{
-    SVGGraphicsElement::didAttachRenderers();
-
-    if (auto* renderer = this->renderer())
-        renderer->updateFromElement();
 }
 
 }

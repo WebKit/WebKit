@@ -569,6 +569,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUExtent3D.serialization.in
     Shared/WebGPU/WebGPUExternalTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUExternalTextureDescriptor.serialization.in
+    Shared/WebGPU/WebGPUFeatureName.serialization.in
     Shared/WebGPU/WebGPUFragmentState.serialization.in
     Shared/WebGPU/WebGPUImageCopyBuffer.serialization.in
     Shared/WebGPU/WebGPUImageCopyExternalImage.serialization.in
@@ -611,6 +612,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUVertexState.serialization.in
 
     Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
+
+    Shared/XR/XRSystem.serialization.in
 
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 )

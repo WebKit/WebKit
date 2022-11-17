@@ -89,7 +89,7 @@ enum class XRTargetRayMode {
 };
 
 // https://immersive-web.github.io/webxr/#feature-descriptor
-enum class SessionFeature {
+enum class SessionFeature : uint8_t {
     ReferenceSpaceTypeViewer,
     ReferenceSpaceTypeLocal,
     ReferenceSpaceTypeLocalFloor,

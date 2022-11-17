@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: BigInt.asUintN type coercion for bigint parameter
-esid: pending
+esid: sec-bigint.asuintn
 info: |
   BigInt.asUintN ( bits, bigint )
 

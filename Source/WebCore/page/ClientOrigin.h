@@ -39,9 +39,6 @@ struct ClientOrigin {
     bool operator==(const ClientOrigin&) const;
     bool operator!=(const ClientOrigin& other) const { return !(*this == other); }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ClientOrigin> decode(Decoder&);
-
     ClientOrigin isolatedCopy() const & { return { topOrigin.isolatedCopy(), clientOrigin.isolatedCopy() }; }
     ClientOrigin isolatedCopy() && { return { WTFMove(topOrigin).isolatedCopy(), WTFMove(clientOrigin).isolatedCopy() }; }
     bool isRelated(const SecurityOriginData& other) const { return topOrigin == other || clientOrigin == other; }
@@ -62,26 +59,6 @@ inline void add(Hasher& hasher, const ClientOrigin& origin)
 inline bool ClientOrigin::operator==(const ClientOrigin& other) const
 {
     return topOrigin == other.topOrigin && clientOrigin == other.clientOrigin;
-}
-
-template<class Encoder> inline void ClientOrigin::encode(Encoder& encoder) const
-{
-    encoder << topOrigin;
-    encoder << clientOrigin;
-}
-
-template<class Decoder> inline std::optional<ClientOrigin> ClientOrigin::decode(Decoder& decoder)
-{
-    std::optional<SecurityOriginData> topOrigin;
-    std::optional<SecurityOriginData> clientOrigin;
-    decoder >> topOrigin;
-    if (!topOrigin || topOrigin->isNull())
-        return std::nullopt;
-    decoder >> clientOrigin;
-    if (!clientOrigin || clientOrigin->isNull())
-        return std::nullopt;
-
-    return ClientOrigin { WTFMove(*topOrigin), WTFMove(*clientOrigin) };
 }
 
 } // namespace WebCore

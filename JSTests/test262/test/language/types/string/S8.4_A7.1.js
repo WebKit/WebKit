@@ -2,9 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: <LF> between chunks of one string not allowed
-es5id: 8.4_A7.1
-description: Insert <LF> between chunks of one string
+esid: sec-line-terminators
+description: >
+  Line terminator <LF> may appear as an escape sequence within a StringLiteral
+info: |
+  A line terminator cannot occur within any token except a StringLiteral, Template, or TemplateSubstitutionTail.
 ---*/
 
 assert.throws(ReferenceError, function() {

@@ -24,44 +24,48 @@
 
         function doTest()
         {
-            debug('Before rotation');
             if (!window.testRunner)
                 return;
 
-            testRunner.runUIScript(getRotationUIScript(), function(result) {
-                debug('After rotation');
-                shouldBe("eventListenerCalls", "4");
-                finishJSTest();
-            });
+            debug("Triggering rotation...");
+            testRunner.runUIScript(getRotationUIScript(), function(result) { });
+            shouldBecomeEqual("gotAllEvents()", "true", finishJSTest);
         }
 
-        eventListenerCalls = 0;
+        didFireResizeEventOnWindow = false;
+        didFireResizeEventOnBody = false;
+        didFireOrientationChangeEventOnWindow = false;
+        didFireOrientationChangeEventOnBody = false;
+
+        function gotAllEvents()
+        {
+            return didFireResizeEventOnWindow && didFireResizeEventOnBody && didFireOrientationChangeEventOnWindow && didFireOrientationChangeEventOnBody;
+        }
+
         window.addEventListener('resize', function() {
-            ++eventListenerCalls;
+            didFireResizeEventOnWindow = true;
         }, false);
 
         window.addEventListener('orientationchange', function() {
-            ++eventListenerCalls;
+            didFireOrientationChangeEventOnWindow = true;
         }, false);
 
         document.body.addEventListener('resize', function() {
             testFailed("In body's resize event listener");
-            ++eventListenerCalls;
         }, false);
 
         document.body.addEventListener('orientationchange', function() {
             testFailed("In body's orientationchange event listener");
-            ++eventListenerCalls;
         }, false);
 
         function bodyOrientationChange()
         {
-            ++eventListenerCalls;
+            didFireOrientationChangeEventOnBody = true;
         }
 
         function bodyResize()
         {
-            ++eventListenerCalls;
+            didFireResizeEventOnBody = true;
         }
 
         window.addEventListener('load', doTest, false);

@@ -53,15 +53,21 @@ function sendMessages(channel)
 
 let connection;
 promise_test(async (test) => {
+    let localConnectionCandidates = [], remoteConnectionCandidates = [];
     await new Promise((resolve, reject) => {
         createConnections((localConnection) => {
             connection = localConnection;
             localConnection.createDataChannel('sendDataChannel');
         }, () => {
         }, {
-            filterOutICECandidate: (candidate) => {
-                if (candidate && candidate.candidate.toLowerCase().indexOf("host") !== -1)
+            filterOutICECandidate: (candidate, candidateConnection) => {
+                if (candidate && candidate.candidate.toLowerCase().indexOf("host") !== -1) {
                     assert_true(candidate.candidate.indexOf(".local") !== -1);
+                    if (candidateConnection == connection)
+                       localConnectionCandidates.push(candidate.foundation);
+                    else
+                        remoteConnectionCandidates.push(candidate.foundation);
+                }
                 if (!candidate)
                     resolve();
                 return false;
@@ -69,6 +75,12 @@ promise_test(async (test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+
+    for (const foundation of localConnectionCandidates)
+        assert_false(remoteConnectionCandidates.includes(foundation), "local connection foundation");
+
+    for (const foundation of remoteConnectionCandidates)
+        assert_false(localConnectionCandidates.includes(foundation), "remote connection foundation");
 
     assert_true(connection.localDescription.sdp.includes(".local "));
     closeConnections();

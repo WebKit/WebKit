@@ -33,8 +33,6 @@
 
 namespace JSC {
 
-const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage { "Underlying ArrayBuffer has been detached from the view"_s };
-
 #define MAKE_CONSTRUCTORS(Class) \
     JSC_DEFINE_HOST_FUNCTION(call##Class, (JSGlobalObject* globalObject, CallFrame* callFrame)) { \
         return callGenericTypedArrayViewImpl<JS##Class>(globalObject, callFrame); \
@@ -50,6 +48,11 @@ const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage { "Underlying Arr
         CREATE_METHOD_TABLE(JS##type##Array) \
     }; \
     const ClassInfo* get##type##ArrayClassInfo() { return &JS##type##Array::s_info; } \
+    template<> const ClassInfo JSResizableOrGrowableShared##type##Array::s_info = { \
+        #type "Array"_s, &JSResizableOrGrowableShared##type##Array::Base::s_info, nullptr, nullptr, \
+        CREATE_METHOD_TABLE(JSResizableOrGrowableShared##type##Array) \
+    }; \
+    const ClassInfo* getResizableOrGrowableShared##type##ArrayClassInfo() { return &JSResizableOrGrowableShared##type##Array::s_info; } \
     MAKE_CONSTRUCTORS(type##Array)
 
 MAKE_S_INFO(Int8);

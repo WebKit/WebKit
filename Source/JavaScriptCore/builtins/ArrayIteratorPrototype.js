@@ -33,7 +33,7 @@ function next()
 
     var array = @getArrayIteratorInternalField(this, @arrayIteratorFieldIteratedObject);
     if (@isTypedArrayView(array) && @isDetached(array))
-        @throwTypeError("Underlying ArrayBuffer has been detached from the view");
+        @throwTypeError("Underlying ArrayBuffer has been detached from the view or out-of-bounds");
 
     var kind = @getArrayIteratorInternalField(this, @arrayIteratorFieldKind);
     return @arrayIteratorNextHelper.@call(this, array, kind);

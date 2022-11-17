@@ -34,6 +34,7 @@
 #include "IntrinsicGetterAccessCase.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
+#include "JSTypedArrays.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 
@@ -61,6 +62,8 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(StructureStubInfo& stubIn
     case TypedArrayByteLengthIntrinsic:
     case TypedArrayLengthIntrinsic: {
         if (!isTypedView(structure->typeInfo().type()))
+            return false;
+        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()))
             return false;
         
         return true;
@@ -116,35 +119,11 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
     }
 
     case TypedArrayByteOffsetIntrinsic: {
-        GPRReg scratchGPR = state.scratchGPR;
-
-        CCallHelpers::Jump emptyByteOffset = jit.branch8(
-            MacroAssembler::Below,
-            MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
-            TrustedImm32(WastefulTypedArray));
-
-        jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-        jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), valueGPR);
-#if CPU(ARM64E)
-        jit.removeArrayPtrTag(valueGPR);
-#endif
-        jit.loadPtr(MacroAssembler::Address(scratchGPR, Butterfly::offsetOfArrayBuffer()), scratchGPR);
-        jit.loadPtr(MacroAssembler::Address(scratchGPR, ArrayBuffer::offsetOfData()), scratchGPR);
-#if CPU(ARM64E)
-        jit.removeArrayPtrTag(scratchGPR);
-#endif
-        jit.subPtr(scratchGPR, valueGPR);
-
-        CCallHelpers::Jump done = jit.jump();
-        
-        emptyByteOffset.link(&jit);
-        jit.move(TrustedImmPtr(nullptr), valueGPR);
-        
-        done.link(&jit);
-
 #if USE(LARGE_TYPED_ARRAYS)
+        jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), valueGPR);
         jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
 #else
+        jit.load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), valueGPR);
         jit.boxInt32(valueGPR, valueRegs);
 #endif
         state.succeed();

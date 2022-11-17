@@ -49,7 +49,6 @@ public:
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    virtual void updateFromStyle() { }
 
     virtual bool requiresLayer() const = 0;
 
@@ -88,7 +87,8 @@ public:
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
 
     void applySVGTransform(TransformationMatrix&, SVGGraphicsElement&, const RenderStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption>) const;
-    void updateHasSVGTransformFlags(const SVGGraphicsElement&);
+    void updateHasSVGTransformFlags();
+    virtual bool needsHasSVGTransformFlags() const { ASSERT_NOT_REACHED(); return false; }
 
     LayoutPoint nominalSVGLayoutLocation() const { return flooredLayoutPoint(objectBoundingBoxWithoutTransformations().minXMinYCorner()); }
     virtual LayoutPoint currentSVGLayoutLocation() const { ASSERT_NOT_REACHED(); return { }; }
@@ -107,6 +107,12 @@ protected:
     void createLayer();
     void willBeDestroyed() override;
     void willBeRemovedFromTree(IsInternalMove) override;
+
+    virtual void updateFromStyle() { }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    void updateHasSVGTransformFlags(bool hasSVGTransform);
+#endif
 
 private:
     std::unique_ptr<RenderLayer> m_layer;

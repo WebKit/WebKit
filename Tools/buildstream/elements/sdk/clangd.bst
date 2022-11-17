@@ -1,8 +1,8 @@
 kind: manual
 sources:
 - kind: zip
-  url: github_files:clangd/clangd/releases/download/14.0.3/clangd-linux-14.0.3.zip
-  ref: 6c6eabfcc5ce91dea2ebce039cf0dea612a191ebbbffe366d973f0a102325bce
+  url: github_files:clangd/clangd/releases/download/15.0.3/clangd-linux-15.0.3.zip
+  ref: c1ebe5b37372553273703f16b7d00c7bc6cf42f4997a07110d18c2105932b9d6
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 

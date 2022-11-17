@@ -71,7 +71,8 @@ static JSObject* toJSObject(JSValueInWrappedObject& wrapper)
 
 static JSFloat32Array* constructJSFloat32Array(JSGlobalObject& globalObject, unsigned length, const float* data = nullptr)
 {
-    auto* jsArray = JSFloat32Array::create(&globalObject, globalObject.typedArrayStructure(TypeFloat32), length);
+    constexpr bool isResizableOrGrowableShared = false;
+    auto* jsArray = JSFloat32Array::create(&globalObject, globalObject.typedArrayStructure(TypeFloat32, isResizableOrGrowableShared), length);
     if (data)
         memcpy(jsArray->typedVector(), data, sizeof(float) * length);
     return jsArray;

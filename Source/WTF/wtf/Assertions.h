@@ -257,7 +257,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #endif
 
 #if COMPILER(MSVC)
-#define WTFBreakpointTrapUnderConstexprContext() __debugbreak()
+#define WTFBreakpointTrapUnderConstexprContext() ((void) 0)
 #else
 #define WTFBreakpointTrapUnderConstexprContext() __builtin_trap()
 #endif

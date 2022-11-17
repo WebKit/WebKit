@@ -404,6 +404,11 @@ bool RenderSVGImage::bufferForeground(PaintInfo& paintInfo, const LayoutPoint& p
     return true;
 }
 
+bool RenderSVGImage::needsHasSVGTransformFlags() const
+{
+    return imageElement().hasTransformRelatedAttributes();
+}
+
 void RenderSVGImage::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     applySVGTransform(transform, imageElement(), style, boundingBox, std::nullopt, std::nullopt, options);

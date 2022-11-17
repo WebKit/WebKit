@@ -146,10 +146,12 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    if (dataView->isDetached())
-        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_relaxed> getter;
+    auto byteLengthValue = dataView->viewByteLength(getter);
+    if (UNLIKELY(!byteLengthValue))
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    size_t byteLength = dataView->length();
+    size_t byteLength = byteLengthValue.value();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
 
@@ -201,10 +203,12 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    if (dataView->isDetached())
-        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_relaxed> getter;
+    auto byteLengthValue = dataView->viewByteLength(getter);
+    if (UNLIKELY(!byteLengthValue))
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    size_t byteLength = dataView->length();
+    size_t byteLength = byteLengthValue.value();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
 
@@ -220,8 +224,6 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
 
     return JSValue::encode(jsUndefined());
 }
-
-IGNORE_CLANG_WARNINGS_BEGIN("missing-prototypes")
 
 JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterBuffer, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
@@ -243,10 +245,13 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteLength, (JSGlobalObject* globalO
     JSDataView* view = jsDynamicCast<JSDataView*>(JSValue::decode(thisValue));
     if (!view)
         return throwVMTypeError(globalObject, scope, "DataView.prototype.byteLength expects |this| to be a DataView object"_s);
-    if (view->isDetached())
-        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
-    return JSValue::encode(jsNumber(view->length()));
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+    auto byteLengthValue = view->viewByteLength(getter);
+    if (UNLIKELY(!byteLengthValue))
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+
+    return JSValue::encode(jsNumber(byteLengthValue.value()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteOffset, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -257,10 +262,13 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteOffset, (JSGlobalObject* globalO
     JSDataView* view = jsDynamicCast<JSDataView*>(JSValue::decode(thisValue));
     if (!view)
         return throwVMTypeError(globalObject, scope, "DataView.prototype.byteOffset expects |this| to be a DataView object"_s);
-    if (view->isDetached())
-        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
-    return JSValue::encode(jsNumber(view->byteOffset()));
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+    auto byteLengthValue = view->viewByteLength(getter);
+    if (UNLIKELY(!byteLengthValue))
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+
+    return JSValue::encode(jsNumber(view->byteOffsetRaw()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dataViewProtoFuncGetInt8, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -362,6 +370,5 @@ JSC_DEFINE_HOST_FUNCTION(dataViewProtoFuncSetBigUint64, (JSGlobalObject* globalO
 {
     return setData<BigUint64Adaptor>(globalObject, callFrame);
 }
-IGNORE_CLANG_WARNINGS_END
 
 } // namespace JSC

@@ -73,14 +73,9 @@ FloatSize RenderSVGTransformableContainer::additionalContainerTranslation() cons
     return { };
 }
 
-void RenderSVGTransformableContainer::updateFromStyle()
+bool RenderSVGTransformableContainer::needsHasSVGTransformFlags() const
 {
-    RenderSVGContainer::updateFromStyle();
-
-    if (associatedUseElement(graphicsElement())) {
-        setHasTransformRelatedProperty();
-        setHasSVGTransform();
-    }
+    return graphicsElement().hasTransformRelatedAttributes() || associatedUseElement(graphicsElement());
 }
 
 void RenderSVGTransformableContainer::updateLayerTransform()

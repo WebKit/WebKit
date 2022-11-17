@@ -177,35 +177,44 @@ MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
     }
 }
 
-bool StyleProperties::shorthandHasVariableReference(CSSPropertyID propertyID, String& shorthandValue) const
+String StyleProperties::commonShorthandChecks(CSSPropertyID propertyID) const
 {
     auto shorthand = shorthandForProperty(propertyID);
-    if (shorthand.length()) {
-        size_t numSetFromShorthand = 0;
-        // Checks for shorthand property if any of its longhand properties have set to a variable
-        // or are all pending substitution
-        for (size_t i = 0; i < shorthand.length(); i++) {
-            auto cssPropertyValue =  getPropertyCSSValue(shorthand.properties()[i]);
-            
-            auto hasBeenSetFromLonghand = is<CSSVariableReferenceValue>(cssPropertyValue);
-            auto hasBeenSetFromShorthand = is<CSSPendingSubstitutionValue>(cssPropertyValue);
-            auto hasNotBeenSetFromRequestedShorthand = hasBeenSetFromShorthand && downcast<CSSPendingSubstitutionValue>(*cssPropertyValue).shorthandPropertyId() != propertyID;
-            
-            // Request for shorthand value should return empty string if any longhand values have been
-            // set to a variable or if they were set to a variable by a different shorthand.
-            if (hasBeenSetFromLonghand || hasNotBeenSetFromRequestedShorthand)
-                return true;
-            if (hasBeenSetFromShorthand)
-                numSetFromShorthand += 1;
-        }
-        if (numSetFromShorthand) {
-            if (numSetFromShorthand != shorthand.length())
-                return true;
-            shorthandValue = downcast<CSSPendingSubstitutionValue>(* getPropertyCSSValue(shorthand.properties()[0])).shorthandValue().cssText();
-            return true;
-        }
+    if (!shorthand.length())
+        return emptyString();
+    std::optional<bool> importance;
+    size_t numSetFromShorthand = 0;
+    for (size_t i = 0; i < shorthand.length(); i++) {
+        // FIXME: Shouldn't serialize the shorthand if some longhand is missing.
+        int propertyIndex = findPropertyIndex(shorthand.properties()[i]);
+        if (propertyIndex == -1)
+            continue;
+        auto property = propertyAt(propertyIndex);
+
+        // Don't serialize the shorthand if longhands have different importance.
+        bool isImportant = property.isImportant();
+        if (importance.value_or(isImportant) != isImportant)
+            return emptyString();
+        importance = isImportant;
+
+        auto value = property.value();
+        auto hasBeenSetFromLonghand = is<CSSVariableReferenceValue>(value);
+        auto hasBeenSetFromShorthand = is<CSSPendingSubstitutionValue>(value);
+        auto hasNotBeenSetFromRequestedShorthand = hasBeenSetFromShorthand && downcast<CSSPendingSubstitutionValue>(*value).shorthandPropertyId() != propertyID;
+
+        // Request for shorthand value should return empty string if any longhand values have been
+        // set to a variable or if they were set to a variable by a different shorthand.
+        if (hasBeenSetFromLonghand || hasNotBeenSetFromRequestedShorthand)
+            return emptyString();
+        if (hasBeenSetFromShorthand)
+            numSetFromShorthand += 1;
     }
-    return false;
+    if (numSetFromShorthand) {
+        if (numSetFromShorthand != shorthand.length())
+            return emptyString();
+        return downcast<CSSPendingSubstitutionValue>(* getPropertyCSSValue(shorthand.properties()[0])).shorthandValue().cssText();
+    }
+    return nullString();
 }
 
 String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
@@ -226,11 +235,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         }
     }
 
-    {
-        auto shorthandValue = String();
-        if (shorthandHasVariableReference(propertyID, shorthandValue))
-            return shorthandValue;
-    }
+    if (auto result = commonShorthandChecks(propertyID); !result.isNull())
+        return result.isEmpty() ? nullString() : result;
+
 
     // Shorthand and 4-values properties
     switch (propertyID) {
@@ -411,7 +418,15 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getPropertyValue(CSSPropertyBackgroundSize);
     case CSSPropertyContainIntrinsicSize:
         return get2Values(containIntrinsicSizeShorthand());
+    case CSSPropertyWebkitBorderRadius:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+    case CSSPropertyWebkitColumnBreakInside:
+    case CSSPropertyWebkitPerspective:
+        // FIXME: Provide a serialization.
+        return String();
     default:
+        ASSERT_NOT_REACHED();
         return String();
     }
 }
@@ -767,10 +782,6 @@ String StyleProperties::get2Values(const StylePropertyShorthand& shorthand) cons
     if (!start.value() || !end.value())
         return { };
 
-    // Important flags must be the same
-    if (start.isImportant() != end.isImportant())
-        return { };
-
     if (start.isInherited() && end.isInherited())
         return nameString(CSSValueInherit);
 
@@ -807,10 +818,6 @@ String StyleProperties::get4Values(const StylePropertyShorthand& shorthand) cons
 
     // All 4 properties must be specified.
     if (!top.value() || !right.value() || !bottom.value() || !left.value())
-        return String();
-
-    // Important flags must be the same
-    if (top.isImportant() != right.isImportant() || right.isImportant() != bottom.isImportant() || bottom.isImportant() != left.isImportant())
         return String();
 
     if (top.isInherited() && right.isInherited() && bottom.isInherited() && left.isInherited())
@@ -1218,7 +1225,6 @@ String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthan
 String StyleProperties::getCommonValue(const StylePropertyShorthand& shorthand) const
 {
     String result;
-    bool lastPropertyWasImportant = false;
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         auto value = getPropertyCSSValue(shorthand.properties()[i]);
         if (!value)
@@ -1231,10 +1237,6 @@ String StyleProperties::getCommonValue(const StylePropertyShorthand& shorthand) 
             result = text;
         else if (result != text)
             return String();
-        bool currentPropertyIsImportant = propertyIsImportant(shorthand.properties()[i]);
-        if (i && lastPropertyWasImportant != currentPropertyIsImportant)
-            return String();
-        lastPropertyWasImportant = currentPropertyIsImportant;
     }
     return result;
 }
@@ -1251,20 +1253,13 @@ String StyleProperties::borderImagePropertyValue(CSSPropertyID propertyID) const
 {
     const StylePropertyShorthand& shorthand = borderImageShorthand();
     StringBuilder result;
-    bool lastPropertyWasImportant = false;
     bool omittedSlice = false;
     bool omittedWidth = false;
     String commonWideValueText;
     auto separator = "";
     for (unsigned i = 0; i < shorthand.length(); ++i) {
-        // All longhands should have the same importance.
-        auto longhand = shorthand.properties()[i];
-        bool currentPropertyIsImportant = propertyIsImportant(longhand);
-        if (i && lastPropertyWasImportant != currentPropertyIsImportant)
-            return String();
-        lastPropertyWasImportant = currentPropertyIsImportant;
-
         // All longhands should be present.
+        auto longhand = shorthand.properties()[i];
         auto value = getPropertyCSSValue(longhand);
         if (!value)
             return String();

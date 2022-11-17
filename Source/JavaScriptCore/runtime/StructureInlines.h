@@ -259,7 +259,7 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
         return false;
 
     TypedArrayMode mode = jsCast<const JSArrayBufferView*>(cell)->mode();
-    return mode == WastefulTypedArray || mode == ResizableWastefulTypedArray;
+    return isWastefulTypedArray(mode);
 }
 
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)

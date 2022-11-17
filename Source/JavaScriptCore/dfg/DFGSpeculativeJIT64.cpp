@@ -2927,7 +2927,8 @@ void SpeculativeJIT::compileNewTypedArrayWithInt52Size(Node* node)
 {
     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
     auto typedArrayType = node->typedArrayType();
-    RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType));
+    bool isResizableOrGrowableShared = false;
+    RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType, isResizableOrGrowableShared));
     RELEASE_ASSERT(structure.get());
 
     SpeculateStrictInt52Operand size(this, node->child1());
@@ -2945,7 +2946,7 @@ void SpeculativeJIT::compileGetTypedArrayLengthAsInt52(Node* node)
     GPRReg baseGPR = base.gpr();
     GPRReg resultGPR = result.gpr();
     // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
-    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branch8(MacroAssembler::Equal, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableWastefulTypedArray)));
+    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
     m_jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
     static_assert(MAX_ARRAY_BUFFER_SIZE < (1ull << 52), "there is a risk that the size of a typed array won't fit in an Int52");
     strictInt52Result(resultGPR, node);
@@ -2954,55 +2955,16 @@ void SpeculativeJIT::compileGetTypedArrayLengthAsInt52(Node* node)
 void SpeculativeJIT::compileGetTypedArrayByteOffsetAsInt52(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
-    GPRTemporary vector(this);
-    GPRTemporary data(this);
+    GPRTemporary result(this);
 
     GPRReg baseGPR = base.gpr();
-    GPRReg vectorGPR = vector.gpr();
-    GPRReg dataGPR = data.gpr();
+    GPRReg resultGPR = result.gpr();
 
-    GPRReg arrayBufferGPR = dataGPR;
+    // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
+    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 
-    JITCompiler::Jump emptyByteOffset = m_jit.branch8(
-        MacroAssembler::Below,
-        MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
-        TrustedImm32(WastefulTypedArray));
-    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branch8(MacroAssembler::Equal, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableWastefulTypedArray)));
-
-    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
-
-    JITCompiler::Jump nullVector = m_jit.branchPtr(JITCompiler::Equal, vectorGPR, TrustedImmPtr(JSArrayBufferView::nullVectorPtr()));
-
-    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
-    m_jit.cageWithoutUntagging(Gigacage::JSValue, dataGPR);
-
-    cageTypedArrayStorage(baseGPR, vectorGPR);
-
-    m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), arrayBufferGPR);
-    // FIXME: This needs caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175515
-    m_jit.loadPtr(MacroAssembler::Address(arrayBufferGPR, ArrayBuffer::offsetOfData()), dataGPR);
-#if CPU(ARM64E)
-    m_jit.removeArrayPtrTag(dataGPR);
-#endif
-
-    m_jit.subPtr(dataGPR, vectorGPR);
-
-    JITCompiler::Jump done = m_jit.jump();
-
-#if CPU(ARM64E)
-    nullVector.link(&m_jit);
-#endif
-    emptyByteOffset.link(&m_jit);
-    m_jit.move(TrustedImmPtr(nullptr), vectorGPR);
-
-    done.link(&m_jit);
-#if !CPU(ARM64E)
-    ASSERT(!JSArrayBufferView::nullVectorPtr());
-    nullVector.link(&m_jit);
-#endif
-
-    strictInt52Result(vectorGPR, node);
+    m_jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
+    strictInt52Result(resultGPR, node);
 }
 #endif // USE(LARGE_TYPED_ARRAYS)
 
@@ -5654,7 +5616,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
 
         // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
-        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(dataViewGPR), node, m_jit.branch8(MacroAssembler::Equal, CCallHelpers::Address(dataViewGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableDataViewMode)));
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(dataViewGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(dataViewGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 
         DataViewData data = node->dataViewData();
 
@@ -5867,7 +5829,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
 
         // FIXME: We should record UnexpectedResizableArrayBufferView in ArrayProfile, propagate it to DFG::ArrayMode, and accept it here.
-        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(dataViewGPR), node, m_jit.branch8(MacroAssembler::Equal, CCallHelpers::Address(dataViewGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(ResizableDataViewMode)));
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(dataViewGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(dataViewGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 
         m_jit.zeroExtend32ToWord(indexGPR, t2);
         if (data.byteSize > 1)

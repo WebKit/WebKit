@@ -2,9 +2,11 @@ This tests copying and pasting content across shadow boundaries.
 To test manually, copy text blow starting from "hello" ending with "Web", and paste into the green box below. All the text shoul be copied & pasted.
 
 pasted html:
-| "hello "
 | <span>
-|   style="display: contents;"
+|   style="font-size: 16px; -webkit-text-fill-color: rgb(0, 0, 0); -webkit-text-stroke-color: rgb(0, 0, 0);"
+|   "hello "
+| <span>
+|   style="-webkit-text-fill-color: rgb(0, 0, 0); -webkit-text-stroke-color: rgb(0, 0, 0); display: contents;"
 |   "world Web<#selection-caret>"
 
 text/plain:

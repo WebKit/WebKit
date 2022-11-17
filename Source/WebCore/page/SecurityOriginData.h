@@ -40,6 +40,7 @@ struct SecurityOriginData {
         , host(host)
         , port(port)
     {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isHashTableDeletedValue());
     }
     SecurityOriginData(WTF::HashTableDeletedValueType)
         : protocol(WTF::HashTableDeletedValue)
@@ -72,9 +73,6 @@ struct SecurityOriginData {
     // file names. This format should be used in storage APIs only.
     WEBCORE_EXPORT String databaseIdentifier() const;
     WEBCORE_EXPORT static std::optional<SecurityOriginData> fromDatabaseIdentifier(StringView);
-    
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SecurityOriginData> decode(Decoder&);
 
     bool isNull() const
     {
@@ -105,39 +103,6 @@ inline bool operator!=(const SecurityOriginData& first, const SecurityOriginData
 inline void add(Hasher& hasher, const SecurityOriginData& data)
 {
     add(hasher, data.protocol, data.host, data.port);
-}
-
-template<class Encoder>
-void SecurityOriginData::encode(Encoder& encoder) const
-{
-    encoder << protocol;
-    encoder << host;
-    encoder << port;
-}
-
-template<class Decoder>
-std::optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
-{
-    std::optional<String> protocol;
-    decoder >> protocol;
-    if (!protocol)
-        return std::nullopt;
-    
-    std::optional<String> host;
-    decoder >> host;
-    if (!host)
-        return std::nullopt;
-    
-    std::optional<std::optional<uint16_t>> port;
-    decoder >> port;
-    if (!port)
-        return std::nullopt;
-    
-    SecurityOriginData data { WTFMove(*protocol), WTFMove(*host), WTFMove(*port) };
-    if (data.isHashTableDeletedValue())
-        return std::nullopt;
-
-    return data;
 }
 
 struct SecurityOriginDataHashTraits : SimpleClassHashTraits<SecurityOriginData> {

@@ -47,8 +47,10 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const Ani
         m_timelineTime = std::nullopt;
 }
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime, WebAnimation* animation)
-    : AnimationEventBase(type, animation, timelineTime)
+AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> timelineTime, std::optional<Seconds> scheduledTime, std::optional<Seconds> currentTime)
+    : AnimationEventBase(type, animation)
+    , m_timelineTime(timelineTime)
+    , m_scheduledTime(scheduledTime)
     , m_currentTime(currentTime)
 {
 }
@@ -64,9 +66,9 @@ std::optional<double> AnimationPlaybackEvent::bindingsCurrentTime() const
 
 std::optional<double> AnimationPlaybackEvent::bindingsTimelineTime() const
 {
-    if (!timelineTime())
+    if (!m_timelineTime)
         return std::nullopt;
-    return secondsToWebAnimationsAPITime(timelineTime().value());
+    return secondsToWebAnimationsAPITime(m_timelineTime.value());
 }
 
 } // namespace WebCore

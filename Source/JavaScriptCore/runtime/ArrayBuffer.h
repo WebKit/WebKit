@@ -184,7 +184,9 @@ public:
     }
     
     bool isShared() const { return m_shared; }
-    bool isResizable() const { return m_hasMaxByteLength; }
+    bool isResizableOrGrowableShared() const { return m_hasMaxByteLength; }
+    bool isGrowableShared() const { return isResizableOrGrowableShared() && isShared(); }
+    bool isResizableNonShared() const { return isResizableOrGrowableShared() && !isShared(); }
     
     void swap(ArrayBufferContents& other)
     {
@@ -260,7 +262,9 @@ public:
     void setSharingMode(ArrayBufferSharingMode);
     inline bool isShared() const;
     inline ArrayBufferSharingMode sharingMode() const { return isShared() ? ArrayBufferSharingMode::Shared : ArrayBufferSharingMode::Default; }
-    inline bool isResizable() const { return m_contents.isResizable(); }
+    inline bool isResizableOrGrowableShared() const { return m_contents.isResizableOrGrowableShared(); }
+    inline bool isGrowableShared() const { return m_contents.isGrowableShared(); }
+    inline bool isResizableNonShared() const { return m_contents.isResizableNonShared(); }
 
     inline size_t gcSizeEstimateInBytes() const;
 
@@ -382,25 +386,22 @@ bool ArrayBuffer::isWasmMemory()
 JS_EXPORT_PRIVATE ASCIILiteral errorMesasgeForTransfer(ArrayBuffer*);
 
 // https://tc39.es/proposal-resizablearraybuffer/#sec-makeidempotentarraybufferbytelengthgetter
+template<std::memory_order order>
 class IdempotentArrayBufferByteLengthGetter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IdempotentArrayBufferByteLengthGetter(std::memory_order order)
-        : m_order(order)
-    {
-    }
+    IdempotentArrayBufferByteLengthGetter() = default;
 
     size_t operator()(ArrayBuffer& buffer)
     {
         if (m_byteLength)
             return m_byteLength.value();
-        size_t result = buffer.byteLength(m_order);
+        size_t result = buffer.byteLength(order);
         m_byteLength = result;
         return result;
     }
 
 private:
-    std::memory_order m_order;
     std::optional<size_t> m_byteLength;
 };
 

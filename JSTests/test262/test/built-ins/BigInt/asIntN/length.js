@@ -1,7 +1,7 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: pending
+esid: sec-bigint.asintn
 description: BigInt.asIntN.length descriptor
 info: |
   BigInt.asIntN ( bits, bigint )

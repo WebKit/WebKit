@@ -195,7 +195,6 @@ svg/as-background-image/background-image-preserveaspectRatio-support.html [ Imag
 svg/as-image/img-preserveAspectRatio-support-1.html                       [ ImageOnlyFailure ]
 
 # getBBox() / getBoundingClientRect() / getCTM() / getScreenCTM() / getIntersectionList / etc. return incorrect results
-svg/animations/animate-mpath-insert.html                    [ Failure ]
 svg/animations/fill-remove-support.html                     [ Failure ]
 svg/custom/getBoundingClientRect.xhtml                      [ Failure ]
 svg/custom/getClientRects.xhtml                             [ Failure ]
@@ -541,9 +540,6 @@ svg/text/select-x-list-with-tspans-3.svg                  [ Failure ]
 svg/text/select-x-list-with-tspans-4.svg                  [ Failure ]
 svg/text/selection-doubleclick.svg                        [ ImageOnlyFailure ]
 
-# Text rendering placement issues (text renders at wrong location)
-svg/carto.net/tabgroup.svg                 [ ImageOnlyFailure ]
-
 # Transforming inner svg elements has issues
 svg/transforms/svgsvgelement-transform.svg [ ImageOnlyFailure ]
 
@@ -586,33 +582,10 @@ svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]
 svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
 
 # SMIL animation not correctly updastes (repainting issue only?)
-svg/W3C-SVG-1.1/animate-elem-04-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-05-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-06-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-07-t.svg                     [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-08-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-09-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-10-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-11-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-12-t.svg                     [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-30-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-33-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-77-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-81-t.svg                     [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-82-t.svg                     [ ImageOnlyFailure ]
 svg/animations/animateMotion-additive-1.svg               [ ImageOnlyFailure ]
-svg/animations/animateMotion-remove-freeze-use.svg        [ ImageOnlyFailure ]
-svg/animations/animateTransform-by-scale-1.svg            [ ImageOnlyFailure ]
-svg/animations/animateTransform-by-scale.svg              [ ImageOnlyFailure ]
-svg/animations/animateTransform-rotate-around-point.svg   [ ImageOnlyFailure ]
-svg/animations/animateTransform-skewX.svg                 [ ImageOnlyFailure ]
-svg/animations/animateTransform-skewY.svg                 [ ImageOnlyFailure ]
-svg/animations/animateTransform-translate.svg             [ ImageOnlyFailure ]
 svg/animations/animated-string-href.svg                   [ ImageOnlyFailure ]
-svg/animations/local-url-target-reference.html            [ ImageOnlyFailure ]
-svg/animations/mozilla/animateMotion-by-1.svg             [ ImageOnlyFailure ]
-svg/animations/mozilla/animateMotion-from-to-1.svg        [ ImageOnlyFailure ]
-svg/animations/multiple-animateTransform-additive-sum.svg [ ImageOnlyFailure ]
 svg/animations/smil-multiple-animate-list.svg             [ ImageOnlyFailure ]
 svg/stroke/animated-non-scaling-stroke.html               [ ImageOnlyFailure ]
 
@@ -663,6 +636,12 @@ svg/filters/feImage-target-reappend-to-document.svg [ Pass ImageOnlyFailure ]
 
 # 3) SVG <image> flakiness
 svg/as-image/image-preserveAspectRatio-all.svg [ Pass ImageOnlyFailure ]
+
+# 4) Historical flakiness of SMIL animations, we don't pause them in these tests, that should
+# finally be fixed to avoid this falkniess, even if it means adapting the SVG testsuite manually.
+svg/W3C-SVG-1.1/animate-elem-04-t.svg                     [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-17-t.svg                     [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-81-t.svg                     [ Pass ImageOnlyFailure ]
 
 ###############
 #   Crashes   #

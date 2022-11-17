@@ -343,11 +343,6 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS_FAMILY)
-template<> struct ArgumentCoder<WebCore::SelectionGeometry> {
-    static void encode(Encoder&, const WebCore::SelectionGeometry&);
-    static std::optional<WebCore::SelectionGeometry> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {
     static void encode(Encoder&, const WebCore::InspectorOverlay::Highlight&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::InspectorOverlay::Highlight&);

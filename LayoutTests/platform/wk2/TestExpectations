@@ -457,7 +457,7 @@ plugins/destroy-on-setwindow.html
 
 # New history tests added in r76205 fail on WebKit2 (perhaps the change
 # as coded doesn't affect both processes for WebKit2)
-fast/history/history-replace-updates-current-item.html
+http/tests/history/history-replace-updates-current-item.html
 http/tests/navigation/redirect-on-back-updates-history-item.html
 http/tests/navigation/redirect-on-reload-updates-history-item.html
 

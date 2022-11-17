@@ -42,6 +42,7 @@ public:
 
     // FIXME: We should move some of these arguments to an auxillary struct.
     SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
+    WEBCORE_EXPORT SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool);
     SelectionGeometry() = default;
     ~SelectionGeometry() = default;
 

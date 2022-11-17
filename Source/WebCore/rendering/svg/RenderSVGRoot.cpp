@@ -41,6 +41,7 @@
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGText.h"
+#include "RenderSVGViewportContainer.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGContainerLayout.h"
@@ -73,10 +74,12 @@ SVGSVGElement& RenderSVGRoot::svgSVGElement() const
     return downcast<SVGSVGElement>(nodeForNonAnonymous());
 }
 
-void RenderSVGRoot::setViewportContainer(RenderSVGViewportContainer& viewportContainer)
+RenderSVGViewportContainer* RenderSVGRoot::viewportContainer() const
 {
-    ASSERT(!m_viewportContainer);
-    m_viewportContainer = viewportContainer;
+    auto* child = firstChild();
+    if (!child || !child->isAnonymous())
+        return nullptr;
+    return dynamicDowncast<RenderSVGViewportContainer>(child);
 }
 
 void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
@@ -424,35 +427,28 @@ bool RenderSVGRoot::paintingAffectedByExternalOffset() const
     return false;
 }
 
-void RenderSVGRoot::updateFromElement()
+bool RenderSVGRoot::needsHasSVGTransformFlags() const
 {
-    RenderReplaced::updateFromElement();
-
-    // Changing SVG zoom / pan properties (or page scale) triggers an updateFromElement() call
-    // from SVGSVGElement. Forward to the anonymous viewport container, as it is responsible
-    // to update the layer transform to reflect the new scale/translation.
-    if (auto* viewportContainer = this->viewportContainer())
-        viewportContainer->updateFromElement();
-}
-
-void RenderSVGRoot::updateFromStyle()
-{
-    RenderReplaced::updateFromStyle();
-
-    if (shouldApplyViewportClip())
-        setHasNonVisibleOverflow();
-
     // Only mark us as transformed if really needed. Whenver a non-zero paintOffset could reach
     // RenderSVGRoot from an ancestor, the pixel snapping logic needs to be applied. Since the rest
     // of the SVG subtree doesn't know anything about subpixel offsets, we'll have to stop use/set
     // 'adjustedSubpixelOffset' starting at the RenderSVGRoot boundary. This mostly affects inline
     // SVG documents and SVGs embedded via <object> / <embed>.
-    if (!hasSVGTransform() && paintingAffectedByExternalOffset()) {
-        setHasTransformRelatedProperty();
-        setHasSVGTransform();
-    }
+    return svgSVGElement().hasTransformRelatedAttributes() || paintingAffectedByExternalOffset();
+}
 
-    updateFromElement();
+void RenderSVGRoot::updateFromStyle()
+{
+    RenderReplaced::updateFromStyle();
+    updateHasSVGTransformFlags();
+
+    // Additionally update style of the anonymous RenderSVGViewportContainer,
+    // which handles zoom / pan / viewBox transformations.
+    if (auto* viewportContainer = this->viewportContainer())
+        viewportContainer->updateFromStyle();
+
+    if (shouldApplyViewportClip())
+        setHasNonVisibleOverflow();
 }
 
 void RenderSVGRoot::updateLayerTransform()

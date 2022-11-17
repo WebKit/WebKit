@@ -10,7 +10,7 @@ features: [Temporal]
 
 // recent date
 var dt = Temporal.PlainDateTime.from("2019-10-29T10:46:38.271986102");
-var tz = Temporal.TimeZone.from("Europe/Amsterdam");
+var tz = Temporal.TimeZone.from("+01:00");
 assert.sameValue(`${ tz.getInstantFor(dt) }`, "2019-10-29T09:46:38.271986102Z");
 
 // year ≤ 99
@@ -31,7 +31,7 @@ assert.sameValue(`${ tz.getInstantFor(dt) }`, "-001000-10-29T04:46:38.271986102Z
 
 // year 0 leap day
 var dt = Temporal.PlainDateTime.from("0000-02-29T00:00");
-var tz = Temporal.TimeZone.from("Europe/London");
+var tz = Temporal.TimeZone.from("-00:01:15");
 assert.sameValue(`${ tz.getInstantFor(dt) }`, "0000-02-29T00:01:15Z");
 dt = Temporal.PlainDateTime.from("+000000-02-29T00:00");
 assert.sameValue(`${ tz.getInstantFor(dt) }`, "0000-02-29T00:01:15Z");
@@ -40,11 +40,11 @@ assert.sameValue(`${ tz.getInstantFor(dt) }`, "0000-02-29T00:01:15Z");
 var max = Temporal.PlainDateTime.from("+275760-09-13T23:59:59.999999999");
 var offsetTz = Temporal.TimeZone.from("-01:00");
 assert.throws(RangeError, () => offsetTz.getInstantFor(max));
-var namedTz = Temporal.TimeZone.from("America/Godthab");
+var namedTz = Temporal.TimeZone.from("Etc/GMT+12");
 assert.throws(RangeError, () => namedTz.getInstantFor(max));
 
 // casts argument
-var tz = Temporal.TimeZone.from("Europe/Amsterdam");
+var tz = Temporal.TimeZone.from("+01:00");
 assert.sameValue(`${ tz.getInstantFor("2019-10-29T10:46:38.271986102") }`, "2019-10-29T09:46:38.271986102Z");
 assert.sameValue(`${ tz.getInstantFor({
   year: 2019,

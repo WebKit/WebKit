@@ -31,21 +31,10 @@
 
 namespace WebCore {
 
-enum class PublicKeyCredentialType {
+enum class PublicKeyCredentialType : bool {
     PublicKey
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PublicKeyCredentialType> {
-    using values = EnumValues<
-        WebCore::PublicKeyCredentialType,
-        WebCore::PublicKeyCredentialType::PublicKey
-    >;
-};
-
-}
 
 #endif // ENABLE(WEB_AUTHN)

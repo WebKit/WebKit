@@ -36,36 +36,7 @@ struct PixelBufferFormat {
     AlphaPremultiplication alphaFormat;
     PixelFormat pixelFormat;
     DestinationColorSpace colorSpace;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PixelBufferFormat> decode(Decoder&);
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PixelBufferFormat&);
-
-template<class Encoder> void PixelBufferFormat::encode(Encoder& encoder) const
-{
-    encoder << alphaFormat << pixelFormat << colorSpace;
-}
-
-template<class Decoder> std::optional<PixelBufferFormat> PixelBufferFormat::decode(Decoder& decoder)
-{
-    std::optional<AlphaPremultiplication> alphaFormat;
-    decoder >> alphaFormat;
-    if (!alphaFormat)
-        return std::nullopt;
-
-    std::optional<PixelFormat> pixelFormat;
-    decoder >> pixelFormat;
-    if (!pixelFormat)
-        return std::nullopt;
-
-    std::optional<DestinationColorSpace> colorSpace;
-    decoder >> colorSpace;
-    if (!colorSpace)
-        return std::nullopt;
-
-    return { { WTFMove(*alphaFormat), WTFMove(*pixelFormat), WTFMove(*colorSpace) } };
-}
-
 }

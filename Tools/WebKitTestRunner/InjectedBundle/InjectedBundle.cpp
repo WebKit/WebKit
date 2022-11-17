@@ -203,23 +203,31 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "Reset")) {
         ASSERT(messageBody);
         auto messageBodyDictionary = dictionaryValue(messageBody);
+
+        bool beforeTest = false;
+        if (auto options = stringValue(messageBodyDictionary, "ResetStage"))
+            beforeTest = toWTFString(options) == "BeforeTest"_s;
+
         if (auto options = stringValue(messageBodyDictionary, "JSCOptions"))
             JSC::Options::setOptions(toWTFString(options).utf8().data());
+
         if (booleanValue(messageBodyDictionary, "ShouldGC"))
             WKBundleGarbageCollectJavaScriptObjects(m_bundle.get());
 
-        setAllowedHosts(messageBodyDictionary);
+        if (!beforeTest) {
+            setAllowedHosts(messageBodyDictionary);
 
-        m_state = Idle;
-        m_dumpPixels = false;
-        m_pixelResultIsPending = false;
-        // Needed for pixel result pending mode, otherwise a no-op.
-        InjectedBundle::page()->stopLoading();
+            m_state = Idle;
+            m_dumpPixels = false;
+            m_pixelResultIsPending = false;
+            // Needed for pixel result pending mode, otherwise a no-op.
+            InjectedBundle::page()->stopLoading();
 
-        setlocale(LC_ALL, "");
-        TestRunner::removeAllWebNotificationPermissions();
+            setlocale(LC_ALL, "");
+            TestRunner::removeAllWebNotificationPermissions();
 
-        InjectedBundle::page()->resetAfterTest();
+            InjectedBundle::page()->resetAfterTest();
+        }
         return;
     }
 

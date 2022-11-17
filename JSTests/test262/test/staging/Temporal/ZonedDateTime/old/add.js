@@ -36,15 +36,15 @@ assert.sameValue(`${ later }`, "1970-01-04T12:23:45.678902034+00:00[UTC]");
 
 // casts argument
 assert.sameValue(`${ zdt.add("PT240H0.000000800S") }`, "1970-01-04T12:23:45.678902034+00:00[UTC]");
-var jan31 = Temporal.ZonedDateTime.from("2020-01-31T15:00-08:00[America/Vancouver]");
+var jan31 = Temporal.ZonedDateTime.from("2020-01-31T15:00-08:00[-08:00]");
 
 // constrain when ambiguous result
-assert.sameValue(`${ jan31.add({ months: 1 }) }`, "2020-02-29T15:00:00-08:00[America/Vancouver]");
-assert.sameValue(`${ jan31.add({ months: 1 }, { overflow: "constrain" }) }`, "2020-02-29T15:00:00-08:00[America/Vancouver]");
+assert.sameValue(`${ jan31.add({ months: 1 }) }`, "2020-02-29T15:00:00-08:00[-08:00]");
+assert.sameValue(`${ jan31.add({ months: 1 }, { overflow: "constrain" }) }`, "2020-02-29T15:00:00-08:00[-08:00]");
 
 // symmetrical with regard to negative durations in the time part
-assert.sameValue(`${ jan31.add({ minutes: -30 }) }`, "2020-01-31T14:30:00-08:00[America/Vancouver]");
-assert.sameValue(`${ jan31.add({ seconds: -30 }) }`, "2020-01-31T14:59:30-08:00[America/Vancouver]");
+assert.sameValue(`${ jan31.add({ minutes: -30 }) }`, "2020-01-31T14:30:00-08:00[-08:00]");
+assert.sameValue(`${ jan31.add({ seconds: -30 }) }`, "2020-01-31T14:59:30-08:00[-08:00]");
 
 // throw when ambiguous result with reject
 assert.throws(RangeError, () => jan31.add({ months: 1 }, { overflow: "reject" }));

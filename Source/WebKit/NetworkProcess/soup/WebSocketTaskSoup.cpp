@@ -27,7 +27,9 @@
 #include "WebSocketTaskSoup.h"
 
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include "NetworkSocketChannel.h"
+#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -74,6 +76,21 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
     // FIXME: this is done by libsoup since 2.69.1 and 2.68.4, so it can be removed when bumping the libsoup requirement.
     // See https://bugs.webkit.org/show_bug.cgi?id=203404
     soup_message_set_flags(msg, static_cast<SoupMessageFlags>(soup_message_get_flags(msg) | SOUP_MESSAGE_NEW_CONNECTION));
+#else
+    {
+        // No need to subscribe to the "request-certificate" signal, just set the client certificate upfront.
+        auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificate(WebCore::soupURIToURL(soup_message_get_uri(msg)));
+        auto certificate = m_channel.session()->networkStorageSession()->credentialStorage().get(m_request.cachePartition(), protectionSpace).certificate();
+        soup_message_set_tls_client_certificate(msg, certificate);
+    }
+
+    g_signal_connect(msg, "request-certificate-password", G_CALLBACK(+[](SoupMessage* msg, GTlsPassword* tlsPassword, WebSocketTask* task) -> gboolean {
+        auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificatePassword(WebCore::soupURIToURL(soup_message_get_uri(msg)), tlsPassword);
+        auto password = task->m_channel.session()->networkStorageSession()->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password().utf8();
+        g_tls_password_set_value(tlsPassword, reinterpret_cast<const unsigned char*>(password.data()), password.length());
+        soup_message_tls_client_certificate_password_request_complete(msg);
+        return TRUE;
+    }), this);
 #endif
 
     soup_session_websocket_connect_async(session, msg, nullptr, protocols.get(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),

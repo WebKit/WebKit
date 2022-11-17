@@ -161,11 +161,7 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
 
     // 5. Let len be O.[[ArrayBufferByteLength]].
     // https://tc39.es/proposal-resizablearraybuffer/#sec-sharedarraybuffer.prototype.slice
-    unsigned byteLength = 0;
-    if (mode == ArrayBufferSharingMode::Default)
-        byteLength = thisObject->impl()->byteLength();
-    else
-        byteLength = thisObject->impl()->byteLength(std::memory_order_seq_cst);
+    unsigned byteLength = thisObject->impl()->byteLength();
 
     unsigned firstIndex = 0;
     double relativeStart = startValue.toIntegerOrInfinity(globalObject);
@@ -267,7 +263,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoFuncGrow, (JSGlobalObject* global
     if (!thisObject || (ArrayBufferSharingMode::Shared != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be SharedArrayBuffer"_s));
 
-    if (!thisObject->impl()->isResizable())
+    if (!thisObject->impl()->isResizableOrGrowableShared())
         return throwVMTypeError(globalObject, scope, makeString("SharedArrayBuffer is not growable"_s));
 
     double newLength = callFrame->argument(0).toIntegerOrInfinity(globalObject);
@@ -298,7 +294,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncGrowable, (JSGlobalObje
     if (!thisObject || (ArrayBufferSharingMode::Shared != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be SharedArrayBuffer"_s));
 
-    return JSValue::encode(jsBoolean(thisObject->impl()->isResizable()));
+    return JSValue::encode(jsBoolean(thisObject->impl()->isGrowableShared()));
 }
 
 // https://tc39.es/proposal-resizablearraybuffer/#sec-get-sharedarraybuffer.prototype.maxbytelength
@@ -312,7 +308,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncMaxByteLength, (JSGloba
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be SharedArrayBuffer"_s));
 
     if (auto value = thisObject->impl()->maxByteLength()) {
-        ASSERT(thisObject->impl()->isResizable());
+        ASSERT(thisObject->impl()->isGrowableShared());
         return JSValue::encode(jsNumber(value.value()));
     }
     return JSValue::encode(jsNumber(thisObject->impl()->byteLength(std::memory_order_relaxed)));

@@ -1304,6 +1304,66 @@ var TemporalHelpers = {
   },
 
   /*
+   * crossDateLineTimeZone():
+   *
+   * This returns an instance of a custom time zone class that implements one
+   * single transition where the time zone moves from one side of the
+   * International Date Line to the other, for the purpose of testing time zone
+   * calculations without depending on system time zone data.
+   *
+   * The transition occurs at epoch second 1325239200 and goes from offset
+   * -10:00 to +14:00. In other words, the time zone skips the whole calendar
+   * day of 2011-12-30. This is the same as the real-life transition in the
+   * Pacific/Apia time zone.
+   */
+  crossDateLineTimeZone() {
+    const { compare } = Temporal.PlainDateTime;
+    const skippedDay = new Temporal.PlainDate(2011, 12, 30);
+    const transitionEpoch = 1325239200_000_000_000n;
+    const beforeOffset = new Temporal.TimeZone("-10:00");
+    const afterOffset = new Temporal.TimeZone("+14:00");
+
+    class CrossDateLineTimeZone extends Temporal.TimeZone {
+      constructor() {
+        super("+14:00");
+      }
+
+      getOffsetNanosecondsFor(instant) {
+        if (instant.epochNanoseconds < transitionEpoch) {
+          return beforeOffset.getOffsetNanosecondsFor(instant);
+        }
+        return afterOffset.getOffsetNanosecondsFor(instant);
+      }
+
+      getPossibleInstantsFor(datetime) {
+        const comparison = Temporal.PlainDate.compare(datetime.toPlainDate(), skippedDay);
+        if (comparison === 0) {
+          return [];
+        }
+        if (comparison < 0) {
+          return [beforeOffset.getInstantFor(datetime)];
+        }
+        return [afterOffset.getInstantFor(datetime)];
+      }
+
+      getPreviousTransition(instant) {
+        if (instant.epochNanoseconds > transitionEpoch) return new Temporal.Instant(transitionEpoch);
+        return null;
+      }
+
+      getNextTransition(instant) {
+        if (instant.epochNanoseconds < transitionEpoch) return new Temporal.Instant(transitionEpoch);
+        return null;
+      }
+
+      toString() {
+        return "Custom/Date_Line";
+      }
+    }
+    return new CrossDateLineTimeZone();
+  },
+
+  /*
    * observeProperty(calls, object, propertyName, value):
    *
    * Defines an own property @object.@propertyName with value @value, that
@@ -1318,6 +1378,97 @@ var TemporalHelpers = {
       set(v) {
         calls.push(`set ${formatPropertyName(propertyName, objectName)}`);
       }
+    });
+  },
+
+  /*
+   * calendarObserver:
+   * A custom calendar that behaves exactly like the ISO 8601 calendar but
+   * tracks calls to any of its methods, and Get/Has operations on its
+   * properties, by appending messages to an array. This is for the purpose of
+   * testing order of operations that are observable from user code.
+   * objectName is used in the log.
+   */
+  calendarObserver(calls, objectName, methodOverrides = {}) {
+    const iso8601 = new Temporal.Calendar("iso8601");
+    const trackingMethods = {
+      dateFromFields(...args) {
+        calls.push(`call ${objectName}.dateFromFields`);
+        if ('dateFromFields' in methodOverrides) {
+          const value = methodOverrides.dateFromFields;
+          return typeof value === "function" ? value(...args) : value;
+        }
+        const originalResult = iso8601.dateFromFields(...args);
+        // Replace the calendar in the result with the call-tracking calendar
+        const {isoYear, isoMonth, isoDay} = originalResult.getISOFields();
+        const result = new Temporal.PlainDate(isoYear, isoMonth, isoDay, this);
+        // Remove the HasProperty check resulting from the above constructor call
+        assert.sameValue(calls.pop(), `has ${objectName}.calendar`);
+        return result;
+      },
+      yearMonthFromFields(...args) {
+        calls.push(`call ${objectName}.yearMonthFromFields`);
+        if ('yearMonthFromFields' in methodOverrides) {
+          const value = methodOverrides.yearMonthFromFields;
+          return typeof value === "function" ? value(...args) : value;
+        }
+        const originalResult = iso8601.yearMonthFromFields(...args);
+        // Replace the calendar in the result with the call-tracking calendar
+        const {isoYear, isoMonth, isoDay} = originalResult.getISOFields();
+        const result = new Temporal.PlainYearMonth(isoYear, isoMonth, this, isoDay);
+        // Remove the HasProperty check resulting from the above constructor call
+        assert.sameValue(calls.pop(), `has ${objectName}.calendar`);
+        return result;
+      },
+      monthDayFromFields(...args) {
+        calls.push(`call ${objectName}.monthDayFromFields`);
+        if ('monthDayFromFields' in methodOverrides) {
+          const value = methodOverrides.monthDayFromFields;
+          return typeof value === "function" ? value(...args) : value;
+        }
+        const originalResult = iso8601.monthDayFromFields(...args);
+        // Replace the calendar in the result with the call-tracking calendar
+        const {isoYear, isoMonth, isoDay} = originalResult.getISOFields();
+        const result = new Temporal.PlainMonthDay(isoMonth, isoDay, this, isoYear);
+        // Remove the HasProperty check resulting from the above constructor call
+        assert.sameValue(calls.pop(), `has ${objectName}.calendar`);
+        return result;
+      },
+      dateAdd(...args) {
+        calls.push(`call ${objectName}.dateAdd`);
+        if ('dateAdd' in methodOverrides) {
+          const value = methodOverrides.dateAdd;
+          return typeof value === "function" ? value(...args) : value;
+        }
+        const originalResult = iso8601.dateAdd(...args);
+        const {isoYear, isoMonth, isoDay} = originalResult.getISOFields();
+        const result = new Temporal.PlainDate(isoYear, isoMonth, isoDay, this);
+        // Remove the HasProperty check resulting from the above constructor call
+        assert.sameValue(calls.pop(), `has ${objectName}.calendar`);
+        return result;
+      }
+    };
+    // Automatically generate the other methods that don't need any custom code
+    ["toString", "dateUntil", "era", "eraYear", "year", "month", "monthCode", "day", "fields", "mergeFields"].forEach((methodName) => {
+      trackingMethods[methodName] = function (...args) {
+        actual.push(`call ${formatPropertyName(methodName, objectName)}`);
+        if (methodName in methodOverrides) {
+          const value = methodOverrides[methodName];
+          return typeof value === "function" ? value(...args) : value;
+        }
+        return iso8601[methodName](...args);
+      };
+    });
+    return new Proxy(trackingMethods, {
+      get(target, key, receiver) {
+        const result = Reflect.get(target, key, receiver);
+        actual.push(`get ${formatPropertyName(key, objectName)}`);
+        return result;
+      },
+      has(target, key) {
+        actual.push(`has ${formatPropertyName(key, objectName)}`);
+        return Reflect.has(target, key);
+      },
     });
   },
 
@@ -1461,6 +1612,10 @@ var TemporalHelpers = {
         calls.push(`ownKeys ${objectName}`);
         return Reflect.ownKeys(target);
       },
+      getOwnPropertyDescriptor(target, key) {
+        calls.push(`getOwnPropertyDescriptor ${formatPropertyName(key, objectName)}`);
+        return Reflect.getOwnPropertyDescriptor(target, key);
+      },
       get(target, key, receiver) {
         calls.push(`get ${formatPropertyName(key, objectName)}`);
         const result = Reflect.get(target, key, receiver);
@@ -1576,6 +1731,44 @@ var TemporalHelpers = {
   },
 
   /*
+   * timeZoneObserver:
+   * A custom calendar that behaves exactly like the UTC time zone but tracks
+   * calls to any of its methods, and Get/Has operations on its properties, by
+   * appending messages to an array. This is for the purpose of testing order of
+   * operations that are observable from user code. objectName is used in the
+   * log. methodOverrides is an optional object containing properties with the
+   * same name as Temporal.TimeZone methods. If the property value is a function
+   * it will be called with the proper arguments instead of the UTC method.
+   * Otherwise, the property value will be returned directly.
+   */
+  timeZoneObserver(calls, objectName, methodOverrides = {}) {
+    const utc = new Temporal.TimeZone("UTC");
+    const trackingMethods = {};
+    // Automatically generate the methods
+    ["getOffsetNanosecondsFor", "getPossibleInstantsFor", "toString"].forEach((methodName) => {
+      trackingMethods[methodName] = function (...args) {
+        actual.push(`call ${formatPropertyName(methodName, objectName)}`);
+        if (methodName in methodOverrides) {
+          const value = methodOverrides[methodName];
+          return typeof value === "function" ? value(...args) : value;
+        }
+        return utc[methodName](...args);
+      };
+    });
+    return new Proxy(trackingMethods, {
+      get(target, key, receiver) {
+        const result = Reflect.get(target, key, receiver);
+        actual.push(`get ${formatPropertyName(key, objectName)}`);
+        return result;
+      },
+      has(target, key) {
+        actual.push(`has ${formatPropertyName(key, objectName)}`);
+        return Reflect.has(target, key);
+      },
+    });
+  },
+
+  /*
    * Returns an object that will append logs of any Gets or Calls of its valueOf
    * or toString properties to the array calls. Both valueOf and toString will
    * return the actual primitiveValue. propertyName is used in the log.
@@ -1605,6 +1798,46 @@ var TemporalHelpers = {
    * testing parsers.
    */
   ISO: {
+    /*
+     * PlainMonthDay strings that are not valid.
+     */
+    plainMonthDayStringsInvalid() {
+      return [
+        "11-18junk",
+      ];
+    },
+
+    /*
+     * PlainMonthDay strings that are valid and that should produce October 1st.
+     */
+    plainMonthDayStringsValid() {
+      return [
+        "10-01",
+        "1001",
+        "1965-10-01",
+        "1976-10-01T152330.1+00:00",
+        "19761001T15:23:30.1+00:00",
+        "1976-10-01T15:23:30.1+0000",
+        "1976-10-01T152330.1+0000",
+        "19761001T15:23:30.1+0000",
+        "19761001T152330.1+00:00",
+        "19761001T152330.1+0000",
+        "+001976-10-01T152330.1+00:00",
+        "+0019761001T15:23:30.1+00:00",
+        "+001976-10-01T15:23:30.1+0000",
+        "+001976-10-01T152330.1+0000",
+        "+0019761001T15:23:30.1+0000",
+        "+0019761001T152330.1+00:00",
+        "+0019761001T152330.1+0000",
+        "1976-10-01T15:23:00",
+        "1976-10-01T15:23",
+        "1976-10-01T15",
+        "1976-10-01",
+        "--10-01",
+        "--1001",
+      ];
+    },
+
     /*
      * PlainTime strings that may be mistaken for PlainMonthDay or
      * PlainYearMonth strings, and so require a time designator.
@@ -1649,6 +1882,58 @@ var TemporalHelpers = {
         "2021-12[-12:00]",  // HHMM-UU is ambiguous with YYYY-MM, but TZ disambiguates
         "202112[UTC]",      // HHMMSS is ambiguous with YYYYMM, but TZ disambiguates
       ];
-    }
+    },
+
+    /*
+     * PlainYearMonth-like strings that are not valid.
+     */
+    plainYearMonthStringsInvalid() {
+      return [
+        "2020-13",
+      ];
+    },
+
+    /*
+     * PlainYearMonth-like strings that are valid and should produce November
+     * 1976 in the ISO 8601 calendar.
+     */
+    plainYearMonthStringsValid() {
+      return [
+        "1976-11",
+        "1976-11-10",
+        "1976-11-01T09:00:00+00:00",
+        "1976-11-01T00:00:00+05:00",
+        "197611",
+        "+00197611",
+        "1976-11-18T15:23:30.1\u221202:00",
+        "1976-11-18T152330.1+00:00",
+        "19761118T15:23:30.1+00:00",
+        "1976-11-18T15:23:30.1+0000",
+        "1976-11-18T152330.1+0000",
+        "19761118T15:23:30.1+0000",
+        "19761118T152330.1+00:00",
+        "19761118T152330.1+0000",
+        "+001976-11-18T152330.1+00:00",
+        "+0019761118T15:23:30.1+00:00",
+        "+001976-11-18T15:23:30.1+0000",
+        "+001976-11-18T152330.1+0000",
+        "+0019761118T15:23:30.1+0000",
+        "+0019761118T152330.1+00:00",
+        "+0019761118T152330.1+0000",
+        "1976-11-18T15:23",
+        "1976-11-18T15",
+        "1976-11-18",
+      ];
+    },
+
+    /*
+     * PlainYearMonth-like strings that are valid and should produce November of
+     * the ISO year -9999.
+     */
+    plainYearMonthStringsValidNegativeYear() {
+      return [
+        "\u2212009999-11",
+      ];
+    },
   }
 };

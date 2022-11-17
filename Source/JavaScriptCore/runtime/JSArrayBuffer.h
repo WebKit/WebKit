@@ -50,6 +50,7 @@ public:
 
     JS_EXPORT_PRIVATE bool isShared() const;
     ArrayBufferSharingMode sharingMode() const;
+    bool isResizableOrGrowableShared() const { return m_impl->isResizableOrGrowableShared(); }
     
     DECLARE_EXPORT_INFO;
     

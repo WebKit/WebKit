@@ -8,6 +8,7 @@ description: It is a SyntaxError if FormalParameters' default expressions contai
 negative:
   phase: parse
   type: SyntaxError
+features: [async-functions]
 ---*/
 
 $DONOTEVALUATE();

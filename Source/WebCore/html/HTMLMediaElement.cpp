@@ -3505,9 +3505,9 @@ void HTMLMediaElement::seekTask()
         noSeekRequired = true;
 
 #if ENABLE(MEDIA_SOURCE)
-    // Always notify the media engine of a seek if the source is not closed. This ensures that the source is
-    // always in a flushed state when the 'seeking' event fires.
-    if (m_mediaSource && !m_mediaSource->isClosed())
+    // Always notify the media engine of a seek if the source is not closed and there is seekable ranges.
+    // This ensures that the source is always in a flushed state when the 'seeking' event fires.
+    if (m_mediaSource && !m_mediaSource->isClosed() && seekableRanges->length())
         noSeekRequired = false;
 #endif
 

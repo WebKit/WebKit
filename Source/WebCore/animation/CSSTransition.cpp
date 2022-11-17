@@ -93,9 +93,9 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     unsuspendEffectInvalidation();
 }
 
-Ref<AnimationEventBase> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime)
+Ref<AnimationEventBase> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId)
 {
-    return TransitionEvent::create(eventType, nameString(m_property), elapsedTime, pseudoId, timelineTime, this);
+    return TransitionEvent::create(eventType, this, elapsedTime, nameString(m_property), pseudoId);
 }
 
 } // namespace WebCore

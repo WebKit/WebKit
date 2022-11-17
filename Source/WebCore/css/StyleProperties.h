@@ -169,7 +169,7 @@ private:
     String fontSynthesisValue() const;
     String textDecorationSkipValue() const;
     String offsetValue() const;
-    bool shorthandHasVariableReference(CSSPropertyID, String&) const;
+    String commonShorthandChecks(CSSPropertyID) const;
     StringBuilder asTextInternal() const;
 
     friend class PropertySetCSSStyleDeclaration;

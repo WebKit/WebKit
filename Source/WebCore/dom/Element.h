@@ -399,6 +399,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, String&& text);
 
     const RenderStyle* computedStyle(PseudoId = PseudoId::None) override;
+    const RenderStyle* computedStyleForEditability();
 
     bool needsStyleInvalidation() const;
 

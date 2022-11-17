@@ -14,9 +14,9 @@ depends:
 - freedesktop-sdk.bst:components/openjpeg.bst
 - freedesktop-sdk.bst:components/libdrm.bst
 - sdk/libkate.bst
+- sdk/libopenh264.bst
 - sdk/libusrsctp.bst
 - freedesktop-sdk.bst:components/libusb.bst
-- filtered-openh264.bst
 - freedesktop-sdk.bst:components/aom.bst
 - freedesktop-sdk.bst:components/librsvg.bst
 - freedesktop-sdk.bst:components/frei0r.bst

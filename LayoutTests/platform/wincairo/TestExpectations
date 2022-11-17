@@ -2118,6 +2118,7 @@ imported/w3c/web-platform-tests/resource-timing/cross-origin-redirects.html [ Pa
 imported/w3c/web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_reuse.sub.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain.html [ Pass ]
+imported/w3c/web-platform-tests/resource-timing/resource_TAO_match_origin.htm [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_timing_same_origin_redirect.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_timing_TAO_cross_origin_redirect.html [ Pass ]
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]

@@ -26,13 +26,12 @@
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "FloatRect.h"
 #include "RenderReplaced.h"
-#include "RenderSVGViewportContainer.h"
 #include "SVGBoundingBoxComputation.h"
 
 namespace WebCore {
 
-class AffineTransform;
 class RenderSVGResourceContainer;
+class RenderSVGViewportContainer;
 class SVGSVGElement;
 
 class RenderSVGRoot final : public RenderReplaced {
@@ -71,8 +70,7 @@ public:
 
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
 
-    RenderSVGViewportContainer* viewportContainer() const { return m_viewportContainer.get(); }
-    void setViewportContainer(RenderSVGViewportContainer&);
+    RenderSVGViewportContainer* viewportContainer() const;
 
 private:
     void element() const = delete;
@@ -102,7 +100,7 @@ private:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateFromStyle() final;
-    void updateFromElement() final;
+    bool needsHasSVGTransformFlags() const final;
     void updateLayerTransform() final;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
@@ -127,7 +125,6 @@ private:
     FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;
     HashSet<RenderSVGResourceContainer*> m_resourcesNeedingToInvalidateClients;
-    WeakPtr<RenderSVGViewportContainer> m_viewportContainer;
 };
 
 } // namespace WebCore

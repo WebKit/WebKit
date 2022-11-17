@@ -79,6 +79,7 @@ enum class SDKAlignedBehavior {
     ObservesClassProperty,
     PictureInPictureMediaPlayback,
     ProcessSwapOnCrossSiteNavigation,
+    PushStateFilePathRestriction,
     RequiresUserGestureToLoadVideo,
     RestrictsBaseURLSchemes,
     ScrollViewContentInsetsAreNotObscuringInsets,

@@ -612,22 +612,53 @@ std::optional<WebCore::ContentSecurityPolicyResponseHeaders> Coder<WebCore::Cont
 
 void Coder<WebCore::ClientOrigin>::encode(Encoder& encoder, const WebCore::ClientOrigin& instance)
 {
-    instance.encode(encoder);
+    encoder << instance.topOrigin;
+    encoder << instance.clientOrigin;
 }
 
 std::optional<WebCore::ClientOrigin> Coder<WebCore::ClientOrigin>::decode(Decoder& decoder)
 {
-    return WebCore::ClientOrigin::decode(decoder);
+    std::optional<WebCore::SecurityOriginData> topOrigin;
+    std::optional<WebCore::SecurityOriginData> clientOrigin;
+    decoder >> topOrigin;
+    if (!topOrigin || topOrigin->isNull())
+        return std::nullopt;
+    decoder >> clientOrigin;
+    if (!clientOrigin || clientOrigin->isNull())
+        return std::nullopt;
+
+    return WebCore::ClientOrigin { WTFMove(*topOrigin), WTFMove(*clientOrigin) };
 }
 
 void Coder<WebCore::SecurityOriginData>::encode(Encoder& encoder, const WebCore::SecurityOriginData& instance)
 {
-    instance.encode(encoder);
+    encoder << instance.protocol;
+    encoder << instance.host;
+    encoder << instance.port;
 }
 
 std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData>::decode(Decoder& decoder)
 {
-    return WebCore::SecurityOriginData::decode(decoder);
+    std::optional<String> protocol;
+    decoder >> protocol;
+    if (!protocol)
+        return std::nullopt;
+
+    std::optional<String> host;
+    decoder >> host;
+    if (!host)
+        return std::nullopt;
+
+    std::optional<std::optional<uint16_t>> port;
+    decoder >> port;
+    if (!port)
+        return std::nullopt;
+
+    WebCore::SecurityOriginData data { WTFMove(*protocol), WTFMove(*host), WTFMove(*port) };
+    if (data.isHashTableDeletedValue())
+        return std::nullopt;
+
+    return data;
 }
 
 void Coder<WebCore::ResourceResponse>::encode(Encoder& encoder, const WebCore::ResourceResponse& instance)

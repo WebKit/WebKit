@@ -78,6 +78,7 @@ class Tracker(GenericTracker):
     NOT_APPLICABLE = 'Not Applicable'
 
     REPRODUCIBILITY = [NOT_APPLICABLE, ALWAYS, SOMETIMES, RARELY, UNABLE, DIDNT_TRY]
+    NAME = 'Radar'
 
     class Encoder(GenericTracker.Encoder):
         @decorators.hybridmethod

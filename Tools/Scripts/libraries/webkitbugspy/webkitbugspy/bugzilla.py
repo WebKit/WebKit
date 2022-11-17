@@ -41,6 +41,7 @@ class Tracker(GenericTracker):
         r'\Ahttps?://{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
         r'\A{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
     ]
+    NAME = 'Bugzilla'
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
