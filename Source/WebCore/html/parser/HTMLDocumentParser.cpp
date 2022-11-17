@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010-2022 Google, Inc. All Rights Reserved.
  * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -444,6 +444,8 @@ void HTMLDocumentParser::end()
 
     // Informs the rest of WebCore that parsing is really finished (and deletes this).
     m_treeBuilder->finished();
+
+    DocumentParser::stopParsing();
 }
 
 void HTMLDocumentParser::attemptToRunDeferredScriptsAndEnd()
