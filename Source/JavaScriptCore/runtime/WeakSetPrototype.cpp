@@ -103,7 +103,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakSetAdd, (JSGlobalObject* globalObject, Cal
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (UNLIKELY(!canBeHeldWeakly(key)))
-        return JSValue::encode(throwTypeError(globalObject, scope, WeakSetInvalidValueError));
+        return throwVMTypeError(globalObject, scope, WeakSetInvalidValueError);
     set->add(vm, key.asCell());
     return JSValue::encode(callFrame->thisValue());
 }

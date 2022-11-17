@@ -114,7 +114,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapSet, (JSGlobalObject* globalObject, Cal
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (UNLIKELY(!canBeHeldWeakly(key)))
-        return JSValue::encode(throwTypeError(globalObject, scope, WeakMapInvalidKeyError));
+        return throwVMTypeError(globalObject, scope, WeakMapInvalidKeyError);
     map->set(vm, key.asCell(), callFrame->argument(1));
     return JSValue::encode(callFrame->thisValue());
 }
