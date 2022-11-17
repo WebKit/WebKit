@@ -41,7 +41,6 @@ AppendNodeCommand::AppendNodeCommand(Ref<ContainerNode>&& parent, Ref<Node>&& no
     , m_node(WTFMove(node))
 {
     ASSERT(!m_node->parentNode());
-    ASSERT(m_parent->hasEditableStyle() || !m_parent->renderer());
 }
 
 void AppendNodeCommand::doApply()
