@@ -1449,6 +1449,7 @@ struct WebCore::ScreenProperties {
     WebCore::PlatformDisplayID primaryDisplayID;
     HashMap<WebCore::PlatformDisplayID, WebCore::ScreenData> screenDataMap;
 };
+
 class WebCore::PlatformTimeRanges {
     Vector<WebCore::PlatformTimeRanges::Range> m_ranges;
 }
@@ -1467,3 +1468,85 @@ struct WebCore::VideoPlaybackQualityMetrics {
     uint32_t displayCompositedVideoFrames;
 }
 #endif
+
+#if ENABLE(WEB_AUTHN)
+enum class WebCore::AuthenticatorTransport : uint8_t {
+    Usb,
+    Nfc,
+    Ble,
+    Internal,
+    Cable,
+    Hybrid,
+    SmartCard
+};
+
+enum class WebCore::PublicKeyCredentialType : bool
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+class WebCore::SelectionGeometry {
+    WebCore::FloatQuad quad();
+    WebCore::SelectionRenderingBehavior behavior();
+    WebCore::TextDirection direction();
+    int minX();
+    int maxX();
+    int maxY();
+    int lineNumber();
+    bool isLineBreak();
+    bool isFirstOnLine();
+    bool isLastOnLine();
+    bool containsStart();
+    bool containsEnd();
+    bool isHorizontal();
+};
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+header: <WebCore/DataListSuggestionInformation.h>
+[CustomHeader] enum class WebCore::DataListSuggestionActivationType : uint8_t {
+    ControlClicked,
+    IndicatorClicked,
+    TextChanged,
+};
+
+header: <WebCore/DataListSuggestionInformation.h>
+[CustomHeader] struct WebCore::DataListSuggestion {
+    String value;
+    String label;
+};
+
+struct WebCore::DataListSuggestionInformation {
+    WebCore::DataListSuggestionActivationType activationType;
+    Vector<WebCore::DataListSuggestion> suggestions;
+    WebCore::IntRect elementRect;
+};
+#endif
+
+struct WebCore::SecurityOriginData {
+    [Validator='!protocol->isHashTableDeletedValue()'] String protocol;
+    String host;
+    std::optional<uint16_t> port;
+};
+
+struct WebCore::ClientOrigin {
+    [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
+    [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData clientOrigin;
+};
+
+enum class WebCore::AlphaPremultiplication : uint8_t {
+    Premultiplied,
+    Unpremultiplied
+};
+
+enum class WebCore::PixelFormat : uint8_t {
+    RGBA8,
+    BGRA8,
+    RGB10,
+    RGB10A8,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
+    WebCore::AlphaPremultiplication alphaFormat;
+    WebCore::PixelFormat pixelFormat;
+    WebCore::DestinationColorSpace colorSpace;
+};

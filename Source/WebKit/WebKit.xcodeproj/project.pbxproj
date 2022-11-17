@@ -6037,6 +6037,8 @@
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
 		869055832912C6B000B5ECD3 /* Model.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model.serialization.in; sourceTree = "<group>"; };
+		86AA520C292522460065399E /* WebGPUFeatureName.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUFeatureName.serialization.in; sourceTree = "<group>"; };
+		86AA520D292523AF0065399E /* XRSystem.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = XRSystem.serialization.in; sourceTree = "<group>"; };
 		86AE2A9628D61EDD007F5A1C /* WebCoreArgumentCodersCocoa.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCoreArgumentCodersCocoa.serialization.in; sourceTree = "<group>"; };
 		86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusedElementInformation.serialization.in; sourceTree = "<group>"; };
 		86DA60CA28EB11830044FE4D /* InteractionInformationAtPosition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationAtPosition.serialization.in; path = ios/InteractionInformationAtPosition.serialization.in; sourceTree = "<group>"; };
@@ -8094,6 +8096,7 @@
 				118502652673B0DA00A6425E /* XRDeviceInfo.h */,
 				118502622673B0DA00A6425E /* XRDeviceProxy.cpp */,
 				118502612673B0DA00A6425E /* XRDeviceProxy.h */,
+				86AA520D292523AF0065399E /* XRSystem.serialization.in */,
 			);
 			path = XR;
 			sourceTree = "<group>";
@@ -9096,6 +9099,7 @@
 				1C98C0BA2746267D002CCB78 /* WebGPUExternalTextureDescriptor.cpp */,
 				1CB7468627439CB500F19874 /* WebGPUExternalTextureDescriptor.h */,
 				5CBA4AD329020A4300F70CCD /* WebGPUExternalTextureDescriptor.serialization.in */,
+				86AA520C292522460065399E /* WebGPUFeatureName.serialization.in */,
 				1C98C0BC2746267E002CCB78 /* WebGPUFragmentState.cpp */,
 				1CB7467A27439CB200F19874 /* WebGPUFragmentState.h */,
 				5CBA4ACD29020A4200F70CCD /* WebGPUFragmentState.serialization.in */,

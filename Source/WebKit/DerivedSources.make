@@ -510,6 +510,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUExtent3D.serialization.in \
 	Shared/WebGPU/WebGPUExternalTextureBindingLayout.serialization.in \
 	Shared/WebGPU/WebGPUExternalTextureDescriptor.serialization.in \
+	Shared/WebGPU/WebGPUFeatureName.serialization.in \
 	Shared/WebGPU/WebGPUFragmentState.serialization.in \
 	Shared/WebGPU/WebGPUImageCopyBuffer.serialization.in \
 	Shared/WebGPU/WebGPUImageCopyExternalImage.serialization.in \
@@ -559,6 +560,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUBlendState.serialization.in \
 	Shared/WebGPU/WebGPUBlendComponent.serialization.in \
 	Shared/WebGPU/WebGPUBindGroupEntry.serialization.in \
+	Shared/XR/XRSystem.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in \
 #
 
