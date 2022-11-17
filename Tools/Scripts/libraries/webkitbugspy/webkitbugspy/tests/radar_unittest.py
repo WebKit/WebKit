@@ -349,22 +349,26 @@ What version of 'WebKit Text' should the bug be associated with?:
                 redact=None,
             ).issue(1).redacted, False)
 
+            self.assertTrue(bool(radar.Tracker(
+                project='WebKit',
+                redact={'.*': True},
+            ).issue(1).redacted))
             self.assertEqual(radar.Tracker(
                 project='WebKit',
                 redact={'.*': True},
-            ).issue(1).redacted, True)
+            ).issue(1).redacted, radar.Tracker.Redaction(True, 'is a Radar'),)
 
             self.assertEqual(radar.Tracker(
                 project='WebKit',
                 redact={'project:WebKit': True},
-            ).issue(1).redacted, True)
+            ).issue(1).redacted, radar.Tracker.Redaction(True, "matches 'project:WebKit'"))
 
             self.assertEqual(radar.Tracker(
                 project='WebKit',
                 redact={'component:Text': True},
-            ).issue(1).redacted, True)
+            ).issue(1).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
 
             self.assertEqual(radar.Tracker(
                 project='WebKit',
                 redact={'version:Other': True},
-            ).issue(1).redacted, True)
+            ).issue(1).redacted, radar.Tracker.Redaction(True, "matches 'version:Other'"))

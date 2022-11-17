@@ -43,6 +43,39 @@ class Tracker(object):
                 return super(Tracker.Encoder, self).default(obj)
             return obj.Encoder.default(obj)
 
+    class Redaction(object):
+        def __init__(self, redacted=False, reason=None):
+            self.redacted = redacted
+            self.reason = reason
+
+        def __bool__(self):
+            return self.redacted
+
+        def __nonzero__(self):
+            return self.redacted
+
+        def __repr__(self):
+            if not self.redacted:
+                return 'is not redacted'
+            if self.reason:
+                return '{} and is thus redacted'.format(self.reason)
+            return 'is redacted for an unknown reason'
+
+        def __str__(self):
+            return self.__repr__()
+
+        def __eq__(self, other):
+            if isinstance(other, str):
+                return str(self) == other
+            elif isinstance(other, bool):
+                return self.redacted == other
+            elif isinstance(other, Tracker.Redaction):
+                return self.redacted == other.redacted and self.reason == other.reason
+            return False
+
+        def __ne__(self, other):
+            return not self.__eq__(other)
+
     @classmethod
     def from_json(cls, data):
         from . import bugzilla, github, radar
@@ -73,7 +106,6 @@ class Tracker(object):
             github=github.Tracker,
             radar=radar.Tracker,
         )[data['type']](**unpacked)
-
 
     @classmethod
     def register(cls, tracker):
