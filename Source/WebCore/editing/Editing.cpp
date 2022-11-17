@@ -574,6 +574,11 @@ Element* enclosingAnchorElement(const Position& p)
     return nullptr;
 }
 
+Node* enclosingAtomicNode(const Position& start)
+{
+    return enclosingNodeOfType(start, isAtomicNode);
+}
+
 HTMLElement* enclosingList(Node* node)
 {
     if (!node)
