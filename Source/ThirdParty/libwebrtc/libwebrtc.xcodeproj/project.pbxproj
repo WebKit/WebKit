@@ -2509,6 +2509,11 @@
 		41D7292526651F7300651A0B /* libvpx_vp9_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D7292126651F7300651A0B /* libvpx_vp9_decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41D7292626651F7300651A0B /* libvpx_vp9_decoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D7292226651F7300651A0B /* libvpx_vp9_decoder.cc */; };
 		41DB1A9424321614005AB8EA /* rtcstats_objects.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DB1A9324321614005AB8EA /* rtcstats_objects.cc */; };
+		41DC25882922788300DAEB3C /* crc32c_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC25872922788300DAEB3C /* crc32c_config.h */; };
+		41DC258B292278A800DAEB3C /* crc32c.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC258A292278A800DAEB3C /* crc32c.h */; };
+		41DC258E2922797000DAEB3C /* crc32c_prefetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC258D2922797000DAEB3C /* crc32c_prefetch.h */; };
+		41DC258F292279F000DAEB3C /* crc32c.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41B8D9B128CB896200E5FA37 /* crc32c.cc */; };
+		41DC259029227B5400DAEB3C /* crc32c_portable.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DC189C2922758800DAEB3C /* crc32c_portable.cc */; };
 		41DDB26C212679D200296D47 /* string_builder.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB268212679D100296D47 /* string_builder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41DDB26D212679D200296D47 /* audio_format_to_string.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB269212679D100296D47 /* audio_format_to_string.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41DDB26E212679D200296D47 /* string_builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DDB26A212679D200296D47 /* string_builder.cc */; };
@@ -7865,6 +7870,19 @@
 		41D7292126651F7300651A0B /* libvpx_vp9_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libvpx_vp9_decoder.h; path = codecs/vp9/libvpx_vp9_decoder.h; sourceTree = "<group>"; };
 		41D7292226651F7300651A0B /* libvpx_vp9_decoder.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = libvpx_vp9_decoder.cc; path = codecs/vp9/libvpx_vp9_decoder.cc; sourceTree = "<group>"; };
 		41DB1A9324321614005AB8EA /* rtcstats_objects.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rtcstats_objects.cc; path = stats/rtcstats_objects.cc; sourceTree = "<group>"; };
+		41DC18942922758600DAEB3C /* crc32c_arm64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32c_arm64.h; path = src/src/crc32c_arm64.h; sourceTree = "<group>"; };
+		41DC18952922758600DAEB3C /* crc32c_arm64_check.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32c_arm64_check.h; path = src/src/crc32c_arm64_check.h; sourceTree = "<group>"; };
+		41DC18962922758600DAEB3C /* crc32c_sse42_check.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32c_sse42_check.h; path = src/src/crc32c_sse42_check.h; sourceTree = "<group>"; };
+		41DC18972922758700DAEB3C /* crc32c_sse42.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = crc32c_sse42.cc; path = src/src/crc32c_sse42.cc; sourceTree = "<group>"; };
+		41DC18982922758700DAEB3C /* crc32c_sse42.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32c_sse42.h; path = src/src/crc32c_sse42.h; sourceTree = "<group>"; };
+		41DC189A2922758700DAEB3C /* crc32c_round_up.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32c_round_up.h; path = src/src/crc32c_round_up.h; sourceTree = "<group>"; };
+		41DC189B2922758800DAEB3C /* crc32c_read_le.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32c_read_le.h; path = src/src/crc32c_read_le.h; sourceTree = "<group>"; };
+		41DC189C2922758800DAEB3C /* crc32c_portable.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = crc32c_portable.cc; path = src/src/crc32c_portable.cc; sourceTree = "<group>"; };
+		41DC189D2922758800DAEB3C /* crc32c_internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32c_internal.h; path = src/src/crc32c_internal.h; sourceTree = "<group>"; };
+		41DC189E2922758900DAEB3C /* crc32c_arm64.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = crc32c_arm64.cc; path = src/src/crc32c_arm64.cc; sourceTree = "<group>"; };
+		41DC25872922788300DAEB3C /* crc32c_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crc32c_config.h; sourceTree = "<group>"; };
+		41DC258A292278A800DAEB3C /* crc32c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crc32c.h; sourceTree = "<group>"; };
+		41DC258D2922797000DAEB3C /* crc32c_prefetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crc32c_prefetch.h; path = src/src/crc32c_prefetch.h; sourceTree = "<group>"; };
 		41DDB24B21265BD700296D47 /* fixed_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_array.h; path = container/fixed_array.h; sourceTree = "<group>"; };
 		41DDB24C21265BD700296D47 /* inlined_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inlined_vector.h; path = container/inlined_vector.h; sourceTree = "<group>"; };
 		41DDB24F21265BE900296D47 /* optional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = optional.h; path = types/optional.h; sourceTree = "<group>"; };
@@ -13387,7 +13405,20 @@
 		41B8D9B028CB893200E5FA37 /* crc32c */ = {
 			isa = PBXGroup;
 			children = (
+				41DC25802922781700DAEB3C /* config */,
+				41DC25832922783400DAEB3C /* include */,
 				41B8D9B128CB896200E5FA37 /* crc32c.cc */,
+				41DC189E2922758900DAEB3C /* crc32c_arm64.cc */,
+				41DC18942922758600DAEB3C /* crc32c_arm64.h */,
+				41DC18952922758600DAEB3C /* crc32c_arm64_check.h */,
+				41DC189D2922758800DAEB3C /* crc32c_internal.h */,
+				41DC189C2922758800DAEB3C /* crc32c_portable.cc */,
+				41DC258D2922797000DAEB3C /* crc32c_prefetch.h */,
+				41DC189B2922758800DAEB3C /* crc32c_read_le.h */,
+				41DC189A2922758700DAEB3C /* crc32c_round_up.h */,
+				41DC18972922758700DAEB3C /* crc32c_sse42.cc */,
+				41DC18982922758700DAEB3C /* crc32c_sse42.h */,
+				41DC18962922758600DAEB3C /* crc32c_sse42_check.h */,
 			);
 			path = crc32c;
 			sourceTree = "<group>";
@@ -13559,6 +13590,39 @@
 				41D728FE2665075A00651A0B /* hpke.c */,
 			);
 			path = hpke;
+			sourceTree = "<group>";
+		};
+		41DC25802922781700DAEB3C /* config */ = {
+			isa = PBXGroup;
+			children = (
+				41DC25862922786800DAEB3C /* crc32c */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+		41DC25832922783400DAEB3C /* include */ = {
+			isa = PBXGroup;
+			children = (
+				41DC25892922788800DAEB3C /* crc32c */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		41DC25862922786800DAEB3C /* crc32c */ = {
+			isa = PBXGroup;
+			children = (
+				41DC25872922788300DAEB3C /* crc32c_config.h */,
+			);
+			path = crc32c;
+			sourceTree = "<group>";
+		};
+		41DC25892922788800DAEB3C /* crc32c */ = {
+			isa = PBXGroup;
+			children = (
+				41DC258A292278A800DAEB3C /* crc32c.h */,
+			);
+			name = crc32c;
+			path = src/include/crc32c;
 			sourceTree = "<group>";
 		};
 		41DDB24521265B8200296D47 /* container */ = {
@@ -18993,7 +19057,10 @@
 				4131C04C234B898D0028A615 /* cpu_time.h in Headers */,
 				5CDD87B21E43BC0500621E92 /* crc.h in Headers */,
 				4131C085234B898D0028A615 /* crc32.h in Headers */,
+				41DC258B292278A800DAEB3C /* crc32c.h in Headers */,
 				41B8D87D28CB84FD00E5FA37 /* crc32c.h in Headers */,
+				41DC25882922788300DAEB3C /* crc32c_config.h in Headers */,
+				41DC258E2922797000DAEB3C /* crc32c_prefetch.h in Headers */,
 				4131C2ED234B8DC20028A615 /* create_peerconnection_factory.h in Headers */,
 				41323A4D2665294D00B38623 /* create_scalability_structure.h in Headers */,
 				4189391C242A704E007FDC41 /* create_video_rtp_depacketizer.h in Headers */,
@@ -22295,6 +22362,8 @@
 				5CDD87B11E43BC0500621E92 /* crc.c in Sources */,
 				4131C03F234B898D0028A615 /* crc32.cc in Sources */,
 				41B8D9B328CB896A00E5FA37 /* crc32c.cc in Sources */,
+				41DC258F292279F000DAEB3C /* crc32c.cc in Sources */,
+				41DC259029227B5400DAEB3C /* crc32c_portable.cc in Sources */,
 				4131C2F0234B8DC20028A615 /* create_peerconnection_factory.cc in Sources */,
 				41323A5D2665294D00B38623 /* create_scalability_structure.cc in Sources */,
 				41893921242A704E007FDC41 /* create_video_rtp_depacketizer.cc in Sources */,

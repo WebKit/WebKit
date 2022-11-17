@@ -11,20 +11,12 @@
 
 #include <cstdint>
 
-#if !defined(WEBRTC_WEBKIT_BUILD)
 #include "third_party/crc32c/src/include/crc32c/crc32c.h"
-#else
-#include "third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h"
-#endif
 
 namespace dcsctp {
 
 uint32_t GenerateCrc32C(rtc::ArrayView<const uint8_t> data) {
-#if !defined(WEBRTC_WEBKIT_BUILD)
   uint32_t crc32c = crc32c_value(data.data(), data.size());
-#else
-  uint32_t crc32c = usrsctp_crc32c(const_cast<uint8_t*>(data.data()), data.size());
-#endif
 
   // Byte swapping for little endian byte order:
   uint8_t byte0 = crc32c;
