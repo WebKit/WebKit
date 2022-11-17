@@ -353,7 +353,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // We don't need to talk to the Dock.
     [NSApplication _preventDockConnections];
 
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions" : @YES, @"ApplePersistence" : @NO }];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"NSApplicationCrashOnExceptions": @YES,
+        @"ApplePersistence": @(-1) // Number -1 means NO + no logging to log and console. See <rdar://7749927>.
+    }];
 
     // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
     // no window in WK2, NSApplication needs to use the focused page's focused element.
