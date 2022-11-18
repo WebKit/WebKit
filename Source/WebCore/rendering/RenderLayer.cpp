@@ -3262,7 +3262,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         // Now walk the sorted list of children with negative z-indices.
         if ((isPaintingScrollingContent && isPaintingOverflowContents) || (!isPaintingScrollingContent && isPaintingCompositedBackground))
-            paintList(negativeZOrderLayers(), currentContext, localPaintingInfo, localPaintFlags);
+            paintList(negativeZOrderLayers(), currentContext, paintingInfo, localPaintFlags);
         
         if (isPaintingCompositedForeground) {
             if (shouldPaintContent) {
@@ -3279,7 +3279,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (isPaintingCompositedForeground) {
             // Paint any child layers that have overflow.
-            paintList(normalFlowLayers(), currentContext, localPaintingInfo, localPaintFlags);
+            paintList(normalFlowLayers(), currentContext, paintingInfo, localPaintFlags);
         
             // Now walk the sorted list of children with positive z-indices.
             paintList(positiveZOrderLayers(), currentContext, localPaintingInfo, localPaintFlags);
