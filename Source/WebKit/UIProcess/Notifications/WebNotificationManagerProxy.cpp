@@ -177,7 +177,7 @@ void WebNotificationManagerProxy::providerDidShowNotification(uint64_t globalNot
 
     LOG(Notifications, "Provider did show notification (%s)", notification->coreNotificationID().toString().utf8().data());
 
-    auto* connection = notification->sourceConnection();
+    auto connection = notification->sourceConnection();
     if (!connection)
         return;
 
@@ -201,7 +201,7 @@ static void dispatchDidClickNotification(WebNotification* notification)
     }
 #endif
 
-    if (auto* connection = notification->sourceConnection())
+    if (auto connection = notification->sourceConnection())
         connection->send(Messages::WebNotificationManager::DidClickNotification(notification->coreNotificationID()), 0);
 }
 
@@ -269,7 +269,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
     }
 
     for (auto& notification : closedNotifications) {
-        if (auto* connection = notification->sourceConnection()) {
+        if (auto connection = notification->sourceConnection()) {
             LOG(Notifications, "Provider did close notification (%s)", notification->coreNotificationID().toString().utf8().data());
             Vector<UUID> notificationIDs = { notification->coreNotificationID() };
             connection->send(Messages::WebNotificationManager::DidCloseNotifications(notificationIDs), 0);

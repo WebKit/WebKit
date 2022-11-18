@@ -194,7 +194,7 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort, logName = CString(name)] (xpc_object_t event) {
+    auto errorHandlerImpl = [weakProcessLauncher = ThreadSafeWeakPtr { *this }, listeningPort, logName = CString(name)] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();

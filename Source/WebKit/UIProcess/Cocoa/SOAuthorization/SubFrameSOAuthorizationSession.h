@@ -38,9 +38,6 @@ namespace WebKit {
 class SubFrameSOAuthorizationSession final : public NavigationSOAuthorizationSession, public FrameLoadState::Observer {
 public:
     using Callback = CompletionHandler<void(bool)>;
-    using SOAuthorizationSession::weakPtrFactory;
-    using SOAuthorizationSession::WeakValueType;
-    using SOAuthorizationSession::WeakPtrImplType;
 
     static Ref<SOAuthorizationSession> create(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
 

@@ -84,6 +84,8 @@ inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainThread) { A
 extern NamedAssertion& mainRunLoop;
 inline void assertIsMainRunLoop() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainRunLoop) { ASSERT(isMainRunLoop()); }
 
+enum class DestructionThread : uint8_t { Any, Main, MainRunLoop };
+
 } // namespace WTF
 
 using WTF::assertIsMainRunLoop;

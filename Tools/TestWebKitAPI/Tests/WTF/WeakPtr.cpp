@@ -26,6 +26,8 @@
 #include "config.h"
 
 #include "Test.h"
+#include <thread>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
@@ -1950,6 +1952,68 @@ TEST(WTF_WeakPtr, MultipleInheritance)
     }
     EXPECT_TRUE(base1Set.computesEmpty());
     EXPECT_TRUE(base2Set.computesEmpty());
+}
+
+struct ThreadSafeInstanceCounter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ThreadSafeInstanceCounter> {
+    ThreadSafeInstanceCounter() { instanceCount++; }
+    ~ThreadSafeInstanceCounter() { instanceCount--; }
+    static std::atomic<size_t> instanceCount;
+};
+
+std::atomic<size_t> ThreadSafeInstanceCounter::instanceCount;
+
+TEST(WTF_ThreadSafeWeakPtr, ThreadSafety)
+{
+    RefPtr counter = adoptRef(*new ThreadSafeInstanceCounter());
+    ThreadSafeWeakPtr<ThreadSafeInstanceCounter> weakPtr(counter);
+    EXPECT_NOT_NULL(weakPtr.get());
+
+    std::atomic<size_t> readyThreads { 0 };
+    EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 1u);
+    std::array<std::thread, 3> threads { std::thread { [&, counter] () mutable {
+        Vector<RefPtr<ThreadSafeInstanceCounter>> strongReferences;
+        strongReferences.reserveInitialCapacity(101);
+        readyThreads++;
+        while (readyThreads < 3) { }
+        for (size_t i = 0; i < 100; i++) {
+            strongReferences.uncheckedAppend(counter);
+            strongReferences.uncheckedAppend(counter);
+            strongReferences.takeLast();
+        }
+        counter = nullptr;
+    } }, std::thread { [&, counter] () mutable {
+        Vector<ThreadSafeWeakPtr<ThreadSafeInstanceCounter>> weakReferences;
+        weakReferences.reserveInitialCapacity(101);
+        readyThreads++;
+        while (readyThreads < 3) { }
+        for (size_t i = 0; i < 100; i++) {
+            weakReferences.uncheckedAppend(counter);
+            weakReferences.uncheckedAppend(counter);
+            weakReferences.takeLast();
+        }
+        counter = nullptr;
+    } }, std::thread { [&, counter] () mutable {
+        Vector<RefPtr<ThreadSafeInstanceCounter>> strongReferences;
+        Vector<ThreadSafeWeakPtr<ThreadSafeInstanceCounter>> weakReferences;
+        strongReferences.reserveInitialCapacity(51);
+        weakReferences.reserveInitialCapacity(51);
+        readyThreads++;
+        while (readyThreads < 3) { }
+        for (size_t i = 0; i < 50; i++) {
+            strongReferences.uncheckedAppend(counter.get());
+            weakReferences.uncheckedAppend(counter);
+            weakReferences.uncheckedAppend(counter);
+            strongReferences.uncheckedAppend(weakReferences.takeLast().get());
+            strongReferences.takeLast();
+        }
+        counter = nullptr;
+    } } };
+
+    counter = nullptr;
+    for (auto& thread : threads)
+        thread.join();
+    EXPECT_NULL(weakPtr.get());
+    EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 0u);
 }
 
 } // namespace TestWebKitAPI

@@ -66,7 +66,7 @@ public:
     uint64_t notificationID() const { return identifier(); }
 
     WebPageProxyIdentifier pageIdentifier() const { return m_pageIdentifier; }
-    IPC::Connection* sourceConnection() const { return m_sourceConnection.get(); }
+    RefPtr<IPC::Connection> sourceConnection() const { return m_sourceConnection.get(); }
 
 private:
     WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, IPC::Connection&);

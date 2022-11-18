@@ -306,8 +306,8 @@ Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
     m_growSuccessCallback(GrowSuccessTag, oldPageCount, newPageCount);
     // Update cache for instance
     for (auto& instance : m_instances) {
-        if (instance.get() != nullptr)
-            instance.get()->updateCachedMemory();
+        if (auto strongReference = instance.get())
+            strongReference->updateCachedMemory();
     }
     return oldPageCount;
 }
@@ -458,16 +458,16 @@ bool Memory::init(uint32_t offset, const uint8_t* data, uint32_t length)
     return true;
 }
 
-void Memory::registerInstance(Instance* instance)
+void Memory::registerInstance(Instance& instance)
 {
     size_t count = m_instances.size();
     for (size_t index = 0; index < count; index++) {
         if (m_instances.at(index).get() == nullptr) {
-            m_instances.at(index) = *instance;
+            m_instances.at(index) = { instance };
             return;
         }
     }
-    m_instances.append(*instance);
+    m_instances.append({ instance });
 }
 
 void Memory::dump(PrintStream& out) const
