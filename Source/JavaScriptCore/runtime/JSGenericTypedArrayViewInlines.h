@@ -108,13 +108,12 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(JSGlo
         return nullptr;
     }
 
-    if (length) {
-        if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length.value(), elementSize)) {
-            throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"_s));
-            return nullptr;
-        }
-    } else
-        ASSERT(buffer->isResizableOrGrowableShared());
+    ASSERT(length || buffer->isResizableOrGrowableShared());
+
+    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length.value_or(0), elementSize)) {
+        throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"_s));
+        return nullptr;
+    }
 
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, elementSize)) {
         throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"_s));
@@ -361,6 +360,57 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
         bool success = setIndex(globalObject, offset + i, value);
         EXCEPTION_ASSERT(!scope.exception() || !success);
         if (!success)
+            return false;
+    }
+    return true;
+}
+
+template<typename Adaptor>
+bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalObject, size_t offset, JSValue sourceValue)
+{
+    // https://tc39.es/ecma262/#sec-settypedarrayfromarraylike
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (isDetached()) {
+        throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        return false;
+    }
+
+    size_t targetLength = this->length();
+
+    JSObject* source = sourceValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSValue sourceLengthValue = source->get(globalObject, vm.propertyNames->length);
+    RETURN_IF_EXCEPTION(scope, { });
+    size_t sourceLength = sourceLengthValue.toLength(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (offset > MAX_ARRAY_BUFFER_SIZE || !isSumSmallerThanOrEqual(sourceLength, offset, targetLength)) {
+        throwRangeError(globalObject, scope, "Range consisting of offset and length are out of bounds"_s);
+        return false;
+    }
+
+    // It is not valid to ever call source->get() with an index of more than MAX_ARRAY_INDEX.
+    // So we iterate in the optimized loop up to MAX_ARRAY_INDEX, then if there is anything to do beyond this, we rely on slower code.
+    size_t safeLength = std::min(sourceLength, static_cast<size_t>(MAX_ARRAY_INDEX) + 1);
+    for (size_t i = 0; i < safeLength; ++i) {
+        ASSERT(i <= MAX_ARRAY_INDEX);
+        JSValue value = source->get(globalObject, static_cast<unsigned>(i));
+        RETURN_IF_EXCEPTION(scope, false);
+        bool success = setIndex(globalObject, offset + i, value);
+        EXCEPTION_ASSERT(!scope.exception() || !success);
+        if (UNLIKELY(!success))
+            return false;
+    }
+    for (size_t i = safeLength; i < sourceLength; ++i) {
+        JSValue value = source->get(globalObject, static_cast<uint64_t>(i));
+        RETURN_IF_EXCEPTION(scope, false);
+        bool success = setIndex(globalObject, offset + i, value);
+        EXCEPTION_ASSERT(!scope.exception() || !success);
+        if (UNLIKELY(!success))
             return false;
     }
     return true;

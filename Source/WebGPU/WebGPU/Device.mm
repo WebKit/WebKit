@@ -349,7 +349,7 @@ WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShade
 
 WGPUSwapChain wgpuDeviceCreateSwapChain(WGPUDevice device, WGPUSurface surface, const WGPUSwapChainDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSwapChain(WebGPU::fromAPI(surface), *descriptor));
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSwapChain(surface, *descriptor));
 }
 
 WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device, const WGPUTextureDescriptor* descriptor)

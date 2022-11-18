@@ -67,9 +67,7 @@ Instance::~Instance() = default;
 
 Ref<Surface> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
 {
-    // FIXME: Implement this.
-    UNUSED_PARAM(descriptor);
-    return Surface::create();
+    return Surface::create(descriptor);
 }
 
 void Instance::scheduleWork(WorkItem&& workItem)
@@ -325,6 +323,10 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateShaderModule);
     if (!strcmp(procName, "wgpuDeviceCreateSwapChain"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateSwapChain);
+    if (!strcmp(procName, "wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer"))
+        return reinterpret_cast<WGPUProc>(&wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer);
+    if (!strcmp(procName, "wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer"))
+        return reinterpret_cast<WGPUProc>(&wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer);
     if (!strcmp(procName, "wgpuDeviceCreateTexture"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateTexture);
     if (!strcmp(procName, "wgpuDeviceDestroy"))
@@ -460,11 +462,6 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
     if (!strcmp(procName, "wgpuTextureDestroy"))
         return reinterpret_cast<WGPUProc>(&wgpuTextureDestroy);
     return nullptr;
-}
-
-WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
-{
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(instance).createSurface(*descriptor));
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)

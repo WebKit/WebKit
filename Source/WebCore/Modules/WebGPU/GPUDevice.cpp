@@ -52,6 +52,10 @@
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUSupportedFeatures.h"
 #include "GPUSupportedLimits.h"
+#include "GPUSurface.h"
+#include "GPUSurfaceDescriptor.h"
+#include "GPUSwapChain.h"
+#include "GPUSwapChainDescriptor.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
 #include "JSGPUComputePipeline.h"
@@ -104,6 +108,21 @@ Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescript
 Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
 {
     return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()));
+}
+
+Ref<GPUTexture> GPUDevice::createSurfaceTexture(const GPUTextureDescriptor& textureDescriptor, const GPUSurface& surface)
+{
+    return GPUTexture::create(m_backing->createSurfaceTexture(textureDescriptor.convertToBacking(), surface.backing()));
+}
+
+Ref<GPUSurface> GPUDevice::createSurface(const GPUSurfaceDescriptor& surfaceDescriptor)
+{
+    return GPUSurface::create(m_backing->createSurface(surfaceDescriptor.convertToBacking()));
+}
+
+Ref<GPUSwapChain> GPUDevice::createSwapChain(const GPUSurface& surface, const GPUSwapChainDescriptor& swapChainDescriptor)
+{
+    return GPUSwapChain::create(m_backing->createSwapChain(surface.backing(), swapChainDescriptor.convertToBacking()));
 }
 
 static PAL::WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)

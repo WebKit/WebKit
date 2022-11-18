@@ -349,6 +349,10 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
+            if (run.isListMarker() && !downcast<ElementBox>(layoutBox).isListMarkerImage()) {
+                // Non-image type of list markers make their parent inline boxes (e.g. root inline box) contentful (and stretch them vertically).
+                lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
+            }
             continue;
         }
         if (run.isLineSpanningInlineBoxStart()) {

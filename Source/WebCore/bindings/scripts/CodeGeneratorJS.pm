@@ -235,7 +235,6 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     $sizeAttribute->isReadOnly(1);
     $sizeAttribute->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($sizeAttribute->extendedAttributes, $interface->mapLike->extendedAttributes);
-    $sizeAttribute->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->attributes}, $sizeAttribute);
 
     # https://webidl.spec.whatwg.org/#es-map-get-has
@@ -247,7 +246,6 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     push(@{$getOperation->arguments}, ($getArgument));
     $getOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($getOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-    $getOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $getOperation);
 
     my $hasOperation = IDLOperation->new();
@@ -258,7 +256,6 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     push(@{$hasOperation->arguments}, ($hasArgument));
     $hasOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($hasOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-    $hasOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $hasOperation);
 
     # https://webidl.spec.whatwg.org/#es-map-entries
@@ -266,7 +263,6 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     $entriesOperation->name("entries");
     $entriesOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($entriesOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-    $entriesOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $entriesOperation);
 
     # https://webidl.spec.whatwg.org/#es-map-keys-values
@@ -274,14 +270,12 @@ sub AddMapLikeAttributesAndOperationIfNeeded
     $keysOperation->name("keys");
     $keysOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($keysOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-    $keysOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $keysOperation);
 
     my $valuesOperation = IDLOperation->new();
     $valuesOperation->name("values");
     $valuesOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($valuesOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-    $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $valuesOperation);
 
     # https://webidl.spec.whatwg.org/#es-forEach
@@ -311,7 +305,6 @@ sub AddMapLikeAttributesAndOperationIfNeeded
         push(@{$setOperation->arguments}, ($setValueArgument));
         $setOperation->type(IDLParser::makeSimpleType("any"));
         IDLParser::copyExtendedAttributes($setOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-        $setOperation->extendedAttributes->{NotEnumerable} = 1;
         push(@{$interface->operations}, $setOperation);
     }
 
@@ -321,7 +314,6 @@ sub AddMapLikeAttributesAndOperationIfNeeded
         $clearOperation->name("clear");
         $clearOperation->type(IDLParser::makeSimpleType("any"));
         IDLParser::copyExtendedAttributes($clearOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-        $clearOperation->extendedAttributes->{NotEnumerable} = 1;
         push(@{$interface->operations}, $clearOperation);
     }
 
@@ -335,7 +327,6 @@ sub AddMapLikeAttributesAndOperationIfNeeded
         push(@{$deleteOperation->arguments}, ($deleteArgument));
         $deleteOperation->type(IDLParser::makeSimpleType("any"));
         IDLParser::copyExtendedAttributes($deleteOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
-        $deleteOperation->extendedAttributes->{NotEnumerable} = 1;
         push(@{$interface->operations}, $deleteOperation);
     }
 }
@@ -354,7 +345,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     $sizeAttribute->isReadOnly(1);
     $sizeAttribute->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($sizeAttribute->extendedAttributes, $interface->setLike->extendedAttributes);
-    $sizeAttribute->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->attributes}, $sizeAttribute);
 
     # https://webidl.spec.whatwg.org/#es-set-has
@@ -366,7 +356,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     push(@{$hasOperation->arguments}, ($hasArgument));
     $hasOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($hasOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-    $hasOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $hasOperation);
 
     # https://webidl.spec.whatwg.org/#es-set-entries-keys
@@ -374,14 +363,12 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     $entriesOperation->name("entries");
     $entriesOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($entriesOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-    $entriesOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $entriesOperation);
 
     my $keysOperation = IDLOperation->new();
     $keysOperation->name("keys");
     $keysOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($keysOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-    $keysOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $keysOperation);
 
     # https://webidl.spec.whatwg.org/#es-set-values
@@ -389,7 +376,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     $valuesOperation->name("values");
     $valuesOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($valuesOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-    $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $valuesOperation);
 
     # https://webidl.spec.whatwg.org/#es-forEach
@@ -401,7 +387,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
     push(@{$forEachOperation->arguments}, ($forEachArgument));
     $forEachOperation->type(IDLParser::makeSimpleType("any"));
     IDLParser::copyExtendedAttributes($forEachOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-    $forEachOperation->extendedAttributes->{NotEnumerable} = 1;
     push(@{$interface->operations}, $forEachOperation);
 
     return if $interface->setLike->isReadOnly;
@@ -416,7 +401,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
         push(@{$addOperation->arguments}, ($addArgument));
         $addOperation->type(IDLParser::makeSimpleType("any"));
         IDLParser::copyExtendedAttributes($addOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-        $addOperation->extendedAttributes->{NotEnumerable} = 1;
         push(@{$interface->operations}, $addOperation);
     }
 
@@ -426,7 +410,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
         $clearOperation->name("clear");
         $clearOperation->type(IDLParser::makeSimpleType("any"));
         IDLParser::copyExtendedAttributes($clearOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-        $clearOperation->extendedAttributes->{NotEnumerable} = 1;
         push(@{$interface->operations}, $clearOperation);
     }
 
@@ -439,7 +422,6 @@ sub AddSetLikeAttributesAndOperationIfNeeded
         push(@{$deleteOperation->arguments}, ($deleteArgument));
         $deleteOperation->type(IDLParser::makeSimpleType("any"));
         IDLParser::copyExtendedAttributes($deleteOperation->extendedAttributes, $interface->setLike->extendedAttributes);
-        $deleteOperation->extendedAttributes->{NotEnumerable} = 1;
         push(@{$interface->operations}, $deleteOperation);
     }
 }

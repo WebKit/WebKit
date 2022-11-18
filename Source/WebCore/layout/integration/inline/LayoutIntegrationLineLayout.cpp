@@ -163,7 +163,20 @@ bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
     // FIXME: Support partial invalidation in LFC.
     // This avoids O(n^2) when lots of boxes are being added dynamically while forcing layouts between.
     constexpr size_t maximimumBoxTreeSizeForInvalidation = 128;
-    return m_boxTree.boxCount() > maximimumBoxTreeSizeForInvalidation;
+    if (m_boxTree.boxCount() <= maximimumBoxTreeSizeForInvalidation)
+        return false;
+    auto isSegmentedTextContent = [&] {
+        // Large text content is broken into smaller (65k) pieces. Modern line layout should be able to handle it just fine.
+        auto renderers = m_boxTree.renderers();
+        ASSERT(renderers.size());
+        for (size_t index = 0; index < renderers.size() - 1; ++index) {
+            if (!is<RenderText>(renderers[index]) || downcast<RenderText>(*renderers[index]).length() < Text::defaultLengthLimit)
+                return false;
+        }
+        return is<RenderText>(renderers[renderers.size() - 1]);
+    };
+    auto isEditable = rootLayoutBox().style().effectiveUserModify() != UserModify::ReadOnly;
+    return isEditable || !isSegmentedTextContent();
 }
 
 void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
@@ -194,6 +207,16 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
     if (layoutBox.isListMarkerOutside()) {
         auto& listMarkerGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
         auto horizontalMargin = listMarkerGeometry.horizontalMargin();
+        if (!is<RenderListItem>(listMarker.containingBlock())) {
+            // In non-integration codepath, outside markers would simply take the incoming horizontal constraints and adjust
+            // the margins accordingly.
+            auto lineLogicalOffsetForNestedListMarker = listMarker.lineLogicalOffsetForListItem();
+            horizontalMargin.start -= lineLogicalOffsetForNestedListMarker;
+            // When the list marker is not the direct child of the list item, we also
+            // have to make sure that the line content does not get pulled in to logical left direction due to
+            // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
+            horizontalMargin.end += lineLogicalOffsetForNestedListMarker;
+        }
         ASSERT(m_inlineContentConstraints);
         auto outsideOffset = m_inlineContentConstraints->horizontal().logicalLeft;
         listMarkerGeometry.setHorizontalMargin({ horizontalMargin.start - outsideOffset, horizontalMargin.end + outsideOffset });  

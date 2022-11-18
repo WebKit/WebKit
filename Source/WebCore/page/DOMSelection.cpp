@@ -188,8 +188,6 @@ String DOMSelection::type() const
 unsigned DOMSelection::rangeCount() const
 {
     auto frame = this->frame();
-    if (frame && frame->settings().liveRangeSelectionEnabled())
-        return frame->selection().isInDocumentTree();
     return !frame || frame->selection().isNone() ? 0 : 1;
 }
 

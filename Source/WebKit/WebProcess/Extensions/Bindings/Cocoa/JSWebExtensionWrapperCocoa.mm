@@ -111,7 +111,7 @@ void WebExtensionCallbackHandler::reportError(NSString *message)
     JSValue *error = [JSValue valueWithNewErrorFromMessage:message inContext:[JSContext contextWithJSGlobalContextRef:m_globalContext.get()]];
 
     callWithArguments<1>(m_rejectFunction, m_globalContext, {
-        toJSValue(m_globalContext.get(), error)
+        toJSValueRef(m_globalContext.get(), error)
     });
 }
 
@@ -123,24 +123,24 @@ id WebExtensionCallbackHandler::call()
 id WebExtensionCallbackHandler::call(id argument)
 {
     return callWithArguments<1>(m_callbackFunction, m_globalContext, {
-        toJSValue(m_globalContext.get(), argument)
+        toJSValueRef(m_globalContext.get(), argument)
     });
 }
 
 id WebExtensionCallbackHandler::call(id argumentOne, id argumentTwo)
 {
     return callWithArguments<2>(m_callbackFunction, m_globalContext, {
-        toJSValue(m_globalContext.get(), argumentOne),
-        toJSValue(m_globalContext.get(), argumentTwo)
+        toJSValueRef(m_globalContext.get(), argumentOne),
+        toJSValueRef(m_globalContext.get(), argumentTwo)
     });
 }
 
 id WebExtensionCallbackHandler::call(id argumentOne, id argumentTwo, id argumentThree)
 {
     return callWithArguments<3>(m_callbackFunction, m_globalContext, {
-        toJSValue(m_globalContext.get(), argumentOne),
-        toJSValue(m_globalContext.get(), argumentTwo),
-        toJSValue(m_globalContext.get(), argumentThree)
+        toJSValueRef(m_globalContext.get(), argumentOne),
+        toJSValueRef(m_globalContext.get(), argumentTwo),
+        toJSValueRef(m_globalContext.get(), argumentThree)
     });
 }
 
@@ -244,7 +244,7 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef value)
     return [result copy];
 }
 
-JSValueRef toJSValue(JSContextRef context, NSString *string, NullOrEmptyString nullOrEmptyString)
+JSValueRef toJSValueRef(JSContextRef context, NSString *string, NullOrEmptyString nullOrEmptyString)
 {
     ASSERT(context);
 
@@ -259,11 +259,11 @@ JSValueRef toJSValue(JSContextRef context, NSString *string, NullOrEmptyString n
     }
 }
 
-JSValueRef toJSValue(JSContextRef context, NSURL *url, NullOrEmptyString nullOrEmptyString)
+JSValueRef toJSValueRef(JSContextRef context, NSURL *url, NullOrEmptyString nullOrEmptyString)
 {
     ASSERT(context);
 
-    return toJSValue(context, url.absoluteURL.absoluteString, nullOrEmptyString);
+    return toJSValueRef(context, url.absoluteURL.absoluteString, nullOrEmptyString);
 }
 
 NSString *toNSString(JSStringRef string)

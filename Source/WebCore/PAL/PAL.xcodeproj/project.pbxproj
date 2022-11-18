@@ -14,6 +14,14 @@
 		079D1D9826950DD700883577 /* SystemStatusSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D1D9626950DD700883577 /* SystemStatusSoftLink.mm */; };
 		0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */; };
 		0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */; };
+		0D7A7A64291C1A4C00DB4E18 /* WebGPUSurfaceImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D7A7A60291C1A4B00DB4E18 /* WebGPUSurfaceImpl.h */; };
+		0D7A7A65291C1A4C00DB4E18 /* WebGPUSwapChainImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A7A61291C1A4B00DB4E18 /* WebGPUSwapChainImpl.cpp */; };
+		0D7A7A66291C1A4C00DB4E18 /* WebGPUSurfaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D7A7A62291C1A4B00DB4E18 /* WebGPUSurfaceImpl.cpp */; };
+		0D7A7A67291C1A4C00DB4E18 /* WebGPUSwapChainImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D7A7A63291C1A4B00DB4E18 /* WebGPUSwapChainImpl.h */; };
+		0D7A7A69291C263D00DB4E18 /* WebGPUSurfaceDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D7A7A68291C263D00DB4E18 /* WebGPUSurfaceDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0D7A7A6C291C267700DB4E18 /* WebGPUSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D7A7A6A291C267600DB4E18 /* WebGPUSurface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0D7A7A6D291C267700DB4E18 /* WebGPUSwapChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D7A7A6B291C267700DB4E18 /* WebGPUSwapChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0D7A7A83291C7D1B00DB4E18 /* WebGPUSwapChainDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D7A7A82291C7D1B00DB4E18 /* WebGPUSwapChainDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C19E644273F3E5D004B17B0 /* WebGPUImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C19E642273F3E5D004B17B0 /* WebGPUImpl.cpp */; };
@@ -635,6 +643,14 @@
 		0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TelephonyUtilitiesSPI.h; sourceTree = "<group>"; };
 		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
 		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
+		0D7A7A60291C1A4B00DB4E18 /* WebGPUSurfaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSurfaceImpl.h; sourceTree = "<group>"; };
+		0D7A7A61291C1A4B00DB4E18 /* WebGPUSwapChainImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSwapChainImpl.cpp; sourceTree = "<group>"; };
+		0D7A7A62291C1A4B00DB4E18 /* WebGPUSurfaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSurfaceImpl.cpp; sourceTree = "<group>"; };
+		0D7A7A63291C1A4B00DB4E18 /* WebGPUSwapChainImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChainImpl.h; sourceTree = "<group>"; };
+		0D7A7A68291C263D00DB4E18 /* WebGPUSurfaceDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSurfaceDescriptor.h; sourceTree = "<group>"; };
+		0D7A7A6A291C267600DB4E18 /* WebGPUSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSurface.h; sourceTree = "<group>"; };
+		0D7A7A6B291C267700DB4E18 /* WebGPUSwapChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChain.h; sourceTree = "<group>"; };
+		0D7A7A82291C7D1B00DB4E18 /* WebGPUSwapChainDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChainDescriptor.h; sourceTree = "<group>"; };
 		1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gunzip.cpp; sourceTree = "<group>"; };
 		1C022EFD22CFE8E1006DF01B /* Gunzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gunzip.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1347,6 +1363,10 @@
 				1C19E6A7273F4244004B17B0 /* WebGPUSamplerImpl.h */,
 				1C19E68E273F4071004B17B0 /* WebGPUShaderModuleImpl.cpp */,
 				1C19E6AA273F4245004B17B0 /* WebGPUShaderModuleImpl.h */,
+				0D7A7A62291C1A4B00DB4E18 /* WebGPUSurfaceImpl.cpp */,
+				0D7A7A60291C1A4B00DB4E18 /* WebGPUSurfaceImpl.h */,
+				0D7A7A61291C1A4B00DB4E18 /* WebGPUSwapChainImpl.cpp */,
+				0D7A7A63291C1A4B00DB4E18 /* WebGPUSwapChainImpl.h */,
 				1C19E692273F407D004B17B0 /* WebGPUTextureImpl.cpp */,
 				1C19E69F273F4243004B17B0 /* WebGPUTextureImpl.h */,
 				1C19E696273F408B004B17B0 /* WebGPUTextureViewImpl.cpp */,
@@ -1529,6 +1549,10 @@
 				1CC5E41F2737492C006F6FF4 /* WebGPUStoreOp.h */,
 				1CC5E4282737492D006F6FF4 /* WebGPUSupportedFeatures.h */,
 				1CC5E42B2737492D006F6FF4 /* WebGPUSupportedLimits.h */,
+				0D7A7A6A291C267600DB4E18 /* WebGPUSurface.h */,
+				0D7A7A68291C263D00DB4E18 /* WebGPUSurfaceDescriptor.h */,
+				0D7A7A6B291C267700DB4E18 /* WebGPUSwapChain.h */,
+				0D7A7A82291C7D1B00DB4E18 /* WebGPUSwapChainDescriptor.h */,
 				1CC5E4272737492D006F6FF4 /* WebGPUTexture.h */,
 				1CC5E4222737492C006F6FF4 /* WebGPUTextureAspect.h */,
 				1CC5E4192737492C006F6FF4 /* WebGPUTextureBindingLayout.h */,
@@ -2039,6 +2063,12 @@
 				DD20DDAA27BC90D70093D175 /* WebGPUStoreOp.h in Headers */,
 				DD20DDAB27BC90D70093D175 /* WebGPUSupportedFeatures.h in Headers */,
 				DD20DDAC27BC90D70093D175 /* WebGPUSupportedLimits.h in Headers */,
+				0D7A7A6C291C267700DB4E18 /* WebGPUSurface.h in Headers */,
+				0D7A7A69291C263D00DB4E18 /* WebGPUSurfaceDescriptor.h in Headers */,
+				0D7A7A64291C1A4C00DB4E18 /* WebGPUSurfaceImpl.h in Headers */,
+				0D7A7A6D291C267700DB4E18 /* WebGPUSwapChain.h in Headers */,
+				0D7A7A83291C7D1B00DB4E18 /* WebGPUSwapChainDescriptor.h in Headers */,
+				0D7A7A67291C1A4C00DB4E18 /* WebGPUSwapChainImpl.h in Headers */,
 				DD20DDAD27BC90D70093D175 /* WebGPUTexture.h in Headers */,
 				DD20DDAE27BC90D70093D175 /* WebGPUTextureAspect.h in Headers */,
 				DD20DDAF27BC90D70093D175 /* WebGPUTextureBindingLayout.h in Headers */,
@@ -2262,6 +2292,8 @@
 				1C19E688273F405D004B17B0 /* WebGPURenderPipelineImpl.cpp in Sources */,
 				1C19E68C273F4069004B17B0 /* WebGPUSamplerImpl.cpp in Sources */,
 				1C19E690273F4072004B17B0 /* WebGPUShaderModuleImpl.cpp in Sources */,
+				0D7A7A66291C1A4C00DB4E18 /* WebGPUSurfaceImpl.cpp in Sources */,
+				0D7A7A65291C1A4C00DB4E18 /* WebGPUSwapChainImpl.cpp in Sources */,
 				1C19E694273F407D004B17B0 /* WebGPUTextureImpl.cpp in Sources */,
 				1C19E698273F408B004B17B0 /* WebGPUTextureViewImpl.cpp in Sources */,
 				A10826FA1F576292004772AC /* WebPanel.mm in Sources */,

@@ -1838,6 +1838,10 @@
 		DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */; };
 		DCFDFBD91D1F5D9B00FE3D72 /* B3BottomProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */; };
 		DCFDFBDA1D1F5D9E00FE3D72 /* B3TypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */; };
+		DD284672291A217E0009A61D /* CachedTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DAFA4521E3B871004B68F7 /* CachedTypes.cpp */; };
+		DD284679291A29900009A61D /* JSCBytecodeCacheVersion.cpp.in in Sources */ = {isa = PBXBuildFile; fileRef = DD284677291A280D0009A61D /* JSCBytecodeCacheVersion.cpp.in */; };
+		DD28467B291A35120009A61D /* JSCBytecodeCacheVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = DD28467A291A35120009A61D /* JSCBytecodeCacheVersion.h */; };
+		DD28467C291AF1B20009A61D /* JSCBuiltins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D801A61880D6A80026C39B /* JSCBuiltins.cpp */; };
 		DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */ = {isa = PBXBuildFile; fileRef = 86A054461556451B00445157 /* LowLevelInterpreter.asm */; };
 		DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */ = {isa = PBXBuildFile; fileRef = 86A054461556451B00445157 /* LowLevelInterpreter.asm */; };
 		DD5F74F9283EF58D0027A8C6 /* copy-profiling-data.sh in Headers */ = {isa = PBXBuildFile; fileRef = DD5F74F8283EF4380027A8C6 /* copy-profiling-data.sh */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2173,6 +2177,21 @@
 				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
 			);
 			script = "exec \"${SRCROOT}/Scripts/postprocess-header-rule\"\n";
+		};
+		DD284676291A27C90009A61D /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*/JSCBytecodeCacheVersion.cpp.in";
+			fileType = pattern.proxy;
+			inputFiles = (
+				"$(OBJECT_FILE_DIR_normal)/$(arch)/JSCBuiltins.o",
+				"$(OBJECT_FILE_DIR_normal)/$(arch)/CachedTypes.o",
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(DERIVED_FILE_DIR)/$(arch)/JSCBytecodeCacheVersion.cpp",
+			);
+			script = "set -eo pipefail\nCKSUM=(`( cat \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_INPUT_FILE_1}\"; echo ${RC_ProjectSourceVersion} ) | shasum`)\nsed -e s/CACHED_TYPES_CKSUM/\\\"${CKSUM[0]}\\\"/ \"${INPUT_FILE_PATH}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		DD41FA7D27CDA6FE00394D95 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -5294,6 +5313,8 @@
 		DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyPropertyInlines.h; sourceTree = "<group>"; };
 		DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BottomProvider.h; path = b3/B3BottomProvider.h; sourceTree = "<group>"; };
 		DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3TypeMap.h; path = b3/B3TypeMap.h; sourceTree = "<group>"; };
+		DD284677291A280D0009A61D /* JSCBytecodeCacheVersion.cpp.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSCBytecodeCacheVersion.cpp.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		DD28467A291A35120009A61D /* JSCBytecodeCacheVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCBytecodeCacheVersion.h; sourceTree = "<group>"; };
 		DD5F74F8283EF4380027A8C6 /* copy-profiling-data.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-profiling-data.sh"; sourceTree = "<group>"; };
 		DDE9930E278D086600F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinExecutableCreator.h; sourceTree = "<group>"; };
@@ -7996,6 +8017,8 @@
 				657CF45619BF6662004ACBF2 /* JSCallee.cpp */,
 				657CF45719BF6662004ACBF2 /* JSCallee.h */,
 				53B601EB2034B8C5006BE667 /* JSCast.h */,
+				DD284677291A280D0009A61D /* JSCBytecodeCacheVersion.cpp.in */,
+				DD28467A291A35120009A61D /* JSCBytecodeCacheVersion.h */,
 				FE48BD4323245E8700F136D0 /* JSCConfig.cpp */,
 				FE48BD4223245E8700F136D0 /* JSCConfig.h */,
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
@@ -10751,6 +10774,7 @@
 				657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */,
 				53B601EC2034B8C5006BE667 /* JSCast.h in Headers */,
 				A7D801A91880D6A80026C39B /* JSCBuiltins.h in Headers */,
+				DD28467B291A35120009A61D /* JSCBytecodeCacheVersion.h in Headers */,
 				FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */,
 				BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */,
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,
@@ -11734,6 +11758,7 @@
 				6517571427C9860C00D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
+				DD284676291A27C90009A61D /* PBXBuildRule */,
 				DD41FA7D27CDA6FE00394D95 /* PBXBuildRule */,
 				535E08C222545AC800DF00CA /* PBXBuildRule */,
 			);
@@ -12383,6 +12408,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD284672291A217E0009A61D /* CachedTypes.cpp in Sources */,
 				FE05FAFD1FE4CEDA00093230 /* DeprecatedInspectorValues.cpp in Sources */,
 				5333BBDC2110F7D9007618EC /* DFGSpeculativeJIT.cpp in Sources */,
 				5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */,
@@ -12394,6 +12420,8 @@
 				E378DC8D2727629400427B0B /* IntlNumberFormat.cpp in Sources */,
 				E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */,
 				A3EE8543262514B000FC9B8D /* IntlWorkaround.cpp in Sources */,
+				DD28467C291AF1B20009A61D /* JSCBuiltins.cpp in Sources */,
+				DD284679291A29900009A61D /* JSCBytecodeCacheVersion.cpp.in in Sources */,
 				E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */,
 				4BE92D442898522400FA48E1 /* LowLevelInterpreter.asm in Sources */,
 				4BE92D452898522400FA48E1 /* LowLevelInterpreter.cpp in Sources */,

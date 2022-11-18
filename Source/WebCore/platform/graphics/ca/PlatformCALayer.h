@@ -237,7 +237,7 @@ public:
     virtual float cornerRadius() const = 0;
     virtual void setCornerRadius(float) = 0;
 
-    virtual void setEdgeAntialiasingMask(unsigned) = 0;
+    virtual void setAntialiasesEdges(bool) = 0;
     
     // Only used by LayerTypeShapeLayer.
     virtual FloatRoundedRect shapeRoundedRect() const = 0;

@@ -247,7 +247,11 @@ BufferMemoryHandle::~BufferMemoryHandle()
             constexpr bool readable = true;
             constexpr bool writable = true;
             if (!OSAllocator::protect(memory, BufferMemoryHandle::fastMappedBytes(), readable, writable)) {
-                dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
+#if OS(WINDOWS)
+                dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+#else
+                dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+#endif
                 RELEASE_ASSERT_NOT_REACHED();
             }
             BufferMemoryManager::singleton().freeFastMemory(memory);
@@ -263,7 +267,11 @@ BufferMemoryHandle::~BufferMemoryHandle()
                 constexpr bool readable = true;
                 constexpr bool writable = true;
                 if (!OSAllocator::protect(memory, m_mappedCapacity, readable, writable)) {
-                    dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
+#if OS(WINDOWS)
+                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+#else
+                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+#endif
                     RELEASE_ASSERT_NOT_REACHED();
                 }
                 BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);

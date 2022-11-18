@@ -4076,7 +4076,7 @@ void MediaPlayerPrivateGStreamer::cdmInstanceAttached(CDMInstance& instance)
 
     m_cdmInstance = reinterpret_cast<CDMInstanceProxy*>(&instance);
     RELEASE_ASSERT(m_cdmInstance);
-    m_cdmInstance->setPlayer(m_player);
+    m_cdmInstance->setPlayer(WeakPtr { *m_player });
 
     GRefPtr<GstContext> context = adoptGRef(gst_context_new("drm-cdm-proxy", FALSE));
     GstStructure* contextStructure = gst_context_writable_structure(context.get());

@@ -219,15 +219,8 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
         return JSValue::encode(jsUndefined());
     }
 
-    JSObject* sourceArray = source.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    JSValue lengthValue = sourceArray->get(globalObject, vm.propertyNames->length);
-    RETURN_IF_EXCEPTION(scope, { });
-    size_t length = lengthValue.toLength(globalObject);
-
     scope.release();
-    thisObject->setFromArrayLike(globalObject, offset, sourceArray, 0, length);
+    thisObject->setFromArrayLike(globalObject, offset, source);
     return JSValue::encode(jsUndefined());
 }
 
@@ -352,28 +345,31 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
     size_t index = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(1), length);
     RETURN_IF_EXCEPTION(scope, { });
 
+    size_t updatedLength = 0;
     {
         IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
         auto lengthValue = integerIndexedObjectLength(thisObject, getter);
         if (UNLIKELY(!lengthValue))
             return JSValue::encode(jsBoolean(valueToFind.isUndefined()));
 
-        length = lengthValue.value();
-        if (index >= length)
-            return JSValue::encode(jsBoolean(false));
+        updatedLength = lengthValue.value();
     }
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
     auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
-    if (!targetOption)
-        return JSValue::encode(jsBoolean(false));
+    if (!targetOption) {
+        // Even though our TypedArray's length is updated, we iterate up to `length`.
+        // So, if `updatedLength` is smaller than `length`, we will see undefined after that.
+        return JSValue::encode(jsBoolean(valueToFind.isUndefined() && length > updatedLength));
+    }
 
     scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
+    size_t searchLength = std::min<size_t>(length, updatedLength);
     if constexpr (ViewClass::Adaptor::isFloat) {
         if (std::isnan(static_cast<double>(*targetOption))) {
-            for (; index < length; ++index) {
+            for (; index < searchLength; ++index) {
                 if (std::isnan(static_cast<double>(array[index])))
                     return JSValue::encode(jsBoolean(true));
             }
@@ -381,7 +377,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
         }
     }
 
-    size_t result = typedArrayIndexOfImpl<ViewClass>(array, length, targetOption.value(), index);
+    size_t result = typedArrayIndexOfImpl<ViewClass>(array, searchLength, targetOption.value(), index);
     return JSValue::encode(jsBoolean(result != WTF::notFound));
 }
 
@@ -404,15 +400,16 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     size_t index = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(1), length);
     RETURN_IF_EXCEPTION(scope, { });
 
+    size_t updatedLength = 0;
     {
         IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
         auto lengthValue = integerIndexedObjectLength(thisObject, getter);
-        if (UNLIKELY(!lengthValue))
+        if (UNLIKELY(!lengthValue)) {
+            // indexOf only sees elements when HasProperty passed. Thus, even though length gets smaller, the trailing undefineds are not checked.
             return JSValue::encode(jsNumber(-1));
+        }
 
-        length = lengthValue.value();
-        if (index >= length)
-            return JSValue::encode(jsNumber(-1));
+        updatedLength = lengthValue.value();
     }
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
@@ -422,7 +419,8 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
-    size_t result = typedArrayIndexOfImpl<ViewClass>(array, length, targetOption.value(), index);
+    size_t searchLength = std::min<size_t>(length, updatedLength);
+    size_t result = typedArrayIndexOfImpl<ViewClass>(array, searchLength, targetOption.value(), index);
     if (result == WTF::notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -805,11 +803,14 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-    auto lengthValue = integerIndexedObjectLength(thisObject, getter);
-    if (UNLIKELY(!lengthValue))
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-    size_t thisLength = lengthValue.value();
+    size_t thisLength = 0;
+    {
+        IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+        auto lengthValue = integerIndexedObjectLength(thisObject, getter);
+        if (UNLIKELY(!lengthValue))
+            return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        thisLength = lengthValue.value();
+    }
 
     size_t begin = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(0), thisLength);
     RETURN_IF_EXCEPTION(scope, { });
@@ -849,11 +850,14 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
     if (!length)
         return JSValue::encode(result);
 
-    auto updatedLength = integerIndexedObjectLength(thisObject, getter);
-    if (UNLIKELY(!updatedLength))
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+    {
+        IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+        auto updatedLength = integerIndexedObjectLength(thisObject, getter);
+        if (UNLIKELY(!updatedLength))
+            return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        end = std::min(updatedLength.value(), end);
+    }
 
-    end = std::min(updatedLength.value(), end);
     // Clamp end to begin, again.
     end = std::max(begin, end);
     ASSERT(end >= begin);
@@ -924,6 +928,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
+
+    size_t thisLength = thisObject->length();
+
     JSValue start = callFrame->argument(0);
     if (UNLIKELY(!start.isInt32())) {
         start = jsNumber(start.toIntegerOrInfinity(globalObject));
@@ -937,14 +945,6 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
             RETURN_IF_EXCEPTION(scope, { });
         }
     }
-
-    ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
-    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-    auto length = integerIndexedObjectLength(thisObject, getter);
-    if (UNLIKELY(!length))
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-
-    size_t thisLength = length.value();
 
     ASSERT(start.isNumber());
     ASSERT(finish.isUndefined() || finish.isNumber());
@@ -1043,9 +1043,19 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncWith(VM& vm, JSGlobal
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, thisLength);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (UNLIKELY(thisLength != thisObject->length())) {
-        for (unsigned index = 0; index < thisLength; ++index) {
+    size_t updatedLength = thisObject->length();
+    if (UNLIKELY(thisLength != updatedLength)) {
+        // If TypedArray is shrunk, remaining part will be filled with NativeValue(undefined).
+        // But BigInt64Array / BigUint64Array throws a TypeError since undefined cannot be converted to BigInt.
+        if constexpr (ViewClass::Adaptor::isBigInt) {
+            if (thisLength > updatedLength)
+                return throwVMTypeError(globalObject, scope, "Cannot convert undefined to BigInt"_s);
+        }
+
+        for (size_t index = 0; index < thisLength; ++index) {
             typename ViewClass::ElementType fromValue = 0;
+            if constexpr (ViewClass::Adaptor::isFloat)
+                fromValue = PNaN;
             if (index == replaceIndex)
                 fromValue = nativeValue;
             else if (thisObject->canGetIndexQuickly(index))

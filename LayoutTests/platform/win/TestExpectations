@@ -787,6 +787,7 @@ fast/images/avif-as-image.html [ Skip ]
 fast/images/avif-heif-container-as-image.html [ Skip ]
 fast/images/animated-avif.html [ Skip ]
 http/tests/images/avif-partial-load-crash.html [ Skip ]
+fast/images/avif-image-document.html [ Skip ]
 
 # TODO The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
 # method. But that method is not implemented in win port since win port can't

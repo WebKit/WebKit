@@ -2283,6 +2283,10 @@ webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
 webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Pass Failure Crash ]
 
+# Note: These tests were previously marked as flaky failures for Big Sur Release WK2 for webkit.org/b/235681, this may need to be re-added once webkit.org/b/248067 is resolved
+webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
+webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
+
 # Plugins
 # FIXME: Remove these tests.
 platform/mac/plugins/testplugin-onnew-onpaint.html [ Skip ]

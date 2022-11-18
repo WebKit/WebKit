@@ -26,31 +26,35 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RetainPtr.h>
 
 struct WGPUSwapChainImpl {
 };
 
 namespace WebGPU {
 
-class TextureView;
+class Surface;
 
 class SwapChain : public WGPUSwapChainImpl, public RefCounted<SwapChain> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SwapChain> create()
+    static Ref<SwapChain> create(WGPUSurface surface, const WGPUSwapChainDescriptor& descriptor)
     {
-        return adoptRef(*new SwapChain());
+        return adoptRef(*new SwapChain(surface, descriptor));
     }
 
     ~SwapChain();
 
-    TextureView* getCurrentTextureView();
     void present();
 
 private:
-    SwapChain();
+    SwapChain(WGPUSurface, const WGPUSwapChainDescriptor&);
+
+    Ref<Surface> m_surface;
+    RetainPtr<IOSurfaceRef> m_drawingBuffer;
 };
 
 } // namespace WebGPU

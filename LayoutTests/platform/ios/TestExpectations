@@ -3678,6 +3678,7 @@ http/tests/media/media-source/mediasource-rvfc.html [ Pass Failure ]
 
 # Crashing in a system framework rdar://102159271
 fast/forms/ios/file-upload-panel-capture.html [ Skip ]
+fast/forms/ios/file-upload-panel.html [ Skip ]
 
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
@@ -3747,6 +3748,12 @@ webkit.org/b/244501 [ Debug ] webgl/2.0.y/conformance2/state/gl-object-get-calls
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
+
+webkit.org/b/248061 webaudio/require-transient-activation.html [ Skip ]
+
+webkit.org/b/248062 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
+
+webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip ]
 
 # These tests have similar harness errors and timeouts. See webkit.org/b/244900
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]

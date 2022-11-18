@@ -233,6 +233,7 @@ public:
     // then it will have thrown an exception.
     bool setFromTypedArray(JSGlobalObject*, size_t offset, JSArrayBufferView*, size_t objectOffset, size_t length, CopyType);
     bool setFromArrayLike(JSGlobalObject*, size_t offset, JSObject*, size_t objectOffset, size_t length);
+    bool setFromArrayLike(JSGlobalObject*, size_t offset, JSValue source);
     
     RefPtr<typename Adaptor::ViewType> possiblySharedTypedImpl();
     RefPtr<typename Adaptor::ViewType> unsharedTypedImpl();
@@ -435,13 +436,19 @@ inline RefPtr<typename Adaptor::ViewType> toUnsharedNativeTypedView(VM& vm, JSVa
 template<typename Adaptor>
 RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(VM& vm, JSValue value)
 {
-    return JSC::toUnsharedNativeTypedView<Adaptor>(vm, value);
+    auto result = JSC::toUnsharedNativeTypedView<Adaptor>(vm, value);
+    if (!result || result->isResizableOrGrowableShared())
+        return nullptr;
+    return result;
 }
 
 template<typename Adaptor>
 RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrappedAllowShared(VM& vm, JSValue value)
 {
-    return JSC::toPossiblySharedNativeTypedView<Adaptor>(vm, value);
+    auto result = JSC::toPossiblySharedNativeTypedView<Adaptor>(vm, value);
+    if (!result || result->isResizableOrGrowableShared())
+        return nullptr;
+    return result;
 }
 
 

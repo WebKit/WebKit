@@ -142,7 +142,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
     }
     ASSERT(!offset && !lengthOpt);
 
-    if (UNLIKELY(ViewClass::TypedArrayStorageType == TypeDataView)) {
+    if constexpr (ViewClass::TypedArrayStorageType == TypeDataView) {
         throwTypeError(globalObject, scope, "Expected ArrayBuffer for the first argument."_s);
         return nullptr;
     }
@@ -158,7 +158,15 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
         if (isTypedView(object->type())) {
             auto* view = jsCast<JSArrayBufferView*>(object);
 
-            if (view->isDetached()) {
+            length = view->length();
+
+            ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
+            EXCEPTION_ASSERT(!!scope.exception() == !result);
+            if (UNLIKELY(!result))
+                return nullptr;
+
+            IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+            if (isIntegerIndexedObjectOutOfBounds(view, getter)) {
                 throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
                 return nullptr;
             }
@@ -167,13 +175,6 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
                 throwTypeError(globalObject, scope, "Content types of source and new typed array are different"_s);
                 return nullptr;
             }
-
-            length = view->length();
-
-            ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
-            EXCEPTION_ASSERT(!!scope.exception() == !result);
-            if (UNLIKELY(!result))
-                return nullptr;
 
             scope.release();
             if (!result->setFromTypedArray(globalObject, 0, view, 0, length, CopyType::Unobservable))

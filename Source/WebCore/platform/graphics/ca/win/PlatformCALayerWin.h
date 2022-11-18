@@ -150,7 +150,7 @@ public:
     WindRule shapeWindRule() const override;
     void setShapeWindRule(WindRule) override;
 
-    void setEdgeAntialiasingMask(unsigned) override;
+    void setAntialiasesEdges(bool) override;
 
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance) override { m_customAppearance = customAppearance; }

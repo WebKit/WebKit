@@ -46,6 +46,8 @@ Modules/WebGPU/GPUSampler.cpp
 Modules/WebGPU/GPUShaderModule.cpp
 Modules/WebGPU/GPUSupportedFeatures.cpp
 Modules/WebGPU/GPUSupportedLimits.cpp
+Modules/WebGPU/GPUSurface.cpp
+Modules/WebGPU/GPUSwapChain.cpp
 Modules/WebGPU/GPUTexture.cpp
 Modules/WebGPU/GPUTextureView.cpp
 Modules/WebGPU/GPUUncapturedErrorEvent.cpp

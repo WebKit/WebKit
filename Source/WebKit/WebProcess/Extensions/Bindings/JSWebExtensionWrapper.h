@@ -116,7 +116,7 @@ inline JSRetainPtr<JSStringRef> toJSString(const char* string)
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(string));
 }
 
-inline JSValueRef toJSNullIfNull(JSContextRef context, JSValueRef value)
+inline JSValueRef toJSValueRefOrJSNull(JSContextRef context, JSValueRef value)
 {
     ASSERT(context);
     return value ? value : JSValueMakeNull(context);
@@ -145,7 +145,12 @@ id toNSObject(JSContextRef, JSValueRef, Class containingObjectsOfClass = Nil);
 NSString *toNSString(JSContextRef, JSValueRef, NullStringPolicy = NullStringPolicy::NullAndUndefinedAsNullString);
 NSDictionary *toNSDictionary(JSContextRef, JSValueRef);
 
-inline JSValueRef toJSValue(JSContextRef context, id object)
+inline JSValue *toJSValue(JSContextRef context, JSValueRef value)
+{
+    return [JSValue valueWithJSValueRef:value inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+}
+
+inline JSValueRef toJSValueRef(JSContextRef context, id object)
 {
     ASSERT(context);
 
@@ -158,8 +163,8 @@ inline JSValueRef toJSValue(JSContextRef context, id object)
     return [JSValue valueWithObject:object inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]].JSValueRef;
 }
 
-JSValueRef toJSValue(JSContextRef, NSString *, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
-JSValueRef toJSValue(JSContextRef, NSURL *, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
+JSValueRef toJSValueRef(JSContextRef, NSString *, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
+JSValueRef toJSValueRef(JSContextRef, NSURL *, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
 
 NSString *toNSString(JSStringRef);
 
@@ -167,7 +172,7 @@ inline JSObjectRef toJSError(JSContextRef context, NSString *string)
 {
     ASSERT(context);
 
-    JSValueRef messageArgument = toJSValue(context, string, NullOrEmptyString::NullStringAsEmptyString);
+    JSValueRef messageArgument = toJSValueRef(context, string, NullOrEmptyString::NullStringAsEmptyString);
     return JSObjectMakeError(context, 1, &messageArgument, nullptr);
 }
 
@@ -176,10 +181,10 @@ inline JSRetainPtr<JSStringRef> toJSString(NSString *string)
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithCFString(string ? (__bridge CFStringRef)string : CFSTR("")));
 }
 
-inline JSValueRef toJSNullIfNull(JSContextRef context, id object)
+inline JSValueRef toJSValueRefOrJSNull(JSContextRef context, id object)
 {
     ASSERT(context);
-    return object ? toJSValue(context, object) : JSValueMakeNull(context);
+    return object ? toJSValueRef(context, object) : JSValueMakeNull(context);
 }
 
 JSValueRef deserializeJSONString(JSContextRef, NSString *jsonString);

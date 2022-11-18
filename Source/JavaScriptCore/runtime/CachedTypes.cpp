@@ -30,6 +30,7 @@
 #include "BuiltinNames.h"
 #include "BytecodeCacheError.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "JSCBytecodeCacheVersion.h"
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSTemplateObjectDescriptor.h"
@@ -66,11 +67,6 @@ struct SourceTypeImpl<T, std::enable_if_t<!std::is_fundamental<T>::value && !std
 
 template<typename T>
 using SourceType = typename SourceTypeImpl<T>::type;
-
-static constexpr unsigned jscBytecodeCacheVersion()
-{
-    return StringHasher::computeHash(__TIMESTAMP__);
-}
 
 class Encoder {
     WTF_MAKE_NONCOPYABLE(Encoder);
@@ -2408,7 +2404,7 @@ protected:
 
     bool isUpToDate(Decoder& decoder) const
     {
-        if (m_cacheVersion != jscBytecodeCacheVersion())
+        if (m_cacheVersion != JSCBytecodeCacheVersion)
             return false;
         if (m_bootSessionUUID.decode(decoder) != bootSessionUUIDString())
             return false;
@@ -2416,7 +2412,7 @@ protected:
     }
 
 private:
-    uint32_t m_cacheVersion { jscBytecodeCacheVersion() };
+    uint32_t m_cacheVersion { JSCBytecodeCacheVersion };
     CachedString m_bootSessionUUID;
     CachedCodeBlockTag m_tag;
 };

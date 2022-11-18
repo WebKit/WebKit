@@ -1616,8 +1616,6 @@ webkit.org/b/236788 [ Monterey ] http/tests/media/video-webm-stall.html [ Failur
 
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
 
-webkit.org/b/235681 [ BigSur Release ]  imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
-webkit.org/b/235681 [ BigSur Release ]  imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
 
 # rdar://86037417 WindowServer returned not alive with context:,unresponsive work processor(s)
 [ Monterey+ ] http/tests/model/model-document.html [ Skip ]
@@ -1764,9 +1762,9 @@ imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Fa
 
 webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Failure ]
 
+webkit.org/b/248083 [ Monterey+ ] webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Failure ]
+
 # webkit.org/b/246773 Constant crashes on wk2 debug
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load.html [ Skip ]
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
-
-webkit.org/b/247982 [ Ventura+ ] fast/images/animated-heics-draw.html [ Timeout ]

@@ -1358,6 +1358,8 @@ public:
     void avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement&);
     bool hasSleepDisabler() const;
 
+    void acceptTypedArrays(Int32Array&);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

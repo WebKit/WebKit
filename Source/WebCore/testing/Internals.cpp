@@ -6982,4 +6982,9 @@ bool Internals::hasSleepDisabler() const
     return document ? document->hasSleepDisabler() : false;
 }
 
+void Internals::acceptTypedArrays(Int32Array&)
+{
+    // Do nothing.
+}
+
 } // namespace WebCore

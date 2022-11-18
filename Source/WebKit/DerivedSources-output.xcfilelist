@@ -393,6 +393,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteShaderModuleMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSourceBufferProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSourceBufferProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSourceBufferProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSurfaceMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSurfaceMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSurfaceMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSwapChainMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSwapChainMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSwapChainMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextTrackProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextTrackProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextTrackProxyMessagesReplies.h

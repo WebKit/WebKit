@@ -301,7 +301,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         }
 #endif
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
         if (m_context->isWebGPU()) {
             if (!isWebGPUType(contextId))
                 return { std::nullopt };
@@ -354,7 +354,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     }
 #endif
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
     if (isWebGPUType(contextId)) {
         auto context = createContextWebGPU(contextId);
         if (!context)
@@ -379,7 +379,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
         return getContextWebGL(HTMLCanvasElement::toWebGLVersion(type));
 #endif
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
     if (HTMLCanvasElement::isWebGPUType(type))
         return getContextWebGPU(type);
 #endif
@@ -568,7 +568,7 @@ bool HTMLCanvasElement::isWebGPUType(const String& type)
     return type == "webgpu"_s;
 }
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
 GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
@@ -606,7 +606,7 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 
     return static_cast<GPUCanvasContext*>(m_context.get());
 }
-#endif // ENABLE(WEBGPU)
+#endif // HAVE(WEBGPU_IMPLEMENTATION)
 
 void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect)
 {

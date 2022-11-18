@@ -39,7 +39,7 @@ PASS FileSystemDirectoryHandle interface object name
 PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object
 PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object's "constructor" property
 PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object's @@unscopables property
-FAIL FileSystemDirectoryHandle interface: async iterable<USVString, FileSystemHandle> undefined is not an object (evaluating 'iteratorDesc.writable')
+FAIL FileSystemDirectoryHandle interface: async iterable<USVString, FileSystemHandle> undefined is not an object (evaluating 'iteratorDesc.enumerable')
 PASS FileSystemDirectoryHandle interface: operation getFileHandle(USVString, optional FileSystemGetFileOptions)
 PASS FileSystemDirectoryHandle interface: operation getDirectoryHandle(USVString, optional FileSystemGetDirectoryOptions)
 PASS FileSystemDirectoryHandle interface: operation removeEntry(USVString, optional FileSystemRemoveOptions)

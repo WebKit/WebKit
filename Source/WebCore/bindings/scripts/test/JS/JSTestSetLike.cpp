@@ -123,15 +123,15 @@ template<> void JSTestSetLikeDOMConstructor::initializeProperties(VM& vm, JSDOMG
 static const HashTableValue JSTestSetLikePrototypeTableValues[] =
 {
     { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSetLikeConstructor, 0 } },
-    { "size"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSetLike_size, 0 } },
-    { "has"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_has, 1 } },
-    { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_entries, 0 } },
-    { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_keys, 0 } },
-    { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_values, 0 } },
-    { "forEach"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_forEach, 1 } },
-    { "add"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_add, 1 } },
-    { "clear"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_clear, 0 } },
-    { "delete"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_delete, 1 } },
+    { "size"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSetLike_size, 0 } },
+    { "has"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_has, 1 } },
+    { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_entries, 0 } },
+    { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_keys, 0 } },
+    { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_values, 0 } },
+    { "forEach"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_forEach, 1 } },
+    { "add"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_add, 1 } },
+    { "clear"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_clear, 0 } },
+    { "delete"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSetLikePrototypeFunction_delete, 1 } },
 };
 
 const ClassInfo JSTestSetLikePrototype::s_info = { "TestSetLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikePrototype) };

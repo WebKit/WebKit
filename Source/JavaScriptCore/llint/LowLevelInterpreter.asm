@@ -1357,6 +1357,7 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     
     # Sweet, now we know that we have a typed array. Do some basic things now.
 
+    btbnz JSArrayBufferView::m_mode[base], (constexpr isResizableOrGrowableSharedMode), slowPath
     if LARGE_TYPED_ARRAYS
         bqaeq index, JSArrayBufferView::m_length[base], slowPath
         bqbeq index, SmallTypedArrayMaxLength, .smallTypedArray

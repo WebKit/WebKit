@@ -34,7 +34,11 @@
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncSlice);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncResize);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncTransfer);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncResizable);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncMaxByteLength);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoFuncGrow);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength);
@@ -200,9 +204,24 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
 
     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
         ASSERT(!thisObject->impl()->isDetached());
-        auto newBuffer = thisObject->impl()->sliceWithClampedIndex(firstIndex, finalIndex);
-        if (!newBuffer)
-            return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+        RefPtr<ArrayBuffer> newBuffer;
+        if (mode == ArrayBufferSharingMode::Default) {
+            if (thisObject->isResizableOrGrowableShared()) {
+                newBuffer = ArrayBuffer::tryCreate(newLength, 1, std::nullopt);
+                if (!newBuffer)
+                    return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+                newBuffer->setSharingMode(thisObject->impl()->sharingMode());
+                if (firstIndex < thisObject->impl()->byteLength())
+                    memcpy(newBuffer->data(), static_cast<const char*>(thisObject->impl()->data()) + firstIndex, std::min<size_t>(newLength, thisObject->impl()->byteLength() - firstIndex));
+            }
+        }
+
+        if (!newBuffer) {
+            newBuffer = thisObject->impl()->sliceWithClampedIndex(firstIndex, finalIndex);
+            if (!newBuffer)
+                return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+        }
+
         Structure* structure = globalObject->arrayBufferStructure(newBuffer->sharingMode());
         JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTFMove(newBuffer));
         return JSValue::encode(result);
@@ -215,7 +234,11 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
     ASSERT(!thisObject->impl()->isDetached());
     ASSERT(!newObject->impl()->isDetached());
     ASSERT(newObject->impl()->byteLength() >= newLength);
-    memcpy(newObject->impl()->data(), static_cast<const char*>(thisObject->impl()->data()) + firstIndex, newLength);
+    if (mode == ArrayBufferSharingMode::Default) {
+        if (firstIndex < thisObject->impl()->byteLength())
+            memcpy(newObject->impl()->data(), static_cast<const char*>(thisObject->impl()->data()) + firstIndex, std::min<size_t>(newLength, thisObject->impl()->byteLength() - firstIndex));
+    } else
+        memcpy(newObject->impl()->data(), static_cast<const char*>(thisObject->impl()->data()) + firstIndex, newLength);
     return JSValue::encode(newObject);
 }
 
@@ -239,10 +262,115 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncSlice, (JSGlobalObject* globalObjec
     return arrayBufferSlice(globalObject, callFrame->thisValue(), callFrame->argument(0), callFrame->argument(1), ArrayBufferSharingMode::Default);
 }
 
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-arraybuffer.prototype.resize
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue arrayBufferValue = callFrame->thisValue();
+
+    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
+        return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
+
+    if (UNLIKELY(!thisObject->impl()->isResizableOrGrowableShared()))
+        return throwVMTypeError(globalObject, scope, "ArrayBuffer is not resizable"_s);
+
+    if (UNLIKELY(thisObject->impl()->isDetached()))
+        return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
+
+    double newLength = callFrame->argument(0).toIntegerOrInfinity(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!std::isfinite(newLength) || newLength < 0)
+        return throwVMRangeError(globalObject, scope, "new length is out of range"_s);
+    size_t newByteLength = static_cast<size_t>(newLength);
+    if (!thisObject->impl()->resize(vm, newByteLength))
+        return throwVMRangeError(globalObject, scope, makeString("resize failed with new byte length "_s, newByteLength));
+
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncTransfer, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-arraybuffer.prototype.transfer
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue arrayBufferValue = callFrame->thisValue();
+
+    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
+        return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
+
+    // WebAssembly.Memory's buffer cannot be detached.
+    if (UNLIKELY(thisObject->impl()->isWasmMemory()))
+        return throwVMTypeError(globalObject, scope, "Receiver cannot be detached because it is WebAssembly.Memory"_s);
+
+    JSValue newLengthValue = callFrame->argument(0);
+    size_t newByteLength = 0;
+    if (newLengthValue.isUndefined()) {
+        if (UNLIKELY(thisObject->impl()->isDetached()))
+            return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
+        newByteLength = thisObject->impl()->byteLength();
+    } else {
+        newByteLength = newLengthValue.toTypedArrayIndex(globalObject, "newLength"_s);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (UNLIKELY(thisObject->impl()->isDetached()))
+            return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
+    }
+
+    auto newBuffer = ArrayBuffer::tryCreate(newByteLength, 1, std::nullopt);
+    if (UNLIKELY(!newBuffer))
+        return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+    size_t copyLength = std::min<size_t>(newByteLength, thisObject->impl()->byteLength());
+    memcpy(newBuffer->data(), thisObject->impl()->data(), copyLength);
+
+    ArrayBufferContents dummyContents;
+    thisObject->impl()->transferTo(vm, dummyContents);
+
+    Structure* structure = globalObject->arrayBufferStructure(newBuffer->sharingMode());
+    JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTFMove(newBuffer));
+    return JSValue::encode(result);
+}
+
 // http://tc39.github.io/ecmascript_sharedmem/shmem.html#sec-get-arraybuffer.prototype.bytelength
 JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return arrayBufferByteLength(globalObject, callFrame->thisValue(), ArrayBufferSharingMode::Default);
+}
+
+// https://tc39.es/proposal-resizablearraybuffer/#sec-get-arraybuffer.prototype.resizable
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncResizable, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(callFrame->thisValue());
+    if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
+        return throwVMTypeError(globalObject, scope, makeString("Receiver must be ArrayBuffer"_s));
+
+    return JSValue::encode(jsBoolean(thisObject->impl()->isResizableNonShared()));
+}
+
+// https://tc39.es/proposal-resizablearraybuffer/#sec-get-arraybuffer.prototype.maxbytelength
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncMaxByteLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(callFrame->thisValue());
+    if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
+        return throwVMTypeError(globalObject, scope, makeString("Receiver must be ArrayBuffer"_s));
+
+    if (auto value = thisObject->impl()->maxByteLength()) {
+        ASSERT(thisObject->impl()->isResizableNonShared());
+        return JSValue::encode(jsNumber(value.value()));
+    }
+    return JSValue::encode(jsNumber(thisObject->impl()->byteLength(std::memory_order_relaxed)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoFuncSlice, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -331,6 +459,12 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     if (sharingMode == ArrayBufferSharingMode::Default) {
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayBufferProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, arrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+        if (Options::useResizableArrayBuffer()) {
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->resize, arrayBufferProtoFuncResize, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->transfer, arrayBufferProtoFuncTransfer, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+            JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->resizable, arrayBufferProtoGetterFuncResizable, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+            JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->maxByteLength, arrayBufferProtoGetterFuncMaxByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+        }
     } else {
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, sharedArrayBufferProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, sharedArrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);

@@ -228,10 +228,8 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
             continue;
         HTMLFormControlElement& formElement = downcast<HTMLFormControlElement>(*listedElement);
         if (formElement.isSuccessfulSubmitButton()) {
-            if (formElement.renderer()) {
-                formElement.dispatchSimulatedClick(&event);
-                return;
-            }
+            formElement.dispatchSimulatedClick(&event);
+            return;
         } else if (formElement.canTriggerImplicitSubmission())
             ++submissionTriggerCount;
     }

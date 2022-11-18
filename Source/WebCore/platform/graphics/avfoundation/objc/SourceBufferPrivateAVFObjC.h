@@ -110,6 +110,8 @@ public:
     FloatSize naturalSize();
 
     uint64_t protectedTrackID() const { return m_protectedTrackID; }
+    bool needsVideoLayer() const;
+
     AVStreamDataParser* streamDataParser() const;
     void setCDMSession(CDMSessionMediaSourceAVFObjC*);
     void setCDMInstance(CDMInstance*);

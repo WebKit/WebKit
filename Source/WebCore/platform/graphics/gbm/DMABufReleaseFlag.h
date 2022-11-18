@@ -28,6 +28,8 @@
 
 #include <sys/eventfd.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/SafeStrerror.h>
+#include <wtf/text/CString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebCore {
@@ -72,7 +74,8 @@ struct DMABufReleaseFlag {
             return;
 
         uint64_t value { 1 };
-        write(fd.value(), &value, sizeof(uint64_t));
+        if (write(fd.value(), &value, sizeof(value)) != sizeof(value))
+            WTFLogAlways("Error writing to the eventfd at DMABufReleaseFlag: %s", safeStrerror(errno).data());
     }
 
     UnixFileDescriptor fd;

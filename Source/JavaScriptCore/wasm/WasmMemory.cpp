@@ -176,7 +176,11 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         constexpr bool readable = false;
         constexpr bool writable = false;
         if (!OSAllocator::protect(fastMemory + initialBytes, BufferMemoryHandle::fastMappedBytes() - initialBytes, readable, writable)) {
-            dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
+#if OS(WINDOWS)
+            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+#else
+            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+#endif
             RELEASE_ASSERT_NOT_REACHED();
         }
 
@@ -228,7 +232,11 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         constexpr bool readable = false;
         constexpr bool writable = false;
         if (!OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable)) {
-            dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
+#if OS(WINDOWS)
+            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+#else
+            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+#endif
             RELEASE_ASSERT_NOT_REACHED();
         }
 
@@ -385,11 +393,15 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         constexpr bool readable = true;
         constexpr bool writable = true;
         if (!OSAllocator::protect(startAddress, extraBytes, readable, writable)) {
-            dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
+#if OS(WINDOWS)
+            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+#else
+            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+#endif
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        m_handle->growToSize(desiredSize);
+        m_handle->resizeToSize(desiredSize);
         return success();
     }
 #endif

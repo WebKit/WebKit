@@ -22,7 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#if defined(ENABLE_WEBGPU) && ENABLE_WEBGPU
+#if defined(HAVE_WEBGPU_IMPLEMENTATION) && HAVE_WEBGPU_IMPLEMENTATION
 
 // https://gpuweb.github.io/gpuweb/#gpucanvascontext
 
@@ -47,4 +47,4 @@ interface GPUCanvasContext {
 #else
 interface GPUCanvasContext {
 };
-#endif // ENABLE_WEBGPU
+#endif // HAVE_WEBGPU_IMPLEMENTATION

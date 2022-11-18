@@ -121,12 +121,12 @@ template<> void JSTestReadOnlyMapLikeDOMConstructor::initializeProperties(VM& vm
 static const HashTableValue JSTestReadOnlyMapLikePrototypeTableValues[] =
 {
     { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestReadOnlyMapLikeConstructor, 0 } },
-    { "size"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestReadOnlyMapLike_size, 0 } },
-    { "get"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_get, 1 } },
-    { "has"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_has, 1 } },
-    { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_entries, 0 } },
-    { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_keys, 0 } },
-    { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_values, 0 } },
+    { "size"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestReadOnlyMapLike_size, 0 } },
+    { "get"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_get, 1 } },
+    { "has"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_has, 1 } },
+    { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_entries, 0 } },
+    { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_keys, 0 } },
+    { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_values, 0 } },
     { "forEach"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestReadOnlyMapLikePrototypeFunction_forEach, 1 } },
 };
 

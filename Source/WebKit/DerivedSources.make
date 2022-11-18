@@ -285,6 +285,8 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/graphics/WebGPU/RemoteRenderPipeline \
 	GPUProcess/graphics/WebGPU/RemoteSampler \
 	GPUProcess/graphics/WebGPU/RemoteShaderModule \
+	GPUProcess/graphics/WebGPU/RemoteSurface \
+	GPUProcess/graphics/WebGPU/RemoteSwapChain \
 	GPUProcess/graphics/WebGPU/RemoteTexture \
 	GPUProcess/graphics/WebGPU/RemoteTextureView \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \
@@ -533,6 +535,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUSamplerDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUShaderModuleCompilationHint.serialization.in \
 	Shared/WebGPU/WebGPUShaderModuleDescriptor.serialization.in \
+	Shared/WebGPU/WebGPUSurfaceDescriptor.serialization.in \
+	Shared/WebGPU/WebGPUSwapChainDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUTextureDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUVertexState.serialization.in \

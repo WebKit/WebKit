@@ -1,34 +1,197 @@
-Test -webkit-user-select all user select all area Test -webkit-user-select all
-Test -webkit-user-select all selection movements and extensions (left right forward backward)
+ Test -webkit-user-select all selection movements and extensions (left right forward backward)
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+After extend forward character:
+| <span>
+|   "Test -webkit-user-select all <#selection-anchor>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   <#selection-focus>
+|   " Test -webkit-user-select all"
 
+After extend backward character:
+| <span>
+|   "Test -webkit-user-select all <#selection-caret>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
 
-placeCaretBeforeUserSelectAllElement()
-window.getSelection().modify('extend', 'forward', 'character')
-PASS Selection is the entire user-select-all element
-window.getSelection().modify('extend', 'backward', 'character')
-PASS Selection is right before user-select-all element
-window.getSelection().modify('extend', 'right', 'character')
-PASS Selection is the entire user-select-all element
-window.getSelection().modify('extend', 'left', 'character')
-PASS Selection is right before user-select-all element
-window.getSelection().modify('move', 'forward', 'character')
-PASS Selection is right after user-select-all element
-window.getSelection().modify('move', 'backward', 'character')
-PASS Selection is right before user-select-all element
-window.getSelection().modify('move', 'right', 'character')
-PASS Selection is right after user-select-all element
-window.getSelection().modify('move', 'left', 'character')
-PASS Selection is right before user-select-all element
-clickAt(descendant.offsetLeft + 10 , descendant.offsetTop + 10)
-PASS Selection is the entire user-select-all element
-mouseMoveFromTo(leftTarget.offsetLeft, descendant.offsetLeft + 20)
-PASS Selection is the entire user-select-all element plus everything on its left
-mouseMoveFromTo(userSelectAllElement.offsetLeft + userSelectAllElement.offsetWidth + rightTarget.offsetWidth, descendant.offsetLeft + 10)
-PASS Selection is the entire user-select-all element plus everything on its right
-PASS Selection is only the text in bold
-PASS successfullyParsed is true
+After extend right character:
+| <span>
+|   "Test -webkit-user-select all <#selection-anchor>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   <#selection-focus>
+|   " Test -webkit-user-select all"
 
-TEST COMPLETE
+After extend left character:
+| <span>
+|   "Test -webkit-user-select all <#selection-caret>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
 
+After move forward character:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   "<#selection-caret> Test -webkit-user-select all"
+
+After move backward character:
+| <span>
+|   "Test -webkit-user-select all <#selection-caret>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After move right character:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   "<#selection-caret> Test -webkit-user-select all"
+
+After move left character:
+| <span>
+|   "Test -webkit-user-select all <#selection-caret>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After click:
+| <span>
+|   "Test -webkit-user-select all <#selection-anchor>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   <#selection-focus>
+|   " Test -webkit-user-select all"
+
+After extending selection from left by mouse:
+| <span>
+|   "<#selection-anchor>Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   <#selection-focus>
+|   " Test -webkit-user-select all"
+
+After extending selection from right by mouse:
+| <span>
+|   "Test -webkit-user-select all <#selection-focus>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all<#selection-anchor>"
+
+After programmatic selection:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "<#selection-anchor>select all<#selection-focus>"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"

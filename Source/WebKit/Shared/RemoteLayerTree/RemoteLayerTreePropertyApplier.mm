@@ -264,8 +264,8 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & RemoteLayerTreeTransaction::AnimationsChanged)
         PlatformCAAnimationRemote::updateLayerAnimations(layer, layerTreeHost, properties.addedAnimations, properties.keyPathsOfAnimationsToRemove);
 
-    if (properties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
-        layer.edgeAntialiasingMask = properties.edgeAntialiasingMask;
+    if (properties.changedProperties & RemoteLayerTreeTransaction::AntialiasesEdgesChanged)
+        layer.edgeAntialiasingMask = properties.antialiasesEdges ? (kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge) : 0;
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
         updateCustomAppearance(layer, properties.customAppearance);

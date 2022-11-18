@@ -754,7 +754,7 @@ Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, Ti
     layer->setPosition(tileRect.location());
     layer->setBorderColor(m_tileDebugBorderColor);
     layer->setBorderWidth(m_tileDebugBorderWidth);
-    layer->setEdgeAntialiasingMask(0);
+    layer->setAntialiasesEdges(false);
     layer->setOpaque(m_tilesAreOpaque);
     layer->setName(makeString("tile at ", tileRect.location().x(), ',', tileRect.location().y()));
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);

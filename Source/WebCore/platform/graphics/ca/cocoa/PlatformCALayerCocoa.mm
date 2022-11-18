@@ -940,10 +940,10 @@ void PlatformCALayerCocoa::setCornerRadius(float value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerCocoa::setEdgeAntialiasingMask(unsigned mask)
+void PlatformCALayerCocoa::setAntialiasesEdges(bool antialiases)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setEdgeAntialiasingMask:mask];
+    [m_layer setEdgeAntialiasingMask:antialiases ? (kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge) : 0];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

@@ -83,6 +83,8 @@ class ShaderModule;
 enum class StencilOperation : uint8_t;
 enum class StorageTextureAccess : uint8_t;
 enum class StoreOp : uint8_t;
+class Surface;
+class SwapChain;
 class Texture;
 enum class TextureAspect : uint8_t;
 enum class TextureDimension : uint8_t;
@@ -158,6 +160,8 @@ public:
     virtual WGPURenderPipeline convertToBacking(const RenderPipeline&) = 0;
     virtual WGPUSampler convertToBacking(const Sampler&) = 0;
     virtual WGPUShaderModule convertToBacking(const ShaderModule&) = 0;
+    virtual WGPUSurface convertToBacking(const Surface&) = 0;
+    virtual WGPUSwapChain convertToBacking(const SwapChain&) = 0;
     virtual WGPUTexture convertToBacking(const Texture&) = 0;
     virtual WGPUTextureView convertToBacking(const TextureView&) = 0;
 };

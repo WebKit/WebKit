@@ -29,27 +29,27 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import "TextureView.h"
+#import <WebGPU/WebGPUExt.h>
 
 namespace WebGPU {
 
-Ref<SwapChain> Device::createSwapChain(const Surface& surface, const WGPUSwapChainDescriptor& descriptor)
+Ref<SwapChain> Device::createSwapChain(WGPUSurface surface, const WGPUSwapChainDescriptor& descriptor)
 {
-    UNUSED_PARAM(surface);
-    UNUSED_PARAM(descriptor);
-    return SwapChain::create();
+    return SwapChain::create(WTFMove(surface), descriptor);
 }
 
-SwapChain::SwapChain() = default;
+SwapChain::SwapChain(WGPUSurface surface, const WGPUSwapChainDescriptor& descriptor)
+    : m_surface(WebGPU::fromAPI(surface))
+    , m_drawingBuffer(m_surface->drawingBuffer())
+{
+    UNUSED_PARAM(descriptor);
+}
 
 SwapChain::~SwapChain() = default;
 
-TextureView* SwapChain::getCurrentTextureView()
-{
-    return nullptr;
-}
-
 void SwapChain::present()
 {
+    m_drawingBuffer = m_surface->nextDrawable();
 }
 
 } // namespace WebGPU
@@ -61,9 +61,9 @@ void wgpuSwapChainRelease(WGPUSwapChain swapChain)
     WebGPU::fromAPI(swapChain).deref();
 }
 
-WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
+WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain)
 {
-    return WebGPU::fromAPI(swapChain).getCurrentTextureView();
+    return nullptr;
 }
 
 void wgpuSwapChainPresent(WGPUSwapChain swapChain)

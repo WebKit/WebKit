@@ -1230,6 +1230,10 @@ void HTMLMediaElement::prepareForLoad()
     m_loadState = WaitingForSource;
     m_currentSourceNode = nullptr;
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    m_playbackBlockedWaitingForKey = false;
+#endif
+
     if (!document().hasBrowsingContext())
         return;
 

@@ -48,6 +48,8 @@
 #include "RemoteRenderPipeline.h"
 #include "RemoteSampler.h"
 #include "RemoteShaderModule.h"
+#include "RemoteSurface.h"
+#include "RemoteSwapChain.h"
 #include "RemoteTexture.h"
 #include "RemoteTextureView.h"
 
@@ -172,6 +174,18 @@ void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteSampler& sampler)
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteShaderModule& shaderModule)
 {
     auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule> { Ref { shaderModule } } });
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteSurface& surface)
+{
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteSurface> { Ref { surface } } });
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteSwapChain& swapChain)
+{
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteSwapChain> { Ref { swapChain } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -348,6 +362,22 @@ PAL::WebGPU::ShaderModule* ObjectHeap::convertShaderModuleFromBacking(WebGPUIden
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>>(iterator->value))
         return nullptr;
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>>(iterator->value)->backing();
+}
+
+PAL::WebGPU::Surface* ObjectHeap::convertSurfaceFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteSurface>>(iterator->value))
+        return nullptr;
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteSurface>>(iterator->value)->backing();
+}
+
+PAL::WebGPU::SwapChain* ObjectHeap::convertSwapChainFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteSwapChain>>(iterator->value))
+        return nullptr;
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteSwapChain>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::Texture* ObjectHeap::convertTextureFromBacking(WebGPUIdentifier identifier)

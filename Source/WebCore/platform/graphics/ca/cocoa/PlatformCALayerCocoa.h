@@ -157,7 +157,7 @@ public:
     float cornerRadius() const override;
     void setCornerRadius(float) override;
 
-    void setEdgeAntialiasingMask(unsigned) override;
+    void setAntialiasesEdges(bool) override;
 
     FloatRoundedRect shapeRoundedRect() const override;
     void setShapeRoundedRect(const FloatRoundedRect&) override;

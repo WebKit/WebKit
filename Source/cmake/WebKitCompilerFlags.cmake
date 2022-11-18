@@ -142,6 +142,12 @@ if (COMPILER_IS_GCC_OR_CLANG)
                                          -Wno-misleading-indentation
                                          -Wno-psabi)
 
+    # GCC < 12.0 gives false warnings for mismatched-new-delete <https://webkit.org/b/241516>
+    if ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "12.0.0"))
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-mismatched-new-delete)
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-uninitialized)
+    endif ()
+
     WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-noexcept-type)
 
     # These GCC warnings produce too many false positives to be useful. We'll

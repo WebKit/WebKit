@@ -48,6 +48,8 @@
 #include "RemoteRenderPipelineProxy.h"
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
+#include "RemoteSurfaceProxy.h"
+#include "RemoteSwapChainProxy.h"
 #include "RemoteTextureProxy.h"
 #include "RemoteTextureViewProxy.h"
 
@@ -151,6 +153,16 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::We
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ShaderModule& shaderModule)
 {
     return static_cast<const RemoteShaderModuleProxy&>(shaderModule).backing();
+}
+
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Surface& surface)
+{
+    return static_cast<const RemoteSurfaceProxy&>(surface).backing();
+}
+
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::SwapChain& swapChain)
+{
+    return static_cast<const RemoteSwapChainProxy&>(swapChain).backing();
 }
 
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Texture& texture)

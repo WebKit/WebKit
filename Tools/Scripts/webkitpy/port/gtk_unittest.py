@@ -70,10 +70,14 @@ class GtkPortTest(port_testcase.PortTestCase):
         })
         with OutputCapture(level=logging.INFO) as captured:
             port.show_results_html_file('test.html')
+            mock_command, mock_env = captured.root.log.getvalue().split(' env=')
         self.assertEqual(
-            captured.root.log.getvalue(),
-            "MOCK run_command: ['/mock-build/bin/MiniBrowser', 'file://test.html'], cwd=/mock-checkout\n",
+            mock_command,
+            "MOCK run_command: ['/mock-build/bin/MiniBrowser', 'file://test.html'], cwd=/mock-checkout,"
         )
+        # Check the environment variables defined by port.setup_environ_for_minibrowser()
+        for mb_env_var in ['LD_LIBRARY_PATH', 'WEBKIT_INJECTED_BUNDLE_PATH', 'WEBKIT_EXEC_PATH']:
+            self.assertTrue(mb_env_var in mock_env)
 
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 15000)

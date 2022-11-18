@@ -56,6 +56,7 @@ class JSGlobalObject;
     v(typedArraySort, nullptr) \
     v(isTypedArrayView, nullptr) \
     v(isSharedTypedArrayView, nullptr) \
+    v(isResizableOrGrowableSharedTypedArrayView, nullptr) \
     v(typedArrayFromFast, nullptr) \
     v(isDetached, nullptr) \
     v(typedArrayDefaultComparator, nullptr) \

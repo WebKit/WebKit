@@ -61,6 +61,8 @@ public:
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderPipeline&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::Sampler&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::ShaderModule&) final;
+    WebGPUIdentifier convertToBacking(const PAL::WebGPU::Surface&) final;
+    WebGPUIdentifier convertToBacking(const PAL::WebGPU::SwapChain&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::Texture&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::TextureView&) final;
 

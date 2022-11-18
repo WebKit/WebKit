@@ -1632,6 +1632,9 @@ fast/images/decoding-attribute-async-small-image.html [ Skip ]
 fast/images/decoding-attribute-dynamic-async-small-image.html [ Skip ]
 fast/images/sprite-sheet-image-draw.html [ Skip ]
 
+# AVIF tests
+fast/images/avif-image-document.html [ Skip ]
+
 # <rdar://problem/42627562>
 media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
 media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
