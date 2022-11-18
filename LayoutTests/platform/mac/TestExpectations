@@ -2375,4 +2375,3 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 [ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Pass Failure ]
 [ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 [ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Pass Failure ]
-
