@@ -42,7 +42,7 @@
     readonly attribute USVString currentSrc;
     [CEReactions=NotNeeded, EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString decoding;
-    [CEReactions, EnabledBySetting=LazyImageLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
+    [CEReactions, DisabledByQuirk=shouldDisableLazyImageLoading, EnabledBySetting=LazyImageLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
 
     Promise<undefined> decode();
 

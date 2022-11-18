@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Event.h"
+#include <optional>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -163,6 +164,8 @@ public:
     bool hasBrokenPermissionsAPISupportQuirk() const;
     bool shouldEnableApplicationCacheQuirk() const;
     bool needsVideoShouldMaintainAspectRatioQuirk() const;
+
+    bool shouldDisableLazyImageLoadingQuirk() const;
     
 private:
     bool needsQuirks() const;
@@ -218,6 +221,7 @@ private:
 #endif
     mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
     mutable std::optional<bool> m_shouldExposeShowModalDialog;
+    mutable std::optional<bool> m_shouldDisableLazyImageLoadingQuirk;
 };
 
 } // namespace WebCore
