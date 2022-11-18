@@ -127,7 +127,7 @@ private:
 
 class FormData : public RefCounted<FormData> {
 public:
-    enum EncodingType {
+    enum class EncodingType : uint8_t {
         FormURLEncoded, // for application/x-www-form-urlencoded
         TextPlain, // for text/plain
         MultipartFormData // for multipart/form-data
@@ -139,7 +139,7 @@ public:
     static Ref<FormData> create(Vector<uint8_t>&&);
     static Ref<FormData> create(const Vector<char>&);
     static Ref<FormData> create(const Vector<uint8_t>&);
-    static Ref<FormData> create(const DOMFormData&, EncodingType = FormURLEncoded);
+    static Ref<FormData> create(const DOMFormData&, EncodingType = EncodingType::FormURLEncoded);
     static Ref<FormData> createMultiPart(const DOMFormData&);
     WEBCORE_EXPORT ~FormData();
 
@@ -187,10 +187,10 @@ public:
     static EncodingType parseEncodingType(const String& type)
     {
         if (equalLettersIgnoringASCIICase(type, "text/plain"_s))
-            return TextPlain;
+            return EncodingType::TextPlain;
         if (equalLettersIgnoringASCIICase(type, "multipart/form-data"_s))
-            return MultipartFormData;
-        return FormURLEncoded;
+            return EncodingType::MultipartFormData;
+        return EncodingType::FormURLEncoded;
     }
 
     WEBCORE_EXPORT uint64_t lengthInBytes() const;
