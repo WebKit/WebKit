@@ -92,11 +92,13 @@ RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::tryCreate
     if (!buffer)
         return nullptr;
 
-    if (length) {
-        if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length.value(), sizeof(typename Adaptor::Type)))
-            return nullptr;
-    } else
+#if ASSERT_ENABLED
+    if (!length)
         ASSERT(buffer->isResizableOrGrowableShared());
+#endif
+
+    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length.value_or(0), sizeof(typename Adaptor::Type)))
+        return nullptr;
 
     if (!verifyByteOffsetAlignment(byteOffset, sizeof(typename Adaptor::Type)))
         return nullptr;

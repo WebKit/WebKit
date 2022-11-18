@@ -137,9 +137,20 @@ public:
     ArrayBufferContents(void* data, size_t sizeInBytes, std::optional<size_t> maxByteLength, Ref<SharedArrayBufferContents>&& shared)
         : m_data(data, maxByteLength.value_or(sizeInBytes))
         , m_shared(WTFMove(shared))
+        , m_memoryHandle(m_shared->memoryHandle())
         , m_sizeInBytes(sizeInBytes)
         , m_maxByteLength(maxByteLength.value_or(sizeInBytes))
         , m_hasMaxByteLength(!!maxByteLength)
+    {
+        RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
+    }
+
+    ArrayBufferContents(void* data, size_t sizeInBytes, size_t maxByteLength, Ref<BufferMemoryHandle>&& memoryHandle)
+        : m_data(data, maxByteLength)
+        , m_memoryHandle(WTFMove(memoryHandle))
+        , m_sizeInBytes(sizeInBytes)
+        , m_maxByteLength(maxByteLength)
+        , m_hasMaxByteLength(true)
     {
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     }
@@ -194,9 +205,17 @@ public:
         swap(m_data, other.m_data);
         swap(m_destructor, other.m_destructor);
         swap(m_shared, other.m_shared);
+        swap(m_memoryHandle, other.m_memoryHandle);
         swap(m_sizeInBytes, other.m_sizeInBytes);
         swap(m_maxByteLength, other.m_maxByteLength);
         swap(m_hasMaxByteLength, other.m_hasMaxByteLength);
+    }
+
+    ArrayBufferContents detach()
+    {
+        ArrayBufferContents contents(WTFMove(*this));
+        m_hasMaxByteLength = contents.m_hasMaxByteLength; // m_maxByteLength needs to be cleared while we need to keep the information that we had m_hasMaxByteLength.
+        return contents;
     }
 
 private:
@@ -205,6 +224,7 @@ private:
         m_data = nullptr;
         m_destructor = nullptr;
         m_shared = nullptr;
+        m_memoryHandle = nullptr;
         m_sizeInBytes = 0;
         m_maxByteLength = 0;
         m_hasMaxByteLength = false;
@@ -217,7 +237,7 @@ private:
         DontInitialize
     };
 
-    void tryAllocate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength, InitializationPolicy);
+    void tryAllocate(size_t numElements, unsigned elementByteSize, InitializationPolicy);
     
     void makeShared();
     void copyTo(ArrayBufferContents&);
@@ -226,7 +246,8 @@ private:
     using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
     DataType m_data { nullptr };
     ArrayBufferDestructorFunction m_destructor { nullptr };
-    RefPtr<SharedArrayBufferContents> m_shared { nullptr };
+    RefPtr<SharedArrayBufferContents> m_shared;
+    RefPtr<BufferMemoryHandle> m_memoryHandle;
     size_t m_sizeInBytes { 0 };
     size_t m_maxByteLength { 0 };
     bool m_hasMaxByteLength { false };
@@ -294,12 +315,14 @@ public:
     JS_EXPORT_PRIVATE static Ref<SharedTask<void(void*)>> primitiveGigacageDestructor();
 
     Expected<void, GrowFailReason> grow(VM&, size_t newByteLength);
+    Expected<void, GrowFailReason> resize(VM&, size_t newByteLength);
 
 private:
     static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy);
     static Ref<ArrayBuffer> createInternal(ArrayBufferContents&&, const void*, size_t);
     static RefPtr<ArrayBuffer> tryCreate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength, ArrayBufferContents::InitializationPolicy);
     ArrayBuffer(ArrayBufferContents&&);
+    static Ref<ArrayBuffer> createResizable(Ref<BufferMemoryHandle>&&);
     inline size_t clampIndex(double index) const;
     static inline size_t clampValue(double x, size_t left, size_t right);
 

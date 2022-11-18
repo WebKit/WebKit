@@ -2455,7 +2455,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
                 return false;
 
             ArrayMode mode = getArrayMode(Array::Read);
-            if (!mode.isSomeTypedArrayView())
+            if (!mode.isSomeTypedArrayView() || mode.mayBeResizableOrGrowableSharedTypedArray())
                 return false;
 
             addToGraph(CheckArray, OpInfo(mode.asWord()), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));

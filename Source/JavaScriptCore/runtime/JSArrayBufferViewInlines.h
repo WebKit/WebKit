@@ -94,7 +94,7 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM&, JSValue value)
 {
     if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value)) {
-        if (!view->isShared())
+        if (!view->isShared() && !view->isResizableOrGrowableShared())
             return view->unsharedImpl();
     }
     return nullptr;
@@ -102,8 +102,10 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM&, JSValue value)
 
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrappedAllowShared(VM&, JSValue value)
 {
-    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value))
-        return view->possiblySharedImpl();
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value)) {
+        if (!view->isResizableOrGrowableShared())
+            return view->possiblySharedImpl();
+    }
     return nullptr;
 }
 

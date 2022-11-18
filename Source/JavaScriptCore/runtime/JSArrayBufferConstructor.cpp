@@ -87,16 +87,14 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
         length = callFrame->uncheckedArgument(0).toTypedArrayIndex(globalObject, "length"_s);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if constexpr (sharingMode == ArrayBufferSharingMode::Shared) {
-            if (Options::useResizableArrayBuffer()) {
-                JSValue options = callFrame->argument(1);
-                if (options.isObject()) {
-                    JSValue maxByteLengthValue = asObject(options)->get(globalObject, vm.propertyNames->maxByteLength);
+        if (Options::useResizableArrayBuffer()) {
+            JSValue options = callFrame->argument(1);
+            if (options.isObject()) {
+                JSValue maxByteLengthValue = asObject(options)->get(globalObject, vm.propertyNames->maxByteLength);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (!maxByteLengthValue.isUndefined()) {
+                    maxByteLength = maxByteLengthValue.toTypedArrayIndex(globalObject, "maxByteLength"_s);
                     RETURN_IF_EXCEPTION(scope, { });
-                    if (!maxByteLengthValue.isUndefined()) {
-                        maxByteLength = maxByteLengthValue.toTypedArrayIndex(globalObject, "maxByteLength"_s);
-                        RETURN_IF_EXCEPTION(scope, { });
-                    }
                 }
             }
         }
@@ -104,11 +102,10 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
 
     // https://tc39.es/proposal-resizablearraybuffer/#sec-allocatesharedarraybuffer
     RefPtr<ArrayBuffer> buffer;
-    if constexpr (sharingMode == ArrayBufferSharingMode::Shared) {
-        if (maxByteLength) {
-            if (maxByteLength.value() < length)
-                return throwVMRangeError(globalObject, scope, "ArrayBuffer length exceeds maxByteLength option"_s);
-            ASSERT(sharingMode == ArrayBufferSharingMode::Shared);
+    if (maxByteLength) {
+        if (maxByteLength.value() < length)
+            return throwVMRangeError(globalObject, scope, "ArrayBuffer length exceeds maxByteLength option"_s);
+        if constexpr (sharingMode == ArrayBufferSharingMode::Shared) {
             buffer = ArrayBuffer::tryCreateShared(vm, length, 1, maxByteLength.value());
             if (!buffer)
                 return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
@@ -119,7 +116,7 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
         buffer = ArrayBuffer::tryCreate(length, 1, maxByteLength);
         if (!buffer)
             return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
-        if (sharingMode == ArrayBufferSharingMode::Shared)
+        if constexpr (sharingMode == ArrayBufferSharingMode::Shared)
             buffer->makeShared();
     }
 

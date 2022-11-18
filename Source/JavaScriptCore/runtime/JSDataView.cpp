@@ -53,13 +53,12 @@ JSDataView* JSDataView::create(
         return nullptr;
     }
 
-    if (byteLength) {
-        if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, byteLength.value(), sizeof(uint8_t))) {
-            throwRangeError(globalObject, scope, "Length out of range of buffer"_s);
-            return nullptr;
-        }
-    } else
-        ASSERT(buffer->isResizableOrGrowableShared());
+    ASSERT(byteLength || buffer->isResizableOrGrowableShared());
+
+    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, byteLength.value_or(0), sizeof(uint8_t))) {
+        throwRangeError(globalObject, scope, "Length out of range of buffer"_s);
+        return nullptr;
+    }
 
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, sizeof(uint8_t))) {
         throwRangeError(globalObject, scope, "Byte offset is not aligned"_s);

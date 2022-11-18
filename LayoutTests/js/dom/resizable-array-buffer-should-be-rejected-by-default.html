@@ -1,0 +1,21 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useResizableArrayBuffer=true,--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<title>Resizable ArrayBuffers</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+var arrayBuffer = new ArrayBuffer(36, { maxByteLength: 128 });
+var sharedArrayBuffer = new SharedArrayBuffer(36, { maxByteLength: 128 });
+description("Resizable ArrayBuffers should be rejected by IDLs by default");
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBeTrue(`sharedArrayBuffer.growable`);
+shouldThrow(`internals.deserializeBuffer(arrayBuffer)`);
+shouldThrow(`internals.deserializeBuffer(sharedArrayBuffer)`);
+shouldThrow(`internals.acceptTypedArrays(new Int32Array(arrayBuffer))`);
+shouldThrow(`internals.acceptTypedArrays(new Int32Array(sharedArrayBuffer))`);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1179,4 +1179,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement element);
 
     boolean hasSleepDisabler();
+
+    undefined acceptTypedArrays(Int32Array target);
 };
