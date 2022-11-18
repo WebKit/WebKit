@@ -844,6 +844,7 @@ http/tests/security/referrer-policy-header.html [ Skip ]
 http/tests/security/referrer-policy-header-multipart.html [ Skip ]
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
+http/tests/navigation/ping-attribute/secure-anchor-cross-origin.html [ Skip ]
 http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ] 
 http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ] 
 http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ] 
@@ -2550,4 +2551,7 @@ webkit.org/b/246653 [ Debug ] media/modern-media-controls/media-documents/click-
 
 # CONSOLE MESSAGE output is nondeterministic and varies from run-to-run
 http/tests/security/basic-auth-subresource.html [ Failure Pass ]
+http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-img-src-star.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
+http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
+
