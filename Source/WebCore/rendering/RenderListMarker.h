@@ -49,6 +49,7 @@ public:
     bool isImage() const final;
 
     LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
+    const RenderListItem* listItem() const;
 
 private:
     void willBeDestroyed() final;

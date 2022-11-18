@@ -1949,6 +1949,11 @@ bool RenderListMarker::isInside() const
     return m_listItem->notInList() || style().listStylePosition() == ListStylePosition::Inside;
 }
 
+const RenderListItem* RenderListMarker::listItem() const
+{
+    return m_listItem.get();
+}
+
 FloatRect RenderListMarker::relativeMarkerRect()
 {
     if (isImage())
