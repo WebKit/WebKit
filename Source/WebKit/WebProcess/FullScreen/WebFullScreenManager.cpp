@@ -84,6 +84,7 @@ WebFullScreenManager::WebFullScreenManager(WebPage* page)
     
 WebFullScreenManager::~WebFullScreenManager()
 {
+    clearElement();
 }
 
 WebCore::Element* WebFullScreenManager::element() 
@@ -137,26 +138,36 @@ bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)
     return m_page->injectedBundleFullScreenClient().supportsFullScreen(m_page.get(), withKeyboard);
 }
 
-void WebFullScreenManager::setElement(WebCore::Element& element)
+static auto& eventsToObserve()
 {
-    if (m_element == &element)
-        return;
-
     static NeverDestroyed eventsToObserve = std::array {
         WebCore::eventNames().playEvent,
         WebCore::eventNames().pauseEvent,
         WebCore::eventNames().loadedmetadataEvent,
     };
+    return eventsToObserve.get();
+}
 
-    if (m_element) {
-        for (auto& eventName : eventsToObserve.get())
-            m_element->removeEventListener(eventName, *this, { true });
-    }
+void WebFullScreenManager::setElement(WebCore::Element& element)
+{
+    if (m_element == &element)
+        return;
+
+    clearElement();
 
     m_element = &element;
 
-    for (auto& eventName : eventsToObserve.get())
+    for (auto& eventName : eventsToObserve())
         m_element->addEventListener(eventName, *this, { true });
+}
+
+void WebFullScreenManager::clearElement()
+{
+    if (!m_element)
+        return;
+    for (auto& eventName : eventsToObserve())
+        m_element->removeEventListener(eventName, *this, { true });
+    m_element = nullptr;
 }
 
 void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
@@ -296,6 +307,7 @@ void WebFullScreenManager::didExitFullScreen()
     setFullscreenInsets(WebCore::FloatBoxExtent());
     setFullscreenAutoHideDuration(0_s);
     m_element->document().fullscreenManager().didExitFullscreen();
+    clearElement();
 }
 
 void WebFullScreenManager::setAnimatingFullScreen(bool animating)
@@ -342,6 +354,7 @@ void WebFullScreenManager::close()
 #if ENABLE(VIDEO)
     setMainVideoElement(nullptr);
 #endif
+    clearElement();
     m_closing = false;
 }
 

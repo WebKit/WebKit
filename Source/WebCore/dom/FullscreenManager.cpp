@@ -372,6 +372,7 @@ void FullscreenManager::exitFullscreen()
         m_pendingExitFullscreen = false;
 
         INFO_LOG(identifier, "task - New top of fullscreen stack.");
+        m_pendingFullscreenElement = newTop;
         page->chrome().client().enterFullScreenForElement(*newTop);
     });
 }
@@ -419,7 +420,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     if (m_pendingFullscreenElement != &element) {
         INFO_LOG(LOGIDENTIFIER, "Pending element mismatch; issuing exit fullscreen request");
         page()->chrome().client().exitFullScreenForElement(&element);
-        return true;
+        return false;
     }
 
     INFO_LOG(LOGIDENTIFIER);
