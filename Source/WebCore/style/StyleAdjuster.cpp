@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -301,7 +301,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             }
 
             if (m_element->hasTagName(legendTag))
-                style.setEffectiveDisplay(DisplayType::Block);
+                style.setEffectiveDisplay(equivalentBlockDisplay(style));
         }
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.

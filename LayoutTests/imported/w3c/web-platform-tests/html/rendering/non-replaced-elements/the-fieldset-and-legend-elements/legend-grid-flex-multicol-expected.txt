@@ -15,9 +15,9 @@
 1
 2
 
-FAIL flex assert_equals: offsetHeight expected 18 but got 36
-FAIL inline-flex assert_equals: offsetHeight expected 18 but got 36
-FAIL grid assert_equals: offsetHeight expected 18 but got 36
-FAIL inline-grid assert_equals: offsetHeight expected 18 but got 36
+PASS flex
+FAIL inline-flex assert_equals: display expected "inline-flex" but got "flex"
+PASS grid
+FAIL inline-grid assert_equals: display expected "inline-grid" but got "grid"
 PASS multicol
 

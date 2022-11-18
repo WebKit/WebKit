@@ -368,7 +368,6 @@ label {
 }
 
 legend {
-    display: block;
     padding-inline-start: 2px;
     padding-inline-end: 2px;
     border: none;
