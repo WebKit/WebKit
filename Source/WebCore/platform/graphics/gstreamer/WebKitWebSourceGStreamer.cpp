@@ -648,8 +648,6 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
-    request.setFirstPartyForCookies(url);
-
     request.setHTTPReferrer(members->referrer);
 
     if (priv->httpMethod.get())
