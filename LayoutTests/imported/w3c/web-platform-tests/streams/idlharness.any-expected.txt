@@ -15,7 +15,7 @@ FAIL ReadableStream interface: operation getReader(optional ReadableStreamGetRea
 FAIL ReadableStream interface: operation pipeThrough(ReadableWritablePair, optional StreamPipeOptions) assert_true: property should be enumerable expected true got false
 FAIL ReadableStream interface: operation pipeTo(WritableStream, optional StreamPipeOptions) assert_true: property should be enumerable expected true got false
 FAIL ReadableStream interface: operation tee() assert_true: property should be enumerable expected true got false
-FAIL ReadableStream interface: async iterable<any> undefined is not an object (evaluating 'iteratorDesc.writable')
+FAIL ReadableStream interface: async iterable<any> undefined is not an object (evaluating 'desc.value')
 PASS ReadableStream must be primary interface of new ReadableStream()
 PASS Stringification of new ReadableStream()
 PASS ReadableStream interface: new ReadableStream() must inherit property "locked" with the proper type

@@ -129,15 +129,15 @@ static const HashTableValue JSTestMapLikeWithOverriddenOperationsPrototypeTableV
 {
     { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperationsConstructor, 0 } },
     { "set"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperations_set, setJSTestMapLikeWithOverriddenOperations_set } },
-    { "size"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperations_size, 0 } },
+    { "size"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperations_size, 0 } },
     { "clear"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_clear, 0 } },
-    { "get"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_get, 1 } },
-    { "has"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_has, 1 } },
-    { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_entries, 0 } },
-    { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_keys, 0 } },
-    { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_values, 0 } },
+    { "get"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_get, 1 } },
+    { "has"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_has, 1 } },
+    { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_entries, 0 } },
+    { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_keys, 0 } },
+    { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_values, 0 } },
     { "forEach"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_forEach, 1 } },
-    { "delete"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_delete, 1 } },
+    { "delete"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_delete, 1 } },
 };
 
 const ClassInfo JSTestMapLikeWithOverriddenOperationsPrototype::s_info = { "TestMapLikeWithOverriddenOperations"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeWithOverriddenOperationsPrototype) };
