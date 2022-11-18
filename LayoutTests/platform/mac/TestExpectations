@@ -1346,11 +1346,11 @@ webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/ap
 webkit.org/b/247705 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
 
 # Tests timing out on BigSur but not timing out on Ventura
-webkit.org/b/247632 [ BigSur ] imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
-webkit.org/b/247632 [ BigSur ] imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
-webkit.org/b/247632 [ BigSur ] imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
-webkit.org/b/247632 [ BigSur ] imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
-webkit.org/b/247632 [ BigSur ] imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
 
 # Flaky subtests. Sometimes fails with Promise rejection, sometimes fails the assertion.
 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
