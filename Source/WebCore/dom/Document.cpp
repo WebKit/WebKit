@@ -9334,6 +9334,11 @@ void Document::sendReportToEndpoints(const URL& baseURL, const Vector<String>& e
     }
 }
 
+bool Document::lazyImageLoadingEnabled() const
+{
+    return m_settings->lazyImageLoadingEnabled() && !m_quirks->shouldDisableLazyImageLoadingQuirk();
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG
