@@ -1762,9 +1762,9 @@ imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Fa
 
 webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Failure ]
 
+webkit.org/b/248083 [ Monterey+ ] webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Failure ]
+
 # webkit.org/b/246773 Constant crashes on wk2 debug
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load.html [ Skip ]
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
-
-webkit.org/b/248083 [ Monterey+ ] webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Failure ]
