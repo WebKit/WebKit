@@ -5,6 +5,7 @@
 </style>
 <script src="../editing.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script src="resources/js-test-selection-shared.js"></script>
 <script>
 function log(str) {
@@ -13,46 +14,14 @@ function log(str) {
     document.getElementById("console").appendChild(div);
 }
 
-function testSelectionAt(anchorNode, anchorOffset, optFocusNode, optFocusOffset, str) {
-    var focusNode = optFocusNode || anchorNode;
-    var focusOffset = (optFocusOffset === undefined) ? anchorOffset : optFocusOffset;
-                
-    var sel = window.getSelection();
-    if (sel.anchorNode == anchorNode
-        && sel.focusNode == focusNode
-        && sel.anchorOffset == anchorOffset
-        && sel.focusOffset == focusOffset) {
-        testPassed("Selection is " + str);
-    } else {
-        testFailed("Selection should be " + str +
-            " at anchorNode: " + sel.anchorNode + " anchorOffset: " + sel.anchorOffset +
-            " focusNode: " + sel.focusNode + " focusOffset: " + sel.focusOffset);
-    }
-}
-
-function selectionShouldBeRelativeToUserSelectAllElement(str) {
-    var userSelectAllElement = document.getElementById("allArea");
-    var userSelectAllNodeIndex = 1;
-    if (str == "around")
-        testSelectionAt(userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length,
-            userSelectAllElement.nextSibling, 0,
-            "the entire user-select-all element");
-    else if ( str == "before")
-        testSelectionAt(userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length,
-            userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length,
-            "right before user-select-all element");
-    else if (str == "after")
-        testSelectionAt(userSelectAllElement.nextSibling.firstChild, 0,
-            userSelectAllElement.nextSibling.firstChild, 0,
-            "right after user-select-all element");
-}
-
-function placeCaretBeforeUserSelectAllElement(){
+function placeCaretBeforeUserSelectAllElement()
+{
     var userSelectAllElement = document.getElementById("allArea");
     execSetSelectionCommand(userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length, userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length);
 }
 
-function mouseMoveFromTo(fromX, toX){
+function mouseMoveFromTo(fromX, toX)
+{
     var userSelectAllElement = document.getElementById("allArea");
     var y = userSelectAllElement.offsetTop + 10;
     eventSender.dragMode = false;
@@ -69,64 +38,63 @@ function mouseMoveFromTo(fromX, toX){
 
 function testKeyboard(){
     var userSelectAllElement = document.getElementById("allArea");
-                
-    evalAndLog("placeCaretBeforeUserSelectAllElement()");
-    evalAndLog("window.getSelection().modify('extend', 'forward', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("around");
-     
-    evalAndLog("window.getSelection().modify('extend', 'backward', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("before");
-     
-    evalAndLog("window.getSelection().modify('extend', 'right', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("around");
-                
-    evalAndLog("window.getSelection().modify('extend', 'left', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("before");
-                
-    evalAndLog("window.getSelection().modify('move', 'forward', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("after");
-                
-    evalAndLog("window.getSelection().modify('move', 'backward', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("before");
-                
-    evalAndLog("window.getSelection().modify('move', 'right', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("after");
-     
-    evalAndLog("window.getSelection().modify('move', 'left', 'character')");
-    selectionShouldBeRelativeToUserSelectAllElement("before");
+
+    placeCaretBeforeUserSelectAllElement();
+    getSelection().modify('extend', 'forward', 'character');
+    Markup.dump(editor, 'After extend forward character');
+
+    getSelection().modify('extend', 'backward', 'character');
+    Markup.dump(editor, 'After extend backward character');
+
+    getSelection().modify('extend', 'right', 'character');
+    Markup.dump(editor, 'After extend right character');
+
+    getSelection().modify('extend', 'left', 'character');
+    Markup.dump(editor, 'After extend left character');
+
+    getSelection().modify('move', 'forward', 'character');
+    Markup.dump(editor, 'After move forward character');
+
+    getSelection().modify('move', 'backward', 'character');
+    Markup.dump(editor, 'After move backward character');
+
+    getSelection().modify('move', 'right', 'character');
+    Markup.dump(editor, 'After move right character');
+
+    getSelection().modify('move', 'left', 'character');
+    Markup.dump(editor, 'After move left character');
 }
 
 function testMouse(){
     var userSelectAllElement = document.getElementById("allArea");
     var descendant = document.getElementById("descendant");
-    evalAndLog("clickAt(descendant.offsetLeft + 10 , descendant.offsetTop + 10)");
-    selectionShouldBeRelativeToUserSelectAllElement("around");
-                
+
+    clickAt(descendant.offsetLeft + 10 , descendant.offsetTop + 10);
+    Markup.dump(editor, 'After click');
+
     // mouse extending from left
     var leftTarget = userSelectAllElement.previousSibling;
-    log("mouseMoveFromTo(leftTarget.offsetLeft, descendant.offsetLeft + 20)");
     mouseMoveFromTo(leftTarget.offsetLeft, descendant.offsetLeft + 20);
-    testSelectionAt(leftTarget.firstChild, 0, userSelectAllElement.nextSibling, 0, "the entire user-select-all element plus everything on its left");
+    Markup.dump(editor, 'After extending selection from left by mouse');
     
     // mouse extending from right
     var rightTarget = userSelectAllElement.nextSibling;
     var textLength = rightTarget.textContent.length;
-    log("mouseMoveFromTo(userSelectAllElement.offsetLeft + userSelectAllElement.offsetWidth + rightTarget.offsetWidth, descendant.offsetLeft + 10)");
     mouseMoveFromTo(userSelectAllElement.offsetLeft + userSelectAllElement.offsetWidth + rightTarget.offsetWidth, descendant.offsetLeft + 10);
-    testSelectionAt(rightTarget.firstChild, textLength, leftTarget.firstChild, leftTarget.textContent.textLength, "the entire user-select-all element plus everything on its right");
+    Markup.dump(editor, 'After extending selection from right by mouse');
 }
     
 function testProgrammaticSelection(){
     var boldElement = document.querySelector('b');
     getSelection().selectAllChildren(boldElement);
-    testSelectionAt(boldElement.firstChild, 0, boldElement.firstChild, 10, "only the text in bold");
+    Markup.dump(editor, 'After programmatic selection');
 }
 </script>
 </head>
-<body><div contenteditable><span>Test -webkit-user-select all </span><span class="userSelectAll" id="allArea"><span style="border: solid red 1px" id="descendant">user <b>select all</b> area</span></span><span> Test -webkit-user-select all</span></div>
+<body><div id="editor" contenteditable><span>Test -webkit-user-select all </span><span class="userSelectAll" id="allArea"><span style="border: solid red 1px" id="descendant">user <b>select all</b> area</span></span><span> Test -webkit-user-select all</span></div>
 <div id="console"></div>
 <script>
-description(" Test -webkit-user-select all selection movements and extensions (left right forward backward) ");
+Markup.description(" Test -webkit-user-select all selection movements and extensions (left right forward backward) ");
 testKeyboard();
 testMouse();
 testProgrammaticSelection();
