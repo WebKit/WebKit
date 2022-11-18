@@ -78,16 +78,15 @@ const CGFloat attachmentMargin = 3;
 
 static Color titleTextColorForAttachment(const RenderAttachment& attachment, AttachmentLayoutStyle style)
 {
-    Color result = Color::black;
+    Color result = RenderTheme::singleton().systemColor(CSSValueCanvastext, attachment.styleColorOptions());
     
     if (style == AttachmentLayoutStyle::Selected) {
         if (attachment.frame().selection().isFocusedAndActive())
-            result = colorFromCocoaColor([NSColor alternateSelectedControlTextColor]);
+            result = RenderTheme::singleton().systemColor(CSSValueAppleSystemAlternateSelectedText, attachment.styleColorOptions());
         else
             result = attachmentTitleInactiveTextColor;
     }
-
-    return attachment.style().colorByApplyingColorFilter(result);
+    return result;
 }
 
 void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
