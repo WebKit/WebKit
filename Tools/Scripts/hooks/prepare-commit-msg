@@ -82,6 +82,8 @@ def message(source=None, sha=None):
 
 Reviewed by NOBODY (OOPS!).
 
+Explanation of why this fixes the bug (OOPS!).
+
 {content}
 '''.format(
         title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',

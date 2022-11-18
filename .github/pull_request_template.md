@@ -20,6 +20,8 @@ Additionally, the pull request should be mentioned on [Bugzilla](https://bugs.we
 
 Reviewed by NOBODY (OOPS!).
 
+Explanation of why this fixes the bug (OOPS!).
+
 * path/changed.ext:
 (function):
 (class.function):
