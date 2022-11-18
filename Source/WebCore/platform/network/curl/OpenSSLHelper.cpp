@@ -149,9 +149,9 @@ private:
 };
 
 
-static Vector<WebCore::CertificateInfo::Certificate> pemDataFromCtx(StackOfX509&& certs)
+static WebCore::CertificateInfo::CertificateChain pemDataFromCtx(StackOfX509&& certs)
 {
-    Vector<WebCore::CertificateInfo::Certificate> result;
+    WebCore::CertificateInfo::CertificateChain result;
 
     for (int i = 0; i < certs.count(); i++) {
         BIO bio(certs.item(i));
@@ -165,22 +165,22 @@ static Vector<WebCore::CertificateInfo::Certificate> pemDataFromCtx(StackOfX509&
     return result;
 }
 
-std::unique_ptr<WebCore::CertificateInfo> createCertificateInfo(SSL* ssl)
+std::unique_ptr<WebCore::CertificateInfo> createCertificateInfo(std::optional<long>&& verifyResult, SSL* ssl)
 {
-    if (!ssl)
+    if (!verifyResult || !ssl)
         return nullptr;
 
     auto certChain = SSL_get_peer_cert_chain(ssl);
 
-    return makeUnique<WebCore::CertificateInfo>(X509_V_OK, pemDataFromCtx(StackOfX509(certChain)));
+    return makeUnique<WebCore::CertificateInfo>(*verifyResult, pemDataFromCtx(StackOfX509(certChain)));
 }
 
-std::optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX* ctx)
+WebCore::CertificateInfo::CertificateChain createCertificateChain(X509_STORE_CTX* ctx)
 {
     if (!ctx)
-        return std::nullopt;
+        return { };
 
-    return WebCore::CertificateInfo(X509_STORE_CTX_get_error(ctx), pemDataFromCtx(StackOfX509(ctx)));
+    return pemDataFromCtx(StackOfX509(ctx));
 }
 
 static String toString(const ASN1_STRING* name)

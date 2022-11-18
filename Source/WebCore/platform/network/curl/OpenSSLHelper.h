@@ -31,8 +31,8 @@
 
 namespace OpenSSL {
 
-std::unique_ptr<WebCore::CertificateInfo> createCertificateInfo(SSL*);
-std::optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX*);
+std::unique_ptr<WebCore::CertificateInfo> createCertificateInfo(std::optional<long>&&, SSL*);
+WebCore::CertificateInfo::CertificateChain createCertificateChain(X509_STORE_CTX*);
 std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem);
 
 String tlsVersion(const SSL*);

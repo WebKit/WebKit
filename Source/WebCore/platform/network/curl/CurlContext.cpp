@@ -381,7 +381,10 @@ CURLcode CurlHandle::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData
 
 int CurlHandle::sslErrors() const
 {
-    return m_sslVerifier ? m_sslVerifier->sslErrors() : 0;
+    if (auto verifyResult = getSSLVerifyResult(); verifyResult && *verifyResult != X509_V_OK)
+        return static_cast<int>(CurlSSLVerifier::convertToSSLCertificateFlags(*verifyResult));
+
+    return 0;
 }
 
 CURLcode CurlHandle::perform()
@@ -777,6 +780,19 @@ std::optional<long> CurlHandle::getHttpVersion()
     return version;
 }
 
+std::optional<long> CurlHandle::getSSLVerifyResult() const
+{
+    if (!m_handle)
+        return std::nullopt;
+
+    long verifyResult;
+    auto errorCode = curl_easy_getinfo(m_handle, CURLINFO_SSL_VERIFYRESULT, &verifyResult);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    return verifyResult;
+}
+
 std::optional<SSL*> CurlHandle::sslConnection() const
 {
     curl_tlssessioninfo* info = nullptr;
@@ -912,15 +928,19 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
-    if (m_sslVerifier && !m_sslVerifier->certificateInfo().isEmpty())
-        return m_sslVerifier->certificateInfo();
-
-    // If you use an existing HTTP/2 connection, SSLVerifier does not exist.
     if (m_certificateInfo)
         return *m_certificateInfo;
 
+    if (m_sslVerifier) {
+        if (auto certificateInfo = m_sslVerifier->createCertificateInfo(getSSLVerifyResult())) {
+            m_certificateInfo = WTFMove(certificateInfo);
+            return *m_certificateInfo;
+        }
+    }
+
+    // If you use an existing HTTP/2 connection, SSLVerifier does not exist.
     if (auto ssl = sslConnection()) {
-        if (auto certificateInfo = OpenSSL::createCertificateInfo(*ssl)) {
+        if (auto certificateInfo = OpenSSL::createCertificateInfo(getSSLVerifyResult(), *ssl)) {
             m_certificateInfo = WTFMove(certificateInfo);
             return *m_certificateInfo;
         }
