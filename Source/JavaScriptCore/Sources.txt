@@ -770,7 +770,6 @@ runtime/CacheUpdate.cpp
 runtime/CacheableIdentifier.cpp
 runtime/CachedBytecode.cpp
 runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp
-runtime/CachedTypes.cpp
 runtime/CatchScope.cpp
 runtime/ClassInfo.cpp
 runtime/ClonedArguments.cpp
@@ -1085,10 +1084,6 @@ runtime/WeakObjectRefPrototype.cpp
 runtime/WeakSetConstructor.cpp
 runtime/WeakSetPrototype.cpp
 runtime/WideningNumberPredictionFuzzerAgent.cpp
-
-// Derived Sources
-// FIXME: We should move this to runtime but it kept breaking the Windows build in weird ways... https://bugs.webkit.org/show_bug.cgi?id=177486
-JSCBuiltins.cpp
 
 tools/CellList.cpp
 tools/CompilerTimingScope.cpp

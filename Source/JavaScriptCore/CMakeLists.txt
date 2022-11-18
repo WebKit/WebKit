@@ -155,6 +155,20 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyTagPrototype.cpp
 )
 
+list(APPEND JavaScriptCore_SOURCES
+    runtime/CachedTypes.cpp
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.cpp
+)
+
+add_custom_command(
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/runtime/JSCBytecodeCacheVersion.cpp.in
+    COMMAND ${PERL_EXECUTABLE} -pe s/CACHED_TYPES_CKSUM/__TIMESTAMP__/ ${JAVASCRIPTCORE_DIR}/runtime/JSCBytecodeCacheVersion.cpp.in > ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
+            VERBATIM
+)
+
+
 set(JavaScriptCore_FRAMEWORKS
     WTF
 )
