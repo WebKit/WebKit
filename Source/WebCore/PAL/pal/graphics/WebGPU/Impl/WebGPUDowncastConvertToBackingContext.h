@@ -60,6 +60,8 @@ public:
     WGPURenderPipeline convertToBacking(const RenderPipeline&) final;
     WGPUSampler convertToBacking(const Sampler&) final;
     WGPUShaderModule convertToBacking(const ShaderModule&) final;
+    WGPUSurface convertToBacking(const Surface&) final;
+    WGPUSwapChain convertToBacking(const SwapChain&) final;
     WGPUTexture convertToBacking(const Texture&) final;
     WGPUTextureView convertToBacking(const TextureView&) final;
 

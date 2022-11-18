@@ -979,6 +979,8 @@ def headers_for_type(type):
         'WebKit::WebGPU::StorageTextureBindingLayout': ['"WebGPUStorageTextureBindingLayout.h"'],
         'WebKit::WebGPU::SupportedFeatures': ['"WebGPUSupportedFeatures.h"'],
         'WebKit::WebGPU::SupportedLimits': ['"WebGPUSupportedLimits.h"'],
+        'WebKit::WebGPU::SurfaceDescriptor': ['"WebGPUSurfaceDescriptor.h"'],
+        'WebKit::WebGPU::SwapChainDescriptor': ['"WebGPUSwapChainDescriptor.h"'],
         'WebKit::WebGPU::TextureBindingLayout': ['"WebGPUTextureBindingLayout.h"'],
         'WebKit::WebGPU::TextureDescriptor': ['"WebGPUTextureDescriptor.h"'],
         'WebKit::WebGPU::TextureViewDescriptor': ['"WebGPUTextureViewDescriptor.h"'],

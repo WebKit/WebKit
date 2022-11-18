@@ -58,7 +58,7 @@ struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
 class GPUCanvasContext;
 #endif
 
@@ -96,10 +96,10 @@ public:
     ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
 
     static bool isWebGPUType(const String&);
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
     GPUCanvasContext* createContextWebGPU(const String&);
     GPUCanvasContext* getContextWebGPU(const String&);
-#endif // ENABLE(WEBGPU)
+#endif // HAVE(WEBGPU_IMPLEMENTATION)
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);

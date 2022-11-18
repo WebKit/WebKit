@@ -6670,7 +6670,7 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
     if (is<ImageBitmapRenderingContext>(*context))
         return RenderingContext { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*context) } };
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
     if (is<GPUCanvasContext>(*context))
         return RenderingContext { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*context) } };
 #endif

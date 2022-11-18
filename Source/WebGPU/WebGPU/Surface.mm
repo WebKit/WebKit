@@ -29,16 +29,107 @@
 #import "APIConversions.h"
 #import "Adapter.h"
 
+#import <WebGPU/WebGPUExt.h>
+
+// borrowed from pal/spi/cocoa/IOTypesSPI.h
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+#include <IOKit/IOTypes.h>
+#else
+
+enum {
+    kIOWriteCombineCache = 4,
+};
+
+enum {
+    kIOMapCacheShift = 8,
+    kIOMapWriteCombineCache = kIOWriteCombineCache << kIOMapCacheShift,
+};
+#endif
+
+static NSDictionary *optionsFor32BitSurface(int width, int height, unsigned pixelFormat)
+{
+    unsigned bytesPerElement = 4;
+    unsigned bytesPerPixel = 4;
+
+    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
+    ASSERT(bytesPerRow);
+
+    size_t totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
+    ASSERT(totalBytes);
+
+    return @{
+        (id)kIOSurfaceWidth: @(width),
+        (id)kIOSurfaceHeight: @(height),
+        (id)kIOSurfacePixelFormat: @(pixelFormat),
+        (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
+        (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
+        (id)kIOSurfaceAllocSize: @(totalBytes),
+#if PLATFORM(IOS_FAMILY)
+        (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
+#endif
+        (id)kIOSurfaceElementHeight: @(1)
+    };
+}
+
+static RetainPtr<IOSurfaceRef> createIOSurface(int width, int height)
+{
+    NSDictionary *options = optionsFor32BitSurface(width, height, 'BGRA');
+    return adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
+}
+
+static RetainPtr<IOSurfaceRef> createSurfaceFromDescriptor(const WGPUSurfaceDescriptor& descriptor)
+{
+    if (!descriptor.nextInChain || descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking))
+        return nullptr;
+
+    auto widthHeight = ((const WGPUSurfaceDescriptorCocoaCustomSurface*)descriptor.nextInChain);
+    return createIOSurface(widthHeight->width, widthHeight->height);
+}
+
+IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface surface)
+{
+    return WebGPU::fromAPI(surface).displayBuffer().get();
+}
+
+IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface surface)
+{
+    return WebGPU::fromAPI(surface).drawingBuffer().get();
+}
+
+WGPUSurface wgpuInstanceCreateSurface(WGPUInstance, const WGPUSurfaceDescriptor* descriptor)
+{
+    return WebGPU::releaseToAPI(WebGPU::Surface::create(*descriptor));
+}
+
 namespace WebGPU {
 
-Surface::Surface() = default;
+Ref<Surface> Device::createSurface(const WGPUSurfaceDescriptor& descriptor)
+{
+    return Surface::create(descriptor);
+}
+
+Surface::Surface(const WGPUSurfaceDescriptor& descriptor)
+    : m_displayBuffer(createSurfaceFromDescriptor(descriptor))
+    , m_drawingBuffer(createSurfaceFromDescriptor(descriptor))
+{
+}
 
 Surface::~Surface() = default;
 
 WGPUTextureFormat Surface::getPreferredFormat(const Adapter& adapter)
 {
     UNUSED_PARAM(adapter);
-    return WGPUTextureFormat_Undefined;
+    return WGPUTextureFormat_BGRA8Unorm;
+}
+
+RetainPtr<IOSurfaceRef> Surface::nextDrawable()
+{
+    // FIXME: wait until a buffer is available
+    auto nextBuffer = m_drawingBuffer;
+    m_drawingBuffer = m_displayBuffer;
+    m_displayBuffer = nextBuffer;
+
+    return m_drawingBuffer;
 }
 
 } // namespace WebGPU

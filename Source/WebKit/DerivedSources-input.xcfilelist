@@ -58,6 +58,8 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteRenderPipeline.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSampler.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteShaderModule.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSurface.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSwapChain.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTextureView.messages.in
 $(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
@@ -231,6 +233,8 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUStencilFaceState.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUSupportedLimits.serialization.in
+$(PROJECT_DIR)/Shared/WebGPU/WebGPUSurfaceDescriptor.serialization.in
+$(PROJECT_DIR)/Shared/WebGPU/WebGPUSwapChainDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUTextureDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in

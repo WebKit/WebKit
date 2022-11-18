@@ -25,22 +25,73 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUCanvasConfiguration.h"
+#include "GPUSurface.h"
+#include "GPUSwapChain.h"
 #include "GPUTexture.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
+#include "IOSurface.h"
 #include "OffscreenCanvas.h"
+#include "PlatformCALayer.h"
 #include <variant>
+#include <wtf/MachSendRight.h>
 #endif
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
 namespace WebCore {
+
+class DisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+public:
+    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque = true, float contentsScale = 1)
+    {
+        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, contentsScale));
+    }
+    // GraphicsLayerContentsDisplayDelegate overrides.
+    void prepareToDelegateDisplay(PlatformCALayer& layer) final
+    {
+        layer.setOpaque(m_isOpaque);
+        layer.setContentsScale(m_contentsScale);
+    }
+    void display(PlatformCALayer& layer) final
+    {
+        if (m_displayBuffer)
+            layer.setContents(m_displayBuffer);
+        else
+            layer.clearContents();
+    }
+    GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
+    {
+        return GraphicsLayer::CompositingCoordinatesOrientation::TopDown;
+    }
+    void setDisplayBuffer(WTF::MachSendRight&& displayBuffer)
+    {
+        if (!displayBuffer) {
+            m_displayBuffer = { };
+            return;
+        }
+
+        if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
+            return;
+
+        m_displayBuffer = displayBuffer.copySendRight();
+    }
+private:
+    DisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
+        : m_contentsScale(contentsScale)
+        , m_isOpaque(isOpaque)
+    {
+    }
+    WTF::MachSendRight m_displayBuffer;
+    const float m_contentsScale;
+    const bool m_isOpaque;
+};
 
 class GPUCanvasContext final : public GPUBasedCanvasRenderingContext {
     WTF_MAKE_ISO_ALLOCATED(GPUCanvasContext);
@@ -81,7 +132,15 @@ private:
     explicit GPUCanvasContext(CanvasBase&);
 
     void markContextChangedAndNotifyCanvasObservers();
+    void createSwapChainIfNeeded();
 
+    std::optional<GPUCanvasConfiguration> m_configuration;
+    Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
+    RefPtr<GPUSwapChain> m_swapChain;
+    RefPtr<GPUSurface> m_surface;
+
+    int m_width { 0 };
+    int m_height { 0 };
     bool m_compositingResultsNeedsUpdating { false };
 };
 
@@ -97,4 +156,4 @@ public:
 };
 
 }
-#endif // ENABLE(WEBGPU)
+#endif // HAVE(WEBGPU_IMPLEMENTATION)

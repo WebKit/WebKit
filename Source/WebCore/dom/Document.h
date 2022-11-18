@@ -254,7 +254,7 @@ class ContentChangeObserver;
 class DOMTimerHoldingTank;
 #endif
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
 class GPUCanvasContext;
 #endif
 
@@ -335,7 +335,7 @@ using RenderingContext = std::variant<
 #if ENABLE(WEBGL2)
     RefPtr<WebGL2RenderingContext>,
 #endif
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
     RefPtr<GPUCanvasContext>,
 #endif
     RefPtr<ImageBitmapRenderingContext>,

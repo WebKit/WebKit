@@ -2031,8 +2031,9 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonP
 #endif
 }
 
-Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor, IOSurfaceRef ioSurfaceBacking)
+Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 {
+    IOSurfaceRef ioSurfaceBacking = nullptr;
     Vector<WGPUTextureFormat> viewFormats;
     const auto* current = descriptor.nextInChain;
     while (current) {
@@ -2045,6 +2046,9 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor, IOSu
 
             const auto& descriptorViewFormats = reinterpret_cast<const WGPUTextureDescriptorViewFormats&>(*current);
             viewFormats = Vector { descriptorViewFormats.viewFormats, descriptorViewFormats.viewFormatsCount };
+        } else if (current->sType == static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorCocoaSurfaceBacking)) {
+            const auto& descriptorIOSurface = reinterpret_cast<const WGPUTextureDescriptorCocoaCustomSurface&>(*current);
+            ioSurfaceBacking = descriptorIOSurface.surface;
         } else
             return Texture::createInvalid(*this);
 

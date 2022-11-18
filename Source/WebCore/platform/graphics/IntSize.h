@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PlatformExportMacros.h"
 #include <algorithm>
 #include <wtf/JSONValues.h>
 #include <wtf/Forward.h>

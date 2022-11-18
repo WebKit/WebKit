@@ -80,6 +80,8 @@ class RemoteRenderPassEncoder;
 class RemoteRenderPipeline;
 class RemoteSampler;
 class RemoteShaderModule;
+class RemoteSurface;
+class RemoteSwapChain;
 class RemoteTexture;
 class RemoteTextureView;
 }
@@ -115,6 +117,8 @@ public:
     void addObject(WebGPUIdentifier, RemoteRenderPipeline&);
     void addObject(WebGPUIdentifier, RemoteSampler&);
     void addObject(WebGPUIdentifier, RemoteShaderModule&);
+    void addObject(WebGPUIdentifier, RemoteSurface&);
+    void addObject(WebGPUIdentifier, RemoteSwapChain&);
     void addObject(WebGPUIdentifier, RemoteTexture&);
     void addObject(WebGPUIdentifier, RemoteTextureView&);
 
@@ -141,6 +145,8 @@ public:
     PAL::WebGPU::RenderPipeline* convertRenderPipelineFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::Sampler* convertSamplerFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::Surface* convertSurfaceFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::SwapChain* convertSwapChainFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
 
@@ -168,6 +174,8 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteSurface>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteSwapChain>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
     >;

@@ -3043,6 +3043,22 @@
 		07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSessionManager.h; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0D7A7A78291C3F1600DB4E18 /* RemoteSurfaceProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSurfaceProxy.h; sourceTree = "<group>"; };
+		0D7A7A79291C3F1600DB4E18 /* RemoteSwapChainProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSwapChainProxy.h; sourceTree = "<group>"; };
+		0D7A7A7A291C3F1600DB4E18 /* RemoteSwapChainProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSwapChainProxy.cpp; sourceTree = "<group>"; };
+		0D7A7A7B291C3F1600DB4E18 /* RemoteSurfaceProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSurfaceProxy.cpp; sourceTree = "<group>"; };
+		0D7A7A7C291C449C00DB4E18 /* RemoteSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSurface.cpp; sourceTree = "<group>"; };
+		0D7A7A7D291C449C00DB4E18 /* RemoteSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSurface.h; sourceTree = "<group>"; };
+		0D7A7A7E291C449D00DB4E18 /* RemoteSurface.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteSurface.messages.in; sourceTree = "<group>"; };
+		0D7A7A7F291C46A700DB4E18 /* RemoteSwapChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSwapChain.h; sourceTree = "<group>"; };
+		0D7A7A80291C46A700DB4E18 /* RemoteSwapChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSwapChain.cpp; sourceTree = "<group>"; };
+		0D7A7A81291C46A700DB4E18 /* RemoteSwapChain.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteSwapChain.messages.in; sourceTree = "<group>"; };
+		0D7A7A84291C7E0E00DB4E18 /* WebGPUSurfaceDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSurfaceDescriptor.cpp; sourceTree = "<group>"; };
+		0D7A7A85291C7E0F00DB4E18 /* WebGPUSwapChainDescriptor.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUSwapChainDescriptor.serialization.in; sourceTree = "<group>"; };
+		0D7A7A86291C7E0F00DB4E18 /* WebGPUSurfaceDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSurfaceDescriptor.h; sourceTree = "<group>"; };
+		0D7A7A87291C7E0F00DB4E18 /* WebGPUSurfaceDescriptor.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUSurfaceDescriptor.serialization.in; sourceTree = "<group>"; };
+		0D7A7A88291C7E0F00DB4E18 /* WebGPUSwapChainDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSwapChainDescriptor.cpp; sourceTree = "<group>"; };
+		0D7A7A89291C7E1000DB4E18 /* WebGPUSwapChainDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChainDescriptor.h; sourceTree = "<group>"; };
 		0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticatorCoordinatorProxy.mm; sourceTree = "<group>"; };
 		0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingSPI.h; sourceTree = "<group>"; };
 		0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsitePopUpPolicy.h; sourceTree = "<group>"; };
@@ -8947,6 +8963,12 @@
 				1C98C02327446A05002CCB78 /* RemoteShaderModule.cpp */,
 				1C98C03427446A09002CCB78 /* RemoteShaderModule.h */,
 				1C98C08C2744BD9A002CCB78 /* RemoteShaderModule.messages.in */,
+				0D7A7A7C291C449C00DB4E18 /* RemoteSurface.cpp */,
+				0D7A7A7D291C449C00DB4E18 /* RemoteSurface.h */,
+				0D7A7A7E291C449D00DB4E18 /* RemoteSurface.messages.in */,
+				0D7A7A80291C46A700DB4E18 /* RemoteSwapChain.cpp */,
+				0D7A7A7F291C46A700DB4E18 /* RemoteSwapChain.h */,
+				0D7A7A81291C46A700DB4E18 /* RemoteSwapChain.messages.in */,
 				1C98C03527446A09002CCB78 /* RemoteTexture.cpp */,
 				1C98C02527446A06002CCB78 /* RemoteTexture.h */,
 				1C98C0872744BD99002CCB78 /* RemoteTexture.messages.in */,
@@ -9013,6 +9035,10 @@
 				1CB7462127436EE500F19874 /* RemoteSamplerProxy.h */,
 				1CB7463527436EE900F19874 /* RemoteShaderModuleProxy.cpp */,
 				1CB7463127436EE800F19874 /* RemoteShaderModuleProxy.h */,
+				0D7A7A7B291C3F1600DB4E18 /* RemoteSurfaceProxy.cpp */,
+				0D7A7A78291C3F1600DB4E18 /* RemoteSurfaceProxy.h */,
+				0D7A7A7A291C3F1600DB4E18 /* RemoteSwapChainProxy.cpp */,
+				0D7A7A79291C3F1600DB4E18 /* RemoteSwapChainProxy.h */,
 				1CB7464327436EEB00F19874 /* RemoteTextureProxy.cpp */,
 				1CB7463927436EE900F19874 /* RemoteTextureProxy.h */,
 				1CB7462B27436EE700F19874 /* RemoteTextureViewProxy.cpp */,
@@ -9200,6 +9226,12 @@
 				1C98C0AA2746267B002CCB78 /* WebGPUSupportedLimits.cpp */,
 				1C98C07A2744A205002CCB78 /* WebGPUSupportedLimits.h */,
 				02789EFE28D4374C00F77E40 /* WebGPUSupportedLimits.serialization.in */,
+				0D7A7A84291C7E0E00DB4E18 /* WebGPUSurfaceDescriptor.cpp */,
+				0D7A7A86291C7E0F00DB4E18 /* WebGPUSurfaceDescriptor.h */,
+				0D7A7A87291C7E0F00DB4E18 /* WebGPUSurfaceDescriptor.serialization.in */,
+				0D7A7A88291C7E0F00DB4E18 /* WebGPUSwapChainDescriptor.cpp */,
+				0D7A7A89291C7E1000DB4E18 /* WebGPUSwapChainDescriptor.h */,
+				0D7A7A85291C7E0F00DB4E18 /* WebGPUSwapChainDescriptor.serialization.in */,
 				1C98C0B22746267C002CCB78 /* WebGPUTextureBindingLayout.cpp */,
 				1CB7467527439CB100F19874 /* WebGPUTextureBindingLayout.h */,
 				02789EFF28D4388D00F77E40 /* WebGPUTextureBindingLayout.serialization.in */,

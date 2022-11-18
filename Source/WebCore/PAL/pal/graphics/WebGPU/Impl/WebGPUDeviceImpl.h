@@ -65,6 +65,9 @@ private:
 
     Ref<Buffer> createBuffer(const BufferDescriptor&) final;
     Ref<Texture> createTexture(const TextureDescriptor&) final;
+    Ref<Texture> createSurfaceTexture(const TextureDescriptor&, const Surface&) final;
+    Ref<Surface> createSurface(const SurfaceDescriptor&) final;
+    Ref<SwapChain> createSwapChain(const Surface&, const SwapChainDescriptor&) final;
     Ref<Sampler> createSampler(const SamplerDescriptor&) final;
     Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
 

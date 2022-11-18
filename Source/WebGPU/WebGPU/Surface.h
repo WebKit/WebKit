@@ -28,6 +28,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RetainPtr.h>
 
 struct WGPUSurfaceImpl {
 };
@@ -39,17 +40,25 @@ class Adapter;
 class Surface : public WGPUSurfaceImpl, public RefCounted<Surface> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Surface> create()
+    static Ref<Surface> create(const WGPUSurfaceDescriptor& descriptor)
     {
-        return adoptRef(*new Surface());
+        return adoptRef(*new Surface(descriptor));
     }
 
     ~Surface();
 
     WGPUTextureFormat getPreferredFormat(const Adapter&);
 
+    RetainPtr<IOSurfaceRef> displayBuffer() const { return m_displayBuffer; }
+    RetainPtr<IOSurfaceRef> drawingBuffer() const { return m_drawingBuffer; }
+    RetainPtr<IOSurfaceRef> nextDrawable();
+
 private:
-    Surface();
+    Surface(const WGPUSurfaceDescriptor&);
+    Surface(int, int);
+
+    RetainPtr<IOSurfaceRef> m_displayBuffer;
+    RetainPtr<IOSurfaceRef> m_drawingBuffer;
 };
 
 } // namespace WebGPU

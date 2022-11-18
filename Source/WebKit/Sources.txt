@@ -54,6 +54,8 @@ GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp
 GPUProcess/graphics/WebGPU/RemoteSampler.cpp
 GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
+GPUProcess/graphics/WebGPU/RemoteSurface.cpp
+GPUProcess/graphics/WebGPU/RemoteSwapChain.cpp
 GPUProcess/graphics/WebGPU/RemoteTexture.cpp
 GPUProcess/graphics/WebGPU/RemoteTextureView.cpp
 GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp
@@ -359,6 +361,8 @@ Shared/WebGPU/WebGPUStencilFaceState.cpp
 Shared/WebGPU/WebGPUStorageTextureBindingLayout.cpp
 Shared/WebGPU/WebGPUSupportedFeatures.cpp
 Shared/WebGPU/WebGPUSupportedLimits.cpp
+Shared/WebGPU/WebGPUSurfaceDescriptor.cpp
+Shared/WebGPU/WebGPUSwapChainDescriptor.cpp
 Shared/WebGPU/WebGPUTextureBindingLayout.cpp
 Shared/WebGPU/WebGPUTextureDescriptor.cpp
 Shared/WebGPU/WebGPUTextureViewDescriptor.cpp
@@ -695,6 +699,8 @@ WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteSurfaceProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteSwapChainProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.cpp
 WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp
@@ -878,6 +884,8 @@ RemoteRenderPassEncoderMessageReceiver.cpp
 RemoteRenderPipelineMessageReceiver.cpp
 RemoteSamplerMessageReceiver.cpp
 RemoteShaderModuleMessageReceiver.cpp
+RemoteSurfaceMessageReceiver.cpp
+RemoteSwapChainMessageReceiver.cpp
 RemoteTextureMessageReceiver.cpp
 RemoteTextureViewMessageReceiver.cpp
 RemoteWebLockRegistryMessageReceiver.cpp

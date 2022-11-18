@@ -31,6 +31,8 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h
     graphics/WebGPU/Impl/WebGPUSamplerImpl.h
     graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h
+    graphics/WebGPU/Impl/WebGPUSurfaceImpl.h
+    graphics/WebGPU/Impl/WebGPUSwapChainImpl.h
     graphics/WebGPU/Impl/WebGPUTextureImpl.h
     graphics/WebGPU/Impl/WebGPUTextureViewImpl.h
 
@@ -143,6 +145,10 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUStoreOp.h
     graphics/WebGPU/WebGPUSupportedFeatures.h
     graphics/WebGPU/WebGPUSupportedLimits.h
+    graphics/WebGPU/WebGPUSurface.h
+    graphics/WebGPU/WebGPUSurfaceDescriptor.h
+    graphics/WebGPU/WebGPUSwapChain.h
+    graphics/WebGPU/WebGPUSwapChainDescriptor.h
     graphics/WebGPU/WebGPUTexture.h
     graphics/WebGPU/WebGPUTextureAspect.h
     graphics/WebGPU/WebGPUTextureBindingLayout.h

@@ -25,12 +25,17 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGPU)
+#if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "GPUCanvasContext.h"
 
 #include "GPUAdapter.h"
 #include "GPUCanvasConfiguration.h"
+#include "GPUSurface.h"
+#include "GPUSurfaceDescriptor.h"
+#include "GPUSwapChain.h"
+#include "GPUSwapChainDescriptor.h"
+#include "GPUTextureDescriptor.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "RenderBox.h"
 #include <wtf/IsoMallocInlines.h>
@@ -73,14 +78,21 @@ std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
 
 GPUCanvasContext::GPUCanvasContext(CanvasBase& canvas)
     : GPUBasedCanvasRenderingContext(canvas)
+    , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
 {
     ASSERT(platformSupportsWebGPUSurface());
 }
 
 void GPUCanvasContext::reshape(int width, int height)
 {
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
+    if (m_width == width && m_height == height)
+        return;
+
+    m_width = width;
+    m_height = height;
+    m_swapChain = nullptr;
+
+    createSwapChainIfNeeded();
 }
 
 GPUCanvasContext::CanvasType GPUCanvasContext::canvas()
@@ -90,15 +102,60 @@ GPUCanvasContext::CanvasType GPUCanvasContext::canvas()
 
 void GPUCanvasContext::configure(GPUCanvasConfiguration&& configuration)
 {
-    UNUSED_PARAM(configuration);
+    m_configuration = WTFMove(configuration);
 
     auto canvasSize = getCanvasSizeAsIntSize(htmlCanvas());
     reshape(canvasSize.width(), canvasSize.height());
 }
 
+void GPUCanvasContext::createSwapChainIfNeeded()
+{
+    if (m_swapChain || !m_configuration)
+        return;
+
+    GPUSurfaceDescriptor surfaceDescriptor = {
+        { "WebGPU Canvas surface"_s },
+        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
+        1 /* sampleCount */,
+        m_configuration->format,
+        m_configuration->usage
+    };
+
+    m_surface = m_configuration->device->createSurface(surfaceDescriptor);
+    ASSERT(m_surface);
+
+    GPUSwapChainDescriptor descriptor = {
+        { "WebGPU Canvas swap chain"_s },
+        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
+        1 /* sampleCount */,
+        m_configuration->format,
+        m_configuration->usage
+    };
+
+    m_swapChain = m_configuration->device->createSwapChain(*m_surface, descriptor);
+    ASSERT(m_swapChain);
+}
+
 RefPtr<GPUTexture> GPUCanvasContext::getCurrentTexture()
 {
-    return nullptr;
+    if (!m_configuration)
+        return nullptr;
+
+    createSwapChainIfNeeded();
+
+    GPUTextureDescriptor descriptor = {
+        { "WebGPU Display texture"_s },
+        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
+        1 /* mipMapCount */,
+        1 /* sampleCount */,
+        GPUTextureDimension::_2d,
+        m_configuration->format,
+        m_configuration->usage,
+        m_configuration->viewFormats
+    };
+
+    markContextChangedAndNotifyCanvasObservers();
+    return m_configuration->device->createSurfaceTexture(descriptor, *m_surface);
 }
 
 PixelFormat GPUCanvasContext::pixelFormat() const
@@ -108,6 +165,7 @@ PixelFormat GPUCanvasContext::pixelFormat() const
 
 void GPUCanvasContext::unconfigure()
 {
+    m_configuration.reset();
 }
 
 DestinationColorSpace GPUCanvasContext::colorSpace() const
@@ -117,12 +175,17 @@ DestinationColorSpace GPUCanvasContext::colorSpace() const
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GPUCanvasContext::layerContentsDisplayDelegate()
 {
-    return nullptr;
+    return m_layerContentsDisplayDelegate.ptr();
 }
 
 void GPUCanvasContext::prepareForDisplay()
 {
-    m_compositingResultsNeedsUpdating = false;
+#if PLATFORM(COCOA)
+    m_swapChain->prepareForDisplay([protectedThis = Ref { *this }] (auto sendRight) {
+        protectedThis->m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(sendRight));
+        protectedThis->m_compositingResultsNeedsUpdating = false;
+    });
+#endif
 }
 
 void GPUCanvasContext::markContextChangedAndNotifyCanvasObservers()
@@ -157,4 +220,4 @@ void GPUCanvasContext::markContextChangedAndNotifyCanvasObservers()
 
 }
 
-#endif // ENABLE(WEBGPU_BY_DEFAULT)
+#endif // HAVE(WEBGPU_IMPLEMENTATION)
