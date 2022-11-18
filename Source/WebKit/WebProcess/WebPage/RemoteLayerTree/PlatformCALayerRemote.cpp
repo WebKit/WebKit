@@ -909,7 +909,7 @@ void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearan
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }
 
-void PlatformCALayerRemote::setEventRegion(const WebCore::EventRegion& eventRegion)
+void PlatformCALayerRemote::setEventRegion(const EventRegion& eventRegion)
 {
     if (m_properties.eventRegion == eventRegion)
         return;
@@ -917,6 +917,22 @@ void PlatformCALayerRemote::setEventRegion(const WebCore::EventRegion& eventRegi
     m_properties.eventRegion = eventRegion;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EventRegionChanged);
 }
+
+#if ENABLE(SCROLLING_THREAD)
+ScrollingNodeID PlatformCALayerRemote::scrollingNodeID() const
+{
+    return m_properties.scrollingNodeID;
+}
+
+void PlatformCALayerRemote::setScrollingNodeID(ScrollingNodeID nodeID)
+{
+    if (nodeID == m_properties.scrollingNodeID)
+        return;
+
+    m_properties.scrollingNodeID = nodeID;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ScrollingNodeIDChanged);
+}
+#endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 bool PlatformCALayerRemote::isSeparated() const

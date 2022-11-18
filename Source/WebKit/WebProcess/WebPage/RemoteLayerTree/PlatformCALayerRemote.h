@@ -179,6 +179,11 @@ public:
 
     void setEventRegion(const WebCore::EventRegion&) override;
 
+#if ENABLE(SCROLLING_THREAD)
+    WebCore::ScrollingNodeID scrollingNodeID() const override;
+    void setScrollingNodeID(WebCore::ScrollingNodeID) override;
+#endif
+
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool isSeparated() const override;
     void setIsSeparated(bool) override;

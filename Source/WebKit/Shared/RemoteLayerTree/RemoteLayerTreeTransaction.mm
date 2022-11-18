@@ -115,6 +115,9 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , shapePath(other.shapePath)
     , maskLayerID(other.maskLayerID)
     , clonedLayerID(other.clonedLayerID)
+#if ENABLE(SCROLLING_THREAD)
+    , scrollingNodeID(other.scrollingNodeID)
+#endif
     , timeOffset(other.timeOffset)
     , speed(other.speed)
     , contentsScale(other.contentsScale)
@@ -227,6 +230,11 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 
     if (changedProperties & ClonedContentsChanged)
         encoder << clonedLayerID;
+
+#if ENABLE(SCROLLING_THREAD)
+    if (changedProperties & ScrollingNodeIDChanged)
+        encoder << scrollingNodeID;
+#endif
 
     if (changedProperties & ContentsRectChanged)
         encoder << contentsRect;
@@ -420,6 +428,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(result.clonedLayerID))
             return false;
     }
+
+#if ENABLE(SCROLLING_THREAD)
+    if (result.changedProperties & ScrollingNodeIDChanged) {
+        if (!decoder.decode(result.scrollingNodeID))
+            return false;
+    }
+#endif
 
     if (result.changedProperties & ContentsRectChanged) {
         if (!decoder.decode(result.contentsRect))
@@ -879,6 +894,11 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ClonedContentsChanged)
             ts.dumpProperty("clonedLayer", layerProperties.clonedLayerID);
+
+#if ENABLE(SCROLLING_THREAD)
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ScrollingNodeIDChanged)
+            ts.dumpProperty("scrollingNodeID", layerProperties.scrollingNodeID);
+#endif
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
             ts.dumpProperty("contentsRect", layerProperties.contentsRect);

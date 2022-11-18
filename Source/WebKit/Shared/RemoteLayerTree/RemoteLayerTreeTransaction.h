@@ -38,6 +38,7 @@
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformCALayer.h>
+#include <WebCore/ScrollTypes.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -97,11 +98,12 @@ public:
         CustomAppearanceChanged             = 1LLU << 36,
         UserInteractionEnabledChanged       = 1LLU << 37,
         EventRegionChanged                  = 1LLU << 38,
+        ScrollingNodeIDChanged              = 1LLU << 39,
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-        SeparatedChanged                    = 1LLU << 39,
+        SeparatedChanged                    = 1LLU << 40,
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-        SeparatedPortalChanged              = 1LLU << 40,
-        DescendentOfSeparatedPortalChanged  = 1LLU << 41,
+        SeparatedPortalChanged              = 1LLU << 41,
+        DescendentOfSeparatedPortalChanged  = 1LLU << 42,
 #endif
 #endif
     };
@@ -165,6 +167,9 @@ public:
         WebCore::Path shapePath;
         WebCore::GraphicsLayer::PlatformLayerID maskLayerID { 0 };
         WebCore::GraphicsLayer::PlatformLayerID clonedLayerID { 0 };
+#if ENABLE(SCROLLING_THREAD)
+        WebCore::ScrollingNodeID scrollingNodeID { 0 };
+#endif
         double timeOffset { 0 };
         float speed { 1 };
         float contentsScale { 1 };
@@ -188,6 +193,7 @@ public:
         bool contentsHidden { false };
         bool userInteractionEnabled { true };
         WebCore::EventRegion eventRegion;
+
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         bool isSeparated { false };
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
@@ -400,7 +406,8 @@ template<> struct EnumTraits<WebKit::RemoteLayerTreeTransaction::LayerChange> {
         WebKit::RemoteLayerTreeTransaction::LayerChange::AntialiasesEdgesChanged,
         WebKit::RemoteLayerTreeTransaction::LayerChange::CustomAppearanceChanged,
         WebKit::RemoteLayerTreeTransaction::LayerChange::UserInteractionEnabledChanged,
-        WebKit::RemoteLayerTreeTransaction::LayerChange::EventRegionChanged
+        WebKit::RemoteLayerTreeTransaction::LayerChange::EventRegionChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ScrollingNodeIDChanged
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         , WebKit::RemoteLayerTreeTransaction::LayerChange::SeparatedChanged
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
