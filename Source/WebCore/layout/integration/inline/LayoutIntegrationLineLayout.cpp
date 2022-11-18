@@ -207,6 +207,16 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
     if (layoutBox.isListMarkerOutside()) {
         auto& listMarkerGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
         auto horizontalMargin = listMarkerGeometry.horizontalMargin();
+        if (!is<RenderListItem>(listMarker.containingBlock())) {
+            // In non-integration codepath, outside markers would simply take the incoming horizontal constraints and adjust
+            // the margins accordingly.
+            auto lineLogicalOffsetForNestedListMarker = listMarker.lineLogicalOffsetForListItem();
+            horizontalMargin.start -= lineLogicalOffsetForNestedListMarker;
+            // When the list marker is not the direct child of the list item, we also
+            // have to make sure that the line content does not get pulled in to logical left direction due to
+            // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
+            horizontalMargin.end += lineLogicalOffsetForNestedListMarker;
+        }
         ASSERT(m_inlineContentConstraints);
         auto outsideOffset = m_inlineContentConstraints->horizontal().logicalLeft;
         listMarkerGeometry.setHorizontalMargin({ horizontalMargin.start - outsideOffset, horizontalMargin.end + outsideOffset });  
