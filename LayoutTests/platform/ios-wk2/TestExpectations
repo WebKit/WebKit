@@ -2237,8 +2237,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitm
 
 js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/241205 [ Release arm64 ] fast/forms/textfield-outline.html [ Pass Failure ]
-
 webkit.org/b/242904 [ Debug ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
 # The Notifications API is not supported on iOS

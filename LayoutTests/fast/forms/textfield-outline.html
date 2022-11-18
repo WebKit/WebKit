@@ -7,9 +7,11 @@
             var tf = document.getElementById('tf');
             tf.focus();
             if (window.testRunner) {
+                testRunner.waitUntilDone();
                 await UIHelper.keyDown("a");
                 await UIHelper.keyDown("b");
                 await UIHelper.keyDown("c");
+                testRunner.notifyDone();
             }
         }
         </script>
