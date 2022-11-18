@@ -482,7 +482,9 @@ void TextFieldInputType::createDataListDropdownIndicator()
     ASSERT(!m_dataListDropdownIndicator);
     if (!m_container)
         createContainer();
-
+    if (!element())
+        return;
+    
     ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
     m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
     m_container->appendChild(*m_dataListDropdownIndicator);
@@ -895,7 +897,8 @@ void TextFieldInputType::dataListMayHaveChanged()
 
     if (!m_dataListDropdownIndicator)
         createDataListDropdownIndicator();
-
+    if (!element())
+        return;
     if (!shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited())
         m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, element()->list() ? CSSValueBlock : CSSValueNone, true);
 }

@@ -248,8 +248,11 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
 void HTMLOptionElement::childrenChanged(const ChildChange& change)
 {
 #if ENABLE(DATALIST_ELEMENT)
+    Vector<Ref<HTMLDataListElement>> ancestors;
     for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
-        dataList.optionElementChildrenChanged();
+        ancestors.append(dataList);
+    for (auto& dataList : ancestors)
+        dataList->optionElementChildrenChanged();
 #endif
     if (RefPtr select = ownerSelectElement())
         select->optionElementChildrenChanged();
