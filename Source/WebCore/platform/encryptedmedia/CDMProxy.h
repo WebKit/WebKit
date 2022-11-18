@@ -255,7 +255,7 @@ public:
     // Media player query methods - main thread only.
     const RefPtr<CDMProxy>& proxy() const { ASSERT(isMainThread()); return m_cdmProxy; }
     virtual bool isWaitingForKey() const { ASSERT(isMainThread()); return m_numDecryptorsWaitingForKey > 0; }
-    void setPlayer(MediaPlayer* player) { ASSERT(isMainThread()); m_player = player; }
+    void setPlayer(WeakPtr<MediaPlayer>&& player) { ASSERT(isMainThread()); m_player = WTFMove(player); }
 
     // Proxy methods - must be thread-safe.
     void startedWaitingForKey();
@@ -263,10 +263,7 @@ public:
 
 private:
     RefPtr<CDMProxy> m_cdmProxy;
-    // FIXME: WeakPtr for the m_player? This is accessed from background and main threads, it's
-    // concerning we could be accessing it in the middle of a shutdown on the main-thread, eh?
-    // As a CDMProxy, we ***should*** be turned off before this pointer ever goes bad.
-    MediaPlayer* m_player { nullptr }; // FIXME: MainThread<T>?
+    WeakPtr<MediaPlayer> m_player;
 
     std::atomic<int> m_numDecryptorsWaitingForKey { 0 };
 };
