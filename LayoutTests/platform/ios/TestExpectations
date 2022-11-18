@@ -3751,8 +3751,6 @@ webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-v
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
 
-webkit.org/b/248061 webaudio/require-transient-activation.html [ Skip ]
-
 webkit.org/b/248062 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
 
 webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip ]

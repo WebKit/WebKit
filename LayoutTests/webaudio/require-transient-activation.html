@@ -22,7 +22,7 @@ onload = () => {
 
     shouldBeEqualToString('context.state', 'suspended');
 
-    runWithKeyDown(function() {
+    internals.withUserGesture(function() {
         setTimeout(() => {
             // We should have transient activation.
             shouldBeTrue("navigator.userActivation.isActive");
