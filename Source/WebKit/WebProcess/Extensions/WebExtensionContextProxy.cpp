@@ -37,48 +37,43 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionContextIdentifier, WebExtensionContextProxy*>& webExtensionContextProxies()
+static HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>& webExtensionContextProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WebExtensionContextProxy*>> contexts;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>> contexts;
     return contexts;
 }
 
 RefPtr<WebExtensionContextProxy> WebExtensionContextProxy::get(WebExtensionContextIdentifier identifier)
 {
-    return webExtensionContextProxies().get(identifier);
+    return webExtensionContextProxies().get(identifier).get();
 }
 
 Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(WebExtensionContextParameters parameters)
 {
-    auto updateProperties = [&](WebExtensionContextProxy* context) {
-        context->m_baseURL = parameters.baseURL;
-        context->m_uniqueIdentifier = parameters.uniqueIdentifier;
-        context->m_manifest = parameters.manifest;
-        context->m_manifestVersion = parameters.manifestVersion;
+    auto updateProperties = [&](WebExtensionContextProxy& context) {
+        context.m_baseURL = parameters.baseURL;
+        context.m_uniqueIdentifier = parameters.uniqueIdentifier;
+        context.m_manifest = parameters.manifest;
+        context.m_manifestVersion = parameters.manifestVersion;
     };
 
-    if (auto* context = webExtensionContextProxies().add(parameters.identifier, nullptr).iterator->value) {
-        updateProperties(context);
+    if (auto context = webExtensionContextProxies().get(parameters.identifier)) {
+        updateProperties(*context);
         return *context;
     }
 
     auto result = adoptRef(new WebExtensionContextProxy(parameters));
-    updateProperties(result.get());
+    updateProperties(*result);
     return result.releaseNonNull();
 }
 
 WebExtensionContextProxy::WebExtensionContextProxy(WebExtensionContextParameters parameters)
     : m_identifier(parameters.identifier)
 {
+    ASSERT(!webExtensionContextProxies().contains(m_identifier));
+    webExtensionContextProxies().add(m_identifier, this);
+
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
-}
-
-WebExtensionContextProxy::~WebExtensionContextProxy()
-{
-    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
-
-    ASSERT(webExtensionContextProxies().contains(m_identifier));
-    webExtensionContextProxies().remove(m_identifier);
 }
 
 } // namespace WebKit
