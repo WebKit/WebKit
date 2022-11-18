@@ -214,7 +214,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         } else {
             if (m_lazyImageLoadState == LazyImageLoadState::None && isImageElement) {
                 auto& imageElement = downcast<HTMLImageElement>(element());
-                if (imageElement.isLazyLoadable() && document.settings().lazyImageLoadingEnabled()) {
+                if (imageElement.isLazyLoadable() && document.lazyImageLoadingEnabled()) {
                     m_lazyImageLoadState = LazyImageLoadState::Deferred;
                     request.setIgnoreForRequestCount(true);
                 }

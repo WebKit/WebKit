@@ -214,7 +214,7 @@ private:
                 m_sizesAttribute = WTFMove(attributeValue);
                 break;
             }
-            if (m_document.settings().lazyImageLoadingEnabled()) {
+            if (m_document.lazyImageLoadingEnabled()) {
                 if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
                     m_lazyloadAttribute = WTFMove(attributeValue);
                     break;

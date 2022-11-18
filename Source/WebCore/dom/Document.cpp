@@ -9269,6 +9269,11 @@ bool Document::isSameSiteForCookies(const URL& url) const
     return domain.matches(url);
 }
 
+bool Document::lazyImageLoadingEnabled() const
+{
+    return m_settings->lazyImageLoadingEnabled() && !m_quirks->shouldDisableLazyImageLoadingQuirk();
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG
