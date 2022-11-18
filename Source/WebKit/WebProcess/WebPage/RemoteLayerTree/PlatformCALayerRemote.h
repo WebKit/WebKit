@@ -162,7 +162,7 @@ public:
     float cornerRadius() const override;
     void setCornerRadius(float) override;
 
-    void setEdgeAntialiasingMask(unsigned) override;
+    void setAntialiasesEdges(bool) override;
 
     // FIXME: Having both shapeRoundedRect and shapePath is redundant. We could use shapePath for everything.
     WebCore::FloatRoundedRect shapeRoundedRect() const override;

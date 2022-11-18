@@ -841,10 +841,13 @@ void PlatformCALayerRemote::setCornerRadius(float value)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CornerRadiusChanged);
 }
 
-void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned value)
+void PlatformCALayerRemote::setAntialiasesEdges(bool antialiases)
 {
-    m_properties.edgeAntialiasingMask = value;
-    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged);
+    if (antialiases == m_properties.antialiasesEdges)
+        return;
+
+    m_properties.antialiasesEdges = antialiases;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AntialiasesEdgesChanged);
 }
 
 FloatRoundedRect PlatformCALayerRemote::shapeRoundedRect() const
