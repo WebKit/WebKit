@@ -44,6 +44,9 @@ Ref<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* rendere
 
 bool AccessibilityMenuList::press()
 {
+    if (!m_renderer)
+        return false;
+
 #if !PLATFORM(IOS_FAMILY)
     auto element = this->element();
     AXObjectCache::AXNotification notification = AXObjectCache::AXPressDidFail;
@@ -88,6 +91,11 @@ void AccessibilityMenuList::addChildren()
 
 bool AccessibilityMenuList::isCollapsed() const
 {
+    // Collapsed is the "default" state, so if the renderer doesn't exist
+    // this makes slightly more sense than returning false.
+    if (!m_renderer)
+        return true;
+
 #if !PLATFORM(IOS_FAMILY)
     auto* renderer = this->renderer();
     return !(is<RenderMenuList>(renderer) && downcast<RenderMenuList>(*renderer).popupIsVisible());
