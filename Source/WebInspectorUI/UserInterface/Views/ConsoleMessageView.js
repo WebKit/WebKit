@@ -790,7 +790,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             buffer.setAttribute("style", obj.description);
             for (var i = 0; i < buffer.style.length; i++) {
                 var property = buffer.style[i];
-                if (isAllowedProperty(property))
+                if (isAllowedProperty(property) && isAllowedValue(buffer.style[property]))
                     currentStyle[property] = buffer.style[property];
             }
         }
@@ -802,6 +802,12 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                     return true;
             }
             return false;
+        }
+
+        function isAllowedValue(value) {
+            if (value.startsWith("url") || value.startsWith("src"))
+                return false;
+            return true;
         }
 
         // Firebug uses %o for formatting objects.
