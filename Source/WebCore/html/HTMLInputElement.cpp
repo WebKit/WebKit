@@ -1701,7 +1701,8 @@ void HTMLInputElement::resetListAttributeTargetObserver()
 
 void HTMLInputElement::dataListMayHaveChanged()
 {
-    m_inputType->dataListMayHaveChanged();
+    auto protectedInputType = m_inputType;
+    protectedInputType->dataListMayHaveChanged();
 }
 
 bool HTMLInputElement::isFocusingWithDataListDropdown() const
