@@ -69,15 +69,18 @@ void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePor
 void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
     m_inProcessPortMessages.add(local, Vector<MessageWithMessagePorts> { });
-    ASSERT(!m_inProcessPortMessages.get(local).size());
 
     networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::EntangleLocalPortInThisProcessToRemote { local, remote }, 0);
 }
 
 void WebMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier& port)
 {
-    auto inProcessPortMessages = m_inProcessPortMessages.take(port);
     networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::MessagePortDisentangled { port }, 0);
+}
+
+void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::MessagePortIdentifier& port)
+{
+    auto inProcessPortMessages = m_inProcessPortMessages.take(port);
     for (auto& message : inProcessPortMessages)
         postMessageToRemote(WTFMove(message), port);
 }
@@ -112,6 +115,9 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
         WebProcess::singleton().messagesAvailableForPort(remoteTarget);
         return;
     }
+
+    for (auto& port : message.transferredPorts)
+        messagePortSentToRemote(port.first);
 
     networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
 }

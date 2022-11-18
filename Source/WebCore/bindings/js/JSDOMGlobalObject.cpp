@@ -51,10 +51,13 @@
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
 #include "JSWritableStream.h"
+#include "ProcessIdentifier.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "ShadowRealmGlobalScope.h"
+#include "SharedWorkerGlobalScope.h"
 #include "StructuredClone.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
@@ -70,6 +73,7 @@
 #include <JavaScriptCore/VMTrapsInlines.h>
 #include <JavaScriptCore/WasmStreamingCompiler.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -622,6 +626,22 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
     return wrapper;
 }
 
+String JSDOMGlobalObject::defaultAgentClusterID()
+{
+    return makeString(Process::identifier().toUInt64(), "-default");
+}
+
+String JSDOMGlobalObject::agentClusterID() const
+{
+#if ENABLE(SERVICE_WORKER)
+    // Service workers may run in process but they need to be in a separate agent cluster.
+    if (is<ServiceWorkerGlobalScope>(scriptExecutionContext()))
+        return makeString(Process::identifier().toUInt64(), "-serviceworker");
+#endif
+    if (is<SharedWorkerGlobalScope>(scriptExecutionContext()))
+        return makeString(Process::identifier().toUInt64(), "-sharedworker");
+    return defaultAgentClusterID();
+}
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)
 {

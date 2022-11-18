@@ -36,6 +36,8 @@ class WebMessagePortChannelProvider final : public WebCore::MessagePortChannelPr
 public:
     static WebMessagePortChannelProvider& singleton();
 
+    void messagePortSentToRemote(const WebCore::MessagePortIdentifier&);
+
 private:
     WebMessagePortChannelProvider();
     ~WebMessagePortChannelProvider() final;
