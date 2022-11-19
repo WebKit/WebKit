@@ -205,7 +205,7 @@ public:
     
     typename WebPageProxyMap::ValuesConstIteratorRange pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
-    unsigned provisionalPageCount() const { return m_provisionalPages.computeSize(); }
+    unsigned provisionalPageCount() const;
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
     void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.

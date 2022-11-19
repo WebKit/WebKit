@@ -100,13 +100,14 @@ public:
             delete this;
     }
 
-    RefPtr<T> makeStrongReferenceIfPossible() const
+    template<typename U>
+    RefPtr<U> get() const
     {
         Locker locker { m_lock };
         if (m_object) {
             // Calling the RefPtr constructor would call strongRef() and deadlock.
             ++m_strongReferenceCount;
-            return adoptRef(m_object);
+            return adoptRef(static_cast<U*>(m_object));
         }
         return nullptr;
     }
@@ -133,12 +134,15 @@ class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr {
     WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr);
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using ThreadSafeWeakPtrCheck = std::true_type;
     void ref() const { m_controlBlock.strongRef(); }
     void deref() const { m_controlBlock.template strongDeref<destructionThread>(); }
 protected:
     ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr() = default;
 private:
     template<typename> friend class ThreadSafeWeakPtr;
+    template<typename, typename> friend struct WeakHashSetTraits;
+    template<typename, typename, typename> friend struct WeakHashSetBase;
     ThreadSafeWeakPtrControlBlock<T>& m_controlBlock { *new ThreadSafeWeakPtrControlBlock<T>(static_cast<T&>(*this)) };
 };
 
@@ -213,7 +217,7 @@ public:
         return *this;
     }
 
-    RefPtr<T> get() const { return m_controlBlock->makeStrongReferenceIfPossible(); }
+    RefPtr<T> get() const { return m_controlBlock->template get<T>(); }
 
 private:
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>

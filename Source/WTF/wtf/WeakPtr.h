@@ -146,7 +146,7 @@ public:
 
 private:
     template<typename, typename, typename> friend class WeakHashMap;
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+    template<typename, typename, typename> friend struct WeakHashSetBase;
     template<typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakPtrFactory;
 
@@ -243,7 +243,7 @@ public:
     void setBitfield(uint16_t value) const { return m_impl.setType(value); }
 
 private:
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+    template<typename, typename, typename> friend struct WeakHashSetBase;
     template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename> friend class WeakPtr;
 

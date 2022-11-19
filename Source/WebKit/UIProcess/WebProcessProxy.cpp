@@ -2125,6 +2125,11 @@ void WebProcessProxy::sendPermissionChanged(WebCore::PermissionName permissionNa
     send(Messages::WebPermissionController::permissionChanged(permissionName, topOrigin), 0);
 }
 
+unsigned WebProcessProxy::provisionalPageCount() const
+{
+    return m_provisionalPages.computeSize();
+}
+
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
 {
     auto appendCount = [&ts](unsigned value, ASCIILiteral description) {
