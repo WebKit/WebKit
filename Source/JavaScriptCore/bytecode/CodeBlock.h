@@ -522,6 +522,12 @@ public:
 #if ENABLE(JIT)
     SimpleJumpTable& baselineSwitchJumpTable(int tableIndex);
     StringJumpTable& baselineStringSwitchJumpTable(int tableIndex);
+    void setBaselineJITData(std::unique_ptr<BaselineJITData>&& jitData)
+    {
+        ASSERT(!m_jitData);
+        WTF::storeStoreFence(); // m_jitData is accessed from concurrent GC threads.
+        m_jitData = jitData.release();
+    }
     BaselineJITData* baselineJITData()
     {
         if (!JITCode::isOptimizingJIT(jitType()))
@@ -533,6 +539,7 @@ public:
     void setDFGJITData(std::unique_ptr<DFG::JITData>&& jitData)
     {
         ASSERT(!m_jitData);
+        WTF::storeStoreFence(); // m_jitData is accessed from concurrent GC threads.
         m_jitData = jitData.release();
     }
 
