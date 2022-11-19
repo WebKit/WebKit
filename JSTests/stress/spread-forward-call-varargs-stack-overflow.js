@@ -1,4 +1,5 @@
 //@ skip if $model == "Apple Watch Series 3" # Takes very long time to reproduce failure.
+//@ $skipModes << :lockdown if $buildType == "debug"
 
 function assert(b) {
     if (!b)

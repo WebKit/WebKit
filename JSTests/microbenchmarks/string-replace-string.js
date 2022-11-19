@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function test(a, b, c)
 {
     return a.replace(b, c);

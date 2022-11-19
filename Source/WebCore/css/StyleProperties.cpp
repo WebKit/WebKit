@@ -717,52 +717,26 @@ String StyleProperties::fontVariantValue() const
 
 String StyleProperties::fontSynthesisValue() const
 {
-    StringBuilder result;
-
-    auto getExplicitLonghandValue = [&](CSSPropertyID propertyID) -> CSSValue* {
-        auto foundPropertyIndex = findPropertyIndex(propertyID);
-        if (foundPropertyIndex == -1)
-            return nullptr;
-
-        auto property = propertyAt(foundPropertyIndex);
-        if (property.isImplicit())
-            return nullptr;
-
-        return property.value();
-    };
-
     // font-synthesis: none | [ weight || style || small-caps ]
-    auto weightValue = getExplicitLonghandValue(CSSPropertyFontSynthesisWeight);
-    auto styleValue = getExplicitLonghandValue(CSSPropertyFontSynthesisStyle);
-    auto capsValue = getExplicitLonghandValue(CSSPropertyFontSynthesisSmallCaps);
+    auto weight = propertyAsValueID(CSSPropertyFontSynthesisWeight).value_or(CSSValueInvalid);
+    auto style = propertyAsValueID(CSSPropertyFontSynthesisStyle).value_or(CSSValueInvalid);
+    auto caps = propertyAsValueID(CSSPropertyFontSynthesisSmallCaps).value_or(CSSValueInvalid);
 
-    auto weightValueID = valueID(weightValue);
-    auto styleValueID = valueID(styleValue);
-    auto capsValueID = valueID(capsValue);
-
-    if (weightValueID != CSSValueInvalid && weightValueID == styleValueID && weightValueID == capsValueID) {
-        // Handle `none` or CSS wide-keywords.
-        if (weightValue->isCSSWideKeyword() || weightValueID == CSSValueNone)
-            return weightValue->cssText();
-    }
+    // Handle `none` or CSS wide-keywords that are common to all longhands.
+    if ((isCSSWideKeyword(weight) || weight == CSSValueNone) && weight == style && weight == caps)
+        return nameString(weight);
 
     // If one of the longhands is a CSS-wide keyword but not all of them are, this is not a valid shorthand.
-    if ((weightValue && weightValue->isCSSWideKeyword()) || (styleValue && styleValue->isCSSWideKeyword()) || (capsValue && capsValue->isCSSWideKeyword()))
-        return String();
+    if (isCSSWideKeyword(weight) || isCSSWideKeyword(style) || isCSSWideKeyword(caps))
+        return emptyString();
 
-    auto appendWithPrefixIfNeeded = [&](ASCIILiteral word) {
-        if (!result.isEmpty())
-            result.append(' ');
-        result.append(word);
-    };
-
-    if (weightValueID == CSSValueAuto)
-        appendWithPrefixIfNeeded("weight"_s);
-    if (styleValueID == CSSValueAuto)
-        appendWithPrefixIfNeeded("style"_s);
-    if (capsValueID == CSSValueAuto)
-        appendWithPrefixIfNeeded("small-caps"_s);
-
+    StringBuilder result;
+    if (weight == CSSValueAuto)
+        result.append("weight"_s);
+    if (style == CSSValueAuto)
+        result.append(result.isEmpty() ? "" : " ", "style"_s);
+    if (caps == CSSValueAuto)
+        result.append(result.isEmpty() ? "" : " ", "small-caps"_s);
     return result.toString();
 }
 

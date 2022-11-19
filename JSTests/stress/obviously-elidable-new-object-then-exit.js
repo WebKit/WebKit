@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function sumOfArithSeries(limit) {
     return limit * (limit + 1) / 2;
 }

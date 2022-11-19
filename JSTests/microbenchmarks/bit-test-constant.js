@@ -1,6 +1,5 @@
 //@ skip if not $jitTests
-if (typeof $vm != "undefined" && !$vm.useJIT())
-    $vm.exit();
+//@ $skipModes << :lockdown
 
 let glob = 0
 

@@ -151,7 +151,7 @@ public:
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(BufferMemoryHandle, m_size); }
     Lock& lock() { return m_lock; }
 
-    void resizeToSize(size_t size, std::memory_order order = std::memory_order_seq_cst)
+    void updateSize(size_t size, std::memory_order order = std::memory_order_seq_cst)
     {
         m_size.store(size, order);
     }

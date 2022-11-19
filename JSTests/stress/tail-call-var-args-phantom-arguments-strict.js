@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 "use strict";
 
 function shouldBe(actual, expected) {

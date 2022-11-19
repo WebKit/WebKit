@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function findFoo(name, array, bail) {
     let some = array.some
     if (bail)

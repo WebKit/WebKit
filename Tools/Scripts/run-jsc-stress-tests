@@ -1500,7 +1500,7 @@ def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
         runDefaultCfg(cfg, *optionalTestSpecificOptions)
         runBytecodeCacheCfg(cfg, *optionalTestSpecificOptions)
         runMiniModeCfg(cfg, *optionalTestSpecificOptions)
-        runLockdownCfg(cfg, *optionalTestSpecificOptions)
+        runLockdownCfg(cfg, *optionalTestSpecificOptions) unless $skipModes.include?(:lockdown)
         if $jitTests
             if not subsetOptions.has_key?(:skipNoLLInt)
                 runNoLLIntCfg(cfg, *optionalTestSpecificOptions)
@@ -2390,7 +2390,7 @@ def handleCollectionDirectory(collection)
             | path |
             
             $benchmark = path.basename
-            
+            $skipModes = Set.new
             $runCommandOptions = {}
             $testSpecificRequiredOptions = []
             defaultRun unless parseRunCommands

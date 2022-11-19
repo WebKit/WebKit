@@ -1,5 +1,6 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 //@ skip if $architecture == "x86"
+//@ $skipModes << :lockdown if $buildType == "debug"
 
 // The type of arrayObject is polymorphic, but the access we do on it are not.
 function nonPolymorphicUint8ClampedArraySetter(arrayObject, isTypedArray) {

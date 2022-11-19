@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 "use strict";
 
 // Copyright 2006-2008 the V8 project authors. All rights reserved.

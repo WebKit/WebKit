@@ -1,4 +1,5 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
+//@ $skipModes << :lockdown if $buildType == "debug"
 //@ requireOptions("--useDataICInFTL=true", "--useDataICSharing=true")
 
 // Copyright 2006-2008 the V8 project authors. All rights reserved.

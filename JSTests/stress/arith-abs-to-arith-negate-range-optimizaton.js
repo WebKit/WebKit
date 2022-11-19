@@ -1,10 +1,8 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
 //@ requireOptions("--forceUnlinkedDFG=0")
 //@ defaultNoEagerRun
 "use strict";
-
-if (typeof $vm != "undefined" && !$vm.useJIT())
-    $vm.exit();
 
 // Checked int_min < value < 0
 function opaqueCheckedBetweenIntMinAndZeroExclusive(arg) {
