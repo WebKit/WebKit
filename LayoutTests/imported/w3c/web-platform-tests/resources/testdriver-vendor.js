@@ -316,8 +316,10 @@ window.test_driver_internal.delete_all_cookies = function(context=null)
 {
     if (!window.testRunner)
         return Promise.reject(new Error("unimplemented"));
-    testRunner.removeAllCookies();
-    return Promise.resolve();
+
+    return new Promise((resolve) => {
+        testRunner.removeAllCookies(resolve);
+    });
 }
 
 window.test_driver_internal.generate_test_report = function(message, context=null)

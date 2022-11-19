@@ -2958,6 +2958,7 @@ xml/parser/XMLDocumentParserScope.cpp
 
 // Derived Sources
 
+CSSPropertyParsing.cpp
 CSSValueKeywords.cpp
 ColorData.cpp
 EventFactory.cpp

@@ -56,10 +56,9 @@
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "StyleProperties.h"
+#include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include "css/StyleRule.h"
-
 #include <bitset>
 #include <memory>
 
@@ -69,7 +68,6 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, StyleSheetContents
     : m_context(context)
     , m_styleSheet(styleSheet)
 {
-    
 }
 
 CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& string, StyleSheetContents* styleSheet, CSSParserObserverWrapper* wrapper)

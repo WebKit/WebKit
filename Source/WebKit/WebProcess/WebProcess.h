@@ -460,6 +460,7 @@ private:
 
     void fetchWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData&&)>&&);
     void deleteWebsiteData(OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
+    void deleteAllCookies(CompletionHandler<void()>&&);
 
     void setMemoryCacheDisabled(bool);
 

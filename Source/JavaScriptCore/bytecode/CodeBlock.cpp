@@ -816,7 +816,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
             }
             }
         }
-        m_jitData = baselineJITData.release();
+        setBaselineJITData(WTFMove(baselineJITData));
     }
 
     switch (codeType()) {

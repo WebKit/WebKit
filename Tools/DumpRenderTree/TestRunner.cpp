@@ -268,8 +268,11 @@ static JSValueRef removeAllVisitedLinksCallback(JSContextRef context, JSObjectRe
 
 static JSValueRef removeAllCookiesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->removeAllCookies();
+    controller->removeAllCookies(JSValueToObject(context, arguments[0], 0));
     return JSValueMakeUndefined(context);
 }
 

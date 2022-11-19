@@ -9,27 +9,27 @@ PASS Cookie with %x6 in name is rejected.
 PASS Cookie with %x7 in name is rejected.
 PASS Cookie with %x8 in name is rejected.
 PASS Cookie with %x9 in name is accepted.
-FAIL Cookie with %xa in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %xb in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %xc in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %xd in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %xe in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %xf in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x10 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x11 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x12 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x13 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x14 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x15 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x16 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x17 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x18 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x19 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x1a in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x1b in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x1c in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x1d in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x1e in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x1f in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
-FAIL Cookie with %x7f in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
+PASS Cookie with %xa in name is rejected.
+PASS Cookie with %xb in name is rejected.
+PASS Cookie with %xc in name is rejected.
+PASS Cookie with %xd in name is rejected.
+PASS Cookie with %xe in name is rejected.
+PASS Cookie with %xf in name is rejected.
+PASS Cookie with %x10 in name is rejected.
+PASS Cookie with %x11 in name is rejected.
+PASS Cookie with %x12 in name is rejected.
+PASS Cookie with %x13 in name is rejected.
+PASS Cookie with %x14 in name is rejected.
+PASS Cookie with %x15 in name is rejected.
+PASS Cookie with %x16 in name is rejected.
+PASS Cookie with %x17 in name is rejected.
+PASS Cookie with %x18 in name is rejected.
+PASS Cookie with %x19 in name is rejected.
+PASS Cookie with %x1a in name is rejected.
+PASS Cookie with %x1b in name is rejected.
+PASS Cookie with %x1c in name is rejected.
+PASS Cookie with %x1d in name is rejected.
+PASS Cookie with %x1e in name is rejected.
+PASS Cookie with %x1f in name is rejected.
+PASS Cookie with %x7f in name is rejected.
 

@@ -52,6 +52,7 @@
 #import <WebCore/WebCoreJITOperations.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/text/TextEncodingRegistry.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Compiler.h>
 #import <wtf/MainThread.h>
 #import <wtf/OptionSet.h>
@@ -2916,9 +2917,11 @@ static RetainPtr<NSString>& classIBCreatorID()
     CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 }
 
-+ (void)_clearNetworkLoaderSession
++ (void)_clearNetworkLoaderSession:(void (^)(void))completionHandler
 {
-    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies([] { });
+    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies([completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
 }
 
 - (void)_setBoolPreferenceForTestingWithValue:(BOOL)value forKey:(NSString *)key

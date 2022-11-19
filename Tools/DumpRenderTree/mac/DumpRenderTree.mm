@@ -899,7 +899,7 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
         [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLayoutFormattingContextEnabled"];
     }];
 
-    [WebPreferences _clearNetworkLoaderSession];
+    [WebPreferences _clearNetworkLoaderSession:^{ }];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
 

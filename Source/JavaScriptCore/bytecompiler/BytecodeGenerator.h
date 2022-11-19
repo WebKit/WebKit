@@ -1290,7 +1290,16 @@ namespace JSC {
         Vector<std::pair<FunctionMetadataNode*, FunctionVariableType>> m_functionsToInitialize;
         bool m_needToInitializeArguments { false };
         RestParameterNode* m_restParameter { nullptr };
-        
+
+        struct AsyncFuncParametersTryCatchInfo {
+            RefPtr<Label> catchStartLabel { nullptr };
+            RefPtr<RegisterID> thrownValue { nullptr };
+        }; 
+        std::optional<AsyncFuncParametersTryCatchInfo> m_asyncFuncParametersTryCatchInfo;
+
+        template<typename EmitBytecodeFunctor>
+        void asyncFuncParametersTryCatchWrap(const EmitBytecodeFunctor&);
+
         Vector<TryRange> m_tryRanges;
         SegmentedVector<TryData, 8> m_tryData;
 

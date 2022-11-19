@@ -200,6 +200,7 @@ public:
     // null checks in WebPageProxy.
     WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID).get(); }
 
+    void forEachProcessForSession(PAL::SessionID, const Function<void(WebProcessProxy&)>&);
     template<typename T> void sendToAllProcesses(const T& message);
     template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
 
@@ -847,14 +848,9 @@ void WebProcessPool::sendToAllProcesses(const T& message)
 template<typename T>
 void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::SessionID sessionID)
 {
-    for (auto& process : m_processes) {
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-        if (process->isCrashyProcess())
-            continue;
-#endif
-        if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
-            process->send(T(message), 0);
-    }
+    forEachProcessForSession(sessionID, [&](auto& process) {
+        process.send(T(message), 0);
+    });
 }
 
 template<typename T>

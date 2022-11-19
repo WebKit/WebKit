@@ -32,6 +32,12 @@
 #include <TargetConditionals.h>
 #endif
 
+/* PAS_CPU() - the target CPU architecture */
+#define PAS_CPU(FEATURE) (defined PAS_CPU_##FEATURE  && PAS_CPU_##FEATURE)
+
+/* PAS_HAVE() - specific system features (headers, functions or similar) that are present or not */
+#define PAS_HAVE(FEATURE) (defined PAS_HAVE_##FEATURE && PAS_HAVE_##FEATURE)
+
 /* PAS_COMPILER() - the target compiler */
 #define PAS_COMPILER(FEATURE) (defined PAS_COMPILER_##FEATURE  && PAS_COMPILER_##FEATURE)
 
@@ -172,6 +178,19 @@
 
 #if defined(__SCE__)
 #define PAS_PLATFORM_PLAYSTATION 1
+#endif
+
+#if PAS_COMPILER(GCC_COMPATIBLE)
+/* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
+#if __SIZEOF_POINTER__ == 8
+#define PAS_CPU_ADDRESS64 1
+#elif __SIZEOF_POINTER__ == 4
+#define PAS_CPU_ADDRESS32 1
+#else
+#error "Unsupported pointer width"
+#endif
+#else
+#error "Unsupported compiler for libpas"
 #endif
 
 #endif /* PAS_PLATFORM_H */

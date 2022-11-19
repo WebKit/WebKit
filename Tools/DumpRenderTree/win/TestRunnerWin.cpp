@@ -49,6 +49,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Scope.h>
 #include <wtf/Vector.h>
 
 using std::string;
@@ -736,8 +737,16 @@ void TestRunner::dispatchPendingLoadRequests()
     viewPrivate->dispatchPendingLoadRequests();
 }
 
-void TestRunner::removeAllCookies()
+void TestRunner::removeAllCookies(JSValueRef callback)
 {
+    static uint64_t callbackIDGenerator = 0;
+    auto callbackID = ++callbackIDGenerator;
+    cacheTestRunnerCallback(callbackID, callback);
+
+    auto scope = makeScopeExit([&] {
+        callTestRunnerCallback(callbackID);
+    });
+
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
         return;
