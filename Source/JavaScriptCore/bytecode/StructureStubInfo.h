@@ -102,8 +102,8 @@ public:
     }
 
     StructureStubInfo()
-    {
-    }
+        : StructureStubInfo(AccessType::GetById, { })
+    { }
 
     ~StructureStubInfo();
 
