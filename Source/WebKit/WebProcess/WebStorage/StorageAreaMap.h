@@ -72,26 +72,25 @@ public:
 
     void connect();
     void disconnect();
-
     void incrementUseCount();
     void decrementUseCount();
 
 private:
-    void didSetItem(uint64_t mapSeed, const String& key, bool quotaError);
+    void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didRemoveItem(uint64_t mapSeed, const String& key);
     void didClear(uint64_t mapSeed);
 
+    // Message handlers.
     void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString, uint64_t messageIdentifier);
     void clearCache(uint64_t messageIdentifier);
 
-    void resetValues();
+    void syncOneItem(const String& key, const String& value);
+    void syncItems(HashMap<String, String>&&);
     WebCore::StorageMap& ensureMap();
     WebCore::StorageType computeStorageType() const;
     WebCore::ClientOrigin clientOrigin() const;
 
-    bool shouldApplyChangeForKey(const String& key) const;
     void applyChange(const String& key, const String& newValue);
-
     void dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
     void dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
