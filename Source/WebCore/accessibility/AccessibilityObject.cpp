@@ -2227,7 +2227,7 @@ bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
     Node* node = this->node();
     return is<Element>(node) && downcast<Element>(*node).hasTagName(tagName);
 }
-    
+
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 {
     RefPtr element = this->element();
@@ -3006,7 +3006,7 @@ bool AccessibilityObject::supportsPosInSet() const
 {
     return hasAttribute(aria_posinsetAttr);
 }
-    
+
 int AccessibilityObject::setSize() const
 {
     return getIntegralAttribute(aria_setsizeAttr);

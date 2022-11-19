@@ -6,49 +6,56 @@
 </head>
 <body>
 
-<ul id="list">
-    <li id="first-list-item" aria-setsize="100" aria-posinset="3">3</li>
-    <li id="second-list-item">4</li>
+<ul id="list" aria-setsize="100">
+    <li id="item1" aria-posinset="3">3</li>
+    <li id="item2">4</li>
 </ul>
 
 <script>
-    var testOutput = "This tests verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.\n\n";
+    let output = "This test verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.\n\n";
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        var firstListItem = accessibilityController.accessibleElementById("first-list-item");
-        var secondListItem = accessibilityController.accessibleElementById("second-list-item");
+        var axList = accessibilityController.accessibleElementById("list");
+        output += "Verify that the list supports setsize.\n";
+        output += expect("axList.isAttributeSupported('AXARIASetSize')", "true");
+        output += "Verify that the list returns the correct value for setsize.\n";
+        output += expect("axList.numberAttributeValue('AXARIASetSize')", "100");
 
-        testOutput += "\nVerify that the first item in the list exposes setsize and posinset attributes.\n";
-        testOutput += expect("firstListItem.isAttributeSupported('AXARIASetSize')", "true");
-        testOutput += expect("firstListItem.isAttributeSupported('AXARIAPosInSet')", "true");
+        var axItem1 = accessibilityController.accessibleElementById("item1");
+        var axItem2 = accessibilityController.accessibleElementById("item2");
 
-        testOutput += "\nVerify that the first item in the list returns the correct value for setsize and posinset.\n";
-        testOutput += expect("firstListItem.numberAttributeValue('AXARIASetSize')", "100");
-        testOutput += expect("firstListItem.numberAttributeValue('AXARIAPosInSet')", "3");
+        output += "Verify that the first item in the list exposes posinset attributes.\n";
+        output += expect("axItem1.isAttributeSupported('AXARIAPosInSet')", "true");
+        output += expect("axItem1.numberAttributeValue('AXARIAPosInSet')", "3");
 
-        testOutput += "\nVerify that the second item in the list does not support setsize and posinset.\n";
-        testOutput += expect("secondListItem.isAttributeSupported('AXARIASetSize')", "false");
-        testOutput += expect("secondListItem.isAttributeSupported('AXARIAPosInSet')", "false");
+        output += "Verify that the second item in the list does not support setsize and posinset.\n";
+        output += expect("axItem2.isAttributeSupported('AXARIASetSize')", "false");
+        output += expect("axItem2.isAttributeSupported('AXARIAPosInSet')", "false");
 
-        testOutput += "\nUpdating aria-posinset to 4 for element #first-list-item.\n";
-        document.getElementById("first-list-item").ariaPosInSet = "4";
+        output += "Update aria-posinset to 4 for the item1.\n";
+        item1.ariaPosInSet = "4";
         setTimeout(async function() {
-            await waitFor(() => firstListItem.numberAttributeValue('AXARIAPosInSet') === 4);
-            testOutput += expect("firstListItem.numberAttributeValue('AXARIAPosInSet')", "4");
+            await waitFor(() => axItem1.numberAttributeValue('AXARIAPosInSet') === 4);
+            output += expect("axItem1.numberAttributeValue('AXARIAPosInSet')", "4");
 
-            testOutput += "\nUpdating aria-setsize to 101 for element #first-list-item.\n";
-            document.getElementById("first-list-item").ariaSetSize = "101";
-            await waitFor(() => firstListItem.numberAttributeValue("AXARIASetSize") === 101);
-            testOutput += expect("firstListItem.numberAttributeValue('AXARIASetSize')", "101");
+            output += "Update aria-setsize to 101.\n";
+            list.ariaSetSize = "101";
+            await waitFor(() => axList.numberAttributeValue("AXARIASetSize") === 101);
+            output += expect("axList.numberAttributeValue('AXARIASetSize')", "101");
 
-            document.getElementById("list").style.visibility = 'hidden';
-            debug(testOutput);
+            output += "Set aria-setsize to -1 and verify that the list still exposes the number of items.\n";
+            list.ariaSetSize = "-1";
+            await waitFor(() => axList.numberAttributeValue("AXARIASetSize") === -1);
+            output += expect("axList.numberAttributeValue('AXARIASetSize')", "-1");
+            output += expect("axList.isAttributeSupported('AXARIASetSize')", "true");
+
+            list.style.visibility = 'hidden';
+            debug(output);
             finishJSTest();
         }, 0);
     }
 </script>
 </body>
 </html>
-
