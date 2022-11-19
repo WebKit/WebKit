@@ -36,8 +36,8 @@
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WTF {
 class PrintStream;
@@ -94,7 +94,7 @@ public:
     bool copy(uint32_t, uint32_t, uint32_t);
     bool init(uint32_t, const uint8_t*, uint32_t);
 
-    void registerInstance(Instance*);
+    void registerInstance(Instance&);
 
     void check() {  ASSERT(!deletionHasBegun()); }
 
@@ -113,7 +113,7 @@ private:
     Ref<BufferMemoryHandle> m_handle;
     RefPtr<SharedArrayBufferContents> m_shared;
     WTF::Function<void(GrowSuccess, PageCount, PageCount)> m_growSuccessCallback;
-    Vector<WeakPtr<Instance>> m_instances;
+    Vector<ThreadSafeWeakPtr<Instance>> m_instances;
 };
 
 } } // namespace JSC::Wasm

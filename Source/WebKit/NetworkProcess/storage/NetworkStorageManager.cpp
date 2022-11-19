@@ -945,19 +945,21 @@ void NetworkStorageManager::cloneSessionStorageNamespace(IPC::Connection& connec
     }
 }
 
-void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    bool hasQuotaError = false;
+    bool hasError = false;
+    HashMap<String, String> allItems;
     auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
-        return completionHandler(hasQuotaError);
+        return completionHandler(hasError, WTFMove(allItems));
 
     auto result = storageArea->setItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(value), WTFMove(urlString));
-    if (!result)
-        hasQuotaError = (result.error() == StorageError::QuotaExceeded);
-    completionHandler(hasQuotaError);
+    hasError = !result;
+    if (hasError)
+        allItems = storageArea->allItems();
+    completionHandler(hasError, WTFMove(allItems));
 
     writeOriginToFileIfNecessary(storageArea->origin(), storageArea);
 }

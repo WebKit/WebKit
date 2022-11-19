@@ -194,29 +194,6 @@ svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ ImageOnlyFailure ]
 svg/as-background-image/background-image-preserveaspectRatio-support.html [ ImageOnlyFailure ]
 svg/as-image/img-preserveAspectRatio-support-1.html                       [ ImageOnlyFailure ]
 
-# getBBox() / getBoundingClientRect() / getCTM() / getScreenCTM() / getIntersectionList / etc. return incorrect results
-svg/animations/fill-remove-support.html                     [ Failure ]
-svg/custom/getBoundingClientRect.xhtml                      [ Failure ]
-svg/custom/getClientRects.xhtml                             [ Failure ]
-svg/custom/getTransformToElement.svg                        [ Failure ]
-svg/custom/getscreenctm-in-mixed-content.xhtml              [ Failure ]
-svg/custom/getscreenctm-in-mixed-content2.xhtml             [ Failure ]
-svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ Failure ]
-svg/custom/getscreenctm-in-scrollable-div-area.xhtml        [ Failure ]
-svg/custom/getscreenctm-in-scrollable-svg-area.xhtml        [ Failure ]
-svg/custom/intersection-list-clipping.svg                   [ Failure ]
-svg/custom/svgsvgelement-ctm.xhtml                          [ Failure ]
-svg/custom/svgsvgelement-ctm2.xhtml                         [ Failure ]
-svg/custom/svgsvgelement-ctm3.xhtml                         [ Failure ]
-svg/custom/svgsvgelement-ctm4.xhtml                         [ Failure ]
-svg/custom/svgsvgelement-ctm5.xhtml                         [ Failure ]
-svg/custom/text-ctm.svg                                     [ Failure ]
-svg/dom/SVGLocatable-getCTM-svg-root.html                   [ Failure ]
-svg/dom/css-transforms.xhtml                                [ Failure ]
-svg/zoom/page/zoom-get-screen-ctm.html                      [ Failure ]
-svg/zoom/page/zoom-getBoundingClientRect.xhtml              [ Failure ]
-svg/zoom/page/zoom-zoom-coords.xhtml                        [ Failure ]
-
 # General repainting issue
 svg/custom/js-repaint-rect-on-path-with-stroke.svg [ Failure ]
 
@@ -468,6 +445,7 @@ svg/clip-path/opacity-assertion.svg                 [ ImageOnlyFailure ]
 svg/clip-path/svg-in-html.html                      [ ImageOnlyFailure ]
 svg/clip-path/webkit-clip-path-after.svg            [ ImageOnlyFailure ]
 svg/clip-path/webkit-clip-path-before.svg           [ ImageOnlyFailure ]
+svg/custom/intersection-list-clipping.svg           [ Failure ]
 svg/custom/js-late-clipPath-and-object-creation.svg [ Failure ]
 svg/custom/js-late-clipPath-creation.svg            [ Failure ]
 svg/custom/local-url-reference-clip-path.html       [ ImageOnlyFailure ]
@@ -538,13 +516,9 @@ svg/text/select-x-list-with-tspans-1.svg                  [ Failure ]
 svg/text/select-x-list-with-tspans-2.svg                  [ Failure ]
 svg/text/select-x-list-with-tspans-3.svg                  [ Failure ]
 svg/text/select-x-list-with-tspans-4.svg                  [ Failure ]
-svg/text/selection-doubleclick.svg                        [ ImageOnlyFailure ]
 
-# Transforming inner svg elements has issues
+# TODO: Test needs to be adapted (see test), then it will pass with LBSE, but fail legacy -- leaving it as-is for now.
 svg/transforms/svgsvgelement-transform.svg [ ImageOnlyFailure ]
-
-# Transform + relative values issues
-svg/transforms/percent-transform-values.xhtml [ Failure ]
 
 # Outline / focus-ring support
 svg/custom/focus-ring.svg         [ Failure ]
@@ -555,7 +529,6 @@ svg/text/text-outline-rgba.html   [ ImageOnlyFailure ]
 svg/hittest/text-multiple-dx-values.svg    [ ImageOnlyFailure ]
 svg/hittest/text-with-multiple-tspans.svg  [ ImageOnlyFailure ]
 svg/hittest/text-with-text-path.svg        [ ImageOnlyFailure ]
-svg/text/text-rescale.html                 [ ImageOnlyFailure ]
 svg/text/scaled-font.svg                   [ ImageOnlyFailure ]
 
 # Text rendering has issues with CSS 'visibility'
@@ -582,7 +555,6 @@ svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]
 svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
 
 # SMIL animation not correctly updastes (repainting issue only?)
-svg/W3C-SVG-1.1/animate-elem-08-t.svg                     [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-30-t.svg                     [ ImageOnlyFailure ]
 svg/animations/animateMotion-additive-1.svg               [ ImageOnlyFailure ]
 svg/animations/animated-string-href.svg                   [ ImageOnlyFailure ]
@@ -671,4 +643,10 @@ svg/W3C-SVG-1.1/text-intro-03-b.svg                         [ Pass ]
 svg/W3C-SVG-1.1/text-intro-04-t.svg                         [ Pass ]
 svg/W3C-SVG-1.1/text-text-06-t.svg                          [ Pass ]
 svg/resource-invalidation/mask-resource-invalidation.html   [ Pass ]
+svg/transforms/animated-path-inside-transformed-html.xhtml  [ Pass ]
+svg/transforms/layout-tiny-elements-in-scaled-group.svg     [ Pass ]
+svg/transforms/rotation-origin-in-small-units.svg           [ Pass ]
+svg/transforms/rotation-tiny-element-in-group.svg           [ Pass ]
+svg/transforms/transformed-child-in-container.svg           [ Pass ImageOnlyFailure ]
 svg/transforms/transformed-text-fill-gradient.html          [ Pass ]
+svg/transforms/translation-tiny-element.svg                 [ Pass ]

@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
+#include "WebMessagePortChannelProvider.h"
 #include "WebProcess.h"
 #include "WebSharedWorkerServerConnectionMessages.h"
 #include <WebCore/ProcessIdentifier.h>
@@ -56,6 +57,7 @@ IPC::Connection* WebSharedWorkerObjectConnection::messageSenderConnection() cons
 void WebSharedWorkerObjectConnection::requestSharedWorker(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, const WebCore::WorkerOptions& workerOptions)
 {
     CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
+    WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
     send(Messages::WebSharedWorkerServerConnection::RequestSharedWorker { sharedWorkerKey, sharedWorkerObjectIdentifier, WTFMove(port), workerOptions });
 }
 

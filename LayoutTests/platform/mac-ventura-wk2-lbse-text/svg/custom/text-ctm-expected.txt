@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (70,55.50) size 44x19
+  RenderSVGTransformableContainer {g} at (70,55.50) size 43.56x18.50
+layer at (0,0) size 800x601 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGViewportContainer {svg} at (-70,-55.50) size 800x600
+layer at (70,55.50) size 44x18
+  RenderSVGText {text} at (70,55) size 44x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 44x19
+      chunk 1 text run 1 at (70.00,70.00) startOffset 0 endOffset 6 width 43.55: "Passed"

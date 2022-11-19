@@ -20,8 +20,10 @@
 #pragma once
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderAncestorIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
+#include "RenderSVGViewportContainer.h"
 #include "TransformState.h"
 #include <wtf/MathExtras.h>
 
@@ -39,22 +41,67 @@ public:
 
     AffineTransform computeAccumulatedTransform(const RenderLayerModelObject* stopAtRenderer, TransformState::TransformMatrixTracking trackingMode) const
     {
+        // The mapping into parent coordinate systems stops at this renderer,
+        // as mapLocalContainer exits if "ancestorContainer == this" is fulfilled.
+        const RenderLayerModelObject* ancestorContainer = nullptr;
+
+        // Special handling of RenderSVGRoot, due to the way we implement the outermost <svg> element.
+        // When SVGSVGElement::getCTM()/getScreenCTM() is invoked, we want to use information from the
+        // anonymous RenderSVGViewportContainer (most noticeable: viewBox). Therefore we have to start
+        // calling mapLocalToContainer() starting from the anonymous RenderSVGViewportContainer, and
+        // not from its parent - RenderSVGRoot.
+        auto* renderer = &m_renderer;
+        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
+            renderer = svgRoot->viewportContainer();
+            if (trackingMode == TransformState::TrackSVGCTMMatrix)
+                ancestorContainer = svgRoot;
+            else
+                ASSERT(!stopAtRenderer);
+        } else if (trackingMode == TransformState::TrackSVGCTMMatrix) {
+            // Only ever walk up to the anonymous RenderSVGViewportContainer (the first and only child of RenderSVGRoot).
+            // Proceeding up to RenderSVGRoot would include border/padding/margin information which shouldn't be included for getCTM() (unlike getScreenCTM()).
+            if (!stopAtRenderer) {
+                if (auto* svgRoot = ancestorsOfType<RenderSVGRoot>(*renderer).first())
+                    ancestorContainer = svgRoot->viewportContainer();
+            } else if (const auto* enclosingLayerRenderer = ancestorsOfType<RenderLayerModelObject>(*stopAtRenderer).first())
+                ancestorContainer = enclosingLayerRenderer;
+        } else if (trackingMode == TransformState::TrackSVGScreenCTMMatrix && stopAtRenderer) {
+            ASSERT(stopAtRenderer->isComposited());
+            ancestorContainer = ancestorsOfType<RenderLayerModelObject>(*stopAtRenderer).first();
+        }
+
         TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint { });
         transformState.setTransformMatrixTracking(trackingMode);
 
-        const RenderLayerModelObject* repaintContainer = nullptr;
-        if (stopAtRenderer && stopAtRenderer->parent()) {
-            if (auto* enclosingLayer = stopAtRenderer->parent()->enclosingLayer())
-                repaintContainer = &enclosingLayer->renderer();
+        renderer->mapLocalToContainer(ancestorContainer, transformState, { UseTransforms, ApplyContainerFlip });
+
+        if (trackingMode == TransformState::TrackSVGCTMMatrix) {
+            if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(m_renderer))
+                transformState.move(-toLayoutSize(svgRoot->contentBoxLocation()));
+            else if (ancestorContainer) {
+                // Continue to accumulate container offsets, excluding transforms, from the container of the current element ('ancestorContainer') up to RenderSVGRoot.
+                // The resulting TransformState is aligned with the 'nominalSVGLayoutLocation()' within the local coordinate system of the 'm_renderer'. (0, 0) in local
+                // coordinates is mapped to the top-left of the 'objectBoundingBoxWithoutTransforms()' of the SVG renderer.
+                if (auto* svgRoot = lineageOfType<RenderSVGRoot>(*ancestorContainer).first())
+                    ancestorContainer->mapLocalToContainer(svgRoot->viewportContainer(), transformState, { ApplyContainerFlip });
+            }
         }
 
-        m_renderer.mapLocalToContainer(repaintContainer, transformState, { UseTransforms, ApplyContainerFlip });
         transformState.flatten();
 
-        if (auto transform = transformState.releaseTrackedTransform())
-            return transform->toAffineTransform();
+        auto transform = transformState.releaseTrackedTransform();
+        if (!transform)
+            return { };
 
-        return { };
+        auto ctm = transform->toAffineTransform();
+
+        // When we've climbed the ancestor tree up to and including RenderSVGRoot, the CTM is aligned with the top-left of the renderers bounding box (= nominal SVG layout location).
+        // However, for getCTM/getScreenCTM we're supposed to align by the top-left corner of the enclosing "viewport element" -- correct for that.
+        if (m_renderer.isSVGRoot())
+            return ctm;
+
+        ctm.translate(-toFloatSize(m_renderer.nominalSVGLayoutLocation()));
+        return ctm;
     }
 
     float calculateScreenFontSizeScalingFactor() const
@@ -66,7 +113,7 @@ public:
         while (layer) {
             // We can stop at compositing layers, to match the backing resolution.
             if (layer->isComposited()) {
-                stopAtLayer = layer->parent();
+                stopAtLayer = layer;
                 break;
             }
 

@@ -86,6 +86,7 @@
 		5CC0EE7621629F1900A1A842 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE7421629F1900A1A842 /* URL.cpp */; };
 		5CC0EE892162BC2200A1A842 /* URLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE862162BC2200A1A842 /* URLCocoa.mm */; };
 		5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE882162BC2200A1A842 /* NSURLExtras.mm */; };
+		5CFF32572925A2EC001050F2 /* ThreadSafeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFF32562925A2EB001050F2 /* ThreadSafeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */; };
 		6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = 6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */; };
@@ -1154,6 +1155,7 @@
 		5CC0EE862162BC2200A1A842 /* URLCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = URLCocoa.mm; sourceTree = "<group>"; };
 		5CC0EE872162BC2200A1A842 /* NSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLExtras.h; sourceTree = "<group>"; };
 		5CC0EE882162BC2200A1A842 /* NSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSURLExtras.mm; sourceTree = "<group>"; };
+		5CFF32562925A2EB001050F2 /* ThreadSafeWeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeWeakPtr.h; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D247B6E14689C4700E78B76 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -2290,6 +2292,7 @@
 				5311BD591EA81A9600525281 /* ThreadMessage.h */,
 				A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */,
 				7B2739DC2624DAAA0040F182 /* ThreadSafetyAnalysis.h */,
+				5CFF32562925A2EB001050F2 /* ThreadSafeWeakPtr.h */,
 				4468567225094FE8008CCA05 /* ThreadSanitizerSupport.h */,
 				A8A4733F151A825B004123FF /* ThreadSpecific.h */,
 				0F66B2861DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp */,
@@ -3229,6 +3232,7 @@
 				DD3DC92227A4BF8E007E5B61 /* ThreadMessage.h in Headers */,
 				DD3DC96927A4BF8E007E5B61 /* ThreadSafeRefCounted.h in Headers */,
 				DD3DC97C27A4BF8E007E5B61 /* ThreadSafetyAnalysis.h in Headers */,
+				5CFF32572925A2EC001050F2 /* ThreadSafeWeakPtr.h in Headers */,
 				DD3DC90F27A4BF8E007E5B61 /* ThreadSanitizerSupport.h in Headers */,
 				DD3DC99327A4BF8E007E5B61 /* ThreadSpecific.h in Headers */,
 				DD3DC8CE27A4BF8E007E5B61 /* TimeWithDynamicClockType.h in Headers */,

@@ -42,10 +42,6 @@ namespace WebKit {
 //      Idle => !isInWindow => Waiting => become isInWindow => Active => Completed
 class NavigationSOAuthorizationSession : public SOAuthorizationSession, private WebViewDidMoveToWindowObserver {
 public:
-    using SOAuthorizationSession::weakPtrFactory;
-    using SOAuthorizationSession::WeakValueType;
-    using SOAuthorizationSession::WeakPtrImplType;
-
     ~NavigationSOAuthorizationSession();
 
 protected:

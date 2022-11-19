@@ -77,7 +77,7 @@ void RenderSVGBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& ac
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        rects.append(snappedIntRect(LayoutRect(accumulatedOffset + location(), size())));
+        rects.append(snappedIntRect(LayoutRect(accumulatedOffset, size())));
         return;
     }
 #else
@@ -91,7 +91,7 @@ void RenderSVGBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& ac
 
 void RenderSVGBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    quads.append(localToAbsoluteQuad(strokeBoundingBox(), UseTransforms, wasFixed));
+    quads.append(localToAbsoluteQuad(FloatRect { { }, size() }, UseTransforms, wasFixed));
 }
 
 void RenderSVGBlock::willBeDestroyed()
@@ -184,7 +184,7 @@ void RenderSVGBlock::mapLocalToContainer(const RenderLayerModelObject* ancestorC
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        RenderBlock::mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
+        mapLocalToSVGContainer(ancestorContainer, transformState, mode, wasFixed);
         return;
     }
 #else
@@ -210,7 +210,7 @@ LayoutSize RenderSVGBlock::offsetFromContainer(RenderElement& container, const L
     ASSERT(!isInFlowPositioned());
     ASSERT(!isAbsolutelyPositioned());
     ASSERT(!isInline());
-    return LayoutSize();
+    return locationOffset();
 }
 #endif
 

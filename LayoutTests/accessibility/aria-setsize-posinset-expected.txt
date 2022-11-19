@@ -1,23 +1,22 @@
-This tests verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.
+This test verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.
 
-
-Verify that the first item in the list exposes setsize and posinset attributes.
-PASS: firstListItem.isAttributeSupported('AXARIASetSize') === true
-PASS: firstListItem.isAttributeSupported('AXARIAPosInSet') === true
-
-Verify that the first item in the list returns the correct value for setsize and posinset.
-PASS: firstListItem.numberAttributeValue('AXARIASetSize') === 100
-PASS: firstListItem.numberAttributeValue('AXARIAPosInSet') === 3
-
+Verify that the list supports setsize.
+PASS: axList.isAttributeSupported('AXARIASetSize') === true
+Verify that the list returns the correct value for setsize.
+PASS: axList.numberAttributeValue('AXARIASetSize') === 100
+Verify that the first item in the list exposes posinset attributes.
+PASS: axItem1.isAttributeSupported('AXARIAPosInSet') === true
+PASS: axItem1.numberAttributeValue('AXARIAPosInSet') === 3
 Verify that the second item in the list does not support setsize and posinset.
-PASS: secondListItem.isAttributeSupported('AXARIASetSize') === false
-PASS: secondListItem.isAttributeSupported('AXARIAPosInSet') === false
-
-Updating aria-posinset to 4 for element #first-list-item.
-PASS: firstListItem.numberAttributeValue('AXARIAPosInSet') === 4
-
-Updating aria-setsize to 101 for element #first-list-item.
-PASS: firstListItem.numberAttributeValue('AXARIASetSize') === 101
+PASS: axItem2.isAttributeSupported('AXARIASetSize') === false
+PASS: axItem2.isAttributeSupported('AXARIAPosInSet') === false
+Update aria-posinset to 4 for the item1.
+PASS: axItem1.numberAttributeValue('AXARIAPosInSet') === 4
+Update aria-setsize to 101.
+PASS: axList.numberAttributeValue('AXARIASetSize') === 101
+Set aria-setsize to -1 and verify that the list still exposes the number of items.
+PASS: axList.numberAttributeValue('AXARIASetSize') === -1
+PASS: axList.isAttributeSupported('AXARIASetSize') === true
 
 PASS successfullyParsed is true
 

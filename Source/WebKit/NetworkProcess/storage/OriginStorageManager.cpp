@@ -526,11 +526,12 @@ SessionStorageManager* OriginStorageManager::existingSessionStorageManager()
 
 IDBStorageManager& OriginStorageManager::idbStorageManager(IDBStorageRegistry& registry)
 {
-    return defaultBucket().idbStorageManager(registry, [quotaManager = WeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
-        if (!quotaManager)
+    return defaultBucket().idbStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+        auto strongReference = quotaManager.get();
+        if (!strongReference)
             return completionHandler(false);
 
-        quotaManager->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
+        strongReference->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
             completionHandler(decision == QuotaManager::Decision::Grant);
         });
     });

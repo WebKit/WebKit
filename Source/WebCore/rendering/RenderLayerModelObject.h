@@ -86,7 +86,7 @@ public:
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
 
-    void applySVGTransform(TransformationMatrix&, SVGGraphicsElement&, const RenderStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption>) const;
+    void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const RenderStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption>) const;
     void updateHasSVGTransformFlags();
     virtual bool needsHasSVGTransformFlags() const { ASSERT_NOT_REACHED(); return false; }
 

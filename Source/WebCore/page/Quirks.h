@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Event.h"
+#include <optional>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -164,6 +165,8 @@ public:
     bool shouldEnableApplicationCacheQuirk() const;
     bool shouldEnableFontLoadingAPIQuirk() const;
     bool needsVideoShouldMaintainAspectRatioQuirk() const;
+
+    bool shouldDisableLazyImageLoadingQuirk() const;
     
 private:
     bool needsQuirks() const;
@@ -219,6 +222,7 @@ private:
     mutable std::optional<bool> m_shouldEnableFontLoadingAPIQuirk;
     mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
     mutable std::optional<bool> m_shouldExposeShowModalDialog;
+    mutable std::optional<bool> m_shouldDisableLazyImageLoadingQuirk;
 };
 
 } // namespace WebCore

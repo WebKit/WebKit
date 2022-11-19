@@ -45,6 +45,7 @@
 #include "WebDatabaseProvider.h"
 #include "WebDocumentLoader.h"
 #include "WebFrameLoaderClient.h"
+#include "WebMessagePortChannelProvider.h"
 #include "WebNotificationClient.h"
 #include "WebPage.h"
 #include "WebPreferencesKeys.h"
@@ -357,6 +358,9 @@ void WebSWContextManagerConnection::navigationPreloadFailed(SWServerConnectionId
 
 void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
+    for (auto& port : message.transferredPorts)
+        WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
+
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::PostMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin), 0);
 }
 

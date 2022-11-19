@@ -3359,7 +3359,7 @@ void WebGL2RenderingContext::uniformMatrix4fv(const WebGLUniformLocation* locati
     m_context->uniformMatrix4fv(location->location(), transpose, result.value());
 }
 
-void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& pixels)
+void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& pixels)
 {
     if (isContextLost())
         return;
@@ -3369,7 +3369,7 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
             "a buffer is bound to PIXEL_PACK_BUFFER");
         return;
     }
-    WebGLRenderingContextBase::readPixels(x, y, width, height, format, type, WTFMove(pixels));
+    WebGLRenderingContextBase::readPixels(x, y, width, height, format, type, pixels);
 }
 
 void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
@@ -3414,7 +3414,7 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
     auto slice = sliceArrayBufferView("readPixels", dstData, dstOffset, 0);
     if (!slice)
         return;
-    WebGLRenderingContextBase::readPixels(x, y, width, height, format, type, WTFMove(slice));
+    WebGLRenderingContextBase::readPixels(x, y, width, height, format, type, *slice);
 }
 
 #define REMOVE_BUFFER_FROM_BINDING(binding) \

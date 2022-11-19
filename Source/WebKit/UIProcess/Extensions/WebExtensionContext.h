@@ -79,8 +79,6 @@ public:
 
     explicit WebExtensionContext(Ref<WebExtension>&&);
 
-    ~WebExtensionContext();
-
     using PermissionsMap = HashMap<String, WallTime>;
     using PermissionMatchPatternsMap = HashMap<Ref<WebExtensionMatchPattern>, WallTime>;
 

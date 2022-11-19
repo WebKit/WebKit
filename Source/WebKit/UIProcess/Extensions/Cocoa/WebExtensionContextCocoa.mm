@@ -1112,6 +1112,7 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webVie
     // FIXME: <https://webkit.org/b/246484> Disconnect message ports for the crashed web view.
 
     if (webView == m_backgroundWebView) {
+        m_backgroundWebView = nullptr;
         loadBackgroundWebView();
         return;
     }

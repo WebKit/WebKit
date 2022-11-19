@@ -35,7 +35,7 @@
 #include "WriteBarrier.h"
 #include <wtf/BitVector.h>
 #include <wtf/RefPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace JSC {
 
@@ -46,7 +46,7 @@ namespace Wasm {
 
 class Instance;
 
-class Instance : public ThreadSafeRefCounted<Instance>, public CanMakeWeakPtr<Instance> {
+class Instance : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Instance> {
     friend LLIntOffsetsExtractor;
 
 public:
@@ -97,7 +97,7 @@ public:
     void setMemory(Ref<Memory>&& memory)
     {
         m_memory = WTFMove(memory);
-        m_memory.get()->registerInstance(this);
+        m_memory.get()->registerInstance(*this);
         updateCachedMemory();
     }
     void updateCachedMemory()

@@ -28,10 +28,11 @@
 #include "QuotaIncreaseRequestIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebKit {
 
-class QuotaManager : public ThreadSafeRefCounted<QuotaManager>, public CanMakeWeakPtr<QuotaManager> {
+class QuotaManager : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<QuotaManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using GetUsageFunction = Function<uint64_t()>;

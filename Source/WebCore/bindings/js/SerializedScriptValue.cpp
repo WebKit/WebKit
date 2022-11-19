@@ -274,6 +274,15 @@ enum DestinationColorSpaceTag {
 #endif
 };
 
+#if ENABLE(WEBASSEMBLY)
+static String agentClusterIDFromGlobalObject(JSGlobalObject& globalObject)
+{
+    if (!globalObject.inherits<JSDOMGlobalObject>())
+        return JSDOMGlobalObject::defaultAgentClusterID();
+    return jsCast<JSDOMGlobalObject*>(&globalObject)->agentClusterID();
+}
+#endif
+
 #if ENABLE(WEB_CRYPTO)
 
 const uint32_t currentKeyFormatVersion = 1;
@@ -356,8 +365,9 @@ static unsigned countUsages(CryptoKeyUsageBitmap usages)
  * Version 9. added support for ImageBitmap color space.
  * Version 10. changed the length (and offsets) of ArrayBuffers (and ArrayBufferViews) from 32 to 64 bits.
  * Version 11. added support for Blob's memory cost.
+ * Version 12. added support for agent cluster ID.
  */
-static const unsigned CurrentVersion = 11;
+static const unsigned CurrentVersion = 12;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -1466,6 +1476,7 @@ private:
                 uint32_t index = m_wasmModules.size(); 
                 m_wasmModules.append(&module->module());
                 write(WasmModuleTag);
+                write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
                 write(index);
                 return true;
             }
@@ -1481,6 +1492,7 @@ private:
                 uint32_t index = m_wasmMemoryHandles.size();
                 m_wasmMemoryHandles.append(memory->memory().shared());
                 write(WasmMemoryTag);
+                write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
                 write(index);
                 return true;
             }
@@ -3861,6 +3873,15 @@ private:
         }
 #if ENABLE(WEBASSEMBLY)
         case WasmModuleTag: {
+            if (m_version >= 12) {
+                // https://webassembly.github.io/spec/web-api/index.html#serialization
+                CachedStringRef agentClusterID;
+                bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
+                if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != agentClusterIDFromGlobalObject(*m_globalObject)) {
+                    fail();
+                    return JSValue();
+                }
+            }
             uint32_t index;
             bool indexSuccessfullyRead = read(index);
             if (!indexSuccessfullyRead || !m_wasmModules || index >= m_wasmModules->size()) {
@@ -3877,6 +3898,14 @@ private:
             return result;
         }
         case WasmMemoryTag: {
+            if (m_version >= 12) {
+                CachedStringRef agentClusterID;
+                bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
+                if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != agentClusterIDFromGlobalObject(*m_globalObject)) {
+                    fail();
+                    return JSValue();
+                }
+            }
             uint32_t index;
             bool indexSuccessfullyRead = read(index);
             if (!indexSuccessfullyRead || !m_wasmMemoryHandles || index >= m_wasmMemoryHandles->size() || !JSC::Options::useSharedArrayBuffer()) {

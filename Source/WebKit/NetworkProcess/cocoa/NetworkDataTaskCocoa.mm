@@ -628,7 +628,8 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     if (m_client)
         m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = WeakPtr { *this }] (auto&& request) mutable {
-            if (!weakThis || !m_session)
+            auto strongThis = weakThis.get();
+            if (!strongThis || !m_session)
                 return completionHandler({ });
             if (!request.isNull())
                 restrictRequestReferrerToOriginIfNeeded(request);

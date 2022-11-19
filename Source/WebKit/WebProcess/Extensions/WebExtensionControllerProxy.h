@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "MessageReceiver.h"
+#include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerParameters.h"
 #include <wtf/Forward.h>
 #include <wtf/URLHash.h>
@@ -38,7 +39,6 @@ class DOMWrapperWorld;
 
 namespace WebKit {
 
-class WebExtensionContextProxy;
 class WebFrame;
 class WebPage;
 
@@ -49,8 +49,6 @@ class WebExtensionControllerProxy final : public RefCounted<WebExtensionControll
 public:
     static RefPtr<WebExtensionControllerProxy> get(WebExtensionControllerIdentifier);
     static Ref<WebExtensionControllerProxy> getOrCreate(WebExtensionControllerParameters);
-
-    ~WebExtensionControllerProxy();
 
     using WebExtensionContextProxySet = HashSet<Ref<WebExtensionContextProxy>>;
     using WebExtensionContextProxyBaseURLMap = HashMap<URL, Ref<WebExtensionContextProxy>>;

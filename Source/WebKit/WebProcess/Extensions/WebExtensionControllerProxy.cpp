@@ -39,20 +39,20 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>& webExtensionControllerProxies()
+static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>& webExtensionControllerProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WebExtensionControllerProxy*>> controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>> controllers;
     return controllers;
 }
 
 RefPtr<WebExtensionControllerProxy> WebExtensionControllerProxy::get(WebExtensionControllerIdentifier identifier)
 {
-    return webExtensionControllerProxies().get(identifier);
+    return webExtensionControllerProxies().get(identifier).get();
 }
 
 Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExtensionControllerParameters parameters)
 {
-    auto updateProperties = [&](WebExtensionControllerProxy* controller) {
+    auto updateProperties = [&](WebExtensionControllerProxy& controller) {
         WebExtensionContextProxySet contexts;
         WebExtensionContextProxyBaseURLMap baseURLMap;
 
@@ -62,32 +62,27 @@ Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExt
             contexts.add(context);
         }
 
-        controller->m_extensionContexts.swap(contexts);
-        controller->m_extensionContextBaseURLMap.swap(baseURLMap);
+        controller.m_extensionContexts.swap(contexts);
+        controller.m_extensionContextBaseURLMap.swap(baseURLMap);
     };
 
-    if (auto* controller = webExtensionControllerProxies().add(parameters.identifier, nullptr).iterator->value) {
-        updateProperties(controller);
+    if (auto controller = webExtensionControllerProxies().get(parameters.identifier)) {
+        updateProperties(*controller);
         return *controller;
     }
 
     auto result = adoptRef(new WebExtensionControllerProxy(parameters));
-    updateProperties(result.get());
+    updateProperties(*result);
     return result.releaseNonNull();
 }
 
 WebExtensionControllerProxy::WebExtensionControllerProxy(WebExtensionControllerParameters parameters)
     : m_identifier(parameters.identifier)
 {
+    ASSERT(!webExtensionControllerProxies().contains(m_identifier));
+    webExtensionControllerProxies().add(m_identifier, this);
+
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionControllerProxy::messageReceiverName(), m_identifier, *this);
-}
-
-WebExtensionControllerProxy::~WebExtensionControllerProxy()
-{
-    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionControllerProxy::messageReceiverName(), m_identifier);
-
-    ASSERT(webExtensionControllerProxies().contains(m_identifier));
-    webExtensionControllerProxies().remove(m_identifier);
 }
 
 void WebExtensionControllerProxy::load(const WebExtensionContextParameters& contextParameters)

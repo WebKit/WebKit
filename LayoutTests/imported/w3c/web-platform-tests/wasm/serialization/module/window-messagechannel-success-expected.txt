@@ -1,3 +1,3 @@
 
-FAIL postMessaging to a dedicated worker via MessageChannel allows them to instantiate promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS postMessaging to a dedicated worker via MessageChannel allows them to instantiate
 

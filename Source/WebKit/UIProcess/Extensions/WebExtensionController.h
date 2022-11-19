@@ -34,6 +34,8 @@
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionControllerIdentifier.h"
 #include "WebExtensionURLSchemeHandler.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include <wtf/Forward.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
@@ -47,7 +49,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebPageProxy;
-class WebProcessProxy;
+class WebProcessPool;
 struct WebExtensionControllerParameters;
 
 class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
@@ -58,7 +60,6 @@ public:
     static WebExtensionController* get(WebExtensionControllerIdentifier);
 
     explicit WebExtensionController();
-    ~WebExtensionController();
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
     using WebExtensionSet = HashSet<Ref<WebExtension>>;
@@ -83,6 +84,9 @@ public:
     const WebExtensionContextSet& extensionContexts() const { return m_extensionContexts; }
     WebExtensionSet extensions() const;
 
+    template<typename T, typename U>
+    void sendToAllProcesses(const T& message, ObjectIdentifier<U> destinationID);
+
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
 #endif
 
@@ -96,10 +100,28 @@ private:
     WebExtensionContextSet m_extensionContexts;
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;
     WeakHashSet<WebPageProxy> m_pages;
-    WeakHashSet<WebProcessProxy> m_processes;
+    WeakHashSet<WebProcessPool> m_processPools;
     HashMap<String, Ref<WebExtensionURLSchemeHandler>> m_registeredSchemeHandlers;
 #endif
 };
+
+template<typename T, typename U>
+void WebExtensionController::sendToAllProcesses(const T& message, ObjectIdentifier<U> destinationID)
+{
+    HashSet<WebProcessProxy*> seenProcesses;
+    seenProcesses.reserveInitialCapacity(m_pages.capacity());
+
+    for (auto& page : m_pages) {
+        auto& process = page.process();
+        if (seenProcesses.contains(&process))
+            continue;
+
+        seenProcesses.add(&process);
+
+        if (process.canSendMessage())
+            process.send(T(message), destinationID);
+    }
+}
 
 } // namespace WebKit
 

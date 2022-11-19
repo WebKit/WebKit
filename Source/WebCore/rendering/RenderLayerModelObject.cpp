@@ -338,9 +338,7 @@ std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContain
 
 void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
-    // FIXME: [LBSE] Upstream RenderSVGBlock changes
-    // ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
-    ASSERT(is<RenderSVGModelObject>(this));
+    ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
     ASSERT(style().position() == PositionType::Static);
 
     if (ancestorContainer == this)
@@ -378,7 +376,7 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
-void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     auto svgTransform = graphicsElement.transform().concatenate();
     auto* supplementalTransform = graphicsElement.supplementalTransform(); // SMIL <animateMotion>
@@ -407,15 +405,14 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         return !svgTransform.isIdentityOrTranslation();
     };
 
-    // SMIL <animateMotion> is pre-multiplied.
-    if (supplementalTransform)
-        transform.multiplyAffineTransform(*supplementalTransform);
-
     FloatPoint3D originTranslate;
     if (options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && affectedByTransformOrigin())
         originTranslate = style.computeTransformOrigin(boundingBox);
 
     style.applyTransformOrigin(transform, originTranslate);
+
+    if (supplementalTransform)
+        transform.multiplyAffineTransform(*supplementalTransform);
 
     if (preApplySVGTransformMatrix)
         transform.multiplyAffineTransform(preApplySVGTransformMatrix.value());

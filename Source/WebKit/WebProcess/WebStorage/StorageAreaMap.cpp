@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,10 +101,10 @@ void StorageAreaMap::setItem(Frame& sourceFrame, StorageAreaImpl* sourceArea, co
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::setItem failed because storage map ID is invalid");
         return;
     }
-        
-    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasQuotaException) mutable {
+
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, auto allItems) mutable {
         if (weakThis)
-            weakThis->didSetItem(seed, key, hasQuotaException);
+            weakThis->didSetItem(seed, key, hasError, WTFMove(allItems));
     };
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
     connection.sendWithAsyncReply(Messages::NetworkStorageManager::SetItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, value, sourceFrame.document()->url().string()), WTFMove(callback));
@@ -137,11 +137,10 @@ void StorageAreaMap::removeItem(WebCore::Frame& sourceFrame, StorageAreaImpl* so
 
 void StorageAreaMap::clear(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea)
 {
-    connectSync();
-    resetValues();
-
+    ensureMap().clear();
+    m_pendingValueChanges.clear();
+    ++m_currentSeed;
     m_hasPendingClear = true;
-    m_map = makeUnique<StorageMap>(m_quotaInBytes);
 
     if (!m_remoteAreaIdentifier) {
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::clear failed because storage map ID is invalid");
@@ -160,38 +159,25 @@ bool StorageAreaMap::contains(const String& key)
     return ensureMap().contains(key);
 }
 
-void StorageAreaMap::resetValues()
-{
-    m_map = nullptr;
-
-    m_pendingValueChanges.clear();
-    m_hasPendingClear = false;
-    ++m_currentSeed;
-}
-
 StorageMap& StorageAreaMap::ensureMap()
 {
     connectSync();
-
     if (!m_map)
         m_map = makeUnique<StorageMap>(m_quotaInBytes);
 
     return *m_map;
 }
 
-void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool quotaError)
+void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&& remoteItems)
 {
     if (m_currentSeed != mapSeed)
         return;
 
     ASSERT(m_pendingValueChanges.contains(key));
-
-    if (quotaError) {
-        resetValues();
-        return;
-    }
-
     m_pendingValueChanges.remove(key);
+
+    if (hasError)
+        syncItems(WTFMove(remoteItems));
 }
 
 void StorageAreaMap::didRemoveItem(uint64_t mapSeed, const String& key)
@@ -212,61 +198,17 @@ void StorageAreaMap::didClear(uint64_t mapSeed)
     m_hasPendingClear = false;
 }
 
-bool StorageAreaMap::shouldApplyChangeForKey(const String& key) const
-{
-    // We have not yet loaded anything from this storage map.
-    if (!m_map)
-        return false;
-
-    // Check if this storage area is currently waiting for the storage manager to update the given key.
-    // If that is the case, we don't want to apply any changes made by other storage areas, since
-    // our change was made last.
-    if (m_pendingValueChanges.contains(key))
-        return false;
-
-    return true;
-}
-
 void StorageAreaMap::applyChange(const String& key, const String& newValue)
 {
     ASSERT(!m_map || !m_map->isShared());
 
-    // There is at least one clear pending we don't want to apply any changes until we get the corresponding DidClear messages.
-    if (m_hasPendingClear)
-        return;
-
+    // A null key means clear.
     if (!key) {
-        // A null key means clear.
-        auto newMap = makeUnique<StorageMap>(m_quotaInBytes);
-
-        // Any changes that were made locally after the clear must still be kept around in the new map.
-        for (auto& change : m_pendingValueChanges) {
-            auto& key = change.key;
-            String value = m_map->getItem(key);
-            if (!value) {
-                // This change must have been a pending remove, ignore it.
-                continue;
-            }
-
-            String oldValue;
-            newMap->setItemIgnoringQuota(key, oldValue);
-        }
-
-        m_map = WTFMove(newMap);
+        syncItems(HashMap<String, String> { });
         return;
     }
 
-    if (!shouldApplyChangeForKey(key))
-        return;
-
-    if (!newValue) {
-        // A null new value means that the item should be removed.
-        String oldValue;
-        m_map->removeItem(key, oldValue);
-        return;
-    }
-
-    m_map->setItemIgnoringQuota(key, newValue);
+    syncOneItem(key, newValue);
 }
 
 void StorageAreaMap::dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString, uint64_t messageIdentifier)
@@ -292,7 +234,7 @@ void StorageAreaMap::clearCache(uint64_t messageIdentifier)
         return;
 
     m_lastHandledMessageIdentifier = messageIdentifier;
-    resetValues();
+    syncItems(HashMap<String, String> { });
 }
 
 void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
@@ -403,8 +345,6 @@ void StorageAreaMap::disconnect()
         return;
     }
 
-    resetValues();
-
     if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
         networkProcessConnection->connection().send(Messages::NetworkStorageManager::DisconnectFromStorageArea(*m_remoteAreaIdentifier), 0);
 
@@ -423,4 +363,39 @@ void StorageAreaMap::decrementUseCount()
         m_namespace.destroyStorageAreaMap(*this);
 }
 
+void StorageAreaMap::syncOneItem(const String& key, const String& value)
+{
+    // Once the pending value change request is handled by remote area, this item will be changed.
+    if (!m_map || m_pendingValueChanges.contains(key))
+        return;
+
+    if (!value) {
+        String oldValue;
+        m_map->removeItem(key, oldValue);
+        return;
+    }
+
+    m_map->setItemIgnoringQuota(key, value);
+}
+
+void StorageAreaMap::syncItems(HashMap<String, String>&& items)
+{
+    // Once the pending clear request is handled by remote area, these items will be gone.
+    if (!m_map || m_hasPendingClear)
+        return;
+
+    auto oldMap = std::exchange(m_map, makeUnique<StorageMap>(m_quotaInBytes));
+    m_map->importItems(WTFMove(items));
+    for (auto change : m_pendingValueChanges) {
+        String value = oldMap->getItem(change.key);
+        if (!value.isNull())
+            m_map->setItemIgnoringQuota(change.key, value);
+        else {
+            String oldValue;
+            m_map->removeItem(change.key, oldValue);
+        }
+    }
+}
+
 } // namespace WebKit
+

@@ -135,12 +135,12 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelO
 
 void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(snappedIntRect(LayoutRect(accumulatedOffset + m_layoutRect.location(), m_layoutRect.size())));
+    rects.append(snappedIntRect(accumulatedOffset, m_layoutRect.size()));
 }
 
 void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    quads.append(localToAbsoluteQuad(objectBoundingBox(), UseTransforms, wasFixed));
+    quads.append(localToAbsoluteQuad(FloatRect { { }, m_layoutRect.size() }, UseTransforms, wasFixed));
 }
 
 void RenderSVGModelObject::willBeDestroyed()

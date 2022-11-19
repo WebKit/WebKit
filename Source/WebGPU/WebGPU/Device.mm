@@ -70,7 +70,7 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     , m_adapter(adapter)
 {
 #if PLATFORM(MAC)
-    auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = WeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
+    auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
         RefPtr<Device> strongThis = weakThis.get();
         if (!strongThis)
             return;
