@@ -27,8 +27,10 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"
+#include "SVGLayerTransformComputation.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
+#include "TransformState.h"
 
 namespace WebCore {
 
@@ -81,9 +83,23 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
     if (styleUpdateStrategy == AllowStyleUpdate)
         element->document().updateLayoutIgnorePendingStylesheets();
 
+    SVGElement* stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : nullptr;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (element->document().settings().layerBasedSVGEngineEnabled()) {
+        // Rudimentary support for operations on "detached" elements.
+        auto* renderer = dynamicDowncast<RenderLayerModelObject>(element->renderer());
+        if (!renderer)
+            return element->localCoordinateSpaceTransform(mode);
+
+        auto trackingMode { mode == SVGLocatable::ScreenScope ? TransformState::TrackSVGScreenCTMMatrix : TransformState::TrackSVGCTMMatrix };
+        auto* stopAtRenderer = dynamicDowncast<RenderLayerModelObject>(stopAtElement ? stopAtElement->renderer() : nullptr);
+        return SVGLayerTransformComputation(*renderer).computeAccumulatedTransform(stopAtRenderer, trackingMode);
+    }
+#endif
+
     AffineTransform ctm;
 
-    SVGElement* stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : nullptr;
     for (Element* currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
         if (!currentElement->isSVGElement())
             break;

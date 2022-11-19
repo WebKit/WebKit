@@ -104,6 +104,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
+#include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -1562,6 +1563,42 @@ int Element::scrollHeight()
     return 0;
 }
 
+inline bool shouldObtainBoundsFromSVGModel(const Element* element)
+{
+    ASSERT(element);
+    if (!element->isSVGElement() || !element->renderer())
+        return false;
+
+    // Legacy SVG engine specific condition.
+    if (element->renderer()->isLegacySVGRoot())
+        return false;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // LBSE specific condition.
+    if (element->document().settings().layerBasedSVGEngineEnabled())
+        return false;
+#endif
+
+    return true;
+}
+
+inline bool shouldObtainBoundsFromBoxModel(const Element* element)
+{
+    ASSERT(element);
+    if (!element->renderer())
+        return false;
+
+    if (is<RenderBoxModelObject>(element->renderer()))
+        return true;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGModelObject>(element->renderer()))
+        return true;
+#endif
+
+    return false;
+}
+
 IntRect Element::boundsInRootViewSpace()
 {
     document().updateLayoutIgnorePendingStylesheets();
@@ -1572,15 +1609,14 @@ IntRect Element::boundsInRootViewSpace()
 
     Vector<FloatQuad> quads;
 
-    if (isSVGElement() && renderer()) {
+    if (shouldObtainBoundsFromSVGModel(this)) {
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
         if (auto localRect = svgElement.getBoundingBox())
             quads.append(renderer()->localToAbsoluteQuad(*localRect));
-    } else {
+    } else if (shouldObtainBoundsFromBoxModel(this)) {
         // Get the bounding rectangle from the box model.
-        if (renderBoxModelObject())
-            renderBoxModelObject()->absoluteQuads(quads);
+        renderer()->absoluteQuads(quads);
     }
 
     return view->contentsToRootView(enclosingIntRect(unitedBoundingBoxes(quads)));
@@ -1639,7 +1675,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
         return LayoutRect();
 
     LayoutRect result;
-    if (isSVGElement()) {
+    if (shouldObtainBoundsFromSVGModel(this)) {
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
         if (auto localRect = svgElement.getBoundingBox())
@@ -1744,12 +1780,13 @@ Ref<DOMRectList> Element::getClientRects()
     RenderObject* renderer = this->renderer();
     Vector<FloatQuad> quads;
 
-    if (auto pair = listBoxElementBoundingBox(*this)) {
+    if (shouldObtainBoundsFromSVGModel(this)) {
+        if (auto localRect = downcast<SVGElement>(*this).getBoundingBox())
+            quads.append(renderer->localToAbsoluteQuad(*localRect));
+    } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = pair.value().first;
         quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
-    } else if (auto* renderBoxModelObject = this->renderBoxModelObject())
-        renderBoxModelObject->absoluteQuads(quads);
-    else if (isSVGElement() && renderer)
+    } else if (shouldObtainBoundsFromBoxModel(this))
         renderer->absoluteQuads(quads);
 
     // FIXME: Handle table/inline-table with a caption.
@@ -1765,15 +1802,14 @@ std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRect
 {
     RenderObject* renderer = this->renderer();
     Vector<FloatQuad> quads;
-    if (isSVGElement() && renderer && !renderer->isSVGRootOrLegacySVGRoot()) {
-        // Get the bounding rectangle from the SVG model.
+    if (shouldObtainBoundsFromSVGModel(this)) {
         if (auto localRect = downcast<SVGElement>(*this).getBoundingBox())
             quads.append(renderer->localToAbsoluteQuad(*localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = pair.value().first;
         quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
-    } else if (auto* renderBoxModelObject = this->renderBoxModelObject())
-        renderBoxModelObject->absoluteQuads(quads);
+    } else if (shouldObtainBoundsFromBoxModel(this))
+        renderer->absoluteQuads(quads);
 
     if (quads.isEmpty())
         return std::nullopt;

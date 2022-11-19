@@ -531,10 +531,10 @@ FloatSize RenderSVGRoot::computeViewportSize() const
 
 void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
+
     if (repaintContainer == this)
         return;
-
-    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
     bool containerSkipped;
     auto* container = this->container(repaintContainer, containerSkipped);
@@ -552,27 +552,29 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     if (wasFixed)
         *wasFixed = mode.contains(IsFixed);
 
-    bool computingCTMOrScreenCTM = false;
-    // FIXME: [LBSE] Upstream TransformState changes
-    // bool computingCTMOrScreenCTM = transformState.transformMatrixTracking() != TransformState::DoNotTrackTransformMatrix;
     auto containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
 
     bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
-
     if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
         getTransformFromContainer(container, containerOffset, t);
 
-        /* FIXME: [LBSE] Upstream TransformState changes
+        // For getCTM() computations we have to stay within the SVG subtree. However when the outermost <svg>
+        // is transformed itself, we need to call mapLocalToContainer() at least up to the parent of the
+        // outermost <svg>. That will also include the offset within the container, due to CSS positioning,
+        // which shall not be included in getCTM() (unlike getScreenCTM()) -- fix that.
         if (transformState.transformMatrixTracking() == TransformState::TrackSVGCTMMatrix) {
             auto offset = toLayoutSize(contentBoxLocation() + containerOffset);
             t.translateRight(-offset.width(), -offset.height());
         }
-        */
 
         transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-    } else
+    } else {
+        if (transformState.transformMatrixTracking() == TransformState::TrackSVGCTMMatrix)
+            containerOffset -= toLayoutSize(contentBoxLocation());
+
         transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    }
 
     if (containerSkipped) {
         // There can't be a transform between repaintContainer and container, because transforms create containers, so it should be safe
@@ -583,41 +585,41 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     }
 
     mode.remove(ApplyContainerFlip);
-
-    if (computingCTMOrScreenCTM) {
-        // The CSS lengths/numbers above the SVG fragment (e.g. in HTML) do not adhere to SVG zoom rules.
-        // All length information (e.g. top/width/...) include the scaling factor. In SVG no lengths are
-        // scaled but a global scaling operation is included in the transform state.
-        // For getCTM/getScreenCTM computations the result must be independent of the page zoom factor.
-        // To compute these matrices within a non-SVG context (e.g. SVG embedded in HTML -- inline SVG)
-        // the scaling needs to be removed from the CSS transform state.
-        TransformState transformStateAboveSVGFragment(transformState.direction(), transformState.mappedPoint());
-        // FIXME: [LBSE] Upstream TransformState changes
-        // transformStateAboveSVGFragment.setTransformMatrixTracking(transformState.transformMatrixTracking());
-        container->mapLocalToContainer(repaintContainer, transformStateAboveSVGFragment, mode, wasFixed);
-
-        /* FIXME: [LBSE] Upstream TransformState changes
-        if (transformState.transformMatrixTracking() == TransformState::TrackSVGScreenCTMMatrix) {
-            auto scale = 1.0 / style().effectiveZoom();
-            if (auto transformAboveSVGFragment = transformStateAboveSVGFragment.releaseTrackedTransform()) {
-                FloatPoint location(transformAboveSVGFragment->e(), transformAboveSVGFragment->f());
-                location.scale(scale);
-
-                auto unscaledTransform = TransformationMatrix().scale(scale) * *transformAboveSVGFragment;
-                unscaledTransform.setE(location.x());
-                unscaledTransform.setF(location.y());
-                transformState.applyTransform(unscaledTransform, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-            }
-
-            // Respect scroll offset, after mapping to container coordinates.
-            if (RefPtr<FrameView> view = document().view()) {
-                LayoutPoint scrollPosition = view->scrollPosition();
-                scrollPosition.scale(scale);
-                transformState.move(-toLayoutSize(scrollPosition));
-            }
-        }*/
-    } else
+    if (transformState.transformMatrixTracking() == TransformState::DoNotTrackTransformMatrix) {
         container->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+        return;
+    }
+
+    if (transformState.transformMatrixTracking() == TransformState::TrackSVGCTMMatrix)
+        return;
+
+    // The CSS lengths/numbers above the SVG fragment (e.g. in HTML) do not adhere to SVG zoom rules.
+    // All length information (e.g. top/width/...) include the scaling factor. In SVG no lengths are
+    // scaled but a global scaling operation is included in the transform state.
+    // For getCTM/getScreenCTM computations the result must be independent of the page zoom factor.
+    // To compute these matrices within a non-SVG context (e.g. SVG embedded in HTML -- inline SVG)
+    // the scaling needs to be removed from the CSS transform state.
+    TransformState transformStateAboveSVGFragment(transformState.direction(), transformState.mappedPoint());
+    transformStateAboveSVGFragment.setTransformMatrixTracking(transformState.transformMatrixTracking());
+    container->mapLocalToContainer(repaintContainer, transformStateAboveSVGFragment, mode, wasFixed);
+
+    auto scale = 1.0 / style().effectiveZoom();
+    if (auto transformAboveSVGFragment = transformStateAboveSVGFragment.releaseTrackedTransform()) {
+        FloatPoint location(transformAboveSVGFragment->e(), transformAboveSVGFragment->f());
+        location.scale(scale);
+
+        auto unscaledTransform = TransformationMatrix().scale(scale) * *transformAboveSVGFragment;
+        unscaledTransform.setE(location.x());
+        unscaledTransform.setF(location.y());
+        transformState.applyTransform(unscaledTransform, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    }
+
+    // Respect scroll offset, after mapping to container coordinates.
+    if (RefPtr<FrameView> view = document().view()) {
+        LayoutPoint scrollPosition = view->scrollPosition();
+        scrollPosition.scale(scale);
+        transformState.move(-toLayoutSize(scrollPosition));
+    }
 }
 
 LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy, PaintPhase) const
@@ -638,12 +640,11 @@ void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& acc
 
 void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    auto* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         return;
 
-    FloatRect localRect = borderBoxRect();
-    quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
+    quads.append(localToAbsoluteQuad(FloatRect { borderBoxRect() }, UseTransforms, wasFixed));
 }
 
 }
