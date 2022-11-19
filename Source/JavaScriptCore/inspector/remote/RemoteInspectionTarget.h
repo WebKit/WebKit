@@ -60,7 +60,7 @@ public:
     bool remoteControlAllowed() const final;
 
 private:
-    bool m_inspectable;
+    bool m_inspectable { false };
 #if USE(CF)
     RetainPtr<CFRunLoopRef> m_runLoop;
 #endif
