@@ -277,7 +277,8 @@ public:
     // Cookies testing
     void setAlwaysAcceptCookies(bool);
     void setOnlyAcceptFirstPartyCookies(bool);
-    void removeAllCookies();
+    void removeAllCookies(JSValueRef callback);
+    void callRemoveAllCookiesCallback();
 
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }

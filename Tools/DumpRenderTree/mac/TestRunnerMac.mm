@@ -556,9 +556,14 @@ void TestRunner::dispatchPendingLoadRequests()
     [[mainFrame webView] _dispatchPendingLoadRequests];
 }
 
-void TestRunner::removeAllCookies()
+void TestRunner::removeAllCookies(JSValueRef callback)
 {
-    [WebPreferences _clearNetworkLoaderSession];
+    static uint64_t callbackIDGenerator = 0;
+    auto callbackID = ++callbackIDGenerator;
+    cacheTestRunnerCallback(callbackID, callback);
+    [WebPreferences _clearNetworkLoaderSession:^{
+        callTestRunnerCallback(callbackID);
+    }];
 }
 
 void TestRunner::removeAllVisitedLinks()

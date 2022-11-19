@@ -2071,11 +2071,6 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         return setHTTPCookieAcceptPolicy(policy, WTFMove(completionHandler));
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies")) {
-        removeAllCookies();
-        return completionHandler(nullptr);
-    }
-
     completionHandler(m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).get());
 }
 
@@ -3858,6 +3853,7 @@ void TestController::removeAllCookies()
     GenericVoidContext context(*this);
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), &context, genericVoidCallback);
     runUntil(context.done, noTimeout);
+    m_currentInvocation->didRemoveAllCookies();
 }
 
 void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type)

@@ -304,7 +304,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @interface WebPreferences (WebPrivateTesting)
 + (void)_switchNetworkLoaderToNewTestingSession;
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
-+ (void)_clearNetworkLoaderSession;
++ (void)_clearNetworkLoaderSession:(void (^)(void))completionHandler;
 
 - (void)_setBoolPreferenceForTestingWithValue:(BOOL)value forKey:(NSString *)key;
 - (void)_setUInt32PreferenceForTestingWithValue:(uint32_t)value forKey:(NSString *)key;

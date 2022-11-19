@@ -1,3 +1,3 @@
 
-FAIL Test for default cookie path assert_false: cookie can be referenced using the expected path expected false got true
+PASS Test for default cookie path
 

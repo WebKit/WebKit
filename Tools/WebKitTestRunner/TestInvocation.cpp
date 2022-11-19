@@ -740,6 +740,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies")) {
+        TestController::singleton().removeAllCookies();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsClearInMemoryAndPersistentStore")) {
         TestController::singleton().statisticsClearInMemoryAndPersistentStore();
         return;
@@ -1654,6 +1659,11 @@ void TestInvocation::didSetVeryPrevalentResource()
 void TestInvocation::didSetHasHadUserInteraction()
 {
     postPageMessage("CallDidSetHasHadUserInteraction");
+}
+
+void TestInvocation::didRemoveAllCookies()
+{
+    postPageMessage("CallDidRemoveAllCookies");
 }
 
 void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>&& domains)

@@ -1413,6 +1413,12 @@ void WebProcess::deleteWebsiteData(OptionSet<WebsiteDataType> websiteDataTypes, 
     completionHandler();
 }
 
+void WebProcess::deleteAllCookies(CompletionHandler<void()>&& completionHandler)
+{
+    m_cookieJar->clearCache();
+    completionHandler();
+}
+
 void WebProcess::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas, CompletionHandler<void()>&& completionHandler)
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {

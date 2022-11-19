@@ -1,35 +1,35 @@
 
-FAIL Cookie with %x0 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=0"
-FAIL Cookie with %x1 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=1"
-FAIL Cookie with %x2 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=2"
-FAIL Cookie with %x3 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=3"
-FAIL Cookie with %x4 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=4"
-FAIL Cookie with %x5 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=5"
-FAIL Cookie with %x6 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=6"
-FAIL Cookie with %x7 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=7"
-FAIL Cookie with %x8 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=8"
+PASS Cookie with %x0 in value is rejected.
+PASS Cookie with %x1 in value is rejected.
+PASS Cookie with %x2 in value is rejected.
+PASS Cookie with %x3 in value is rejected.
+PASS Cookie with %x4 in value is rejected.
+PASS Cookie with %x5 in value is rejected.
+PASS Cookie with %x6 in value is rejected.
+PASS Cookie with %x7 in value is rejected.
+PASS Cookie with %x8 in value is rejected.
 PASS Cookie with %x9 in value is accepted.
-FAIL Cookie with %xa in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=10"
-FAIL Cookie with %xb in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=11"
-FAIL Cookie with %xc in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=12"
-FAIL Cookie with %xd in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=13"
-FAIL Cookie with %xe in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=14"
-FAIL Cookie with %xf in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=15"
-FAIL Cookie with %x10 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=16"
-FAIL Cookie with %x11 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=17"
-FAIL Cookie with %x12 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=18"
-FAIL Cookie with %x13 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=19"
-FAIL Cookie with %x14 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=20"
-FAIL Cookie with %x15 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=21"
-FAIL Cookie with %x16 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=22"
-FAIL Cookie with %x17 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=23"
-FAIL Cookie with %x18 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=24"
-FAIL Cookie with %x19 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=25"
-FAIL Cookie with %x1a in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=26"
-FAIL Cookie with %x1b in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=27"
-FAIL Cookie with %x1c in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=28"
-FAIL Cookie with %x1d in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=29"
-FAIL Cookie with %x1e in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=30"
-FAIL Cookie with %x1f in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=31"
-FAIL Cookie with %x7f in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=127"
+PASS Cookie with %xa in value is rejected.
+PASS Cookie with %xb in value is rejected.
+PASS Cookie with %xc in value is rejected.
+PASS Cookie with %xd in value is rejected.
+PASS Cookie with %xe in value is rejected.
+PASS Cookie with %xf in value is rejected.
+PASS Cookie with %x10 in value is rejected.
+PASS Cookie with %x11 in value is rejected.
+PASS Cookie with %x12 in value is rejected.
+PASS Cookie with %x13 in value is rejected.
+PASS Cookie with %x14 in value is rejected.
+PASS Cookie with %x15 in value is rejected.
+PASS Cookie with %x16 in value is rejected.
+PASS Cookie with %x17 in value is rejected.
+PASS Cookie with %x18 in value is rejected.
+PASS Cookie with %x19 in value is rejected.
+PASS Cookie with %x1a in value is rejected.
+PASS Cookie with %x1b in value is rejected.
+PASS Cookie with %x1c in value is rejected.
+PASS Cookie with %x1d in value is rejected.
+PASS Cookie with %x1e in value is rejected.
+PASS Cookie with %x1f in value is rejected.
+PASS Cookie with %x7f in value is rejected.
 

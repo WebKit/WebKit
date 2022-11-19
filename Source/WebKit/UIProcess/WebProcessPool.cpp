@@ -2132,6 +2132,19 @@ bool WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion()
     return false;
 }
 
+void WebProcessPool::forEachProcessForSession(PAL::SessionID sessionID, const Function<void(WebProcessProxy&)>& apply)
+{
+    for (auto& process : m_processes) {
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+        if (process->isCrashyProcess())
+            continue;
+#endif
+        if (process->isPrewarmed() || process->sessionID() != sessionID)
+            continue;
+        apply(process.get());
+    }
+}
+
 #if ENABLE(SERVICE_WORKER)
 size_t WebProcessPool::serviceWorkerProxiesCount() const
 {

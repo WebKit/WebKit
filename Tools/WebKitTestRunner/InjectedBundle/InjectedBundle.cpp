@@ -392,6 +392,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->statisticsCallDidSetHasHadUserInteractionCallback();
         return;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveAllCookies")) {
+        m_testRunner->callRemoveAllCookiesCallback();
+        return;
+    }
     
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveAllStorageAccessEntries")) {
         ASSERT(messageBody);

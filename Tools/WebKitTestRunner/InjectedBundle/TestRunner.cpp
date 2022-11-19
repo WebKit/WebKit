@@ -653,6 +653,7 @@ enum {
     ExitFullscreenForElementCallbackID,
     AppBoundRequestContextDataForDomainCallbackID,
     TakeViewPortSnapshotCallbackID,
+    RemoveAllCookiesCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -792,9 +793,15 @@ void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
     postSynchronousMessage("SetOnlyAcceptFirstPartyCookies", accept);
 }
 
-void TestRunner::removeAllCookies()
+void TestRunner::removeAllCookies(JSValueRef callback)
 {
-    postSynchronousMessage("RemoveAllCookies");
+    cacheTestRunnerCallback(RemoveAllCookiesCallbackID, callback);
+    postMessage("RemoveAllCookies");
+}
+
+void TestRunner::callRemoveAllCookiesCallback()
+{
+    callTestRunnerCallback(RemoveAllCookiesCallbackID);
 }
 
 void TestRunner::setEnterFullscreenForElementCallback(JSValueRef callback)
