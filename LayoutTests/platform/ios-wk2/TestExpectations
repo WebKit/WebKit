@@ -2007,10 +2007,6 @@ webkit.org/b/228114 imported/w3c/web-platform-tests/fetch/content-type/script.wi
 
 webkit.org/b/230418 imported/w3c/web-platform-tests/fetch/data-urls/base64.any.worker.html [ Pass Crash ]
 
-# These tests are dumping the render tree.
-webkit.org/b/247682 imported/w3c/web-platform-tests/fetch/private-network-access/non-secure-context.window.html [ Skip ]
-webkit.org/b/247682 imported/w3c/web-platform-tests/fetch/private-network-access/secure-context.https.window.html [ Skip ]
-
 # These are timing out.
 webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
 webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
