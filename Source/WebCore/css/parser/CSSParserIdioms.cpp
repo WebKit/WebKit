@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "CSSParserIdioms.h"
+
 #include "CSSValueKeywords.h"
 
 namespace WebCore {
@@ -36,12 +37,11 @@ namespace WebCore {
 bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
 {
     switch (id) {
-    case CSSValueInternalVariableValue:
-        return isUASheetBehavior(mode);
     case CSSValueWebkitFocusRingColor:
         return isUASheetBehavior(mode) || isQuirksModeBehavior(mode);
     case CSSValueInternalThCenter:
     case CSSValueInternalDocumentTextColor:
+    case CSSValueInternalVariableValue:
         return isUASheetBehavior(mode);
     default:
         return true;
