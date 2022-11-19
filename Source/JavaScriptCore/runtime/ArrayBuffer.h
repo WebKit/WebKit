@@ -87,7 +87,7 @@ public:
     Expected<void, GrowFailReason> grow(VM&, size_t newByteLength);
     Expected<void, GrowFailReason> grow(const AbstractLocker&, VM&, size_t newByteLength);
 
-    void growToSize(size_t sizeInBytes, std::memory_order order = std::memory_order_seq_cst)
+    void updateSize(size_t sizeInBytes, std::memory_order order = std::memory_order_seq_cst)
     {
         m_sizeInBytes.store(sizeInBytes, order);
     }

@@ -516,7 +516,7 @@ Expected<void, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLength)
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
-        memoryHandle->resizeToSize(desiredSize);
+        memoryHandle->updateSize(desiredSize);
     }
 
     if (m_contents.m_sizeInBytes < newByteLength)
@@ -597,12 +597,12 @@ Expected<void, GrowFailReason> SharedArrayBufferContents::grow(const AbstractLoc
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        m_memoryHandle->resizeToSize(desiredSize);
+        m_memoryHandle->updateSize(desiredSize);
     }
 
     memset(bitwise_cast<uint8_t*>(data()) + sizeInBytes, 0, newByteLength - sizeInBytes);
 
-    growToSize(newByteLength);
+    updateSize(newByteLength);
     return { };
 }
 
