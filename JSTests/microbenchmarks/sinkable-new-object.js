@@ -1,4 +1,6 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function sumOfArithSeries(limit) {
     return limit * (limit + 1) / 2;
 }

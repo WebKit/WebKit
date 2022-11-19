@@ -1,6 +1,5 @@
 //@ skip if not $jitTests
-if (typeof $vm != "undefined" && !$vm.useJIT())
-    $vm.exit();
+//@ $skipModes << :lockdown
 
 function doTest(arr1, arr2) {
     if (arr1.length != arr2.length)

@@ -1,10 +1,8 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
 //@ requireOptions("--forceUnlinkedDFG=0")
 //@ defaultNoEagerRun
 "use strict";
-
-if (typeof $vm != "undefined" && !$vm.useJIT())
-    $vm.exit();
 
 let froundOfPi = Math.fround(Math.PI);
 let froundOfE = Math.fround(Math.E);

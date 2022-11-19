@@ -1,11 +1,9 @@
 //@ crashOK!
+//@ $skipModes << :lockdown
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
 }
-
-if (!$vm.useJIT())
-    $vm.exit();
 
 var putter = function(o) {
     o._unsupported = not_string;

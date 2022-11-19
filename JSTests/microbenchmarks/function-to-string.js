@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function f(x, y, z) {
     // comment in the body
     const w = 42;

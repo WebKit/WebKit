@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 const numPixels = 24000000;
 let source = new Uint8Array(numPixels);
 let target = new Uint8Array(numPixels);

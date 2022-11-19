@@ -1,10 +1,8 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
 //@ requireOptions("--forceUnlinkedDFG=0")
 //@ defaultNoEagerRun
 "use strict";
-
-if (typeof $vm != "undefined" && !$vm.useJIT())
-    $vm.exit();
 
 let acosOfHalf = Math.acos(0.5);
 

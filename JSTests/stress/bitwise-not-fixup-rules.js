@@ -1,6 +1,5 @@
 //@ skip unless $jitTests
-if (typeof $vm != "undefined" && !$vm.useJIT())
-    $vm.exit();
+//@ $skipModes << :lockdown
 
 function assert(a, e) {
     if (a !== e)
