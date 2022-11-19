@@ -413,7 +413,7 @@ static inline vm_address_t decode_system_compact_pointer(pas_root* root, uint32_
 #endif
 }
 
-static inline bool is_compact_pointer_enabled()
+static inline bool is_compact_pointer_enabled(void)
 {
 #if PAS_HAVE(36BIT_ADDRESS)
     return true;
