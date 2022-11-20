@@ -76,7 +76,6 @@ public:
     WEBCORE_EXPORT bool didExitFullscreen();
 
     void dispatchFullscreenChangeEvents();
-    void fullscreenElementRemoved();
 
     void adjustFullscreenElementOnNodeRemoval(Node&, Document::NodeRemoval = Document::NodeRemoval::Node);
 
