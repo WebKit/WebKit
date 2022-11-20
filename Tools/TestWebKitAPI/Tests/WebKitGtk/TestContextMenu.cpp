@@ -66,6 +66,7 @@ public:
     {
         g_assert_true(WEBKIT_IS_CONTEXT_MENU(contextMenu));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(contextMenu));
+        g_assert_true(webkit_context_menu_get_event(contextMenu) == event);
         test->checkContextMenuEvent(event);
         g_assert_true(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(hitTestResult));
@@ -326,7 +327,7 @@ public:
     {
     }
 
-    bool contextMenu(WebKitContextMenu* contextMenu, GdkEvent* event, WebKitHitTestResult* hitTestResult)
+    bool contextMenu(WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult)
     {
         GList* iter = webkit_context_menu_get_items(contextMenu);
 
@@ -1166,7 +1167,6 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-    // FIXME: Rework context menu API in GTK4 to not expose GdkEvent.
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
     ContextMenuDefaultTest::add("WebKitWebView", "context-menu-key", testContextMenuKey);
     ContextMenuDefaultTest::add("WebKitWebView", "popup-event-signal", testPopupEventSignal);

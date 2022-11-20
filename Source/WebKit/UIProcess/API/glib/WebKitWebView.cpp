@@ -993,71 +993,6 @@ static gboolean webkitWebViewAccumulatorObjectHandled(GSignalInvocationHint*, GV
     return !object;
 }
 
-#if PLATFORM(GTK) && USE(GTK4)
-static GdkEvent* gValueGetEvent(const GValue* value)
-{
-    g_return_val_if_fail(G_VALUE_HOLDS(value, GDK_TYPE_EVENT), NULL);
-
-    return reinterpret_cast<GdkEvent*>(value->data[0].v_pointer);
-}
-
-typedef gboolean (*ContextMenuCallback) (gpointer, WebKitContextMenu*, GdkEvent*, WebKitHitTestResult*, gpointer);
-
-static void webkitWebViewContextMenuMarshal(GClosure* closure, GValue* returnValue, guint nParams, const GValue* params, gpointer, gpointer marshalData)
-{
-    auto* cc = reinterpret_cast<GCClosure*>(closure);
-    gpointer data1, data2;
-
-    g_return_if_fail(returnValue);
-    g_return_if_fail(nParams == 4);
-
-    if (G_CCLOSURE_SWAP_DATA(closure)) {
-        data1 = closure->data;
-        data2 = g_value_peek_pointer(&params[0]);
-    } else {
-        data1 = g_value_peek_pointer(&params[0]);
-        data2 = closure->data;
-    }
-
-    auto* menu = WEBKIT_CONTEXT_MENU(g_value_get_object(&params[1]));
-    auto* event = gValueGetEvent(&params[2]);
-    auto* result = WEBKIT_HIT_TEST_RESULT(g_value_get_object(&params[3]));
-
-    auto callback = reinterpret_cast<ContextMenuCallback>(marshalData ? marshalData : cc->callback);
-    gboolean ret = callback(data1, menu, event, result, data2);
-    g_value_set_boolean(returnValue, ret);
-}
-
-static void webkitWebViewContextMenuMarshalVa(GClosure* closure, GValue* returnValue, gpointer instance, va_list args, gpointer marshalData, int, GType*)
-{
-    auto* cc = reinterpret_cast<GCClosure*>(closure);
-    gpointer data1, data2;
-
-    g_return_if_fail(returnValue);
-
-    if (G_CCLOSURE_SWAP_DATA(closure)) {
-        data1 = closure->data;
-        data2 = instance;
-    } else {
-        data1 = instance;
-        data2 = closure->data;
-    }
-
-    va_list argsCopy;
-    G_VA_COPY(argsCopy, args);
-
-    GRefPtr<WebKitContextMenu> menu = WEBKIT_CONTEXT_MENU(va_arg(argsCopy, gpointer));
-    GRefPtr<GdkEvent> event = reinterpret_cast<GdkEvent*>(va_arg(argsCopy, gpointer));
-    GRefPtr<WebKitHitTestResult> result = WEBKIT_HIT_TEST_RESULT(va_arg(argsCopy, gpointer));
-
-    va_end(argsCopy);
-
-    auto callback = reinterpret_cast<ContextMenuCallback>(marshalData ? marshalData : cc->callback);
-    gboolean ret = callback(data1, menu.get(), event.get(), result.get(), data2);
-    g_value_set_boolean(returnValue, ret);
-}
-#endif
-
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(webViewClass);
@@ -2076,11 +2011,12 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         G_TYPE_BOOLEAN, 1, /* number of parameters */
         WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
 
+    // FIXME: We need a solution to split the documentation that doesn't break introspection.
     /**
      * WebKitWebView::context-menu:
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @context_menu: the proposed #WebKitContextMenu
-     * @event: the #GdkEvent that triggered the context menu
+     * @event: the #GdkEvent that triggered the context menu. Deprecated 2.40.
      * @hit_test_result: a #WebKitHitTestResult
      *
      * Emitted when a context menu is about to be displayed to give the application
@@ -2111,21 +2047,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * </para></listitem>
      * </itemizedlist>
      *
-     * The @event is expected to be one of the following types:
-     * <itemizedlist>
-     * <listitem><para>
-     * a #GdkEventButton of type %GDK_BUTTON_PRESS when the context menu
-     * was triggered with mouse.
-     * </para></listitem>
-     * <listitem><para>
-     * a #GdkEventKey of type %GDK_KEY_PRESS if the keyboard was used to show
-     * the menu.
-     * </para></listitem>
-     * <listitem><para>
-     * a generic #GdkEvent of type %GDK_NOTHING when the #GtkWidget::popup-menu
-     * signal was used to show the context menu.
-     * </para></listitem>
-     * </itemizedlist>
+     * The @event parameter is now deprecated, use webkit_context_menu_get_event() to get the
+     * #GdkEvent that triggered the context menu.
      *
      * If the signal handler returns %FALSE the context menu represented by @context_menu
      * will be shown, if it return %TRUE the context menu will not be shown.
@@ -2142,26 +2065,22 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         G_SIGNAL_RUN_LAST,
         G_STRUCT_OFFSET(WebKitWebViewClass, context_menu),
         g_signal_accumulator_true_handled, nullptr,
-#if USE(GTK4)
-        webkitWebViewContextMenuMarshal,
-#else
         g_cclosure_marshal_generic,
-#endif
-        G_TYPE_BOOLEAN, 3,
-        WEBKIT_TYPE_CONTEXT_MENU,
-#if PLATFORM(GTK)
-#if USE(GTK4)
-        GDK_TYPE_EVENT,
+        G_TYPE_BOOLEAN,
+#if ENABLE(2022_GLIB_API)
+        2,
 #else
-        GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
+        3,
 #endif
+        WEBKIT_TYPE_CONTEXT_MENU,
+#if !ENABLE(2022_GLIB_API)
+#if PLATFORM(GTK)
+        GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
 #elif PLATFORM(WPE)
-        G_TYPE_POINTER, // FIXME: use a wpe thing here. I'm not sure we want to expose libwpe in the API.
+        G_TYPE_POINTER,
+#endif
 #endif
         WEBKIT_TYPE_HIT_TEST_RESULT);
-#if USE(GTK4)
-    g_signal_set_va_marshaller(signals[CONTEXT_MENU], G_TYPE_FROM_CLASS(webViewClass), webkitWebViewContextMenuMarshalVa);
-#endif
 
     /**
      * WebKitWebView::context-menu-dismissed:
@@ -2809,11 +2728,11 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
     if (userData)
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
+    webkitContextMenuSetEvent(contextMenu.get(), webkitWebViewBaseTakeContextMenuEvent(webViewBase));
 
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
-    auto contextMenuEvent = webkitWebViewBaseTakeContextMenuEvent(webViewBase);
     gboolean returnValue;
-    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), contextMenuEvent.get(), hitTestResult.get(), &returnValue);
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), webkit_context_menu_get_event(contextMenu.get()), hitTestResult.get(), &returnValue);
     if (returnValue)
         return;
 
