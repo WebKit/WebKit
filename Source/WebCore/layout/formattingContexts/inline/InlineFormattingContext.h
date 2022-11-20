@@ -72,7 +72,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const ConstraintsForInlineContent&);
+    InlineRect createDisplayContentForLine(const LineBuilder::LineContent&, const ConstraintsForInlineContent&);
     void invalidateFormattingState();
 
     const InlineDamage* m_lineDamage { nullptr };

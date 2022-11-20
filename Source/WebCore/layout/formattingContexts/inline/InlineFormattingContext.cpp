@@ -202,20 +202,26 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
     return lineContentRange.end;
 }
 
-static bool shouldTruncateOverflow(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfLines)
+enum class ShouldLineEndWithEllispsis : uint8_t {
+    No,
+    WhenContentOverflows,
+    Always
+};
+static ShouldLineEndWithEllispsis shouldTruncateOverflow(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfLines)
 {
     // Truncation is in effect when the block container has overflow other than visible.
     if (rootStyle.isOverflowVisible())
-        return false;
+        return ShouldLineEndWithEllispsis::No;
     if (rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return true;
+        return ShouldLineEndWithEllispsis::WhenContentOverflows;
     if (maximumNumberOfLines) {
         ASSERT(numberOfLines < *maximumNumberOfLines);
         // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
         auto treatNextLineAsLastLine = *maximumNumberOfLines - numberOfLines == 1;
-        return treatNextLineAsLastLine;
+        if (treatNextLineAsLastLine)
+            return ShouldLineEndWithEllispsis::Always;
     }
-    return false;
+    return ShouldLineEndWithEllispsis::No;
 }
 
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
@@ -244,9 +250,11 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
-        auto shouldApplyOverflowTruncation = shouldTruncateOverflow(root().style(), numberOfLines, maximumNumberOfLines);
-        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, shouldApplyOverflowTruncation }, previousLine);
-        auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints);
+        auto ellipsisBehavior = shouldTruncateOverflow(root().style(), numberOfLines, maximumNumberOfLines);
+        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, ellipsisBehavior != ShouldLineEndWithEllispsis::No }, previousLine);
+
+        lineContent.lineNeedsTrailingEllipsis |= ellipsisBehavior == ShouldLineEndWithEllispsis::Always;
+        auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints);
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
         if (!lineContent.runs.isEmpty() && !lineLogicalRect.isEmpty())
@@ -457,7 +465,7 @@ void InlineFormattingContext::collectContentIfNeeded()
     formattingState.addInlineItems(inlineItemsBuilder.build());
 }
 
-InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints)
+InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints)
 {
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();

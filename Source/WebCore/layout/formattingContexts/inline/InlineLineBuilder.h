@@ -84,7 +84,7 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
         TextDirection inlineBaseDirection { TextDirection::LTR };
-        bool contentNeedsTrailingEllipsis { false };
+        bool lineNeedsTrailingEllipsis { false };
         const Line::RunList& runs;
     };
     LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
