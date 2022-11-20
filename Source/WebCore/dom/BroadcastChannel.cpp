@@ -240,8 +240,15 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
         return;
 
     queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, message = WTFMove(message)]() mutable {
-        if (!m_isClosed && scriptExecutionContext())
-            dispatchEvent(MessageEvent::create(WTFMove(message), scriptExecutionContext()->securityOrigin()->toString()));
+        if (m_isClosed || !scriptExecutionContext())
+            return;
+
+        auto* globalObject = scriptExecutionContext()->globalObject();
+        if (!globalObject)
+            return;
+
+        auto event = MessageEvent::create(*globalObject, WTFMove(message), scriptExecutionContext()->securityOrigin()->toString());
+        dispatchEvent(event.event);
     });
 }
 

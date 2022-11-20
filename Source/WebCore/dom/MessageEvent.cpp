@@ -30,6 +30,7 @@
 
 #include "Blob.h"
 #include "EventNames.h"
+#include "JSMessageEvent.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -60,6 +61,24 @@ inline MessageEvent::MessageEvent(const AtomString& type, DataType&& data, const
     , m_source(WTFMove(source))
     , m_ports(WTFMove(ports))
 {
+}
+
+auto MessageEvent::create(JSC::JSGlobalObject& globalObject, Ref<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports) -> MessageEventWithStrongData
+{
+    auto& vm = globalObject.vm();
+    Locker<JSC::JSLock> locker(vm.apiLock());
+
+    bool didFail = false;
+
+    auto deserialized = data->deserialize(globalObject, &globalObject, ports, SerializationErrorMode::NonThrowing, &didFail);
+    JSC::Strong<JSC::Unknown> strongData(vm, deserialized);
+
+    auto& eventType = didFail ? eventNames().messageerrorEvent : eventNames().messageEvent;
+    auto event = adoptRef(*new MessageEvent(eventType, MessageEvent::JSValueTag { }, origin, lastEventId, WTFMove(source), WTFMove(ports)));
+    JSC::Strong<JSC::JSObject> strongWrapper(vm, JSC::jsCast<JSC::JSObject*>(toJS(&globalObject, JSC::jsCast<JSDOMGlobalObject*>(&globalObject), event.get())));
+    event->jsData().set(vm, strongWrapper.get(), deserialized);
+
+    return MessageEventWithStrongData { event, WTFMove(strongWrapper) };
 }
 
 Ref<MessageEvent> MessageEvent::create(const AtomString& type, DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)

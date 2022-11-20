@@ -35,6 +35,7 @@
     [CallWith=CurrentGlobalObject] undefined postMessage(any message, sequence<object> transfer);
     [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
     attribute EventHandler onmessage;
+    attribute EventHandler onmessageerror;
 };
 
 Worker includes AbstractWorker;
