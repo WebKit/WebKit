@@ -1,8 +1,8 @@
 
 PASS Filling effect values reflect changes to font-size on element
 PASS Filling effect values reflect changes to font-size on parent element
-FAIL Filling effect values reflect changes to variables on element assert_equals: Effect value after updating variable expected "200px" but got "100px"
-FAIL Filling effect values reflect changes to variables on parent element assert_equals: Effect value after updating variable expected "400px" but got "200px"
+PASS Filling effect values reflect changes to variables on element
+PASS Filling effect values reflect changes to variables on parent element
 PASS Filling effect values reflect changes to the the animation's keyframes
 PASS Filling effect values reflect changes to the the animation's composite mode
 PASS Filling effect values reflect changes to the the animation's iteration composite mode

@@ -59,6 +59,8 @@ public:
 
     String cssText() const;
 
+    bool containsCSSVariableReferences() const;
+
 private:
     explicit StyleRuleKeyframe(Ref<StyleProperties>&&);
     StyleRuleKeyframe(Vector<double>&&, Ref<StyleProperties>&&);

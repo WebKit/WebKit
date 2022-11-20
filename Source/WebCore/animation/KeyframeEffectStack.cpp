@@ -171,8 +171,21 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             return false;
         };
 
+        auto cssVariableChanged = [&]() {
+            auto customPropertyValueMapDidChange = [](const CustomPropertyValueMap& a, const CustomPropertyValueMap& b) {
+                return &a != &b && a != b;
+            };
+
+            if (previousLastStyleChangeEventStyle && effect->containsCSSVariableReferences()) {
+                if (customPropertyValueMapDidChange(previousLastStyleChangeEventStyle->inheritedCustomProperties(), targetStyle.inheritedCustomProperties())
+                    || customPropertyValueMapDidChange(previousLastStyleChangeEventStyle->nonInheritedCustomProperties(), targetStyle.nonInheritedCustomProperties()))
+                    return true;
+            }
+            return false;
+        };
+
         auto logicalPropertyDidChange = propertyAffectingLogicalPropertiesChanged && effect->animatesDirectionAwareProperty();
-        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged())
+        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged())
             effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
 
         animation->resolve(targetStyle, resolutionContext);

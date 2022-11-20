@@ -873,6 +873,8 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     KeyframeList keyframeList(m_keyframesName);
     auto& styleResolver = m_target->styleResolver();
 
+    m_containsCSSVariableReferences = false;
+
     for (auto& keyframe : m_parsedKeyframes) {
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
         keyframeValue.setTimingFunction(keyframe.timingFunction->clone());
@@ -892,6 +894,8 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
         }
 
         auto keyframeRule = StyleRuleKeyframe::create(keyframe.style->immutableCopyIfNeeded());
+        if (!m_containsCSSVariableReferences)
+            m_containsCSSVariableReferences = keyframeRule->containsCSSVariableReferences();
         keyframeValue.setStyle(styleResolver.styleForKeyframe(*m_target, elementStyle, resolutionContext, keyframeRule.get(), keyframeValue));
         keyframeList.insert(WTFMove(keyframeValue));
     }
@@ -1101,7 +1105,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     KeyframeList keyframeList(AtomString { backingAnimation.name().string });
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList) {
