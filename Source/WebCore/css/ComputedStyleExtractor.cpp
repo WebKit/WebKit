@@ -2484,6 +2484,11 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
     if (!element.document().childNeedsStyleRecalc())
         return true;
 
+    if (auto* keyframeEffectStack = Styleable(element, PseudoId::None).keyframeEffectStack()) {
+        if (keyframeEffectStack->containsProperty(propertyID))
+            return false;
+    }
+
     auto isQueryContainer = [&](Element& element) {
         auto* style = element.renderStyle();
         return style && style->containerType() != ContainerType::Normal;

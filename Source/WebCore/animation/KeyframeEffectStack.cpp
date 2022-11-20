@@ -77,6 +77,13 @@ bool KeyframeEffectStack::hasMatchingEffect(const Function<bool(const KeyframeEf
     return false;
 }
 
+bool KeyframeEffectStack::containsProperty(CSSPropertyID property) const
+{
+    return hasMatchingEffect([property] (const KeyframeEffect& effect) {
+        return effect.animatesProperty(property);
+    });
+}
+
 bool KeyframeEffectStack::requiresPseudoElement() const
 {
     return hasMatchingEffect([] (const KeyframeEffect& effect) {
