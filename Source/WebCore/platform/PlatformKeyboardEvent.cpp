@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,20 @@
 namespace WebCore {
 
 std::optional<OptionSet<PlatformEvent::Modifier>> PlatformKeyboardEvent::s_currentModifiers;    
+
+bool PlatformKeyboardEvent::currentCapsLockState()
+{
+    return currentStateOfModifierKeys().contains(PlatformEvent::Modifier::CapsLockKey);
+}
+
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    auto currentModifiers = currentStateOfModifierKeys();
+    shiftKey = currentModifiers.contains(PlatformEvent::Modifier::ShiftKey);
+    ctrlKey = currentModifiers.contains(PlatformEvent::Modifier::ControlKey);
+    altKey = currentModifiers.contains(PlatformEvent::Modifier::AltKey);
+    metaKey = currentModifiers.contains(PlatformEvent::Modifier::MetaKey);
+}
 
 void PlatformKeyboardEvent::setCurrentModifierState(OptionSet<Modifier> modifiers)
 {

@@ -1332,13 +1332,9 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCo
     }
 }
 
-bool PlatformKeyboardEvent::currentCapsLockState()
+OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
-    return false;
-}
-
-void PlatformKeyboardEvent::getCurrentModifierState(bool&, bool&, bool&, bool&)
-{
+    return { }; // FIXME: Implement.
 }
 
 } // namespace WebCore

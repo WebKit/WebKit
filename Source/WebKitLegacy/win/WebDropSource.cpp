@@ -100,7 +100,7 @@ PlatformMouseEvent generateMouseEvent(WebView* webView, bool isDrag)
     if (SUCCEEDED(webView->viewWindow(&viewWindow)))
         ::ScreenToClient(viewWindow, reinterpret_cast<LPPOINT>(&localpt));
     return PlatformMouseEvent(IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y),
-        isDrag ? LeftButton : NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, WallTime::now(), 0, NoTap);
+        isDrag ? LeftButton : NoButton, PlatformEvent::MouseMoved, 0, { }, WallTime::now(), 0, NoTap);
 }
 
 STDMETHODIMP WebDropSource::QueryContinueDrag(_In_ BOOL fEscapePressed, _In_ DWORD grfKeyState)
