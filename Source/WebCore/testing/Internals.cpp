@@ -1890,11 +1890,6 @@ void Internals::invalidateFontCache()
     FontCache::invalidateAllFontCaches();
 }
 
-void Internals::setFontSmoothingEnabled(bool enabled)
-{
-    FontCascade::setShouldUseSmoothingForTesting(enabled);
-}
-
 ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
 {
     auto* document = contextDocument();

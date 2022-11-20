@@ -439,7 +439,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setMarkedTextMatchesAreHighlighted(boolean flag);
 
     undefined invalidateFontCache();
-    undefined setFontSmoothingEnabled(boolean enabled);
 
     undefined setScrollViewPosition(long x, long y);
 

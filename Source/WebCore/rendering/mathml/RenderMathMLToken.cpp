@@ -609,7 +609,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     LayoutUnit glyphAscent = static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()));
     // FIXME: If we're just drawing a single glyph, why do we need to compute an advance?
     auto advance = makeGlyphBufferAdvance(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph));
-    info.context().drawGlyphs(*mathVariantGlyph.font, &mathVariantGlyph.glyph, &advance, 1, paintOffset + location() + LayoutPoint(0_lu, glyphAscent), style().fontCascade().fontDescription().fontSmoothing());
+    info.context().drawGlyphs(*mathVariantGlyph.font, &mathVariantGlyph.glyph, &advance, 1, paintOffset + location() + LayoutPoint(0_lu, glyphAscent), style().fontCascade().fontDescription().usedFontSmoothing());
 }
 
 void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)

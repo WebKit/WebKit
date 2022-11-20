@@ -83,6 +83,7 @@ public:
         return identifier;
     }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
+    FontSmoothingMode usedFontSmoothing() const;
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
 
     void setOneFamily(const AtomString& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = family; }

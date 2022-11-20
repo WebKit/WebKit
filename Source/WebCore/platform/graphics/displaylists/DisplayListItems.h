@@ -586,6 +586,7 @@ public:
     RenderingResourceIdentifier fontIdentifier() { return m_fontIdentifier; }
     const FloatPoint& localAnchor() const { return m_positionedGlyphs.localAnchor; }
     FloatPoint anchorPoint() const { return m_positionedGlyphs.localAnchor; }
+    FontSmoothingMode fontSmoothingMode() const { return m_positionedGlyphs.smoothingMode; }
     const Vector<GlyphBufferGlyph>& glyphs() const { return m_positionedGlyphs.glyphs; }
 
     template<class Encoder> void encode(Encoder&) const;

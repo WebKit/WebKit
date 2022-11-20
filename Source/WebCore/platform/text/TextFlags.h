@@ -54,6 +54,8 @@ enum class FontSmoothingMode : uint8_t {
     SubpixelAntialiased
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, FontSmoothingMode);
+
 enum class FontOrientation : uint8_t {
     Horizontal,
     Vertical

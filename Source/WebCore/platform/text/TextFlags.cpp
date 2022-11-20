@@ -34,6 +34,17 @@
 
 namespace WebCore {
 
+WTF::TextStream& operator<<(TextStream& ts, FontSmoothingMode mode)
+{
+    switch (mode) {
+    case FontSmoothingMode::AutoSmoothing: ts << "auto"; break;
+    case FontSmoothingMode::NoSmoothing: ts << "no-smoothing"; break;
+    case FontSmoothingMode::Antialiased: ts << "antialiased"; break;
+    case FontSmoothingMode::SubpixelAntialiased: ts << "subpixel-antialiased"; break;
+    }
+    return ts;
+}
+
 WTF::TextStream& operator<<(TextStream& ts, ExpansionBehavior::Behavior behavior)
 {
     switch (behavior) {

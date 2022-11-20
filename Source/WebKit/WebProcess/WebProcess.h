@@ -430,7 +430,7 @@ private:
 
     void setDefaultRequestTimeoutInterval(double);
     void setAlwaysUsesComplexTextCodePath(bool);
-    void setShouldUseFontSmoothingForTesting(bool);
+    void setDisableFontSubpixelAntialiasingForTesting(bool);
     void setTrackingPreventionEnabled(bool);
     void clearResourceLoadStatistics();
     void flushResourceLoadStatistics();
