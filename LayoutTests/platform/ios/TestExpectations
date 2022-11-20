@@ -3755,6 +3755,9 @@ webkit.org/b/248062 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.ht
 
 webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip ]
 
+imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOnlyFailure ]
+
 # These tests have similar harness errors and timeouts. See webkit.org/b/244900
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
