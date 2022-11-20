@@ -1,23 +1,26 @@
-<html> 
+<!DOCTYPE html>
+<html>
 <head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
+
 if (window.testRunner)
      testRunner.dumpEditingCallbacks();
-</script>
-
-
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
 
 function runTest() {
+    Markup.description(`This tests behavior when a node that serves as the start or end of a selection is removed from the document.
+Ideally, we would just adjust the selection when an endpoint is removed, for now, we just blow away the selection.<br>
+This test creates a selection that ends inside of a node that will be removed.  Then the node is removed.`);
+
     var selection = window.getSelection();
     var e = document.getElementById("test");
     var r = document.getElementById("removeme");
-    
+
     selection.setBaseAndExtent(e, 0, r.childNodes[0], 2);
-    
+    Markup.dump(test, 'Before removing node');
     r.parentNode.removeChild(r);
+    Markup.dump(test, 'After removing node');
 }
 
 </script>
@@ -25,8 +28,6 @@ function runTest() {
 <title>Removing the endpoints of a selection</title> 
 </head> 
 <body>
-<p>This tests behavior when a node that serves as the start or end of a selection is removed from the document.  Ideally, we would just adjust the selection when an endpoint is removed, for now, we just blow away the selection.</p>
-<p>This test creates a selection that ends inside of a node that will be removed.  Then the node is removed.  There should be no selection afterward.</p>
 <div id="test">
 hello <span style="color:red;" id="removeme">removeme</span> world!
 </div>
