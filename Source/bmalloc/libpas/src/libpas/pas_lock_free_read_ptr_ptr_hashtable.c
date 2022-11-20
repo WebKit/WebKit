@@ -87,7 +87,7 @@ void pas_lock_free_read_ptr_ptr_hashtable_set(
                 unsigned hash;
                 
                 old_entry = table->array + old_index;
-                if (pas_pair_low(*old_entry) == UINTPTR_MAX)
+                if (pas_pair_low(*old_entry) == UINT64_MAX)
                     continue;
                 
                 for (hash = hash_key((const void*)pas_pair_low(*old_entry), hash_arg); ; ++hash) {
@@ -97,7 +97,7 @@ void pas_lock_free_read_ptr_ptr_hashtable_set(
                     new_index = hash & new_table_mask;
                     new_entry = new_table->array + new_index;
                     
-                    if (pas_pair_low(*new_entry) == UINTPTR_MAX) {
+                    if (pas_pair_low(*new_entry) == UINT64_MAX) {
                         /* Can do this without atomics because the old table is frozen, the old_entry
                            is frozen if non-null even if the old table wasn't, and the new table is
                            still private to this thread. */
@@ -125,7 +125,7 @@ void pas_lock_free_read_ptr_ptr_hashtable_set(
         index = hash & table->table_mask;
         entry = table->array + index;
 
-        if (pas_pair_low(*entry) == UINTPTR_MAX) {
+        if (pas_pair_low(*entry) == UINT64_MAX) {
             pas_atomic_store_pair(entry, pas_pair_create((uintptr_t)key,
                                                          (uintptr_t)value));
             table->key_count++;

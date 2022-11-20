@@ -29,8 +29,7 @@
 
 #include "pas_versioned_field.h"
 
-uintptr_t pas_versioned_field_minimize(pas_versioned_field* field,
-                                       uintptr_t new_value)
+uint64_t pas_versioned_field_minimize(pas_versioned_field* field, uint64_t new_value)
 {
     for (;;) {
         pas_versioned_field old_value;
@@ -44,8 +43,7 @@ uintptr_t pas_versioned_field_minimize(pas_versioned_field* field,
     }
 }
 
-uintptr_t pas_versioned_field_maximize(pas_versioned_field* field,
-                                       uintptr_t new_value)
+uint64_t pas_versioned_field_maximize(pas_versioned_field* field, uint64_t new_value)
 {
     for (;;) {
         pas_versioned_field old_value;
@@ -61,7 +59,7 @@ uintptr_t pas_versioned_field_maximize(pas_versioned_field* field,
 
 void pas_versioned_field_minimize_watched(pas_versioned_field* field,
                                           pas_versioned_field expected_value,
-                                          uintptr_t new_value)
+                                          uint64_t new_value)
 {
     if (new_value < expected_value.value)
         pas_versioned_field_try_write_watched(field, expected_value, new_value);
@@ -69,7 +67,7 @@ void pas_versioned_field_minimize_watched(pas_versioned_field* field,
 
 void pas_versioned_field_maximize_watched(pas_versioned_field* field,
                                           pas_versioned_field expected_value,
-                                          uintptr_t new_value)
+                                          uint64_t new_value)
 {
     if (new_value > expected_value.value)
         pas_versioned_field_try_write_watched(field, expected_value, new_value);

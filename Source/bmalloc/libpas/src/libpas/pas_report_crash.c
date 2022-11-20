@@ -85,7 +85,7 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
 
     size_t table_size = 0;
 
-    kern_return_t kr = reader(task, pas_dead_root, sizeof(pas_root), (void **) &read_pas_dead_root);
+    kern_return_t kr = reader(task, (vm_address_t)pas_dead_root, sizeof(pas_root), (void **)&read_pas_dead_root);
     if (kr != KERN_SUCCESS)
         return KERN_FAILURE;
 

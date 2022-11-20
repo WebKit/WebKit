@@ -78,7 +78,7 @@ pas_coalign_result pas_coalign_one_sided(uintptr_t begin_left, uintptr_t left_si
     
     step = offset / (uintptr_t)gcd_result.result;
     boundary = right_size * (uintptr_t)formal_mod(
-        gcd_result.right_bezout_coefficient * (intptr_t)step,
+        (intptr_t)(gcd_result.right_bezout_coefficient * (intptr_t)step),
         (intptr_t)(multiple / right_size));
     PAS_ASSERT((intptr_t)boundary >= 0);
     

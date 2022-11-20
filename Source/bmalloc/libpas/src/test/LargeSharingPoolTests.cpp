@@ -37,7 +37,7 @@
 #include <vector>
 
 #define PG (pas_page_malloc_alignment())
-#define END ((uintptr_t)1 << PAS_ADDRESS_BITS)
+#define END PAS_MAX_ADDRESS
 
 using namespace std;
 

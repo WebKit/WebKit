@@ -55,9 +55,9 @@ typedef struct pas_deferred_decommit_log pas_deferred_decommit_log;
 typedef struct pas_segregated_heap pas_segregated_heap;
 typedef struct pas_segregated_page pas_segregated_page;
 
-typedef struct PAS_ALIGNED(sizeof(uintptr_t) * 2) pas_segregated_page_emptiness {
-    uintptr_t use_epoch;
-    uintptr_t num_non_empty_words;
+typedef struct PAS_ALIGNED(sizeof(uint64_t) * 2) pas_segregated_page_emptiness {
+    uint64_t use_epoch;
+    uint64_t num_non_empty_words;
 } pas_segregated_page_emptiness;
 #if PAS_COMPILER(CLANG)
 _Static_assert(sizeof(pas_segregated_page_emptiness) == sizeof(pas_pair), "pas_segregated_page_emptiness should be able to be used as pas_pair");

@@ -52,7 +52,16 @@
 
 #define PAS_RISCV __PAS_RISCV
 
+#if PAS_CPU(ADDRESS64)
 #define PAS_ADDRESS_BITS                 48
+#define PAS_MAX_ADDRESS                  (1ULL << PAS_ADDRESS_BITS)
+#else
+#define PAS_ADDRESS_BITS                 32
+/* 1 << PAS_ADDRESS_BITS exceeds pointer size. Actually, ARM64_32 max address is VM_MAX_ADDRESS, which is 0xF0000001.
+   Thus, we can make PAS_MAX_ADDRESS smaller than 4GB. In libpas, we define it as 4GB - 16KB. */
+#define PAS_MAX_ADDRESS                  ((1ULL << PAS_ADDRESS_BITS) - (16ULL << 10))
+#endif
+
 
 #if PAS_ARM || PAS_PLATFORM(PLAYSTATION)
 #define PAS_MAX_GRANULES                 256
@@ -94,8 +103,7 @@
 
 #define PAS_COMPACT_PTR_SIZE             3
 #define PAS_COMPACT_PTR_BITS             (PAS_COMPACT_PTR_SIZE << 3)
-#define PAS_COMPACT_PTR_MASK             ((uintptr_t)(((uint64_t)1 \
-                                                       << (PAS_COMPACT_PTR_BITS & 63)) - 1))
+#define PAS_COMPACT_PTR_MASK             ((uintptr_t)(((uint64_t)1 << (PAS_COMPACT_PTR_BITS & 63)) - 1))
 
 #define PAS_ALLOCATOR_INDEX_BYTES        4
 

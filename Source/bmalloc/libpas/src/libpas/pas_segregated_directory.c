@@ -81,7 +81,7 @@ uint64_t pas_segregated_directory_get_use_epoch(pas_segregated_directory* direct
 {
     static const bool verbose = false;
     
-    uintptr_t last_empty_plus_one;
+    size_t last_empty_plus_one;
     size_t index;
 
     last_empty_plus_one = pas_segregated_directory_get_last_empty_plus_one_value(directory);

@@ -71,7 +71,7 @@ typedef struct pas_ptr_hash_map pas_ptr_hash_map;
 typedef struct pas_ptr_hash_map_in_flux_stash pas_ptr_hash_map_in_flux_stash;
 
 struct pas_root {
-    uintptr_t magic;
+    uint64_t magic;
     uintptr_t* compact_heap_reservation_base;
     size_t* compact_heap_reservation_size;
     size_t* compact_heap_reservation_guard_size;

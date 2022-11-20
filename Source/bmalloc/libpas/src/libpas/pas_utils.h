@@ -809,28 +809,46 @@ static inline bool pas_compare_and_swap_bool_strong(bool* ptr, bool old_value, b
 
 static inline bool pas_compare_and_swap_uintptr_weak(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
 {
+#if PAS_CPU(ADDRESS64)
     return pas_compare_and_swap_uint64_weak((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
+#else
+    return pas_compare_and_swap_uint32_weak((uint32_t*)ptr, (uint32_t)old_value, (uint32_t)new_value);
+#endif
 }
 
 static inline uintptr_t pas_compare_and_swap_uintptr_strong(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
 {
+#if PAS_CPU(ADDRESS64)
     return (uintptr_t)pas_compare_and_swap_uint64_strong((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
+#else
+    return (uintptr_t)pas_compare_and_swap_uint32_strong((uint32_t*)ptr, (uint32_t)old_value, (uint32_t)new_value);
+#endif
 }
 
 static inline bool pas_compare_and_swap_ptr_weak(void* ptr, const void* old_value, const void* new_value)
 {
+#if PAS_CPU(ADDRESS64)
     return pas_compare_and_swap_uint64_weak((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
+#else
+    return pas_compare_and_swap_uint32_weak((uint32_t*)ptr, (uint32_t)old_value, (uint32_t)new_value);
+#endif
 }
 
 static inline void* pas_compare_and_swap_ptr_strong(void* ptr, const void* old_value, const void* new_value)
 {
+#if PAS_CPU(ADDRESS64)
     return (void*)pas_compare_and_swap_uint64_strong((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
+#else
+    return (void*)pas_compare_and_swap_uint32_strong((uint32_t*)ptr, (uint32_t)old_value, (uint32_t)new_value);
+#endif
 }
 
 #define pas_compiler_fence __pas_compiler_fence
 #define pas_fence __pas_fence
 #define pas_depend __pas_depend
 #define pas_depend_cpu_only __pas_depend_cpu_only
+#define pas_depend64 __pas_depend64
+#define pas_depend64_cpu_only __pas_depend64_cpu_only
 
 /* Block loads or stores after this from getting hoisted above some prior load. */
 static PAS_ALWAYS_INLINE void pas_fence_after_load(void)
@@ -860,12 +878,12 @@ static PAS_ALWAYS_INLINE uintptr_t pas_opaque(uintptr_t value)
 struct pas_pair;
 typedef struct pas_pair pas_pair;
 
-struct PAS_ALIGNED(sizeof(uintptr_t) * 2) pas_pair {
-    uintptr_t low;
-    uintptr_t high;
+struct PAS_ALIGNED(sizeof(uint64_t) * 2) pas_pair {
+    uint64_t low;
+    uint64_t high;
 };
 
-static inline pas_pair pas_pair_create(uintptr_t low, uintptr_t high)
+static inline pas_pair pas_pair_create(uint64_t low, uint64_t high)
 {
     pas_pair result;
     result.low = low;
@@ -873,12 +891,12 @@ static inline pas_pair pas_pair_create(uintptr_t low, uintptr_t high)
     return result;
 }
 
-static inline uintptr_t pas_pair_low(pas_pair pair)
+static inline uint64_t pas_pair_low(pas_pair pair)
 {
     return pair.low;
 }
 
-static inline uintptr_t pas_pair_high(pas_pair pair)
+static inline uint64_t pas_pair_high(pas_pair pair)
 {
     return pair.high;
 }
@@ -887,17 +905,17 @@ static inline uintptr_t pas_pair_high(pas_pair pair)
 
 typedef __uint128_t pas_pair;
 
-static inline pas_pair pas_pair_create(uintptr_t low, uintptr_t high)
+static inline pas_pair pas_pair_create(uint64_t low, uint64_t high)
 {
     return ((pas_pair)low) | ((pas_pair)(high) << 64);
 }
 
-static inline uintptr_t pas_pair_low(pas_pair pair)
+static inline uint64_t pas_pair_low(pas_pair pair)
 {
     return pair;
 }
 
-static inline uintptr_t pas_pair_high(pas_pair pair)
+static inline uint64_t pas_pair_high(pas_pair pair)
 {
     return pair >> 64;
 }
@@ -908,14 +926,14 @@ static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
                                                   pas_pair old_value, pas_pair new_value)
 {
 #if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
-    uintptr_t low = 0;
-    uintptr_t high = 0;
-    uintptr_t old_low = pas_pair_low(old_value);
-    uintptr_t old_high = pas_pair_high(old_value);
-    uintptr_t new_low = pas_pair_low(new_value);
-    uintptr_t new_high = pas_pair_high(new_value);
-    uintptr_t cond = 0;
-    uintptr_t temp = 0;
+    uint64_t low = 0;
+    uint64_t high = 0;
+    uint64_t old_low = pas_pair_low(old_value);
+    uint64_t old_high = pas_pair_high(old_value);
+    uint64_t new_low = pas_pair_low(new_value);
+    uint64_t new_high = pas_pair_high(new_value);
+    uint64_t cond = 0;
+    uint64_t temp = 0;
     asm volatile (
         "ldxp %x[low], %x[high], [%x[ptr]]\t\n"
         "eor %x[cond], %x[high], %x[old_high]\t\n"
@@ -952,14 +970,14 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
                                                         pas_pair old_value, pas_pair new_value)
 {
 #if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
-    uintptr_t low = 0;
-    uintptr_t high = 0;
-    uintptr_t old_low = pas_pair_low(old_value);
-    uintptr_t old_high = pas_pair_high(old_value);
-    uintptr_t new_low = pas_pair_low(new_value);
-    uintptr_t new_high = pas_pair_high(new_value);
-    uintptr_t cond = 0;
-    uintptr_t temp = 0;
+    uint64_t low = 0;
+    uint64_t high = 0;
+    uint64_t old_low = pas_pair_low(old_value);
+    uint64_t old_high = pas_pair_high(old_value);
+    uint64_t new_low = pas_pair_low(new_value);
+    uint64_t new_high = pas_pair_high(new_value);
+    uint64_t cond = 0;
+    uint64_t temp = 0;
     asm volatile (
     "0:\t\n"
         "ldxp %x[low], %x[high], [%x[ptr]]\t\n"
@@ -1005,9 +1023,9 @@ PAS_IGNORE_WARNINGS_END
 static inline void pas_atomic_store_pair(void* raw_ptr, pas_pair value)
 {
 #if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
-    uintptr_t low = pas_pair_low(value);
-    uintptr_t high = pas_pair_high(value);
-    uintptr_t cond = 0;
+    uint64_t low = pas_pair_low(value);
+    uint64_t high = pas_pair_high(value);
+    uint64_t cond = 0;
     asm volatile (
     "0:\t\n"
         "ldxp xzr, %x[cond], [%x[ptr]]\t\n"
@@ -1039,7 +1057,7 @@ PAS_IGNORE_WARNINGS_END
 #endif
 }
 
-static PAS_ALWAYS_INLINE bool pas_compare_ptr_opaque(uintptr_t a, uintptr_t b)
+static PAS_ALWAYS_INLINE bool pas_compare_64_opaque(uint64_t a, uint64_t b)
 {
 #if PAS_COMPILER(CLANG)
 #if PAS_ARM64

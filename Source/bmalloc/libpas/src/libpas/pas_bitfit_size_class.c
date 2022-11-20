@@ -90,8 +90,7 @@ pas_bitfit_size_class_get_first_free_view(pas_bitfit_size_class* size_class,
     first_free_for_size = pas_versioned_field_read_to_watch(&size_class->first_free);
     first_unprocessed_free = pas_versioned_field_read_to_watch(&directory->first_unprocessed_free);
 
-    start_index = PAS_MIN(first_free_for_size.value,
-                          first_unprocessed_free.value);
+    start_index = (uintptr_t)PAS_MIN(first_free_for_size.value, first_unprocessed_free.value);
     PAS_ASSERT((unsigned)start_index == start_index);
     
     view_and_index = pas_bitfit_directory_get_first_free_view(

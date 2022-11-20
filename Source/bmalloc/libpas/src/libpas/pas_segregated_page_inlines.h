@@ -483,7 +483,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
     
     if (!new_word) {
         PAS_TESTING_ASSERT(page->emptiness.num_non_empty_words);
-        uintptr_t num_non_empty_words = page->emptiness.num_non_empty_words;
+        uint64_t num_non_empty_words = page->emptiness.num_non_empty_words;
         if (!--num_non_empty_words) {
             /* This has to happen last since it effectively unlocks the lock. That's due to
                the things that happen in switch_lock_and_try_to_take_bias. Specifically, its

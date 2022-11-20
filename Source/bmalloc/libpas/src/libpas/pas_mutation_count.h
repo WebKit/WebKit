@@ -34,12 +34,12 @@ struct pas_mutation_count;
 typedef struct pas_mutation_count pas_mutation_count;
 
 struct pas_mutation_count {
-    uintptr_t count;
+    uint64_t count;
 };
 
 #define PAS_MUTATION_COUNT_INITIALIZER ((pas_mutation_count){ .count = 0 })
 
-#define PAS_MUTATION_COUNT_MUTATING_BIT ((uintptr_t)1)
+#define PAS_MUTATION_COUNT_MUTATING_BIT ((uint64_t)1)
 
 /* Always call the start_mutating/stop_mutating functions while holding a lock. */
 
@@ -76,7 +76,7 @@ static inline bool pas_mutation_count_matches_with_dependency(pas_mutation_count
 
 static inline unsigned pas_mutation_count_depend(pas_mutation_count saved_mutation_count)
 {
-    return pas_depend((unsigned long)saved_mutation_count.count);
+    return pas_depend64(saved_mutation_count.count);
 }
 
 PAS_END_EXTERN_C;

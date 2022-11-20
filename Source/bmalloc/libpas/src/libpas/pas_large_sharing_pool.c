@@ -234,7 +234,7 @@ static void boot_tree(void)
     /* Create the One True Node for all of VA.
      
        ROFL: This is totally borked on 32-bit. */
-    range = pas_range_create(0, (uintptr_t)1 << PAS_ADDRESS_BITS);
+    range = pas_range_create(0, PAS_MAX_ADDRESS);
     
     create_and_insert(
         range,

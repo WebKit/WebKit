@@ -279,11 +279,11 @@ bool pas_bitfit_directory_does_sharing(pas_bitfit_directory* directory)
     
 uint64_t pas_bitfit_directory_get_use_epoch(pas_bitfit_directory* directory)
 {
-    uintptr_t last_empty_plus_one;
+    size_t last_empty_plus_one;
     size_t index;
     pas_bitfit_page_config config;
 
-    last_empty_plus_one = directory->last_empty_plus_one.value;
+    last_empty_plus_one = (size_t)directory->last_empty_plus_one.value;
     config = *pas_bitfit_page_config_kind_get_config(directory->config_kind);
 
     for (index = last_empty_plus_one; index--;) {
@@ -388,7 +388,7 @@ pas_page_sharing_pool_take_result pas_bitfit_directory_take_last_empty(
     page_config = pas_bitfit_page_config_kind_get_config(directory->config_kind);
     num_granules = page_config->base.page_size / page_config->base.granule_size;
 
-    for (index = last_empty_plus_one_value.value; index--;) {
+    for (index = (size_t)last_empty_plus_one_value.value; index--;) {
         pas_bitfit_view* view;
         pas_bitfit_page* page;
         uintptr_t base;
