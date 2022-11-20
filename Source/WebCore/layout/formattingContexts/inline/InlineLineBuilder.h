@@ -50,7 +50,7 @@ public:
     struct LineInput {
         InlineItemRange needsLayoutRange;
         InlineRect initialLogicalRect;
-        bool applyOverflowTruncation { false };
+        bool shouldTruncateOverflow { false };
     };
     struct PartialContent {
         PartialContent(size_t, std::optional<InlineLayoutUnit>);
@@ -133,7 +133,7 @@ private:
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     CommittedContent placeInlineContent(const InlineItemRange&);
-    InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
+    InlineItemRange close(const InlineItemRange& needsLayoutRange, bool truncateOverflow, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;

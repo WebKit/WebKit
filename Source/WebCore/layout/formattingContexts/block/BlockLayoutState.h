@@ -40,8 +40,8 @@ public:
     FloatingState& floatingState() { return m_floatingState; }
 
     struct LineClamp {
-        size_t m_maximumNumberOfLines { 0 };
-        size_t m_numberOfVisibleLines { 0 };
+        size_t maximumNumberOfLines { 0 };
+        size_t numberOfVisibleLines { 0 };
     };
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
 
