@@ -100,6 +100,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
             JSC::Options::useConcurrentGC() = false;
             JSC::Options::useLLIntICs() = false;
             JSC::Options::useZombieMode() = true;
+            JSC::Options::allowDoubleShape() = false;
         }
         if (xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
             JSC::ExecutableAllocator::setJITEnabled(false);

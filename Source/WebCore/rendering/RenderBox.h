@@ -590,15 +590,20 @@ override;
     void flipForWritingMode(FloatRect&) const;
     // These represent your location relative to your container as a physical offset.
     // In layout related methods you almost always want the logical location (e.g. x() and y()).
-    LayoutPoint topLeftLocation() const;
-    LayoutSize topLeftLocationOffset() const;
-    void applyTopLeftLocationOffset(LayoutPoint& point) const
+    LayoutPoint topLeftLocation() const
     {
         // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.
         if (!document().view() || !document().view()->hasFlippedBlockRenderers())
-            point.move(m_frameRect.x(), m_frameRect.y());
-        else
-            applyTopLeftLocationOffsetWithFlipping(point);
+            return location();
+        return topLeftLocationWithFlipping();
+    }
+
+    LayoutSize topLeftLocationOffset() const
+    {
+        // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.
+        if (!document().view() || !document().view()->hasFlippedBlockRenderers())
+            return locationOffset();
+        return toLayoutSize(topLeftLocationWithFlipping());
     }
 
     LayoutRect logicalVisualOverflowRectForPropagation(const RenderStyle*) const;
@@ -800,7 +805,7 @@ private:
 
     LayoutRect computeVisibleRectUsingPaintOffset(const LayoutRect&) const;
     
-    void applyTopLeftLocationOffsetWithFlipping(LayoutPoint&) const;
+    LayoutPoint topLeftLocationWithFlipping() const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
