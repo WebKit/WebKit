@@ -47,6 +47,11 @@ public:
         size_t start { 0 };
         size_t end { 0 };
     };
+    struct LineInput {
+        InlineItemRange needsLayoutRange;
+        InlineRect initialLogicalRect;
+        bool applyOverflowTruncation { false };
+    };
     struct PartialContent {
         PartialContent(size_t, std::optional<InlineLayoutUnit>);
 
@@ -82,7 +87,7 @@ public:
         bool contentNeedsTrailingEllipsis { false };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>&);
+    LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;

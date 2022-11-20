@@ -220,7 +220,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
-        auto lineContent = lineBuilder.layoutInlineContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, previousLine);
+        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, false }, previousLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints);
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
