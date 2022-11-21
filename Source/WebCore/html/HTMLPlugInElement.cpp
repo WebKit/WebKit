@@ -176,9 +176,8 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
     // Don't keep the widget alive over the defaultEventHandler call, since that can do things like navigate.
     {
         RefPtr<Widget> widget = downcast<RenderWidget>(*renderer).widget();
-        if (!widget)
-            return;
-        widget->handleEvent(event);
+        if (widget)
+            widget->handleEvent(event);
         if (event.defaultHandled())
             return;
     }

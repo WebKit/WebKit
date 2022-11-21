@@ -1,0 +1,6 @@
+Pressing TAB twice should focus/highlight end checkbox
+
+start  end
+
+FAIL focus advances with tab key thorough object element assert_equals: object got focus expected Element node <object type="text/html" data="data:text/html," width="16... but got Element node <body><p>Pressing TAB twice should focus/highlight end ch...
+
