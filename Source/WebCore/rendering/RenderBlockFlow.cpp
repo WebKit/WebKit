@@ -3895,14 +3895,23 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
     
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     if (RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow()) {
+        // Calculate the non-auto content box height, or set it to 0 if it's auto. We need to know
+        // this before layout, so that we can figure out where to insert column breaks. We also
+        // treat RenderView (which may be paginated, which uses the multicol implmentation) as
+        // having non-auto height, since its height is deduced from the viewport height. We use
+        // computeLogicalHeight() to calculate the content box height. That method will clamp
+        // against max-height and min-height. Since we're now at the beginning of layout, and we
+        // don't know the actual height of the content yet, only call that method when height is
+        // definite, or we might fool ourselves into believing that columns have a definite height
+        // when they in fact don't.        
         LayoutUnit newColumnHeight;
-        if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Unpaginated) {
+        if (hasDefiniteLogicalHeight() || isRenderView() || view().frameView().pagination().mode != Pagination::Unpaginated) {
             auto computedValues = computeLogicalHeight(0_lu, logicalTop());
             newColumnHeight = std::max<LayoutUnit>(computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)
                 relayoutChildren = true;
         }
-        fragmentedFlow->setColumnHeightAvailable(newColumnHeight);
+        fragmentedFlow->setColumnHeightAvailable(std::max(newColumnHeight, 0_lu));
     } else if (is<RenderFragmentedFlow>(*this)) {
         RenderFragmentedFlow& fragmentedFlow = downcast<RenderFragmentedFlow>(*this);
 
