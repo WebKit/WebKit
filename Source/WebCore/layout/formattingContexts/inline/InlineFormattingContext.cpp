@@ -261,9 +261,11 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
             ++numberOfLines;
 
         firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
-        auto isAtEnd = firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty();
-        if (isAtEnd)
+        auto isAtEnd = (firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty()) || ellipsisBehavior == ShouldLineEndWithEllispsis::Always;
+        if (isAtEnd) {
+            resetGeometryForClampedContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineContent.overflowingFloats, { constraints.horizontal().logicalLeft, lineLogicalRect.bottom() });
             break;
+        }
 
         lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext);
         previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, WTFMove(lineContent.overflowingFloats), lineContent.trailingOverflowingContentWidth };
@@ -477,6 +479,24 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilde
     formattingState.addLine(displayLine);
 
     return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(formattingState.lines().last().lineBoxRect(), root().style().writingMode());
+}
+
+void InlineFormattingContext::resetGeometryForClampedContent(const LineBuilder::InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft)
+{
+    if (needsDisplayContentRange.isEmpty() && overflowingFloats.isEmpty())
+        return;
+
+    auto& inlineItems = formattingState().inlineItems();
+    for (size_t index = needsDisplayContentRange.start; index < needsDisplayContentRange.end; ++index) {
+        auto& inlineItem = inlineItems[index];
+        auto hasBoxGeometry = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak() || inlineItem.isInlineBoxStart();
+        if (!hasBoxGeometry)
+            continue;
+        auto& boxGeometry = formattingState().boxGeometry(inlineItem.layoutBox());
+        boxGeometry.setLogicalTopLeft(topleft);
+        boxGeometry.setContentBoxHeight({ });
+        boxGeometry.setContentBoxWidth({ });
+    }
 }
 
 void InlineFormattingContext::invalidateFormattingState()
