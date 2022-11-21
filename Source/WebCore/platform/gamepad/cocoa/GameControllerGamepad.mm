@@ -73,12 +73,8 @@ static GCControllerButtonInput *homeButtonFromExtendedGamepad(GCExtendedGamepad 
 
 static void disableDefaultSystemAction(GCControllerButtonInput *button)
 {
-#if PLATFORM(IOS_FAMILY)
     if ([button respondsToSelector:@selector(preferredSystemGestureState)])
         button.preferredSystemGestureState = GCSystemGestureStateDisabled;
-#else
-    UNUSED_PARAM(button);
-#endif
 }
 
 void GameControllerGamepad::setupAsExtendedGamepad()

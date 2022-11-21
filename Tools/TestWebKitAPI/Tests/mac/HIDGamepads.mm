@@ -33,6 +33,7 @@
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "VirtualGamepad.h"
+#import <WebCore/GameControllerSoftLink.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 
 @interface GamepadMessageHandler : NSObject <WKScriptMessageHandler>
@@ -79,6 +80,8 @@ static NSWindow *getKeyWindowForTesting()
 
 TEST(Gamepad, Basic)
 {
+    [WebCore::getGCControllerClass() setShouldMonitorBackgroundEvents:YES];
+
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -123,10 +126,17 @@ TEST(Gamepad, Basic)
     didReceiveMessage = false;
 
     EXPECT_EQ(messageHandler.get().messages.size(), 1u);
+
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:@"\"Virtual Nimbus Extended Gamepad\""]);
+#else
     EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:@"\"ffff-1420-Virtual Nimbus\""]);
+#endif
+
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting], 1u);
 }
 
+#if !HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 TEST(Gamepad, GCFVersusHID)
 {
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
@@ -203,6 +213,7 @@ TEST(Gamepad, GCFVersusHID)
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 2u);
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 3u);
 }
+#endif // !HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 
 static const char* pollGamepadStateFunction = R"GAMEPADRESOURCE(
 var result = new Object();
@@ -230,6 +241,8 @@ return result;
 
 TEST(Gamepad, GamepadState)
 {
+    [WebCore::getGCControllerClass() setShouldMonitorBackgroundEvents:YES];
+
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -364,6 +377,18 @@ TEST(Gamepad, GamepadState)
 
 TEST(Gamepad, Dualshock3Basic)
 {
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    auto expectedHID = 0u;
+    auto expectedGC = 1u;
+    NSString *expectedName = @"\"Virtual Dualshock3 Extended Gamepad\"";
+#else
+    auto expectedHID = 1u;
+    auto expectedGC = 0u;
+    NSString *expectedName = @"\"54c-268-Virtual Dualshock3\"";
+#endif
+
+    [WebCore::getGCControllerClass() setShouldMonitorBackgroundEvents:YES];
+
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -396,10 +421,10 @@ TEST(Gamepad, Dualshock3Basic)
     while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
         Util::runFor(0.01_s);
 
-    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 1u);
-    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 0u);
+    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], expectedHID);
+    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], expectedGC);
 
-    gamepad->setButtonValue(0, 0.75);
+    gamepad->setButtonValue(1, 0.75);
     gamepad->publishReport();
 
     // Wait for the page to tell us a gamepad connected
@@ -407,7 +432,7 @@ TEST(Gamepad, Dualshock3Basic)
     didReceiveMessage = false;
 
     EXPECT_EQ(messageHandler.get().messages.size(), 1u);
-    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:@"\"54c-268-Virtual Dualshock3\""]);
+    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:expectedName]);
 
     bool done = false;
     auto resultBlock = [&] (id result, NSError *error) {
@@ -425,8 +450,12 @@ TEST(Gamepad, Dualshock3Basic)
     didReceiveMessage = true;
 }
 
+// Disabled for now with GameController framework's handling because our virtual HID report isn't quite right
+#if !HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 TEST(Gamepad, Stadia)
 {
+    [WebCore::getGCControllerClass() setShouldMonitorBackgroundEvents:YES];
+
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -492,9 +521,27 @@ TEST(Gamepad, Stadia)
     Util::run(&done);
     didReceiveMessage = true;
 }
+#endif // #if !HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 
 TEST(Gamepad, LogitechBasic)
 {
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    auto expectedHID = 0u;
+    auto expectedGC = 2u;
+    auto expectedButtons = 17u;
+    NSSet *expectedGamepadNames = [NSSet setWithArray:@[
+        @"\"Virtual Logitech F310 Extended Gamepad\"",
+        @"\"Virtual Logitech F710 Extended Gamepad\""]];
+#else
+    auto expectedHID = 2u;
+    auto expectedGC = 0u;
+    auto expectedButtons = 16u;
+    NSSet *expectedGamepadNames = [NSSet setWithArray:@[
+        @"\"46d-c216-Virtual Logitech F310\"",
+        @"\"46d-c219-Virtual Logitech F710\""]];
+#endif
+    [WebCore::getGCControllerClass() setShouldMonitorBackgroundEvents:YES];
+
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -529,8 +576,8 @@ TEST(Gamepad, LogitechBasic)
     while ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting] != 2u)
         Util::runFor(0.01_s);
 
-    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 2u);
-    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 0u);
+    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], expectedHID);
+    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], expectedGC);
 
     gamepad1->setButtonValue(0, 1.0);
     gamepad2->setButtonValue(0, 1.0);
@@ -544,11 +591,6 @@ TEST(Gamepad, LogitechBasic)
     }
 
     EXPECT_EQ(messageHandler.get().messages.size(), 2u);
-    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:@"\"46d-c216-Virtual Logitech F310\""]);
-
-    NSSet *expectedGamepadNames = [NSSet setWithArray:@[
-        @"\"46d-c216-Virtual Logitech F310\"",
-        @"\"46d-c219-Virtual Logitech F710\""]];
 
     for (size_t i = 0; i < 2; ++i)
         EXPECT_TRUE([expectedGamepadNames containsObject:messageHandler.get().messages[i].get()]);
@@ -557,8 +599,8 @@ TEST(Gamepad, LogitechBasic)
     auto resultBlock = [&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result[@"gamepadCount"] isEqualToNumber:@(2)]);
-        EXPECT_EQ(((NSArray *)result[@"gamepadButtons"][0]).count, 16u);
-        EXPECT_EQ(((NSArray *)result[@"gamepadButtons"][1]).count, 16u);
+        EXPECT_EQ(((NSArray *)result[@"gamepadButtons"][0]).count, expectedButtons);
+        EXPECT_EQ(((NSArray *)result[@"gamepadButtons"][1]).count, expectedButtons);
         EXPECT_EQ(((NSArray *)result[@"gamepadAxes"][0]).count, 4u);
         EXPECT_EQ(((NSArray *)result[@"gamepadAxes"][1]).count, 4u);
 
@@ -573,6 +615,8 @@ TEST(Gamepad, LogitechBasic)
 
 TEST(Gamepad, FullInfoAfterConnection)
 {
+    [WebCore::getGCControllerClass() setShouldMonitorBackgroundEvents:YES];
+
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -605,13 +649,15 @@ TEST(Gamepad, FullInfoAfterConnection)
     while ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting] != 1u)
         Util::runFor(0.01_s);
 
-    gamepad1->setButtonValue(0, 1.0);
-    gamepad1->publishReport();
-
     // Wait until the page sees the gamepad
     while (messageHandler.get().messages.size() < 1) {
         didReceiveMessage = false;
-        Util::run(&didReceiveMessage);
+        gamepad1->setButtonValue(0, 1.0);
+        gamepad1->publishReport();
+        Util::runFor(0.01_s);
+        gamepad1->setButtonValue(0, 0.0);
+        gamepad1->publishReport();
+        Util::runFor(0.01_s);
     }
 
     bool done = false;
@@ -635,14 +681,14 @@ TEST(Gamepad, FullInfoAfterConnection)
 
     // The gamepad is already connected, but this new web view can't see it.
     // Press buttons to make it visible.
-    gamepad1->setButtonValue(1, 1.0);
-    gamepad1->publishReport();
-
-    // The gamepad is already connected, but this new web view can't see it.
-    // Press buttons to make it visible.
     while (messageHandler.get().messages.size() < 2) {
         didReceiveMessage = false;
-        Util::run(&didReceiveMessage);
+        gamepad1->setButtonValue(0, 1.0);
+        gamepad1->publishReport();
+        Util::runFor(0.01_s);
+        gamepad1->setButtonValue(0, 0.0);
+        gamepad1->publishReport();
+        Util::runFor(0.01_s);
     }
 
     // Verify the gamepad has the expected mapping in the second web view.
