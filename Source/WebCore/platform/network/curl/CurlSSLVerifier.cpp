@@ -41,11 +41,6 @@ CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
     SSL_CTX_set_app_data(ctx, this);
     SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), verifyCallback);
 
-#if defined(LIBRESSL_VERSION_NUMBER)
-    if (auto data = std::get_if<CertificateInfo::Certificate>(&sslHandle.getCACertInfo()))
-        SSL_CTX_load_verify_mem(ctx, static_cast<void*>(const_cast<uint8_t*>(data->data())), data->size());
-#endif
-
 #if (!defined(LIBRESSL_VERSION_NUMBER))
     if (const auto& signatureAlgorithmsList = sslHandle.signatureAlgorithmsList(); !signatureAlgorithmsList.isNull())
         SSL_CTX_set1_sigalgs_list(ctx, signatureAlgorithmsList.data());

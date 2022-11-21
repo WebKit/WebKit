@@ -25,7 +25,7 @@ messages -> WebResourceLoader LegacyReceiver {
     SetWorkerStart(MonotonicTime value)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponse(WebCore::ResourceResponse response, enum:bool WebKit::PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics> optionalNetworkLoadMetrics)
-    DidReceiveData(IPC::SharedBufferReference data, int64_t encodedDataLength)
+    DidReceiveData(IPC::SharedBufferReference data, uint64_t encodedDataLength)
     DidFinishResourceLoad(WebCore::NetworkLoadMetrics networkLoadMetrics)
     DidFailResourceLoad(WebCore::ResourceError error)
     DidFailServiceWorkerLoad(WebCore::ResourceError error)

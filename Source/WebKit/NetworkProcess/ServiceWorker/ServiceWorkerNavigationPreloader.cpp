@@ -181,7 +181,7 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
         callback();
 }
 
-void ServiceWorkerNavigationPreloader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
+void ServiceWorkerNavigationPreloader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, uint64_t reportedEncodedDataLength)
 {
     if (m_bodyCallback)
         m_bodyCallback(RefPtr { &buffer }, reportedEncodedDataLength);

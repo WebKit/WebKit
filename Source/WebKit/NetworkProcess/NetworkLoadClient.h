@@ -52,7 +52,7 @@ public:
     virtual void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) = 0;
     virtual void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) = 0;
     virtual void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&&) = 0;
-    virtual void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, int reportedEncodedDataLength) = 0;
+    virtual void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength) = 0;
     virtual void didFinishLoading(const WebCore::NetworkLoadMetrics&) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;
     virtual void didBlockAuthenticationChallenge() { };
