@@ -117,7 +117,6 @@ public:
     virtual bool supportsReadOnly() const { return false; }
     bool isReadOnly() const { return supportsReadOnly() && m_hasReadOnlyAttribute; }
     bool isMutable() const { return !isDisabledFormControl() && !isReadOnly(); }
-    void updateReadOnlyState();
 
     WEBCORE_EXPORT String autocomplete() const;
     WEBCORE_EXPORT void setAutocomplete(const AtomString&);
