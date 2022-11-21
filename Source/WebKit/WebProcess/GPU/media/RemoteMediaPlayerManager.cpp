@@ -235,7 +235,7 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
 HashSet<SecurityOriginData> RemoteMediaPlayerManager::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path)
 {
     auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache(remoteEngineIdentifier, path), 0);
-    auto [originData] = sendResult.takeReplyOr(HashSet<SecurityOriginData> { });
+    auto [originData] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return originData;
 }
 

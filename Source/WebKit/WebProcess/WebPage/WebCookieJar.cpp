@@ -145,8 +145,10 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
         return m_cache.cookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 
     auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
-    auto [cookieString, secureCookiesAccessed] = sendResult.takeReplyOr(String { }, false);
-
+    auto [cookieString, secureCookiesAccessed] = sendResult.takeReplyOr(
+        []() -> Messages::NetworkConnectionToWebProcess::CookiesForDOM::ReplyArguments {
+            return { String { }, false };
+        });
     return cookieString;
 }
 

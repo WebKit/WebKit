@@ -160,14 +160,14 @@ void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const
 String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardStringForType(pasteboardName, pasteboardType, pageIdentifier(context)), 0);
-    auto [value] = sendResult.takeReplyOr(String { });
+    auto [value] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return value;
 }
 
 Vector<String> WebPlatformStrategies::allStringsForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardStringsForType(pasteboardName, pasteboardType, pageIdentifier(context)), 0);
-    auto [values] = sendResult.takeReplyOr(Vector<String> { });
+    auto [values] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return values;
 }
 
@@ -182,14 +182,14 @@ int64_t WebPlatformStrategies::changeCount(const String& pasteboardName, const P
 Color WebPlatformStrategies::color(const String& pasteboardName, const PasteboardContext* context)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardColor(pasteboardName, pageIdentifier(context)), 0);
-    auto [color] = sendResult.takeReplyOr(Color { });
+    auto [color] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return color;
 }
 
 URL WebPlatformStrategies::url(const String& pasteboardName, const PasteboardContext* context)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardURL(pasteboardName, pageIdentifier(context)), 0);
-    auto [urlString] = sendResult.takeReplyOr(String { });
+    auto [urlString] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return URL({ }, urlString);
 }
 
@@ -301,21 +301,21 @@ void WebPlatformStrategies::updateSupportedTypeIdentifiers(const Vector<String>&
 Vector<String> WebPlatformStrategies::types(const String& pasteboardName)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetTypes(pasteboardName), 0);
-    auto [result] = sendResult.takeReplyOr(Vector<String> { });
+    auto [result] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return result;
 }
 
 String WebPlatformStrategies::readTextFromClipboard(const String& pasteboardName)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadText(pasteboardName), 0);
-    auto [result] = sendResult.takeReplyOr(String { });
+    auto [result] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return result;
 }
 
 Vector<String> WebPlatformStrategies::readFilePathsFromClipboard(const String& pasteboardName)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadFilePaths(pasteboardName), 0);
-    auto [result] = sendResult.takeReplyOr(Vector<String> { });
+    auto [result] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return result;
 }
 
@@ -363,7 +363,7 @@ void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, cons
 Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, const PasteboardContext* context)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::TypesSafeForDOMToReadAndWrite(pasteboardName, origin, pageIdentifier(context)), 0);
-    auto [types] = sendResult.takeReplyOr(Vector<String> { });
+    auto [types] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return types;
 }
 
@@ -436,7 +436,7 @@ URL WebPlatformStrategies::readURLFromPasteboard(size_t index, const String& pas
 String WebPlatformStrategies::readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadStringFromPasteboard(index, pasteboardType, pasteboardName, pageIdentifier(context)), 0);
-    auto [value] = sendResult.takeReplyOr(String { });
+    auto [value] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return value;
 }
 

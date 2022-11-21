@@ -71,7 +71,7 @@ bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
 std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem, const CDMPrivateClient&)
 {
     auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), { });
-    auto [identifier, configuration] = sendResult.takeReplyOr(RemoteCDMIdentifier { }, RemoteCDMConfiguration { });
+    auto [identifier, configuration] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     if (!identifier)
         return nullptr;
     return RemoteCDM::create(*this, WTFMove(identifier), WTFMove(configuration));

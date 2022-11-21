@@ -215,7 +215,7 @@ String WebPageProxy::stringSelectionForPasteboard()
     
     const Seconds messageTimeout(20);
     auto sendResult = sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), messageTimeout);
-    auto [value] = sendResult.takeReplyOr(String { });
+    auto [value] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return value;
 }
 

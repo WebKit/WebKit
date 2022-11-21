@@ -188,7 +188,7 @@ FloatRect WebChromeClient::windowRect()
 #endif
 
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetWindowFrame(), m_page.identifier());
-    auto [newWindowFrame] = sendResult.takeReplyOr(FloatRect { });
+    auto [newWindowFrame] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return newWindowFrame;
 #endif
 }

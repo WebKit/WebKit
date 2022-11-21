@@ -3832,28 +3832,28 @@ void WebPage::resume(CompletionHandler<void(bool)>&& completionHandler)
 IntPoint WebPage::screenToRootView(const IntPoint& point)
 {
     auto sendResult = sendSync(Messages::WebPageProxy::ScreenToRootView(point));
-    auto [windowPoint] = sendResult.takeReplyOr(IntPoint { });
+    auto [windowPoint] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return windowPoint;
 }
     
 IntRect WebPage::rootViewToScreen(const IntRect& rect)
 {
     auto sendResult = sendSync(Messages::WebPageProxy::RootViewToScreen(rect));
-    auto [screenRect] = sendResult.takeReplyOr(IntRect { });
+    auto [screenRect] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return screenRect;
 }
     
 IntPoint WebPage::accessibilityScreenToRootView(const IntPoint& point)
 {
     auto sendResult = sendSync(Messages::WebPageProxy::AccessibilityScreenToRootView(point));
-    auto [windowPoint] = sendResult.takeReplyOr(IntPoint { });
+    auto [windowPoint] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return windowPoint;
 }
 
 IntRect WebPage::rootViewToAccessibilityScreen(const IntRect& rect)
 {
     auto sendResult = sendSync(Messages::WebPageProxy::RootViewToAccessibilityScreen(rect));
-    auto [screenRect] = sendResult.takeReplyOr(IntRect { });
+    auto [screenRect] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return screenRect;
 }
 

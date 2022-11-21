@@ -71,7 +71,7 @@ IPC::Connection& RemoteAudioSession::ensureConnection()
         m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
 
         auto sendResult = ensureConnection().sendSync(Messages::GPUConnectionToWebProcess::EnsureAudioSession(), { });
-        std::tie(m_configuration) = sendResult.takeReplyOr(RemoteAudioSessionConfiguration { });
+        std::tie(m_configuration) = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     }
     return m_gpuProcessConnection->connection();
 }
