@@ -3610,6 +3610,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     bool needsUpdateReplacedDimensions = false;
+    auto& layoutState = *view().frameView().layoutContext().layoutState();
 
     if (!modernLineLayout()) {
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
@@ -3665,7 +3666,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     layoutFormattingContextLineLayout.layout();
 
-    if (view().frameView().layoutContext().layoutState()->isPaginated())
+    if (layoutState.isPaginated())
         layoutFormattingContextLineLayout.adjustForPagination();
 
     auto newBorderBoxBottom = computeBorderBoxBottom();
@@ -3684,6 +3685,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     inflateRepaintTopAndBottomWithInkOverflow();
 
     setLogicalHeight(newBorderBoxBottom);
+    if (layoutState.hasLineClamp())
+        layoutState.setVisibleLineCountForLineClamp(layoutState.visibleLineCountForLineClamp().value_or(0) + layoutFormattingContextLineLayout.lineCount());
 }
 
 #if ENABLE(TREE_DEBUGGING)

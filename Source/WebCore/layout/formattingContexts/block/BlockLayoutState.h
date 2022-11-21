@@ -35,27 +35,23 @@ class BlockFormattingContext;
 // This class holds block level information shared across child inline formatting contexts. 
 class BlockLayoutState {
 public:
-    BlockLayoutState(FloatingState&);
-
-    FloatingState& floatingState() { return m_floatingState; }
-
     struct LineClamp {
         size_t maximumNumberOfLines { 0 };
         size_t numberOfVisibleLines { 0 };
     };
+    BlockLayoutState(FloatingState&, std::optional<LineClamp>);
+
+    FloatingState& floatingState() { return m_floatingState; }
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
 
 private:
-    friend BlockFormattingContext;
-
-    void setLineClamp(LineClamp lineClamp) { m_lineClamp = lineClamp; }
-
     FloatingState& m_floatingState;
     std::optional<LineClamp> m_lineClamp;
 };
 
-inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState)
+inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp)
     : m_floatingState(floatingState)
+    , m_lineClamp(lineClamp)
 {
 }
 

@@ -57,6 +57,7 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
@@ -462,6 +463,14 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
     return { constraints.minimum, constraints.maximum };
 }
 
+static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
+{
+    auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
+    if (layoutState.hasLineClamp())
+        return Layout::BlockLayoutState::LineClamp { *layoutState.maximumLineCountForLineClamp(), layoutState.visibleLineCountForLineClamp().value_or(0) };
+    return { };
+}
+
 void LineLayout::layout()
 {
     auto& rootLayoutBox = this->rootLayoutBox();
@@ -474,7 +483,7 @@ void LineLayout::layout()
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
     clearInlineContent();
     ASSERT(m_inlineContentConstraints);
-    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState() };
+    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()) };
     Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints, blockLayoutState);
 
     constructContent();

@@ -142,7 +142,7 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     auto& inlineItems = formattingState().inlineItems();
     // FIXME: Let the caller pass in the block layout state. 
     auto floatingState = FloatingState { layoutState(), FormattingContext::initialContainingBlock(root()) };
-    auto blockLayoutState = BlockLayoutState { floatingState };
+    auto blockLayoutState = BlockLayoutState { floatingState, { } };
     lineLayout(inlineItems, { 0, inlineItems.size() }, { constraints, { } }, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes(), { constraints.horizontal().logicalLeft, constraints.logicalTop() });
     InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(formattingState().boxes());
