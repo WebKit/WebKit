@@ -97,6 +97,18 @@ AsyncOverflowScrollingEnabled:
     WebCore:
       default: false
 
+AttachmentElementEnabled:
+  type: bool
+  webcoreBinding: DeprecatedGlobalSettings
+  humanReadableName: "Attachment Element"
+  humanReadableDescription: "Enable rendering of <attachment> elements"
+  condition: ENABLE(ATTACHMENT_ELEMENT)
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultAttachmentElementEnabled()
+    WebKit:
+      default: false
+
 AutomaticLiveResizeEnabled:
   type: bool
   humanReadableName: "Enable Automatic Live Resize"
