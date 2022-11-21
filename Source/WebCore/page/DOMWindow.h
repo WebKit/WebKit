@@ -186,7 +186,7 @@ public:
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool hasStickyActivation() const;
-    bool consumeTransientActivation();
+    WEBCORE_EXPORT bool consumeTransientActivation();
 
     WEBCORE_EXPORT Location& location();
     void setLocation(DOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = LockHistoryBasedOnGestureState);

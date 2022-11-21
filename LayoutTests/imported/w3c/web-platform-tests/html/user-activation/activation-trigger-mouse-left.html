@@ -25,17 +25,17 @@
         await test_driver.click(document.body);
 
         await mousedown_event;
-        let consumed = await consumeTransientActivation();
+        let consumed = await test_driver.consume_user_activation();
         assert_true(consumed,
                     "mousedown event should result in activation");
 
         await mouseup_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "mouseup should have no activation after mousedown consumption");
 
         await click_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "click should have no activation after mousedown consumption");
     }, "Activation through left-click mouse event");

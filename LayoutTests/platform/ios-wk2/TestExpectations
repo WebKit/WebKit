@@ -2419,3 +2419,5 @@ imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub
 imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-crossorigin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/user-activation-interface.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/activation-same-and-cross-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html

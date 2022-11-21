@@ -1180,4 +1180,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean hasSleepDisabler();
 
     undefined acceptTypedArrays(Int32Array target);
+
+    boolean consumeTransientActivation();
 };

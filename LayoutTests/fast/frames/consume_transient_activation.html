@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        description("Test consuming transient activation.");
+
+        testRunner.waitUntilDone();
+
+        var frame;
+        var innerFrame;
+        var innerFrame2;
+
+        function dispatchUserGesture() {
+            const target = document.getElementById("target");
+            const x = target.offsetLeft + target.offsetWidth / 2;
+            const y = target.offsetTop + target.offsetHeight / 2;
+            return new Promise((r) => {
+                target.addEventListener("click", r, { once: true });
+                UIHelper.activateAt(x, y);
+            });
+        }
+
+        async function doTest() {
+            frame = document.getElementById("frame");
+            innerFrame = frame.contentWindow.document.getElementById("frame");
+            innerFrame2 = frame.contentWindow.document.getElementById("frame2");
+
+            shouldBeFalse("navigator.userActivation.isActive");
+            shouldBeFalse("frame.contentWindow.navigator.userActivation.isActive");
+            shouldBeFalse("innerFrame.contentWindow.navigator.userActivation.isActive");
+            shouldBeFalse(
+                "innerFrame2.contentWindow.navigator.userActivation.isActive"
+            );
+
+            debug("Dispatching press");
+            await dispatchUserGesture();
+
+            shouldBeTrue("navigator.userActivation.isActive");
+            shouldBeTrue("frame.contentWindow.navigator.userActivation.isActive");
+            shouldBeTrue("innerFrame.contentWindow.navigator.userActivation.isActive");
+            shouldBeTrue("innerFrame2.contentWindow.navigator.userActivation.isActive");
+
+            debug("Consuming transient activation");
+            internals.consumeTransientActivation();
+
+            shouldBeFalse("navigator.userActivation.isActive");
+            shouldBeFalse("frame.contentWindow.navigator.userActivation.isActive");
+            shouldBeFalse("innerFrame.contentWindow.navigator.userActivation.isActive");
+            shouldBeFalse(
+                "innerFrame2.contentWindow.navigator.userActivation.isActive"
+            );
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener("load", doTest);
+        </script>
+    </head>
+    <body>
+        <button id="target" style="width: 100px; height: 100px;"></button>
+        <iframe
+            id="frame"
+            srcdoc="
+              <body>
+                <iframe id='frame' srcdoc='
+                Inner frame
+                '>
+              </iframe>
+              <iframe id='frame2' srcdoc='
+              Inner frame
+              '>
+            </iframe>
+            </body>"
+        >
+        </iframe>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

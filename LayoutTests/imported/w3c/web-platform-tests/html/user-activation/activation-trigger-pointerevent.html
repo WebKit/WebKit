@@ -36,11 +36,11 @@
         let click_event = getEvent('click');
 
         await pointerdown_event;
-        let consumed_pointerdown = await consumeTransientActivation();
+        let consumed_pointerdown = await test_driver.consume_user_activation();
         await pointerup_event;
-        let consumed_pointerup = await consumeTransientActivation();
+        let consumed_pointerup = await test_driver.consume_user_activation();
         await click_event;
-        let consumed_click = await consumeTransientActivation();
+        let consumed_click = await test_driver.consume_user_activation();
 
         if (pointer_type === "mouse") {
             assert_true(consumed_pointerdown,

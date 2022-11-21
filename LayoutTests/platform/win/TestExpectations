@@ -5206,3 +5206,6 @@ css3/filters/effect-opacity.html [ ImageOnlyFailure ]
 css3/filters/effect-saturate.html [ ImageOnlyFailure ]
 css3/filters/effect-sepia.html [ ImageOnlyFailure ]
 fast/css/aspect-ratio-min-height-replaced.html [ ImageOnlyFailure ]
+
+# navigator.userActivation is not implemented on Windows.
+fast/frames/consume_transient_activation.html [ Skip ]

@@ -27,17 +27,17 @@
         await test_driver.send_keys(document.body, ENTER_KEY);
 
         await keydown_event;
-        let consumed = await consumeTransientActivation();
+        let consumed = await test_driver.consume_user_activation();
         assert_true(consumed,
                     "ENTER keydown event should result in activation");
 
         await keypress_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "ENTER keypress should have no activation after keydown consumption");
 
         await keyup_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "ENTER keyup should have no activation after keydown consumption");
     }, "Activation through ENTER keyboard event");
