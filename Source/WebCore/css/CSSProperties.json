@@ -187,52 +187,6 @@
         "Internal properties (\"internal-only\") are never computable,",
         "and setting this flag to true is an error.",
         "",
-        "* custom-parser:",
-        "Indicates that the property requires a custom parser. Unless 'parser-function'",
-        "is also specified, the name of the parser function will be 'consume' followed by",
-        "the property name. For instance, if 'font-size' requires a custom parser, it",
-        "would be named 'consumeFontSize'.",
-        "",
-        "* parser-function:",
-        "Indicates that the property requires a custom parser and that the parser function",
-        "will be named whatever string is provided as the value.",
-        "",
-        "* parser-requires-additional-parameters:",
-        "An array of strings to pass as arguments to a custom parser. Either 'custom-parser'",
-        "or 'parser-function' must also be specified for this to be valid.",
-        "",
-        "* parser-requires-context:",
-        "Indicates that the CSSPropertyContext is required by the custom parser. Either",
-        "'custom-parser' or 'parser-function' must also be specified for this to be valid.",
-        "",
-        "* parser-requires-context-mode:",
-        "Indicates that the CSSPropertyContext's mode property is required by the custom",
-        "parser. Either 'custom-parser' or 'parser-function' must also be specified for this",
-        "to be valid.",
-        "",
-        "* parser-requires-current-shorthand:",
-        "Indicates that the current shorthand being parsed is required by the custom",
-        "parser. Either 'custom-parser' or 'parser-function' must also be specified for this",
-        "to be valid.",
-        "",
-        "* parser-requires-current-property:",
-        "Indicates that the current property being parsed is required by the custom",
-        "parser. Either 'custom-parser' or 'parser-function' must also be specified for this",
-        "to be valid.",
-        "",
-        "* parser-requires-quirks-mode:",
-        "Indicates that the current state of quirks mode is required by the custom parser.",
-        "Either 'custom-parser' or 'parser-function' must also be specified for this to be",
-        "valid.",
-        "",
-        "* parser-requires-value-pool:",
-        "Indicates that a CSSValuePool is required by the custom parser. Either 'custom-parser'",
-        "or 'parser-function' must also be specified for this to be valid.",
-        "",
-        "* partial-keyword-property:",
-        "Indicates that in addition to single keyword values, this property can also take other",
-        "values in a valid parse. ",
-        "",
         "2. Lesser known capabilities of this file format",
         "",
         "Conditional CSS keyword value:",
@@ -284,9 +238,7 @@
             "codegen-properties": {
                 "auto-functions": true,
                 "color-property": true,
-                "settings-flag": "accentColorEnabled",
-                "parser-function": "consumeAutoOrColor",
-                "parser-requires-context": true
+                "settings-flag": "accentColorEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -301,9 +253,7 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "custom": "All",
-                "parser-function": "consumeAutoOrColor",
-                "parser-requires-context": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-ui",
@@ -317,10 +267,7 @@
                 "color-property": true,
                 "custom": "Value",
                 "high-priority": true,
-                "fast-path-inherited": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true,
-                "parser-requires-quirks-mode": true
+                "fast-path-inherited": true
             },
             "status": {
                 "comment": "All the values from CSS Color Level 3 are supported, as well as the 8- and 4-digit forms of hex color, and the color() function."
@@ -369,7 +316,7 @@
                 "inline-grid",
                 {
                     "value": "ruby",
-                    "status": "unimplemented"
+                    "status": "not implemented"
                 },
                 "contents",
                 "none",
@@ -406,8 +353,7 @@
             ],
             "codegen-properties": {
                 "custom": "Inherit|Value",
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-display",
@@ -418,8 +364,7 @@
             "inherited": true,
             "codegen-properties": {
                 "custom": "All",
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -430,10 +375,7 @@
             "inherited": true,
             "codegen-properties": {
                 "custom": "All",
-                "high-priority": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -445,8 +387,7 @@
             "codegen-properties": {
                 "custom": "Value",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -463,14 +404,11 @@
             "codegen-properties": {
                 "custom": "All",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true,
-                "parser-requires-value-pool": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
-                "url": "https://www.w3.org/TR/css-fonts-4/#font-style-prop"
+                "url": "https://www.w3.org/TR/css-fonts-3/#font-style-prop"
             }
         },
         "font-weight": {
@@ -479,8 +417,7 @@
                 "name-for-methods": "Weight",
                 "font-property": true,
                 "high-priority": true,
-                "converter": "FontWeight",
-                "custom-parser": true
+                "converter": "FontWeight"
             },
             "specification": {
                 "category": "css-fonts",
@@ -504,22 +441,20 @@
                 "name-for-methods": "Stretch",
                 "font-property": true,
                 "high-priority": true,
-                "converter": "FontStretch",
-                "custom-parser": true,
-                "parser-requires-value-pool": true
+                "converter": "FontStretch"
             },
             "specification": {
                 "category": "css-fonts",
-                "url": "https://www.w3.org/TR/css-fonts-4/#font-stretch-prop"
+                "url": "https://www.w3.org/TR/css-fonts-3/#font-stretch-prop"
             }
         },
         "text-rendering": {
             "inherited": true,
             "values": [
                 "auto",
-                "optimizeSpeed",
-                "optimizeLegibility",
-                "geometricPrecision"
+                "optimizespeed",
+                "optimizelegibility",
+                "geometricprecision"
             ],
             "codegen-properties": {
                 "name-for-methods": "TextRenderingMode",
@@ -538,9 +473,7 @@
                 "converter": "FontFeatureSettings",
                 "custom": "Initial|Inherit",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true,
-                "parser-requires-value-pool": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -555,8 +488,7 @@
                 "custom": "Initial|Inherit",
                 "font-property": true,
                 "high-priority": true,
-                "enable-if": "ENABLE_VARIATION_FONTS",
-                "custom-parser": true
+                "enable-if": "ENABLE_VARIATION_FONTS"
             },
             "specification": {
                 "category": "css-fonts-4",
@@ -588,8 +520,7 @@
             "codegen-properties": {
                 "converter": "FontPalette",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -616,8 +547,7 @@
                 "name-for-methods": "VariantLigatures",
                 "custom": "All",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -672,8 +602,7 @@
                 "name-for-methods": "VariantNumeric",
                 "custom": "All",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -686,8 +615,7 @@
                 "name-for-methods": "VariantAlternates",
                 "custom": "All",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -700,8 +628,7 @@
                 "name-for-methods": "VariantEastAsian",
                 "custom": "All",
                 "font-property": true,
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -715,12 +642,11 @@
                     "font-synthesis-weight",
                     "font-synthesis-style",
                     "font-synthesis-small-caps"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-fonts",
-                "url": "https://drafts.csswg.org/css-fonts-4/#font-synthesis"
+                "url": "https://drafts.csswg.org/css-fonts-3/#font-synthesis-prop"
             }
         },
         "font-synthesis-weight": {
@@ -813,8 +739,7 @@
                         "enable-if": "ENABLE_VARIATION_FONTS"
                     },
                     "font-palette"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-fonts",
@@ -831,8 +756,7 @@
                     "font-variant-numeric",
                     "font-variant-east-asian",
                     "font-variant-position"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-fonts",
@@ -845,8 +769,7 @@
                 "custom": "Value",
                 "font-property": true,
                 "high-priority": true,
-                "name-for-methods": "SpecifiedLocale",
-                "parser-function": "consumeAutoOrString"
+                "name-for-methods": "SpecifiedLocale"
             },
             "status": "non-standard"
         },
@@ -896,8 +819,7 @@
                 "custom": "Value",
                 "high-priority": true,
                 "enable-if": "ENABLE_TEXT_AUTOSIZING",
-                "settings-flag": "textAutosizingEnabled",
-                "parser-function": "consumeTextSizeAdjust"
+                "settings-flag": "textAutosizingEnabled"
             },
             "status": "experimental",
             "specification": {
@@ -907,19 +829,6 @@
         "writing-mode": {
             "inherited": true,
             "values": [
-                "horizontal-tb",
-                "vertical-lr",
-                "vertical-rl",
-                {
-                    "value": "sideways-lr",
-                    "status": "unimplemented",
-                    "url": "https://w3c.github.io/csswg-drafts/css-writing-modes/#block-flow"
-                },
-                {
-                    "value": "sideways-rl",
-                    "status": "unimplemented",
-                    "url": "https://w3c.github.io/csswg-drafts/css-writing-modes/#block-flow"
-                },
                 {
                     "value": "lr-tb",
                     "status": "deprecated"
@@ -943,6 +852,17 @@
                 {
                     "value": "tb",
                     "status": "deprecated"
+                },
+                "horizontal-tb",
+                "vertical-lr",
+                "vertical-rl",
+                {
+                    "value": "sideways-lr",
+                    "status": "unimplemented"
+                },
+                {
+                    "value": "sideways-rl",
+                    "status": "unimplemented"
                 },
                 {
                     "value": "horizontal-bt",
@@ -982,8 +902,7 @@
         "zoom": {
             "codegen-properties": {
                 "custom": "All",
-                "high-priority": true,
-                "custom-parser": true
+                "high-priority": true
             },
             "status": "non-standard",
             "specification": {
@@ -1024,8 +943,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -1036,14 +954,13 @@
             "values": [
                 "auto",
                 "baseline",
-                "before-edge",
-                "text-before-edge",
                 "middle",
-                "central",
+                "before-edge",
                 "after-edge",
+                "central",
+                "text-before-edge",
                 "text-after-edge",
                 "ideographic",
-                "alphabetic",
                 "hanging",
                 "mathematical"
             ],
@@ -1060,8 +977,7 @@
                 "computable": false,
                 "longhands": [
                     "all"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-cascade",
@@ -1082,8 +998,7 @@
                     "animation-fill-mode",
                     "animation-play-state",
                     "animation-name"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-animations",
@@ -1101,10 +1016,7 @@
             "animatable": true,
             "codegen-properties": {
                 "name-for-methods": "CompositeOperation",
-                "settings-flag": "webAnimationsCompositeOperationsEnabled",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "settings-flag": "webAnimationsCompositeOperationsEnabled"
             },
             "specification": {
                 "category": "css-animations",
@@ -1121,10 +1033,7 @@
                     "-webkit-animation-delay"
                 ],
                 "name-for-methods": "Delay",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1144,10 +1053,7 @@
                     "-webkit-animation-direction"
                 ],
                 "name-for-methods": "Direction",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1161,10 +1067,7 @@
                     "-webkit-animation-duration"
                 ],
                 "name-for-methods": "Duration",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1174,7 +1077,6 @@
         },
         "animation-fill-mode": {
             "values": [
-                "none",
                 "forwards",
                 "backwards",
                 "both"
@@ -1185,10 +1087,7 @@
                     "-webkit-animation-fill-mode"
                 ],
                 "name-for-methods": "FillMode",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1202,10 +1101,7 @@
                     "-webkit-animation-iteration-count"
                 ],
                 "name-for-methods": "IterationCount",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1219,10 +1115,7 @@
                     "-webkit-animation-name"
                 ],
                 "name-for-methods": "Name",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1240,10 +1133,7 @@
                     "-webkit-animation-play-state"
                 ],
                 "name-for-methods": "PlayState",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1257,10 +1147,7 @@
                     "-webkit-animation-timing-function"
                 ],
                 "name-for-methods": "TimingFunction",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-animations",
@@ -1279,8 +1166,7 @@
                     "background-origin",
                     "background-clip",
                     "background-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1289,17 +1175,14 @@
         },
         "background-attachment": {
             "values": [
-                "scroll",
                 "fixed",
-                "local"
+                "local",
+                "scroll"
             ],
             "codegen-properties": {
                 "name-for-methods": "Attachment",
                 "fill-layer-property": true,
-                "separator": ",",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1323,23 +1206,12 @@
                 "hue",
                 "saturation",
                 "color",
-                "luminosity",
-                {
-                    "value": "plus-darker",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "plus-lighter",
-                    "status": "unimplemented"
-                }
+                "luminosity"
             ],
             "codegen-properties": {
                 "name-for-methods": "BlendMode",
                 "fill-layer-property": true,
-                "separator": ",",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-compositing",
@@ -1351,15 +1223,7 @@
                 "border-box",
                 "padding-box",
                 "content-box",
-                {
-                    "value": "border",
-                    "status": "unimplemented",
-                    "url": "https://drafts.csswg.org/css-backgrounds-4/#background-clip"
-                },
-                {
-                    "value": "text",
-                    "url": "https://drafts.csswg.org/css-backgrounds-4/#background-clip"
-                },
+                "text",
                 {
                     "value": "-webkit-text",
                     "status": "non-standard"
@@ -1369,10 +1233,7 @@
                 "related-property": "-webkit-background-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
-                "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1382,10 +1243,7 @@
         "background-color": {
             "codegen-properties": {
                 "visited-link-color-support": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true,
-                "parser-requires-quirks-mode": true
+                "color-property": true
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1396,10 +1254,7 @@
             "codegen-properties": {
                 "name-for-methods": "Image",
                 "fill-layer-property": true,
-                "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1411,10 +1266,7 @@
                 "related-property": "-webkit-background-origin",
                 "name-for-methods": "Origin",
                 "fill-layer-property": true,
-                "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1426,8 +1278,7 @@
                 "longhands": [
                     "background-position-x",
                     "background-position-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1437,10 +1288,7 @@
         "background-position-x": {
             "codegen-properties": {
                 "name-for-methods": "XPosition",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1450,10 +1298,7 @@
         "background-position-y": {
             "codegen-properties": {
                 "name-for-methods": "YPosition",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1463,10 +1308,7 @@
         "background-repeat": {
             "codegen-properties": {
                 "name-for-methods": "Repeat",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1477,10 +1319,7 @@
             "codegen-properties": {
                 "name-for-methods": "Size",
                 "fill-layer-property": true,
-                "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": " "
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1490,8 +1329,7 @@
         "baseline-shift": {
             "codegen-properties": {
                 "custom": "Value",
-                "svg": true,
-                "custom-parser": true
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -1507,9 +1345,7 @@
                 "logical-property-group": {
                     "name": "size",
                     "resolver": "block"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1531,8 +1367,7 @@
                     "border-left-color",
                     "border-left-style",
                     "border-left-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1548,8 +1383,7 @@
                     "border-block-end-color",
                     "border-block-end-style",
                     "border-block-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1561,8 +1395,7 @@
                 "longhands": [
                     "border-block-start-color",
                     "border-block-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1578,8 +1411,7 @@
                     "border-block-end-width",
                     "border-block-end-style",
                     "border-block-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1596,9 +1428,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "block-end"
-                },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1642,10 +1472,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "block-end"
-                },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1661,8 +1488,7 @@
                     "border-block-start-width",
                     "border-block-start-style",
                     "border-block-start-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1679,9 +1505,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "block-start"
-                },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1725,10 +1549,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "block-start"
-                },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1740,8 +1561,7 @@
                 "longhands": [
                     "border-block-start-style",
                     "border-block-end-style"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1753,8 +1573,7 @@
                 "longhands": [
                     "border-block-start-width",
                     "border-block-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1767,8 +1586,7 @@
                     "border-bottom-width",
                     "border-bottom-style",
                     "border-bottom-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1783,10 +1601,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "bottom"
-                },
-                "parser-function": "consumeBorderColor",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1802,9 +1617,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "bottom-left"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1820,9 +1633,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "bottom-right"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1861,10 +1672,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "bottom"
-                },
-                "parser-function": "consumeBorderWidth",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1889,8 +1697,7 @@
                     "border-right-color",
                     "border-bottom-color",
                     "border-left-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1903,9 +1710,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "end-end"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1918,9 +1723,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "end-start"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1935,8 +1738,7 @@
                     "border-image-width",
                     "border-image-outset",
                     "border-image-repeat"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1945,8 +1747,7 @@
         },
         "border-image-outset": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1955,8 +1756,7 @@
         },
         "border-image-repeat": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1965,9 +1765,7 @@
         },
         "border-image-slice": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-current-property": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1976,9 +1774,7 @@
         },
         "border-image-source": {
             "codegen-properties": {
-                "converter": "StyleImage<CSSPropertyBorderImageSource>",
-                "parser-function": "consumeImageOrNone",
-                "parser-requires-context": true
+                "converter": "StyleImage<CSSPropertyBorderImageSource>"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1987,9 +1783,7 @@
         },
         "border-image-width": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-current-property": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2005,8 +1799,7 @@
                     "border-inline-end-color",
                     "border-inline-end-style",
                     "border-inline-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2018,8 +1811,7 @@
                 "longhands": [
                     "border-inline-start-color",
                     "border-inline-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2035,8 +1827,7 @@
                     "border-inline-end-width",
                     "border-inline-end-style",
                     "border-inline-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2053,9 +1844,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "inline-end"
-                },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2099,10 +1888,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "inline-end"
-                },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2118,8 +1904,7 @@
                     "border-inline-start-width",
                     "border-inline-start-style",
                     "border-inline-start-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2136,9 +1921,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "inline-start"
-                },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2182,10 +1965,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "inline-start"
-                },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2197,8 +1977,7 @@
                 "longhands": [
                     "border-inline-start-style",
                     "border-inline-end-style"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2210,8 +1989,7 @@
                 "longhands": [
                     "border-inline-start-width",
                     "border-inline-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2224,8 +2002,7 @@
                     "border-left-width",
                     "border-left-style",
                     "border-left-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2240,10 +2017,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "left"
-                },
-                "parser-function": "consumeBorderColor",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2282,10 +2056,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "left"
-                },
-                "parser-function": "consumeBorderWidth",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2299,8 +2070,7 @@
                     "border-top-right-radius",
                     "border-bottom-right-radius",
                     "border-bottom-left-radius"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2313,8 +2083,7 @@
                     "border-right-width",
                     "border-right-style",
                     "border-right-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2329,10 +2098,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "right"
-                },
-                "parser-function": "consumeBorderColor",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2371,10 +2137,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "right"
-                },
-                "parser-function": "consumeBorderWidth",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2387,8 +2150,7 @@
                 "longhands": [
                     "-webkit-border-horizontal-spacing",
                     "-webkit-border-vertical-spacing"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -2401,9 +2163,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "start-end"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2416,9 +2176,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "start-start"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2432,8 +2190,7 @@
                     "border-right-style",
                     "border-bottom-style",
                     "border-left-style"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2446,8 +2203,7 @@
                     "border-top-width",
                     "border-top-style",
                     "border-top-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2462,10 +2218,7 @@
                 "logical-property-group": {
                     "name": "border-color",
                     "resolver": "top"
-                },
-                "parser-function": "consumeBorderColor",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2481,9 +2234,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "top-left"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2499,9 +2250,7 @@
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "top-right"
-                },
-                "parser-function": "consumeBorderRadiusCorner",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2540,10 +2289,7 @@
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "top"
-                },
-                "parser-function": "consumeBorderWidth",
-                "parser-requires-context": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2557,8 +2303,7 @@
                     "border-right-width",
                     "border-bottom-width",
                     "border-left-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2572,10 +2317,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "bottom"
-                },
-                "parser-function": "consumeSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -2585,9 +2327,7 @@
         "box-shadow": {
             "codegen-properties": {
                 "related-property": "-webkit-box-shadow",
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2616,22 +2356,14 @@
             "values": [
                 "auto",
                 "avoid",
-                "avoid-page",
-                "page",
                 "left",
                 "right",
                 "recto",
                 "verso",
-                "avoid-column",
                 "column",
-                {
-                    "value": "avoid-region",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "region",
-                    "status": "unimplemented"
-                }
+                "page",
+                "avoid-column",
+                "avoid-page"
             ],
             "codegen-properties": {
                 "initial": "initialBreakBetween"
@@ -2645,22 +2377,14 @@
             "values": [
                 "auto",
                 "avoid",
-                "avoid-page",
-                "page",
                 "left",
                 "right",
                 "recto",
                 "verso",
-                "avoid-column",
                 "column",
-                {
-                    "value": "avoid-region",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "region",
-                    "status": "unimplemented"
-                }
+                "page",
+                "avoid-column",
+                "avoid-page"
             ],
             "codegen-properties": {
                 "initial": "initialBreakBetween"
@@ -2674,12 +2398,8 @@
             "values": [
                 "auto",
                 "avoid",
-                "avoid-page",
                 "avoid-column",
-                {
-                    "value": "avoid-region",
-                    "status": "unimplemented"
-                }
+                "avoid-page"
             ],
             "codegen-properties": {
                 "initial": "initialBreakInside"
@@ -2726,15 +2446,7 @@
                 "none",
                 "left",
                 "right",
-                "both",
-                {
-                    "value": "inline-start",
-                    "url": "https://www.w3.org/TR/css-logical/#float-clear"
-                },
-                {
-                    "value": "inline-end",
-                    "url": "https://www.w3.org/TR/css-logical/#float-clear"
-                }
+                "both"
             ],
             "specification": {
                 "category": "css-22",
@@ -2743,9 +2455,7 @@
         },
         "clip": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-22",
@@ -2757,10 +2467,7 @@
                 "aliases": [
                     "-webkit-clip-path"
                 ],
-                "converter": "PathOperation",
-                "parser-function": "consumePathOperation",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["ConsumeRay::Exclude"]
+                "converter": "PathOperation"
             }
         },
         "clip-rule": {
@@ -2781,8 +2488,8 @@
             "inherited": true,
             "values": [
                 "auto",
-                "sRGB",
-                "linearRGB"
+                "srgb",
+                "linearrgb"
             ],
             "codegen-properties": {
                 "svg": true
@@ -2796,8 +2503,8 @@
             "inherited": true,
             "values": [
                 "auto",
-                "sRGB",
-                "linearRGB"
+                "srgb",
+                "linearrgb"
             ],
             "codegen-properties": {
                 "svg": true
@@ -2810,9 +2517,7 @@
         "content": {
             "codegen-properties": {
                 "custom": "All",
-                "separator": ",",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-content",
@@ -2821,8 +2526,7 @@
         },
         "counter-increment": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-lists",
@@ -2831,8 +2535,7 @@
         },
         "counter-reset": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-lists",
@@ -2853,9 +2556,6 @@
         },
         "cursor": {
             "values": [
-                "auto",
-                "default",
-                "none",
                 "context-menu",
                 "help",
                 "pointer",
@@ -2871,7 +2571,15 @@
                 "no-drop",
                 "not-allowed",
                 "grab",
+                {
+                    "value": "-webkit-grab",
+                    "status": "non-standard"
+                },
                 "grabbing",
+                {
+                    "value": "-webkit-grabbing",
+                    "status": "non-standard"
+                },
                 "e-resize",
                 "n-resize",
                 "ne-resize",
@@ -2890,14 +2598,6 @@
                 "zoom-in",
                 "zoom-out",
                 {
-                    "value": "-webkit-grab",
-                    "status": "non-standard"
-                },
-                {
-                    "value": "-webkit-grabbing",
-                    "status": "non-standard"
-                },
-                {
                     "value": "-webkit-zoom-in",
                     "status": "non-standard"
                 },
@@ -2908,10 +2608,7 @@
             ],
             "inherited": true,
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context": true,
-                "parser-requires-quirks-mode": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-ui",
@@ -2932,9 +2629,7 @@
         "cx": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "converter": "Length"
             },
             "specification": {
                 "category": "svg",
@@ -2944,9 +2639,7 @@
         "cy": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "converter": "Length"
             },
             "specification": {
                 "category": "svg",
@@ -2956,17 +2649,16 @@
         "dominant-baseline": {
             "values": [
                 "auto",
+                "middle",
                 "use-script",
                 "no-change",
                 "reset-size",
-                "ideographic",
-                "alphabetic",
-                "hanging",
-                "mathematical",
                 "central",
-                "middle",
                 "text-before-edge",
-                "text-after-edge"
+                "text-after-edge",
+                "ideographic",
+                "hanging",
+                "mathematical"
             ],
             "codegen-properties": {
                 "svg": true
@@ -2991,8 +2683,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -3004,9 +2695,7 @@
             "codegen-properties": {
                 "custom": "All",
                 "svg": true,
-                "color-property": true,
-                "parser-function": "consumePaintStroke",
-                "parser-requires-context": true
+                "color-property": true
             },
             "specification": {
                 "category": "svg",
@@ -3017,8 +2706,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "Opacity",
-                "svg": true,
-                "parser-function": "consumeOpacity"
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3043,15 +2731,7 @@
             "values": [
                 "left",
                 "right",
-                "none",
-                {
-                    "value": "inline-start",
-                    "url": "https://www.w3.org/TR/css-logical/#float-clear"
-                },
-                {
-                    "value": "inline-end",
-                    "url": "https://www.w3.org/TR/css-logical/#float-clear"
-                }
+                "none"
             ],
             "codegen-properties": {
                 "name-for-methods": "Floating"
@@ -3064,9 +2744,7 @@
         "flood-color": {
             "codegen-properties": {
                 "svg": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "specification": {
                 "category": "svg",
@@ -3076,8 +2754,7 @@
         "flood-opacity": {
             "codegen-properties": {
                 "converter": "Opacity",
-                "svg": true,
-                "parser-function": "consumeOpacity"
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3088,9 +2765,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "GlyphOrientation",
-                "svg": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3101,9 +2776,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "GlyphOrientationOrAuto",
-                "svg": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3113,8 +2786,7 @@
         "hanging-punctuation": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "HangingPunctuation",
-                "custom-parser": true
+                "converter": "HangingPunctuation"
             },
             "specification": {
                 "category": "css-text",
@@ -3128,10 +2800,7 @@
                 "logical-property-group": {
                     "name": "size",
                     "resolver": "vertical"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -3140,10 +2809,6 @@
         },
         "image-orientation": {
             "inherited": true,
-            "values": [
-                "from-image",
-                "none"
-            ],
             "codegen-properties": {
                 "initial": "initialImageOrientation",
                 "converter": "ImageOrientation"
@@ -3158,21 +2823,11 @@
             "values": [
                 "auto",
                 {
-                    "value": "smooth",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "high-quality",
-                    "status": "unimplemented"
-                },
-                "pixelated",
-                "crisp-edges",
-                {
-                    "value": "optimizeSpeed",
+                    "value": "optimizespeed",
                     "url": "https://www.w3.org/TR/SVG11/painting.html#ImageRenderingProperty"
                 },
                 {
-                    "value": "optimizeQuality",
+                    "value": "optimizequality",
                     "url": "https://www.w3.org/TR/SVG11/painting.html#ImageRenderingProperty"
                 },
                 {
@@ -3182,7 +2837,9 @@
                 {
                     "value": "-webkit-optimize-contrast",
                     "status": "non-standard"
-                }
+                },
+                "crisp-edges",
+                "pixelated"
             ],
             "specification": {
                 "category": "css-images",
@@ -3193,8 +2850,7 @@
             "inherited": true,
             "codegen-properties": {
                 "custom": "All",
-                "enable-if": "ENABLE_CSS_IMAGE_RESOLUTION",
-                "custom-parser": true
+                "enable-if": "ENABLE_CSS_IMAGE_RESOLUTION"
             },
             "status": {
                 "status": "under consideration",
@@ -3214,9 +2870,7 @@
                 "logical-property-group": {
                     "name": "size",
                     "resolver": "inline"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3224,13 +2878,13 @@
             }
         },
         "input-security": {
+            "codegen-properties": {
+                "settings-flag": "cssInputSecurityEnabled"
+            },
             "values": [
                 "auto",
                 "none"
             ],
-            "codegen-properties": {
-                "settings-flag": "cssInputSecurityEnabled"
-            },
             "specification": {
                 "category": "css-ui",
                 "url": "https://drafts.csswg.org/css-ui-4/#input-security"
@@ -3243,8 +2897,7 @@
                     "right",
                     "bottom",
                     "left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3256,8 +2909,7 @@
                 "longhands": [
                     "inset-block-start",
                     "inset-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3270,10 +2922,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "block-end"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3286,10 +2935,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "block-start"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3301,8 +2947,7 @@
                 "longhands": [
                     "inset-inline-start",
                     "inset-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3315,10 +2960,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "inline-end"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3331,10 +2973,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "inline-start"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3345,9 +2984,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "SVGLengthValue",
-                "svg": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3361,10 +2998,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "left"
-                },
-                "parser-function": "consumeSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -3378,9 +3012,7 @@
                 "font-property": true,
                 "high-priority": true,
                 "sink-priority": true,
-                "converter": "Spacing",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "Spacing"
             },
             "specification": {
                 "category": "css-text",
@@ -3390,9 +3022,7 @@
         "lighting-color": {
             "codegen-properties": {
                 "svg": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             }
         },
         "line-height": {
@@ -3400,16 +3030,12 @@
             "codegen-properties": [
                 {
                     "custom": "All",
-                    "enable-if": "ENABLE_TEXT_AUTOSIZING",
-                    "custom-parser": true,
-                    "parser-requires-context-mode": true
+                    "enable-if": "ENABLE_TEXT_AUTOSIZING"
                 },
                 {
                     "getter": "specifiedLineHeight",
                     "conditional-converter": "LineHeight",
-                    "enable-if": "!ENABLE_TEXT_AUTOSIZING",
-                    "custom-parser": true,
-                    "parser-requires-context-mode": true
+                    "enable-if": "!ENABLE_TEXT_AUTOSIZING"
                 }
             ],
             "specification": {
@@ -3424,8 +3050,7 @@
                     "list-style-position",
                     "list-style-image",
                     "list-style-type"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-lists",
@@ -3435,10 +3060,7 @@
         "list-style-image": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "StyleImage<CSSPropertyListStyleImage>",
-                "parser-function": "consumeImageOrNone",
-                "parser-requires-context": true
-
+                "converter": "StyleImage<CSSPropertyListStyleImage>"
             },
             "specification": {
                 "category": "css-lists",
@@ -3539,27 +3161,10 @@
                 "katakana",
                 "hiragana-iroha",
                 "katakana-iroha",
-                "cjk-decimal",
-                "tamil",
-                "disclosure-open",
-                "disclosure-closed",
-                "japanese-informal",
-                "japanese-formal",
-                "korean-hangul-formal",
-                "korean-hanja-informal",
-                "korean-hanja-formal",
-                "simp-chinese-informal",
-                "simp-chinese-formal",
-                "trad-chinese-informal",
-                "trad-chinese-formal",
-                "ethiopic-numeric",
                 "none"
             ],
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context": true,
-                "partial-keyword-property": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-lists",
@@ -3573,8 +3178,7 @@
                     "margin-right",
                     "margin-bottom",
                     "margin-left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -3586,8 +3190,7 @@
                 "longhands": [
                     "margin-block-start",
                     "margin-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3603,10 +3206,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "block-end"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3622,10 +3222,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "block-start"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3639,10 +3236,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "bottom"
-                },
-                "parser-function": "consumeMarginSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -3654,8 +3248,7 @@
                 "longhands": [
                     "margin-inline-start",
                     "margin-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3671,10 +3264,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "inline-end"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3690,10 +3280,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "inline-start"
-                },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3707,10 +3294,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "left"
-                },
-                "parser-function": "consumeMarginSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -3724,10 +3308,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "right"
-                },
-                "parser-function": "consumeMarginSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -3741,10 +3322,7 @@
                 "logical-property-group": {
                     "name": "margin",
                     "resolver": "top"
-                },
-                "parser-function": "consumeMarginSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -3758,8 +3336,7 @@
                     "marker-start",
                     "marker-mid",
                     "marker-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "svg",
@@ -3771,8 +3348,7 @@
             "codegen-properties": {
                 "name-for-methods": "MarkerEndResource",
                 "converter": "SVGURIReference",
-                "svg": true,
-                "parser-function": "consumeNoneOrURL"
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3784,8 +3360,7 @@
             "codegen-properties": {
                 "name-for-methods": "MarkerMidResource",
                 "converter": "SVGURIReference",
-                "svg": true,
-                "parser-function": "consumeNoneOrURL"
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3797,8 +3372,7 @@
             "codegen-properties": {
                 "name-for-methods": "MarkerStartResource",
                 "converter": "SVGURIReference",
-                "svg": true,
-                "parser-function": "consumeNoneOrURL"
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -3817,8 +3391,7 @@
                     "mask-clip",
                     "mask-composite",
                     "mask-mode"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-masking",
@@ -3829,10 +3402,7 @@
             "codegen-properties": {
                 "related-property": "-webkit-mask-clip",
                 "name-for-methods": "Clip",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
@@ -3843,10 +3413,7 @@
             "codegen-properties": {
                 "related-property": "-webkit-mask-composite",
                 "name-for-methods": "Composite",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
@@ -3859,10 +3426,7 @@
                     "-webkit-mask-image"
                 ],
                 "name-for-methods": "Image",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
@@ -3873,10 +3437,7 @@
             "codegen-properties": {
                 "related-property": "-webkit-mask-source-type",
                 "name-for-methods": "MaskMode",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
@@ -3889,10 +3450,7 @@
                     "-webkit-mask-origin"
                 ],
                 "name-for-methods": "Origin",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
@@ -3904,8 +3462,7 @@
                 "longhands": [
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-masking",
@@ -3917,8 +3474,7 @@
                 "longhands": [
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -3931,10 +3487,7 @@
         "-webkit-mask-position-x": {
             "codegen-properties": {
                 "name-for-methods": "XPosition",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "status": {
                 "status": "experimental",
@@ -3948,10 +3501,7 @@
         "-webkit-mask-position-y": {
             "codegen-properties": {
                 "name-for-methods": "YPosition",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "status": {
                 "status": "experimental",
@@ -3968,10 +3518,7 @@
                     "-webkit-mask-repeat"
                 ],
                 "name-for-methods": "Repeat",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
@@ -3984,10 +3531,7 @@
                     "-webkit-mask-size"
                 ],
                 "name-for-methods": "Size",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "specification": {
                 "category": "css-masking",
@@ -4026,9 +3570,7 @@
                 "logical-property-group": {
                     "name": "max-size",
                     "resolver": "block"
-                },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4042,10 +3584,7 @@
                 "logical-property-group": {
                     "name": "max-size",
                     "resolver": "vertical"
-                },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4061,9 +3600,7 @@
                 "logical-property-group": {
                     "name": "max-size",
                     "resolver": "inline"
-                },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4077,10 +3614,7 @@
                 "logical-property-group": {
                     "name": "max-size",
                     "resolver": "horizontal"
-                },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4096,9 +3630,7 @@
                 "logical-property-group": {
                     "name": "min-size",
                     "resolver": "block"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4112,10 +3644,7 @@
                 "logical-property-group": {
                     "name": "min-size",
                     "resolver": "vertical"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4131,9 +3660,7 @@
                 "logical-property-group": {
                     "name": "min-size",
                     "resolver": "inline"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4147,10 +3674,7 @@
                 "logical-property-group": {
                     "name": "min-size",
                     "resolver": "horizontal"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4167,15 +3691,12 @@
             ],
             "specification": {
                 "category": "css-images",
-                "url": "https://www.w3.org/TR/css-images-3/#the-object-fit"
+                "url": "https://www.w3.org/TR/css3-images/#object-fit"
             }
         },
         "object-position": {
             "codegen-properties": {
-                "converter": "Position",
-                "parser-function": "consumePosition",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid", "PositionSyntax::Position"]
+                "converter": "Position"
             },
             "specification": {
                 "category": "css-images",
@@ -4185,10 +3706,7 @@
         "offset-path": {
             "codegen-properties": {
                 "converter": "PathOperation",
-                "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumePathOperation",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["ConsumeRay::Include"]
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4198,10 +3716,7 @@
         "offset-distance": {
             "codegen-properties": {
                 "converter": "Length",
-                "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All", "UnitlessQuirk::Forbid"]
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4211,10 +3726,7 @@
         "offset-position": {
             "codegen-properties": {
                 "converter": "PositionOrAuto",
-                "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeAutoOrPosition",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid", "PositionSyntax::Position"]
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4224,10 +3736,7 @@
         "offset-anchor": {
             "codegen-properties": {
                 "converter": "PositionOrAuto",
-                "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeAutoOrPosition",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid", "PositionSyntax::Position"]
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4237,9 +3746,7 @@
         "offset-rotate": {
             "codegen-properties": {
                 "converter": "OffsetRotate",
-                "settings-flag": "cssMotionPathEnabled",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4255,8 +3762,7 @@
                     "offset-anchor",
                     "offset-rotate"
                 ],
-                "settings-flag": "cssMotionPathEnabled",
-                "custom-parser": true
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4268,8 +3774,7 @@
                 "converter": "Opacity",
                 "aliases": [
                     "-webkit-opacity"
-                ],
-                "parser-function": "consumeOpacity"
+                ]
             },
             "status": {
                 "comment": "Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets."
@@ -4282,8 +3787,7 @@
         "orphans": {
             "inherited": true,
             "codegen-properties": {
-                "auto-functions": true,
-                "parser-function": "consumePositiveInteger"
+                "auto-functions": true
             },
             "specification": {
                 "category": "css-22",
@@ -4296,8 +3800,7 @@
                     "outline-color",
                     "outline-style",
                     "outline-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-ui",
@@ -4308,9 +3811,7 @@
             "codegen-properties": {
                 "initial": "currentColor",
                 "visited-link-color-support": true,
-                "color-property": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "color-property": true
             },
             "specification": {
                 "category": "css-ui",
@@ -4319,10 +3820,7 @@
         },
         "outline-offset": {
             "codegen-properties": {
-                "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "converter": "ComputedLength<float>"
             },
             "specification": {
                 "category": "css-ui",
@@ -4352,10 +3850,7 @@
         },
         "outline-width": {
             "codegen-properties": {
-                "converter": "LineWidth<float>",
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "converter": "LineWidth<float>"
             },
             "specification": {
                 "category": "css-ui",
@@ -4367,8 +3862,7 @@
                 "longhands": [
                     "overflow-x",
                     "overflow-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-overflow",
@@ -4376,30 +3870,30 @@
             }
         },
         "overflow-anchor": {
+            "codegen-properties": {
+                "settings-flag": "cssScrollAnchoringEnabled"
+            },
             "values": [
                 "none",
                 "auto"
             ],
-            "codegen-properties": {
-                "settings-flag": "cssScrollAnchoringEnabled"
-            },
             "specification": {
                 "category": "css-scroll-anchoring",
                 "url": "https://www.w3.org/TR/css-scroll-anchoring-1/#propdef-overflow-anchor"
             }
         },
         "overflow-wrap": {
+            "codegen-properties": {
+                "aliases": [
+                    "word-wrap"
+                ]
+            },
             "inherited": true,
             "values": [
                 "normal",
                 "break-word",
                 "anywhere"
             ],
-            "codegen-properties": {
-                "aliases": [
-                    "word-wrap"
-                ]
-            },
             "specification": {
                 "category": "css-text",
                 "url": "https://www.w3.org/TR/css-text-3/#overflow-wrap"
@@ -4409,16 +3903,9 @@
             "values": [
                 "visible",
                 "hidden",
-                {
-                    "value": "clip",
-                    "settings-flag": "overflowClipEnabled"
-                },
+                "clip",
                 "scroll",
-                "auto",
-                {
-                    "value": "overlay",
-                    "status": "non-standard"
-                }
+                "auto"
             ],
             "specification": {
                 "category": "css-overflow",
@@ -4429,24 +3916,11 @@
             "values": [
                 "visible",
                 "hidden",
-                {
-                    "value": "clip",
-                    "settings-flag": "overflowClipEnabled"
-                },
+                "clip",
                 "scroll",
                 "auto",
-                {
-                    "value": "overlay",
-                    "status": "non-standard"
-                },
-                {
-                    "value": "-webkit-paged-x",
-                    "status": "non-standard"
-                },
-                {
-                    "value": "-webkit-paged-y",
-                    "status": "non-standard"
-                }
+                "-webkit-paged-x",
+                "-webkit-paged-y"
             ],
             "specification": {
                 "category": "css-overflow",
@@ -4459,8 +3933,7 @@
                     "overscroll-behavior-x",
                     "overscroll-behavior-y"
                 ],
-                "settings-flag": "overscrollBehaviorEnabled",
-                "custom-parser": true
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -4555,8 +4028,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -4570,8 +4042,7 @@
                     "padding-right",
                     "padding-bottom",
                     "padding-left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -4583,8 +4054,7 @@
                 "longhands": [
                     "padding-block-start",
                     "padding-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4600,10 +4070,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "block-end"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4619,10 +4086,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "block-start"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4636,10 +4100,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "bottom"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4651,8 +4112,7 @@
                 "longhands": [
                     "padding-inline-start",
                     "padding-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4668,10 +4128,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "inline-end"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4687,10 +4144,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "inline-start"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4704,10 +4158,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "left"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4721,10 +4172,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "right"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4738,10 +4186,7 @@
                 "logical-property-group": {
                     "name": "padding",
                     "resolver": "top"
-                },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4750,8 +4195,7 @@
         },
         "page": {
             "codegen-properties": {
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-page",
@@ -4762,8 +4206,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-after"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -4774,8 +4217,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-before"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -4786,8 +4228,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-inside"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -4796,8 +4237,7 @@
         },
         "paint-order": {
             "codegen-properties": {
-                "converter": "PaintOrder",
-                "custom-parser": true
+                "converter": "PaintOrder"
             },
             "status": "supported",
             "specification": {
@@ -4809,23 +4249,17 @@
         "pointer-events": {
             "inherited": true,
             "values": [
-                "visiblePainted",
-                "visibleFill",
-                "visibleStroke",
                 "visible",
+                "none",
+                "all",
+                "auto",
+                "visiblepainted",
+                "visiblefill",
+                "visiblestroke",
                 "painted",
                 "fill",
                 "stroke",
-                "all",
-                "none",
-                {
-                    "value": "auto",
-                    "url": "https://svgwg.org/svg2-draft/interact.html#PointerEventsProperty"
-                },
-                {
-                    "value": "bounding-box",
-                    "url": "https://svgwg.org/svg2-draft/interact.html#PointerEventsProperty"
-                }
+                "bounding-box"
             ],
             "specification": {
                 "category": "svg",
@@ -4855,8 +4289,7 @@
         "quotes": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "Quotes",
-                "custom-parser": true
+                "converter": "Quotes"
             },
             "specification": {
                 "category": "css-22",
@@ -4866,10 +4299,7 @@
         "r": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                "converter": "Length"
             },
             "specification": {
                 "category": "svg",
@@ -4882,14 +4312,8 @@
                 "both",
                 "horizontal",
                 "vertical",
-                {
-                    "value": "block",
-                    "url": "https://www.w3.org/TR/css-logical/#resize"
-                },
-                {
-                    "value": "inline",
-                    "url": "https://www.w3.org/TR/css-logical/#resize"
-                },
+                "block",
+                "inline",
                 {
                     "value": "auto",
                     "status": "non-standard"
@@ -4910,10 +4334,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "right"
-                },
-                "parser-function": "consumeSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -4923,9 +4344,7 @@
         "rx": {
             "codegen-properties": {
                 "initial": "initialRadius",
-                "converter": "LengthOrAuto",
-                "parser-function": "consumeRxOrRy",
-                "parser-requires-context-mode": true
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "svg",
@@ -4935,9 +4354,7 @@
         "ry": {
             "codegen-properties": {
                 "initial": "initialRadius",
-                "converter": "LengthOrAuto",
-                "parser-function": "consumeRxOrRy",
-                "parser-requires-context-mode": true
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "svg",
@@ -4948,9 +4365,9 @@
             "inherited": true,
             "values": [
                 "auto",
-                "optimizeSpeed",
+                "optimizespeed",
                 "crispedges",
-                "geometricPrecision"
+                "geometricprecision"
             ],
             "codegen-properties": {
                 "svg": true
@@ -4962,9 +4379,7 @@
         },
         "size": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-page",
@@ -4974,8 +4389,7 @@
         "src": {
             "codegen-properties": {
                 "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
+                "descriptor-only": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -4985,8 +4399,7 @@
         "base-palette": {
             "codegen-properties": {
                 "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
+                "descriptor-only": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -4996,8 +4409,7 @@
         "override-colors": {
             "codegen-properties": {
                 "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
+                "descriptor-only": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -5007,9 +4419,7 @@
         "stop-color": {
             "codegen-properties": {
                 "svg": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "specification": {
                 "category": "svg",
@@ -5019,8 +4429,7 @@
         "stop-opacity": {
             "codegen-properties": {
                 "converter": "Opacity",
-                "svg": true,
-                "parser-function": "consumeOpacity"
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -5032,9 +4441,7 @@
             "codegen-properties": {
                 "custom": "All",
                 "svg": true,
-                "color-property": true,
-                "parser-function": "consumePaintStroke",
-                "parser-requires-context": true
+                "color-property": true
             },
             "specification": {
                 "category": "svg",
@@ -5046,8 +4453,7 @@
             "codegen-properties": {
                 "name-for-methods": "StrokeDashArray",
                 "converter": "StrokeDashArray",
-                "svg": true,
-                "custom-parser": true
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -5059,9 +4465,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "name-for-methods": "StrokeDashOffset",
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "converter": "Length"
             },
             "specification": {
                 "category": "svg",
@@ -5108,9 +4512,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "StrokeMiterLimit",
-                "converter": "Number<float>",
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "converter": "Number<float>"
             },
             "status": "supported",
             "specification": {
@@ -5124,8 +4526,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "Opacity",
-                "svg": true,
-                "parser-function": "consumeOpacity"
+                "svg": true
             },
             "specification": {
                 "category": "svg",
@@ -5137,9 +4538,7 @@
             "codegen-properties": {
                 "custom": "Value",
                 "visited-link-color-support": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "status": "supported",
             "specification": {
@@ -5152,9 +4551,7 @@
             "codegen-properties": {
                 "custom": "Value",
                 "initial": "initialOneLength",
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "converter": "Length"
             },
             "status": "supported",
             "specification": {
@@ -5167,8 +4564,7 @@
         "speak-as": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "SpeakAs",
-                "custom-parser": true
+                "converter": "SpeakAs"
             },
             "specification": {
                 "category": "css-speech",
@@ -5179,8 +4575,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -5200,9 +4595,7 @@
         "tab-size": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "TabSize",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "TabSize"
             },
             "specification": {
                 "category": "css-text",
@@ -5224,30 +4617,12 @@
                     "value": "match-parent",
                     "url": "https://www.w3.org/TR/css-text-3/#text-align"
                 },
-                {
-                    "value": "justify-all",
-                    "status": "unimplemented",
-                    "url": "https://www.w3.org/TR/css-text-3/#text-align"
-                },
-                {
-                    "value": "-webkit-left",
-                    "status": "non-standard"
-                },
-                {
-                    "value": "-webkit-right",
-                    "status": "non-standard"
-                },
-                {
-                    "value": "-webkit-center",
-                    "status": "non-standard"
-                },
+                "-webkit-left",
+                "-webkit-right",
+                "-webkit-center",
                 {
                     "value": "-webkit-match-parent",
-                    "status": "non-standard"
-                },
-                {
-                    "value": "-internal-th-center",
-                    "status": "internal"
+                    "url": "non-standard"
                 },
                 {
                     "value": "start",
@@ -5269,13 +4644,13 @@
         "text-align-last": {
             "inherited": true,
             "values": [
-                "auto",
-                "start",
-                "end",
                 "left",
                 "right",
                 "center",
                 "justify",
+                "start",
+                "end",
+                "auto",
                 "match-parent"
             ],
             "codegen-properties": {
@@ -5306,8 +4681,7 @@
             "codegen-properties": {
                 "longhands": [
                     "text-decoration-line"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -5317,9 +4691,7 @@
         "text-indent": {
             "inherited": true,
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-22",
@@ -5329,16 +4701,11 @@
         "text-justify": {
             "inherited": true,
             "values": [
-                "auto",
-                "none",
                 "inter-word",
                 "inter-character",
-                {
-                    "value": "distribute",
-                    "status": "deprecated",
-                    "comment": "computes to -inter-character",
-                    "url": "https://www.w3.org/TR/css-text-3/#valdef-text-justify-distribute"
-                }
+                "distribute",
+                "auto",
+                "none"
             ],
             "codegen-properties": {
                 "settings-flag": "cssTextJustifyEnabled"
@@ -5487,9 +4854,7 @@
         "text-shadow": {
             "inherited": true,
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -5584,10 +4949,7 @@
                 "logical-property-group": {
                     "name": "inset",
                     "resolver": "top"
-                },
-                "parser-function": "consumeSide",
-                "parser-requires-context-mode": true,
-                "parser-requires-current-shorthand": true
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -5604,8 +4966,7 @@
                     "transition-duration",
                     "transition-timing-function",
                     "transition-delay"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transitions",
@@ -5619,10 +4980,7 @@
                     "-webkit-transition-delay"
                 ],
                 "name-for-methods": "Delay",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-transitions",
@@ -5636,10 +4994,7 @@
                     "-webkit-transition-duration"
                 ],
                 "name-for-methods": "Duration",
-                "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "separator": ","
             },
             "specification": {
                 "category": "css-transitions",
@@ -5652,10 +5007,7 @@
                 "aliases": [
                     "-webkit-transition-property"
                 ],
-                "name-for-methods": "Property",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "name-for-methods": "Property"
             },
             "specification": {
                 "category": "css-transitions",
@@ -5668,10 +5020,7 @@
                 "aliases": [
                     "-webkit-transition-timing-function"
                 ],
-                "name-for-methods": "TimingFunction",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "name-for-methods": "TimingFunction"
             },
             "specification": {
                 "category": "css-transitions",
@@ -5716,8 +5065,7 @@
         "unicode-range": {
             "codegen-properties": {
                 "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
+                "descriptor-only": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -5725,13 +5073,6 @@
             }
         },
         "font-display": {
-            "values": [
-                "auto",
-                "block",
-                "swap",
-                "fallback",
-                "optional"
-            ],
             "codegen-properties": {
                 "skip-builder": true,
                 "descriptor-only": true
@@ -5739,7 +5080,14 @@
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#font-display-desc"
-            }
+            },
+            "values": [
+                "auto",
+                "block",
+                "swap",
+                "fallback",
+                "optional"
+            ]
         },
         "vector-effect": {
             "values": [
@@ -5756,9 +5104,7 @@
         },
         "vertical-align": {
             "codegen-properties": {
-                "custom": "Inherit|Value",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "custom": "Inherit|Value"
             },
             "specification": {
                 "category": "css-22",
@@ -5795,8 +5141,7 @@
         "widows": {
             "inherited": true,
             "codegen-properties": {
-                "auto-functions": true,
-                "parser-function": "consumePositiveInteger"
+                "auto-functions": true
             },
             "specification": {
                 "category": "css-22",
@@ -5810,10 +5155,7 @@
                 "logical-property-group": {
                     "name": "size",
                     "resolver": "horizontal"
-                },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                }
             },
             "specification": {
                 "category": "css-22",
@@ -5822,9 +5164,7 @@
         },
         "will-change": {
             "codegen-properties": {
-                "custom": "Value",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "custom": "Value"
             },
             "specification": {
                 "category": "css-will-change",
@@ -5852,9 +5192,7 @@
         "word-spacing": {
             "inherited": true,
             "codegen-properties": {
-                "conditional-converter": "WordSpacing",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "conditional-converter": "WordSpacing"
             },
             "specification": {
                 "category": "css-22",
@@ -5864,9 +5202,7 @@
         "x": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "converter": "Length"
             },
             "specification": {
                 "category": "svg",
@@ -5876,9 +5212,7 @@
         "y": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "converter": "Length"
             },
             "specification": {
                 "category": "svg",
@@ -5888,8 +5222,7 @@
         "z-index": {
             "codegen-properties": {
                 "auto-functions": true,
-                "name-for-methods": "SpecifiedZIndex",
-                "custom-parser": true
+                "name-for-methods": "SpecifiedZIndex"
             },
             "specification": {
                 "category": "css-22",
@@ -5902,13 +5235,16 @@
                     "-webkit-alt"
                 ],
                 "name-for-methods": "ContentAltText",
-                "custom": "Value",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "custom": "Value"
             },
             "status": "non-standard"
         },
         "appearance": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-appearance"
+                ]
+            },
             "values": [
                 "checkbox",
                 "radio",
@@ -5924,36 +5260,11 @@
                 "slider-vertical",
                 "searchfield",
                 "textfield",
+                "-apple-pay-button",
                 "textarea",
                 "auto",
-                "none",
-                {
-                    "value": "-apple-pay-button",
-                    "status": "non-standard",
-                    "enable-if": "ENABLE_APPLE_PAY"
-                },
-                {
-                    "value": "default-button",
-                    "status": "non-standard",
-                    "settings-flag": "useSystemAppearance"
-                },
-                {
-                    "value": "attachment",
-                    "status": "non-standard",
-                    "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled()",
-                    "enable-if": "ENABLE_ATTACHMENT_ELEMENT"
-                },
-                {
-                    "value": "borderless-attachment",
-                    "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled()",
-                    "enable-if": "ENABLE_ATTACHMENT_ELEMENT"
-                }
+                "none"
             ],
-            "codegen-properties": {
-                "aliases": [
-                    "-webkit-appearance"
-                ]
-            },
             "status": {
                 "status": "experimental"
             },
@@ -5965,8 +5276,7 @@
         "aspect-ratio": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "aspectRatioEnabled",
-                "custom-parser": true
+                "settings-flag": "aspectRatioEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -5982,8 +5292,7 @@
                     "contain-intrinsic-width",
                     "contain-intrinsic-height"
                 ],
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
-                "custom-parser": true
+                "settings-flag": "cssContainIntrinsicSizeEnabled"
             },
             "status": {
                 "status": "in development"
@@ -6000,8 +5309,7 @@
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "vertical"
-                },
-                "parser-function": "consumeContainIntrinsicSize"
+                }
             },
             "status": {
                 "status": "in development"
@@ -6018,8 +5326,7 @@
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "horizontal"
-                },
-                "parser-function": "consumeContainIntrinsicSize"
+                }
             },
             "status": {
                 "status": "in development"
@@ -6036,8 +5343,7 @@
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "block"
-                },
-                "parser-function": "consumeContainIntrinsicSize"
+                }
             },
             "status": {
                 "status": "in development"
@@ -6054,8 +5360,7 @@
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "inline"
-                },
-                "parser-function": "consumeContainIntrinsicSize"
+                }
             },
             "status": {
                 "status": "in development"
@@ -6068,8 +5373,7 @@
         "contain": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "cssContainmentEnabled",
-                "custom-parser": true
+                "settings-flag": "cssContainmentEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -6084,8 +5388,7 @@
                 "longhands": [
                     "container-name",
                     "container-type"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6099,8 +5402,7 @@
             "codegen-properties": {
                 "settings-flag": "cssContainerQueriesEnabled",
                 "converter": "ContainerName",
-                "name-for-methods": "ContainerNames",
-                "custom-parser": true
+                "name-for-methods": "ContainerNames"
             },
             "status": {
                 "status": "experimental"
@@ -6111,14 +5413,14 @@
             }
         },
         "container-type": {
-            "values": [
-                "normal",
-                "size",
-                "inline-size"
-            ],
             "codegen-properties": {
                 "settings-flag": "cssContainerQueriesEnabled"
             },
+            "values": [
+                "none",
+                "size",
+                "inline-size"
+            ],
             "status": {
                 "status": "experimental"
             },
@@ -6128,14 +5430,14 @@
             }
         },
         "content-visibility": {
+            "codegen-properties": {
+                "settings-flag": "cssContentVisibilityEnabled"
+            },
             "values": [
                 "visible",
                 "hidden",
                 "auto"
             ],
-            "codegen-properties": {
-                "settings-flag": "cssContentVisibilityEnabled"
-            },
             "status": {
                 "status": "experimental"
             },
@@ -6145,15 +5447,15 @@
             }
         },
         "backface-visibility": {
-            "values": [
-                "visible",
-                "hidden"
-            ],
             "codegen-properties": {
                 "aliases": [
                     "-webkit-backface-visibility"
                 ]
             },
+            "values": [
+                "visible",
+                "hidden"
+            ],
             "specification": {
                 "category": "css-transforms",
                 "url": "https://www.w3.org/TR/css-transforms-1/#propdef-backface-visibility"
@@ -6163,28 +5465,21 @@
             "codegen-properties": {
                 "related-property": "background-clip",
                 "name-for-methods": "Clip",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             }
         },
         "-webkit-background-origin": {
             "codegen-properties": {
                 "related-property": "background-origin",
                 "name-for-methods": "Origin",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             }
         },
         "-webkit-background-size": {
             "codegen-properties": {
                 "longhands": [
                     "background-size"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "comment": "Differs from background-size only in the interpretation of a single value: '-webkit-background-size: l;' is equivalent to 'background-size: l l;' whereas 'background-size: l;' is equivalent to 'background-size: l auto;'"
@@ -6194,10 +5489,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "HorizontalBorderSpacing",
-                "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "converter": "ComputedLength<float>"
             },
             "status": "non-standard"
         },
@@ -6209,8 +5501,7 @@
                     "border-image-width",
                     "border-image-outset",
                     "border-image-repeat"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "comment": "Differs from border-image in that it always includes the 'fill' keyword in 'border-image-slice', and makes length values in 'border-image-width' override the corresponding 'border-*-width'."
@@ -6223,8 +5514,7 @@
                     "border-top-right-radius",
                     "border-bottom-right-radius",
                     "border-bottom-left-radius"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "comment": "Differs from border-radius only in the interpretation of a value consisting of two lengths: '-webkit-border-radius: l1 l2;' is equivalent to 'border-radius: l1 / l2;'."
@@ -6234,10 +5524,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "VerticalBorderSpacing",
-                "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "converter": "ComputedLength<float>"
             },
             "status": "non-standard"
         },
@@ -6268,10 +5555,6 @@
             }
         },
         "-webkit-box-flex": {
-            "codegen-properties": {
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::All"]
-            },
             "status": "obsolete",
             "specification":  {
                 "category": "css-flexbox",
@@ -6279,9 +5562,6 @@
             }
         },
         "-webkit-box-flex-group": {
-            "codegen-properties": {
-                "parser-function": "consumeIntegerZeroAndGreater"
-            },
             "status": "obsolete",
             "specification":  {
                 "category": "css-flexbox",
@@ -6300,9 +5580,6 @@
             }
         },
         "-webkit-box-ordinal-group": {
-            "codegen-properties": {
-                "parser-function": "consumePositiveInteger"
-            },
             "status": "obsolete",
             "specification":  {
                 "category": "css-flexbox",
@@ -6337,9 +5614,7 @@
         },
         "-webkit-box-reflect": {
             "codegen-properties": {
-                "converter": "Reflection",
-                "parser-function": "consumeReflect",
-                "parser-requires-context": true
+                "converter": "Reflection"
             },
             "status": {
                 "status": "experimental"
@@ -6348,9 +5623,7 @@
         "-webkit-box-shadow": {
             "codegen-properties": {
                 "related-property": "box-shadow",
-                "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "custom": "All"
             },
             "status": {
                 "comment": "Differs from box-shadow in its treatement of blur radii > 8px. Let -webkit-box-shadow blur, radius be w_r and box-shadow blur radius be b_r. For w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2)."
@@ -6371,8 +5644,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-after"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6386,8 +5658,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-before"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6401,8 +5672,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-inside"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6417,8 +5687,7 @@
                 "aliases": [
                     "-webkit-column-count"
                 ],
-                "auto-functions": true,
-                "custom-parser": true
+                "auto-functions": true
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6446,9 +5715,7 @@
                     "grid-column-gap",
                     "-webkit-column-gap"
                 ],
-                "converter": "GapLength",
-                "parser-function": "consumeGapLength",
-                "parser-requires-context-mode": true
+                "converter": "GapLength"
             },
             "specification":  {
                 "category": "css-align",
@@ -6460,9 +5727,7 @@
                 "aliases": [
                     "grid-row-gap"
                 ],
-                "converter": "GapLength",
-                "parser-function": "consumeGapLength",
-                "parser-requires-context-mode": true
+                "converter": "GapLength"
             },
             "specification": {
                 "category": "css-align",
@@ -6477,8 +5742,7 @@
                 "longhands": [
                     "row-gap",
                     "column-gap"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -6504,8 +5768,7 @@
                     "column-rule-width",
                     "column-rule-style",
                     "column-rule-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6519,9 +5782,7 @@
                 ],
                 "initial": "currentColor",
                 "visited-link-color-support": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6557,9 +5818,7 @@
                 "aliases": [
                     "-webkit-column-rule-width"
                 ],
-                "converter": "LineWidth<unsigned short>",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "LineWidth<unsigned short>"
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6567,10 +5826,6 @@
             }
         },
         "column-span": {
-            "values": [
-                "none",
-                "all"
-            ],
             "codegen-properties": {
                 "aliases": [
                     "-webkit-column-span"
@@ -6587,8 +5842,7 @@
                     "-webkit-column-width"
                 ],
                 "converter": "ComputedLength<float>",
-                "auto-functions": true,
-                "custom-parser": true
+                "auto-functions": true
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6603,8 +5857,7 @@
                 "longhands": [
                     "column-width",
                     "column-count"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6641,10 +5894,6 @@
                 "soft-light",
                 "difference",
                 "exclusion",
-                "hue",
-                "saturation",
-                "color",
-                "luminosity",
                 "plus-darker",
                 "plus-lighter"
             ],
@@ -6675,10 +5924,7 @@
                 "aliases": [
                     "-webkit-filter"
                 ],
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"]
+                "conditional-converter": "FilterOperations"
             },
             "specification":  {
                 "category": "css-filters",
@@ -6689,10 +5935,7 @@
             "inherited": true,
             "codegen-properties": {
                 "settings-flag": "colorFilterEnabled",
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["AllowedFilterFunctions::ColorFilters"]
+                "conditional-converter": "FilterOperations"
             },
             "status": {
                 "status": "non-standard"
@@ -6712,9 +5955,7 @@
                     "-webkit-align-content"
                 ],
                 "initial": "initialContentAlignment",
-                "converter": "ContentAlignmentData",
-                "parser-function": "consumeContentDistributionOverflowPosition",
-                "parser-requires-additional-parameters": ["isContentPositionKeyword"]
+                "converter": "ContentAlignmentData"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6734,8 +5975,7 @@
                     "-webkit-align-items"
                 ],
                 "initial": "initialDefaultAlignment",
-                "converter": "SelfOrDefaultAlignmentData",
-                "custom-parser": true
+                "converter": "SelfOrDefaultAlignmentData"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6757,9 +5997,7 @@
                     "-webkit-align-self"
                 ],
                 "initial": "initialSelfAlignment",
-                "converter": "SelfOrDefaultAlignmentData",
-                "parser-function": "consumeSelfPositionOverflowPosition",
-                "parser-requires-additional-parameters": ["isSelfPositionKeyword"]
+                "converter": "SelfOrDefaultAlignmentData"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6775,8 +6013,7 @@
                     "flex-grow",
                     "flex-shrink",
                     "flex-basis"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6788,9 +6025,7 @@
                 "aliases": [
                     "-webkit-flex-basis"
                 ],
-                "converter": "LengthSizing",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "converter": "LengthSizing"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6822,8 +6057,7 @@
                 "longhands": [
                     "flex-direction",
                     "flex-wrap"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6834,9 +6068,7 @@
             "codegen-properties": {
                 "aliases": [
                     "-webkit-flex-grow"
-                ],
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                ]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6847,9 +6079,7 @@
             "codegen-properties": {
                 "aliases": [
                     "-webkit-flex-shrink"
-                ],
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                ]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6885,8 +6115,7 @@
                     "-webkit-justify-content"
                 ],
                 "initial": "initialContentAlignment",
-                "converter": "ContentAlignmentData",
-                "custom-parser": true
+                "converter": "ContentAlignmentData"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6896,10 +6125,7 @@
         "-webkit-backdrop-filter": {
             "codegen-properties": {
                 "conditional-converter": "FilterOperations",
-                "enable-if": "ENABLE_FILTERS_LEVEL_2",
-                "parser-function": "consumeFilter",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"]
+                "enable-if": "ENABLE_FILTERS_LEVEL_2"
             },
             "status": {
                 "status": "experimental"
@@ -6912,19 +6138,14 @@
         "-webkit-font-size-delta": {
             "codegen-properties": {
                 "skip-builder": true,
-                "internal-only": true,
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All, UnitlessQuirk::Allow"]
+                "internal-only": true
             },
             "status": "non-standard"
         },
         "justify-self": {
             "codegen-properties": {
                 "initial": "initialSelfAlignment",
-                "converter": "SelfOrDefaultAlignmentData",
-                "parser-function": "consumeSelfPositionOverflowPosition",
-                "parser-requires-additional-parameters": ["isSelfPositionOrLeftOrRightKeyword"]
+                "converter": "SelfOrDefaultAlignmentData"
             },
             "specification": {
                 "category": "css-align",
@@ -6936,8 +6157,7 @@
                 "aliases": [
                     "-webkit-justify-items"
                 ],
-                "converter": "SelfOrDefaultAlignmentData",
-                "custom-parser": true
+                "converter": "SelfOrDefaultAlignmentData"
             },
             "specification": {
                 "category": "css-align",
@@ -6949,8 +6169,7 @@
                 "longhands": [
                     "align-content",
                     "justify-content"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -6962,8 +6181,7 @@
                 "longhands": [
                     "align-items",
                     "justify-items"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -6975,8 +6193,7 @@
                 "longhands": [
                     "align-self",
                     "justify-self"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -6992,8 +6209,7 @@
                     "grid-auto-flow",
                     "grid-auto-rows",
                     "grid-auto-columns"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7007,8 +6223,7 @@
                     "grid-column-start",
                     "grid-row-end",
                     "grid-column-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7018,10 +6233,7 @@
         "grid-auto-columns": {
             "codegen-properties": {
                 "converter": "GridTrackSizeList",
-                "separator": " ",
-                "parser-function": "consumeGridTrackList",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["GridAuto"]
+                "separator": " "
             },
             "specification": {
                 "category": "css-grid",
@@ -7031,10 +6243,7 @@
         "grid-auto-rows": {
             "codegen-properties": {
                 "converter": "GridTrackSizeList",
-                "separator": " ",
-                "parser-function": "consumeGridTrackList",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["GridAuto"]
+                "separator": " "
             },
             "specification": {
                 "category": "css-grid",
@@ -7044,8 +6253,7 @@
         "grid-column-end": {
             "codegen-properties": {
                 "name-for-methods": "GridItemColumnEnd",
-                "conditional-converter": "GridPosition",
-                "parser-function": "consumeGridLine"
+                "conditional-converter": "GridPosition"
             },
             "specification": {
                 "category": "css-grid",
@@ -7055,8 +6263,7 @@
         "grid-column-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemColumnStart",
-                "conditional-converter": "GridPosition",
-                "parser-function": "consumeGridLine"
+                "conditional-converter": "GridPosition"
             },
             "specification": {
                 "category": "css-grid",
@@ -7069,8 +6276,7 @@
                     "grid-template-rows",
                     "grid-template-columns",
                     "grid-template-areas"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7079,9 +6285,7 @@
         },
         "grid-template-columns": {
             "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeGridTemplatesRowsOrColumns",
-                "parser-requires-context": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-grid",
@@ -7090,9 +6294,7 @@
         },
         "grid-template-rows": {
             "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeGridTemplatesRowsOrColumns",
-                "parser-requires-context": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-grid",
@@ -7102,8 +6304,7 @@
         "grid-row-end": {
             "codegen-properties": {
                 "name-for-methods": "GridItemRowEnd",
-                "conditional-converter": "GridPosition",
-                "parser-function": "consumeGridLine"
+                "conditional-converter": "GridPosition"
             },
             "specification": {
                 "category": "css-grid",
@@ -7113,8 +6314,7 @@
         "grid-row-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemRowStart",
-                "conditional-converter": "GridPosition",
-                "parser-function": "consumeGridLine"
+                "conditional-converter": "GridPosition"
             },
             "specification": {
                 "category": "css-grid",
@@ -7126,8 +6326,7 @@
                 "longhands": [
                     "grid-column-start",
                     "grid-column-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7139,8 +6338,7 @@
                 "longhands": [
                     "grid-row-start",
                     "grid-row-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7149,8 +6347,7 @@
         },
         "grid-template-areas": {
             "codegen-properties": {
-                "custom": "All",
-                "custom-parser": true
+                "custom": "All"
             },
             "specification": {
                 "category": "css-grid",
@@ -7159,8 +6356,7 @@
         },
         "grid-auto-flow": {
             "codegen-properties": {
-                "converter": "GridAutoFlow",
-                "custom-parser": true
+                "converter": "GridAutoFlow"
             },
             "specification": {
                 "category": "css-grid",
@@ -7171,8 +6367,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "HyphenationString",
-                "converter": "StringOrAutoAtom",
-                "parser-function": "consumeAutoOrString"
+                "converter": "StringOrAutoAtom"
             },
             "status": {
                 "status": "experimental"
@@ -7186,9 +6381,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "HyphenationLimitAfter",
-                "converter": "NumberOrAuto<short>",
-                "parser-function": "consumeHyphenateLimit",
-                "parser-requires-additional-parameters": ["CSSValueAuto"]
+                "converter": "NumberOrAuto<short>"
             },
             "status": "non-standard"
         },
@@ -7196,9 +6389,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "HyphenationLimitBefore",
-                "converter": "NumberOrAuto<short>",
-                "parser-function": "consumeHyphenateLimit",
-                "parser-requires-additional-parameters": ["CSSValueAuto"]
+                "converter": "NumberOrAuto<short>"
             },
             "status": "non-standard"
         },
@@ -7206,9 +6397,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "HyphenationLimitLines",
-                "converter": "WebkitHyphenateLimitLines",
-                "parser-function": "consumeHyphenateLimit",
-                "parser-requires-additional-parameters": ["CSSValueNoLimit"]
+                "converter": "WebkitHyphenateLimitLines"
             },
             "status": {
                 "status": "experimental"
@@ -7240,8 +6429,7 @@
         },
         "-webkit-initial-letter": {
             "codegen-properties": {
-                "converter": "InitialLetter",
-                "custom-parser": true
+                "converter": "InitialLetter"
             },
             "status": {
                 "status": "experimental"
@@ -7263,8 +6451,7 @@
             ],
             "inherited": true,
             "codegen-properties": {
-                "converter": "LineBoxContain",
-                "parser-function": "consumeLineBoxContain"
+                "converter": "LineBoxContain"
             },
             "status": {
                 "status": "obsolete",
@@ -7311,16 +6498,12 @@
             }
         },
         "-webkit-line-clamp": {
-            "codegen-properties": {
-                "custom-parser": true
-            },
             "status": "non-standard"
         },
         "-webkit-line-grid": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "StringOrNoneAtom",
-                "custom-parser": true
+                "converter": "StringOrNoneAtom"
             },
             "status": {
                 "status": "experimental"
@@ -7366,6 +6549,9 @@
             }
         },
         "-webkit-marquee-direction": {
+            "codegen-properties": {
+                "internal-only": true
+            },
             "values": [
                 "forwards",
                 "backwards",
@@ -7377,17 +6563,12 @@
                 "up",
                 "auto"
             ],
-            "codegen-properties": {
-                "internal-only": true
-            },
             "status": "non-standard"
         },
         "-webkit-marquee-increment": {
             "codegen-properties": {
                 "conditional-converter": "MarqueeIncrement",
-                "internal-only": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "internal-only": true
             },
             "status": "non-standard"
         },
@@ -7395,17 +6576,14 @@
             "codegen-properties": {
                 "name-for-methods": "MarqueeLoopCount",
                 "converter": "MarqueeRepetition",
-                "internal-only": true,
-                "custom-parser": true
+                "internal-only": true
             },
             "status": "non-standard"
         },
         "-webkit-marquee-speed": {
             "codegen-properties": {
                 "converter": "MarqueeSpeed",
-                "internal-only": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "internal-only": true
             },
             "status": "non-standard"
         },
@@ -7434,8 +6612,7 @@
                     "mask-origin",
                     "-webkit-mask-clip"
                 ],
-                "comment": "Differs from the unprefixed property in accepting -webkit-mask-source-type in place of mask-mode",
-                "custom-parser": true
+                "comment": "Differs from the unprefixed property in accepting -webkit-mask-source-type in place of mask-mode"
             },
             "specification": {
                 "category": "css-masking",
@@ -7445,10 +6622,7 @@
         "-webkit-mask-box-image": {
             "codegen-properties": {
                 "initial": "initialNinePieceImage",
-                "converter": "BorderMask<CSSPropertyWebkitMaskBoxImage>",
-                "parser-function": "consumeWebkitBorderImage",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "converter": "BorderMask<CSSPropertyWebkitMaskBoxImage>"
             },
             "status": "non-standard",
             "specification": {
@@ -7457,8 +6631,7 @@
         },
         "-webkit-mask-box-image-outset": {
             "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageOutset"
+                "custom": "All"
             },
             "status": "non-standard",
             "specification": {
@@ -7467,8 +6640,7 @@
         },
         "-webkit-mask-box-image-repeat": {
             "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageRepeat"
+                "custom": "All"
             },
             "status": "non-standard",
             "specification": {
@@ -7477,9 +6649,7 @@
         },
         "-webkit-mask-box-image-slice": {
             "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageSlice",
-                "parser-requires-current-property": true
+                "custom": "All"
             },
             "status": "non-standard",
             "specification": {
@@ -7488,9 +6658,7 @@
         },
         "-webkit-mask-box-image-source": {
             "codegen-properties": {
-                "converter": "StyleImage<CSSPropertyWebkitMaskBoxImageSource>",
-                "parser-function": "consumeImageOrNone",
-                "parser-requires-context": true
+                "converter": "StyleImage<CSSPropertyWebkitMaskBoxImageSource>"
             },
             "status": "non-standard",
             "specification": {
@@ -7499,9 +6667,7 @@
         },
         "-webkit-mask-box-image-width": {
             "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageWidth",
-                "parser-requires-current-property": true
+                "custom": "All"
             },
             "status": "non-standard",
             "specification": {
@@ -7512,10 +6678,7 @@
             "codegen-properties": {
                 "related-property": "mask-clip",
                 "name-for-methods": "Clip",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "status": {
                 "status": "experimental"
@@ -7529,10 +6692,7 @@
             "codegen-properties": {
                 "related-property": "mask-composite",
                 "name-for-methods": "Composite",
-                "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "fill-layer-property": true
             },
             "status": {
                 "status": "experimental"
@@ -7546,10 +6706,7 @@
             "codegen-properties": {
                 "related-property": "mask-mode",
                 "synonym": "mask-mode",
-                "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'"
             },
             "status": "non-standard",
             "specification": {
@@ -7572,8 +6729,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -7596,8 +6752,7 @@
                 "comment": "This is a top priority property, to ensure that its value can be checked when resolving colors.",
                 "custom": "Value",
                 "enable-if": "ENABLE_DARK_MODE_CSS",
-                "top-priority": true,
-                "custom-parser": true
+                "top-priority": true
             },
             "specification": {
                 "category": "css-color-adjust",
@@ -7612,8 +6767,7 @@
             "codegen-properties": {
                 "aliases": [
                     "-webkit-order"
-                ],
-                "parser-function": "consumeInteger"
+                ]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -7622,9 +6776,7 @@
         },
         "perspective": {
             "codegen-properties": {
-                "conditional-converter": "Perspective",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "conditional-converter": "Perspective"
             },
             "specification": {
                 "category": "css-transforms",
@@ -7635,8 +6787,7 @@
             "codegen-properties": {
                 "longhands": [
                     "perspective"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transforms",
@@ -7654,8 +6805,7 @@
                 "longhands": [
                     "perspective-origin-x",
                     "perspective-origin-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transforms",
@@ -7668,9 +6818,7 @@
                     "-webkit-perspective-origin-x"
                 ],
                 "computable": false,
-                "converter": "PositionComponentX",
-                "parser-function": "consumePositionX",
-                "parser-requires-context-mode": true
+                "converter": "PositionComponentX"
             },
             "specification": {
                 "category": "css-transforms",
@@ -7683,9 +6831,7 @@
                     "-webkit-perspective-origin-y"
                 ],
                 "computable": false,
-                "converter": "PositionComponentY",
-                "parser-function": "consumePositionY",
-                "parser-requires-context-mode": true
+                "converter": "PositionComponentY"
             },
             "specification": {
                 "category": "css-transforms",
@@ -7696,8 +6842,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -7705,17 +6850,17 @@
             }
         },
         "print-color-adjust": {
-            "inherited": true,
-            "values": [
-                "exact",
-                "economy"
-            ],
             "codegen-properties": {
                 "aliases": [
                     "-webkit-print-color-adjust",
                     "color-adjust"
                 ]
             },
+            "inherited": true,
+            "values": [
+                "exact",
+                "economy"
+            ],
             "specification": {
                 "category": "css-color-adjust",
                 "url": "https://www.w3.org/TR/css-color-adjust/#print-color-adjust"
@@ -7725,8 +6870,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -7749,8 +6893,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -7776,14 +6919,14 @@
         },
         "text-combine-upright": {
             "inherited": true,
-            "values": [
-                "none",
-                "all"
-            ],
             "codegen-properties": {
                 "related-property": "-webkit-text-combine",
                 "name-for-methods": "TextCombine"
             },
+            "values": [
+                "none",
+                "all"
+            ],
             "specification": {
                 "category": "css-writing-modes",
                 "url": "https://www.w3.org/TR/css-writing-modes-3/#propdef-direction"
@@ -7795,8 +6938,7 @@
                     "text-decoration-line",
                     "text-decoration-style",
                     "text-decoration-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -7807,29 +6949,32 @@
             }
         },
         "text-decoration-line": {
+            "codegen-properties": {
+                "converter": "TextDecorationLine",
+                "aliases": [
+                    "-webkit-text-decoration-line"
+                ]
+            },
             "values": [
-                "none",
                 "underline",
                 "overline",
                 "line-through",
                 {
                     "value": "blink",
-                    "comment": "The value is parsed but ignored for rendering and computed style."
+                    "status": "not considering"
                 }
             ],
-            "codegen-properties": {
-                "converter": "TextDecorationLine",
-                "aliases": [
-                    "-webkit-text-decoration-line"
-                ],
-                "custom-parser": true
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-line"
             }
         },
         "text-decoration-style": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-text-decoration-style"
+                ]
+            },
             "values": [
                 "solid",
                 "double",
@@ -7837,11 +6982,6 @@
                 "dashed",
                 "wavy"
             ],
-            "codegen-properties": {
-                "aliases": [
-                    "-webkit-text-decoration-style"
-                ]
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-style"
@@ -7854,9 +6994,7 @@
                 ],
                 "initial": "currentColor",
                 "visited-link-color-support": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "specification": {
                 "category": "css-text-decor",
@@ -7871,8 +7009,7 @@
                 ],
                 "longhands": [
                     "text-decoration-skip-ink"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-text-decor",
@@ -7892,18 +7029,12 @@
             }
         },
         "text-underline-position": {
-            "inherited": true,
-            "values": [
-                "auto",
-                "under",
-                "from-font"
-            ],
             "codegen-properties": {
                 "aliases": [
                     "-webkit-text-underline-position"
-                ],
-                "comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support auto | under | from-font for now"
+                ]
             },
+            "inherited": true,
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-underline-position-property"
@@ -7912,9 +7043,7 @@
         "text-underline-offset": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "TextUnderlineOffset",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "TextUnderlineOffset"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -7923,9 +7052,7 @@
         },
         "text-decoration-thickness": {
             "codegen-properties": {
-                "converter": "TextDecorationThickness",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "TextDecorationThickness"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -7935,9 +7062,7 @@
         "-webkit-text-decorations-in-effect": {
             "inherited": true,
             "codegen-properties": {
-                "skip-builder": true,
-                "parser-function": "consumeTextDecorationLine",
-                "comment": "FIXME: Should this be an alias of text-decoration-line?"
+                "skip-builder": true
             },
             "status": "non-standard"
         },
@@ -7945,7 +7070,6 @@
             "inherited": true,
             "codegen-properties": {
                 "skip-builder": true,
-                "skip-parser": true,
                 "enable-if": "ENABLE_TEXT_AUTOSIZING",
                 "internal-only": true
             },
@@ -7961,8 +7085,7 @@
                 "longhands": [
                     "text-emphasis-style",
                     "text-emphasis-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -7981,9 +7104,7 @@
                 ],
                 "initial": "currentColor",
                 "visited-link-color-support": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "status": {
                 "status": "experimental"
@@ -7999,8 +7120,7 @@
                 "aliases": [
                     "-webkit-text-emphasis-position"
                 ],
-                "converter": "TextEmphasisPosition",
-                "custom-parser": true
+                "converter": "TextEmphasisPosition"
             },
             "status": {
                 "status": "experimental"
@@ -8017,8 +7137,7 @@
                     "-epub-text-emphasis-style",
                     "-webkit-text-emphasis-style"
                 ],
-                "custom": "All",
-                "custom-parser": true
+                "custom": "All"
             },
             "status": {
                 "status": "experimental"
@@ -8033,9 +7152,7 @@
             "codegen-properties": {
                 "initial": "currentColor",
                 "visited-link-color-support": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "status": {
                 "status": "non-standard",
@@ -8058,8 +7175,7 @@
                 "longhands": [
                     "-webkit-text-stroke-width",
                     "-webkit-text-stroke-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": "non-standard"
         },
@@ -8068,9 +7184,7 @@
             "codegen-properties": {
                 "initial": "currentColor",
                 "visited-link-color-support": true,
-                "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "color-property": true
             },
             "status": {
                 "status": "non-standard",
@@ -8080,9 +7194,7 @@
         "-webkit-text-stroke-width": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "TextStrokeWidth",
-                "parser-function": "consumeTextStrokeWidth",
-                "parser-requires-context-mode": true
+                "converter": "TextStrokeWidth"
             },
             "status": {
                 "status": "non-standard",
@@ -8094,9 +7206,7 @@
                 "aliases": [
                     "-webkit-transform"
                 ],
-                "converter": "Transform",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "Transform"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8128,8 +7238,7 @@
                     "transform-origin-x",
                     "transform-origin-y",
                     "transform-origin-z"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transforms",
@@ -8142,9 +7251,7 @@
                     "-webkit-transform-origin-x"
                 ],
                 "computable": false,
-                "converter": "PositionComponentX",
-                "parser-function": "consumePositionX",
-                "parser-requires-context-mode": true
+                "converter": "PositionComponentX"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8157,9 +7264,7 @@
                     "-webkit-transform-origin-y"
                 ],
                 "computable": false,
-                "converter": "PositionComponentY",
-                "parser-function": "consumePositionY",
-                "parser-requires-context-mode": true
+                "converter": "PositionComponentY"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8172,10 +7277,7 @@
                     "-webkit-transform-origin-z"
                 ],
                 "computable": false,
-                "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "converter": "ComputedLength<float>"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8188,9 +7290,7 @@
                 "preserve-3d",
                 {
                     "value": "optimized-3d",
-                    "status": "internal",
-                    "enable-if": "ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D",
-                    "settings-flag": "transformStyleOptimized3DEnabled"
+                    "status": "internal"
                 }
             ],
             "codegen-properties": {
@@ -8207,9 +7307,7 @@
         "translate": {
             "codegen-properties": {
                 "settings-flag": "cssIndividualTransformPropertiesEnabled",
-                "converter": "Translate",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "Translate"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8219,9 +7317,7 @@
         "scale": {
             "codegen-properties": {
                 "settings-flag": "cssIndividualTransformPropertiesEnabled",
-                "converter": "Scale",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "Scale"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8232,9 +7328,7 @@
         "rotate": {
             "codegen-properties": {
                 "settings-flag": "cssIndividualTransformPropertiesEnabled",
-                "converter": "Rotate",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "converter": "Rotate"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8261,18 +7355,11 @@
         "-webkit-user-select": {
             "inherited": true,
             "values": [
-                "auto",
-                "text",
-                "none",
-                {
-                    "value": "contain",
-                    "status": "unimplemented"
-                },
-                "all"
+                "element"
             ],
             "status": {
                 "status": "experimental"
-            },
+        },
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-user-select"
@@ -8305,8 +7392,7 @@
                 ],
                 "aliases": [
                     "scroll-snap-margin"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8323,10 +7409,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "bottom"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8343,10 +7426,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "left"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8363,10 +7443,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "right"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8383,10 +7460,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "top"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8399,10 +7473,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "inline-start"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8415,10 +7486,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "block-start"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8431,10 +7499,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "inline-end"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8447,10 +7512,7 @@
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "block-end"
-                },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8462,8 +7524,7 @@
                 "longhands": [
                     "scroll-margin-block-start",
                     "scroll-margin-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8475,8 +7536,7 @@
                 "longhands": [
                     "scroll-margin-inline-start",
                     "scroll-margin-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8490,8 +7550,7 @@
                     "scroll-padding-right",
                     "scroll-padding-bottom",
                     "scroll-padding-left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8505,9 +7564,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "bottom"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8521,9 +7578,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "left"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8537,9 +7592,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "right"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8553,9 +7606,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "top"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8568,9 +7619,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "inline-start"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8583,9 +7632,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "block-start"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8598,9 +7645,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "inline-end"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8613,9 +7658,7 @@
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "block-end"
-                },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                }
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8627,8 +7670,7 @@
                 "longhands": [
                     "scroll-padding-block-start",
                     "scroll-padding-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8640,8 +7682,7 @@
                 "longhands": [
                     "scroll-padding-inline-start",
                     "scroll-padding-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8650,8 +7691,7 @@
         },
         "scroll-snap-align": {
             "codegen-properties": {
-                "converter": "ScrollSnapAlign",
-                "custom-parser": true
+                "converter": "ScrollSnapAlign"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8660,8 +7700,7 @@
         },
         "scroll-snap-type": {
             "codegen-properties": {
-                "converter": "ScrollSnapType",
-                "custom-parser": true
+                "converter": "ScrollSnapType"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8669,10 +7708,6 @@
             }
         },
         "scroll-snap-stop": {
-            "values": [
-                "always",
-                "normal"
-            ],
             "codegen-properties": {
                 "converter": "ScrollSnapStop"
             },
@@ -8686,9 +7721,7 @@
                 "aliases": [
                     "-webkit-shape-outside"
                 ],
-                "converter": "ShapeValue",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "converter": "ShapeValue"
             },
             "specification": {
                 "category": "css-shapes",
@@ -8700,10 +7733,7 @@
                 "aliases": [
                     "-webkit-shape-margin"
                 ],
-                "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "converter": "Length"
             },
             "specification": {
                 "category": "css-shapes",
@@ -8715,9 +7745,7 @@
                 "aliases": [
                     "-webkit-shape-image-threshold"
                 ],
-                "converter": "NumberOrAuto<float>",
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "converter": "NumberOrAuto<float>"
             },
             "specification": {
                 "category": "css-shapes",
@@ -8728,8 +7756,7 @@
             "codegen-properties": {
                 "descriptor-only": true,
                 "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
@@ -8740,9 +7767,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TapHighlightColor",
-                "enable-if": "ENABLE_TOUCH_EVENTS",
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "enable-if": "ENABLE_TOUCH_EVENTS"
             },
             "status": "non-standard"
         },
@@ -8766,33 +7791,12 @@
                 "none",
                 "manipulation",
                 "pan-x",
-                {
-                    "value": "pan-left",
-                    "status": "unimplemented",
-                    "url": "https://w3c.github.io/pointerevents/#the-touch-action-css-property"
-                },
-                {
-                    "value": "pan-right",
-                    "status": "unimplemented",
-                    "url": "https://w3c.github.io/pointerevents/#the-touch-action-css-property"
-                },
                 "pan-y",
-                {
-                    "value": "pan-up",
-                    "status": "unimplemented",
-                    "url": "https://w3c.github.io/pointerevents/#the-touch-action-css-property"
-                },
-                {
-                    "value": "pan-down",
-                    "status": "unimplemented",
-                    "url": "https://w3c.github.io/pointerevents/#the-touch-action-css-property"
-                },
                 "pinch-zoom"
             ],
             "codegen-properties": {
                 "name-for-methods": "TouchActions",
-                "converter": "TouchAction",
-                "custom-parser": true
+                "converter": "TouchAction"
             },
             "specification": {
                 "url": "https://www.w3.org/TR/pointerevents/#the-touch-action-css-property"
@@ -8818,58 +7822,12 @@
             "status": "removed"
         },
         "-apple-pay-button-style": {
-            "values": [
-                "white",
-                "white-outline",
-                "black"
-            ],
             "codegen-properties": {
                 "enable-if": "ENABLE_APPLE_PAY"
             },
             "status": "non-standard"
         },
         "-apple-pay-button-type": {
-            "values": [
-                "plain",
-                "buy",
-                "set-up",
-                "donate",
-                "check-out",
-                "book",
-                "subscribe",
-                {
-                    "value": "reload",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                },
-                {
-                    "value": "add-money",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                },
-                {
-                    "value": "top-up",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                },
-                {
-                    "value": "order",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                },
-                {
-                    "value": "rent",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                },
-                {
-                    "value": "support",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                },
-                {
-                    "value": "contribute",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                },
-                {
-                    "value": "tip",
-                    "enable-if": "ENABLE_APPLE_PAY_NEW_BUTTON_TYPES"
-                }
-            ],
             "codegen-properties": {
                 "enable-if": "ENABLE_APPLE_PAY"
             },
