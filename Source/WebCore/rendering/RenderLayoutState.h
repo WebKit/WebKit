@@ -89,6 +89,7 @@ public:
 #endif
 
     bool hasLineClamp() const { return m_maximumLineCountForLineClamp.has_value(); }
+    void resetLineClamp();
     void setMaximumLineCountForLineClamp(size_t maximumLineCount) { m_maximumLineCountForLineClamp = maximumLineCount; }
     std::optional<size_t> maximumLineCountForLineClamp() { return m_maximumLineCountForLineClamp; }
     void setVisibleLineCountForLineClamp(size_t visibleLineCount) { m_visibleLineCountForLineClamp = visibleLineCount; }
@@ -183,5 +184,11 @@ private:
     FrameViewLayoutContext& m_context;
     bool m_pushed { false };
 };
+
+inline void RenderLayoutState::resetLineClamp()
+{
+    m_maximumLineCountForLineClamp = { };
+    m_visibleLineCountForLineClamp = { };
+}
 
 } // namespace WebCore
