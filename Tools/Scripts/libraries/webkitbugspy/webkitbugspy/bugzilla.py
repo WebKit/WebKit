@@ -439,6 +439,7 @@ class Tracker(GenericTracker):
             version = self.projects[project]['versions'][0]
         elif not version:
             print(traceback.format_exc())
+            raise "NOT WORKING!"
             version = webkitcorepy.Terminal.choose(
                 "What version of '{}' should the bug be associated with?".format(project),
                 options=self.projects[project]['versions'], numbered=True,
