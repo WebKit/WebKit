@@ -4815,7 +4815,8 @@
       "name" : "Marcos Caceres",
       "nicks" : [
          "marcosc"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -7473,13 +7474,6 @@
       "nicks" : [
          "yuzo"
       ]
-   },
-   {
-      "emails" : [
-         "yvlai@apple.com"
-      ],
-      "github" : "yvonne-lai1",
-      "name" : "Yvonne Lai"
    },
    {
       "emails" : [
