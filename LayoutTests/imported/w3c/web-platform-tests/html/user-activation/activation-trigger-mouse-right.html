@@ -35,22 +35,22 @@
         let contextmenu_event = getEvent('contextmenu');
 
         await mousedown_event;
-        let consumed = await consumeTransientActivation();
+        let consumed = await test_driver.consume_user_activation();
         assert_true(consumed,
                     "mousedown event should result in activation");
 
         await mouseup_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "mouseup should have no activation after mousedown consumption");
 
         await auxclick_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "auxclick should have no activation after mousedown consumption");
 
         await contextmenu_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "contextmenu should have no activation after mousedown consumption");
     }, "Activation through right-click mouse event");

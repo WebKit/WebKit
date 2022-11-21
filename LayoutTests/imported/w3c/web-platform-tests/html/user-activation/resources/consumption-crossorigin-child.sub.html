@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
 <head>
   <script>
     window.top.postMessage(JSON.stringify({
@@ -8,8 +10,8 @@
         "hasBeenActive": navigator.userActivation.hasBeenActive
     }), "*");
 
-    window.addEventListener("click", event => {
-        window.open().close();
+    window.addEventListener("click", async event => {
+        await test_driver.consume_user_activation();
 
         window.top.postMessage(JSON.stringify({
             "type": "child-crossorigin-report",

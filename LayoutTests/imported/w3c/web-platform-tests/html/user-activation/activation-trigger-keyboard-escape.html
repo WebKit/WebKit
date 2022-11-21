@@ -26,12 +26,12 @@
         await test_driver.send_keys(document.body, ESCAPE_KEY);
 
         await keydown_event;
-        let consumed = await consumeTransientActivation();
+        let consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                     "ESCAPE keydown event should not result in activation");
 
         await keyup_event;
-        consumed = await consumeTransientActivation();
+        consumed = await test_driver.consume_user_activation();
         assert_false(consumed,
                      "ESCAPE keyup should have no activation after keydown consumption");
     }, "Activation through ESCAPE keyboard event");

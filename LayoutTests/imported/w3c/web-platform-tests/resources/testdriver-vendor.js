@@ -330,3 +330,11 @@ window.test_driver_internal.generate_test_report = function(message, context=nul
     return Promise.resolve();
 }
 
+window.test_driver_internal.consume_user_activation = async function(context)
+{
+    if (context === null)
+        context = window;
+    if (!context.internals?.consumeTransientActivation)
+        throw new Error("unimplemented");
+    return context.internals.consumeTransientActivation();
+}

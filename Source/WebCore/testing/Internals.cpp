@@ -5272,6 +5272,15 @@ bool Internals::hasTransientActivation()
     return false;
 }
 
+bool Internals::consumeTransientActivation()
+{
+    if (auto* document = contextDocument()) {
+        if (auto* window = document->domWindow())
+            return window->consumeTransientActivation();
+    }
+    return false;
+}
+
 double Internals::lastHandledUserGestureTimestamp()
 {
     Document* document = contextDocument();

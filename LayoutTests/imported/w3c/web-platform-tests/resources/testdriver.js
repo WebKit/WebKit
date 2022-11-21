@@ -167,6 +167,23 @@
         },
 
         /**
+         * Consumes the user activation
+         *
+         * Matches the behavior of the `Consume User Activation of window`
+         * as proposed in: https://github.com/w3c/webdriver/pull/1695
+         *
+         * Which corresponds to these steps in HTML:
+         * https://html.spec.whatwg.org/#consume-user-activation
+         *
+         * @param {WindowProxy} context - Browsing context in which to run the
+         *                                call.
+         * @returns {Promise<boolean>} fulfilled when user activation is consumed.
+         */
+        consume_user_activation(context=null) {
+            return window.test_driver_internal.consume_user_activation(context);
+        },
+
+        /**
          * Deletes all cookies.
          *
          * Matches the behaviour of the `Delete All Cookies
@@ -631,6 +648,12 @@
             return new Promise(function(resolve, reject) {
                 element.addEventListener("click", resolve);
             });
+        },
+
+        async consume_user_activation () {
+            if (this.in_automation) {
+                throw new Error('Not implemented');
+            }
         },
 
         delete_all_cookies: function(context=null) {
