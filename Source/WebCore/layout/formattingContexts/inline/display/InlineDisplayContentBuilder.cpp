@@ -881,6 +881,11 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(DisplayBo
 
 void InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(DisplayBoxes& boxes)
 {
+    if (boxes.isEmpty()) {
+        // Line clamp may produce a completely empty IFC.
+        return;
+    }
+
     HashMap<const Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
 
     ASSERT(boxes[0].isRootInlineBox());

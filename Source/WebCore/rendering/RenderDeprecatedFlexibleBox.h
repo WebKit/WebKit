@@ -63,6 +63,7 @@ private:
     bool isHorizontal() const { return style().boxOrient() == BoxOrient::Horizontal; }
 
     void applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
+    bool applyModernLineClamp(FlexBoxIterator&);
     void clearLineClamp();
 
     bool m_stretchingChildren;

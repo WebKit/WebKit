@@ -1,22 +1,287 @@
-a bc
-d ef
-ghi
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 2 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](ef) anchorOffset: 2 focusNode: [object Text](a ) focusOffset: 1 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](ef) anchorOffset: 2 focusNode: [object Text](bc) focusOffset: 0 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text]( ) anchorOffset: 1 focusNode: [object Text](bc) focusOffset: 0 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text]( ) anchorOffset: 1 focusNode: [object Text](a ) focusOffset: 0 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 2 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 1 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 2 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text]( ) focusOffset: 1 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object HTMLSpanElement](null) focusOffset: 4 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 2 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 1 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 2 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text]( ) focusOffset: 1 isCollapsed: false]
-PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object HTMLSpanElement](null) focusOffset: 4 isCollapsed: false]
-PASS successfullyParsed is true
 
-TEST COMPLETE
+Selecting from start to end with mac editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef<#selection-focus>"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
 
+Extending selection backward by one character with mac editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a<#selection-focus> "
+|   <span>
+|     id="start"
+|     "bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef<#selection-anchor>"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection forward by one character with mac editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-focus>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef<#selection-anchor>"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection forward by line boundary with mac editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-focus>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef"
+|   " <#selection-anchor>"
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection backward by line boundary with mac editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "<#selection-focus>a "
+|   <span>
+|     id="start"
+|     "bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef"
+|   " <#selection-anchor>"
+|   <br>
+|   "ghi"
+| "\n"
+
+Selecting from start to end with windows editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef<#selection-focus>"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection backward by one character with windows editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "e<#selection-focus>f"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection forward by one character with windows editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef<#selection-focus>"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection forward by line boundary with windows editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef"
+|   " <#selection-focus>"
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection backward by line boundary with windows editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   <#selection-focus>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Selecting from start to end with unix editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef<#selection-focus>"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection backward by one character with unix editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "e<#selection-focus>f"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection forward by one character with unix editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef<#selection-focus>"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection forward by line boundary with unix editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef"
+|   " <#selection-focus>"
+|   <br>
+|   "ghi"
+| "\n"
+
+Extending selection backward by line boundary with unix editing behavior:
+| "\n    "
+| <span>
+|   id="test"
+|   "a "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>bc"
+|   " "
+|   <br>
+|   <#selection-focus>
+|   "d "
+|   <span>
+|     id="end"
+|     "ef"
+|   " "
+|   <br>
+|   "ghi"
+| "\n"

@@ -209,11 +209,6 @@ enum class ShouldLineEndWithEllispsis : uint8_t {
 };
 static ShouldLineEndWithEllispsis shouldTruncateOverflow(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfLines)
 {
-    // Truncation is in effect when the block container has overflow other than visible.
-    if (rootStyle.isOverflowVisible())
-        return ShouldLineEndWithEllispsis::No;
-    if (rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return ShouldLineEndWithEllispsis::WhenContentOverflows;
     if (maximumNumberOfLines) {
         ASSERT(numberOfLines < *maximumNumberOfLines);
         // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
@@ -221,6 +216,9 @@ static ShouldLineEndWithEllispsis shouldTruncateOverflow(const RenderStyle& root
         if (treatNextLineAsLastLine)
             return ShouldLineEndWithEllispsis::Always;
     }
+    // Truncation is in effect when the block container has overflow other than visible.
+    if (!rootStyle.isOverflowVisible() && rootStyle.textOverflow() == TextOverflow::Ellipsis)
+        return ShouldLineEndWithEllispsis::WhenContentOverflows;
     return ShouldLineEndWithEllispsis::No;
 }
 
@@ -239,6 +237,11 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
             return lineClamp->maximumNumberOfLines - lineClamp->numberOfVisibleLines;
         return { };
     }();
+    if (maximumNumberOfLines && !*maximumNumberOfLines) {
+        // There nothing to do here at all.
+        resetGeometryForClampedContent(needsLayoutRange, { }, { constraints.horizontal().logicalLeft, constraints.logicalTop() });
+        return;
+    }
     size_t numberOfLines = 0;
 
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };

@@ -51,13 +51,6 @@
 #endif
 #endif
 
-#if PLATFORM(X11)
-#include <WebCore/PlatformDisplayX11.h>
-#if USE(GLX)
-#include <GL/glx.h>
-#endif
-#endif
-
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
 #elif USE(OPENGL_ES)
@@ -71,6 +64,17 @@
 #include <epoxy/egl.h>
 #else
 #include <EGL/egl.h>
+#endif
+#endif
+
+#if PLATFORM(X11)
+#include <WebCore/PlatformDisplayX11.h>
+#if USE(GLX)
+#if USE(LIBEPOXY)
+#include <epoxy/glx.h>
+#else
+#include <GL/glx.h>
+#endif
 #endif
 #endif
 

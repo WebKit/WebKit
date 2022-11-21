@@ -313,16 +313,6 @@ AsynchronousSpellCheckingEnabled:
     WebCore:
       default: false
 
-AttachmentElementEnabled:
-  type: bool
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(ATTACHMENT_ELEMENT)
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultAttachmentElementEnabled()
-    WebKit:
-      default: false
-
 AuthorAndUserStylesEnabled:
   type: bool
   webKitLegacyPreferenceKey: WebKitAuthorAndUserStylesEnabledPreferenceKey

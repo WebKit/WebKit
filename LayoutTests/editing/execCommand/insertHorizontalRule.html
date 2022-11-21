@@ -10,7 +10,8 @@ if (window.testRunner)
 <p>This test inserts an hr with id="hr" between 'foo' and 'bar', fetches the hr using its id, then removes it.</p>
 <div id="test2" contenteditable="true">foobar</div>
 
-<script type="text/javascript" src="../editing.js"></script>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 var s = window.getSelection();
 var e;
@@ -21,6 +22,7 @@ moveSelectionForwardByCharacterCommand();
 moveSelectionForwardByCharacterCommand();
 moveSelectionForwardByCharacterCommand();
 document.execCommand("InsertHorizontalRule", false, "");
+Markup.dump(test1, 'Inserting hr between "foo" and "bar"');
 
 e = document.getElementById("test2");
 s.setPosition(e, 0);
@@ -29,6 +31,8 @@ moveSelectionForwardByCharacterCommand();
 moveSelectionForwardByCharacterCommand();
 var id = "hr";
 document.execCommand("InsertHorizontalRule", false, id);
+Markup.dump(test2, 'Inserting hr between "foo" and "bar"');
 var hr = document.getElementById(id);
 hr.parentNode.removeChild(hr);
+Markup.dump(test2, 'After removing hr');
 </script>
