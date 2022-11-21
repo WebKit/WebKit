@@ -128,3 +128,4 @@ void webkitWebViewDeleteSurrounding(WebKitWebView*, int offset, unsigned charact
 void webkitWebViewSetIsWebProcessResponsive(WebKitWebView*, bool);
 
 guint createShowOptionMenuSignal(WebKitWebViewClass*);
+guint createContextMenuSignal(WebKitWebViewClass*);
