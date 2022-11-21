@@ -973,10 +973,10 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
     });
 }
 
-void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
+void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, uint64_t reportedEncodedDataLength)
 {
     if (!m_numBytesReceived)
-        LOADER_RELEASE_LOG("didReceiveData: Started receiving data (reportedEncodedDataLength=%d)", reportedEncodedDataLength);
+        LOADER_RELEASE_LOG("didReceiveData: Started receiving data (reportedEncodedDataLength=%" PRIu64 ")", reportedEncodedDataLength);
     m_numBytesReceived += buffer.size();
 
     ASSERT(!m_cacheEntryForValidation);
@@ -991,16 +991,14 @@ void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuff
     }
     if (isCrossOriginPrefetch())
         return;
-    // FIXME: At least on OS X Yosemite we always get -1 from the resource handle.
-    unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer.size();
 
     if (m_bufferedData) {
         m_bufferedData.append(buffer);
-        m_bufferedDataEncodedDataLength += encodedDataLength;
+        m_bufferedDataEncodedDataLength += reportedEncodedDataLength;
         startBufferingTimerIfNeeded();
         return;
     }
-    sendBuffer(buffer, encodedDataLength);
+    sendBuffer(buffer, reportedEncodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
