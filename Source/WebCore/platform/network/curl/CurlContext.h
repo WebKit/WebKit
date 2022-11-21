@@ -272,6 +272,7 @@ public:
 
     void disableServerTrustEvaluation();
     void setCACertPath(const char*);
+    void setCACertBlob(void*, size_t);
     void setSslVerifyPeer(VerifyPeer);
     void setSslVerifyHost(VerifyHost);
     void setSslCert(const char*);

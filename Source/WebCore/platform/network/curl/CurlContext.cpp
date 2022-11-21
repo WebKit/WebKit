@@ -354,6 +354,8 @@ void CurlHandle::enableSSLForHost(const String& host)
 #else
     if (auto* path = std::get_if<String>(&sslHandle.getCACertInfo()))
         setCACertPath(path->utf8().data());
+    else if (auto data = std::get_if<CertificateInfo::Certificate>(&sslHandle.getCACertInfo()))
+        setCACertBlob(const_cast<uint8_t*>(data->data()), data->size());
 #endif
 }
 
@@ -566,6 +568,19 @@ void CurlHandle::setCACertPath(const char* path)
 {
     if (path)
         curl_easy_setopt(m_handle, CURLOPT_CAINFO, path);
+}
+
+void CurlHandle::setCACertBlob(void* data, size_t length)
+{
+    if (!data || !length)
+        return;
+
+    curl_blob blob;
+    blob.data = data;
+    blob.len = length;
+    blob.flags = CURL_BLOB_NOCOPY;
+
+    curl_easy_setopt(m_handle, CURLOPT_CAINFO_BLOB, &blob);
 }
 
 void CurlHandle::setSslVerifyPeer(VerifyPeer verifyPeer)
