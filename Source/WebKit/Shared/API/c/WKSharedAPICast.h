@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -288,6 +288,22 @@ inline WKPoint toAPI(const WebCore::IntPoint& point)
 inline WKTypeID toAPI(API::Object::Type type)
 {
     return static_cast<WKTypeID>(type);
+}
+
+inline OptionSet<WebEventModifier> fromAPI(WKEventModifiers wkModifiers)
+{
+    OptionSet<WebEventModifier> modifiers;
+    if (wkModifiers & kWKEventModifiersShiftKey)
+        modifiers.add(WebEventModifier::ShiftKey);
+    if (wkModifiers & kWKEventModifiersControlKey)
+        modifiers.add(WebEventModifier::ControlKey);
+    if (wkModifiers & kWKEventModifiersAltKey)
+        modifiers.add(WebEventModifier::AltKey);
+    if (wkModifiers & kWKEventModifiersMetaKey)
+        modifiers.add(WebEventModifier::MetaKey);
+    if (wkModifiers & kWKEventModifiersCapsLockKey)
+        modifiers.add(WebEventModifier::CapsLockKey);
+    return modifiers;
 }
 
 inline WKEventModifiers toAPI(OptionSet<WebEventModifier> modifiers)
