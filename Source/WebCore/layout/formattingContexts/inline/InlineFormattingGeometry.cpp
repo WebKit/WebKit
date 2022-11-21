@@ -271,6 +271,11 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
     auto& lines = formattingState.lines();
     auto& boxes = formattingState.boxes();
 
+    if (lines.isEmpty()) {
+        ASSERT(boxes.isEmpty());
+        return contentBoxTopLeft;
+    }
+
     auto previousDisplayBoxIndexBeforeOutOfFlowBox = previousDisplayBoxIndex(outOfFlowBox, boxes);
     if (!previousDisplayBoxIndexBeforeOutOfFlowBox)
         return { boxes[0].left(), lines[0].top() };

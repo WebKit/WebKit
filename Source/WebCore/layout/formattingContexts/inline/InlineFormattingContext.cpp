@@ -239,6 +239,11 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
             return lineClamp->maximumNumberOfLines - lineClamp->numberOfVisibleLines;
         return { };
     }();
+    if (maximumNumberOfLines && !*maximumNumberOfLines) {
+        // There nothing to do here at all.
+        resetGeometryForClampedContent(needsLayoutRange, { }, { constraints.horizontal().logicalLeft, constraints.logicalTop() });
+        return;
+    }
     size_t numberOfLines = 0;
 
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };

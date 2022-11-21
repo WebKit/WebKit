@@ -493,9 +493,12 @@ void LineLayout::layout()
 
 void LineLayout::constructContent()
 {
-    auto inlineContentBuilder = InlineContentBuilder { flow(), m_boxTree };
-    inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
-    ASSERT(m_inlineContent);
+    if (!m_inlineFormattingState.lines().isEmpty()) {
+        InlineContentBuilder { flow(), m_boxTree }.build(m_inlineFormattingState, ensureInlineContent());
+        ASSERT(m_inlineContent);
+        m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
+        m_inlineContent->shrinkToFit();
+    }
 
     auto& blockFlow = flow();
     auto& rootStyle = blockFlow.style();
@@ -548,8 +551,6 @@ void LineLayout::constructContent()
         renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft());
     }
 
-    m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
-    m_inlineContent->shrinkToFit();
     m_inlineFormattingState.shrinkToFit();
 }
 
