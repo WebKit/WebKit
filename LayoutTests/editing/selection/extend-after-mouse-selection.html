@@ -8,8 +8,7 @@
 }
 </style>
 <script src="../editing.js"></script>
-<script src="../../resources/js-test-pre.js"></script>
-<script src="resources/js-test-selection-shared.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 
 <script>
 
@@ -30,36 +29,22 @@ function editingTest(editingBehavior) {
     eventSender.mouseMoveTo(endTarget.offsetLeft, endTarget.offsetTop + 10);
     eventSender.mouseUp();
 
-    assertSelectionAt(startTarget.firstChild, 0, endTarget.firstChild, 2);
+    Markup.dump(root, `Selecting from start to end with ${editingBehavior} editing behavior`);
 
     extendSelectionBackwardByCharacterCommand();
 
     // On Win/Linux the anchor is be fixed after the mouse-selection and never changes.
     // On Mac, the first character-granularity selection after a mouse-selection resets the anchor/focus.
-    if (editingBehavior == "mac")
-        assertSelectionAt(endTarget.firstChild, 2, startTarget.previousSibling, 1);
-    else
-        assertSelectionAt(startTarget.firstChild, 0, endTarget.firstChild, 1);
+    Markup.dump(root, `Extending selection backward by one character with ${editingBehavior} editing behavior`);
 
     extendSelectionForwardByCharacterCommand();
-    if (editingBehavior == "mac")
-        assertSelectionAt(endTarget.firstChild, 2, startTarget.firstChild, 0);
-    else
-        assertSelectionAt(startTarget.firstChild, 0, endTarget.firstChild, 2);
+    Markup.dump(root, `Extending selection forward by one character with ${editingBehavior} editing behavior`);
 
     extendSelectionForwardByLineBoundaryCommand();
-
-    if (editingBehavior == "mac")
-        assertSelectionAt(endTarget.nextSibling, 1, startTarget.firstChild, 0);
-    else
-        assertSelectionAt(startTarget.firstChild, 0, endTarget.nextSibling, 1);
+    Markup.dump(root, `Extending selection forward by line boundary with ${editingBehavior} editing behavior`);
 
     extendSelectionBackwardByLineBoundaryCommand();
-
-    if (editingBehavior == "mac")
-        assertSelectionAt(endTarget.nextSibling, 1, startTarget.previousSibling, 0);
-    else
-        assertSelectionAt(startTarget.firstChild, 0, document.getElementById('test'), 4);
+    Markup.dump(root, `Extending selection backward by line boundary with ${editingBehavior} editing behavior`);
 }
 
 </script>
@@ -78,7 +63,6 @@ editingTest("mac");
 editingTest("windows");
 editingTest("unix");
 </script>
-<script src="../../resources/js-test-post.js"></script>
 
 </body>
 </html>
