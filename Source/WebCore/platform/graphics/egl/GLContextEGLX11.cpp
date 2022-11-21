@@ -20,11 +20,17 @@
 #include "GLContextEGL.h"
 
 #if USE(EGL) && PLATFORM(X11)
+
 #include "PlatformDisplayX11.h"
 #include "XErrorTrapper.h"
 #include "XUniquePtr.h"
-#include <EGL/egl.h>
 #include <X11/Xlib.h>
+
+#if USE(LIBEPOXY)
+#include <epoxy/egl.h>
+#else
+#include <EGL/egl.h>
+#endif
 
 namespace WebCore {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L
+ * Copyright (C) 2022 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,72 +24,28 @@
  */
 
 #include "config.h"
-#include "XUniqueResource.h"
+#include "XUniquePtr.h"
 
 #if PLATFORM(X11)
-#include "PlatformDisplayX11.h"
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
-#if PLATFORM(GTK)
-#include <X11/extensions/Xdamage.h>
-#endif
 
 #if USE(GLX)
 #if USE(LIBEPOXY)
 #include <epoxy/glx.h>
 #else
-#include <GL/glx.h>
+extern "C" void glXDestroyContext(::Display*, GLXContext);
 #endif
 #endif
 
 namespace WebCore {
 
-static inline Display* sharedDisplay()
+#if USE(GLX)
+
+void XPtrDeleter<__GLXcontextRec>::operator() (__GLXcontextRec*) const
 {
-    return downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
 }
 
-template<> void XUniqueResource<XResource::Colormap>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        XFreeColormap(sharedDisplay(), resource);
-}
-
-#if PLATFORM(GTK)
-template<> void XUniqueResource<XResource::Damage>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        XDamageDestroy(sharedDisplay(), resource);
-}
 #endif
 
-template<> void XUniqueResource<XResource::Pixmap>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        XFreePixmap(sharedDisplay(), resource);
 }
-
-template<> void XUniqueResource<XResource::Window>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        XDestroyWindow(sharedDisplay(), resource);
-}
-
-#if USE(GLX)
-template<> void XUniqueResource<XResource::GLXPbuffer>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        glXDestroyPbuffer(sharedDisplay(), resource);
-}
-
-template<> void XUniqueResource<XResource::GLXPixmap>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        glXDestroyGLXPixmap(sharedDisplay(), resource);
-}
-#endif // USE(GLX)
-
-} // namespace WebCore
 
 #endif // PLATFORM(X11)

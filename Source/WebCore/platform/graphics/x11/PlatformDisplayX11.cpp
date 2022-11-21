@@ -45,12 +45,20 @@
 #endif
 
 #if USE(EGL)
+#if USE(LIBEPOXY)
+#include <epoxy/egl.h>
+#else
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #endif
+#endif
 
 #if USE(GLX)
+#if USE(LIBEPOXY)
+#include <epoxy/glx.h>
+#else
 #include <GL/glx.h>
+#endif
 #endif
 
 namespace WebCore {
