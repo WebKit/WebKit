@@ -26,6 +26,7 @@ import requests
 import sys
 import time
 import webkitcorepy
+import traceback
 
 from .issue import Issue
 from .tracker import Tracker as GenericTracker
@@ -437,6 +438,7 @@ class Tracker(GenericTracker):
         if not version and len(self.projects[project]['versions']) == 1:
             version = self.projects[project]['versions'][0]
         elif not version:
+            print(traceback.format_exc())
             version = webkitcorepy.Terminal.choose(
                 "What version of '{}' should the bug be associated with?".format(project),
                 options=self.projects[project]['versions'], numbered=True,
