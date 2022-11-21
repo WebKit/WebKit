@@ -31,6 +31,8 @@ function clickOnElement(element, keys) {
 function runTest(editingBehavior) {
     internals.settings.setEditingBehavior(editingBehavior);
 
+    getSelection().removeAllRanges();
+
     var postfix = ' (' + editingBehavior + ')';
 
     clickOnElement(document.getElementById('first'));
