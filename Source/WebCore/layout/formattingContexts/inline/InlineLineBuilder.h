@@ -47,6 +47,11 @@ public:
         size_t start { 0 };
         size_t end { 0 };
     };
+    struct LineInput {
+        InlineItemRange needsLayoutRange;
+        InlineRect initialLogicalRect;
+        bool shouldTruncateOverflow { false };
+    };
     struct PartialContent {
         PartialContent(size_t, std::optional<InlineLayoutUnit>);
 
@@ -79,10 +84,10 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
         TextDirection inlineBaseDirection { TextDirection::LTR };
-        bool contentNeedsTrailingEllipsis { false };
+        bool lineNeedsTrailingEllipsis { false };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>&);
+    LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -128,7 +133,7 @@ private:
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     CommittedContent placeInlineContent(const InlineItemRange&);
-    InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
+    InlineItemRange close(const InlineItemRange& needsLayoutRange, bool truncateOverflow, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;

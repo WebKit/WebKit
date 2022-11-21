@@ -4732,19 +4732,19 @@ String SerializedScriptValue::toString() const
     return CloneDeserializer::deserializeString(m_data);
 }
 
-JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, SerializationErrorMode throwExceptions)
+JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, SerializationErrorMode throwExceptions, bool* didFail)
 {
-    return deserialize(lexicalGlobalObject, globalObject, { }, throwExceptions);
+    return deserialize(lexicalGlobalObject, globalObject, { }, throwExceptions, didFail);
 }
 
-JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, SerializationErrorMode throwExceptions)
+JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, SerializationErrorMode throwExceptions, bool* didFail)
 {
     Vector<String> dummyBlobs;
     Vector<String> dummyPaths;
-    return deserialize(lexicalGlobalObject, globalObject, messagePorts, dummyBlobs, dummyPaths, throwExceptions);
+    return deserialize(lexicalGlobalObject, globalObject, messagePorts, dummyBlobs, dummyPaths, throwExceptions, didFail);
 }
 
-JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode throwExceptions)
+JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode throwExceptions, bool* didFail)
 {
     DeserializationResult result = CloneDeserializer::deserialize(&lexicalGlobalObject, globalObject, messagePorts, WTFMove(m_backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -4763,6 +4763,8 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
         , WTFMove(m_serializedVideoFrames)
 #endif
         );
+    if (didFail)
+        *didFail = result.second != SerializationReturnCode::SuccessfullyCompleted;
     if (throwExceptions == SerializationErrorMode::Throwing)
         maybeThrowExceptionIfSerializationFailed(lexicalGlobalObject, result.second);
     return result.first ? result.first : jsNull();

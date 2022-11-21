@@ -1632,8 +1632,6 @@ all : \
     \
     CSSPropertyNames.cpp \
     CSSPropertyNames.h \
-    CSSPropertyParsing.cpp \
-    CSSPropertyParsing.h \
     CSSValueKeywords.cpp \
     CSSValueKeywords.h \
     ColorData.cpp \
@@ -1690,12 +1688,10 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCS
 CSS_PROPERTY_NAME_FILES = \
     CSSPropertyNames.cpp \
     CSSPropertyNames.h \
-    CSSPropertyParsing.cpp \
-    CSSPropertyParsing.h \
-    CSSStyleDeclaration+PropertyNames.idl \
     StyleBuilderGenerated.cpp \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
+    CSSStyleDeclaration+PropertyNames.idl \
 #
 CSS_PROPERTY_NAME_FILES_PATTERNS = $(subst .,%,$(CSS_PROPERTY_NAME_FILES))
 

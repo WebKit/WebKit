@@ -1,5 +1,5 @@
 
-FAIL The default value of onmessageerror is null assert_equals: body expected (object) null but got (undefined) undefined
-FAIL The onmessageerror content attribute must be compiled into the onmessageerror property assert_equals: The onmessageerror property must be a function expected "function" but got "undefined"
-FAIL The onmessageerror content attribute must execute when an event is dispatched on the window assert_true: Dispatching the event must run the code expected true got false
+PASS The default value of onmessageerror is null
+PASS The onmessageerror content attribute must be compiled into the onmessageerror property
+PASS The onmessageerror content attribute must execute when an event is dispatched on the window
 

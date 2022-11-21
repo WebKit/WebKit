@@ -961,11 +961,16 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
             }
         }
 
+        auto* globalObject = document()->globalObject();
+        if (!globalObject)
+            return;
+
         UserGestureIndicator userGestureIndicator(userGestureToForward);
         InspectorInstrumentation::willDispatchPostMessage(frame, postMessageIdentifier);
 
-        auto event = MessageEvent::create(message.message.releaseNonNull(), sourceOrigin, { }, incumbentWindowProxy ? std::make_optional(MessageEventSource(WTFMove(incumbentWindowProxy))) : std::nullopt, MessagePort::entanglePorts(*document(), WTFMove(message.transferredPorts)));
-        dispatchEvent(event);
+        auto ports = MessagePort::entanglePorts(*document(), WTFMove(message.transferredPorts));
+        auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), sourceOrigin, { }, incumbentWindowProxy ? std::make_optional(MessageEventSource(WTFMove(incumbentWindowProxy))) : std::nullopt, WTFMove(ports));
+        dispatchEvent(event.event);
 
         InspectorInstrumentation::didDispatchPostMessage(frame, postMessageIdentifier);
     });

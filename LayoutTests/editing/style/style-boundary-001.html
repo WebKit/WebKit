@@ -1,6 +1,6 @@
-<html> 
+<!DOCTYPE html>
+<html>
 <head>
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -16,41 +16,32 @@
 .scenario:first-line { font-weight: bold; margin-bottom: 16px;}
 .expected-results:first-line { font-weight: bold }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
+
+Markup.description('This tests bolding a character immediately after a character that is already in bold.');
 
 function editingTest() {
     moveSelectionForwardByCharacterCommand();
     extendSelectionForwardByCharacterCommand();
+    Markup.dump('root', 'Before bolding');
     boldCommand();
+    Markup.dump('root', 'After bolding');
 }
 
 </script>
 
-<title>Editing Test</title> 
-</head> 
+<title>Editing Test</title>
+</head>
 <body>
-
-<div class="explanation">
-<div class="scenario">
-Tests: 
-<br>
-Style checks performed on boundaries between style changes.
-</div>
-<div class="expected-results">
-Expected Results:
-<br>
-Should see this content in the red box below: <b>ab</b>
-</div>
-</div>
 
 <div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
 <div id="test" class="editing"><b>a</b>b</div>
 </div>
 
 <script>
-runEditingTest();
+runEditingTestWithCallbackLogging(false);
 </script>
 
 </body>

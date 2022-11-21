@@ -412,7 +412,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences)
 {
     list.clear();
 
@@ -420,6 +420,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
     if (keyframeRules.isEmpty())
         return;
 
+    containsCSSVariableReferences = false;
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
@@ -427,6 +428,8 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             KeyframeValue keyframeValue(0, nullptr);
             keyframeValue.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), keyframeValue));
             keyframeValue.setKey(key);
+            if (!containsCSSVariableReferences)
+                containsCSSVariableReferences = keyframeRule->containsCSSVariableReferences();
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
             if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {

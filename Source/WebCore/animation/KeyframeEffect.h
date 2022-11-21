@@ -189,6 +189,8 @@ public:
 
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
+    bool containsCSSVariableReferences() const { return m_containsCSSVariableReferences; }
+
 private:
     KeyframeEffect(Element*, PseudoId);
 
@@ -282,6 +284,7 @@ private:
     bool m_someKeyframesUseStepsTimingFunction { false };
     bool m_hasImplicitKeyframeForAcceleratedProperty { false };
     bool m_hasKeyframeComposingAcceleratedProperty { false };
+    bool m_containsCSSVariableReferences { false };
 };
 
 } // namespace WebCore

@@ -45,7 +45,6 @@
 #include "JSServiceWorkerRegistration.h"
 #include "LegacySchemeRegistry.h"
 #include "Logging.h"
-#include "MessageEvent.h"
 #include "NavigatorBase.h"
 #include "Page.h"
 #include "PushSubscriptionOptions.h"
@@ -350,9 +349,11 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 void ServiceWorkerContainer::startMessages()
 {
     m_shouldDeferMessageEvents = false;
-    auto deferredMessageEvents = WTFMove(m_deferredMessageEvents);
-    for (auto& messageEvent : deferredMessageEvents)
-        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, WTFMove(messageEvent));
+    for (auto&& messageEvent : std::exchange(m_deferredMessageEvents, Vector<MessageEvent::MessageEventWithStrongData> { })) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, messageEvent = WTFMove(messageEvent)] {
+            dispatchEvent(messageEvent.event);
+        });
+    }
 }
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
@@ -440,14 +441,20 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
 {
     auto& context = *scriptExecutionContext();
+    auto* globalObject = context.globalObject();
+    if (!globalObject)
+        return;
+
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(context, WTFMove(sourceData)) };
 
-    auto messageEvent = MessageEvent::create(message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source), MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)));
+    auto messageEvent = MessageEvent::create(*globalObject, message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source), MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)));
     if (m_shouldDeferMessageEvents)
         m_deferredMessageEvents.append(WTFMove(messageEvent));
     else {
         ASSERT(m_deferredMessageEvents.isEmpty());
-        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, WTFMove(messageEvent));
+        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, messageEvent = WTFMove(messageEvent)] {
+            dispatchEvent(messageEvent.event);
+        });
     }
 }
 

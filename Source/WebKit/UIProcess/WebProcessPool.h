@@ -263,7 +263,7 @@ public:
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
 
     void setAlwaysUsesComplexTextCodePath(bool);
-    void setShouldUseFontSmoothingForTesting(bool);
+    void setDisableFontSubpixelAntialiasingForTesting(bool);
     
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
@@ -675,7 +675,7 @@ private:
     HashSet<String> m_schemesToRegisterAsCanDisplayOnlyIfCanRequest;
 
     bool m_alwaysUsesComplexTextCodePath { false };
-    bool m_shouldUseFontSmoothingForTesting { true };
+    bool m_disableFontSubpixelAntialiasingForTesting { false };
 
     Vector<String> m_fontAllowList;
 

@@ -341,15 +341,15 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>& previousLine)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
-    initialize(initialConstraintsForLine(lineLogicalRect, previousLineEndsWithLineBreak), needsLayoutRange, previousLine);
+    initialize(initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
 
-    auto committedContent = placeInlineContent(needsLayoutRange);
-    auto committedRange = close(needsLayoutRange, committedContent);
+    auto committedContent = placeInlineContent(lineInput.needsLayoutRange);
+    auto committedRange = close(lineInput.needsLayoutRange, lineInput.shouldTruncateOverflow, committedContent);
 
-    auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
+    auto isLastLine = isLastLineWithInlineContent(committedRange, lineInput.needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
     auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
 
@@ -382,7 +382,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     initialize(lineConstraints, needsLayoutRange, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
-    auto committedRange = close(needsLayoutRange, committedContent);
+    auto committedRange = close(needsLayoutRange, false, committedContent);
     auto lineWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
     auto overflow = std::optional<PartialContent> { };
     if (committedContent.partialTrailingContentLength)
@@ -529,7 +529,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
     return { committedItemCount, { } };
 }
 
-LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
+LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, bool shouldTruncateOverflow, const CommittedContent& committedContent)
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_lineIsConstrainedByFloat);
     auto& rootStyle = this->rootStyle();
@@ -591,14 +591,8 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     }
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
 
-    auto needsTextOverflowAdjustment = [&] {
-        auto lineHasOverflow = horizontalAvailableSpace < m_line.contentLogicalWidth();
-        if (!lineHasOverflow || isInIntrinsicWidthMode())
-            return false;
-        // text-overflow is in effect when the block container has overflow other than visible.
-        return !rootStyle.isOverflowVisible() && rootStyle.textOverflow() == TextOverflow::Ellipsis;
-    };
-    if (needsTextOverflowAdjustment()) {
+    auto truncateInlineContent = shouldTruncateOverflow && horizontalAvailableSpace < m_line.contentLogicalWidth();
+    if (truncateInlineContent) {
         auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
         auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
         m_line.truncate(logicalRightForContentWithoutEllipsis);

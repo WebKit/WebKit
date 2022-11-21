@@ -123,7 +123,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
 // and also run truncation on the (visual)display box list and not on the (logical)line runs.
 std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisRect(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const FloatRect& lineBoxVisualRect) const
 {
-    if (!lineContent.contentNeedsTrailingEllipsis)
+    if (!lineContent.lineNeedsTrailingEllipsis)
         return { };
 
     auto ellipsisStart = 0.f;

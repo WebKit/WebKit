@@ -2484,6 +2484,11 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
     if (!element.document().childNeedsStyleRecalc())
         return true;
 
+    if (auto* keyframeEffectStack = Styleable(element, PseudoId::None).keyframeEffectStack()) {
+        if (keyframeEffectStack->containsProperty(propertyID))
+            return false;
+    }
+
     auto isQueryContainer = [&](Element& element) {
         auto* style = element.renderStyle();
         return style && style->containerType() != ContainerType::Normal;
@@ -2799,7 +2804,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledElement)
         return nullptr;
 
-    if (!isExposed(propertyID, m_element->document().settings())) {
+    if (!isExposed(propertyID, &m_element->document().settings())) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
@@ -2849,7 +2854,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
 
-    ASSERT(isExposed(propertyID, m_element->document().settings()));
+    ASSERT(isExposed(propertyID, &m_element->document().settings()));
 
     switch (propertyID) {
     case CSSPropertyInvalid:

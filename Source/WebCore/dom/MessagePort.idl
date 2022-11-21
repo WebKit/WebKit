@@ -38,4 +38,5 @@
     undefined close();
 
     attribute EventHandler onmessage;
+    attribute EventHandler onmessageerror;
 };

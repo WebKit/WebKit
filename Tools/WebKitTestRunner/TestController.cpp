@@ -728,6 +728,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
         }
 
         WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
+        WKContextSetDisableFontSubpixelAntialiasingForTesting(TestController::singleton().context(), true);
 
         platformInitializeContext();
     }
@@ -1099,7 +1100,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
 
-    WKContextSetShouldUseFontSmoothingForTesting(TestController::singleton().context(), false);
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
     WKWebsiteDataStoreClearCachedCredentials(websiteDataStore());

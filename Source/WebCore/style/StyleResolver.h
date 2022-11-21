@@ -98,7 +98,7 @@ public:
 
     ElementStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&);
+    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&, bool& containsCSSVariableReferences);
 
     WEBCORE_EXPORT std::unique_ptr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
 

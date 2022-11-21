@@ -274,7 +274,7 @@ void MessagePort::dispatchMessages()
         LOG(MessagePorts, "MessagePort %s (%p) dispatching %zu messages", m_identifier.logString().utf8().data(), this, messages.size());
 
         auto* context = scriptExecutionContext();
-        if (!context)
+        if (!context || !context->globalObject())
             return;
 
         ASSERT(context->isContextThread());
@@ -284,9 +284,14 @@ void MessagePort::dispatchMessages()
             // close() in Worker onmessage handler should prevent next message from dispatching.
             if (contextIsWorker && downcast<WorkerGlobalScope>(*context).isClosing())
                 return;
+
             auto ports = MessagePort::entanglePorts(*context, WTFMove(message.transferredPorts));
+            auto event = MessageEvent::create(*context->globalObject(), message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports));
+
             // Per specification, each MessagePort object has a task source called the port message queue.
-            queueTaskToDispatchEvent(*this, TaskSource::PostedMessageQueue, MessageEvent::create(message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports)));
+            queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, event = WTFMove(event)] {
+                dispatchEvent(event.event);
+            });
         }
     };
 

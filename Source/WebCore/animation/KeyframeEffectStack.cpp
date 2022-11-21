@@ -68,31 +68,41 @@ void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
         startAcceleratedAnimationsIfPossible();
 }
 
-bool KeyframeEffectStack::requiresPseudoElement() const
+bool KeyframeEffectStack::hasMatchingEffect(const Function<bool(const KeyframeEffect&)>& function) const
 {
     for (auto& effect : m_effects) {
-        if (effect->requiresPseudoElement())
+        if (function(*effect))
             return true;
     }
     return false;
+}
+
+bool KeyframeEffectStack::containsProperty(CSSPropertyID property) const
+{
+    return hasMatchingEffect([property] (const KeyframeEffect& effect) {
+        return effect.animatesProperty(property);
+    });
+}
+
+bool KeyframeEffectStack::requiresPseudoElement() const
+{
+    return hasMatchingEffect([] (const KeyframeEffect& effect) {
+        return effect.requiresPseudoElement();
+    });
 }
 
 bool KeyframeEffectStack::hasEffectWithImplicitKeyframes() const
 {
-    for (auto& effect : m_effects) {
-        if (effect->hasImplicitKeyframes())
-            return true;
-    }
-    return false;
+    return hasMatchingEffect([] (const KeyframeEffect& effect) {
+        return effect.hasImplicitKeyframes();
+    });
 }
 
 bool KeyframeEffectStack::isCurrentlyAffectingProperty(CSSPropertyID property) const
 {
-    for (auto& effect : m_effects) {
-        if (effect->isCurrentlyAffectingProperty(property) || effect->isRunningAcceleratedAnimationForProperty(property))
-            return true;
-    }
-    return false;
+    return hasMatchingEffect([property] (const KeyframeEffect& effect) {
+        return effect.isCurrentlyAffectingProperty(property) || effect.isRunningAcceleratedAnimationForProperty(property);
+    });
 }
 
 Vector<WeakPtr<KeyframeEffect>> KeyframeEffectStack::sortedEffects()
@@ -161,8 +171,21 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             return false;
         };
 
+        auto cssVariableChanged = [&]() {
+            auto customPropertyValueMapDidChange = [](const CustomPropertyValueMap& a, const CustomPropertyValueMap& b) {
+                return &a != &b && a != b;
+            };
+
+            if (previousLastStyleChangeEventStyle && effect->containsCSSVariableReferences()) {
+                if (customPropertyValueMapDidChange(previousLastStyleChangeEventStyle->inheritedCustomProperties(), targetStyle.inheritedCustomProperties())
+                    || customPropertyValueMapDidChange(previousLastStyleChangeEventStyle->nonInheritedCustomProperties(), targetStyle.nonInheritedCustomProperties()))
+                    return true;
+            }
+            return false;
+        };
+
         auto logicalPropertyDidChange = propertyAffectingLogicalPropertiesChanged && effect->animatesDirectionAwareProperty();
-        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged())
+        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged())
             effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
 
         animation->resolve(targetStyle, resolutionContext);
@@ -224,11 +247,9 @@ bool KeyframeEffectStack::allowsAcceleration() const
     // as well not run any at all since we'll be updating effects for this stack
     // for each animation frame. So for now, we simply return false if any effect in the
     // stack is unable to be accelerated.
-    for (auto& effect : m_effects) {
-        if (effect->preventsAcceleration())
-            return false;
-    }
-    return true;
+    return !hasMatchingEffect([] (const KeyframeEffect& effect) {
+        return effect.preventsAcceleration();
+    });
 }
 
 void KeyframeEffectStack::startAcceleratedAnimationsIfPossible()

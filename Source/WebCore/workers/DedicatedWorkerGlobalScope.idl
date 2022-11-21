@@ -43,6 +43,7 @@
     undefined close();
 
     attribute EventHandler onmessage;
+    attribute EventHandler onmessageerror;
 };
 
 [Conditional=OFFSCREEN_CANVAS_IN_WORKERS, EnabledByDeprecatedGlobalSetting=OffscreenCanvasInWorkersEnabled] DedicatedWorkerGlobalScope includes AnimationFrameProvider;

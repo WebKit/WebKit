@@ -820,7 +820,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
-    parameters.shouldUseFontSmoothingForTesting = m_shouldUseFontSmoothingForTesting;
+    parameters.disableFontSubpixelAntialiasingForTesting = m_disableFontSubpixelAntialiasingForTesting;
 
     parameters.textCheckerState = TextChecker::state();
 
@@ -1293,10 +1293,10 @@ void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     sendToAllProcesses(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText));
 }
 
-void WebProcessPool::setShouldUseFontSmoothingForTesting(bool useFontSmoothing)
+void WebProcessPool::setDisableFontSubpixelAntialiasingForTesting(bool disable)
 {
-    m_shouldUseFontSmoothingForTesting = useFontSmoothing;
-    sendToAllProcesses(Messages::WebProcess::SetShouldUseFontSmoothingForTesting(useFontSmoothing));
+    m_disableFontSubpixelAntialiasingForTesting = disable;
+    sendToAllProcesses(Messages::WebProcess::SetDisableFontSubpixelAntialiasingForTesting(disable));
 }
 
 void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)

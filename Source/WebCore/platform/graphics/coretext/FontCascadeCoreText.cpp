@@ -315,11 +315,11 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 
     CGContextRef cgContext = context.platformContext();
 
-    bool shouldAntialias = true;
-    bool shouldSmoothFonts = true;
-
     if (!font.allowsAntialiasing())
         smoothingMode = FontSmoothingMode::NoSmoothing;
+
+    bool shouldAntialias = true;
+    bool shouldSmoothFonts = true;
 
     switch (smoothingMode) {
     case FontSmoothingMode::Antialiased:
@@ -327,7 +327,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         break;
     case FontSmoothingMode::AutoSmoothing:
     case FontSmoothingMode::SubpixelAntialiased:
-        shouldAntialias = true;
         break;
     case FontSmoothingMode::NoSmoothing:
         shouldAntialias = false;
@@ -338,9 +337,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 #if PLATFORM(IOS_FAMILY)
     UNUSED_VARIABLE(shouldSmoothFonts);
 #else
-    if (!shouldUseSmoothingForTesting())
-        shouldSmoothFonts = false;
-
     bool originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts(cgContext);
     if (shouldSmoothFonts != originalShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);

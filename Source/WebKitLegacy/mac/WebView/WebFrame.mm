@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -957,7 +957,7 @@ static NSURL *createUniqueWebDataURL();
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [view->platformWidget() window])),
-        WebCore::LeftButton, WebCore::PlatformEvent::MouseMoved, 0, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+        WebCore::LeftButton, WebCore::PlatformEvent::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

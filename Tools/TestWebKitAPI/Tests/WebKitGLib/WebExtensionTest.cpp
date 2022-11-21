@@ -272,6 +272,10 @@ static GVariant* serializeNode(JSCValue* node)
 
 static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu, WebKitWebHitTestResult* hitTestResult, gpointer)
 {
+#if PLATFORM(GTK)
+    g_assert_null(webkit_context_menu_get_event(menu));
+#endif
+
     const char* pageURI = webkit_web_page_get_uri(page);
     if (!g_strcmp0(pageURI, "ContextMenuTestDefault")) {
         webkit_context_menu_set_user_data(menu, serializeContextMenu(menu));

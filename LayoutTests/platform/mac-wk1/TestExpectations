@@ -1213,6 +1213,9 @@ http/tests/navigation/page-cache-iframe-no-current-historyItem.html
 # The animation tests below (e.g. animated-gif-body-outside-viewport.html) are skipped for similar reasons.
 fast/images/pagewide-play-pause-offscreen-animations.html [ Skip ]
 
+# Skip because this test relies on certain context menu items that will not be added for WK1.
+fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Skip ]
+
 # Animated image throttling behaves differently on WK1.
 fast/images/animated-gif-body-outside-viewport.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]

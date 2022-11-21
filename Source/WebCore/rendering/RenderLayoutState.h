@@ -88,6 +88,12 @@ public:
     bool layoutDeltaMatches(LayoutSize) const;
 #endif
 
+    bool hasLineClamp() const { return m_maximumLineCountForLineClamp.has_value(); }
+    void setMaximumLineCountForLineClamp(size_t maximumLineCount) { m_maximumLineCountForLineClamp = maximumLineCount; }
+    std::optional<size_t> maximumLineCountForLineClamp() { return m_maximumLineCountForLineClamp; }
+    void setVisibleLineCountForLineClamp(size_t visibleLineCount) { m_visibleLineCountForLineClamp = visibleLineCount; }
+    std::optional<size_t> visibleLineCountForLineClamp() const { return m_visibleLineCountForLineClamp; }
+
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
     void computeClipRect(const RenderLayoutState& ancestor, RenderBox&);
@@ -128,6 +134,8 @@ private:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
+    std::optional<size_t> m_maximumLineCountForLineClamp;
+    std::optional<size_t> m_visibleLineCountForLineClamp;
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif

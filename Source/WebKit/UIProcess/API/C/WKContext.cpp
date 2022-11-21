@@ -325,9 +325,9 @@ void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef contextRef, bool alw
     WebKit::toImpl(contextRef)->setAlwaysUsesComplexTextCodePath(alwaysUseComplexTextCodePath);
 }
 
-void WKContextSetShouldUseFontSmoothingForTesting(WKContextRef contextRef, bool useFontSmoothing)
+void WKContextSetDisableFontSubpixelAntialiasingForTesting(WKContextRef contextRef, bool disable)
 {
-    WebKit::toImpl(contextRef)->setShouldUseFontSmoothingForTesting(useFontSmoothing);
+    WebKit::toImpl(contextRef)->setDisableFontSubpixelAntialiasingForTesting(disable);
 }
 
 void WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)

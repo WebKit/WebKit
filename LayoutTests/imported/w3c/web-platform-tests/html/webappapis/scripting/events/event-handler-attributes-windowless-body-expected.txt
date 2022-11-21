@@ -23,8 +23,8 @@ PASS Return null when getting the languagechange event handler of a windowless b
 PASS Ignore setting of languagechange window event handlers on windowless body
 PASS Return null when getting the message event handler of a windowless body
 PASS Ignore setting of message window event handlers on windowless body
-FAIL Return null when getting the messageerror event handler of a windowless body assert_equals: expected (object) null but got (undefined) undefined
-FAIL Ignore setting of messageerror window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the messageerror event handler of a windowless body
+PASS Ignore setting of messageerror window event handlers on windowless body
 PASS Return null when getting the offline event handler of a windowless body
 PASS Ignore setting of offline window event handlers on windowless body
 PASS Return null when getting the online event handler of a windowless body
@@ -132,8 +132,8 @@ PASS Return null when getting the languagechange event handler of a windowless f
 PASS Ignore setting of languagechange window event handlers on windowless frameset
 PASS Return null when getting the message event handler of a windowless frameset
 PASS Ignore setting of message window event handlers on windowless frameset
-FAIL Return null when getting the messageerror event handler of a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
-FAIL Ignore setting of messageerror window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the messageerror event handler of a windowless frameset
+PASS Ignore setting of messageerror window event handlers on windowless frameset
 PASS Return null when getting the offline event handler of a windowless frameset
 PASS Ignore setting of offline window event handlers on windowless frameset
 PASS Return null when getting the online event handler of a windowless frameset

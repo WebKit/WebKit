@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebAssembly.Module cannot cross agent clusters, BroadcastChannel edition Test timed out
+PASS WebAssembly.Module cannot cross agent clusters, BroadcastChannel edition
 

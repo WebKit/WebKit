@@ -569,7 +569,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setAlwaysUsesComplexTextCodePath(parameters.shouldAlwaysUseComplexTextCodePath);
 
-    setShouldUseFontSmoothingForTesting(parameters.shouldUseFontSmoothingForTesting);
+    setDisableFontSubpixelAntialiasingForTesting(parameters.disableFontSubpixelAntialiasingForTesting);
 
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
@@ -780,9 +780,9 @@ void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     WebCore::FontCascade::setCodePath(alwaysUseComplexText ? WebCore::FontCascade::CodePath::Complex : WebCore::FontCascade::CodePath::Auto);
 }
 
-void WebProcess::setShouldUseFontSmoothingForTesting(bool useFontSmoothing)
+void WebProcess::setDisableFontSubpixelAntialiasingForTesting(bool disable)
 {
-    WebCore::FontCascade::setShouldUseSmoothingForTesting(useFontSmoothing);
+    WebCore::FontCascade::setDisableFontSubpixelAntialiasingForTesting(disable);
 }
 
 void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
