@@ -119,12 +119,12 @@ namespace API {
 
 void Object::ref() const
 {
-    CFRetain((__bridge CFTypeRef)wrapper());
+    CFRetain(m_wrapper);
 }
 
 void Object::deref() const
 {
-    CFRelease((__bridge CFTypeRef)wrapper());
+    CFRelease(m_wrapper);
 }
 
 static id <WKObject> allocateWKObject(Class cls, size_t size)
@@ -475,7 +475,7 @@ void* Object::newObject(size_t size, Type type)
     }
 
     Object& object = wrapper._apiObject;
-    object.m_wrapper = wrapper;
+    object.m_wrapper = (__bridge CFTypeRef)wrapper;
 
     return &object;
 }

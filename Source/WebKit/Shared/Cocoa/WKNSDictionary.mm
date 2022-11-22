@@ -68,7 +68,7 @@ using namespace WebKit;
     if (!exists)
         return nil;
 
-    return value ? value->wrapper() : [NSNull null];
+    return value ? (id)value->wrapper() : [NSNull null];
 }
 
 - (NSEnumerator *)keyEnumerator

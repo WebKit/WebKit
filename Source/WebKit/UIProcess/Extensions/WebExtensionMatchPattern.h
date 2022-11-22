@@ -101,7 +101,9 @@ public:
 
     unsigned hash() const { return m_hash; }
 
+#ifdef __OBJC__
     _WKWebExtensionMatchPattern *wrapper() const { return (_WKWebExtensionMatchPattern *)API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper(); }
+#endif
 #endif
 
 private:

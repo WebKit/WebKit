@@ -87,7 +87,9 @@ public:
     template<typename T, typename U>
     void sendToAllProcesses(const T& message, ObjectIdentifier<U> destinationID);
 
+#ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
+#endif
 #endif
 
 private:
