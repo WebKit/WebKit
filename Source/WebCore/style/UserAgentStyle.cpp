@@ -75,6 +75,7 @@ StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
+StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 #if ENABLE(SERVICE_CONTROLS)
 StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
 #endif
@@ -253,6 +254,13 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         addToDefaultStyle(*alternateFormControlDesignStyleSheet);
     }
 #endif
+
+    if ((is<HTMLFormControlElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element)) && !element.document().settings().verticalFormControlsEnabled()) {
+        if (!horizontalFormControlsStyleSheet) {
+            horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet, sizeof(horizontalFormControlsUserAgentStyleSheet)));
+            addToDefaultStyle(*horizontalFormControlsStyleSheet);
+        }
+    }
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
     ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());

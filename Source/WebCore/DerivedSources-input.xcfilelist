@@ -994,6 +994,7 @@ $(PROJECT_DIR)/css/WebKitCSSViewportRule.idl
 $(PROJECT_DIR)/css/WebKitFontFamilyNames.in
 $(PROJECT_DIR)/css/dialog.css
 $(PROJECT_DIR)/css/fullscreen.css
+$(PROJECT_DIR)/css/horizontalFormControls.css
 $(PROJECT_DIR)/css/html.css
 $(PROJECT_DIR)/css/legacyFormControlsIOS.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl

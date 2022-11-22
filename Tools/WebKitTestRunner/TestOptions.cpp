@@ -129,6 +129,7 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingEnabled", false },
             { "TextAutosizingUsesIdempotentMode", false },
             { "UsesBackForwardCache", false },
+            { "VerticalFormControlsEnabled", false },
             { "WebAuthenticationEnabled", true },
             { "WebRTCRemoteVideoFrameEnabled", true },
             { "WebRTCMDNSICECandidatesEnabled", false },

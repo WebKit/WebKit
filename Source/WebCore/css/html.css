@@ -389,11 +389,6 @@ button {
     appearance: auto;
 }
 
-/* Form controls don't go vertical. */
-input, textarea, select, button, meter, progress {
-    writing-mode: horizontal-tb !important;
-}
-
 input, textarea, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)

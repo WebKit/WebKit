@@ -1799,6 +1799,18 @@ VP9SWDecoderEnabledOnBattery:
     WebKit:
       default: false
 
+VerticalFormControlsEnabled:
+  type: bool
+  humanReadableName: "Vertical form control support"
+  humanReadableDescription: "Enable support for form controls in vertical writing mode"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 VisualViewportAPIEnabled:
   type: bool
   humanReadableName: "Visual Viewport API"
