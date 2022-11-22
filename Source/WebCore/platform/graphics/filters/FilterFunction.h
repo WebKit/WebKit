@@ -102,6 +102,8 @@ private:
     Type m_filterType;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FilterFunction&);
+
 } // namespace WebCore
 
 namespace WTF {

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .filtered {
+            width: 200px;
+            height: 200px;
+            filter: saturate(0.2);
+            background-color: green;
+        }
+        
+        body.changed .filtered {
+            filter: saturate(1);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate(); // Wait for one paint.
+            document.body.classList.add('changed');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="filtered"></div>
+</body>
+</html>

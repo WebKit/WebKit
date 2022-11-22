@@ -47,9 +47,12 @@ RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperati
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
     auto filter = adoptRef(*new CSSFilter(renderingMode, filterScale, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
-
-    if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox, destinationContext))
+    if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox, destinationContext)) {
+        LOG_WITH_STREAM(Filters, stream << "CSSFilter::create: failed to build filters " << operations);
         return nullptr;
+    }
+
+    LOG_WITH_STREAM(Filters, stream << "CSSFilter::create built filter " << filter.get() << " for " << operations);
 
     if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
         filter->setRenderingMode(RenderingMode::Unaccelerated);
