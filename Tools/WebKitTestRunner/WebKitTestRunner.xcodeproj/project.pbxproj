@@ -73,7 +73,7 @@
 		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
 		29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB3144CACD400835BB5 /* AccessibilityTextMarkerMac.mm */; };
 		29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */; };
-		29210EDA144CC3EA00835BB6 /* AccessibilityCommonMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EAB144CACB200835BB6 /* AccessibilityCommonMac.mm */; };
+		29210EDA144CC3EA00835BB6 /* AccessibilityCommonCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EAB144CACB200835BB6 /* AccessibilityCommonCocoa.mm */; };
 		29210EDB144CD47900835BB5 /* JSAccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 583913D014335E95008307E5 /* JSAccessibilityController.cpp */; };
 		29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EDB146727E711835BB5 /* JSAccessibilityUIElement.cpp */; };
 		29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */; };
@@ -273,7 +273,7 @@
 		29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityUIElement.cpp; sourceTree = "<group>"; };
 		29210EAA144CACB200835BB5 /* AccessibilityUIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElement.h; sourceTree = "<group>"; };
 		29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityUIElementMac.mm; sourceTree = "<group>"; };
-		29210EAB144CACB200835BB6 /* AccessibilityCommonMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityCommonMac.mm; sourceTree = "<group>"; };
+		29210EAB144CACB200835BB6 /* AccessibilityCommonCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityCommonCocoa.mm; sourceTree = "<group>"; };
 		29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTextMarker.cpp; sourceTree = "<group>"; };
 		29210EB2144CACD400835BB5 /* AccessibilityTextMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTextMarker.h; sourceTree = "<group>"; };
 		29210EB3144CACD400835BB5 /* AccessibilityTextMarkerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityTextMarkerMac.mm; path = mac/AccessibilityTextMarkerMac.mm; sourceTree = "<group>"; };
@@ -282,7 +282,7 @@
 		29210EDC144CD56E00835BB5 /* AccessibilityUIElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibilityUIElement.idl; sourceTree = "<group>"; };
 		29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityTextMarker.cpp; sourceTree = "<group>"; };
 		29210EE1145CDE6789815EE5 /* JSAccessibilityTextMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityTextMarker.h; sourceTree = "<group>"; };
-		299E2AA41E3DEE140065DC30 /* AccessibilityCommonMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityCommonMac.h; sourceTree = "<group>"; };
+		299E2AA41E3DEE140065DC30 /* AccessibilityCommonCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityCommonCocoa.h; sourceTree = "<group>"; };
 		29A8FCC5145B93C6009045A6 /* AccessibilityTextMarker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibilityTextMarker.idl; sourceTree = "<group>"; };
 		29A8FCD2145EF8F2009045A6 /* AccessibilityTextMarkerRange.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AccessibilityTextMarkerRange.idl; sourceTree = "<group>"; };
 		29A8FCDF145F0358009045A6 /* AccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
@@ -627,6 +627,8 @@
 		0FEB909D1905A75D000FDBF3 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				299E2AA41E3DEE140065DC30 /* AccessibilityCommonCocoa.h */,
+				29210EAB144CACB200835BB6 /* AccessibilityCommonCocoa.mm */,
 				65EB859F11EC67CC0034D300 /* ActivateFontsCocoa.mm */,
 				0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */,
 			);
@@ -761,8 +763,6 @@
 		65EB859E11EC67CC0034D300 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				299E2AA41E3DEE140065DC30 /* AccessibilityCommonMac.h */,
-				29210EAB144CACB200835BB6 /* AccessibilityCommonMac.mm */,
 				8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */,
 				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
 				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
@@ -1295,7 +1295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29210EDA144CC3EA00835BB6 /* AccessibilityCommonMac.mm in Sources */,
+				29210EDA144CC3EA00835BB6 /* AccessibilityCommonCocoa.mm in Sources */,
 				29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */,
 				2E63ED8A1891AD7E002A7AFC /* AccessibilityControllerIOS.mm in Sources */,
 				8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */,
