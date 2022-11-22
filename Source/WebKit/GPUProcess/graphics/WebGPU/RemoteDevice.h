@@ -60,6 +60,8 @@ struct RenderBundleEncoderDescriptor;
 struct RenderPipelineDescriptor;
 struct SamplerDescriptor;
 struct ShaderModuleDescriptor;
+struct SurfaceDescriptor;
+struct SwapChainDescriptor;
 struct TextureDescriptor;
 }
 
