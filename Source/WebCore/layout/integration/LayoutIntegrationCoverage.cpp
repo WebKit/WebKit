@@ -401,39 +401,20 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     };
 
     auto& renderer = downcast<RenderElement>(child);
-    if (is<RenderReplaced>(renderer)) {
+    if (renderer.isSVGRootOrLegacySVGRoot())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+
+    if (renderer.isRubyRun())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+
+    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)) {
         if (!isSupportedFloatingOrPositioned(renderer))
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
-
-        if (renderer.isSVGRootOrLegacySVGRoot())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
-
-        return reasons;
-    }
-
-    if (is<RenderListItem>(renderer)) {
-        if (!isSupportedFloatingOrPositioned(renderer))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
         return reasons;
     }
 
     if (is<RenderListMarker>(renderer) && is<RenderListItem>(renderer.parent()) && !is<RenderListMarker>(renderer.nextSibling()))
         return reasons;
-
-    if (is<RenderTable>(renderer)) {
-        if (!isSupportedFloatingOrPositioned(renderer))
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
-        return reasons;
-    }
-
-    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer)) {
-        if (!isSupportedFloatingOrPositioned(renderer))
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
-        if (renderer.isRubyRun())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
-        return reasons;
-    }
 
     if (is<RenderInline>(renderer)) {
         auto renderInlineReasons = canUseForRenderInlineChild(downcast<RenderInline>(renderer), includeReasons);
