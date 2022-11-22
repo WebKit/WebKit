@@ -34,8 +34,6 @@ OBJC_CLASS GCController;
 OBJC_CLASS GCControllerAxisInput;
 OBJC_CLASS GCControllerButtonInput;
 OBJC_CLASS GCControllerElement;
-OBJC_CLASS GCExtendedGamepad;
-OBJC_CLASS GCGamepad;
 
 namespace WebCore {
 
@@ -50,18 +48,12 @@ public:
     const char* source() const final { return "GameController"_s; }
 
 private:
-    void setupAsExtendedGamepad();
-    void setupAsGamepad();
+    void setupElements();
 
     RetainPtr<GCController> m_gcController;
 
     Vector<SharedGamepadValue> m_axisValues;
     Vector<SharedGamepadValue> m_buttonValues;
-
-    RetainPtr<GCGamepad> m_gamepad;
-    RetainPtr<GCExtendedGamepad> m_extendedGamepad;
-
-    bool m_hadButtonPresses { false };
 };
 
 

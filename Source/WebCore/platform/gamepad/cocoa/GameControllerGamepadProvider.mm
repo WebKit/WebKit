@@ -159,6 +159,24 @@ void GameControllerGamepadProvider::prewarmGameControllerDevicesIfNecessary()
 
     LOG(Gamepad, "GameControllerGamepadProvider explicitly starting GameController framework monitoring");
     [getGCControllerClass() __openXPC_and_CBApplicationDidBecomeActive__];
+
+    init_GameController_GCInputButtonA();
+    init_GameController_GCInputButtonB();
+    init_GameController_GCInputButtonX();
+    init_GameController_GCInputButtonY();
+    init_GameController_GCInputButtonHome();
+    init_GameController_GCInputButtonMenu();
+    init_GameController_GCInputButtonOptions();
+    init_GameController_GCInputDirectionPad();
+    init_GameController_GCInputLeftShoulder();
+    init_GameController_GCInputLeftTrigger();
+    init_GameController_GCInputLeftThumbstick();
+    init_GameController_GCInputLeftThumbstickButton();
+    init_GameController_GCInputRightShoulder();
+    init_GameController_GCInputRightTrigger();
+    init_GameController_GCInputRightThumbstick();
+    init_GameController_GCInputRightThumbstickButton();
+    
     prewarmed = true;
 }
 

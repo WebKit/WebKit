@@ -241,6 +241,25 @@ return result;
 
 TEST(Gamepad, GamepadState)
 {
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    NSString *expectedName = @"\"Virtual Shenzhen Longshengwei Technology Gamepad Gamepad\"";
+    
+    // This particular device we're emulating is kind of a mess;
+    // It's understood differently by GameController.framework and our old HID code path.
+    // That's fine. We're just looking for reliable changes.
+    Vector<double> setButtons1 = { 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    Vector<double> expectedButtons1 = { 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    Vector<double> setButtons2 = { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+    Vector<double> expectedButtons2 = { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0 };
+#else
+    NSString *expectedName = @"\"79-11-Virtual Shenzhen Longshengwei Technology Gamepad\"";
+    
+    Vector<double> setButtons1 = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    Vector<double> expectedButtons1 = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    Vector<double> setButtons2 = { 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 };
+    Vector<double> expectedButtons2 = { 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 };
+#endif
+
     [WebCore::getGCControllerClass() setShouldMonitorBackgroundEvents:YES];
 
     auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
@@ -275,25 +294,21 @@ TEST(Gamepad, GamepadState)
     while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
         Util::runFor(0.01_s);
 
-    Vector<double> expectedButtons = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-    Vector<double> expectedAxes = { -0.9921568627450981, -0.003921568627450966, -0.003921568627450966, -0.003921568627450966, -0.003921568627450966 };
-
-    auto updateStateAndPublish = [&] {
-        for (size_t i = 0; i < expectedButtons.size(); ++i)
-            gamepad->setButtonValue(i, expectedButtons[i]);
-        for (size_t i = 0; i < 5; ++i)
-            gamepad->setAxisValue(i, expectedAxes[i]);
+    auto updateStateAndPublish = [&] (Vector<double>& setButtons) {
+        for (size_t i = 0; i < setButtons.size(); ++i)
+            gamepad->setButtonValue(i, setButtons[i]);
         gamepad->publishReport();
     };
 
-    updateStateAndPublish();
+    Vector<double> *expectedButtons = &expectedButtons1;
+    updateStateAndPublish(setButtons1);
 
     // Wait for the page to tell us a gamepad connected
     Util::run(&didReceiveMessage);
     didReceiveMessage = false;
 
     EXPECT_EQ(messageHandler.get().messages.size(), 1u);
-    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:@"\"79-11-Virtual Shenzhen Longshengwei Technology Gamepad\""]);
+    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:expectedName]);
 
     bool done = false;
     bool gotNewValues = false;
@@ -302,14 +317,9 @@ TEST(Gamepad, GamepadState)
         EXPECT_TRUE([result[@"gamepadCount"] isEqualToNumber:@(1)]);
 
         bool areEqual = true;
-
-        for (size_t i = 0; i < 10; ++i) {
-            if (!WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadButtons"][0][i] doubleValue], expectedButtons[i]))
-                areEqual = false;
-        }
-
-        for (size_t i = 0; i < 5; ++i) {
-            if (!WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadAxes"][0][i] doubleValue], expectedAxes[i]))
+        
+        for (size_t i = 0; i < expectedButtons->size(); ++i) {
+            if (!WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadButtons"][0][i] doubleValue], (*expectedButtons)[i]))
                 areEqual = false;
         }
 
@@ -332,26 +342,8 @@ TEST(Gamepad, GamepadState)
     EXPECT_TRUE(gotNewValues);
     gotNewValues = false;
 
-    expectedButtons = { 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 };
-    updateStateAndPublish();
-
-    start = [NSDate date];
-    while (!gotNewValues) {
-        [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
-        Util::run(&done);
-        done = false;
-
-        if ([[NSDate date] timeIntervalSinceDate:start] > 1.0)
-            break;
-    }
-    EXPECT_TRUE(gotNewValues);
-    gotNewValues = false;
-
-    expectedAxes = { -1.0, -1.0, -1.0, -1.0, 1.0 };
-    updateStateAndPublish();
-
-    // Even though we set -1.0 for each "X" axis, the first 3 axes on this controller are always constant
-    expectedAxes = { -0.9921568627450981, -0.003921568627450966, -0.003921568627450966, -1.0, 1.0 };
+    expectedButtons = &expectedButtons2;
+    updateStateAndPublish(setButtons2);
 
     start = [NSDate date];
     while (!gotNewValues) {
@@ -372,7 +364,9 @@ TEST(Gamepad, GamepadState)
     didReceiveMessage = false;
 
     EXPECT_EQ(messageHandler.get().messages.size(), 2u);
-    EXPECT_TRUE([messageHandler.get().messages[1] isEqualToString:@"Disconnect: \"79-11-Virtual Shenzhen Longshengwei Technology Gamepad\""]);
+
+    NSString *lastMessage = [NSString stringWithFormat:@"Disconnect: %@", expectedName];
+    EXPECT_TRUE([messageHandler.get().messages[1] isEqualToString:lastMessage]);
 }
 
 TEST(Gamepad, Dualshock3Basic)

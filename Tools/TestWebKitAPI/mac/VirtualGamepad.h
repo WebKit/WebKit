@@ -99,8 +99,8 @@ public:
     VirtualGamepad(const GamepadMapping&);
     ~VirtualGamepad();
 
-    size_t buttonCount() const;
-    size_t axisCount() const;
+    size_t buttonCount() const { return m_buttonValues.size(); }
+    size_t axisCount() const { return m_axisValues.size(); }
 
     // Acceptable values are 0.0 to 1.0
     void setButtonValue(size_t index, float value);
