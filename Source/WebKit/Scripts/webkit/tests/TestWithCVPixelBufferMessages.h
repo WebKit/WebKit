@@ -75,8 +75,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&&);
-    static void cancelReply(CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     using AsyncReply = ReceiveCVPixelBufferAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;

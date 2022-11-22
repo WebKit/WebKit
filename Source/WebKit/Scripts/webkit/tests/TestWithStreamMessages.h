@@ -75,8 +75,6 @@ public:
     static constexpr bool isReplyStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(int64_t&&)>&&);
-    static void cancelReply(CompletionHandler<void(int64_t&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringSynchronizedReply; }
     using AsyncReply = SendStringSynchronizedAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -131,8 +129,6 @@ public:
     static constexpr bool isReplyStreamEncodable = false;
     static constexpr bool isStreamBatched = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(MachSendRight&&)>&&);
-    static void cancelReply(CompletionHandler<void(MachSendRight&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_ReceiveMachSendRightReply; }
     using AsyncReply = ReceiveMachSendRightAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -158,8 +154,6 @@ public:
     static constexpr bool isReplyStreamEncodable = false;
     static constexpr bool isStreamBatched = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(MachSendRight&&)>&&);
-    static void cancelReply(CompletionHandler<void(MachSendRight&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRightReply; }
     using AsyncReply = SendAndReceiveMachSendRightAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
