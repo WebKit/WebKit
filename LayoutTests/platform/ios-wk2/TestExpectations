@@ -187,6 +187,13 @@ scrollbars/scrollbars-on-positioned-content.html [ Failure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
 
+# SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
+svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
+svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
+
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html

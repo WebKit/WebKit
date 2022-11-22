@@ -1,0 +1,47 @@
+Tests getCTM/getScreenCTM in combination with CSS transform-origin / transform-box
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!iframe.contentDocument is true
+PASS iframe.contentDocument.toString() is "[object XMLDocument]"
+FAIL getCTMById('rect1') should be [2.0 0.0 0.0 2.0 -40.0 -40.0]. Was [2.0 0.0 0.0 2.0 23.0 73.0].
+FAIL getScreenCTMById('rect1') should be [2.0 0.0 0.0 2.0 -37.0 -37.0]. Was [2.0 0.0 0.0 2.0 23.0 73.0].
+PASS getBBoxById('rect1') is "[30 55 50 50]"
+FAIL getAbsoluteBBoxById('rect1') should be [23 73 100 100]. Was [83 183 100 100].
+FAIL getCTMById('rect2') should be [2.0 0.0 0.0 2.0 -70.0 -50.0]. Was [2.0 0.0 0.0 2.0 -10.0 5.0].
+FAIL getScreenCTMById('rect2') should be [2.0 0.0 0.0 2.0 -37.0 103.0]. Was [2.0 0.0 0.0 2.0 83.0 213.0].
+PASS getBBoxById('rect2') is "[60 55 50 50]"
+FAIL getAbsoluteBBoxById('rect2') should be [83 213 100 100]. Was [203 323 100 100].
+FAIL getCTMById('rect3') should be [8.0 0.0 0.0 3.0 -280.0 -75.0]. Was [8.0 0.0 0.0 3.0 140.0 35.0].
+FAIL getScreenCTMById('rect3') should be [8.0 0.0 0.0 3.0 -247.0 -92.0]. Was [8.0 0.0 0.0 3.0 233.0 73.0].
+PASS getBBoxById('rect3') is "[60 55 25 25]"
+FAIL getAbsoluteBBoxById('rect3') should be [233 73 200 75]. Was [713 238 200 75].
+FAIL getCTMById('rect4') should be [2.0 0.0 0.0 2.0 -40.0 220.0]. Was [2.0 0.0 0.0 2.0 23.0 333.0].
+FAIL getScreenCTMById('rect4') should be [2.0 0.0 0.0 2.0 -37.0 223.0]. Was [2.0 0.0 0.0 2.0 23.0 333.0].
+PASS getBBoxById('rect4') is "[30 55 50 50]"
+FAIL getAbsoluteBBoxById('rect4') should be [23 333 100 100]. Was [83 443 100 100].
+FAIL getCTMById('rect5') should be [2.0 0.0 0.0 2.0 10.0 10.0]. Was [2.0 0.0 0.0 2.0 70.0 65.0].
+FAIL getScreenCTMById('rect5') should be [2.0 0.0 0.0 2.0 -37.0 363.0]. Was [2.0 0.0 0.0 2.0 83.0 473.0].
+PASS getBBoxById('rect5') is "[60 55 50 50]"
+FAIL getAbsoluteBBoxById('rect5') should be [83 473 100 100]. Was [203 583 100 100].
+FAIL getCTMById('rect6') should be [8.0 0.0 0.0 3.0 -200.0 -15.0]. Was [8.0 0.0 0.0 3.0 220.0 95.0].
+FAIL getScreenCTMById('rect6') should be [8.0 0.0 0.0 3.0 -247.0 168.0]. Was [8.0 0.0 0.0 3.0 233.0 333.0].
+PASS getBBoxById('rect6') is "[60 55 25 25]"
+FAIL getAbsoluteBBoxById('rect6') should be [233 333 200 75]. Was [713 498 200 75].
+FAIL getCTMById('rect7') should be [2.0 0.0 0.0 2.0 467.5 17.5]. Was [2.0 0.0 0.0 2.0 530.5 130.5].
+FAIL getScreenCTMById('rect7') should be [2.0 0.0 0.0 2.0 470.5 20.5]. Was [2.0 0.0 0.0 2.0 530.5 130.5].
+PASS getBBoxById('rect7') is "[30 55 50 50]"
+FAIL getAbsoluteBBoxById('rect7') should be [530.5 130.5 100 100]. Was [590.5 240.5 100 100].
+FAIL getCTMById('rect8') should be [2.0 0.0 0.0 2.0 -155.0 -130.0]. Was [2.0 0.0 0.0 2.0 -95.0 -75.0].
+FAIL getScreenCTMById('rect8') should be [2.0 0.0 0.0 2.0 428.0 123.0]. Was [2.0 0.0 0.0 2.0 548.0 233.0].
+PASS getBBoxById('rect8') is "[60 55 50 50]"
+FAIL getAbsoluteBBoxById('rect8') should be [548 233 100 100]. Was [668 343 100 100].
+FAIL getCTMById('rect9') should be [8.0 0.0 0.0 3.0 -620.0 -195.0]. Was [8.0 0.0 0.0 3.0 -200.0 -85.0].
+FAIL getScreenCTMById('rect9') should be [8.0 0.0 0.0 3.0 3.0 -112.0]. Was [8.0 0.0 0.0 3.0 483.0 53.0].
+PASS getBBoxById('rect9') is "[60 55 25 25]"
+FAIL getAbsoluteBBoxById('rect9') should be [483 53 200 75]. Was [963 218 200 75].
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

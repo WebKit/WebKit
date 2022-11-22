@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 48 36">
+<g transform="scale(0.5, 0.5) translate(10,15)">
+<rect transform="rotate(-45)" x="0" y="0" width="15" height="15" fill="red" />
+</g>
+</svg>

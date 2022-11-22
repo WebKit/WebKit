@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<g transform="scale(200 200)">
+  <circle fill="green" cx="0" cy="0" r="0.5"/>
+</g>
+
+<g>
+  <g transform="scale(200 200)">
+    <circle fill="yellow" cx="1.0" cy="0" r="0.5"/>
+  </g>
+</g>
+
+<g transform="scale(200 200)">
+  <g>
+    <circle fill="blue" cx="0" cy="1.0" r="0.5"/>
+  </g>
+</g>
+
+<g>
+  <g>
+     <circle fill="red" transform="scale(200 200)" cx="1.0" cy="1.0" r="0.5"/>
+  </g>
+</g>
+</svg>

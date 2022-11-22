@@ -2263,6 +2263,18 @@ svg/animations/svglength-element-removed-crash.svg [ Failure ]
 svg/compositing [ Skip ]
 svg/z-index [ Skip ]
 
+# SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
+svg/custom/circle-move-invalidation-small-viewBox.svg [ ImageOnlyFailure ]
+svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
+svg/transforms/transformed-child-in-container-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-child-in-container.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-container-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-container.svg [ ImageOnlyFailure ]
+svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
+
 ################################################################################
 ###################          End SVG Issues              #######################
 ################################################################################
