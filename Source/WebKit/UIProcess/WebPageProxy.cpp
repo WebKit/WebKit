@@ -495,6 +495,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_userContentController(*m_configuration->userContentController())
 #if ENABLE(WK_WEB_EXTENSIONS)
     , m_webExtensionController(m_configuration->webExtensionController())
+    , m_weakWebExtensionController(m_configuration->weakWebExtensionController())
 #endif
     , m_visitedLinkStore(*m_configuration->visitedLinkStore())
     , m_websiteDataStore(*m_configuration->websiteDataStore())
@@ -564,6 +565,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #if ENABLE(WK_WEB_EXTENSIONS)
     if (m_webExtensionController)
         m_webExtensionController->addPage(*this);
+    if (m_weakWebExtensionController)
+        m_weakWebExtensionController->addPage(*this);
 #endif
 
     m_inspector = WebInspectorUIProxy::create(*this);
@@ -1221,6 +1224,8 @@ void WebPageProxy::close()
 #if ENABLE(WK_WEB_EXTENSIONS)
     if (m_webExtensionController)
         m_webExtensionController->removePage(*this);
+    if (m_weakWebExtensionController)
+        m_weakWebExtensionController->removePage(*this);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -8743,6 +8748,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if ENABLE(WK_WEB_EXTENSIONS)
     if (m_webExtensionController)
         parameters.webExtensionControllerParameters = m_webExtensionController->parameters();
+    if (m_weakWebExtensionController)
+        parameters.webExtensionControllerParameters = m_weakWebExtensionController->parameters();
 #endif
 
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.

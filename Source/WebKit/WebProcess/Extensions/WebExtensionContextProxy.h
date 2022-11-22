@@ -42,6 +42,8 @@ public:
     static RefPtr<WebExtensionContextProxy> get(WebExtensionContextIdentifier);
     static Ref<WebExtensionContextProxy> getOrCreate(WebExtensionContextParameters);
 
+    ~WebExtensionContextProxy();
+
     WebExtensionContextIdentifier identifier() { return m_identifier; }
 
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }

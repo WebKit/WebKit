@@ -60,6 +60,7 @@ public:
     static WebExtensionController* get(WebExtensionControllerIdentifier);
 
     explicit WebExtensionController();
+    ~WebExtensionController();
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
     using WebExtensionSet = HashSet<Ref<WebExtension>>;
@@ -74,6 +75,8 @@ public:
 #if PLATFORM(COCOA)
     bool load(WebExtensionContext&, NSError ** = nullptr);
     bool unload(WebExtensionContext&, NSError ** = nullptr);
+
+    void unloadAll();
 
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);

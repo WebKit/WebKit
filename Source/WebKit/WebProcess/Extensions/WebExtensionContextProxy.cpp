@@ -77,6 +77,11 @@ WebExtensionContextProxy::WebExtensionContextProxy(WebExtensionContextParameters
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
 }
 
+WebExtensionContextProxy::~WebExtensionContextProxy()
+{
+    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

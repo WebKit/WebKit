@@ -92,6 +92,8 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
     if (outError)
         *outError = nil;
 
+    Ref protectedExtensionContext = extensionContext;
+
     if (!m_extensionContexts.remove(extensionContext)) {
         if (outError)
             *outError = extensionContext.createError(WebExtensionContext::Error::NotLoaded);
@@ -101,15 +103,22 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
     ASSERT(m_extensionContextBaseURLMap.contains(extensionContext.baseURL()));
     m_extensionContextBaseURLMap.remove(extensionContext.baseURL());
 
-    if (!extensionContext.unload(outError))
-        return false;
-
-    sendToAllProcesses(Messages::WebExtensionControllerProxy::Unload(extensionContext.identifier()), extensionContext.identifier());
+    sendToAllProcesses(Messages::WebExtensionControllerProxy::Unload(extensionContext.identifier()), m_identifier);
 
     for (auto& processPool : m_processPools)
         processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
 
+    if (!extensionContext.unload(outError))
+        return false;
+
     return true;
+}
+
+void WebExtensionController::unloadAll()
+{
+    auto contextsCopy = m_extensionContexts;
+    for (auto& context : contextsCopy)
+        unload(context, nullptr);
 }
 
 void WebExtensionController::addPage(WebPageProxy& page)

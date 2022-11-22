@@ -55,6 +55,13 @@ WebExtensionController::WebExtensionController()
     webExtensionControllers().add(m_identifier, this);
 }
 
+WebExtensionController::~WebExtensionController()
+{
+#if PLATFORM(COCOA)
+    unloadAll();
+#endif
+}
+
 WebExtensionControllerParameters WebExtensionController::parameters() const
 {
     WebExtensionControllerParameters parameters;

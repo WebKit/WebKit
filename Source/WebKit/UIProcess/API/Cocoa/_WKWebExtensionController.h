@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  A controller is associated with @link WKWebView @/link via the `webExtensionController` property on @link WKWebViewConfiguration @/link.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
-@interface _WKWebExtensionController : NSObject <NSSecureCoding>
+@interface _WKWebExtensionController : NSObject
 
 /*! @abstract The extension controller delegate. */
 @property (nonatomic, weak) id <_WKWebExtensionControllerDelegate> delegate;

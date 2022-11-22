@@ -1001,7 +1001,9 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
 
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
 
-    configuration._webExtensionController = m_extensionController->wrapper();
+    // Use the weak property to avoid a reference cycle while an extension web view is being held by the context.
+    configuration._weakWebExtensionController = m_extensionController->wrapper();
+
     configuration._processDisplayName = extension().webProcessDisplayName();
 
     WKPreferences *preferences = configuration.preferences;

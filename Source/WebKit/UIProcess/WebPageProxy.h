@@ -2779,6 +2779,7 @@ private:
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     RefPtr<WebExtensionController> m_webExtensionController;
+    WeakPtr<WebExtensionController> m_weakWebExtensionController;
 #endif
 
     Ref<VisitedLinkStore> m_visitedLinkStore;
