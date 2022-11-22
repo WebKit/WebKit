@@ -4896,9 +4896,6 @@ webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/co
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]
 
-# Multicolumn does not paint the horizontal overflow area of a relative child.
-webkit.org/b/41796 imported/w3c/web-platform-tests/css/css-contain/contain-size-monolithic-002.html [ ImageOnlyFailure ]
-
 # Scrollbar displays are different.
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]

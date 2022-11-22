@@ -672,16 +672,16 @@ void RenderBlock::layoutBlock(bool, LayoutUnit)
 
 void RenderBlock::addOverflowFromChildren()
 {
-    if (childrenInline())
+    if (childrenInline()) {
         addOverflowFromInlineChildren();
-    else
-        addOverflowFromBlockChildren();
     
-    // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
-    if (m_overflow) {
-        if (RenderFragmentedFlow* containingFragmentedFlow = enclosingFragmentedFlow())
-            containingFragmentedFlow->addFragmentsVisualOverflow(this, m_overflow->visualOverflowRect());
-    }
+        // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
+        if (m_overflow) {
+            if (auto* flow = enclosingFragmentedFlow())
+                flow->addFragmentsVisualOverflow(this, m_overflow->visualOverflowRect());
+        }
+    } else
+        addOverflowFromBlockChildren();
 }
 
 // Overflow is always relative to the border-box of the element in question.

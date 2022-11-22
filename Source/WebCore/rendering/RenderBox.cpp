@@ -4993,14 +4993,30 @@ void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& d
     if (paintContainmentApplies())
         return;
 
-    // Add in visual overflow from the child.  Even if the child clips its overflow, it may still
+    // Add in visual overflow from the child. Even if the child clips its overflow, it may still
     // have visual overflow of its own set from box shadows or reflections. It is unnecessary to propagate this
     // overflow if we are clipping our own overflow.
-    if (child->hasSelfPaintingLayer() || hasPotentiallyScrollableOverflow())
+    if (hasPotentiallyScrollableOverflow())
         return;
-    LayoutRect childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
-    childVisualOverflowRect.move(delta);
-    addVisualOverflow(childVisualOverflowRect);
+
+    std::optional<LayoutRect> childVisualOverflowRect;
+    auto computeChildVisualOverflowRect = [&] () {
+        childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
+        childVisualOverflowRect->move(delta);
+    };
+    // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
+    if (fragmentedFlow) {
+        computeChildVisualOverflowRect();
+        fragmentedFlow->addFragmentsVisualOverflow(this, *childVisualOverflowRect);
+    } else {
+        // Update our visual overflow in case the child spills out the block, but only if we were going to paint
+        // the child block ourselves.
+        if (child->hasSelfPaintingLayer())
+            return;
+    }
+    if (!childVisualOverflowRect)
+        computeChildVisualOverflowRect();
+    addVisualOverflow(*childVisualOverflowRect);
 }
 
 void RenderBox::addLayoutOverflow(const LayoutRect& rect)
