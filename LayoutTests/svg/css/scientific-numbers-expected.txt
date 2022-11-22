@@ -82,11 +82,11 @@ PASS getComputedStyle(text).baselineShift is "-50px"
 
 Test if value and 'em' still works
 PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "50em"
+PASS getComputedStyle(text).baselineShift is "800px"
 
 Test if value and 'ex' still works
 PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "50ex"
+PASS getComputedStyle(text).baselineShift is "400px"
 
 Trailing and leading whitespaces
 PASS getComputedStyle(text).baselineShift is "baseline"

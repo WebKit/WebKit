@@ -63,7 +63,7 @@ testComputed("x", "calc(40px + 60px)", "100px");
 testComputed("y", "calc(40px + 60px)", "100px");
 
 // Test 'calc(0% + 100px)'.
-testComputed("baseline-shift", "calc(0% + 100px)", "0");
+testComputed("baseline-shift", "calc(0% + 100px)", "0px");
 testComputed("cx", "calc(0% + 100px)", "calc(0% + 100px)");
 testComputed("cy", "calc(0% + 100px)", "calc(0% + 100px)");
 testComputed("height", "calc(0% + 100px)", "calc(0% + 100px)");
@@ -78,7 +78,7 @@ testComputed("x", "calc(0% + 100px)", "calc(0% + 100px)");
 testComputed("y", "calc(0% + 100px)", "calc(0% + 100px)");
 
 // Test 'calc(100% - 100px)'.
-testComputed("baseline-shift", "calc(100% - 100px)", "0");
+testComputed("baseline-shift", "calc(100% - 100px)", "0px");
 testComputed("cx", "calc(100% - 100px)", "calc(100% - 100px)");
 testComputed("cy", "calc(100% - 100px)", "calc(100% - 100px)");
 testComputed("height", "calc(100% - 100px)", "calc(100% - 100px)");

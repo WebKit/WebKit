@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class CSSPrimitiveValue;
+class Element;
 class SVGLengthContext;
 
 enum class SVGLengthType : uint8_t {
@@ -67,7 +68,7 @@ public:
     static SVGLengthValue blend(const SVGLengthValue& from, const SVGLengthValue& to, float progress);
 
     static SVGLengthValue fromCSSPrimitiveValue(const CSSPrimitiveValue&);
-    static Ref<CSSPrimitiveValue> toCSSPrimitiveValue(const SVGLengthValue&);
+    Ref<CSSPrimitiveValue> toCSSPrimitiveValue(const Element* = nullptr) const;
 
     SVGLengthType lengthType() const { return m_lengthType; }
     SVGLengthMode lengthMode() const { return m_lengthMode; }
