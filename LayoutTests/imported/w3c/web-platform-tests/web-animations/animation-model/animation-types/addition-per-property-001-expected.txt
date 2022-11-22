@@ -197,8 +197,8 @@ PASS fill-rule (type: discrete) has testAddition function
 PASS fill-rule: "nonzero" onto "evenodd"
 PASS fill-rule: "evenodd" onto "nonzero"
 PASS filter (type: filterList) has testAddition function
-FAIL filter: blur on blur assert_equals: The value should be blur(10px) blur(20px) at 0ms expected "blur(10px) blur(20px)" but got "blur(30px)"
-FAIL filter: different filter functions assert_equals: The value should be blur(10px) brightness(0.8) at 0ms expected "blur(10px) brightness(0.8)" but got "brightness(0.8)"
+PASS filter: blur on blur
+PASS filter: different filter functions
 PASS flex-basis (type: lengthPercentageOrCalc) has testAddition function
 PASS flex-basis: length
 PASS flex-basis: length of rem
