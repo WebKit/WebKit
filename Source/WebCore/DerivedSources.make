@@ -1219,7 +1219,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLBuffer.idl \
     $(WebCore)/html/canvas/WebGLColorBufferFloat.idl \
     $(WebCore)/html/canvas/WebGLCompressedTextureASTC.idl \
-    $(WebCore)/html/canvas/WebGLCompressedTextureATC.idl \
     $(WebCore)/html/canvas/WebGLCompressedTextureETC.idl \
     $(WebCore)/html/canvas/WebGLCompressedTextureETC1.idl \
     $(WebCore)/html/canvas/WebGLCompressedTexturePVRTC.idl \

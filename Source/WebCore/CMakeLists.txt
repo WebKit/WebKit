@@ -1873,7 +1873,6 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLColorBufferFloat.cpp
         html/canvas/WebGLCompressedTextureASTC.cpp
-        html/canvas/WebGLCompressedTextureATC.cpp
         html/canvas/WebGLCompressedTextureETC.cpp
         html/canvas/WebGLCompressedTextureETC1.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
@@ -1942,7 +1941,6 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLBuffer.idl
     html/canvas/WebGLColorBufferFloat.idl
     html/canvas/WebGLCompressedTextureASTC.idl
-    html/canvas/WebGLCompressedTextureATC.idl
     html/canvas/WebGLCompressedTextureETC.idl
     html/canvas/WebGLCompressedTextureETC1.idl
     html/canvas/WebGLCompressedTexturePVRTC.idl

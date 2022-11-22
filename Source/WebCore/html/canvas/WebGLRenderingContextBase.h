@@ -108,7 +108,6 @@ class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
 class WebGLColorBufferFloat;
 class WebGLCompressedTextureASTC;
-class WebGLCompressedTextureATC;
 class WebGLCompressedTextureETC;
 class WebGLCompressedTextureETC1;
 class WebGLCompressedTexturePVRTC;
@@ -489,7 +488,6 @@ protected:
     friend class OESDrawBuffersIndexed;
     friend class OESVertexArrayObject;
     friend class WebGLCompressedTextureASTC;
-    friend class WebGLCompressedTextureATC;
     friend class WebGLCompressedTextureETC;
     friend class WebGLCompressedTextureETC1;
     friend class WebGLCompressedTexturePVRTC;
@@ -754,7 +752,6 @@ protected:
     RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
     RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
     RefPtr<WebGLCompressedTextureASTC> m_webglCompressedTextureASTC;
-    RefPtr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
     RefPtr<WebGLCompressedTextureETC> m_webglCompressedTextureETC;
     RefPtr<WebGLCompressedTextureETC1> m_webglCompressedTextureETC1;
     RefPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;

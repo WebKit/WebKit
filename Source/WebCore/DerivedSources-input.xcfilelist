@@ -1375,7 +1375,6 @@ $(PROJECT_DIR)/html/canvas/WebGLActiveInfo.idl
 $(PROJECT_DIR)/html/canvas/WebGLBuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLColorBufferFloat.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureASTC.idl
-$(PROJECT_DIR)/html/canvas/WebGLCompressedTextureATC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC1.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTexturePVRTC.idl

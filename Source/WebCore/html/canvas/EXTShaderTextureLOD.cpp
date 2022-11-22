@@ -49,8 +49,7 @@ WebGLExtension::ExtensionName EXTShaderTextureLOD::getName() const
 
 bool EXTShaderTextureLOD::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_EXT_shader_texture_lod"_s)
-        || context.supportsExtension("GL_ARB_shader_texture_lod"_s);
+    return context.supportsExtension("GL_EXT_shader_texture_lod"_s);
 }
 
 } // namespace WebCore

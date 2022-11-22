@@ -85,7 +85,6 @@
 #include "WebGLBuffer.h"
 #include "WebGLColorBufferFloat.h"
 #include "WebGLCompressedTextureASTC.h"
-#include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTextureETC.h"
 #include "WebGLCompressedTextureETC1.h"
 #include "WebGLCompressedTexturePVRTC.h"
@@ -3001,7 +3000,6 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_oesVertexArrayObject, "OES_vertex_array_object");
     CHECK_EXTENSION(m_webglColorBufferFloat, "WEBGL_color_buffer_float");
     CHECK_EXTENSION(m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc");
-    CHECK_EXTENSION(m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc");
     CHECK_EXTENSION(m_webglCompressedTextureETC, "WEBGL_compressed_texture_etc");
     CHECK_EXTENSION(m_webglCompressedTextureETC1, "WEBGL_compressed_texture_etc1");
     CHECK_EXTENSION(m_webglCompressedTexturePVRTC, "WEBGL_compressed_texture_pvrtc");
@@ -5800,7 +5798,6 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_oesVertexArrayObject);
     LOSE_EXTENSION(m_webglColorBufferFloat);
     LOSE_EXTENSION(m_webglCompressedTextureASTC);
-    LOSE_EXTENSION(m_webglCompressedTextureATC);
     LOSE_EXTENSION(m_webglCompressedTextureETC);
     LOSE_EXTENSION(m_webglCompressedTextureETC1);
     LOSE_EXTENSION(m_webglCompressedTexturePVRTC);

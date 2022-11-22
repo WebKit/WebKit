@@ -40,9 +40,6 @@ public:
     static bool supported(WebGLRenderingContextBase&);
 
     void drawBuffersWEBGL(const Vector<GCGLenum>& buffers);
-
-private:
-    static bool satisfiesWebGLRequirements(WebGLRenderingContextBase&);
 };
 
 } // namespace WebCore
