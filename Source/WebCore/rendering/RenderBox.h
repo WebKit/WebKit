@@ -807,6 +807,8 @@ private:
     
     LayoutPoint topLeftLocationWithFlipping() const;
 
+    void clipContentForBorderRadius(GraphicsContext&, const LayoutPoint&, float);
+
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
     LayoutRect m_frameRect;

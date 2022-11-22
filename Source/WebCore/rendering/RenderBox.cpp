@@ -2000,6 +2000,12 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     return false;
 }
 
+void RenderBox::clipContentForBorderRadius(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor)
+{
+    auto innerBorder = style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size()));
+    context.clipRoundedRect(innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+}
+
 bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
 {
     if (paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::SelfOutline || paintInfo.phase == PaintPhase::Mask)
@@ -2007,10 +2013,10 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
 
     bool isControlClip = hasControlClip();
     bool isOverflowClip = hasNonVisibleOverflow() && !layer()->isSelfPaintingLayer();
-    
+
     if (!isControlClip && !isOverflowClip)
         return false;
-    
+
     if (paintInfo.phase == PaintPhase::Outline)
         paintInfo.phase = PaintPhase::ChildOutlines;
     else if (paintInfo.phase == PaintPhase::ChildBlockBackground) {
@@ -2022,7 +2028,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
     paintInfo.context().save();
     if (style().hasBorderRadius())
-        paintInfo.context().clipRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+        clipContentForBorderRadius(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
     paintInfo.context().clip(clipRect);
 
     if (paintInfo.phase == PaintPhase::EventRegion)
