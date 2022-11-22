@@ -23,3 +23,4 @@
 #include "WebKitPopupMenu.h"
 
 WebKitOptionMenu* webkitOptionMenuCreate(WebKit::WebKitPopupMenu&, const Vector<WebKit::WebPopupItem>&, int32_t selectedIndex);
+void webkitOptionMenuSetEvent(WebKitOptionMenu*, GdkEvent*);

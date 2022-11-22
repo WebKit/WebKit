@@ -41,6 +41,13 @@ using namespace WebKit;
 struct _WebKitOptionMenuPrivate {
     Vector<WebKitOptionMenuItem> items;
     RefPtr<WebKitPopupMenu> popupMenu;
+#if PLATFORM(GTK)
+#if USE(GTK4)
+    GRefPtr<GdkEvent> event;
+#else
+    GUniquePtr<GdkEvent> event;
+#endif
+#endif
 };
 
 enum {
@@ -87,6 +94,17 @@ WebKitOptionMenu* webkitOptionMenuCreate(WebKitPopupMenu& popupMenu, const Vecto
     }
     return menu;
 }
+
+#if PLATFORM(GTK)
+void webkitOptionMenuSetEvent(WebKitOptionMenu* menu, GdkEvent* event)
+{
+#if USE(GTK4)
+    menu->priv->event = event;
+#else
+    menu->priv->event.reset(event ? gdk_event_copy(event) : nullptr);
+#endif
+}
+#endif
 
 /**
  * webkit_option_menu_get_n_items:
@@ -188,3 +206,24 @@ void webkit_option_menu_close(WebKitOptionMenu* menu)
 
     g_signal_emit(menu, signals[CLOSE], 0, nullptr);
 }
+
+#if PLATFORM(GTK)
+/**
+ * webkit_option_menu_get_event:
+ * @menu: a #WebKitOptionMenu
+ *
+ * Gets the #GdkEvent that triggered the dropdown menu.
+ * If @menu was not triggered by a user interaction, like a mouse click,
+ * %NULL is returned.
+ *
+ * Returns: (transfer none): the menu event or %NULL.
+ *
+ * Since: 2.40
+ */
+GdkEvent* webkit_option_menu_get_event(WebKitOptionMenu* menu)
+{
+    g_return_val_if_fail(WEBKIT_IS_OPTION_MENU(menu), nullptr);
+
+    return menu->priv->event.get();
+}
+#endif

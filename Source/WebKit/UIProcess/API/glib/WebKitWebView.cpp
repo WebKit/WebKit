@@ -2663,7 +2663,11 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
 
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     gboolean returnValue;
-    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), webkit_context_menu_get_event(contextMenu.get()), hitTestResult.get(), &returnValue);
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get()
+#if !USE(GTK4)
+        , webkit_context_menu_get_event(contextMenu.get()),
+#endif
+        hitTestResult.get(), &returnValue);
     if (returnValue)
         return;
 
@@ -2749,11 +2753,15 @@ WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView* webV
 }
 
 #if PLATFORM(GTK)
-bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, WebKitOptionMenu* menu, const GdkEvent* event)
+bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, WebKitOptionMenu* menu)
 {
     GdkRectangle menuRect = rect;
     gboolean handled;
-    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu, event, &menuRect, &handled);
+    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu
+#if !USE(GTK4)
+        , webkit_option_menu_get_event(menu),
+#endif
+        &menuRect, &handled);
     return handled;
 }
 #endif
