@@ -80,6 +80,8 @@ messages -> GPUProcess LegacyReceiver {
 #endif
 
     WebProcessConnectionCountForTesting() -> (uint64_t count)
+
+    UserPreferredLanguagesChanged(Vector<String> languages)
 }
 
 #endif // ENABLE(GPU_PROCESS)

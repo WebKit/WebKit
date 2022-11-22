@@ -158,6 +158,12 @@ void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef, WKArr
     // However, playwright automation tests rely on it.
     // See https://bugs.webkit.org/show_bug.cgi?id=242827 for details.
     WebKit::setOverrideLanguages(toImpl(overrideLanguages)->toStringVector());
+
+#if ENABLE(GPU_PROCESS)
+    // Assume we don't have multiple WebProcessPools operational that need to
+    // have distinct override languages, which is true for WebKitTestRunner.
+    WebProcessPool::updateOverrideLanguagesInGPUProcessIfCreated();
+#endif
 }
 
 bool WKContextConfigurationProcessSwapsOnNavigation(WKContextConfigurationRef configuration)

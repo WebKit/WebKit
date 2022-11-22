@@ -371,7 +371,10 @@ public:
 
     GPUProcessProxy& ensureGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
+
+    static void updateOverrideLanguagesInGPUProcessIfCreated();
 #endif
+
     // Network Process Management
     void networkProcessDidTerminate(NetworkProcessProxy&, ProcessTerminationReason);
 

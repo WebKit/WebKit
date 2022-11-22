@@ -375,6 +375,14 @@ void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 #endif
 }
 
+#if ENABLE(GPU_PROCESS)
+void WebProcessPool::updateOverrideLanguagesInGPUProcessIfCreated()
+{
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::UserPreferredLanguagesChanged(overrideLanguages()), 0);
+}
+#endif
+
 void WebProcessPool::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 {
     sendToAllProcesses(Messages::WebProcess::FullKeyboardAccessModeChanged(fullKeyboardAccessEnabled));
