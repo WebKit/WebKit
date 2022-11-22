@@ -1,0 +1,68 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-negcoord-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-negcoord-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-negcoord.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-opacity-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-opacity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/blur-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/blur-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/blur.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/color-inherit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/color-inherit-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/color-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/color-parserorder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/color-parserorder-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/color-parserorder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/currentcolor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/currentcolor-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/currentcolor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multiple-zorder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multiple-zorder-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multiple-zorder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/dynamic-blur-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/dynamic-blur-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/dynamic-blur.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/lineoverflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/lineoverflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/lineoverflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/multiple-noblur-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/multiple-noblur-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/multiple-noblur.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/overflow-not-scrollable-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/overflow-not-scrollable-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/overflow-not-scrollable-1-ref2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/overflow-not-scrollable-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/overflow-not-scrollable-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/overflow-not-scrollable-2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/overflow-not-scrollable-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/padding-decoration-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/padding-decoration-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/padding-decoration.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/textindent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/textindent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/textindent.html

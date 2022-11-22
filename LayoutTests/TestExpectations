@@ -6015,3 +6015,10 @@ http/tests/loading/oauth.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/terminology-0/document-base-url-initiated-grand-parent.https.window.html [ DumpJSConsoleLogInStdErr ]
+
+# text-shadow
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/currentcolor.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multiple-zorder.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur.html [ ImageOnlyFailure ]
+
