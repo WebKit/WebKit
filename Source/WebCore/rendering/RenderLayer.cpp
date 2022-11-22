@@ -5293,7 +5293,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode();
 #endif
-    updateFiltersAfterStyleChange();
+    updateFiltersAfterStyleChange(diff, oldStyle);
     
     compositor().layerStyleChanged(diff, *this, oldStyle);
 
@@ -5415,7 +5415,7 @@ void RenderLayer::clearLayerScrollableArea()
     }
 }
 
-void RenderLayer::updateFiltersAfterStyleChange()
+void RenderLayer::updateFiltersAfterStyleChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (!hasFilter()) {
         clearLayerFilters();
@@ -5429,6 +5429,9 @@ void RenderLayer::updateFiltersAfterStyleChange()
         m_filters->updateReferenceFilterClients(renderer().style().filter());
     } else if (m_filters)
         m_filters->removeReferenceFilterClients();
+
+    if (diff >= StyleDifference::RepaintLayer && oldStyle && oldStyle->filter() != renderer().style().filter())
+        clearLayerFilters();
 }
 
 void RenderLayer::updateLayerScrollableArea()
