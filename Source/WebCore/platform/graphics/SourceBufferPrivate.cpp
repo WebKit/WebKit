@@ -357,6 +357,21 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
     return trackBuffer.removeSamples(samples, logPrefix);
 }
 
+MediaTime SourceBufferPrivate::findPreviousSyncSamplePresentationTime(const MediaTime& time)
+{
+    MediaTime previousSyncSamplePresentationTime = time;
+    for (auto& trackBufferKeyValue : m_trackBufferMap) {
+        TrackBuffer& trackBuffer = trackBufferKeyValue.value;
+        auto sampleIterator = trackBuffer.samples().decodeOrder().findSyncSamplePriorToPresentationTime(time);
+        if (sampleIterator == trackBuffer.samples().decodeOrder().rend())
+            continue;
+        const MediaTime& samplePresentationTime = sampleIterator->first.second;
+        if (samplePresentationTime < time)
+            previousSyncSamplePresentationTime = samplePresentationTime;
+    }
+    return previousSyncSamplePresentationTime;
+}
+
 void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(start < end);
@@ -437,7 +452,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     unsigned timeChunkAsMilliseconds = evictionAlgorithmInitialTimeChunk;
     do {
         const MediaTime timeChunk = MediaTime(timeChunkAsMilliseconds, 1000);
-        const MediaTime maximumRangeEnd = currentTime - timeChunk;
+        const MediaTime maximumRangeEnd = std::min(currentTime - timeChunk, findPreviousSyncSamplePresentationTime(currentTime));
 
         do {
             MediaTime rangeStart = buffered.minimumBufferedTime();
