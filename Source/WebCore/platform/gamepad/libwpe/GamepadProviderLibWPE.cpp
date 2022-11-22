@@ -117,7 +117,7 @@ void GamepadProviderLibWPE::stopMonitoringGamepads(GamepadProviderClient& client
     m_lastActiveGamepad = nullptr;
 }
 
-void GamepadProviderLibWPE::gamepadConnected(unsigned id)
+void GamepadProviderLibWPE::gamepadConnected(uintptr_t id)
 {
     ASSERT(!m_gamepadMap.get(id));
     ASSERT(m_provider);
@@ -148,7 +148,7 @@ void GamepadProviderLibWPE::gamepadConnected(unsigned id)
         client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
 }
 
-void GamepadProviderLibWPE::gamepadDisconnected(unsigned id)
+void GamepadProviderLibWPE::gamepadDisconnected(uintptr_t id)
 {
     LOG(Gamepad, "GamepadProviderLibWPE device %u removed", id);
 
@@ -171,7 +171,7 @@ unsigned GamepadProviderLibWPE::indexForNewlyConnectedDevice()
     return index;
 }
 
-std::unique_ptr<GamepadLibWPE> GamepadProviderLibWPE::removeGamepadForId(unsigned id)
+std::unique_ptr<GamepadLibWPE> GamepadProviderLibWPE::removeGamepadForId(uintptr_t id)
 {
     auto removedGamepad = m_gamepadMap.take(id);
     ASSERT(removedGamepad);
