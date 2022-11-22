@@ -3609,8 +3609,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return willChangePropertyValue(style.willChange());
     case CSSPropertyWordBreak:
         return cssValuePool.createValue(style.wordBreak());
-    case CSSPropertyWordSpacing:
-        return zoomAdjustedPixelValue(style.fontCascade().wordSpacing(), style);
+    case CSSPropertyWordSpacing: {
+        auto& wordSpacingLength = style.wordSpacing();
+        if (wordSpacingLength.isFixed() || wordSpacingLength.isAuto())
+            return zoomAdjustedPixelValue(style.fontCascade().wordSpacing(), style);
+        return cssValuePool.createValue(wordSpacingLength, style);
+    }
     case CSSPropertyLineBreak:
         return cssValuePool.createValue(style.lineBreak());
     case CSSPropertyWebkitNbspMode:
