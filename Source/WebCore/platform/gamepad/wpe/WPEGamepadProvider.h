@@ -62,16 +62,16 @@ public:
 private:
     WPEGamepadProvider();
 
-    void gamepadConnected(unsigned);
-    void gamepadDisconnected(unsigned);
-    std::unique_ptr<WPEGamepad> removeGamepadForId(unsigned);
+    void gamepadConnected(uintptr_t);
+    void gamepadDisconnected(uintptr_t);
+    std::unique_ptr<WPEGamepad> removeGamepadForId(uintptr_t);
 
     unsigned indexForNewlyConnectedDevice();
     void initialGamepadsConnectedTimerFired();
     void inputNotificationTimerFired();
 
     Vector<PlatformGamepad*> m_gamepadVector;
-    HashMap<unsigned, std::unique_ptr<WPEGamepad>> m_gamepadMap;
+    HashMap<uintptr_t, std::unique_ptr<WPEGamepad>> m_gamepadMap;
     bool m_initialGamepadsConnected { false };
 
     std::unique_ptr<struct wpe_gamepad_provider, void (*)(struct wpe_gamepad_provider*)> m_provider;
