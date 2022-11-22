@@ -34,6 +34,16 @@
 
 namespace WebKit {
 
+bool WebExtensionAPINamespace::isPropertyAllowed(String name, WebPage*)
+{
+    // This property is only allowed in testing contexts.
+    if (name == "test"_s)
+        return extensionContext().inTestingMode();
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
 {
     if (!m_extension)
@@ -46,6 +56,13 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
     if (!m_runtime)
         m_runtime = WebExtensionAPIRuntime::create(forMainWorld(), extensionContext());
     return *m_runtime;
+}
+
+WebExtensionAPITest& WebExtensionAPINamespace::test()
+{
+    if (!m_test)
+        m_test = WebExtensionAPITest::create(forMainWorld(), runtime(), extensionContext());
+    return *m_test;
 }
 
 } // namespace WebKit

@@ -56,6 +56,8 @@ public:
     double manifestVersion() { return m_manifestVersion; }
     bool usesManifestVersion(double version) { return manifestVersion() >= version; }
 
+    bool inTestingMode() { return m_testingMode; }
+
     WebCore::DOMWrapperWorld* contentScriptWorld() { return m_contentScriptWorld.get(); }
     void setContentScriptWorld(WebCore::DOMWrapperWorld* world) { m_contentScriptWorld = world; }
 #endif
@@ -72,7 +74,8 @@ private:
     URL m_baseURL;
     String m_uniqueIdentifier;
     RetainPtr<NSDictionary> m_manifest;
-    double m_manifestVersion;
+    double m_manifestVersion { 0 };
+    bool m_testingMode { false };
     RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
 #endif
 };

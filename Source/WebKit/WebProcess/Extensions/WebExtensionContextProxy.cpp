@@ -55,6 +55,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(WebExtension
         context.m_uniqueIdentifier = parameters.uniqueIdentifier;
         context.m_manifest = parameters.manifest;
         context.m_manifestVersion = parameters.manifestVersion;
+        context.m_testingMode = parameters.testingMode;
     };
 
     if (auto context = webExtensionContextProxies().get(parameters.identifier)) {

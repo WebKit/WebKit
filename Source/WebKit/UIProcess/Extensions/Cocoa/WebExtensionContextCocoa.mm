@@ -986,6 +986,15 @@ void WebExtensionContext::cancelUserGesture(_WKWebExtensionTab *tab)
     [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab];
 }
 
+void WebExtensionContext::setTestingMode(bool testingMode)
+{
+    ASSERT(!isLoaded());
+    if (isLoaded())
+        return;
+
+    m_testingMode = testingMode;
+}
+
 WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
 {
     ASSERT(isLoaded());

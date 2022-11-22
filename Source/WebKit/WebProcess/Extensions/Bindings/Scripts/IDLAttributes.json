@@ -121,6 +121,9 @@
         },
         "URL": {
             "contextsAllowed": ["argument", "attribute", "operation"]
+        },
+        "ValuesAllowed": {
+            "contextsAllowed": ["argument"]
         }
     }
 }

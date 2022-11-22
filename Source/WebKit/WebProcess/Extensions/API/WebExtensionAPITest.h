@@ -27,33 +27,39 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPINamespace.h"
-#include "WebExtensionAPIExtension.h"
+#include "JSWebExtensionAPITest.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIRuntime.h"
-#include "WebExtensionAPITest.h"
+
+OBJC_CLASS NSString;
 
 namespace WebKit {
 
-class WebExtensionAPIExtension;
-class WebExtensionAPIRuntime;
+class WebPage;
 
-class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace);
+class WebExtensionAPITest : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test);
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    void notifyFail(JSContextRef, NSString *message);
+    void notifyPass(JSContextRef, NSString *message);
 
-    WebExtensionAPIExtension& extension();
-    WebExtensionAPIRuntime& runtime() final;
-    WebExtensionAPITest& test();
+    void yield(JSContextRef, NSString *message);
+
+    void log(JSContextRef, NSString *message);
+
+    void fail(JSContextRef, NSString *message);
+    void succeed(JSContextRef, NSString *message);
+
+    void assertTrue(JSContextRef, bool testValue, NSString *message);
+    void assertFalse(JSContextRef, bool testValue, NSString *message);
+
+    void assertDeepEq(JSContextRef, JSValue *expectedValue, JSValue *actualValue, NSString *message);
+    void assertEq(JSContextRef, JSValue *expectedValue, JSValue *actualValue, NSString *message);
+
+    JSValue *assertRejects(JSContextRef, JSValue *promise, JSValue *expectedError, NSString *message);
+    void assertThrows(JSContextRef, JSValue *function, JSValue *expectedError, NSString *message);
 #endif
-
-private:
-    RefPtr<WebExtensionAPIExtension> m_extension;
-    RefPtr<WebExtensionAPIRuntime> m_runtime;
-    RefPtr<WebExtensionAPITest> m_test;
 };
 
 } // namespace WebKit

@@ -44,6 +44,7 @@ struct WebExtensionContextParameters {
     String uniqueIdentifier;
     RetainPtr<NSDictionary> manifest;
     double manifestVersion;
+    bool testingMode;
 #endif
 };
 

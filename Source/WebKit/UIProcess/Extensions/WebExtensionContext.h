@@ -185,6 +185,9 @@ public:
     bool hasActiveUserGesture(_WKWebExtensionTab *) const;
     void cancelUserGesture(_WKWebExtensionTab *);
 
+    bool inTestingMode() const { return m_testingMode; }
+    void setTestingMode(bool);
+
     bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
     void didFinishNavigation(WKWebView *, WKNavigation *);
     void didFailNavigation(WKWebView *, WKNavigation *, NSError *);
@@ -215,6 +218,13 @@ private:
     void unloadBackgroundWebView();
 
     void performTasksAfterBackgroundContentLoads();
+
+    // Test APIs
+    void testResult(bool result, String message, String sourceURL, unsigned lineNumber);
+    void testEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber);
+    void testMessage(String message, String sourceURL, unsigned lineNumber);
+    void testYielded(String message, String sourceURL, unsigned lineNumber);
+    void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 #endif
 
     // IPC::MessageReceiver.
@@ -242,7 +252,12 @@ private:
 
     RetainPtr<NSMapTable> m_temporaryTabPermissionMatchPatterns;
 
-    bool m_requestedOptionalAccessToAllHosts = false;
+    bool m_requestedOptionalAccessToAllHosts { false };
+#ifdef NDEBUG
+    bool m_testingMode { false };
+#else
+    bool m_testingMode { true };
+#endif
 
     RetainPtr<WKWebView> m_backgroundWebView;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;

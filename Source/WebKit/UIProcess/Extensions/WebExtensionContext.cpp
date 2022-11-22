@@ -66,6 +66,7 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
     parameters.uniqueIdentifier = uniqueIdentifier();
     parameters.manifest = extension().manifest();
     parameters.manifestVersion = extension().manifestVersion();
+    parameters.testingMode = inTestingMode();
 #endif
 
     return parameters;

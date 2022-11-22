@@ -589,6 +589,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIExtension \
     WebExtensionAPINamespace \
     WebExtensionAPIRuntime \
+    WebExtensionAPITest \
 #
 
 JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)

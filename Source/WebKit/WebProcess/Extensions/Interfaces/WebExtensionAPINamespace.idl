@@ -32,4 +32,6 @@
 
     readonly attribute WebExtensionAPIRuntime runtime;
 
+    [Dynamic] readonly attribute WebExtensionAPITest test;
+
 };

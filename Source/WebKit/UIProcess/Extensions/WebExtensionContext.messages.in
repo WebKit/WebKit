@@ -26,7 +26,12 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 messages -> WebExtensionContext {
-
+    // Test APIs
+    TestResult(bool result, String message, String sourceURL, unsigned lineNumber);
+    TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber);
+    TestMessage(String message, String sourceURL, unsigned lineNumber);
+    TestYielded(String message, String sourceURL, unsigned lineNumber);
+    TestFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
