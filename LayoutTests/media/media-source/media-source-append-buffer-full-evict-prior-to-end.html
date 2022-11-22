@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var exception;
+
+    function bufferedRanges() {
+        var bufferedRanges = '[ ';
+        var timeRanges = sourceBuffer.buffered;
+        for (var i = 0 ; i < timeRanges.length ; i++) {
+            if (i)
+                bufferedRanges += ', ';
+            bufferedRanges += timeRanges.start(i) + '...' + timeRanges.end(i);
+        }
+        bufferedRanges += ' ]';
+        return bufferedRanges;
+    }
+
+    function doBufferedRangesContain(time) {
+        var timeRanges = sourceBuffer.buffered;
+        for (var i = 0 ; i < timeRanges.length ; i++) {
+            if (timeRanges.start(i) <= time && time <= timeRanges.end(i))
+                return true;
+        }
+        return false;
+    }
+
+    async function appendSample(dts, pts) {
+         const flag = dts % 5 == 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE;
+         consoleWrite('Appending PTS=' + pts + ', DTS=' + dts + (flag == SAMPLE_FLAG.SYNC ? ', sync' : ''));
+         sourceBuffer.appendBuffer(makeASample(pts, dts, 1, 1, 1, flag, 1));
+         await waitFor(sourceBuffer, 'updateend', true);
+    }
+
+    async function appendDtsRange(firstDts, lastDts) {
+        if (firstDts >= lastDts)
+            return null;
+
+        var resultException = null;
+        try {
+            for (var dts = firstDts; dts <= lastDts; dts += 5) {
+                await appendSample(dts + 0, dts + 0);
+                await appendSample(dts + 1, dts + 3);
+                await appendSample(dts + 2, dts + 1);
+                await appendSample(dts + 3, dts + 2);
+                await appendSample(dts + 4, dts + 4);
+            }
+        } catch (e) {
+            resultException = e;
+            sourceBuffer.abort();
+        }
+        return resultException;
+    }
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+        source = new MediaSource();
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(350, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        sourceBuffer.appendBuffer(initSegment);
+        await waitFor(sourceBuffer, 'updateend');
+        waitFor(sourceBuffer, 'error');
+
+        internals.settings.setMaximumSourceBufferSize(500);
+
+        video.currentTime = 18;
+        testExpected('video.currentTime', 18, '==');
+        exception = await appendDtsRange(0, 14);
+
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
+        testExpected('bufferedRanges()', '[ 10...15 ]', '==');
+
+        endTest();
+        });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>
