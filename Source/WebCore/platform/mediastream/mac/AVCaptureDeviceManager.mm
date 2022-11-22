@@ -91,28 +91,10 @@ inline static bool deviceIsAvailable(AVCaptureDevice *device)
     return true;
 }
 
-static RetainPtr<NSArray<AVCaptureDevice *>> currentCameras()
-{
-    AVCaptureDeviceDiscoverySession *discoverySession = [PAL::getAVCaptureDeviceDiscoverySessionClass()
-        discoverySessionWithDeviceTypes:
-            @[AVCaptureDeviceTypeBuiltInWideAngleCamera,
-              AVCaptureDeviceTypeBuiltInTelephotoCamera,
-              AVCaptureDeviceTypeBuiltInUltraWideCamera,
-              AVCaptureDeviceTypeDeskViewCamera,
-#if PLATFORM(MAC)
-              AVCaptureDeviceTypeExternalUnknown,
-#endif
-            ]
-        mediaType:AVMediaTypeVideo
-        position:AVCaptureDevicePositionUnspecified
-    ];
-    return discoverySession.devices;
-}
-
 void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 {
     ASSERT(!isMainThread());
-    auto currentDevices = currentCameras();
+    auto* currentDevices = [PAL::getAVCaptureDeviceClass() devices];
     auto removedDevices = adoptNS([[NSMutableArray alloc] init]);
     for (AVCaptureDevice *cachedDevice in m_avCaptureDevices.get()) {
         if (![currentDevices containsObject:cachedDevice])
@@ -125,7 +107,7 @@ void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
         [m_avCaptureDevices removeObjectsInArray:removedDevices.get()];
     }
 
-    for (AVCaptureDevice *device in currentDevices.get()) {
+    for (AVCaptureDevice *device in currentDevices) {
 
         if (![device hasMediaType:AVMediaTypeVideo] && ![device hasMediaType:AVMediaTypeMuxed])
             continue;
@@ -171,14 +153,14 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 
     updateCachedAVCaptureDevices();
 
-    auto currentDevices = currentCameras();
+    auto* currentDevices = [PAL::getAVCaptureDeviceClass() devices];
     Vector<CaptureDevice> deviceList;
 
     auto* defaultVideoDevice = [PAL::getAVCaptureDeviceClass() defaultDeviceWithMediaType: AVMediaTypeVideo];
 #if PLATFORM(IOS)
     if ([defaultVideoDevice position] != AVCaptureDevicePositionFront) {
         defaultVideoDevice = nullptr;
-        for (AVCaptureDevice *platformDevice in currentDevices.get()) {
+        for (AVCaptureDevice *platformDevice in currentDevices) {
             if (!isVideoDevice(platformDevice))
                 continue;
 
@@ -193,7 +175,7 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
     if (defaultVideoDevice)
         deviceList.append(toCaptureDevice(defaultVideoDevice, true));
 
-    for (AVCaptureDevice *platformDevice in currentDevices.get()) {
+    for (AVCaptureDevice *platformDevice in currentDevices) {
         if (isVideoDevice(platformDevice) && platformDevice.uniqueID != defaultVideoDevice.uniqueID)
             deviceList.append(toCaptureDevice(platformDevice));
     }
@@ -248,7 +230,6 @@ AVCaptureDeviceManager::~AVCaptureDeviceManager()
     for (AVCaptureDevice *device in m_avCaptureDevices.get())
         [device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
     [PAL::getAVCaptureDeviceClass() removeObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera"];
-    [PAL::getAVCaptureDeviceDiscoverySessionClass() removeObserver:m_objcObserver.get() forKeyPath:@"devices"];
 }
 
 void AVCaptureDeviceManager::registerForDeviceNotifications()
@@ -256,7 +237,6 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasConnectedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasDisconnectedNotification object:nil];
     [PAL::getAVCaptureDeviceClass() addObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
-    [PAL::getAVCaptureDeviceDiscoverySessionClass() addObserver:m_objcObserver.get() forKeyPath:@"devices" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
 }
 
 } // namespace WebCore
