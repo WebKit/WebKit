@@ -51,8 +51,6 @@ public:
 
     bool handleWheelEvent(const PlatformWheelEvent&);
 
-    void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&) override;
-
     void willDoProgrammaticScroll(const FloatPoint&);
     void currentScrollPositionChanged();
 

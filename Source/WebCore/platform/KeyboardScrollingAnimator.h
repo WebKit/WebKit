@@ -41,7 +41,9 @@ enum class KeyboardScrollingKey : uint8_t {
     DownArrow,
     Space,
     PageUp,
-    PageDown
+    PageDown,
+    Home,
+    End
 };
 
 const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(const KeyboardEvent&);

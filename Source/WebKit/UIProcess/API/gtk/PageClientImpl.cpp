@@ -253,6 +253,23 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     if (wasEventHandled || event.type() != WebEvent::Type::KeyDown || !event.nativeEvent())
         return;
 
+    // Always consider arrow keys as handled, otherwise the GtkWindow key bindings will move the focus.
+    guint keyval;
+    gdk_event_get_keyval(event.nativeEvent(), &keyval);
+    switch (keyval) {
+    case GDK_KEY_Up:
+    case GDK_KEY_KP_Up:
+    case GDK_KEY_Down:
+    case GDK_KEY_KP_Down:
+    case GDK_KEY_Left:
+    case GDK_KEY_KP_Left:
+    case GDK_KEY_Right:
+    case GDK_KEY_KP_Right:
+        return;
+    default:
+        break;
+    }
+
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
     webkitWebViewBaseForwardNextKeyEvent(webkitWebViewBase);
 #if USE(GTK4)

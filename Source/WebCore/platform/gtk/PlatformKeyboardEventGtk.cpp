@@ -783,9 +783,11 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_Clear:
         return "Clear"_s;
     case GDK_KEY_Down:
+    case GDK_KEY_KP_Down:
         return "Down"_s;
         // "End"
     case GDK_KEY_End:
+    case GDK_KEY_KP_End:
         return "End"_s;
         // "Enter"
     case GDK_KEY_ISO_Enter:
@@ -845,14 +847,18 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_Help:
         return "Help"_s;
     case GDK_KEY_Home:
+    case GDK_KEY_KP_Home:
         return "Home"_s;
     case GDK_KEY_Insert:
         return "Insert"_s;
     case GDK_KEY_Left:
+    case GDK_KEY_KP_Left:
         return "Left"_s;
     case GDK_KEY_Page_Down:
+    case GDK_KEY_KP_Page_Down:
         return "PageDown"_s;
     case GDK_KEY_Page_Up:
+    case GDK_KEY_KP_Page_Up:
         return "PageUp"_s;
     case GDK_KEY_Pause:
         return "Pause"_s;
@@ -860,10 +866,12 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_Print:
         return "PrintScreen"_s;
     case GDK_KEY_Right:
+    case GDK_KEY_KP_Right:
         return "Right"_s;
     case GDK_KEY_Select:
         return "Select"_s;
     case GDK_KEY_Up:
+    case GDK_KEY_KP_Up:
         return "Up"_s;
         // Standard says that DEL becomes U+007F.
     case GDK_KEY_Delete:

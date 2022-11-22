@@ -59,44 +59,9 @@ void WebPage::platformReinitialize()
 {
 }
 
-bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
+bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
 {
-    if (keyboardEvent.type() != WebEvent::KeyDown && keyboardEvent.type() != WebEvent::RawKeyDown)
-        return false;
-
-    switch (keyboardEvent.windowsVirtualKeyCode()) {
-    case VK_SPACE:
-        scroll(m_page.get(), keyboardEvent.shiftKey() ? ScrollUp : ScrollDown, ScrollGranularity::Page);
-        break;
-    case VK_LEFT:
-        scroll(m_page.get(), ScrollLeft, ScrollGranularity::Line);
-        break;
-    case VK_RIGHT:
-        scroll(m_page.get(), ScrollRight, ScrollGranularity::Line);
-        break;
-    case VK_UP:
-        scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
-        break;
-    case VK_DOWN:
-        scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
-        break;
-    case VK_HOME:
-        scroll(m_page.get(), ScrollUp, ScrollGranularity::Document);
-        break;
-    case VK_END:
-        scroll(m_page.get(), ScrollDown, ScrollGranularity::Document);
-        break;
-    case VK_PRIOR:
-        scroll(m_page.get(), ScrollUp, ScrollGranularity::Page);
-        break;
-    case VK_NEXT:
-        scroll(m_page.get(), ScrollDown, ScrollGranularity::Page);
-        break;
-    default:
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 bool WebPage::platformCanHandleRequest(const ResourceRequest&)

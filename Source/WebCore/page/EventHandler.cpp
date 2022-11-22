@@ -3907,6 +3907,10 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
             defaultTabEventHandler(event);
         else if (event.keyIdentifier() == "U+0008"_s)
             defaultBackspaceEventHandler(event);
+        else if (event.keyIdentifier() == "PageDown"_s || event.keyIdentifier() == "PageUp"_s)
+            defaultPageUpDownEventHandler(event);
+        else if (event.keyIdentifier() == "Home"_s || event.keyIdentifier() == "End"_s)
+            defaultHomeEndEventHandler(event);
         else {
             FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
             if (direction != FocusDirection::None)
@@ -4310,6 +4314,46 @@ void EventHandler::defaultTextInputEventHandler(TextEvent& event)
         event.setDefaultHandled();
 }
 
+bool EventHandler::defaultKeyboardScrollEventHandler(KeyboardEvent& event, ScrollLogicalDirection direction, ScrollGranularity granularity)
+{
+    if (shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
+        return keyboardScrollRecursively(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr);
+
+    return logicalScrollRecursively(direction, granularity);
+}
+
+void EventHandler::defaultPageUpDownEventHandler(KeyboardEvent& event)
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    ASSERT(event.type() == eventNames().keydownEvent);
+
+    if (event.ctrlKey() || event.metaKey() || event.altKey() || event.altGraphKey() || event.shiftKey())
+        return;
+
+    ScrollLogicalDirection direction = event.keyIdentifier() == "PageUp"_s ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward;
+    if (defaultKeyboardScrollEventHandler(event, direction, ScrollGranularity::Page))
+        event.setDefaultHandled();
+#else
+    UNUSED_PARAM(event);
+#endif
+}
+
+void EventHandler::defaultHomeEndEventHandler(KeyboardEvent& event)
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    ASSERT(event.type() == eventNames().keydownEvent);
+
+    if (event.ctrlKey() || event.metaKey() || event.altKey() || event.altGraphKey() || event.shiftKey())
+        return;
+
+    ScrollLogicalDirection direction = event.keyIdentifier() == "Home"_s ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward;
+    if (defaultKeyboardScrollEventHandler(event, direction, ScrollGranularity::Document))
+        event.setDefaultHandled();
+#else
+    UNUSED_PARAM(event);
+#endif
+}
+
 void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
 {
     Ref<Frame> protectedFrame(m_frame);
@@ -4331,7 +4375,7 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
 
     bool defaultHandled = false;
     if (shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
-        defaultHandled = keyboardScrollRecursively(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr);
+        defaultHandled = keyboardScroll(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr);
     else
         defaultHandled = view->logicalScroll(direction, ScrollGranularity::Page);
 
@@ -4437,7 +4481,7 @@ bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(Sc
     return false;
 }
 
-bool EventHandler::focusedScrollableAreaUsesScrollSnap()
+bool EventHandler::focusedScrollableAreaShouldUseSmoothKeyboardScrolling()
 {
     Node* node = m_frame.document()->focusedElement();
     if (!node)
@@ -4447,14 +4491,23 @@ bool EventHandler::focusedScrollableAreaUsesScrollSnap()
     if (!scrollableArea)
         return false;
 
-    return scrollableArea->scrollAnimator().usesScrollSnap();
+    if (scrollableArea->scrollAnimator().usesScrollSnap())
+        return false;
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    if (!m_frame.settings().asyncFrameScrollingEnabled())
+        return false;
+
+    if (!scrollableArea->scrollAnimatorEnabled())
+        return false;
+#endif
+
+    return true;
 }
 
 bool EventHandler::shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()
 {
-    if (m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() && !focusedScrollableAreaUsesScrollSnap()) 
-        return true;
-    return false;
+    return m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() && focusedScrollableAreaShouldUseSmoothKeyboardScrolling();
 }
 
 bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode)
@@ -4463,9 +4516,6 @@ bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> dire
         return false;
 
     Ref protectedFrame = m_frame;
-
-    if (!shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
-        return false;
 
     m_frame.document()->updateLayoutIgnorePendingStylesheets();
 
@@ -4486,12 +4536,47 @@ bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> dire
     return localParent->eventHandler().keyboardScrollRecursively(direction, granularity, m_frame.ownerElement());
 }
 
+bool EventHandler::keyboardScroll(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode)
+{
+    if (!direction || !granularity)
+        return false;
+
+    Ref protectedFrame = m_frame;
+
+    m_frame.document()->updateLayoutIgnorePendingStylesheets();
+
+    if (startKeyboardScrollAnimationOnEnclosingScrollableContainer(*direction, *granularity, startingNode))
+        return true;
+
+    return startKeyboardScrollAnimationOnDocument(*direction, *granularity);
+}
+
 void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent& event)
 {
     ASSERT(event.type() == eventNames().keydownEvent);
 
     if (!isSpatialNavigationEnabled(&m_frame)) {
-        if (keyboardScrollRecursively(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr))
+        ScrollLogicalDirection direction;
+        switch (focusDirection) {
+        case FocusDirection::Down:
+            direction = ScrollBlockDirectionForward;
+            break;
+        case FocusDirection::Right:
+            direction = ScrollInlineDirectionForward;
+            break;
+        case FocusDirection::Up:
+            direction = ScrollBlockDirectionBackward;
+            break;
+        case FocusDirection::Left:
+            direction = ScrollInlineDirectionBackward;
+            break;
+        case FocusDirection::None:
+        case FocusDirection::Backward:
+        case FocusDirection::Forward:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        if (defaultKeyboardScrollEventHandler(event, direction, ScrollGranularity::Line))
             event.setDefaultHandled();
         return;
     }

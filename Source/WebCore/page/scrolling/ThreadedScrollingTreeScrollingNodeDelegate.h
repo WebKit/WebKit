@@ -83,6 +83,8 @@ protected:
 
     FloatPoint adjustedScrollPosition(const FloatPoint&) const override;
 
+    void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&) override;
+
     ScrollingEffectsController m_scrollController;
 };
 
