@@ -114,6 +114,8 @@ protected:
     {
     }
 
+    double blendAmounts(double from, double to, const BlendingContext&) const;
+
     OperationType m_type;
 };
 
