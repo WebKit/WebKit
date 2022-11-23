@@ -284,7 +284,7 @@ void handleWebPushDMessageWithReply(ClientConnection* connection, Span<const uin
         replySender(Info::encodeReply(std::forward<decltype(args)>(args)...));
     } };
 
-    IPC::callMemberFunction(tuple_cat(std::make_tuple(connection), WTFMove(*arguments)), WTFMove(completionHandler), &WebPushD::Daemon::singleton(), Info::MemberFunction);
+    IPC::callMemberFunction(&WebPushD::Daemon::singleton(), Info::MemberFunction, tuple_cat(std::make_tuple(connection), WTFMove(*arguments)), WTFMove(completionHandler));
 }
 
 template<typename Info>
@@ -297,7 +297,7 @@ void handleWebPushDMessage(ClientConnection* connection, Span<const uint8_t> enc
     if (UNLIKELY(!arguments))
         return;
 
-    IPC::callMemberFunction(tuple_cat(std::make_tuple(connection), WTFMove(*arguments)), &WebPushD::Daemon::singleton(), Info::MemberFunction);
+    IPC::callMemberFunction(&WebPushD::Daemon::singleton(), Info::MemberFunction, tuple_cat(std::make_tuple(connection), WTFMove(*arguments)));
 }
 
 Daemon& Daemon::singleton()
