@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
+#include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "ThreadSafeRemoteImageBufferFlusher.h"
 #include <wtf/SystemTracing.h>
@@ -106,7 +107,7 @@ void RemoteImageBufferProxy::backingStoreWillChange()
     prepareForBackingStoreChange();
 }
 
-void RemoteImageBufferProxy::didCreateImageBufferBackend(ImageBufferBackendHandle&& handle)
+void RemoteImageBufferProxy::didCreateBackend(ImageBufferBackendHandle&& handle)
 {
     ASSERT(!m_backend);
     if (renderingMode() == RenderingMode::Accelerated && std::holds_alternative<ShareableBitmapHandle>(handle))
@@ -120,43 +121,21 @@ void RemoteImageBufferProxy::didCreateImageBufferBackend(ImageBufferBackendHandl
         m_backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(handle));
 }
 
-void RemoteImageBufferProxy::waitForDidFlushWithTimeout()
+void RemoteImageBufferProxy::markLost()
 {
-    if (!m_remoteRenderingBackendProxy)
-        return;
-
-    // Wait for our DisplayList to be flushed but do not hang.
-    static constexpr unsigned maximumNumberOfTimeouts = 3;
-    unsigned numberOfTimeouts = 0;
-#if !LOG_DISABLED
-    auto startTime = MonotonicTime::now();
-#endif
-    LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " waitForDidFlushWithTimeout: waiting for flush {" << m_sentFlushIdentifier);
-    while (numberOfTimeouts < maximumNumberOfTimeouts && hasPendingFlush()) {
-        if (!m_remoteRenderingBackendProxy->waitForDidFlush())
-            ++numberOfTimeouts;
-    }
-
-    LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " waitForDidFlushWithTimeout: done waiting " << (MonotonicTime::now() - startTime).milliseconds() << "ms; " << numberOfTimeouts << " timeout(s)");
-
-    if (UNLIKELY(numberOfTimeouts >= maximumNumberOfTimeouts))
-        RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded timeout while waiting for flush in remote rendering backend: %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
+    m_needsFlush = false;
+    didFlush(m_sentFlushIdentifier);
+    prepareForBackingStoreChange();
 }
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 {
-    if (!m_remoteRenderingBackendProxy)
+    if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return m_backend.get();
 
-    static constexpr unsigned maximumTimeoutOrFailureCount = 3;
-    unsigned numberOfTimeoutsOrFailures = 0;
-    while (!m_backend && numberOfTimeoutsOrFailures < maximumTimeoutOrFailureCount) {
-        if (m_remoteRenderingBackendProxy->waitForDidCreateImageBufferBackend() == RemoteRenderingBackendProxy::DidReceiveBackendCreationResult::TimeoutOrIPCFailure)
-            ++numberOfTimeoutsOrFailures;
-    }
-    if (numberOfTimeoutsOrFailures == maximumTimeoutOrFailureCount) {
-        LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " ensureBackendCreated: exceeded max number of timeouts");
-        RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded max number of timeouts waiting for image buffer backend creation in remote rendering backend %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
+    if (!m_backend) {
+        if (!m_remoteRenderingBackendProxy->streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, defaultSendTimeout))
+            const_cast<RemoteImageBufferProxy*>(this)->markLost();
     }
     return m_backend.get();
 }
@@ -220,9 +199,7 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
 
 void RemoteImageBufferProxy::clearBackend()
 {
-    m_needsFlush = false;
-    didFlush(m_sentFlushIdentifier);
-    prepareForBackingStoreChange();
+    markLost();
     m_backend = nullptr;
 }
 
@@ -269,8 +246,14 @@ void RemoteImageBufferProxy::flushDrawingContext()
 
     bool shouldWait = flushDrawingContextAsync();
     LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContext: shouldWait " << shouldWait);
-    if (shouldWait)
-        waitForDidFlushWithTimeout();
+    if (!shouldWait)
+        return;
+
+    IPC::Timeout timeout = defaultSendTimeout;
+    while (hasPendingFlush()) {
+        if (!m_remoteRenderingBackendProxy->streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidFlush>(m_renderingResourceIdentifier, timeout))
+            markLost();
+    }
 }
 
 bool RemoteImageBufferProxy::flushDrawingContextAsync()

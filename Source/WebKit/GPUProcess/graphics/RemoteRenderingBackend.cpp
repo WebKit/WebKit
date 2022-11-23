@@ -37,6 +37,7 @@
 #include "RemoteDisplayListRecorder.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBuffer.h"
+#include "RemoteImageBufferProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendCreationParameters.h"
@@ -160,13 +161,13 @@ void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandl
             m_remoteDisplayLists.add(renderingResourceIdentifier, remoteDisplayList);
     }
     MESSAGE_CHECK(renderingResourceIdentifier.processIdentifier() == m_gpuConnectionToWebProcess->webProcessIdentifier(), "Sending didCreateImageBufferBackend() message to the wrong web process.");
-    send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
+    send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(handle)), renderingResourceIdentifier.object());
 }
 
 void RemoteRenderingBackend::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     MESSAGE_CHECK(renderingResourceIdentifier.processIdentifier() == m_gpuConnectionToWebProcess->webProcessIdentifier(), "Sending didFlush() message to the wrong web process.");
-    send(Messages::RemoteRenderingBackendProxy::DidFlush(flushIdentifier, renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
+    send(Messages::RemoteImageBufferProxy::DidFlush(flushIdentifier), renderingResourceIdentifier.object());
 }
 
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferResourceIdentifier)
