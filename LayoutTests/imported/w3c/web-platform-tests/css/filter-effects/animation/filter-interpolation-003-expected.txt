@@ -241,16 +241,16 @@ PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilt
 PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.6) should be [blur(5px)]
 PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1) should be [blur(5px)]
 PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1.5) should be [blur(5px)]
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")]
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")]
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.5) should be [blur(5px)]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.6) should be [blur(5px)]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1) should be [blur(5px)]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1.5) should be [blur(5px)]
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")]
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")]
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.5) should be [blur(5px)]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.6) should be [blur(5px)]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1) should be [blur(5px)]
