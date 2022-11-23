@@ -67,7 +67,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
         return { };
     }
     auto propertyID = cssPropertyID(property);
-    if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, &document.settings()))
+    if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, document.settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (!CSSProperty::isListValuedProperty(propertyID) && values.size() > 1)
@@ -119,7 +119,7 @@ ExceptionOr<void> StylePropertyMap::remove(Document& document, const AtomString&
     }
 
     auto propertyID = cssPropertyID(property);
-    if (!isExposed(propertyID, &document.settings()))
+    if (!isExposed(propertyID, document.settings()))
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     removeProperty(propertyID);
