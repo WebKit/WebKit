@@ -338,6 +338,11 @@ static inline FilterOperations blendFilterOperations(const FilterOperations& fro
         return resultOperations;
     }
 
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1.0);
+        return context.progress ? to : from;
+    }
+
     FilterOperations result;
     size_t fromSize = from.operations().size();
     size_t toSize = to.operations().size();
@@ -1426,6 +1431,17 @@ private:
             || property() == CSSPropertyWebkitBackdropFilter
 #endif
             ;
+    }
+
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
+        auto containsReference = [](auto& filterOperations) {
+            return filterOperations.operations().findIf([](auto& filterOperation) {
+                return filterOperation->type() == FilterOperation::OperationType::REFERENCE;
+            }) != notFound;
+        };
+        return !containsReference(from.filter()) && !containsReference(to.filter());
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final

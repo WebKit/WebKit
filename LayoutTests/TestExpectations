@@ -5176,8 +5176,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 
 
 # css/filter-effects
-webkit.org/b/235000 [ Debug ] imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-003.html [ Skip ]
-
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-background-color.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-opacity-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic.html [ ImageOnlyFailure ]
