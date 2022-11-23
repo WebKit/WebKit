@@ -689,8 +689,23 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
                 newSelection = VisibleSelection(end, pos);
             else
                 newSelection = VisibleSelection(start, pos);
-        } else
+        } else {
+            if (newSelection.isDirectional()) {
+                RefPtr baseNode = newSelection.isBaseFirst() ? newSelection.base().computeNodeAfterPosition() : newSelection.base().computeNodeBeforePosition();
+                if (!baseNode)
+                    baseNode = newSelection.base().containerNode();
+                if (baseNode) {
+                    auto expandedBaseSelection = expandSelectionToRespectSelectOnMouseDown(*baseNode, VisibleSelection { newSelection.visibleBase() });
+                    if (expandedBaseSelection.isRange()) {
+                        if (newSelection.isBaseFirst() && pos < newSelection.start())
+                            newSelection.setBase(expandedBaseSelection.end());
+                        else if (!newSelection.isBaseFirst() && newSelection.end() < pos)
+                            newSelection.setBase(expandedBaseSelection.start());
+                    }
+                }
+            }
             newSelection.setExtent(pos);
+        }
 
         if (m_frame.selection().granularity() != TextGranularity::CharacterGranularity) {
             granularity = m_frame.selection().granularity();

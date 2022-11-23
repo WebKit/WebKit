@@ -1,0 +1,63 @@
+<!DOCTYPE html><!--  webkit-test-runner [ LiveRangeSelectionEnabled=true ]  -->
+<html>
+<body>
+<style>
+.select-all {
+    border: 1px solid black;
+    height: 100px;
+    width: 100px;
+    -webkit-user-select: all;
+    -moz-user-select: all;
+}
+</style>
+<p id="description">This tests shift + selecting two discontinuous elements with user-select: all. WebKit should select the both elements instead of moving the selection.
+To manually test, click to select the first element and shift-click the second element. WebKit should select both elements.</p>
+<div id="test">
+<div id="first" class="select-all">First element</div>
+Some other text.
+<div id="second" class="select-all">Second element</div>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description(document.getElementById('description').textContent);
+
+function clickOnElement(element, keys) {
+    eventSender.mouseMoveTo(element.offsetLeft + 10, element.offsetTop + 10);
+    eventSender.mouseDown(0, keys);
+    eventSender.mouseUp(0, keys);
+}
+
+function runTest(editingBehavior) {
+    internals.settings.setEditingBehavior(editingBehavior);
+
+    getSelection().removeAllRanges();
+
+    var postfix = ' (' + editingBehavior + ')';
+
+    clickOnElement(document.getElementById('first'));
+    Markup.dump('test', 'After clicking on the first element' + postfix);
+    eventSender.leapForward(300);
+    clickOnElement(document.getElementById('second'), ['shiftKey']);
+    Markup.dump('test', 'After shift clicking on the second element' + postfix);
+
+    getSelection().removeAllRanges();
+
+    clickOnElement(document.getElementById('second'));
+    Markup.dump('test', 'After clicking on the second element' + postfix);
+    eventSender.leapForward(300);
+    clickOnElement(document.getElementById('first'), ['shiftKey']);
+    Markup.dump('test', 'After shift clicking on the first element' + postfix);
+}
+
+if (window.eventSender) {
+    runTest('mac');
+    runTest('windows');
+    runTest('unix');
+
+} else
+    Markup.noAutoDump();
+
+</script>
+</body>
+</html>
