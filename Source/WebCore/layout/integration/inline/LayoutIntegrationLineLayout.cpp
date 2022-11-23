@@ -466,8 +466,18 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
-    if (layoutState.hasLineClamp())
-        return Layout::BlockLayoutState::LineClamp { *layoutState.maximumLineCountForLineClamp(), layoutState.visibleLineCountForLineClamp().value_or(0) };
+    if (layoutState.hasLineClamp()) {
+        // FIXME: This is a rather odd behavior when we let line-clamp place ellipsis on a line and still
+        // continue with constructing subsequent, visible lines on the block (other browsers match this exoctic behavior).
+        auto isLineClampRootOverflowHidden = true;
+        for (const RenderBlock* ancestor = &rootRenderer; ancestor; ancestor = ancestor->containingBlock()) {
+            if (!ancestor->style().lineClamp().isNone()) {
+                isLineClampRootOverflowHidden = ancestor->style().overflowY() == Overflow::Hidden;
+                break;
+            }
+        }
+        return Layout::BlockLayoutState::LineClamp { *layoutState.maximumLineCountForLineClamp(), layoutState.visibleLineCountForLineClamp().value_or(0), isLineClampRootOverflowHidden };
+    }
     return { };
 }
 
@@ -657,6 +667,7 @@ LayoutUnit LineLayout::contentLogicalHeight() const
     if (!m_inlineContent)
         return { };
 
+    // FIXME: Content height with line-clamp and non-hidden overflow computes to the clamped content.
     auto& lines = m_inlineContent->lines;
     auto flippedContentHeightForWritingMode = rootLayoutBox().style().isHorizontalWritingMode()
         ? lines.last().lineBoxBottom() - lines.first().lineBoxTop()

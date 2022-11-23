@@ -38,6 +38,7 @@ public:
     struct LineClamp {
         size_t maximumNumberOfLines { 0 };
         size_t numberOfVisibleLines { 0 };
+        bool isLineClampRootOverflowHidden { true };
     };
     BlockLayoutState(FloatingState&, std::optional<LineClamp>);
 
