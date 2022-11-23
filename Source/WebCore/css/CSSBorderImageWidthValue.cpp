@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-CSSBorderImageWidthValue::CSSBorderImageWidthValue(RefPtr<CSSPrimitiveValue>&& widths, bool overridesBorderWidths)
+CSSBorderImageWidthValue::CSSBorderImageWidthValue(Ref<Quad>&& widths, bool overridesBorderWidths)
     : CSSValue(BorderImageWidthClass)
     , m_widths(WTFMove(widths))
     , m_overridesBorderWidths(overridesBorderWidths)
@@ -50,7 +50,7 @@ String CSSBorderImageWidthValue::customCSSText() const
 
 bool CSSBorderImageWidthValue::equals(const CSSBorderImageWidthValue& other) const
 {
-    return m_overridesBorderWidths == other.m_overridesBorderWidths && compareCSSValuePtr(m_widths, other.m_widths);
+    return m_overridesBorderWidths == other.m_overridesBorderWidths && m_widths->equals(other.m_widths);
 }
 
 } // namespace WebCore

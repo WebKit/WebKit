@@ -275,7 +275,7 @@ static inline Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
     quad->setBottom(WTFMove(bottom));
     quad->setLeft(WTFMove(left));
 
-    return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), image.fill());
+    return CSSBorderImageSliceValue::create(WTFMove(quad), image.fill());
 }
 
 static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box, const RenderStyle& style)

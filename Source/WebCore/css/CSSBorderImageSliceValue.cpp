@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(RefPtr<CSSPrimitiveValue>&& slices, bool fill)
+CSSBorderImageSliceValue::CSSBorderImageSliceValue(Ref<Quad>&& slices, bool fill)
     : CSSValue(BorderImageSliceClass)
     , m_slices(WTFMove(slices))
     , m_fill(fill)
@@ -51,7 +51,7 @@ String CSSBorderImageSliceValue::customCSSText() const
 
 bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
 {
-    return m_fill == other.m_fill && compareCSSValuePtr(m_slices, other.m_slices);
+    return m_fill == other.m_fill && m_slices->equals(other.m_slices);
 }
 
 } // namespace WebCore

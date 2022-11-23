@@ -1249,18 +1249,20 @@ String StyleProperties::borderImagePropertyValue(CSSPropertyID propertyID) const
         if (omittedSlice && (longhand == CSSPropertyBorderImageWidth || longhand == CSSPropertyBorderImageOutset))
             return String();
 
+        String valueText;
+
         // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
         if (is<CSSBorderImageWidthValue>(value.get())) {
             auto* borderImageWidth = downcast<CSSBorderImageWidthValue>(value.get());
-            Quad* widths = borderImageWidth->widths();
-            bool overridesBorderWidths = propertyID == CSSPropertyWebkitBorderImage && widths && (widths->top()->isLength() || widths->right()->isLength() || widths->bottom()->isLength() || widths->left()->isLength());
+            Quad& widths = borderImageWidth->widths();
+            bool overridesBorderWidths = propertyID == CSSPropertyWebkitBorderImage && (widths.top()->isLength() || widths.right()->isLength() || widths.bottom()->isLength() || widths.left()->isLength());
             if (overridesBorderWidths != borderImageWidth->m_overridesBorderWidths)
                 return String();
-            value = borderImageWidth->m_widths;
-        }
+            valueText = widths.cssText();
+        } else
+            valueText = value->cssText();
 
         // If a longhand is set to a css-wide keyword, the others should be the same.
-        String valueText = value->cssText();
         if (isCSSWideValueKeyword(valueText)) {
             if (!i)
                 commonWideValueText = valueText;

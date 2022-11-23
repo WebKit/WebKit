@@ -34,22 +34,22 @@ class Rect;
 
 class CSSBorderImageWidthValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageWidthValue> create(RefPtr<CSSPrimitiveValue>&& widths, bool overridesBorderWidths)
+    static Ref<CSSBorderImageWidthValue> create(Ref<Quad>&& widths, bool overridesBorderWidths)
     {
         return adoptRef(*new CSSBorderImageWidthValue(WTFMove(widths), overridesBorderWidths));
     }
 
     String customCSSText() const;
 
-    Quad* widths() const { return m_widths ? m_widths->quadValue() : nullptr; }
+    Quad& widths() const { return m_widths.get(); }
 
     bool equals(const CSSBorderImageWidthValue&) const;
 
-    RefPtr<CSSPrimitiveValue> m_widths;
+    Ref<Quad> m_widths;
     bool m_overridesBorderWidths;
 
 private:
-    CSSBorderImageWidthValue(RefPtr<CSSPrimitiveValue>&& widths, bool overridesBorderWidths);
+    CSSBorderImageWidthValue(Ref<Quad>&& widths, bool overridesBorderWidths);
 };
 
 } // namespace WebCore

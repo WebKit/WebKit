@@ -34,24 +34,24 @@ class Rect;
 
 class CSSBorderImageSliceValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageSliceValue> create(RefPtr<CSSPrimitiveValue>&& slices, bool fill)
+    static Ref<CSSBorderImageSliceValue> create(Ref<Quad>&& slices, bool fill)
     {
         return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slices), fill));
     }
 
     String customCSSText() const;
 
-    Quad* slices() const { return m_slices ? m_slices->quadValue() : nullptr; }
+    Quad& slices() const { return m_slices.get(); }
 
     bool equals(const CSSBorderImageSliceValue&) const;
 
     // These four values are used to make "cuts" in the border image. They can be numbers
     // or percentages.
-    RefPtr<CSSPrimitiveValue> m_slices;
+    Ref<Quad> m_slices;
     bool m_fill;
 
 private:
-    CSSBorderImageSliceValue(RefPtr<CSSPrimitiveValue>&& slices, bool fill);
+    CSSBorderImageSliceValue(Ref<Quad>&& slices, bool fill);
 };
 
 } // namespace WebCore

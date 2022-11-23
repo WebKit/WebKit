@@ -7429,7 +7429,7 @@ RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID property, CSSParserTokenR
     quad->setLeft(slices[3].releaseNonNull());
     
     // Make our new border image value now.
-    return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), fill);
+    return CSSBorderImageSliceValue::create(WTFMove(quad), fill);
 }
 
 RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange& range)
@@ -7488,7 +7488,7 @@ RefPtr<CSSValue> consumeBorderImageWidth(CSSPropertyID property, CSSParserTokenR
     quad->setBottom(widths[2].releaseNonNull());
     quad->setLeft(widths[3].releaseNonNull());
 
-    return CSSBorderImageWidthValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), overridesBorderWidths);
+    return CSSBorderImageWidthValue::create(WTFMove(quad), overridesBorderWidths);
 }
 
 bool consumeBorderImageComponents(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context, RefPtr<CSSValue>& source,

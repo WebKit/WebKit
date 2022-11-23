@@ -86,7 +86,7 @@ private:
     RenderStyle* style() const;
     bool useSVGZoomRules() const;
     RefPtr<StyleImage> styleImage(CSSValue&);
-    LengthBox mapNinePieceImageQuad(Quad*);
+    LengthBox mapNinePieceImageQuad(Quad&);
 
     // FIXME: This type can merge into BuilderState.
     Style::BuilderState& m_builderState;
