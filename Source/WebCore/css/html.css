@@ -390,7 +390,7 @@ button {
 }
 
 /* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
-input:not([type="color"]), textarea, select, button, meter, progress {
+input:not([type="color"]), select, button, meter, progress {
     writing-mode: horizontal-tb !important;
 }
 

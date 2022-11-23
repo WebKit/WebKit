@@ -31,3 +31,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vlr.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vlr.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vrl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vrl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vlr.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vlr.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vrl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vrl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-rows-cols-sizing.html
