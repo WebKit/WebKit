@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <animate id="animate" attributeName="visibility" value="visible; visible" dur="10s"/>
-  <foreignObject><pre id="console" xmlns="http://www.w3.org/1999/xhtml"/></foreignObject>
+  <foreignObject width="100%" height="400"><pre id="console" xmlns="http://www.w3.org/1999/xhtml"/></foreignObject>
   <script>
 var console = document.getElementById("console");
 var animate = document.getElementById("animate");

@@ -428,6 +428,7 @@ public:
     bool isAbsolutelyPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Absolute; }
     bool isRelativelyPositioned() const { return m_bitfields.isRelativelyPositioned(); }
     bool isStickilyPositioned() const { return m_bitfields.isStickilyPositioned(); }
+    bool shouldUsePositionedClipping() const { return isAbsolutelyPositioned() || isSVGForeignObject(); }
 
     bool isText() const  { return !m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isLineBreak() const { return m_bitfields.isLineBreak(); }

@@ -105,6 +105,7 @@
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
+#include "RenderSVGForeignObject.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
@@ -1560,7 +1561,16 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
 
 void RenderLayer::updateAncestorDependentState()
 {
-    bool insideSVGForeignObject = renderer().document().mayHaveRenderedSVGForeignObjects() && ancestorsOfType<LegacyRenderSVGForeignObject>(renderer()).first();
+    bool insideSVGForeignObject = false;
+    if (renderer().document().mayHaveRenderedSVGForeignObjects()) {
+        if (ancestorsOfType<LegacyRenderSVGForeignObject>(renderer()).first())
+            insideSVGForeignObject = true;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        else if (renderer().document().settings().layerBasedSVGEngineEnabled() && ancestorsOfType<RenderSVGForeignObject>(renderer()).first())
+            insideSVGForeignObject = true;
+#endif
+    }
+
     if (insideSVGForeignObject == m_insideSVGForeignObject)
         return;
 
@@ -4407,7 +4417,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         clipRects.setFixed(true);
     } else if (renderer().isInFlowPositioned())
         clipRects.setPosClipRect(clipRects.overflowClipRect());
-    else if (renderer().isAbsolutelyPositioned())
+    else if (renderer().shouldUsePositionedClipping())
         clipRects.setOverflowClipRect(clipRects.posClipRect());
     
     // Update the clip rects that will be passed to child layers.

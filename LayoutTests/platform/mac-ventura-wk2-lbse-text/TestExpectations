@@ -571,7 +571,6 @@ svg/custom/multiple-view-elements.html          [ ImageOnlyFailure ]
 svg/dom/complex-svgView-specification.html      [ ImageOnlyFailure ]
 
 # SVG <foreignObject> issues
-svg/hixie/mixed/009.xml                      [ ImageOnlyFailure ]
 svg/overflow/overflow-on-foreignObject.svg   [ ImageOnlyFailure ]
 
 # SVG <image> (buffered-rendering) issues
@@ -580,19 +579,8 @@ svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 ###############
 # Buggy tests #
 ###############
-# 1) no width/height specified for <foreignObject> (disabled rendering in LBSE, ignored by legacy)
-svg/custom/display-table-caption-foreignObject.svg           [ Failure ]
-svg/custom/display-table-caption-inherit-foreignObject.xhtml [ Failure ]
-svg/custom/use-on-use-with-child.svg                         [ Failure ]
-svg/dom/SVGScriptElement/script-async-attr.svg               [ Failure ]
-svg/dom/SVGScriptElement/script-load-and-error-events.svg    [ Failure ]
-svg/dom/SVGScriptElement/script-onerror-bubbling.svg         [ Failure ]
-svg/dom/SVGScriptElement/script-reexecution.svg              [ Failure ]
-svg/dom/SVGScriptElement/script-type-attribute.svg           [ Failure ]
-svg/dom/smil-methods.svg                                     [ Failure ]
-svg/hittest/svg-standalone-tooltip.svg                       [ Failure ]
 
-# 2) Parses render tree output, therefore not adapted to LBSE.
+# Parses render tree output, therefore not adapted to LBSE.
 svg/outermost-svg-root.html [ Failure ]
 
 ###############
