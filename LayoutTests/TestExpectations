@@ -4222,10 +4222,24 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/individua
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-001.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-008.tentative.html [ ImageOnlyFailure ]
 
-# writing-modes: sideways-lr/sideways-rl support
+# writing-modes: sideways-lr/sideways-rl support.
 webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-writing-modes/logical-physical-mapping-001.html [ ImageOnlyFailure ]
 
+# Vertical form controls support.
+webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-vertical.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-vertical.optional.html [ ImageOnlyFailure ]
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-vertical.optional.html [ ImageOnlyFailure ]
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional.html [ ImageOnlyFailure ]
 
+# Untriaged writing-mode failures.
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-001.html [ ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-002.html [ ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-replaced-vrl-001.html [ ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-vlr-border-001.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-003.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/clearance-calculations-vrl-002.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-001.html [ ImageOnlyFailure ]
