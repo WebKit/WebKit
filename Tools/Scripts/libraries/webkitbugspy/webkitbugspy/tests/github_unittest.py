@@ -338,7 +338,6 @@ class TestGitHub(unittest.TestCase):
 
             self.assertEqual(created.project, 'WebKit')
             self.assertEqual(created.component, 'SVG')
-            self.assertEqual(created.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -349,13 +348,6 @@ class TestGitHub(unittest.TestCase):
     4) Scrolling
     5) Tables
     6) Text
-: 
-What version of 'WebKit' should the bug be associated with?:
-    1) All
-    2) Other
-    3) Safari 15
-    4) Safari Technology Preview
-    5) WebKit Local Build
 : 
 ''',
         )
