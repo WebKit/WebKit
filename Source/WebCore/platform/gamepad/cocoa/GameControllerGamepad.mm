@@ -54,6 +54,16 @@ static void disableDefaultSystemAction(GCControllerButtonInput *button)
 void GameControllerGamepad::setupElements()
 {
     auto *profile = m_gcController.get().physicalInputProfile;
+
+    // The user can expose an already-connected game controller to a web page by expressing explicit intent.
+    // Examples include pressing a button, or wiggling the joystick with intent.
+    if ([profile respondsToSelector:@selector(setThumbstickUserIntentHandler:)]) {
+        [profile setThumbstickUserIntentHandler:^(__kindof GCPhysicalInputProfile*, GCControllerElement*) {
+            m_lastUpdateTime = MonotonicTime::now();
+            GameControllerGamepadProvider::singleton().gamepadHadInput(*this, true);
+        }];
+    }
+
     auto *homeButton = profile.buttons[GCInputButtonHome];
     m_buttonValues.resize(homeButton ? numberOfStandardGamepadButtonsWithHomeButton : numberOfStandardGamepadButtonsWithoutHomeButton);
 

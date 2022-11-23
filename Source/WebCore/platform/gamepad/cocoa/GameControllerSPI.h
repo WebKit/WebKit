@@ -27,6 +27,11 @@
 
 #import <GameController/GCController.h>
 
+typedef void (^GCPhysicalInputProfileThumbstickUserIntentHandler)(__kindof GCPhysicalInputProfile *profile, GCControllerElement *element);
+@interface GCPhysicalInputProfile ()
+-(void) setThumbstickUserIntentHandler:(GCPhysicalInputProfileThumbstickUserIntentHandler)handler;
+@end
+
 #if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 @class _GCCControllerHIDServiceInfo;
 #endif
