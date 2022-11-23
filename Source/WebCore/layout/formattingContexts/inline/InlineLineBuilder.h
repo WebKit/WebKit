@@ -50,7 +50,13 @@ public:
     struct LineInput {
         InlineItemRange needsLayoutRange;
         InlineRect initialLogicalRect;
-        bool shouldTruncateOverflow { false };
+
+        enum class LineEndingEllipsisPolicy : uint8_t {
+            No,
+            WhenContentOverflows,
+            Always
+        };
+        LineEndingEllipsisPolicy ellipsisPolicy { LineEndingEllipsisPolicy::No };
     };
     struct PartialContent {
         PartialContent(size_t, std::optional<InlineLayoutUnit>);
@@ -133,7 +139,7 @@ private:
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     CommittedContent placeInlineContent(const InlineItemRange&);
-    InlineItemRange close(const InlineItemRange& needsLayoutRange, bool truncateOverflow, const CommittedContent&);
+    InlineItemRange close(const InlineItemRange& needsLayoutRange, LineInput::LineEndingEllipsisPolicy, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;

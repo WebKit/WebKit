@@ -202,24 +202,19 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
     return lineContentRange.end;
 }
 
-enum class ShouldLineEndWithEllispsis : uint8_t {
-    No,
-    WhenContentOverflows,
-    Always
-};
-static ShouldLineEndWithEllispsis shouldTruncateOverflow(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfLines)
+static LineBuilder::LineInput::LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfLines)
 {
     if (maximumNumberOfLines) {
         ASSERT(numberOfLines < *maximumNumberOfLines);
         // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
         auto treatNextLineAsLastLine = *maximumNumberOfLines - numberOfLines == 1;
         if (treatNextLineAsLastLine)
-            return ShouldLineEndWithEllispsis::Always;
+            return LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
     }
     // Truncation is in effect when the block container has overflow other than visible.
     if (!rootStyle.isOverflowVisible() && rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return ShouldLineEndWithEllispsis::WhenContentOverflows;
-    return ShouldLineEndWithEllispsis::No;
+        return LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflows;
+    return LineBuilder::LineInput::LineEndingEllipsisPolicy::No;
 }
 
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
@@ -253,23 +248,25 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
-        auto ellipsisBehavior = shouldTruncateOverflow(root().style(), numberOfLines, maximumNumberOfLines);
-        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, ellipsisBehavior != ShouldLineEndWithEllispsis::No }, previousLine);
+        auto ellipsisPolicy = lineEndingEllipsisPolicy(root().style(), numberOfLines, maximumNumberOfLines);
+        auto contentIsTruncatedInBlockDirection = ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
+        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, ellipsisPolicy }, previousLine);
 
-        lineContent.lineNeedsTrailingEllipsis |= ellipsisBehavior == ShouldLineEndWithEllispsis::Always;
+        firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
+        auto isLastLine = (firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty());
+        if (contentIsTruncatedInBlockDirection && !isLastLine)
+            lineContent.lineNeedsTrailingEllipsis = true;
+
         auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints);
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
-        if (!lineContent.runs.isEmpty() && !lineLogicalRect.isEmpty())
-            ++numberOfLines;
-
-        firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
-        auto isAtEnd = (firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty()) || ellipsisBehavior == ShouldLineEndWithEllispsis::Always;
-        if (isAtEnd) {
+        if (isLastLine || contentIsTruncatedInBlockDirection) {
             resetGeometryForClampedContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineContent.overflowingFloats, { constraints.horizontal().logicalLeft, lineLogicalRect.bottom() });
             break;
         }
 
+        if (!lineContent.runs.isEmpty() && !lineLogicalRect.isEmpty())
+            ++numberOfLines;
         lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext);
         previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, WTFMove(lineContent.overflowingFloats), lineContent.trailingOverflowingContentWidth };
         previousLineLastInlineItemIndex = lineContent.inlineItemRange.end;

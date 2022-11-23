@@ -347,7 +347,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
     initialize(initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
 
     auto committedContent = placeInlineContent(lineInput.needsLayoutRange);
-    auto committedRange = close(lineInput.needsLayoutRange, lineInput.shouldTruncateOverflow, committedContent);
+    auto committedRange = close(lineInput.needsLayoutRange, lineInput.ellipsisPolicy, committedContent);
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, lineInput.needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
@@ -382,7 +382,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     initialize(lineConstraints, needsLayoutRange, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
-    auto committedRange = close(needsLayoutRange, false, committedContent);
+    auto committedRange = close(needsLayoutRange, LineInput::LineEndingEllipsisPolicy::No, committedContent);
     auto lineWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
     auto overflow = std::optional<PartialContent> { };
     if (committedContent.partialTrailingContentLength)
@@ -529,7 +529,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
     return { committedItemCount, { } };
 }
 
-LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, bool shouldTruncateOverflow, const CommittedContent& committedContent)
+LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, LineInput::LineEndingEllipsisPolicy ellipsisPolicy, const CommittedContent& committedContent)
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_lineIsConstrainedByFloat);
     auto& rootStyle = this->rootStyle();
@@ -591,12 +591,32 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     }
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
 
-    auto truncateInlineContent = shouldTruncateOverflow && horizontalAvailableSpace < m_line.contentLogicalWidth();
-    if (truncateInlineContent) {
-        auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
-        auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
-        m_line.truncate(logicalRightForContentWithoutEllipsis);
-    }
+    auto handleLineEndingEllipsisPolicy = [&] {
+        switch (ellipsisPolicy) {
+        case LineInput::LineEndingEllipsisPolicy::No:
+            break;
+        case LineInput::LineEndingEllipsisPolicy::WhenContentOverflows: {
+            if (m_line.contentLogicalWidth() > horizontalAvailableSpace) {
+                auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
+                auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
+                m_line.truncate(logicalRightForContentWithoutEllipsis);
+            }
+            break;
+        }
+        case LineInput::LineEndingEllipsisPolicy::Always: {
+            auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
+            if (m_line.contentLogicalWidth() + ellipsisWidth > horizontalAvailableSpace) {
+                auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
+                m_line.truncate(logicalRightForContentWithoutEllipsis);
+            }
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    };
+    handleLineEndingEllipsisPolicy();
     return lineRange;
 }
 
