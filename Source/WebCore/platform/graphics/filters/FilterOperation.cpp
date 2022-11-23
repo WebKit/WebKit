@@ -134,7 +134,7 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
         return this;
 
     if (blendToPassthrough)
-        return BasicColorMatrixFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), context), m_type);
+        return BasicColorMatrixFilterOperation::create(blendAmounts(m_amount, passthroughAmount(), context), m_type);
 
     const BasicColorMatrixFilterOperation* fromOperation = downcast<BasicColorMatrixFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
@@ -203,7 +203,7 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
         return this;
     
     if (blendToPassthrough)
-        return BasicComponentTransferFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), context), m_type);
+        return BasicComponentTransferFilterOperation::create(blendAmounts(m_amount, passthroughAmount(), context), m_type);
         
     const BasicComponentTransferFilterOperation* fromOperation = downcast<BasicComponentTransferFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();

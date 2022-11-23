@@ -16,7 +16,7 @@ PASS iteration composition of filter brightness animation
 PASS iteration composition of filter drop-shadow animation
 PASS iteration composition of same filter list animation
 PASS iteration composition of discrete filter list because of mismatch of the order
-FAIL iteration composition of different length filter list animation assert_equals: Animated filter list at 0s of the third iteration expected "sepia(1) contrast(3)" but got "sepia(1) contrast(4)"
+PASS iteration composition of different length filter list animation
 PASS iteration composition of transform(rotate) animation
 PASS iteration composition of transform: [ scale(0), scale(1) ] animation
 PASS iteration composition of transform: [ scale(1), scale(2) ] animation
