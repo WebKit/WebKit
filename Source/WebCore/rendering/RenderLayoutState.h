@@ -52,7 +52,7 @@ public:
 #endif
     {
     }
-    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
+    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp);
     enum class IsPaginated { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
