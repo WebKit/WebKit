@@ -2663,9 +2663,9 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
 
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     gboolean returnValue;
-    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get()
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(),
 #if !USE(GTK4)
-        , webkit_context_menu_get_event(contextMenu.get()),
+        webkit_context_menu_get_event(contextMenu.get()),
 #endif
         hitTestResult.get(), &returnValue);
     if (returnValue)
@@ -2757,9 +2757,9 @@ bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, We
 {
     GdkRectangle menuRect = rect;
     gboolean handled;
-    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu
+    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu,
 #if !USE(GTK4)
-        , webkit_option_menu_get_event(menu),
+        webkit_option_menu_get_event(menu),
 #endif
         &menuRect, &handled);
     return handled;
