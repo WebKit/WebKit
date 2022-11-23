@@ -24,7 +24,7 @@
 
 @namespace "http://www.w3.org/1999/xhtml";
 
-/* Form controls don't go vertical. */
-input, textarea, select, button, meter, progress {
+/* Every time a new control is supported in vertical writing mode, it should be added here and removed from the html.css rule */
+input[type="color"] {
     writing-mode: horizontal-tb !important;
 }

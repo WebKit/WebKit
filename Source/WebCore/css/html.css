@@ -389,6 +389,11 @@ button {
     appearance: auto;
 }
 
+/* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
+input:not([type="color"]), textarea, select, button, meter, progress {
+    writing-mode: horizontal-tb !important;
+}
+
 input, textarea, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
@@ -1027,7 +1032,8 @@ input[type="color"]::-webkit-color-swatch-wrapper {
     border-radius: inherit;
     padding: 2px;
 #else
-    padding: 4px 2px 5px;
+    padding-inline: 2px;
+    padding-block: 4px 5px;
 #endif
     box-sizing: border-box;
     width: 100%;

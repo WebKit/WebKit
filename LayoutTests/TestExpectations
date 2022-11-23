@@ -4231,10 +4231,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-writing-modes/logical-physical-mapping-001.html [ ImageOnlyFailure ]
 
 # Vertical form controls support.
-webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-vertical.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
-webkit.org/b/248253 imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-vertical.optional.html [ ImageOnlyFailure ]
 webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
 webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-vertical.optional.html [ ImageOnlyFailure ]
 webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
