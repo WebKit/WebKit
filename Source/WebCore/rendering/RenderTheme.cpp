@@ -141,7 +141,7 @@ static bool isAppearanceAllowedForAllElements(ControlPart part)
 
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
-    ControlPart autoAppearance = autoAppearanceForElement(element);
+    ControlPart autoAppearance = autoAppearanceForElement(style, element);
     auto part = adjustAppearanceForElement(style, element, autoAppearance);
 
     if (part == NoControlPart)
@@ -332,7 +332,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     }
 }
 
-ControlPart RenderTheme::autoAppearanceForElement(const Element* elementPtr) const
+ControlPart RenderTheme::autoAppearanceForElement(RenderStyle& style, const Element* elementPtr) const
 {
     if (!elementPtr)
         return NoControlPart;
@@ -373,7 +373,7 @@ ControlPart RenderTheme::autoAppearanceForElement(const Element* elementPtr) con
 #endif
 
         if (input.isRangeControl())
-            return SliderHorizontalPart;
+            return style.isHorizontalWritingMode() ? SliderHorizontalPart : SliderVerticalPart;
 
         if (input.isTextField())
             return TextFieldPart;
@@ -1166,7 +1166,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
     if (part != SliderHorizontalPart && part != SliderVerticalPart)
         return;
-    bool isHorizontal = part ==  SliderHorizontalPart;
+    bool isHorizontal = part == SliderHorizontalPart;
 
     IntSize thumbSize;
     const RenderObject* thumbRenderer = input.sliderThumbElement()->renderer();
@@ -1209,10 +1209,11 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     }
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     paintInfo.context().setFillColor(o.style().visitedDependentColorWithColorFilter(CSSPropertyColor));
+    bool isReversedInlineDirection = (!isHorizontal && o.style().isHorizontalWritingMode()) || !o.style().isLeftToRightDirection();
     for (auto& optionElement : dataList->suggestions()) {
         if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
             double tickFraction = (*optionValue - min) / (max - min);
-            double tickRatio = isHorizontal && o.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+            double tickRatio = isReversedInlineDirection ? 1.0 - tickFraction : tickFraction;
             double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
             if (isHorizontal)
                 tickRect.setX(tickPosition);

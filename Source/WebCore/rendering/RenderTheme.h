@@ -418,7 +418,7 @@ protected:
     virtual ColorCache& colorCache(OptionSet<StyleColorOptions>) const;
 
 private:
-    ControlPart autoAppearanceForElement(const Element*) const;
+    ControlPart autoAppearanceForElement(RenderStyle&, const Element*) const;
     ControlPart adjustAppearanceForElement(RenderStyle&, const Element*, ControlPart) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
