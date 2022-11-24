@@ -127,11 +127,6 @@ CurlContext::CurlContext()
     if (logFile)
         m_logFile = fopen(logFile, "a");
 #endif
-
-#if ENABLE(TLS_DEBUG)
-    if (auto filePath = envVar.read("SSLKEYLOGFILE"))
-        m_tlsKeyLogFilePath = filePath;
-#endif
 }
 
 CurlContext::~CurlContext()

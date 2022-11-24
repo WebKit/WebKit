@@ -129,11 +129,6 @@ public:
     bool isVerbose() const { return m_verbose; }
 #endif
 
-#if ENABLE(TLS_DEBUG)
-    bool shouldLogTLSKey() const { return !m_tlsKeyLogFilePath.isEmpty(); }
-    const String& tlsKeyLogFilePath() const { return m_tlsKeyLogFilePath; }
-#endif
-
 private:
     CurlContext();
     void initShareHandle();
@@ -150,10 +145,6 @@ private:
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
     bool m_verbose { false };
-#endif
-
-#if ENABLE(TLS_DEBUG)
-    String m_tlsKeyLogFilePath;
 #endif
 };
 

@@ -57,11 +57,6 @@ private:
     static int verifyCallback(int, X509_STORE_CTX*);
     void collectInfo(X509_STORE_CTX*);
 
-#if ENABLE(TLS_DEBUG)
-    static void infoCallback(const SSL*, int, int);
-    void logTLSKey(const SSL*);
-#endif
-
     CertificateInfo::CertificateChain m_certificateChain;
 };
 
