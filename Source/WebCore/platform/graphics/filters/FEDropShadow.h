@@ -55,7 +55,7 @@ public:
 private:
     FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity);
 
-    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

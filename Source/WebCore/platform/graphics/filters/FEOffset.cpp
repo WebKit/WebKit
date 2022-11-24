@@ -59,9 +59,9 @@ bool FEOffset::setDy(float dy)
     return true;
 }
 
-FloatRect FEOffset::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
+FloatRect FEOffset::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
-    auto imageRect = inputs[0]->imageRect();
+    auto imageRect = inputImageRects[0];
     imageRect.move(filter.resolvedSize({ m_dx, m_dy }));
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }

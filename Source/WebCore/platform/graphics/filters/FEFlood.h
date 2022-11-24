@@ -51,7 +51,7 @@ private:
 
     unsigned numberOfEffectInputs() const override { return 0; }
 
-    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

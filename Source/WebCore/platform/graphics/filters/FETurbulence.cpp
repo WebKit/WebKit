@@ -96,7 +96,7 @@ bool FETurbulence::setStitchTiles(bool stitch)
     return true;
 }
 
-FloatRect FETurbulence::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+FloatRect FETurbulence::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
 }

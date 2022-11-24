@@ -86,14 +86,14 @@ bool FEComposite::setK4(float k4)
     return true;
 }
 
-FloatRect FEComposite::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
+FloatRect FEComposite::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_IN:
     case FECOMPOSITE_OPERATOR_ATOP:
         // For In and Atop the first FilterImage just influences the result of the
         // second FilterImage. So just use the rect of the second FilterImage here.
-        return filter.clipToMaxEffectRect(inputs[1]->imageRect(), primitiveSubregion);
+        return filter.clipToMaxEffectRect(inputImageRects[1], primitiveSubregion);
 
     case FECOMPOSITE_OPERATOR_ARITHMETIC:
         // Arithmetic may influnce the entire filter primitive region. So we can't
@@ -102,7 +102,7 @@ FloatRect FEComposite::calculateImageRect(const Filter& filter, const FilterImag
 
     default:
         // Take the union of both input effects.
-        return FilterEffect::calculateImageRect(filter, inputs, primitiveSubregion);
+        return FilterEffect::calculateImageRect(filter, inputImageRects, primitiveSubregion);
     }
 }
 

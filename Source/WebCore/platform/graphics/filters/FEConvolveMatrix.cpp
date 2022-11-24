@@ -114,7 +114,7 @@ bool FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
     return true;
 }
 
-FloatRect FEConvolveMatrix::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+FloatRect FEConvolveMatrix::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
 }

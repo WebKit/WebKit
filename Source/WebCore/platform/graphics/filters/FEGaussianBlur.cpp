@@ -112,9 +112,9 @@ IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
     return { 3 * kernelSize.width() / 2, 3 * kernelSize.height() / 2 };
 }
 
-FloatRect FEGaussianBlur::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
+FloatRect FEGaussianBlur::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
-    auto imageRect = inputs[0]->imageRect();
+    auto imageRect = inputImageRects[0];
 
     // Edge modes other than 'none' do not inflate the affected paint rect.
     if (m_edgeMode != EdgeModeType::None)
