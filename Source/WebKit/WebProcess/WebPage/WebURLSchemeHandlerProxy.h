@@ -60,7 +60,7 @@ public:
 
     void taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void taskDidReceiveResponse(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&);
-    void taskDidReceiveData(WebCore::ResourceLoaderIdentifier, const WebCore::SharedBuffer&);
+    void taskDidReceiveData(WebCore::ResourceLoaderIdentifier, Ref<WebCore::SharedBuffer>&&);
     void taskDidComplete(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceError&);
     void taskDidStopLoading(WebURLSchemeTaskProxy&);
 

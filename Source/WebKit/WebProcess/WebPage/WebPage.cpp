@@ -7406,12 +7406,12 @@ void WebPage::urlSchemeTaskDidReceiveResponse(WebURLSchemeHandlerIdentifier hand
     handler->taskDidReceiveResponse(taskIdentifier, response);
 }
 
-void WebPage::urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const IPC::SharedBufferReference& data)
+void WebPage::urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, Ref<WebCore::SharedBuffer>&& data)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
 
-    handler->taskDidReceiveData(taskIdentifier, data.isNull() ? WebCore::SharedBuffer::create() : data.unsafeBuffer().releaseNonNull());
+    handler->taskDidReceiveData(taskIdentifier, WTFMove(data));
 }
 
 void WebPage::urlSchemeTaskDidComplete(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceError& error)

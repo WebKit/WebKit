@@ -1806,6 +1806,17 @@ std::optional<SerializedPlatformDataCueValue> ArgumentCoder<WebCore::SerializedP
 }
 #endif
 
+constexpr bool useUnixDomainSockets()
+{
+#if USE(UNIX_DOMAIN_SOCKETS)
+    return true;
+#else
+    return false;
+#endif
+}
+
+static constexpr size_t minimumPageSize = 4096;
+
 void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, const WebCore::FragmentedSharedBuffer& buffer)
 {
     uint64_t bufferSize = buffer.size();
@@ -1813,22 +1824,23 @@ void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, co
     if (!bufferSize)
         return;
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-    // Do not use shared memory for FragmentedSharedBuffer encoding in Unix, because it's easy to reach the
-    // maximum number of file descriptors open per process when sending large data in small chunks
-    // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
-    // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
-    for (const auto& element : buffer)
-        encoder.encodeFixedLengthData(element.segment->data(), element.segment->size(), 1);
-#else
-    SharedMemory::Handle handle;
-    {
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(buffer);
-        if (auto memoryHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
-            handle = WTFMove(*memoryHandle);
+    if (useUnixDomainSockets() || bufferSize < minimumPageSize) {
+        encoder.reserve(encoder.bufferSize() + bufferSize);
+        // Do not use shared memory for FragmentedSharedBuffer encoding in Unix, because it's easy to reach the
+        // maximum number of file descriptors open per process when sending large data in small chunks
+        // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
+        // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
+        for (const auto& element : buffer)
+            encoder.encodeFixedLengthData(element.segment->data(), element.segment->size(), 1);
+    } else {
+        SharedMemory::Handle handle;
+        {
+            auto sharedMemoryBuffer = SharedMemory::copyBuffer(buffer);
+            if (auto memoryHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
+                handle = WTFMove(*memoryHandle);
+        }
+        encoder << WTFMove(handle);
     }
-    encoder << WTFMove(handle);
-#endif
 }
 
 std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::FragmentedSharedBuffer>::decode(Decoder& decoder)
@@ -1840,17 +1852,18 @@ std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::Fragm
     if (!bufferSize)
         return SharedBuffer::create();
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-    if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
-        return std::nullopt;
+    if (useUnixDomainSockets() || bufferSize < minimumPageSize) {
+        if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
+            return std::nullopt;
 
-    Vector<uint8_t> data;
-    data.grow(bufferSize);
-    if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
-        return std::nullopt;
+        Vector<uint8_t> data;
+        data.grow(bufferSize);
+        if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
+            return std::nullopt;
 
-    return SharedBuffer::create(WTFMove(data));
-#else
+        return SharedBuffer::create(WTFMove(data));
+    }
+
     SharedMemory::Handle handle;
     if (!decoder.decode(handle))
         return std::nullopt;
@@ -1863,7 +1876,6 @@ std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::Fragm
         return std::nullopt;
 
     return SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
-#endif
 }
 
 void ArgumentCoder<WebCore::SharedBuffer>::encode(Encoder& encoder, const WebCore::SharedBuffer& buffer)

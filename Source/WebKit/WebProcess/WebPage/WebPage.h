@@ -2017,7 +2017,7 @@ private:
     void urlSchemeTaskWillPerformRedirection(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void urlSchemeTaskDidPerformRedirection(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     void urlSchemeTaskDidReceiveResponse(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const WebCore::ResourceResponse&);
-    void urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const IPC::SharedBufferReference&);
+    void urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, Ref<WebCore::SharedBuffer>&&);
     void urlSchemeTaskDidComplete(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const WebCore::ResourceError&);
 
     void setIsTakingSnapshotsForApplicationSuspension(bool);
