@@ -327,8 +327,27 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         }
         return nullptr;
     };
-    if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
+    if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone()) {
+        auto isSupportedLineClamp = [&] {
+            if (ancestor->style().lineClamp().isPercentage())
+                return false;
+            auto* firstFlexItem = ancestor->firstChild();
+            // Only support one flex item with no nested content.
+            if (!is<RenderBlockFlow>(firstFlexItem) || ancestor->firstChild() != ancestor->lastChild())
+                return false;
+            auto* firstInFlowChild = downcast<RenderBlockFlow>(*firstFlexItem).firstChild();
+            if (!firstInFlowChild || !firstInFlowChild->isInline())
+                return false;
+            // No anchor box support either (let's just disable content with links).
+            for (auto* inFlowChild = downcast<RenderBlockFlow>(*firstFlexItem).lastChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
+                if (inFlowChild->style().isLink())
+                    return false;
+            }
+            return true;
+        };
+        if (!isSupportedLineClamp())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
+    }
     return reasons;
 }
 
