@@ -1664,10 +1664,12 @@ static inline void blendFloat(double& from, double to, double progress, Composit
         from = from + (to - from) * progress;
         break;
     case CompositeOperation::Accumulate:
-        from += from + (to - from - 1) * progress;
+        ASSERT(progress == 1.0);
+        from += to - 1;
         break;
     case CompositeOperation::Add:
-        from += from + (to - from) * progress;
+        ASSERT(progress == 1.0);
+        from += to;
         break;
     }
 }
