@@ -207,6 +207,9 @@ static const char* stateChangeName(GraphicsContextState::Change change)
     case GraphicsContextState::Change::DropShadow:
         return "drop-shadow";
 
+    case GraphicsContextState::Change::Style:
+        return "style";
+
     case GraphicsContextState::Change::Alpha:
         return "alpha";
 
@@ -258,6 +261,7 @@ TextStream& GraphicsContextState::dump(TextStream& ts) const
 
     dump(Change::CompositeMode,                 &GraphicsContextState::m_compositeMode);
     dump(Change::DropShadow,                    &GraphicsContextState::m_dropShadow);
+    dump(Change::Style,                         &GraphicsContextState::m_style);
 
     dump(Change::Alpha,                         &GraphicsContextState::m_alpha);
     dump(Change::ImageInterpolationQuality,     &GraphicsContextState::m_imageInterpolationQuality);

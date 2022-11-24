@@ -1077,6 +1077,36 @@ void GraphicsContextCG::clearCGShadow()
     CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 }
 
+#if HAVE(CORE_GRAPHICS_STYLES)
+static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>& style)
+{
+    if (!style) {
+        CGContextSetStyle(context, nullptr);
+        return;
+    }
+
+    auto cgStyle = WTF::switchOn(*style,
+        [&] (const GraphicsDropShadow& dropShadow) -> RetainPtr<CGStyleRef> {
+            return adoptCF(CGStyleCreateShadow2(dropShadow.offset, dropShadow.radius.width(), cachedCGColor(dropShadow.color).get()));
+        },
+        [&] (const GraphicsGaussianBlur& gaussianBlur) -> RetainPtr<CGStyleRef> {
+            ASSERT(gaussianBlur.radius.width() == gaussianBlur.radius.height());
+            CGGaussianBlurStyle gaussianBlurStyle = { 1, gaussianBlur.radius.width() };
+            return adoptCF(CGStyleCreateGaussianBlur(&gaussianBlurStyle));
+        },
+        [&] (const GraphicsColorMatrix& colorMatrix) -> RetainPtr<CGStyleRef> {
+            CGColorMatrixStyle colorMatrixStyle = { 1, { 0 } };
+            for (auto value : colorMatrix.values)
+                colorMatrixStyle.matrix[i] = value;
+            return adoptCF(CGStyleCreateColorMatrix(&colorMatrixStyle));
+        }
+    );
+
+    if (cgStyle)
+        CGContextSetStyle(context, cgStyle.get());
+}
+#endif
+
 void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 {
     if (!state.changes())
@@ -1104,6 +1134,12 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 
         case GraphicsContextState::Change::DropShadow:
             setCGShadow(renderingMode(), state.dropShadow().offset, state.dropShadow().blurRadius, state.dropShadow().color, state.shadowsIgnoreTransforms());
+            break;
+
+        case GraphicsContextState::Change::Style:
+#if HAVE(CORE_GRAPHICS_STYLES)
+            setCGStyle(context, state.style());
+#endif
             break;
 
         case GraphicsContextState::Change::Alpha:
