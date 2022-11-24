@@ -12,8 +12,8 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#include <stdint.h>
 #include <array>
+#include <cstdint>
 
 #include "angle_gl.h"
 

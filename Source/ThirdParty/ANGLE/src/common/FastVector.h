@@ -34,14 +34,10 @@ class WrapIter
     typedef typename std::iterator_traits<iterator_type>::iterator_category iterator_category;
 
     WrapIter() : mIter() {}
+    WrapIter(const WrapIter &x)            = default;
+    WrapIter &operator=(const WrapIter &x) = default;
     WrapIter(const Iter &iter) : mIter(iter) {}
     ~WrapIter() = default;
-
-    WrapIter &operator=(const WrapIter &x)
-    {
-        mIter = x.mIter;
-        return *this;
-    }
 
     bool operator==(const WrapIter &x) const { return mIter == x.mIter; }
     bool operator!=(const WrapIter &x) const { return mIter != x.mIter; }

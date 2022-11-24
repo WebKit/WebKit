@@ -30,13 +30,10 @@ logging.basicConfig(
 d = os.path.dirname
 ANGLE_DIR = d(d(os.path.realpath(__file__)))
 sys.path.append(os.path.join(ANGLE_DIR, 'tools', 'perf'))
-import cross_device_test_config
-
 from core import path_util
 
 path_util.AddTelemetryToPath()
 from core import upload_results_to_perf_dashboard
-from core import bot_platforms
 from core import results_merger
 
 path_util.AddAndroidPylibToPath()
@@ -232,6 +229,7 @@ def _scan_output_dir(task_output_dir):
     # the lists were written to.
     for directory in benchmark_directory_list:
         benchmark_name = _get_benchmark_name(directory)
+        logging.debug('Found benchmark %s directory %s' % (benchmark_name, directory))
         if benchmark_name in benchmark_directory_map.keys():
             benchmark_directory_map[benchmark_name].append(directory)
         else:
@@ -295,14 +293,12 @@ def process_perf_results(output_json,
     benchmark_enabled_map = _handle_perf_json_test_results(benchmark_directory_map,
                                                            test_results_list)
 
-    build_properties_map = json.loads(build_properties)
-    if not configuration_name:
-        # we are deprecating perf-id crbug.com/817823
-        configuration_name = build_properties_map['buildername']
-
-    _update_perf_results_for_calibration(benchmarks_shard_map_file, benchmark_enabled_map,
-                                         benchmark_directory_map, configuration_name)
     if not smoke_test_mode and handle_perf:
+        build_properties_map = json.loads(build_properties)
+        if not configuration_name:
+            # we are deprecating perf-id crbug.com/817823
+            configuration_name = build_properties_map['buildername']
+
         try:
             return_code, benchmark_upload_result_map = _handle_perf_results(
                 benchmark_enabled_map, benchmark_directory_map, configuration_name,
@@ -315,8 +311,7 @@ def process_perf_results(output_json,
         # Finally, merge all test results json, add the extra links and write out to
         # output location
         try:
-            _merge_json_output(output_json, test_results_list, extra_links,
-                               configuration_name in cross_device_test_config.TARGET_DEVICES)
+            _merge_json_output(output_json, test_results_list, extra_links)
         except Exception:
             logging.exception('Error handling test results jsons.')
 
@@ -515,28 +510,6 @@ def _update_perf_json_with_summary_on_device_id(directory, device_id):
     logging.info('Finished adding device id %s in perf result.', device_id)
 
 
-def _should_add_device_id_in_perf_result(builder_name):
-    # We should always add device id in calibration builders.
-    # For testing purpose, adding fyi as well for faster turnaround, because
-    # calibration builders run every 24 hours.
-    return any([builder_name == p.name for p in bot_platforms.CALIBRATION_PLATFORMS
-               ]) or (builder_name == 'android-pixel2-perf-fyi')
-
-
-def _update_perf_results_for_calibration(benchmarks_shard_map_file, benchmark_enabled_map,
-                                         benchmark_directory_map, configuration_name):
-    if not _should_add_device_id_in_perf_result(configuration_name):
-        return
-    logging.info('Updating perf results for %s.', configuration_name)
-    for benchmark_name, directories in benchmark_directory_map.items():
-        if not benchmark_enabled_map.get(benchmark_name, False):
-            continue
-        for directory in directories:
-            shard_id = _load_shard_id_from_test_results(directory)
-            device_id = _find_device_id_by_shard_id(benchmarks_shard_map_file, shard_id)
-            _update_perf_json_with_summary_on_device_id(directory, device_id)
-
-
 def _handle_perf_results(benchmark_enabled_map, benchmark_directory_map, configuration_name,
                          build_properties, extra_links, output_results_dir):
     """
@@ -689,10 +662,9 @@ def main():
     # configuration-name and results-url are set in the json file which is going
     # away tools/perf/core/chromium.perf.fyi.extras.json
     parser.add_argument('--configuration-name', help=argparse.SUPPRESS)
-
     parser.add_argument('--build-properties', help=argparse.SUPPRESS)
     parser.add_argument('--summary-json', help=argparse.SUPPRESS)
-    parser.add_argument('--task-output-dir', help=argparse.SUPPRESS)
+    parser.add_argument('--task-output-dir', required=True, help=argparse.SUPPRESS)
     parser.add_argument('-o', '--output-json', required=True, help=argparse.SUPPRESS)
     parser.add_argument(
         '--skip-perf',

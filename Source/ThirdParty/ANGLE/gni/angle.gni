@@ -89,6 +89,14 @@ if (angle_has_build) {
   }
 }
 
+if (!defined(checkout_angle_internal)) {
+  checkout_angle_internal = false
+}
+
+if (!defined(checkout_angle_restricted_traces)) {
+  checkout_angle_restricted_traces = false
+}
+
 # Subdirectory to place data files (e.g. layer JSON files).
 angle_data_dir = "angledata"
 
@@ -184,9 +192,6 @@ declare_args() {
 
   # Enables the OpenCL pass-through back end
   angle_enable_cl_passthrough = angle_enable_cl
-
-  # Use glslang to generate SPIR-V
-  angle_use_spirv_gen_through_glslang = false
 }
 
 declare_args() {
@@ -207,6 +212,10 @@ if (!angle_enable_cl) {
   angle_enable_cl_passthrough = false
 }
 
+if (!defined(checkout_angle_mesa)) {
+  checkout_angle_mesa = false
+}
+
 declare_args() {
   # Currently SwiftShader's Vulkan front-end doesn't build on Android.
   # Disabled by default on MSVC because of compiler warnings/errors.
@@ -224,19 +233,16 @@ declare_args() {
   angle_enable_trace_android_logcat = false
   angle_enable_trace_events = false
 
+  # Unwind backtrace support. This feature is currently only implemented
+  # on Android for debugging purposes. Disabled by default.
+  angle_enable_unwind_backtrace_support = false
+
   # Disable the layers in ubsan builds because of really slow builds.
   # Vulkan Validation Layers require Android NDK API level 26, i.e. Oreo, due to
   # Vulkan Validation Layers compatibility issues, see http://crrev/c/1405714.
   angle_enable_vulkan_validation_layers =
       angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan &&
       angle_debug_layers_enabled && (!is_android || ndk_api_level_at_least_26)
-
-  # Support using glslang to generate SPIR-V for the time being for the purpose of debugging
-  # the SPIR-V generation path, but leave it disabled on release.  It's still used by the metal
-  # backend nevertheless.
-  angle_enable_spirv_gen_through_glslang =
-      is_debug || angle_assert_always_on || angle_enable_msl_through_spirv ||
-      angle_use_spirv_gen_through_glslang
 
   # ISpriteVisual windows cannot be validated and can lead to crashes if an invalid window is
   # provided to ANGLE. Disable them for non-standalone ANGLE builds. crbug.com/1176118
@@ -268,6 +274,8 @@ declare_args() {
   # Enable overlay by default when debug layers are enabled.  This is currently only implemented on
   # Vulkan.
   angle_enable_overlay = angle_enable_vulkan && angle_debug_layers_enabled
+
+  angle_build_mesa = checkout_angle_mesa && is_linux
 }
 
 declare_args() {
@@ -501,7 +509,6 @@ if (angle_standalone || build_with_chromium) {
                     ]
 
       data = invoker.data + [
-               "$angle_root/scripts/run_gtest_angle_test.py",
                "$angle_root/src/tests/py_utils/android_helper.py",
                "$angle_root/src/tests/py_utils/angle_path_util.py",
                "$angle_root/src/tests/py_utils/angle_test_util.py",
@@ -583,7 +590,10 @@ template("angle_trace") {
     defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
     suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
 
-    deps = [ "$angle_root:angle_trace_fixture" ]
+    deps = [
+      "$angle_root/util:angle_trace_fixture",
+      "$angle_root/util:angle_trace_loader",
+    ]
 
     if (is_android) {
       libs = [ "log" ]

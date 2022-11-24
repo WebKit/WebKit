@@ -152,6 +152,21 @@ void AddAdvancedBlendEquation(gl::BlendEquationType eq, TLayoutQualifier *qualif
 {
     qualifier->advancedBlendEquations.set(static_cast<uint32_t>(eq));
 }
+
+constexpr bool IsValidWithPixelLocalStorage(TLayoutImageInternalFormat internalFormat)
+{
+    switch (internalFormat)
+    {
+        case EiifRGBA8:
+        case EiifRGBA8I:
+        case EiifRGBA8UI:
+        case EiifR32F:
+        case EiifR32UI:
+            return true;
+        default:
+            return false;
+    }
+}
 }  // namespace
 
 // This tracks each binding point's current default offset for inheritance of subsequent
@@ -1877,6 +1892,7 @@ void TParseContext::nonEmptyDeclarationErrorCheck(const TPublicType &publicType,
             case EiifRGBA16UI:
             case EiifRGBA32UI:
             default:
+                ASSERT(!IsValidWithPixelLocalStorage(layoutQualifier.imageInternalFormat));
                 error(identifierLocation, "illegal pixel local storage format",
                       getImageInternalFormatString(layoutQualifier.imageInternalFormat));
                 break;
@@ -1913,7 +1929,15 @@ void TParseContext::checkBindingIsValid(const TSourceLoc &identifierLocation, co
     // of arrays of blocks are specified to behave in GLSL 4.50 and a conservative interpretation
     // when it comes to which shaders are accepted by the compiler.
     int arrayTotalElementCount = type.getArraySizeProduct();
-    if (IsImage(type.getBasicType()))
+    if (IsPixelLocal(type.getBasicType()))
+    {
+        checkPixelLocalStorageBindingIsValid(identifierLocation, type);
+    }
+    else if (mShaderVersion < 310)
+    {
+        checkBindingIsNotSpecified(identifierLocation, layoutQualifier.binding);
+    }
+    else if (IsImage(type.getBasicType()))
     {
         checkImageBindingIsValid(identifierLocation, layoutQualifier.binding,
                                  arrayTotalElementCount);
@@ -1927,10 +1951,6 @@ void TParseContext::checkBindingIsValid(const TSourceLoc &identifierLocation, co
     {
         checkAtomicCounterBindingIsValid(identifierLocation, layoutQualifier.binding);
     }
-    else if (IsPixelLocal(type.getBasicType()))
-    {
-        checkPixelLocalStorageBindingIsValid(identifierLocation, type);
-    }
     else
     {
         ASSERT(!IsOpaqueType(type.getBasicType()));
@@ -1940,10 +1960,10 @@ void TParseContext::checkBindingIsValid(const TSourceLoc &identifierLocation, co
 
 void TParseContext::checkCanUseLayoutQualifier(const TSourceLoc &location)
 {
-    constexpr std::array<TExtension, 3u> extensions{
+    constexpr std::array<TExtension, 4u> extensions{
         {TExtension::EXT_shader_framebuffer_fetch,
          TExtension::EXT_shader_framebuffer_fetch_non_coherent,
-         TExtension::KHR_blend_equation_advanced}};
+         TExtension::KHR_blend_equation_advanced, TExtension::ANGLE_shader_pixel_local_storage}};
     if (getShaderVersion() < 300 && !checkCanUseOneOfExtensions(location, extensions))
     {
         error(location, "qualifier supported in GLSL ES 3.00 and above only", "layout");
@@ -1987,8 +2007,36 @@ void TParseContext::checkInternalFormatIsNotSpecified(const TSourceLoc &location
 {
     if (internalFormat != EiifUnspecified)
     {
-        error(location, "invalid layout qualifier: only valid when used with images",
-              getImageInternalFormatString(internalFormat));
+        if (mShaderVersion < 310)
+        {
+            if (IsValidWithPixelLocalStorage(internalFormat))
+            {
+                error(location,
+                      "invalid layout qualifier: not supported before GLSL ES 3.10, except pixel "
+                      "local storage",
+                      getImageInternalFormatString(internalFormat));
+            }
+            else
+            {
+                error(location, "invalid layout qualifier: not supported before GLSL ES 3.10",
+                      getImageInternalFormatString(internalFormat));
+            }
+        }
+        else
+        {
+            if (IsValidWithPixelLocalStorage(internalFormat))
+            {
+                error(location,
+                      "invalid layout qualifier: only valid when used with images or pixel local "
+                      "storage ",
+                      getImageInternalFormatString(internalFormat));
+            }
+            else
+            {
+                error(location, "invalid layout qualifier: only valid when used with images",
+                      getImageInternalFormatString(internalFormat));
+            }
+        }
     }
 }
 
@@ -2007,9 +2055,18 @@ void TParseContext::checkBindingIsNotSpecified(const TSourceLoc &location, int b
 {
     if (binding != -1)
     {
-        error(location,
-              "invalid layout qualifier: only valid when used with opaque types or blocks",
-              "binding");
+        if (mShaderVersion < 310)
+        {
+            error(location,
+                  "invalid layout qualifier: only valid when used with pixel local storage",
+                  "binding");
+        }
+        else
+        {
+            error(location,
+                  "invalid layout qualifier: only valid when used with opaque types or blocks",
+                  "binding");
+        }
     }
 }
 
@@ -2614,7 +2671,7 @@ TIntermNode *TParseContext::addLoop(TLoopType type,
     }
     if (cond == nullptr || typedCond)
     {
-        if (type == ELoopDoWhile)
+        if (type == ELoopDoWhile && typedCond)
         {
             checkIsScalarBool(line, typedCond);
         }
@@ -5341,12 +5398,18 @@ TLayoutQualifier TParseContext::parseLayoutQualifier(const ImmutableString &qual
     }
     else if (qualifierType == "r32f")
     {
-        checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        if (!isExtensionEnabled(TExtension::ANGLE_shader_pixel_local_storage))
+        {
+            checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        }
         qualifier.imageInternalFormat = EiifR32F;
     }
     else if (qualifierType == "rgba8")
     {
-        checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        if (!isExtensionEnabled(TExtension::ANGLE_shader_pixel_local_storage))
+        {
+            checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        }
         qualifier.imageInternalFormat = EiifRGBA8;
     }
     else if (qualifierType == "rgba8_snorm")
@@ -5366,7 +5429,10 @@ TLayoutQualifier TParseContext::parseLayoutQualifier(const ImmutableString &qual
     }
     else if (qualifierType == "rgba8i")
     {
-        checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        if (!isExtensionEnabled(TExtension::ANGLE_shader_pixel_local_storage))
+        {
+            checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        }
         qualifier.imageInternalFormat = EiifRGBA8I;
     }
     else if (qualifierType == "r32i")
@@ -5386,12 +5452,18 @@ TLayoutQualifier TParseContext::parseLayoutQualifier(const ImmutableString &qual
     }
     else if (qualifierType == "rgba8ui")
     {
-        checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        if (!isExtensionEnabled(TExtension::ANGLE_shader_pixel_local_storage))
+        {
+            checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        }
         qualifier.imageInternalFormat = EiifRGBA8UI;
     }
     else if (qualifierType == "r32ui")
     {
-        checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        if (!isExtensionEnabled(TExtension::ANGLE_shader_pixel_local_storage))
+        {
+            checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        }
         qualifier.imageInternalFormat = EiifR32UI;
     }
     else if (mShaderType == GL_GEOMETRY_SHADER_EXT &&
@@ -5715,7 +5787,10 @@ TLayoutQualifier TParseContext::parseLayoutQualifier(const ImmutableString &qual
     }
     else if (qualifierType == "binding")
     {
-        checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        if (!isExtensionEnabled(TExtension::ANGLE_shader_pixel_local_storage))
+        {
+            checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        }
         if (intValue < 0)
         {
             error(intValueLine, "out of range: binding must be non-negative",

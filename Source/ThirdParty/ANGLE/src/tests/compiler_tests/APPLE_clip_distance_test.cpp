@@ -42,6 +42,35 @@ const char ESSL100_APPLEClipDistanceShader2[] =
         gl_ClipDistance[gl_MaxClipDistances - int(aPosition.x)] = dot(aPosition, uPlane);
     })";
 
+// ESSL 3.00 Shader using gl_ClipDistance
+const char ESSL300_APPLEClipDistanceShader1[] =
+    R"(
+    uniform vec4 uPlane;
+
+    in vec4 aPosition;
+
+    void main()
+    {
+        gl_Position = aPosition;
+        gl_ClipDistance[1] = dot(aPosition, uPlane);
+    })";
+
+// ESSL 3.00 Shader redeclares gl_ClipDistance
+const char ESSL300_APPLEClipDistanceShader2[] =
+    R"(
+    uniform vec4 uPlane;
+
+    in vec4 aPosition;
+
+    out highp float gl_ClipDistance[4];
+
+    void main()
+    {
+        gl_Position = aPosition;
+        gl_ClipDistance[gl_MaxClipDistances - 6 + 1] = dot(aPosition, uPlane);
+        gl_ClipDistance[gl_MaxClipDistances - int(aPosition.x)] = dot(aPosition, uPlane);
+    })";
+
 class APPLEClipDistanceTest : public sh::ShaderExtensionTest
 {
   public:
@@ -180,5 +209,12 @@ INSTANTIATE_TEST_SUITE_P(CorrectESSL100Shaders,
                                  Values(sh::ESSLVersion100),
                                  Values(ESSL100_APPLEClipDistanceShader1,
                                         ESSL100_APPLEClipDistanceShader2)));
+
+INSTANTIATE_TEST_SUITE_P(CorrectESSL300Shaders,
+                         APPLEClipDistanceTest,
+                         Combine(Values(SH_GLES3_SPEC),
+                                 Values(sh::ESSLVersion300),
+                                 Values(ESSL300_APPLEClipDistanceShader1,
+                                        ESSL300_APPLEClipDistanceShader2)));
 
 }  // anonymous namespace

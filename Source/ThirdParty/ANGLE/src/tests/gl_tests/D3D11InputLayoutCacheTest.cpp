@@ -4,12 +4,13 @@
 // found in the LICENSE file.
 //
 // D3D11InputLayoutCacheTest:
-//   Stress to to reproduce a bug where we weren't fluing the case correctly.
+//   Stress to to reproduce a bug where we weren't flushing the case correctly.
 //
 
 #include <sstream>
 
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/renderer/d3d/d3d11/Context11.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "test_utils/ANGLETest.h"
@@ -65,9 +66,12 @@ class D3D11InputLayoutCacheTest : public ANGLETest<>
 TEST_P(D3D11InputLayoutCacheTest, StressTest)
 {
     // Hack the ANGLE!
-    gl::Context *context       = static_cast<gl::Context *>(getEGLWindow()->getContext());
-    rx::Context11 *context11   = rx::GetImplAs<rx::Context11>(context);
-    rx::Renderer11 *renderer11 = context11->getRenderer();
+    egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
+    gl::ContextID contextID = {
+        static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
+    gl::Context *context                   = display->getContext(contextID);
+    rx::Context11 *context11               = rx::GetImplAs<rx::Context11>(context);
+    rx::Renderer11 *renderer11             = context11->getRenderer();
     rx::InputLayoutCache *inputLayoutCache = renderer11->getStateManager()->getInputLayoutCache();
 
     // Clamp the cache size to something tiny

@@ -50,7 +50,6 @@ SELECTED_DEVICE = ''
 
 Result = namedtuple('Result', ['process', 'time'])
 
-
 def run_command(args):
     logging.debug('Running %s' % args)
 
@@ -178,7 +177,7 @@ def get_trace_width(mode):
     return width
 
 
-def run_trace(trace, renderer, args):
+def run_trace(trace, args):
     mode = get_mode(args)
     if mode != '':
         mode = '_' + mode
@@ -191,7 +190,8 @@ def run_trace(trace, renderer, args):
 
     adb_command = 'shell am instrument -w '
     adb_command += '-e org.chromium.native_test.NativeTestInstrumentationTestRunner.StdoutFile /sdcard/Download/out.txt '
-    adb_command += '-e org.chromium.native_test.NativeTest.CommandLineFlags "--gtest_filter=TracePerfTest.Run/' + renderer + mode + '_' + trace + '\ '
+    adb_command += '-e org.chromium.native_test.NativeTest.CommandLineFlags "--gtest_filter=TraceTest.' + trace + '\ '
+    adb_command += '--use-gl=native\ '
     if args.maxsteps != '':
         adb_command += '--max-steps-performed\ ' + args.maxsteps + '\ '
     if args.fixedtime != '':
@@ -200,8 +200,7 @@ def run_trace(trace, renderer, args):
         adb_command += '--minimize-gpu-work\ '
     adb_command += '--verbose\ '
     adb_command += '--verbose-logging\ '
-    adb_command += '--warmup-loops\ 1\ '
-    adb_command += '--enable-all-trace-tests"\ '
+    adb_command += '--warmup-trials\ 1\"\ '
     adb_command += '-e org.chromium.native_test.NativeTestInstrumentationTestRunner.ShardNanoTimeout "1000000000000000000" '
     adb_command += '-e org.chromium.native_test.NativeTestInstrumentationTestRunner.NativeTestActivity com.android.angle.test.AngleUnitTestActivity '
     adb_command += 'com.android.angle.test/org.chromium.build.gtest_apk.NativeTestInstrumentationTestRunner'
@@ -214,7 +213,7 @@ def run_trace(trace, renderer, args):
     return result.time
 
 
-def get_test_time(renderer, time):
+def get_test_time():
     # Pull the results from the device and parse
     result = run_adb_command('shell cat /sdcard/Download/out.txt | grep -v Error | grep -v Frame')
 
@@ -592,6 +591,8 @@ def main():
         '--loop-count', help='How many times to loop through the traces', default=5)
     parser.add_argument(
         '--device', help='Which device to run the tests on (use serial)', default='')
+    parser.add_argument(
+        '--sleep', help='Add a sleep of this many seconds between each test)', type=int, default=0)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -694,6 +695,20 @@ def main():
     proc_mem_peaks = defaultdict(dict)
 
     for renderer in renderers:
+
+        if renderer == "native":
+            # Force the settings to native
+            run_adb_command('shell settings put global angle_debug_package org.chromium.angle')
+            run_adb_command(
+                'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test')
+            run_adb_command('shell settings put global angle_gl_driver_selection_values native')
+        else:
+            # Force the settings to ANGLE
+            run_adb_command('shell settings put global angle_debug_package org.chromium.angle')
+            run_adb_command(
+                'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test')
+            run_adb_command('shell settings put global angle_gl_driver_selection_values angle')
+
         for i in range(int(args.loop_count)):
             print("\nStarting run %i with %s at %s\n" %
                   (i + 1, renderer, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
@@ -712,7 +727,7 @@ def main():
                                   int(starting_power.little_cpu_power))
 
                 logging.debug('Running %s' % test)
-                test_time = run_trace(test, renderer, args)
+                test_time = run_trace(test, args)
 
                 if args.power:
                     ending_power.get_power_data()
@@ -722,7 +737,7 @@ def main():
                     logging.debug('Ending little CPU power: %i' %
                                   int(ending_power.little_cpu_power))
 
-                wall_time = get_test_time(renderer, "wall_time")
+                wall_time = get_test_time()
 
                 gpu_time = get_gpu_time() if args.vsync else '0'
 
@@ -821,6 +836,10 @@ def main():
 
                 # Early exit for testing
                 #exit()
+
+                # For unlocked clocks, try sleeping the same amount of time that the trace ran, to dissipate heat
+                if args.sleep != 0:
+                    time.sleep(args.sleep)
 
     # Generate the SUMMARY output
 
@@ -962,6 +981,11 @@ def main():
             percent(data["vulkan"][17]),
             percent(safe_divide(data["native"][16], data["vulkan"][16]))
         ])
+
+    # Clean up settings
+    run_adb_command('shell settings delete global angle_debug_package')
+    run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
+    run_adb_command('shell settings delete global angle_gl_driver_selection_values')
 
     return 0
 

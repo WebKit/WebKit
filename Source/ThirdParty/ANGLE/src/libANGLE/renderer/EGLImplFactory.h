@@ -79,8 +79,6 @@ class EGLImplFactory : angle::NonCopyable
     virtual EGLSyncImpl *createSync(const egl::AttributeMap &attribs);
 
     virtual ShareGroupImpl *createShareGroup() = 0;
-
-    virtual GLuint getNextSurfaceID() = 0;
 };
 
 inline ExternalImageSiblingImpl *EGLImplFactory::createExternalImageSibling(

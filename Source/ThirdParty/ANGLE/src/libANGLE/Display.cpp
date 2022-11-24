@@ -16,7 +16,7 @@
 #include <vector>
 
 #include <EGL/eglext.h>
-#include <platform/Platform.h>
+#include <platform/PlatformMethods.h>
 
 #include "anglebase/no_destructor.h"
 #include "common/android_util.h"
@@ -28,6 +28,7 @@
 #include "common/tls.h"
 #include "common/utilities.h"
 #include "gpu_info_util/SystemInfo.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Device.h"
 #include "libANGLE/EGLSync.h"
@@ -80,6 +81,20 @@
 #if defined(ANGLE_ENABLE_METAL)
 #    include "libANGLE/renderer/metal/DisplayMtl_api.h"
 #endif  // defined(ANGLE_ENABLE_METAL)
+
+template <typename T, typename IDType, typename SetT>
+T GetResourceFromHashSet(IDType id, SetT &hashSet)
+{
+    for (T resource : hashSet)
+    {
+        if (resource->id() == id)
+        {
+            return resource;
+        }
+    }
+
+    return nullptr;
+}
 
 namespace egl
 {
@@ -287,8 +302,6 @@ EGLAttrib GetPlatformTypeFromEnvironment()
     return EGL_PLATFORM_X11_EXT;
 #elif defined(ANGLE_USE_WAYLAND)
     return EGL_PLATFORM_WAYLAND_EXT;
-#elif defined(ANGLE_USE_GBM)
-    return EGL_PLATFORM_GBM_KHR;
 #elif defined(ANGLE_USE_VULKAN_DISPLAY) && defined(ANGLE_VULKAN_DISPLAY_MODE_SIMPLE)
     return EGL_PLATFORM_VULKAN_DISPLAY_MODE_SIMPLE_ANGLE;
 #elif defined(ANGLE_USE_VULKAN_DISPLAY) && defined(ANGLE_VULKAN_DISPLAY_MODE_HEADLESS)
@@ -876,7 +889,9 @@ Display::Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDe
       mGlobalTextureShareGroupUsers(0),
       mGlobalSemaphoreShareGroupUsers(0),
       mTerminatedByApi(false),
-      mActiveThreads()
+      mActiveThreads(),
+      mSingleThreadPool(nullptr),
+      mMultiThreadPool(nullptr)
 {}
 
 Display::~Display()
@@ -1072,6 +1087,9 @@ Error Display::initialize()
         mDevice = nullptr;
     }
 
+    mSingleThreadPool = angle::WorkerThreadPool::Create(1, ANGLEPlatformCurrent());
+    mMultiThreadPool  = angle::WorkerThreadPool::Create(0, ANGLEPlatformCurrent());
+
     mInitialized = true;
 
     return NoError();
@@ -1217,6 +1235,9 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
 
     mImplementation->terminate();
 
+    mSingleThreadPool.reset();
+    mMultiThreadPool.reset();
+
     mDeviceLost = false;
 
     mInitialized = false;
@@ -1296,7 +1317,8 @@ Error Display::createWindowSurface(const Config *configuration,
         ANGLE_TRY(restoreLostDevice());
     }
 
-    SurfacePointer surface(new WindowSurface(mImplementation, configuration, window, attribs,
+    SurfaceID id = {mSurfaceHandleAllocator.allocate()};
+    SurfacePointer surface(new WindowSurface(mImplementation, id, configuration, window, attribs,
                                              mFrontendFeatures.forceRobustResourceInit.enabled),
                            this);
     ANGLE_TRY(surface->initialize(this));
@@ -1325,7 +1347,8 @@ Error Display::createPbufferSurface(const Config *configuration,
         ANGLE_TRY(restoreLostDevice());
     }
 
-    SurfacePointer surface(new PbufferSurface(mImplementation, configuration, attribs,
+    SurfaceID id = {mSurfaceHandleAllocator.allocate()};
+    SurfacePointer surface(new PbufferSurface(mImplementation, id, configuration, attribs,
                                               mFrontendFeatures.forceRobustResourceInit.enabled),
                            this);
     ANGLE_TRY(surface->initialize(this));
@@ -1350,8 +1373,9 @@ Error Display::createPbufferFromClientBuffer(const Config *configuration,
         ANGLE_TRY(restoreLostDevice());
     }
 
+    SurfaceID id = {mSurfaceHandleAllocator.allocate()};
     SurfacePointer surface(
-        new PbufferSurface(mImplementation, configuration, buftype, clientBuffer, attribs,
+        new PbufferSurface(mImplementation, id, configuration, buftype, clientBuffer, attribs,
                            mFrontendFeatures.forceRobustResourceInit.enabled),
         this);
     ANGLE_TRY(surface->initialize(this));
@@ -1375,9 +1399,11 @@ Error Display::createPixmapSurface(const Config *configuration,
         ANGLE_TRY(restoreLostDevice());
     }
 
-    SurfacePointer surface(new PixmapSurface(mImplementation, configuration, nativePixmap, attribs,
-                                             mFrontendFeatures.forceRobustResourceInit.enabled),
-                           this);
+    SurfaceID id = {mSurfaceHandleAllocator.allocate()};
+    SurfacePointer surface(
+        new PixmapSurface(mImplementation, id, configuration, nativePixmap, attribs,
+                          mFrontendFeatures.forceRobustResourceInit.enabled),
+        this);
     ANGLE_TRY(surface->initialize(this));
 
     ASSERT(outSurface != nullptr);
@@ -1419,8 +1445,9 @@ Error Display::createImage(const gl::Context *context,
     }
     ASSERT(sibling != nullptr);
 
+    ImageID id = {mImageHandleAllocator.allocate()};
     angle::UniqueObjectPointer<Image, Display> imagePtr(
-        new Image(mImplementation, context, target, sibling, attribs), this);
+        new Image(mImplementation, id, context, target, sibling, attribs), this);
     ANGLE_TRY(imagePtr->initialize(this));
 
     Image *image = imagePtr.release();
@@ -1668,6 +1695,7 @@ Error Display::destroySurfaceImpl(Surface *surface, SurfaceSet *surfaces)
 
     auto iter = surfaces->find(surface);
     ASSERT(iter != surfaces->end());
+    mSurfaceHandleAllocator.release(surface->id().value);
     surfaces->erase(iter);
     ANGLE_TRY(surface->onDestroy(this));
     return NoError();
@@ -1677,6 +1705,7 @@ void Display::destroyImageImpl(Image *image, ImageSet *images)
 {
     auto iter = images->find(image);
     ASSERT(iter != images->end());
+    mImageHandleAllocator.release(image->id().value);
     (*iter)->release(this);
     images->erase(iter);
 }
@@ -1918,19 +1947,19 @@ bool Display::isValidConfig(const Config *config) const
     return mConfigSet.contains(config);
 }
 
-bool Display::isValidContext(const gl::Context *context) const
+bool Display::isValidContext(const gl::ContextID contextID) const
 {
-    return mState.contextSet.find(const_cast<gl::Context *>(context)) != mState.contextSet.end();
+    return getContext(contextID) != nullptr;
 }
 
-bool Display::isValidSurface(const Surface *surface) const
+bool Display::isValidSurface(SurfaceID surfaceID) const
 {
-    return mState.surfaceSet.find(const_cast<Surface *>(surface)) != mState.surfaceSet.end();
+    return getSurface(surfaceID) != nullptr;
 }
 
-bool Display::isValidImage(const Image *image) const
+bool Display::isValidImage(ImageID imageID) const
 {
-    return mImageSet.find(const_cast<Image *>(image)) != mImageSet.end();
+    return getImage(imageID) != nullptr;
 }
 
 bool Display::isValidStream(const Stream *stream) const
@@ -2505,4 +2534,43 @@ Error Display::queryDmaBufModifiers(EGLint format,
     return NoError();
 }
 
+angle::ImageLoadContext Display::getImageLoadContext() const
+{
+    angle::ImageLoadContext imageLoadContext;
+
+    imageLoadContext.singleThreadPool = mSingleThreadPool;
+    imageLoadContext.multiThreadPool =
+        mFrontendFeatures.singleThreadedTextureDecompression.enabled ? nullptr : mMultiThreadPool;
+
+    return imageLoadContext;
+}
+
+const gl::Context *Display::getContext(gl::ContextID contextID) const
+{
+    return GetResourceFromHashSet<const gl::Context *>(contextID, mState.contextSet);
+}
+
+const egl::Surface *Display::getSurface(egl::SurfaceID surfaceID) const
+{
+    return GetResourceFromHashSet<const egl::Surface *>(surfaceID, mState.surfaceSet);
+}
+
+const egl::Image *Display::getImage(egl::ImageID imageID) const
+{
+    return GetResourceFromHashSet<const egl::Image *>(imageID, mImageSet);
+}
+
+gl::Context *Display::getContext(gl::ContextID contextID)
+{
+    return GetResourceFromHashSet<gl::Context *>(contextID, mState.contextSet);
+}
+
+egl::Surface *Display::getSurface(egl::SurfaceID surfaceID)
+{
+    return GetResourceFromHashSet<egl::Surface *>(surfaceID, mState.surfaceSet);
+}
+egl::Image *Display::getImage(egl::ImageID imageID)
+{
+    return GetResourceFromHashSet<egl::Image *>(imageID, mImageSet);
+}
 }  // namespace egl

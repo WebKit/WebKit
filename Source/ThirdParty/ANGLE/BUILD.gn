@@ -88,6 +88,9 @@ if (angle_build_all) {
     if (angle_enable_cl) {
       deps += [ "$angle_root/src/libOpenCL:angle_cl" ]
     }
+    if (angle_build_mesa) {
+      deps += [ "$angle_root/third_party/mesa" ]
+    }
   }
 }
 
@@ -173,6 +176,9 @@ config("internal_config") {
     defines += [ "ANGLE_ENABLE_TRACE_EVENTS=1" ]
   }
 
+  # Checks that unwind backtrace support for Android is enabled only for debug mode.
+  assert(is_debug || !angle_enable_unwind_backtrace_support)
+
   if (is_chromeos) {
     defines += [ "ANGLE_PLATFORM_CHROMEOS" ]
   }
@@ -214,6 +220,14 @@ config("internal_config") {
 
   if (angle_test_enable_system_egl) {
     defines += [ "ANGLE_TEST_ENABLE_SYSTEM_EGL" ]
+  }
+
+  if (angle_debug_layers_enabled) {
+    defines += [ "ANGLE_DEBUG_LAYERS_ENABLED" ]
+  }
+
+  if (angle_build_mesa) {
+    defines += [ "ANGLE_HAS_MESA" ]
   }
 }
 
@@ -391,6 +405,11 @@ config("angle_common_config") {
   if (is_android) {
     libs = [ "log" ]
   }
+
+  defines = []
+  if (angle_delegate_workers) {
+    defines += [ "ANGLE_DELEGATE_WORKERS" ]
+  }
 }
 
 # Silences the "indirect call of a function with wrong dynamic type" cfi error
@@ -470,6 +489,17 @@ angle_static_library("angle_common") {
   }
 }
 
+angle_source_set("angle_capture_common") {
+  sources = [
+    "src/common/frame_capture_utils.cpp",
+    "src/common/frame_capture_utils.h",
+    "src/common/frame_capture_utils_autogen.cpp",
+    "src/common/frame_capture_utils_autogen.h",
+  ]
+  deps = [ ":angle_common" ]
+  public_deps = [ ":angle_gl_enum_utils" ]
+}
+
 config("angle_image_util_config") {
   include_dirs = [
     "include",
@@ -539,6 +569,7 @@ angle_static_library("angle_gpu_info_util") {
       "src/common/vulkan:angle_libvulkan_loader",
       "src/common/vulkan:angle_vulkan_icd",
     ]
+    configs += [ "$angle_root:angle_no_cfi_icall" ]
     if (angle_enable_vulkan_system_info) {
       defines += [ "ANGLE_USE_VULKAN_SYSTEM_INFO" ]
     }
@@ -698,15 +729,6 @@ template("translator_lib") {
         "${angle_spirv_tools_dir}:spvtools_headers",
         "${angle_spirv_tools_dir}:spvtools_val",
       ]
-
-      if (angle_enable_spirv_gen_through_glslang) {
-        defines += [ "ANGLE_ENABLE_SPIRV_GENERATION_THROUGH_GLSLANG" ]
-        sources += [ "src/compiler/translator/glslang_wrapper.cpp" ]
-        deps += [
-          "${angle_glslang_dir}:glslang_default_resource_limits_sources",
-          "${angle_glslang_dir}:glslang_lib_sources",
-        ]
-      }
     }
 
     public_deps = [
@@ -813,20 +835,12 @@ angle_source_set("angle_version_info") {
 config("angle_backend_config") {
   defines = []
 
-  if (angle_delegate_workers) {
-    defines += [ "ANGLE_DELEGATE_WORKERS" ]
-  }
-
   if (angle_force_context_check_every_call) {
     defines += [ "ANGLE_FORCE_CONTEXT_CHECK_EVERY_CALL=1" ]
   }
 
   if (angle_expose_non_conformant_extensions_and_versions) {
     defines += [ "ANGLE_EXPOSE_NON_CONFORMANT_EXTENSIONS_AND_VERSIONS" ]
-  }
-
-  if (angle_use_spirv_gen_through_glslang) {
-    defines += [ "ANGLE_USE_SPIRV_GENERATION_THROUGH_GLSLANG" ]
   }
 
   configs = []
@@ -914,7 +928,7 @@ angle_source_set("libANGLE_headers") {
   public_configs += [ ":libANGLE_config" ]
 }
 
-# Don't even try to build glslang if Metal and Vulkan are disabled.
+# Don't even try to build the SPIR-V transformer if Metal and Vulkan are disabled.
 if (angle_enable_vulkan || angle_enable_metal) {
   angle_source_set("angle_glslang_wrapper") {
     sources = [
@@ -974,13 +988,13 @@ angle_source_set("libANGLE_base") {
   public_deps = [
     ":angle_common",
     ":angle_gpu_info_util",
+    ":angle_image_util",
     ":angle_version_info",
     ":libANGLE_headers",
     ":translator",
   ]
   deps = [
     ":angle_compression",
-    ":angle_image_util",
     ":includes",
   ]
 
@@ -1066,7 +1080,7 @@ angle_source_set("libANGLE") {
   public_configs = [ ":angle_frame_capture_disabled" ]
   sources = [
     "src/libANGLE/capture/FrameCapture_mock.cpp",
-    "src/libANGLE/capture/frame_capture_utils_mock.cpp",
+    "src/libANGLE/capture/serialize_mock.cpp",
   ]
 
   # gl_enum_utils defaults included in with_capture build
@@ -1079,10 +1093,10 @@ angle_source_set("libANGLE") {
 angle_source_set("angle_gl_enum_utils") {
   deps = [ ":angle_common" ]
   sources = [
-    "src/libANGLE/capture/gl_enum_utils.cpp",
-    "src/libANGLE/capture/gl_enum_utils.h",
-    "src/libANGLE/capture/gl_enum_utils_autogen.cpp",
-    "src/libANGLE/capture/gl_enum_utils_autogen.h",
+    "src/common/gl_enum_utils.cpp",
+    "src/common/gl_enum_utils.h",
+    "src/common/gl_enum_utils_autogen.cpp",
+    "src/common/gl_enum_utils_autogen.h",
   ]
 }
 
@@ -1183,43 +1197,22 @@ if (angle_has_frame_capture) {
   }
 
   angle_source_set("libANGLE_with_capture") {
-    public_deps = [ ":libANGLE_base" ]
-    deps = [ ":angle_compression" ]
+    public_deps = [
+      ":angle_gl_enum_utils",
+      ":libANGLE_base",
+    ]
+    deps = [
+      ":angle_capture_common",
+      ":angle_compression",
+    ]
     public_configs = [ ":angle_frame_capture_enabled" ]
     sources = libangle_capture_sources
 
     if (angle_has_rapidjson) {
       public_deps += [ ":angle_json_serializer" ]
-      sources += [ "src/libANGLE/capture/frame_capture_utils.cpp" ]
+      sources += [ "src/libANGLE/capture/serialize.cpp" ]
     } else {
-      sources += [ "src/libANGLE/capture/frame_capture_utils_mock.cpp" ]
-    }
-  }
-}
-
-if (angle_build_tests) {
-  # Used by a few targets that compile traces.
-  config("angle_trace_fixture_config") {
-    include_dirs = [ "src/libANGLE/capture" ]
-  }
-
-  angle_source_set("angle_trace_fixture") {
-    testonly = true
-    defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
-    suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
-    sources = [
-      "src/libANGLE/capture/trace_fixture.cpp",
-      "src/libANGLE/capture/trace_fixture.h",
-    ]
-    public_deps = [
-      ":includes",
-      "util:angle_trace_loader",
-    ]
-    include_dirs = [ "." ]
-    public_configs = [ ":angle_trace_fixture_config" ]
-    if (is_ios) {
-      # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
-      check_includes = false
+      sources += [ "src/libANGLE/capture/serialize_mock.cpp" ]
     }
   }
 }
@@ -1261,17 +1254,20 @@ config("library_name_config") {
       "ANGLE_EGL_LIBRARY_NAME=\"libEGL${angle_libs_suffix}.cr\"",
       "ANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2${angle_libs_suffix}.cr\"",
     ]
-  } else if (angle_expose_wgl_entry_points) {
-    defines = [
-      "ANGLE_EGL_LIBRARY_NAME=\"libEGL\"",
-      "ANGLE_GLESV2_LIBRARY_NAME=\"opengl32\"",
-    ]
   } else {
+    glesv2_library_name = "libGLESv2"
+    if (angle_expose_wgl_entry_points) {
+      glesv2_library_name = "opengl32"
+    }
     defines = [
       "ANGLE_EGL_LIBRARY_NAME=\"libEGL${angle_libs_suffix}\"",
-      "ANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2${angle_libs_suffix}\"",
+      "ANGLE_GLESV2_LIBRARY_NAME=\"${glesv2_library_name}${angle_libs_suffix}\"",
     ]
   }
+  defines += [
+    "ANGLE_MESA_EGL_LIBRARY_NAME=\"mesa/src/egl/libEGL\"",
+    "ANGLE_MESA_GLESV2_LIBRARY_NAME=\"mesa/src/mapi/es2api/libGLESv2\"",
+  ]
 }
 
 # This config controls export definitions on ANGLE API calls.

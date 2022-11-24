@@ -106,19 +106,14 @@ namespace
         EXPECT_EQ(expected.stencilLoadOpLoads, counters.stencilLoadOpLoads); \
     }
 
-#define EXPECT_COUNTERS_FOR_UNRESOLVE_RESOLVE_TEST(counters, expected)                             \
-    {                                                                                              \
-        EXPECT_EQ(expected.colorAttachmentUnresolves, counters.colorAttachmentUnresolves);         \
-        EXPECT_EQ(expected.depthAttachmentUnresolves, counters.depthAttachmentUnresolves);         \
-        if (counters.stencilAttachmentUnresolves != 0)                                             \
-        {                                                                                          \
-            /*Allow stencil unresolves to be 0.  If VK_EXT_shader_stencil_export is not supported, \
-             * stencil unresolve is impossible.*/                                                  \
-            EXPECT_EQ(expected.stencilAttachmentUnresolves, counters.stencilAttachmentUnresolves); \
-        }                                                                                          \
-        EXPECT_EQ(expected.colorAttachmentResolves, counters.colorAttachmentResolves);             \
-        EXPECT_EQ(expected.depthAttachmentResolves, counters.depthAttachmentResolves);             \
-        EXPECT_EQ(expected.stencilAttachmentResolves, counters.stencilAttachmentResolves);         \
+#define EXPECT_COUNTERS_FOR_UNRESOLVE_RESOLVE_TEST(counters, expected)                         \
+    {                                                                                          \
+        EXPECT_EQ(expected.colorAttachmentUnresolves, counters.colorAttachmentUnresolves);     \
+        EXPECT_EQ(expected.depthAttachmentUnresolves, counters.depthAttachmentUnresolves);     \
+        EXPECT_EQ(expected.stencilAttachmentUnresolves, counters.stencilAttachmentUnresolves); \
+        EXPECT_EQ(expected.colorAttachmentResolves, counters.colorAttachmentResolves);         \
+        EXPECT_EQ(expected.depthAttachmentResolves, counters.depthAttachmentResolves);         \
+        EXPECT_EQ(expected.stencilAttachmentResolves, counters.stencilAttachmentResolves);     \
     }
 
 #define EXPECT_CLEAR_ATTACHMENTS_COUNTER(expected, actual) \
@@ -372,6 +367,10 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
     bool hasDisallowMixedDepthStencilLoadOpNoneAndLoad() const
     {
         return isFeatureEnabled(Feature::DisallowMixedDepthStencilLoadOpNoneAndLoad);
+    }
+    bool hasSupportsImagelessFramebuffer() const
+    {
+        return isFeatureEnabled(Feature::SupportsImagelessFramebuffer);
     }
 
     CounterNameToIndexMap mIndexMap;
@@ -3502,6 +3501,40 @@ TEST_P(VulkanPerformanceCounterTest, InRenderpassFlushShouldNotBreakRenderpass)
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
+// Tests switch from query enabled draw to query disabled draw should break renderpass (so that wait
+// for query result will be available sooner).
+TEST_P(VulkanPerformanceCounterTest,
+       SwitchFromQueryEnabledDrawToQueryDisabledDrawShouldBreakRenderpass)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    uint64_t expectedRenderPassCount =
+        getPerfCounters().renderPasses +
+        (isFeatureEnabled(Feature::PreferSubmitOnAnySamplesPassedQueryEnd) ? 2 : 1);
+
+    GLQueryEXT query1, query2;
+    // Draw inside query
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query1);
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.8f, 0.5f);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query2);
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.8f, 0.5f);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    // Draw outside his query
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.8f, 0.5f);
+
+    GLuint results[2];
+    // will block waiting for result
+    glGetQueryObjectuivEXT(query1, GL_QUERY_RESULT_EXT, &results[0]);
+    glGetQueryObjectuivEXT(query2, GL_QUERY_RESULT_EXT, &results[1]);
+    EXPECT_GL_NO_ERROR();
+
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
+    EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
+}
+
 // Tests that depth/stencil texture clear/load works correctly.
 TEST_P(VulkanPerformanceCounterTest, DepthStencilTextureClearAndLoad)
 {
@@ -3733,8 +3766,8 @@ TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilTextureShouldNot
     EXPECT_PIXEL_COLOR_EQ(kSize / 2 - 1, kSize / 2 - 1, GLColor::red);
 }
 
-// Tests that multisampled-render-to-texture depth/stencil renderbuffers don't ever load depth data.
-// Stencil data may still be loaded if VK_EXT_shader_stencil_export is not supported.
+// Tests that multisampled-render-to-texture depth/stencil renderbuffers don't ever load
+// depth/stencil data.
 TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilRenderbufferShouldNotLoad)
 {
     // http://anglebug.com/5083
@@ -5903,6 +5936,69 @@ TEST_P(VulkanPerformanceCounterTest, ColorClearAfterInvalidate)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that depth clears are picked up as loadOp even if a color blit is done in between.
+TEST_P(VulkanPerformanceCounterTest, DepthClearThenColorBlitThenDraw)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    angle::VulkanPerfCounters expected;
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForColorDepthOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    // Execute the scenario that this test is for:
+
+    // color+depth clear, blit color as source, draw
+    //
+    // Expected:
+    //   rpCount+1,
+    //   depth(Clears+1, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
+    //   color(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0)
+    setExpectedCountersForDepthOps(getPerfCounters(), 0, 1, 0, 0, 1, 0, &expected);
+    setExpectedCountersForColorOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glClearColor(0, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Blit color into another FBO
+    GLTexture destColor;
+    glBindTexture(GL_TEXTURE_2D, destColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kOpsTestSize, kOpsTestSize);
+
+    GLFramebuffer destFbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, destFbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, destColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kOpsTestSize, kOpsTestSize, 0, 0, kOpsTestSize, kOpsTestSize,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    // Draw back to the original framebuffer
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+
+    // Use swapBuffers and then check how many loads and stores were actually done.  The clear
+    // applied to depth should be done as loadOp, not flushed during the blit.
+    swapBuffers();
+    EXPECT_COLOR_OP_COUNTERS(getPerfCounters(), expected);
+    EXPECT_DEPTH_OP_COUNTERS(getPerfCounters(), expected);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Result of blit should be green
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, destFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Ensure that image gets marked as defined after clear + invalidate + clear, and that we use
 // LoadOp=Load for a renderpass which draws to it after the clear has been flushed with a blit.
 TEST_P(VulkanPerformanceCounterTest, InvalidateThenRepeatedClearThenBlitThenDraw)
@@ -6280,9 +6376,10 @@ TEST_P(VulkanPerformanceCounterTest, ResizeFBOAttachedTexture)
     }
     int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
     int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
+    int32_t expectedFramebufferCacheSizeIncrease = (hasSupportsImagelessFramebuffer()) ? 0 : 1;
     printf("\tframebufferCacheCountIncrease:%u\n", framebufferCacheSizeIncrease);
     // We should not cache obsolete VkImages. Only current VkImage should be cached.
-    EXPECT_EQ(framebufferCacheSizeIncrease, 1);
+    EXPECT_EQ(framebufferCacheSizeIncrease, expectedFramebufferCacheSizeIncrease);
 }
 
 // Test calling glTexParameteri(GL_TEXTURE_SWIZZLE_*) on a texture that attached to FBO with the
@@ -6337,8 +6434,9 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithSameValueOnFBOAttached
     ASSERT_GL_NO_ERROR();
     int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
     int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
+    int32_t expectedFramebufferCacheSizeIncrease = (hasSupportsImagelessFramebuffer()) ? 0 : 1;
     // This should not cause frame buffer cache increase.
-    EXPECT_EQ(framebufferCacheSizeIncrease, 1);
+    EXPECT_EQ(framebufferCacheSizeIncrease, expectedFramebufferCacheSizeIncrease);
 }
 
 // Test calling glTexParameteri(GL_TEXTURE_SWIZZLE_*) on a texture that attached to FBO with
@@ -6408,8 +6506,9 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAtt
     ASSERT_GL_NO_ERROR();
     int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
     int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
+    int32_t expectedFramebufferCacheSizeIncrease = (hasSupportsImagelessFramebuffer()) ? 0 : 1;
     // This should not cause frame buffer cache increase.
-    EXPECT_EQ(framebufferCacheSizeIncrease, 1);
+    EXPECT_EQ(framebufferCacheSizeIncrease, expectedFramebufferCacheSizeIncrease);
 }
 
 void VulkanPerformanceCounterTest::saveAndReloadBinary(GLProgram *original, GLProgram *reloaded)

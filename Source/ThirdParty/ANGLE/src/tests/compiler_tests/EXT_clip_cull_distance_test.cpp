@@ -42,6 +42,7 @@ const char VertexShaderCompileSucceeds2[] =
         gl_Position = aPosition;
         gl_ClipDistance[gl_MaxClipDistances - 6 + 1] = dot(aPosition, uPlane);
         gl_ClipDistance[gl_MaxClipDistances - int(aPosition.x)] = dot(aPosition, uPlane);
+        gl_ClipDistance[gl_MaxCombinedClipAndCullDistances - 5] = dot(aPosition, uPlane);
         gl_CullDistance[gl_MaxCullDistances - 6 + 1] = dot(aPosition, uPlane);
         gl_CullDistance[gl_MaxCullDistances - int(aPosition.x)] = dot(aPosition, uPlane);
     })";
@@ -166,6 +167,7 @@ const char FragmentShaderCompileSucceeds2[] =
         fragColor.y = gl_ClipDistance[gl_MaxClipDistances - int(aPosition.x)];
         fragColor.z = gl_CullDistance[gl_MaxCullDistances - 6 + 1];
         fragColor.w = gl_CullDistance[gl_MaxCullDistances - int(aPosition.x)];
+        fragColot *= gl_CullDistance[gl_MaxCombinedClipAndCullDistances - 5];
     })";
 
 #if defined(ANGLE_ENABLE_VULKAN)

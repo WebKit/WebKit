@@ -15,6 +15,7 @@ namespace angle
 {
 enum class EntryPoint
 {
+    Invalid,
     CLBuildProgram,
     CLCloneKernel,
     CLCompileProgram,
@@ -597,6 +598,9 @@ enum class EntryPoint
     GLFramebufferMemorylessPixelLocalStorageANGLE,
     GLFramebufferParameteri,
     GLFramebufferParameteriMESA,
+    GLFramebufferPixelLocalClearValuefvANGLE,
+    GLFramebufferPixelLocalClearValueivANGLE,
+    GLFramebufferPixelLocalClearValueuivANGLE,
     GLFramebufferRenderbuffer,
     GLFramebufferRenderbufferOES,
     GLFramebufferTexture,
@@ -687,6 +691,8 @@ enum class EntryPoint
     GLGetFramebufferParameteriv,
     GLGetFramebufferParameterivMESA,
     GLGetFramebufferParameterivRobustANGLE,
+    GLGetFramebufferPixelLocalStorageParameterfvANGLE,
+    GLGetFramebufferPixelLocalStorageParameterivANGLE,
     GLGetGraphicsResetStatus,
     GLGetGraphicsResetStatusEXT,
     GLGetInteger64i_v,
@@ -918,7 +924,6 @@ enum class EntryPoint
     GLInitNames,
     GLInsertEventMarkerEXT,
     GLInterleavedArrays,
-    GLInvalid,
     GLInvalidateBufferData,
     GLInvalidateBufferSubData,
     GLInvalidateFramebuffer,

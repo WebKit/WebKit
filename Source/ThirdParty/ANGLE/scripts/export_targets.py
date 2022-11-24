@@ -251,6 +251,8 @@ IGNORED_INCLUDES = {
     # From a comment in vulkan-validation-layers/src/layers/vk_mem_alloc.h
     b'my_custom_assert.h',
     b'my_custom_min.h',
+    # https://bugs.chromium.org/p/gn/issues/detail?id=311
+    b'spirv/unified1/spirv.hpp11',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

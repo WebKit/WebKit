@@ -194,6 +194,8 @@ class OutputHLSL : public TIntermTraverser
     AtomicCounterFunctionHLSL *mAtomicCounterFunctionHLSL;
 
     // Parameters determining what goes in the header output
+    bool mUsesClipDistance;
+    bool mUsesCullDistance;
     bool mUsesFragColor;
     bool mUsesFragData;
     bool mUsesDepthRange;

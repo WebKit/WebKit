@@ -30,7 +30,8 @@ class ShaderInfo final : angle::NonCopyable
     ShaderInfo();
     ~ShaderInfo();
 
-    angle::Result initShaders(const gl::ShaderBitSet &linkedShaderStages,
+    angle::Result initShaders(ContextVk *contextVk,
+                              const gl::ShaderBitSet &linkedShaderStages,
                               const gl::ShaderMap<const angle::spirv::Blob *> &spirvBlobs,
                               const ShaderInterfaceVariableInfoMap &variableInfoMap);
     void initShaderFromProgram(gl::ShaderType shaderType, const ShaderInfo &programShaderInfo);
@@ -84,7 +85,7 @@ class ProgramInfo final : angle::NonCopyable
 
   private:
     vk::ShaderProgramHelper mProgramHelper;
-    gl::ShaderMap<vk::RefCounted<vk::ShaderAndSerial>> mShaders;
+    gl::ShaderMap<vk::RefCounted<vk::ShaderModule>> mShaders;
 };
 
 // State for the default uniform blocks.
@@ -123,31 +124,33 @@ class ProgramExecutableVk
 
     void clearVariableInfoMap();
 
-    ProgramInfo &getGraphicsProgramInfo(ProgramTransformOptions transformOptions)
-    {
-        uint8_t index = gl::bitCast<uint8_t, ProgramTransformOptions>(transformOptions);
-        return mGraphicsProgramInfos[index];
-    }
-    ProgramInfo &getComputeProgramInfo() { return mComputeProgramInfo; }
     vk::BufferSerial getCurrentDefaultUniformBufferSerial() const
     {
         return mCurrentDefaultUniformBufferSerial;
     }
 
+    // Get the graphics pipeline if already created.
     angle::Result getGraphicsPipeline(ContextVk *contextVk,
-                                      gl::PrimitiveMode mode,
-                                      PipelineCacheAccess *pipelineCache,
-                                      PipelineSource source,
+                                      vk::GraphicsPipelineSubset pipelineSubset,
                                       const vk::GraphicsPipelineDesc &desc,
                                       const gl::ProgramExecutable &glExecutable,
                                       const vk::GraphicsPipelineDesc **descPtrOut,
                                       vk::PipelineHelper **pipelineOut);
 
-    angle::Result getComputePipeline(ContextVk *contextVk,
-                                     PipelineCacheAccess *pipelineCache,
-                                     PipelineSource source,
-                                     const gl::ProgramExecutable &glExecutable,
-                                     vk::PipelineHelper **pipelineOut);
+    angle::Result createGraphicsPipeline(ContextVk *contextVk,
+                                         vk::GraphicsPipelineSubset pipelineSubset,
+                                         PipelineCacheAccess *pipelineCache,
+                                         PipelineSource source,
+                                         const vk::GraphicsPipelineDesc &desc,
+                                         const gl::ProgramExecutable &glExecutable,
+                                         const vk::GraphicsPipelineDesc **descPtrOut,
+                                         vk::PipelineHelper **pipelineOut);
+
+    angle::Result getOrCreateComputePipeline(ContextVk *contextVk,
+                                             PipelineCacheAccess *pipelineCache,
+                                             PipelineSource source,
+                                             const gl::ProgramExecutable &glExecutable,
+                                             vk::PipelineHelper **pipelineOut);
 
     const vk::PipelineLayout &getPipelineLayout() const { return mPipelineLayout.get(); }
     angle::Result createPipelineLayout(ContextVk *contextVk,
@@ -305,16 +308,22 @@ class ProgramExecutableVk
                            programInfo, variableInfoMap);
     }
 
-    angle::Result getGraphicsPipelineImpl(ContextVk *contextVk,
-                                          ProgramTransformOptions transformOptions,
-                                          gl::PrimitiveMode mode,
-                                          gl::DrawBufferMask framebufferMask,
-                                          PipelineCacheAccess *pipelineCache,
-                                          PipelineSource source,
-                                          const vk::GraphicsPipelineDesc &desc,
-                                          const gl::ProgramExecutable &glExecutable,
-                                          const vk::GraphicsPipelineDesc **descPtrOut,
-                                          vk::PipelineHelper **pipelineOut);
+    ProgramTransformOptions getTransformOptions(ContextVk *contextVk,
+                                                const vk::GraphicsPipelineDesc &desc,
+                                                const gl::ProgramExecutable &glExecutable);
+    angle::Result initGraphicsShaderPrograms(ContextVk *contextVk,
+                                             ProgramTransformOptions transformOptions,
+                                             const gl::ProgramExecutable &glExecutable,
+                                             vk::ShaderProgramHelper **shaderProgramOut);
+    angle::Result createGraphicsPipelineImpl(ContextVk *contextVk,
+                                             ProgramTransformOptions transformOptions,
+                                             vk::GraphicsPipelineSubset pipelineSubset,
+                                             PipelineCacheAccess *pipelineCache,
+                                             PipelineSource source,
+                                             const vk::GraphicsPipelineDesc &desc,
+                                             const gl::ProgramExecutable &glExecutable,
+                                             const vk::GraphicsPipelineDesc **descPtrOut,
+                                             vk::PipelineHelper **pipelineOut);
 
     angle::Result resizeUniformBlockMemory(ContextVk *contextVk,
                                            const gl::ProgramExecutable &glExecutable,
@@ -357,6 +366,10 @@ class ProgramExecutableVk
     // need some LRU algorithm to free least used programs to reduce the number of programs.
     ProgramInfo mGraphicsProgramInfos[ProgramTransformOptions::kPermutationCount];
     ProgramInfo mComputeProgramInfo;
+
+    CompleteGraphicsPipelineCache
+        mCompleteGraphicsPipelines[ProgramTransformOptions::kPermutationCount];
+    vk::ComputePipelineCache mComputePipelines;
 
     DefaultUniformBlockMap mDefaultUniformBlocks;
     gl::ShaderBitSet mDefaultUniformBlocksDirty;

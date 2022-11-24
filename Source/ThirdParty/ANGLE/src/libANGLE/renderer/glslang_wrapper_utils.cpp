@@ -4958,7 +4958,10 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
 
     spirvBlobOut->shrink_to_fit();
 
-    ASSERT(spirv::Validate(*spirvBlobOut));
+    if (options.validate)
+    {
+        ASSERT(spirv::Validate(*spirvBlobOut));
+    }
 
     return angle::Result::Continue;
 }

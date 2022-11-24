@@ -21,6 +21,7 @@
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/validationES.h"
+#include "libANGLE/validationES3.h"
 
 using namespace angle;
 
@@ -660,7 +661,7 @@ bool ValidateES3TexImageParametersBase(const Context *context,
         // compressedTexSubImage does not generate GL_INVALID_ENUM when format is unknown or invalid
         if (!isSubImage)
         {
-            if (!actualFormatInfo.compressed)
+            if (!actualFormatInfo.compressed && !actualFormatInfo.paletted)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kCompressedMismatch);
                 return false;
@@ -1935,7 +1936,7 @@ bool ValidateDrawRangeElements(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 0))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1))
     {
         return false;
     }
@@ -2429,6 +2430,10 @@ bool ValidateClearBufferiv(const Context *context,
     switch (buffer)
     {
         case GL_COLOR:
+            if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, drawbuffer, "drawbuffer"))
+            {
+                return false;
+            }
             if (drawbuffer < 0 || drawbuffer >= context->getCaps().maxDrawBuffers)
             {
                 context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -2472,6 +2477,10 @@ bool ValidateClearBufferuiv(const Context *context,
     switch (buffer)
     {
         case GL_COLOR:
+            if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, drawbuffer, "drawbuffer"))
+            {
+                return false;
+            }
             if (drawbuffer < 0 || drawbuffer >= context->getCaps().maxDrawBuffers)
             {
                 context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -2506,6 +2515,10 @@ bool ValidateClearBufferfv(const Context *context,
     switch (buffer)
     {
         case GL_COLOR:
+            if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, drawbuffer, "drawbuffer"))
+            {
+                return false;
+            }
             if (drawbuffer < 0 || drawbuffer >= context->getCaps().maxDrawBuffers)
             {
                 context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -3355,35 +3368,6 @@ bool ValidateIndexedStateQuery(const Context *context,
                 return false;
             }
             break;
-        // GL_ANGLE_shader_pixel_local_storage
-        case GL_PIXEL_LOCAL_FORMAT_ANGLE:
-        case GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE:
-        case GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE:
-        case GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE:
-        {
-            // Check that the pixel local storage extension is enabled at all.
-            if (!context->getExtensions().shaderPixelLocalStorageANGLE)
-            {
-                context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSExtensionNotEnabled);
-                return false;
-            }
-            // INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer object name 0
-            // is bound to DRAW_FRAMEBUFFER.
-            Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
-            if (framebuffer->id().value == 0)
-            {
-                context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
-                                         kPLSDefaultFramebufferBound);
-                return false;
-            }
-            // INVALID_VALUE is generated if <index> >= MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
-            if (index >= context->getCaps().maxPixelLocalStoragePlanes)
-            {
-                context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSPlaneOutOfRange);
-                return false;
-            }
-            break;
-        }
         default:
             context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
             return false;
@@ -5307,5 +5291,30 @@ bool ValidateSampleMaskiANGLE(const Context *context,
     }
 
     return ValidateSampleMaskiBase(context, entryPoint, maskNumber, mask);
+}
+
+bool ValidateDrawBufferIndexIfActivePLS(const Context *context,
+                                        angle::EntryPoint entryPoint,
+                                        GLuint drawBufferIdx,
+                                        const char *argumentName)
+{
+    int numPLSPlanes = context->getState().getPixelLocalStorageActivePlanes();
+    if (numPLSPlanes != 0)
+    {
+        if (drawBufferIdx >= context->getCaps().maxColorAttachmentsWithActivePixelLocalStorage)
+        {
+            context->validationErrorF(entryPoint, GL_INVALID_OPERATION,
+                                      kPLSDrawBufferExceedsAttachmentLimit, argumentName);
+            return false;
+        }
+        if (drawBufferIdx >=
+            context->getCaps().maxCombinedDrawBuffersAndPixelLocalStoragePlanes - numPLSPlanes)
+        {
+            context->validationErrorF(entryPoint, GL_INVALID_OPERATION,
+                                      kPLSDrawBufferExceedsCombinedAttachmentLimit, argumentName);
+            return false;
+        }
+    }
+    return true;
 }
 }  // namespace gl

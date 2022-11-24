@@ -332,6 +332,8 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
       mIsEarlyFragmentTestsSpecified(isEarlyFragmentTestsSpecified),
       mNeedStructMapping(false)
 {
+    mUsesClipDistance     = false;
+    mUsesCullDistance     = false;
     mUsesFragColor        = false;
     mUsesFragData         = false;
     mUsesDepthRange       = false;
@@ -905,6 +907,20 @@ void OutputHLSL::header(TInfoSinkBase &out,
                    "\n";
         }
 
+        if (mUsesClipDistance)
+        {
+            out << (mUsesCullDistance
+                        ? "static float gl_ClipDistance[4] = {0, 0, 0, 0};\n"
+                        : "static float gl_ClipDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+        }
+
+        if (mUsesCullDistance)
+        {
+            out << (mUsesClipDistance
+                        ? "static float gl_CullDistance[4] = {0, 0, 0, 0};\n"
+                        : "static float gl_CullDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+        }
+
         if (usingMRTExtension && mNumRenderTargets > 1)
         {
             out << "#define GL_USES_MRT\n";
@@ -931,6 +947,20 @@ void OutputHLSL::header(TInfoSinkBase &out,
         writeReferencedAttributes(out);
         out << "\n"
                "static float4 gl_Position = float4(0, 0, 0, 0);\n";
+
+        if (mUsesClipDistance)
+        {
+            out << (mUsesCullDistance
+                        ? "static float gl_ClipDistance[4] = {0, 0, 0, 0};\n"
+                        : "static float gl_ClipDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+        }
+
+        if (mUsesCullDistance)
+        {
+            out << (mUsesClipDistance
+                        ? "static float gl_CullDistance[4] = {0, 0, 0, 0};\n"
+                        : "static float gl_CullDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+        }
 
         if (mUsesPointSize)
         {
@@ -999,6 +1029,11 @@ void OutputHLSL::header(TInfoSinkBase &out,
             if (mUsesVertexID)
             {
                 out << "    uint dx_VertexID : packoffset(c4.y);\n";
+            }
+
+            if (mUsesClipDistance)
+            {
+                out << "    uint clipDistancesEnabled : packoffset(c4.z);\n";
             }
 
             out << "};\n"
@@ -1106,6 +1141,16 @@ void OutputHLSL::header(TInfoSinkBase &out,
     mTextureFunctionHLSL->textureFunctionHeader(out, mOutputType, getDimensionsIgnoresBaseLevel);
     mImageFunctionHLSL->imageFunctionHeader(out);
     mAtomicCounterFunctionHLSL->atomicCounterFunctionHeader(out);
+
+    if (mUsesClipDistance)
+    {
+        out << "#define GL_USES_CLIP_DISTANCE\n";
+    }
+
+    if (mUsesCullDistance)
+    {
+        out << "#define GL_USES_CULL_DISTANCE\n";
+    }
 
     if (mUsesFragCoord)
     {
@@ -1263,6 +1308,16 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         {
             mReferencedOutputVariables[uniqueId.get()] = &variable;
             out << "out_" << name;
+        }
+        else if (qualifier == EvqClipDistance)
+        {
+            mUsesClipDistance = true;
+            out << name;
+        }
+        else if (qualifier == EvqCullDistance)
+        {
+            mUsesCullDistance = true;
+            out << name;
         }
         else if (qualifier == EvqFragColor)
         {

@@ -323,7 +323,7 @@ class Renderer11 : public RendererD3D
 
     Blit11 *getBlitter() { return mBlit; }
     Clear11 *getClearer() { return mClear; }
-    gl::DebugAnnotator *getAnnotator();
+    DebugAnnotatorContext11 *getDebugAnnotatorContext();
 
     // Buffer-to-texture and Texture-to-buffer copies
     bool supportsFastCopyBufferToTexture(GLenum internalFormat) const override;
@@ -620,7 +620,7 @@ class Renderer11 : public RendererD3D
 
     angle::ScratchBuffer mScratchMemoryBuffer;
 
-    DebugAnnotator11 mAnnotator;
+    DebugAnnotatorContext11 mAnnotatorContext;
 
     mutable Optional<bool> mSupportsShareHandles;
     ResourceManager11 mResourceManager11;

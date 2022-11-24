@@ -724,6 +724,17 @@
             },
             "EXTClipCullDistance":{
                 "variables":{
+                    "gl_MaxClipDistances":{
+                        "essl_level":"ESSL3_BUILTINS",
+                        "type":{
+                            "basic":"Int",
+                            "precision":"Medium",
+                            "qualifier":"Const"
+                        },
+                        "essl_extension":"EXT_clip_cull_distance",
+                        "value":"resources",
+                        "suffix": "EXT"
+                    },
                     "gl_MaxCullDistances":{
                         "essl_level":"ESSL3_BUILTINS",
                         "type":{
@@ -1131,6 +1142,12 @@
             },
             "EXTClipCullDistance":{
                 "variables":{
+                    "gl_ClipDistance":{
+                        "essl_level":"ESSL3_BUILTINS",
+                        "essl_extension":"EXT_clip_cull_distance",
+                        "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqClipDistance, 1); {type_name}->makeArray(resources.MaxClipDistances);",
+                        "suffix": "EXT"
+                    },
                     "gl_CullDistance":{
                         "essl_level":"ESSL3_BUILTINS",
                         "essl_extension":"EXT_clip_cull_distance",

@@ -237,6 +237,9 @@ class EGLRobustnessTest : public ANGLETest<>
 class EGLRobustnessTestES3 : public EGLRobustnessTest
 {};
 
+class EGLRobustnessTestES31 : public EGLRobustnessTest
+{};
+
 // Check glGetGraphicsResetStatusEXT returns GL_NO_ERROR if we did nothing
 TEST_P(EGLRobustnessTest, NoErrorByDefault)
 {
@@ -414,8 +417,355 @@ TEST_P(EGLRobustnessTestES3,
     eglDestroyContext(mDisplay, shareContext);
 }
 
+// Test that using a program in a non-robust context, then sharing it with a robust context and
+// using it with the same state (but with an OOB access) works.
+TEST_P(EGLRobustnessTestES31, NonRobustContextThenOOBInSharedRobustContext)
+{
+    ANGLE_SKIP_TEST_IF(!mInitialized);
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_create_context") ||
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_create_context_robustness"));
+
+    createContext(EGL_NO_RESET_NOTIFICATION_EXT);
+
+    GLint maxFragmentShaderStorageBlocks = 0;
+    glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &maxFragmentShaderStorageBlocks);
+    ANGLE_SKIP_TEST_IF(maxFragmentShaderStorageBlocks == 0);
+
+    constexpr char kFS[] = R"(#version 310 es
+layout(location = 0) out highp vec4 fragColor;
+layout(std140, binding = 0) buffer Block
+{
+    mediump vec4 data[];
+};
+uniform mediump uint index;
+
+void main (void)
+{
+    fragColor = data[index];
+})";
+
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint indexLocation = glGetUniformLocation(program, "index");
+    ASSERT_NE(-1, indexLocation);
+
+    constexpr std::array<float, 4> kBufferData = {1, 0, 0, 1};
+
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferData), kBufferData.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    // Use the program once before the robust context is created.
+    glUniform1ui(indexLocation, 0);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    // Create the share context as robust, and draw identically except accessing OOB.
+    EGLContext shareContext = mContext;
+
+    createRobustContext(EGL_NO_RESET_NOTIFICATION_EXT, shareContext);
+
+    glClearColor(0, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(program);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+    glUniform1ui(indexLocation, 1'000'000'000u);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0);
+    // Expect 0, 0, 0, 0/1 returned from buffer
+    GLColor actualColor = angle::ReadColor(0, 0);
+    EXPECT_TRUE(actualColor.A == 0 || actualColor.A == 255);
+    actualColor.A = 0;
+    EXPECT_EQ(actualColor, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    eglDestroyContext(mDisplay, shareContext);
+}
+
+// Similar to NonRobustContextThenOOBInSharedRobustContext, but access is in vertex shader.
+TEST_P(EGLRobustnessTestES31, NonRobustContextThenOOBInSharedRobustContext_VertexShader)
+{
+    ANGLE_SKIP_TEST_IF(!mInitialized);
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_create_context") ||
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_create_context_robustness"));
+
+    createContext(EGL_NO_RESET_NOTIFICATION_EXT);
+
+    GLint maxVertexShaderStorageBlocks = 0;
+    glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &maxVertexShaderStorageBlocks);
+    ANGLE_SKIP_TEST_IF(maxVertexShaderStorageBlocks == 0);
+
+    constexpr char kVS[] = R"(#version 310 es
+layout(std140, binding = 0) buffer Block
+{
+    mediump vec4 data[];
+};
+uniform mediump uint index;
+in vec4 position;
+out mediump vec4 color;
+
+void main (void)
+{
+    color = data[index];
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+layout(location = 0) out highp vec4 fragColor;
+in mediump vec4 color;
+
+void main (void)
+{
+    fragColor = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint indexLocation = glGetUniformLocation(program, "index");
+    ASSERT_NE(-1, indexLocation);
+
+    constexpr std::array<float, 4> kBufferData = {1, 0, 0, 1};
+
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferData), kBufferData.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    // Use the program once before the robust context is created.
+    glUniform1ui(indexLocation, 0);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    // Create the share context as robust, and draw identically except accessing OOB.
+    EGLContext shareContext = mContext;
+
+    createRobustContext(EGL_NO_RESET_NOTIFICATION_EXT, shareContext);
+
+    glClearColor(0, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(program);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+    glUniform1ui(indexLocation, 1'000'000'000u);
+    drawQuad(program, "position", 0);
+    // Expect 0, 0, 0, 0/1 returned from buffer
+    GLColor actualColor = angle::ReadColor(0, 0);
+    EXPECT_TRUE(actualColor.A == 0 || actualColor.A == 255);
+    actualColor.A = 0;
+    EXPECT_EQ(actualColor, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    eglDestroyContext(mDisplay, shareContext);
+}
+
+// Similar to NonRobustContextThenOOBInSharedRobustContext, but access is in compute shader.
+TEST_P(EGLRobustnessTestES31, NonRobustContextThenOOBInSharedRobustContext_ComputeShader)
+{
+    ANGLE_SKIP_TEST_IF(!mInitialized);
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_create_context") ||
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_create_context_robustness"));
+
+    createContext(EGL_NO_RESET_NOTIFICATION_EXT);
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+layout(std140, binding = 0) buffer BlockIn
+{
+    mediump vec4 dataIn[];
+};
+layout(std140, binding = 1) buffer BlockOut
+{
+    mediump vec4 dataOut;
+};
+uniform mediump uint index;
+
+void main (void)
+{
+    dataOut = dataIn[index];
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program);
+
+    GLint indexLocation = glGetUniformLocation(program, "index");
+    ASSERT_NE(-1, indexLocation);
+
+    constexpr std::array<float, 4> kBufferData        = {1, 0, 0, 1};
+    constexpr std::array<float, 4> kInvalidBufferData = {0, 0, 1, 1};
+
+    GLBuffer bufferIn;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferIn);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferData), kBufferData.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferIn);
+
+    GLBuffer bufferOut;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferOut);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kInvalidBufferData), kInvalidBufferData.data(),
+                 GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferOut);
+
+    // Use the program once before the robust context is created.
+    glUniform1ui(indexLocation, 0);
+    glDispatchCompute(1, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    std::array<float, 4> readbackData = {};
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    void *mappedBuffer =
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(readbackData), GL_MAP_READ_BIT);
+    memcpy(readbackData.data(), mappedBuffer, sizeof(readbackData));
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    EXPECT_EQ(readbackData, kBufferData);
+
+    // Create the share context as robust, and draw identically except accessing OOB.
+    EGLContext shareContext = mContext;
+
+    createRobustContext(EGL_NO_RESET_NOTIFICATION_EXT, shareContext);
+
+    glUseProgram(program);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferIn);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferIn);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferOut);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferOut);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kInvalidBufferData), kInvalidBufferData.data(),
+                 GL_STATIC_DRAW);
+
+    glUniform1ui(indexLocation, 1'000'000'000u);
+    glDispatchCompute(1, 1, 1);
+
+    // Expect 0, 0, 0, 0/1 returned from bufferIn
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    mappedBuffer =
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(readbackData), GL_MAP_READ_BIT);
+    memcpy(readbackData.data(), mappedBuffer, sizeof(readbackData));
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(readbackData[0], 0);
+    EXPECT_EQ(readbackData[1], 0);
+    EXPECT_EQ(readbackData[2], 0);
+    EXPECT_TRUE(readbackData[3] == 0 || readbackData[3] == 1);
+
+    eglDestroyContext(mDisplay, shareContext);
+}
+
+// Test that indirect indices on unsized storage buffer arrays work.  Regression test for the
+// ClampIndirectIndices AST transformation.
+TEST_P(EGLRobustnessTestES31, IndirectIndexOnUnsizedStorageBufferArray)
+{
+    ANGLE_SKIP_TEST_IF(!mInitialized);
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_create_context") ||
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_create_context_robustness"));
+
+    createRobustContext(EGL_NO_RESET_NOTIFICATION_EXT, EGL_NO_CONTEXT);
+
+    const char kCS[] = R"(#version 310 es
+
+layout(binding = 0, std430) buffer B {
+  uint data[];
+} b;
+
+layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+void main() {
+  b.data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x;
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr uint32_t kBufferSize              = 2;
+    constexpr uint32_t kBufferData[kBufferSize] = {10, 20};
+
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferData), kBufferData, GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    // Run the compute shader with a large workload.  Only the first two invocations should write to
+    // the buffer, the rest should be dropped out due to robust access.
+    glUseProgram(program);
+    glDispatchCompute(8192, 1, 1);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    uint32_t bufferDataOut[kBufferSize] = {};
+    const uint32_t *ptr                 = reinterpret_cast<uint32_t *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(kBufferData), GL_MAP_READ_BIT));
+    memcpy(bufferDataOut, ptr, sizeof(kBufferData));
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    for (uint32_t index = 0; index < kBufferSize; ++index)
+    {
+        EXPECT_EQ(bufferDataOut[index], index) << " index " << index;
+    }
+}
+
+// Similar to IndirectIndexOnUnsizedStorageBufferArray, but without a block instance name.
+TEST_P(EGLRobustnessTestES31, IndirectIndexOnUnsizedStorageBufferArray_NoBlockInstanceName)
+{
+    ANGLE_SKIP_TEST_IF(!mInitialized);
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_create_context") ||
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_create_context_robustness"));
+
+    createRobustContext(EGL_NO_RESET_NOTIFICATION_EXT, EGL_NO_CONTEXT);
+
+    const char kCS[] = R"(#version 310 es
+
+layout(binding = 0, std430) buffer B {
+  uint data[];
+};
+
+layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+void main() {
+  data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x;
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr uint32_t kBufferSize              = 2;
+    constexpr uint32_t kBufferData[kBufferSize] = {10, 20};
+
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferData), kBufferData, GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    // Run the compute shader with a large workload.  Only the first two invocations should write to
+    // the buffer, the rest should be dropped out due to robust access.
+    glUseProgram(program);
+    glDispatchCompute(8192, 1, 1);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    uint32_t bufferDataOut[kBufferSize] = {};
+    const uint32_t *ptr                 = reinterpret_cast<uint32_t *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(kBufferData), GL_MAP_READ_BIT));
+    memcpy(bufferDataOut, ptr, sizeof(kBufferData));
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    for (uint32_t index = 0; index < kBufferSize; ++index)
+    {
+        EXPECT_EQ(bufferDataOut[index], index) << " index " << index;
+    }
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLRobustnessTest);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLRobustnessTestES3);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLRobustnessTestES31);
 ANGLE_INSTANTIATE_TEST(EGLRobustnessTest,
                        WithNoFixture(ES2_VULKAN()),
                        WithNoFixture(ES2_D3D9()),
@@ -427,3 +777,6 @@ ANGLE_INSTANTIATE_TEST(EGLRobustnessTestES3,
                        WithNoFixture(ES3_D3D11()),
                        WithNoFixture(ES3_OPENGL()),
                        WithNoFixture(ES3_OPENGLES()));
+ANGLE_INSTANTIATE_TEST(EGLRobustnessTestES31,
+                       WithNoFixture(ES31_VULKAN()),
+                       WithNoFixture(ES31_VULKAN_SWIFTSHADER()));

@@ -155,10 +155,6 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
-    FeatureInfo directMetalGeneration = {"directMetalGeneration", FeatureCategory::MetalFeatures,
-                                         "Direct translation to Metal.", &members,
-                                         "http://anglebug.com/5505"};
-
     FeatureInfo forceNonCSBaseMipmapGeneration = {
         "forceNonCSBaseMipmapGeneration",
         FeatureCategory::MetalFeatures,
@@ -205,7 +201,7 @@ struct FeaturesMtl : FeatureSetBase
         "copyIOSurfaceToNonIOSurfaceForReadOptimization", FeatureCategory::MetalWorkarounds,
         "some GPUs are faster to read an IOSurface texture by first copying the texture to a "
         "non-IOSurface texture",
-        &members, "http://anglebug.com/7117"};
+        &members, "http://anglebug.com/7117 http://anglebug.com/7573"};
 
     FeatureInfo copyTextureToBufferForReadOptimization = {
         "copyTextureToBufferForReadOptimization", FeatureCategory::MetalWorkarounds,
@@ -228,15 +224,35 @@ struct FeaturesMtl : FeatureSetBase
         "AMD Metal Drivers appear to have a bug this works around", &members,
         "http://anglebug.com/7635"};
 
-    FeatureInfo unpackLastRowSeparatelyForPaddingInclusion = {
-        "unpackLastRowSeparatelyForPaddingInclusion", FeatureCategory::MetalWorkarounds,
-        "When uploading textures, some drivers count an extra row padding", &members,
-        "http://anglebug.com/7573"};
-
     FeatureInfo uploadDataToIosurfacesWithStagingBuffers = {
         "uploadDataToIosurfacesWithStagingBuffers", FeatureCategory::MetalWorkarounds,
         "When uploading data to IOSurface-backed textures, use a staging buffer.", &members,
         "http://anglebug.com/7573"};
+
+    FeatureInfo alwaysUseStagedBufferUpdates = {
+        "alwaysUseStagedBufferUpdates", FeatureCategory::MetalFeatures,
+        "Always update buffers by copying the data to a staging buffer and then blitting it to the "
+        "actual buffer",
+        &members, "http://anglebug.com/7544"};
+
+    FeatureInfo useShadowBuffersWhenAppropriate = {
+        "useShadowBuffersWhenAppropriate", FeatureCategory::MetalFeatures,
+        "On some architectures using a shadow buffer can be faster for certain size buffers",
+        &members, "http://anglebug.com/7544"};
+
+    FeatureInfo alwaysUseManagedStorageModeForBuffers = {
+        "alwaysUseManagedStorageModeForBuffers", FeatureCategory::MetalFeatures,
+        "Metal buffers can be managed, shared, or private. Sometimes managed is fastest", &members,
+        "http://anglebug.com/7544"};
+
+    FeatureInfo alwaysUseSharedStorageModeForBuffers = {
+        "alwaysUseSharedStorageModeForBuffers", FeatureCategory::MetalFeatures,
+        "Metal buffers can be managed, shared, or private. Sometimes shared is fastest", &members,
+        "http://anglebug.com/7544"};
+
+    FeatureInfo preferCpuForBuffersubdata = {
+        "preferCpuForBuffersubdata", FeatureCategory::MetalFeatures,
+        "Makes bufferSubData always update via CPU", &members, "http://anglebug.com/7544"};
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

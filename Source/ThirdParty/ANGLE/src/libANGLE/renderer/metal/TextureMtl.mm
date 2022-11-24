@@ -15,6 +15,7 @@
 #include "common/debug.h"
 #include "common/mathutil.h"
 #include "image_util/imageformats.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -523,10 +524,10 @@ angle::Result UploadTextureContents(const gl::Context *context,
 
 {
     ASSERT(texture && texture->valid());
-    ContextMtl *contextMtl             = mtl::GetImpl(context);
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+#if !TARGET_OS_SIMULATOR
     const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
 
-#if !TARGET_OS_SIMULATOR
     bool forceStagedUpload =
         texture->hasIOSurface() && features.uploadDataToIosurfacesWithStagingBuffers.enabled;
     if (texture->isCPUAccessible() && !forceStagedUpload)
@@ -1797,8 +1798,6 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
 
     if (unpackBuffer)
     {
-        // TODO: handle the unpackLastRowSeparatelyForPaddingInclusion feature for unpack buffers
-
         uintptr_t offset = reinterpret_cast<uintptr_t>(pixels);
         GLuint minRowPitch;
         ANGLE_CHECK_GL_MATH(contextMtl, internalFormat.computeRowPitch(
@@ -1819,7 +1818,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
         {
             // NOTE(hqle): packed depth & stencil texture cannot copy from buffer directly, needs
             // to split its depth & stencil data and copy separately.
-            const uint8_t *clientData = unpackBufferMtl->getClientShadowCopyData(contextMtl);
+            const uint8_t *clientData = unpackBufferMtl->getBufferDataReadOnly(contextMtl);
             clientData += offset;
             ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
                                             mtl::kZeroNativeMipLevel, slice, clientData,
@@ -1837,37 +1836,9 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
     }
     else
     {
-        const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
-        bool updateLastRowSeparately =
-            features.unpackLastRowSeparatelyForPaddingInclusion.enabled &&
-            mtlArea.size.height > 1 && mtlArea.size.depth == 1 && !internalFormat.compressed;
-        if (updateLastRowSeparately)
-        {
-            // Upload all but the last row
-            MTLRegion mainRegion = mtlArea;
-            mainRegion.size.height--;
-            ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mainRegion,
-                                            mtl::kZeroNativeMipLevel, slice, pixels, pixelsRowPitch,
-                                            0, image));
-
-            // Upload the last row "manually"
-            MTLRegion lastRowRegion = mtlArea;
-            lastRowRegion.origin.y += (mtlArea.size.height - 1);
-            lastRowRegion.size.height    = 1;
-            size_t lastRowOffset         = (mtlArea.size.height - 1) * pixelsRowPitch;
-            const GLubyte *lastRowPixels = pixels + lastRowOffset;
-            size_t lastRowSize = internalFormat.computePixelBytes(type) * mtlArea.size.width;
-            ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), lastRowRegion,
-                                            mtl::kZeroNativeMipLevel, slice, lastRowPixels,
-                                            lastRowSize, 0, image));
-        }
-        else
-        {
-            // Upload texture data directly
-            ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
-                                            mtl::kZeroNativeMipLevel, slice, pixels, pixelsRowPitch,
-                                            pixelsDepthPitch, image));
-        }
+        ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
+                                        mtl::kZeroNativeMipLevel, slice, pixels, pixelsRowPitch,
+                                        pixelsDepthPitch, image));
     }
     return angle::Result::Continue;
 }
@@ -1901,7 +1872,7 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
             mFormat.intendedAngleFormat().isBlock)
         {
             // Unsupported format, use CPU path.
-            const uint8_t *clientData = unpackBufferMtl->getClientShadowCopyData(contextMtl);
+            const uint8_t *clientData = unpackBufferMtl->getBufferDataReadOnly(contextMtl);
             clientData += offset;
             ANGLE_TRY(convertAndSetPerSliceSubImage(context, slice, mtlArea, internalFormat, type,
                                                     pixelsAngleFormat, pixelsRowPitch,
@@ -1954,10 +1925,10 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                                      decompressBuf.resize(dstDepthPitch * mtlArea.size.depth));
 
                 // Decompress
-                loadFunctionInfo.loadFunction(mtlArea.size.width, mtlArea.size.height,
-                                              mtlArea.size.depth, pixels, pixelsRowPitch,
-                                              pixelsDepthPitch, decompressBuf.data(), dstRowPitch,
-                                              dstDepthPitch);
+                loadFunctionInfo.loadFunction(contextMtl->getImageLoadContext(), mtlArea.size.width,
+                                              mtlArea.size.height, mtlArea.size.depth, pixels,
+                                              pixelsRowPitch, pixelsDepthPitch,
+                                              decompressBuf.data(), dstRowPitch, dstDepthPitch);
 
                 // Upload to texture
                 ANGLE_TRY(UploadTextureContents(
@@ -1995,7 +1966,8 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                     // Convert pixels
                     if (loadFunctionInfo.loadFunction)
                     {
-                        loadFunctionInfo.loadFunction(mtlRow.size.width, 1, 1, psrc, pixelsRowPitch,
+                        loadFunctionInfo.loadFunction(contextMtl->getImageLoadContext(),
+                                                      mtlRow.size.width, 1, 1, psrc, pixelsRowPitch,
                                                       0, conversionRow.data(), dstRowPitch, 0);
                     }
                     else if (mFormat.hasDepthOrStencilBits())

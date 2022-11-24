@@ -145,7 +145,6 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
                                             EGLuint64KHR *modifiers,
                                             EGLBoolean *external_only,
                                             EGLint *num_modifiers);
-    GLuint getNextSurfaceID() override;
 
   protected:
     const egl::DisplayState &mState;
@@ -161,7 +160,6 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
     mutable egl::Caps mCaps;
 
     egl::BlobCache *mBlobCache;
-    rx::AtomicSerialFactory mNextSurfaceID;
 };
 
 }  // namespace rx

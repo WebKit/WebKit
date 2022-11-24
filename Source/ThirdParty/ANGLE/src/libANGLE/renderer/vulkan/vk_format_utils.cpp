@@ -257,6 +257,20 @@ void FormatTable::initialize(RendererVk *renderer, gl::TextureCapsMap *outTextur
             continue;
         }
 
+        bool transcodeEtcToBc = false;
+        if (renderer->getFeatures().supportsComputeTranscodeEtcToBc.enabled &&
+            IsETCFormat(intendedFormatID) &&
+            !angle::Format::Get(format.mActualSampleOnlyImageFormatID).isBlock)
+        {
+            // Check BC format support
+            angle::FormatID bcFormat = GetTranscodeBCFormatID(intendedFormatID);
+            if (HasNonRenderableTextureFormatSupport(renderer, bcFormat))
+            {
+                format.mActualSampleOnlyImageFormatID = bcFormat;
+                transcodeEtcToBc                      = true;
+            }
+        }
+
         if (format.mActualRenderableImageFormatID == angle::FormatID::NONE)
         {
             // If renderable format was not set, it means there is no fallback format for
@@ -271,7 +285,8 @@ void FormatTable::initialize(RendererVk *renderer, gl::TextureCapsMap *outTextur
         if (textureCaps.texturable)
         {
             format.mTextureLoadFunctions = GetLoadFunctionsMap(
-                format.mIntendedGLFormat, format.mActualSampleOnlyImageFormatID);
+                format.mIntendedGLFormat,
+                transcodeEtcToBc ? intendedFormatID : format.mActualSampleOnlyImageFormatID);
         }
 
         if (format.mActualRenderableImageFormatID == format.mActualSampleOnlyImageFormatID)
@@ -392,6 +407,41 @@ bool HasNonRenderableTextureFormatSupport(RendererVk *renderer, angle::FormatID 
 
     return renderer->hasImageFormatFeatureBits(formatID, kBitsColor) ||
            renderer->hasImageFormatFeatureBits(formatID, kBitsDepth);
+}
+
+// Checks if it is a ETC texture format
+bool IsETCFormat(angle::FormatID formatID)
+{
+    return formatID >= angle::FormatID::EAC_R11G11_SNORM_BLOCK &&
+           formatID <= angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
+}
+// Checks if it is a BC texture format
+bool IsBCFormat(angle::FormatID formatID)
+{
+    return formatID >= angle::FormatID::BC1_RGBA_UNORM_BLOCK &&
+           formatID <= angle::FormatID::BC7_RGBA_UNORM_SRGB_BLOCK;
+}
+
+static constexpr angle::FormatID kEtcToBcFormatMapping[] = {
+    angle::FormatID::BC5_RG_SNORM_BLOCK,         // EAC_R11G11_SNORM
+    angle::FormatID::BC5_RG_UNORM_BLOCK,         // EAC_R11G11_UNORM
+    angle::FormatID::BC4_RED_SNORM_BLOCK,        // EAC_R11_SNORM
+    angle::FormatID::BC4_RED_UNORM_BLOCK,        // EAC_R11_UNORM_BLOCK
+    angle::FormatID::BC1_RGB_UNORM_BLOCK,        // ETC1_LOSSY_DECODE_R8G8B8_UNORM
+    angle::FormatID::BC1_RGB_UNORM_BLOCK,        // ETC1_R8G8B8_UNORM
+    angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK,  // ETC2_R8G8B8A1_SRGB
+    angle::FormatID::BC1_RGBA_UNORM_BLOCK,       // ETC2_R8G8B8A1_UNORM
+    angle::FormatID::BC3_RGBA_UNORM_SRGB_BLOCK,  // ETC2_R8G8B8A8_SRGB
+    angle::FormatID::BC3_RGBA_UNORM_BLOCK,       // ETC2_R8G8B8A8_UNORM
+    angle::FormatID::BC1_RGB_UNORM_SRGB_BLOCK,   // ETC2_R8G8B8_SRGB
+    angle::FormatID::BC1_RGB_UNORM_BLOCK,        // ETC2_R8G8B8_UNORM
+};
+
+angle::FormatID GetTranscodeBCFormatID(angle::FormatID formatID)
+{
+    ASSERT(IsETCFormat(formatID));
+    return kEtcToBcFormatMapping[static_cast<uint32_t>(formatID) -
+                                 static_cast<uint32_t>(angle::FormatID::EAC_R11G11_SNORM_BLOCK)];
 }
 
 GLenum GetSwizzleStateComponent(const gl::SwizzleState &swizzleState, GLenum component)

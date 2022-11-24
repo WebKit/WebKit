@@ -144,6 +144,13 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.MaxCullDistances                = caps.maxCullDistances;
     mResources.MaxCombinedClipAndCullDistances = caps.maxCombinedClipAndCullDistances;
 
+    // ANGLE_shader_pixel_local_storage.
+    mResources.MaxPixelLocalStoragePlanes = caps.maxPixelLocalStoragePlanes;
+    mResources.MaxColorAttachmentsWithActivePixelLocalStorage =
+        caps.maxColorAttachmentsWithActivePixelLocalStorage;
+    mResources.MaxCombinedDrawBuffersAndPixelLocalStoragePlanes =
+        caps.maxCombinedDrawBuffersAndPixelLocalStoragePlanes;
+
     // OES_sample_variables
     mResources.OES_sample_variables = extensions.sampleVariablesOES;
     mResources.MaxSamples           = caps.maxSamples;

@@ -126,6 +126,7 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
                                  const AttribKHR *attrib_list)          = 0;
     virtual EGLBoolean destroyImage(Image image)                        = 0;
     virtual EGLBoolean destroyImageKHR(Image image)                     = 0;
+    virtual EGLint getEGLError()                                        = 0;
     virtual Surface createPbufferSurface(const EGLint *attrib_list)     = 0;
     virtual EGLBoolean destroySurface(Surface surface)                  = 0;
 
@@ -236,6 +237,7 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
                          const AttribKHR *attrib_list) override;
     EGLBoolean destroyImage(Image image) override;
     EGLBoolean destroyImageKHR(Image image) override;
+    EGLint getEGLError() override;
     Surface createPbufferSurface(const EGLint *attrib_list) override;
     EGLBoolean destroySurface(Surface surface) override;
 

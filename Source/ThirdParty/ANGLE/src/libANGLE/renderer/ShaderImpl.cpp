@@ -94,7 +94,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderImpl::compileImpl(
         std::make_shared<TranslateTask>(compilerInstance->getHandle(), *compileOptions, source);
 
     return std::make_shared<WaitableCompileEventImpl>(
-        angle::WorkerThreadPool::PostWorkerTask(workerThreadPool, translateTask), translateTask);
+        workerThreadPool->postWorkerTask(translateTask), translateTask);
 }
 
 angle::Result ShaderImpl::onLabelUpdate(const gl::Context *context)

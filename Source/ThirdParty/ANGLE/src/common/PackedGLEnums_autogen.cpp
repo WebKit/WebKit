@@ -1265,9 +1265,9 @@ ProvokingVertexConvention FromGLenum<ProvokingVertexConvention>(GLenum from)
 {
     switch (from)
     {
-        case GL_FIRST_VERTEX_CONVENTION:
+        case GL_FIRST_VERTEX_CONVENTION_ANGLE:
             return ProvokingVertexConvention::FirstVertexConvention;
-        case GL_LAST_VERTEX_CONVENTION:
+        case GL_LAST_VERTEX_CONVENTION_ANGLE:
             return ProvokingVertexConvention::LastVertexConvention;
         default:
             return ProvokingVertexConvention::InvalidEnum;
@@ -1279,9 +1279,9 @@ GLenum ToGLenum(ProvokingVertexConvention from)
     switch (from)
     {
         case ProvokingVertexConvention::FirstVertexConvention:
-            return GL_FIRST_VERTEX_CONVENTION;
+            return GL_FIRST_VERTEX_CONVENTION_ANGLE;
         case ProvokingVertexConvention::LastVertexConvention:
-            return GL_LAST_VERTEX_CONVENTION;
+            return GL_LAST_VERTEX_CONVENTION_ANGLE;
         default:
             UNREACHABLE();
             return 0;
@@ -1293,10 +1293,10 @@ std::ostream &operator<<(std::ostream &os, ProvokingVertexConvention value)
     switch (value)
     {
         case ProvokingVertexConvention::FirstVertexConvention:
-            os << "GL_FIRST_VERTEX_CONVENTION";
+            os << "GL_FIRST_VERTEX_CONVENTION_ANGLE";
             break;
         case ProvokingVertexConvention::LastVertexConvention:
-            os << "GL_LAST_VERTEX_CONVENTION";
+            os << "GL_LAST_VERTEX_CONVENTION_ANGLE";
             break;
         default:
             os << "GL_INVALID_ENUM";

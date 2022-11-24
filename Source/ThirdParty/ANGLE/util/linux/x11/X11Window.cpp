@@ -378,7 +378,15 @@ void X11Window::destroy()
     if (mWindow)
     {
         XDestroyWindow(mDisplay, mWindow);
-        mWindow = 0;
+        // There appears to be a race condition where XDestroyWindow+XCreateWindow ignores
+        // the new size (the same window normally gets reused but this only happens sometimes on
+        // some X11 versions). Wait until we get the destroy notification.
+        mWindow = 0;  // Set before messageLoop() to avoid a race in processEvent().
+        while (!mDestroyed)
+        {
+            messageLoop();
+            angle::Sleep(10);
+        }
     }
     if (mDisplay)
     {
@@ -481,6 +489,15 @@ void X11Window::setVisible(bool isVisible)
         XUnmapWindow(mDisplay, mWindow);
         XFlush(mDisplay);
     }
+
+    // Block until we get ConfigureNotify to set up fully before returning.
+    mConfigured = false;
+    while (!mConfigured)
+    {
+        messageLoop();
+        angle::Sleep(10);
+    }
+
     mVisible = isVisible;
 }
 
@@ -649,6 +666,11 @@ void X11Window::processEvent(const XEvent &xEvent)
 
         case ConfigureNotify:
         {
+            mConfigured = true;
+            if (mWindow == 0)
+            {
+                break;
+            }
             if (xEvent.xconfigure.width != mWidth || xEvent.xconfigure.height != mHeight)
             {
                 Event event;
@@ -701,7 +723,8 @@ void X11Window::processEvent(const XEvent &xEvent)
             break;
 
         case DestroyNotify:
-            // We already received WM_DELETE_WINDOW
+            // Note: we already received WM_DELETE_WINDOW
+            mDestroyed = true;
             break;
 
         case ClientMessage:

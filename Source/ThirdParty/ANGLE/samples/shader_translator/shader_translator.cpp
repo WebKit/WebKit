@@ -85,12 +85,11 @@ int main(int argc, char *argv[])
     ShHandle fragmentCompiler       = 0;
     ShHandle computeCompiler        = 0;
     ShHandle geometryCompiler       = 0;
+    ShHandle tessEvalCompiler       = 0;
+    ShHandle tessControlCompiler    = 0;
     ShShaderSpec spec               = SH_GLES2_SPEC;
     ShShaderOutput output           = SH_ESSL_OUTPUT;
 
-#if defined(ANGLE_ENABLE_VULKAN)
-    sh::InitializeGlslang();
-#endif
     sh::Initialize();
 
     ShBuiltInResources resources;
@@ -124,6 +123,10 @@ int main(int argc, char *argv[])
                                     if (argv[0][5] == '1')
                                     {
                                         spec = SH_GLES3_1_SPEC;
+                                    }
+                                    else if (argv[0][5] == '2')
+                                    {
+                                        spec = SH_GLES3_2_SPEC;
                                     }
                                     else
                                     {
@@ -192,6 +195,7 @@ int main(int argc, char *argv[])
                             case 'v':
                                 output = SH_SPIRV_VULKAN_OUTPUT;
                                 compileOptions.initializeUninitializedLocals = true;
+                                compileOptions.variables                     = true;
                                 break;
                             case 'h':
                                 if (argv[0][4] == '1' && argv[0][5] == '1')
@@ -204,14 +208,7 @@ int main(int argc, char *argv[])
                                 }
                                 break;
                             case 'm':
-                                if (argv[0][4] == 'v')
-                                {
-                                    output = SH_SPIRV_METAL_OUTPUT;
-                                }
-                                else
-                                {
-                                    output = SH_MSL_METAL_OUTPUT;
-                                }
+                                output = SH_MSL_METAL_OUTPUT;
                                 break;
                             default:
                                 failCode = EFailUsage;
@@ -317,10 +314,31 @@ int main(int argc, char *argv[])
                 case GL_GEOMETRY_SHADER_EXT:
                     if (geometryCompiler == 0)
                     {
+                        resources.EXT_geometry_shader = 1;
                         geometryCompiler =
                             sh::ConstructCompiler(GL_GEOMETRY_SHADER_EXT, spec, output, &resources);
                     }
                     compiler = geometryCompiler;
+                    break;
+                case GL_TESS_CONTROL_SHADER_EXT:
+                    if (tessControlCompiler == 0)
+                    {
+                        assert(spec == SH_GLES3_1_SPEC || spec == SH_GLES3_2_SPEC);
+                        resources.EXT_tessellation_shader = 1;
+                        tessControlCompiler = sh::ConstructCompiler(GL_TESS_CONTROL_SHADER_EXT,
+                                                                    spec, output, &resources);
+                    }
+                    compiler = tessControlCompiler;
+                    break;
+                case GL_TESS_EVALUATION_SHADER_EXT:
+                    if (tessEvalCompiler == 0)
+                    {
+                        assert(spec == SH_GLES3_1_SPEC || spec == SH_GLES3_2_SPEC);
+                        resources.EXT_tessellation_shader = 1;
+                        tessEvalCompiler = sh::ConstructCompiler(GL_TESS_EVALUATION_SHADER_EXT,
+                                                                 spec, output, &resources);
+                    }
+                    compiler = tessEvalCompiler;
                     break;
                 default:
                     break;
@@ -381,24 +399,41 @@ int main(int argc, char *argv[])
     }
 
     if ((vertexCompiler == 0) && (fragmentCompiler == 0) && (computeCompiler == 0) &&
-        (geometryCompiler == 0))
+        (geometryCompiler == 0) && (tessControlCompiler == 0) && (tessEvalCompiler == 0))
+    {
         failCode = EFailUsage;
+    }
     if (failCode == EFailUsage)
+    {
         usage();
+    }
 
     if (vertexCompiler)
+    {
         sh::Destruct(vertexCompiler);
+    }
     if (fragmentCompiler)
+    {
         sh::Destruct(fragmentCompiler);
+    }
     if (computeCompiler)
+    {
         sh::Destruct(computeCompiler);
+    }
     if (geometryCompiler)
+    {
         sh::Destruct(geometryCompiler);
+    }
+    if (tessControlCompiler)
+    {
+        sh::Destruct(tessControlCompiler);
+    }
+    if (tessEvalCompiler)
+    {
+        sh::Destruct(tessEvalCompiler);
+    }
 
     sh::Finalize();
-#if defined(ANGLE_ENABLE_VULKAN)
-    sh::FinalizeGlslang();
-#endif
 
     return failCode;
 }
@@ -411,13 +446,14 @@ void usage()
     // clang-format off
     printf(
         "Usage: translate [-i -o -u -l -b=e -b=g -b=h9 -x=i -x=d] file1 file2 ...\n"
-        "Where: filename : filename ending in .frag or .vert\n"
+        "Where: filename : filename ending in .frag*, .vert*, .comp*, .geom*, .tcs* or .tes*\n"
         "       -i       : print intermediate tree\n"
         "       -o       : print translated code\n"
         "       -u       : print active attribs, uniforms, varyings and program outputs\n"
         "       -s=e2    : use GLES2 spec (this is by default)\n"
         "       -s=e3    : use GLES3 spec\n"
         "       -s=e31   : use GLES31 spec (in development)\n"
+        "       -s=e32   : use GLES32 spec (in development)\n"
         "       -s=w     : use WebGL 1.0 spec\n"
         "       -s=wn    : use WebGL 1.0 spec with no highp support in fragment shaders\n"
         "       -s=w2    : use WebGL 2.0 spec\n"
@@ -431,7 +467,6 @@ void usage()
         "       -b=h9    : output HLSL9 code\n"
         "       -b=h11   : output HLSL11 code\n"
         "       -b=m     : output MSL code (direct)\n"
-        "       -b=mv    : output MSL code (via SPIR-V)\n"
         "       -x=i     : enable GL_OES_EGL_image_external\n"
         "       -x=d     : enable GL_OES_EGL_standard_derivatives\n"
         "       -x=r     : enable ARB_texture_rectangle\n"
@@ -454,6 +489,10 @@ void usage()
 //
 //   .frag*    = fragment shader
 //   .vert*    = vertex shader
+//   .comp*    = compute shader
+//   .geom*    = geometry shader
+//   .tcs*     = tessellation control shader
+//   .tes*     = tessellation evaluation shader
 //
 sh::GLenum FindShaderType(const char *fileName)
 {
@@ -476,6 +515,10 @@ sh::GLenum FindShaderType(const char *fileName)
             return GL_COMPUTE_SHADER;
         if (strncmp(ext, ".geom", 5) == 0)
             return GL_GEOMETRY_SHADER_EXT;
+        if (strncmp(ext, ".tcs", 5) == 0)
+            return GL_TESS_CONTROL_SHADER_EXT;
+        if (strncmp(ext, ".tes", 5) == 0)
+            return GL_TESS_EVALUATION_SHADER_EXT;
     }
 
     return GL_FRAGMENT_SHADER;

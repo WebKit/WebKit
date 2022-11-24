@@ -270,8 +270,8 @@
     },
     "ProvokingVertexConvention":
     {
-        "FirstVertexConvention": "GL_FIRST_VERTEX_CONVENTION",
-        "LastVertexConvention": "GL_LAST_VERTEX_CONVENTION"
+        "FirstVertexConvention": "GL_FIRST_VERTEX_CONVENTION_ANGLE",
+        "LastVertexConvention": "GL_LAST_VERTEX_CONVENTION_ANGLE"
     },
     "HandleType":
     {

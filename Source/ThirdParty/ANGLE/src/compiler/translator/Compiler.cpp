@@ -367,6 +367,7 @@ TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
       mTessEvaluationShaderInputPointType(EtetUndefined),
       mHasAnyPreciseType(false),
       mAdvancedBlendEquations(0),
+      mHasPixelLocalStorageUniforms(false),
       mCompileOptions{}
 {}
 
@@ -586,7 +587,8 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     if (mShaderType == GL_FRAGMENT_SHADER)
     {
-        mAdvancedBlendEquations = parseContext.getAdvancedBlendEquations();
+        mAdvancedBlendEquations       = parseContext.getAdvancedBlendEquations();
+        mHasPixelLocalStorageUniforms = !parseContext.pixelLocalStorageBindings().empty();
     }
     if (mShaderType == GL_GEOMETRY_SHADER_EXT)
     {
@@ -695,19 +697,16 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     //   Should this actually run after collecting variables?
     //   Do we need more introspection?
     //   Do we want to hide rewritten shader image uniforms from glGetActiveUniform?
-    if (!parseContext.pixelLocalStorageBindings().empty())
+    if (hasPixelLocalStorageUniforms())
     {
         ASSERT(
             IsExtensionEnabled(mExtensionBehavior, TExtension::ANGLE_shader_pixel_local_storage));
-        if (!RewritePixelLocalStorageToImages(this, root, getSymbolTable(), compileOptions,
-                                              getShaderVersion()))
+        if (!RewritePixelLocalStorage(this, root, getSymbolTable(), compileOptions,
+                                      getShaderVersion()))
         {
             mDiagnostics.globalError("internal compiler error translating pixel local storage");
             return false;
         }
-        // When PLS is implemented with images, early_fragment_tests ensure that depth/stencil can
-        // also block stores to PLS.
-        mEarlyFragmentTestsSpecified = true;
     }
 
     // Disallow expressions deemed too complex.
@@ -845,7 +844,8 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     if (parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance))
     {
         if (!ValidateClipCullDistance(root, &mDiagnostics,
-                                      mResources.MaxCombinedClipAndCullDistances))
+                                      mResources.MaxCombinedClipAndCullDistances,
+                                      compileOptions.limitSimultaneousClipAndCullDistanceUsage))
         {
             return false;
         }
@@ -1662,7 +1662,8 @@ bool TCompiler::initializeOutputVariables(TIntermBlock *root)
 {
     InitVariableList list;
     list.reserve(mOutputVaryings.size());
-    if (mShaderType == GL_VERTEX_SHADER || mShaderType == GL_GEOMETRY_SHADER_EXT)
+    if (mShaderType == GL_VERTEX_SHADER || mShaderType == GL_GEOMETRY_SHADER_EXT ||
+        mShaderType == GL_TESS_CONTROL_SHADER_EXT || mShaderType == GL_TESS_EVALUATION_SHADER_EXT)
     {
         for (const sh::ShaderVariable &var : mOutputVaryings)
         {

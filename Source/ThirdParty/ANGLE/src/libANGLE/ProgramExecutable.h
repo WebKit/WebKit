@@ -154,9 +154,9 @@ class ProgramExecutable final : public angle::Subject
         return mActiveAttribLocationsMask;
     }
     bool isAttribLocationActive(size_t attribLocation) const;
-    const AttributesMask &getNonBuiltinAttribLocationsMask() const { return mAttributesMask; }
+    AttributesMask getNonBuiltinAttribLocationsMask() const { return mAttributesMask; }
     unsigned int getMaxActiveAttribLocation() const { return mMaxActiveAttribLocation; }
-    const ComponentTypeMask &getAttributesTypeMask() const { return mAttributesTypeMask; }
+    ComponentTypeMask getAttributesTypeMask() const { return mAttributesTypeMask; }
     AttributesMask getAttributesMask() const;
 
     const ActiveTextureMask &getActiveSamplersMask() const { return mActiveSamplersMask; }

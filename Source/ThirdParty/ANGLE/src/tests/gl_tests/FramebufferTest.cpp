@@ -2840,6 +2840,58 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDrawThenResolveAgainT
                       255, 1.0);
 }
 
+// Test resolving a multisampled texture with blit to a non-zero level.
+TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitNonZeroLevel)
+{
+    constexpr int kWidth  = 16;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    ASSERT_GL_NO_ERROR();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
+                     essl31_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    // Create a resolve FBO and texture. The multisample buffer will be resolved into level 1 of the
+    // bound texture, which has the same dimensions as the multisampled texture.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 3, GL_RGBA8, kWidth * 2, kHeight * 2);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, msaaFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    constexpr uint8_t kWidthHalfPixelGradient  = 256 / kWidth / 2;
+    constexpr uint8_t kHeightHalfPixelGradient = 256 / kHeight / 2;
+    EXPECT_PIXEL_NEAR(0, 0, kWidthHalfPixelGradient, kHeightHalfPixelGradient, 0, 255, 1.0);
+    EXPECT_PIXEL_NEAR(kWidth - 1, 0, 255 - kWidthHalfPixelGradient, kHeightHalfPixelGradient, 0,
+                      255, 1.0);
+    EXPECT_PIXEL_NEAR(0, kHeight - 1, kWidthHalfPixelGradient, 255 - kHeightHalfPixelGradient, 0,
+                      255, 1.0);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight - 1, 255 - kWidthHalfPixelGradient,
+                      255 - kHeightHalfPixelGradient, 0, 255, 1.0);
+}
+
 // If there are no attachments, rendering will be limited to a rectangle having a lower left of
 // (0, 0) and an upper right of(width, height), where width and height are the framebuffer
 // object's default width and height.
@@ -2942,8 +2994,8 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
-// If fbo has no attachments, change size should still work without vvl error.
-TEST_P(FramebufferTest_ES31, ChangeFBOSizeWithNoAttachments)
+// Creating two attachmentless framebuffers should work without vvl error.
+TEST_P(FramebufferTest_ES31, CreateNoAttachmentFBOWithDifferentSize)
 {
     constexpr char kVS1[] = R"(#version 310 es
 in layout(location = 0) highp vec2 a_position;
@@ -2993,14 +3045,102 @@ void main()
     }
 
     ASSERT_GL_NO_ERROR();
+
+    // Test that:
+    // 1. create 1st no-attachment framebuffer with size 2*2, draw, delete framebuffer
+    // 2. create 2nd no-attachment framebuffer with size 1*1, draw, delete framebuffer
+    // works properly
+    for (int loop = 1; loop >= 0; loop--)
+    {
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+        GLuint defaultWidth  = 1 << loop;
+        GLuint defaultHeight = 1 << loop;
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+
+        // Draw and check the FBO size
+        validateSamplePass(query, defaultWidth, defaultHeight);
+    }
+
+    ASSERT_GL_NO_ERROR();
 }
 
-// Test that:
-// 1. create a no-attachment framebuffer with default size 1*1, draw
-// 2. give the fbo with 1 color attachment with size 2*2, draw
-// 3. change the fbo default size to 3*3, draw
-// 4. remove the fbo attachment, draw
-// works properly
+// Altering the default width and height of attachmentless framebuffer should work fine
+TEST_P(FramebufferTest_ES31, ChangeFBOSizeWithNoAttachments)
+{
+    constexpr char kVS1[] = R"(#version 310 es
+in layout(location = 0) highp vec2 a_position;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+
+    constexpr char kFS1[] = R"(#version 310 es
+uniform layout(location = 0) highp ivec2 u_expectedSize;
+out layout(location = 3) mediump vec4 f_color;
+void main()
+{
+    if (ivec2(gl_FragCoord.xy) != u_expectedSize) discard;
+    f_color = vec4(1.0, 0.5, 0.25, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program1, kVS1, kFS1);
+    glUseProgram(program1);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    const float data[] = {
+        1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f,
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+
+    GLQuery query;
+
+    // Test that:
+    // 1. create a no-attachment framebuffer with size 1*1, draw
+    // 2. change the no-attachment framebuffer size to 2*2, draw
+    // works properly
+    GLFramebuffer framebufferWithVariousSizeGrow;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferWithVariousSizeGrow);
+    for (int loop = 0; loop < 2; loop++)
+    {
+        GLuint defaultWidth  = 1 << loop;
+        GLuint defaultHeight = 1 << loop;
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+
+        // Draw and check the FBO size
+        validateSamplePass(query, defaultWidth, defaultHeight);
+    }
+
+    ASSERT_GL_NO_ERROR();
+
+    // Test that:
+    // 1. create a no-attachment framebuffer with size 2*2, draw
+    // 2. change the no-attachment framebuffer size to 1*1, draw
+    // works properly
+    GLFramebuffer framebufferWithVariousSizeShrink;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferWithVariousSizeShrink);
+    for (int loop = 1; loop >= 0; loop--)
+    {
+        GLuint defaultWidth  = 1 << loop;
+        GLuint defaultHeight = 1 << loop;
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+
+        // Draw and check the FBO size
+        validateSamplePass(query, defaultWidth, defaultHeight);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that changing framebuffer attachment count and its' default width and height work properly
 TEST_P(FramebufferTest_ES31, ChangeFBOSizeAndAttachmentsCount)
 {
     constexpr char kVS1[] = R"(#version 310 es
@@ -3032,8 +3172,13 @@ void main()
 
     GLQuery query;
 
-    GLFramebuffer framebufferWithVariousSizeAndAttachment;
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferWithVariousSizeAndAttachment);
+    // 1. create a no-attachment framebuffer with default size 1*1, draw
+    // 2. give the fbo with 1 color attachment with size 2*2, draw
+    // 3. change the fbo default size to 3*3, draw
+    // 4. remove the fbo attachment, draw
+    // works properly
+    GLFramebuffer framebufferWithVariousSizeAndAttachmentGrow;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferWithVariousSizeAndAttachmentGrow);
     GLuint defaultWidth  = 1;
     GLuint defaultHeight = 1;
     glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
@@ -3063,6 +3208,298 @@ void main()
     validateSamplePass(query, defaultWidth, defaultHeight);
 
     ASSERT_GL_NO_ERROR();
+
+    // 1. create a no-attachment framebuffer with default size 3*3, draw
+    // 2. give the fbo with 1 color attachment with size 2*2, draw
+    // 3. change the fbo default size to 1*1, draw
+    // 4. remove the fbo attachment, draw
+    // works properly
+    GLFramebuffer framebufferWithVariousSizeAndAttachmentShrink;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferWithVariousSizeAndAttachmentShrink);
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    validateSamplePass(query, defaultWidth, defaultHeight);
+
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture.get(),
+                           0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    validateSamplePass(query, attachmentWidth, attachmentHeight);
+
+    defaultWidth  = 1;
+    defaultHeight = 1;
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    validateSamplePass(query, attachmentWidth, attachmentHeight);
+
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0, 0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    validateSamplePass(query, defaultWidth, defaultHeight);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test binding two textures with different widths to an FBO and drawing to it.
+TEST_P(FramebufferTest_ES31, BindTexturesOfDifferentWidthsToFBOAndDraw)
+{
+    constexpr GLuint kSize = 2;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+
+    // The second texture is defined with double the width as the first.
+    GLTexture colorTexture2;
+    glBindTexture(GL_TEXTURE_2D, colorTexture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize * 2, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture2, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize * 2, kSize, GLColor::green);
+}
+
+// Test binding two textures with different heights to an FBO and drawing to it.
+TEST_P(FramebufferTest_ES31, BindTexturesOfDifferentHeightsToFBOAndDraw)
+{
+    constexpr GLuint kSize = 2;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+
+    // The second texture is defined with double the height as the first.
+    GLTexture colorTexture2;
+    glBindTexture(GL_TEXTURE_2D, colorTexture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize * 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture2, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize * 2, GLColor::green);
+}
+
+// Test binding two textures with different formats to an FBO and drawing to it.
+TEST_P(FramebufferTest_ES31, BindTexturesOfDifferentFormatsToFBOAndDraw)
+{
+    constexpr GLuint kSize = 2;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    // The second texture is defined with R8 as its format.
+    GLTexture colorTexture2;
+    glBindTexture(GL_TEXTURE_2D, colorTexture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, kSize, kSize, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture2, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+}
+
+// Test binding two textures with different attachments to an FBO and drawing to it.
+TEST_P(FramebufferTest_ES31, BindTexturesOfDifferentAttachmentsToFBOAndDraw)
+{
+    constexpr GLuint kSize = 2;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+
+    // The second texture has an additional depth attachment.
+    GLTexture colorTexture2;
+    glBindTexture(GL_TEXTURE_2D, colorTexture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture2, 0);
+
+    GLRenderbuffer depthBuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+}
+
+// Test binding two textures with different create flags to an FBO and drawing to it.
+TEST_P(FramebufferTest_ES31, BindTexturesOfDifferentCreateFlagsToFBOAndDraw)
+{
+    constexpr GLuint kSize = 2;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+
+    // The second texture is defined as a cubemap, changing its create flags.
+    GLTexture colorTexture2;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, colorTexture2);
+
+    for (size_t faceIndex = 0; faceIndex < 6; ++faceIndex)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, 0, GL_RGBA8, kSize, kSize, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    }
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    for (size_t faceIndex = 0; faceIndex < 6; ++faceIndex)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, colorTexture2, 0);
+    }
+    ASSERT_GL_NO_ERROR();
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+}
+
+// Test binding two textures with different usage flags to an FBO and drawing to it.
+TEST_P(FramebufferTest_ES31, BindTexturesOfDifferentUsageFlagsToFBOAndDraw)
+{
+    constexpr GLuint kSize = 2;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+
+    // The second texture is used in a compute shader before the original shader, adding the storage
+    // bit to its usage bits.
+    GLTexture colorTexture2;
+    glBindTexture(GL_TEXTURE_2D, colorTexture2);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+uniform vec4 data;
+layout(rgba8, binding = 0) writeonly uniform highp image2D image;
+
+void main()
+{
+    imageStore(image, ivec2(gl_LocalInvocationID.xy), data);
+})";
+
+    GLuint computeProgram = CompileComputeProgram(kCS);
+    ASSERT_NE(computeProgram, 0u);
+    glUseProgram(computeProgram);
+
+    glBindImageTexture(0, colorTexture2, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+    GLint uniformLoc = glGetUniformLocation(computeProgram, "data");
+    ASSERT_NE(uniformLoc, -1);
+    glUniform4f(uniformLoc, 0.0f, 0.0f, 1.0f, 1.0f);
+
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture2, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
 }
 
 // Validates both MESA and standard functions can be used on OpenGL ES >=3.1
@@ -4689,6 +5126,131 @@ TEST_P(FramebufferTest_ES3, BlitWithDifferentPreRotations)
     ASSERT_EGL_SUCCESS();
 }
 
+// Tests draw to surfaces with different pre-rotation values.
+TEST_P(FramebufferTest_ES3, DrawWithDifferentPreRotations)
+{
+    EGLWindow *window = getEGLWindow();
+    ASSERT(window);
+    EGLConfig config   = window->getConfig();
+    EGLContext context = window->getContext();
+    EGLDisplay dpy     = window->getDisplay();
+    EGLint surfaceType = 0;
+
+    // Skip if pbuffer surface is not supported
+    eglGetConfigAttrib(dpy, config, EGL_SURFACE_TYPE, &surfaceType);
+    ANGLE_SKIP_TEST_IF((surfaceType & EGL_PBUFFER_BIT) == 0);
+
+    const EGLint surfaceWidth        = static_cast<EGLint>(getWindowWidth());
+    const EGLint surfaceHeight       = static_cast<EGLint>(getWindowHeight());
+    const EGLint pBufferAttributes[] = {
+        EGL_WIDTH, surfaceWidth, EGL_HEIGHT, surfaceHeight, EGL_NONE,
+    };
+
+    // Create Pbuffer surface
+    EGLSurface pbufferSurface = eglCreatePbufferSurface(dpy, config, pBufferAttributes);
+    ASSERT_NE(pbufferSurface, EGL_NO_SURFACE);
+    ASSERT_EGL_SUCCESS();
+
+    EGLSurface windowSurface = window->getSurface();
+    ASSERT_NE(windowSurface, EGL_NO_SURFACE);
+
+    constexpr char kCheckered2FS[] = R"(precision highp float;
+varying vec4 v_position;
+
+void main()
+{
+    bool isLeft = v_position.x < 0.0;
+    bool isTop = v_position.y < 0.0;
+    if (isLeft)
+    {
+        if (isTop)
+        {
+            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+        }
+        else
+        {
+            gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+        }
+    }
+    else
+    {
+        if (isTop)
+        {
+            gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+        }
+        else
+        {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    }
+})";
+
+    ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::Checkered());
+    ANGLE_GL_PROGRAM(checkerProgram2, essl1_shaders::vs::Passthrough(), kCheckered2FS);
+
+    // The test does the following:
+    //
+    // 1. draw checkered to window (rotated)
+    // 2. draw checkered to pbuffer (not rotated)
+    // 3. verify rendering to window, draw checkered2, verify again
+    // 4. verify rendering to pbuffer, draw checkered2, verify again
+    //
+    // Step 2 ensures that the correct state is used after a change to the bound surface (from
+    // rotated to not). Step 3 ensures the same from not rotated to rotated.  Step 4 is a redundant
+    // check.
+
+    // Step 1
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, windowSurface, windowSurface, context));
+    ASSERT_EGL_SUCCESS();
+
+    drawQuad(checkerProgram, essl1_shaders::PositionAttrib(), 0);
+
+    // Step 2
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, pbufferSurface, windowSurface, context));
+    ASSERT_EGL_SUCCESS();
+
+    drawQuad(checkerProgram, essl1_shaders::PositionAttrib(), 0);
+
+    // Step 3
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, windowSurface, windowSurface, context));
+    ASSERT_EGL_SUCCESS();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, surfaceHeight - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, surfaceHeight - 1, GLColor::yellow);
+
+    drawQuad(checkerProgram2, essl1_shaders::PositionAttrib(), 0);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(0, surfaceHeight - 1, GLColor::cyan);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, 0, GLColor::magenta);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, surfaceHeight - 1, GLColor::white);
+
+    // Step 4
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, pbufferSurface, pbufferSurface, context));
+    ASSERT_EGL_SUCCESS();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, surfaceHeight - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, surfaceHeight - 1, GLColor::yellow);
+
+    drawQuad(checkerProgram2, essl1_shaders::PositionAttrib(), 0);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(0, surfaceHeight - 1, GLColor::cyan);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, 0, GLColor::magenta);
+    EXPECT_PIXEL_COLOR_EQ(surfaceWidth - 1, surfaceHeight - 1, GLColor::white);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, windowSurface, windowSurface, context));
+    ASSERT_EGL_SUCCESS();
+
+    EXPECT_EGL_TRUE(eglDestroySurface(dpy, pbufferSurface));
+    ASSERT_EGL_SUCCESS();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
                                ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
                                ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));
@@ -4707,5 +5269,6 @@ ANGLE_INSTANTIATE_TEST(FramebufferTest_ES3Metal,
                        ES3_METAL().enable(Feature::LimitMaxColorTargetBitsForTesting));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferTest_ES31);
-ANGLE_INSTANTIATE_TEST_ES31(FramebufferTest_ES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferTest_ES31,
+                                ES31_VULKAN().disable(Feature::SupportsImagelessFramebuffer));
 ANGLE_INSTANTIATE_TEST_ES3(FramebufferTestWithFormatFallback);

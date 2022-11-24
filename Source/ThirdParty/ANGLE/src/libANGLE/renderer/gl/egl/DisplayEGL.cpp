@@ -16,6 +16,7 @@
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/egl/ContextEGL.h"
+#include "libANGLE/renderer/gl/egl/DeviceEGL.h"
 #include "libANGLE/renderer/gl/egl/DmaBufImageSiblingEGL.h"
 #include "libANGLE/renderer/gl/egl/FunctionsEGLDL.h"
 #include "libANGLE/renderer/gl/egl/ImageEGL.h"
@@ -1044,6 +1045,11 @@ EGLint DisplayEGL::fixSurfaceType(EGLint surfaceType) const
 const FunctionsEGL *DisplayEGL::getFunctionsEGL() const
 {
     return mEGL;
+}
+
+DeviceImpl *DisplayEGL::createDevice()
+{
+    return new DeviceEGL(this);
 }
 
 bool DisplayEGL::supportsDmaBufFormat(EGLint format) const

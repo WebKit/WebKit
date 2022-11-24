@@ -10,6 +10,7 @@
 #include "libANGLE/renderer/d3d/d3d9/Image9.h"
 
 #include "common/utilities.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
@@ -500,9 +501,9 @@ angle::Result Image9::loadData(const gl::Context *context,
     RECT lockRect = {area.x, area.y, area.x + area.width, area.y + area.height};
 
     D3DLOCKED_RECT locked;
-    ANGLE_TRY(lock(GetImplAs<Context9>(context), &locked, lockRect));
+    ANGLE_TRY(lock(context9, &locked, lockRect));
 
-    d3dFormatInfo.loadFunction(area.width, area.height, area.depth,
+    d3dFormatInfo.loadFunction(context9->getImageLoadContext(), area.width, area.height, area.depth,
                                static_cast<const uint8_t *>(input), inputRowPitch, 0,
                                static_cast<uint8_t *>(locked.pBits), locked.Pitch, 0);
 
@@ -539,11 +540,12 @@ angle::Result Image9::loadCompressedData(const gl::Context *context,
     RECT lockRect = {area.x, area.y, area.x + area.width, area.y + area.height};
 
     D3DLOCKED_RECT locked;
-    ANGLE_TRY(lock(GetImplAs<Context9>(context), &locked, lockRect));
+    ANGLE_TRY(lock(context9, &locked, lockRect));
 
-    d3d9FormatInfo.loadFunction(area.width, area.height, area.depth,
-                                static_cast<const uint8_t *>(input), inputRowPitch, inputDepthPitch,
-                                static_cast<uint8_t *>(locked.pBits), locked.Pitch, 0);
+    d3d9FormatInfo.loadFunction(context9->getImageLoadContext(), area.width, area.height,
+                                area.depth, static_cast<const uint8_t *>(input), inputRowPitch,
+                                inputDepthPitch, static_cast<uint8_t *>(locked.pBits), locked.Pitch,
+                                0);
 
     unlock();
 

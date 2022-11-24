@@ -29,7 +29,9 @@ class ValidateClipCullDistanceTraverser : public TIntermTraverser
 {
   public:
     ValidateClipCullDistanceTraverser();
-    void validate(TDiagnostics *diagnostics, const unsigned int maxCombinedClipAndCullDistances);
+    void validate(TDiagnostics *diagnostics,
+                  const unsigned int maxCombinedClipAndCullDistances,
+                  const bool limitSimultaneousClipAndCullDistanceUsage);
 
   private:
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
@@ -155,8 +157,10 @@ bool ValidateClipCullDistanceTraverser::visitBinary(Visit visit, TIntermBinary *
     return true;
 }
 
-void ValidateClipCullDistanceTraverser::validate(TDiagnostics *diagnostics,
-                                                 const unsigned int maxCombinedClipAndCullDistances)
+void ValidateClipCullDistanceTraverser::validate(
+    TDiagnostics *diagnostics,
+    const unsigned int maxCombinedClipAndCullDistances,
+    const bool limitSimultaneousClipAndCullDistanceUsage)
 {
     ASSERT(diagnostics);
 
@@ -182,18 +186,30 @@ void ValidateClipCullDistanceTraverser::validate(TDiagnostics *diagnostics,
                << combinedClipAndCullDistances << " > " << maxCombinedClipAndCullDistances << ")";
         error(*greaterSymbol, strstr.str().c_str(), diagnostics);
     }
+
+    if (limitSimultaneousClipAndCullDistanceUsage &&
+        (enabledClipDistances && enabledCullDistances) &&
+        (enabledClipDistances > 4 || enabledCullDistances > 4))
+    {
+        error(enabledClipDistances > 4 ? *mClipDistance : *mCullDistance,
+              "When both 'gl_ClipDistance' and 'gl_CullDistance' are used, each size must "
+              "not be greater than 4.",
+              diagnostics);
+    }
 }
 
 }  // anonymous namespace
 
 bool ValidateClipCullDistance(TIntermBlock *root,
                               TDiagnostics *diagnostics,
-                              const unsigned int maxCombinedClipAndCullDistances)
+                              const unsigned int maxCombinedClipAndCullDistances,
+                              const bool limitSimultaneousClipAndCullDistanceUsage)
 {
     ValidateClipCullDistanceTraverser varyingValidator;
     root->traverse(&varyingValidator);
     int numErrorsBefore = diagnostics->numErrors();
-    varyingValidator.validate(diagnostics, maxCombinedClipAndCullDistances);
+    varyingValidator.validate(diagnostics, maxCombinedClipAndCullDistances,
+                              limitSimultaneousClipAndCullDistanceUsage);
     return (diagnostics->numErrors() == numErrorsBefore);
 }
 

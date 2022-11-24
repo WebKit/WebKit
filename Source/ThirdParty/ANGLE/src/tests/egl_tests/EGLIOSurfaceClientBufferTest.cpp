@@ -13,8 +13,11 @@
 #include "util/EGLWindow.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <IOSurface/IOSurface.h>
-
+#if TARGET_OS_OSX
+#    include <IOSurface/IOSurface.h>
+#else
+#    include <IOSurface/IOSurfaceRef.h>
+#endif
 using namespace angle;
 
 namespace

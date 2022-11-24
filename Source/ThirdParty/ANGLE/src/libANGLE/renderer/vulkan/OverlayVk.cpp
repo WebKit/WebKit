@@ -69,7 +69,8 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
     ANGLE_TRY(mFontImage.initImageView(
         contextVk, gl::TextureType::_2DArray, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(),
-        &mFontImageView, vk::LevelIndex(0), gl::overlay::kFontMipCount));
+        &mFontImageView, vk::LevelIndex(0), gl::overlay::kFontMipCount,
+        vk::ImageHelper::kDefaultImageViewUsageFlags));
 
     // Copy font data from staging buffer.
     vk::CommandBufferAccess access;

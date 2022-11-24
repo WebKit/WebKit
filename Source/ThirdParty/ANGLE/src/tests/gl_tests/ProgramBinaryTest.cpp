@@ -1413,7 +1413,7 @@ class ProgramBinariesAcrossPlatforms : public testing::TestWithParam<PlatformsWi
             EGLWindow::Delete(&eglWindow);
         }
 
-        angle::LoadGLES(eglGetProcAddress);
+        LoadUtilGLES(eglGetProcAddress);
 
         return eglWindow;
     }

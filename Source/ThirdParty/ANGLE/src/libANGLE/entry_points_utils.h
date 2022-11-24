@@ -91,11 +91,9 @@ constexpr ANGLE_INLINE ReturnType GetDefaultReturnValue()
 }
 
 #if ANGLE_CAPTURE_ENABLED
-#    define ANGLE_CAPTURE_GL(Func, ...) CaptureCallToFrameCapture(Capture##Func, __VA_ARGS__)
-#    define ANGLE_CAPTURE_EGL(Func, ...) CaptureCallToCaptureEGL(Capture##Func, __VA_ARGS__)
+#    define ANGLE_CAPTURE_GL(Func, ...) CaptureGLCallToFrameCapture(Capture##Func, __VA_ARGS__)
 #else
 #    define ANGLE_CAPTURE_GL(...)
-#    define ANGLE_CAPTURE_EGL(...)
 #endif  // ANGLE_CAPTURE_ENABLED
 
 #define EGL_EVENT(EP, FMT, ...) EVENT(nullptr, EGL##EP, FMT, ##__VA_ARGS__)
@@ -104,24 +102,39 @@ inline int CID(const Context *context)
 {
     return context == nullptr ? 0 : static_cast<int>(context->id().value);
 }
+
+bool GeneratePixelLocalStorageActiveError(const Context *context, angle::EntryPoint entryPoint);
+
+ANGLE_INLINE bool ValidatePixelLocalStorageInactive(const Context *context,
+                                                    angle::EntryPoint entryPoint)
+{
+    return context->getState().getPixelLocalStorageActivePlanes() == 0 ||
+           GeneratePixelLocalStorageActiveError(context, entryPoint);
+}
 }  // namespace gl
 
 namespace egl
 {
 inline int CID(EGLDisplay display, EGLContext context)
 {
-    auto *displayPtr = reinterpret_cast<const egl::Display *>(display);
+    const egl::Display *displayPtr = reinterpret_cast<const egl::Display *>(display);
     if (!Display::isValidDisplay(displayPtr))
     {
         return -1;
     }
-    auto *contextPtr = reinterpret_cast<const gl::Context *>(context);
-    if (!displayPtr->isValidContext(contextPtr))
+    gl::ContextID contextID = {static_cast<GLuint>(reinterpret_cast<uintptr_t>(context))};
+    if (!displayPtr->isValidContext(contextID))
     {
         return -1;
     }
-    return gl::CID(contextPtr);
+    return contextID.value;
 }
+
+#if ANGLE_CAPTURE_ENABLED
+#    define ANGLE_CAPTURE_EGL(Func, ...) CaptureEGLCallToFrameCapture(Capture##Func, __VA_ARGS__)
+#else
+#    define ANGLE_CAPTURE_EGL(...)
+#endif  // ANGLE_CAPTURE_ENABLED
 }  // namespace egl
 
 #endif  // LIBANGLE_ENTRY_POINT_UTILS_H_

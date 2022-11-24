@@ -2403,7 +2403,7 @@ unsigned int Renderer9::getReservedFragmentUniformVectors() const
 bool Renderer9::getShareHandleSupport() const
 {
     // PIX doesn't seem to support using share handles, so disable them.
-    return (mD3d9Ex != nullptr) && !gl::DebugAnnotationsActive();
+    return (mD3d9Ex != nullptr) && !gl::DebugAnnotationsActive(/*context=*/nullptr);
 }
 
 int Renderer9::getMajorShaderModel() const
@@ -2706,7 +2706,7 @@ angle::Result Renderer9::compileToExecutable(d3d::Context *context,
         flags = D3DCOMPILE_OPTIMIZATION_LEVEL3;
     }
 
-    if (gl::DebugAnnotationsActive())
+    if (gl::DebugAnnotationsActive(/*context=*/nullptr))
     {
 #ifndef NDEBUG
         flags = D3DCOMPILE_SKIP_OPTIMIZATION;

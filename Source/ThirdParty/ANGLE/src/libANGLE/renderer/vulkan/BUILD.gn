@@ -153,6 +153,8 @@ if (angle_use_vulkan_null_display) {
 
 if (is_linux || is_chromeos) {
   _vulkan_backend_sources += [
+    "linux/DeviceVkLinux.cpp",
+    "linux/DeviceVkLinux.h",
     "linux/DisplayVkLinux.cpp",
     "linux/DisplayVkLinux.h",
     "linux/DmaBufImageSiblingVkLinux.cpp",

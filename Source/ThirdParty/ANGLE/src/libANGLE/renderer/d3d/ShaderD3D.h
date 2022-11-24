@@ -73,6 +73,8 @@ class ShaderD3D : public ShaderImpl
 
     void generateWorkarounds(CompilerWorkaroundsD3D *workarounds) const;
 
+    bool usesClipDistance() const { return mUsesClipDistance; }
+    bool usesCullDistance() const { return mUsesCullDistance; }
     bool usesMultipleRenderTargets() const { return mUsesMultipleRenderTargets; }
     bool usesFragColor() const { return mUsesFragColor; }
     bool usesFragData() const { return mUsesFragData; }
@@ -91,6 +93,8 @@ class ShaderD3D : public ShaderImpl
     ShShaderOutput getCompilerOutputType() const;
 
   private:
+    bool mUsesClipDistance;
+    bool mUsesCullDistance;
     bool mUsesMultipleRenderTargets;
     bool mUsesFragColor;
     bool mUsesFragData;

@@ -160,6 +160,8 @@ struct InternalFormat
                                          GLint imageHeight,
                                          GLuint *resultOut) const;
 
+    [[nodiscard]] bool computePalettedImageRowPitch(GLsizei width, GLuint *resultOut) const;
+
     [[nodiscard]] bool computeCompressedImageSize(const Extents &size, GLuint *resultOut) const;
 
     [[nodiscard]] std::pair<GLuint, GLuint> getCompressedImageMinBlocks() const;
@@ -231,6 +233,9 @@ struct InternalFormat
     GLuint compressedBlockWidth;
     GLuint compressedBlockHeight;
     GLuint compressedBlockDepth;
+
+    bool paletted;
+    GLuint paletteBits;
 
     GLenum format;
     GLenum type;

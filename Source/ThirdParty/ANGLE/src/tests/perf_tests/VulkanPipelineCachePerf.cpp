@@ -19,7 +19,13 @@ namespace
 {
 constexpr unsigned int kIterationsPerStep = 100;
 
-class VulkanPipelineCachePerfTest : public ANGLEPerfTest
+struct Params
+{
+    bool withDynamicState = false;
+};
+
+class VulkanPipelineCachePerfTest : public ANGLEPerfTest,
+                                    public ::testing::WithParamInterface<Params>
 {
   public:
     VulkanPipelineCachePerfTest();
@@ -28,21 +34,19 @@ class VulkanPipelineCachePerfTest : public ANGLEPerfTest
     void SetUp() override;
     void step() override;
 
-    GraphicsPipelineCache mCache;
+    GraphicsPipelineCache<GraphicsPipelineDescCompleteHash> mCache;
     angle::RNG mRNG;
 
     std::vector<vk::GraphicsPipelineDesc> mCacheHits;
     std::vector<vk::GraphicsPipelineDesc> mCacheMisses;
     size_t mMissIndex = 0;
 
-    bool mWithDynamicState;
-
   private:
     void randomizeDesc(vk::GraphicsPipelineDesc *desc);
 };
 
 VulkanPipelineCachePerfTest::VulkanPipelineCachePerfTest()
-    : ANGLEPerfTest("VulkanPipelineCachePerf", "", "", kIterationsPerStep), mWithDynamicState(false)
+    : ANGLEPerfTest("VulkanPipelineCachePerf", "", "", kIterationsPerStep), mRNG(0x12345678u)
 {}
 
 VulkanPipelineCachePerfTest::~VulkanPipelineCachePerfTest()
@@ -80,7 +84,7 @@ void VulkanPipelineCachePerfTest::randomizeDesc(vk::GraphicsPipelineDesc *desc)
     FillVectorWithRandomUBytes(&mRNG, &bytes);
     memcpy(desc, bytes.data(), sizeof(vk::GraphicsPipelineDesc));
 
-    desc->setSupportsDynamicStateForTest(mWithDynamicState);
+    desc->setSupportsDynamicStateForTest(GetParam().withDynamicState);
 }
 
 void VulkanPipelineCachePerfTest::step()
@@ -89,24 +93,21 @@ void VulkanPipelineCachePerfTest::step()
     vk::PipelineLayout pl;
     vk::PipelineCache pc;
     PipelineCacheAccess spc;
-    vk::RefCounted<vk::ShaderAndSerial> vsAndSerial;
-    vk::RefCounted<vk::ShaderAndSerial> fsAndSerial;
-    vk::ShaderAndSerialMap ssm;
+    vk::RefCounted<vk::ShaderModule> vsRefCounted;
+    vk::RefCounted<vk::ShaderModule> fsRefCounted;
+    vk::ShaderModuleMap ssm;
     const vk::GraphicsPipelineDesc *desc = nullptr;
     vk::PipelineHelper *result           = nullptr;
-    gl::AttributesMask am;
-    gl::ComponentTypeMask ctm;
-    gl::DrawBufferMask dbm;
 
     // The Vulkan handle types are difficult to cast to without #ifdefs.
     VkShaderModule vs = (VkShaderModule)1;
     VkShaderModule fs = (VkShaderModule)2;
 
-    vsAndSerial.get().get().setHandle(vs);
-    fsAndSerial.get().get().setHandle(fs);
+    vsRefCounted.get().setHandle(vs);
+    fsRefCounted.get().setHandle(fs);
 
-    ssm[gl::ShaderType::Vertex].set(&vsAndSerial);
-    ssm[gl::ShaderType::Fragment].set(&fsAndSerial);
+    ssm[gl::ShaderType::Vertex].set(&vsRefCounted);
+    ssm[gl::ShaderType::Fragment].set(&fsRefCounted);
 
     spc.init(&pc, nullptr);
 
@@ -116,8 +117,11 @@ void VulkanPipelineCachePerfTest::step()
     {
         for (const auto &hit : mCacheHits)
         {
-            (void)mCache.getPipeline(VK_NULL_HANDLE, &spc, rp, pl, am, ctm, dbm, ssm,
-                                     defaultSpecConsts, PipelineSource::Draw, hit, &desc, &result);
+            if (!mCache.getPipeline(hit, &desc, &result))
+            {
+                (void)mCache.createPipeline(VK_NULL_HANDLE, &spc, rp, pl, ssm, defaultSpecConsts,
+                                            PipelineSource::Draw, hit, &desc, &result);
+            }
         }
     }
 
@@ -125,23 +129,25 @@ void VulkanPipelineCachePerfTest::step()
          ++missCount, ++mMissIndex)
     {
         const auto &miss = mCacheMisses[mMissIndex];
-        (void)mCache.getPipeline(VK_NULL_HANDLE, &spc, rp, pl, am, ctm, dbm, ssm, defaultSpecConsts,
-                                 PipelineSource::Draw, miss, &desc, &result);
+        if (!mCache.getPipeline(miss, &desc, &result))
+        {
+            (void)mCache.createPipeline(VK_NULL_HANDLE, &spc, rp, pl, ssm, defaultSpecConsts,
+                                        PipelineSource::Draw, miss, &desc, &result);
+        }
     }
 
-    vsAndSerial.get().get().setHandle(VK_NULL_HANDLE);
-    fsAndSerial.get().get().setHandle(VK_NULL_HANDLE);
+    vsRefCounted.get().setHandle(VK_NULL_HANDLE);
+    fsRefCounted.get().setHandle(VK_NULL_HANDLE);
 }
 
 }  // anonymous namespace
 
-TEST_F(VulkanPipelineCachePerfTest, Run)
+// Test performance of pipeline hash and look up in Vulkan
+TEST_P(VulkanPipelineCachePerfTest, Run)
 {
     run();
 }
 
-TEST_F(VulkanPipelineCachePerfTest, Run_WithDynamicState)
-{
-    mWithDynamicState = true;
-    run();
-}
+INSTANTIATE_TEST_SUITE_P(,
+                         VulkanPipelineCachePerfTest,
+                         ::testing::ValuesIn(std::vector<Params>{{Params{false}, Params{true}}}));

@@ -153,6 +153,8 @@ class ProgramD3DMetadata final : angle::NonCopyable
     int getRendererMajorShaderModel() const;
     bool usesBroadcast(const gl::State &data) const;
     bool usesSecondaryColor() const;
+    bool usesClipDistance() const;
+    bool usesCullDistance() const;
     bool usesFragDepth() const;
     bool usesPointCoord() const;
     bool usesFragCoord() const;

@@ -105,7 +105,6 @@ static int ES2_reserved_ES3_1_keyword(TParseContext *context, int token);
 static int ES3_1_keyword(TParseContext *context, int token);
 static int ES2_reserved_ES2_extension_ES3_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_extension(TParseContext *context, TExtension extension, int token);
-static int ES3_1_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context, TExtension extension, int token);
@@ -283,9 +282,9 @@ O           [0-7]
 "precise" { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::EXT_gpu_shader5, PRECISE); }
 
     /* ANGLE_shader_pixel_local_storage */
-"pixelLocalANGLE" { return ES3_1_extension(context, TExtension::ANGLE_shader_pixel_local_storage, PIXELLOCALANGLE); }
-"ipixelLocalANGLE" { return ES3_1_extension(context, TExtension::ANGLE_shader_pixel_local_storage, IPIXELLOCALANGLE); }
-"upixelLocalANGLE" { return ES3_1_extension(context, TExtension::ANGLE_shader_pixel_local_storage, UPIXELLOCALANGLE); }
+"pixelLocalANGLE" { return ES3_extension(context, TExtension::ANGLE_shader_pixel_local_storage, PIXELLOCALANGLE); }
+"ipixelLocalANGLE" { return ES3_extension(context, TExtension::ANGLE_shader_pixel_local_storage, IPIXELLOCALANGLE); }
+"upixelLocalANGLE" { return ES3_extension(context, TExtension::ANGLE_shader_pixel_local_storage, UPIXELLOCALANGLE); }
 
     /* Reserved keywords for GLSL ES 3.00 that are not reserved for GLSL ES 1.00 */
 "resource"          |
@@ -663,22 +662,6 @@ int ES3_extension(TParseContext *context, TExtension extension, int token)
 
     // a keyword word in GLSL ES 3.00 with enabled extension.
     if (context->getShaderVersion() >= 300 && context->isExtensionEnabled(extension))
-    {
-        return token;
-    }
-
-    // Otherwise can be used as an identifier/type name
-    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
-    return check_type(yyscanner);
-}
-
-int ES3_1_extension(TParseContext *context, TExtension extension, int token)
-{
-    struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
-    yyscan_t yyscanner = (yyscan_t) context->getScanner();
-
-    // a keyword word in GLSL ES 3.10 with enabled extension.
-    if (context->getShaderVersion() >= 310 && context->isExtensionEnabled(extension))
     {
         return token;
     }

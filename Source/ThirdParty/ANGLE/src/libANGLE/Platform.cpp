@@ -6,7 +6,7 @@
 
 // Platform.cpp: Implementation methods for angle::Platform.
 
-#include <platform/Platform.h>
+#include <platform/PlatformMethods.h>
 
 #include <cstring>
 

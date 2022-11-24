@@ -47,10 +47,4 @@
 #    define ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION ANGLE_ENABLED
 #endif
 
-// Controls if our threading code uses std::async or falls back to single-threaded operations.
-// Note that we can't easily use std::async in UWPs due to UWP threading restrictions.
-#if !defined(ANGLE_STD_ASYNC_WORKERS) && !defined(ANGLE_ENABLE_WINDOWS_UWP)
-#    define ANGLE_STD_ASYNC_WORKERS ANGLE_ENABLED
-#endif  // !defined(ANGLE_STD_ASYNC_WORKERS) && & !defined(ANGLE_ENABLE_WINDOWS_UWP)
-
 #endif  // LIBANGLE_FEATURES_H_

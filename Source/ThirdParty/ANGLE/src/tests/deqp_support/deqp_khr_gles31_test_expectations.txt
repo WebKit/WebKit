@@ -256,15 +256,6 @@
 5990 PIXEL4ORXL VULKAN : KHR-GLES31.core.sample_variables.mask.rgba8ui.samples_4.mask_7 = SKIP
 5990 PIXEL4ORXL VULKAN : KHR-GLES31.core.sample_variables.mask.rgba8ui.samples_4.mask_zero = SKIP
 
-// Pixel 6 expectations.
-
-// These fail on the Android S bots, but pass on pre-release Android T drivers:
-6918 PIXEL6 VULKAN : KHR-GLES31.core.compute_shader.resources-max = FAIL
-6918 PIXEL6 VULKAN : KHR-GLES31.core.geometry_shader.constant_variables.constant_variables = FAIL
-6918 PIXEL6 VULKAN : KHR-GLES31.core.geometry_shader.primitive_queries.* = FAIL
-6918 PIXEL6 VULKAN : KHR-GLES31.core.shader_storage_buffer_object.advanced-usage-operators-cs = FAIL
-6918 PIXEL6 VULKAN : KHR-GLES31.core.shader_storage_buffer_object.basic-operations-case1-cs = FAIL
-
 // Slow tests
 5755 SWIFTSHADER : KHR-GLES31.core.arrays_of_arrays.SizedDeclarationsPrimitive = TIMEOUT
 6295 : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructors1 = TIMEOUT

@@ -84,19 +84,19 @@ bool ShouldCreatePlatformLogMessage(LogSeverity severity)
 std::ostream *gSwallowStream;
 }  // namespace priv
 
-bool DebugAnnotationsActive()
+bool DebugAnnotationsActive(const gl::Context *context)
 {
 #if defined(ANGLE_ENABLE_DEBUG_ANNOTATIONS) || defined(ANGLE_ENABLE_DEBUG_TRACE)
-    return g_debugAnnotator != nullptr && g_debugAnnotator->getStatus();
+    return g_debugAnnotator != nullptr && g_debugAnnotator->getStatus(context);
 #else
     return false;
 #endif
 }
 
-bool ShouldBeginScopedEvent()
+bool ShouldBeginScopedEvent(const gl::Context *context)
 {
 #if defined(ANGLE_ENABLE_ANNOTATOR_RUN_TIME_CHECKS)
-    return DebugAnnotationsActive();
+    return DebugAnnotationsActive(context);
 #else
     return true;
 #endif  // defined(ANGLE_ENABLE_ANNOTATOR_RUN_TIME_CHECKS)
@@ -180,19 +180,21 @@ LogMessage::LogMessage(const char *file, const char *function, int line, LogSeve
 
 LogMessage::~LogMessage()
 {
-    std::unique_lock<std::mutex> lock;
-    if (g_debugMutex != nullptr)
     {
-        lock = std::unique_lock<std::mutex>(*g_debugMutex);
-    }
+        std::unique_lock<std::mutex> lock;
+        if (g_debugMutex != nullptr)
+        {
+            lock = std::unique_lock<std::mutex>(*g_debugMutex);
+        }
 
-    if (DebugAnnotationsInitialized() && (mSeverity > LOG_INFO))
-    {
-        g_debugAnnotator->logMessage(*this);
-    }
-    else
-    {
-        Trace(getSeverity(), getMessage().c_str());
+        if (DebugAnnotationsInitialized() && (mSeverity > LOG_INFO))
+        {
+            g_debugAnnotator->logMessage(*this);
+        }
+        else
+        {
+            Trace(getSeverity(), getMessage().c_str());
+        }
     }
 
     if (mSeverity == LOG_FATAL)
@@ -217,7 +219,7 @@ void Trace(LogSeverity severity, const char *message)
 
     std::string str(message);
 
-    if (DebugAnnotationsActive())
+    if (DebugAnnotationsActive(/*context=*/nullptr))
     {
 
         switch (severity)
@@ -226,7 +228,7 @@ void Trace(LogSeverity severity, const char *message)
                 // Debugging logging done in ScopedPerfEventHelper
                 break;
             default:
-                g_debugAnnotator->setMarker(message);
+                g_debugAnnotator->setMarker(/*context=*/nullptr, message);
                 break;
         }
     }
@@ -266,6 +268,7 @@ void Trace(LogSeverity severity, const char *message)
             switch (severity)
             {
                 case LOG_INFO:
+                case LOG_EVENT:
                     apple_log_type = OS_LOG_TYPE_INFO;
                     break;
                 case LOG_WARN:

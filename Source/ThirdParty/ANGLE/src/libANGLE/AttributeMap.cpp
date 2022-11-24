@@ -129,6 +129,7 @@ AttributeMap AttributeMap::CreateFromIntArray(const EGLint *attributes)
 {
     AttributeMap map;
     map.mIntPointer = attributes;
+    map.mMapType    = AttributeMapType::Int;
     return map;
 }
 
@@ -137,6 +138,7 @@ AttributeMap AttributeMap::CreateFromAttribArray(const EGLAttrib *attributes)
 {
     AttributeMap map;
     map.mAttribPointer = attributes;
+    map.mMapType       = AttributeMapType::Attrib;
     return map;
 }
 

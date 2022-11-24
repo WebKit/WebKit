@@ -16,15 +16,13 @@
 namespace rx
 {
 
-CompilerMtl::CompilerMtl(ShShaderOutput translatorOutputType)
-    : CompilerImpl(), mTranslatorOutputType(translatorOutputType)
-{}
+CompilerMtl::CompilerMtl() : CompilerImpl() {}
 
 CompilerMtl::~CompilerMtl() {}
 
 ShShaderOutput CompilerMtl::getTranslatorOutputType() const
 {
-    return mTranslatorOutputType;
+    return SH_MSL_METAL_OUTPUT;
 }
 
 }  // namespace rx

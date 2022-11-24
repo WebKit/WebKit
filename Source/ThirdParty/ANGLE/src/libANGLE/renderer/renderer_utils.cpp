@@ -32,7 +32,8 @@ namespace
 {
 // For the sake of feature name matching, underscore is ignored, and the names are matched
 // case-insensitive.  This allows feature names to be overriden both in snake_case (previously used
-// by ANGLE) and camelCase.
+// by ANGLE) and camelCase.  The second string (user-provided name) can end in `*` for wildcard
+// matching.
 bool FeatureNameMatch(const std::string &a, const std::string &b)
 {
     size_t ai = 0;
@@ -48,6 +49,11 @@ bool FeatureNameMatch(const std::string &a, const std::string &b)
         {
             ++bi;
         }
+        if (b[bi] == '*' && bi + 1 == b.size())
+        {
+            // If selected feature name ends in wildcard, match it.
+            return true;
+        }
         if (std::tolower(a[ai++]) != std::tolower(b[bi++]))
         {
             return false;
@@ -56,20 +62,6 @@ bool FeatureNameMatch(const std::string &a, const std::string &b)
 
     return ai == a.size() && bi == b.size();
 }
-
-// Search for a feature by name, matching it loosely so that both snake_case and camelCase names are
-// matched.
-FeatureInfo *FindFeatureByName(FeatureMap *features, const std::string &name)
-{
-    for (auto iter : *features)
-    {
-        if (FeatureNameMatch(iter.first, name))
-        {
-            return iter.second;
-        }
-    }
-    return nullptr;
-}
 }  // anonymous namespace
 
 // FeatureSetBase implementation
@@ -77,10 +69,25 @@ void FeatureSetBase::overrideFeatures(const std::vector<std::string> &featureNam
 {
     for (const std::string &name : featureNames)
     {
-        FeatureInfo *feature = FindFeatureByName(&members, name);
-        if (feature != nullptr)
+        const bool hasWildcard = name.back() == '*';
+        for (auto iter : members)
         {
+            const std::string &featureName = iter.first;
+            FeatureInfo *feature           = iter.second;
+
+            if (!FeatureNameMatch(featureName, name))
+            {
+                continue;
+            }
+
             feature->enabled = enabled;
+
+            // If name has a wildcard, try to match it with all features.  Otherwise, bail on first
+            // match, as names are unique.
+            if (!hasWildcard)
+            {
+                break;
+            }
         }
     }
 }
@@ -1069,9 +1076,22 @@ void LogFeatureStatus(const angle::FeatureSetBase &features,
 {
     for (const std::string &name : featureNames)
     {
-        if (features.getFeatures().find(name) != features.getFeatures().end())
+        const bool hasWildcard = name.back() == '*';
+        for (auto iter : features.getFeatures())
         {
-            INFO() << "Feature: " << name << (enabled ? " enabled" : " disabled");
+            const std::string &featureName = iter.first;
+
+            if (!angle::FeatureNameMatch(featureName, name))
+            {
+                continue;
+            }
+
+            INFO() << "Feature: " << featureName << (enabled ? " enabled" : " disabled");
+
+            if (!hasWildcard)
+            {
+                break;
+            }
         }
     }
 }

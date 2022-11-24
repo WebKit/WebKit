@@ -126,7 +126,7 @@ class BitSetT final
     constexpr bool none() const;
     constexpr std::size_t count() const;
 
-    constexpr std::size_t size() const { return N; }
+    constexpr static std::size_t size() { return N; }
 
     constexpr BitSetT &operator&=(const BitSetT &other);
     constexpr BitSetT &operator|=(const BitSetT &other);
@@ -631,7 +631,7 @@ class BitSetArray final
         typename BaseBitSet::Iterator mCurrentIterator;
     };
 
-    constexpr std::size_t size() const { return N; }
+    constexpr static std::size_t size() { return N; }
     Iterator begin() const { return Iterator(*this, 0); }
     Iterator end() const { return Iterator(*this, kArraySize); }
     constexpr unsigned long to_ulong() const

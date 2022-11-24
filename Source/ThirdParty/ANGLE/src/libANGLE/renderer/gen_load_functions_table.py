@@ -47,7 +47,8 @@ namespace
 //    device's capabilities)
 // This map type determines which loading function to use, based on these three parameters.
 // Source formats and types are taken from Tables 3.2 and 3.3 of the ES 3 spec.
-void UnimplementedLoadFunction(size_t width,
+void UnimplementedLoadFunction(const ImageLoadContext &context,
+                               size_t width,
                                size_t height,
                                size_t depth,
                                const uint8_t *input,
@@ -60,7 +61,8 @@ void UnimplementedLoadFunction(size_t width,
     UNIMPLEMENTED();
 }}
 
-void UnreachableLoadFunction(size_t width,
+void UnreachableLoadFunction(const ImageLoadContext &context,
+                             size_t width,
                              size_t height,
                              size_t depth,
                              const uint8_t *input,

@@ -9,6 +9,7 @@
 
 import argparse
 import fnmatch
+import glob
 import importlib
 import io
 import json
@@ -20,7 +21,8 @@ import re
 import subprocess
 import sys
 
-PY_UTILS = str(pathlib.Path(__file__).resolve().parent / 'py_utils')
+SCRIPT_DIR = str(pathlib.Path(__file__).resolve().parent)
+PY_UTILS = str(pathlib.Path(SCRIPT_DIR) / 'py_utils')
 if PY_UTILS not in sys.path:
     os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
 import android_helper
@@ -35,13 +37,15 @@ from tracing.value import histogram
 from tracing.value import histogram_set
 from tracing.value import merge_histograms
 
-ANGLE_PERFTESTS = 'angle_perftests'
+DEFAULT_TEST_SUITE = 'angle_perftests'
 DEFAULT_LOG = 'info'
-DEFAULT_SAMPLES = 4
-DEFAULT_TRIALS = 3
+DEFAULT_SAMPLES = 10
+DEFAULT_TRIALS = 4
 DEFAULT_MAX_ERRORS = 3
-DEFAULT_WARMUP_LOOPS = 2
-DEFAULT_CALIBRATION_TIME = 2
+
+# These parameters condition the test warmup to stabilize the scores across runs.
+DEFAULT_WARMUP_TRIALS = 2
+DEFAULT_TRIAL_TIME = 3
 
 # Test expectations
 FAIL = 'FAIL'
@@ -75,13 +79,6 @@ def _get_results_from_output(output, result):
         return None
 
     return [float(value) for value in m]
-
-
-def _get_tests_from_output(output):
-    out_lines = output.split('\n')
-    start = out_lines.index('Tests list:')
-    end = out_lines.index('End tests list.')
-    return out_lines[start + 1:end]
 
 
 def _truncated_list(data, n):
@@ -134,7 +131,7 @@ def _save_extra_output_files(args, results, histograms):
 
 class Results:
 
-    def __init__(self):
+    def __init__(self, suffix):
         self._results = {
             'tests': {},
             'interrupted': False,
@@ -148,23 +145,31 @@ class Results:
             },
         }
         self._test_results = {}
+        self._suffix = suffix
+
+    def _testname(self, name):
+        return name + self._suffix
 
     def has_failures(self):
         return self._results['num_failures_by_type'][FAIL] > 0
 
     def has_result(self, test):
-        return test in self._test_results
+        return self._testname(test) in self._test_results
 
     def result_skip(self, test):
-        self._test_results[test] = {'expected': SKIP, 'actual': SKIP}
+        self._test_results[self._testname(test)] = {'expected': SKIP, 'actual': SKIP}
         self._results['num_failures_by_type'][SKIP] += 1
 
     def result_pass(self, test):
-        self._test_results[test] = {'expected': PASS, 'actual': PASS}
+        self._test_results[self._testname(test)] = {'expected': PASS, 'actual': PASS}
         self._results['num_failures_by_type'][PASS] += 1
 
     def result_fail(self, test):
-        self._test_results[test] = {'expected': PASS, 'actual': FAIL, 'is_unexpected': True}
+        self._test_results[self._testname(test)] = {
+            'expected': PASS,
+            'actual': FAIL,
+            'is_unexpected': True
+        }
         self._results['num_failures_by_type'][FAIL] += 1
 
     def save_to_output_file(self, test_suite, fname):
@@ -217,17 +222,10 @@ def _wall_times_stats(wall_times):
 
 
 def _run_test_suite(args, cmd_args, env):
-    android_test_runner_args = [
-        '--extract-test-list-from-filter',
-        '--enable-device-cache',
-        '--skip-clear-data',
-        '--use-existing-test-data',
-    ]
     return angle_test_util.RunTestSuite(
         args.test_suite,
         cmd_args,
         env,
-        runner_args=android_test_runner_args,
         use_xvfb=args.xvfb,
         show_test_stdout=args.show_test_stdout)
 
@@ -236,8 +234,10 @@ def _run_calibration(args, common_args, env):
     exit_code, calibrate_output, json_results = _run_test_suite(
         args, common_args + [
             '--calibration',
-            '--warmup-loops',
-            str(args.warmup_loops),
+            '--warmup-trials',
+            str(args.warmup_trials),
+            '--calibration-time',
+            str(args.trial_time),
         ], env)
     if exit_code != EXIT_SUCCESS:
         raise RuntimeError('%s failed. Output:\n%s' % (args.test_suite, calibrate_output))
@@ -252,18 +252,21 @@ def _run_calibration(args, common_args, env):
     return PASS, int(steps_per_trial[0])
 
 
-def _run_perf(args, common_args, env, steps_per_trial):
+def _run_perf(args, common_args, env, steps_per_trial=None):
     run_args = common_args + [
-        '--steps-per-trial',
-        str(steps_per_trial),
         '--trials',
         str(args.trials_per_sample),
     ]
 
+    if steps_per_trial:
+        run_args += ['--steps-per-trial', str(steps_per_trial)]
+    else:
+        run_args += ['--trial-time', str(args.trial_time)]
+
     if args.smoke_test_mode:
         run_args += ['--no-warmup']
     else:
-        run_args += ['--warmup-loops', str(args.warmup_loops)]
+        run_args += ['--warmup-trials', str(args.warmup_trials)]
 
     if args.perf_counters:
         run_args += ['--perf-counters', args.perf_counters]
@@ -303,7 +306,8 @@ def _skipped_or_glmark2(test, test_status):
 
 
 def _run_tests(tests, args, extra_flags, env):
-    results = Results()
+    result_suffix = '_shard%d' % (args.shard_index if args.shard_index != None else None)
+    results = Results(result_suffix)
     histograms = histogram_set.HistogramSet()
     total_errors = 0
     prepared_traces = set()
@@ -323,13 +327,12 @@ def _run_tests(tests, args, extra_flags, env):
         common_args = [
             '--gtest_filter=%s' % test,
             '--verbose',
-            '--calibration-time',
-            str(args.calibration_time),
         ] + extra_flags
 
         if args.steps_per_trial:
             steps_per_trial = args.steps_per_trial
-        else:
+            trial_limit = 'steps_per_trial=%d' % steps_per_trial
+        elif args.calibrate_steps_per_trial:
             try:
                 test_status, steps_per_trial = _run_calibration(args, common_args, env)
             except RuntimeError as e:
@@ -346,10 +349,14 @@ def _run_tests(tests, args, extra_flags, env):
                 logging.error('Test %s missing steps_per_trial' % test)
                 results.result_fail(test)
                 continue
+            trial_limit = 'steps_per_trial=%d' % steps_per_trial
+        else:
+            steps_per_trial = None
+            trial_limit = 'trial_time=%d' % args.trial_time
 
-        logging.info('Test %d/%d: %s (samples=%d trials_per_sample=%d steps_per_trial=%d)' %
+        logging.info('Test %d/%d: %s (samples=%d trials_per_sample=%d %s)' %
                      (test_index + 1, len(tests), test, args.samples_per_test,
-                      args.trials_per_sample, steps_per_trial))
+                      args.trials_per_sample, trial_limit))
 
         wall_times = []
         test_histogram_set = histogram_set.HistogramSet()
@@ -396,13 +403,51 @@ def _run_tests(tests, args, extra_flags, env):
     return results, histograms
 
 
+def _find_test_suite_directory(test_suite):
+    if os.path.exists(angle_test_util.ExecutablePathInCurrentDir(test_suite)):
+        return '.'
+
+    if angle_test_util.IsWindows():
+        test_suite += '.exe'
+
+    # Find most recent binary in search paths.
+    newest_binary = None
+    newest_mtime = None
+
+    for path in glob.glob('out/*'):
+        binary_path = str(pathlib.Path(SCRIPT_DIR).parent.parent / path / test_suite)
+        if os.path.exists(binary_path):
+            binary_mtime = os.path.getmtime(binary_path)
+            if (newest_binary is None) or (binary_mtime > newest_mtime):
+                newest_binary = binary_path
+                newest_mtime = binary_mtime
+
+    if newest_binary:
+        logging.info('Found %s in %s' % (test_suite, os.path.dirname(newest_binary)))
+        return os.path.dirname(newest_binary)
+    return None
+
+
+def _split_shard_samples(tests, samples_per_test, shard_count, shard_index):
+    test_samples = [(test, sample) for test in tests for sample in range(samples_per_test)]
+    shard_test_samples = _shard_tests(test_samples, shard_count, shard_index)
+    return [test for (test, sample) in shard_test_samples]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--isolated-script-test-output', type=str)
     parser.add_argument('--isolated-script-test-perf-output', type=str)
     parser.add_argument(
         '-f', '--filter', '--isolated-script-test-filter', type=str, help='Test filter.')
-    parser.add_argument('--test-suite', help='Test suite to run.', default=ANGLE_PERFTESTS)
+    suite_group = parser.add_mutually_exclusive_group()
+    suite_group.add_argument(
+        '--test-suite', '--suite', help='Test suite to run.', default=DEFAULT_TEST_SUITE)
+    suite_group.add_argument(
+        '-T',
+        '--trace-tests',
+        help='Run with the angle_trace_tests test suite.',
+        action='store_true')
     parser.add_argument('--xvfb', help='Use xvfb.', action='store_true')
     parser.add_argument(
         '--shard-count',
@@ -428,8 +473,18 @@ def main():
         help='Number of trials to run per sample. Default is %d.' % DEFAULT_TRIALS,
         type=int,
         default=DEFAULT_TRIALS)
-    parser.add_argument(
+    trial_group = parser.add_mutually_exclusive_group()
+    trial_group.add_argument(
         '--steps-per-trial', help='Fixed number of steps to run per trial.', type=int)
+    trial_group.add_argument(
+        '--trial-time',
+        help='Number of seconds to run per trial. Default is %d.' % DEFAULT_TRIAL_TIME,
+        type=int,
+        default=DEFAULT_TRIAL_TIME)
+    trial_group.add_argument(
+        '--calibrate-steps-per-trial',
+        help='Automatically determine a number of steps per trial.',
+        action='store_true')
     parser.add_argument(
         '--max-errors',
         help='After this many errors, abort the run. Default is %d.' % DEFAULT_MAX_ERRORS,
@@ -438,23 +493,29 @@ def main():
     parser.add_argument(
         '--smoke-test-mode', help='Do a quick run to validate correctness.', action='store_true')
     parser.add_argument(
-        '--warmup-loops',
-        help='Number of warmup loops to run in the perf test. Default is %d.' %
-        DEFAULT_WARMUP_LOOPS,
+        '--warmup-trials',
+        help='Number of warmup trials to run in the perf test. Default is %d.' %
+        DEFAULT_WARMUP_TRIALS,
         type=int,
-        default=DEFAULT_WARMUP_LOOPS)
-    parser.add_argument(
-        '--calibration-time',
-        help='Amount of time to spend each loop in calibration and warmup. Default is %d seconds.'
-        % DEFAULT_CALIBRATION_TIME,
-        type=int,
-        default=DEFAULT_CALIBRATION_TIME)
+        default=DEFAULT_WARMUP_TRIALS)
     parser.add_argument(
         '--show-test-stdout', help='Prints all test stdout during execution.', action='store_true')
     parser.add_argument(
         '--perf-counters', help='Colon-separated list of extra perf counter metrics.')
+    parser.add_argument(
+        '-a',
+        '--auto-dir',
+        help='Run with the most recent test suite found in the build directories.',
+        action='store_true')
+    parser.add_argument(
+        '--split-shard-samples',
+        help='Attempt to mitigate variance between machines by splitting samples between shards.',
+        action='store_true')
 
     args, extra_flags = parser.parse_known_args()
+
+    if args.trace_tests:
+        args.test_suite = angle_test_util.ANGLE_TRACE_TEST_SUITE
 
     angle_test_util.SetupLogging(args.log.upper())
 
@@ -471,28 +532,40 @@ def main():
     if angle_test_util.HasGtestShardsAndIndex(env):
         args.shard_count, args.shard_index = angle_test_util.PopGtestShardsAndIndex(env)
 
+    if args.auto_dir:
+        test_suite_dir = _find_test_suite_directory(args.test_suite)
+        if not test_suite_dir:
+            logging.fatal('Could not find test suite: %s' % args.test_suite)
+            return EXIT_FAILURE
+        else:
+            os.chdir(test_suite_dir)
+
     angle_test_util.Initialize(args.test_suite)
 
     # Get test list
-    if angle_test_util.IsAndroid():
-        tests = android_helper.ListTests(args.test_suite)
-    else:
-        exit_code, output, _ = _run_test_suite(args, ['--list-tests', '--verbose'], env)
-        if exit_code != EXIT_SUCCESS:
-            logging.fatal('Could not find test list from test output:\n%s' % output)
-        tests = _get_tests_from_output(output)
+    exit_code, output, _ = _run_test_suite(args, ['--list-tests', '--verbose'] + extra_flags, env)
+    if exit_code != EXIT_SUCCESS:
+        logging.fatal('Could not find test list from test output:\n%s' % output)
+        sys.exit(EXIT_FAILURE)
+    tests = angle_test_util.GetTestsFromOutput(output)
 
     if args.filter:
         tests = _filter_tests(tests, args.filter)
 
     # Get tests for this shard (if using sharding args)
-    tests = _shard_tests(tests, args.shard_count, args.shard_index)
+    if args.split_shard_samples and args.shard_count >= args.samples_per_test:
+        tests = _split_shard_samples(tests, args.samples_per_test, args.shard_count,
+                                     args.shard_index)
+        assert (len(set(tests)) == len(tests))
+        args.samples_per_test = 1
+    else:
+        tests = _shard_tests(tests, args.shard_count, args.shard_index)
 
     if not tests:
         logging.error('No tests to run.')
         return EXIT_FAILURE
 
-    if angle_test_util.IsAndroid() and args.test_suite == ANGLE_PERFTESTS:
+    if angle_test_util.IsAndroid() and args.test_suite == android_helper.ANGLE_TRACE_TEST_SUITE:
         android_helper.RunSmokeTest()
 
     logging.info('Running %d test%s' % (len(tests), 's' if len(tests) > 1 else ' '))

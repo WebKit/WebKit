@@ -20,18 +20,6 @@
 namespace egl
 {
 
-namespace
-{
-enum CacheResult
-{
-    kCacheMiss,
-    kCacheHitMemory,
-    kCacheHitDisk,
-    kCacheResultMax,
-};
-
-}  // anonymous namespace
-
 // In oder to store more cache in blob cache, compress cacheData to compressedData
 // before being stored.
 bool CompressBlobCacheData(const size_t cacheSize,

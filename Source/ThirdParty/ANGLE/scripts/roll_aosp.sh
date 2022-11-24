@@ -5,6 +5,9 @@
 #  found in the LICENSE file.
 #
 # Generates a roll CL within the ANGLE repository of AOSP.
+#
+# WARNING: Running this script without args may mess up the checkout.
+#   See --genAndroidBp for testing just the code generation.
 
 # exit when any command fails
 set -eE -o functrace
@@ -22,8 +25,6 @@ cd "${0%/*}/.."
 GN_OUTPUT_DIRECTORY=out/Android
 
 function generate_Android_bp_file() {
-    rm -rf ${GN_OUTPUT_DIRECTORY}
-
     abis=(
         "arm"
         "arm64"
@@ -91,12 +92,11 @@ function generate_Android_bp_file() {
     done
 
     python3 scripts/generate_android_bp.py \
-        ${GN_OUTPUT_DIRECTORY}/desc.arm.json \
-        ${GN_OUTPUT_DIRECTORY}/desc.arm64.json \
-        ${GN_OUTPUT_DIRECTORY}/desc.x86.json \
-        ${GN_OUTPUT_DIRECTORY}/desc.x64.json > Android.bp
-
-    rm -rf ${GN_OUTPUT_DIRECTORY}
+        --gn_json_arm=${GN_OUTPUT_DIRECTORY}/desc.arm.json \
+        --gn_json_arm64=${GN_OUTPUT_DIRECTORY}/desc.arm64.json \
+        --gn_json_x86=${GN_OUTPUT_DIRECTORY}/desc.x86.json \
+        --gn_json_x64=${GN_OUTPUT_DIRECTORY}/desc.x64.json \
+        > Android.bp
 }
 
 
@@ -141,7 +141,13 @@ done
 python scripts/bootstrap.py
 gclient sync --reset --force --delete_unversioned_trees
 
+# Delete outdir to ensure a clean gn run.
+rm -rf ${GN_OUTPUT_DIRECTORY}
+
 generate_Android_bp_file
+
+# Delete outdir to cleanup after gn.
+rm -rf ${GN_OUTPUT_DIRECTORY}
 
 # Delete all unsupported 3rd party dependencies. Do this after generate_Android_bp_file, so
 # it has access to all of the necessary BUILD.gn files.

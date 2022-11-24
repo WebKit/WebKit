@@ -1147,11 +1147,11 @@ GROUP END Image
 
 GROUP BEGIN PixelLocal {"queryFunction": true}
     GROUP BEGIN Load {"queryFunction": true}
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "ANGLE_shader_pixel_local_storage", "hasSideEffects": "false"}
+      DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "essl_extension": "ANGLE_shader_pixel_local_storage", "hasSideEffects": "false"}
         gvec4 pixelLocalLoadANGLE(gpixelLocalANGLE);
     GROUP END Load
     GROUP BEGIN Store {"queryFunction": true}
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "ANGLE_shader_pixel_local_storage", "hasSideEffects": "true"}
+      DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "essl_extension": "ANGLE_shader_pixel_local_storage", "hasSideEffects": "true"}
         void pixelLocalStoreANGLE(gpixelLocalANGLE, gvec4);
     GROUP END Store
 GROUP END PixelLocal

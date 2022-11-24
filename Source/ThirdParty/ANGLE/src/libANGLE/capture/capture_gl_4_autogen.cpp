@@ -10,9 +10,9 @@
 
 #include "libANGLE/capture/capture_gl_4_autogen.h"
 
+#include "common/gl_enum_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/capture/FrameCapture.h"
-#include "libANGLE/capture/gl_enum_utils.h"
 #include "libANGLE/validationGL4_autogen.h"
 
 using namespace angle;
@@ -21,7 +21,6 @@ namespace gl
 {
 
 // GL 4.0
-
 CallCapture CaptureBeginQueryIndexed(const State &glState,
                                      bool isCallValid,
                                      GLenum target,
@@ -931,7 +930,6 @@ CallCapture CaptureUniformSubroutinesuiv(const State &glState,
 }
 
 // GL 4.1
-
 CallCapture CaptureDepthRangeArrayv(const State &glState,
                                     bool isCallValid,
                                     GLuint first,
@@ -1923,7 +1921,6 @@ CallCapture CaptureViewportIndexedfv(const State &glState,
 }
 
 // GL 4.2
-
 CallCapture CaptureDrawArraysInstancedBaseInstance(const State &glState,
                                                    bool isCallValid,
                                                    PrimitiveMode modePacked,
@@ -2108,7 +2105,6 @@ CallCapture CaptureTexStorage1D(const State &glState,
 }
 
 // GL 4.3
-
 CallCapture CaptureClearBufferData(const State &glState,
                                    bool isCallValid,
                                    GLenum target,
@@ -2446,7 +2442,6 @@ CallCapture CaptureVertexAttribLFormat(const State &glState,
 }
 
 // GL 4.4
-
 CallCapture CaptureBindBuffersBase(const State &glState,
                                    bool isCallValid,
                                    GLenum target,
@@ -2811,7 +2806,6 @@ CallCapture CaptureClearTexSubImage(const State &glState,
 }
 
 // GL 4.5
-
 CallCapture CaptureBindTextureUnit(const State &glState,
                                    bool isCallValid,
                                    GLuint unit,
@@ -5961,7 +5955,6 @@ CallCapture CaptureVertexArrayVertexBuffers(const State &glState,
 }
 
 // GL 4.6
-
 CallCapture CaptureMultiDrawArraysIndirectCount(const State &glState,
                                                 bool isCallValid,
                                                 GLenum mode,

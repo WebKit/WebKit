@@ -35,7 +35,9 @@ if is_windows:
 elif is_macos:
     chrome_folder = '/Applications/Google Chrome Canary.app/Contents/Frameworks/Google Chrome Framework.framework/Libraries'
     libs_to_copy = ['libGLESv2.dylib', 'libEGL.dylib']
-    optional_libs_to_copy = ['libchrome_zlib.dylib', 'libabsl.dylib', 'libc++.dylib']
+    optional_libs_to_copy = [
+        'libvk_swiftshader.dylib', 'libchrome_zlib.dylib', 'libabsl.dylib', 'libc++_chrome.dylib'
+    ]
 
 else:
     # Must be Linux

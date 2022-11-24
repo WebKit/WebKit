@@ -951,7 +951,6 @@ static int ES2_reserved_ES2_extension_ES3_keyword(TParseContext *context,
                                                   TExtension extension,
                                                   int token);
 static int ES3_extension(TParseContext *context, TExtension extension, int token);
-static int ES3_1_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context,
                                                       TExtension extension,
                                                       int token);
@@ -2141,24 +2140,22 @@ YY_DECL
                 case 128:
                     YY_RULE_SETUP
                     {
-                        return ES3_1_extension(
-                            context, TExtension::ANGLE_shader_pixel_local_storage, PIXELLOCALANGLE);
+                        return ES3_extension(context, TExtension::ANGLE_shader_pixel_local_storage,
+                                             PIXELLOCALANGLE);
                     }
                     YY_BREAK
                 case 129:
                     YY_RULE_SETUP
                     {
-                        return ES3_1_extension(context,
-                                               TExtension::ANGLE_shader_pixel_local_storage,
-                                               IPIXELLOCALANGLE);
+                        return ES3_extension(context, TExtension::ANGLE_shader_pixel_local_storage,
+                                             IPIXELLOCALANGLE);
                     }
                     YY_BREAK
                 case 130:
                     YY_RULE_SETUP
                     {
-                        return ES3_1_extension(context,
-                                               TExtension::ANGLE_shader_pixel_local_storage,
-                                               UPIXELLOCALANGLE);
+                        return ES3_extension(context, TExtension::ANGLE_shader_pixel_local_storage,
+                                             UPIXELLOCALANGLE);
                     }
                     YY_BREAK
                 /* Reserved keywords for GLSL ES 3.00 that are not reserved for GLSL ES 1.00 */
@@ -4010,22 +4007,6 @@ int ES3_extension(TParseContext *context, TExtension extension, int token)
 
     // a keyword word in GLSL ES 3.00 with enabled extension.
     if (context->getShaderVersion() >= 300 && context->isExtensionEnabled(extension))
-    {
-        return token;
-    }
-
-    // Otherwise can be used as an identifier/type name
-    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
-    return check_type(yyscanner);
-}
-
-int ES3_1_extension(TParseContext *context, TExtension extension, int token)
-{
-    struct yyguts_t *yyg = (struct yyguts_t *)context->getScanner();
-    yyscan_t yyscanner   = (yyscan_t)context->getScanner();
-
-    // a keyword word in GLSL ES 3.10 with enabled extension.
-    if (context->getShaderVersion() >= 310 && context->isExtensionEnabled(extension))
     {
         return token;
     }

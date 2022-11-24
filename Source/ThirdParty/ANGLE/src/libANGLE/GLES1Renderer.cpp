@@ -120,6 +120,10 @@ angle::Result GLES1Renderer::prepareForDraw(PrimitiveMode mode, Context *context
         {
             tex2DFormats[i] = gl::GetUnsizedFormat(
                 curr2DTexture->getFormat(TextureTarget::_2D, 0).info->internalFormat);
+
+            // Handle GL_BGRA the same way we do GL_RGBA
+            if (tex2DFormats[i] == GL_BGRA_EXT)
+                tex2DFormats[i] = GL_RGBA;
         }
 
         Texture *currCubeTexture = glState->getSamplerTexture(i, TextureType::CubeMap);

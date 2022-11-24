@@ -44,8 +44,8 @@ TEST(ImageTest, RefCounting)
         .WillOnce(CreateMockImageImpl())
         .RetiresOnSaturation();
 
-    egl::Image *image =
-        new egl::Image(&mockEGLFactory, nullptr, EGL_GL_TEXTURE_2D, texture, egl::AttributeMap());
+    egl::Image *image = new egl::Image(&mockEGLFactory, {1}, nullptr, EGL_GL_TEXTURE_2D, texture,
+                                       egl::AttributeMap());
     rx::MockImageImpl *imageImpl = static_cast<rx::MockImageImpl *>(image->getImplementation());
     image->addRef();
 
@@ -97,7 +97,7 @@ TEST(ImageTest, RefCounting)
     renderbuffer->release(nullptr);
 }
 
-// Verify that respecifiying textures releases references to the Image.
+// Verify that respecifying textures releases references to the Image.
 TEST(ImageTest, RespecificationReleasesReferences)
 {
     NiceMock<rx::MockGLFactory> mockGLFactory;
@@ -123,15 +123,15 @@ TEST(ImageTest, RespecificationReleasesReferences)
         .WillOnce(CreateMockImageImpl())
         .RetiresOnSaturation();
 
-    egl::Image *image =
-        new egl::Image(&mockEGLFactory, nullptr, EGL_GL_TEXTURE_2D, texture, egl::AttributeMap());
+    egl::Image *image = new egl::Image(&mockEGLFactory, {1}, nullptr, EGL_GL_TEXTURE_2D, texture,
+                                       egl::AttributeMap());
     image->addRef();
 
     // Verify that the image did not add a ref to it's source.
     EXPECT_EQ(1u, texture->getRefCount());
     EXPECT_EQ(1u, image->getRefCount());
 
-    // Respecify the texture and verify that the image is orpahaned
+    // Respecify the texture and verify that the image is orphaned
     rx::MockImageImpl *imageImpl = static_cast<rx::MockImageImpl *>(image->getImplementation());
     EXPECT_CALL(*imageImpl, orphan(_, _))
         .WillOnce(Return(angle::Result::Continue))

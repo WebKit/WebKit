@@ -396,6 +396,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglPrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurf
 #define EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE 0x34D4
 #define EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE 0x34D5
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLEXPORTVKIMAGEANGLEPROC)(EGLDisplay dpy, EGLImage image, void* vk_image, void* vk_image_create_info);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI EGLBoolean EGLAPIENTRY eglExportVkImageANGLE(EGLDisplay dpy, EGLImage image, void* vk_image, void* vk_image_create_info);
+#endif
 #endif /* EGL_ANGLE_vulkan_image */
 
 #ifndef EGL_ANGLE_metal_shared_event_sync
@@ -404,7 +407,10 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLEXPORTVKIMAGEANGLEPROC)(EGLDisplay dpy, E
 #define EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE 0x34D9
 #define EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE 0x34DA
 #define EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE 0x34DB
-typedef void* (EGLAPIENTRYP PFNEGLCOPYMETALSHAREDEVENTANGLEPROC)(EGLDisplay dpy, EGLSyncKHR sync);
+typedef void* (EGLAPIENTRYP PFNEGLCOPYMETALSHAREDEVENTANGLEPROC)(EGLDisplay dpy, EGLSync sync);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI void *EGLAPIENTRY eglCopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSync sync);
+#endif
 #endif /* EGL_ANGLE_metal_shared_event_sync */
 
 // clang-format on

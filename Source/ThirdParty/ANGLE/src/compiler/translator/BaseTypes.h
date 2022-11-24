@@ -1160,6 +1160,9 @@ enum TQualifier
     // constant_id.
     EvqSpecConst,
 
+    // __pixel_localEXT from EXT_shader_pixel_local_storage.
+    EvqPixelLocalEXT,
+
     // end of list
     EvqLast
 };
@@ -1621,6 +1624,7 @@ inline const char *getQualifierString(TQualifier q)
     case EvqTessEvaluationOut:      return "out";
     case EvqTessCoord:              return "TessCoord";
     case EvqSpecConst:              return "const";
+    case EvqPixelLocalEXT:          return "__pixel_localEXT";
     default: UNREACHABLE();         return "unknown qualifier";
     }
     // clang-format on

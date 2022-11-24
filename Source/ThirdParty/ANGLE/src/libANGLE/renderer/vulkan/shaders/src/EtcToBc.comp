@@ -1,0 +1,354 @@
+//
+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#version 450 core
+
+#extension GL_GOOGLE_include_directive : require
+
+#if EtcRgb8ToBC1
+#define OUTFORMAT rg32ui
+#define DECODE_RGBA 1
+#define ENCODE_RGBA 1
+#elif EtcRgba8ToBC3
+#define DECODE_RGBA 1
+#define ENCODE_RGBA 1
+#define OUTFORMAT rgba32ui
+#elif EtcR11ToBC4
+#define DECODE_R11 1
+#define ENCODE_R11 1
+#define OUTFORMAT rg32ui
+#define R11 1
+#elif EtcRg11ToBC5
+#define DECODE_R11 1
+#define ENCODE_R11 1
+#define DECODE_G11 1
+#define ENCODE_G11 1
+#define OUTFORMAT rgba32ui
+#define R11 1
+#elif EtcR11ToR8
+#define DECODE_R11 1
+#define OUTFORMAT r8ui
+#define R11 1
+#elif EtcRg11ToRG8
+#define DECODE_R11 1
+#define DECODE_G11 1
+#define OUTFORMAT rg8ui
+#define R11 1
+#else //EtcToRGBA
+#define DECODE_RGBA 1
+#define OUTFORMAT rgba8ui
+#endif
+
+#if ENCODE_RGBA || ENCODE_R11
+#define SUBGROUP_OP 1
+#define TRANSCODE 1
+#endif
+
+
+#if SUBGROUP_OP
+#extension GL_KHR_shader_subgroup_clustered : enable
+#extension GL_KHR_shader_subgroup_shuffle : enable
+#endif
+
+
+
+layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+layout(binding = 0) uniform highp usamplerBuffer  uInputBuffer;
+layout(binding = 1, rgba32ui) writeonly uniform  uimage2D uOutput;
+
+
+layout(push_constant) uniform imagInfo {
+    // for transcode to BC the width and height need to be aligned to block size
+    // we need full block data. if decode to RGBA, we don't need to write full block data out.
+    // offsetX, offsetY both need to be multiple of four.
+    uint offsetX;
+    uint offsetY;
+    int  texelOffset;
+    uint width;
+    uint height;
+    uint alphaBits;
+    uint isSigned;
+    uint isEacRg;
+};
+
+#include "third_party/etc_decoder/etc_decoder.h"
+
+ivec2 build_coord()
+{
+    uvec2 base = (gl_WorkGroupID.xy) * 8;
+    uint blockid = gl_LocalInvocationID.x >> 4u;
+    uint blockxy = gl_LocalInvocationID.x & 0xfu;
+    base.x +=  4 * (blockid & 0x1);
+    base.y +=  2 * (blockid & 0x2);
+    base += uvec2(blockxy & 0x3, blockxy >> 0x2);
+    return ivec2(base);
+}
+
+uint flip_endian(uint v)
+{
+    uvec4 words = uvec4(v) >> uvec4(0, 8, 16, 24);
+    words &= 0xffu;
+    return (words.x << 24u) | (words.y << 16u) | (words.z << 8u) | (words.w << 0u);
+}
+
+uvec2 flip_endian(uvec2 v)
+{
+    return uvec2(flip_endian(v.y), flip_endian(v.x));
+}
+
+#if SUBGROUP_OP
+uint GetIndicesRGB(vec3 color, vec3 minColor, vec3 maxColor, int scale)
+{
+    vec3 dir = maxColor - minColor;
+    float distMin = dot(minColor, dir);
+    float distMax = dot(maxColor, dir);
+    float dist = dot(color, dir);
+    uint ind = uint(clamp(int( (dist - distMin) / (distMax - distMin) * scale + 0.5f), 0, scale));
+
+    // BC1 index mapping
+    //  color0: maxColor
+    //  color1: minColor
+    //  color2: (2/3)*maxColor + (1/3)*minColor
+    //  color3: (1/3)*maxColor + (2/3)*minColor
+    // The mapping is:
+    //  0 -> 1
+    //  1 -> 3
+    //  2 -> 2
+    //  3 -> 0
+    // Tranparent case
+    //  color0: minColor
+    //  color1: maxColor
+    //  color2: (1/2)*maxColor + (1/2)*minColor
+    //  color3: 0
+    // The mapping is:
+    //  0 -> 0
+    //  1 -> 2
+    //  2 -> 1
+    ind = -ind & 3;
+    ind ^= uint( ind < 2 );
+    ind += scale;
+    ind -= 3;
+    return ind;
+}
+
+// Select end point using PCA
+void ComputeMaxMinColor(uvec3 rgbColor, inout uvec3 minColor, inout uvec3 maxColor) {
+    ivec3 dx;
+    if( alphaBits == 1 ) {
+        int count = subgroupClusteredAdd(1, 16);
+        ivec3 avg = ivec3((subgroupClusteredAdd(rgbColor, 16) * 2 + count)/ (2*count));
+        dx = ivec3(rgbColor) - avg;
+    }
+    else {
+        dx = ivec3(rgbColor) - ivec3((subgroupClusteredAdd(rgbColor, 16)+8)>>4);
+    }
+    float cov0 = float(subgroupClusteredAdd(dx.r*dx.r, 16));
+    float cov1 = float(subgroupClusteredAdd(dx.r*dx.g, 16));
+    float cov2 = float(subgroupClusteredAdd(dx.r*dx.b, 16));
+    float cov3 = float(subgroupClusteredAdd(dx.g*dx.g, 16));
+    float cov4 = float(subgroupClusteredAdd(dx.g*dx.b, 16));
+    float cov5 = float(subgroupClusteredAdd(dx.b*dx.b, 16));
+
+    vec3  vg = vec3(subgroupClusteredMax(rgbColor, 16) - subgroupClusteredMin(rgbColor, 16));
+    float eigenvalue = 0.0f;
+
+    // unroll ? compiler should do
+    for( int i = 0; i<4; i++ ) {
+        float r = dot(vec3(cov0, cov1, cov2), vg);
+        float g = dot(vec3(cov1, cov3, cov4), vg);
+        float b = dot(vec3(cov2, cov4, cov5), vg);
+        vg = vec3(r, g, b);
+        eigenvalue = sqrt(dot(vg, vg));
+        if( eigenvalue > 0.0f ) {
+            float invNorm = 1.0f/eigenvalue;
+            vg *= invNorm;
+        }
+    }
+
+    const float kDefaultLuminanceThreshold = 4.0f * 255;
+    const float kQuantizeRange             = 0.512f;
+
+    if (eigenvalue < kDefaultLuminanceThreshold) {
+        vg = vec3(0.299f, 0.587f, 0.114f);
+    }
+    else {
+        float magn = max(max(abs(vg.r), abs(vg.g)), abs(vg.b));
+        vg *= kQuantizeRange / magn;
+    }
+    float dist = dot(vec3(rgbColor), vg);
+    float min_dist = subgroupClusteredMin(dist, 16);
+    float max_dist = subgroupClusteredMax(dist, 16);
+    uint  min_index = subgroupClusteredMax(dist == min_dist? gl_SubgroupInvocationID : 0, 16);
+    uint  max_index = subgroupClusteredMax(dist == max_dist? gl_SubgroupInvocationID : 0, 16);
+    minColor = subgroupShuffle(rgbColor, min_index);
+    maxColor = subgroupShuffle(rgbColor, max_index);
+}
+
+uint GetIndicesAlpha(int alpha, int minAlpha, int maxAlpha)
+{
+    float dist  = float(maxAlpha-minAlpha);
+    uint ind = uint(float(alpha - minAlpha)/dist*7.0f + 0.5f);
+    // 0 : maxAlpha
+    // 1 : minAlpha
+    // 2 : 6/7*maxAlpha + 1/7*minAlpha;
+    // 3 : 5/7*maxAlpha + 2/7*minAlpha;
+    // 4 : 4/7*maxAlpha + 3/7*minAlpha;
+    // 5 : 3/7*maxAlpha + 4/7*minAlpha;
+    // 6 : 2/7*maxAlpha + 5/7*minAlpha;
+    // 7 : 1/7*maxAlpha + 6/7*minAlpha;
+    // so the mapping is
+    // 0 -> 1
+    // 7 -> 0
+    // 1 -> 7
+    // 2 -> 6
+    // 3 -> 5
+    // 4 -> 4
+    // 5 -> 3
+    // 6 -> 2
+
+    ind = -ind & 7;
+    ind ^= int(2 > ind);
+    return ind;
+}
+
+void ComputeMaxMin(int alpha, inout int minAlpha, inout int maxAlpha) {
+    minAlpha = subgroupClusteredMin(alpha, 16);
+    maxAlpha = subgroupClusteredMax(alpha, 16);
+}
+uvec2 EncodeBC4(int value, uint pid) {
+    int minValue, maxValue;
+    ComputeMaxMin(value, minValue, maxValue);
+    uint indices = 0;
+    if( minValue != maxValue )
+        indices = GetIndicesAlpha(value, minValue, maxValue);
+
+    uint indices0 = pid<5 ? indices<<(3*pid+16) : 0x0;
+    uint indices1 = pid>5 ? indices<<(3*pid-16) : 0x0;
+    if( pid == 5 ) {
+        indices0 |= (indices&0x1)<<31;
+        indices1 |= (indices&0x6)>>1;
+    }
+    uint mask0 = subgroupClusteredOr( indices0, 16);
+    uint mask1 = subgroupClusteredOr( indices1, 16);
+
+    return  uvec2((maxValue & 0xff) | ((minValue & 0xff) << 8) |  mask0, mask1);
+}
+#endif
+
+
+uint packColorToRGB565(uvec3 color) {
+    return ((color.r>>3)<<11) | ((color.g>>2)<<5) | (color.b>>3);
+}
+
+
+void swap( inout uint a, inout uint b) {
+    uint t = a;
+    a = b;
+    b = t;
+}
+
+
+void main()
+{
+    ivec2 coord = build_coord();
+    if( any(greaterThanEqual(coord, ivec2(width, height)) ))
+        return;
+
+    ivec2 tile_coord = coord >> 2;
+    ivec2 pixel_coord = coord & 3;
+    int linear_pixel = 4 * pixel_coord.x + pixel_coord.y;
+    int pid = 4 * pixel_coord.y + pixel_coord.x;
+    uvec4 payload = texelFetch(uInputBuffer, tile_coord.y * int((width+3)>>2) + tile_coord.x + texelOffset);
+
+    ivec4 result;
+#if DECODE_RGBA
+    uvec2 color_payload;
+    if( alphaBits == 8 )
+        color_payload = flip_endian(payload.zw);
+    else
+        color_payload = flip_endian(payload.xy);
+
+    bool nonOpaque = alphaBits == 1 && (color_payload.y & 2u) == 0u;
+    bool punchthrough = nonOpaque;
+    result = DecodeRGB(pixel_coord, color_payload, linear_pixel, punchthrough);
+#endif
+
+#if DECODE_R11
+    result.r = decode_etc2_alpha(flip_endian(payload.xy), linear_pixel);
+    if( isEacRg != 0 ) {
+        result.g = decode_etc2_alpha(flip_endian(payload.zw), linear_pixel);
+    }
+#endif
+
+    uvec4 finalResult;
+#if ENCODE_RGBA
+    uvec3 minColor, maxColor;
+    uint indices = 0;
+    uint color565 = 0;
+
+    bool controlFlag = alphaBits != 1 || result.a > 0;
+    if( controlFlag )
+    {
+        ComputeMaxMinColor(uvec3(result.r, result.g, result.b), minColor, maxColor);
+
+        uint minColor565 = packColorToRGB565(minColor);
+        uint maxColor565 = packColorToRGB565(maxColor);
+
+        if( minColor565 != maxColor565 ) {
+            indices = GetIndicesRGB(vec3(result.r, result.g, result.b), vec3(minColor), vec3(maxColor), nonOpaque ? 2: 3);
+        }
+        bool flip = maxColor565 < minColor565;
+        if( flip ) {
+            indices ^= 1;
+            // nonOpaque only need flip 0-->1, 1-->0. fix 2-->3.
+            if( nonOpaque && indices == 3 ){
+                indices = 2;
+            }
+        }
+        if( flip != nonOpaque )
+            swap(maxColor565, minColor565);
+        color565 = maxColor565 | (minColor565<<16);
+    }
+    if( alphaBits == 1 ) {
+        int active_lane_index = subgroupClusteredMax(controlFlag ? int(gl_SubgroupInvocationID) : -1, 16);
+        if(active_lane_index != -1) {
+            color565 = subgroupShuffle(color565, active_lane_index);
+        }
+        if( punchthrough && result.a == 0 ) {
+            indices = 3;
+        }
+    }
+    uint mask = subgroupClusteredOr(indices << (2*pid), 16);
+    if( alphaBits == 8 ) {
+        finalResult.b = color565;
+        finalResult.a = mask;
+        uvec2 alpha_payload = flip_endian(payload.xy);
+        result.a = decode_etc2_alpha(alpha_payload, linear_pixel);
+        finalResult.rg = EncodeBC4(result.a, pid);
+    }
+    else {
+        finalResult.r = color565;
+        finalResult.g = mask;
+    }
+#endif
+
+#if ENCODE_R11
+    finalResult.rg = EncodeBC4(result.r, pid);
+    if( isEacRg != 0 )
+        finalResult.ba = EncodeBC4(result.g, pid);
+#endif
+
+
+
+#if TRANSCODE
+    if( pid == 0 ) {
+        tile_coord += ivec2(offsetX/4, offsetY/4);
+        imageStore(uOutput, tile_coord, finalResult);
+    }
+#else
+    coord +=  ivec2(offsetX, offsetY);
+    imageStore(uOutput, coord, uvec4(result));
+#endif
+}

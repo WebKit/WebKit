@@ -14,6 +14,7 @@ angle_perf_tests_sources = [
   "perf_tests/EGLMakeCurrentPerf.cpp",
   "perf_tests/FramebufferAttachmentPerfTest.cpp",
   "perf_tests/GenerateMipmapPerf.cpp",
+  "perf_tests/ImagelessFramebufferPerfTest.cpp",
   "perf_tests/IndexConversionPerf.cpp",
   "perf_tests/InstancingPerf.cpp",
   "perf_tests/InterleavedAttributeData.cpp",
@@ -41,7 +42,9 @@ angle_perf_tests_sources = [
 ]
 
 angle_white_box_perf_tests_sources = [
+  "../image_util/AstcDecompressorTestUtils.h",
   "angle_unittests_utils.h",
+  "perf_tests/AstcDecompressorPerf.cpp",
   "perf_tests/BitSetIteratorPerf.cpp",
   "perf_tests/CompilerPerf.cpp",
   "perf_tests/EGLInitializePerf.cpp",  # Uses ANGLEGetDisplayPlatform, a

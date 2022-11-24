@@ -126,6 +126,27 @@ const char *GetNativeEGLLibraryNameWithExtension();
 #if defined(ANGLE_PLATFORM_APPLE)
 void InitMetalFileAPIHooking(int argc, char **argv);
 #endif
+
+enum ArgHandling
+{
+    Delete,
+    Preserve,
+};
+
+bool ParseIntArgWithHandling(const char *flag,
+                             int *argc,
+                             char **argv,
+                             int argIndex,
+                             int *valueOut,
+                             ArgHandling handling);
+bool ParseIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut);
+bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut);
+bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut);
+bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut);
+void AddArg(int *argc, char **argv, const char *arg);
+
+uint32_t GetPlatformANGLETypeFromArg(const char *useANGLEArg, uint32_t defaultPlatformType);
+uint32_t GetANGLEDeviceTypeFromArg(const char *useANGLEArg, uint32_t defaultDeviceType);
 }  // namespace angle
 
 #endif  // UTIL_TEST_UTILS_H_

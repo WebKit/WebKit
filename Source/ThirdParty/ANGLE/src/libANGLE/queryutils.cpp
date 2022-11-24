@@ -3632,7 +3632,7 @@ bool GetQueryParameterInfo(const State &glState,
         return true;
     }
 
-    if (extensions.provokingVertexANGLE && pname == GL_PROVOKING_VERTEX)
+    if (extensions.provokingVertexANGLE && pname == GL_PROVOKING_VERTEX_ANGLE)
     {
         *type      = GL_INT;
         *numParams = 1;
@@ -3855,6 +3855,20 @@ bool GetQueryParameterInfo(const State &glState,
         }
     }
 
+    if (extensions.shaderPixelLocalStorageANGLE)
+    {
+        switch (pname)
+        {
+            case GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE:
+            case GL_MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE:
+            case GL_MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE:
+            case GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE:
+                *type      = GL_INT;
+                *numParams = 1;
+                return true;
+        }
+    }
+
     if (glState.getClientVersion() < Version(3, 1))
     {
         return false;
@@ -3988,23 +4002,6 @@ bool GetQueryParameterInfo(const State &glState,
             case GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS_EXT:
             case GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS_EXT:
                 *type      = GL_INT;
-                *numParams = 1;
-                return true;
-        }
-    }
-
-    if (extensions.shaderPixelLocalStorageANGLE)
-    {
-        switch (pname)
-        {
-            case GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE:
-            case GL_MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE:
-            case GL_MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE:
-                *type      = GL_INT;
-                *numParams = 1;
-                return true;
-            case GL_PIXEL_LOCAL_STORAGE_ACTIVE_ANGLE:
-                *type      = GL_BOOL;
                 *numParams = 1;
                 return true;
         }

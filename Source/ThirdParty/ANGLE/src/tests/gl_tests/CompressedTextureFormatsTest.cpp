@@ -8,7 +8,7 @@
 //   enabling compressed texture extensions.
 //
 
-#include "libANGLE/capture/gl_enum_utils.h"
+#include "common/gl_enum_utils.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 

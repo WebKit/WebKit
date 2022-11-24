@@ -66,8 +66,7 @@ EGLMakeCurrentPerfTest::EGLMakeCurrentPerfTest()
     mEGLLibrary.reset(
         angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
 
-    angle::LoadProc getProc =
-        reinterpret_cast<angle::LoadProc>(mEGLLibrary->getSymbol("eglGetProcAddress"));
+    LoadProc getProc = reinterpret_cast<LoadProc>(mEGLLibrary->getSymbol("eglGetProcAddress"));
 
     if (!getProc)
     {
@@ -75,7 +74,7 @@ EGLMakeCurrentPerfTest::EGLMakeCurrentPerfTest()
     }
     else
     {
-        angle::LoadEGL(getProc);
+        LoadUtilEGL(getProc);
 
         if (!eglGetPlatformDisplayEXT)
         {

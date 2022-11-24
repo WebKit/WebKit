@@ -319,7 +319,6 @@ class ReplaceSubpassInputUtils
                                              const TVariable *loadInputAttachmentDataVar);
 
     ImmutableString getInputAttachmentName(unsigned int index);
-    ImmutableString getInputAttachmentArrayName();
 
     TCompiler *mCompiler;
     TSymbolTable *mSymbolTable;
@@ -334,14 +333,6 @@ class ReplaceSubpassInputUtils
     std::map<unsigned int, TVariable *> mInputAttachmentVarList;
     std::map<unsigned int, const TVariable *> mDataLoadVarList;
 };
-
-ImmutableString ReplaceSubpassInputUtils::getInputAttachmentArrayName()
-{
-    constexpr ImmutableString suffix("Array");
-    std::stringstream nameStream = sh::InitializeStream<std::stringstream>();
-    nameStream << sh::vk::kInputAttachmentName << suffix << mInputAttachmentArrayIdSeq++;
-    return ImmutableString(nameStream.str());
-}
 
 ImmutableString ReplaceSubpassInputUtils::getInputAttachmentName(unsigned int index)
 {

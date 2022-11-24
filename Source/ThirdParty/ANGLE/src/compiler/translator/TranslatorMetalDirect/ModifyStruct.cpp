@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <functional>
 #include <numeric>
 #include <unordered_map>
 #include <unordered_set>
@@ -235,7 +236,11 @@ class ConvertStructState : angle::NonCopyable
             const TType mt = modified->getType();
             ASSERT(ot.isArray() == mt.isArray());
 
-            if (ot.isArray() && (ot.getLayoutQualifier().matrixPacking == EmpRowMajor || ot != mt))
+            // Clip distance output uses float[n] type, so the field must be assigned per-element
+            // when filling the modified struct. Explicit path name is used because original types
+            // are not available here.
+            if (ot.isArray() && (ot.getLayoutQualifier().matrixPacking == EmpRowMajor || ot != mt ||
+                                 info.pathName == ImmutableString("gl_ClipDistance")))
             {
                 ASSERT(ot.getArraySizes() == mt.getArraySizes());
                 if (ot.isArrayOfArrays())
