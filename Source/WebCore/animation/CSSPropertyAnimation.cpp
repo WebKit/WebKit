@@ -175,8 +175,18 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
         resultOperations.operations().appendVector(to.operations());
         return resultOperations;
     }
+
+    auto prefix = [&]() -> std::optional<unsigned> {
+        // We cannot use the pre-computed prefix when dealing with accumulation
+        // since the values used to accumulate may be different than those held
+        // in the initial keyframe list.
+        if (context.compositeOperation == CompositeOperation::Accumulate)
+            return std::nullopt;
+        return context.client->transformFunctionListPrefix();
+    };
+
     auto boxSize = is<RenderBox>(context.client->renderer()) ? downcast<RenderBox>(*context.client->renderer()).borderBoxRect().size() : LayoutSize();
-    return to.blend(from, context, boxSize, context.client->transformFunctionListPrefix());
+    return to.blend(from, context, boxSize, prefix());
 }
 
 static RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, ScaleTransformOperation* to, const CSSPropertyBlendingContext& context)

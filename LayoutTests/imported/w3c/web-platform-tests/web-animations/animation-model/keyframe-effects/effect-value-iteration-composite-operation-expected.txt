@@ -23,8 +23,8 @@ PASS iteration composition of transform: [ scale(1), scale(2) ] animation
 PASS iteration composition of transform: scale(2) animation
 PASS iteration composition of transform list animation
 PASS iteration composition of transform of matrix function
-FAIL iteration composition of transform list animation whose order is mismatched assert_approx_equals: expected matrix(6.5, 0, 0, 6.5, 135, 0) but got matrix(6.5, 0, 0, 6.5, 75, 0): Animated transform list at 50s of the third iteration expected 135 +/- 0.0001 but got 75
-FAIL iteration composition of transform list animation whose order is mismatched because of missing functions assert_approx_equals: expected matrix(3.5, 0, 0, 3.5, 80, 0) but got matrix(3.5, 0, 0, 3.5, 50, 0): Animated transform list at 50s of the third iteration expected 80 +/- 0.0001 but got 50
+PASS iteration composition of transform list animation whose order is mismatched
+PASS iteration composition of transform list animation whose order is mismatched because of missing functions
 PASS iteration composition of transform from none to translate
 PASS iteration composition of transform of matrix3d function
 PASS iteration composition of transform of rotate3d function
