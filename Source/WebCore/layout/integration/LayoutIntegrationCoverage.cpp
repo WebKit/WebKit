@@ -331,17 +331,17 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         auto isSupportedLineClamp = [&] {
             if (ancestor->style().lineClamp().isPercentage())
                 return false;
-            auto* firstFlexItem = ancestor->firstChild();
-            // Only support one flex item with no nested content.
-            if (!is<RenderBlockFlow>(firstFlexItem) || ancestor->firstChild() != ancestor->lastChild())
-                return false;
-            auto* firstInFlowChild = downcast<RenderBlockFlow>(*firstFlexItem).firstChild();
-            if (!firstInFlowChild || !firstInFlowChild->isInline())
-                return false;
-            // No anchor box support either (let's just disable content with links).
-            for (auto* inFlowChild = downcast<RenderBlockFlow>(*firstFlexItem).lastChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
-                if (inFlowChild->style().isLink())
+            for (auto* flexItem = ancestor->firstChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
+                if (!is<RenderBlockFlow>(*flexItem))
                     return false;
+                auto* firstInFlowChild = downcast<RenderBlockFlow>(*flexItem).firstChild();
+                if (!firstInFlowChild || !firstInFlowChild->isInline())
+                    return false;
+                // No anchor box support either (let's just disable content with links).
+                for (auto* inFlowChild = downcast<RenderBlockFlow>(*flexItem).lastChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
+                    if (inFlowChild->style().isLink())
+                        return false;
+                }
             }
             return true;
         };
