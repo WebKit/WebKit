@@ -32,6 +32,7 @@
 #include "GamepadLibWPE.h"
 #include "GamepadProviderClient.h"
 #include "Logging.h"
+#include <inttypes.h>
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -122,7 +123,7 @@ void GamepadProviderLibWPE::gamepadConnected(uintptr_t id)
     ASSERT(!m_gamepadMap.get(id));
     ASSERT(m_provider);
 
-    LOG(Gamepad, "GamepadProviderLibWPE device %u added", id);
+    LOG(Gamepad, "GamepadProviderLibWPE device %" PRIuPTR " added", id);
 
     unsigned index = indexForNewlyConnectedDevice();
     auto gamepad = makeUnique<GamepadLibWPE>(m_provider.get(), id, index);
@@ -150,7 +151,7 @@ void GamepadProviderLibWPE::gamepadConnected(uintptr_t id)
 
 void GamepadProviderLibWPE::gamepadDisconnected(uintptr_t id)
 {
-    LOG(Gamepad, "GamepadProviderLibWPE device %u removed", id);
+    LOG(Gamepad, "GamepadProviderLibWPE device %" PRIuPTR " removed", id);
 
     auto removedGamepad = removeGamepadForId(id);
     ASSERT(removedGamepad);
