@@ -3828,13 +3828,14 @@ void Page::recomputeTextAutoSizingInAllFrames()
 
 #endif
 
-bool Page::acceleratedFiltersEnabled() const
+OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes() const
 {
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
-    return settings().acceleratedFiltersEnabled();
-#else
-    return false;
+    if (settings().acceleratedFiltersEnabled())
+        modes = modes | FilterRenderingMode::Accelerated;
 #endif
+    return modes;
 }
 
 bool Page::shouldDisableCorsForRequestTo(const URL& url) const

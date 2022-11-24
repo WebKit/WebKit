@@ -57,13 +57,14 @@ FEComponentTransfer::FEComponentTransfer(ComponentTransferFunctions&& functions)
 {
 }
 
-bool FEComponentTransfer::supportsAcceleratedRendering() const
+OptionSet<FilterRenderingMode> FEComponentTransfer::supportedFilterRenderingModes() const
 {
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
-    return FEComponentTransferCoreImageApplier::supportsCoreImageRendering(*this);
-#else
-    return false;
+    if (FEComponentTransferCoreImageApplier::supportsCoreImageRendering(*this))
+        modes = modes | FilterRenderingMode::Accelerated;
 #endif
+    return modes;
 }
 
 std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createAcceleratedApplier() const

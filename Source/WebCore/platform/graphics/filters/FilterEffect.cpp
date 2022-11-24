@@ -101,9 +101,14 @@ FloatRect FilterEffect::calculateImageRect(const Filter& filter, Span<const Floa
 
 std::unique_ptr<FilterEffectApplier> FilterEffect::createApplier(const Filter& filter) const
 {
-    if (filter.renderingMode() == RenderingMode::Accelerated)
+    if (filter.filterRenderingMode() == FilterRenderingMode::Accelerated)
         return createAcceleratedApplier();
-    return createSoftwareApplier();
+
+    if (filter.filterRenderingMode() == FilterRenderingMode::Software)
+        return createSoftwareApplier();
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void FilterEffect::transformInputsColorSpace(const FilterImageVector& inputs) const
@@ -139,14 +144,14 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
 
     if (absoluteImageRect.isEmpty() || ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()))
         return nullptr;
-    
-    auto isAlphaImage = resultIsAlphaImage(inputs);
-    auto isValidPremultiplied = resultIsValidPremultiplied();
-    auto imageColorSpace = resultColorSpace(inputs);
 
     auto applier = createApplier(filter);
     if (!applier)
         return nullptr;
+
+    auto isAlphaImage = resultIsAlphaImage(inputs);
+    auto isValidPremultiplied = resultIsValidPremultiplied();
+    auto imageColorSpace = resultColorSpace(inputs);
 
     auto result = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace, results.allocator());
     if (!result)

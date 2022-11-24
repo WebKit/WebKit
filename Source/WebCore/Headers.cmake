@@ -1763,6 +1763,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/FilterImageVector.h
     platform/graphics/filters/FilterOperation.h
     platform/graphics/filters/FilterOperations.h
+    platform/graphics/filters/FilterRenderingMode.h
     platform/graphics/filters/FilterResults.h
     platform/graphics/filters/LightSource.h
     platform/graphics/filters/PointLightSource.h

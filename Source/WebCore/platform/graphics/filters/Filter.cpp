@@ -33,9 +33,8 @@
 
 namespace WebCore {
 
-Filter::Filter(Filter::Type filterType, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion)
+Filter::Filter(Filter::Type filterType, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion)
     : FilterFunction(filterType)
-    , m_renderingMode(renderingMode)
     , m_filterScale(filterScale)
     , m_clipOperation(clipOperation)
     , m_filterRegion(filterRegion)
@@ -80,6 +79,35 @@ bool Filter::clampFilterRegionIfNeeded()
 
     m_filterScale = m_filterScale * clampingScale;
     return true;
+}
+
+RenderingMode Filter::renderingMode() const
+{
+    if (m_filterRenderingMode == FilterRenderingMode::Software)
+        return RenderingMode::Unaccelerated;
+    
+    if (m_filterRenderingMode == FilterRenderingMode::Accelerated)
+        return RenderingMode::Accelerated;
+    
+    ASSERT_NOT_REACHED();
+    return RenderingMode::Unaccelerated;
+}
+
+void Filter::setFilterRenderingMode(OptionSet<FilterRenderingMode> preferredFilterRenderingModes)
+{
+    auto filterRenderingModes = preferredFilterRenderingModes & supportedFilterRenderingModes();
+
+    if (filterRenderingModes.contains(FilterRenderingMode::GraphicsContext)) {
+        setFilterRenderingMode(FilterRenderingMode::GraphicsContext);
+        return;
+    }
+
+    if (filterRenderingModes.contains(FilterRenderingMode::Accelerated)) {
+        setFilterRenderingMode(FilterRenderingMode::Accelerated);
+        return;
+    }
+
+    setFilterRenderingMode(FilterRenderingMode::Software);
 }
 
 RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults& results)

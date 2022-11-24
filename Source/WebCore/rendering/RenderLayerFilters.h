@@ -32,6 +32,7 @@
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
+#include "FilterRenderingMode.h"
 #include "RenderLayer.h"
 
 namespace WebCore {
@@ -58,7 +59,7 @@ public:
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
 
-    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
+    void setPreferredFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) { m_preferredFilterRenderingModes = preferredFilterRenderingModes; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
 
     static bool isIdentity(RenderElement&);
@@ -77,7 +78,7 @@ private:
     void allocateBackingStoreIfNeeded(GraphicsContext&);
 
     RenderLayer& m_layer;
-    RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
+    OptionSet<FilterRenderingMode> m_preferredFilterRenderingModes { FilterRenderingMode::Software };
     FloatSize m_filterScale { 1, 1 };
 
     Vector<RefPtr<Element>> m_internalSVGReferences;

@@ -41,9 +41,12 @@ class Filter : public FilterFunction {
 public:
     enum class ClipOperation { Intersect, Unite };
 
-    RenderingMode renderingMode() const { return m_renderingMode; }
-    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
-    
+    RenderingMode renderingMode() const;
+
+    FilterRenderingMode filterRenderingMode() const { return m_filterRenderingMode; }
+    void setFilterRenderingMode(FilterRenderingMode filterRenderingMode) { m_filterRenderingMode = filterRenderingMode; }
+    void setFilterRenderingMode(OptionSet<FilterRenderingMode> preferredFilterRenderingMode);
+
     FloatSize filterScale() const { return m_filterScale; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
 
@@ -72,10 +75,10 @@ public:
 
 protected:
     using FilterFunction::FilterFunction;
-    Filter(Filter::Type, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion = { });
+    Filter(Filter::Type, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion = { });
 
 private:
-    RenderingMode m_renderingMode;
+    FilterRenderingMode m_filterRenderingMode { FilterRenderingMode::Software };
     FloatSize m_filterScale;
     ClipOperation m_clipOperation;
     FloatRect m_filterRegion;

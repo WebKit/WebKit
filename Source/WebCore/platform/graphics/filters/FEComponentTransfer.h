@@ -81,7 +81,7 @@ private:
     FEComponentTransfer(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
     FEComponentTransfer(ComponentTransferFunctions&&);
 
-    bool supportsAcceleratedRendering() const override;
+    OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const override;
     std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
