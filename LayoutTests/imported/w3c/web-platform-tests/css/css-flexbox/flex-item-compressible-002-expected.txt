@@ -20,7 +20,12 @@ Test3: "height: calc(140px + 100%)"
 
 
 
-PASS .flexbox 1
+FAIL .flexbox 1 assert_equals:
+<div class="flexbox">
+      <div class="spacer"></div>
+      <input type="text" class="test1" data-expected-height="100">
+    </div>
+height expected 100 but got 40
 FAIL .flexbox 2 assert_equals:
 <div class="flexbox">
       <div class="spacer"></div>
@@ -45,7 +50,12 @@ FAIL .flexbox 5 assert_equals:
       <input type="reset" value="XXXXXXX" class="test1" data-expected-height="140">
     </div>
 height expected 140 but got 100
-PASS .flexbox 6
+FAIL .flexbox 6 assert_equals:
+<div class="flexbox">
+      <div class="spacer"></div>
+      <input type="text" class="test2" data-expected-height="100">
+    </div>
+height expected 100 but got 40
 FAIL .flexbox 7 assert_equals:
 <div class="flexbox">
       <div class="spacer"></div>

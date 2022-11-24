@@ -61,7 +61,7 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Fie
 {
 }
 
-void DateTimeNumericFieldElement::adjustMinWidth(RenderStyle& style) const
+void DateTimeNumericFieldElement::adjustMinInlineSize(RenderStyle& style) const
 {
     auto& font = style.fontCascade();
 
@@ -73,13 +73,16 @@ void DateTimeNumericFieldElement::adjustMinWidth(RenderStyle& style) const
 
     auto& locale = localeForOwner();
 
-    float width = 0;
+    float inlineSize = 0;
     for (char c = '0'; c <= '9'; ++c) {
         auto numberString = locale.convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
-        width = std::max(width, font.width(RenderBlock::constructTextRun(numberString, style)));
+        inlineSize = std::max(inlineSize, font.width(RenderBlock::constructTextRun(numberString, style)));
     }
 
-    style.setMinWidth({ width, LengthType::Fixed });
+    if (style.isHorizontalWritingMode())
+        style.setMinWidth({ inlineSize, LengthType::Fixed });
+    else
+        style.setMinHeight({ inlineSize, LengthType::Fixed });
 }
 
 int DateTimeNumericFieldElement::maximum() const

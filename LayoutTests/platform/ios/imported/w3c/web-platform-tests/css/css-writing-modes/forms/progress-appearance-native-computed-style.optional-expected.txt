@@ -1,0 +1,6 @@
+
+
+PASS progress[style="writing-mode: horizontal-tb"] block size should match height and inline should match width
+FAIL progress[style="writing-mode: vertical-lr"] block size should match width and inline should match width assert_equals: expected "160px" but got "16px"
+FAIL progress[style="writing-mode: vertical-rl"] block size should match width and inline should match width assert_equals: expected "160px" but got "16px"
+

@@ -70,7 +70,7 @@ std::optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(cons
         return std::nullopt;
 
     auto& style = *elementStyle.renderStyle;
-    adjustMinWidth(style);
+    adjustMinInlineSize(style);
 
     if (!hasValue() && shadowHostStyle) {
         auto textColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
