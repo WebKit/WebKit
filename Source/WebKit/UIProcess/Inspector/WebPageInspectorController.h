@@ -97,7 +97,7 @@ private:
     Inspector::InspectorTargetAgent* m_targetAgent { nullptr };
     HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
 
-    InspectorBrowserAgent* m_enabledBrowserAgent;
+    InspectorBrowserAgent* m_enabledBrowserAgent { nullptr };
 
     bool m_didCreateLazyAgents { false };
 };
