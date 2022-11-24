@@ -196,6 +196,8 @@ UIProcess/API/wpe/WebKitPopupMenu.cpp @no-unify
 UIProcess/API/wpe/WebKitRectangle.cpp @no-unify
 UIProcess/API/wpe/WebKitScriptDialogWPE.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewBackend.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewWPE1.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewWPE2.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewWPE.cpp @no-unify
 UIProcess/API/wpe/WPEView.cpp @no-unify
 

@@ -2690,7 +2690,11 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     gboolean returnValue;
-    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), nullptr, hitTestResult.get(), &returnValue);
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(),
+#if !ENABLE(2022_GLIB_API)
+        nullptr,
+#endif
+        hitTestResult.get(), &returnValue);
 }
 #endif
 
