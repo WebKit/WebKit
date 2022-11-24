@@ -938,24 +938,6 @@ webkit.org/b/184937 transitions/opacity-transition-zindex.html [ Skip ]
 
 webkit.org/b/186362 [ Release ] http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Skip ]
 
-# Manual tests.
-imported/w3c/web-platform-tests/web-share/share-cancel-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-extra-argument-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-extra-field-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-files-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-image-manual.tentative.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-non-string-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-null-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-simple-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-unicode-strings-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-unicode-strings-nonutf8-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-data-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-empty-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-encoding-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-noscheme-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-pathonly-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-relative-manual.https.html [ Skip ]
-
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
 
 # Local authenticator tests require restricted keychain entitlement, which cannot be signed with ad hoc signing.

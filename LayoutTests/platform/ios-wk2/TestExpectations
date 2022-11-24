@@ -1771,24 +1771,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-i
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-indent-vrl-014.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-indent-vrl-016.xht [ ImageOnlyFailure ]
 
-# Manual tests.
-imported/w3c/web-platform-tests/web-share/share-cancel-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-extra-argument-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-extra-field-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-files-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-image-manual.tentative.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-non-string-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-null-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-simple-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-unicode-strings-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-unicode-strings-nonutf8-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-data-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-empty-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-encoding-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-noscheme-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-pathonly-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-relative-manual.https.html [ Skip ]
-
 # rdar://problem/59595496
 quicklook/keynote-09.html [ Failure ]
 quicklook/keynote.html [ ImageOnlyFailure ]
