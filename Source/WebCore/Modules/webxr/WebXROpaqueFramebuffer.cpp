@@ -77,6 +77,16 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
         m_multisampleColorBuffer.release(*gl);
         m_resolvedFBO.release(*gl);
         m_context.deleteFramebuffer(m_framebuffer.ptr());
+    } else {
+        // The GraphicsContextGL is gone, so disarm the GCGLOwned objects so
+        // their destructors don't assert.
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+        m_opaqueTexture.leakObject();
+#endif
+        m_stencilBuffer.leakObject();
+        m_depthStencilBuffer.leakObject();
+        m_multisampleColorBuffer.leakObject();
+        m_resolvedFBO.leakObject();
     }
 }
 
