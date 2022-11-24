@@ -90,20 +90,21 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
             return { };
         }
         auto bufferClone = ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength());
-        Structure* structure = bufferView->structure();
-
+        constexpr bool isResizableOrGrowableShared = false;
+        switch (typedArrayType(bufferView->type())) {
 #define CLONE_TYPED_ARRAY(name) \
-        do { \
-            if (bufferView->inherits<JS##name##Array>()) \
-                RELEASE_AND_RETURN(scope, JSValue::encode(JS##name##Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()))); \
-        } while (0);
-
+        case Type##name: { \
+            RELEASE_AND_RETURN(scope, JSValue::encode(JS##name##Array::create(globalObject, globalObject->typedArrayStructure(Type##name, isResizableOrGrowableShared), WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()))); \
+        }
         FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(CLONE_TYPED_ARRAY)
-
 #undef CLONE_TYPED_ARRAY
-
-        if (value.inherits<JSDataView>())
-            RELEASE_AND_RETURN(scope, JSValue::encode(JSDataView::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length())));
+        case TypeDataView: {
+            RELEASE_AND_RETURN(scope, JSValue::encode(JSDataView::create(globalObject, globalObject->typedArrayStructure(TypeDataView, isResizableOrGrowableShared), WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length())));
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
 
     throwTypeError(globalObject, scope, "structuredClone not implemented for non-ArrayBuffer / non-ArrayBufferView"_s);

@@ -70,6 +70,11 @@ public:
         return byteLength() / sizeof(typename Adaptor::Type);
     }
 
+    size_t lengthRaw() const
+    {
+        return byteLengthRaw() / sizeof(typename Adaptor::Type);
+    }
+
     typename Adaptor::Type item(size_t index) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < this->length());
@@ -102,6 +107,8 @@ public:
     }
 
     JSArrayBufferView* wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject);
+
+    static RefPtr<GenericTypedArrayView<Adaptor>> wrappedAs(Ref<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);
 
 private:
     GenericTypedArrayView(RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);

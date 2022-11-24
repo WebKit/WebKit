@@ -338,16 +338,16 @@ RefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
     ArrayBuffer* buffer = possiblySharedBuffer();
     if (!buffer)
         return nullptr;
-    size_t byteOffset = this->byteOffset();
-    size_t length = this->length();
+    size_t byteOffset = this->byteOffsetRaw();
+    size_t length = this->lengthRaw();
     switch (type()) {
 #define FACTORY(type) \
     case type ## ArrayType: \
-        return type ## Array::tryCreate(buffer, byteOffset, isAutoLength() ? std::nullopt : std::optional { length });
+        return type ## Array::wrappedAs(*buffer, byteOffset, isAutoLength() ? std::nullopt : std::optional { length });
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
 #undef FACTORY
     case DataViewType:
-        return DataView::create(buffer, byteOffset, isAutoLength() ? std::nullopt : std::optional { length });
+        return DataView::wrappedAs(*buffer, byteOffset, isAutoLength() ? std::nullopt : std::optional { length });
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;

@@ -77,6 +77,8 @@ public:
             flipBytesIfLittleEndian(value, littleEndian);
     }
 
+    JS_EXPORT_PRIVATE static RefPtr<DataView> wrappedAs(Ref<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);
+
 private:
     DataView(RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> byteLength);
 };

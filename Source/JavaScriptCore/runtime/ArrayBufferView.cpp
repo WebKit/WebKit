@@ -41,9 +41,12 @@ ArrayBufferView::ArrayBufferView(TypedArrayType type, RefPtr<ArrayBuffer>&& buff
     , m_buffer(WTFMove(buffer))
 {
     if (byteLength) {
-        Checked<size_t, CrashOnOverflow> length(byteOffset);
-        length += byteLength.value();
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(length <= m_buffer->byteLength());
+        // If it is resizable, then it can be possible that length exceeds byteLength, and this is fine since it just becomes OOB array.
+        if (!isResizableOrGrowableShared()) {
+            Checked<size_t, CrashOnOverflow> length(byteOffset);
+            length += byteLength.value();
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(length <= m_buffer->byteLength());
+        }
     } else
         ASSERT(isAutoLength());
 
