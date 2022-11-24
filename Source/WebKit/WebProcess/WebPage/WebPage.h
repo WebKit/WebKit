@@ -45,6 +45,7 @@
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
 #include "LayerTreeContext.h"
+#include "MediaPlaybackState.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "NetworkResourceLoadIdentifier.h"
@@ -57,7 +58,7 @@
 #include "TransactionID.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
-#include "WebPageMessagesReplies.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUndoStepID.h"
 #include "WebUserContentController.h"
@@ -65,6 +66,8 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/ActivityState.h>
 #include <WebCore/AppHighlight.h>
+#include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/DictationContext.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
@@ -255,6 +258,7 @@ struct ContactsRequestData;
 struct DataDetectorElementInfo;
 struct DictationAlternative;
 struct ElementContext;
+struct FontAttributes;
 struct GlobalFrameIdentifier;
 struct GlobalWindowIdentifier;
 struct InteractionRegion;
@@ -307,6 +311,7 @@ class WebEvent;
 class WebFoundTextRangeController;
 class PlaybackSessionManager;
 class VideoFullscreenManager;
+class WebBackForwardListItem;
 class WebFrame;
 class WebFullScreenManager;
 class WebGestureEvent;
@@ -361,6 +366,10 @@ struct WebsitePoliciesData;
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 class VisibleContentRectUpdateInfo;
+#endif
+
+#if ENABLE(REVEAL)
+class RevealItem;
 #endif
 
 using SnapshotOptions = uint32_t;
@@ -1059,8 +1068,8 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&, Messages::WebPage::ComputePagesForPrintingiOSDelayedReply&&);
-    void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t, Messages::WebPage::DrawToPDFiOSAsyncReply&&);
+    void computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(size_t)>&&);
+    void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
 
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
@@ -1670,7 +1679,7 @@ private:
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
 #endif
 
-    void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
+    void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&&);
 
     void updateDrawingAreaLayerTreeFreezeState();
 

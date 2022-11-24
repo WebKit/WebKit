@@ -60,6 +60,7 @@
 #include <WebCore/EditorClient.h>
 #include <WebCore/EmptyClients.h>
 #include <WebCore/MessageWithMessagePorts.h>
+#include <WebCore/NotificationData.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SerializedScriptValue.h>

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPage.h"
 
+#import "EditorState.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "PluginView.h"

@@ -28,7 +28,7 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "Connection.h"
-#include "RemoteSampleBufferDisplayLayerManagerMessagesReplies.h"
+#include "LayerHostingContext.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/IntSize.h>
