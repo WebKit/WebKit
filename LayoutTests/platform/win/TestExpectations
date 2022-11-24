@@ -3853,7 +3853,6 @@ fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Failur
 fast/multicol/client-rects-spanners-complex.html [ Failure ]
 fast/multicol/client-rects-spanners.html [ Failure ]
 fast/multicol/client-rects.html [ Failure ]
-fast/multicol/newmulticol/client-rects.html [ Failure ]
 fast/multicol/table-vertical-align.html [ Failure ]
 fast/parser/xml-error-unload-iframe.html [ Failure ]
 fast/replaced/table-percent-height.html [ Failure ]
