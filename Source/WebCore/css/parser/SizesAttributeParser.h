@@ -31,7 +31,7 @@
 
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
-#include "LegacyMediaQueryEvaluator.h"
+#include "MediaQuery.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,17 +48,17 @@ public:
     static float defaultLength(const Document&);
     static float computeLength(double value, CSSUnitType, const Document&);
 
-    auto& dynamicMediaConditionResults() const { return m_dynamicMediaConditionResults; }
+    auto& dynamicMediaQueryResults() const { return m_dynamicMediaQueryResults; }
 
 private:
     bool parse(CSSParserTokenRange);
     float effectiveSize();
     bool calculateLengthInPixels(CSSParserTokenRange, float& result);
-    bool mediaConditionMatches(const MediaQuerySet& mediaCondition);
+    bool mediaConditionMatches(const MQ::MediaQuery&);
     unsigned effectiveSizeDefaultValue();
 
     const Document& m_document;
-    Vector<MediaQueryResult> m_dynamicMediaConditionResults;
+    Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
     float m_length { 0 };
     bool m_lengthWasSet { false };
     bool m_isValid { false };

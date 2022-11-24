@@ -105,5 +105,27 @@ struct FeatureSchema {
     virtual ~FeatureSchema() = default;
 };
 
+template<typename TraverseFunction> void traverseFeatures(const Condition&, TraverseFunction&&);
+
+template<typename TraverseFunction>
+void traverseFeatures(const QueryInParens& queryInParens, TraverseFunction&& function)
+{
+    return WTF::switchOn(queryInParens, [&](const Condition& condition) {
+        traverseFeatures(condition, function);
+    }, [&](const MQ::Feature& feature) {
+        function(feature);
+    }, [&](const MQ::GeneralEnclosed&) {
+        return;
+    });
+}
+
+template<typename TraverseFunction>
+void traverseFeatures(const Condition& condition, TraverseFunction&& function)
+{
+    for (auto& queryInParens : condition.queries)
+        traverseFeatures(queryInParens, function);
+}
+
+
 }
 }

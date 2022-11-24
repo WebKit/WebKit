@@ -33,7 +33,7 @@
 #include "HTMLNames.h"
 #include "HTMLPictureElement.h"
 #include "Logging.h"
-#include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -170,16 +170,13 @@ void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomStri
 #endif
 }
 
-const MediaQuerySet* HTMLSourceElement::parsedMediaAttribute(Document& document) const
+const MQ::MediaQueryList& HTMLSourceElement::parsedMediaAttribute(Document& document) const
 {
     if (!m_cachedParsedMediaAttribute) {
-        RefPtr<const MediaQuerySet> parsedAttribute;
         auto& value = attributeWithoutSynchronization(mediaAttr);
-        if (!value.isNull())
-            parsedAttribute = MediaQuerySet::create(value, MediaQueryParserContext(document));
-        m_cachedParsedMediaAttribute = WTFMove(parsedAttribute);
+        m_cachedParsedMediaAttribute = MQ::MediaQueryParser::parse(value, MediaQueryParserContext { document });
     }
-    return m_cachedParsedMediaAttribute.value().get();
+    return m_cachedParsedMediaAttribute.value();
 }
 
 void HTMLSourceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)

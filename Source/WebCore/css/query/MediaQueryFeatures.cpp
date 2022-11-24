@@ -529,7 +529,7 @@ const FeatureSchema& prefersDarkInterface()
 const FeatureSchema& prefersReducedMotion()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
-        "prefers-contrast"_s,
+        "prefers-reduced-motion"_s,
         Vector { CSSValueNoPreference, CSSValueReduce },
         [](auto& context) {
             bool userPrefersReducedMotion = [&] {
@@ -732,6 +732,25 @@ Vector<const FeatureSchema*> allSchemas()
         &prefersColorScheme(),
 #endif
     };
+}
+
+// FIXME: This could be part of the schema.
+std::optional<MediaQueryDynamicDependency> dynamicDependency(const FeatureSchema& schema)
+{
+    if (&schema == &width() || &schema == &height() || &schema == &orientation() || &schema == &aspectRatio())
+        return MediaQueryDynamicDependency::Viewport;
+
+    if (&schema == &prefersDarkInterface())
+        return MediaQueryDynamicDependency::Appearance;
+#if ENABLE(DARK_MODE_CSS)
+    if (&schema == &prefersColorScheme())
+        return MediaQueryDynamicDependency::Appearance;
+#endif
+
+    if (&schema == &invertedColors() || &schema == &monochrome() || &schema == &prefersReducedMotion() || &schema == &prefersContrast())
+        return MediaQueryDynamicDependency::Accessibility;
+
+    return { };
 }
 
 }

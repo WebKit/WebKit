@@ -35,6 +35,7 @@ public:
     MediaQueryParser(const MediaQueryParserContext&);
 
     static MediaQueryList parse(const String&, const MediaQueryParserContext&);
+    static std::optional<MediaQuery> parseCondition(CSSParserTokenRange, const MediaQueryParserContext&);
 
     MediaQueryList consumeMediaQueryList(CSSParserTokenRange&);
     std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&);

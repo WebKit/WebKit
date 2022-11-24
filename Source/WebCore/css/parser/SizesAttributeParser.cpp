@@ -34,9 +34,8 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSTokenizer.h"
 #include "FontCascade.h"
-#include "LegacyMediaQueryEvaluator.h"
-#include "LegacyMediaQueryParser.h"
-#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "RenderView.h"
 #include "SizesCalcParser.h"
@@ -104,14 +103,14 @@ bool SizesAttributeParser::calculateLengthInPixels(CSSParserTokenRange range, fl
     return false;
 }
 
-bool SizesAttributeParser::mediaConditionMatches(const MediaQuerySet& mediaCondition)
+bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCondition)
 {
     // A Media Condition cannot have a media type other than screen.
     auto* renderer = m_document.renderView();
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return LegacyMediaQueryEvaluator { "screen"_s, m_document, &style }.evaluate(mediaCondition);
+    return MQ::MediaQueryEvaluator { "screen"_s, m_document, &style }.evaluate(mediaCondition);
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)
@@ -133,12 +132,13 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
         float length;
         if (!calculateLengthInPixels(range.makeSubRange(lengthTokenStart, lengthTokenEnd), length))
             continue;
-        auto mediaCondition = LegacyMediaQueryParser::parseMediaCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(m_document));
+        auto mediaCondition = MQ::MediaQueryParser::parseCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(m_document));
         if (!mediaCondition)
             continue;
         bool matches = mediaConditionMatches(*mediaCondition);
-        if (!mediaQueryDynamicDependencies(*mediaCondition, { "screen"_s, false }).isEmpty())
-            m_dynamicMediaConditionResults.append({ *mediaCondition, matches });
+        MQ::MediaQueryEvaluator evaluator { "screen"_s, m_document, nullptr };
+        if (!evaluator.collectDynamicDependencies(*mediaCondition).isEmpty())
+            m_dynamicMediaQueryResults.append({ MQ::MediaQueryList { *mediaCondition }, matches });
         if (!matches)
             continue;
         m_length = length;

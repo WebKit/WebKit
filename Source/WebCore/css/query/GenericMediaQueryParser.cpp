@@ -195,11 +195,19 @@ RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& 
         return nullptr;
     if (auto value = CSSPropertyParserHelpers::consumeIdent(range))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeLength(range, m_context.mode, ValueRange::All))
+    auto rangeCopy = range;
+    if (auto value = CSSPropertyParserHelpers::consumeInteger(range)) {
+        if (range.atEnd())
+            return value;
+        range = rangeCopy;
+    }
+    if (auto value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
         return value;
     if (auto value = CSSPropertyParserHelpers::consumeAspectRatioValue(range))
         return value;
     if (auto value = CSSPropertyParserHelpers::consumeResolution(range))
+        return value;
+    if (auto value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::All))
         return value;
 
     return nullptr;
@@ -223,6 +231,10 @@ bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature,
         if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
             if (primitiveValue->isValueID())
                 return schema.valueIdentifiers.contains(primitiveValue->valueID());
+
+            if (primitiveValue->isInteger() && !primitiveValue->intValue() && schema.valueTypes.contains(FeatureSchema::ValueType::Length))
+                return true;
+
             auto valueType = valueTypeForValue(*primitiveValue);
             return valueType && schema.valueTypes.contains(*valueType);
         }

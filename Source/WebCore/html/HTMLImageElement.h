@@ -29,7 +29,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
-#include "LegacyMediaQueryEvaluator.h"
+#include "MediaQuery.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -243,7 +243,8 @@ private:
     WeakPtr<HTMLPictureElement, WeakPtrImplWithEventTargetData> m_pictureElement;
     // The source element that was selected to provide the source URL.
     WeakPtr<HTMLSourceElement, WeakPtrImplWithEventTargetData> m_sourceElement;
-    Vector<MediaQueryResult> m_dynamicMediaQueryResults;
+
+    Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     String m_pendingClonedAttachmentID;

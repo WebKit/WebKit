@@ -40,6 +40,11 @@ public:
     bool evaluate(const MediaQueryList&) const;
     bool evaluate(const MediaQuery&) const;
 
+    bool evaluateMediaType(const MediaQuery&) const;
+
+    OptionSet<MediaQueryDynamicDependency> collectDynamicDependencies(const MediaQueryList&) const;
+    OptionSet<MediaQueryDynamicDependency> collectDynamicDependencies(const MediaQuery&) const;
+
 private:
     const AtomString m_mediaType;
     const Document& m_document;
