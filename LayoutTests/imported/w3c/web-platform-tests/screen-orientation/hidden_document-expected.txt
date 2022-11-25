@@ -1,0 +1,3 @@
+
+PASS test locking the orientation when document is hidden
+

@@ -250,7 +250,7 @@ window.test_driver_internal.click = function (element, coords)
 
 window.test_driver_internal.action_sequence = function(sources)
 {
-    // https://w3c.github.io/webdriver/#processing-actions    
+    // https://w3c.github.io/webdriver/#processing-actions
 
     let noneSource;
     let pointerSource;
@@ -337,4 +337,58 @@ window.test_driver_internal.consume_user_activation = async function(context)
     if (!context.internals?.consumeTransientActivation)
         throw new Error("unimplemented");
     return context.internals.consumeTransientActivation();
+}
+
+/**
+ *
+ * @param {Window} context
+ * @returns {Promise<DOMRect>}
+ */
+window.test_driver_internal.minimize_window = async function (context=null)
+{
+    if (context === null)
+        context = window;
+
+    if (context.document?.fullscreenElement)
+        await context.document.exitFullscreen();
+
+    const rect = internals.visualViewportRect();
+
+    if (context.document.visibilityState === "hidden")
+        return rect;
+
+    await new Promise(resolve => {
+        context.addEventListener("visibilitychange", resolve, { once: true });
+        testRunner.setPageVisibility("hidden");
+    });
+
+    return rect;
+}
+
+/**
+ *
+ * @param {DOMRect} rect
+ * @param {Window} context
+ * @returns {Promise<void>}
+ */
+window.test_driver_internal.set_window_rect = async function (rect, context=null)
+{
+    if (typeof rect !== "object" || typeof rect.width !== "number" || typeof rect.height !== "number")
+        throw new Error("Invalid rect");
+
+    if (context === null)
+        context = window;
+
+    if (context.document?.fullscreenElement)
+        await context.document.exitFullscreen();
+
+    context.testRunner.setViewSize(rect.width, rect.height);
+
+    if (context.document.visibilityState === "visible")
+        return;
+
+    await new Promise(resolve => {
+        context.addEventListener("visibilitychange", resolve, { once: true });
+        testRunner.setPageVisibility("visible");
+    });
 }

@@ -367,6 +367,7 @@ webkit.org/b/165799 svg/animations/animations-paused-page-non-visible.html [ Ski
 webkit.org/b/165799 svg/animations/animations-paused-in-background-page-iframe.html [ Skip ]
 webkit.org/b/165799 svg/animations/animations-paused-in-background-page.html [ Skip ]
 webkit.org/b/165799 webaudio/silent-audio-interrupted-in-background.html [ Skip ]
+webkit.org/b/165799 imported/w3c/web-platform-tests/screen-orientation/hidden_document.html
 
 # AutoFill button is not supported
 fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
