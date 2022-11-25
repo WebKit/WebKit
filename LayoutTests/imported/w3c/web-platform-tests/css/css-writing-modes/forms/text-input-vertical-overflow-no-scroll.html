@@ -50,9 +50,7 @@ for (const inputType of ["text", "email", "tel", "url", "password", "search", "n
             const numCharsToOverflow = document.documentElement.clientHeight / parseInt(getComputedStyle(testInput).fontSize);
             const value = "1".repeat(numCharsToOverflow);
 
-            await test_driver.click(testInput);
-
-            assert_true(testInput.matches(":focus"), "input is focused");
+            testInput.focus();
 
             await test_driver.send_keys(testInput, value);
 
