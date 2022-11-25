@@ -89,7 +89,7 @@ void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuI
     // Give the bundle client a chance to process the menu.
     const Vector<ContextMenuItem>& coreItems = menu->items();
 
-    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(*m_page, controller.hitTestResult(), coreItems, menuItems, userData))
+    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(*m_page, controller.hitTestResult(), coreItems, menuItems, controller.context(), userData))
         return;
     menuItems = kitItems(coreItems);
 }

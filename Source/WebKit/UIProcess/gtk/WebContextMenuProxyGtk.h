@@ -56,6 +56,7 @@ public:
 
 private:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, ContextMenuContextData&&, const UserData&);
+    void show() override;
     Vector<Ref<WebContextMenuItem>> proposedItems() const override;
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
     void append(GMenu*, const WebContextMenuItemGlib&);
