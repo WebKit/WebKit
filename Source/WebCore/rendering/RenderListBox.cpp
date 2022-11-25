@@ -805,9 +805,10 @@ static void setupWheelEventTestMonitor(RenderListBox& renderer)
 
 void RenderListBox::setScrollTop(int newTop, const ScrollPositionChangeOptions&)
 {
-    // Determine an index and scroll to it.    
+    // Determine an index and scroll to it.
     int index = newTop / itemHeight();
-    if (index < 0 || index >= numItems() || index == m_indexOffset)
+    index = std::clamp(index, 0, std::max(0, numItems() - 1));
+    if (index == m_indexOffset)
         return;
 
     setupWheelEventTestMonitor(*this);

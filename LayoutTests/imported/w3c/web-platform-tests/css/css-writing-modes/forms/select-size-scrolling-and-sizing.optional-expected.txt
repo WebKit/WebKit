@@ -1,6 +1,6 @@
 
 
-FAIL select[size][style="writing-mode: horizontal-tb"] scrolls correctly assert_equals: Setting scrollTop to a negative value of the list does not work for writing-mode: horizontal-tb expected 0 but got 98
+PASS select[size][style="writing-mode: horizontal-tb"] scrolls correctly
 PASS select[size][style="writing-mode: horizontal-tb"] sizing works correctly
 FAIL select[size][style="writing-mode: vertical-lr"] scrolls correctly assert_true: select should be scrollable in block axis expected true got false
 FAIL select[size][style="writing-mode: vertical-lr"] sizing works correctly assert_true: clientWidth increased when increasing size expected true got false
