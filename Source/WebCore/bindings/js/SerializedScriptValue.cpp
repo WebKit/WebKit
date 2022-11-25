@@ -1398,7 +1398,7 @@ private:
                 
                 if (arrayBuffer->isShared() && m_context == SerializationContext::WorkerPostMessage) {
                     // https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
-                    if (!JSC::Options::useSharedArrayBuffer()) {
+                    if (UNLIKELY(!JSC::Options::useSharedArrayBuffer() || m_forStorage == SerializationForStorage::Yes)) {
                         code = SerializationReturnCode::DataCloneError;
                         return true;
                     }
