@@ -629,4 +629,3 @@ ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
 }
 
 } // namespace JSC
-
