@@ -1059,9 +1059,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Float64Array:
             read(TypedArrayProperties);
             read(MiscFields);
-            if (mode.mayBeResizableOrGrowableSharedTypedArray())
+            if (mode.mayBeResizableOrGrowableSharedTypedArray()) {
                 write(MiscFields);
-            else
+                write(TypedArrayProperties);
+            } else
                 def(HeapLocation(indexedPropertyLoc, TypedArrayProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
             return;
         // We should not get an AnyTypedArray in a GetByVal as AnyTypedArray is only created from intrinsics, which
@@ -2086,15 +2087,21 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case DataViewGetInt: {
         read(MiscFields);
         read(TypedArrayProperties);
-        LocationKind indexedPropertyLoc = indexedPropertyLocForResultType(node->result());
-        def(HeapLocation(indexedPropertyLoc, AbstractHeap(TypedArrayProperties, node->dataViewData().asQuadWord),
-            node->child1(), node->child2(), node->child3()), LazyNode(node));
+        if (node->dataViewData().isResizable) {
+            write(MiscFields);
+            write(TypedArrayProperties);
+        } else {
+            LocationKind indexedPropertyLoc = indexedPropertyLocForResultType(node->result());
+            def(HeapLocation(indexedPropertyLoc, AbstractHeap(TypedArrayProperties, node->dataViewData().asQuadWord), node->child1(), node->child2(), node->child3()), LazyNode(node));
+        }
         return;
     }
 
     case DataViewSet: {
         read(MiscFields);
         read(TypedArrayProperties);
+        if (node->dataViewData().isResizable)
+            write(MiscFields);
         write(TypedArrayProperties);
         return;
     }

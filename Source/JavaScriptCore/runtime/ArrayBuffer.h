@@ -93,6 +93,8 @@ public:
     }
 
     BufferMemoryHandle* memoryHandle() const { return m_memoryHandle.get(); }
+
+    static ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(SharedArrayBufferContents, m_sizeInBytes); }
     
 private:
     SharedArrayBufferContents(void* data, size_t size, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
@@ -308,7 +310,9 @@ public:
     bool isDetached() { return !m_contents.m_data; }
     InlineWatchpointSet& detachingWatchpointSet() { return m_detachingWatchpointSet; }
 
+    static ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_sizeInBytes); }
     static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_data); }
+    static ptrdiff_t offsetOfShared() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_shared); }
 
     ~ArrayBuffer() { }
 

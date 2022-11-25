@@ -3522,6 +3522,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             uint8_t byteSize;
             NodeType op = DataViewGetInt;
             bool isSigned = false;
+            bool isResizable = false;
             switch (intrinsic) {
             case DataViewGetInt8:
                 isSigned = true;
@@ -3575,9 +3576,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
                 }
             }
 
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView))
+                isResizable = true;
+            else
+                isResizable = getArrayMode(Array::Read).mayBeResizableOrGrowableSharedTypedArray();
+
             DataViewData data { };
             data.isLittleEndian = isLittleEndian;
             data.isSigned = isSigned;
+            data.isResizable = isResizable;
             data.byteSize = byteSize;
 
             setResult(
@@ -3607,6 +3614,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             uint8_t byteSize;
             bool isFloatingPoint = false;
             bool isSigned = false;
+            bool isResizable = false;
             switch (intrinsic) {
             case DataViewSetInt8:
                 isSigned = true;
@@ -3660,9 +3668,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
                 }
             }
 
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView))
+                isResizable = true;
+            else
+                isResizable = getArrayMode(Array::Read).mayBeResizableOrGrowableSharedTypedArray();
+
             DataViewData data { };
             data.isLittleEndian = isLittleEndian;
             data.isSigned = isSigned;
+            data.isResizable = isResizable;
             data.byteSize = byteSize;
             data.isFloatingPoint = isFloatingPoint;
 
@@ -3826,8 +3840,6 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         if (mayBeLargeTypedArray)
             return false;
 #endif
-        insertChecks();
-
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
         bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
@@ -3841,6 +3853,12 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
+#if USE(JSVALUE32_64)
+        if (mayBeResizableOrGrowableSharedTypedArray)
+            return false;
+#endif
+
+        insertChecks();
         NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
         Node* lengthNode = addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode);
         // Our ArrayMode shouldn't cause us to exit here so we should be ok to exit without effects.
@@ -3865,8 +3883,6 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         if (mayBeLargeTypedArray)
             return false;
 #endif
-        insertChecks();
-
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
         bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
@@ -3878,6 +3894,12 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
+#if USE(JSVALUE32_64)
+        if (mayBeResizableOrGrowableSharedTypedArray)
+            return false;
+#endif
+
+        insertChecks();
         NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
         set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode));
 
@@ -3890,7 +3912,6 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         if (mayBeLargeTypedArray)
             return false;
 #endif
-        insertChecks();
 
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
@@ -3903,6 +3924,13 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
             ASSERT(arrayType != Array::Generic);
         });
 
+
+#if USE(JSVALUE32_64)
+        if (mayBeResizableOrGrowableSharedTypedArray)
+            return false;
+#endif
+
+        insertChecks();
         NodeType op = mayBeLargeTypedArray ? GetTypedArrayByteOffsetAsInt52 : GetTypedArrayByteOffset;
         set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode));
 

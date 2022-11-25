@@ -653,6 +653,13 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void lshift32(Address src, RegisterID shiftAmount, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        load32(src, temp.data());
+        lshift32(temp.data(), shiftAmount, dest);
+    }
+
     void lshift64(RegisterID shiftAmount, RegisterID dest)
     {
         lshift64(dest, shiftAmount, dest);
@@ -671,6 +678,13 @@ public:
     void lshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.slliInsn(dest, src, uint32_t(imm.m_value & ((1 << 6) - 1)));
+    }
+
+    void lshift64(Address src, RegisterID shiftAmount, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        load64(src, temp.data());
+        lshift64(temp.data(), shiftAmount, dest);
     }
 
     void rshift32(RegisterID shiftAmount, RegisterID dest)
@@ -3528,6 +3542,38 @@ public:
         }
 
         return failure;
+    }
+
+    void atomicLoad32(Address address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.lwInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
+    }
+
+    void atomicLoad32(BaseIndex address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.lwInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
+    }
+
+    void atomicLoad64(Address address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.ldInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
+    }
+
+    void atomicLoad64(BaseIndex address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.ldInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
     }
 
     void moveConditionally32(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID src, RegisterID dest)

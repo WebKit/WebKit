@@ -852,6 +852,12 @@ public:
         lshift32(dest, imm, dest);
     }
 
+    void lshift32(Address src, RegisterID shiftAmount, RegisterID dest)
+    {
+        load32(src, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.lsl<32>(dest, dataTempRegister, shiftAmount);
+    }
+
     void lshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.lsl<64>(dest, src, shiftAmount);
@@ -870,6 +876,12 @@ public:
     void lshift64(TrustedImm32 imm, RegisterID dest)
     {
         lshift64(dest, imm, dest);
+    }
+
+    void lshift64(Address src, RegisterID shiftAmount, RegisterID dest)
+    {
+        load64(src, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.lsl<64>(dest, dataTempRegister, shiftAmount);
     }
 
     void mul32(RegisterID left, RegisterID right, RegisterID dest)
@@ -4453,7 +4465,17 @@ public:
     {
         m_assembler.ldar<64>(dest, extractSimpleAddress(address));
     }
-    
+
+    void loadAcq32(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.ldar<32>(dest, extractSimpleAddress(address));
+    }
+
+    void loadAcq64(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.ldar<64>(dest, extractSimpleAddress(address));
+    }
+
     void storeRel32(RegisterID dest, Address address)
     {
         m_assembler.stlr<32>(dest, extractSimpleAddress(address));
@@ -5992,7 +6014,27 @@ protected:
         
         RELEASE_ASSERT_NOT_REACHED();
     }
-    
+
+    void atomicLoad32(Address address, RegisterID dest)
+    {
+        loadAcq32(address, dest);
+    }
+
+    void atomicLoad64(Address address, RegisterID dest)
+    {
+        loadAcq64(address, dest);
+    }
+
+    void atomicLoad32(BaseIndex address, RegisterID dest)
+    {
+        loadAcq32(address, dest);
+    }
+
+    void atomicLoad64(BaseIndex address, RegisterID dest)
+    {
+        loadAcq64(address, dest);
+    }
+
     RegisterID extractSimpleAddress(Address address)
     {
         if (!address.offset)
