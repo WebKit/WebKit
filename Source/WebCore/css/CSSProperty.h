@@ -40,7 +40,7 @@ struct StylePropertyMetadata {
         , m_inherited(inherited)
     {
         ASSERT(propertyID != CSSPropertyInvalid);
-        ASSERT(propertyID < firstShorthandProperty);
+        ASSERT_WITH_MESSAGE(propertyID < firstShorthandProperty, "unexpected property: %d", propertyID);
     }
 
     CSSPropertyID shorthandID() const;

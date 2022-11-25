@@ -335,7 +335,7 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
                 return true; // For variables, we just permit everything
         }
 
-        auto primitiveVal = consumeWidthOrHeight(m_range, m_context);
+        auto primitiveVal = CSSPropertyParsing::consumeWidthOrHeight(m_range, m_context);
         if (primitiveVal && primitiveVal->isPrimitiveValue() && m_range.atEnd())
             return true;
         return false;
@@ -348,7 +348,7 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const Strin
 {
     if (syntax != "*"_s) {
         m_range.consumeWhitespace();
-        auto primitiveVal = consumeWidthOrHeight(m_range, m_context);
+        auto primitiveVal = CSSPropertyParsing::consumeWidthOrHeight(m_range, m_context);
         if (!m_range.atEnd())
             return;
         if (primitiveVal && primitiveVal->isPrimitiveValue()) {
@@ -363,7 +363,7 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
 {
     if (syntax != "*"_s) {
         m_range.consumeWhitespace();
-        auto primitiveVal = consumeWidthOrHeight(m_range, m_context);
+        auto primitiveVal = CSSPropertyParsing::consumeWidthOrHeight(m_range, m_context);
         if (primitiveVal && primitiveVal->isPrimitiveValue() && downcast<CSSPrimitiveValue>(*primitiveVal).isLength()) {
             auto length = Style::BuilderConverter::convertLength(builderState, *primitiveVal);
             if (!length.isCalculated() && !length.isUndefined())
@@ -484,7 +484,7 @@ static RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange& range, const
     RefPtr<CSSValue> symbol;
     while (!integer || !symbol) {
         if (!integer) {
-            integer = consumeIntegerZeroAndGreater(range);
+            integer = consumeNonNegativeInteger(range);
             if (integer)
                 continue;
         }
@@ -524,12 +524,12 @@ static RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& 
     auto values = CSSValueList::createCommaSeparated();
     std::optional<int> lastWeight;
     do {
-        auto integer = consumeIntegerZeroAndGreater(range);
+        auto integer = consumeNonNegativeInteger(range);
         auto symbol = consumeCounterStyleSymbol(range, context);
         if (!integer) {
             if (!symbol)
                 return nullptr;
-            integer = consumeIntegerZeroAndGreater(range);
+            integer = consumeNonNegativeInteger(range);
             if (!integer)
                 return nullptr;
         }
@@ -639,7 +639,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
 #endif
         break;
     case CSSPropertyFontVariantCaps:
-        parsedValue = consumeFontVariantCaps(m_range);
+        parsedValue = CSSPropertyParsing::consumeFontVariantCaps(m_range);
         break;
     case CSSPropertyFontVariantLigatures:
         parsedValue = consumeFontVariantLigatures(m_range);
@@ -654,7 +654,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         parsedValue = consumeFontVariantAlternates(m_range);
         break;
     case CSSPropertyFontVariantPosition:
-        parsedValue = consumeFontVariantPosition(m_range);
+        parsedValue = CSSPropertyParsing::consumeFontVariantPosition(m_range);
         break;
     case CSSPropertyFontVariant:
         return consumeFontVariantShorthand(false);
@@ -697,14 +697,14 @@ static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRang
 {
     if (auto result = consumeIdent<CSSValueLight, CSSValueDark>(range))
         return result;
-    return consumeIntegerZeroAndGreater(range);
+    return consumeNonNegativeInteger(range);
 }
 
 static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     do {
-        auto key = consumeIntegerZeroAndGreater(range);
+        auto key = consumeNonNegativeInteger(range);
         if (!key)
             return nullptr;
 
@@ -794,13 +794,13 @@ bool CSSPropertyParser::consumeFont(bool important)
     if (range.atEnd())
         return false;
 
-    fontSize = consumeFontSize(range, m_context.mode);
+    fontSize = CSSPropertyParsing::consumeFontSize(range, m_context);
     if (!fontSize || range.atEnd())
         return false;
 
     if (consumeSlashIncludingWhitespace(range)) {
         if (!consumeIdent<CSSValueNormal>(range)) {
-            lineHeight = consumeLineHeight(range, m_context.mode);
+            lineHeight = CSSPropertyParsing::consumeLineHeight(range, m_context);
             if (!lineHeight)
                 return false;
         }
@@ -882,13 +882,13 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     bool implicitNumeric = true;
     do {
         if (!capsValue) {
-            capsValue = consumeFontVariantCaps(m_range);
+            capsValue = CSSPropertyParsing::consumeFontVariantCaps(m_range);
             if (capsValue)
                 continue;
         }
         
         if (!positionValue) {
-            positionValue = consumeFontVariantPosition(m_range);
+            positionValue = CSSPropertyParsing::consumeFontVariantPosition(m_range);
             if (positionValue)
                 continue;
         }
@@ -1012,9 +1012,9 @@ bool CSSPropertyParser::consumeColumns(bool important)
             // we don't know which one(s) it is meant for. We need to see if there are other values first.
             consumeIdent(m_range);
         } else {
-            if (!columnWidth && (columnWidth = consumeColumnWidth(m_range)))
+            if (!columnWidth && (columnWidth = CSSPropertyParsing::consumeColumnWidth(m_range)))
                 continue;
-            if (!columnCount && (columnCount = consumeColumnCount(m_range)))
+            if (!columnCount && (columnCount = CSSPropertyParsing::consumeColumnCount(m_range)))
                 continue;
             // If we didn't find at least one match, this is an invalid shorthand and we have to ignore it.
             return false;
@@ -1120,7 +1120,7 @@ bool CSSPropertyParser::consumeBorder(RefPtr<CSSValue>& width, RefPtr<CSSValue>&
 {
     while (!width || !style || !color) {
         if (!width) {
-            width = consumeLineWidth(m_range, m_context.mode, UnitlessQuirk::Forbid);
+            width = CSSPropertyParsing::consumeLineWidth(m_range, m_context);
             if (width)
                 continue;
         }
@@ -1844,7 +1844,7 @@ bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
     if (m_range.atEnd())
         return false;
 
-    RefPtr<CSSValue> overscrollBehaviorX = consumeOverscrollBehavior(m_range);
+    RefPtr<CSSValue> overscrollBehaviorX = CSSPropertyParsing::consumeOverscrollBehaviorX(m_range);
     if (!overscrollBehaviorX)
         return false;
 
@@ -1853,7 +1853,7 @@ bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
     if (m_range.atEnd())
         overscrollBehaviorY = overscrollBehaviorX;
     else {
-        overscrollBehaviorY = consumeOverscrollBehavior(m_range);
+        overscrollBehaviorY = CSSPropertyParsing::consumeOverscrollBehaviorY(m_range);
         m_range.consumeWhitespace();
         if (!m_range.atEnd())
             return false;
@@ -2285,8 +2285,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyWebkitPerspective:
         return consumePrefixedPerspective(important);
     case CSSPropertyGap: {
-        RefPtr<CSSValue> rowGap = consumeGapLength(m_range, m_context.mode);
-        RefPtr<CSSValue> columnGap = consumeGapLength(m_range, m_context.mode);
+        auto rowGap = CSSPropertyParsing::consumeRowGap(m_range, m_context);
+        auto columnGap = CSSPropertyParsing::consumeColumnGap(m_range, m_context);
         if (!rowGap || !m_range.atEnd())
             return false;
         if (!columnGap)

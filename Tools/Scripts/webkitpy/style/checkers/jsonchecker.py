@@ -25,7 +25,6 @@
 import json
 import re
 
-
 class JSONChecker(object):
     """Processes JSON lines for checking style."""
 
@@ -119,42 +118,81 @@ class JSONCSSPropertiesChecker(JSONChecker):
 
         try:
             properties_definition = json.loads('\n'.join(lines) + '\n')
-            if 'properties' not in properties_definition:
-                self._handle_style_error(0, 'json/syntax', 5, '"properties" key not found, the key is mandatory.')
-                return
 
+            if 'categories' not in properties_definition:
+                self._handle_style_error(0, 'json/syntax', 5, '"categories" key not found, the key is mandatory.')
+                return
             self._categories = properties_definition['categories']
             self.check_categories()
 
-            properties = properties_definition['properties']
-            if not isinstance(properties, dict):
-                self._handle_style_error(0, 'json/syntax', 5, '"properties" is not a dictionary.')
+            if 'shared-grammar-rules' not in properties_definition:
+                self._handle_style_error(0, 'json/syntax', 5, '"shared-grammar-rules" key not found, the key is mandatory.')
                 return
+            self._shared_grammar_rules = properties_definition['shared-grammar-rules']
+            self.check_shared_grammar_rules()
 
-            for property_name, property_value in properties.items():
-                self.check_property(property_name, property_value)
+            if 'properties' not in properties_definition:
+                self._handle_style_error(0, 'json/syntax', 5, '"properties" key not found, the key is mandatory.')
+                return
+            self._properties = properties_definition['properties']
+            self.check_properties()
 
         except Exception as e:
             print(e)
             pass
 
-    def check_category(self, category, category_value):
+    def check_category(self, category_name, category_value):
         keys_and_validators = {
-            "shortname": self.validate_string,
-            "longname": self.validate_string,
-            "url": self.validate_url,
-            "status": self.validate_status_type,
+            'shortname': self.validate_string,
+            'longname': self.validate_string,
+            'url': self.validate_url,
+            'status': self.validate_status,
         }
         for key, value in category_value.items():
             if key not in keys_and_validators:
-                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for specification "%s" has unexpected key "%s".' % (category, key))
+                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for category "%s" has unexpected key "%s".' % (category_name, key))
                 return
 
-            keys_and_validators[key](category, "", key, value)
+            keys_and_validators[key](category_name, "", key, value)
 
     def check_categories(self):
+        if not isinstance(self._categories, dict):
+            self._handle_style_error(0, 'json/syntax', 5, '"categories" is not a dictionary.')
+            return
+
         for key, value in self._categories.items():
             self.check_category(key, value)
+
+    def check_shared_grammar_rule(self, rule_name, rule_value):
+        keys_and_validators = {
+            'comment': self.validate_comment,
+            'exported': self.validate_boolean,
+            'grammar': self.validate_grammar,
+            'specification': self.validate_specification,
+            'status': self.validate_status,
+        }
+        for key, value in rule_value.items():
+            if key not in keys_and_validators:
+                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for shared property rule "%s" has unexpected key "%s".' % (rule_name, key))
+                return
+
+            keys_and_validators[key](rule_name, "", key, value)
+
+    def check_shared_grammar_rules(self):
+        if not isinstance(self._shared_grammar_rules, dict):
+            self._handle_style_error(0, 'json/syntax', 5, '"shared-grammar-rules" is not a dictionary.')
+            return
+
+        for rule_name, rule_value in self._shared_grammar_rules.items():
+            self.check_shared_grammar_rule(rule_name, rule_value)
+
+    def check_properties(self):
+        if not isinstance(self._properties, dict):
+            self._handle_style_error(0, 'json/syntax', 5, '"properties" is not a dictionary.')
+            return
+
+        for property_name, property_value in self._properties.items():
+            self.check_property(property_name, property_value)
 
     def validate_type(self, property_name, property_key, key, value, expected_type):
         if not isinstance(value, expected_type):
@@ -185,6 +223,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'not implemented',
             'not considering',
             'obsolete',
+            'removed',
         }
         if value not in allowed_statuses:
             self._handle_style_error(0, 'json/syntax', 5, 'status "%s" for property "%s" is not one of the recognized status values' % (value, property_name))
@@ -198,6 +237,33 @@ class JSONCSSPropertiesChecker(JSONChecker):
                 self.check_codegen_properties(property_name, entry)
         else:
             self.check_codegen_properties(property_name, value)
+
+    def validate_grammar(self, property_name, property_key, key, value):
+        self.validate_grammar_term(property_name, property_key, key, value)
+
+    def validate_grammar_term(self, property_name, property_key, key, value):
+        if isinstance(value, dict):
+            keys_and_validators = {
+                'aliased-to': self.validate_string,
+                'comment': self.validate_comment,
+                'enable-if': self.validate_string,
+                'kind': self.validate_string,
+                'settings-flag': self.validate_string,
+                'status': self.validate_status,
+                'value': self.validate_grammar_term,
+            }
+
+            for key, value in value.items():
+                if key not in keys_and_validators:
+                    self._handle_style_error(0, 'json/syntax', 5, 'dictionary for "parser-grammar" of property "%s" has unexpected key "%s".' % (property_name, key))
+                    return
+
+                keys_and_validators[key](property_name, "", key, value)
+        elif isinstance(value, list):
+            for entry in value:
+                self.validate_grammar_term(property_name, "", "", entry)
+        else:
+            self.validate_string(property_name, property_key, key, value)
 
     def validate_logical_property_group(self, property_name, property_key, key, value):
         self.validate_type(property_name, property_key, key, value, dict)
@@ -224,7 +290,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
 
                 keys_and_validators[key](property_name, "", key, value)
         else:
-            self.validate_string(property_name, property_key, key, value)
+            self.validate_status_type(property_name, property_key, key, value)
 
     def validate_property_category(self, property_name, property_key, key, value):
         self.validate_string(property_name, property_key, key, value)
@@ -233,7 +299,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             self._handle_style_error(0, 'json/syntax', 5, 'property "%s" has category "%s" which is not in the set of categories.' % (property_name, value))
             return
 
-    def validate_property_specification(self, property_name, property_key, key, value):
+    def validate_specification(self, property_name, property_key, key, value):
         self.validate_type(property_name, property_key, key, value, dict)
 
         keys_and_validators = {
@@ -265,7 +331,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'values': self.validate_array,
             'codegen-properties': self.validate_codegen_properties,
             'status': self.validate_status,
-            'specification': self.validate_property_specification,
+            'specification': self.validate_specification,
         }
 
         for key, value in value.items():
@@ -303,6 +369,9 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'logical-property-group': self.validate_logical_property_group,
             'longhands': self.validate_array,
             'name-for-methods': self.validate_string,
+            'parser-exported': self.validate_boolean,
+            'parser-grammar': self.validate_grammar,
+            'parser-grammar-comment': self.validate_comment,
             'parser-function': self.validate_string,
             'parser-requires-additional-parameters': self.validate_array,
             'parser-requires-context': self.validate_boolean,
@@ -311,7 +380,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'parser-requires-current-property': self.validate_boolean,
             'parser-requires-quirks-mode': self.validate_boolean,
             'parser-requires-value-pool': self.validate_boolean,
-            'partial-keyword-property': self.validate_boolean,
             'no-default-color': self.validate_boolean,
             'related-property': self.validate_string,
             'runtime-flag': self.validate_string,

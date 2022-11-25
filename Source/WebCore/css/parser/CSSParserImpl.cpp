@@ -652,7 +652,7 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesR
 
         Vector<unsigned> values;
         while (!range.atEnd()) {
-            auto value = CSSPropertyParserHelpers::consumeIntegerZeroAndGreater(range);
+            auto value = CSSPropertyParserHelpers::consumeNonNegativeInteger(range);
             if (!value)
                 return { };
             ASSERT(value->isInteger());

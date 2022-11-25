@@ -229,9 +229,11 @@
         "Indicates that a CSSValuePool is required by the custom parser. Either 'custom-parser'",
         "or 'parser-function' must also be specified for this to be valid.",
         "",
-        "* partial-keyword-property:",
-        "Indicates that in addition to single keyword values, this property can also take other",
-        "values in a valid parse. ",
+        "* parser-grammar:",
+        "An array of terms that define the grammar for the property.",
+        "",
+        "* parser-grammar-comment:",
+        "A comment specific to the `parser-grammar` value.",
         "",
         "2. Lesser known capabilities of this file format",
         "",
@@ -285,8 +287,7 @@
                 "auto-functions": true,
                 "color-property": true,
                 "settings-flag": "accentColorEnabled",
-                "parser-function": "consumeAutoOrColor",
-                "parser-requires-context": true
+                "parser-grammar": ["auto", "<color>"]
             },
             "status": {
                 "status": "experimental"
@@ -302,8 +303,7 @@
                 "visited-link-color-support": true,
                 "color-property": true,
                 "custom": "All",
-                "parser-function": "consumeAutoOrColor",
-                "parser-requires-context": true
+                "parser-grammar": ["auto", "<color>"]
             },
             "specification": {
                 "category": "css-ui",
@@ -318,9 +318,7 @@
                 "custom": "Value",
                 "high-priority": true,
                 "fast-path-inherited": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true,
-                "parser-requires-quirks-mode": true
+                "parser-grammar": ["<color accept-quirky-colors-in-quirks-mode>"]
             },
             "status": {
                 "comment": "All the values from CSS Color Level 3 are supported, as well as the 8- and 4-digit forms of hex color, and the color() function."
@@ -431,9 +429,8 @@
             "codegen-properties": {
                 "custom": "All",
                 "high-priority": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "parser-grammar": ["<absolute-size>", "<relative-size>", "<length-percentage [0,inf] unitless-allowed>", "<-webkit-absolute-size>", "<-webkit-relative-size>"],
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -446,7 +443,7 @@
                 "custom": "Value",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true
+                "parser-grammar": ["none", "<number [0,inf]>"]
             },
             "specification": {
                 "category": "css-fonts",
@@ -589,7 +586,7 @@
                 "converter": "FontPalette",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true
+                "parser-grammar": ["normal", "light", "dark", "<palette-identifier>"]
             },
             "specification": {
                 "category": "css-fonts",
@@ -634,7 +631,8 @@
             "codegen-properties": {
                 "name-for-methods": "VariantPosition",
                 "font-property": true,
-                "high-priority": true
+                "high-priority": true,
+                "parser-exported": true
             },
             "status": {
                 "status": "in development",
@@ -659,7 +657,8 @@
             "codegen-properties": {
                 "name-for-methods": "VariantCaps",
                 "font-property": true,
-                "high-priority": true
+                "high-priority": true,
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -846,7 +845,7 @@
                 "font-property": true,
                 "high-priority": true,
                 "name-for-methods": "SpecifiedLocale",
-                "parser-function": "consumeAutoOrString"
+                "parser-grammar": ["auto", "<string>"]
             },
             "status": "non-standard"
         },
@@ -897,7 +896,7 @@
                 "high-priority": true,
                 "enable-if": "ENABLE_TEXT_AUTOSIZING",
                 "settings-flag": "textAutosizingEnabled",
-                "parser-function": "consumeTextSizeAdjust"
+                "parser-grammar": ["auto", "none", "<percentage [0,inf]>"]
             },
             "status": "experimental",
             "specification": {
@@ -983,7 +982,7 @@
             "codegen-properties": {
                 "custom": "All",
                 "high-priority": true,
-                "custom-parser": true
+                "parser-grammar": ["normal", "reset", "document", "<percentage [0,inf]>", "<number [0,inf]>"]
             },
             "status": "non-standard",
             "specification": {
@@ -1383,9 +1382,7 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true,
-                "parser-requires-quirks-mode": true
+                "parser-grammar": ["<color accept-quirky-colors-in-quirks-mode>"]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1491,7 +1488,7 @@
             "codegen-properties": {
                 "custom": "Value",
                 "svg": true,
-                "custom-parser": true
+                "parser-grammar": ["baseline", "sub", "super", "<length-percentage svg>"]
             },
             "specification": {
                 "category": "svg",
@@ -1508,8 +1505,7 @@
                     "name": "size",
                     "resolver": "block"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                "parser-grammar": ["<width-or-height>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1597,8 +1593,7 @@
                     "name": "border-color",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1643,9 +1638,7 @@
                     "name": "border-width",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<line-width>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1680,8 +1673,7 @@
                     "name": "border-color",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1726,9 +1718,7 @@
                     "name": "border-width",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<line-width>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1977,8 +1967,7 @@
         "border-image-source": {
             "codegen-properties": {
                 "converter": "StyleImage<CSSPropertyBorderImageSource>",
-                "parser-function": "consumeImageOrNone",
-                "parser-requires-context": true
+                "parser-grammar": ["none", "<image>"]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2054,8 +2043,7 @@
                     "name": "border-color",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2100,9 +2088,7 @@
                     "name": "border-width",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<line-width>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2137,8 +2123,7 @@
                     "name": "border-color",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2183,9 +2168,7 @@
                     "name": "border-width",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<line-width>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2933,8 +2916,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage svg>"]
             },
             "specification": {
                 "category": "svg",
@@ -2945,8 +2927,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage svg>"]
             },
             "specification": {
                 "category": "svg",
@@ -3018,7 +2999,7 @@
             "codegen-properties": {
                 "converter": "Opacity",
                 "svg": true,
-                "parser-function": "consumeOpacity"
+                "parser-grammar": "<alpha-value>"
             },
             "specification": {
                 "category": "svg",
@@ -3065,8 +3046,7 @@
             "codegen-properties": {
                 "svg": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification": {
                 "category": "svg",
@@ -3077,11 +3057,11 @@
             "codegen-properties": {
                 "converter": "Opacity",
                 "svg": true,
-                "parser-function": "consumeOpacity"
+                "parser-grammar": "<alpha-value>"
             },
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG/filters.html#FloodOpacityProperty"
+                "category": "css-filters",
+                "url": "https://www.w3.org/TR/filter-effects/#FloodOpacityProperty"
             }
         },
         "glyph-orientation-horizontal": {
@@ -3089,8 +3069,7 @@
             "codegen-properties": {
                 "converter": "GlyphOrientation",
                 "svg": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<angle unitless-allowed unitless-zero-allowed>"]
             },
             "specification": {
                 "category": "svg",
@@ -3102,8 +3081,7 @@
             "codegen-properties": {
                 "converter": "GlyphOrientationOrAuto",
                 "svg": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<angle unitless-allowed unitless-zero-allowed>"]
             },
             "specification": {
                 "category": "svg",
@@ -3129,9 +3107,7 @@
                     "name": "size",
                     "resolver": "vertical"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "parser-grammar": ["<width-or-height-unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -3215,8 +3191,7 @@
                     "name": "size",
                     "resolver": "inline"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                "parser-grammar": ["<width-or-height>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3271,9 +3246,7 @@
                     "name": "inset",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<inset-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3287,9 +3260,7 @@
                     "name": "inset",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<inset-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3316,9 +3287,7 @@
                     "name": "inset",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<inset-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3332,9 +3301,7 @@
                     "name": "inset",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<inset-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3346,8 +3313,7 @@
             "codegen-properties": {
                 "converter": "SVGLengthValue",
                 "svg": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "normal", "<length unitless-allowed>"]
             },
             "specification": {
                 "category": "svg",
@@ -3379,8 +3345,7 @@
                 "high-priority": true,
                 "sink-priority": true,
                 "converter": "Spacing",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["normal", "<length unitless-allowed>"]
             },
             "specification": {
                 "category": "css-text",
@@ -3391,8 +3356,7 @@
             "codegen-properties": {
                 "svg": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             }
         },
         "line-height": {
@@ -3401,20 +3365,20 @@
                 {
                     "custom": "All",
                     "enable-if": "ENABLE_TEXT_AUTOSIZING",
-                    "custom-parser": true,
-                    "parser-requires-context-mode": true
+                    "parser-grammar": ["normal", "<number [0,inf]>", "<length-percentage [0,inf]>"],
+                    "parser-exported": true
                 },
                 {
                     "getter": "specifiedLineHeight",
                     "conditional-converter": "LineHeight",
                     "enable-if": "!ENABLE_TEXT_AUTOSIZING",
-                    "custom-parser": true,
-                    "parser-requires-context-mode": true
+                    "parser-grammar": ["normal", "<number [0,inf]>", "<length-percentage [0,inf]>"],
+                    "parser-exported": true
                 }
             ],
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/visudet.html#propdef-line-height"
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-inline-3/#line-height-property"
             }
         },
         "list-style": {
@@ -3436,9 +3400,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "StyleImage<CSSPropertyListStyleImage>",
-                "parser-function": "consumeImageOrNone",
-                "parser-requires-context": true
-
+                "parser-grammar": ["none", "<image>"]
             },
             "specification": {
                 "category": "css-lists",
@@ -3557,9 +3519,7 @@
             ],
             "codegen-properties": {
                 "custom": "All",
-                "custom-parser": true,
-                "parser-requires-context": true,
-                "partial-keyword-property": true
+                "parser-grammar": ["<<values>>", "<string>"]
             },
             "specification": {
                 "category": "css-lists",
@@ -3604,9 +3564,7 @@
                     "name": "margin",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<margin-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3623,9 +3581,7 @@
                     "name": "margin",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<margin-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3672,9 +3628,7 @@
                     "name": "margin",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<margin-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3691,9 +3645,7 @@
                     "name": "margin",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeMarginOrOffset",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<margin-logical-start-end>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3772,7 +3724,7 @@
                 "name-for-methods": "MarkerEndResource",
                 "converter": "SVGURIReference",
                 "svg": true,
-                "parser-function": "consumeNoneOrURL"
+                "parser-grammar": ["none", "<marker-ref>"]
             },
             "specification": {
                 "category": "svg",
@@ -3785,7 +3737,7 @@
                 "name-for-methods": "MarkerMidResource",
                 "converter": "SVGURIReference",
                 "svg": true,
-                "parser-function": "consumeNoneOrURL"
+                "parser-grammar": ["none", "<marker-ref>"]
             },
             "specification": {
                 "category": "svg",
@@ -3798,7 +3750,7 @@
                 "name-for-methods": "MarkerStartResource",
                 "converter": "SVGURIReference",
                 "svg": true,
-                "parser-function": "consumeNoneOrURL"
+                "parser-grammar": ["none", "<marker-ref>"]
             },
             "specification": {
                 "category": "svg",
@@ -4027,8 +3979,7 @@
                     "name": "max-size",
                     "resolver": "block"
                 },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true
+                "parser-grammar": ["<max-width-or-height>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4043,9 +3994,7 @@
                     "name": "max-size",
                     "resolver": "vertical"
                 },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "parser-grammar": ["<max-width-or-height-unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4062,8 +4011,7 @@
                     "name": "max-size",
                     "resolver": "inline"
                 },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true
+                "parser-grammar": ["<max-width-or-height>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4078,9 +4026,7 @@
                     "name": "max-size",
                     "resolver": "horizontal"
                 },
-                "parser-function": "consumeMaxWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "parser-grammar": ["<max-width-or-height-unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4097,8 +4043,7 @@
                     "name": "min-size",
                     "resolver": "block"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                "parser-grammar": ["<width-or-height>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4113,9 +4058,7 @@
                     "name": "min-size",
                     "resolver": "vertical"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "parser-grammar": ["<width-or-height-unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4132,8 +4075,7 @@
                     "name": "min-size",
                     "resolver": "inline"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true
+                "parser-grammar": ["<width-or-height>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4148,9 +4090,7 @@
                     "name": "min-size",
                     "resolver": "horizontal"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "parser-grammar": ["<width-or-height-unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4173,9 +4113,7 @@
         "object-position": {
             "codegen-properties": {
                 "converter": "Position",
-                "parser-function": "consumePosition",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid", "PositionSyntax::Position"]
+                "parser-grammar": ["<position>"]
             },
             "specification": {
                 "category": "css-images",
@@ -4199,9 +4137,7 @@
             "codegen-properties": {
                 "converter": "Length",
                 "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage>"]
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4212,9 +4148,7 @@
             "codegen-properties": {
                 "converter": "PositionOrAuto",
                 "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeAutoOrPosition",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid", "PositionSyntax::Position"]
+                "parser-grammar": ["auto", "<position>"]
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4225,9 +4159,7 @@
             "codegen-properties": {
                 "converter": "PositionOrAuto",
                 "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeAutoOrPosition",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid", "PositionSyntax::Position"]
+                "parser-grammar": ["auto", "<position>"]
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4269,21 +4201,21 @@
                 "aliases": [
                     "-webkit-opacity"
                 ],
-                "parser-function": "consumeOpacity"
+                "parser-grammar": ["<alpha-value>"]
             },
             "status": {
                 "comment": "Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets."
             },
             "specification": {
                 "category": "css-color",
-                "url": "https://www.w3.org/TR/css3-color/#opacity"
+                "url": "https://www.w3.org/TR/css-color-4/#propdef-opacity"
             }
         },
         "orphans": {
             "inherited": true,
             "codegen-properties": {
                 "auto-functions": true,
-                "parser-function": "consumePositiveInteger"
+                "parser-grammar": ["<integer [1,inf]>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4309,8 +4241,7 @@
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["-webkit-focus-ring-color", "<color>"]
             },
             "specification": {
                 "category": "css-ui",
@@ -4320,9 +4251,7 @@
         "outline-offset": {
             "codegen-properties": {
                 "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-ui",
@@ -4353,9 +4282,7 @@
         "outline-width": {
             "codegen-properties": {
                 "converter": "LineWidth<float>",
-                "parser-function": "consumeLineWidth",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<line-width>"]
             },
             "specification": {
                 "category": "css-ui",
@@ -4480,7 +4407,8 @@
                 "logical-property-group": {
                     "name": "overscroll-behavior",
                     "resolver": "horizontal"
-                }
+                },
+                "parser-exported": true
             },
             "status": {
                 "status": "in development"
@@ -4500,7 +4428,8 @@
                 "logical-property-group": {
                     "name": "overscroll-behavior",
                     "resolver": "vertical"
-                }
+                },
+                "parser-exported": true
             },
             "status": {
                 "status": "in development"
@@ -4601,9 +4530,7 @@
                     "name": "padding",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4620,9 +4547,7 @@
                     "name": "padding",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4637,9 +4562,7 @@
                     "name": "padding",
                     "resolver": "bottom"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                "parser-grammar": ["<length-percentage [0,inf] unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4669,9 +4592,7 @@
                     "name": "padding",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4688,9 +4609,7 @@
                     "name": "padding",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4705,9 +4624,7 @@
                     "name": "padding",
                     "resolver": "left"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                "parser-grammar": ["<length-percentage [0,inf] unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4722,9 +4639,7 @@
                     "name": "padding",
                     "resolver": "right"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                "parser-grammar": ["<length-percentage [0,inf] unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4739,9 +4654,7 @@
                     "name": "padding",
                     "resolver": "top"
                 },
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Allow"]
+                "parser-grammar": ["<length-percentage [0,inf] unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -4751,7 +4664,7 @@
         "page": {
             "codegen-properties": {
                 "skip-builder": true,
-                "custom-parser": true
+                "parser-grammar": ["auto", "<custom-ident>"]
             },
             "specification": {
                 "category": "css-page",
@@ -4867,9 +4780,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "svg",
@@ -4924,8 +4835,7 @@
             "codegen-properties": {
                 "initial": "initialRadius",
                 "converter": "LengthOrAuto",
-                "parser-function": "consumeRxOrRy",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "svg",
@@ -4936,8 +4846,7 @@
             "codegen-properties": {
                 "initial": "initialRadius",
                 "converter": "LengthOrAuto",
-                "parser-function": "consumeRxOrRy",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "svg",
@@ -5008,8 +4917,7 @@
             "codegen-properties": {
                 "svg": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification": {
                 "category": "svg",
@@ -5020,7 +4928,7 @@
             "codegen-properties": {
                 "converter": "Opacity",
                 "svg": true,
-                "parser-function": "consumeOpacity"
+                "parser-grammar": ["<alpha-value>"]
             },
             "specification": {
                 "category": "svg",
@@ -5060,8 +4968,7 @@
                 "initial": "initialZeroLength",
                 "name-for-methods": "StrokeDashOffset",
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage svg>"]
             },
             "specification": {
                 "category": "svg",
@@ -5109,8 +5016,7 @@
             "codegen-properties": {
                 "name-for-methods": "StrokeMiterLimit",
                 "converter": "Number<float>",
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "parser-grammar": ["<number [0,inf]>"]
             },
             "status": "supported",
             "specification": {
@@ -5125,7 +5031,7 @@
             "codegen-properties": {
                 "converter": "Opacity",
                 "svg": true,
-                "parser-function": "consumeOpacity"
+                "parser-grammar": ["<alpha-value>"]
             },
             "specification": {
                 "category": "svg",
@@ -5138,8 +5044,7 @@
                 "custom": "Value",
                 "visited-link-color-support": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "status": "supported",
             "specification": {
@@ -5153,8 +5058,7 @@
                 "custom": "Value",
                 "initial": "initialOneLength",
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage svg>"]
             },
             "status": "supported",
             "specification": {
@@ -5201,8 +5105,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TabSize",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<number [0,inf]>", "<length [0,inf]>"]
             },
             "specification": {
                 "category": "css-text",
@@ -5757,8 +5660,21 @@
         "vertical-align": {
             "codegen-properties": {
                 "custom": "Inherit|Value",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": [
+                    "baseline",
+                    "sub",
+                    "super",
+                    "top",
+                    "text-top",
+                    "middle",
+                    "bottom",
+                    "text-bottom",
+                    {
+                        "value": "-webkit-baseline-middle",
+                        "status": "non-standard"
+                    },
+                    "<length-percentage unitless-allowed>"
+                 ]
             },
             "specification": {
                 "category": "css-22",
@@ -5796,7 +5712,7 @@
             "inherited": true,
             "codegen-properties": {
                 "auto-functions": true,
-                "parser-function": "consumePositiveInteger"
+                "parser-grammar": ["<integer [1,inf]>"]
             },
             "specification": {
                 "category": "css-22",
@@ -5811,9 +5727,7 @@
                     "name": "size",
                     "resolver": "horizontal"
                 },
-                "parser-function": "consumeWidthOrHeight",
-                "parser-requires-context": true,
-                "parser-requires-additional-parameters": ["UnitlessQuirk::Allow"]
+                "parser-grammar": ["<width-or-height-unitless-allowed>"]
             },
             "specification": {
                 "category": "css-22",
@@ -5853,8 +5767,8 @@
             "inherited": true,
             "codegen-properties": {
                 "conditional-converter": "WordSpacing",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["normal", "<length-percentage unitless-allowed>"],
+                "parser-grammar-comment": "The current specification has a <length>, not a <length-percentage>"
             },
             "specification": {
                 "category": "css-22",
@@ -5865,8 +5779,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage svg>"]
             },
             "specification": {
                 "category": "svg",
@@ -5877,8 +5790,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-additional-parameters": ["SVGAttributeMode", "ValueRange::All", "UnitlessQuirk::Forbid"]
+                "parser-grammar": ["<length-percentage svg>"]
             },
             "specification": {
                 "category": "svg",
@@ -5889,7 +5801,7 @@
             "codegen-properties": {
                 "auto-functions": true,
                 "name-for-methods": "SpecifiedZIndex",
-                "custom-parser": true
+                "parser-grammar": ["auto", "<integer>"]
             },
             "specification": {
                 "category": "css-22",
@@ -6195,9 +6107,7 @@
             "codegen-properties": {
                 "name-for-methods": "HorizontalBorderSpacing",
                 "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "parser-grammar": ["<length [0,inf]>"]
             },
             "status": "non-standard"
         },
@@ -6235,9 +6145,7 @@
             "codegen-properties": {
                 "name-for-methods": "VerticalBorderSpacing",
                 "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "parser-grammar": ["<length [0,inf]>"]
             },
             "status": "non-standard"
         },
@@ -6269,8 +6177,7 @@
         },
         "-webkit-box-flex": {
             "codegen-properties": {
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<number>"]
             },
             "status": "obsolete",
             "specification":  {
@@ -6280,7 +6187,7 @@
         },
         "-webkit-box-flex-group": {
             "codegen-properties": {
-                "parser-function": "consumeIntegerZeroAndGreater"
+                "parser-grammar": ["<integer [0,inf]>"]
             },
             "status": "obsolete",
             "specification":  {
@@ -6301,7 +6208,7 @@
         },
         "-webkit-box-ordinal-group": {
             "codegen-properties": {
-                "parser-function": "consumePositiveInteger"
+                "parser-grammar": ["<integer [1,inf]>"]
             },
             "status": "obsolete",
             "specification":  {
@@ -6418,7 +6325,8 @@
                     "-webkit-column-count"
                 ],
                 "auto-functions": true,
-                "custom-parser": true
+                "parser-grammar": ["auto", "<integer [1,inf]>"],
+                "parser-exported": true
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6447,10 +6355,10 @@
                     "-webkit-column-gap"
                 ],
                 "converter": "GapLength",
-                "parser-function": "consumeGapLength",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<gap-gutter>"],
+                "parser-exported": true
             },
-            "specification":  {
+            "specification": {
                 "category": "css-align",
                 "url": "https://drafts.csswg.org/css-align/#column-row-gap"
             }
@@ -6461,8 +6369,8 @@
                     "grid-row-gap"
                 ],
                 "converter": "GapLength",
-                "parser-function": "consumeGapLength",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<gap-gutter>"],
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-align",
@@ -6520,8 +6428,7 @@
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6558,8 +6465,7 @@
                     "-webkit-column-rule-width"
                 ],
                 "converter": "LineWidth<unsigned short>",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<line-width>"]
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6588,7 +6494,8 @@
                 ],
                 "converter": "ComputedLength<float>",
                 "auto-functions": true,
-                "custom-parser": true
+                "parser-grammar": ["auto", "<length [0,inf] strict>"],
+                "parser-exported": true
             },
             "specification":  {
                 "category": "css-multicol",
@@ -6789,8 +6696,7 @@
                     "-webkit-flex-basis"
                 ],
                 "converter": "LengthSizing",
-                "custom-parser": true,
-                "parser-requires-context": true
+                "parser-grammar": ["auto", "content", "<width-or-height-keyword>", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6835,8 +6741,7 @@
                 "aliases": [
                     "-webkit-flex-grow"
                 ],
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "parser-grammar": ["<number [0,inf]>"]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6848,8 +6753,7 @@
                 "aliases": [
                     "-webkit-flex-shrink"
                 ],
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "parser-grammar": ["<number [0,inf]>"]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6913,9 +6817,7 @@
             "codegen-properties": {
                 "skip-builder": true,
                 "internal-only": true,
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All, UnitlessQuirk::Allow"]
+                "parser-grammar": ["<length unitless-allowed>"]
             },
             "status": "non-standard"
         },
@@ -7172,7 +7074,7 @@
             "codegen-properties": {
                 "name-for-methods": "HyphenationString",
                 "converter": "StringOrAutoAtom",
-                "parser-function": "consumeAutoOrString"
+                "parser-grammar": ["auto", "<string>"]
             },
             "status": {
                 "status": "experimental"
@@ -7187,8 +7089,7 @@
             "codegen-properties": {
                 "name-for-methods": "HyphenationLimitAfter",
                 "converter": "NumberOrAuto<short>",
-                "parser-function": "consumeHyphenateLimit",
-                "parser-requires-additional-parameters": ["CSSValueAuto"]
+                "parser-grammar": ["auto", "<number [0,inf]>"]
             },
             "status": "non-standard"
         },
@@ -7197,8 +7098,7 @@
             "codegen-properties": {
                 "name-for-methods": "HyphenationLimitBefore",
                 "converter": "NumberOrAuto<short>",
-                "parser-function": "consumeHyphenateLimit",
-                "parser-requires-additional-parameters": ["CSSValueAuto"]
+                "parser-grammar": ["auto", "<number [0,inf]>"]
             },
             "status": "non-standard"
         },
@@ -7207,8 +7107,7 @@
             "codegen-properties": {
                 "name-for-methods": "HyphenationLimitLines",
                 "converter": "WebkitHyphenateLimitLines",
-                "parser-function": "consumeHyphenateLimit",
-                "parser-requires-additional-parameters": ["CSSValueNoLimit"]
+                "parser-grammar": ["no-limit", "<number [0,inf]>"]
             },
             "status": {
                 "status": "experimental"
@@ -7312,7 +7211,7 @@
         },
         "-webkit-line-clamp": {
             "codegen-properties": {
-                "custom-parser": true
+                "parser-grammar": ["<percentage [0,inf]>", "<integer [1,inf]>"]
             },
             "status": "non-standard"
         },
@@ -7320,7 +7219,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "StringOrNoneAtom",
-                "custom-parser": true
+                "parser-grammar": ["none", "<custom-ident>"]
             },
             "status": {
                 "status": "experimental"
@@ -7386,8 +7285,7 @@
             "codegen-properties": {
                 "conditional-converter": "MarqueeIncrement",
                 "internal-only": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<length-percentage unitless-allowed>"]
             },
             "status": "non-standard"
         },
@@ -7396,7 +7294,7 @@
                 "name-for-methods": "MarqueeLoopCount",
                 "converter": "MarqueeRepetition",
                 "internal-only": true,
-                "custom-parser": true
+                "parser-grammar": ["<number [0,inf]>"]
             },
             "status": "non-standard"
         },
@@ -7404,8 +7302,7 @@
             "codegen-properties": {
                 "converter": "MarqueeSpeed",
                 "internal-only": true,
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<time [0,inf] unitless-allowed>"]
             },
             "status": "non-standard"
         },
@@ -7489,8 +7386,7 @@
         "-webkit-mask-box-image-source": {
             "codegen-properties": {
                 "converter": "StyleImage<CSSPropertyWebkitMaskBoxImageSource>",
-                "parser-function": "consumeImageOrNone",
-                "parser-requires-context": true
+                "parser-grammar": ["none", "<image>"]
             },
             "status": "non-standard",
             "specification": {
@@ -7613,7 +7509,7 @@
                 "aliases": [
                     "-webkit-order"
                 ],
-                "parser-function": "consumeInteger"
+                "parser-grammar": ["<integer>"]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -7855,8 +7751,7 @@
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "specification": {
                 "category": "css-text-decor",
@@ -7913,8 +7808,8 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TextUnderlineOffset",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length>"],
+                "parser-grammar-comment": "The current specification has a <length> | <percentage>, not just <length>"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -7924,8 +7819,8 @@
         "text-decoration-thickness": {
             "codegen-properties": {
                 "converter": "TextDecorationThickness",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "from-font", "<length>"],
+                "parser-grammar-comment": "The current specification has a <length> | <percentage>, not just <length>"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -7982,8 +7877,7 @@
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "status": {
                 "status": "experimental"
@@ -8034,8 +7928,7 @@
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "status": {
                 "status": "non-standard",
@@ -8069,8 +7962,7 @@
                 "initial": "currentColor",
                 "visited-link-color-support": true,
                 "color-property": true,
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "status": {
                 "status": "non-standard",
@@ -8081,8 +7973,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TextStrokeWidth",
-                "parser-function": "consumeTextStrokeWidth",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["<line-width>"]
             },
             "status": {
                 "status": "non-standard",
@@ -8173,9 +8064,7 @@
                 ],
                 "computable": false,
                 "converter": "ComputedLength<float>",
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-transforms",
@@ -8324,9 +8213,7 @@
                     "name": "scroll-margin",
                     "resolver": "bottom"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8344,9 +8231,7 @@
                     "name": "scroll-margin",
                     "resolver": "left"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8364,9 +8249,7 @@
                     "name": "scroll-margin",
                     "resolver": "right"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8384,9 +8267,7 @@
                     "name": "scroll-margin",
                     "resolver": "top"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8400,9 +8281,7 @@
                     "name": "scroll-margin",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8416,9 +8295,7 @@
                     "name": "scroll-margin",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8432,9 +8309,7 @@
                     "name": "scroll-margin",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8448,9 +8323,7 @@
                     "name": "scroll-margin",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeLength",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<length>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8506,8 +8379,7 @@
                     "name": "scroll-padding",
                     "resolver": "bottom"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8522,8 +8394,7 @@
                     "name": "scroll-padding",
                     "resolver": "left"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8538,8 +8409,7 @@
                     "name": "scroll-padding",
                     "resolver": "right"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8554,8 +8424,7 @@
                     "name": "scroll-padding",
                     "resolver": "top"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8569,8 +8438,7 @@
                     "name": "scroll-padding",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8584,8 +8452,7 @@
                     "name": "scroll-padding",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8599,8 +8466,7 @@
                     "name": "scroll-padding",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8614,8 +8480,7 @@
                     "name": "scroll-padding",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeScrollPadding",
-                "parser-requires-context-mode": true
+                "parser-grammar": ["auto", "<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -8701,9 +8566,7 @@
                     "-webkit-shape-margin"
                 ],
                 "converter": "Length",
-                "parser-function": "consumeLengthOrPercent",
-                "parser-requires-context-mode": true,
-                "parser-requires-additional-parameters": ["ValueRange::NonNegative"]
+                "parser-grammar": ["<length-percentage [0,inf]>"]
             },
             "specification": {
                 "category": "css-shapes",
@@ -8716,8 +8579,7 @@
                     "-webkit-shape-image-threshold"
                 ],
                 "converter": "NumberOrAuto<float>",
-                "parser-function": "consumeNumber",
-                "parser-requires-additional-parameters": ["ValueRange::All"]
+                "parser-grammar": ["<number>"]
             },
             "specification": {
                 "category": "css-shapes",
@@ -8741,8 +8603,7 @@
             "codegen-properties": {
                 "converter": "TapHighlightColor",
                 "enable-if": "ENABLE_TOUCH_EVENTS",
-                "parser-function": "consumeColor",
-                "parser-requires-context": true
+                "parser-grammar": ["<color>"]
             },
             "status": "non-standard"
         },
@@ -9031,7 +8892,7 @@
         "css-inline": {
             "shortname": "CSS Inline Layout",
             "longname": "CSS Inline Layout Module",
-            "url": "https://www.w3.org/TR/css-inline/"
+            "url": "https://www.w3.org/TR/css-inline-3/"
         },
         "css-line-grid": {
             "shortname": "CSS Line Grid",
@@ -9162,6 +9023,147 @@
             "shortname": "SVG",
             "longname": "SVG",
             "url": "https://www.w3.org/TR/SVG11/"
+        }
+    },
+    "shared-grammar-rules": {
+        "<alpha-value>": {
+            "grammar": ["<number>", "<percentage>"],
+            "specification": {
+                "category": "css-color",
+                "url": "https://www.w3.org/TR/css-color-4/#typedef-alpha-value"
+            }
+        },
+        "<marker-ref>": {
+            "grammar": ["<url>"],
+            "specification": {
+                "category": "svg",
+                "url": "https://www.w3.org/TR/SVG/painting.html#DataTypeMarkerRef"
+            }
+        },
+        "<absolute-size>": {
+            "grammar": ["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", "xxx-large"],
+            "specification": {
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts-4/#valdef-font-size-absolute-size"
+            }
+        },
+        "<-webkit-absolute-size>": {
+            "grammar": [
+                {
+                    "value": "-webkit-xxx-large",
+                    "aliased-to": "xxx-large"
+                }
+            ],
+            "status": "non-standard"
+        },
+        "<relative-size>": {
+            "grammar": ["larger", "smaller"],
+            "specification": {
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts-4/#valdef-font-size-relative-size"
+            }
+        },
+        "<-webkit-relative-size>": {
+            "grammar": ["-webkit-ruby-text"],
+            "status": "non-standard"
+        },
+        "<gap-gutter>": {
+            "grammar": ["normal", "<length-percentage [0,inf]>"],
+            "specification": {
+                "category": "css-align",
+                "url": "https://drafts.csswg.org/css-align/#column-row-gap"
+            }
+        },
+        "<width-or-height-keyword>": {
+            "grammar": [
+                "intrinsic",
+                "min-intrinsic",
+                "min-content",
+                "webkit-min-content",
+                "max-content",
+                "webkit-max-content",
+                "webkit-fill-available",
+                "fit-content",
+                "webkit-fit-content"
+            ]
+        },
+        "<width-or-height>": {
+            "grammar": [
+                "auto",
+                "<width-or-height-keyword>",
+                "<length-percentage [0,inf]>"
+            ],
+            "exported": true,
+            "comment": "Doesn't match current specification",
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-3/#preferred-size-properties"
+            }
+        },
+        "<width-or-height-unitless-allowed>": {
+            "grammar": [
+                "auto",
+                "<width-or-height-keyword>",
+                "<length-percentage [0,inf] unitless-allowed>"
+            ],
+            "comment": "Doesn't match current specification",
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-3/#preferred-size-properties"
+            }
+        },
+        "<max-width-or-height>": {
+            "grammar": [
+                "none",
+                "<width-or-height-keyword>",
+                "<length-percentage [0,inf]>"
+            ],
+            "comment": "Doesn't match current specification",
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-3/#max-size-properties"
+            }
+        },
+        "<max-width-or-height-unitless-allowed>": {
+            "grammar": [
+                "none",
+                "<width-or-height-keyword>",
+                "<length-percentage [0,inf] unitless-allowed>"
+            ],
+            "comment": "Doesn't match current specification",
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-3/#max-size-properties"
+            }
+        },
+        "<line-width>": {
+            "grammar": ["thin", "medium", "thick", "<length [0,inf]>"],
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://drafts.csswg.org/css-backgrounds/#typedef-line-width"
+            }
+        },
+        "<inset-logical-start-end>": {
+            "grammar": ["auto", "<length-percentage>"],
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
+        "<margin-logical-start-end>": {
+            "grammar": ["auto", "<length-percentage>"],
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#margin-properties"
+            }
+        },
+        "<palette-identifier>": {
+            "grammar": ["<dashed-ident>"],
+            "specification": {
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts-4/#typedef-font-palette-palette-identifier"
+            }
         }
     }
 }

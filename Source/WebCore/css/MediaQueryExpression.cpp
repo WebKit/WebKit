@@ -223,7 +223,7 @@ static inline bool isFeatureValidWithoutValue(const AtomString& mediaFeature, co
 
 inline RefPtr<CSSPrimitiveValue> consumeFirstValue(const String& mediaFeature, CSSParserTokenRange& range)
 {
-    if (auto value = CSSPropertyParserHelpers::consumeIntegerZeroAndGreater(range))
+    if (auto value = CSSPropertyParserHelpers::consumeNonNegativeInteger(range))
         return value;
 
     if (!featureExpectingPositiveInteger(mediaFeature) && !isAspectRatioFeature(AtomString { mediaFeature })) {
