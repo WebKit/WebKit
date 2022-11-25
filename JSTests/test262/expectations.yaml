@@ -1146,9 +1146,6 @@ test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematica
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
-test/built-ins/TypedArray/prototype/map/callbackfn-resize.js:
-  default: 'Test262Error: Expected [0, 1, 2] and [0, 1, NaN] to have the same contents. result (shrink) (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected [0, 1, 2] and [0, 1, NaN] to have the same contents. result (shrink) (Testing with Float64Array.)'
 test/harness/temporalHelpers-cross-date-line-time-zone.js:
   default: "TypeError: afterOffset.getOffsetNanosecondsFor is not a function. (In 'afterOffset.getOffsetNanosecondsFor(instant)', 'afterOffset.getOffsetNanosecondsFor' is undefined)"
   strict mode: "TypeError: afterOffset.getOffsetNanosecondsFor is not a function. (In 'afterOffset.getOffsetNanosecondsFor(instant)', 'afterOffset.getOffsetNanosecondsFor' is undefined)"
