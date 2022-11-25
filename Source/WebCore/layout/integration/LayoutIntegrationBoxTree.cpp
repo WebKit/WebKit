@@ -32,6 +32,7 @@
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFlexibleBox.h"
@@ -190,8 +191,11 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
         }
 
         auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
-        auto text = style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text());
-        return makeUniqueRef<Layout::InlineTextBox>(text, textRenderer.canUseSimplifiedTextMeasuring(), textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
+        auto isCombinedText = is<RenderCombineText>(textRenderer);
+        auto text = style.textSecurity() == TextSecurity::None
+            ? (isCombinedText ? textRenderer.originalText() : textRenderer.text())
+            : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : textRenderer.text());
+        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, textRenderer.canUseSimplifiedTextMeasuring(), textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
     }
 
     auto& renderElement = downcast<RenderElement>(renderer);

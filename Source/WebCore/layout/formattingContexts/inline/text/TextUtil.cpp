@@ -53,6 +53,9 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     if (from == to)
         return 0;
 
+    if (inlineTextBox.isCombined())
+        return fontCascade.size();
+
     auto text = inlineTextBox.content();
     ASSERT(to <= text.length());
     auto hasKerningOrLigatures = fontCascade.enableKerning() || fontCascade.requiresShaping();
