@@ -5989,8 +5989,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html [ Pass Failure ]
 
 # Disable ShadowRealm (while running to ensure we do not crash)
-webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Skip ]
-inspector/shadow-realm-console.html [ Pass Failure ]
 imported/w3c/web-platform-tests/compression/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/dom/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/encoding/idlharness-shadowrealm.window.html [ Pass Failure ]
@@ -6000,12 +5998,6 @@ imported/w3c/web-platform-tests/performance-timeline/idlharness-shadowrealm.wind
 imported/w3c/web-platform-tests/streams/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html [ Pass Failure ]
-js/ShadowRealm-evaluate.html [ Pass Failure ]
-js/ShadowRealm-globalThis.html [ Pass Failure ]
-js/ShadowRealm-iframe-detach.html [ Pass Failure ]
-js/ShadowRealm-iframe-sandboxed.html [ Pass Failure ]
-js/ShadowRealm-importValue.html [ Pass Failure ]
-js/ShadowRealm-worker.html [ Pass Failure ]
 
 # Failing since their import.
 imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle.html [ ImageOnlyFailure ]
