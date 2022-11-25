@@ -1128,7 +1128,6 @@ public:
         instance->finishCreation(vm);
         return instance;
     }
-
 private:
     TestInterfaceIterator(JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind)
         : Base(structure, iteratedObject, kind)
@@ -1140,7 +1139,7 @@ using TestInterfaceIteratorPrototype = JSDOMIteratorPrototype<JSTestInterface, T
 JSC_ANNOTATE_HOST_FUNCTION(TestInterfaceIteratorPrototypeNext, TestInterfaceIteratorPrototype::next);
 
 template<>
-const JSC::ClassInfo TestInterfaceIteratorBase::s_info = { "TestInterface Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestInterfaceIteratorBase) };
+const JSC::ClassInfo TestInterfaceIteratorBase::s_info = { "TestInterfaceBase Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestInterfaceIteratorBase) };
 const JSC::ClassInfo TestInterfaceIterator::s_info = { "TestInterface Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestInterfaceIterator) };
 
 template<>
