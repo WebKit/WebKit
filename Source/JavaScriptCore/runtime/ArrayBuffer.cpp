@@ -315,14 +315,6 @@ ArrayBuffer::ArrayBuffer(ArrayBufferContents&& contents)
 {
 }
 
-ArrayBuffer::ArrayBuffer(void* ptr, size_t length, ArrayBufferDestructorFunction&& destructor)
-    : m_contents(ptr, length, WTFMove(destructor))
-    , m_pinCount(0)
-    , m_isWasmMemory(false)
-    , m_locked(false)
-{
-}
-
 size_t ArrayBuffer::clampValue(double x, size_t left, size_t right)
 {
     ASSERT(left <= right);
