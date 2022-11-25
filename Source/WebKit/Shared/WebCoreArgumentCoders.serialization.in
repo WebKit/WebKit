@@ -691,6 +691,17 @@ struct WebCore::ApplePayCouponCodeUpdate : WebCore::ApplePayDetailsUpdateBase {
     Fullscreen
 };
 
+enum class WebCore::ScreenOrientationLockType : uint8_t {
+    Any
+    Natural
+    Landscape
+    Portrait
+    PortraitPrimary
+    PortraitSecondary
+    LandscapePrimary
+    LandscapeSecondary
+};
+
 [Nested, OptionSet] enum class WebCore::ApplicationManifest::Icon::Purpose : uint8_t {
     Any
     Monochrome
@@ -710,6 +721,7 @@ struct WebCore::ApplicationManifest {
     String description
     URL scope
     WebCore::ApplicationManifest::Display display
+    WebCore::ScreenOrientationLockType orientation
     URL startURL
     URL id
     WebCore::Color themeColor

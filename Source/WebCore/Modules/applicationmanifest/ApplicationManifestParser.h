@@ -46,6 +46,7 @@ private:
 
     URL parseStartURL(const JSON::Object&, const URL&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
+    WebCore::ScreenOrientationLockType parseOrientation(const JSON::Object&);
     String parseName(const JSON::Object&);
     String parseDescription(const JSON::Object&);
     String parseShortName(const JSON::Object&);

@@ -42,6 +42,17 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
     _WKApplicationManifestDisplayModeFullScreen,
 } WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
+typedef NS_OPTIONS(NSInteger, _WKApplicationManifestOrientation) {
+    _WKApplicationManifestOrientationAny = (1 << 0),
+    _WKApplicationManifestOrientationNatural = (1 << 1),
+    _WKApplicationManifestOrientationLandscape = (1 << 2),
+    _WKApplicationManifestOrientationPortrait = (1 << 3),
+    _WKApplicationManifestOrientationPortraitPrimary = (1 << 4),
+    _WKApplicationManifestOrientationPortraitSecondary = (1 << 5),
+    _WKApplicationManifestOrientationLandscapePrimary = (1 << 6),
+    _WKApplicationManifestOrientationLandscapeSecondary = (1 << 7),
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 typedef NS_ENUM(NSInteger, _WKApplicationManifestIconPurpose) {
     _WKApplicationManifestIconPurposeAny = (1 << 0),
     _WKApplicationManifestIconPurposeMonochrome = (1 << 1),
