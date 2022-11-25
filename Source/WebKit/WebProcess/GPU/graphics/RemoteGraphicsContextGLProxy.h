@@ -349,12 +349,12 @@ protected:
     template<typename T>
     WARN_UNUSED_RETURN bool send(T&& message)
     {
-        return m_streamConnection.send(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
+        return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return m_streamConnection.sendSync(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
+        return m_streamConnection->sendSync(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
 
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier { GraphicsContextGLIdentifier::generate() };
@@ -379,7 +379,7 @@ private:
     HashSet<String> m_requestableExtensions;
 
     HashSet<String> m_enabledExtensions;
-    IPC::StreamClientConnection m_streamConnection;
+    std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

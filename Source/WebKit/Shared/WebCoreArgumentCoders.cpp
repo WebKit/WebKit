@@ -2083,25 +2083,6 @@ std::optional<TextRecognitionDataDetector> ArgumentCoder<TextRecognitionDataDete
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-
-void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, const UnixFileDescriptor& fd)
-{
-    encoder.addAttachment(fd.duplicate());
-}
-
-void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, UnixFileDescriptor&& fd)
-{
-    encoder.addAttachment(WTFMove(fd));
-}
-
-std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Decoder& decoder)
-{
-    return decoder.takeLastAttachment();
-}
-
-#endif
-
 template<class Encoder>
 void ArgumentCoder<PixelBuffer>::encode(Encoder& encoder, const PixelBuffer& pixelBuffer)
 {

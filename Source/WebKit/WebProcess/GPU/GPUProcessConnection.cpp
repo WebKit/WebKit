@@ -259,11 +259,6 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     if (messageReceiverMap().dispatchMessage(connection, decoder))
         return true;
 
-#if ENABLE(WEBGL)
-    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGLProxy::messageReceiverName())
-        return RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination(connection, decoder);
-#endif
-
 #if USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSession::messageReceiverName()) {
         RELEASE_LOG_ERROR(Media, "The RemoteAudioSession object has beed destroyed");

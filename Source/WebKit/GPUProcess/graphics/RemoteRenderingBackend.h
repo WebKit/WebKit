@@ -74,7 +74,7 @@ enum class SwapBuffersDisplayRequirement : uint8_t;
 
 class RemoteRenderingBackend : private IPC::MessageSender, public IPC::StreamMessageReceiver {
 public:
-    static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::Connection::Handle&&, IPC::StreamConnectionBuffer&&);
+    static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     virtual ~RemoteRenderingBackend();
     void stopListeningForIPC();
 
@@ -101,7 +101,7 @@ public:
     const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
 
 private:
-    RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::Connection::Handle&&, IPC::StreamConnectionBuffer&&);
+    RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     void startListeningForIPC();
 
     // IPC::MessageSender.

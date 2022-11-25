@@ -49,6 +49,9 @@
 #if OS(WINDOWS)
 #include "ArgumentCodersWin.h"
 #endif
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include "ArgumentCodersUnix.h"
+#endif
 
 namespace IPC {
 

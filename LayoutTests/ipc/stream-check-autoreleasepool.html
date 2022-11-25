@@ -11,12 +11,13 @@ promise_test(async t => {
     const bufferSize = 400;
     const streamTesterID = 447;
     for (const processTarget of IPC.processTargets) {
-        const streamConnection = IPC.createStreamClientConnection(processTarget, bufferSize);
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSize);
+        streamConnection.open();
         IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
             { type: 'uint64_t', value: streamTesterID },
-            { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },
+            { type: 'StreamServerConnectionHandle', value: serverConnectionHandle },
         ]);
-        const arguments = IPC.waitForMessage(processTarget, streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
         streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
 
         // Test starts here.
@@ -35,6 +36,7 @@ promise_test(async t => {
             assert_equals(previousValue.value, 1, `for ${ processTarget }`);
         } finally {
             IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_ReleaseStreamTester.name, defaultTimeout, [{ type: 'uint64_t', value: streamTesterID }]);
+            streamConnection.invalidate();
         }
     }
 });

@@ -52,6 +52,7 @@ NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 
+Platform/IPC/unix/ArgumentCodersUnix.cpp
 Platform/IPC/unix/ConnectionUnix.cpp
 Platform/IPC/unix/IPCSemaphoreUnix.cpp
 

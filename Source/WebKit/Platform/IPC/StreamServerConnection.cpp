@@ -48,51 +48,42 @@ private:
 
 }
 
-Ref<StreamServerConnection> StreamServerConnection::create(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
+Ref<StreamServerConnection> StreamServerConnection::create(Handle&& handle, StreamConnectionWorkQueue& workQueue)
 {
-    return adoptRef(*new StreamServerConnection(Ref { connection }, WTFMove(streamBuffer), workQueue, HasDedicatedConnection::No));
+    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle.outOfStreamConnection) });
+    auto buffer = StreamConnectionBuffer::map(WTFMove(handle.buffer));
+    RELEASE_ASSERT(buffer); // FIXME: make callers call this outside constructor.
+    return adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(*buffer), workQueue));
 }
 
-Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Connection::Handle&& connectionHandle, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
-{
-    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) });
-    auto streamConnection = adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(streamBuffer), workQueue, HasDedicatedConnection::Yes));
-    return streamConnection;
-}
-
-StreamServerConnection::StreamServerConnection(Ref<Connection>&& connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue, HasDedicatedConnection hasDedicatedConnection)
+StreamServerConnection::StreamServerConnection(Ref<Connection> connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
     : m_connection(WTFMove(connection))
     , m_workQueue(workQueue)
     , m_buffer(WTFMove(stream))
-    , m_hasDedicatedConnection(hasDedicatedConnection == HasDedicatedConnection::Yes)
 {
 }
 
 StreamServerConnection::~StreamServerConnection()
 {
-    ASSERT(!m_hasDedicatedConnection || !m_connection->isValid());
+    ASSERT(!m_connection->isValid());
 }
 
 void StreamServerConnection::open()
 {
-    if (m_hasDedicatedConnection) {
-        static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
-        static std::once_flag s_onceFlag;
-        std::call_once(s_onceFlag, [] {
-            s_dedicatedConnectionClient.construct();
-        });
-        // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
-        m_connection->addMessageReceiveQueue(*this, { });
-        m_connection->open(s_dedicatedConnectionClient.get());
-    }
+    static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag, [] {
+        s_dedicatedConnectionClient.construct();
+    });
+    // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
+    m_connection->addMessageReceiveQueue(*this, { });
+    m_connection->open(s_dedicatedConnectionClient.get());
 }
 
 void StreamServerConnection::invalidate()
 {
-    if (m_hasDedicatedConnection) {
-        m_connection->removeMessageReceiveQueue({ });
-        m_connection->invalidate();
-    }
+    m_connection->removeMessageReceiveQueue({ });
+    m_connection->invalidate();
 }
 
 void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
@@ -103,16 +94,11 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
         ASSERT(!m_receivers.contains(key));
         m_receivers.add(key, receiver);
     }
-
-    if (!m_hasDedicatedConnection)
-        m_connection->addMessageReceiveQueue(*this, { receiverName, destinationID });
     m_workQueue.addStreamConnection(*this);
 }
 
 void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
 {
-    if (!m_hasDedicatedConnection)
-        m_connection->removeMessageReceiveQueue({ receiverName, destinationID });
     m_workQueue.removeStreamConnection(*this);
 
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);

@@ -554,10 +554,10 @@ RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
 }
 #endif
 
-void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& creationParameters, IPC::Connection::Handle&& connectionIdentifier, IPC::StreamConnectionBuffer&& streamBuffer)
+void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
-    auto addResult = m_remoteRenderingBackendMap.ensure(creationParameters.identifier, [&]() {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, WTFMove(creationParameters), WTFMove(connectionIdentifier), WTFMove(streamBuffer)) };
+    auto addResult = m_remoteRenderingBackendMap.ensure(creationParameters.identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, WTFMove(creationParameters), WTFMove(connectionHandle)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -570,7 +570,7 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
 }
 
 #if ENABLE(WEBGL)
-void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer&& stream)
+void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     MESSAGE_CHECK(!isLockdownModeEnabled());
 
@@ -579,8 +579,8 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
         return;
     auto* renderingBackend = it->value.get();
 
-    auto addResult = m_remoteGraphicsContextGLMap.ensure(graphicsContextGLIdentifier, [&]() {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGraphicsContextGL::create(*this, WTFMove(attributes), graphicsContextGLIdentifier, *renderingBackend, WTFMove(stream)) };
+    auto addResult = m_remoteGraphicsContextGLMap.ensure(graphicsContextGLIdentifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGraphicsContextGL::create(*this, WTFMove(attributes), graphicsContextGLIdentifier, *renderingBackend, WTFMove(connectionHandle)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -600,15 +600,15 @@ void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsConte
 }
 #endif
 
-void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer&& stream)
+void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
         return;
     auto* renderingBackend = it->value.get();
 
-    auto addResult = m_remoteGPUMap.ensure(identifier, [&]() {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, *this, *renderingBackend, WTFMove(stream)) };
+    auto addResult = m_remoteGPUMap.ensure(identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, *this, *renderingBackend, WTFMove(connectionHandle)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

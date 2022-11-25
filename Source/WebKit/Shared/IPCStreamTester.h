@@ -31,12 +31,12 @@
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "SharedMemory.h"
 #include "StreamMessageReceiver.h"
+#include "StreamServerConnection.h"
 #include <memory>
 #include <wtf/HashMap.h>
 
 namespace IPC {
 class Connection;
-class StreamServerConnection;
 class StreamConnectionBuffer;
 class StreamConnectionWorkQueue;
 }
@@ -46,13 +46,13 @@ namespace WebKit {
 // Interface to test various IPC stream related activities.
 class IPCStreamTester final : public IPC::StreamMessageReceiver {
 public:
-    static RefPtr<IPCStreamTester> create(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
+    static RefPtr<IPCStreamTester> create(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
     void stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
 
     // IPC::StreamMessageReceiver overrides.
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 private:
-    IPCStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
+    IPCStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
     ~IPCStreamTester();
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }

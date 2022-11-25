@@ -44,10 +44,10 @@
 
 namespace WebKit {
 
-RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
+RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), workQueue()))
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue()))
     , m_objectHeap(WebGPU::ObjectHeap::create())
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
