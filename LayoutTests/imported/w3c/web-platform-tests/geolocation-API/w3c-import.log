@@ -16,13 +16,22 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/PositionOptions.https.html
-/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/clearWatch_TypeError.html
-/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_IDL.https.html
-/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_TypeError.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/clearWatch_TypeError.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/disabled-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/disabled-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/enabled-by-feature-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/enabled-by-feature-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/enabled-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/enabled-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/enabled-on-self-origin-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/enabled-on-self-origin-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_TypeError.https.html
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_permission_allow.https.html
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_permission_deny.https.html
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/non-fully-active.https.html
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/non-secure-contexts.http.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/permission.https.html
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/support.js
-/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/watchPosition_TypeError.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/watchPosition_TypeError.https.html
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API/watchPosition_permission_deny.https.html

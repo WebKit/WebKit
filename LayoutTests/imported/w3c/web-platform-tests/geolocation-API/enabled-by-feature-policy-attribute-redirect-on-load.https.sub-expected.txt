@@ -1,0 +1,5 @@
+
+
+PASS Feature-Policy allow="geolocation" allows same-origin relocation
+FAIL Feature-Policy allow="geolocation" disallows cross-origin relocation assert_false: geolocation expected false got true
+

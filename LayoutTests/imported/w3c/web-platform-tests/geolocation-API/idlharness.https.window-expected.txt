@@ -64,5 +64,4 @@ PASS GeolocationPositionError interface: constant TIMEOUT on interface prototype
 PASS GeolocationPositionError interface: attribute code
 PASS GeolocationPositionError interface: attribute message
 PASS Navigator interface: attribute geolocation
-PASS Navigator interface: navigator must inherit property "geolocation" with the proper type
 
