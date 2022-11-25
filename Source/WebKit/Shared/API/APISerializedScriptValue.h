@@ -76,6 +76,7 @@ public:
     static JSCContext* sharedJSCContext();
     static GRefPtr<JSCValue> deserialize(WebCore::SerializedScriptValue&);
     static RefPtr<SerializedScriptValue> createFromGVariant(GVariant*);
+    static RefPtr<SerializedScriptValue> createFromJSCValue(JSCValue*);
 #endif
 
     IPC::DataReference dataReference() const { return m_serializedScriptValue->wireBytes(); }

@@ -23,6 +23,7 @@
 #define WebKitUserContentManager_h
 
 #include <glib-object.h>
+#include <jsc/jsc.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitUserContent.h>
 
@@ -82,6 +83,11 @@ webkit_user_content_manager_unregister_script_message_handler          (WebKitUs
                                                                         const gchar              *name);
 
 WEBKIT_API gboolean
+webkit_user_content_manager_register_script_message_handler_with_reply (WebKitUserContentManager *manager,
+                                                                        const char               *name,
+                                                                        const char               *world_name);
+
+WEBKIT_API gboolean
 webkit_user_content_manager_register_script_message_handler_in_world   (WebKitUserContentManager *manager,
                                                                         const gchar              *name,
                                                                         const gchar              *world_name);
@@ -115,6 +121,27 @@ webkit_user_content_manager_remove_filter_by_id                        (WebKitUs
 
 WEBKIT_API void
 webkit_user_content_manager_remove_all_filters                         (WebKitUserContentManager *manager);
+
+#define WEBKIT_TYPE_SCRIPT_MESSAGE_REPLY                               (webkit_script_message_reply_get_type())
+
+typedef struct _WebKitScriptMessageReply WebKitScriptMessageReply;
+
+WEBKIT_API GType
+webkit_script_message_reply_get_type                                   (void);
+
+WEBKIT_API WebKitScriptMessageReply *
+webkit_script_message_reply_ref                                        (WebKitScriptMessageReply *script_message_reply);
+
+WEBKIT_API void
+webkit_script_message_reply_unref                                      (WebKitScriptMessageReply *script_message_reply);
+
+WEBKIT_API void
+webkit_script_message_reply_return_value                               (WebKitScriptMessageReply *script_message_reply,
+                                                                        JSCValue                 *reply_value);
+
+WEBKIT_API void
+webkit_script_message_reply_return_error_message                       (WebKitScriptMessageReply *script_message_reply,
+                                                                        const char               *error_message);
 
 G_END_DECLS
 

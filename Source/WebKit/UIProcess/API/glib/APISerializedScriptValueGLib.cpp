@@ -168,4 +168,10 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::createFromGVariant(GVariant
     return create(coreValue.releaseNonNull());
 }
 
+RefPtr<SerializedScriptValue> SerializedScriptValue::createFromJSCValue(JSCValue* value)
+{
+    ASSERT(jsc_value_get_context(value) == sharedJSCContext());
+    return create(jscContextGetJSContext(jsc_value_get_context(value)), jscValueGetJSValue(value), nullptr);
+}
+
 }; // namespace API
