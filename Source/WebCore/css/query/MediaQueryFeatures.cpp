@@ -45,7 +45,7 @@ struct BooleanSchema : public FeatureSchema {
     using ValueFunction = Function<bool(const FeatureEvaluationContext&)>;
 
     BooleanSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Discrete, { FeatureSchema::ValueType::Integer })
+        : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Integer)
         , valueFunction(WTFMove(valueFunction))
     { }
 
@@ -62,7 +62,7 @@ struct IntegerSchema : public FeatureSchema {
     using ValueFunction = Function<int(const FeatureEvaluationContext&)>;
 
     IntegerSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Integer })
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Integer)
         , valueFunction(WTFMove(valueFunction))
     { }
 
@@ -79,7 +79,7 @@ struct NumberSchema : public FeatureSchema {
     using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
 
     NumberSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Integer, FeatureSchema::ValueType::Number })
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Number)
         , valueFunction(WTFMove(valueFunction))
     { }
 
@@ -96,7 +96,7 @@ struct LengthSchema : public FeatureSchema {
     using ValueFunction = Function<LayoutUnit(const FeatureEvaluationContext&)>;
 
     LengthSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length })
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length)
         , valueFunction(WTFMove(valueFunction))
     { }
 
@@ -113,7 +113,7 @@ struct RatioSchema : public FeatureSchema {
     using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
 
     RatioSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Ratio })
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio)
         , valueFunction(WTFMove(valueFunction))
     { }
 
@@ -130,7 +130,7 @@ struct ResolutionSchema : public FeatureSchema {
     using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
 
     ResolutionSchema(const AtomString& name, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Resolution })
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Resolution)
         , valueFunction(WTFMove(valueFunction))
     { }
 
@@ -149,7 +149,7 @@ struct IdentifierSchema : public FeatureSchema {
     using ValueFunction = Function<MatchingIdentifiers(const FeatureEvaluationContext&)>;
 
     IdentifierSchema(const AtomString& name, Vector<CSSValueID>&& valueIdentifiers, ValueFunction&& valueFunction)
-        : FeatureSchema(name, FeatureSchema::Type::Discrete, { }, WTFMove(valueIdentifiers))
+        : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, WTFMove(valueIdentifiers))
         , valueFunction(WTFMove(valueFunction))
     { }
 
