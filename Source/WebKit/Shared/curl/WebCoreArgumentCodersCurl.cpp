@@ -88,7 +88,6 @@ void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const Re
     encoder << resourceError.errorCode();
     encoder << resourceError.failingURL().string();
     encoder << resourceError.localizedDescription();
-    encoder << resourceError.sslErrors();
 }
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, ResourceError& resourceError)
@@ -117,12 +116,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     if (!decoder.decode(localizedDescription))
         return false;
 
-    unsigned sslErrors;
-    if (!decoder.decode(sslErrors))
-        return false;
-
     resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription, errorType);
-    resourceError.setSslErrors(sslErrors);
 
     return true;
 }

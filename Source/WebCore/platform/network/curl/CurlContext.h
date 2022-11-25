@@ -297,7 +297,6 @@ public:
     std::optional<NetworkLoadMetrics> getNetworkLoadMetrics(MonotonicTime startTime);
     void addExtraNetworkLoadMetrics(NetworkLoadMetrics&);
 
-    int sslErrors() const;
     std::optional<CertificateInfo> certificateInfo() const;
 
     static long long maxCurlOffT();
