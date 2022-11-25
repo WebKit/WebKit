@@ -432,8 +432,17 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
     }
 
-    if (is<RenderListMarker>(renderer) && is<RenderListItem>(renderer.parent()) && !is<RenderListMarker>(renderer.nextSibling()))
+    if (is<RenderListMarker>(renderer)) {
+        auto& listMarker = downcast<RenderListMarker>(renderer);
+        auto* associatedListItem = listMarker.listItem();
+        for (auto* ancestor = listMarker.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            if (ancestor->containsFloats())
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
+            if (ancestor == associatedListItem)
+                break;
+        }
         return reasons;
+    }
 
     if (is<RenderInline>(renderer)) {
         auto renderInlineReasons = canUseForRenderInlineChild(downcast<RenderInline>(renderer), includeReasons);
