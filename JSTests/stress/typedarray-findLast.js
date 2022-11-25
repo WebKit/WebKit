@@ -1,4 +1,3 @@
-//@ requireOptions("--useArrayFindLastMethod=true")
 load("./resources/typedarray-test-helper-functions.js", "caller relative");
 description(
 "This test checks the behavior of the TypedArray.prototype.findLast function"

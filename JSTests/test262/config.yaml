@@ -3,13 +3,8 @@
 flags:
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
-  Array.prototype.at: useAtMethod
-  TypedArray.prototype.at: useAtMethod
-  String.prototype.at: useAtMethod
   Temporal: useTemporal
-  array-find-from-last: useArrayFindLastMethod
   array-grouping: useArrayGroupMethod
-  Object.hasOwn: useHasOwn
   ShadowRealm: useShadowRealm
   import-assertions: useImportAssertion
   json-modules: useImportAssertion
