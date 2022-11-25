@@ -160,13 +160,14 @@ void RenderSliderContainer::layout()
     LayoutUnit offset { percentageOffset * availableExtent };
     LayoutPoint thumbLocation = thumb->location();
     if (isVertical) {
-        // RTL in vertical writing mode or appearance: slider-vertical in horizontal writing mode.
-        if (!style().isLeftToRightDirection() || style().isHorizontalWritingMode())
+        // appearance: slider-vertical in horizontal writing mode.
+        if (style().isHorizontalWritingMode())
             thumbLocation.setY(thumbLocation.y() + track->contentHeight() - thumb->height() - offset);
-        else // LTR in vertical writing mode.
+        else if (style().isLeftToRightDirection()) // LTR in vertical writing mode.
             thumbLocation.setY(thumbLocation.y() + offset);
-    }
-    else if (style().isLeftToRightDirection())
+        else // RTL in vertical writing mode.
+            thumbLocation.setY(thumbLocation.y() - offset);
+    } else if (style().isLeftToRightDirection())
         thumbLocation.setX(thumbLocation.x() + offset);
     else
         thumbLocation.setX(thumbLocation.x() - offset);
