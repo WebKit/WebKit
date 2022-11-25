@@ -177,11 +177,8 @@ MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
     }
 }
 
-String StyleProperties::commonShorthandChecks(CSSPropertyID propertyID) const
+String StyleProperties::commonShorthandChecks(const StylePropertyShorthand& shorthand) const
 {
-    auto shorthand = shorthandForProperty(propertyID);
-    if (!shorthand.length())
-        return emptyString();
     std::optional<bool> importance;
     size_t numSetFromShorthand = 0;
     for (size_t i = 0; i < shorthand.length(); i++) {
@@ -200,7 +197,7 @@ String StyleProperties::commonShorthandChecks(CSSPropertyID propertyID) const
         auto value = property.value();
         auto hasBeenSetFromLonghand = is<CSSVariableReferenceValue>(value);
         auto hasBeenSetFromShorthand = is<CSSPendingSubstitutionValue>(value);
-        auto hasNotBeenSetFromRequestedShorthand = hasBeenSetFromShorthand && downcast<CSSPendingSubstitutionValue>(*value).shorthandPropertyId() != propertyID;
+        auto hasNotBeenSetFromRequestedShorthand = hasBeenSetFromShorthand && downcast<CSSPendingSubstitutionValue>(*value).shorthandPropertyId() != shorthand.id();
 
         // Request for shorthand value should return empty string if any longhand values have been
         // set to a variable or if they were set to a variable by a different shorthand.
@@ -235,73 +232,89 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         }
     }
 
-    if (auto result = commonShorthandChecks(propertyID); !result.isNull())
+    auto shorthand = shorthandForProperty(propertyID);
+    if (!shorthand.length())
+        return nullString();
+
+    if (auto result = commonShorthandChecks(shorthand); !result.isNull())
         return result.isEmpty() ? nullString() : result;
 
-
-    // Shorthand and 4-values properties
     switch (propertyID) {
     case CSSPropertyAll:
-        return getCommonValue(allShorthand());
+        return getCommonValue(shorthand);
     case CSSPropertyAnimation:
-        return getLayeredShorthandValue(animationShorthand());
-    case CSSPropertyBorderSpacing:
-        return borderSpacingValue(borderSpacingShorthand());
-    case CSSPropertyBackgroundPosition:
-        return getLayeredShorthandValue(backgroundPositionShorthand());
     case CSSPropertyBackground:
-        return getLayeredShorthandValue(backgroundShorthand());
+    case CSSPropertyBackgroundPosition:
+    case CSSPropertyMask:
+    case CSSPropertyMaskPosition:
+    case CSSPropertyTransition:
+    case CSSPropertyWebkitMask:
+    case CSSPropertyWebkitMaskPosition:
+        return getLayeredShorthandValue(shorthand);
+    case CSSPropertyBorderBlockEnd:
+    case CSSPropertyBorderBlockStart:
+    case CSSPropertyBorderBottom:
+    case CSSPropertyBorderInlineEnd:
+    case CSSPropertyBorderInlineStart:
+    case CSSPropertyBorderLeft:
+    case CSSPropertyBorderRight:
+    case CSSPropertyBorderTop:
+    case CSSPropertyColumnRule:
+    case CSSPropertyColumns:
+    case CSSPropertyFlex:
+    case CSSPropertyFlexFlow:
+    case CSSPropertyListStyle:
+    case CSSPropertyOutline:
+    case CSSPropertyPerspectiveOrigin:
+    case CSSPropertyTextEmphasis:
+    case CSSPropertyTransformOrigin:
+    case CSSPropertyWebkitTextDecoration:
+    case CSSPropertyWebkitTextStroke:
+        return getShorthandValue(shorthand);
+    case CSSPropertyBorderBlockColor:
+    case CSSPropertyBorderBlockStyle:
+    case CSSPropertyBorderBlockWidth:
+    case CSSPropertyBorderInlineColor:
+    case CSSPropertyBorderInlineStyle:
+    case CSSPropertyBorderInlineWidth:
+    case CSSPropertyContainIntrinsicSize:
+    case CSSPropertyGap:
+    case CSSPropertyInsetBlock:
+    case CSSPropertyInsetInline:
+    case CSSPropertyMarginBlock:
+    case CSSPropertyMarginInline:
+    case CSSPropertyOverflow:
+    case CSSPropertyOverscrollBehavior:
+    case CSSPropertyPaddingBlock:
+    case CSSPropertyPaddingInline:
+    case CSSPropertyScrollMarginBlock:
+    case CSSPropertyScrollMarginInline:
+    case CSSPropertyScrollPaddingBlock:
+    case CSSPropertyScrollPaddingInline:
+        return get2Values(shorthand);
+    case CSSPropertyBorderColor:
+    case CSSPropertyBorderRadius:
+    case CSSPropertyBorderStyle:
+    case CSSPropertyBorderWidth:
+    case CSSPropertyInset:
+    case CSSPropertyMargin:
+    case CSSPropertyPadding:
+    case CSSPropertyScrollMargin:
+    case CSSPropertyScrollPadding:
+        return get4Values(shorthand);
+    case CSSPropertyBorderSpacing:
+        return borderSpacingValue(shorthand);
     case CSSPropertyBorder:
         return borderPropertyValue(borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand());
-    case CSSPropertyBorderTop:
-        return getShorthandValue(borderTopShorthand());
-    case CSSPropertyBorderRight:
-        return getShorthandValue(borderRightShorthand());
-    case CSSPropertyBorderBottom:
-        return getShorthandValue(borderBottomShorthand());
-    case CSSPropertyBorderLeft:
-        return getShorthandValue(borderLeftShorthand());
     case CSSPropertyBorderBlock:
         return borderPropertyValue(borderBlockWidthShorthand(), borderBlockStyleShorthand(), borderBlockColorShorthand());
-    case CSSPropertyBorderBlockColor:
-        return get2Values(borderBlockColorShorthand());
-    case CSSPropertyBorderBlockStyle:
-        return get2Values(borderBlockStyleShorthand());
-    case CSSPropertyBorderBlockWidth:
-        return get2Values(borderBlockWidthShorthand());
-    case CSSPropertyBorderBlockStart:
-        return getShorthandValue(borderBlockStartShorthand());
-    case CSSPropertyBorderBlockEnd:
-        return getShorthandValue(borderBlockEndShorthand());
-    case CSSPropertyBorderImage:
-    case CSSPropertyWebkitBorderImage:
-        return borderImagePropertyValue(propertyID);
     case CSSPropertyBorderInline:
         return borderPropertyValue(borderInlineWidthShorthand(), borderInlineStyleShorthand(), borderInlineColorShorthand());
-    case CSSPropertyBorderInlineColor:
-        return get2Values(borderInlineColorShorthand());
-    case CSSPropertyBorderInlineStyle:
-        return get2Values(borderInlineStyleShorthand());
-    case CSSPropertyBorderInlineWidth:
-        return get2Values(borderInlineWidthShorthand());
-    case CSSPropertyBorderInlineStart:
-        return getShorthandValue(borderInlineStartShorthand());
-    case CSSPropertyBorderInlineEnd:
-        return getShorthandValue(borderInlineEndShorthand());
+    case CSSPropertyBorderImage:
+    case CSSPropertyWebkitBorderImage:
+        return borderImagePropertyValue(shorthand);
     case CSSPropertyOffset:
         return offsetValue();
-    case CSSPropertyOutline:
-        return getShorthandValue(outlineShorthand());
-    case CSSPropertyBorderColor:
-        return get4Values(borderColorShorthand());
-    case CSSPropertyBorderWidth:
-        return get4Values(borderWidthShorthand());
-    case CSSPropertyBorderStyle:
-        return get4Values(borderStyleShorthand());
-    case CSSPropertyColumnRule:
-        return getShorthandValue(columnRuleShorthand());
-    case CSSPropertyColumns:
-        return getShorthandValue(columnsShorthand());
     case CSSPropertyContainer:
         if (auto type = getPropertyCSSValue(CSSPropertyContainerType)) {
             if (isNormalValue(type)) {
@@ -310,11 +323,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
                 return { };
             }
         }
-        return getShorthandValue(containerShorthand(), " / ");
-    case CSSPropertyFlex:
-        return getShorthandValue(flexShorthand());
-    case CSSPropertyFlexFlow:
-        return getShorthandValue(flexFlowShorthand());
+        return getShorthandValue(shorthand, " / ");
     case CSSPropertyGridArea:
         return getGridAreaShorthandValue();
     case CSSPropertyGridTemplate:
@@ -322,102 +331,37 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyGrid:
         return getGridValue();
     case CSSPropertyGridColumn:
-        return getGridRowColumnShorthandValue(gridColumnShorthand());
     case CSSPropertyGridRow:
-        return getGridRowColumnShorthandValue(gridRowShorthand());
+        return getGridRowColumnShorthandValue(shorthand);
     case CSSPropertyPageBreakAfter:
-        return pageBreakPropertyValue(pageBreakAfterShorthand());
     case CSSPropertyPageBreakBefore:
-        return pageBreakPropertyValue(pageBreakBeforeShorthand());
     case CSSPropertyPageBreakInside:
-        return pageBreakPropertyValue(pageBreakInsideShorthand());
+        return pageBreakPropertyValue(shorthand);
     case CSSPropertyPlaceContent:
-        return getAlignmentShorthandValue(placeContentShorthand());
     case CSSPropertyPlaceItems:
-        return getAlignmentShorthandValue(placeItemsShorthand());
     case CSSPropertyPlaceSelf:
-        return getAlignmentShorthandValue(placeSelfShorthand());
+        return getAlignmentShorthandValue(shorthand);
     case CSSPropertyFont:
-        return fontValue();
+        return fontValue(shorthand);
     case CSSPropertyFontVariant:
-        return fontVariantValue();
+        return fontVariantValue(shorthand);
     case CSSPropertyFontSynthesis:
         return fontSynthesisValue();
-    case CSSPropertyTextDecoration:
-        if (auto line = getPropertyCSSValue(CSSPropertyTextDecorationLine))
-            return line->cssText();
-        return String();
-    case CSSPropertyWebkitTextDecoration:
-        return getShorthandValue(webkitTextDecorationShorthand());
     case CSSPropertyTextDecorationSkip:
         return textDecorationSkipValue();
-    case CSSPropertyInset:
-        return get4Values(insetShorthand());
-    case CSSPropertyInsetBlock:
-        return get2Values(insetBlockShorthand());
-    case CSSPropertyInsetInline:
-        return get2Values(insetInlineShorthand());
-    case CSSPropertyMargin:
-        return get4Values(marginShorthand());
-    case CSSPropertyMarginBlock:
-        return get2Values(marginBlockShorthand());
-    case CSSPropertyMarginInline:
-        return get2Values(marginInlineShorthand());
-    case CSSPropertyOverflow:
-        return get2Values(overflowShorthand());
-    case CSSPropertyOverscrollBehavior:
-        return get2Values(overscrollBehaviorShorthand());
-    case CSSPropertyPadding:
-        return get4Values(paddingShorthand());
-    case CSSPropertyPaddingBlock:
-        return get2Values(paddingBlockShorthand());
-    case CSSPropertyPaddingInline:
-        return get2Values(paddingInlineShorthand());
-    case CSSPropertyTransition:
-        return getLayeredShorthandValue(transitionShorthand());
-    case CSSPropertyListStyle:
-        return getShorthandValue(listStyleShorthand());
-    case CSSPropertyMaskPosition:
-        return getLayeredShorthandValue(maskPositionShorthand());
-    case CSSPropertyWebkitMaskPosition:
-        return getLayeredShorthandValue(webkitMaskPositionShorthand());
-    case CSSPropertyMask:
-    case CSSPropertyWebkitMask:
-        return getLayeredShorthandValue(shorthandForProperty(propertyID));
-    case CSSPropertyTextEmphasis:
-        return getShorthandValue(textEmphasisShorthand());
-    case CSSPropertyWebkitTextStroke:
-        return getShorthandValue(webkitTextStrokeShorthand());
-    case CSSPropertyPerspectiveOrigin:
-        return getShorthandValue(perspectiveOriginShorthand());
-    case CSSPropertyTransformOrigin:
-        return getShorthandValue(transformOriginShorthand());
+    case CSSPropertyTextDecoration:
+    case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyWebkitTextOrientation:
+        ASSERT(shorthand.length() == 1);
+        if (auto value = getPropertyCSSValue(shorthand.properties()[0]))
+            return value->cssText();
+        return String();
     case CSSPropertyMarker:
+        ASSERT(shorthand.length() == 3);
+        // FIXME: Stop ignoring marker-mid and marker-end (http://webkit.org/b/248308).
         if (auto value = getPropertyCSSValue(CSSPropertyMarkerStart))
             return value->cssText();
         return String();
-    case CSSPropertyBorderRadius:
-        return get4Values(borderRadiusShorthand());
-    case CSSPropertyGap:
-        return get2Values(gapShorthand());
-    case CSSPropertyScrollMargin:
-        return get4Values(scrollMarginShorthand());
-    case CSSPropertyScrollMarginBlock:
-        return get2Values(scrollMarginBlockShorthand());
-    case CSSPropertyScrollMarginInline:
-        return get2Values(scrollMarginInlineShorthand());
-    case CSSPropertyScrollPadding:
-        return get4Values(scrollPaddingShorthand());
-    case CSSPropertyScrollPaddingBlock:
-        return get2Values(scrollPaddingBlockShorthand());
-    case CSSPropertyScrollPaddingInline:
-        return get2Values(scrollPaddingInlineShorthand());
-    case CSSPropertyWebkitTextOrientation:
-        return getPropertyValue(CSSPropertyTextOrientation);
-    case CSSPropertyWebkitBackgroundSize:
-        return getPropertyValue(CSSPropertyBackgroundSize);
-    case CSSPropertyContainIntrinsicSize:
-        return get2Values(containIntrinsicSizeShorthand());
     case CSSPropertyWebkitBorderRadius:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
@@ -459,6 +403,7 @@ String StyleProperties::getCustomPropertyValue(const String& propertyName) const
 
 String StyleProperties::borderSpacingValue(const StylePropertyShorthand& shorthand) const
 {
+    ASSERT(shorthand.length() == 2);
     auto horizontalValue = getPropertyCSSValue(shorthand.properties()[0]);
     auto verticalValue = getPropertyCSSValue(shorthand.properties()[1]);
 
@@ -486,13 +431,14 @@ static std::optional<CSSValueID> fontStretchKeyword(double value)
     return fontStretchKeyword(valueAsFontSelectionValue);
 }
 
-String StyleProperties::fontValue() const
+String StyleProperties::fontValue(const StylePropertyShorthand& shorthand) const
 {
+    ASSERT(shorthand.id() == CSSPropertyFont);
     // If all properties are set to the same special keyword, serialize as that.
     // If some but not all properties are, the font shorthand can't represent that, serialize as empty string.
     std::optional<CSSValueID> specialKeyword;
     bool allSpecialKeywords = true;
-    for (auto property : fontShorthand()) {
+    for (auto property : shorthand) {
         // Can't call propertyAsValueID here because we need to bypass the isSystemFontShorthand check in getPropertyCSSValue.
         int index = findPropertyIndex(property);
         auto keyword = index == -1 ? CSSValueInvalid : valueID(propertyAt(index).value());
@@ -566,6 +512,7 @@ String StyleProperties::fontValue() const
 
 String StyleProperties::offsetValue() const
 {
+    ASSERT(offsetShorthand().length() == 5);
     StringBuilder result;
 
     auto offsetPositionIndex = findPropertyIndex(CSSPropertyOffsetPosition);
@@ -653,6 +600,7 @@ String StyleProperties::offsetValue() const
 
 String StyleProperties::textDecorationSkipValue() const
 {
+    ASSERT(textDecorationSkipShorthand().length() == 1);
     int textDecorationSkipInkPropertyIndex = findPropertyIndex(CSSPropertyTextDecorationSkipInk);
     if (textDecorationSkipInkPropertyIndex == -1)
         return emptyString();
@@ -662,14 +610,15 @@ String StyleProperties::textDecorationSkipValue() const
     return textDecorationSkipInkProperty.value()->cssText();
 }
 
-String StyleProperties::fontVariantValue() const
+String StyleProperties::fontVariantValue(const StylePropertyShorthand& shorthand) const
 {
+    ASSERT(shorthand.id() == CSSPropertyFontVariant);
     StringBuilder result;
     std::optional<CSSValueID> commonCSSWideKeyword;
     bool isAllNormal = true;
     auto ligaturesKeyword = propertyAsValueID(CSSPropertyFontVariantLigatures);
 
-    for (auto property : fontVariantShorthand()) {
+    for (auto property : shorthand) {
         int foundPropertyIndex = findPropertyIndex(property);
         if (foundPropertyIndex == -1)
             return emptyString(); // All longhands must have at least implicit values.
@@ -718,6 +667,7 @@ String StyleProperties::fontVariantValue() const
 String StyleProperties::fontSynthesisValue() const
 {
     // font-synthesis: none | [ weight || style || small-caps ]
+    ASSERT(fontSynthesisShorthand().length() == 3);
     auto weight = propertyAsValueID(CSSPropertyFontSynthesisWeight).value_or(CSSValueInvalid);
     auto style = propertyAsValueID(CSSPropertyFontSynthesisStyle).value_or(CSSValueInvalid);
     auto caps = propertyAsValueID(CSSPropertyFontSynthesisSmallCaps).value_or(CSSValueInvalid);
@@ -743,6 +693,7 @@ String StyleProperties::fontSynthesisValue() const
 String StyleProperties::get2Values(const StylePropertyShorthand& shorthand) const
 {
     // Assume the properties are in the usual order start, end.
+    ASSERT(shorthand.length() == 2);
     int startValueIndex = findPropertyIndex(shorthand.properties()[0]);
     int endValueIndex = findPropertyIndex(shorthand.properties()[1]);
 
@@ -777,6 +728,7 @@ String StyleProperties::get2Values(const StylePropertyShorthand& shorthand) cons
 String StyleProperties::get4Values(const StylePropertyShorthand& shorthand) const
 {
     // Assume the properties are in the usual order top, right, bottom, left.
+    ASSERT(shorthand.length() == 4);
     int topValueIndex = findPropertyIndex(shorthand.properties()[0]);
     int rightValueIndex = findPropertyIndex(shorthand.properties()[1]);
     int bottomValueIndex = findPropertyIndex(shorthand.properties()[2]);
@@ -962,6 +914,7 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
 
 String StyleProperties::getGridTemplateValue() const
 {
+    ASSERT(gridTemplateShorthand().length() == 3);
     StringBuilder result;
     int areasIndex = findPropertyIndex(CSSPropertyGridTemplateAreas);
     if (areasIndex == -1)
@@ -1042,6 +995,7 @@ static bool gridAutoFlowContains(const RefPtr<CSSValue>& autoFlow, CSSValueID id
 
 String StyleProperties::getGridValue() const
 {
+    ASSERT(gridShorthand().length() == 6);
     auto autoColumns = getPropertyCSSValue(CSSPropertyGridAutoColumns);
     auto autoRows = getPropertyCSSValue(CSSPropertyGridAutoRows);
     auto autoFlow = getPropertyCSSValue(CSSPropertyGridAutoFlow);
@@ -1118,6 +1072,7 @@ static bool canOmitTrailingGridAreaValue(CSSValue& value, CSSValue& trailing)
 
 String StyleProperties::getGridRowColumnShorthandValue(const StylePropertyShorthand& shorthand) const
 {
+    ASSERT(shorthand.length() == 2);
     auto start = getPropertyCSSValue(shorthand.properties()[0]);
     auto end = getPropertyCSSValue(shorthand.properties()[1]);
 
@@ -1136,6 +1091,7 @@ String StyleProperties::getGridRowColumnShorthandValue(const StylePropertyShorth
 
 String StyleProperties::getGridAreaShorthandValue() const
 {
+    ASSERT(gridAreaShorthand().length() == 4);
     RefPtr<CSSValue> values[4];
     values[0] = getPropertyCSSValue(CSSPropertyGridRowStart);
     values[1] = getPropertyCSSValue(CSSPropertyGridColumnStart);
@@ -1223,9 +1179,9 @@ String StyleProperties::getAlignmentShorthandValue(const StylePropertyShorthand&
     return value;
 }
 
-String StyleProperties::borderImagePropertyValue(CSSPropertyID propertyID) const
+String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& shorthand) const
 {
-    const StylePropertyShorthand& shorthand = borderImageShorthand();
+    ASSERT(shorthand.length() == 5);
     StringBuilder result;
     bool omittedSlice = false;
     bool omittedWidth = false;
@@ -1255,7 +1211,7 @@ String StyleProperties::borderImagePropertyValue(CSSPropertyID propertyID) const
         if (is<CSSBorderImageWidthValue>(value.get())) {
             auto* borderImageWidth = downcast<CSSBorderImageWidthValue>(value.get());
             Quad& widths = borderImageWidth->widths();
-            bool overridesBorderWidths = propertyID == CSSPropertyWebkitBorderImage && (widths.top()->isLength() || widths.right()->isLength() || widths.bottom()->isLength() || widths.left()->isLength());
+            bool overridesBorderWidths = shorthand.id() == CSSPropertyWebkitBorderImage && (widths.top()->isLength() || widths.right()->isLength() || widths.bottom()->isLength() || widths.left()->isLength());
             if (overridesBorderWidths != borderImageWidth->m_overridesBorderWidths)
                 return String();
             valueText = widths.cssText();
@@ -1312,6 +1268,7 @@ String StyleProperties::borderPropertyValue(const StylePropertyShorthand& width,
 
 String StyleProperties::pageBreakPropertyValue(const StylePropertyShorthand& shorthand) const
 {
+    ASSERT(shorthand.length() == 1);
     auto value = getPropertyCSSValue(shorthand.properties()[0]);
     if (!value)
         return String();
@@ -1658,6 +1615,8 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
 
     // FIXME: If font-variant-ligatures is none, this depends on the value of the longhand.
     case CSSPropertyFontVariant:
+    // FIXME: Serialization ignores marker-mid and marker-end (http://webkit.org/b/248308).
+    case CSSPropertyMarker:
     // FIXME: These shorthands are avoided for unknown legacy reasons, probably shouldn't be avoided.
     case CSSPropertyBackground:
     case CSSPropertyBorderBlockEnd:
@@ -1676,7 +1635,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyGridArea:
     case CSSPropertyGridColumn:
     case CSSPropertyGridRow:
-    case CSSPropertyMarker:
     case CSSPropertyMaskPosition:
     case CSSPropertyOffset:
     case CSSPropertyPlaceContent:
