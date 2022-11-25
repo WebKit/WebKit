@@ -5355,6 +5355,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     do {
         TreeExpression optionalChainBase = 0;
         JSTokenLocation optionalChainLocation;
+        bool isOptionalCall = false;
         JSTokenType type = m_token.m_type;
 
         if (match(QUESTIONDOT)) {
@@ -5437,12 +5438,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                             functionScope->setInnerArrowFunctionUsesSuperCall();
                     }
 
-                    bool isOptionalCall = optionalChainLocation.endOffset == static_cast<unsigned>(expressionEnd.offset);
+                    isOptionalCall = optionalChainLocation.endOffset == static_cast<unsigned>(expressionEnd.offset);
                     base = context.makeFunctionCallNode(startLocation, base, previousBaseWasSuper, arguments, expressionStart,
                         expressionEnd, lastTokenEndPosition(), callOrApplyDepthScope ? callOrApplyDepthScope->distanceToInnermostChild() : 0, isOptionalCall);
-
-                    if (isOptionalCall)
-                        optionalChainBase = base;
                 }
                 break;
             }
@@ -5490,7 +5488,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         }
 endOfChain:
         if (optionalChainBase)
-            base = context.createOptionalChain(optionalChainLocation, optionalChainBase, base, !match(QUESTIONDOT));
+            base = context.createOptionalChain(optionalChainLocation, isOptionalCall ? 0 : optionalChainBase, base, !match(QUESTIONDOT));
     } while (match(QUESTIONDOT));
 
     semanticFailIfTrue(baseIsSuper, newCount ? "Cannot use new with super call" : "super is not valid in this context");
