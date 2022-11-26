@@ -70,10 +70,19 @@ public:
     {
         auto& box = this->box();
         auto& textContent = box.text();
+        auto extraTrailingLength = [&] () -> unsigned {
+            if (textContent->hasHyphen())
+                return box.style().hyphenString().length();
+            if (downcast<Layout::InlineTextBox>(box.layoutBox()).isCombined()) {
+                ASSERT(textContent->renderedContent().length() >= length());
+                return textContent->renderedContent().length() - length();
+            }
+            return 0;
+        };
         return {
             start(),
             length(),
-            textContent->hasHyphen() ? box.style().hyphenString().length() : downcast<Layout::InlineTextBox>(box.layoutBox()).isCombined() ? textContent->renderedContent().length() : 0,
+            extraTrailingLength(),
             box.isLineBreak(),
             textContent->partiallyVisibleContentLength()
         };

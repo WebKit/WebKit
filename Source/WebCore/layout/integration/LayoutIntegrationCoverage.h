@@ -63,7 +63,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 23,
     // Unused                                    = 1LLU  << 24,
     // Unused                                    = 1LLU  << 25,
-    FlowHasTextCombine                           = 1LLU  << 26,
+    // Unused                                    = 1LLU  << 26,
     // Unused                                    = 1LLU  << 27,
     // Unused                                    = 1LLU  << 28,
     // Unused                                    = 1LLU  << 29,
