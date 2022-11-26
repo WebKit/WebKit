@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: action
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "wheel".
 CSSScrollSnap
 
 Tests that the window can snap at user scroll end.
@@ -7,7 +7,7 @@ Scroll the page vertically and horizontally. Keep scrolling until background has
 Press the button "Done"
 
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: action
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "wheel".
 
 NOTRUN Tests that window should snap at user scroll end.
 

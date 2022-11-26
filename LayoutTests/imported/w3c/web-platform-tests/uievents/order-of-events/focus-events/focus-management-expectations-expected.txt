@@ -1,4 +1,11 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
 Focus management from button  To button  End test button
 
-FAIL Keydown to focus should not trigger activation Can't find variable: action
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "key".
+
+TIMEOUT Keydown to focus should not trigger activation Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "key".
+
+TIMEOUT Keydown to focus should not trigger activation Test timed out
 

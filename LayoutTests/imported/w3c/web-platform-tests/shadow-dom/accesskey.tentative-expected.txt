@@ -1,4 +1,4 @@
 
-FAIL button element with accesskey in the shadow tree of open mode promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
-FAIL button element with accesskey in the shadow tree of closed mode promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
+FAIL button element with accesskey in the shadow tree of open mode promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL button element with accesskey in the shadow tree of closed mode promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
 

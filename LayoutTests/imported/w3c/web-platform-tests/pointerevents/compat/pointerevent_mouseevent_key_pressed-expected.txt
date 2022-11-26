@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: action
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
 Test Description: Tests that the mouse events with some keys pressed.
 Press Alt, Control, Meta, Shift keys and move the mouse
 
 
-Harness Error (FAIL), message = Unhandled rejection: Can't find variable: action
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "key".
 
 FAIL Tests that the mouse events with some keys pressed. assert_true: Timed out waiting for pointermove expected true got false
 

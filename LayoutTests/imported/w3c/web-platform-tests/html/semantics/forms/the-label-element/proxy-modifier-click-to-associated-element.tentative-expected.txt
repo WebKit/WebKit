@@ -1,6 +1,18 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "key".
+
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "key".
 
 PASS label with for attribute should proxy click events to the associated element on click
-FAIL label with for attribute should proxy click events to the associated element on shift click Can't find variable: action
-FAIL label with for attribute should proxy click events to the associated element on alt click Can't find variable: action
-FAIL label with for attribute should proxy click events to the associated element on meta click Can't find variable: action
+TIMEOUT label with for attribute should proxy click events to the associated element on shift click Test timed out
+TIMEOUT label with for attribute should proxy click events to the associated element on alt click Test timed out
+TIMEOUT label with for attribute should proxy click events to the associated element on meta click Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "key".
+
+PASS label with for attribute should proxy click events to the associated element on click
+TIMEOUT label with for attribute should proxy click events to the associated element on shift click Test timed out
+TIMEOUT label with for attribute should proxy click events to the associated element on alt click Test timed out
+TIMEOUT label with for attribute should proxy click events to the associated element on meta click Test timed out
 foo foo foo foo

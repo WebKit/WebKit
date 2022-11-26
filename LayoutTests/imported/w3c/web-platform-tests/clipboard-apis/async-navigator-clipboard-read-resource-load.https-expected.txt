@@ -2,5 +2,5 @@ Body needed for test_driver.click()
 Put payload in the clipboard
 
 
-FAIL Async Clipboard.read() should not trigger resource loading promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL Async Clipboard.read() should not trigger resource loading promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
 

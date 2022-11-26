@@ -2,5 +2,5 @@ Header 1Footer 1
 Header 2Footer 2
 
 FAIL Keyboard scrolling with vertical snap-area overflow assert_equals: End boundary of snap-area is valid snap target expected 39 but got 449
-FAIL Mouse-wheel scrolling with vertical snap-area overflow promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
+FAIL Mouse-wheel scrolling with vertical snap-area overflow promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
 
