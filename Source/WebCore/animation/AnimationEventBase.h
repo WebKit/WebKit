@@ -43,8 +43,8 @@ public:
     virtual ~AnimationEventBase();
 
     virtual bool isAnimationPlaybackEvent() const { return false; }
-    virtual bool isAnimationEvent() const { return false; }
-    virtual bool isTransitionEvent() const { return false; }
+    virtual bool isCSSAnimationEvent() const { return false; }
+    virtual bool isCSSTransitionEvent() const { return false; }
 
     WebAnimation* animation() const { return m_animation.get(); }
 

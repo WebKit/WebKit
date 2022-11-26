@@ -27,16 +27,16 @@
 #include "WebAnimationUtilities.h"
 
 #include "Animation.h"
-#include "AnimationEvent.h"
 #include "AnimationEventBase.h"
 #include "AnimationList.h"
 #include "AnimationPlaybackEvent.h"
 #include "CSSAnimation.h"
+#include "CSSAnimationEvent.h"
 #include "CSSTransition.h"
+#include "CSSTransitionEvent.h"
 #include "DeclarativeAnimation.h"
 #include "Element.h"
 #include "KeyframeEffectStack.h"
-#include "TransitionEvent.h"
 #include "WebAnimation.h"
 
 namespace WebCore {
@@ -236,18 +236,18 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
         return aAnimation->globalPosition() < bAnimation->globalPosition();
     }
 
-    // TransitionEvent instances sort next.
-    bool aIsCSSTransition = is<TransitionEvent>(a);
-    bool bIsCSSTransition = is<TransitionEvent>(b);
+    // CSSTransitionEvent instances sort next.
+    bool aIsCSSTransition = is<CSSTransitionEvent>(a);
+    bool bIsCSSTransition = is<CSSTransitionEvent>(b);
     if (aIsCSSTransition || bIsCSSTransition) {
         if (aIsCSSTransition == bIsCSSTransition)
             return false;
         return !bIsCSSTransition;
     }
 
-    // AnimationEvent instances sort last.
-    bool aIsCSSAnimation = is<AnimationEvent>(a);
-    bool bIsCSSAnimation = is<AnimationEvent>(b);
+    // CSSAnimationEvent instances sort last.
+    bool aIsCSSAnimation = is<CSSAnimationEvent>(a);
+    bool bIsCSSAnimation = is<CSSAnimationEvent>(b);
     if (aIsCSSAnimation || bIsCSSAnimation) {
         if (aIsCSSAnimation == bIsCSSAnimation)
             return false;

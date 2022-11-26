@@ -486,13 +486,14 @@ accessibility/AccessibilityTreeItem.cpp
 accessibility/isolatedtree/AXIsolatedObject.cpp
 accessibility/isolatedtree/AXIsolatedTree.cpp
 animation/AnimationEffect.cpp
-animation/AnimationEvent.cpp
 animation/AnimationEventBase.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
+animation/CSSAnimationEvent.cpp
 animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
+animation/CSSTransitionEvent.cpp
 animation/CompositeOperation.cpp
 animation/CustomEffect.cpp
 animation/DeclarativeAnimation.cpp
@@ -502,7 +503,6 @@ animation/ElementAnimationRareData.cpp
 animation/FrameRateAligner.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
-animation/TransitionEvent.cpp
 animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp
 bindings/js/CachedModuleScriptLoader.cpp
@@ -2994,7 +2994,6 @@ JSAesKeyParams.cpp
 JSAnalyserNode.cpp
 JSAnalyserOptions.cpp
 JSAnimationEffect.cpp
-JSAnimationEvent.cpp
 JSAnimationFrameRatePreset.cpp
 JSAnimationPlaybackEvent.cpp
 JSAnimationPlaybackEventInit.cpp
@@ -3057,6 +3056,7 @@ JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCSPViolationReportBody.cpp
 JSCSSAnimation.cpp
+JSCSSAnimationEvent.cpp
 JSCSSConditionRule.cpp
 JSCSSContainerRule.cpp
 JSCSSCounterStyleRule.cpp
@@ -3081,6 +3081,7 @@ JSCSSStyleRule.cpp
 JSCSSStyleSheet.cpp
 JSCSSSupportsRule.cpp
 JSCSSTransition.cpp
+JSCSSTransitionEvent.cpp
 JSCSSUnknownRule.cpp
 JSCOEPInheritenceViolationReportBody.cpp
 JSCORPViolationReportBody.cpp
@@ -4067,7 +4068,6 @@ JSTrackEvent.cpp
 JSTransferFunction.cpp
 JSTransformStream.cpp
 JSTransformStreamDefaultController.cpp
-JSTransitionEvent.cpp
 JSTreeWalker.cpp
 JSCSSKeywordValue.cpp
 JSCSSStyleImageValue.cpp

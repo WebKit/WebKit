@@ -24,8 +24,9 @@
  */
 
 [
-    Exposed=Window
-] interface AnimationEvent : Event {
+    Exposed=Window,
+    InterfaceName=AnimationEvent
+] interface CSSAnimationEvent : Event {
     constructor([AtomString] DOMString type, optional AnimationEventInit animationEventInitDict);
 
     readonly attribute DOMString animationName;

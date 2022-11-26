@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,50 +25,50 @@
  */
 
 #include "config.h"
-#include "AnimationEvent.h"
+#include "CSSTransitionEvent.h"
 
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationEvent);
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransitionEvent);
 
-AnimationEvent::AnimationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : AnimationEventBase(type, initializer, isTrusted)
-    , m_animationName(initializer.animationName)
-    , m_elapsedTime(initializer.elapsedTime)
-    , m_pseudoElement(initializer.pseudoElement)
-{
-}
-
-AnimationEvent::AnimationEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& animationName, const String& pseudoElement)
+CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& propertyName, const String& pseudoElement)
     : AnimationEventBase(type, animation)
-    , m_animationName(animationName)
+    , m_propertyName(propertyName)
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {
 }
 
-AnimationEvent::~AnimationEvent() = default;
-
-const String& AnimationEvent::animationName() const
+CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+    : AnimationEventBase(type, initializer, isTrusted)
+    , m_propertyName(initializer.propertyName)
+    , m_elapsedTime(initializer.elapsedTime)
+    , m_pseudoElement(initializer.pseudoElement)
 {
-    return m_animationName;
 }
 
-double AnimationEvent::elapsedTime() const
+CSSTransitionEvent::~CSSTransitionEvent() = default;
+
+const String& CSSTransitionEvent::propertyName() const
+{
+    return m_propertyName;
+}
+
+double CSSTransitionEvent::elapsedTime() const
 {
     return m_elapsedTime;
 }
 
-const String& AnimationEvent::pseudoElement() const
+const String& CSSTransitionEvent::pseudoElement() const
 {
     return m_pseudoElement;
 }
 
-EventInterface AnimationEvent::eventInterface() const
+EventInterface CSSTransitionEvent::eventInterface() const
 {
-    return AnimationEventInterfaceType;
+    return CSSTransitionEventInterfaceType;
 }
 
 } // namespace WebCore

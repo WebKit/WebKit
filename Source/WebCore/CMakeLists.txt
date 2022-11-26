@@ -751,14 +751,15 @@ set(WebCore_NON_SVG_IDL_FILES
 
     animation/Animatable.idl
     animation/AnimationEffect.idl
-    animation/AnimationEvent.idl
     animation/AnimationFrameProvider.idl
     animation/AnimationFrameRatePreset.idl
     animation/AnimationPlaybackEvent.idl
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
     animation/CSSAnimation.idl
+    animation/CSSAnimationEvent.idl
     animation/CSSTransition.idl
+    animation/CSSTransitionEvent.idl
     animation/CompositeOperation.idl
     animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
@@ -780,7 +781,6 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/KeyframeEffectOptions.idl
     animation/OptionalEffectTiming.idl
     animation/PlaybackDirection.idl
-    animation/TransitionEvent.idl
     animation/WebAnimation.idl
 
     crypto/CryptoAlgorithmParameters.idl

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,44 +30,44 @@
 
 namespace WebCore {
 
-class AnimationEvent final : public AnimationEventBase {
-    WTF_MAKE_ISO_ALLOCATED(AnimationEvent);
+class CSSTransitionEvent final : public AnimationEventBase {
+    WTF_MAKE_ISO_ALLOCATED(CSSTransitionEvent);
 public:
-    static Ref<AnimationEvent> create(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& animationName, const String& pseudoElement)
+    static Ref<CSSTransitionEvent> create(const AtomString& type, WebAnimation* animation,  double elapsedTime, const String& propertyName, const String& pseudoElement)
     {
-        return adoptRef(*new AnimationEvent(type, animation, elapsedTime, animationName, pseudoElement));
+        return adoptRef(*new CSSTransitionEvent(type, animation, elapsedTime, propertyName, pseudoElement));
     }
 
     struct Init : EventInit {
-        String animationName;
+        String propertyName;
         double elapsedTime { 0 };
         String pseudoElement;
     };
 
-    static Ref<AnimationEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CSSTransitionEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new AnimationEvent(type, initializer, isTrusted));
+        return adoptRef(*new CSSTransitionEvent(type, initializer, isTrusted));
     }
 
-    virtual ~AnimationEvent();
+    virtual ~CSSTransitionEvent();
 
-    bool isAnimationEvent() const final { return true; }
+    bool isCSSTransitionEvent() const final { return true; }
 
-    const String& animationName() const;
+    const String& propertyName() const;
     double elapsedTime() const;
     const String& pseudoElement() const;
 
     EventInterface eventInterface() const override;
 
 private:
-    AnimationEvent(const AtomString& type, WebAnimation*, double elapsedTime, const String& animationName, const String& pseudoElement);
-    AnimationEvent(const AtomString&, const Init&, IsTrusted);
+    CSSTransitionEvent(const AtomString& type, WebAnimation*, double elapsedTime, const String& propertyName, const String& pseudoElement);
+    CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted);
 
-    String m_animationName;
+    String m_propertyName;
     double m_elapsedTime;
     String m_pseudoElement;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(AnimationEvent, isAnimationEvent())
+SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(CSSTransitionEvent, isCSSTransitionEvent())

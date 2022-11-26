@@ -757,14 +757,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/accessibility/AriaAttributes.idl \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
-    $(WebCore)/animation/AnimationEvent.idl \
     $(WebCore)/animation/AnimationFrameProvider.idl \
     $(WebCore)/animation/AnimationFrameRatePreset.idl \
     $(WebCore)/animation/AnimationPlaybackEvent.idl \
     $(WebCore)/animation/AnimationPlaybackEventInit.idl \
     $(WebCore)/animation/AnimationTimeline.idl \
     $(WebCore)/animation/CSSAnimation.idl \
+    $(WebCore)/animation/CSSAnimationEvent.idl \
     $(WebCore)/animation/CSSTransition.idl \
+    $(WebCore)/animation/CSSTransitionEvent.idl \
     $(WebCore)/animation/CompositeOperation.idl \
     $(WebCore)/animation/CompositeOperationOrAuto.idl \
     $(WebCore)/animation/ComputedEffectTiming.idl \
@@ -786,7 +787,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/KeyframeEffectOptions.idl \
     $(WebCore)/animation/OptionalEffectTiming.idl \
     $(WebCore)/animation/PlaybackDirection.idl \
-    $(WebCore)/animation/TransitionEvent.idl \
     $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \
