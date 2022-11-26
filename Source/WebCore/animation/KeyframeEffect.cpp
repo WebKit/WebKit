@@ -1531,6 +1531,8 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         auto startKeyframeStyle = RenderStyle::clone(*startKeyframe.style());
         auto endKeyframeStyle = RenderStyle::clone(*endKeyframe.style());
 
+        auto usedBlendingForAccumulativeIteration = false;
+
         // 12. For each keyframe in interval endpoints:
         //     If keyframe has a composite operation that is not replace, or keyframe has no composite operation and the
         //     composite operation of this keyframe effect is not replace, then perform the following steps:
@@ -1562,7 +1564,8 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
                 }
 
                 // If this keyframe effect has an iteration composite operation of accumulate,
-                if (m_iterationCompositeOperation == IterationCompositeOperation::Accumulate) {
+                if (m_iterationCompositeOperation == IterationCompositeOperation::Accumulate && currentIteration && CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cssPropertyId, startKeyframeStyle, endKeyframeStyle)) {
+                    usedBlendingForAccumulativeIteration = true;
                     // apply the following step current iteration times:
                     for (auto i = 0; i < currentIteration; ++i) {
                         // replace the property value of target property on keyframe with the result of combining the
@@ -1608,7 +1611,11 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //     property specified on the two keyframes in interval endpoints taking the first such value as Vstart and the second as Vend and using transformed
         //     distance as the interpolation parameter p.
         WTF::switchOn(property,
-            [&] (CSSPropertyID propertyId) { CSSPropertyAnimation::blendProperties(this, propertyId, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance, CompositeOperation::Replace); },
+            [&] (CSSPropertyID propertyId) {
+                auto iterationCompositeOperation = usedBlendingForAccumulativeIteration ? IterationCompositeOperation::Replace : m_iterationCompositeOperation;
+                currentIteration = usedBlendingForAccumulativeIteration ? 0 : currentIteration;
+                CSSPropertyAnimation::blendProperties(this, propertyId, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance, CompositeOperation::Replace, iterationCompositeOperation, currentIteration);
+            },
             [&] (AtomString customProperty) { CSSPropertyAnimation::blendCustomProperty(customProperty, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance); }
         );
     };

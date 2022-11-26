@@ -8,7 +8,7 @@ PASS iteration composition of <number> type animation
 PASS iteration composition of <shape> type animation
 PASS iteration composition of <calc()> value animation
 PASS iteration composition of <calc()> value animation that the values can'tbe reduced
-FAIL iteration composition of opacity animation assert_equals: Animated opacity style at 50s of the third iteration expected "1" but got "0.9"
+PASS iteration composition of opacity animation
 PASS iteration composition of box-shadow animation
 PASS iteration composition of filter blur animation
 PASS iteration composition of filter brightness for different unit animation
