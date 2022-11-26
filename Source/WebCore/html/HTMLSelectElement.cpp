@@ -3,9 +3,9 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -72,7 +72,7 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& doc
     : HTMLFormControlElementWithState(tagName, document, form)
     , m_typeAhead(this)
     , m_size(0)
-    , m_lastOnChangeIndex(-1)
+    , m_lastOnChangeOption(nullptr)
     , m_activeSelectionAnchorIndex(-1)
     , m_activeSelectionEndIndex(-1)
     , m_isProcessingUserDrivenChange(false)
@@ -247,12 +247,8 @@ void HTMLSelectElement::remove(int optionIndex)
 
 String HTMLSelectElement::value() const
 {
-    for (auto& item : listItems()) {
-        if (auto* option = dynamicDowncast<HTMLOptionElement>(item.get())) {
-            if (option->selected())
-                return option->value();
-        }
-    }
+    if (HTMLOptionElement* option = selectedOption())
+        return option->value();
     return emptyString();
 }
 
@@ -627,7 +623,7 @@ void HTMLSelectElement::selectAll()
 void HTMLSelectElement::saveLastSelection()
 {
     if (usesMenuList()) {
-        m_lastOnChangeIndex = selectedIndex();
+        m_lastOnChangeOption = selectedOption();
         return;
     }
 
@@ -719,9 +715,9 @@ void HTMLSelectElement::dispatchChangeEventForMenuList()
 {
     ASSERT(usesMenuList());
 
-    int selected = selectedIndex();
-    if (m_lastOnChangeIndex != selected && m_isProcessingUserDrivenChange) {
-        m_lastOnChangeIndex = selected;
+    HTMLOptionElement* selectedOption = this->selectedOption();
+    if (m_lastOnChangeOption.get() != selectedOption && m_isProcessingUserDrivenChange) {
+        m_lastOnChangeOption = selectedOption;
         m_isProcessingUserDrivenChange = false;
         dispatchInputEvent();
         dispatchFormControlChangeEvent();
@@ -835,6 +831,15 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
         firstOption->setSelectedState(true, allowStyleInvalidation);
 }
 
+HTMLOptionElement* HTMLSelectElement::selectedOption() const
+{
+    for (const auto& element : listItems()) {
+        if (is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected())
+        return downcast<HTMLOptionElement>(element);
+    }
+    return nullptr;
+}
+
 int HTMLSelectElement::selectedIndex() const
 {
     unsigned index = 0;
@@ -944,6 +949,12 @@ int HTMLSelectElement::listToOptionIndex(int listIndex) const
     }
 
     return optionIndex;
+}
+
+void HTMLSelectElement::optionRemoved(const HTMLOptionElement& option)
+{
+    if (m_lastOnChangeOption == &option)
+        m_lastOnChangeOption.clear();
 }
 
 void HTMLSelectElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions& options)
