@@ -81,29 +81,45 @@ struct FeatureSchema {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     enum class Type : uint8_t { Discrete, Range };
-    enum class ValueType : uint8_t {
-        Integer =       1 << 0,
-        Number =        1 << 1,
-        Length =        1 << 2,
-        Ratio =         1 << 3,
-        Resolution =    1 << 4,
-    };
+    enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier };
 
     AtomString name;
     Type type;
-    OptionSet<ValueType> valueTypes;
+    ValueType valueType;
     Vector<CSSValueID> valueIdentifiers;
 
     virtual EvaluationResult evaluate(const Feature&, const FeatureEvaluationContext&) const { return EvaluationResult::Unknown; }
 
-    FeatureSchema(const AtomString& name, Type type, OptionSet<ValueType> valueTypes, Vector<CSSValueID>&& valueIdentifiers = { })
+    FeatureSchema(const AtomString& name, Type type, ValueType valueType, Vector<CSSValueID>&& valueIdentifiers = { })
         : name(name)
         , type(type)
-        , valueTypes(valueTypes)
+        , valueType(valueType)
         , valueIdentifiers(WTFMove(valueIdentifiers))
     { }
     virtual ~FeatureSchema() = default;
 };
+
+template<typename TraverseFunction> void traverseFeatures(const Condition&, TraverseFunction&&);
+
+template<typename TraverseFunction>
+void traverseFeatures(const QueryInParens& queryInParens, TraverseFunction&& function)
+{
+    return WTF::switchOn(queryInParens, [&](const Condition& condition) {
+        traverseFeatures(condition, function);
+    }, [&](const MQ::Feature& feature) {
+        function(feature);
+    }, [&](const MQ::GeneralEnclosed&) {
+        return;
+    });
+}
+
+template<typename TraverseFunction>
+void traverseFeatures(const Condition& condition, TraverseFunction&& function)
+{
+    for (auto& queryInParens : condition.queries)
+        traverseFeatures(queryInParens, function);
+}
+
 
 }
 }

@@ -1,5 +1,5 @@
 
 
-FAIL Checkboxes should clear :active when the user tabs away from them while holding spacebar. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
-FAIL Radios should clear :active when the user tabs away from them while holding spacebar. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
+FAIL Checkboxes should clear :active when the user tabs away from them while holding spacebar. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Radios should clear :active when the user tabs away from them while holding spacebar. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
 

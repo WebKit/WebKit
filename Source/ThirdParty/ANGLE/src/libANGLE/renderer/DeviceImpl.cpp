@@ -15,4 +15,10 @@ DeviceImpl::DeviceImpl() {}
 
 DeviceImpl::~DeviceImpl() {}
 
+const std::string DeviceImpl::getDeviceString(EGLint name)
+{
+    UNIMPLEMENTED();
+    return std::string();
+}
+
 }  // namespace rx

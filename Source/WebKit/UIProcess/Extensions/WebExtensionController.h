@@ -60,6 +60,7 @@ public:
     static WebExtensionController* get(WebExtensionControllerIdentifier);
 
     explicit WebExtensionController();
+    ~WebExtensionController();
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
     using WebExtensionSet = HashSet<Ref<WebExtension>>;
@@ -75,6 +76,8 @@ public:
     bool load(WebExtensionContext&, NSError ** = nullptr);
     bool unload(WebExtensionContext&, NSError ** = nullptr);
 
+    void unloadAll();
+
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
 
@@ -87,7 +90,9 @@ public:
     template<typename T, typename U>
     void sendToAllProcesses(const T& message, ObjectIdentifier<U> destinationID);
 
+#ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
+#endif
 #endif
 
 private:

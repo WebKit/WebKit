@@ -56,6 +56,8 @@ class ANGLE_UTIL_EXPORT X11Window : public OSWindow
     Window mWindow;
     int mRequestedVisualId;
     bool mVisible;
+    bool mConfigured = false;
+    bool mDestroyed  = false;
 };
 
 #endif  // UTIL_X11_WINDOW_H

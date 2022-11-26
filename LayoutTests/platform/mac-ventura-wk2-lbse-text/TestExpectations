@@ -571,7 +571,6 @@ svg/custom/multiple-view-elements.html          [ ImageOnlyFailure ]
 svg/dom/complex-svgView-specification.html      [ ImageOnlyFailure ]
 
 # SVG <foreignObject> issues
-svg/hixie/mixed/009.xml                      [ ImageOnlyFailure ]
 svg/overflow/overflow-on-foreignObject.svg   [ ImageOnlyFailure ]
 
 # SVG <image> (buffered-rendering) issues
@@ -580,19 +579,8 @@ svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 ###############
 # Buggy tests #
 ###############
-# 1) no width/height specified for <foreignObject> (disabled rendering in LBSE, ignored by legacy)
-svg/custom/display-table-caption-foreignObject.svg           [ Failure ]
-svg/custom/display-table-caption-inherit-foreignObject.xhtml [ Failure ]
-svg/custom/use-on-use-with-child.svg                         [ Failure ]
-svg/dom/SVGScriptElement/script-async-attr.svg               [ Failure ]
-svg/dom/SVGScriptElement/script-load-and-error-events.svg    [ Failure ]
-svg/dom/SVGScriptElement/script-onerror-bubbling.svg         [ Failure ]
-svg/dom/SVGScriptElement/script-reexecution.svg              [ Failure ]
-svg/dom/SVGScriptElement/script-type-attribute.svg           [ Failure ]
-svg/dom/smil-methods.svg                                     [ Failure ]
-svg/hittest/svg-standalone-tooltip.svg                       [ Failure ]
 
-# 2) Parses render tree output, therefore not adapted to LBSE.
+# Parses render tree output, therefore not adapted to LBSE.
 svg/outermost-svg-root.html [ Failure ]
 
 ###############
@@ -635,18 +623,22 @@ svg/filters/feGaussianBlur-negative-deviation.svg [ ImageOnlyFailure Crash ]
 #  OVERRIDES  #
 ###############
 # Reset results inherited from TestExpectations chaining
-svg/W3C-SVG-1.1/fonts-elem-04-b.svg                         [ Pass ]
-svg/W3C-SVG-1.1/text-altglyph-01-b.svg                      [ Pass ]
-svg/W3C-SVG-1.1/text-intro-01-t.svg                         [ Pass ]
-svg/W3C-SVG-1.1/text-intro-02-b.svg                         [ Pass ]
-svg/W3C-SVG-1.1/text-intro-03-b.svg                         [ Pass ]
-svg/W3C-SVG-1.1/text-intro-04-t.svg                         [ Pass ]
-svg/W3C-SVG-1.1/text-text-06-t.svg                          [ Pass ]
-svg/resource-invalidation/mask-resource-invalidation.html   [ Pass ]
-svg/transforms/animated-path-inside-transformed-html.xhtml  [ Pass ]
-svg/transforms/layout-tiny-elements-in-scaled-group.svg     [ Pass ]
-svg/transforms/rotation-origin-in-small-units.svg           [ Pass ]
-svg/transforms/rotation-tiny-element-in-group.svg           [ Pass ]
-svg/transforms/transformed-child-in-container.svg           [ Pass ImageOnlyFailure ]
-svg/transforms/transformed-text-fill-gradient.html          [ Pass ]
-svg/transforms/translation-tiny-element.svg                 [ Pass ]
+svg/W3C-SVG-1.1/fonts-elem-04-b.svg                           [ Pass ]
+svg/W3C-SVG-1.1/text-altglyph-01-b.svg                        [ Pass ]
+svg/W3C-SVG-1.1/text-intro-01-t.svg                           [ Pass ]
+svg/W3C-SVG-1.1/text-intro-02-b.svg                           [ Pass ]
+svg/W3C-SVG-1.1/text-intro-03-b.svg                           [ Pass ]
+svg/W3C-SVG-1.1/text-intro-04-t.svg                           [ Pass ]
+svg/W3C-SVG-1.1/text-text-06-t.svg                            [ Pass ]
+svg/custom/circle-move-invalidation-small-viewBox.svg         [ Pass ]
+svg/resource-invalidation/mask-resource-invalidation.html     [ Pass ]
+svg/transforms/animated-path-inside-transformed-html.xhtml    [ Pass ]
+svg/transforms/layout-tiny-elements-in-scaled-group.svg       [ Pass ]
+svg/transforms/rotation-origin-in-small-units.svg             [ Pass ]
+svg/transforms/rotation-tiny-element-in-group.svg             [ Pass ]
+svg/transforms/transformed-child-in-container-small-units.svg [ Pass ]
+svg/transforms/transformed-child-in-container.svg             [ Pass ImageOnlyFailure ]
+svg/transforms/transformed-container-small-units.svg          [ Pass ]
+svg/transforms/transformed-container.svg                      [ Pass ]
+svg/transforms/transformed-text-fill-gradient.html            [ Pass ]
+svg/transforms/translation-tiny-element.svg                   [ Pass ]

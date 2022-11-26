@@ -106,12 +106,12 @@ bool JSDataView::setIndex(JSGlobalObject*, size_t, JSValue)
 
 RefPtr<DataView> JSDataView::possiblySharedTypedImpl()
 {
-    return DataView::create(possiblySharedBuffer(), byteOffset(), isAutoLength() ? std::nullopt : std::optional { length() });
+    return DataView::create(possiblySharedBuffer(), byteOffsetRaw(), isAutoLength() ? std::nullopt : std::optional { lengthRaw() });
 }
 
 RefPtr<DataView> JSDataView::unsharedTypedImpl()
 {
-    return DataView::create(unsharedBuffer(), byteOffset(), isAutoLength() ? std::nullopt : std::optional { length() });
+    return DataView::create(unsharedBuffer(), byteOffsetRaw(), isAutoLength() ? std::nullopt : std::optional { lengthRaw() });
 }
 
 Structure* JSDataView::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

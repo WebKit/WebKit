@@ -55,6 +55,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(WebExtension
         context.m_uniqueIdentifier = parameters.uniqueIdentifier;
         context.m_manifest = parameters.manifest;
         context.m_manifestVersion = parameters.manifestVersion;
+        context.m_testingMode = parameters.testingMode;
     };
 
     if (auto context = webExtensionContextProxies().get(parameters.identifier)) {
@@ -74,6 +75,11 @@ WebExtensionContextProxy::WebExtensionContextProxy(WebExtensionContextParameters
     webExtensionContextProxies().add(m_identifier, this);
 
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
+}
+
+WebExtensionContextProxy::~WebExtensionContextProxy()
+{
+    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
 }
 
 } // namespace WebKit

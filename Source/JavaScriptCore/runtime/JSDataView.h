@@ -86,6 +86,7 @@ public:
         RELEASE_ASSERT(!m_buffer->isShared());
         return m_buffer;
     }
+    static ptrdiff_t offsetOfBuffer() { return OBJECT_OFFSETOF(JSDataView, m_buffer); }
     
     RefPtr<DataView> possiblySharedTypedImpl();
     RefPtr<DataView> unsharedTypedImpl();

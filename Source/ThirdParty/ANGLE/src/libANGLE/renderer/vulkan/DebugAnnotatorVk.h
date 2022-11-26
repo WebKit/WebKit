@@ -27,7 +27,7 @@ class DebugAnnotatorVk : public angle::LoggingAnnotator
     void endEvent(gl::Context *context,
                   const char *eventName,
                   angle::EntryPoint entryPoint) override;
-    bool getStatus() override;
+    bool getStatus(const gl::Context *context) override;
 };
 
 }  // namespace rx

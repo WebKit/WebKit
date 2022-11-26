@@ -102,18 +102,15 @@ layer at (432,93) size 102x38 clip at (433,94) size 100x36 scrollHeight 144
         text run at (0,90) width 51: "ellipsis-"
         text run at (0,108) width 83: "truncation of"
         text run at (0,126) width 96: "multi-line text."
-layer at (538,75) size 102x56 clip at (539,76) size 100x54 scrollHeight 108
-  RenderDeprecatedFlexibleBox {DIV} at (530,67) size 102x56 [border: (1px solid #808080)]
+layer at (538,80) size 102x56 clip at (539,81) size 100x54
+  RenderDeprecatedFlexibleBox {DIV} at (530,72) size 102x56 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x54
-      RenderText {#text} at (0,0) size 99x108
+      RenderText {#text} at (0,0) size 99x54
         text run at (0,0) width 51: "3 lines. "
         text run at (50,0) width 49: "No link"
         text run at (0,18) width 71: "at the end. "
         text run at (70,18) width 29: "This"
         text run at (0,36) width 88: "is an example"
-        text run at (0,54) width 68: "of ellipsis-"
-        text run at (0,72) width 83: "truncation of"
-        text run at (0,90) width 96: "multi-line text."
 layer at (644,44) size 102x92 clip at (645,45) size 100x90
   RenderDeprecatedFlexibleBox {DIV} at (636,36) size 102x92 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x90

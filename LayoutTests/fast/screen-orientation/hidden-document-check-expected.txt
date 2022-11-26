@@ -1,0 +1,12 @@
+This test checks that trying to lock or unlock a hidden document results in a SecurityError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.hidden is true
+PASS SecurityError rejected promise  with SecurityError: Only visible documents can lock the screen orientation.
+PASS screen.orientation.unlock() threw exception SecurityError: Only visible documents can unlock the screen orientation.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

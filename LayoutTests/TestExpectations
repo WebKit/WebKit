@@ -1811,7 +1811,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-non-snap-to-lines.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-two-cue-layout-after-first-end.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/available-images.html [ Skip ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/apng/animated-png-timeout.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-font-loading/fontface-descriptor-updates.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2.html [ Skip ]
@@ -3926,6 +3925,7 @@ webgl/1.0.x/conformance/textures/misc/exif-orientation.html [ Pass ]
 webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Pass ]
 webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/1.0.x/conformance/programs/program-test.html [ Pass ]
+webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass ]
 
 # Debug builds on slower machines run close to the time out especially with GPUP enabled
 webkit.org/b/238691 [ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Slow ]
@@ -3959,6 +3959,7 @@ webgl/2.0.y/conformance2/extensions/oes-draw-buffers-indexed.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass ]
 webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Pass ]
+webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass ]
 
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.
@@ -3967,10 +3968,14 @@ webgl/1.0.3/conformance/context/constants-and-properties.html  [ Skip ]
 webgl/1.0.3/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
 webgl/1.0.3/conformance/misc/invalid-passed-params.html [ Skip ]
 webgl/1.0.3/conformance/programs/program-test.html [ Skip ]
+webgl/1.0.3/conformance/reading/read-pixels-test.html [ Skip ]
 webgl/2.0.0/conformance/context/constants-and-properties.html  [ Skip ]
+webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Skip ]
 webgl/2.0.0/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
 webgl/2.0.0/conformance/misc/invalid-passed-params.html [ Skip ]
 webgl/2.0.0/conformance/programs/program-test.html [ Skip ]
+webgl/2.0.0/conformance/reading/read-pixels-test.html [ Skip ]
+
 
 # https://github.com/KhronosGroup/WebGL/issues/3341
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
@@ -4213,10 +4218,26 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/individua
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-001.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-008.tentative.html [ ImageOnlyFailure ]
 
-# writing-modes: sideways-lr/sideways-rl support
+# writing-modes: sideways-lr/sideways-rl support.
 webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-writing-modes/logical-physical-mapping-001.html [ ImageOnlyFailure ]
 
+# Vertical form controls support.
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-vertical.optional.html [ ImageOnlyFailure ]
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vlr.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vrl.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vlr.optional.html [ ImageOnlyFailure ]
+webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vrl.optional.html [ ImageOnlyFailure ]
 
+# Untriaged writing-mode failures.
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-001.html [ ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-002.html [ ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-replaced-vrl-001.html [ ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-vlr-border-001.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-003.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/clearance-calculations-vrl-002.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-001.html [ ImageOnlyFailure ]
@@ -4887,9 +4908,6 @@ webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/co
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]
 
-# Multicolumn does not paint the horizontal overflow area of a relative child.
-webkit.org/b/41796 imported/w3c/web-platform-tests/css/css-contain/contain-size-monolithic-002.html [ ImageOnlyFailure ]
-
 # Scrollbar displays are different.
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]
@@ -5155,8 +5173,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 
 
 # css/filter-effects
-webkit.org/b/235000 [ Debug ] imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-003.html [ Skip ]
-
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-background-color.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-opacity-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic.html [ ImageOnlyFailure ]
@@ -5965,8 +5981,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html [ Pass Failure ]
 
 # Disable ShadowRealm (while running to ensure we do not crash)
-webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Skip ]
-inspector/shadow-realm-console.html [ Pass Failure ]
 imported/w3c/web-platform-tests/compression/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/dom/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/encoding/idlharness-shadowrealm.window.html [ Pass Failure ]
@@ -5976,12 +5990,6 @@ imported/w3c/web-platform-tests/performance-timeline/idlharness-shadowrealm.wind
 imported/w3c/web-platform-tests/streams/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html [ Pass Failure ]
-js/ShadowRealm-evaluate.html [ Pass Failure ]
-js/ShadowRealm-globalThis.html [ Pass Failure ]
-js/ShadowRealm-iframe-detach.html [ Pass Failure ]
-js/ShadowRealm-iframe-sandboxed.html [ Pass Failure ]
-js/ShadowRealm-importValue.html [ Pass Failure ]
-js/ShadowRealm-worker.html [ Pass Failure ]
 
 # Failing since their import.
 imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle.html [ ImageOnlyFailure ]
@@ -6007,3 +6015,10 @@ http/tests/loading/oauth.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/terminology-0/document-base-url-initiated-grand-parent.https.window.html [ DumpJSConsoleLogInStdErr ]
+
+# text-shadow
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/currentcolor.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multiple-zorder.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur.html [ ImageOnlyFailure ]
+

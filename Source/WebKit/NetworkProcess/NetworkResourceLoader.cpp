@@ -88,13 +88,13 @@ using namespace WebCore;
 struct NetworkResourceLoader::SynchronousLoadData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    SynchronousLoadData(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& reply)
+    SynchronousLoadData(CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
         : delayedReply(WTFMove(reply))
     {
         ASSERT(delayedReply);
     }
     ResourceRequest currentRequest;
-    Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply delayedReply;
+    CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)> delayedReply;
     ResourceResponse response;
     ResourceError error;
 };
@@ -110,11 +110,11 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
 
     data.response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(metrics));
 
-    data.delayedReply(data.error, data.response, responseBuffer);
+    data.delayedReply(data.error, data.response, WTFMove(responseBuffer));
     data.delayedReply = nullptr;
 }
 
-NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& synchronousReply)
+NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& synchronousReply)
     : m_parameters { WTFMove(parameters) }
     , m_connection { connection }
     , m_fileReferences(connection.resolveBlobReferences(m_parameters))

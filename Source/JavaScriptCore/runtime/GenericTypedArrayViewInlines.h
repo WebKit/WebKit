@@ -104,6 +104,24 @@ RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::tryCreate
 }
 
 template<typename Adaptor>
+RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::wrappedAs(Ref<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> length)
+{
+    ASSERT(length || buffer->isResizableOrGrowableShared());
+
+    // We do not check verifySubRangeLength for resizable buffer case since this function is only called from already created JS TypedArrays.
+    // It is possible that verifySubRangeLength fails when underlying ArrayBuffer is resized, but it is OK since it will be just recognized as OOB TypedArray.
+    if (!buffer->isResizableOrGrowableShared()) {
+        if (!ArrayBufferView::verifySubRangeLength(buffer.get(), byteOffset, length.value_or(0), sizeof(typename Adaptor::Type)))
+            return nullptr;
+    }
+
+    if (!verifyByteOffsetAlignment(byteOffset, sizeof(typename Adaptor::Type)))
+        return nullptr;
+
+    return adoptRef(*new GenericTypedArrayView(WTFMove(buffer), byteOffset, length));
+}
+
+template<typename Adaptor>
 Ref<GenericTypedArrayView<Adaptor>>
 GenericTypedArrayView<Adaptor>::createUninitialized(size_t length)
 {

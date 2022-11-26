@@ -56,6 +56,22 @@ MediaQueryList MediaQueryParser::parse(const String& string, const MediaQueryPar
     return parser.consumeMediaQueryList(range);
 }
 
+std::optional<MediaQuery> MediaQueryParser::parseCondition(CSSParserTokenRange range, const MediaQueryParserContext& context)
+{
+    range.consumeWhitespace();
+
+    if (range.atEnd())
+        return MediaQuery { { }, "all"_s };
+
+    MediaQueryParser parser { context };
+    
+    auto condition = parser.consumeCondition(range);
+    if (!condition)
+        return { };
+
+    return MediaQuery { { }, { }, condition };
+}
+
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range)
 {
     MediaQueryList list;

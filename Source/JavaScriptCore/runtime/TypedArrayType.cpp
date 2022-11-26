@@ -30,6 +30,12 @@
 
 namespace JSC {
 
+const uint8_t logElementSizes[] = {
+#define JSC_ELEMENT_SIZE(type) logElementSize(Type ## type),
+FOR_EACH_TYPED_ARRAY_TYPE(JSC_ELEMENT_SIZE)
+#undef JSC_ELEMENT_SIZE
+};
+
 const ClassInfo* constructorClassInfoForType(TypedArrayType type)
 {
     switch (type) {

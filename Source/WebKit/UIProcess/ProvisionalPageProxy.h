@@ -33,8 +33,9 @@
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
-#include "WebPageProxyMessagesReplies.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
@@ -57,6 +58,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class SuspendedPageProxy;
 class UserData;
+class WebBackForwardListItem;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
@@ -64,6 +66,7 @@ class WebsiteDataStore;
 struct FrameInfoData;
 struct NavigationActionData;
 struct URLSchemeTaskParameters;
+struct WebBackForwardListCounts;
 struct WebNavigationDataStore;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -141,7 +144,7 @@ private:
     void logDiagnosticMessageWithValueDictionaryFromWebProcess(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary&, WebCore::ShouldSample);
     void startURLSchemeTask(URLSchemeTaskParameters&&);
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
-    void decidePolicyForNavigationActionSync(WebCore::FrameIdentifier, bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, Messages::WebPageProxy::DecidePolicyForNavigationActionSyncDelayedReply&&);
+    void decidePolicyForNavigationActionSync(WebCore::FrameIdentifier, bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, CompletionHandler<void(PolicyDecision&&)>&&);
     void backForwardAddItem(BackForwardListItemState&&);
 #if USE(QUICK_LOOK)
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);

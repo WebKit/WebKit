@@ -181,25 +181,26 @@ private:
 
 class JSIPCStreamClientConnection : public RefCounted<JSIPCStreamClientConnection>, public CanMakeWeakPtr<JSIPCStreamClientConnection> {
 public:
-    static Ref<JSIPCStreamClientConnection> create(JSIPC& jsIPC, IPC::Connection& connection, size_t bufferSize)
+    static Ref<JSIPCStreamClientConnection> create(JSIPC& jsIPC, std::unique_ptr<IPC::StreamClientConnection> connection)
     {
-        return adoptRef(*new JSIPCStreamClientConnection(jsIPC, connection, bufferSize));
+        return adoptRef(*new JSIPCStreamClientConnection(jsIPC, WTFMove(connection)));
     }
 
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCStreamClientConnection* toWrapped(JSContextRef, JSValueRef);
 
-    IPC::StreamClientConnection& connection() { return m_streamConnection; }
+    IPC::StreamClientConnection& connection() { return *m_streamConnection; }
 
 private:
     friend class JSIPCStreamConnectionBuffer;
 
-    JSIPCStreamClientConnection(JSIPC& jsIPC, IPC::Connection& connection, size_t bufferSize)
+    JSIPCStreamClientConnection(JSIPC& jsIPC, std::unique_ptr<IPC::StreamClientConnection> connection)
         : m_jsIPC(jsIPC)
-        , m_streamConnection { connection, bufferSize }
-    { }
+        , m_streamConnection { WTFMove(connection) }
+    {
+    }
 
-    void setSemaphores(JSIPCSemaphore& jsWakeUpSemaphore, JSIPCSemaphore& jsClientWaitSemaphore) { m_streamConnection.setSemaphores(jsWakeUpSemaphore.exchange(), jsClientWaitSemaphore.exchange()); }
+    void setSemaphores(JSIPCSemaphore& jsWakeUpSemaphore, JSIPCSemaphore& jsClientWaitSemaphore) { m_streamConnection->setSemaphores(jsWakeUpSemaphore.exchange(), jsClientWaitSemaphore.exchange()); }
 
     static JSClassRef wrapperClass();
     static JSIPCStreamClientConnection* unwrap(JSObjectRef);
@@ -209,14 +210,50 @@ private:
     static bool prepareToSendOutOfStreamMessage(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSIPC&, IPC::StreamClientConnection&, IPC::Encoder&, uint64_t destinationID, IPC::Timeout, JSValueRef* exception);
 
     static const JSStaticFunction* staticFunctions();
+    static JSValueRef open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef invalidate(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef streamBuffer(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef setSemaphores(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendIPCStreamTesterSyncCrashOnZero(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     WeakPtr<JSIPC> m_jsIPC;
-    IPC::StreamClientConnection m_streamConnection;
+    std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
+
+    // Current tests expect that actions and their induced messages are waited on during same
+    // run loop invocation (in JS). This means that messages of interest do not ever enter here.
+    // Due to JSIPCStreamClientConnection supporting WeakPtr and IPC::MessageReceiver forcing WeakPtr, we store this as a member.
+    class MessageReceiver : public IPC::MessageReceiver {
+    public:
+        // IPC::MessageReceiver overrides.
+        void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
+        bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); return false; }
+    } m_dummyMessageReceiver;
+};
+
+class JSIPCStreamServerConnectionHandle : public RefCounted<JSIPCStreamServerConnectionHandle> {
+public:
+    static Ref<JSIPCStreamServerConnectionHandle> create(IPC::StreamServerConnection::Handle&& handle)
+    {
+        return adoptRef(*new JSIPCStreamServerConnectionHandle(WTFMove(handle)));
+    }
+    JSObjectRef createJSWrapper(JSContextRef);
+    static JSIPCStreamServerConnectionHandle* toWrapped(JSContextRef, JSValueRef);
+    void encode(IPC::Encoder& encoder) const { encoder << m_handle; }
+private:
+    JSIPCStreamServerConnectionHandle(IPC::StreamServerConnection::Handle&& handle)
+        : m_handle { WTFMove(handle) }
+    {
+    }
+    static JSClassRef wrapperClass();
+    static JSIPCStreamServerConnectionHandle* unwrap(JSObjectRef);
+    static void initialize(JSContextRef, JSObjectRef);
+    static void finalize(JSObjectRef);
+    static const JSStaticFunction* staticFunctions();
+
+    IPC::StreamServerConnection::Handle m_handle;
 };
 
 class JSIPCStreamConnectionBuffer : public RefCounted<JSIPCStreamConnectionBuffer> {
@@ -229,12 +266,13 @@ public:
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCStreamConnectionBuffer* toWrapped(JSContextRef, JSValueRef);
 
-    void encode(IPC::Encoder& encoder) const { m_streamConnection->connection().streamBuffer().encode(encoder); }
+    void encode(IPC::Encoder& encoder) const { m_streamConnection->connection().streamBuffer().createHandle().encode(encoder); }
 
 private:
     JSIPCStreamConnectionBuffer(JSIPCStreamClientConnection& streamConnection)
         : m_streamConnection(streamConnection)
-    { }
+    {
+    }
 
     static JSClassRef wrapperClass();
     static JSIPCStreamConnectionBuffer* unwrap(JSObjectRef);
@@ -866,14 +904,39 @@ void JSIPCStreamClientConnection::finalize(JSObjectRef object)
 const JSStaticFunction* JSIPCStreamClientConnection::staticFunctions()
 {
     static const JSStaticFunction functions[] = {
+        { "open", open, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "invalidate", invalidate, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "streamBuffer", streamBuffer, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "setSemaphores", setSemaphores, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendMessage", sendMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendSyncMessage", sendSyncMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendIPCStreamTesterSyncCrashOnZero", sendIPCStreamTesterSyncCrashOnZero, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "waitForMessage", waitForMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
     };
     return functions;
+}
+
+JSValueRef JSIPCStreamClientConnection::open(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
+{
+    RefPtr self = toWrapped(context, thisObject);
+    if (!self) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+    self->m_streamConnection->open(self->m_dummyMessageReceiver);
+    return JSValueMakeUndefined(context);
+}
+
+JSValueRef JSIPCStreamClientConnection::invalidate(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
+{
+    RefPtr self = toWrapped(context, thisObject);
+    if (!self) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+    self->m_streamConnection->invalidate();
+    return JSValueMakeUndefined(context);
 }
 
 JSValueRef JSIPCStreamClientConnection::streamBuffer(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1094,6 +1157,20 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
     return JSValueMakeNumber(context, resultValue);
 }
 
+JSValueRef JSIPCStreamClientConnection::waitForMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    RefPtr self = toWrapped(context, thisObject);
+    if (!self) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+    if (argumentCount < 2) {
+        *exception = createTypeError(context, "Must specify the destination ID and message ID as the first two arguments"_s);
+        return JSValueMakeUndefined(context);
+    }
+    return waitForMessageWithJSArguments(self->m_streamConnection->connectionForTesting(), context, argumentCount, arguments, exception);
+}
+
 JSObjectRef JSIPCStreamConnectionBuffer::createJSWrapper(JSContextRef context)
 {
     auto* globalObject = toJS(context);
@@ -1154,6 +1231,64 @@ const JSStaticFunction* JSIPCStreamConnectionBuffer::staticFunctions()
     };
     return functions;
 }
+
+JSObjectRef JSIPCStreamServerConnectionHandle::createJSWrapper(JSContextRef context)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSObjectRef wrapperObject = JSObjectMake(toGlobalRef(globalObject), wrapperClass(), this);
+    scope.clearException();
+    return wrapperObject;
+}
+
+JSClassRef JSIPCStreamServerConnectionHandle::wrapperClass()
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
+        definition.className = "StreamServerConnectionHandle";
+        definition.parentClass = nullptr;
+        definition.staticValues = nullptr;
+        definition.staticFunctions = staticFunctions();
+        definition.initialize = initialize;
+        definition.finalize = finalize;
+        jsClass = JSClassCreate(&definition);
+    }
+    return jsClass;
+}
+
+inline JSIPCStreamServerConnectionHandle* JSIPCStreamServerConnectionHandle::unwrap(JSObjectRef object)
+{
+    return static_cast<JSIPCStreamServerConnectionHandle*>(JSObjectGetPrivate(object));
+}
+
+JSIPCStreamServerConnectionHandle* JSIPCStreamServerConnectionHandle::toWrapped(JSContextRef context, JSValueRef value)
+{
+    if (!context || !value || !JSValueIsObjectOfClass(context, value, wrapperClass()))
+        return nullptr;
+    return unwrap(JSValueToObject(context, value, nullptr));
+}
+
+void JSIPCStreamServerConnectionHandle::initialize(JSContextRef, JSObjectRef object)
+{
+    unwrap(object)->ref();
+}
+
+void JSIPCStreamServerConnectionHandle::finalize(JSObjectRef object)
+{
+    unwrap(object)->deref();
+}
+
+const JSStaticFunction* JSIPCStreamServerConnectionHandle::staticFunctions()
+{
+    static const JSStaticFunction functions[] = {
+        { 0, 0, 0 }
+    };
+    return functions;
+}
+
 
 JSValueRef JSIPCSemaphore::signal(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -1418,7 +1553,7 @@ JSValueRef JSIPCStreamConnectionBuffer::readHeaderBytes(JSContextRef context, JS
         return JSValueMakeUndefined(context);
     }
 
-    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection.bufferForTesting();
+    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection->bufferForTesting();
     Span<uint8_t> span = buffer.headerForTesting();
 
     return readBytes(context, nullptr, thisObject, argumentCount, arguments, exception, span);
@@ -1437,7 +1572,7 @@ JSValueRef JSIPCStreamConnectionBuffer::readDataBytes(JSContextRef context, JSOb
         return JSValueMakeUndefined(context);
     }
 
-    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection.bufferForTesting();
+    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection->bufferForTesting();
     Span<uint8_t> span = buffer.dataForTesting();
 
     return readBytes(context, nullptr, thisObject, argumentCount, arguments, exception, span);
@@ -1499,7 +1634,7 @@ JSValueRef JSIPCStreamConnectionBuffer::writeHeaderBytes(JSContextRef context, J
         return JSValueMakeUndefined(context);
     }
 
-    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection.bufferForTesting();
+    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection->bufferForTesting();
     Span<uint8_t> span = buffer.headerForTesting();
 
     return writeBytes(context, nullptr, thisObject, argumentCount, arguments, exception, span);
@@ -1518,7 +1653,7 @@ JSValueRef JSIPCStreamConnectionBuffer::writeDataBytes(JSContextRef context, JSO
         return JSValueMakeUndefined(context);
     }
 
-    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection.bufferForTesting();
+    IPC::StreamConnectionBuffer& buffer = jsStreamBuffer->m_streamConnection->m_streamConnection->bufferForTesting();
     Span<uint8_t> span = buffer.dataForTesting();
 
     return writeBytes(context, nullptr, thisObject, argumentCount, arguments, exception, span);
@@ -1883,6 +2018,16 @@ static bool encodeStreamConnectionBuffer(IPC::Encoder& encoder, JSC::JSGlobalObj
     return true;
 }
 
+static bool encodeStreamServerConnectionHandle(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::CatchScope& scope)
+{
+    RefPtr JSIPCStreamServerConnectionHandle = JSIPCStreamServerConnectionHandle::toWrapped(toRef(globalObject), toRef(jsValue));
+    if (!JSIPCStreamServerConnectionHandle)
+        return false;
+
+    JSIPCStreamServerConnectionHandle->encode(encoder);
+    return true;
+}
+
 static bool encodeSemaphore(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::CatchScope& scope)
 {
     RefPtr jsIPCSemaphore = JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsValue));
@@ -2045,6 +2190,13 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
     if (type == "StreamConnectionBuffer"_s) {
         if (!encodeStreamConnectionBuffer(encoder, globalObject, jsValue, scope)) {
             *exception = createTypeError(context, "Failed to convert StreamConnectionBuffer"_s);
+            return false;
+        }
+        return true;
+    }
+    if (type == "StreamServerConnectionHandle"_s) {
+        if (!encodeStreamServerConnectionHandle(encoder, globalObject, jsValue, scope)) {
+            *exception = createTypeError(context, "Failed to convert StreamServerConnectionHandle"_s);
             return false;
         }
         return true;
@@ -2298,22 +2450,29 @@ JSValueRef JSIPC::createStreamClientConnection(JSContextRef context, JSObjectRef
         return JSValueMakeUndefined(context);
     }
 
-    if (argumentCount < 2) {
-        *exception = createTypeError(context, "Must specify the target process and buffer size as the first two arguments"_s);
+    if (argumentCount < 1) {
+        *exception = createTypeError(context, "Must specify the buffer size as the first argument"_s);
         return JSValueMakeUndefined(context);
     }
 
-    auto connection = processTargetFromArgument(globalObject, arguments[0], exception);
-    if (!connection)
-        return JSValueMakeUndefined(context);
-
-    auto bufferSize = argumentCount ? convertToUint64(toJS(globalObject, arguments[1])) : std::optional<uint64_t> { };
+    auto bufferSize = argumentCount ? convertToUint64(toJS(globalObject, arguments[0])) : std::optional<uint64_t> { };
     if (!bufferSize) {
         *exception = createTypeError(context, "Must specify the size"_s);
         return JSValueMakeUndefined(context);
     }
-
-    return JSIPCStreamClientConnection::create(*jsIPC, *connection, *bufferSize)->createJSWrapper(context);
+    auto connectionPair = IPC::StreamClientConnection::create(*bufferSize);
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSC::JSObject* connectionPairObject = JSC::constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+    int index = 0;
+    auto jsValue = toJS(globalObject, JSIPCStreamClientConnection::create(*jsIPC, WTFMove(connectionPair.streamConnection))->createJSWrapper(context));
+    connectionPairObject->putDirectIndex(globalObject, index++, jsValue);
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+    jsValue = toJS(globalObject, JSIPCStreamServerConnectionHandle::create(WTFMove(connectionPair.connectionHandle))->createJSWrapper(context));
+    connectionPairObject->putDirectIndex(globalObject, index++, jsValue);
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+    return toRef(vm, connectionPairObject);
 }
 
 JSValueRef JSIPC::createSemaphore(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

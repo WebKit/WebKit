@@ -81,7 +81,6 @@ public:
         OESVertexArrayObjectName,
         WebGLColorBufferFloatName,
         WebGLCompressedTextureASTCName,
-        WebGLCompressedTextureATCName,
         WebGLCompressedTextureETCName,
         WebGLCompressedTextureETC1Name,
         WebGLCompressedTexturePVRTCName,

@@ -124,6 +124,7 @@ struct( IDLAsyncIterable => {
     isKeyValue => '$',
     keyType => 'IDLType',
     valueType => 'IDLType',
+    operations => '@',
     arguments => '@', # List of 'IDLArgument'
     extendedAttributes => '%',
 });
@@ -2051,8 +2052,7 @@ sub parseAsyncIterable
         }
 
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-
-        die "'async iterable` interfaces are not currently supported by the code generators.";
+        $asyncIterable->extendedAttributes($extendedAttributeList);
 
         return $asyncIterable;
     }

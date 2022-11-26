@@ -57,8 +57,8 @@ TEST_P(KTXCompressedTextureTest, CompressedTexImageETC1)
     constexpr size_t kDecompressedBytesPerPixel = 4;
     std::vector<GLubyte> decompressedTextureData(
         kDecompressedPixelCount * kDecompressedBytesPerPixel, 0);
-    LoadETC1RGB8ToRGBA8(ktx_etc1_width, ktx_etc1_height, 1, ktx_etc1_data, ktx_etc1_width / 4 * 8,
-                        0, decompressedTextureData.data(),
+    LoadETC1RGB8ToRGBA8({}, ktx_etc1_width, ktx_etc1_height, 1, ktx_etc1_data,
+                        ktx_etc1_width / 4 * 8, 0, decompressedTextureData.data(),
                         kDecompressedBytesPerPixel * ktx_etc1_width, 0);
 
     constexpr size_t kComparePixelX = ktx_etc1_width / 2;

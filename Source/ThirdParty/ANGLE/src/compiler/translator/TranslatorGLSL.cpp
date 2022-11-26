@@ -301,6 +301,12 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
                  << "\n";
         }
 
+        if (getOutputType() != SH_ESSL_OUTPUT && iter.first == TExtension::EXT_clip_cull_distance &&
+            getOutputType() < SH_GLSL_450_CORE_OUTPUT)
+        {
+            sink << "#extension GL_ARB_cull_distance : " << GetBehaviorString(iter.second) << "\n";
+        }
+
         if ((iter.first == TExtension::OES_texture_cube_map_array ||
              iter.first == TExtension::EXT_texture_cube_map_array) &&
             (iter.second == EBhRequire || iter.second == EBhEnable))

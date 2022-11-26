@@ -92,7 +92,7 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(JSGlobalObject* globalObject, ViewCl
 // Note, that this function throws.
 // https://tc39.es/ecma262/#typedarray-species-create
 template<typename ViewClass, typename Functor, typename SlowPathArgsConstructor>
-inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewClass* exemplar, const Functor& defaultConstructor, const SlowPathArgsConstructor& constructArgs)
+inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewClass* exemplar, const Functor& defaultConstructor, const SlowPathArgsConstructor& constructArgs, std::optional<size_t> length)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -149,6 +149,23 @@ inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewCla
 
         validateTypedArray(globalObject, view);
         RETURN_IF_EXCEPTION(scope, nullptr);
+
+        // https://tc39.es/ecma262/#typedarray-create
+        // 3. If argumentList is a List of a single Number, then
+        // a. If newTypedArray.[[ArrayLength]] < R(argumentList[0]), throw a TypeError exception.
+        if (length) {
+            if (UNLIKELY(view->length() < length.value())) {
+                throwTypeError(globalObject, scope, "TypedArray.prototype.slice constructed typed array of insufficient length"_s);
+                return nullptr;
+            }
+        }
+
+        // https://tc39.es/ecma262/#typedarray-species-create
+        // If result.[[ContentType]] ≠ exemplar.[[ContentType]], throw a TypeError exception.
+        if (UNLIKELY(contentType(view->type()) != ViewClass::contentType)) {
+            throwTypeError(globalObject, scope, "Content types of source and created typed arrays are different"_s);
+            return nullptr;
+        }
 
         return view;
     }
@@ -838,13 +855,8 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
     }, [&](MarkedArgumentBuffer& args) {
         args.append(jsNumber(length));
         ASSERT(!args.hasOverflowed());
-    });
+    }, length);
     RETURN_IF_EXCEPTION(scope, { });
-
-    // https://tc39.es/ecma262/#typedarray-species-create
-    // If result.[[ContentType]] ≠ exemplar.[[ContentType]], throw a TypeError exception.
-    if (contentType(result->type()) != ViewClass::contentType)
-        return throwVMTypeError(globalObject, scope, "Content types of source and created typed arrays are different"_s);
 
     // We return early here since we don't allocate a backing store if length is 0 and memmove does not like nullptrs
     if (!length)
@@ -858,18 +870,14 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
         end = std::min(updatedLength.value(), end);
     }
 
-    // Clamp end to begin, again.
-    end = std::max(begin, end);
-    ASSERT(end >= begin);
-    length = end - begin;
-
-    // The species constructor may return an array with any arbitrary length.
-    if (result->length() < length)
-        return throwVMTypeError(globalObject, scope, "TypedArray.prototype.slice constructed typed array of insufficient length"_s);
-
-    // If length is zero, begin and end can point at random places (because of resize). We should avoid calling `set`, and return early here.
-    if (!length)
+    // It is possible that |begin| becomes larger than |end| at this point. In this case, we do nothing.
+    if (begin >= end)
         return JSValue::encode(result);
+
+    ASSERT(end > begin);
+    // This length is always smaller than the previous length.
+    length = end - begin;
+    ASSERT(result->length() >= length);
 
     switch (result->type()) {
     case Int8ArrayType:
@@ -981,7 +989,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
         if (count)
             args.append(jsNumber(count.value()));
         ASSERT(!args.hasOverflowed());
-    }));
+    }, std::nullopt));
 }
 
 template<typename ViewClass>

@@ -9798,6 +9798,52 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests a specific case for multiview and queries.
+TEST_P(SimpleStateChangeTestES3, MultiviewAndQueries)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OVR_multiview"));
+
+    ANGLE_GL_PROGRAM(prog, essl1_shaders::vs::Zero(), essl1_shaders::fs::Red());
+    glUseProgram(prog);
+
+    const int PRE_QUERY_CNT = 63;
+
+    GLQuery qry;
+    GLTexture tex;
+    GLFramebuffer fb;
+    GLFramebuffer fb2;
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, qry);
+    for (int i = 0; i < PRE_QUERY_CNT; i++)
+    {
+        glDrawArrays(GL_POINTS, 0, 1);
+
+        GLColor color;
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &color);
+    }
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, tex);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, 2, 2, 2);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 0, 2);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb2);
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, qry);
+}
+
+// Tests a bug related to an ordering of certain commands.
+TEST_P(SimpleStateChangeTestES3, ClearQuerySwapClear)
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    {
+        GLQuery query;
+        glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+        glEndQuery(GL_ANY_SAMPLES_PASSED);
+    }
+    swapBuffers();
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2(StateChangeTest);

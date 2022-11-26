@@ -32,6 +32,7 @@
 #include "GamepadLibWPE.h"
 #include "GamepadProviderClient.h"
 #include "Logging.h"
+#include <inttypes.h>
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -117,12 +118,12 @@ void GamepadProviderLibWPE::stopMonitoringGamepads(GamepadProviderClient& client
     m_lastActiveGamepad = nullptr;
 }
 
-void GamepadProviderLibWPE::gamepadConnected(unsigned id)
+void GamepadProviderLibWPE::gamepadConnected(uintptr_t id)
 {
     ASSERT(!m_gamepadMap.get(id));
     ASSERT(m_provider);
 
-    LOG(Gamepad, "GamepadProviderLibWPE device %u added", id);
+    LOG(Gamepad, "GamepadProviderLibWPE device %" PRIuPTR " added", id);
 
     unsigned index = indexForNewlyConnectedDevice();
     auto gamepad = makeUnique<GamepadLibWPE>(m_provider.get(), id, index);
@@ -148,9 +149,9 @@ void GamepadProviderLibWPE::gamepadConnected(unsigned id)
         client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
 }
 
-void GamepadProviderLibWPE::gamepadDisconnected(unsigned id)
+void GamepadProviderLibWPE::gamepadDisconnected(uintptr_t id)
 {
-    LOG(Gamepad, "GamepadProviderLibWPE device %u removed", id);
+    LOG(Gamepad, "GamepadProviderLibWPE device %" PRIuPTR " removed", id);
 
     auto removedGamepad = removeGamepadForId(id);
     ASSERT(removedGamepad);
@@ -171,7 +172,7 @@ unsigned GamepadProviderLibWPE::indexForNewlyConnectedDevice()
     return index;
 }
 
-std::unique_ptr<GamepadLibWPE> GamepadProviderLibWPE::removeGamepadForId(unsigned id)
+std::unique_ptr<GamepadLibWPE> GamepadProviderLibWPE::removeGamepadForId(uintptr_t id)
 {
     auto removedGamepad = m_gamepadMap.take(id);
     ASSERT(removedGamepad);

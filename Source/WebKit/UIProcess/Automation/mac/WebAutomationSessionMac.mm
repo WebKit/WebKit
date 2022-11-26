@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "WebAutomationSessionMacros.h"
+#import "WebEventFactory.h"
 #import "WebInspectorUIProxy.h"
 #import "WebPageProxy.h"
 #import "WKWebViewPrivate.h"
@@ -253,20 +254,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 
 OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
 {
-    OptionSet<WebEventModifier> webModifiers;
-
-    if (modifiers & NSEventModifierFlagCommand)
-        webModifiers.add(WebEventModifier::MetaKey);
-    if (modifiers & NSEventModifierFlagOption)
-        webModifiers.add(WebEventModifier::AltKey);
-    if (modifiers & NSEventModifierFlagControl)
-        webModifiers.add(WebEventModifier::ControlKey);
-    if (modifiers & NSEventModifierFlagShift)
-        webModifiers.add(WebEventModifier::ShiftKey);
-    if (modifiers & NSEventModifierFlagCapsLock)
-        webModifiers.add(WebEventModifier::CapsLockKey);
-
-    return webModifiers;
+    return WebEventFactory::webEventModifiersForNSEventModifierFlags(modifiers);
 }
 
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)

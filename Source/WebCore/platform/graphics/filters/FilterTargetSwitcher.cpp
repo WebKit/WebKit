@@ -27,78 +27,34 @@
 #include "FilterTargetSwitcher.h"
 
 #include "Filter.h"
-#include "FilterResults.h"
+#include "FilterImageTargetSwitcher.h"
 #include "GraphicsContext.h"
-#include "ImageBuffer.h"
 
 namespace WebCore {
 
-FilterTargetSwitcher::FilterTargetSwitcher(Client& client, const DestinationColorSpace& colorSpace, const std::function<FloatRect()>& boundsProvider)
-    : m_client(client)
+std::unique_ptr<FilterTargetSwitcher> FilterTargetSwitcher::create(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
 {
-    auto* context = m_client.drawingContext();
-    if (!context)
-        return;
+    return makeUnique<FilterImageTargetSwitcher>(destinationContext, filter, sourceImageRect, colorSpace, results);
+}
 
-    m_filter = m_client.createFilter([&]() {
-        m_bounds = boundsProvider();
-        return m_bounds;
-    });
+FilterTargetSwitcher::FilterTargetSwitcher(Filter& filter)
+    : m_filter(&filter)
+{
+}
 
-    if (!m_filter)
-        return;
-
-    ASSERT(!m_bounds.isEmpty());
-
-    m_imageBuffer = context->createScaledImageBuffer(m_bounds, { 1, 1 }, colorSpace);
-    if (!m_imageBuffer) {
-        m_filter = nullptr;
-        return;
+void FilterTargetSwitcher::willDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect)
+{
+    if (auto* context = drawingContext(destinationContext)) {
+        context->save();
+        context->clearRect(repaintRect);
+        context->clip(repaintRect);
     }
-
-    auto state = context->state();
-    m_imageBuffer->context().mergeAllChanges(state);
-    m_client.setTargetSwitcher(this);
 }
 
-FilterTargetSwitcher::FilterTargetSwitcher(Client& client, const DestinationColorSpace& colorSpace, const FloatRect& bounds)
-    : FilterTargetSwitcher(client, colorSpace, [&]() {
-        return bounds;
-    })
+void FilterTargetSwitcher::didDrawSourceImage(GraphicsContext& destinationContext)
 {
-}
-
-FilterTargetSwitcher::~FilterTargetSwitcher()
-{
-    if (!m_filter)
-        return;
-
-    ASSERT(m_imageBuffer);
-    ASSERT(!m_bounds.isEmpty());
-
-    m_client.setTargetSwitcher(nullptr);
-
-    auto* context = m_client.drawingContext();
-    FilterResults results;
-    context->drawFilteredImageBuffer(m_imageBuffer.get(), m_bounds, *m_filter, results);
-}
-
-GraphicsContext* FilterTargetSwitcher::drawingContext() const
-{
-    if (m_imageBuffer)
-        return &m_imageBuffer->context();
-    return m_client.drawingContext();
-}
-
-FloatBoxExtent FilterTargetSwitcher::outsets() const
-{
-    if (!m_filter)
-        return { };
-
-    ASSERT(!m_bounds.isEmpty());
-
-    auto outsets = m_client.calculateFilterOutsets(m_bounds);
-    return { outsets.top(), outsets.right(), outsets.bottom(), outsets.left() };
+    if (auto* context = drawingContext(destinationContext))
+        context->restore();
 }
 
 } // namespace WebCore

@@ -215,7 +215,6 @@ public:
         instance->finishCreation(vm);
         return instance;
     }
-
 private:
     TestIterableIterator(JSC::Structure* structure, JSTestIterable& iteratedObject, IterationKind kind)
         : Base(structure, iteratedObject, kind)
@@ -227,7 +226,7 @@ using TestIterableIteratorPrototype = JSDOMIteratorPrototype<JSTestIterable, Tes
 JSC_ANNOTATE_HOST_FUNCTION(TestIterableIteratorPrototypeNext, TestIterableIteratorPrototype::next);
 
 template<>
-const JSC::ClassInfo TestIterableIteratorBase::s_info = { "TestIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIteratorBase) };
+const JSC::ClassInfo TestIterableIteratorBase::s_info = { "TestIterableBase Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIteratorBase) };
 const JSC::ClassInfo TestIterableIterator::s_info = { "TestIterable Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIterator) };
 
 template<>

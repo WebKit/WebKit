@@ -10,6 +10,7 @@
 
 #include "trace_egl_loader_autogen.h"
 
+extern "C" {
 ANGLE_TRACE_LOADER_EXPORT PFNEGLCHOOSECONFIGPROC t_eglChooseConfig;
 ANGLE_TRACE_LOADER_EXPORT PFNEGLCOPYBUFFERSPROC t_eglCopyBuffers;
 ANGLE_TRACE_LOADER_EXPORT PFNEGLCREATECONTEXTPROC t_eglCreateContext;
@@ -130,9 +131,7 @@ ANGLE_TRACE_LOADER_EXPORT PFNEGLPOSTSUBBUFFERNVPROC t_eglPostSubBufferNV;
 ANGLE_TRACE_LOADER_EXPORT PFNEGLSTREAMCONSUMERGLTEXTUREEXTERNALATTRIBSNVPROC
     t_eglStreamConsumerGLTextureExternalAttribsNV;
 
-namespace trace_angle
-{
-void LoadEGL(LoadProc loadProc)
+void LoadTraceEGL(LoadProc loadProc)
 {
     t_eglChooseConfig  = reinterpret_cast<PFNEGLCHOOSECONFIGPROC>(loadProc("eglChooseConfig"));
     t_eglCopyBuffers   = reinterpret_cast<PFNEGLCOPYBUFFERSPROC>(loadProc("eglCopyBuffers"));
@@ -321,4 +320,4 @@ void LoadEGL(LoadProc loadProc)
         reinterpret_cast<PFNEGLSTREAMCONSUMERGLTEXTUREEXTERNALATTRIBSNVPROC>(
             loadProc("eglStreamConsumerGLTextureExternalAttribsNV"));
 }
-}  // namespace trace_angle
+}  // extern "C"

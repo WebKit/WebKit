@@ -549,6 +549,7 @@ void INTERNAL_GL_APIENTRY glFlushMappedBufferRangeNULL(GLenum target,
 void INTERNAL_GL_APIENTRY glFlushMappedNamedBufferRangeNULL(GLuint buffer,
                                                             GLintptr offset,
                                                             GLsizeiptr length);
+void INTERNAL_GL_APIENTRY glFramebufferFetchBarrierEXTNULL();
 void INTERNAL_GL_APIENTRY glFramebufferParameteriNULL(GLenum target, GLenum pname, GLint param);
 void INTERNAL_GL_APIENTRY glFramebufferRenderbufferNULL(GLenum target,
                                                         GLenum attachment,

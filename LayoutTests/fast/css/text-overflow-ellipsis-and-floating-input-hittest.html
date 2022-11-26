@@ -26,7 +26,7 @@ function test() {
     shouldBe("document.elementFromPoint(inputRight - 10, inputTop).id", "'left-floating-input'");
     shouldBe("document.elementFromPoint(inputRight + 10, inputTop).id", "'container-rtl'");
 
-    inputBox = document.getElementById('vertial-left-floating-input');
+    inputBox = document.getElementById('vertical-left-floating-input');
     inputRight = offset(inputBox).left + inputBox.offsetWidth;;
     inputTop = offset(inputBox).top;
     shouldBe("document.elementFromPoint(inputRight - 10, inputTop).id", "'container-vertical-rl'");
@@ -44,9 +44,11 @@ function test() {
     border: solid 1px red;
     padding: 10px;
   }
-  
+
+  input { writing-mode: horizontal-tb; }
+
   #container-vertical-rl {
-    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
     height: 150px;
   }
 </style>
@@ -56,7 +58,7 @@ function test() {
   </div>
   <div dir='rtl' id='container-rtl'><input id='left-floating-input' style='float: left' type='text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   </div>
-  <div id='container-vertical-rl'><input id='vertial-left-floating-input' style='float: right' type='text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  <div id='container-vertical-rl'><input id='vertical-left-floating-input' style='float: right' type='text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   </div>
   <br>
   <div>Hittest for the vertical mode needs updating after fixing this: <a href='https://bugs.webkit.org/show_bug.cgi?id=116413'>Text does not get truncated properly in vertical writing mode when overflow:hidden and text-overflow:ellipsis are set</a></div>

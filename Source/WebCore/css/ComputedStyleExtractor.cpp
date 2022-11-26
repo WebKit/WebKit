@@ -275,7 +275,7 @@ static inline Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
     quad->setBottom(WTFMove(bottom));
     quad->setLeft(WTFMove(left));
 
-    return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), image.fill());
+    return CSSBorderImageSliceValue::create(WTFMove(quad), image.fill());
 }
 
 static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box, const RenderStyle& style)
@@ -2804,7 +2804,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledElement)
         return nullptr;
 
-    if (!isExposed(propertyID, &m_element->document().settings())) {
+    if (!isExposed(propertyID, m_element->document().settings())) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
@@ -2854,7 +2854,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
 
-    ASSERT(isExposed(propertyID, &m_element->document().settings()));
+    ASSERT(isExposed(propertyID, m_element->document().settings()));
 
     switch (propertyID) {
     case CSSPropertyInvalid:
@@ -3609,8 +3609,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return willChangePropertyValue(style.willChange());
     case CSSPropertyWordBreak:
         return cssValuePool.createValue(style.wordBreak());
-    case CSSPropertyWordSpacing:
-        return zoomAdjustedPixelValue(style.fontCascade().wordSpacing(), style);
+    case CSSPropertyWordSpacing: {
+        auto& wordSpacingLength = style.wordSpacing();
+        if (wordSpacingLength.isFixed() || wordSpacingLength.isAuto())
+            return zoomAdjustedPixelValue(style.fontCascade().wordSpacing(), style);
+        return cssValuePool.createValue(wordSpacingLength, style);
+    }
     case CSSPropertyLineBreak:
         return cssValuePool.createValue(style.lineBreak());
     case CSSPropertyWebkitNbspMode:

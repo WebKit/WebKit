@@ -78,6 +78,8 @@ struct GCGLOwned {
 
     operator PlatformGLObject() const { return m_object; }
 
+    PlatformGLObject leakObject() { return std::exchange(m_object, 0); }
+
 protected:
     PlatformGLObject m_object = 0;
 };

@@ -196,9 +196,15 @@ NSString *serializeJSObject(JSContextRef, JSValueRef, JSValueRef* exception);
 
 #ifdef __OBJC__
 
-@interface JSValue (ThenableExtras)
+@interface JSValue (WebKitExtras)
+- (NSString *)_toJSONString;
+- (NSString *)_toSortedJSONString;
+
+@property (nonatomic, readonly, getter=_isFunction) BOOL _function;
+@property (nonatomic, readonly, getter=_isRegularExpression) BOOL _regularExpression;
 @property (nonatomic, readonly, getter=_isThenable) BOOL _thenable;
-- (void)_awaitThenableResolutionWithCompletionHandler:(void (^)(id result, id error))completionHandler;
+
+- (void)_awaitThenableResolutionWithCompletionHandler:(void (^)(JSValue *result, JSValue *error))completionHandler;
 @end
 
 #endif // __OBJC__

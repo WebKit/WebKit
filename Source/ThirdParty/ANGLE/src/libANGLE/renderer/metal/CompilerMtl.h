@@ -18,13 +18,10 @@ namespace rx
 class CompilerMtl : public CompilerImpl
 {
   public:
-    CompilerMtl(ShShaderOutput translatorOutputType);
+    CompilerMtl();
     ~CompilerMtl() override;
 
     ShShaderOutput getTranslatorOutputType() const override;
-
-  private:
-    ShShaderOutput mTranslatorOutputType;
 };
 
 }  // namespace rx

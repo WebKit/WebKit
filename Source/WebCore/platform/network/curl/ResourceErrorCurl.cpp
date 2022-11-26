@@ -39,13 +39,6 @@ ResourceError ResourceError::httpError(int errorCode, const URL& failingURL, Typ
     return ResourceError(curlErrorDomain, errorCode, failingURL, CurlHandle::errorDescription(static_cast<CURLcode>(errorCode)), type);
 }
 
-ResourceError ResourceError::sslError(int errorCode, unsigned sslErrors, const URL& failingURL)
-{
-    ResourceError resourceError = ResourceError::httpError(errorCode, failingURL);
-    resourceError.setSslErrors(sslErrors);
-    return resourceError;
-}
-
 bool ResourceError::isSSLConnectError() const
 {
     return errorCode() == CURLE_SSL_CONNECT_ERROR;
@@ -56,14 +49,13 @@ bool ResourceError::isSSLCertVerificationError() const
     return errorCode() == CURLE_PEER_FAILED_VERIFICATION;
 }
 
-void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)
+void ResourceError::doPlatformIsolatedCopy(const ResourceError&)
 {
-    m_sslErrors = other.m_sslErrors;
 }
 
-bool ResourceError::platformCompare(const ResourceError& a, const ResourceError& b)
+bool ResourceError::platformCompare(const ResourceError&, const ResourceError&)
 {
-    return a.sslErrors() == b.sslErrors();
+    return true;
 }
 
 } // namespace WebCore

@@ -1153,7 +1153,7 @@ private:
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 
-    void updateFiltersAfterStyleChange();
+    void updateFiltersAfterStyleChange(StyleDifference, const RenderStyle* oldStyle);
     void updateFilterPaintingStrategy();
 
 #if ENABLE(CSS_COMPOSITING)

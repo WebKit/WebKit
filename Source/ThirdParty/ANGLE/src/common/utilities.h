@@ -11,6 +11,7 @@
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
+#include <GLSLANG/ShaderLang.h>
 
 #include <math.h>
 #include <string>
@@ -25,6 +26,12 @@
 namespace sh
 {
 struct ShaderVariable;
+}
+
+constexpr bool ShPixelLocalStorageTypeUsesImages(ShPixelLocalStorageType type)
+{
+    return type == ShPixelLocalStorageType::ImageStoreR32PackedFormats ||
+           type == ShPixelLocalStorageType::ImageStoreNativeFormats;
 }
 
 namespace gl

@@ -127,11 +127,6 @@ CurlContext::CurlContext()
     if (logFile)
         m_logFile = fopen(logFile, "a");
 #endif
-
-#if ENABLE(TLS_DEBUG)
-    if (auto filePath = envVar.read("SSLKEYLOGFILE"))
-        m_tlsKeyLogFilePath = filePath;
-#endif
 }
 
 CurlContext::~CurlContext()
@@ -379,14 +374,6 @@ CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
 CURLcode CurlHandle::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData)
 {
     return static_cast<CurlHandle*>(userData)->willSetupSslCtx(sslCtx);
-}
-
-int CurlHandle::sslErrors() const
-{
-    if (auto verifyResult = getSSLVerifyResult(); verifyResult && *verifyResult != X509_V_OK)
-        return static_cast<int>(CurlSSLVerifier::convertToSSLCertificateFlags(*verifyResult));
-
-    return 0;
 }
 
 CURLcode CurlHandle::perform()

@@ -356,8 +356,11 @@ struct _WebKitWebViewClass {
     gboolean   (* run_color_chooser)           (WebKitWebView               *web_view,
                                                 WebKitColorChooserRequest   *request);
     gboolean   (* show_option_menu)            (WebKitWebView               *web_view,
-                                                GdkRectangle                *rectangle,
-                                                WebKitOptionMenu            *menu);
+                                                WebKitOptionMenu            *menu,
+#if !USE(GTK4)
+                                                GdkEvent                    *event,
+#endif
+                                                GdkRectangle                *rectangle);
 #endif
 
     void       (* web_process_terminated)      (WebKitWebView               *web_view,

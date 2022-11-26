@@ -114,6 +114,8 @@ generators = {
         'scripts/gen_gl_enum_utils.py',
     'GL format map':
         'src/libANGLE/gen_format_map.py',
+    'interpreter utils':
+        'scripts/gen_interpreter_utils.py',
     'Metal format table':
         'src/libANGLE/renderer/metal/gen_mtl_format_table.py',
     'Metal default shaders':

@@ -422,7 +422,6 @@ public:
         instance->finishCreation(vm);
         return instance;
     }
-
 private:
     TestNodeIterator(JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind)
         : Base(structure, iteratedObject, kind)
@@ -434,7 +433,7 @@ using TestNodeIteratorPrototype = JSDOMIteratorPrototype<JSTestNode, TestNodeIte
 JSC_ANNOTATE_HOST_FUNCTION(TestNodeIteratorPrototypeNext, TestNodeIteratorPrototype::next);
 
 template<>
-const JSC::ClassInfo TestNodeIteratorBase::s_info = { "TestNode Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIteratorBase) };
+const JSC::ClassInfo TestNodeIteratorBase::s_info = { "TestNodeBase Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIteratorBase) };
 const JSC::ClassInfo TestNodeIterator::s_info = { "TestNode Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIterator) };
 
 template<>

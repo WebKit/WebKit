@@ -35,16 +35,18 @@ namespace Layout {
 class InlineTextBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
 public:
-    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, bool canUseSimpleFontCodePath, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, bool isCombined, bool canUseSimpleFontCodePath, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
     const String& content() const { return m_content; }
+    bool isCombined() const { return m_isCombined; }
     // FIXME: This should not be a box's property.
     bool canUseSimplifiedContentMeasuring() const { return m_canUseSimplifiedContentMeasuring; }
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
 
 private:
     String m_content;
+    bool m_isCombined { false };
     bool m_canUseSimplifiedContentMeasuring { false };
     bool m_canUseSimpleFontCodePath { true };
 };

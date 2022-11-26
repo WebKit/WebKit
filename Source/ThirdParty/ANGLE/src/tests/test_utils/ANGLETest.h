@@ -669,11 +669,13 @@ class ANGLETestEnvironment : public testing::Environment
 
   private:
     static angle::Library *GetAngleEGLLibrary();
+    static angle::Library *GetMesaEGLLibrary();
     static angle::Library *GetSystemEGLLibrary();
     static angle::Library *GetSystemWGLLibrary();
 
     // For loading entry points.
     static std::unique_ptr<angle::Library> gAngleEGLLibrary;
+    static std::unique_ptr<angle::Library> gMesaEGLLibrary;
     static std::unique_ptr<angle::Library> gSystemEGLLibrary;
     static std::unique_ptr<angle::Library> gSystemWGLLibrary;
 };

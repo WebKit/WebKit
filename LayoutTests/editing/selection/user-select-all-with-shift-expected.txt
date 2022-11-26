@@ -102,7 +102,7 @@ After shift clicking on the first element (windows):
 | <div>
 |   class="select-all"
 |   id="second"
-|   "Second<#selection-anchor> element"
+|   "Second element<#selection-anchor>"
 | "\n"
 
 After clicking on the first element (unix):
@@ -154,5 +154,5 @@ After shift clicking on the first element (unix):
 | <div>
 |   class="select-all"
 |   id="second"
-|   "Second<#selection-anchor> element"
+|   "Second element<#selection-anchor>"
 | "\n"

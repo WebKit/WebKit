@@ -50,15 +50,7 @@ struct MockTestMessageWithAsyncReply1 {
     // If WebPage_GetBytecodeProfileReply is removed, just use another one.
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
     std::tuple<> arguments() { return { }; }
-    static void callReply(IPC::Decoder& decoder, CompletionHandler<void(uint64_t)>&& completionHandler)
-    {
-        auto value = decoder.decode<uint64_t>();
-        completionHandler(*value);
-    }
-    static void cancelReply(CompletionHandler<void(uint64_t)>&& completionHandler)
-    {
-        completionHandler(0);
-    }
+    using ReplyArguments = std::tuple<uint64_t>;
 };
 
 class MockConnectionClient final : public IPC::Connection::Client {

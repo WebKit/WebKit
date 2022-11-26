@@ -43,7 +43,7 @@ FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect, co
 {
 }
 
-FloatRect FEImage::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+FloatRect FEImage::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     if (m_sourceImage.nativeImageIfExists()) {
         auto imageRect = primitiveSubregion;

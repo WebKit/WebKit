@@ -39,10 +39,6 @@
 
 #define DELEGATE_REF_COUNTING_TO_COCOA PLATFORM(COCOA)
 
-#if DELEGATE_REF_COUNTING_TO_COCOA
-OBJC_CLASS NSObject;
-#endif
-
 namespace API {
 
 class Object
@@ -231,14 +227,14 @@ public:
 #if DELEGATE_REF_COUNTING_TO_COCOA
 #ifdef __OBJC__
     template<typename T, typename... Args>
-    static void constructInWrapper(NSObject <WKObject> *wrapper, Args&&... args)
+    static void constructInWrapper(id <WKObject> wrapper, Args&&... args)
     {
         Object* object = new (&wrapper._apiObject) T(std::forward<Args>(args)...);
-        object->m_wrapper = wrapper;
+        object->m_wrapper = (__bridge CFTypeRef)wrapper;
     }
-#endif
 
-    NSObject *wrapper() const { return m_wrapper; }
+    id <WKObject> wrapper() const { return (__bridge id <WKObject>)m_wrapper; }
+#endif
 
     void ref() const;
     void deref() const;
@@ -261,7 +257,7 @@ private:
     // Derived classes must override operator new and call newObject().
     void* operator new(size_t) = delete;
 
-    NSObject *m_wrapper;
+    CFTypeRef m_wrapper;
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
 };
 

@@ -14,7 +14,7 @@
 # For more info see Chromium's mixins.pyl in testing/buildbot.
 
 { 'android_r': {'swarming': {'dimensions': {'device_os': 'R'}}},
-  'android_t': {'swarming': {'dimensions': {'device_os': 'T'}}},
+  'android_t': {'swarming': {'dimensions': {'device_os': 'TP1A.220624.021'}}},
   'angle_skia_gold_test': { '$mixin_append': { 'args': [ '--git-revision=${got_angle_revision}'],
                                                'precommit_args': [ '--gerrit-issue=${patch_issue}',
                                                                    '--gerrit-patchset=${patch_set}',
@@ -58,6 +58,7 @@
   'oriole': { 'swarming': { 'dimensions': { 'device_type': 'oriole',
                                             'os': 'Android'}}},
   'swarming_containment_auto': {'swarming': {'containment_type': 'AUTO'}},
+  'timeout_120m': {'swarming': {'hard_timeout': 7200, 'io_timeout': 300}},
   'timeout_15m': {'swarming': {'hard_timeout': 900, 'io_timeout': 900}},
   'win10_gce_gpu_pool': { 'swarming': { 'dimensions': { 'cpu': 'x86-64',
                                                         'gpu': 'none',

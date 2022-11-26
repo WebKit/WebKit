@@ -8,10 +8,15 @@ import("../../gni/angle.gni")
 import("angle_unittests.gni")
 
 declare_args() {
-  build_angle_gles1_conform_tests = false
+  build_angle_gles1_conform_tests = checkout_angle_internal
   build_angle_trace_perf_tests = false
   build_angle_perftests =
       is_win || is_linux || is_chromeos || is_android || is_apple || is_fuchsia
+}
+
+declare_args() {
+  build_angle_trace_tests = is_clang && (build_angle_trace_perf_tests ||
+                                         checkout_angle_restricted_traces)
 }
 
 if (is_android) {
@@ -233,6 +238,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
     sources = angle_end2end_tests_sources + [ "angle_end2end_tests_main.cpp" ]
     libs = []
 
+    if (is_ios) {
+      sources += angle_end2end_tests_ios_sources
+      frameworks = [ "IOSurface.framework" ]
+    }
     if (is_mac) {
       sources += angle_end2end_tests_mac_sources
       frameworks = [
@@ -285,6 +294,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
       "$angle_root:libGLESv1_CM",
       "$angle_root:libGLESv2",
     ]
+
+    if (angle_build_mesa) {
+      data_deps += [ "$angle_root/third_party/mesa" ]
+    }
 
     if (angle_enable_vulkan) {
       sources += [
@@ -458,38 +471,6 @@ config("angle_enable_renderdoc") {
 if (build_angle_perftests) {
   import("angle_perftests.gni")
 
-  config("angle_trace_perftests_config") {
-    if (build_angle_trace_perf_tests) {
-      defines = [ "ANGLE_TRACE_PERF_TESTS" ]
-    }
-  }
-
-  angle_source_set("angle_trace_perftests") {
-    testonly = true
-
-    if (build_angle_trace_perf_tests) {
-      # http://anglebug.com/6009: Traces with long shaders are hitting string literal
-      # limit in MSVC, so only compile them when using clang
-      assert(is_clang, "build_angle_trace_perf_tests requires is_clang")
-
-      if (is_ios) {
-        # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
-        check_includes = false
-      }
-      sources = [ "perf_tests/TracePerfTest.cpp" ]
-      deps = [
-        ":angle_perftests_shared",
-        "$angle_root:angle_compression",
-        "$angle_root/util:angle_frame_capture_test_utils",
-        "$angle_root/util:angle_png_utils",
-        "restricted_traces:angle_restricted_traces",
-      ]
-      public_configs = [ ":angle_trace_perftests_config" ]
-      suppressed_configs +=
-          [ "$angle_root:constructor_and_destructor_warnings" ]
-    }
-  }
-
   # This test suite is designed to run against a generic GL implementation.
   angle_test("angle_perftests") {
     include_dirs = [ "." ]
@@ -497,7 +478,6 @@ if (build_angle_perftests) {
 
     deps = [
       ":angle_perftests_shared",
-      ":angle_trace_perftests",
       "$angle_spirv_tools_dir:spvtools_val",
     ]
 
@@ -513,6 +493,10 @@ if (build_angle_perftests) {
       "//testing:run_perf_test",
     ]
 
+    if (angle_build_mesa) {
+      data_deps += [ "$angle_root/third_party/mesa" ]
+    }
+
     if (is_win || is_linux || is_chromeos) {
       data_deps += [ "${angle_root}/third_party/glmark2:glmark2_angle" ]
     }
@@ -522,11 +506,65 @@ if (build_angle_perftests) {
     if (is_linux || is_chromeos) {
       data_deps += [ "${angle_root}/third_party/glmark2:glmark2_glx" ]
     }
+  }
+}
+
+if (build_angle_trace_tests) {
+  angle_test("angle_trace_tests") {
+    # http://anglebug.com/6009: Traces with long shaders are hitting string literal
+    # limit in MSVC, so only compile them when using clang
+    assert(is_clang, "angle trace tests require clang")
+
+    if (is_ios) {
+      # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
+      check_includes = false
+    }
+    sources = [
+      "angle_trace_tests_main.cpp",
+      "perf_tests/TracePerfTest.cpp",
+    ]
+    deps = [
+      ":angle_perftests_shared",
+      "$angle_root:angle_compression",
+      "$angle_root/util:angle_frame_capture_test_utils",
+      "$angle_root/util:angle_png_utils",
+      "restricted_traces:angle_restricted_traces",
+    ]
+
+    data = [ "$angle_root/src/tests/py_utils/android_helper.py" ]
+
+    data_deps = [
+      "${angle_root}:libEGL",
+      "${angle_root}:libGLESv2",
+    ]
 
     if (is_clang) {
       # Allows us to edit traces and remove chunks of code without compile warnings.
       cflags_cc = [ "-Wno-unused-const-variable" ]
     }
+  }
+
+  group("angle_trace_perf_tests") {
+    testonly = true
+
+    data = [
+      "$angle_root/scripts/process_angle_perf_results.py",
+      "$angle_root/src/tests/run_perf_tests.py",
+    ]
+
+    data_deps = [
+      ":angle_trace_tests",
+      "//testing:run_perf_test",
+    ]
+  }
+
+  group("angle_trace_interpreter_tests") {
+    testonly = true
+    data = [
+      "restricted_traces/gen_restricted_traces.py",
+      "restricted_traces/retrace_restricted_traces.py",
+    ]
+    data_deps = [ ":angle_trace_tests" ]
   }
 }
 
@@ -761,6 +799,7 @@ if (build_angle_gles1_conform_tests) {
     ]
 
     configs += [
+      ":angle_gles1_conform_support",
       "${angle_root}:libANGLE_config",
       "${angle_root}:angle_backend_config",
     ]
@@ -1693,11 +1732,18 @@ group("angle_tests") {
   testonly = true
   deps = [
     ":angle_end2end_tests",
-    ":angle_perftests",
     ":angle_system_info_test",
     ":angle_unittests",
-    "capture_replay_tests",
   ]
+  if (build_angle_perftests) {
+    deps += [ ":angle_perftests" ]
+  }
+  if (build_angle_trace_tests) {
+    deps += [ ":angle_trace_tests" ]
+  }
+  if (is_clang) {
+    deps += [ "capture_replay_tests" ]
+  }
   if (!is_fuchsia) {
     deps += [
       ":angle_white_box_perftests",

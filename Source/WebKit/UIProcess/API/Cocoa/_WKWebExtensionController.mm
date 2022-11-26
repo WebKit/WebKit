@@ -37,21 +37,6 @@
 
 @implementation _WKWebExtensionController
 
-+ (BOOL)supportsSecureCoding
-{
-    return YES;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    return [self init];
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    // Nothing to meaningfully encode.
-}
-
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 - (instancetype)init
@@ -74,26 +59,36 @@
 
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext
 {
+    NSParameterAssert(extensionContext);
+
     return [self loadExtensionContext:extensionContext error:nullptr];
 }
 
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
+    NSParameterAssert(extensionContext);
+
     return _webExtensionController->load(extensionContext._webExtensionContext, outError);
 }
 
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext
 {
+    NSParameterAssert(extensionContext);
+
     return [self unloadExtensionContext:extensionContext error:nullptr];
 }
 
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
+    NSParameterAssert(extensionContext);
+
     return _webExtensionController->unload(extensionContext._webExtensionContext, outError);
 }
 
 - (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
 {
+    NSParameterAssert(extension);
+
     if (auto extensionContext = _webExtensionController->extensionContext(extension._webExtension))
         return extensionContext->wrapper();
     return nil;

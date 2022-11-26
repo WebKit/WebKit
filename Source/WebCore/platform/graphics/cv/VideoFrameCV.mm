@@ -452,41 +452,41 @@ static PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixe
 
     std::optional<PlatformVideoColorPrimaries> primaries;
     auto pixelPrimaries = CVBufferGetAttachment(pixelBuffer, kCVImageBufferColorPrimariesKey, nil);
-    if (pixelPrimaries == kCVImageBufferColorPrimaries_ITU_R_709_2)
+    if (safeCFEqual(pixelPrimaries, kCVImageBufferColorPrimaries_ITU_R_709_2))
         primaries = PlatformVideoColorPrimaries::Bt709;
-    else if (pixelPrimaries == kCVImageBufferColorPrimaries_EBU_3213)
+    else if (safeCFEqual(pixelPrimaries, kCVImageBufferColorPrimaries_EBU_3213))
         primaries = PlatformVideoColorPrimaries::JedecP22Phosphors;
-    else if (pixelPrimaries == PAL::kCMFormatDescriptionColorPrimaries_DCI_P3)
+    else if (safeCFEqual(pixelPrimaries, PAL::kCMFormatDescriptionColorPrimaries_DCI_P3))
         primaries = PlatformVideoColorPrimaries::SmpteRp431;
-    else if (pixelPrimaries == PAL::kCMFormatDescriptionColorPrimaries_P3_D65)
+    else if (safeCFEqual(pixelPrimaries, PAL::kCMFormatDescriptionColorPrimaries_P3_D65))
         primaries = PlatformVideoColorPrimaries::SmpteEg432;
-    else if (pixelPrimaries == PAL::kCMFormatDescriptionColorPrimaries_ITU_R_2020)
+    else if (safeCFEqual(pixelPrimaries, PAL::kCMFormatDescriptionColorPrimaries_ITU_R_2020))
         primaries = PlatformVideoColorPrimaries::Bt2020;
 
     std::optional<PlatformVideoTransferCharacteristics> transfer;
     auto pixelTransfer = CVBufferGetAttachment(pixelBuffer, kCVImageBufferTransferFunctionKey, nil);
-    if (pixelTransfer == kCVImageBufferTransferFunction_ITU_R_709_2)
+    if (safeCFEqual(pixelTransfer, kCVImageBufferTransferFunction_ITU_R_709_2))
         transfer = PlatformVideoTransferCharacteristics::Bt709;
-    else if (pixelTransfer == kCVImageBufferTransferFunction_SMPTE_240M_1995)
+    else if (safeCFEqual(pixelTransfer, kCVImageBufferTransferFunction_SMPTE_240M_1995))
         transfer = PlatformVideoTransferCharacteristics::Smpte240m;
-    else if (pixelTransfer == PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ)
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ))
         transfer = PlatformVideoTransferCharacteristics::SmpteSt2084;
-    else if (pixelTransfer == PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1)
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1))
         transfer = PlatformVideoTransferCharacteristics::SmpteSt4281;
-    else if (pixelTransfer == PAL::kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG)
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG))
         transfer = PlatformVideoTransferCharacteristics::AribStdB67Hlg;
-    else if (pixelTransfer == PAL::kCMFormatDescriptionTransferFunction_Linear)
+    else if (safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_Linear))
         transfer = PlatformVideoTransferCharacteristics::Linear;
-    else if (PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() && pixelTransfer == PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB())
+    else if (PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() && safeCFEqual(pixelTransfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB()))
         transfer = PlatformVideoTransferCharacteristics::Iec6196621;
 
     std::optional<PlatformVideoMatrixCoefficients> matrix;
     auto pixelMatrix = CVBufferGetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, nil);
-    if (pixelMatrix == PAL::kCMFormatDescriptionYCbCrMatrix_ITU_R_2020)
+    if (safeCFEqual(pixelMatrix, PAL::kCMFormatDescriptionYCbCrMatrix_ITU_R_2020))
         matrix = PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
-    else if (pixelMatrix == kCVImageBufferYCbCrMatrix_ITU_R_709_2)
+    else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
         matrix = PlatformVideoMatrixCoefficients::Bt709;
-    else if (pixelMatrix == kCVImageBufferYCbCrMatrix_SMPTE_240M_1995)
+    else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
         matrix = PlatformVideoMatrixCoefficients::Smpte240m;
 
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);

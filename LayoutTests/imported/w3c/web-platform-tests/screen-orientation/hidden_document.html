@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta name="timeout" content="long" />
+<title>Prevent hidden documents from locking orientation</title>
+<link rel="help" href="https://github.com/w3c/screen-orientation/pull/232" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script type="module">
+  import { getOppositeOrientation } from "./resources/orientation-utils.js";
+  let rect;
+
+  promise_setup(async (t) => {
+    rect = await test_driver.minimize_window();
+    assert_true(document.hidden, "document must be hidden");
+  });
+
+  promise_test(async (t) => {
+    await promise_rejects_dom(
+      t,
+      "SecurityError",
+      screen.orientation.lock("landscape"),
+      "Locking orientation must reject when the document is hidden"
+    );
+
+    assert_throws_dom(
+      "SecurityError",
+      () => {
+        screen.orientation.unlock();
+      },
+      "Unlocking orientation must throw when the document is hidden"
+    );
+
+    await test_driver.set_window_rect(rect);
+    assert_false(document.hidden, "document must not be hidden");
+    // not longer throws
+    screen.orientation.unlock();
+  }, "test locking the orientation when document is hidden");
+</script>

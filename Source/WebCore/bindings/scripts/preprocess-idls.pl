@@ -759,7 +759,7 @@ sub containsIterableInterfaceFromIDL
 
         my $containsIterableInterfaceFromParsedDocument = 0;
         foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
-            if ($interface->iterable) {
+            if ($interface->iterable or $interface->asyncIterable) {
                 $containsIterableInterfaceFromParsedDocument = 1;
                 last;
             }

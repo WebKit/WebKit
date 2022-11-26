@@ -214,7 +214,9 @@ public:
 
     NSArray *errors();
 
+#ifdef __OBJC__
     _WKWebExtension *wrapper() const { return (_WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
+#endif
 #endif
 
 private:

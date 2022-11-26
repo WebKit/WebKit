@@ -4,16 +4,12 @@
         display:inline-block;
         block-size: 60px;
         inline-size: 100px;
-        margin-block-start: 10px;
-        margin-block-end: 10px;
-         padding: 5px;
+        margin-block: 10px;
+        padding: 5px;
         border: solid black;
         font-family: ahem;
         font-size: 25px;
         color: lightblue;
-        -webkit-columns: 2;
-        -webkit-column-gap: 5px;
-        -webkit-column-fill: auto;
         columns: 2;
         column-gap: 5px;
         column-fill: auto;
@@ -22,24 +18,25 @@
     div.marker {
         position: absolute;
         border: solid rgba(0, 0, 255, 0.5);
-        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
     }
 
     input[type="range"] {
-        -webkit-appearance: none;
+        appearance: none;
+        writing-mode: horizontal-tb;
         width: 25px;
         height: 25px;
         background-color: lightblue;
     }
 
     input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
+        appearance: none;
     }
 
-    .vertical { -webkit-writing-mode: vertical-lr; }
-    .vertical.flipped { -webkit-writing-mode: vertical-rl; }
+    .vertical { writing-mode: vertical-lr; }
+    .vertical.flipped { writing-mode: vertical-rl; }
 
-    div.span { -webkit-column-span: all; block-size:10px; background-color:silver; }
+    div.span { column-span: all; block-size:10px; background-color:silver; }
 
 </style>
 </head>

@@ -32,3 +32,6 @@ enable_java_templates = true
 
 # Build with fewer Android dependencies
 limit_android_deps = true
+
+# Use C++17 instead of C++20 in MSVC builds
+msvc_use_cxx17 = true

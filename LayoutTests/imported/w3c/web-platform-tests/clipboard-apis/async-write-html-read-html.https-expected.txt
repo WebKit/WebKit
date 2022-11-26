@@ -1,4 +1,4 @@
 Body needed for test_driver.click()
 
-FAIL Verify read and write of some text/html content promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL Verify read and write of some text/html content promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
 

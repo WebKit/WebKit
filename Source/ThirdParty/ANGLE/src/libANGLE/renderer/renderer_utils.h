@@ -24,6 +24,7 @@ namespace angle
 {
 struct FeatureSetBase;
 struct Format;
+struct ImageLoadContext;
 enum class FormatID;
 }  // namespace angle
 
@@ -146,7 +147,8 @@ using InitializeTextureDataFunction = void (*)(size_t width,
                                                size_t outputRowPitch,
                                                size_t outputDepthPitch);
 
-using LoadImageFunction = void (*)(size_t width,
+using LoadImageFunction = void (*)(const angle::ImageLoadContext &context,
+                                   size_t width,
                                    size_t height,
                                    size_t depth,
                                    const uint8_t *input,

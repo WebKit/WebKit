@@ -157,19 +157,19 @@ private:
     String getShorthandValue(const StylePropertyShorthand&, const char* separator = " ") const;
     String getCommonValue(const StylePropertyShorthand&) const;
     String getAlignmentShorthandValue(const StylePropertyShorthand&) const;
-    String borderImagePropertyValue(CSSPropertyID) const;
+    String borderImagePropertyValue(const StylePropertyShorthand&) const;
     String borderPropertyValue(const StylePropertyShorthand&, const StylePropertyShorthand&, const StylePropertyShorthand&) const;
     String pageBreakPropertyValue(const StylePropertyShorthand&) const;
     String getLayeredShorthandValue(const StylePropertyShorthand&) const;
     String get2Values(const StylePropertyShorthand&) const;
     String get4Values(const StylePropertyShorthand&) const;
     String borderSpacingValue(const StylePropertyShorthand&) const;
-    String fontValue() const;
-    String fontVariantValue() const;
+    String fontValue(const StylePropertyShorthand&) const;
+    String fontVariantValue(const StylePropertyShorthand&) const;
     String fontSynthesisValue() const;
     String textDecorationSkipValue() const;
     String offsetValue() const;
-    String commonShorthandChecks(CSSPropertyID) const;
+    String commonShorthandChecks(const StylePropertyShorthand&) const;
     StringBuilder asTextInternal() const;
 
     friend class PropertySetCSSStyleDeclaration;

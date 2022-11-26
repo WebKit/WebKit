@@ -89,6 +89,9 @@ public:
 #if ENABLE(WK_WEB_EXTENSIONS)
     WebKit::WebExtensionController* webExtensionController();
     void setWebExtensionController(WebKit::WebExtensionController*);
+
+    WebKit::WebExtensionController* weakWebExtensionController();
+    void setWeakWebExtensionController(WebKit::WebExtensionController*);
 #endif
 
     WebKit::WebPageGroup* pageGroup();
@@ -214,6 +217,7 @@ private:
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
 #if ENABLE(WK_WEB_EXTENSIONS)
     RefPtr<WebKit::WebExtensionController> m_webExtensionController;
+    WeakPtr<WebKit::WebExtensionController> m_weakWebExtensionController;
 #endif
     RefPtr<WebKit::WebPageGroup> m_pageGroup;
     RefPtr<WebKit::WebPreferences> m_preferences;

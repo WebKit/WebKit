@@ -54,7 +54,6 @@
 #include "JSWebGLBuffer.h"
 #include "JSWebGLColorBufferFloat.h"
 #include "JSWebGLCompressedTextureASTC.h"
-#include "JSWebGLCompressedTextureATC.h"
 #include "JSWebGLCompressedTextureETC.h"
 #include "JSWebGLCompressedTextureETC1.h"
 #include "JSWebGLCompressedTexturePVRTC.h"
@@ -194,7 +193,6 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(OESVertexArrayObject)
         TO_JS(WebGLColorBufferFloat)
         TO_JS(WebGLCompressedTextureASTC)
-        TO_JS(WebGLCompressedTextureATC)
         TO_JS(WebGLCompressedTextureETC)
         TO_JS(WebGLCompressedTextureETC1)
         TO_JS(WebGLCompressedTexturePVRTC)

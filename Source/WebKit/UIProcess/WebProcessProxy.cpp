@@ -839,7 +839,7 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
     }
 }
 
-void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
+void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)
 {
     auto* dataStore = websiteDataStore();
     if (!dataStore) {

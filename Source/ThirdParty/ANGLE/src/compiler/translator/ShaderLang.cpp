@@ -13,7 +13,6 @@
 
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/InitializeDll.h"
-#include "compiler/translator/glslang_wrapper.h"
 #include "compiler/translator/length_limits.h"
 #ifdef ANGLE_ENABLE_HLSL
 #    include "compiler/translator/TranslatorHLSL.h"
@@ -28,17 +27,6 @@ namespace
 {
 
 bool isInitialized = false;
-
-// glslang can only be initialized/finalized once per process. Otherwise, the following EGL commands
-// will call GlslangFinalize() without ever being able to GlslangInitialize() again, leading to
-// crashes since GlslangFinalize() cleans up glslang for the entire process.
-//   dpy1 = eglGetPlatformDisplay()   |
-//   eglInitialize(dpy1)              | GlslangInitialize()
-//   dpy2 = eglGetPlatformDisplay()   |
-//   eglInitialize(dpy2)              | GlslangInitialize()
-//   eglTerminate(dpy2)               | GlslangFinalize()
-//   eglInitialize(dpy1)              | Display::isInitialized() == true, no GlslangInitialize()
-int initializeGlslangRefCount = 0;
 
 //
 // This is the platform independent interface between an OGL driver
@@ -951,26 +939,6 @@ uint32_t GetAdvancedBlendEquations(const ShHandle handle)
     ASSERT(compiler);
 
     return compiler->getAdvancedBlendEquations().bits();
-}
-
-void InitializeGlslang()
-{
-    if (initializeGlslangRefCount == 0)
-    {
-        GlslangInitialize();
-    }
-    ++initializeGlslangRefCount;
-    ASSERT(initializeGlslangRefCount < std::numeric_limits<int>::max());
-}
-
-void FinalizeGlslang()
-{
-    --initializeGlslangRefCount;
-    ASSERT(initializeGlslangRefCount >= 0);
-    if (initializeGlslangRefCount == 0)
-    {
-        GlslangFinalize();
-    }
 }
 
 // Can't prefix with just _ because then we might introduce a double underscore, which is not safe

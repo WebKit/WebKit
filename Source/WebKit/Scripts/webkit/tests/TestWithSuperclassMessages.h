@@ -75,8 +75,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessage; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(uint64_t&&)>&&);
-    static void cancelReply(CompletionHandler<void(uint64_t&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply; }
     using AsyncReply = TestAsyncMessageAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;
@@ -104,8 +102,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void()>&&);
-    static void cancelReply(CompletionHandler<void()>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
     using AsyncReply = TestAsyncMessageWithNoArgumentsAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -128,8 +124,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&, uint64_t&&)>&&);
-    static void cancelReply(CompletionHandler<void(bool&&, uint64_t&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
     using AsyncReply = TestAsyncMessageWithMultipleArgumentsAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -152,8 +146,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnection; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&)>&&);
-    static void cancelReply(CompletionHandler<void(bool&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply; }
     using AsyncReply = TestAsyncMessageWithConnectionAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;

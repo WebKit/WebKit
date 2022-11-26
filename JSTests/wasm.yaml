@@ -50,7 +50,7 @@
 - path: wasm/v8/
   cmd: runWebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
 - path: wasm/branch-hints
-  cmd: runWebAssemblySuite("--useWebAssemblyBranchHints=true")
+  cmd: runWebAssemblySuite unless parseRunCommands
 
 - path: wasm/references-spec-tests/elem.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal

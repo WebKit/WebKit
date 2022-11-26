@@ -1,3 +1,3 @@
 
-FAIL fullscreenOptions.screen getter is invoked on requestFullscreen promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL fullscreenOptions.screen getter is invoked on requestFullscreen promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "window-placement"."
 

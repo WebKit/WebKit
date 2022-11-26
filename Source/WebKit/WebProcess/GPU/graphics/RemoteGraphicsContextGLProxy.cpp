@@ -69,12 +69,12 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection& gpuProcessConnection, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
     : GraphicsContextGL(attributes)
     , m_gpuProcessConnection(&gpuProcessConnection)
-    , m_streamConnection(gpuProcessConnection.connection(), defaultStreamSize)
 {
+    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize);
+    m_streamConnection = WTFMove(clientConnection);
     m_gpuProcessConnection->addClient(*this);
-    m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64(), *this);
-    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, m_streamConnection.streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_streamConnection.open();
+    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_streamConnection->open(*this);
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
@@ -343,7 +343,7 @@ void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& 
         return;
     }
     ASSERT(!m_didInitialize);
-    m_streamConnection.setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+    m_streamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
     initialize(availableExtensions, requestedExtensions);
 }
@@ -389,7 +389,7 @@ void RemoteGraphicsContextGLProxy::waitUntilInitialized()
         return;
     if (m_didInitialize)
         return;
-    if (m_streamConnection.waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_graphicsContextGLIdentifier, defaultSendTimeout))
+    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_graphicsContextGLIdentifier, defaultSendTimeout))
         return;
     markContextLost();
 }
@@ -405,16 +405,14 @@ void RemoteGraphicsContextGLProxy::abandonGpuProcess()
 {
     auto gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr);
     gpuProcessConnection->removeClient(*this);
-    gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
     m_gpuProcessConnection = nullptr;
 }
 
 void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
 {
     if (auto gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr)) {
-        m_streamConnection.invalidate();
+        m_streamConnection->invalidate();
         gpuProcessConnection->removeClient(*this);
-        gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
         gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(m_graphicsContextGLIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     ASSERT(isContextLost());

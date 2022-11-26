@@ -57,7 +57,7 @@ static Ref<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>&
 
     auto list = CSSValueList::createCommaSeparated();
     for (auto& length : dashes)
-        list->append(SVGLengthValue::toCSSPrimitiveValue(length));
+        list->append(length.toCSSPrimitiveValue());
 
     return list;
 }
@@ -129,7 +129,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
     case CSSPropertyFill:
         return adjustSVGPaint(svgStyle.fillPaintType(), svgStyle.fillPaintUri(), createColor(svgStyle.fillPaintColor()));
     case CSSPropertyKerning:
-        return SVGLengthValue::toCSSPrimitiveValue(svgStyle.kerning());
+        return svgStyle.kerning().toCSSPrimitiveValue();
     case CSSPropertyMarkerEnd:
         if (!svgStyle.markerEndResource().isEmpty())
             return CSSPrimitiveValue::create(makeString('#', svgStyle.markerEndResource()), CSSUnitType::CSS_URI);
@@ -155,7 +155,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         case BaselineShift::Sub:
             return CSSPrimitiveValue::createIdentifier(CSSValueSub);
         case BaselineShift::Length:
-            return SVGLengthValue::toCSSPrimitiveValue(svgStyle.baselineShiftValue());
+            return svgStyle.baselineShiftValue().toCSSPrimitiveValue(m_element.get());
         }
         ASSERT_NOT_REACHED();
         return nullptr;

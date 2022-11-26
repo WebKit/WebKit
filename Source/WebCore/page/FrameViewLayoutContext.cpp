@@ -605,7 +605,13 @@ bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSi
     auto* layoutState = this->layoutState();
     if (!layoutState || !needsFullRepaint() || layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
         || layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
-        m_layoutStateStack.append(makeUnique<RenderLayoutState>(m_layoutStateStack, renderer, offset, pageHeight, pageHeightChanged));
+        m_layoutStateStack.append(makeUnique<RenderLayoutState>(m_layoutStateStack
+            , renderer
+            , offset
+            , pageHeight
+            , pageHeightChanged
+            , layoutState ? layoutState->maximumLineCountForLineClamp() : std::nullopt
+            , layoutState ? layoutState->visibleLineCountForLineClamp() : std::nullopt));
         return true;
     }
     return false;

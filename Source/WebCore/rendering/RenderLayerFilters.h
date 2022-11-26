@@ -32,6 +32,7 @@
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
+#include "FilterRenderingMode.h"
 #include "RenderLayer.h"
 
 namespace WebCore {
@@ -39,6 +40,7 @@ namespace WebCore {
 class CachedSVGDocument;
 class Element;
 class FilterOperations;
+class FilterTargetSwitcher;
 
 class RenderLayerFilters final : private CachedSVGDocumentClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -58,7 +60,7 @@ public:
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
 
-    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
+    void setPreferredFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) { m_preferredFilterRenderingModes = preferredFilterRenderingModes; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
 
     static bool isIdentity(RenderElement&);
@@ -73,25 +75,21 @@ public:
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
-    GraphicsContext* inputContext();
-    void allocateBackingStoreIfNeeded(GraphicsContext&);
 
     RenderLayer& m_layer;
-    RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
-    FloatSize m_filterScale { 1, 1 };
-
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
 
     LayoutRect m_targetBoundingBox;
-    FloatRect m_filterRegion;
-    RefPtr<ImageBuffer> m_sourceImage;
-    RefPtr<CSSFilter> m_filter;
     LayoutRect m_dirtySourceRect;
-    
-    // Data used per paint
-    LayoutPoint m_paintOffset;
     LayoutRect m_repaintRect;
+
+    OptionSet<FilterRenderingMode> m_preferredFilterRenderingModes { FilterRenderingMode::Software };
+    FloatSize m_filterScale { 1, 1 };
+    FloatRect m_filterRegion;
+
+    RefPtr<CSSFilter> m_filter;
+    std::unique_ptr<FilterTargetSwitcher> m_targetSwitcher;
 };
 
 } // namespace WebCore

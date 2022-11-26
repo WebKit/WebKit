@@ -43,6 +43,8 @@ set(_gl_backend_sources
     "src/libANGLE/renderer/gl/ImageGL.h"
     "src/libANGLE/renderer/gl/MemoryObjectGL.cpp"
     "src/libANGLE/renderer/gl/MemoryObjectGL.h"
+    "src/libANGLE/renderer/gl/PLSProgramCache.cpp"
+    "src/libANGLE/renderer/gl/PLSProgramCache.h"
     "src/libANGLE/renderer/gl/ProgramGL.cpp"
     "src/libANGLE/renderer/gl/ProgramGL.h"
     "src/libANGLE/renderer/gl/ProgramPipelineGL.cpp"
@@ -134,6 +136,8 @@ if(is_android OR is_linux OR is_chromeos)
     list(APPEND _gl_backend_sources
         "src/libANGLE/renderer/gl/egl/ContextEGL.cpp"
         "src/libANGLE/renderer/gl/egl/ContextEGL.h"
+        "src/libANGLE/renderer/gl/egl/DeviceEGL.cpp"
+        "src/libANGLE/renderer/gl/egl/DeviceEGL.h"
         "src/libANGLE/renderer/gl/egl/DisplayEGL.cpp"
         "src/libANGLE/renderer/gl/egl/DisplayEGL.h"
         "src/libANGLE/renderer/gl/egl/DmaBufImageSiblingEGL.cpp"

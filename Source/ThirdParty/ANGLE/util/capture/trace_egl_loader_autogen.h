@@ -125,6 +125,10 @@
 #define eglWaitSyncKHR t_eglWaitSyncKHR
 #define eglPostSubBufferNV t_eglPostSubBufferNV
 #define eglStreamConsumerGLTextureExternalAttribsNV t_eglStreamConsumerGLTextureExternalAttribsNV
+
+#if defined(__cplusplus)
+extern "C" {
+#endif  // defined(__cplusplus)
 ANGLE_TRACE_LOADER_EXPORT extern PFNEGLCHOOSECONFIGPROC t_eglChooseConfig;
 ANGLE_TRACE_LOADER_EXPORT extern PFNEGLCOPYBUFFERSPROC t_eglCopyBuffers;
 ANGLE_TRACE_LOADER_EXPORT extern PFNEGLCREATECONTEXTPROC t_eglCreateContext;
@@ -251,11 +255,12 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNEGLPOSTSUBBUFFERNVPROC t_eglPostSubBufferNV;
 ANGLE_TRACE_LOADER_EXPORT extern PFNEGLSTREAMCONSUMERGLTEXTUREEXTERNALATTRIBSNVPROC
     t_eglStreamConsumerGLTextureExternalAttribsNV;
 
-namespace trace_angle
-{
-using GenericProc = void (*)();
-using LoadProc    = GenericProc(KHRONOS_APIENTRY *)(const char *);
-ANGLE_TRACE_LOADER_EXPORT void LoadEGL(LoadProc loadProc);
-}  // namespace trace_angle
+typedef void (*GenericProc)(void);
+typedef GenericProc(KHRONOS_APIENTRY *LoadProc)(const char *);
+ANGLE_TRACE_LOADER_EXPORT void LoadTraceEGL(LoadProc loadProc);
+
+#if defined(__cplusplus)
+}  // extern "C"
+#endif  // defined(__cplusplus)
 
 #endif  // ANGLE_TRACES_UTIL_EGL_LOADER_AUTOGEN_H_

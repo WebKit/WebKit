@@ -303,6 +303,7 @@ $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIExtension.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPINamespace.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITest.idl
 $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionContextProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/FullScreen/WebFullScreenManager.messages.in

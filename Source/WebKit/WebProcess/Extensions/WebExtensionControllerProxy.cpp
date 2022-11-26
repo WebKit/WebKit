@@ -85,6 +85,11 @@ WebExtensionControllerProxy::WebExtensionControllerProxy(WebExtensionControllerP
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionControllerProxy::messageReceiverName(), m_identifier, *this);
 }
 
+WebExtensionControllerProxy::~WebExtensionControllerProxy()
+{
+    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionControllerProxy::messageReceiverName(), m_identifier);
+}
+
 void WebExtensionControllerProxy::load(const WebExtensionContextParameters& contextParameters)
 {
     auto context = WebExtensionContextProxy::getOrCreate(contextParameters);

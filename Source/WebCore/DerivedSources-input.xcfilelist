@@ -994,6 +994,7 @@ $(PROJECT_DIR)/css/WebKitCSSViewportRule.idl
 $(PROJECT_DIR)/css/WebKitFontFamilyNames.in
 $(PROJECT_DIR)/css/dialog.css
 $(PROJECT_DIR)/css/fullscreen.css
+$(PROJECT_DIR)/css/horizontalFormControls.css
 $(PROJECT_DIR)/css/html.css
 $(PROJECT_DIR)/css/legacyFormControlsIOS.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
@@ -1375,7 +1376,6 @@ $(PROJECT_DIR)/html/canvas/WebGLActiveInfo.idl
 $(PROJECT_DIR)/html/canvas/WebGLBuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLColorBufferFloat.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureASTC.idl
-$(PROJECT_DIR)/html/canvas/WebGLCompressedTextureATC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC1.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTexturePVRTC.idl

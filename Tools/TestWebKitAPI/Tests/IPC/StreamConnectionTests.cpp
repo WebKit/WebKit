@@ -42,15 +42,6 @@ static constexpr Seconds defaultSendTimeout = 1_s;
 enum TestObjectIdentifierTag { };
 using TestObjectIdentifier = ObjectIdentifier<TestObjectIdentifierTag>;
 
-template <typename T>
-std::optional<T> refViaEncoder(const T& o)
-{
-    IPC::Encoder encoder(static_cast<IPC::MessageName>(78), 0);
-    encoder << o;
-    auto decoder = IPC::Decoder::create(encoder.buffer(), encoder.bufferSize(), encoder.releaseAttachments());
-    return decoder->decode<T>();
-}
-
 struct MessageInfo {
     IPC::MessageName messageName;
     uint64_t destinationID;
@@ -131,8 +122,8 @@ public:
     void SetUp() override
     {
         WTF::initializeMainThread();
-        auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::createWithDedicatedConnection(m_mockClientReceiver, 1000);
-        auto serverConnection = IPC::StreamServerConnection::createWithDedicatedConnection(WTFMove(serverConnectionHandle), *refViaEncoder(clientConnection->streamBuffer()), *m_workQueue);
+        auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(1000);
+        auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), *m_workQueue);
         m_clientConnection = WTFMove(clientConnection);
         m_serverConnection = WTFMove(serverConnection);
     }
@@ -151,7 +142,7 @@ protected:
 
 TEST_F(StreamConnectionTest, OpenConnections)
 {
-    m_clientConnection->open();
+    m_clientConnection->open(m_mockClientReceiver);
     m_serverConnection->open();
     m_clientConnection->invalidate();
     m_serverConnection->invalidate();
@@ -159,7 +150,7 @@ TEST_F(StreamConnectionTest, OpenConnections)
 
 TEST_F(StreamConnectionTest, SendLocalMessage)
 {
-    m_clientConnection->open();
+    m_clientConnection->open(m_mockClientReceiver);
     m_serverConnection->open();
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
     m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockTestMessage1::name()), 77);

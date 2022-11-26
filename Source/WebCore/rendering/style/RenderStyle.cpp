@@ -1780,6 +1780,8 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, 
         adjustedRadii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
         roundedRect.includeLogicalEdges(adjustedRadii, isHorizontalWritingMode, includeLogicalLeftEdge, includeLogicalRightEdge);
     }
+    if (!roundedRect.isRenderable())
+        roundedRect.adjustRadii();
     return roundedRect;
 }
 

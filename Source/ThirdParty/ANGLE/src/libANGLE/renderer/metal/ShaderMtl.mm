@@ -9,13 +9,13 @@
 
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 
+#include "common/WorkerThread.h"
 #include "common/debug.h"
-#include "compiler/translator/TranslatorMetal.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Shader.h"
-#include "libANGLE/WorkerThread.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
+#include "libANGLE/trace.h"
 
 namespace rx
 {
@@ -33,6 +33,7 @@ class TranslateTask : public angle::Closure
 
     void operator()() override
     {
+        ANGLE_TRACE_EVENT1("gpu.angle", "TranslateTaskMetal::run", "source", mSource);
         const char *source = mSource.c_str();
         mResult            = sh::Compile(mHandle, &source, 1, mOptions);
     }
@@ -95,15 +96,16 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compileImplMtl(
         std::make_shared<TranslateTask>(compilerInstance->getHandle(), *compileOptions, source);
 
     return std::make_shared<MTLWaitableCompileEventImpl>(
-        this, angle::WorkerThreadPool::PostWorkerTask(workerThreadPool, translateTask),
-        translateTask);
+        this, workerThreadPool->postWorkerTask(translateTask), translateTask);
 }
 
 std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *context,
                                                          gl::ShCompilerInstance *compilerInstance,
                                                          ShCompileOptions *options)
 {
-    ContextMtl *contextMtl                 = mtl::GetImpl(context);
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    DisplayMtl *displayMtl = contextMtl->getDisplay();
+
     options->initializeUninitializedLocals = true;
 
     if (context->isWebGL() && mState.getShaderType() != gl::ShaderType::Compute)
@@ -111,7 +113,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
         options->initOutputVariables = true;
     }
 
-    if (contextMtl->getDisplay()->getFeatures().intelExplicitBoolCastWorkaround.enabled)
+    if (displayMtl->getFeatures().intelExplicitBoolCastWorkaround.enabled)
     {
         options->addExplicitBoolCasts = true;
     }
@@ -121,21 +123,22 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
     options->clampFragDepth = true;
 #endif
 
-    if (contextMtl->getDisplay()->getFeatures().rewriteRowMajorMatrices.enabled)
+    if (displayMtl->getFeatures().rewriteRowMajorMatrices.enabled)
     {
         options->rewriteRowMajorMatrices = true;
     }
-    // If compiling through SPIR-V
-    options->addVulkanXfbEmulationSupportCode = true;
-    options->addVulkanDepthCorrection         = true;
-    // If compiling through SPIR-V.  This path outputs text, so cannot use the direct SPIR-V gen
-    // path unless fixed.
-    options->generateSpirvThroughGlslang = true;
 
-    // Direct-to-metal constants:
+    // Constants:
     options->metal.driverUniformsBindingIndex    = mtl::kDriverUniformsBindingIndex;
     options->metal.defaultUniformsBindingIndex   = mtl::kDefaultUniformsBindingIndex;
     options->metal.UBOArgumentBufferBindingIndex = mtl::kUBOArgumentBufferBindingIndex;
+
+    // GL_ANGLE_shader_pixel_local_storage.
+    if (displayMtl->getNativeExtensions().shaderPixelLocalStorageANGLE)
+    {
+        options->pls.type                        = displayMtl->getNativePixelLocalStorageType();
+        options->pls.fragmentSynchronizationType = displayMtl->getPLSSynchronizationType();
+    }
 
     return compileImplMtl(context, compilerInstance, getState().getSource(), options);
 }

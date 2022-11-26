@@ -5,7 +5,6 @@
 //
 // VulkanMultithreadingTest.cpp : Tests of multithreaded rendering specific to the Vulkan back end.
 
-#include "platform/FeaturesVk_autogen.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"

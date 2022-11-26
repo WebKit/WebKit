@@ -117,8 +117,9 @@ class SerialFactoryBase final : angle::NonCopyable
     SerialBaseType mSerial;
 };
 
-using SerialFactory       = SerialFactoryBase<uint64_t>;
-using AtomicSerialFactory = SerialFactoryBase<std::atomic<uint64_t>>;
+using SerialFactory           = SerialFactoryBase<uint64_t>;
+using AtomicSerialFactory     = SerialFactoryBase<std::atomic<uint64_t>>;
+using RenderPassSerialFactory = SerialFactoryBase<uint64_t>;
 
 }  // namespace rx
 

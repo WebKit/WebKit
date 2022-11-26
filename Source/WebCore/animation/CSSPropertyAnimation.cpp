@@ -175,8 +175,18 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
         resultOperations.operations().appendVector(to.operations());
         return resultOperations;
     }
+
+    auto prefix = [&]() -> std::optional<unsigned> {
+        // We cannot use the pre-computed prefix when dealing with accumulation
+        // since the values used to accumulate may be different than those held
+        // in the initial keyframe list.
+        if (context.compositeOperation == CompositeOperation::Accumulate)
+            return std::nullopt;
+        return context.client->transformFunctionListPrefix();
+    };
+
     auto boxSize = is<RenderBox>(context.client->renderer()) ? downcast<RenderBox>(*context.client->renderer()).borderBoxRect().size() : LayoutSize();
-    return to.blend(from, context, boxSize, context.client->transformFunctionListPrefix());
+    return to.blend(from, context, boxSize, prefix());
 }
 
 static RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, ScaleTransformOperation* to, const CSSPropertyBlendingContext& context)
@@ -330,6 +340,19 @@ static inline RefPtr<FilterOperation> blendFunc(FilterOperation* from, FilterOpe
 
 static inline FilterOperations blendFilterOperations(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
 {
+    if (context.compositeOperation == CompositeOperation::Add) {
+        ASSERT(context.progress == 1.0);
+        FilterOperations resultOperations;
+        resultOperations.operations().appendVector(from.operations());
+        resultOperations.operations().appendVector(to.operations());
+        return resultOperations;
+    }
+
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1.0);
+        return context.progress ? to : from;
+    }
+
     FilterOperations result;
     size_t fromSize = from.operations().size();
     size_t toSize = to.operations().size();
@@ -351,38 +374,9 @@ static inline FilterOperations blendFilterOperations(const FilterOperations& fro
     return result;
 }
 
-static inline FilterOperations blendFunc(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context, CSSPropertyID propertyID = CSSPropertyFilter)
+static inline FilterOperations blendFunc(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
 {
-    FilterOperations result;
-
-    // If we have a filter function list, use that to do a per-function animation.
-    
-    bool listsMatch = false;
-    switch (propertyID) {
-    case CSSPropertyFilter:
-        listsMatch = context.client->filterFunctionListsMatch();
-        break;
-#if ENABLE(FILTERS_LEVEL_2)
-    case CSSPropertyWebkitBackdropFilter:
-        listsMatch = context.client->backdropFilterFunctionListsMatch();
-        break;
-#endif
-    case CSSPropertyAppleColorFilter:
-        listsMatch = context.client->colorFilterFunctionListsMatch();
-        break;
-    default:
-        break;
-    }
-    
-    if (listsMatch)
-        result = blendFilterOperations(from, to, context);
-    else {
-        // If the filter function lists don't match, we could try to cross-fade, but don't yet have a way to represent that in CSS.
-        // For now we'll just fail to animate.
-        result = to;
-    }
-
-    return result;
+    return blendFilterOperations(from, to, context);
 }
 
 static inline RefPtr<StyleImage> blendFilter(RefPtr<StyleImage> inputImage, const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
@@ -1420,9 +1414,56 @@ private:
             ;
     }
 
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
+    {
+        auto& fromFilterOperations = value(from);
+        auto& toFilterOperations = value(to);
+
+        // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
+
+        auto listContainsReference = [](auto& filterOperations) {
+            return filterOperations.operations().findIf([](auto& filterOperation) {
+                return filterOperation->type() == FilterOperation::OperationType::REFERENCE;
+            }) != notFound;
+        };
+
+        if (listContainsReference(fromFilterOperations) || listContainsReference(toFilterOperations))
+            return false;
+
+        // If one filter is none and the other is a <filter-value-list> without <url>
+        auto oneListIsEmpty = [&]() {
+            return fromFilterOperations.isEmpty() != toFilterOperations.isEmpty();
+        };
+
+        // If both filters have a <filter-value-list> of same length without <url> and for each <filter-function>
+        // for which there is a corresponding item in each list
+        // If both filters have a <filter-value-list> of different length without <url> and for each
+        // <filter-function> for which there is a corresponding item in each list
+        auto listsMatch = [&]() {
+            auto numItems = [&]() {
+                if (fromFilterOperations.size() == toFilterOperations.size())
+                    return fromFilterOperations.size();
+                return std::min(fromFilterOperations.size(), toFilterOperations.size());
+            }();
+
+            for (size_t i = 0; i < numItems; ++i) {
+                auto* fromOperation = fromFilterOperations.at(i);
+                auto* toOperation = toFilterOperations.at(i);
+                if (!!fromOperation != !!toOperation)
+                    return false;
+                if (fromOperation && toOperation && fromOperation->type() != toOperation->type())
+                    return false;
+            }
+
+            return true;
+        };
+
+        return compositeOperation != CompositeOperation::Replace || oneListIsEmpty() || listsMatch();
+    }
+
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination.*m_setter)(blendFunc(value(from), value(to), context, property()));
+        (destination.*m_setter)(blendFunc(value(from), value(to), context));
     }
 };
 
@@ -2429,6 +2470,33 @@ private:
     }
 };
 
+class PropertyWrapperBaselineShift final : public PropertyWrapper<SVGLengthValue> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PropertyWrapperBaselineShift()
+        : PropertyWrapper(CSSPropertyBaselineShift, &RenderStyle::baselineShiftValue, &RenderStyle::setBaselineShiftValue)
+    {
+    }
+
+private:
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    {
+        return a.svgStyle().baselineShift() == b.svgStyle().baselineShift() && PropertyWrapper::equals(a, b);
+    }
+
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
+    {
+        return from.svgStyle().baselineShift() == to.svgStyle().baselineShift() && PropertyWrapper::canInterpolate(from, to, compositeOperation);
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        auto& srcSVGStyle = !context.progress ? from.svgStyle() : to.svgStyle();
+        destination.accessSVGStyle().setBaselineShift(srcSVGStyle.baselineShift());
+        PropertyWrapper::blend(destination, from, to, context);
+    }
+};
+
 template <typename T>
 class AutoPropertyWrapper final : public PropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -3221,7 +3289,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<float>(CSSPropertyOutlineOffset, &RenderStyle::outlineOffset, &RenderStyle::setOutlineOffset),
         new FloatPropertyWrapper(CSSPropertyOutlineWidth, &RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, FloatPropertyWrapper::ValueRange::NonNegative),
         new PropertyWrapper<float>(CSSPropertyLetterSpacing, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing),
-        new LengthPropertyWrapper(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing),
+        new LengthPropertyWrapper(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing, LengthPropertyWrapper::Flags::IsLengthPercentage),
         new TextIndentWrapper,
         new VerticalAlignWrapper,
 
@@ -3298,7 +3366,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new PropertyWrapperColor(CSSPropertyLightingColor, &RenderStyle::lightingColor, &RenderStyle::setLightingColor),
 
-        new PropertyWrapper<SVGLengthValue>(CSSPropertyBaselineShift, &RenderStyle::baselineShiftValue, &RenderStyle::setBaselineShiftValue),
+        new PropertyWrapperBaselineShift,
         new PropertyWrapper<SVGLengthValue>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
 #if ENABLE(VARIATION_FONTS)
         new PropertyWrapperFontVariationSettings(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings),
@@ -3460,6 +3528,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
     static const CSSPropertyID animatableShorthandProperties[] = {
+        CSSPropertyAll,
         CSSPropertyBackground, // for background-color, background-position, background-image
         CSSPropertyBackgroundPosition,
         CSSPropertyFont, // for font-size, font-weight
@@ -3559,7 +3628,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitTextZoom:
         case CSSPropertyAdditiveSymbols:
         case CSSPropertyAlignmentBaseline:
-        case CSSPropertyAll:
         case CSSPropertyAlt:
         case CSSPropertyAnimation:
         case CSSPropertyAnimationComposition:

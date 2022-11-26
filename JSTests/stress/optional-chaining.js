@@ -95,6 +95,9 @@ shouldThrowTypeError(() => ({})?.['i'](), '({})?.[\'i\'] is not a function');
 shouldBe(({})['i']?.(), undefined);
 shouldBe(({})?.['i']?.(), undefined);
 
+shouldThrowTypeError(() => ({}).i()?.x, '({}).i is not a function');
+shouldThrowTypeError(() => ({})['i']()?.['x'], '({})[\'i\'] is not a function');
+
 shouldThrowTypeError(() => ({})?.a['b'], 'undefined is not an object');
 shouldBe(({})?.a?.['b'], undefined);
 shouldBe(null?.a['b']().c, undefined);
@@ -105,6 +108,9 @@ shouldThrowTypeError(() => (() => {})?.()(), '(() => {})?.() is not a function')
 shouldBe((() => {})?.()?.(), undefined);
 shouldBe(null?.()().a['b'], undefined);
 shouldBe(masquerader?.(), null);
+
+shouldThrowTypeError(() => (() => {})?.().x, 'undefined is not an object');
+shouldThrowTypeError(() => shouldBe?.().x, 'undefined is not an object');
 
 const o0 = { a: { b() { return this._b.bind(this); }, _b() { return this.__b; }, __b: { c: 42 } } };
 shouldBe(o0?.a?.['b']?.()?.()?.c, 42);
@@ -151,6 +157,16 @@ shouldBe(greet?.apply({ suffix: '?' }, ['world']), 'hey, world?');
 shouldBe(greet.apply?.({ suffix: '?' }, ['world']), 'hey, world?');
 shouldBe(null?.apply({ suffix: '?' }, ['world']), undefined);
 shouldBe(({}).apply?.({ suffix: '?' }, ['world']), undefined);
+shouldBe(greet?.hasOwnProperty('name'), true);
+shouldBe(greet.hasOwnProperty?.('name'), true);
+shouldBe(null?.hasOwnProperty('name'), undefined);
+shouldBe(({}).hasOwnProperty?.('name'), false);
+
+shouldThrowTypeError(() => shouldBe.call?.().x, 'undefined is not an object');
+shouldThrowTypeError(() => ({}).call()?.x, '({}).call is not a function');
+shouldThrowTypeError(() => shouldBe.apply?.().x, 'undefined is not an object');
+shouldThrowTypeError(() => ({}).apply()?.x, '({}).apply is not a function');
+shouldThrowTypeError(() => Object.create(null).hasOwnProperty()?.x, 'Object.create(null).hasOwnProperty is not a function');
 
 shouldThrowSyntaxError('class C {} class D extends C { foo() { return super?.bar; } }');
 shouldThrowSyntaxError('class C {} class D extends C { foo() { return super?.["bar"]; } }');

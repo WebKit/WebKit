@@ -142,7 +142,7 @@ struct FeatureInfo
     // version, but may be overriden to any value.
     bool enabled = false;
 
-    // A stingified version of the condition used to set 'enabled'. ie "IsNvidia() && IsApple()"
+    // A stringified version of the condition used to set 'enabled'. ie "IsNvidia() && IsApple()"
     const char *condition;
 };
 

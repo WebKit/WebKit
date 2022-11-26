@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AccessibilityUIElement.h"
 
-#import "AccessibilityCommonMac.h"
+#import "AccessibilityCommonCocoa.h"
 #import "AccessibilityNotificationHandler.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
@@ -148,23 +148,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
 - (NSString *)accessibilityDOMIdentifier;
 - (CGPathRef)_accessibilityPath;
-@end
-
-@implementation NSString (JSStringRefAdditions)
-
-+ (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef
-{
-    if (!jsStringRef)
-        return nil;
-    
-    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsStringRef)).bridgingAutorelease();
-}
-
-- (JSRetainPtr<JSStringRef>)createJSStringRef
-{
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)self));
-}
-
 @end
 
 namespace WTR {

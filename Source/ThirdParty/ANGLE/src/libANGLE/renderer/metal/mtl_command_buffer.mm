@@ -11,6 +11,7 @@
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 
 #include <cassert>
+#include <cstdint>
 #if ANGLE_MTL_SIMULATE_DISCARD_FRAMEBUFFER
 #    include <random>
 #endif
@@ -579,6 +580,11 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf, uint64_t s
         std::memory_order_relaxed);
 }
 
+uint64_t CommandQueue::getNextRenderEncoderSerial()
+{
+    return ++mRenderEncoderCounter;
+}
+
 // CommandBuffer implementation
 CommandBuffer::CommandBuffer(CommandQueue *cmdQueue) : mCmdQueue(*cmdQueue) {}
 
@@ -1065,7 +1071,9 @@ void RenderCommandEncoderStates::reset()
 // RenderCommandEncoder implemtation
 RenderCommandEncoder::RenderCommandEncoder(CommandBuffer *cmdBuffer,
                                            const OcclusionQueryPool &queryPool)
-    : CommandEncoder(cmdBuffer, RENDER), mOcclusionQueryPool(queryPool)
+    : CommandEncoder(cmdBuffer, RENDER),
+      mOcclusionQueryPool(queryPool),
+      mSerial(cmdBuffer->cmdQueue().getNextRenderEncoderSerial())
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -1556,6 +1564,7 @@ RenderCommandEncoder &RenderCommandEncoder::setBufferForWrite(gl::ShaderType sha
         return *this;
     }
 
+    buffer->setLastWritingRenderEncoderSerial(mSerial);
     cmdBuffer().setWriteDependency(buffer);
 
     id<MTLBuffer> mtlBuffer = (buffer ? buffer->get() : nil);
@@ -2183,10 +2192,14 @@ BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Buffer *buffer)
     }
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
-    // synchronization
-    cmdBuffer().setReadDependency(buffer);
-    [get() synchronizeResource:buffer->get()];
+    if (buffer->get().storageMode == MTLStorageModeManaged)
+    {
+        // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
+        // synchronization
+        cmdBuffer().setReadDependency(buffer);
+
+        [get() synchronizeResource:buffer->get()];
+    }
 #endif
     return *this;
 }

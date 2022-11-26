@@ -461,8 +461,11 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->setDefaultWebsitePolicies([_configuration defaultWebpagePreferences]->_websitePolicies.get());
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto *controller = _configuration.get()._webExtensionControllerIfExists)
+    if (auto *controller = _configuration.get()._strongWebExtensionController)
         pageConfiguration->setWebExtensionController(&controller._webExtensionController);
+
+    if (auto *controller = _configuration.get()._weakWebExtensionController)
+        pageConfiguration->setWeakWebExtensionController(&controller._webExtensionController);
 #endif
 
 #if PLATFORM(MAC)

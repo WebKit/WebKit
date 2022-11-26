@@ -3644,6 +3644,10 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
                 downcast<RenderCounter>(renderer).updateCounter();
             continue;
         }
+        if (is<RenderCombineText>(renderer)) {
+            downcast<RenderCombineText>(renderer).combineTextIfNeeded();
+            continue;
+        }
     }
 
     layoutFormattingContextLineLayout.updateInlineContentDimensions();

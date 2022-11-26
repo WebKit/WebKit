@@ -1143,6 +1143,120 @@ class ImageTest : public ANGLETest<>
         return colorspace3DAttribs;
     }
 
+    void externalTextureTracerTestHelper(const EGLint *attribsToRecoverInMEC)
+    {
+        const EGLWindow *eglWindow = getEGLWindow();
+        // Frame 1 begins
+        // Create the Image
+        GLTexture sourceTexture1;
+        EGLImageKHR image1;
+
+        GLubyte data[] = {132, 55, 219, 255};
+        // Create a source 2D texture
+        glBindTexture(GL_TEXTURE_2D, sourceTexture1);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(1), static_cast<GLsizei>(1), 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        // Disable mipmapping
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        ASSERT_GL_NO_ERROR();
+
+        image1 = eglCreateImageKHR(
+            eglWindow->getDisplay(), eglWindow->getContext(), EGL_GL_TEXTURE_2D_KHR,
+            reinterpretHelper<EGLClientBuffer>(sourceTexture1.get()), attribsToRecoverInMEC);
+
+        ASSERT_EGL_SUCCESS();
+
+        // Create the target
+        GLTexture targetTexture1;
+        // Create a target texture from the image
+        glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture1);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, image1);
+
+        // Disable mipmapping
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        ASSERT_GL_NO_ERROR();
+
+        // Calls On EndFrame(), with MidExecutionSetup to restore external texture targetTexture1
+        // above
+        EGLDisplay display = eglWindow->getDisplay();
+        EGLSurface surface = eglWindow->getSurface();
+        eglSwapBuffers(display, surface);
+        // Frame 1 ends
+
+        // Frame 2 begins
+        // Create another eglImage with another associated texture
+        // Draw using the eglImage texture targetTexture1 created in frame 1
+        GLTexture sourceTexture2;
+        EGLImageKHR image2;
+
+        // Create a source 2D texture
+        glBindTexture(GL_TEXTURE_2D, sourceTexture2);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(1), static_cast<GLsizei>(1), 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        // Disable mipmapping
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        ASSERT_GL_NO_ERROR();
+
+        constexpr EGLint defaultAttribs[] = {
+            EGL_IMAGE_PRESERVED,
+            EGL_TRUE,
+            EGL_NONE,
+        };
+        image2 = eglCreateImageKHR(
+            eglWindow->getDisplay(), eglWindow->getContext(), EGL_GL_TEXTURE_2D_KHR,
+            reinterpretHelper<EGLClientBuffer>(sourceTexture2.get()), defaultAttribs);
+
+        ASSERT_EGL_SUCCESS();
+
+        // Create the target
+        GLTexture targetTexture2;
+        // Create a target texture from the image
+        glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture2);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, image2);
+
+        // Disable mipmapping
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        ASSERT_GL_NO_ERROR();
+        glUseProgram(mTextureExternalProgram);
+        glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture1);
+        glUniform1i(mTextureExternalUniformLocation, 0);
+
+        drawQuad(mTextureExternalProgram, "position", 0.5f);
+
+        // Calls On EndFrame() to save the gl calls creating external texture targetTexture2;
+        // We use this as a reference to check the gl calls we restore for targetTexture1
+        // in MidExecutionSetup
+        eglSwapBuffers(display, surface);
+        // Frame 2 ends
+
+        // Frame 3 begins
+        // Draw a quad with the targetTexture2
+        glUseProgram(mTextureExternalProgram);
+        glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture2);
+        glUniform1i(mTextureExternalUniformLocation, 0);
+
+        drawQuad(mTextureExternalProgram, "position", 0.5f);
+
+        eglSwapBuffers(display, surface);
+        // Frame 3 ends
+
+        // Clean up
+        eglDestroyImageKHR(eglWindow->getDisplay(), image1);
+        eglDestroyImageKHR(eglWindow->getDisplay(), image2);
+    }
+
     EGLint default3DAttribs[5] = {
         EGL_GL_TEXTURE_ZOFFSET_KHR, static_cast<EGLint>(0), EGL_IMAGE_PRESERVED, EGL_TRUE, EGL_NONE,
     };
@@ -5729,9 +5843,8 @@ TEST_P(ImageTest, SourceCubeAndSameTargetTextureWithEachCubeFace)
 //      adb shell setprop debug.angle.capture.frame_end 2
 //      adb shell setprop debug.angle.capture.label external_textures
 //      adb shell setprop debug.angle.capture.out_dir /data/data/externaltextures/angle_capture/
-TEST_P(ImageTest, AppTraceExternalTextureUseCase)
+TEST_P(ImageTest, AppTraceExternalTextureDefaultAttribs)
 {
-    EGLWindow *window = getEGLWindow();
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
                        !hasExternalESSL3Ext());
 
@@ -5741,101 +5854,31 @@ TEST_P(ImageTest, AppTraceExternalTextureUseCase)
         EGL_NONE,
     };
 
-    // Create the Image
-    GLTexture sourceTexture1;
-    EGLImageKHR image1;
+    externalTextureTracerTestHelper(attribs);
+}
 
-    GLubyte data[] = {132, 55, 219, 255};
-    // Create a source 2D texture
-    glBindTexture(GL_TEXTURE_2D, sourceTexture1);
+// Same as AppTraceExternalTextureUseCase, except we will pass additional attrib_list values in
+// EGLAttrib* for eglCreateImageKHR calls
+TEST_P(ImageTest, AppTraceExternalTextureOtherAttribs)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasExternalESSL3Ext());
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(1), static_cast<GLsizei>(1), 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, data);
+    constexpr EGLint attribs[] = {
+        EGL_IMAGE_PRESERVED, EGL_TRUE, EGL_GL_TEXTURE_LEVEL, 0, EGL_NONE,
+    };
 
-    // Disable mipmapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    externalTextureTracerTestHelper(attribs);
+}
 
-    ASSERT_GL_NO_ERROR();
+// Same as AppTraceExternalTextureUseCase, except we will pass nullptr as EGLAttrib* for
+// eglCreateImageKHR calls
+TEST_P(ImageTest, AppTraceExternalTextureNullAttribs)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasExternalESSL3Ext());
 
-    image1 = eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-                               reinterpretHelper<EGLClientBuffer>(sourceTexture1.get()), attribs);
-
-    ASSERT_EGL_SUCCESS();
-
-    // Create the target
-    GLTexture targetTexture1;
-    // Create a target texture from the image
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture1);
-    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, image1);
-
-    // Disable mipmapping
-    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    ASSERT_GL_NO_ERROR();
-
-    // Calls On EndFrame(), with MidExecutionSetup to restore external texture targetTexture1 above
-    EGLDisplay display = getEGLWindow()->getDisplay();
-    EGLSurface surface = getEGLWindow()->getSurface();
-    eglSwapBuffers(display, surface);
-
-    // Create another eglImage with another associated texture
-    // Draw using the eglImage texture targetTexture1 created in frame 1
-    GLTexture sourceTexture2;
-    EGLImageKHR image2;
-
-    // Create a source 2D texture
-    glBindTexture(GL_TEXTURE_2D, sourceTexture2);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(1), static_cast<GLsizei>(1), 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-    // Disable mipmapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    ASSERT_GL_NO_ERROR();
-
-    image2 = eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-                               reinterpretHelper<EGLClientBuffer>(sourceTexture2.get()), attribs);
-
-    ASSERT_EGL_SUCCESS();
-
-    // Create the target
-    GLTexture targetTexture2;
-    // Create a target texture from the image
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture2);
-    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, image2);
-
-    // Disable mipmapping
-    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    ASSERT_GL_NO_ERROR();
-    glUseProgram(mTextureExternalProgram);
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture1);
-    glUniform1i(mTextureExternalUniformLocation, 0);
-
-    drawQuad(mTextureExternalProgram, "position", 0.5f);
-
-    // Calls On EndFrame() to save the gl calls creating external texture targetTexture2;
-    // We use this as a reference to check the gl calls we restore for targetTexture1
-    // in MidExecutionSetup
-    eglSwapBuffers(display, surface);
-
-    // Draw a quad with the targetTexture2
-    glUseProgram(mTextureExternalProgram);
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, targetTexture2);
-    glUniform1i(mTextureExternalUniformLocation, 0);
-
-    drawQuad(mTextureExternalProgram, "position", 0.5f);
-
-    eglSwapBuffers(display, surface);
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image1);
-    eglDestroyImageKHR(window->getDisplay(), image2);
+    externalTextureTracerTestHelper(nullptr);
 }
 
 // Alternate case for testing External Texture (created with AHB) support in MEC.

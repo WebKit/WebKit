@@ -181,3 +181,6 @@
 7570 : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3_Colorspace/* = SKIP_FOR_CAPTURE
 
 7581 : FramebufferTest_ES3.BlitWithDifferentPreRotations/* = SKIP_FOR_CAPTURE
+
+7814 WIN : PBOExtensionTest.PBOWithExistingData/ES2_Vulkan_SwiftShader = FLAKY
+7814 WIN : PBOExtensionTest.PBOWithOtherTarget/ES2_Vulkan_SwiftShader = FLAKY

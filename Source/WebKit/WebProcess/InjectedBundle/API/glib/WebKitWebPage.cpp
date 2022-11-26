@@ -23,7 +23,7 @@
 #include "APIString.h"
 #include "InjectedBundle.h"
 #include "WebContextMenuItem.h"
-#include "WebKitConsoleMessagePrivate.h"
+#include "WebKitConsoleMessage.h"
 #include "WebKitContextMenuPrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
@@ -40,6 +40,7 @@
 #include "WebKitWebProcessEnumTypes.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/ContextMenuContext.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
@@ -151,12 +152,6 @@ static void webkitWebPageSetURI(WebKitWebPage* webPage, const CString& uri)
     g_object_notify_by_pspec(G_OBJECT(webPage), sObjProperties[PROP_URI]);
 }
 
-static void webkitWebPageDidSendConsoleMessage(WebKitWebPage* webPage, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
-{
-    WebKitConsoleMessage consoleMessage(source, level, message, lineNumber, sourceID);
-    g_signal_emit(webPage, signals[CONSOLE_MESSAGE_SENT], 0, &consoleMessage);
-}
-
 class PageLoaderClient final : public API::InjectedBundle::PageLoaderClient {
 public:
     explicit PageLoaderClient(WebKitWebPage* webPage)
@@ -256,25 +251,6 @@ private:
         webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
     }
 
-    void didReceiveResponseForResource(WebPage& page, WebFrame&, WebCore::ResourceLoaderIdentifier identifier, const ResourceResponse& response) override
-    {
-        // Post on the console as well to be consistent with the inspector.
-        if (response.httpStatusCode() >= 400) {
-            String errorMessage = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", response.httpStatusText(), ')');
-            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, response.url().string());
-        }
-    }
-
-    void didFailLoadForResource(WebPage& page, WebFrame&, WebCore::ResourceLoaderIdentifier identifier, const ResourceError& error) override
-    {
-        // Post on the console as well to be consistent with the inspector.
-        if (!error.isCancellation()) {
-            auto errorDescription = error.localizedDescription();
-            auto errorMessage = makeString("Failed to load resource", errorDescription.isEmpty() ? "" : ": ", errorDescription);
-            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, error.failingURL().string());
-        }
-    }
-
     WebKitWebPage* m_webPage;
 };
 
@@ -286,8 +262,11 @@ public:
     }
 
 private:
-    bool getCustomMenuFromDefaultItems(WebPage&, const WebCore::HitTestResult& hitTestResult, const Vector<WebCore::ContextMenuItem>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData) override
+    bool getCustomMenuFromDefaultItems(WebPage&, const WebCore::HitTestResult& hitTestResult, const Vector<WebCore::ContextMenuItem>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, const WebCore::ContextMenuContext& context, RefPtr<API::Object>& userData) override
     {
+        if (context.type() != ContextMenuContext::Type::ContextMenu)
+            return false;
+
         GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(kitItems(defaultMenu)));
         GRefPtr<WebKitWebHitTestResult> webHitTestResult = adoptGRef(webkitWebHitTestResultCreate(hitTestResult));
         gboolean returnValue;
@@ -302,22 +281,6 @@ private:
 
         webkitContextMenuPopulate(contextMenu.get(), newMenu);
         return true;
-    }
-
-    WebKitWebPage* m_webPage;
-};
-
-class PageUIClient final : public API::InjectedBundle::PageUIClient {
-public:
-    explicit PageUIClient(WebKitWebPage* webPage)
-        : m_webPage(webPage)
-    {
-    }
-
-private:
-    void willAddMessageToConsole(WebPage*, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned /*columnNumber*/, const String& sourceID) override
-    {
-        webkitWebPageDidSendConsoleMessage(m_webPage, source, level, message, lineNumber, sourceID);
     }
 
     WebKitWebPage* m_webPage;
@@ -488,6 +451,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         WEBKIT_TYPE_CONTEXT_MENU,
         WEBKIT_TYPE_WEB_HIT_TEST_RESULT);
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     /**
      * WebKitWebPage::console-message-sent:
      * @web_page: the #WebKitWebPage on which the signal is emitted
@@ -498,7 +462,11 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * a security error or other errors, warnings, debug or log messages.
      * The @console_message contains information of the message.
      *
+     * This signal is now deprecated and it's never emitted.
+     *
      * Since: 2.12
+     *
+     * Deprecated: 2.40
      */
     signals[CONSOLE_MESSAGE_SENT] = g_signal_new(
         "console-message-sent",
@@ -508,6 +476,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         g_cclosure_marshal_VOID__BOXED,
         G_TYPE_NONE, 1,
         WEBKIT_TYPE_CONSOLE_MESSAGE | G_SIGNAL_TYPE_STATIC_SCOPE);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     /**
      * WebKitWebPage::form-controls-associated:
@@ -668,7 +637,6 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     webPage->setInjectedBundleResourceLoadClient(makeUnique<PageResourceLoadClient>(page));
     webPage->setInjectedBundlePageLoaderClient(makeUnique<PageLoaderClient>(page));
     webPage->setInjectedBundleContextMenuClient(makeUnique<PageContextMenuClient>(page));
-    webPage->setInjectedBundleUIClient(makeUnique<PageUIClient>(page));
     webPage->setInjectedBundleFormClient(makeUnique<PageFormClient>(page));
 
     return page;

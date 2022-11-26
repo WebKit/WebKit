@@ -233,6 +233,10 @@ ArrayMode ArrayMode::refine(
             // are non-configurable.
             return ArrayMode(Array::Generic, action());
         }
+        if (graph.hasExitSite(node->origin.semantic, UnexpectedResizableArrayBufferView)) {
+            constexpr bool mayBeResizableOrGrowableSharedTypedArray = true;
+            return result.withArrayClassAndSpeculation(result.arrayClass(), result.speculation(), result.mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray);
+        }
         return result;
     };
     

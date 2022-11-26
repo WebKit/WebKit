@@ -12327,7 +12327,6 @@
 			files = (
 				0FF922D414F46B410041A24E /* LLIntOffsetsExtractor.cpp in Sources */,
 				DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */,
-				DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12375,7 +12374,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				14BD689D215191C10050DAFF /* LLIntSettingsExtractor.cpp in Sources */,
-				DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */,
 				DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

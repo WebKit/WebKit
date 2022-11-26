@@ -50,7 +50,7 @@ function finish() {
 }
 </script>
 </defs>
-<foreignObject>
+<foreignObject width="100%" height="100">
 <xhtml:p>Created script element, script data passed as text content, appended: <xhtml:span id="p1">FAIL</xhtml:span></xhtml:p>
 <xhtml:p>Removed element, readd element, remove again, script shouldn't have executed:<xhtml:span id="p2">PASS</xhtml:span></xhtml:p>
 <xhtml:p>Created script element, loading external script content, appended: <xhtml:span id="p3">FAIL</xhtml:span></xhtml:p>

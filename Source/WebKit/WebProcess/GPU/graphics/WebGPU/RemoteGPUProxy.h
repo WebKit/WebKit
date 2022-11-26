@@ -57,7 +57,7 @@ public:
 
     RemoteGPUProxy& root() { return *this; }
 
-    IPC::StreamClientConnection& streamClientConnection() { return m_streamConnection; }
+    IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
 
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
@@ -106,7 +106,7 @@ private:
     GPUProcessConnection* m_gpuProcessConnection;
     bool m_didInitialize { false };
     bool m_lost { false };
-    IPC::StreamClientConnection m_streamConnection;
+    std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
 };
 
 } // namespace WebKit

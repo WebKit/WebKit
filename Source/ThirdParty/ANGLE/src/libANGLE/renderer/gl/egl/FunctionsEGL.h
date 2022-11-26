@@ -113,6 +113,10 @@ class FunctionsEGL
                                    EGLBoolean *externalOnly,
                                    EGLint *numModifiers) const;
 
+    EGLBoolean queryDeviceAttribEXT(EGLDisplay dpy, EGLint attribute, EGLAttrib *value) const;
+    const char *queryDeviceStringEXT(EGLDeviceEXT device, EGLint name) const;
+    EGLBoolean queryDisplayAttribEXT(EGLint attribute, EGLAttrib *value) const;
+
   private:
     // So as to isolate from angle we do not include angleutils.h and cannot
     // use angle::NonCopyable so we replicated it here instead.

@@ -218,13 +218,6 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
 
     void linkUpdateHasFlatAttributes(const gl::Context *context);
 
-#if ANGLE_ENABLE_METAL_SPIRV
-
-    angle::Result linkImplSpirv(const gl::Context *glContext,
-                                const gl::ProgramLinkedResources &resources,
-                                gl::InfoLog &infoLog);
-#endif
-
     angle::Result linkImplDirect(const gl::Context *glContext,
                                  const gl::ProgramLinkedResources &resources,
                                  gl::InfoLog &infoLog);

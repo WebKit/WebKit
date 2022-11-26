@@ -391,12 +391,6 @@
 
 // Pixel 6 expectations
 
-// These tests fail on the Android S bots, but pass on pre-release Android T drivers as of 3/25/22:
-6910 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.max_geometry_input_components = FAIL
-6910 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.linkage.es31.tessellation_geometry.varying.rules.different_precision = FAIL
-// This test fails on pre-release Android T drivers as of 3/25/22:
-6910 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.layered.layer_provoking_vertex_* = FAIL
-
 // Geometry shader support:
 // This fails on pre-release Android T drivers as of 3/25/22:
 5430 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL

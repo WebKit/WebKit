@@ -141,14 +141,6 @@ def function_parameter_type(type, kind):
     return 'const %s&' % type
 
 
-def reply_parameter_type(type):
-    return '%s&' % type
-
-
-def move_type(type):
-    return '%s&&' % type
-
-
 def arguments_type(message):
     return 'std::tuple<%s>' % ', '.join(function_parameter_type(parameter.type, parameter.kind) for parameter in message.parameters)
 
@@ -202,9 +194,6 @@ def message_to_struct_declaration(receiver, message):
         if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             result.append('    using DelayedReply = %sDelayedReply;\n' % message.name)
         else:
-            move_parameters = ', '.join([move_type(x.type) for x in message.reply_parameters])
-            result.append('    static void callReply(IPC::Decoder&, CompletionHandler<void(%s)>&&);\n' % move_parameters)
-            result.append('    static void cancelReply(CompletionHandler<void(%s)>&&);\n' % move_parameters)
             result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
             result.append('    using AsyncReply = %sAsyncReply;\n' % message.name)
         if message.has_attribute(MAINTHREADCALLBACK_ATTRIBUTE):
@@ -1103,40 +1092,6 @@ def generate_message_handler(receiver):
     result.append('#if ENABLE(IPC_TESTING_API)\n')
     result.append('#include "JSIPCBinding.h"\n')
     result.append("#endif\n\n")
-
-    delayed_or_async_messages = []
-    for message in receiver.messages:
-        if message.reply_parameters is not None:
-            delayed_or_async_messages.append(message)
-
-    if delayed_or_async_messages and not receiver.has_attribute(STREAM_ATTRIBUTE):
-        result.append('namespace Messages {\n\nnamespace %s {\n\n' % receiver.name)
-
-        for message in delayed_or_async_messages:
-            send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
-
-            if message.condition:
-                result.append('#if %s\n\n' % message.condition)
-
-            if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-                move_parameters = message.name, ', '.join([move_type(x.type) for x in message.reply_parameters])
-                result.append('void %s::callReply(IPC::Decoder& decoder, CompletionHandler<void(%s)>&& completionHandler)\n{\n' % move_parameters)
-                for x in message.reply_parameters:
-                    result.append('    std::optional<%s> %s;\n' % (x.type, x.name))
-                    result.append('    decoder >> %s;\n' % x.name)
-                    result.append('    if (!%s) {\n        ASSERT_NOT_REACHED();\n        cancelReply(WTFMove(completionHandler));\n        return;\n    }\n' % x.name)
-                result.append('    completionHandler(')
-                if len(message.reply_parameters):
-                    result.append('WTFMove(*%s)' % ('), WTFMove(*'.join(x.name for x in message.reply_parameters)))
-                result.append(');\n}\n\n')
-                result.append('void %s::cancelReply(CompletionHandler<void(%s)>&& completionHandler)\n{\n    completionHandler(' % move_parameters)
-                result.append(', '.join(['IPC::AsyncReplyError<' + x.type + '>::create()' for x in message.reply_parameters]))
-                result.append(');\n}\n\n')
-
-            if message.condition:
-                result.append('#endif\n\n')
-
-        result.append('} // namespace %s\n\n} // namespace Messages\n\n' % receiver.name)
 
     result.append('namespace WebKit {\n\n')
 

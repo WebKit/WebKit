@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "AccessibilityCommonMac.h"
+#import "AccessibilityCommonCocoa.h"
 
 #if ENABLE(ACCESSIBILITY)
 

@@ -80,4 +80,38 @@ guint createContextMenuSignal(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_CONTEXT_MENU,
         WEBKIT_TYPE_HIT_TEST_RESULT);
 }
+
+guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
+{
+    /**
+     * WebKitWebView::show-option-menu:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @menu: the #WebKitOptionMenu
+     * @rectangle: the option element area
+     *
+     * This signal is emitted when a select element in @web_view needs to display a
+     * dropdown menu. This signal can be used to show a custom menu, using @menu to get
+     * the details of all items that should be displayed. The area of the element in the
+     * #WebKitWebView is given as @rectangle parameter, it can be used to position the
+     * menu.
+     * To handle this signal asynchronously you should keep a ref of the @menu.
+     *
+     * The default signal handler will pop up a #GtkMenu.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *   %FALSE to propagate the event further.
+     *
+     * Since: 2.18
+     */
+    return g_signal_new(
+        "show-option-menu",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, show_option_menu),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 2,
+        WEBKIT_TYPE_OPTION_MENU,
+        GDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
+}
 #endif

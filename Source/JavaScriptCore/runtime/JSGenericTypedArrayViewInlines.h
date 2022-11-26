@@ -132,7 +132,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(JSGlo
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(VM& vm, Structure* structure, RefPtr<typename Adaptor::ViewType>&& impl)
 {
-    ConstructionContext context(vm, structure, impl->possiblySharedBuffer(), impl->byteOffset(), impl->isAutoLength() ? std::nullopt : std::optional { impl->length() });
+    ConstructionContext context(vm, structure, impl->possiblySharedBuffer(), impl->byteOffsetRaw(), impl->isAutoLength() ? std::nullopt : std::optional { impl->lengthRaw() });
     ASSERT(context);
     JSGenericTypedArrayView* result =
         new (NotNull, allocateCell<JSGenericTypedArrayView>(vm))
@@ -419,13 +419,13 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
 template<typename Adaptor>
 RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::possiblySharedTypedImpl()
 {
-    return Adaptor::ViewType::tryCreate(possiblySharedBuffer(), byteOffset(), isAutoLength() ? std::nullopt : std::optional { length() });
+    return Adaptor::ViewType::tryCreate(possiblySharedBuffer(), byteOffsetRaw(), isAutoLength() ? std::nullopt : std::optional { lengthRaw() });
 }
 
 template<typename Adaptor>
 RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::unsharedTypedImpl()
 {
-    return Adaptor::ViewType::tryCreate(unsharedBuffer(), byteOffset(), isAutoLength() ? std::nullopt : std::optional { length() });
+    return Adaptor::ViewType::tryCreate(unsharedBuffer(), byteOffsetRaw(), isAutoLength() ? std::nullopt : std::optional { lengthRaw() });
 }
 
 template<typename Adaptor>

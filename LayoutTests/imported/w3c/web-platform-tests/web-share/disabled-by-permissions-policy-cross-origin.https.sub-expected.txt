@@ -2,13 +2,12 @@ CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin '
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'web-share=()'.
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'web-share=(self)'.
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'undefined'.
-CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'web-share=("https://127.0.0.1:9443")'.
 CONSOLE MESSAGE: Feature policy 'WebShare' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'web-share=(self)'.
 
 PASS share() is disabled by default 'self' by permissions policy for cross-origin iframes
 PASS share() is disabled explicitly by permissions policy for cross-origin iframe
 PASS share() not allowed, as only allowed to share with self
 PASS canShare() not allowed to share by default permissions policy cross-origin
-FAIL canShare() is allowed by permissions policy to share cross-origin on a particular origin assert_equals: Expected true, is it can now share on https://localhost:9443. expected true but got false
+PASS canShare() is allowed by permissions policy to share cross-origin on a particular origin
 FAIL canShare() with self assert_equals: Expected true, at it can share with self. expected true but got false
 

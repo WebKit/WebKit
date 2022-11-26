@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 Apple Inc. All rights reserved.
+* Copyright (C) 2019-2022 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -29,25 +29,10 @@
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import "NativeWebMouseEvent.h"
+#import "WebIOSEventFactory.h"
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/Compiler.h>
 #import <wtf/MonotonicTime.h>
-
-static OptionSet<WebKit::WebEventModifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags flags)
-{
-    OptionSet<WebKit::WebEventModifier> modifiers;
-    if (flags & UIKeyModifierShift)
-        modifiers.add(WebKit::WebEventModifier::ShiftKey);
-    if (flags & UIKeyModifierControl)
-        modifiers.add(WebKit::WebEventModifier::ControlKey);
-    if (flags & UIKeyModifierAlternate)
-        modifiers.add(WebKit::WebEventModifier::AltKey);
-    if (flags & UIKeyModifierCommand)
-        modifiers.add(WebKit::WebEventModifier::MetaKey);
-    if (flags & UIKeyModifierAlphaShift)
-        modifiers.add(WebKit::WebEventModifier::CapsLockKey);
-    return modifiers;
-}
 
 @implementation WKMouseGestureRecognizer {
     RetainPtr<UIEvent> _currentHoverEvent;
@@ -119,7 +104,7 @@ static String pointerTypeForUITouchType(UITouchType type)
 
 - (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEvent::Type)type wasCancelled:(BOOL)cancelled
 {
-    auto modifiers = webEventModifiersForUIKeyModifierFlags(self.modifierFlags);
+    auto modifiers = WebIOSEventFactory::webEventModifiersForUIKeyModifierFlags(self.modifierFlags);
     BOOL isRightButton = modifiers.contains(WebKit::WebEventModifier::ControlKey) || (_pressedButtonMask && (*_pressedButtonMask & UIEventButtonMaskSecondary));
 
     auto button = [&] {

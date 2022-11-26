@@ -22,7 +22,6 @@
 #include "libANGLE/renderer/vulkan/SyncVk.h"
 #include "libANGLE/renderer/vulkan/TextureVk.h"
 #include "libANGLE/renderer/vulkan/VkImageImageSiblingVk.h"
-#include "libANGLE/trace.h"
 
 namespace rx
 {

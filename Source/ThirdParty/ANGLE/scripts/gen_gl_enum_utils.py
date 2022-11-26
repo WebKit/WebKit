@@ -23,8 +23,8 @@ template_gl_enums_header = """// GENERATED FILE - DO NOT EDIT.
 // gl_enum_utils_autogen.h:
 //   mapping of GLenum value to string.
 
-# ifndef LIBANGLE_GL_ENUM_UTILS_AUTOGEN_H_
-# define LIBANGLE_GL_ENUM_UTILS_AUTOGEN_H_
+# ifndef COMMON_GL_ENUM_UTILS_AUTOGEN_H_
+# define COMMON_GL_ENUM_UTILS_AUTOGEN_H_
 
 namespace gl
 {{
@@ -39,7 +39,7 @@ enum class BigGLEnum
 }};
 }}  // namespace gl
 
-# endif  // LIBANGLE_GL_ENUM_UTILS_AUTOGEN_H_
+# endif  // COMMON_GL_ENUM_UTILS_AUTOGEN_H_
 """
 
 template_gl_enums_source = """// GENERATED FILE - DO NOT EDIT.
@@ -52,9 +52,12 @@ template_gl_enums_source = """// GENERATED FILE - DO NOT EDIT.
 // gl_enum_utils_autogen.cpp:
 //   mapping of GLenum value to string.
 
-#include "libANGLE/capture/gl_enum_utils_autogen.h"
+#include "common/gl_enum_utils_autogen.h"
 
-#include "libANGLE/capture/gl_enum_utils.h"
+#include "common/debug.h"
+#include "common/gl_enum_utils.h"
+
+#include <cstring>
 
 namespace gl
 {{
@@ -87,6 +90,13 @@ const char *GLenumToString(BigGLEnum enumGroup, unsigned int value)
         default:
             return UnknownEnumToString(value);
     }}
+}}
+
+unsigned int StringToGLenum(const char *str)
+{{
+{string_to_enum_table}
+    UNREACHABLE();
+    return 0;
 }}
 }}  // namespace gl
 
@@ -150,6 +160,28 @@ def dump_value_to_string_mapping(enum_groups, api_enum):
     ])
 
 
+def dump_string_to_value_mapping(enums_and_values):
+    templ = """\
+    if (strcmp(str, "{enum}") == 0)
+    {{
+        return {value};
+    }}
+"""
+
+    def f(value):
+        if value < 0:
+            return str(value)
+        if value < 0xFFFF:
+            return "0x%04X" % value
+        if value <= 0xFFFFFFFF:
+            return "0x%X" % value
+        else:
+            return "0xFFFFFFFF"
+
+    items = [templ.format(enum=k, value=f(v)) for (k, v) in sorted(enums_and_values)]
+    return ''.join(items)
+
+
 def main(header_output_path, source_output_path):
     xml = registry_xml.RegistryXML('gl.xml', 'gl_angle_ext.xml')
 
@@ -189,11 +221,13 @@ def main(header_output_path, source_output_path):
     gles_default_enums = dict()
     gl_enum_groups[registry_xml.default_enum_group_name] = gl_default_enums
     gles_enum_groups[registry_xml.default_enum_group_name] = gles_default_enums
+    enums_and_values = []
 
     for enums_node in xml.root.findall('enums'):
         for enum in enums_node.findall('enum'):
             enum_name = enum.attrib['name']
             enum_value = int(enum.attrib['value'], base=16)
+            enums_and_values.append((enum_name, enum_value))
 
             if enum_name in gles_enums:
                 gles_default_enums[enum_name] = enum_value
@@ -234,11 +268,13 @@ def main(header_output_path, source_output_path):
     # Write mapping to source file
     gles_enums_value_to_string_table = dump_value_to_string_mapping(gles_enum_groups, 'GLESEnum')
     gl_enums_value_to_string_table = dump_value_to_string_mapping(gl_enum_groups, 'BigGLEnum')
+    string_to_enum_table = dump_string_to_value_mapping(enums_and_values)
     source_content = template_gl_enums_source.format(
         script_name=os.path.basename(sys.argv[0]),
         data_source_name="gl.xml and gl_angle_ext.xml",
         gles_enums_value_to_string_table=gles_enums_value_to_string_table,
         gl_enums_value_to_string_table=gl_enums_value_to_string_table,
+        string_to_enum_table=string_to_enum_table,
     )
 
     source_output_path = registry_xml.script_relative(source_output_path)
@@ -255,7 +291,7 @@ if __name__ == '__main__':
         'registry_xml.py',
     ]
 
-    gl_enum_utils_autogen_base_path = '../src/libANGLE/capture/gl_enum_utils_autogen'
+    gl_enum_utils_autogen_base_path = '../src/common/gl_enum_utils_autogen'
     outputs = [
         gl_enum_utils_autogen_base_path + '.h',
         gl_enum_utils_autogen_base_path + '.cpp',

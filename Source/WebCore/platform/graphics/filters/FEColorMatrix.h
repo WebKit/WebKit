@@ -57,7 +57,7 @@ private:
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 
-    bool supportsAcceleratedRendering() const override;
+    OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const override;
     std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

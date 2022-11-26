@@ -31,6 +31,7 @@
 #include "WebExtensionAPIExtension.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIRuntime.h"
+#include "WebExtensionAPITest.h"
 
 namespace WebKit {
 
@@ -41,12 +42,18 @@ class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExten
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace);
 
 public:
+#if PLATFORM(COCOA)
+    bool isPropertyAllowed(String propertyName, WebPage*);
+
     WebExtensionAPIExtension& extension();
     WebExtensionAPIRuntime& runtime() final;
+    WebExtensionAPITest& test();
+#endif
 
 private:
     RefPtr<WebExtensionAPIExtension> m_extension;
     RefPtr<WebExtensionAPIRuntime> m_runtime;
+    RefPtr<WebExtensionAPITest> m_test;
 };
 
 } // namespace WebKit

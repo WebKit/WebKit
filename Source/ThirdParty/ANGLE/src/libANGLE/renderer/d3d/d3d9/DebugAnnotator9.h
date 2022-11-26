@@ -25,8 +25,8 @@ class DebugAnnotator9 : public angle::LoggingAnnotator
     void endEvent(gl::Context *context,
                   const char *eventName,
                   angle::EntryPoint entryPoint) override;
-    void setMarker(const char *markerName) override;
-    bool getStatus() override;
+    void setMarker(gl::Context *context, const char *markerName) override;
+    bool getStatus(const gl::Context *context) override;
 
   private:
     static constexpr size_t kMaxMessageLength = 256;

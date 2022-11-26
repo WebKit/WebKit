@@ -138,7 +138,10 @@
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/210635"}}
             },
             "/webkit/WebKitWebView/fullscreen": {
-                "expected": {"wpe": {"status": ["TIMEOUT", "PASS"]}}
+                "expected": {
+                        "gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"},
+                        "wpe": {"status": ["TIMEOUT", "PASS"]}
+                }
             }
         }
     },
@@ -312,7 +315,12 @@
             },
             "/webkit/WebKitWebView/default-menu": {
                 "expected": {
-                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230043"}
+                    "gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/248213"}
+                }
+            },
+            "/webkit/WebKitWebView/popup-event-signal": {
+                "expected": {
+                    "gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/248213"}
                 }
             }
         }

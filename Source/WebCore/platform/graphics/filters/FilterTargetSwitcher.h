@@ -27,38 +27,32 @@
 
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
-#include <functional>
 
 namespace WebCore {
 
 class Filter;
+class FilterResults;
 class GraphicsContext;
-class ImageBuffer;
 
 class FilterTargetSwitcher {
+    WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    class Client {
-    public:
-        virtual ~Client() = default;
-        virtual RefPtr<Filter> createFilter(const std::function<FloatRect()>& boundsProvider) const = 0;
-        virtual IntOutsets calculateFilterOutsets(const FloatRect& bounds) const = 0;
-        virtual GraphicsContext* drawingContext() const = 0;
-        virtual void setTargetSwitcher(FilterTargetSwitcher*) = 0;
-    protected:
-        Client() = default;
-    };
+    static std::unique_ptr<FilterTargetSwitcher> create(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect, const DestinationColorSpace&, FilterResults* = nullptr);
 
-    FilterTargetSwitcher(Client&, const DestinationColorSpace&, const std::function<FloatRect()>& boundsProvider);
-    FilterTargetSwitcher(Client&, const DestinationColorSpace&, const FloatRect& bounds);
-    ~FilterTargetSwitcher();
-    GraphicsContext* drawingContext() const;
-    FloatBoxExtent outsets() const;
+    virtual ~FilterTargetSwitcher() = default;
 
-private:
-    Client& m_client;
+    virtual GraphicsContext* drawingContext(GraphicsContext& destinationContext) const { return &destinationContext; }
+
+    virtual bool needsRedrawSourceImage() { return false; }
+
+    virtual void willDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect);
+    virtual void didDrawSourceImage(GraphicsContext& destinationContext);
+
+protected:
+    FilterTargetSwitcher(Filter&);
+
     RefPtr<Filter> m_filter;
-    RefPtr<ImageBuffer> m_imageBuffer;
-    FloatRect m_bounds;
 };
 
 } // namespace WebCore

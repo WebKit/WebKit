@@ -42,35 +42,6 @@
 #include "JSIPCBinding.h"
 #endif
 
-namespace Messages {
-
-namespace TestWithCVPixelBuffer {
-
-#if USE(AVFOUNDATION)
-
-void ReceiveCVPixelBuffer::callReply(IPC::Decoder& decoder, CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&& completionHandler)
-{
-    std::optional<RetainPtr<CVPixelBufferRef>> r0;
-    decoder >> r0;
-    if (!r0) {
-        ASSERT_NOT_REACHED();
-        cancelReply(WTFMove(completionHandler));
-        return;
-    }
-    completionHandler(WTFMove(*r0));
-}
-
-void ReceiveCVPixelBuffer::cancelReply(CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&& completionHandler)
-{
-    completionHandler(IPC::AsyncReplyError<RetainPtr<CVPixelBufferRef>>::create());
-}
-
-#endif
-
-} // namespace TestWithCVPixelBuffer
-
-} // namespace Messages
-
 namespace WebKit {
 
 void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

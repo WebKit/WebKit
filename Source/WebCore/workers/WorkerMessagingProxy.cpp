@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
- * Copyright (C) 2009 Google Inc. All Rights Reserved.
+ * Copyright (C) 2009-2022 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,6 +123,11 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 {
     if (!m_scriptExecutionContext)
         return;
+    
+    if (m_askedToTerminate) {
+        // Worker.terminate() could be called from JS before the thread was created.
+        return;
+    }
 
     auto* parentWorkerGlobalScope = dynamicDowncast<WorkerGlobalScope>(m_scriptExecutionContext.get());
     WorkerThreadStartMode startMode = m_inspectorProxy->workerStartMode(*m_scriptExecutionContext.get());
@@ -325,21 +330,17 @@ void WorkerMessagingProxy::setResourceCachingDisabledByWebInspector(bool disable
 
 void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThread)
 {
+    ASSERT(!m_askedToTerminate);
     m_workerThread = &workerThread;
 
-    if (m_askedToTerminate) {
-        // Worker.terminate() could be called from JS before the thread was created.
-        m_workerThread->stop(nullptr);
-    } else {
-        if (m_askedToSuspend) {
-            m_askedToSuspend = false;
-            m_workerThread->suspend();
-        }
-
-        auto queuedEarlyTasks = WTFMove(m_queuedEarlyTasks);
-        for (auto& task : queuedEarlyTasks)
-            m_workerThread->runLoop().postTask(WTFMove(*task));
+    if (m_askedToSuspend) {
+        m_askedToSuspend = false;
+        m_workerThread->suspend();
     }
+
+    auto queuedEarlyTasks = std::exchange(m_queuedEarlyTasks, { });
+    for (auto& task : queuedEarlyTasks)
+        m_workerThread->runLoop().postTask(WTFMove(*task));
 }
 
 void WorkerMessagingProxy::workerObjectDestroyed()

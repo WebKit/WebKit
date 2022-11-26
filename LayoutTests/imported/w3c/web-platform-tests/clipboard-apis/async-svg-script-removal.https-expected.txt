@@ -1,5 +1,5 @@
 Body needed for test_driver.click()
 
 FAIL Verify write and read clipboard with scripts removed given image/svg+xml: <svg> <script>const a = 5;</scr' + 'ipt>
-   <a href="javascript:alert(2)"> test </a> </svg> promise_test: Unhandled rejection with value: object "Error: unimplemented"
+   <a href="javascript:alert(2)"> test </a> </svg> promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
 

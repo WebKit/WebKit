@@ -49,7 +49,8 @@ static InternalFormatInitialzerMap BuildInternalFormatInitialzerMap()
     return map;
 }
 
-static void UnreachableLoad(size_t width,
+static void UnreachableLoad(const ImageLoadContext &context,
+                            size_t width,
                             size_t height,
                             size_t depth,
                             const uint8_t *input,

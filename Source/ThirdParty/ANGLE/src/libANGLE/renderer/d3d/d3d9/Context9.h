@@ -243,6 +243,7 @@ class Context9 : public ContextD3D
     angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
 
     Renderer9 *getRenderer() const { return mRenderer; }
+    angle::ImageLoadContext getImageLoadContext() const;
 
     angle::Result getIncompleteTexture(const gl::Context *context,
                                        gl::TextureType type,

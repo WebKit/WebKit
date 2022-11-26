@@ -573,7 +573,14 @@
 #define glEndPixelLocalStorageANGLE l_glEndPixelLocalStorageANGLE
 #define glFramebufferMemorylessPixelLocalStorageANGLE \
     l_glFramebufferMemorylessPixelLocalStorageANGLE
+#define glFramebufferPixelLocalClearValuefvANGLE l_glFramebufferPixelLocalClearValuefvANGLE
+#define glFramebufferPixelLocalClearValueivANGLE l_glFramebufferPixelLocalClearValueivANGLE
+#define glFramebufferPixelLocalClearValueuivANGLE l_glFramebufferPixelLocalClearValueuivANGLE
 #define glFramebufferTexturePixelLocalStorageANGLE l_glFramebufferTexturePixelLocalStorageANGLE
+#define glGetFramebufferPixelLocalStorageParameterfvANGLE \
+    l_glGetFramebufferPixelLocalStorageParameterfvANGLE
+#define glGetFramebufferPixelLocalStorageParameterivANGLE \
+    l_glGetFramebufferPixelLocalStorageParameterivANGLE
 #define glPixelLocalStorageBarrierANGLE l_glPixelLocalStorageBarrierANGLE
 #define glInvalidateTextureANGLE l_glInvalidateTextureANGLE
 #define glTexImage2DExternalANGLE l_glTexImage2DExternalANGLE
@@ -836,6 +843,10 @@
 #define glTexGenivOES l_glTexGenivOES
 #define glTexGenxOES l_glTexGenxOES
 #define glTexGenxvOES l_glTexGenxvOES
+
+#if defined(__cplusplus)
+extern "C" {
+#endif  // defined(__cplusplus)
 ANGLE_UTIL_EXPORT extern PFNGLALPHAFUNCPROC l_glAlphaFunc;
 ANGLE_UTIL_EXPORT extern PFNGLCLIPPLANEFPROC l_glClipPlanef;
 ANGLE_UTIL_EXPORT extern PFNGLCOLOR4FPROC l_glColor4f;
@@ -1419,8 +1430,18 @@ ANGLE_UTIL_EXPORT extern PFNGLBEGINPIXELLOCALSTORAGEANGLEPROC l_glBeginPixelLoca
 ANGLE_UTIL_EXPORT extern PFNGLENDPIXELLOCALSTORAGEANGLEPROC l_glEndPixelLocalStorageANGLE;
 ANGLE_UTIL_EXPORT extern PFNGLFRAMEBUFFERMEMORYLESSPIXELLOCALSTORAGEANGLEPROC
     l_glFramebufferMemorylessPixelLocalStorageANGLE;
+ANGLE_UTIL_EXPORT extern PFNGLFRAMEBUFFERPIXELLOCALCLEARVALUEFVANGLEPROC
+    l_glFramebufferPixelLocalClearValuefvANGLE;
+ANGLE_UTIL_EXPORT extern PFNGLFRAMEBUFFERPIXELLOCALCLEARVALUEIVANGLEPROC
+    l_glFramebufferPixelLocalClearValueivANGLE;
+ANGLE_UTIL_EXPORT extern PFNGLFRAMEBUFFERPIXELLOCALCLEARVALUEUIVANGLEPROC
+    l_glFramebufferPixelLocalClearValueuivANGLE;
 ANGLE_UTIL_EXPORT extern PFNGLFRAMEBUFFERTEXTUREPIXELLOCALSTORAGEANGLEPROC
     l_glFramebufferTexturePixelLocalStorageANGLE;
+ANGLE_UTIL_EXPORT extern PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERFVANGLEPROC
+    l_glGetFramebufferPixelLocalStorageParameterfvANGLE;
+ANGLE_UTIL_EXPORT extern PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERIVANGLEPROC
+    l_glGetFramebufferPixelLocalStorageParameterivANGLE;
 ANGLE_UTIL_EXPORT extern PFNGLPIXELLOCALSTORAGEBARRIERANGLEPROC l_glPixelLocalStorageBarrierANGLE;
 ANGLE_UTIL_EXPORT extern PFNGLINVALIDATETEXTUREANGLEPROC l_glInvalidateTextureANGLE;
 ANGLE_UTIL_EXPORT extern PFNGLTEXIMAGE2DEXTERNALANGLEPROC l_glTexImage2DExternalANGLE;
@@ -1695,11 +1716,12 @@ ANGLE_UTIL_EXPORT extern PFNGLTEXGENIVOESPROC l_glTexGenivOES;
 ANGLE_UTIL_EXPORT extern PFNGLTEXGENXOESPROC l_glTexGenxOES;
 ANGLE_UTIL_EXPORT extern PFNGLTEXGENXVOESPROC l_glTexGenxvOES;
 
-namespace angle
-{
-using GenericProc = void (*)();
-using LoadProc    = GenericProc(KHRONOS_APIENTRY *)(const char *);
-ANGLE_UTIL_EXPORT void LoadGLES(LoadProc loadProc);
-}  // namespace angle
+typedef void (*GenericProc)(void);
+typedef GenericProc(KHRONOS_APIENTRY *LoadProc)(const char *);
+ANGLE_UTIL_EXPORT void LoadUtilGLES(LoadProc loadProc);
+
+#if defined(__cplusplus)
+}  // extern "C"
+#endif  // defined(__cplusplus)
 
 #endif  // UTIL_GLES_LOADER_AUTOGEN_H_

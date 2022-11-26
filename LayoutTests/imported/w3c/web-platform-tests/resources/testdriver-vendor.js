@@ -9,59 +9,54 @@ function logDebug(callback)
 
 function pause(duration) {
     return new Promise(resolve => {
-        setTimeout(() => {
-            resolve();
-        }, duration);
+        setTimeout(resolve, duration);
     });
 }
 
-function dispatchMouseActions(actions, pointerType)
+async function dispatchMouseActions(actions, pointerType)
 {
     if (!window.eventSender)
-        return Promise.reject(new Error("window.eventSender is undefined."));
+        throw new Error("window.eventSender is undefined.");
 
-    return new Promise(resolve => {
-        setTimeout(async () => {
-            eventSender.dragMode = false;
+    await new Promise(resolve => setTimeout(resolve, 0));
 
-            for (let action of actions) {
-                switch (action.type) {
-                case "pointerMove":
-                    let origin = { x: 0, y: 0 };
-                    if (action.origin instanceof Element) {
-                        const bounds = action.origin.getBoundingClientRect();
-                        logDebug(() => `${action.origin.id} [${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height}]`);
-                        origin.x = bounds.left + 1;
-                        origin.y = bounds.top + 1;
-                    }
-                    logDebug(() => `eventSender.mouseMoveTo(${action.x + origin.x}, ${action.y + origin.y})`);
-                    eventSender.mouseMoveTo(action.x + origin.x, action.y + origin.y, pointerType);
-                    break;
-                case "pointerDown":
-                    logDebug(() => `eventSender.mouseDown()`);
-                    eventSender.mouseDown(action.button, [], pointerType);
-                    break;
-                case "pointerUp":
-                    logDebug(() => `eventSender.mouseUp()`);
-                    eventSender.mouseUp(action.button, [], pointerType);
-                    break;
-                case "pause":
-                    logDebug(() => `pause(${action.duration})`);
-                    await pause(action.duration);
-                    break;
-                default:
-                    return Promise.reject(new Error(`Unknown action type "${action.type}".`));
-                }
+    eventSender.dragMode = false;
+
+    for (let action of actions) {
+        switch (action.type) {
+        case "pointerMove":
+            let origin = { x: 0, y: 0 };
+            if (action.origin instanceof Element) {
+                const bounds = action.origin.getBoundingClientRect();
+                logDebug(() => `${action.origin.id} [${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height}]`);
+                origin.x = bounds.left + 1;
+                origin.y = bounds.top + 1;
             }
-            resolve();
-        });
-    });
+            logDebug(() => `eventSender.mouseMoveTo(${action.x + origin.x}, ${action.y + origin.y})`);
+            eventSender.mouseMoveTo(action.x + origin.x, action.y + origin.y, pointerType);
+            break;
+        case "pointerDown":
+            logDebug(() => `eventSender.mouseDown()`);
+            eventSender.mouseDown(action.button, [], pointerType);
+            break;
+        case "pointerUp":
+            logDebug(() => `eventSender.mouseUp()`);
+            eventSender.mouseUp(action.button, [], pointerType);
+            break;
+        case "pause":
+            logDebug(() => `pause(${action.duration})`);
+            await pause(action.duration);
+            break;
+        default:
+            throw new Error(`Unknown action type "${action.type}".`);
+        }
+    }
 }
 
-function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: false })
+async function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: false })
 {
-    if (!window.testRunner || typeof window.testRunner.runUIScript !== "function")
-        return Promise.reject(new Error("window.testRunner.runUIScript() is undefined."));
+    if (!window.testRunner?.runUIScript)
+        throw new Error("window.testRunner.runUIScript() is undefined.");
 
     let x = 0;
     let y = 0;
@@ -119,7 +114,7 @@ function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: fa
             timeOffsetIncrease = action.duration / 1000;
             break;
         default:
-            return Promise.reject(new Error(`Unknown action type "${action.type}".`));
+            throw new Error(`Unknown action type "${action.type}".`);
         }
 
         if (action.type !== "pause") {
@@ -148,10 +143,10 @@ function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: fa
 if (window.test_driver_internal === undefined)
     window.test_driver_internal = { };
 
-window.test_driver_internal.send_keys = function(element, keys)
+window.test_driver_internal.send_keys = async function(element, keys)
 {
     if (!window.eventSender)
-        return Promise.reject(new Error("window.eventSender is undefined."));
+        throw new Error("window.eventSender is undefined.");
 
     element.focus();
 
@@ -211,47 +206,45 @@ window.test_driver_internal.send_keys = function(element, keys)
     }
 
     if (testRunner.isIOSFamily && testRunner.isWebKit2) {
-        return new Promise((resolve) => {
+        await new Promise((resolve) => {
             testRunner.runUIScript(`
                 const keyList = JSON.parse('${JSON.stringify(keyList)}');
                 for (const key of keyList)
                     uiController.keyDown(key, modifiers);`, resolve);
         });
+        return;
     }
 
     for (const key of keyList)
         eventSender.keyDown(key, modifiers);
-    return Promise.resolve();
 }
 
-window.test_driver_internal.click = function (element, coords)
+window.test_driver_internal.click = async function (element, coords)
 {
     if (!window.testRunner)
-        return Promise.resolve();
+        return;
 
     if (!window.eventSender)
-        return Promise.reject(new Error("window.eventSender is undefined."));
+        throw new Error("window.eventSender is undefined.");
 
     if (testRunner.isIOSFamily && testRunner.isWebKit2) {
-        return new Promise((resolve) => {
+        await new Promise((resolve) => {
             testRunner.runUIScript(`
                 uiController.singleTapAtPoint(${coords.x}, ${coords.y}, function() {
                     uiController.uiScriptComplete();
                 });`, resolve);
         });
+        return;
     }
 
     eventSender.mouseMoveTo(coords.x, coords.y);
     eventSender.mouseDown();
     eventSender.mouseUp();
-
-    return Promise.resolve();
 }
 
-window.test_driver_internal.action_sequence = function(sources)
+window.test_driver_internal.action_sequence = async function(sources)
 {
-    // https://w3c.github.io/webdriver/#processing-actions    
-
+    // https://w3c.github.io/webdriver/#processing-actions
     let noneSource;
     let pointerSource;
     for (let source of sources) {
@@ -263,16 +256,16 @@ window.test_driver_internal.action_sequence = function(sources)
             pointerSource = source;
             break;
         default:
-            return Promise.reject(new Error(`Unknown source type "${action.type}".`));
+            throw new Error(`Unknown source type "${source.type}".`);
         }
     }
 
     if (!pointerSource)
-        return Promise.reject(new Error(`Unknown pointer type pointer type "${action.parameters.pointerType}".`));
+        throw new Error(`Unknown pointer type pointer type "${action.parameters.pointerType}".`);
 
-    const pointerType = pointerSource.parameters.pointerType;
-    if (pointerType !== "mouse" && pointerType !== "touch" && pointerType !== "pen")
-        return Promise.reject(new Error(`Unknown pointer type "${pointerType}".`));
+    const { pointerType } = pointerSource.parameters;
+    if (!["mouse", "touch", "pen"].includes(pointerType))
+        throw new Error(`Unknown pointer type "${pointerType}".`);
 
     // If we have a "none" source, let's inject any pause with non-zero durations into the pointer source
     // after the matching action in the pointer source.
@@ -289,45 +282,46 @@ window.test_driver_internal.action_sequence = function(sources)
     logDebug(() => JSON.stringify(pointerSource));
 
     if (pointerType === "touch")
-        return dispatchTouchActions(pointerSource.actions);
-    if (testRunner.isIOSFamily && "createTouch" in document)
-        return dispatchTouchActions(pointerSource.actions, { insertPauseAfterPointerUp: true });
-    if (pointerType === "mouse" || pointerType === "pen")
-        return dispatchMouseActions(pointerSource.actions, pointerType);
+        await dispatchTouchActions(pointerSource.actions);
+    else if (testRunner.isIOSFamily && "createTouch" in document)
+        await dispatchTouchActions(pointerSource.actions, { insertPauseAfterPointerUp: true });
+    else if (pointerType === "mouse" || pointerType === "pen")
+        await dispatchMouseActions(pointerSource.actions, pointerType);
 };
 
-window.test_driver_internal.set_permission = function(permission_params, context=null)
+window.test_driver_internal.set_permission = async function(permission_params, context=null)
 {
-    if (window.testRunner && permission_params.descriptor.name == "geolocation") {
+    switch (permission_params.descriptor.name) {
+    case "geolocation":
+        if (!window.testRunner?.setGeolocationPermission)
+            throw new Error("unimplemented");
         setInterval(() => {
             window.testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
         }, 100);
         testRunner.setGeolocationPermission(permission_params.state == "granted");
-        return Promise.resolve();
-    }
-    if (window.testRunner && permission_params.descriptor.name == "screen-wake-lock") {
+        break;
+    case "screen-wake-lock":
+        if (!window.testRunner?.setScreenWakeLockPermission)
+            throw new Error("unimplemented");
         testRunner.setScreenWakeLockPermission(permission_params.state == "granted");
-        return Promise.resolve();
+        break;
+    default:
+        throw new Error(`Unsupported permission name "${permission_params.descriptor.name}".`);
     }
-    return Promise.reject(new Error("unimplemented"));
 };
 
-window.test_driver_internal.delete_all_cookies = function(context=null)
+window.test_driver_internal.delete_all_cookies = async function(context=null)
 {
-    if (!window.testRunner)
-        return Promise.reject(new Error("unimplemented"));
-
-    return new Promise((resolve) => {
-        testRunner.removeAllCookies(resolve);
-    });
+    if (!window.testRunner?.removeAllCookies)
+        throw new Error("unimplemented");
+    return new Promise(r => testRunner.removeAllCookies(r));
 }
 
-window.test_driver_internal.generate_test_report = function(message, context=null)
+window.test_driver_internal.generate_test_report = async function(message, context=null)
 {
-    if (!window.testRunner)
-        return Promise.reject(new Error("unimplemented"));
+    if (!window.testRunner?.generateTestReport)
+        throw new Error("unimplemented");
     testRunner.generateTestReport(message);
-    return Promise.resolve();
 }
 
 window.test_driver_internal.consume_user_activation = async function(context)
@@ -337,4 +331,58 @@ window.test_driver_internal.consume_user_activation = async function(context)
     if (!context.internals?.consumeTransientActivation)
         throw new Error("unimplemented");
     return context.internals.consumeTransientActivation();
+}
+
+/**
+ *
+ * @param {Window} context
+ * @returns {Promise<DOMRect>}
+ */
+window.test_driver_internal.minimize_window = async function (context=null)
+{
+    if (context === null)
+        context = window;
+
+    if (context.document?.fullscreenElement)
+        await context.document.exitFullscreen();
+
+    const rect = internals.visualViewportRect();
+
+    if (context.document.visibilityState === "hidden")
+        return rect;
+
+    await new Promise(resolve => {
+        context.addEventListener("visibilitychange", resolve, { once: true });
+        testRunner.setPageVisibility("hidden");
+    });
+
+    return rect;
+}
+
+/**
+ *
+ * @param {DOMRect} rect
+ * @param {Window} context
+ * @returns {Promise<void>}
+ */
+window.test_driver_internal.set_window_rect = async function (rect, context=null)
+{
+    if (typeof rect !== "object" || typeof rect.width !== "number" || typeof rect.height !== "number")
+        throw new Error("Invalid rect");
+
+    if (context === null)
+        context = window;
+
+    if (context.document?.fullscreenElement)
+        await context.document.exitFullscreen();
+
+    context.testRunner.setViewSize(rect.width, rect.height);
+
+    if (context.document.visibilityState === "visible")
+        return;
+
+    await new Promise(resolve => {
+        context.addEventListener("visibilitychange", resolve, { once: true });
+        testRunner.setPageVisibility("visible");
+    });
 }

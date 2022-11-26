@@ -76,9 +76,10 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateConditio
     case LogicalOperator::Not:
         return !concreteEvaluator().evaluateQueryInParens(condition.queries.first(), context);
 
+    // Kleene 3-valued logic.
     case LogicalOperator::And: {
         auto result = EvaluationResult::True;
-        for (auto query : condition.queries) {
+        for (auto& query : condition.queries) {
             auto queryResult = concreteEvaluator().evaluateQueryInParens(query, context);
             if (queryResult == EvaluationResult::False)
                 return EvaluationResult::False;
@@ -90,7 +91,7 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateConditio
 
     case LogicalOperator::Or: {
         auto result = EvaluationResult::False;
-        for (auto query : condition.queries) {
+        for (auto& query : condition.queries) {
             auto queryResult = concreteEvaluator().evaluateQueryInParens(query, context);
             if (queryResult == EvaluationResult::True)
                 return EvaluationResult::True;
@@ -111,7 +112,6 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateFeature(
 
     return feature.schema->evaluate(feature, context);
 }
-
 
 inline EvaluationResult operator&(EvaluationResult left, EvaluationResult right)
 {

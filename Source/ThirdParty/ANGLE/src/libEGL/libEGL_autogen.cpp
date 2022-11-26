@@ -25,9 +25,9 @@ namespace
 bool gLoaded          = false;
 void *gEntryPointsLib = nullptr;
 
-angle::GenericProc KHRONOS_APIENTRY GlobalLoad(const char *symbol)
+GenericProc KHRONOS_APIENTRY GlobalLoad(const char *symbol)
 {
-    return reinterpret_cast<angle::GenericProc>(angle::GetLibrarySymbol(gEntryPointsLib, symbol));
+    return reinterpret_cast<GenericProc>(angle::GetLibrarySymbol(gEntryPointsLib, symbol));
 }
 
 void EnsureEGLLoaded()
@@ -42,7 +42,7 @@ void EnsureEGLLoaded()
                                                    angle::SearchType::ModuleDir, &errorOut);
     if (gEntryPointsLib)
     {
-        angle::LoadEGL_EGL(GlobalLoad);
+        LoadLibEGL_EGL(GlobalLoad);
         gLoaded = true;
     }
     else

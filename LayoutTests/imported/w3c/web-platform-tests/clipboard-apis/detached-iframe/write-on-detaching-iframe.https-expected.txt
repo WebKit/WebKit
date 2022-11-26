@@ -1,4 +1,4 @@
 
 
-FAIL Verify write fails on detaching iframe promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL Verify write fails on detaching iframe promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
 

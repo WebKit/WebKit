@@ -372,22 +372,8 @@ public:
     size_t pendingMessageCountForTesting() const;
     void dispatchOnReceiveQueueForTesting(Function<void()>&&);
 
-    template<typename T, typename C>
-    static AsyncReplyHandler makeAsyncReplyHandler(C&& completionHandler, ThreadLikeAssertion callThread = CompletionHandlerCallThread::AnyThread)
-    {
-        // FIXME: The above uses AnyThread because the API contract on invalid sends does not make sense.
-        return AsyncReplyHandler {
-            {
-                [completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
-                    if (decoder && decoder->isValid())
-                        T::callReply(*decoder, WTFMove(completionHandler));
-                    else
-                        T::cancelReply(WTFMove(completionHandler));
-                }, callThread
-            },
-            nextAsyncReplyHandlerID()
-        };
-    }
+    template<typename T, typename C> static AsyncReplyHandler makeAsyncReplyHandler(C&& completionHandler, ThreadLikeAssertion callThread = CompletionHandlerCallThread::AnyThread);
+
 private:
     Connection(Identifier, bool isServer);
     void platformInitialize(Identifier);
@@ -447,6 +433,9 @@ private:
 
     // Only valid between open() and invalidate().
     SerialFunctionDispatcher& dispatcher();
+
+    template<typename T, typename C> static void callReply(IPC::Decoder&, C&& completionHandler);
+    template<typename T, typename C> static void cancelReply(C&& completionHandler);
 
     class SyncMessageState;
     struct SyncMessageStateRelease {
@@ -674,6 +663,48 @@ inline std::unique_ptr<Decoder> Connection::waitForMessageForTesting(MessageName
 }
 #endif
 
+template<typename T, typename C>
+Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(C&& completionHandler, ThreadLikeAssertion callThread)
+{
+    // FIXME: callThread by default uses AnyThread because the API contract on invalid sends does not make sense.
+    return AsyncReplyHandler {
+        {
+            [completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
+                if (decoder && decoder->isValid())
+                    callReply<T>(*decoder, WTFMove(completionHandler));
+                else
+                    cancelReply<T>(WTFMove(completionHandler));
+            }, callThread
+        },
+        nextAsyncReplyHandlerID()
+    };
+}
+
+template<typename T, typename C>
+void Connection::callReply(Decoder& decoder, C&& completionHandler)
+{
+    if constexpr (!std::tuple_size_v<typename T::ReplyArguments>) {
+        // Nothing to decode in case of no reply arguments, so just invoke the completion handler in that case.
+        completionHandler();
+    } else {
+        if (auto arguments = decoder.decode<typename T::ReplyArguments>()) {
+            std::apply(WTFMove(completionHandler), WTFMove(*arguments));
+            return;
+        }
+
+        ASSERT_NOT_REACHED();
+        cancelReply<T>(WTFMove(completionHandler));
+    }
+}
+
+template<typename T, typename C>
+void Connection::cancelReply(C&& completionHandler)
+{
+    [&]<size_t... Indices>(std::index_sequence<Indices...>)
+    {
+        completionHandler(AsyncReplyError<std::tuple_element_t<Indices, typename T::ReplyArguments>>::create()...);
+    }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
+}
 
 class UnboundedSynchronousIPCScope {
 public:

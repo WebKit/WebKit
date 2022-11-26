@@ -507,23 +507,23 @@ void CSSToStyleMap::mapNinePieceImageSlice(CSSBorderImageSliceValue& value, Nine
 {
     // Set up a length box to represent our image slices.
     LengthBox box;
-    Quad* slices = value.slices();
-    if (slices->top()->isPercentage())
-        box.top() = Length(slices->top()->doubleValue(), LengthType::Percent);
+    Quad& slices = value.slices();
+    if (slices.top()->isPercentage())
+        box.top() = Length(slices.top()->doubleValue(), LengthType::Percent);
     else
-        box.top() = Length(slices->top()->intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
-    if (slices->bottom()->isPercentage())
-        box.bottom() = Length(slices->bottom()->doubleValue(), LengthType::Percent);
+        box.top() = Length(slices.top()->intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
+    if (slices.bottom()->isPercentage())
+        box.bottom() = Length(slices.bottom()->doubleValue(), LengthType::Percent);
     else
-        box.bottom() = Length((int)slices->bottom()->floatValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
-    if (slices->left()->isPercentage())
-        box.left() = Length(slices->left()->doubleValue(), LengthType::Percent);
+        box.bottom() = Length((int)slices.bottom()->floatValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
+    if (slices.left()->isPercentage())
+        box.left() = Length(slices.left()->doubleValue(), LengthType::Percent);
     else
-        box.left() = Length(slices->left()->intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
-    if (slices->right()->isPercentage())
-        box.right() = Length(slices->right()->doubleValue(), LengthType::Percent);
+        box.left() = Length(slices.left()->intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
+    if (slices.right()->isPercentage())
+        box.right() = Length(slices.right()->doubleValue(), LengthType::Percent);
     else
-        box.right() = Length(slices->right()->intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
+        box.right() = Length(slices.right()->intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
     image.setImageSlices(box);
 
     // Set our fill mode.
@@ -555,51 +555,51 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
     // Retrieve the primitive value.
     auto& borderWidths = downcast<CSSPrimitiveValue>(value);
 
-    return mapNinePieceImageQuad(borderWidths.quadValue());
+    return mapNinePieceImageQuad(*borderWidths.quadValue());
 }
 
-LengthBox CSSToStyleMap::mapNinePieceImageQuad(Quad* quad)
+LengthBox CSSToStyleMap::mapNinePieceImageQuad(Quad& quad)
 {
     // Get our zoom value.
     CSSToLengthConversionData conversionData = useSVGZoomRules() ? m_builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f) : m_builderState.cssToLengthConversionData();
 
     // Set up a length box to represent our image slices.
     LengthBox box; // Defaults to 'auto' so we don't have to handle that explicitly below.
-    if (quad->top()->isNumber())
-        box.top() = Length(quad->top()->floatValue(), LengthType::Relative);
-    else if (quad->top()->isPercentage())
-        box.top() = Length(quad->top()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
-    else if (quad->top()->isCalculatedPercentageWithLength())
-        box.top() = Length(quad->top()->cssCalcValue()->createCalculationValue(conversionData));
-    else if (quad->top()->valueID() != CSSValueAuto)
-        box.top() = quad->top()->computeLength<Length>(conversionData);
+    if (quad.top()->isNumber())
+        box.top() = Length(quad.top()->floatValue(), LengthType::Relative);
+    else if (quad.top()->isPercentage())
+        box.top() = Length(quad.top()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (quad.top()->isCalculatedPercentageWithLength())
+        box.top() = Length(quad.top()->cssCalcValue()->createCalculationValue(conversionData));
+    else if (quad.top()->valueID() != CSSValueAuto)
+        box.top() = quad.top()->computeLength<Length>(conversionData);
 
-    if (quad->right()->isNumber())
-        box.right() = Length(quad->right()->floatValue(), LengthType::Relative);
-    else if (quad->right()->isPercentage())
-        box.right() = Length(quad->right()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
-    else if (quad->right()->isCalculatedPercentageWithLength())
-        box.right() = Length(quad->right()->cssCalcValue()->createCalculationValue(conversionData));
-    else if (quad->right()->valueID() != CSSValueAuto)
-        box.right() = quad->right()->computeLength<Length>(conversionData);
+    if (quad.right()->isNumber())
+        box.right() = Length(quad.right()->floatValue(), LengthType::Relative);
+    else if (quad.right()->isPercentage())
+        box.right() = Length(quad.right()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (quad.right()->isCalculatedPercentageWithLength())
+        box.right() = Length(quad.right()->cssCalcValue()->createCalculationValue(conversionData));
+    else if (quad.right()->valueID() != CSSValueAuto)
+        box.right() = quad.right()->computeLength<Length>(conversionData);
 
-    if (quad->bottom()->isNumber())
-        box.bottom() = Length(quad->bottom()->floatValue(), LengthType::Relative);
-    else if (quad->bottom()->isPercentage())
-        box.bottom() = Length(quad->bottom()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
-    else if (quad->bottom()->isCalculatedPercentageWithLength())
-        box.bottom() = Length(quad->bottom()->cssCalcValue()->createCalculationValue(conversionData));
-    else if (quad->bottom()->valueID() != CSSValueAuto)
-        box.bottom() = quad->bottom()->computeLength<Length>(conversionData);
+    if (quad.bottom()->isNumber())
+        box.bottom() = Length(quad.bottom()->floatValue(), LengthType::Relative);
+    else if (quad.bottom()->isPercentage())
+        box.bottom() = Length(quad.bottom()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (quad.bottom()->isCalculatedPercentageWithLength())
+        box.bottom() = Length(quad.bottom()->cssCalcValue()->createCalculationValue(conversionData));
+    else if (quad.bottom()->valueID() != CSSValueAuto)
+        box.bottom() = quad.bottom()->computeLength<Length>(conversionData);
 
-    if (quad->left()->isNumber())
-        box.left() = Length(quad->left()->floatValue(), LengthType::Relative);
-    else if (quad->left()->isPercentage())
-        box.left() = Length(quad->left()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
-    else if (quad->left()->isCalculatedPercentageWithLength())
-        box.left() = Length(quad->left()->cssCalcValue()->createCalculationValue(conversionData));
-    else if (quad->left()->valueID() != CSSValueAuto)
-        box.left() = quad->left()->computeLength<Length>(conversionData);
+    if (quad.left()->isNumber())
+        box.left() = Length(quad.left()->floatValue(), LengthType::Relative);
+    else if (quad.left()->isPercentage())
+        box.left() = Length(quad.left()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (quad.left()->isCalculatedPercentageWithLength())
+        box.left() = Length(quad.left()->cssCalcValue()->createCalculationValue(conversionData));
+    else if (quad.left()->valueID() != CSSValueAuto)
+        box.left() = quad.left()->computeLength<Length>(conversionData);
 
     return box;
 }

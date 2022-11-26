@@ -164,6 +164,7 @@ private:
     void provideMediaData(TrackBuffer&, const AtomString& trackID);
     void setBufferedDirty(bool);
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
+    MediaTime findPreviousSyncSamplePresentationTime(const MediaTime&);
 
     bool m_isAttached { false };
     bool m_hasAudio { false };

@@ -11,6 +11,7 @@
 #define UTIL_CAPTURE_FRAME_CAPTURE_TEST_UTILS_H_
 
 #include <iostream>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <type_traits>
@@ -18,6 +19,7 @@
 
 #include "common/angleutils.h"
 #include "common/debug.h"
+#include "common/frame_capture_utils.h"
 #include "common/system_utils.h"
 
 #define USE_SYSTEM_ZLIB
@@ -69,7 +71,27 @@ using FinishReplayFunc                       = void (*)();
 using GetSerializedContextStateFunc          = const char *(*)(uint32_t);
 using SetValidateSerializedStateCallbackFunc = void (*)(ValidateSerializedStateCallback);
 
-class TraceLibrary
+class TraceReplayInterface : angle::NonCopyable
+{
+  public:
+    virtual ~TraceReplayInterface() {}
+
+    virtual bool valid() const                                                                = 0;
+    virtual void setBinaryDataDir(const char *dataDir)                                        = 0;
+    virtual void setBinaryDataDecompressCallback(DecompressCallback decompressCallback,
+                                                 DeleteCallback deleteCallback)               = 0;
+    virtual void replayFrame(uint32_t frameIndex)                                             = 0;
+    virtual void setupReplay()                                                                = 0;
+    virtual void resetReplay()                                                                = 0;
+    virtual void finishReplay()                                                               = 0;
+    virtual const char *getSerializedContextState(uint32_t frameIndex)                        = 0;
+    virtual void setValidateSerializedStateCallback(ValidateSerializedStateCallback callback) = 0;
+
+  protected:
+    TraceReplayInterface() {}
+};
+
+class TraceLibrary : public TraceReplayInterface
 {
   public:
     TraceLibrary(const char *traceNameIn)
@@ -88,37 +110,40 @@ class TraceLibrary
         mTraceLibrary.reset(OpenSharedLibrary(traceName.c_str(), SearchType::ModuleDir));
     }
 
-    bool valid() const
+    bool valid() const override
     {
         return (mTraceLibrary != nullptr) && (mTraceLibrary->getNative() != nullptr);
     }
 
-    void setBinaryDataDir(const char *dataDir)
+    void setBinaryDataDir(const char *dataDir) override
     {
         callFunc<SetBinaryDataDirFunc>("SetBinaryDataDir", dataDir);
     }
 
     void setBinaryDataDecompressCallback(DecompressCallback decompressCallback,
-                                         DeleteCallback deleteCallback)
+                                         DeleteCallback deleteCallback) override
     {
         callFunc<SetBinaryDataDecompressCallbackFunc>("SetBinaryDataDecompressCallback",
                                                       decompressCallback, deleteCallback);
     }
 
-    void replayFrame(uint32_t frameIndex) { callFunc<ReplayFrameFunc>("ReplayFrame", frameIndex); }
+    void replayFrame(uint32_t frameIndex) override
+    {
+        callFunc<ReplayFrameFunc>("ReplayFrame", frameIndex);
+    }
 
-    void setupReplay() { callFunc<SetupReplayFunc>("SetupReplay"); }
+    void setupReplay() override { callFunc<SetupReplayFunc>("SetupReplay"); }
 
-    void resetReplay() { callFunc<ResetReplayFunc>("ResetReplay"); }
+    void resetReplay() override { callFunc<ResetReplayFunc>("ResetReplay"); }
 
-    void finishReplay() { callFunc<FinishReplayFunc>("FinishReplay"); }
+    void finishReplay() override { callFunc<FinishReplayFunc>("FinishReplay"); }
 
-    const char *getSerializedContextState(uint32_t frameIndex)
+    const char *getSerializedContextState(uint32_t frameIndex) override
     {
         return callFunc<GetSerializedContextStateFunc>("GetSerializedContextState", frameIndex);
     }
 
-    void setValidateSerializedStateCallback(ValidateSerializedStateCallback callback)
+    void setValidateSerializedStateCallback(ValidateSerializedStateCallback callback) override
     {
         return callFunc<SetValidateSerializedStateCallbackFunc>(
             "SetValidateSerializedStateCallback", callback);
@@ -167,12 +192,26 @@ struct TraceInfo
     bool isBindGeneratesResourcesEnabled;
     bool isWebGLCompatibilityEnabled;
     bool isRobustResourceInitEnabled;
+    std::vector<std::string> traceFiles;
+    int windowSurfaceContextId;
+    std::vector<std::string> requiredExtensions;
 };
 
 bool LoadTraceNamesFromJSON(const std::string jsonFilePath, std::vector<std::string> *namesOut);
 bool LoadTraceInfoFromJSON(const std::string &traceName,
                            const std::string &traceJsonPath,
                            TraceInfo *traceInfoOut);
+
+using TraceFunction    = std::vector<CallCapture>;
+using TraceFunctionMap = std::map<std::string, TraceFunction>;
+
+void ReplayTraceFunction(const TraceFunction &func, const TraceFunctionMap &customFunctions);
+void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &customFunctions);
+void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &customFunctions);
+
+template <typename T>
+struct AssertFalse : std::false_type
+{};
 }  // namespace angle
 
 #endif  // UTIL_CAPTURE_FRAME_CAPTURE_TEST_UTILS_H_

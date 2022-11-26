@@ -259,7 +259,7 @@ class WindowSurfaceVk : public SurfaceVk
                                         FramebufferFetchMode fetchMode,
                                         const vk::RenderPass &compatibleRenderPass,
                                         const SwapchainResolveMode swapchainResolveMode,
-                                        vk::Framebuffer **framebufferOut);
+                                        vk::MaybeImagelessFramebuffer *framebufferOut);
 
     const vk::Semaphore *getAndResetAcquireImageSemaphore();
 

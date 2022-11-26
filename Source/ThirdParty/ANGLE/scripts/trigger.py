@@ -5,7 +5,42 @@
 # found in the LICENSE file.
 #
 # trigger.py:
-#   Helper script for triggering GPU tests on swarming.
+#   Helper script for triggering GPU tests on LUCI swarming.
+#
+# HOW TO USE THIS SCRIPT
+#
+# Prerequisites:
+#   - Your host OS must be able to build the targets. Linux can cross-compile Android and Windows.
+#   - You might need to be logged in to some services. Look in the error output to verify.
+#
+# Steps:
+#   1. Visit https://ci.chromium.org/p/angle/g/ci/console and find a builder with a similar OS and configuration.
+#      Replicating GN args exactly is not necessary. For example, linux-test:
+#         https://ci.chromium.org/p/angle/builders/ci/linux-test
+#   2. Find a recent green build from the builder, for example:
+#         https://ci.chromium.org/ui/p/angle/builders/ci/linux-test/2443/overview
+#   3. Find a test step shard that matches your test and intended target. For example, angle_unittests on Intel:
+#         https://chromium-swarm.appspot.com/task?id=5d6eecdda8e82210
+#   4. Now run this script without arguments to print the help message. For example:
+#         usage: trigger.py [-h] [-s SHARDS] [-p POOL] [-g GPU] [-t DEVICE_TYPE] [-o DEVICE_OS] [-l LOG] [--gold]
+#           [--priority PRIORITY] [-e ENV] gn_path test os_dim
+#   5. Next, find values for "GPU" on a desktop platform, and "DEVICE_TYPE" and "DEVICE_OS" on Android. You'll
+#      also need to find a value for "os_dim". For the above example:
+#         "os_dim" -> Ubuntu-18.04.6, "GPU" -> 8086:9bc5-20.0.8.
+#   6. For "gn_path" and "test", use your local GN out directory path and triggered test name. The test name must
+#      match an entry in infra/specs/gn_isolate_map.pyl. For example:
+#         trigger.py -g 8086:9bc5-20.0.8 out/Debug angle_unittests Ubuntu-18.04.6
+#   7. Finally, append the same arguments you'd run with locally when invoking this trigger script, e.g:
+#         --gtest_filter=*YourTest*
+#         --use-angle=backend
+#   8. Note that you can look up test artifacts in the test CAS outputs. For example:
+#         https://cas-viewer.appspot.com/projects/chromium-swarm/instances/default_instance/blobs/6165a0ede67ef2530f595ed9a1202671a571da952b6c887f516641993c9a96d4/87/tree
+#
+# Additional Notes:
+#   - Use --priority 1 to ensure your task is scheduled immediately, just be mindful of resources.
+#   - For Skia Gold tests specifically, append --gold. Otherwise ignore this argument.
+#   - You can also specify environment variables with --env.
+#   - For SwiftShader, use a GPU dimension of "none".
 
 import argparse
 import json
@@ -22,6 +57,8 @@ DEFAULT_POOL = 'chromium.tests.gpu'
 DEFAULT_LOG_LEVEL = 'info'
 DEFAULT_REALM = 'chromium:try'
 GOLD_SERVICE_ACCOUNT = 'chrome-gpu-gold@chops-service-accounts.iam.gserviceaccount.com'
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
 
 
 def parse_args():
@@ -56,7 +93,7 @@ def parse_args():
     return parser.parse_known_args()
 
 
-def invoke_mb(args):
+def invoke_mb(args, stdout=None):
     mb_script_path = os.path.join('tools', 'mb', 'mb.py')
     mb_args = [sys.executable, mb_script_path] + args
 
@@ -68,7 +105,12 @@ def invoke_mb(args):
         mb_args += ['-i', os.path.join('infra', 'specs', 'gn_isolate_map.pyl')]
 
     logging.info('Invoking mb: %s' % ' '.join(mb_args))
-    return subprocess.check_output(mb_args)
+    proc = subprocess.run(mb_args, stdout=stdout)
+    if proc.returncode != EXIT_SUCCESS:
+        print('Aborting run because mb retured a failure.')
+        sys.exit(EXIT_FAILURE)
+    if stdout != None:
+        return proc.stdout.decode()
 
 
 def main():
@@ -80,7 +122,8 @@ def main():
     out_gn_path = '//' + path
     out_file_path = os.path.join(*path.split('/'))
 
-    get_command_output = invoke_mb(['get-swarming-command', out_gn_path, args.test, '--as-list'])
+    get_command_output = invoke_mb(['get-swarming-command', out_gn_path, args.test, '--as-list'],
+                                   stdout=subprocess.PIPE)
     swarming_cmd = json.loads(get_command_output)
     logging.info('Swarming command: %s' % ' '.join(swarming_cmd))
 
@@ -160,7 +203,7 @@ def main():
         swarming_args += cmd_args
         logging.info('Invoking swarming: %s' % ' '.join(swarming_args))
         subprocess.call(swarming_args)
-    return 0
+    return EXIT_SUCCESS
 
 
 if __name__ == '__main__':

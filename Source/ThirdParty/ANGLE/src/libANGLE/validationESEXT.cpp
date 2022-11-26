@@ -8,6 +8,7 @@
 #include "libANGLE/validationESEXT_autogen.h"
 
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/MemoryObject.h"
 #include "libANGLE/PixelLocalStorage.h"
@@ -429,7 +430,7 @@ bool ValidateDrawRangeElementsBaseVertexEXT(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 0))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1))
     {
         return false;
     }
@@ -648,7 +649,7 @@ bool ValidateDrawRangeElementsBaseVertexOES(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 0))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1))
     {
         return false;
     }
@@ -1570,10 +1571,11 @@ bool ValidateImportSemaphoreZirconHandleANGLE(const Context *context,
 
 namespace
 {
-enum class PLSExpectedStatus : bool
+enum class PLSExpectedStatus
 {
     Inactive,
-    Active
+    Active,
+    Any
 };
 
 bool ValidatePLSCommon(const Context *context,
@@ -1587,32 +1589,29 @@ bool ValidatePLSCommon(const Context *context,
         return false;
     }
 
-    // INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer object name 0 is
-    // bound to DRAW_FRAMEBUFFER.
-    if (context->getState().getDrawFramebuffer()->id().value == 0)
+    if (expectedStatus == PLSExpectedStatus::Active)
     {
-        context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
-                                 kPLSDefaultFramebufferBound);
-        return false;
-    }
-
-    if (expectedStatus == PLSExpectedStatus::Inactive)
-    {
-        // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_ANGLE is TRUE.
-        if (context->getState().getPixelLocalStorageActive())
+        // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is zero.
+        if (context->getState().getPixelLocalStorageActivePlanes() == 0)
         {
-            context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSActive);
+            context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSInactive);
             return false;
         }
     }
     else
     {
-        ASSERT(expectedStatus == PLSExpectedStatus::Active);
-
-        // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_ANGLE is FALSE.
-        if (!context->getState().getPixelLocalStorageActive())
+        // PLSExpectedStatus::Inactive is validated by the allow list.
+        if (expectedStatus == PLSExpectedStatus::Inactive)
         {
-            context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSInactive);
+            ASSERT(context->getState().getPixelLocalStorageActivePlanes() == 0);
+        }
+
+        // INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer object name 0 is
+        // bound to DRAW_FRAMEBUFFER.
+        if (context->getState().getDrawFramebuffer()->id().value == 0)
+        {
+            context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
+                                     kPLSDefaultFramebufferBound);
             return false;
         }
     }
@@ -1620,9 +1619,12 @@ bool ValidatePLSCommon(const Context *context,
     return true;
 }
 
-bool ValidatePLSCommon(const Context *context, angle::EntryPoint entryPoint, GLint plane)
+bool ValidatePLSCommon(const Context *context,
+                       angle::EntryPoint entryPoint,
+                       GLint plane,
+                       PLSExpectedStatus expectedStatus)
 {
-    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Inactive))
+    if (!ValidatePLSCommon(context, entryPoint, expectedStatus))
     {
         return false;
     }
@@ -1691,8 +1693,8 @@ bool ValidatePLSTextureType(const Context *context,
 
 bool ValidatePLSLoadOperation(const Context *context, angle::EntryPoint entryPoint, GLenum loadop)
 {
-    // INVALID_ENUM is generated if <loadops>[0..<planes>-1] is not one of the Load Operations
-    // enumerated in Table X.1.
+    // INVALID_ENUM is generated if <loadops>[0..<n>-1] is not one of the Load Operations enumerated
+    // in Table X.1.
     switch (loadop)
     {
         case GL_ZERO:
@@ -1702,7 +1704,24 @@ bool ValidatePLSLoadOperation(const Context *context, angle::EntryPoint entryPoi
         case GL_DISABLE_ANGLE:
             return true;
         default:
-            context->validationError(entryPoint, GL_INVALID_ENUM, kPLSInvalidLoadOperation);
+            context->validationErrorF(entryPoint, GL_INVALID_ENUM, kPLSInvalidLoadOperation,
+                                      loadop);
+            return false;
+    }
+}
+
+bool ValidatePLSStoreOperation(const Context *context, angle::EntryPoint entryPoint, GLenum storeop)
+{
+    // INVALID_ENUM is generated if <storeops>[0..PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE-1] is not
+    // one of the Store Operations enumerated in Table X.2.
+    switch (storeop)
+    {
+        case GL_KEEP:
+        case GL_DONT_CARE:
+            return true;
+        default:
+            context->validationErrorF(entryPoint, GL_INVALID_ENUM, kPLSInvalidStoreOperation,
+                                      storeop);
             return false;
     }
 }
@@ -1713,7 +1732,7 @@ bool ValidateFramebufferMemorylessPixelLocalStorageANGLE(const Context *context,
                                                          GLint plane,
                                                          GLenum internalformat)
 {
-    if (!ValidatePLSCommon(context, entryPoint, plane))
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive))
     {
         return false;
     }
@@ -1738,7 +1757,7 @@ bool ValidateFramebufferTexturePixelLocalStorageANGLE(const Context *context,
                                                       GLint level,
                                                       GLint layer)
 {
-    if (!ValidatePLSCommon(context, entryPoint, plane))
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive))
     {
         return false;
     }
@@ -1811,11 +1830,34 @@ bool ValidateFramebufferTexturePixelLocalStorageANGLE(const Context *context,
     return true;
 }
 
+bool ValidateFramebufferPixelLocalClearValuefvANGLE(const Context *context,
+                                                    angle::EntryPoint entryPoint,
+                                                    GLint plane,
+                                                    const GLfloat[])
+{
+    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive);
+}
+
+bool ValidateFramebufferPixelLocalClearValueivANGLE(const Context *context,
+                                                    angle::EntryPoint entryPoint,
+                                                    GLint plane,
+                                                    const GLint[])
+{
+    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive);
+}
+
+bool ValidateFramebufferPixelLocalClearValueuivANGLE(const Context *context,
+                                                     angle::EntryPoint entryPoint,
+                                                     GLint plane,
+                                                     const GLuint[])
+{
+    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive);
+}
+
 bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
                                          angle::EntryPoint entryPoint,
-                                         GLsizei planes,
-                                         const GLenum loadops[],
-                                         const void *cleardata)
+                                         GLsizei n,
+                                         const GLenum loadops[])
 {
     if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Inactive))
     {
@@ -1862,14 +1904,13 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
         return false;
     }
 
-    // INVALID_VALUE is generated if <planes> < 1 or <planes> >
-    // MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
-    if (planes < 1)
+    // INVALID_VALUE is generated if <n> < 1 or <n> > MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
+    if (n < 1)
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kPLSPlanesLessThanOne);
         return false;
     }
-    if (planes > static_cast<GLsizei>(context->getCaps().maxPixelLocalStoragePlanes))
+    if (n > static_cast<GLsizei>(context->getCaps().maxPixelLocalStoragePlanes))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kPLSPlanesOutOfRange);
         return false;
@@ -1896,11 +1937,9 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
     // INVALID_FRAMEBUFFER_OPERATION is generated if the draw framebuffer has an image attached to
     // any color attachment point on or after:
     //
-    //   COLOR_ATTACHMENT0 +
-    //   MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
-    //   <planes>
+    //   COLOR_ATTACHMENT0 + MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE - <n>
     //
-    for (GLuint i = caps.maxCombinedDrawBuffersAndPixelLocalStoragePlanes - planes;
+    for (GLuint i = caps.maxCombinedDrawBuffersAndPixelLocalStoragePlanes - n;
          i < caps.maxColorAttachmentsWithActivePixelLocalStorage; ++i)
     {
         if (framebuffer->getColorAttachment(i))
@@ -1922,10 +1961,10 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
     bool hasTextureBackedPLSPlanes = false;
     Extents textureBackedPLSExtents{};
 
-    for (int i = 0; i < planes; ++i)
+    for (GLsizei i = 0; i < n; ++i)
     {
-        // INVALID_ENUM is generated if <loadops>[0..<planes>-1] is not one of the Load
-        // Operations enumerated in Table X.1.
+        // INVALID_ENUM is generated if <loadops>[0..<n>-1] is not one of the Load Operations
+        // enumerated in Table X.1.
         if (!ValidatePLSLoadOperation(context, entryPoint, loadops[i]))
         {
             return false;
@@ -1936,16 +1975,8 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
             continue;
         }
 
-        // INVALID_VALUE is generated if <loadops>[0..<planes>-1] is CLEAR_ANGLE and <cleardata> is
-        // NULL.
-        if (loadops[i] == GL_CLEAR_ANGLE && !cleardata)
-        {
-            context->validationError(entryPoint, GL_INVALID_VALUE, kPLSNullClearData);
-            return false;
-        }
-
-        // INVALID_OPERATION is generated if <loadops>[0..<planes>-1] is not DISABLE_ANGLE, and
-        // the pixel local storage plane at that same index is is in a deinitialized state.
+        // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is not DISABLE_ANGLE, and the pixel
+        // local storage plane at that same index is is in a deinitialized state.
         if (pls == nullptr || pls->getPlane(i).isDeinitialized())
         {
             context->validationError(entryPoint, GL_INVALID_OPERATION,
@@ -1978,8 +2009,8 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
         }
         else
         {
-            // INVALID_OPERATION is generated if <loadops>[0..<planes>-1] is KEEP and the pixel
-            // local storage plane at that same index is memoryless.
+            // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is KEEP and the pixel local
+            // storage plane at that same index is memoryless.
             if (loadops[i] == GL_KEEP)
             {
                 context->validationError(entryPoint, GL_INVALID_OPERATION,
@@ -2031,9 +2062,34 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
     return true;
 }
 
-bool ValidateEndPixelLocalStorageANGLE(const Context *context, angle::EntryPoint entryPoint)
+bool ValidateEndPixelLocalStorageANGLE(const Context *context,
+                                       angle::EntryPoint entryPoint,
+                                       GLsizei n,
+                                       const GLenum storeops[])
 {
-    return ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active);
+    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active))
+    {
+        return false;
+    }
+
+    // INVALID_VALUE is generated if <n> != PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE.
+    if (n != context->getState().getPixelLocalStorageActivePlanes())
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSNNotEqualActivePlanes);
+        return false;
+    }
+
+    // INVALID_ENUM is generated if <storeops>[0..PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE-1] is not
+    // one of the Store Operations enumerated in Table X.2.
+    for (GLsizei i = 0; i < n; ++i)
+    {
+        if (!ValidatePLSStoreOperation(context, entryPoint, storeops[i]))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool ValidatePixelLocalStorageBarrierANGLE(const Context *context, angle::EntryPoint entryPoint)
@@ -2041,8 +2097,59 @@ bool ValidatePixelLocalStorageBarrierANGLE(const Context *context, angle::EntryP
     return ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active);
 }
 
+bool ValidateGetFramebufferPixelLocalStorageParameterfvANGLE(const Context *context,
+                                                             angle::EntryPoint entryPoint,
+                                                             GLint plane,
+                                                             GLenum pname,
+                                                             const GLfloat *params)
+{
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
+    {
+        return false;
+    }
+    switch (pname)
+    {
+        case GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE:
+            return true;
+        default:
+            context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
+            return false;
+    }
+}
+
+bool ValidateGetFramebufferPixelLocalStorageParameterivANGLE(const Context *context,
+                                                             angle::EntryPoint entryPoint,
+                                                             GLint plane,
+                                                             GLenum pname,
+                                                             const GLint *params)
+{
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
+    {
+        return false;
+    }
+    switch (pname)
+    {
+        case GL_PIXEL_LOCAL_FORMAT_ANGLE:
+        case GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE:
+        case GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE:
+        case GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE:
+        case GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE:
+        case GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE:
+            return true;
+        default:
+            context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
+            return false;
+    }
+}
+
 bool ValidateFramebufferFetchBarrierEXT(const Context *context, angle::EntryPoint entryPoint)
 {
+    if (!context->getExtensions().shaderFramebufferFetchNonCoherentEXT)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                 kFramebufferFetchNonCoherentExtensionNotEnabled);
+        return false;
+    }
     return true;
 }
 
@@ -3122,7 +3229,7 @@ bool ValidateLabelObjectEXT(const Context *context,
 bool ValidateEGLImageTargetTextureStorageEXT(const Context *context,
                                              angle::EntryPoint entryPoint,
                                              GLuint texture,
-                                             GLeglImageOES image,
+                                             egl::ImageID image,
                                              const GLint *attrib_list)
 {
     UNREACHABLE();
@@ -3132,7 +3239,7 @@ bool ValidateEGLImageTargetTextureStorageEXT(const Context *context,
 bool ValidateEGLImageTargetTexStorageEXT(const Context *context,
                                          angle::EntryPoint entryPoint,
                                          GLenum target,
-                                         GLeglImageOES image,
+                                         egl::ImageID image,
                                          const GLint *attrib_list)
 {
     if (!context->getExtensions().EGLImageStorageEXT)
@@ -3169,7 +3276,7 @@ bool ValidateEGLImageTargetTexStorageEXT(const Context *context,
     }
 
     // Validate egl source image is valid
-    egl::Image *imageObject = static_cast<egl::Image *>(image);
+    egl::Image *imageObject = context->getDisplay()->getImage(image);
     if (!ValidateEGLImageObject(context, entryPoint, targetType, image))
     {
         return false;

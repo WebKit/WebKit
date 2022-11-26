@@ -14,6 +14,7 @@
 
 #include "common/MemoryBuffer.h"
 #include "common/utilities.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/ImageIndex.h"
 #include "libANGLE/formatutils.h"
@@ -815,9 +816,9 @@ angle::Result TextureStorage11::setData(const gl::Context *context,
     if (loadFunctionInfo.requiresConversion)
     {
         ANGLE_TRY(mRenderer->getScratchMemoryBuffer(context11, neededSize, &conversionBuffer));
-        loadFunctionInfo.loadFunction(width, height, depth, pixelData + srcSkipBytes, srcRowPitch,
-                                      srcDepthPitch, conversionBuffer->data(), bufferRowPitch,
-                                      bufferDepthPitch);
+        loadFunctionInfo.loadFunction(mRenderer->getDisplay()->getImageLoadContext(), width, height,
+                                      depth, pixelData + srcSkipBytes, srcRowPitch, srcDepthPitch,
+                                      conversionBuffer->data(), bufferRowPitch, bufferDepthPitch);
         data = conversionBuffer->data();
     }
     else

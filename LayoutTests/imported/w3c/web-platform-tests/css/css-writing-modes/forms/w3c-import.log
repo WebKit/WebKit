@@ -1,0 +1,76 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-horizontal-rtl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-horizontal-rtl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-vertical-rtl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-vertical-rtl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-horizontal-rtl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-horizontal-rtl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-vertical-rtl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-vertical-rtl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vlr.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vlr.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vrl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vrl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vlr.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vlr.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vrl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vrl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-scrolling.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrolling-and-sizing.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vlr.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vlr.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vrl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-native-vrl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vlr.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vlr.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vrl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-appearance-none-vrl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/textarea-rows-cols-sizing.html

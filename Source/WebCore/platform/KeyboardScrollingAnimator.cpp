@@ -83,6 +83,8 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
 
     static constexpr std::pair<PackedASCIILiteral<uint64_t>, KeyboardScrollingKey> mappings[] = {
         { "Down", KeyboardScrollingKey::DownArrow },
+        { "End", KeyboardScrollingKey::End },
+        { "Home", KeyboardScrollingKey::Home },
         { "Left", KeyboardScrollingKey::LeftArrow },
         { "PageDown", KeyboardScrollingKey::PageDown },
         { "PageUp", KeyboardScrollingKey::PageUp },
@@ -116,9 +118,11 @@ const std::optional<ScrollDirection> scrollDirectionForKeyboardEvent(const Keybo
             return ScrollDirection::ScrollRight;
         case KeyboardScrollingKey::UpArrow:
         case KeyboardScrollingKey::PageUp:
+        case KeyboardScrollingKey::Home:
             return ScrollDirection::ScrollUp;
         case KeyboardScrollingKey::DownArrow:
         case KeyboardScrollingKey::PageDown:
+        case KeyboardScrollingKey::End:
             return ScrollDirection::ScrollDown;
         case KeyboardScrollingKey::Space:
             return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
@@ -152,6 +156,9 @@ const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const K
         case KeyboardScrollingKey::PageUp:
         case KeyboardScrollingKey::PageDown:
             return ScrollGranularity::Page;
+        case KeyboardScrollingKey::Home:
+        case KeyboardScrollingKey::End:
+            return ScrollGranularity::Document;
         };
         RELEASE_ASSERT_NOT_REACHED();
     }();

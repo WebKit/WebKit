@@ -50,6 +50,8 @@ public:
     static RefPtr<WebExtensionControllerProxy> get(WebExtensionControllerIdentifier);
     static Ref<WebExtensionControllerProxy> getOrCreate(WebExtensionControllerParameters);
 
+    ~WebExtensionControllerProxy();
+
     using WebExtensionContextProxySet = HashSet<Ref<WebExtensionContextProxy>>;
     using WebExtensionContextProxyBaseURLMap = HashMap<URL, Ref<WebExtensionContextProxy>>;
 

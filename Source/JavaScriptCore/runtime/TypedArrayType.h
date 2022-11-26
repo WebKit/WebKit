@@ -324,6 +324,8 @@ inline constexpr bool isSomeUint8(TypedArrayType type)
     return false;
 }
 
+JS_EXPORT_PRIVATE extern const uint8_t logElementSizes[NumberOfTypedArrayTypes];
+
 } // namespace JSC
 
 namespace WTF {

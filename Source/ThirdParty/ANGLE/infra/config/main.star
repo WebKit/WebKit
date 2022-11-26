@@ -213,7 +213,7 @@ def angle_builder(name, cpu):
     is_uwp = "winuwp" in name
     is_msvc = is_uwp or "-msvc" in name
 
-    location_regexp = None
+    location_filters = None
 
     if name.endswith("-compile"):
         test_mode = "compile_only"
@@ -226,13 +226,13 @@ def angle_builder(name, cpu):
         category = "trace"
 
         # Trace tests are only run on CQ if files in the capture folders change.
-        location_regexp = [
-            ".+/[+]/DEPS",
-            ".+/[+]/src/libANGLE/capture/.+",
-            ".+/[+]/src/tests/angle_end2end_tests_expectations.txt",
-            ".+/[+]/src/tests/capture.+",
-            ".+/[+]/src/tests/egl_tests/.+",
-            ".+/[+]/src/tests/gl_tests/.+",
+        location_filters = [
+            cq.location_filter(path_regexp = "DEPS"),
+            cq.location_filter(path_regexp = "src/libANGLE/capture/.+"),
+            cq.location_filter(path_regexp = "src/tests/angle_end2end_tests_expectations.txt"),
+            cq.location_filter(path_regexp = "src/tests/capture.+"),
+            cq.location_filter(path_regexp = "src/tests/egl_tests/.+"),
+            cq.location_filter(path_regexp = "src/tests/gl_tests/.+"),
         ]
     elif is_perf:
         test_mode = "compile_and_test"
@@ -283,6 +283,11 @@ def angle_builder(name, cpu):
 
     ci_properties["sheriff_rotations"] = ["angle"]
 
+    if is_perf:
+        timeout_hours = 5
+    else:
+        timeout_hours = 3
+
     luci.builder(
         name = name,
         bucket = "ci",
@@ -301,6 +306,7 @@ def angle_builder(name, cpu):
             kind = scheduler.LOGARITHMIC_BATCHING_KIND,
             log_base = 2,
         ),
+        execution_timeout = timeout_hours * time.hour,
     )
 
     luci.console_view_entry(
@@ -338,7 +344,7 @@ def angle_builder(name, cpu):
             luci.cq_tryjob_verifier(
                 cq_group = "main",
                 builder = "angle:try/" + name,
-                location_regexp = location_regexp,
+                location_filters = location_filters,
             )
 
 luci.bucket(

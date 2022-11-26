@@ -570,8 +570,6 @@ bindings/js/JSExecState.cpp
 bindings/js/JSExtendableMessageEventCustom.cpp
 bindings/js/JSFetchEventCustom.cpp
 bindings/js/JSFileSystemEntryCustom.cpp
-bindings/js/JSFileSystemDirectoryHandleCustom.cpp
-bindings/js/JSFileSystemDirectoryHandleIterator.cpp
 bindings/js/JSFileSystemHandleCustom.cpp
 bindings/js/JSHTMLAllCollectionCustom.cpp
 bindings/js/JSHTMLCanvasElementCustom.cpp
@@ -1433,7 +1431,6 @@ html/canvas/WebGL2RenderingContext.cpp
 html/canvas/WebGLBuffer.cpp
 html/canvas/WebGLColorBufferFloat.cpp
 html/canvas/WebGLCompressedTextureASTC.cpp
-html/canvas/WebGLCompressedTextureATC.cpp
 html/canvas/WebGLCompressedTextureETC.cpp
 html/canvas/WebGLCompressedTextureETC1.cpp
 html/canvas/WebGLCompressedTexturePVRTC.cpp
@@ -2140,6 +2137,7 @@ platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayerContentsDisplayDelegate.cpp
 platform/graphics/GraphicsLayerTransform.cpp
 platform/graphics/GraphicsLayerUpdater.cpp
+platform/graphics/GraphicsStyle.cpp
 platform/graphics/GraphicsTypes.cpp
 platform/graphics/HEVCUtilities.cpp
 platform/graphics/Icon.cpp
@@ -2227,6 +2225,7 @@ platform/graphics/filters/Filter.cpp
 platform/graphics/filters/FilterEffect.cpp
 platform/graphics/filters/FilterFunction.cpp
 platform/graphics/filters/FilterImage.cpp
+platform/graphics/filters/FilterImageTargetSwitcher.cpp
 platform/graphics/filters/FilterOperation.cpp
 platform/graphics/filters/FilterOperations.cpp
 platform/graphics/filters/FilterResults.cpp
@@ -2958,6 +2957,7 @@ xml/parser/XMLDocumentParserScope.cpp
 
 // Derived Sources
 
+CSSPropertyParsing.cpp
 CSSValueKeywords.cpp
 ColorData.cpp
 EventFactory.cpp
@@ -4165,7 +4165,6 @@ JSWebGLActiveInfo.cpp
 JSWebGLBuffer.cpp
 JSWebGLColorBufferFloat.cpp
 JSWebGLCompressedTextureASTC.cpp
-JSWebGLCompressedTextureATC.cpp
 JSWebGLCompressedTextureETC.cpp
 JSWebGLCompressedTextureETC1.cpp
 JSWebGLCompressedTexturePVRTC.cpp

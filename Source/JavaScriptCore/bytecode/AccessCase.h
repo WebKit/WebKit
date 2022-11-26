@@ -88,68 +88,93 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 // We will sometimes buffer committed AccessCases in the PolymorphicAccess object before generating
 // code. This allows us to only regenerate once we've accumulated (hopefully) more than one new
 // AccessCase.
+
+#define JSC_FOR_EACH_ACCESS_TYPE(macro) \
+    macro(Load) \
+    macro(Transition) \
+    macro(Delete) \
+    macro(DeleteNonConfigurable) \
+    macro(DeleteMiss) \
+    macro(Replace) \
+    macro(Miss) \
+    macro(GetGetter) \
+    macro(Getter) \
+    macro(Setter) \
+    macro(CustomValueGetter) \
+    macro(CustomAccessorGetter) \
+    macro(CustomValueSetter) \
+    macro(CustomAccessorSetter) \
+    macro(IntrinsicGetter) \
+    macro(InHit) \
+    macro(InMiss) \
+    macro(ArrayLength) \
+    macro(StringLength) \
+    macro(DirectArgumentsLength) \
+    macro(ScopedArgumentsLength) \
+    macro(ModuleNamespaceLoad) \
+    macro(ProxyObjectLoad) \
+    macro(InstanceOfHit) \
+    macro(InstanceOfMiss) \
+    macro(InstanceOfGeneric) \
+    macro(CheckPrivateBrand) \
+    macro(SetPrivateBrand) \
+    macro(IndexedInt32Load) \
+    macro(IndexedDoubleLoad) \
+    macro(IndexedContiguousLoad) \
+    macro(IndexedArrayStorageLoad) \
+    macro(IndexedScopedArgumentsLoad) \
+    macro(IndexedDirectArgumentsLoad) \
+    macro(IndexedTypedArrayInt8Load) \
+    macro(IndexedTypedArrayUint8Load) \
+    macro(IndexedTypedArrayUint8ClampedLoad) \
+    macro(IndexedTypedArrayInt16Load) \
+    macro(IndexedTypedArrayUint16Load) \
+    macro(IndexedTypedArrayInt32Load) \
+    macro(IndexedTypedArrayUint32Load) \
+    macro(IndexedTypedArrayFloat32Load) \
+    macro(IndexedTypedArrayFloat64Load) \
+    macro(IndexedResizableTypedArrayInt8Load) \
+    macro(IndexedResizableTypedArrayUint8Load) \
+    macro(IndexedResizableTypedArrayUint8ClampedLoad) \
+    macro(IndexedResizableTypedArrayInt16Load) \
+    macro(IndexedResizableTypedArrayUint16Load) \
+    macro(IndexedResizableTypedArrayInt32Load) \
+    macro(IndexedResizableTypedArrayUint32Load) \
+    macro(IndexedResizableTypedArrayFloat32Load) \
+    macro(IndexedResizableTypedArrayFloat64Load) \
+    macro(IndexedStringLoad) \
+    macro(IndexedNoIndexingMiss) \
+    macro(IndexedInt32Store) \
+    macro(IndexedDoubleStore) \
+    macro(IndexedContiguousStore) \
+    macro(IndexedArrayStorageStore) \
+    macro(IndexedTypedArrayInt8Store) \
+    macro(IndexedTypedArrayUint8Store) \
+    macro(IndexedTypedArrayUint8ClampedStore) \
+    macro(IndexedTypedArrayInt16Store) \
+    macro(IndexedTypedArrayUint16Store) \
+    macro(IndexedTypedArrayInt32Store) \
+    macro(IndexedTypedArrayUint32Store) \
+    macro(IndexedTypedArrayFloat32Store) \
+    macro(IndexedTypedArrayFloat64Store) \
+    macro(IndexedResizableTypedArrayInt8Store) \
+    macro(IndexedResizableTypedArrayUint8Store) \
+    macro(IndexedResizableTypedArrayUint8ClampedStore) \
+    macro(IndexedResizableTypedArrayInt16Store) \
+    macro(IndexedResizableTypedArrayUint16Store) \
+    macro(IndexedResizableTypedArrayInt32Store) \
+    macro(IndexedResizableTypedArrayUint32Store) \
+    macro(IndexedResizableTypedArrayFloat32Store) \
+    macro(IndexedResizableTypedArrayFloat64Store) \
+
+
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessCase);
 public:
     enum AccessType : uint8_t {
-        Load,
-        Transition,
-        Delete,
-        DeleteNonConfigurable,
-        DeleteMiss,
-        Replace,
-        Miss,
-        GetGetter,
-        Getter,
-        Setter,
-        CustomValueGetter,
-        CustomAccessorGetter,
-        CustomValueSetter,
-        CustomAccessorSetter,
-        IntrinsicGetter,
-        InHit,
-        InMiss,
-        ArrayLength,
-        StringLength,
-        DirectArgumentsLength,
-        ScopedArgumentsLength,
-        ModuleNamespaceLoad,
-        ProxyObjectLoad,
-        InstanceOfHit,
-        InstanceOfMiss,
-        InstanceOfGeneric,
-        CheckPrivateBrand,
-        SetPrivateBrand,
-        IndexedInt32Load,
-        IndexedDoubleLoad,
-        IndexedContiguousLoad,
-        IndexedArrayStorageLoad,
-        IndexedScopedArgumentsLoad,
-        IndexedDirectArgumentsLoad,
-        IndexedTypedArrayInt8Load,
-        IndexedTypedArrayUint8Load,
-        IndexedTypedArrayUint8ClampedLoad,
-        IndexedTypedArrayInt16Load,
-        IndexedTypedArrayUint16Load,
-        IndexedTypedArrayInt32Load,
-        IndexedTypedArrayUint32Load,
-        IndexedTypedArrayFloat32Load,
-        IndexedTypedArrayFloat64Load,
-        IndexedStringLoad,
-        IndexedNoIndexingMiss,
-        IndexedInt32Store,
-        IndexedDoubleStore,
-        IndexedContiguousStore,
-        IndexedArrayStorageStore,
-        IndexedTypedArrayInt8Store,
-        IndexedTypedArrayUint8Store,
-        IndexedTypedArrayUint8ClampedStore,
-        IndexedTypedArrayInt16Store,
-        IndexedTypedArrayUint16Store,
-        IndexedTypedArrayInt32Store,
-        IndexedTypedArrayUint32Store,
-        IndexedTypedArrayFloat32Store,
-        IndexedTypedArrayFloat64Store,
+#define JSC_DEFINE_ACCESS_TYPE(name) name,
+        JSC_FOR_EACH_ACCESS_TYPE(JSC_DEFINE_ACCESS_TYPE)
+#undef JSC_DEFINE_ACCESS_TYPE
     };
 
     enum State : uint8_t {
@@ -261,6 +286,7 @@ public:
     bool needsScratchFPR() const;
 
     static TypedArrayType toTypedArrayType(AccessType);
+    static bool forResizableTypedArray(AccessType);
 
     UniquedStringImpl* uid() const { return m_identifier.uid(); }
     CacheableIdentifier identifier() const { return m_identifier; }

@@ -78,25 +78,29 @@ public:
 
     void* data() const { return baseAddress(); }
 
+    size_t byteOffsetRaw() const { return m_byteOffset; }
+
     size_t byteOffset() const
     {
         if (UNLIKELY(isDetached()))
             return 0;
 
         if (LIKELY(!isResizableOrGrowableShared()))
-            return m_byteOffset;
+            return byteOffsetRaw();
 
         size_t bufferByteLength = m_buffer->byteLength(std::memory_order_seq_cst);
-        size_t byteOffsetStart = m_byteOffset;
+        size_t byteOffsetStart = byteOffsetRaw();
         size_t byteOffsetEnd = 0;
         if (isAutoLength())
             byteOffsetEnd = bufferByteLength;
         else
-            byteOffsetEnd = byteOffsetStart + m_byteLength;
+            byteOffsetEnd = byteOffsetStart + byteLengthRaw();
         if (UNLIKELY(!(byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength)))
             return 0;
-        return m_byteOffset;
+        return byteOffsetRaw();
     }
+
+    size_t byteLengthRaw() const { return m_byteLength; }
 
     size_t byteLength() const
     {
@@ -104,19 +108,19 @@ public:
             return 0;
 
         if (LIKELY(!isResizableOrGrowableShared()))
-            return m_byteLength;
+            return byteLengthRaw();
 
         size_t bufferByteLength = m_buffer->byteLength(std::memory_order_seq_cst);
-        size_t byteOffsetStart = m_byteOffset;
+        size_t byteOffsetStart = byteOffsetRaw();
         size_t byteOffsetEnd = 0;
         if (isAutoLength())
             byteOffsetEnd = bufferByteLength;
         else
-            byteOffsetEnd = byteOffsetStart + m_byteLength;
+            byteOffsetEnd = byteOffsetStart + byteLengthRaw();
         if (UNLIKELY(!(byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength)))
             return 0;
         if (!isAutoLength())
-            return m_byteLength;
+            return byteLengthRaw();
         return roundDownToMultipleOf(JSC::elementSize(m_type), bufferByteLength - byteOffsetStart);
     }
 

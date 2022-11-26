@@ -27,6 +27,7 @@
 #include "DisabledAdaptations.h"
 #include "Document.h"
 #include "EventTrackingRegions.h"
+#include "FilterRenderingMode.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
 #include "IntRectHash.h"
@@ -514,7 +515,7 @@ public:
     WEBCORE_EXPORT void recomputeTextAutoSizingInAllFrames();
 #endif
 
-    bool acceleratedFiltersEnabled() const;
+    OptionSet<FilterRenderingMode> preferredFilterRenderingModes() const;
 
     const FloatBoxExtent& fullscreenInsets() const { return m_fullscreenInsets; }
     WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);

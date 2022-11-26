@@ -48,7 +48,7 @@ private:
     static constexpr int invalidIndex = -1;
 
     // DateTimeFieldElement functions:
-    void adjustMinWidth(RenderStyle&) const final;
+    void adjustMinInlineSize(RenderStyle&) const final;
     void stepDown() final;
     void stepUp() final;
     String value() const final;

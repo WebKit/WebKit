@@ -102,6 +102,14 @@ ParamsT EGL(const ParamsT &in)
 }
 
 template <typename ParamsT>
+ParamsT Zink(const ParamsT &in)
+{
+    ParamsT out = in;
+    out.driver  = angle::GLESDriverType::ZinkEGL;
+    return out;
+}
+
+template <typename ParamsT>
 ParamsT Native(const ParamsT &in)
 {
 #if defined(ANGLE_PLATFORM_WINDOWS)

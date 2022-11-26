@@ -50,6 +50,7 @@ private:
 
     void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final;
+    void platformTaskCompleted(WebURLSchemeTask&) final;
 
     WeakPtr<WebExtensionController> m_webExtensionController;
     HashMap<Ref<WebURLSchemeTask>, RetainPtr<NSBlockOperation>> m_operations;

@@ -211,6 +211,52 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesCamelCase)
         [](const std::string &featureName) { return angle::ToCamelCase(featureName); });
 }
 
+// Similar to OverrideFeatures, but ensures wildcard matching works
+TEST_P(EGLFeatureControlTest, OverrideFeaturesWildcard)
+{
+    ANGLE_SKIP_TEST_IF(!initTest());
+    egl::Display *display       = static_cast<egl::Display *>(mDisplay);
+    angle::FeatureList features = display->getFeatures();
+
+    // Build lists of features to enable/disabled. Toggle features we know are ok to toggle based
+    // from this list.
+    std::vector<const char *> enabled = {"prefer_*", nullptr};
+
+    std::vector<bool> shouldBe = std::vector<bool>();
+    for (size_t i = 0; i < features.size(); i++)
+    {
+        std::string featureName = std::string(features[i]->name);
+        std::transform(featureName.begin(), featureName.end(), featureName.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+
+        const bool enable = strncmp(featureName.c_str(), "prefer", 6) == 0;
+
+        // Save what we expect the feature status will be when checking later.
+        shouldBe.push_back(features[i]->enabled || enable);
+    }
+
+    // Terminate the old display (we just used it to collect features)
+    eglTerminate(mDisplay);
+
+    // Create a new display with these overridden features.
+    EGLAttrib dispattrs[]   = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                               EGL_FEATURE_OVERRIDES_ENABLED_ANGLE,
+                               reinterpret_cast<EGLAttrib>(enabled.data()), EGL_NONE};
+    EGLDisplay dpy_override = eglGetPlatformDisplay(
+        EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_TRUE(dpy_override != EGL_NO_DISPLAY);
+    ASSERT_TRUE(eglInitialize(dpy_override, nullptr, nullptr) == EGL_TRUE);
+
+    // Check that all features have the correct status (even the ones we toggled).
+    for (size_t i = 0; i < features.size(); i++)
+    {
+        EXPECT_STREQ(FeatureStatusToString(shouldBe[i]),
+                     eglQueryStringiANGLE(dpy_override, EGL_FEATURE_STATUS_ANGLE, i))
+            << features[i]->name;
+    }
+}
+
 ANGLE_INSTANTIATE_TEST(EGLFeatureControlTest,
                        WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),

@@ -829,8 +829,10 @@ void BorderPainter::paintOneBorderSide(const RoundedRect& outerBorder, const Rou
 
         clipBorderSidePolygon(outerBorder, innerBorder, side, adjacentSide1StylesMatch, adjacentSide2StylesMatch);
 
-        if (!innerBorder.isRenderable())
-            graphicsContext.clipOutRoundedRect(FloatRoundedRect(calculateAdjustedInnerBorder(innerBorder, side)));
+        if (!innerBorder.isRenderable())  {
+            auto adjustedInnerBorder = FloatRoundedRect(calculateAdjustedInnerBorder(innerBorder, side));
+            graphicsContext.clipOutRoundedRect(adjustedInnerBorder);
+        }
 
         float thickness = std::max(std::max(edgeToRender.widthForPainting(), adjacentEdge1.widthForPainting()), adjacentEdge2.widthForPainting());
         drawBoxSideFromPath(outerBorder.rect(), *path, edges, radii, edgeToRender.widthForPainting(), thickness, side,

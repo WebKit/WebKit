@@ -36,7 +36,11 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+static bool useGameControllerFramework = true;
+#else
 static bool useGameControllerFramework = false;
+#endif
 
 void UIGamepadProvider::setUsesGameControllerFramework()
 {

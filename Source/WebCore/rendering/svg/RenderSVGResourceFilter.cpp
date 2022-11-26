@@ -119,11 +119,10 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // Determine scale factor for filter. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     ImageBuffer::sizeNeedsClamping(filterData->sourceImageRect.size(), filterScale);
 
-    // Set the rendering mode from the page's settings.
-    auto renderingMode = renderer.page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto preferredFilterModes = renderer.page().preferredFilterRenderingModes();
 
     // Create the SVGFilter object.
-    filterData->filter = SVGFilter::create(filterElement(), renderingMode, filterScale, Filter::ClipOperation::Intersect, filterRegion, targetBoundingBox, *context);
+    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, Filter::ClipOperation::Intersect, filterRegion, targetBoundingBox, *context);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;

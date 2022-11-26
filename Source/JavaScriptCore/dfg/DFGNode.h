@@ -141,6 +141,7 @@ struct DataViewData {
         struct {
             uint8_t byteSize;
             bool isSigned;
+            bool isResizable;
             bool isFloatingPoint; // Used for the DataViewSet node.
             TriState isLittleEndian;
         };

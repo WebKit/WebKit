@@ -32,6 +32,7 @@
 #include "MessageNames.h"
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionEncoder.h"
+#include "StreamServerConnection.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/Threading.h>
 
@@ -57,28 +58,13 @@ class StreamClientConnection final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
-    // Creates StreamClientConnection where the out of stream messages and server replies are
-    // sent through the passed IPC::Connection. The messages from the server are delivered to
-    // the caller through the passed IPC::Connection.
-    // Note: This function should be used only in cases where the
-    // stream server starts listening to messages with new identifiers on the same thread as
-    // in which the server IPC::Connection dispatch messages. At the time of writing,
-    // IPC::Connection dispatches messages only in main thread.
-    StreamClientConnection(Connection&, size_t bufferSize);
-
-    struct StreamConnectionWithDedicatedConnection {
+    struct StreamConnectionPair {
         std::unique_ptr<StreamClientConnection> streamConnection;
-        IPC::Connection::Handle connectionHandle;
-        // FIXME: Once IPC can treat handles as first class objects, add stream buffer as
-        // a handle here.
+        IPC::StreamServerConnection::Handle connectionHandle;
     };
 
-    // Creates StreamClientConnection where the out of stream messages and server replies are
-    // sent through a dedidcated, new IPC::Connection. The messages from the server are delivered to
-    // the caller through the passed IPC::MessageReceiver.
-    // The caller should send StreamConnectionWithDedicatedConnection::connectionHandle and
-    // StreamClientConnection::streamBuffer() to the server via an existing IPC::Connection.
-    static StreamConnectionWithDedicatedConnection createWithDedicatedConnection(MessageReceiver&, size_t bufferSize);
+    // The messages from the server are delivered to the caller through the passed IPC::MessageReceiver.
+    static StreamConnectionPair create(size_t bufferSize);
 
     ~StreamClientConnection();
 
@@ -91,7 +77,7 @@ public:
         wakeUpServer(WakeUpServer::Yes);
     }
 
-    void open();
+    void open(MessageReceiver&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
 
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
@@ -107,8 +93,7 @@ public:
     Connection& connectionForTesting();
 
 private:
-    class DedicatedConnectionClient;
-    StreamClientConnection(Ref<Connection>&&, size_t bufferSize, std::unique_ptr<DedicatedConnectionClient>&&);
+    StreamClientConnection(Ref<Connection>, size_t bufferSize);
 
     struct Span {
         uint8_t* data;
@@ -148,7 +133,19 @@ private:
     size_t dataSize() const { return m_buffer.dataSize(); }
 
     Ref<Connection> m_connection;
-    std::unique_ptr<DedicatedConnectionClient> m_dedicatedConnectionClient;
+    class DedicatedConnectionClient final : public Connection::Client {
+        WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
+    public:
+        DedicatedConnectionClient(MessageReceiver&);
+        // Connection::Client overrides.
+        void didReceiveMessage(Connection&, Decoder&) final;
+        bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+        void didClose(Connection&) final;
+        void didReceiveInvalidMessage(Connection&, MessageName) final;
+    private:
+        MessageReceiver& m_receiver;
+    };
+    std::optional<DedicatedConnectionClient> m_dedicatedConnectionClient;
     uint64_t m_currentDestinationID { 0 };
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;

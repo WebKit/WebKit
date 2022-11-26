@@ -1056,8 +1056,9 @@ void Buffer::flush(ContextMtl *context, size_t offsetWritten, size_t sizeWritten
     {
         if (get().storageMode == MTLStorageModeManaged)
         {
-            size_t startOffset = std::min(offsetWritten, size());
-            size_t endOffset   = std::min(offsetWritten + sizeWritten, size());
+            size_t bufferSize  = size();
+            size_t startOffset = std::min(offsetWritten, bufferSize);
+            size_t endOffset   = std::min(offsetWritten + sizeWritten, bufferSize);
             size_t clampedSize = endOffset - startOffset;
             if (clampedSize > 0)
             {

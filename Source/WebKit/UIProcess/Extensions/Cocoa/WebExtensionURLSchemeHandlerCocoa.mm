@@ -62,6 +62,11 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         URL frameDocumentURL = task.frameInfo().request().url().isEmpty() ? task.request().firstPartyForCookies() : task.frameInfo().request().url();
         URL requestURL = task.request().url();
 
+        if (!m_webExtensionController) {
+            task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:noPermissionErrorCode userInfo:nil]);
+            return;
+        }
+
         auto extensionContext = m_webExtensionController->extensionContext(requestURL);
         if (!extensionContext) {
             // We need to return the same error here, as we do below for URLs that don't match web_accessible_resources.
@@ -113,6 +118,11 @@ void WebExtensionURLSchemeHandler::platformStopTask(WebPageProxy& page, WebURLSc
 {
     auto operation = m_operations.take(task);
     [operation cancel];
+}
+
+void WebExtensionURLSchemeHandler::platformTaskCompleted(WebURLSchemeTask& task)
+{
+    m_operations.remove(task);
 }
 
 } // namespace WebKit

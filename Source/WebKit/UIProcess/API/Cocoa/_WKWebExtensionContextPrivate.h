@@ -29,6 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKWebExtensionContext ()
 
+/*!
+ @abstract Enables extra `browser.test` JavaScript APIs for unit testing.
+ @discussion Defaults to `YES` in debug builds.
+ */
+@property (nonatomic, getter=_inTestingMode, setter=_setTestingMode:) BOOL _testingMode;
+
 @end
 
 NS_ASSUME_NONNULL_END

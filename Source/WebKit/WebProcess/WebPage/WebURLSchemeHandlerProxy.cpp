@@ -97,13 +97,13 @@ void WebURLSchemeHandlerProxy::taskDidReceiveResponse(WebCore::ResourceLoaderIde
     task->didReceiveResponse(response);
 }
 
-void WebURLSchemeHandlerProxy::taskDidReceiveData(WebCore::ResourceLoaderIdentifier taskIdentifier, const SharedBuffer& data)
+void WebURLSchemeHandlerProxy::taskDidReceiveData(WebCore::ResourceLoaderIdentifier taskIdentifier, Ref<WebCore::SharedBuffer>&& data)
 {
     auto* task = m_tasks.get(taskIdentifier);
     if (!task)
         return;
 
-    task->didReceiveData(data);
+    task->didReceiveData(WTFMove(data));
 }
 
 void WebURLSchemeHandlerProxy::taskDidComplete(WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceError& error)

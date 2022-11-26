@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -276,9 +276,9 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     return static_cast<NSEventType>(0);
 }
 
-static int buildModifierFlags(WKEventModifiers modifiers)
+static NSEventModifierFlags buildModifierFlags(WKEventModifiers modifiers)
 {
-    int flags = 0;
+    NSEventModifierFlags flags = 0;
     if (modifiers & kWKEventModifiersControlKey)
         flags |= NSEventModifierFlagControl;
     if (modifiers & kWKEventModifiersShiftKey)

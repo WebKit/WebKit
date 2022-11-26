@@ -78,8 +78,9 @@
     /* GL_EXT_EGL_image_array */                                                                   \
     /* GL_EXT_EGL_image_external_wrap_modes */                                                     \
     /* GL_EXT_EGL_image_storage */                                                                 \
-    void eGLImageTargetTexStorage(GLenum target, GLeglImageOES image, const GLint *attrib_list);   \
-    void eGLImageTargetTextureStorage(GLuint texture, GLeglImageOES image,                         \
+    void eGLImageTargetTexStorage(GLenum target, egl::ImageID imagePacked,                         \
+                                  const GLint *attrib_list);                                       \
+    void eGLImageTargetTextureStorage(GLuint texture, egl::ImageID imagePacked,                    \
                                       const GLint *attrib_list);                                   \
     /* GL_EXT_YUV_target */                                                                        \
     /* GL_EXT_base_instance */                                                                     \
@@ -268,8 +269,8 @@
     /* GL_NV_robustness_video_memory_purge */                                                      \
     /* GL_NV_shader_noperspective_interpolation */                                                 \
     /* GL_OES_EGL_image */                                                                         \
-    void eGLImageTargetRenderbufferStorage(GLenum target, GLeglImageOES image);                    \
-    void eGLImageTargetTexture2D(TextureType targetPacked, GLeglImageOES image);                   \
+    void eGLImageTargetRenderbufferStorage(GLenum target, egl::ImageID imagePacked);               \
+    void eGLImageTargetTexture2D(TextureType targetPacked, egl::ImageID imagePacked);              \
     /* GL_OES_EGL_image_external */                                                                \
     /* GL_OES_EGL_image_external_essl3 */                                                          \
     /* GL_OES_EGL_sync */                                                                          \
@@ -569,9 +570,14 @@
     void framebufferMemorylessPixelLocalStorage(GLint plane, GLenum internalformat);               \
     void framebufferTexturePixelLocalStorage(GLint plane, TextureID backingtexturePacked,          \
                                              GLint level, GLint layer);                            \
-    void beginPixelLocalStorage(GLsizei planes, const GLenum *loadops, const void *cleardata);     \
-    void endPixelLocalStorage();                                                                   \
+    void framebufferPixelLocalClearValuefv(GLint plane, const GLfloat *value);                     \
+    void framebufferPixelLocalClearValueiv(GLint plane, const GLint *value);                       \
+    void framebufferPixelLocalClearValueuiv(GLint plane, const GLuint *value);                     \
+    void beginPixelLocalStorage(GLsizei n, const GLenum *loadops);                                 \
+    void endPixelLocalStorage(GLsizei n, const GLenum *storeops);                                  \
     void pixelLocalStorageBarrier();                                                               \
+    void getFramebufferPixelLocalStorageParameterfv(GLint plane, GLenum pname, GLfloat *params);   \
+    void getFramebufferPixelLocalStorageParameteriv(GLint plane, GLenum pname, GLint *params);     \
     /* GL_ANGLE_shader_pixel_local_storage_coherent */                                             \
     /* GL_ANGLE_texture_compression_dxt3 */                                                        \
     /* GL_ANGLE_texture_compression_dxt5 */                                                        \

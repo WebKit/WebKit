@@ -2081,30 +2081,6 @@ else ()
         Source/third_party/libyuv/source/scale_neon.cc
         Source/third_party/libyuv/source/scale_neon64.cc
 
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c
-
         Source/webrtc/modules/audio_device/linux/alsasymboltable_linux.cc
         Source/webrtc/modules/audio_device/linux/audio_device_alsa_linux.cc
         Source/webrtc/modules/audio_device/linux/audio_device_pulse_linux.cc
@@ -2216,10 +2192,6 @@ set(webrtc_INCLUDE_DIRECTORIES PRIVATE
     Source/third_party/opus/src/include
     Source/third_party/opus/src/silk
     Source/third_party/opus/src/silk/float
-    Source/third_party/usrsctp
-    Source/third_party/usrsctp/usrsctplib
-    Source/third_party/usrsctp/usrsctplib/usrsctplib
-    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet
     Source/webrtc
     Source/webrtc/common_audio/resampler/include
     Source/webrtc/common_audio/signal_processing/include
@@ -2305,47 +2277,6 @@ target_include_directories(libsrtp PRIVATE
 )
 
 if (APPLE)
-    add_library(usrsctp STATIC
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c
-        Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c
-    )
-    target_compile_options(usrsctp PRIVATE
-        -D__Userspace_os_Darwin
-    )
-
-    target_include_directories(usrsctp PRIVATE
-        Source/third_party/boringssl/src/include
-        Source/third_party/usrsctp/usrsctplib/usrsctplib
-    )
-
-    target_compile_definitions(usrsctp PRIVATE
-        __Userspace__
-        SCTP_SIMPLE_ALLOCATOR
-        SCTP_PROCESS_LEVEL_LOCKS
-        SCTP_USE_OPENSSL_SHA1
-    )
-
     set(opus_SOURCES
         Source/third_party/opus/src/celt/kiss_fft.c
         Source/third_party/opus/src/celt/rate.c

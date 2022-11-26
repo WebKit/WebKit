@@ -46,7 +46,7 @@ public:
 private:
     GamepadButton();
 
-    double m_value;
+    double m_value { 0.0 };
 };
 
 } // namespace WebCore

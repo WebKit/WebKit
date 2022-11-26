@@ -93,9 +93,9 @@ bool FEDropShadow::setShadowOpacity(float shadowOpacity)
     return true;
 }
 
-FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
+FloatRect FEDropShadow::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
-    auto imageRect = inputs[0]->imageRect();
+    auto imageRect = inputImageRects[0];
     auto imageRectWithOffset(imageRect);
     imageRectWithOffset.move(filter.resolvedSize({ m_dx, m_dy }));
     imageRect.unite(imageRectWithOffset);

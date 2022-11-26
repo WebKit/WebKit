@@ -88,7 +88,11 @@ struct FunctionsEGL::EGLDispatchTable
           dupNativeFenceFDANDROIDPtr(nullptr),
 
           queryDmaBufFormatsEXTPtr(nullptr),
-          queryDmaBufModifiersEXTPtr(nullptr)
+          queryDmaBufModifiersEXTPtr(nullptr),
+
+          queryDeviceAttribEXTPtr(nullptr),
+          queryDeviceStringEXTPtr(nullptr),
+          queryDisplayAttribEXTPtr(nullptr)
     {}
 
     // 1.0
@@ -155,6 +159,11 @@ struct FunctionsEGL::EGLDispatchTable
     // EGL_EXT_image_dma_buf_import_modifiers
     PFNEGLQUERYDMABUFFORMATSEXTPROC queryDmaBufFormatsEXTPtr;
     PFNEGLQUERYDMABUFMODIFIERSEXTPROC queryDmaBufModifiersEXTPtr;
+
+    // EGL_EXT_device_query
+    PFNEGLQUERYDEVICEATTRIBEXTPROC queryDeviceAttribEXTPtr;
+    PFNEGLQUERYDEVICESTRINGEXTPROC queryDeviceStringEXTPtr;
+    PFNEGLQUERYDISPLAYATTRIBEXTPROC queryDisplayAttribEXTPtr;
 };
 
 FunctionsEGL::FunctionsEGL()
@@ -300,8 +309,52 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
 
     if (hasExtension("EGL_EXT_image_dma_buf_import_modifiers"))
     {
-        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->queryDmaBufFormatsEXTPtr, eglQueryDmaBufFormatsEXT);
-        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->queryDmaBufModifiersEXTPtr, eglQueryDmaBufModifiersEXT);
+        std::string eglVendor  = queryString(EGL_VENDOR);
+        std::string eglVersion = queryString(EGL_VERSION);
+
+        if (eglVendor.find("ARM") != std::string::npos &&
+            eglVersion.find("r26p0-01rel0") != std::string::npos)
+        {
+            // https://anglebug.com/7664
+            // Disable EGL_EXT_image_dma_buf_import_modifiers on old Mali drivers
+            mExtensions.erase(
+                std::remove_if(mExtensions.begin(), mExtensions.end(),
+                               [](const std::string &extension) {
+                                   return extension.compare(
+                                              "EGL_EXT_image_dma_buf_import_modifiers") == 0;
+                               }),
+                mExtensions.end());
+        }
+        else
+        {
+            // https://anglebug.com/7664
+            // Some drivers, notably older versions of ANGLE, announce this extension without
+            // implementing the following functions. Fail softly in such cases.
+            if (!SetPtr(&mFnPtrs->queryDmaBufFormatsEXTPtr,
+                        getProcAddress("eglQueryDmaBufFormatsEXT")) ||
+                !SetPtr(&mFnPtrs->queryDmaBufModifiersEXTPtr,
+                        getProcAddress("eglQueryDmaBufModifiersEXT")))
+            {
+                mFnPtrs->queryDmaBufFormatsEXTPtr   = nullptr;
+                mFnPtrs->queryDmaBufModifiersEXTPtr = nullptr;
+                mExtensions.erase(
+                    std::remove_if(mExtensions.begin(), mExtensions.end(),
+                                   [](const std::string &extension) {
+                                       return extension.compare(
+                                                  "EGL_EXT_image_dma_buf_import_modifiers") == 0;
+                                   }),
+                    mExtensions.end());
+            }
+        }
+    }
+
+    // EGL_EXT_device_query is only advertised in extension string in the
+    // no-display case, see getNativeDisplay().
+    if (SetPtr(&mFnPtrs->queryDeviceAttribEXTPtr, getProcAddress("eglQueryDeviceAttribEXT")) &&
+        SetPtr(&mFnPtrs->queryDeviceStringEXTPtr, getProcAddress("eglQueryDeviceStringEXT")) &&
+        SetPtr(&mFnPtrs->queryDisplayAttribEXTPtr, getProcAddress("eglQueryDisplayAttribEXT")))
+    {
+        mExtensions.push_back("EGL_EXT_device_query");
     }
 
 #undef ANGLE_GET_PROC_OR_ERROR
@@ -623,6 +676,23 @@ EGLint FunctionsEGL::queryDmaBufModifiersEXT(EGLint format,
 {
     return mFnPtrs->queryDmaBufModifiersEXTPtr(mEGLDisplay, format, maxModifiers, modifiers,
                                                externalOnly, numModifiers);
+}
+
+EGLBoolean FunctionsEGL::queryDeviceAttribEXT(EGLDeviceEXT device,
+                                              EGLint attribute,
+                                              EGLAttrib *value) const
+{
+    return mFnPtrs->queryDeviceAttribEXTPtr(device, attribute, value);
+}
+
+const char *FunctionsEGL::queryDeviceStringEXT(EGLDeviceEXT device, EGLint name) const
+{
+    return mFnPtrs->queryDeviceStringEXTPtr(device, name);
+}
+
+EGLBoolean FunctionsEGL::queryDisplayAttribEXT(EGLint attribute, EGLAttrib *value) const
+{
+    return mFnPtrs->queryDisplayAttribEXTPtr(mEGLDisplay, attribute, value);
 }
 
 }  // namespace rx

@@ -1704,6 +1704,13 @@ void GenerateCaps(ID3D11Device *device,
     // GL_EXT_clip_control
     extensions->clipControlEXT = (renderer11DeviceCaps.featureLevel >= D3D_FEATURE_LEVEL_9_3);
 
+    // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance
+    extensions->clipDistanceAPPLE         = true;
+    extensions->clipCullDistanceEXT       = true;
+    caps->maxClipDistances                = D3D11_CLIP_OR_CULL_DISTANCE_COUNT;
+    caps->maxCullDistances                = D3D11_CLIP_OR_CULL_DISTANCE_COUNT;
+    caps->maxCombinedClipAndCullDistances = D3D11_CLIP_OR_CULL_DISTANCE_COUNT;
+
     // GL_KHR_parallel_shader_compile
     extensions->parallelShaderCompileKHR = true;
 
@@ -1749,6 +1756,9 @@ void GenerateCaps(ID3D11Device *device,
 
     // D3D11 does not support compressed textures where the base mip level is not a multiple of 4
     limitations->compressedBaseMipLevelMultipleOfFour = true;
+
+    // When clip and cull distances are used simultaneously, D3D11 can support up to four of each.
+    limitations->limitSimultaneousClipAndCullDistanceUsage = true;
 
     if (extensions->textureBufferAny())
     {

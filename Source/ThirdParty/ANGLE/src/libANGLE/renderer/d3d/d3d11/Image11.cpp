@@ -10,6 +10,7 @@
 #include "libANGLE/renderer/d3d/d3d11/Image11.h"
 
 #include "common/utilities.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
@@ -300,7 +301,7 @@ angle::Result Image11::loadData(const gl::Context *context,
     uint8_t *offsetMappedData = (static_cast<uint8_t *>(mappedImage.pData) +
                                  (area.y * mappedImage.RowPitch + area.x * outputPixelSize +
                                   area.z * mappedImage.DepthPitch));
-    loadFunction(area.width, area.height, area.depth,
+    loadFunction(context11->getImageLoadContext(), area.width, area.height, area.depth,
                  static_cast<const uint8_t *>(input) + inputSkipBytes, inputRowPitch,
                  inputDepthPitch, offsetMappedData, mappedImage.RowPitch, mappedImage.DepthPitch);
 
@@ -344,9 +345,9 @@ angle::Result Image11::loadCompressedData(const gl::Context *context,
         ((area.y / outputBlockHeight) * mappedImage.RowPitch +
          (area.x / outputBlockWidth) * outputPixelSize + area.z * mappedImage.DepthPitch);
 
-    loadFunction(area.width, area.height, area.depth, static_cast<const uint8_t *>(input),
-                 inputRowPitch, inputDepthPitch, offsetMappedData, mappedImage.RowPitch,
-                 mappedImage.DepthPitch);
+    loadFunction(context11->getImageLoadContext(), area.width, area.height, area.depth,
+                 static_cast<const uint8_t *>(input), inputRowPitch, inputDepthPitch,
+                 offsetMappedData, mappedImage.RowPitch, mappedImage.DepthPitch);
 
     unmap();
 
@@ -375,6 +376,8 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
                                            const gl::Rectangle &sourceArea,
                                            const gl::Framebuffer *sourceFBO)
 {
+    Context11 *context11 = GetImplAs<Context11>(context);
+
     const gl::FramebufferAttachment *srcAttachment = sourceFBO->getReadColorAttachment();
     ASSERT(srcAttachment);
 
@@ -419,8 +422,7 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
     {
         size_t bufferSize = destFormatInfo.pixelBytes * sourceArea.width * sourceArea.height;
         angle::MemoryBuffer *memoryBuffer = nullptr;
-        result = mRenderer->getScratchMemoryBuffer(GetImplAs<Context11>(context), bufferSize,
-                                                   &memoryBuffer);
+        result = mRenderer->getScratchMemoryBuffer(context11, bufferSize, &memoryBuffer);
 
         if (result == angle::Result::Continue)
         {
@@ -430,7 +432,8 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
                 context, *srcAttachment, sourceArea, destFormatInfo.format, destFormatInfo.type,
                 memoryBufferRowPitch, gl::PixelPackState(), memoryBuffer->data());
 
-            loadFunction.loadFunction(sourceArea.width, sourceArea.height, 1, memoryBuffer->data(),
+            loadFunction.loadFunction(context11->getImageLoadContext(), sourceArea.width,
+                                      sourceArea.height, 1, memoryBuffer->data(),
                                       memoryBufferRowPitch, 0, dataOffset, mappedImage.RowPitch,
                                       mappedImage.DepthPitch);
         }

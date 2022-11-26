@@ -110,13 +110,14 @@ bool FEColorMatrix::resultIsAlphaImage(const FilterImageVector&) const
     return m_type == FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
 }
 
-bool FEColorMatrix::supportsAcceleratedRendering() const
+OptionSet<FilterRenderingMode> FEColorMatrix::supportedFilterRenderingModes() const
 {
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
-    return FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this);
-#else
-    return false;
+    if (FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this))
+        modes = modes | FilterRenderingMode::Accelerated;
 #endif
+    return modes;
 }
 
 std::unique_ptr<FilterEffectApplier> FEColorMatrix::createAcceleratedApplier() const

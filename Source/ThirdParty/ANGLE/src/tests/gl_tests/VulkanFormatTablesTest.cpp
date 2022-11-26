@@ -15,6 +15,7 @@
 // So we need to include ANGLETest.h first to avoid this conflict.
 
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
@@ -43,9 +44,12 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
     ASSERT_TRUE(IsVulkan());
 
     // Hack the angle!
-    const gl::Context *context = static_cast<gl::Context *>(getEGLWindow()->getContext());
-    auto *contextVk            = rx::GetImplAs<rx::ContextVk>(context);
-    rx::RendererVk *renderer   = contextVk->getRenderer();
+    egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
+    gl::ContextID contextID = {
+        static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
+    gl::Context *context     = display->getContext(contextID);
+    auto *contextVk          = rx::GetImplAs<rx::ContextVk>(context);
+    rx::RendererVk *renderer = contextVk->getRenderer();
 
     // We need to test normal 2D images as well as Cube images.
     const std::vector<ParametersToTest> parametersToTest = {

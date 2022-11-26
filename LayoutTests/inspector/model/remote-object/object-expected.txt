@@ -291,6 +291,16 @@ EXPRESSION: new ArrayBuffer(16)
         "_name": "byteLength",
         "_type": "number",
         "_value": "16"
+      },
+      {
+        "_name": "resizable",
+        "_type": "boolean",
+        "_value": "false"
+      },
+      {
+        "_name": "maxByteLength",
+        "_type": "number",
+        "_value": "16"
       }
     ],
     "_entries": null

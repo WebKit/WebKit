@@ -25,7 +25,7 @@
 messages -> IPCTester NotRefCounted {
     StartMessageTesting(String driverName) WantsConnection
     StopMessageTesting() -> () Synchronous
-    CreateStreamTester(WebKit::IPCStreamTesterIdentifier identifier, IPC::StreamConnectionBuffer stream) WantsConnection
+    CreateStreamTester(WebKit::IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle serverConnection)
     ReleaseStreamTester(WebKit::IPCStreamTesterIdentifier identifier) -> () Synchronous
     CreateConnectionTester(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection) WantsConnection
     CreateConnectionTesterAndSendAsyncMessages(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection, uint32_t messageCount) WantsConnection

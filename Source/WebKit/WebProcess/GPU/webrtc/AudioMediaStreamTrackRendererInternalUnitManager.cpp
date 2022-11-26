@@ -48,7 +48,7 @@ namespace WebKit {
 class AudioMediaStreamTrackRendererInternalUnitManager::Proxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public CanMakeWeakPtr<Proxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Proxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&, WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback&&);
+    explicit Proxy(Client&);
     ~Proxy();
 
     AudioMediaStreamTrackRendererInternalUnitIdentifier identifier() const { return m_identifier; }
@@ -70,8 +70,7 @@ private:
     void startThread();
     void createRemoteUnit();
 
-    WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback m_renderCallback;
-    WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback m_resetCallback;
+    Client& m_client;
     AudioMediaStreamTrackRendererInternalUnitIdentifier m_identifier;
 
     Deque<CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>> m_descriptionCallbacks;
@@ -102,9 +101,9 @@ void AudioMediaStreamTrackRendererInternalUnitManager::remove(Proxy& proxy)
     m_proxies.remove(proxy.identifier());
 }
 
-UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> AudioMediaStreamTrackRendererInternalUnitManager::createRemoteInternalUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback&& renderCallback, WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback&& resetCallback)
+UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
 {
-    return makeUniqueRef<AudioMediaStreamTrackRendererInternalUnitManager::Proxy>(WTFMove(renderCallback), WTFMove(resetCallback));
+    return makeUniqueRef<AudioMediaStreamTrackRendererInternalUnitManager::Proxy>(client);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::reset(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
@@ -120,9 +119,8 @@ void AudioMediaStreamTrackRendererInternalUnitManager::restartAllUnits()
         proxy->reset(Proxy::IsClosed::Yes);
 }
 
-AudioMediaStreamTrackRendererInternalUnitManager::Proxy::Proxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback&& renderCallback, WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback&& resetCallback)
-    : m_renderCallback(WTFMove(renderCallback))
-    , m_resetCallback(WTFMove(resetCallback))
+AudioMediaStreamTrackRendererInternalUnitManager::Proxy::Proxy(Client& client)
+    : m_client(client)
     , m_identifier(AudioMediaStreamTrackRendererInternalUnitIdentifier::generate())
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().add(*this);
@@ -241,7 +239,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::startThread()
             auto& bufferList = *m_buffer->list();
 
             AudioUnitRenderActionFlags flags = 0;
-            m_renderCallback(m_frameChunkSize, bufferList, m_writeOffset, mach_absolute_time(), flags);
+            m_client.render(m_frameChunkSize, bufferList, m_writeOffset, mach_absolute_time(), flags);
 
             if (flags == kAudioUnitRenderAction_OutputIsSilence)
                 WebCore::AudioSampleBufferList::zeroABL(bufferList, static_cast<size_t>(m_frameChunkSize * m_description->bytesPerFrame()));
@@ -257,7 +255,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::reset(IsClosed isC
 {
     stopThread();
     m_didClose = isClosed == IsClosed::Yes;
-    m_resetCallback();
+    m_client.reset();
     if (m_isPlaying)
         start();
 }

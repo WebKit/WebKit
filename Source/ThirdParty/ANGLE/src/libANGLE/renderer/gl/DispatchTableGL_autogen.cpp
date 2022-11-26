@@ -2793,6 +2793,11 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
         ASSIGN("glValidateProgramPipelineEXT", validateProgramPipeline);
     }
 
+    if (extensions.count("GL_EXT_shader_framebuffer_fetch_non_coherent") != 0)
+    {
+        ASSIGN("glFramebufferFetchBarrierEXT", framebufferFetchBarrierEXT);
+    }
+
     if (extensions.count("GL_EXT_texture_storage") != 0)
     {
         ASSIGN("glTexStorage1DEXT", texStorage1D);
@@ -5597,6 +5602,11 @@ void DispatchTableGL::initProcsSharedExtensionsNULL(const std::set<std::string> 
         programUniformMatrix4x3fv = &glProgramUniformMatrix4x3fvNULL;
         useProgramStages          = &glUseProgramStagesNULL;
         validateProgramPipeline   = &glValidateProgramPipelineNULL;
+    }
+
+    if (extensions.count("GL_EXT_shader_framebuffer_fetch_non_coherent") != 0)
+    {
+        framebufferFetchBarrierEXT = &glFramebufferFetchBarrierEXTNULL;
     }
 
     if (extensions.count("GL_EXT_texture_storage") != 0)

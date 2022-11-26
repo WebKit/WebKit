@@ -1,8 +1,0 @@
-
-PASS canShare with single file
-FAIL canShare with empty file list navigator.canShare is not a function. (In 'navigator.canShare({files: []})', 'navigator.canShare' is undefined)
-FAIL canShare with single file list navigator.canShare is not a function. (In 'navigator.canShare({files: [emptyFile]})', 'navigator.canShare' is undefined)
-FAIL canShare with file list navigator.canShare is not a function. (In 'navigator.canShare({files: [textFile, emptyFile]})', 'navigator.canShare' is undefined)
-FAIL canShare with repeated file navigator.canShare is not a function. (In 'navigator.canShare({files: [textFile, emptyFile, textFile]})', 'navigator.canShare' is undefined)
-FAIL canShare with file list and url navigator.canShare is not a function. (In 'navigator.canShare({url: 'https://example.com/', files: [textFile, emptyFile]})', 'navigator.canShare' is undefined)
-

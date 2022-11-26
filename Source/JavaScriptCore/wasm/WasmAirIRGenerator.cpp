@@ -4208,19 +4208,16 @@ auto AirIRGenerator::addIf(ExpressionType condition, BlockSignature signature, S
     B3::FrequencyClass takenFrequency = B3::FrequencyClass::Normal;
     B3::FrequencyClass notTakenFrequency= B3::FrequencyClass::Normal;
 
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            takenFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            notTakenFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
+    BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+    switch (hint) {
+    case BranchHint::Unlikely:
+        takenFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Likely:
+        notTakenFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Invalid:
+        break;
     }
 
     // Wasm bools are i32.
@@ -4475,19 +4472,16 @@ auto AirIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
     B3::FrequencyClass targetFrequency = B3::FrequencyClass::Normal;
     B3::FrequencyClass continuationFrequency = B3::FrequencyClass::Normal;
 
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            targetFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            continuationFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
+    BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+    switch (hint) {
+    case BranchHint::Unlikely:
+        targetFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Likely:
+        continuationFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Invalid:
+        break;
     }
 
     if (condition) {

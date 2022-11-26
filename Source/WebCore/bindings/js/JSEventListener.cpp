@@ -180,6 +180,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     JSValue handleEventFunction = jsFunction;
 
+    Ref protectedThis { *this };
+
     auto callData = JSC::getCallData(handleEventFunction);
 
     // If jsFunction is not actually a function and this is an EventListener, see if it implements callback interface.
@@ -202,8 +204,6 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
         }
     }
-
-    Ref<JSEventListener> protectedThis(*this);
 
     MarkedArgumentBuffer args;
     args.append(toJS(lexicalGlobalObject, globalObject, &event));

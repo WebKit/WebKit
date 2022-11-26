@@ -69,8 +69,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(IPC::Semaphore&&)>&&);
-    static void cancelReply(CompletionHandler<void(IPC::Semaphore&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
     using AsyncReply = ReceiveSemaphoreAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;

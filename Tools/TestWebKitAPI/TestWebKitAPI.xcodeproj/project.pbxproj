@@ -103,6 +103,7 @@
 		1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */; };
+		1C15499A2928475C001B9E5B /* WebExtensionUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C15498E2926F701001B9E5B /* WebExtensionUtilities.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C24DEED263001DE00450D07 /* TextStyleFontSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C24DEEC263001DE00450D07 /* TextStyleFontSize.mm */; };
 		1C2B81831C891F0900A5529F /* CancelFontSubresourcePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */; };
 		1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1C2B81841C8924A200A5529F /* webfont.html */; };
@@ -1996,6 +1997,10 @@
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		1AEF994817A09F5300998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetPIDAfterAbortedProcessLaunch.cpp; sourceTree = "<group>"; };
 		1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumTraits.cpp; sourceTree = "<group>"; };
+		1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIRuntime.mm; sourceTree = "<group>"; };
+		1C15498E2926F701001B9E5B /* WebExtensionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WebExtensionUtilities.mm; path = cocoa/WebExtensionUtilities.mm; sourceTree = "<group>"; };
+		1C15498F2926F944001B9E5B /* WebExtensionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebExtensionUtilities.h; path = cocoa/WebExtensionUtilities.h; sourceTree = "<group>"; };
+		1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIExtension.mm; sourceTree = "<group>"; };
 		1C24DEEC263001DE00450D07 /* TextStyleFontSize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextStyleFontSize.mm; sourceTree = "<group>"; };
 		1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresource.mm; sourceTree = "<group>"; };
 		1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresourcePlugIn.mm; sourceTree = "<group>"; };
@@ -3695,6 +3700,8 @@
 				41733D7A25DE96DA00A136E5 /* UserMediaCaptureUIDelegate.h */,
 				41733D7B25DE96DA00A136E5 /* UserMediaCaptureUIDelegate.mm */,
 				7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */,
+				1C15498F2926F944001B9E5B /* WebExtensionUtilities.h */,
+				1C15498E2926F701001B9E5B /* WebExtensionUtilities.mm */,
 				A14FC5841B89739100D107EB /* WKWebViewConfigurationExtras.h */,
 				A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */,
 			);
@@ -4061,6 +4068,8 @@
 				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
 				5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */,
 				1CFAA40828947999009F894D /* WKWebExtension.mm */,
+				1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */,
+				1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */,
 				1CBEE26228F47FA9006D1A02 /* WKWebExtensionContext.mm */,
 				1CAB9B7128F5E08900E6C77E /* WKWebExtensionController.mm */,
 				1CFAA40928974405009F894D /* WKWebExtensionMatchPattern.mm */,
@@ -6504,6 +6513,7 @@
 				0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */,
 				7CCE7F191A411AE600447C4C /* WebArchive.cpp in Sources */,
 				7C83E04C1D0A641800FEBCF3 /* WebCoreNSURLSession.mm in Sources */,
+				1C15499A2928475C001B9E5B /* WebExtensionUtilities.mm in Sources */,
 				C1FF9EDB244644F000839AE4 /* WebFilter.mm in Sources */,
 				7B7D096A2519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm in Sources */,
 				31E9BDA1247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm in Sources */,

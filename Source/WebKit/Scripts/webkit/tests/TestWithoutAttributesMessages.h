@@ -283,8 +283,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_CreatePlugin; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&)>&&);
-    static void cancelReply(CompletionHandler<void(bool&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_CreatePluginReply; }
     using AsyncReply = CreatePluginAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -310,8 +308,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlert; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void()>&&);
-    static void cancelReply(CompletionHandler<void()>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply; }
     using AsyncReply = RunJavaScriptAlertAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -337,8 +333,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_GetPlugins; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&&);
-    static void cancelReply(CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_GetPluginsReply; }
     using AsyncReply = GetPluginsAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -494,8 +488,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEvent; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&&);
-    static void cancelReply(CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply; }
     using AsyncReply = InterpretKeyEventAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;

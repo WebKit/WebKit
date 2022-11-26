@@ -34,8 +34,8 @@ namespace WebCore::CQ::Features {
 using namespace MQ;
 
 struct SizeFeatureSchema : public FeatureSchema {
-    SizeFeatureSchema(const AtomString& name, Type type, OptionSet<ValueType> valueTypes, Vector<CSSValueID>&& valueIdentifiers = { })
-        : FeatureSchema(name, type, valueTypes, WTFMove(valueIdentifiers))
+    SizeFeatureSchema(const AtomString& name, Type type, ValueType valueType, Vector<CSSValueID>&& valueIdentifiers = { })
+        : FeatureSchema(name, type, valueType, WTFMove(valueIdentifiers))
     { }
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
@@ -76,7 +76,7 @@ const FeatureSchema& width()
 {
     struct Schema : public SizeFeatureSchema {
         Schema()
-            : SizeFeatureSchema("width"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length } )
+            : SizeFeatureSchema("width"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length)
         { }
 
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
@@ -93,7 +93,7 @@ const FeatureSchema& height()
 {
     struct Schema : public SizeFeatureSchema {
         Schema()
-            : SizeFeatureSchema("height"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length } )
+            : SizeFeatureSchema("height"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length)
         { }
 
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
@@ -110,7 +110,7 @@ const FeatureSchema& inlineSize()
 {
     struct Schema : public SizeFeatureSchema {
         Schema()
-            : SizeFeatureSchema("inline-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length } )
+            : SizeFeatureSchema("inline-size"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length)
         { }
 
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
@@ -127,7 +127,7 @@ const FeatureSchema& blockSize()
 {
     struct Schema : public SizeFeatureSchema {
         Schema()
-            : SizeFeatureSchema("block-size"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Length } )
+            : SizeFeatureSchema("block-size"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Length)
         { }
 
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
@@ -144,7 +144,7 @@ const FeatureSchema& aspectRatio()
 {
     struct Schema : public SizeFeatureSchema {
         Schema()
-            : SizeFeatureSchema("aspect-ratio"_s, FeatureSchema::Type::Range, { FeatureSchema::ValueType::Ratio } )
+            : SizeFeatureSchema("aspect-ratio"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio)
         { }
 
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData&) const override
@@ -162,7 +162,7 @@ const FeatureSchema& orientation()
 {
     struct Schema : public SizeFeatureSchema {
         Schema()
-            : SizeFeatureSchema("orientation"_s, FeatureSchema::Type::Discrete, { }, { CSSValuePortrait, CSSValueLandscape })
+            : SizeFeatureSchema("orientation"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, { CSSValuePortrait, CSSValueLandscape })
         { }
 
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData&) const override

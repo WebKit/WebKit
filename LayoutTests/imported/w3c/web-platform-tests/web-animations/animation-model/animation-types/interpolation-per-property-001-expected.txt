@@ -244,11 +244,11 @@ FAIL filter: hue-rotate function with different unit(deg -> rad) assert_equals: 
 PASS filter: drop-shadow function
 PASS filter: percentage or numeric-specifiable functions (number value)
 PASS filter: percentage or numeric-specifiable functions (percentage value)
-FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 1 assert_equals: The value should be grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5) at 500ms expected "grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5)" but got "grayscale(1) brightness(0) contrast(0) opacity(0) saturate(0)"
-FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 0 assert_equals: The value should be opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px) at 500ms expected "opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px)" but got "opacity(0) grayscale(1) invert(1) sepia(1) blur(10px)"
-FAIL filter: interpolate different length of filter-function-list with drop-shadow function assert_equals: The value should be blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px) at 500ms expected "blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px)" but got "blur(10px) drop-shadow(rgba(0, 0, 255, 0.8) 10px 10px 10px)"
+PASS filter: interpolate different length of filter-function-list with function which lacuna value is 1
+PASS filter: interpolate different length of filter-function-list with function which lacuna value is 0
+PASS filter: interpolate different length of filter-function-list with drop-shadow function
 PASS filter: interpolate from none
-FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.99px) url(\"#f1\")"
+PASS filter: url function (interpoalte as discrete)
 PASS flex-basis (type: lengthPercentageOrCalc) has testInterpolation function
 PASS flex-basis supports animating as a length
 PASS flex-basis supports animating as a length of rem

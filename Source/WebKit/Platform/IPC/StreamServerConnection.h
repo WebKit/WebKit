@@ -54,19 +54,13 @@ class StreamConnectionWorkQueue;
 class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
-    // Creates StreamClientConnection where the out of stream messages and server replies are
-    // received through the passed IPC::Connection. The messages from the server are sent to
-    // the passed IPC::Connection.
-    // Note: This function should be used only in cases where the
-    // stream server starts listening to messages with new identifiers on the same thread as
-    // in which the server IPC::Connection dispatch messages. At the time of writing,
-    // IPC::Connection dispatches messages only in main thread.
-    static Ref<StreamServerConnection> create(Connection&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
-
-    // Creates StreamServerConnection where the out of stream messages and server replies are
-    // received through a dedidcated, new IPC::Connection. The messages from the server are sent to
-    // the dedicated conneciton.
-    static Ref<StreamServerConnection> createWithDedicatedConnection(IPC::Connection::Handle&&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
+    struct Handle {
+        Connection::Handle outOfStreamConnection;
+        StreamConnectionBuffer::Handle buffer;
+        void encode(Encoder&) const;
+        static std::optional<Handle> decode(Decoder&);
+    };
+    static Ref<StreamServerConnection> create(Handle&&, StreamConnectionWorkQueue&);
     ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
@@ -91,8 +85,7 @@ public:
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
 private:
-    enum class HasDedicatedConnection : bool { No, Yes };
-    StreamServerConnection(Ref<Connection>&&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&, HasDedicatedConnection);
+    StreamServerConnection(Ref<Connection>, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
 
     // MessageReceiveQueue
     void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) final;
@@ -134,7 +127,6 @@ private:
     Deque<std::unique_ptr<Decoder>> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
 
     bool m_isDispatchingStreamMessage { false };
-    const bool m_hasDedicatedConnection;
     Lock m_receiversLock;
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
@@ -167,6 +159,20 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
 
     (encoder.get() << ... << std::forward<Arguments>(arguments));
     m_connection->sendSyncReply(WTFMove(encoder));
+}
+
+inline void StreamServerConnection::Handle::encode(Encoder& encoder) const
+{
+    encoder << outOfStreamConnection << buffer;
+}
+
+inline std::optional<StreamServerConnection::Handle> StreamServerConnection::Handle::decode(Decoder& decoder)
+{
+    auto outOfStreamConnection = decoder.decode<Connection::Handle>();
+    auto buffer = decoder.decode<StreamConnectionBuffer::Handle>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return Handle { WTFMove(*outOfStreamConnection), WTFMove(*buffer) };
 }
 
 }

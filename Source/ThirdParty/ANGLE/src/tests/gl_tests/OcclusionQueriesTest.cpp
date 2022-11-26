@@ -913,7 +913,9 @@ TEST_P(OcclusionQueriesNoSurfaceTestES3, SwitchingContextsWithQuery)
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(OcclusionQueriesTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(OcclusionQueriesTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(OcclusionQueriesTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    OcclusionQueriesTestES3,
+    ES3_VULKAN().enable(Feature::PreferSubmitOnAnySamplesPassedQueryEnd));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(OcclusionQueriesNoSurfaceTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(OcclusionQueriesNoSurfaceTestES3);

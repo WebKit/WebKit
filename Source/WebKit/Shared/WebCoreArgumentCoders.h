@@ -97,10 +97,6 @@
 #include "ArgumentCodersCF.h"
 #endif
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-#include <wtf/unix/UnixFileDescriptor.h>
-#endif
-
 OBJC_CLASS VKCImageAnalysis;
 
 #if USE(AVFOUNDATION)
@@ -633,16 +629,6 @@ template<> struct ArgumentCoder<RetainPtr<VKCImageAnalysis>> {
 template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {
     static void encode(Encoder&, const RetainPtr<CVPixelBufferRef>&);
     static std::optional<RetainPtr<CVPixelBufferRef>> decode(Decoder&);
-};
-
-#endif
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-
-template<> struct ArgumentCoder<UnixFileDescriptor> {
-    static void encode(Encoder&, const UnixFileDescriptor&);
-    static void encode(Encoder&, UnixFileDescriptor&&);
-    static std::optional<UnixFileDescriptor> decode(Decoder&);
 };
 
 #endif

@@ -32,6 +32,7 @@
 #include "WebNotificationManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/NotificationData.h>
 #include <WebCore/ScriptExecutionContext.h>
 
 namespace WebKit {

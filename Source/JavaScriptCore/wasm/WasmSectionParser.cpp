@@ -129,8 +129,7 @@ auto SectionParser::parseImport() -> PartialResult
     WASM_PARSER_FAIL_IF(!m_info->globals.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " globals"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_info->imports.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " imports"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_info->importFunctionTypeIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import function signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
-    if (Options::useWebAssemblyExceptions())
-        WASM_PARSER_FAIL_IF(!m_info->importExceptionTypeIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import exception signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
+    WASM_PARSER_FAIL_IF(!m_info->importExceptionTypeIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import exception signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
 
     for (uint32_t importNumber = 0; importNumber < importCount; ++importNumber) {
         uint32_t moduleLen;
@@ -183,8 +182,6 @@ auto SectionParser::parseImport() -> PartialResult
             break;
         }
         case ExternalKind::Exception: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
-
             uint8_t tagType;
             WASM_PARSER_FAIL_IF(!parseUInt8(tagType), "can't get ", importNumber, "th Import exception's tag type");
             WASM_PARSER_FAIL_IF(tagType, importNumber, "th Import exception has tag type ", tagType, " but the only supported tag type is 0");
@@ -423,8 +420,6 @@ auto SectionParser::parseExport() -> PartialResult
             break;
         }
         case ExternalKind::Exception: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
-
             WASM_PARSER_FAIL_IF(kindIndex >= m_info->exceptionIndexSpaceSize(), exportNumber, "th Export has invalid exception number ", kindIndex, " it exceeds the exception index space ", m_info->exceptionIndexSpaceSize(), ", named '", fieldString, "'");
             m_info->addDeclaredException(kindIndex);
             break;
@@ -1197,8 +1192,6 @@ auto SectionParser::parseDataCount() -> PartialResult
 
 auto SectionParser::parseException() -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExceptions(), "wasm exceptions are not enabled");
-
     uint32_t exceptionCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionCount), "can't get Exception section's count");
     WASM_PARSER_FAIL_IF(exceptionCount > maxExceptions, "Export section's count is too big ", exceptionCount, " maximum ", maxExceptions);
@@ -1236,16 +1229,14 @@ auto SectionParser::parseCustom() -> PartialResult
     }
 
     Name nameName = { 'n', 'a', 'm', 'e' };
+    Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
     if (section.name == nameName) {
         NameSectionParser nameSectionParser(section.payload.begin(), section.payload.size(), m_info);
         if (auto nameSection = nameSectionParser.parse())
             m_info->nameSection = WTFMove(*nameSection);
-    } else if (Options::useWebAssemblyBranchHints()) {
-        Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
-        if (section.name == branchHintsName) {
-            BranchHintsSectionParser branchHintsSectionParser(section.payload.begin(), section.payload.size(), m_info);
-            branchHintsSectionParser.parse();
-        }
+    } else if (section.name == branchHintsName) {
+        BranchHintsSectionParser branchHintsSectionParser(section.payload.begin(), section.payload.size(), m_info);
+        branchHintsSectionParser.parse();
     }
 
     m_info->customSections.uncheckedAppend(WTFMove(section));

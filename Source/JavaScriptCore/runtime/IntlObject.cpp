@@ -161,6 +161,7 @@ namespace JSC {
 /* Source for IntlObject.lut.h
 @begin intlObjectTable
   getCanonicalLocales   intlObjectFuncGetCanonicalLocales            DontEnum|Function 1
+  supportedValuesOf     intlObjectFuncSupportedValuesOf              DontEnum|Function 1
   Collator              createCollatorConstructor                    DontEnum|PropertyCallback
   DateTimeFormat        createDateTimeFormatConstructor              DontEnum|PropertyCallback
   DisplayNames          createDisplayNamesConstructor                DontEnum|PropertyCallback
@@ -246,7 +247,7 @@ IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* 
     return object;
 }
 
-void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void IntlObject::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
@@ -259,8 +260,6 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     UNUSED_PARAM(&createDurationFormatConstructor);
     UNUSED_PARAM(&createListFormatConstructor);
 #endif
-    if (Options::useIntlEnumeration())
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("supportedValuesOf"_s, intlObjectFuncSupportedValuesOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

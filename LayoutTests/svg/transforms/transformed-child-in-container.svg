@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<g>
+  <circle fill="green" transform="scale(20 20)" cx="0" cy="0" r="5"/>
+</g>
+
+<g transform="scale(10 10)">
+  <g>
+    <circle fill="red" transform="scale(2 2)" cx="10" cy="0" r="5"/>
+  </g>
+</g>
+
+<g transform="scale(10 10)">
+  <g transform="scale(0.1 0.1)">
+    <circle fill="yellow" transform="scale(20 20)" cx="0" cy="10" r="5"/>
+  </g>
+</g>
+
+<g transform="scale(0.125 0.125)">
+  <g transform="scale(20 20)">
+    <g transform="scale(8 8)">
+      <circle fill="blue" cx="10" cy="10" r="5"/>
+    </g>
+  </g>
+</g>
+</svg>

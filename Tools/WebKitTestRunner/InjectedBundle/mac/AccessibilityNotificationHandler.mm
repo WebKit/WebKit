@@ -31,7 +31,7 @@
 #import "config.h"
 #import "AccessibilityNotificationHandler.h"
 
-#import "AccessibilityCommonMac.h"
+#import "AccessibilityCommonCocoa.h"
 #import "AccessibilityUIElement.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"

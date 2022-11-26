@@ -25,6 +25,7 @@
 #include "config.h"
 #include "GenericMediaQueryEvaluator.h"
 
+#include "CSSAspectRatioValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueList.h"
@@ -138,20 +139,11 @@ static EvaluationResult evaluateRatioComparison(double ratio, const std::optiona
     if (!comparison)
         return EvaluationResult::True;
 
-    if (!is<CSSValueList>(comparison->value))
+    if (!is<CSSAspectRatioValue>(comparison->value))
         return EvaluationResult::Unknown;
 
-    auto& ratioList = downcast<CSSValueList>(*comparison->value);
-    if (ratioList.length() != 2)
-        return EvaluationResult::Unknown;
-
-    auto first = dynamicDowncast<CSSPrimitiveValue>(ratioList.item(0));
-    auto second = dynamicDowncast<CSSPrimitiveValue>(ratioList.item(1));
-
-    if (!first || !second || !first->isNumberOrInteger() || !second->isNumberOrInteger())
-        return EvaluationResult::Unknown;
-
-    auto expressionRatio = first->doubleValue() / second->doubleValue();
+    auto& ratioValue = downcast<CSSAspectRatioValue>(*comparison->value);
+    auto expressionRatio = ratioValue.numeratorValue() / ratioValue.denominatorValue();
 
     auto left = side == Side::Left ? expressionRatio : ratio;
     auto right = side == Side::Left ? ratio : expressionRatio;

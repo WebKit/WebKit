@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-share/resources/blank.html
 /LayoutTests/imported/w3c/web-platform-tests/web-share/resources/manual-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/web-share/resources/post-message.html

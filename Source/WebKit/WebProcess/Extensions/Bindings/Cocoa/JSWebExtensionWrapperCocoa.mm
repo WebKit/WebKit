@@ -144,22 +144,6 @@ id WebExtensionCallbackHandler::call(id argumentOne, id argumentTwo, id argument
     });
 }
 
-static JSObjectRef functionObjectByName(JSContextRef context, JSObjectRef objectRef, const char* functionName)
-{
-    ASSERT(context);
-
-    JSValueRef exception = nullptr;
-    JSValueRef function = JSObjectGetProperty(context, objectRef, toJSString(functionName).get(), &exception);
-    if (exception || !function || !JSValueIsObject(context, function))
-        return nullptr;
-
-    JSObjectRef functionRef = JSValueToObject(context, function, &exception);
-    if (exception || !functionRef || !JSObjectIsFunction(context, functionRef))
-        return nullptr;
-
-    return functionRef;
-}
-
 id toNSObject(JSContextRef context, JSValueRef valueRef, Class requiredClass)
 {
     ASSERT(context);
@@ -301,14 +285,14 @@ JSValueRef deserializeJSONString(JSContextRef context, NSString *jsonString)
     return JSValueMakeNull(context);
 }
 
-NSString *serializeJSObject(JSContextRef context, JSValueRef object, JSValueRef* exception)
+NSString *serializeJSObject(JSContextRef context, JSValueRef value, JSValueRef* exception)
 {
     ASSERT(context);
 
-    if (!object)
+    if (!value)
         return nil;
 
-    JSRetainPtr<JSStringRef> string(Adopt, JSValueCreateJSONString(context, object, 0, exception));
+    JSRetainPtr<JSStringRef> string(Adopt, JSValueCreateJSONString(context, value, 0, exception));
 
     return toNSString(string.get());
 }
@@ -317,29 +301,62 @@ NSString *serializeJSObject(JSContextRef context, JSValueRef object, JSValueRef*
 
 using namespace WebKit;
 
-@implementation JSValue (ThenableExtras)
+@implementation JSValue (WebKitExtras)
 
-- (BOOL)_isThenable
+- (NSString *)_toJSONString
+{
+    return serializeJSObject(self.context.JSGlobalContextRef, self.JSValueRef, nullptr);
+}
+
+- (NSString *)_toSortedJSONString
+{
+    // This double-JSON approach works best since it avoids JSC's Cocoa object conversion, which can produce JSValue's that NSJSONSerialization can't convert.
+    auto* data = [self._toJSONString dataUsingEncoding:NSUTF8StringEncoding];
+    if (!data)
+        return nil;
+
+    id object = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingFragmentsAllowed error:nullptr];
+    if (!object)
+        return nil;
+
+    data = [NSJSONSerialization dataWithJSONObject:object options:NSJSONWritingFragmentsAllowed | NSJSONWritingSortedKeys error:nullptr];
+    if (!data)
+        return nil;
+
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+}
+
+- (BOOL)_isFunction
 {
     JSGlobalContextRef context = self.context.JSGlobalContextRef;
     JSValueRef valueRef = self.JSValueRef;
 
-    if (!JSValueIsObject(context, valueRef))
+    if (!valueRef || !JSValueIsObject(context, valueRef))
         return NO;
 
-    // A Promise object or any "thenable" object just needs to have a "then" function.
-    return !!functionObjectByName(context, JSValueToObject(context, valueRef, nullptr), "then");
+    JSObjectRef functionRef = JSValueToObject(context, valueRef, nullptr);
+    return functionRef && JSObjectIsFunction(context, functionRef);
 }
 
-- (void)_awaitThenableResolutionWithCompletionHandler:(void (^)(id result, id error))completionHandler
+- (BOOL)_isRegularExpression
+{
+    return self.isObject && dynamic_objc_cast<JSValue>(self[@"test"])._function;
+}
+
+- (BOOL)_isThenable
+{
+    return self.isObject && dynamic_objc_cast<JSValue>(self[@"then"])._function;
+}
+
+- (void)_awaitThenableResolutionWithCompletionHandler:(void (^)(JSValue *result, JSValue *error))completionHandler
 {
     ASSERT(self._thenable);
 
-    auto resolveBlock = ^(id result) {
+    auto resolveBlock = ^(JSValue *result) {
         completionHandler(result, nil);
     };
 
-    auto rejectBlock = ^(id error) {
+    auto rejectBlock = ^(JSValue *error) {
         completionHandler(nil, error);
     };
 

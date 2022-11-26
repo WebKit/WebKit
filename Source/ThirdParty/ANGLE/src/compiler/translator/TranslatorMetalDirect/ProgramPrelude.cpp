@@ -1496,7 +1496,6 @@ struct ANGLE_TextureEnv
 };
 )")
 
-// Note: for the time being, names must match those in TranslatorMetal.
 PROGRAM_PRELUDE_DECLARE(functionConstants,
                         R"(
 #define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX 0

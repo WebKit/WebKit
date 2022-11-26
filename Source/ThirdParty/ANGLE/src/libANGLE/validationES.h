@@ -581,15 +581,15 @@ bool ValidatePushGroupMarkerEXT(const Context *context,
 bool ValidateEGLImageObject(const Context *context,
                             angle::EntryPoint entryPoint,
                             TextureType type,
-                            GLeglImageOES image);
+                            egl::ImageID image);
 bool ValidateEGLImageTargetTexture2DOES(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         TextureType type,
-                                        GLeglImageOES image);
+                                        egl::ImageID image);
 bool ValidateEGLImageTargetRenderbufferStorageOES(const Context *context,
                                                   angle::EntryPoint entryPoint,
                                                   GLenum target,
-                                                  GLeglImageOES image);
+                                                  egl::ImageID image);
 
 bool ValidateProgramBinaryBase(const Context *context,
                                angle::EntryPoint entryPoint,

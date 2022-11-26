@@ -45,6 +45,7 @@ bool Pipeline::uses(const TVariable &var) const
             {
                 case TQualifier::EvqVertexOut:
                 case TQualifier::EvqPosition:
+                case TQualifier::EvqClipDistance:
                 case TQualifier::EvqFlatOut:
                 case TQualifier::EvqPointSize:
                 case TQualifier::EvqSmoothOut:
@@ -74,6 +75,7 @@ bool Pipeline::uses(const TVariable &var) const
             switch (qualifier)
             {
                 case TQualifier::EvqFragmentOut:
+                case TQualifier::EvqFragmentInOut:
                 case TQualifier::EvqFragColor:
                 case TQualifier::EvqFragData:
                 case TQualifier::EvqFragDepth:
@@ -342,7 +344,10 @@ ModifyStructConfig Pipeline::externalStructModifyConfig() const
             break;
 
         case Type::VertexOut:
-            config.inlineArray        = Pred::True;
+            config.inlineArray = [](const TField &field) -> bool {
+                // Clip distance output uses float[n] type instead of metal::array.
+                return field.type()->getQualifier() != TQualifier::EvqClipDistance;
+            };
             config.splitMatrixColumns = Pred::True;
             config.inlineStruct       = Pred::True;
             break;

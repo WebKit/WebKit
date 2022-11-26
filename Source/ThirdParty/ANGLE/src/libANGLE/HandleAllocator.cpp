@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <limits>
 
 #include "common/debug.h"
 

@@ -62,13 +62,17 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPagi
     }
 }
 
-RenderLayoutState::RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
+RenderLayoutState::RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
 #if ASSERT_ENABLED
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
+#endif
+    , m_maximumLineCountForLineClamp(maximumLineCountForLineClamp)
+    , m_visibleLineCountForLineClamp(visibleLineCountForLineClamp)
+#if ASSERT_ENABLED
     , m_renderer(&renderer)
 #endif
 {

@@ -130,8 +130,10 @@ class ExternalImageSibling : public ImageSibling
 
 struct ImageState : private angle::NonCopyable
 {
-    ImageState(EGLenum target, ImageSibling *buffer, const AttributeMap &attribs);
+    ImageState(ImageID id, EGLenum target, ImageSibling *buffer, const AttributeMap &attribs);
     ~ImageState();
+
+    ImageID id;
 
     EGLLabelKHR label;
     EGLenum target;
@@ -158,6 +160,7 @@ class Image final : public RefCountObject, public LabeledObject
 {
   public:
     Image(rx::EGLImplFactory *factory,
+          ImageID id,
           const gl::Context *context,
           EGLenum target,
           ImageSibling *buffer,
@@ -165,6 +168,8 @@ class Image final : public RefCountObject, public LabeledObject
 
     void onDestroy(const Display *display) override;
     ~Image() override;
+
+    ImageID id() const { return mState.id; }
 
     void setLabel(EGLLabelKHR label) override;
     EGLLabelKHR getLabel() const override;

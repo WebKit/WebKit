@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: action
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "wheel".
 Description: Verifies that wheel events are captured and sent
 
 Instructions:
@@ -10,7 +10,7 @@ Scroll the mouse wheel again to change this box's color
 Test Passes if the box turns green and the word 'PASS' appears below
 
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: action
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "wheel".
 
 NOTRUN wheel event test
 

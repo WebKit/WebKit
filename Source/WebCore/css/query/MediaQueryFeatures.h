@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "GenericMediaQueryTypes.h"
+#include "MediaQuery.h"
 
 namespace WebCore::MQ {
 
@@ -68,6 +68,8 @@ const FeatureSchema& prefersColorScheme();
 #endif
 
 Vector<const FeatureSchema*> allSchemas();
+
+std::optional<MediaQueryDynamicDependency> dynamicDependency(const FeatureSchema&);
 
 };
 

@@ -68,9 +68,9 @@ bool FEMorphology::setRadiusY(float radiusY)
     return true;
 }
 
-FloatRect FEMorphology::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
+FloatRect FEMorphology::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
-    auto imageRect = inputs[0]->imageRect();
+    auto imageRect = inputImageRects[0];
     imageRect.inflate(filter.resolvedSize({ m_radiusX, m_radiusY }));
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }

@@ -3782,21 +3782,48 @@ void GL_APIENTRY glFramebufferTexturePixelLocalStorageANGLE(GLint plane,
     return GL_FramebufferTexturePixelLocalStorageANGLE(plane, backingtexture, level, layer);
 }
 
-void GL_APIENTRY glBeginPixelLocalStorageANGLE(GLsizei planes,
-                                               const GLenum *loadops,
-                                               const void *cleardata)
+void GL_APIENTRY glFramebufferPixelLocalClearValuefvANGLE(GLint plane, const GLfloat *value)
 {
-    return GL_BeginPixelLocalStorageANGLE(planes, loadops, cleardata);
+    return GL_FramebufferPixelLocalClearValuefvANGLE(plane, value);
 }
 
-void GL_APIENTRY glEndPixelLocalStorageANGLE()
+void GL_APIENTRY glFramebufferPixelLocalClearValueivANGLE(GLint plane, const GLint *value)
 {
-    return GL_EndPixelLocalStorageANGLE();
+    return GL_FramebufferPixelLocalClearValueivANGLE(plane, value);
+}
+
+void GL_APIENTRY glFramebufferPixelLocalClearValueuivANGLE(GLint plane, const GLuint *value)
+{
+    return GL_FramebufferPixelLocalClearValueuivANGLE(plane, value);
+}
+
+void GL_APIENTRY glBeginPixelLocalStorageANGLE(GLsizei n, const GLenum *loadops)
+{
+    return GL_BeginPixelLocalStorageANGLE(n, loadops);
+}
+
+void GL_APIENTRY glEndPixelLocalStorageANGLE(GLsizei n, const GLenum *storeops)
+{
+    return GL_EndPixelLocalStorageANGLE(n, storeops);
 }
 
 void GL_APIENTRY glPixelLocalStorageBarrierANGLE()
 {
     return GL_PixelLocalStorageBarrierANGLE();
+}
+
+void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterfvANGLE(GLint plane,
+                                                                   GLenum pname,
+                                                                   GLfloat *params)
+{
+    return GL_GetFramebufferPixelLocalStorageParameterfvANGLE(plane, pname, params);
+}
+
+void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterivANGLE(GLint plane,
+                                                                   GLenum pname,
+                                                                   GLint *params)
+{
+    return GL_GetFramebufferPixelLocalStorageParameterivANGLE(plane, pname, params);
 }
 
 // GL_ANGLE_texture_compression_dxt3

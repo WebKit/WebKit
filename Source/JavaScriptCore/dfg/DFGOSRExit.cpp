@@ -318,7 +318,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // Refine some array and/or value profile, if appropriate.
 
     if (!!exit.m_jsValueSource) {
-        if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
+        if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType || exit.m_kind == UnexpectedResizableArrayBufferView) {
             // If the instruction that this originated from has an array profile, then
             // refine it. If it doesn't, then do nothing. The latter could happen for
             // hoisted checks, or checks emitted for operations that didn't have array

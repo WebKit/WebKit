@@ -133,6 +133,10 @@ suppressions. When a roll fails, stop the roller, determine if the root cause
 is a problem with ANGLE or with the upstream repo, and file an issue with an
 appropriate next step.
 
+To monitor the rollers during your shift, you can:
+  1. Open the [autoroll dashboard](https://autoroll.skia.org/) and put "angle" in `Filter`.  The dashboard provides the status of ANGLE related rollers.  Monitor their modes and numbers.
+  1. Filter out the non-critical emails by a filter: “`from:(*-autoroll (Gerrit))`”.  This improves the signal to noise ratio of your inbox, so the important emails, ex) "`The roll is failing consistently. Time to investigate.`", can stand out.
+
 The autoroller configurations live in the
 [skia-autoroll-internal-config repository](https://skia.googlesource.com/skia-autoroll-internal-config.git/+/main/skia-public).
 Feel free to maintain these configs yourself, or file a Skia [autoroll bug][SkiaAutorollBug]

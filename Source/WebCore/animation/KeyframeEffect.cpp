@@ -1003,11 +1003,6 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
     computeHasKeyframeComposingAcceleratedProperty();
 
     checkForMatchingTransformFunctionLists();
-    checkForMatchingFilterFunctionLists();
-#if ENABLE(FILTERS_LEVEL_2)
-    checkForMatchingBackdropFilterFunctionLists();
-#endif
-    checkForMatchingColorFilterFunctionLists();
 }
 
 void KeyframeEffect::checkForMatchingTransformFunctionLists()
@@ -1022,66 +1017,6 @@ void KeyframeEffect::checkForMatchingTransformFunctionLists()
         prefix.update(keyframe.style()->transform());
 
     m_transformFunctionListsMatchPrefix = prefix.primitives().size();
-}
-
-bool KeyframeEffect::checkForMatchingFilterFunctionLists(CSSPropertyID propertyID, const std::function<const FilterOperations& (const RenderStyle&)>& filtersGetter) const
-{
-    if (!m_blendingKeyframes.containsProperty(propertyID))
-        return false;
-
-    if (m_blendingKeyframes.size() < 2)
-        return true;
-
-    // Empty filters match anything, so find the first non-empty entry as the reference.
-    size_t numKeyframes = m_blendingKeyframes.size();
-    size_t firstNonEmptyKeyframeIndex = numKeyframes;
-
-    for (size_t i = 0; i < numKeyframes; ++i) {
-        if (filtersGetter(*m_blendingKeyframes[i].style()).operations().size()) {
-            firstNonEmptyKeyframeIndex = i;
-            break;
-        }
-    }
-
-    if (firstNonEmptyKeyframeIndex == numKeyframes)
-        return false;
-
-    auto& firstVal = filtersGetter(*m_blendingKeyframes[firstNonEmptyKeyframeIndex].style());
-    for (size_t i = firstNonEmptyKeyframeIndex + 1; i < numKeyframes; ++i) {
-        auto& value = filtersGetter(*m_blendingKeyframes[i].style());
-
-        // An empty filter list matches anything.
-        if (value.operations().isEmpty())
-            continue;
-
-        if (!firstVal.operationsMatch(value))
-            return false;
-    }
-
-    return true;
-}
-
-void KeyframeEffect::checkForMatchingFilterFunctionLists()
-{
-    m_filterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyFilter, [] (const RenderStyle& style) -> const FilterOperations& {
-        return style.filter();
-    });
-}
-
-#if ENABLE(FILTERS_LEVEL_2)
-void KeyframeEffect::checkForMatchingBackdropFilterFunctionLists()
-{
-    m_backdropFilterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyWebkitBackdropFilter, [] (const RenderStyle& style) -> const FilterOperations& {
-        return style.backdropFilter();
-    });
-}
-#endif
-
-void KeyframeEffect::checkForMatchingColorFilterFunctionLists()
-{
-    m_colorFilterFunctionListsMatch = checkForMatchingFilterFunctionLists(CSSPropertyAppleColorFilter, [] (const RenderStyle& style) -> const FilterOperations& {
-        return style.appleColorFilter();
-    });
 }
 
 void KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)

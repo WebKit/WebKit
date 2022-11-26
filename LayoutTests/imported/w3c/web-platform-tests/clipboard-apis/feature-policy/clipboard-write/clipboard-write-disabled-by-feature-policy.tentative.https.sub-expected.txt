@@ -1,5 +1,5 @@
 
-FAIL Feature-Policy header clipboard-write "none" disallows the top-level document. promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL Feature-Policy header clipboard-write "none" disallows the top-level document. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-write"."
 PASS Feature-Policy header clipboard-write "none" disallows same-origin iframes.
 PASS Feature-Policy header clipboard-write "none" disallows cross-origin iframes.
 
