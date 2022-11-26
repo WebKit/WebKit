@@ -63,16 +63,16 @@ function selectRange(id, start, end, expectedText) {
 
     if (window.eventSender) {
         // Trigger 'partial glyph selection' code, by adjusting the end x position by half glyph width
-        var xOld = endPos.x;
+        var xOldStart = startPos.x;
+        var xOldEnd = endPos.x;
         endPos.x -= endExtent.width / 2 - 1;
-
-        var absStartPos = toAbsoluteCoordinates(startPos, element);
-        var absEndPos = toAbsoluteCoordinates(endPos, element);
 
         // Round the points "inwards" to avoid being affected by the truncation taking place in 
         // eventSender.mouseMoveTo(...).
-        absStartPos.x = Math.ceil(absStartPos.x);
-        absEndPos.x = Math.floor(absEndPos.x);
+        startPos.x = Math.ceil(startPos.x);
+
+        var absStartPos = toAbsoluteCoordinates(startPos, element);
+        var absEndPos = toAbsoluteCoordinates(endPos, element);
 
         // Move to selection origin and hold down mouse
         eventSender.mouseMoveTo(absStartPos.x, absStartPos.y);
@@ -85,7 +85,8 @@ function selectRange(id, start, end, expectedText) {
         eventSender.mouseMoveTo(absEndPos.x, absEndPos.y);
         eventSender.mouseUp();
 
-        endPos.x = xOld;
+        startPos.x = xOldStart;
+        endPos.x = xOldEnd;
     }
 
     // Mark start position using a green line
