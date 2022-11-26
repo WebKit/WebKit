@@ -24,37 +24,46 @@
  */
 
 #include "config.h"
-#include "FilterTargetSwitcher.h"
+#include "FilterImageTargetSwitcher.h"
 
 #include "Filter.h"
-#include "FilterImageTargetSwitcher.h"
+#include "FilterResults.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 
 namespace WebCore {
 
-std::unique_ptr<FilterTargetSwitcher> FilterTargetSwitcher::create(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
+FilterImageTargetSwitcher::FilterImageTargetSwitcher(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
+    : FilterTargetSwitcher(filter)
+    , m_sourceImageRect(sourceImageRect)
+    , m_results(results)
 {
-    return makeUnique<FilterImageTargetSwitcher>(destinationContext, filter, sourceImageRect, colorSpace, results);
-}
+    if (sourceImageRect.isEmpty())
+        return;
 
-FilterTargetSwitcher::FilterTargetSwitcher(Filter& filter)
-    : m_filter(&filter)
-{
-}
-
-void FilterTargetSwitcher::willDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect)
-{
-    if (auto* context = drawingContext(destinationContext)) {
-        context->save();
-        context->clearRect(repaintRect);
-        context->clip(repaintRect);
+    m_sourceImage = destinationContext.createScaledImageBuffer(m_sourceImageRect, filter.filterScale(), colorSpace, filter.renderingMode());
+    if (!m_sourceImage) {
+        m_filter = nullptr;
+        return;
     }
+
+    auto state = destinationContext.state();
+    m_sourceImage->context().mergeAllChanges(state);
 }
 
-void FilterTargetSwitcher::didDrawSourceImage(GraphicsContext& destinationContext)
+GraphicsContext* FilterImageTargetSwitcher::drawingContext(GraphicsContext& context) const
 {
-    if (auto* context = drawingContext(destinationContext))
-        context->restore();
+    return m_sourceImage ? &m_sourceImage->context() : &context;
+}
+
+void FilterImageTargetSwitcher::didDrawSourceImage(GraphicsContext& destinationContext)
+{
+    FilterTargetSwitcher::didDrawSourceImage(destinationContext);
+
+    if (m_filter) {
+        FilterResults results;
+        destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, *m_filter, m_results ? *m_results : results);
+    }
 }
 
 } // namespace WebCore

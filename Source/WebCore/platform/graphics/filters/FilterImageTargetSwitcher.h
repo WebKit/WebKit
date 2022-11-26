@@ -23,38 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FilterTargetSwitcher.h"
+#pragma once
 
-#include "Filter.h"
-#include "FilterImageTargetSwitcher.h"
-#include "GraphicsContext.h"
+#include "FilterTargetSwitcher.h"
 
 namespace WebCore {
 
-std::unique_ptr<FilterTargetSwitcher> FilterTargetSwitcher::create(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
-{
-    return makeUnique<FilterImageTargetSwitcher>(destinationContext, filter, sourceImageRect, colorSpace, results);
-}
+class ImageBuffer;
 
-FilterTargetSwitcher::FilterTargetSwitcher(Filter& filter)
-    : m_filter(&filter)
-{
-}
+class FilterImageTargetSwitcher final : public FilterTargetSwitcher {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FilterImageTargetSwitcher(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect, const DestinationColorSpace&, FilterResults* = nullptr);
 
-void FilterTargetSwitcher::willDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect)
-{
-    if (auto* context = drawingContext(destinationContext)) {
-        context->save();
-        context->clearRect(repaintRect);
-        context->clip(repaintRect);
-    }
-}
+private:
+    GraphicsContext* drawingContext(GraphicsContext& destinationContext) const override;
 
-void FilterTargetSwitcher::didDrawSourceImage(GraphicsContext& destinationContext)
-{
-    if (auto* context = drawingContext(destinationContext))
-        context->restore();
-}
+    void didDrawSourceImage(GraphicsContext& destinationContext) override;
+
+    RefPtr<ImageBuffer> m_sourceImage;
+    FloatRect m_sourceImageRect;
+
+    FilterResults* m_results { nullptr };
+};
 
 } // namespace WebCore
