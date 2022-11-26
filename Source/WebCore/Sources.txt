@@ -486,6 +486,7 @@ accessibility/AccessibilityTreeItem.cpp
 accessibility/isolatedtree/AXIsolatedObject.cpp
 accessibility/isolatedtree/AXIsolatedTree.cpp
 animation/AnimationEffect.cpp
+animation/AnimationEvent.cpp
 animation/AnimationEventBase.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
@@ -501,6 +502,7 @@ animation/ElementAnimationRareData.cpp
 animation/FrameRateAligner.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
+animation/TransitionEvent.cpp
 animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp
 bindings/js/CachedModuleScriptLoader.cpp
@@ -949,7 +951,6 @@ dom/AbstractRange.cpp
 dom/ActiveDOMCallback.cpp
 dom/ActiveDOMObject.cpp
 dom/AllDescendantsCollection.cpp
-dom/AnimationEvent.cpp
 dom/Attr.cpp
 dom/BeforeTextInsertedEvent.cpp
 dom/BeforeUnloadEvent.cpp
@@ -1110,7 +1111,6 @@ dom/Touch.cpp @no-unify
 dom/TouchEvent.cpp @no-unify
 dom/TouchList.cpp @no-unify
 dom/TransformSourceLibxslt.cpp
-dom/TransitionEvent.cpp
 dom/Traversal.cpp
 dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp

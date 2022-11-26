@@ -757,6 +757,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/accessibility/AriaAttributes.idl \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
+    $(WebCore)/animation/AnimationEvent.idl \
     $(WebCore)/animation/AnimationFrameProvider.idl \
     $(WebCore)/animation/AnimationFrameRatePreset.idl \
     $(WebCore)/animation/AnimationPlaybackEvent.idl \
@@ -785,6 +786,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/KeyframeEffectOptions.idl \
     $(WebCore)/animation/OptionalEffectTiming.idl \
     $(WebCore)/animation/PlaybackDirection.idl \
+    $(WebCore)/animation/TransitionEvent.idl \
     $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \
@@ -912,7 +914,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/AbortSignal.idl \
     $(WebCore)/dom/AbstractRange.idl \
     $(WebCore)/dom/AddEventListenerOptions.idl \
-    $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeUnloadEvent.idl \
     $(WebCore)/dom/BroadcastChannel.idl \
@@ -1036,7 +1037,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/TextEncoderStream.idl \
     $(WebCore)/dom/TextEncoderStreamEncoder.idl \
     $(WebCore)/dom/TextEvent.idl \
-    $(WebCore)/dom/TransitionEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/UIEventInit.idl \

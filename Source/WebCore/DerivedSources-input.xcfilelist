@@ -866,6 +866,7 @@ $(PROJECT_DIR)/accessibility/AccessibilityRole.idl
 $(PROJECT_DIR)/accessibility/AriaAttributes.idl
 $(PROJECT_DIR)/animation/Animatable.idl
 $(PROJECT_DIR)/animation/AnimationEffect.idl
+$(PROJECT_DIR)/animation/AnimationEvent.idl
 $(PROJECT_DIR)/animation/AnimationFrameProvider.idl
 $(PROJECT_DIR)/animation/AnimationFrameRatePreset.idl
 $(PROJECT_DIR)/animation/AnimationPlaybackEvent.idl
@@ -894,6 +895,7 @@ $(PROJECT_DIR)/animation/KeyframeEffect.idl
 $(PROJECT_DIR)/animation/KeyframeEffectOptions.idl
 $(PROJECT_DIR)/animation/OptionalEffectTiming.idl
 $(PROJECT_DIR)/animation/PlaybackDirection.idl
+$(PROJECT_DIR)/animation/TransitionEvent.idl
 $(PROJECT_DIR)/animation/WebAnimation.idl
 $(PROJECT_DIR)/bindings/js/JSDOMBindingInternals.js
 $(PROJECT_DIR)/bindings/scripts/CodeGenerator.pm

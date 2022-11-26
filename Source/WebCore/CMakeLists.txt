@@ -751,6 +751,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     animation/Animatable.idl
     animation/AnimationEffect.idl
+    animation/AnimationEvent.idl
     animation/AnimationFrameProvider.idl
     animation/AnimationFrameRatePreset.idl
     animation/AnimationPlaybackEvent.idl
@@ -779,6 +780,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/KeyframeEffectOptions.idl
     animation/OptionalEffectTiming.idl
     animation/PlaybackDirection.idl
+    animation/TransitionEvent.idl
     animation/WebAnimation.idl
 
     crypto/CryptoAlgorithmParameters.idl
@@ -915,7 +917,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/AbortSignal.idl
     dom/AbstractRange.idl
     dom/AddEventListenerOptions.idl
-    dom/AnimationEvent.idl
     dom/Attr.idl
     dom/BeforeUnloadEvent.idl
     dom/BroadcastChannel.idl
@@ -1042,7 +1043,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Touch.idl
     dom/TouchEvent.idl
     dom/TouchList.idl
-    dom/TransitionEvent.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/UIEventInit.idl
