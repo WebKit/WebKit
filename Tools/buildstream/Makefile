@@ -19,7 +19,7 @@ EXPORT_ARGS ?=
 
 RSYNC_HOST ?= software.igalia.com
 RSYNC_REMOTE_DIR ?= /var/www/software/webkit-sdk-repo
-RSYNC_ARGS ?=
+RSYNC_ARGS ?= -vz
 
 FLATPAK_RUNTIMES_REPO = $(CACHEDIR)/flatpak-runtimes-repo
 FLATPAK_PLATFORM_EXTENSIONS_REPO = $(CACHEDIR)/flatpak-platform-extensions-repo
@@ -119,10 +119,10 @@ CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_REPO):
 clean: CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_REPO)
 
 pull-repo:
-	./ostree-releng-scripts/rsync-repos --rsync-opts="-vz ${RSYNC_ARGS}" --src ${RSYNC_HOST}:${RSYNC_REMOTE_DIR}/ --dest ${REPO}
+	./ostree-releng-scripts/rsync-repos --rsync-opts="${RSYNC_ARGS}" --src ${RSYNC_HOST}:${RSYNC_REMOTE_DIR}/ --dest ${REPO}
 
 push-repo:
-	./ostree-releng-scripts/rsync-repos --rsync-opts="-vz ${RSYNC_ARGS}" --src ${REPO}/ --dest ${RSYNC_HOST}:${RSYNC_REMOTE_DIR}
+	./ostree-releng-scripts/rsync-repos --rsync-opts="${RSYNC_ARGS}" --src ${REPO}/ --dest ${RSYNC_HOST}:${RSYNC_REMOTE_DIR}
 
 dry-push-repo:
-	./ostree-releng-scripts/rsync-repos --rsync-opts="-vzn ${RSYNC_ARGS}" --src ${REPO}/ --dest ${RSYNC_HOST}:${RSYNC_REMOTE_DIR}
+	./ostree-releng-scripts/rsync-repos --rsync-opts="-n ${RSYNC_ARGS}" --src ${REPO}/ --dest ${RSYNC_HOST}:${RSYNC_REMOTE_DIR}
