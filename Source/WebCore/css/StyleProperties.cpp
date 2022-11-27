@@ -293,7 +293,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyScrollPaddingInline:
         return get2Values(shorthand);
     case CSSPropertyBorderColor:
-    case CSSPropertyBorderRadius:
     case CSSPropertyBorderStyle:
     case CSSPropertyBorderWidth:
     case CSSPropertyInset:
@@ -313,6 +312,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
         return borderImagePropertyValue(shorthand);
+    case CSSPropertyBorderRadius:
+    case CSSPropertyWebkitBorderRadius:
+        return borderRadiusShorthandValue(shorthand);
     case CSSPropertyOffset:
         return offsetValue();
     case CSSPropertyContainer:
@@ -362,7 +364,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         if (auto value = getPropertyCSSValue(CSSPropertyMarkerStart))
             return value->cssText();
         return String();
-    case CSSPropertyWebkitBorderRadius:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
@@ -1239,6 +1240,67 @@ String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& s
     }
     if (!commonWideValueText.isNull())
         return commonWideValueText;
+    return result.toString();
+}
+
+String StyleProperties::borderRadiusShorthandValue(const StylePropertyShorthand& shorthand) const
+{
+    ASSERT(shorthand.length() == 4);
+    RefPtr<CSSPrimitiveValue> horizontalRadii[4];
+    RefPtr<CSSPrimitiveValue> verticalRadii[4];
+    CSSValueID cssWideKeyword = CSSValueInvalid;
+    for (unsigned i = 0; i < 4; ++i) {
+        auto value = getPropertyCSSValue(shorthand.properties()[i]);
+        ASSERT(!value || is<CSSPrimitiveValue>(value));
+        if (!is<CSSPrimitiveValue>(value))
+            return String();
+
+        // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
+        if (auto keyword = downcast<CSSPrimitiveValue>(*value).valueID(); isCSSWideKeyword(keyword)) {
+            if (!i)
+                cssWideKeyword = keyword;
+            else if (cssWideKeyword != keyword)
+                return String();
+            else if (i == 3)
+                return value->cssText();
+            continue;
+        }
+        if (cssWideKeyword != CSSValueInvalid)
+            return String();
+
+        auto pair = downcast<CSSPrimitiveValue>(*value).pairValue();
+        if (!pair || !pair->first() || !pair->second()) {
+            ASSERT_NOT_REACHED();
+            return String();
+        }
+        horizontalRadii[i] = pair->first();
+        verticalRadii[i] = pair->second();
+    }
+
+    bool serializeBoth = false;
+    for (unsigned i = 0; i < 4; ++i) {
+        if (!horizontalRadii[i]->equals(*verticalRadii[i])) {
+            serializeBoth = true;
+            break;
+        }
+    }
+
+    StringBuilder result;
+    auto serializeRadii = [&](const auto (&r)[4]) {
+        if (!r[3]->equals(*r[1]))
+            result.append(r[0]->cssText(), ' ', r[1]->cssText(), ' ', r[2]->cssText(), ' ', r[3]->cssText());
+        else if (!r[2]->equals(*r[0]) || (shorthand.id() == CSSPropertyWebkitBorderRadius && !serializeBoth && !r[1]->equals(*r[0])))
+            result.append(r[0]->cssText(), ' ', r[1]->cssText(), ' ', r[2]->cssText());
+        else if (!r[1]->equals(*r[0]))
+            result.append(r[0]->cssText(), ' ', r[1]->cssText());
+        else
+            result.append(r[0]->cssText());
+    };
+    serializeRadii(horizontalRadii);
+    if (serializeBoth) {
+        result.append(" / ");
+        serializeRadii(verticalRadii);
+    }
     return result.toString();
 }
 

@@ -603,14 +603,6 @@ static Ref<CSSPrimitiveValue> autoOrZoomAdjustedValue(Length length, const Rende
     return zoomAdjustedPixelValueForLength(length, style);
 }
 
-static Ref<CSSValueList> borderRadiusCornerValues(const LengthSize& radius, const RenderStyle& style)
-{
-    auto list = CSSValueList::createSpaceSeparated();
-    list->append(percentageOrZoomAdjustedValue(radius.width, style));
-    list->append(percentageOrZoomAdjustedValue(radius.height, style));
-    return list;
-}
-
 static Ref<CSSValue> valueForQuotes(const QuotesData* quotes)
 {
     if (!quotes)
@@ -626,14 +618,19 @@ static Ref<CSSValue> valueForQuotes(const QuotesData* quotes)
     return list;
 }
 
-static Ref<CSSValue> borderRadiusCornerValue(const LengthSize& radius, const RenderStyle& style)
+static Ref<Pair> borderRadiusCornerValues(const LengthSize& radius, const RenderStyle& style)
 {
-    if (radius.width == radius.height)
-        return percentageOrZoomAdjustedValue(radius.width, style);
-    return borderRadiusCornerValues(radius, style);
+    auto x = percentageOrZoomAdjustedValue(radius.width, style);
+    auto y = radius.width == radius.height ? x.copyRef() : percentageOrZoomAdjustedValue(radius.height, style);
+    return Pair::create(WTFMove(x), WTFMove(y));
 }
 
-static Ref<CSSValueList> borderRadiusShorthandValue(const RenderStyle& style)
+static Ref<CSSPrimitiveValue> borderRadiusCornerValue(const LengthSize& radius, const RenderStyle& style)
+{
+    return CSSValuePool::singleton().createValue(borderRadiusCornerValues(radius, style));
+}
+
+static Ref<CSSValueList> borderRadiusShorthandValue(const RenderStyle& style, CSSPropertyID propertyID)
 {
     auto list = CSSValueList::createSlashSeparated();
     bool showHorizontalBottomLeft = style.borderTopRightRadius().width != style.borderBottomLeftRadius().width;
@@ -645,32 +642,42 @@ static Ref<CSSValueList> borderRadiusShorthandValue(const RenderStyle& style)
     bool showVerticalTopRight = showVerticalBottomRight || (style.borderTopRightRadius().height != style.borderTopLeftRadius().height);
 
     auto topLeftRadius = borderRadiusCornerValues(style.borderTopLeftRadius(), style);
+    CSSValue* topLeftRadiusX = topLeftRadius->first();
+    CSSValue* topLeftRadiusY = topLeftRadius->second();
     auto topRightRadius = borderRadiusCornerValues(style.borderTopRightRadius(), style);
+    CSSValue* topRightRadiusX = topRightRadius->first();
+    CSSValue* topRightRadiusY = topRightRadius->second();
     auto bottomRightRadius = borderRadiusCornerValues(style.borderBottomRightRadius(), style);
+    CSSValue* bottomRightRadiusX = bottomRightRadius->first();
+    CSSValue* bottomRightRadiusY = bottomRightRadius->second();
     auto bottomLeftRadius = borderRadiusCornerValues(style.borderBottomLeftRadius(), style);
+    CSSValue* bottomLeftRadiusX = bottomLeftRadius->first();
+    CSSValue* bottomLeftRadiusY = bottomLeftRadius->second();
 
     auto horizontalRadii = CSSValueList::createSpaceSeparated();
-    horizontalRadii->append(*topLeftRadius->item(0));
+    horizontalRadii->append(*topLeftRadiusX);
     if (showHorizontalTopRight)
-        horizontalRadii->append(*topRightRadius->item(0));
+        horizontalRadii->append(*topRightRadiusX);
     if (showHorizontalBottomRight)
-        horizontalRadii->append(*bottomRightRadius->item(0));
+        horizontalRadii->append(*bottomRightRadiusX);
     if (showHorizontalBottomLeft)
-        horizontalRadii->append(*bottomLeftRadius->item(0));
+        horizontalRadii->append(*bottomLeftRadiusX);
 
     list->append(WTFMove(horizontalRadii));
 
     auto verticalRadiiList = CSSValueList::createSpaceSeparated();
-    verticalRadiiList->append(*topLeftRadius->item(1));
+    verticalRadiiList->append(*topLeftRadiusY);
     if (showVerticalTopRight)
-        verticalRadiiList->append(*topRightRadius->item(1));
+        verticalRadiiList->append(*topRightRadiusY);
     if (showVerticalBottomRight)
-        verticalRadiiList->append(*bottomRightRadius->item(1));
+        verticalRadiiList->append(*bottomRightRadiusY);
     if (showVerticalBottomLeft)
-        verticalRadiiList->append(*bottomLeftRadius->item(1));
+        verticalRadiiList->append(*bottomLeftRadiusY);
 
     if (!verticalRadiiList->equals(downcast<CSSValueList>(*list->item(0))))
         list->append(WTFMove(verticalRadiiList));
+    else if (propertyID == CSSPropertyWebkitBorderRadius && showHorizontalTopRight && !showHorizontalBottomRight)
+        downcast<CSSValueList>(list->item(0))->append(*bottomRightRadiusX);
 
     return list;
 }
@@ -4000,7 +4007,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyBorderInlineWidth:
         return getCSSPropertyValuesFor2SidesShorthand(borderInlineWidthShorthand());
     case CSSPropertyBorderRadius:
-        return borderRadiusShorthandValue(style);
+    case CSSPropertyWebkitBorderRadius:
+        return borderRadiusShorthandValue(style, propertyID);
     case CSSPropertyBorderRight:
         return getCSSPropertyValuesForShorthandProperties(borderRightShorthand());
     case CSSPropertyBorderStyle:
@@ -4229,7 +4237,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return nullptr;
 
     /* Unimplemented -webkit- properties */
-    case CSSPropertyWebkitBorderRadius:
     case CSSPropertyWebkitMask:
     case CSSPropertyPerspectiveOriginX:
     case CSSPropertyPerspectiveOriginY:
