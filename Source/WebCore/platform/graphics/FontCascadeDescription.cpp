@@ -32,6 +32,10 @@
 
 #include <wtf/text/StringHash.h>
 
+#if USE(CORE_TEXT)
+#include "FontCascade.h"
+#endif
+
 namespace WebCore {
 
 struct SameSizeAsFontCascadeDescription {
