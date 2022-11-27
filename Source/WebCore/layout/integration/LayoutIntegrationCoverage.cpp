@@ -142,8 +142,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
         break;
-    case AvoidanceReason::FlowIsUnsupportedListItem:
-        stream << "list item with text-indent";
+    case AvoidanceReason::ChildIsUnsupportedListItem:
+        stream << "list item with floats";
         break;
     case AvoidanceReason::FlowHasInitialLetter:
         stream << "intial letter";
@@ -430,7 +430,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         auto* associatedListItem = listMarker.listItem();
         for (auto* ancestor = listMarker.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
             if (ancestor->containsFloats())
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
+                SET_REASON_AND_RETURN_IF_NEEDED(ChildIsUnsupportedListItem, reasons, includeReasons);
             if (ancestor == associatedListItem)
                 break;
         }
@@ -493,8 +493,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-    if (is<RenderListItem>(flow) && (flow.isPositioned() || flow.isFloating()))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
 #if ENABLE(VIDEO)
     if (is<RenderVTTCue>(flow) || is<RenderVTTCue>(flow.parent())) {
         // First child of the RenderVTTCue is the backdropBox.
