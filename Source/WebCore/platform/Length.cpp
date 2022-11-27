@@ -322,10 +322,10 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
     if (from.isCalculated() || to.isCalculated() || (from.type() != to.type()))
         return blendMixedTypes(from, to, context);
 
-    if (!context.progress && context.compositeOperation == CompositeOperation::Replace)
+    if (!context.progress && context.isReplace())
         return from;
 
-    if (context.progress == 1 && context.compositeOperation == CompositeOperation::Replace)
+    if (context.progress == 1 && context.isReplace())
         return to;
 
     LengthType resultType = to.type();

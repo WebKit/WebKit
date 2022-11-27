@@ -9079,12 +9079,12 @@
                 "intrinsic",
                 "min-intrinsic",
                 "min-content",
-                "webkit-min-content",
+                "-webkit-min-content",
                 "max-content",
-                "webkit-max-content",
-                "webkit-fill-available",
+                "-webkit-max-content",
+                "-webkit-fill-available",
                 "fit-content",
-                "webkit-fit-content"
+                "-webkit-fit-content"
             ]
         },
         "<width-or-height>": {

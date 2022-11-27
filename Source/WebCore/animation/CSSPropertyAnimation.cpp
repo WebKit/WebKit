@@ -85,8 +85,8 @@ static TextStream& operator<<(TextStream& stream, CSSPropertyID property)
 struct CSSPropertyBlendingContext : BlendingContext {
     const CSSPropertyBlendingClient* client { nullptr };
 
-    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient* client)
-        : BlendingContext(progress, isDiscrete, compositeOperation)
+    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient* client, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
+        : BlendingContext(progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration)
         , client(client)
     {
     }
@@ -104,6 +104,12 @@ static inline double blendFunc(double from, double to, const CSSPropertyBlending
 
 static inline float blendFunc(float from, float to, const CSSPropertyBlendingContext& context)
 {
+    if (context.iterationCompositeOperation == IterationCompositeOperation::Accumulate && context.currentIteration) {
+        auto iterationIncrement = context.currentIteration * to;
+        from += iterationIncrement;
+        to += iterationIncrement;
+    }
+
     if (context.compositeOperation == CompositeOperation::Replace)
         return narrowPrecisionToFloat(from + (to - from) * context.progress);
     return narrowPrecisionToFloat(from + from + (to - from) * context.progress);
@@ -720,6 +726,7 @@ public:
 
     virtual bool isShorthandWrapper() const { return false; }
     virtual bool isAdditiveOrCumulative() const { return true; }
+    virtual bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const { return false; }
     virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
     virtual bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
     virtual void blend(RenderStyle&, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const = 0;
@@ -948,6 +955,12 @@ static bool canInterpolateLengths(const Length& from, const Length& to, bool isL
     return false;
 }
 
+static bool lengthsRequireBlendingForAccumulativeIteration(const Length& from, const Length& to)
+{
+    // If blending the values can yield a calc() value, we must go through the blending code for iterationComposite.
+    return from.isCalculated() || to.isCalculated() || from.type() != to.type();
+}
+
 class LengthPropertyWrapper : public PropertyWrapperGetter<const Length&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -966,6 +979,11 @@ protected:
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const override
     {
         return canInterpolateLengths(value(from), value(to), m_flags.contains(Flags::IsLengthPercentage));
+    }
+
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        return lengthsRequireBlendingForAccumulativeIteration(value(from), value(to));
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
@@ -1004,6 +1022,14 @@ public:
     }
 
 private:
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        auto fromLengthPoint = value(from);
+        auto toLengthPoint = value(to);
+        return lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.x(), toLengthPoint.x())
+            || lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.y(), toLengthPoint.y());
+    }
+
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
         (destination.*m_setter)(blendFunc(value(from), value(to), context));
@@ -1034,6 +1060,17 @@ private:
     }
 };
 
+static bool lengthVariantRequiresBlendingForAccumulativeIteration(const LengthSize& from, const LengthSize& to)
+{
+    return lengthsRequireBlendingForAccumulativeIteration(from.width, to.width)
+        || lengthsRequireBlendingForAccumulativeIteration(from.height, to.height);
+}
+
+static bool lengthVariantRequiresBlendingForAccumulativeIteration(const GapLength& from, const GapLength& to)
+{
+    return from.isNormal() || to.isNormal() || lengthsRequireBlendingForAccumulativeIteration(from.length(), to.length());
+}
+
 template <typename T>
 class LengthVariantPropertyWrapper final : public PropertyWrapperGetter<const T&> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -1048,6 +1085,11 @@ private:
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return canInterpolateLengthVariants(this->value(from), this->value(to));
+    }
+
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        return lengthVariantRequiresBlendingForAccumulativeIteration(this->value(from), this->value(to));
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -1170,6 +1212,16 @@ public:
             && canInterpolateLengths(fromLengthBox.right(), toLengthBox.right(), isLengthPercentage)
             && canInterpolateLengths(fromLengthBox.bottom(), toLengthBox.bottom(), isLengthPercentage)
             && canInterpolateLengths(fromLengthBox.left(), toLengthBox.left(), isLengthPercentage);
+    }
+
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        auto& fromLengthBox = value(from);
+        auto& toLengthBox = value(to);
+        return lengthsRequireBlendingForAccumulativeIteration(fromLengthBox.top(), toLengthBox.top())
+            && lengthsRequireBlendingForAccumulativeIteration(fromLengthBox.right(), toLengthBox.right())
+            && lengthsRequireBlendingForAccumulativeIteration(fromLengthBox.bottom(), toLengthBox.bottom())
+            && lengthsRequireBlendingForAccumulativeIteration(fromLengthBox.left(), toLengthBox.left());
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
@@ -1376,6 +1428,7 @@ public:
 
 private:
     bool animationIsAccelerated() const final { return true; }
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return this->property() == CSSPropertyTransform; }
 };
 
 template <typename T>
@@ -1413,6 +1466,8 @@ private:
 #endif
             ;
     }
+
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return true; }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
@@ -1502,6 +1557,8 @@ public:
     }
 
 private:
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return true; }
+
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         if (&a == &b)
@@ -1750,6 +1807,8 @@ public:
     }
 
 protected:
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return true; }
+
     bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
         return m_wrapper->equals(a, b) && m_visitedWrapper->equals(a, b);
@@ -3826,7 +3885,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
 }
 
-void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation)
+void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
     ASSERT(property != CSSPropertyInvalid && property != CSSPropertyCustom);
 
@@ -3841,7 +3900,7 @@ void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* clie
             progress = progress < 0.5 ? 0 : 1;
             compositeOperation = CompositeOperation::Replace;
         }
-        wrapper->blend(destination, from, to, { progress, isDiscrete, compositeOperation, client });
+        wrapper->blend(destination, from, to, { progress, isDiscrete, compositeOperation, client, iterationCompositeOperation, currentIteration });
 #if !LOG_DISABLED
         wrapper->logBlend(from, to, destination, progress);
 #endif
@@ -3866,6 +3925,12 @@ bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(CSSPropertyID property
 {
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     return wrapper ? wrapper->isAdditiveOrCumulative() : false;
+}
+
+bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(CSSPropertyID property, const RenderStyle& a, const RenderStyle& b)
+{
+    auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
+    return wrapper && wrapper->requiresBlendingForAccumulativeIteration(a, b);
 }
 
 bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(CSSPropertyID property)

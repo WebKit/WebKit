@@ -5,13 +5,14 @@ useNamespaceAsSuffix=false
 Event
 Events interfaceName=Event
 HTMLEvents interfaceName=Event
-AnimationEvent
 AnimationPlaybackEvent
 BeforeLoadEvent interfaceName=Event
 BeforeUnloadEvent
 ClipboardEvent
 CloseEvent
 CompositionEvent
+CSSAnimationEvent
+CSSTransitionEvent
 CustomEvent
 DragEvent
 ExtendableEvent conditional=SERVICE_WORKER
@@ -40,7 +41,6 @@ PushEvent conditional=SERVICE_WORKER
 PushSubscriptionChangeEvent conditional=SERVICE_WORKER
 SubmitEvent
 TextEvent
-TransitionEvent
 UIEvent
 UIEvents interfaceName=UIEvent
 WheelEvent

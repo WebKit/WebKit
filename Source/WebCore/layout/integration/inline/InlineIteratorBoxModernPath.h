@@ -68,12 +68,23 @@ public:
 
     TextBoxSelectableRange selectableRange() const
     {
+        auto& box = this->box();
+        auto& textContent = box.text();
+        auto extraTrailingLength = [&] () -> unsigned {
+            if (textContent->hasHyphen())
+                return box.style().hyphenString().length();
+            if (downcast<Layout::InlineTextBox>(box.layoutBox()).isCombined()) {
+                ASSERT(textContent->renderedContent().length() >= length());
+                return textContent->renderedContent().length() - length();
+            }
+            return 0;
+        };
         return {
             start(),
             length(),
-            box().text()->hasHyphen() ? box().style().hyphenString().length() : 0,
-            box().isLineBreak(),
-            box().text()->partiallyVisibleContentLength()
+            extraTrailingLength(),
+            box.isLineBreak(),
+            textContent->partiallyVisibleContentLength()
         };
     }
 

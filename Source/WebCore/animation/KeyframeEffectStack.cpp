@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KeyframeEffectStack.h"
 
+#include "AnimationTimeline.h"
 #include "CSSAnimation.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"

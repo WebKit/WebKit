@@ -321,6 +321,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimationEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSColor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSColorValue.cpp
@@ -445,6 +447,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransformValue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransformValue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransition.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransitionEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransitionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTranslate.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTranslate.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSUnitValue.cpp
@@ -1769,6 +1773,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+ScreenWakeLock.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+ScreenWakeLock.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebXR.cpp
@@ -1797,8 +1803,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNodeFilter.cpp

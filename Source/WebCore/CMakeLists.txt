@@ -757,7 +757,9 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
     animation/CSSAnimation.idl
+    animation/CSSAnimationEvent.idl
     animation/CSSTransition.idl
+    animation/CSSTransitionEvent.idl
     animation/CompositeOperation.idl
     animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
@@ -915,7 +917,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/AbortSignal.idl
     dom/AbstractRange.idl
     dom/AddEventListenerOptions.idl
-    dom/AnimationEvent.idl
     dom/Attr.idl
     dom/BeforeUnloadEvent.idl
     dom/BroadcastChannel.idl
@@ -1042,7 +1043,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Touch.idl
     dom/TouchEvent.idl
     dom/TouchList.idl
-    dom/TransitionEvent.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/UIEventInit.idl

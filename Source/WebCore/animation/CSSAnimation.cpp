@@ -28,7 +28,7 @@
 
 #include "Animation.h"
 #include "AnimationEffect.h"
-#include "AnimationEvent.h"
+#include "CSSAnimationEvent.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "RenderStyle.h"
@@ -283,7 +283,7 @@ void CSSAnimation::updateKeyframesIfNeeded(const RenderStyle* oldStyle, const Re
 
 Ref<AnimationEventBase> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId)
 {
-    return AnimationEvent::create(eventType, this, elapsedTime, m_animationName, pseudoId);
+    return CSSAnimationEvent::create(eventType, this, elapsedTime, m_animationName, pseudoId);
 }
 
 } // namespace WebCore
