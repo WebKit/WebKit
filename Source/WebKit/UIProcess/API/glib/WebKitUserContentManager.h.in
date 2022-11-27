@@ -75,7 +75,7 @@ webkit_user_content_manager_remove_style_sheet                         (WebKitUs
 WEBKIT_API void
 webkit_user_content_manager_remove_all_style_sheets                    (WebKitUserContentManager *manager);
 
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_user_content_manager_register_script_message_handler            (WebKitUserContentManager *manager,
                                                                         const gchar              *name);
 WEBKIT_API void
@@ -87,7 +87,7 @@ webkit_user_content_manager_register_script_message_handler_with_reply (WebKitUs
                                                                         const char               *name,
                                                                         const char               *world_name);
 
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_user_content_manager_register_script_message_handler_in_world   (WebKitUserContentManager *manager,
                                                                         const gchar              *name,
                                                                         const gchar              *world_name);

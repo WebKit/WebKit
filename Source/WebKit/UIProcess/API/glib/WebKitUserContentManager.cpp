@@ -96,6 +96,8 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
      * webkit_user_content_manager_register_script_message_handler()
      *
      * Since: 2.8
+     *
+     * Deprecated: 2.40
      */
     signals[SCRIPT_MESSAGE_RECEIVED] =
         g_signal_new(
@@ -456,6 +458,8 @@ private:
  * Returns: %TRUE if message handler was registered successfully, or %FALSE otherwise.
  *
  * Since: 2.8
+ *
+ * Deprecated: 2.40
  */
 gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserContentManager* manager, const char* name)
 {
@@ -543,6 +547,8 @@ gboolean webkit_user_content_manager_register_script_message_handler_with_reply(
  * Returns: %TRUE if message handler was registered successfully, or %FALSE otherwise.
  *
  * Since: 2.22
+ *
+ * Deprecated: 2.40
  */
 gboolean webkit_user_content_manager_register_script_message_handler_in_world(WebKitUserContentManager* manager, const char* name, const char* worldName)
 {

@@ -716,7 +716,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     webkit_web_context_register_uri_scheme(webContext, BROWSER_ABOUT_SCHEME, (WebKitURISchemeRequestCallback)aboutURISchemeRequestCallback, webContext, NULL);
 
     WebKitUserContentManager *userContentManager = webkit_user_content_manager_new();
-    webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData");
+    webkit_user_content_manager_register_script_message_handler_with_reply(userContentManager, "aboutData", "");
     g_signal_connect(userContentManager, "script-message-received::aboutData", G_CALLBACK(aboutDataScriptMessageReceivedCallback), webContext);
 
     WebKitWebsitePolicies *defaultWebsitePolicies = webkit_website_policies_new_with_policies(
