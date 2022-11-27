@@ -115,7 +115,11 @@ OptionSet<FilterRenderingMode> FEColorMatrix::supportedFilterRenderingModes() co
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
     if (FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this))
-        modes = modes | FilterRenderingMode::Accelerated;
+        modes.add(FilterRenderingMode::Accelerated);
+#endif
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+    if (m_type == FECOLORMATRIX_TYPE_MATRIX)
+        modes.add(FilterRenderingMode::GraphicsContext);
 #endif
     return modes;
 }
@@ -132,6 +136,13 @@ std::unique_ptr<FilterEffectApplier> FEColorMatrix::createAcceleratedApplier() c
 std::unique_ptr<FilterEffectApplier> FEColorMatrix::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FEColorMatrixSoftwareApplier>(*this);
+}
+
+std::optional<GraphicsStyle> FEColorMatrix::createGraphicsStyle(const Filter&) const
+{
+    std::array<float, 20> values;
+    std::copy_n(m_values.begin(), std::min<size_t>(m_values.size(), 20), values.begin());
+    return GraphicsColorMatrix { values };
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

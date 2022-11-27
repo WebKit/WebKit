@@ -29,6 +29,7 @@
 #include "FilterEffect.h"
 #include "FilterImage.h"
 #include "FilterResults.h"
+#include "FilterStyle.h"
 #include "ImageBuffer.h"
 
 namespace WebCore {
@@ -127,6 +128,18 @@ RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sou
 
     result->correctPremultipliedPixelBuffer();
     result->transformToColorSpace(DestinationColorSpace::SRGB());
+    return result;
+}
+
+FilterStyleVector Filter::createFilterStyles(const FloatRect& sourceImageRect) const
+{
+    auto input = FilterStyle { std::nullopt, m_filterRegion, sourceImageRect };
+    auto result = createFilterStyles(input);
+    if (result.isEmpty())
+        return { };
+
+    result.reverse();
+    result.shrinkToFit();
     return result;
 }
 

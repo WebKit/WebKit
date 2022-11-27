@@ -44,8 +44,11 @@ public:
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
 
+    unsigned numberOfImageInputs() const { return filterType() == FilterEffect::Type::SourceGraphic ? 1 : numberOfEffectInputs(); }
     FilterImageVector takeImageInputs(FilterImageVector& stack) const;
+
     RefPtr<FilterImage> apply(const Filter&, const FilterImageVector& inputs, FilterResults&, const std::optional<FilterEffectGeometry>& = std::nullopt);
+    FilterStyle createFilterStyle(const Filter&, const FilterStyle& input, const std::optional<FilterEffectGeometry>& = std::nullopt) const;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
@@ -53,7 +56,6 @@ protected:
     using FilterFunction::FilterFunction;
 
     virtual unsigned numberOfEffectInputs() const { return 1; }
-    unsigned numberOfImageInputs() const { return filterType() == FilterEffect::Type::SourceGraphic ? 1 : numberOfEffectInputs(); }
 
     FloatRect calculatePrimitiveSubregion(const Filter&, Span<const FloatRect> inputPrimitiveSubregions, const std::optional<FilterEffectGeometry>&) const;
 
@@ -74,8 +76,10 @@ protected:
 
     virtual std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const { return nullptr; }
     virtual std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const = 0;
+    virtual std::optional<GraphicsStyle> createGraphicsStyle(const Filter&) const { return std::nullopt; }
 
     RefPtr<FilterImage> apply(const Filter&, FilterImage& input, FilterResults&) override;
+    FilterStyleVector createFilterStyles(const Filter&, const FilterStyle& input) const override;
 
     DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::SRGB() };
 };
