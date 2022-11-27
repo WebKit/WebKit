@@ -84,8 +84,8 @@ public:
 
     Mode mode() const { return m_mode; }
 
-    Expected<void, GrowFailReason> grow(VM&, size_t newByteLength);
-    Expected<void, GrowFailReason> grow(const AbstractLocker&, VM&, size_t newByteLength);
+    Expected<int64_t, GrowFailReason> grow(VM&, size_t newByteLength);
+    Expected<int64_t, GrowFailReason> grow(const AbstractLocker&, VM&, size_t newByteLength);
 
     void updateSize(size_t sizeInBytes, std::memory_order order = std::memory_order_seq_cst)
     {
@@ -318,8 +318,8 @@ public:
 
     JS_EXPORT_PRIVATE static Ref<SharedTask<void(void*)>> primitiveGigacageDestructor();
 
-    Expected<void, GrowFailReason> grow(VM&, size_t newByteLength);
-    Expected<void, GrowFailReason> resize(VM&, size_t newByteLength);
+    Expected<int64_t, GrowFailReason> grow(VM&, size_t newByteLength);
+    Expected<int64_t, GrowFailReason> resize(VM&, size_t newByteLength);
 
 private:
     static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy);

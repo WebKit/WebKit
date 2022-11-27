@@ -431,99 +431,110 @@ void ArrayBuffer::notifyDetaching(VM& vm)
     m_detachingWatchpointSet.fireAll(vm, "Array buffer was detached");
 }
 
-Expected<void, GrowFailReason> ArrayBuffer::grow(VM& vm, size_t newByteLength)
+Expected<int64_t, GrowFailReason> ArrayBuffer::grow(VM& vm, size_t newByteLength)
 {
     auto shared = m_contents.m_shared;
     if (UNLIKELY(!shared))
         return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
-    return shared->grow(vm, newByteLength);
+    auto result = shared->grow(vm, newByteLength);
+    if (result && result.value() > 0)
+        vm.heap.reportExtraMemoryAllocated(result.value());
+    return result;
 }
 
-Expected<void, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLength)
+Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLength)
 {
     auto memoryHandle = m_contents.m_memoryHandle;
     if (UNLIKELY(!memoryHandle || m_contents.m_shared))
         return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
 
-    Locker { memoryHandle->lock() };
+    int64_t deltaByteLength = 0;
+    {
+        Locker { memoryHandle->lock() };
 
-    // Keep in mind that newByteLength may not be page-size-aligned.
-    if (m_contents.m_maxByteLength < newByteLength)
-        return makeUnexpected(GrowFailReason::InvalidGrowSize);
+        // Keep in mind that newByteLength may not be page-size-aligned.
+        if (m_contents.m_maxByteLength < newByteLength)
+            return makeUnexpected(GrowFailReason::InvalidGrowSize);
 
-    if (m_contents.m_sizeInBytes == newByteLength)
-        return { };
+        deltaByteLength = static_cast<int64_t>(newByteLength) - static_cast<int64_t>(m_contents.m_sizeInBytes);
+        if (!deltaByteLength)
+            return 0;
 
-    auto newPageCount = PageCount::fromBytesWithRoundUp(newByteLength);
-    auto oldPageCount = PageCount::fromBytes(memoryHandle->size()); // MemoryHandle's size is always page-size aligned.
-    if (newPageCount.bytes() > MAX_ARRAY_BUFFER_SIZE)
-        return makeUnexpected(GrowFailReason::WouldExceedMaximum);
+        auto newPageCount = PageCount::fromBytesWithRoundUp(newByteLength);
+        auto oldPageCount = PageCount::fromBytes(memoryHandle->size()); // MemoryHandle's size is always page-size aligned.
+        if (newPageCount.bytes() > MAX_ARRAY_BUFFER_SIZE)
+            return makeUnexpected(GrowFailReason::WouldExceedMaximum);
 
-    if (newPageCount != oldPageCount) {
-        ASSERT(memoryHandle->maximum() >= newPageCount);
-        size_t desiredSize = newPageCount.bytes();
-        RELEASE_ASSERT(desiredSize <= MAX_ARRAY_BUFFER_SIZE);
+        if (newPageCount != oldPageCount) {
+            ASSERT(memoryHandle->maximum() >= newPageCount);
+            size_t desiredSize = newPageCount.bytes();
+            RELEASE_ASSERT(desiredSize <= MAX_ARRAY_BUFFER_SIZE);
 
-        if (desiredSize > memoryHandle->size()) {
-            size_t bytesToAdd = desiredSize - memoryHandle->size();
-            ASSERT(bytesToAdd);
-            ASSERT(roundUpToMultipleOf<PageCount::pageSize>(bytesToAdd) == bytesToAdd);
-            bool allocationSuccess = tryAllocate(&vm,
-                [&] () -> BufferMemoryResult::Kind {
-                    return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(bytesToAdd);
-                });
-            if (!allocationSuccess)
-                return makeUnexpected(GrowFailReason::OutOfMemory);
+            if (desiredSize > memoryHandle->size()) {
+                size_t bytesToAdd = desiredSize - memoryHandle->size();
+                ASSERT(bytesToAdd);
+                ASSERT(roundUpToMultipleOf<PageCount::pageSize>(bytesToAdd) == bytesToAdd);
+                bool allocationSuccess = tryAllocate(&vm,
+                    [&] () -> BufferMemoryResult::Kind {
+                        return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(bytesToAdd);
+                    });
+                if (!allocationSuccess)
+                    return makeUnexpected(GrowFailReason::OutOfMemory);
 
-            void* memory = memoryHandle->memory();
-            RELEASE_ASSERT(memory);
+                void* memory = memoryHandle->memory();
+                RELEASE_ASSERT(memory);
 
-            // Signaling memory must have been pre-allocated virtually.
-            uint8_t* startAddress = static_cast<uint8_t*>(memory) + memoryHandle->size();
+                // Signaling memory must have been pre-allocated virtually.
+                uint8_t* startAddress = static_cast<uint8_t*>(memory) + memoryHandle->size();
 
-            dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToAdd), ")");
-            constexpr bool readable = true;
-            constexpr bool writable = true;
-            if (!OSAllocator::protect(startAddress, bytesToAdd, readable, writable)) {
+                dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToAdd), ")");
+                constexpr bool readable = true;
+                constexpr bool writable = true;
+                if (!OSAllocator::protect(startAddress, bytesToAdd, readable, writable)) {
 #if OS(WINDOWS)
-                dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
 #else
-                dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
 #endif
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        } else {
-            size_t bytesToSubtract = memoryHandle->size() - desiredSize;
-            ASSERT(bytesToSubtract);
-            ASSERT(roundUpToMultipleOf<PageCount::pageSize>(bytesToSubtract) == bytesToSubtract);
-            BufferMemoryManager::singleton().freePhysicalBytes(bytesToSubtract);
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            } else {
+                size_t bytesToSubtract = memoryHandle->size() - desiredSize;
+                ASSERT(bytesToSubtract);
+                ASSERT(roundUpToMultipleOf<PageCount::pageSize>(bytesToSubtract) == bytesToSubtract);
+                BufferMemoryManager::singleton().freePhysicalBytes(bytesToSubtract);
 
-            void* memory = memoryHandle->memory();
-            RELEASE_ASSERT(memory);
+                void* memory = memoryHandle->memory();
+                RELEASE_ASSERT(memory);
 
-            // Signaling memory must have been pre-allocated virtually.
-            uint8_t* startAddress = static_cast<uint8_t*>(memory) + desiredSize;
+                // Signaling memory must have been pre-allocated virtually.
+                uint8_t* startAddress = static_cast<uint8_t*>(memory) + desiredSize;
 
-            dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as none in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToSubtract), ")");
-            constexpr bool readable = false;
-            constexpr bool writable = false;
-            if (!OSAllocator::protect(startAddress, bytesToSubtract, readable, writable)) {
+                dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as none in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToSubtract), ")");
+                constexpr bool readable = false;
+                constexpr bool writable = false;
+                if (!OSAllocator::protect(startAddress, bytesToSubtract, readable, writable)) {
 #if OS(WINDOWS)
-                dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
 #else
-                dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
 #endif
-                RELEASE_ASSERT_NOT_REACHED();
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
             }
+            memoryHandle->updateSize(desiredSize);
         }
-        memoryHandle->updateSize(desiredSize);
+
+        if (m_contents.m_sizeInBytes < newByteLength)
+            memset(bitwise_cast<uint8_t*>(data()) + m_contents.m_sizeInBytes, 0, newByteLength - m_contents.m_sizeInBytes);
+
+        m_contents.m_sizeInBytes = newByteLength;
     }
 
-    if (m_contents.m_sizeInBytes < newByteLength)
-        memset(bitwise_cast<uint8_t*>(data()) + m_contents.m_sizeInBytes, 0, newByteLength - m_contents.m_sizeInBytes);
+    if (deltaByteLength > 0)
+        vm.heap.reportExtraMemoryAllocated(deltaByteLength);
 
-    m_contents.m_sizeInBytes = newByteLength;
-    return { };
+    return deltaByteLength;
 }
 
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreateShared(VM& vm, size_t numElements, unsigned elementByteSize, size_t maxByteLength)
@@ -541,7 +552,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreateShared(VM& vm, size_t numElements, uns
     return createShared(SharedArrayBufferContents::create(memory, sizeInBytes.value(), maxByteLength, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::Default));
 }
 
-Expected<void, GrowFailReason> SharedArrayBufferContents::grow(VM& vm, size_t newByteLength)
+Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(VM& vm, size_t newByteLength)
 {
     if (!m_hasMaxByteLength)
         return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
@@ -549,15 +560,16 @@ Expected<void, GrowFailReason> SharedArrayBufferContents::grow(VM& vm, size_t ne
     return grow(Locker { m_memoryHandle->lock() }, vm, newByteLength);
 }
 
-Expected<void, GrowFailReason> SharedArrayBufferContents::grow(const AbstractLocker&, VM& vm, size_t newByteLength)
+Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(const AbstractLocker&, VM& vm, size_t newByteLength)
 {
     // Keep in mind that newByteLength may not be page-size-aligned.
     size_t sizeInBytes = m_sizeInBytes.load(std::memory_order_seq_cst);
     if (sizeInBytes > newByteLength || m_maxByteLength < newByteLength)
         return makeUnexpected(GrowFailReason::InvalidGrowSize);
 
-    if (sizeInBytes == newByteLength)
-        return { };
+    int64_t deltaByteLength = newByteLength - sizeInBytes;
+    if (!deltaByteLength)
+        return 0;
 
     auto newPageCount = PageCount::fromBytesWithRoundUp(newByteLength);
     auto oldPageCount = PageCount::fromBytes(m_memoryHandle->size()); // MemoryHandle's size is always page-size aligned.
@@ -603,7 +615,7 @@ Expected<void, GrowFailReason> SharedArrayBufferContents::grow(const AbstractLoc
     memset(bitwise_cast<uint8_t*>(data()) + sizeInBytes, 0, newByteLength - sizeInBytes);
 
     updateSize(newByteLength);
-    return { };
+    return deltaByteLength;
 }
 
 ASCIILiteral errorMesasgeForTransfer(ArrayBuffer* buffer)

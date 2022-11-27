@@ -271,7 +271,7 @@ Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
 
     PageCount oldPageCount;
     PageCount newPageCount;
-    Expected<void, GrowFailReason> result;
+    Expected<int64_t, GrowFailReason> result;
     {
         std::optional<Locker<Lock>> locker;
         // m_shared may not be exist, if this is zero byte memory with zero byte maximum size.
