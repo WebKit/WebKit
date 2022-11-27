@@ -33,42 +33,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransitionEvent);
 
-CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& propertyName, const String& pseudoElement)
-    : AnimationEventBase(type, animation)
+CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& pseudoElement, const String& propertyName)
+    : DeclarativeAnimationEvent(type, animation, elapsedTime, pseudoElement)
     , m_propertyName(propertyName)
-    , m_elapsedTime(elapsedTime)
-    , m_pseudoElement(pseudoElement)
 {
 }
 
 CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : AnimationEventBase(type, initializer, isTrusted)
+    : DeclarativeAnimationEvent(type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)
     , m_propertyName(initializer.propertyName)
-    , m_elapsedTime(initializer.elapsedTime)
-    , m_pseudoElement(initializer.pseudoElement)
 {
 }
 
 CSSTransitionEvent::~CSSTransitionEvent() = default;
-
-const String& CSSTransitionEvent::propertyName() const
-{
-    return m_propertyName;
-}
-
-double CSSTransitionEvent::elapsedTime() const
-{
-    return m_elapsedTime;
-}
-
-const String& CSSTransitionEvent::pseudoElement() const
-{
-    return m_pseudoElement;
-}
-
-EventInterface CSSTransitionEvent::eventInterface() const
-{
-    return CSSTransitionEventInterfaceType;
-}
 
 } // namespace WebCore

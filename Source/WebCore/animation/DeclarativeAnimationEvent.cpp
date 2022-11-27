@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,30 +20,32 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "CSSAnimationEvent.h"
+#include "DeclarativeAnimationEvent.h"
 
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimationEvent);
+WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimationEvent);
 
-CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : DeclarativeAnimationEvent(type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)
-    , m_animationName(initializer.animationName)
+DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& pseudoElement)
+    : AnimationEventBase(type, animation)
+    , m_elapsedTime(elapsedTime)
+    , m_pseudoElement(pseudoElement)
 {
 }
 
-CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& pseudoElement, const String& animationName)
-    : DeclarativeAnimationEvent(type, animation, elapsedTime, pseudoElement)
-    , m_animationName(animationName)
+DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
+    : AnimationEventBase(type, init, isTrusted)
+    , m_elapsedTime(elapsedTime)
+    , m_pseudoElement(pseudoElement)
 {
 }
 
-CSSAnimationEvent::~CSSAnimationEvent() = default;
+DeclarativeAnimationEvent::~DeclarativeAnimationEvent() = default;
 
 } // namespace WebCore

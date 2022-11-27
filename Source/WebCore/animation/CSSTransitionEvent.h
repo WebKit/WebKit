@@ -26,16 +26,16 @@
 
 #pragma once
 
-#include "AnimationEventBase.h"
+#include "DeclarativeAnimationEvent.h"
 
 namespace WebCore {
 
-class CSSTransitionEvent final : public AnimationEventBase {
+class CSSTransitionEvent final : public DeclarativeAnimationEvent {
     WTF_MAKE_ISO_ALLOCATED(CSSTransitionEvent);
 public:
-    static Ref<CSSTransitionEvent> create(const AtomString& type, WebAnimation* animation,  double elapsedTime, const String& propertyName, const String& pseudoElement)
+    static Ref<CSSTransitionEvent> create(const AtomString& type, WebAnimation* animation,  double elapsedTime, const String& pseudoElement, const String& propertyName)
     {
-        return adoptRef(*new CSSTransitionEvent(type, animation, elapsedTime, propertyName, pseudoElement));
+        return adoptRef(*new CSSTransitionEvent(type, animation, elapsedTime, pseudoElement, propertyName));
     }
 
     struct Init : EventInit {
@@ -53,19 +53,15 @@ public:
 
     bool isCSSTransitionEvent() const final { return true; }
 
-    const String& propertyName() const;
-    double elapsedTime() const;
-    const String& pseudoElement() const;
+    const String& propertyName() const { return m_propertyName; }
 
-    EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override { return CSSTransitionEventInterfaceType; }
 
 private:
-    CSSTransitionEvent(const AtomString& type, WebAnimation*, double elapsedTime, const String& propertyName, const String& pseudoElement);
+    CSSTransitionEvent(const AtomString& type, WebAnimation*, double elapsedTime, const String& pseudoElement, const String& propertyName);
     CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted);
 
     String m_propertyName;
-    double m_elapsedTime;
-    String m_pseudoElement;
 };
 
 } // namespace WebCore

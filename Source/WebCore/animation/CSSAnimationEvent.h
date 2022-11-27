@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "AnimationEventBase.h"
+#include "DeclarativeAnimationEvent.h"
 
 namespace WebCore {
 
-class CSSAnimationEvent final : public AnimationEventBase {
+class CSSAnimationEvent final : public DeclarativeAnimationEvent {
     WTF_MAKE_ISO_ALLOCATED(CSSAnimationEvent);
 public:
-    static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& animationName, const String& pseudoElement)
+    static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& pseudoElement, const String& animationName)
     {
-        return adoptRef(*new CSSAnimationEvent(type, animation, elapsedTime, animationName, pseudoElement));
+        return adoptRef(*new CSSAnimationEvent(type, animation, elapsedTime, pseudoElement, animationName));
     }
 
     struct Init : EventInit {
@@ -52,19 +52,15 @@ public:
 
     bool isCSSAnimationEvent() const final { return true; }
 
-    const String& animationName() const;
-    double elapsedTime() const;
-    const String& pseudoElement() const;
+    const String& animationName() const { return m_animationName; }
 
-    EventInterface eventInterface() const override;
+    EventInterface eventInterface() const override { return CSSAnimationEventInterfaceType; }
 
 private:
     CSSAnimationEvent(const AtomString& type, WebAnimation*, double elapsedTime, const String& animationName, const String& pseudoElement);
     CSSAnimationEvent(const AtomString&, const Init&, IsTrusted);
 
     String m_animationName;
-    double m_elapsedTime;
-    String m_pseudoElement;
 };
 
 } // namespace WebCore

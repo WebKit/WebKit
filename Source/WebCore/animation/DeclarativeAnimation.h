@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class Animation;
-class AnimationEventBase;
+class DeclarativeAnimationEvent;
 class Element;
 class RenderStyle;
 
@@ -75,9 +75,7 @@ protected:
 
     void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
-    // elapsedTime is the animation's current time at the time the event is added and is exposed through the DOM API, timelineTime is the animations'
-    // timeline current time and is not exposed through the DOM API but used by the DocumentTimeline for sorting events before dispatch. 
-    virtual Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId) = 0;
+    virtual Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId) = 0;
     void invalidateDOMEvents(Seconds elapsedTime = 0_s);
 
 private:
