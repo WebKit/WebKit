@@ -772,7 +772,7 @@ void WebAnimation::willChangeRenderer()
 void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> scheduledTime)
 {
     auto timelineTime = m_timeline ? m_timeline->currentTime() : std::nullopt;
-    auto event = AnimationPlaybackEvent::create(type, this, timelineTime, scheduledTime, currentTime);
+    auto event = AnimationPlaybackEvent::create(type, this, scheduledTime, timelineTime, currentTime);
     event->setTarget(Ref { *this });
     enqueueAnimationEvent(WTFMove(event));
 }

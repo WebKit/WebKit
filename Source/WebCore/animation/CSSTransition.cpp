@@ -95,7 +95,7 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
 
 Ref<DeclarativeAnimationEvent> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId)
 {
-    return CSSTransitionEvent::create(eventType, this, elapsedTime, pseudoId, nameString(m_property));
+    return CSSTransitionEvent::create(eventType, this, std::nullopt, elapsedTime, pseudoId, nameString(m_property));
 }
 
 } // namespace WebCore

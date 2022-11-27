@@ -34,9 +34,9 @@ namespace WebCore {
 class AnimationPlaybackEvent final : public AnimationEventBase {
     WTF_MAKE_ISO_ALLOCATED(AnimationPlaybackEvent);
 public:
-    static Ref<AnimationPlaybackEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> timelineTime, std::optional<Seconds> scheduledTime, std::optional<Seconds> currentTime)
+    static Ref<AnimationPlaybackEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime)
     {
-        return adoptRef(*new AnimationPlaybackEvent(type, animation, timelineTime, scheduledTime, currentTime));
+        return adoptRef(*new AnimationPlaybackEvent(type, animation, scheduledTime, timelineTime, currentTime));
     }
 
     static Ref<AnimationPlaybackEvent> create(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -51,19 +51,16 @@ public:
     std::optional<Seconds> timelineTime() const { return m_timelineTime; }
     std::optional<double> bindingsTimelineTime() const;
 
-    std::optional<Seconds> scheduledTime() const { return m_scheduledTime; }
-
     std::optional<double> bindingsCurrentTime() const;
     std::optional<Seconds> currentTime() const { return m_currentTime; }
 
     EventInterface eventInterface() const override { return AnimationPlaybackEventInterfaceType; }
 
 private:
-    AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<Seconds> timelineTime, std::optional<Seconds> scheduledTime, std::optional<Seconds> currentTime);
+    AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime);
     AnimationPlaybackEvent(const AtomString&, const AnimationPlaybackEventInit&, IsTrusted);
 
     Markable<Seconds, Seconds::MarkableTraits> m_timelineTime;
-    Markable<Seconds, Seconds::MarkableTraits> m_scheduledTime;
     Markable<Seconds, Seconds::MarkableTraits> m_currentTime;
 };
 

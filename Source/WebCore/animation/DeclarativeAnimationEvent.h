@@ -38,7 +38,7 @@ public:
     const String& pseudoElement() const { return m_pseudoElement; }
 
 protected:
-    DeclarativeAnimationEvent(const AtomString& type, WebAnimation*, double, const String&);
+    DeclarativeAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const String&);
     DeclarativeAnimationEvent(const AtomString&, const EventInit&, IsTrusted, double, const String&);
 
 private:

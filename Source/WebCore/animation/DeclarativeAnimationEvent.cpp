@@ -32,8 +32,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimationEvent);
 
-DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& pseudoElement)
-    : AnimationEventBase(type, animation)
+DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const String& pseudoElement)
+    : AnimationEventBase(type, animation, scheduledTime)
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {

@@ -34,9 +34,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationEventBase);
 
-AnimationEventBase::AnimationEventBase(const AtomString& type, WebAnimation* animation)
+AnimationEventBase::AnimationEventBase(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime)
     : Event(type, CanBubble::Yes, IsCancelable::No)
     , m_animation(animation)
+    , m_scheduledTime(scheduledTime)
 {
 }
 

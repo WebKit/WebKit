@@ -283,7 +283,7 @@ void CSSAnimation::updateKeyframesIfNeeded(const RenderStyle* oldStyle, const Re
 
 Ref<DeclarativeAnimationEvent> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId)
 {
-    return CSSAnimationEvent::create(eventType, this, elapsedTime, pseudoId, m_animationName);
+    return CSSAnimationEvent::create(eventType, this, std::nullopt, elapsedTime, pseudoId, m_animationName);
 }
 
 } // namespace WebCore

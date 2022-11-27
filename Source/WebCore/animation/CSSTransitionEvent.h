@@ -33,9 +33,9 @@ namespace WebCore {
 class CSSTransitionEvent final : public DeclarativeAnimationEvent {
     WTF_MAKE_ISO_ALLOCATED(CSSTransitionEvent);
 public:
-    static Ref<CSSTransitionEvent> create(const AtomString& type, WebAnimation* animation,  double elapsedTime, const String& pseudoElement, const String& propertyName)
+    static Ref<CSSTransitionEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime,  double elapsedTime, const String& pseudoElement, const String& propertyName)
     {
-        return adoptRef(*new CSSTransitionEvent(type, animation, elapsedTime, pseudoElement, propertyName));
+        return adoptRef(*new CSSTransitionEvent(type, animation, scheduledTime, elapsedTime, pseudoElement, propertyName));
     }
 
     struct Init : EventInit {
@@ -58,7 +58,7 @@ public:
     EventInterface eventInterface() const override { return CSSTransitionEventInterfaceType; }
 
 private:
-    CSSTransitionEvent(const AtomString& type, WebAnimation*, double elapsedTime, const String& pseudoElement, const String& propertyName);
+    CSSTransitionEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const String& pseudoElement, const String& propertyName);
     CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted);
 
     String m_propertyName;
