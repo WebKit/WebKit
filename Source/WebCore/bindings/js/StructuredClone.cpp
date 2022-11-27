@@ -77,29 +77,65 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
 
     JSValue value = callFrame->uncheckedArgument(0);
 
-    if (value.inherits<JSArrayBuffer>())
-        RELEASE_AND_RETURN(scope, cloneArrayBufferImpl(globalObject, callFrame, CloneMode::Full));
+    auto cloneArrayBuffer = [&](ArrayBuffer& buffer) -> RefPtr<ArrayBuffer> {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        size_t byteLength = buffer.byteLength();
+        auto result = ArrayBuffer::tryCreate(byteLength, 1, buffer.maxByteLength());
+        if (UNLIKELY(!result)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
+
+        memcpy(result->data(), buffer.data(), byteLength);
+        return result;
+    };
+
+    if (value.inherits<JSArrayBuffer>()) {
+        auto* buffer = toUnsharedArrayBuffer(vm, value);
+        if (UNLIKELY(!buffer || buffer->isDetached())) {
+            throwDataCloneError(*globalObject, scope);
+            return { };
+        }
+
+        auto result = cloneArrayBuffer(*buffer);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        return JSValue::encode(JSArrayBuffer::create(globalObject->vm(), globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), result.releaseNonNull()));
+    }
 
     if (value.inherits<JSArrayBufferView>()) {
         auto* bufferView = jsCast<JSArrayBufferView*>(value);
         ASSERT(bufferView);
 
         auto* buffer = bufferView->unsharedBuffer();
-        if (!buffer) {
+        if (UNLIKELY(!buffer || buffer->isDetached())) {
             throwDataCloneError(*globalObject, scope);
             return { };
         }
-        auto bufferClone = ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength());
-        constexpr bool isResizableOrGrowableShared = false;
+
+        auto bufferClone = cloneArrayBuffer(*buffer);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        size_t byteOffset = 0;
+        std::optional<size_t> length;
+        if (bufferView->isResizableOrGrowableShared()) {
+            byteOffset = bufferView->byteOffsetRaw();
+            if (!bufferView->isAutoLength())
+                length = bufferView->lengthRaw();
+        } else {
+            byteOffset = bufferView->byteOffset();
+            length = bufferView->length();
+        }
+
         switch (typedArrayType(bufferView->type())) {
 #define CLONE_TYPED_ARRAY(name) \
         case Type##name: { \
-            RELEASE_AND_RETURN(scope, JSValue::encode(JS##name##Array::create(globalObject, globalObject->typedArrayStructure(Type##name, isResizableOrGrowableShared), WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()))); \
+            RELEASE_AND_RETURN(scope, JSValue::encode(toJS(globalObject, globalObject, name##Array::wrappedAs(bufferClone.releaseNonNull(), byteOffset, length).get()))); \
         }
         FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(CLONE_TYPED_ARRAY)
 #undef CLONE_TYPED_ARRAY
         case TypeDataView: {
-            RELEASE_AND_RETURN(scope, JSValue::encode(JSDataView::create(globalObject, globalObject->typedArrayStructure(TypeDataView, isResizableOrGrowableShared), WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length())));
+            RELEASE_AND_RETURN(scope, JSValue::encode(toJS(globalObject, globalObject, DataView::wrappedAs(bufferClone.releaseNonNull(), byteOffset, length).get())));
         }
         default:
             RELEASE_ASSERT_NOT_REACHED();
