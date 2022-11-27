@@ -72,8 +72,33 @@ constexpr bool operator!=(const ColorMatrix<ColumnCount, RowCount>& a, const Col
     return !(a == b);
 }
 
+constexpr ColorMatrix<3, 3> brightnessColorMatrix(float amount)
+{
+    // Brightness is specified as a compontent transfer function: https://www.w3.org/TR/filter-effects-1/#brightnessEquivalent
+    // which is equivalent to the following matrix.
+    amount = std::max(amount, 0.0f);
+    return ColorMatrix<3, 3> {
+        amount, 0.0f, 0.0f,
+        0.0f, amount, 0.0f,
+        0.0f, 0.0f, amount,
+    };
+}
 
-// FIXME: These are only used in FilterOperations.cpp. Consider moving them there.
+constexpr ColorMatrix<5, 4> contrastColorMatrix(float amount)
+{
+    // Contrast is specified as a compontent transfer function: https://www.w3.org/TR/filter-effects-1/#contrastEquivalent
+    // which is equivalent to the following matrix.
+    amount = std::max(amount, 0.0f);
+    float intercept = -0.5f * amount + 0.5f;
+
+    return ColorMatrix<5, 4> {
+        amount, 0.0f, 0.0f, 0.0f, intercept,
+        0.0f, amount, 0.0f, 0.0f, intercept,
+        0.0f, 0.0f, amount, 0.0f, intercept,
+        0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+    };
+}
+
 constexpr ColorMatrix<3, 3> grayscaleColorMatrix(float amount)
 {
     // Values from https://www.w3.org/TR/filter-effects-1/#grayscaleEquivalent
@@ -82,6 +107,33 @@ constexpr ColorMatrix<3, 3> grayscaleColorMatrix(float amount)
         0.2126f + 0.7874f * oneMinusAmount, 0.7152f - 0.7152f * oneMinusAmount, 0.0722f - 0.0722f * oneMinusAmount,
         0.2126f - 0.2126f * oneMinusAmount, 0.7152f + 0.2848f * oneMinusAmount, 0.0722f - 0.0722f * oneMinusAmount,
         0.2126f - 0.2126f * oneMinusAmount, 0.7152f - 0.7152f * oneMinusAmount, 0.0722f + 0.9278f * oneMinusAmount
+    };
+}
+
+constexpr ColorMatrix<5, 4> invertColorMatrix(float amount)
+{
+    // Invert is specified as a compontent transfer function: https://www.w3.org/TR/filter-effects-1/#invertEquivalent
+    // which is equivalent to the following matrix.
+    amount = std::clamp(amount, 0.0f, 1.0f);
+    float multiplier = 1.0f - amount * 2.0f;
+    return ColorMatrix<5, 4> {
+        multiplier, 0.0f, 0.0f, 0.0f, amount,
+        0.0f, multiplier, 0.0f, 0.0f, amount,
+        0.0f, 0.0f, multiplier, 0.0f, amount,
+        0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+    };
+}
+
+constexpr ColorMatrix<5, 4> opacityColorMatrix(float amount)
+{
+    // Opacity is specified as a compontent transfer function: https://www.w3.org/TR/filter-effects-1/#opacityEquivalent
+    // which is equivalent to the following matrix.
+    amount = std::clamp(amount, 0.0f, 1.0f);
+    return ColorMatrix<5, 4> {
+        1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, amount, 0.0f
     };
 }
 

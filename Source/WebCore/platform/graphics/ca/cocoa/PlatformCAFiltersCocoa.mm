@@ -449,58 +449,46 @@ static CAColorMatrix caColorMatrixFromColorMatrix(const ColorMatrix<3, 3>& color
     };
 }
 
+static CAColorMatrix caColorMatrixFromColorMatrix(const ColorMatrix<5, 4>& colorMatrix)
+{
+    return {
+        colorMatrix.at(0, 0), colorMatrix.at(0, 1), colorMatrix.at(0, 2), colorMatrix.at(0, 3), colorMatrix.at(0, 4),
+        colorMatrix.at(1, 0), colorMatrix.at(1, 1), colorMatrix.at(1, 2), colorMatrix.at(1, 3), colorMatrix.at(1, 4),
+        colorMatrix.at(2, 0), colorMatrix.at(2, 1), colorMatrix.at(2, 2), colorMatrix.at(2, 3), colorMatrix.at(2, 4),
+        colorMatrix.at(3, 0), colorMatrix.at(3, 1), colorMatrix.at(3, 2), colorMatrix.at(3, 3), colorMatrix.at(3, 4),
+    };
+}
+
 RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(FilterOperation::OperationType type, const FilterOperation* filterOperation)
 {
     switch (type) {
     case FilterOperation::SEPIA: {
-        double t = filterOperation ? downcast<BasicColorMatrixFilterOperation>(*filterOperation).amount() : 0;
-        auto sepiaMatrix = sepiaColorMatrix(t);
+        float amount = filterOperation ? downcast<BasicColorMatrixFilterOperation>(*filterOperation).amount() : 0;
+        auto sepiaMatrix = sepiaColorMatrix(amount);
         return [NSValue valueWithCAColorMatrix:caColorMatrixFromColorMatrix(sepiaMatrix)];
     }
     case FilterOperation::INVERT: {
         float amount = filterOperation ? downcast<BasicComponentTransferFilterOperation>(*filterOperation).amount() : 0;
-        float multiplier = 1 - amount * 2;
-        CAColorMatrix colorMatrix = {
-            multiplier, 0, 0, 0, amount,
-            0, multiplier, 0, 0, amount,
-            0, 0, multiplier, 0, amount,
-            0, 0, 0, 1, 0
-        };
-        return [NSValue valueWithCAColorMatrix:colorMatrix];
+        auto invertMatrix = invertColorMatrix(amount);
+        return [NSValue valueWithCAColorMatrix:caColorMatrixFromColorMatrix(invertMatrix)];
     }
     case FilterOperation::APPLE_INVERT_LIGHTNESS:
         ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
         return nullptr;
     case FilterOperation::OPACITY: {
         float amount = filterOperation ? downcast<BasicComponentTransferFilterOperation>(filterOperation)->amount() : 1;
-        CAColorMatrix colorMatrix = {
-            1, 0, 0, 0, 0,
-            0, 1, 0, 0, 0,
-            0, 0, 1, 0, 0,
-            0, 0, 0, amount, 0
-        };
-        return [NSValue valueWithCAColorMatrix:colorMatrix];
+        auto opacityMatrix = opacityColorMatrix(amount);
+        return [NSValue valueWithCAColorMatrix:caColorMatrixFromColorMatrix(opacityMatrix)];
     }
     case FilterOperation::CONTRAST: {
         float amount = filterOperation ? downcast<BasicComponentTransferFilterOperation>(filterOperation)->amount() : 1;
-        float intercept = -0.5 * amount + 0.5;
-        CAColorMatrix colorMatrix = {
-            amount, 0, 0, 0, intercept,
-            0, amount, 0, 0, intercept,
-            0, 0, amount, 0, intercept,
-            0, 0, 0, 1, 0
-        };
-        return [NSValue valueWithCAColorMatrix:colorMatrix];
+        auto contrastMatrix = contrastColorMatrix(amount);
+        return [NSValue valueWithCAColorMatrix:caColorMatrixFromColorMatrix(contrastMatrix)];
     }
     case FilterOperation::BRIGHTNESS: {
         float amount = filterOperation ? downcast<BasicComponentTransferFilterOperation>(filterOperation)->amount() : 1;
-        CAColorMatrix colorMatrix = {
-            amount, 0, 0, 0, 0,
-            0, amount, 0, 0, 0,
-            0, 0, amount, 0, 0,
-            0, 0, 0, 1, 0
-        };
-        return [NSValue valueWithCAColorMatrix:colorMatrix];
+        auto brightnessMatrix = brightnessColorMatrix(amount);
+        return [NSValue valueWithCAColorMatrix:caColorMatrixFromColorMatrix(brightnessMatrix)];
     }
     default:
         ASSERT_NOT_REACHED();
