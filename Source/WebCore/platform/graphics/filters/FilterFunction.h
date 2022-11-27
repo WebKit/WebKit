@@ -29,6 +29,7 @@
 #include "FilterImage.h"
 #include "FilterImageVector.h"
 #include "FilterRenderingMode.h"
+#include "FilterStyle.h"
 #include "FloatRect.h"
 #include "LengthBox.h"
 #include <wtf/RefCounted.h>
@@ -96,6 +97,7 @@ public:
 
     virtual OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const { return FilterRenderingMode::Software; }
     virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&, FilterResults&) { return nullptr; }
+    virtual FilterStyleVector createFilterStyles(const Filter&, const FilterStyle&) const { return { }; }
 
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation = FilterRepresentation::TestOutput) const = 0;
 

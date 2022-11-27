@@ -159,6 +159,7 @@ private:
     String getAlignmentShorthandValue(const StylePropertyShorthand&) const;
     String borderImagePropertyValue(const StylePropertyShorthand&) const;
     String borderPropertyValue(const StylePropertyShorthand&, const StylePropertyShorthand&, const StylePropertyShorthand&) const;
+    String borderRadiusShorthandValue(const StylePropertyShorthand&) const;
     String pageBreakPropertyValue(const StylePropertyShorthand&) const;
     String getLayeredShorthandValue(const StylePropertyShorthand&) const;
     String get2Values(const StylePropertyShorthand&) const;
