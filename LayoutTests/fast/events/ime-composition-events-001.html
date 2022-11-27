@@ -53,6 +53,7 @@ test.value = 'I have a pen';
 test.selectionStart = 2;
 test.selectionEnd = 6;
 textInputController.setMarkedText('lost', 0, 1);
+shouldBeEqualToString('test.value', 'I lost a pen');
 textInputController.insertText('made');
 shouldBeEqualToString('test.value', 'I made a pen');
 </script>

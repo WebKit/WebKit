@@ -2184,6 +2184,11 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             // We should send a compositionstart event only when the given text is not empty because this
             // function doesn't create a composition node when the text is empty.
             if (!text.isEmpty()) {
+                auto selection = m_document.selection().selection();
+                if (selection.isRange()) {
+                    auto range = m_document.selection().selection().toNormalizedRange();
+                    String selectionText = plainText(*range);
+                }
                 target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, document().windowProxy(), originalText));
                 event = CompositionEvent::create(eventNames().compositionupdateEvent, document().windowProxy(), text);
             }
