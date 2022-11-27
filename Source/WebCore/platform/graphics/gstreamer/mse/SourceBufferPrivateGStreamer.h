@@ -52,6 +52,7 @@ class MediaSourceTrackGStreamer;
 
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate {
 public:
+    static bool isContentTypeSupported(const ContentType&);
     static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer*, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~SourceBufferPrivateGStreamer() = default;
 
