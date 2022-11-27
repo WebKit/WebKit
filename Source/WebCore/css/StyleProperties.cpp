@@ -32,6 +32,7 @@
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
@@ -69,26 +70,6 @@ static bool isCSSWideValueKeyword(StringView value)
     return value == "initial"_s || value == "inherit"_s || value == "unset"_s || value == "revert"_s || value == "revert-layer"_s;
 }
 
-static bool isNoneValue(const RefPtr<CSSValue>& value)
-{
-    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNone;
-}
-
-static bool isNormalValue(const RefPtr<CSSValue>& value)
-{
-    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNormal;
-}
-
-static bool isValueID(const CSSValue& value, CSSValueID id)
-{
-    return value.isPrimitiveValue() && downcast<CSSPrimitiveValue>(value).isValueID() && downcast<CSSPrimitiveValue>(value).valueID() == id;
-}
-
-static bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
-{
-    return value && isValueID(*value, id);
-}
-
 static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 {
     if (is<CSSValueList>(value)) {
@@ -104,16 +85,6 @@ static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 static bool isValueIDIncludingList(const RefPtr<CSSValue>& value, CSSValueID id)
 {
     return value && isValueIDIncludingList(*value, id);
-}
-
-static CSSValueID valueID(const CSSPrimitiveValue* value)
-{
-    return value ? value->valueID() : CSSValueInvalid;
-}
-
-static CSSValueID valueID(const CSSValue* value)
-{
-    return valueID(dynamicDowncast<CSSPrimitiveValue>(value));
 }
 
 Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
@@ -319,7 +290,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return offsetValue();
     case CSSPropertyContainer:
         if (auto type = getPropertyCSSValue(CSSPropertyContainerType)) {
-            if (isNormalValue(type)) {
+            if (isValueID(type, CSSValueNormal)) {
                 if (auto name = getPropertyCSSValue(CSSPropertyContainerName))
                     return name->cssText();
                 return { };
@@ -929,16 +900,14 @@ String StyleProperties::getGridTemplateValue() const
 
     auto areas = propertyAt(areasIndex);
     if (!is<CSSGridTemplateAreasValue>(areas.value())) {
-        String rowsText = rows->cssText();
+        auto rowsText = rows->cssText();
         result.append(rowsText);
 
-        String columnsText = columns->cssText();
+        auto columnsText = columns->cssText();
         // If the values are identical, and either a css wide keyword
         // or 'none', then we can just output it once.
-        if (columnsText != rowsText || (!isCSSWideValueKeyword(columnsText) && !isValueID(columns, CSSValueNone))) {
-            result.append(" / ");
-            result.append(columnsText);
-        }
+        if (columnsText != rowsText || (!isCSSWideValueKeyword(columnsText) && !isValueID(columns, CSSValueNone)))
+            result.append(" / ", columnsText);
         return result.toString();
     }
     // We only want to try serializing the interleaved areas/templates
@@ -955,29 +924,22 @@ String StyleProperties::getGridTemplateValue() const
     unsigned row = 0;
     for (auto& currentValue : downcast<CSSValueList>(*rows)) {
         if (!first)
-            result.append(" ");
+            result.append(' ');
         first = false;
 
         if (is<CSSGridLineNamesValue>(currentValue))
             result.append(currentValue->cssText());
         else {
-            result.append("\"");
-            result.append(areasValue.stringForRow(row));
-            result.append("\"");
+            result.append('"', areasValue.stringForRow(row), '"');
 
-            if (!isValueID(currentValue, CSSValueAuto)) {
-                result.append(" ");
-                result.append(currentValue->cssText());
-            }
+            if (!isValueID(currentValue, CSSValueAuto))
+                result.append(' ', currentValue->cssText());
             row++;
         }
     }
 
-    String columnsText = columns->cssText();
-    if (!isNoneValue(columns)) {
-        result.append(" / ");
-        result.append(columnsText);
-    }
+    if (!isValueID(columns, CSSValueNone))
+        result.append(" / ", columns->cssText());
 
     return result.toString();
 }
@@ -1025,10 +987,8 @@ String StyleProperties::getGridValue() const
         if (gridAutoFlowContains(autoFlow, CSSValueDense))
             result.append(" dense");
 
-        if (!isValueIDIncludingList(autoColumns, CSSValueAuto)) {
-            result.append(" ");
-            result.append(autoColumns->cssText());
-        }
+        if (!isValueIDIncludingList(autoColumns, CSSValueAuto))
+            result.append(' ', autoColumns->cssText());
 
         return result.toString();
     }

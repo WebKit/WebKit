@@ -1101,9 +1101,7 @@
             "codegen-properties": {
                 "name-for-methods": "CompositeOperation",
                 "settings-flag": "webAnimationsCompositeOperationsEnabled",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-animation-composition>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1121,9 +1119,7 @@
                 ],
                 "name-for-methods": "Delay",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<time>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1144,9 +1140,7 @@
                 ],
                 "name-for-methods": "Direction",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-animation-direction>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1161,9 +1155,7 @@
                 ],
                 "name-for-methods": "Duration",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<time [0,inf]>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1185,9 +1177,7 @@
                 ],
                 "name-for-methods": "FillMode",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-animation-fill-mode>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1202,9 +1192,7 @@
                 ],
                 "name-for-methods": "IterationCount",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-animation-iteration-count>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1219,9 +1207,7 @@
                 ],
                 "name-for-methods": "Name",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-animation-name>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1240,9 +1226,7 @@
                 ],
                 "name-for-methods": "PlayState",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-animation-play-state>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1257,9 +1241,7 @@
                 ],
                 "name-for-methods": "TimingFunction",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<timing-function>#"
             },
             "specification": {
                 "category": "css-animations",
@@ -1296,9 +1278,7 @@
                 "name-for-methods": "Attachment",
                 "fill-layer-property": true,
                 "separator": ",",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-attachment>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1336,9 +1316,7 @@
                 "name-for-methods": "BlendMode",
                 "fill-layer-property": true,
                 "separator": ",",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-blend-mode>#"
             },
             "specification": {
                 "category": "css-compositing",
@@ -1369,9 +1347,7 @@
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
                 "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-clip>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1394,9 +1370,7 @@
                 "name-for-methods": "Image",
                 "fill-layer-property": true,
                 "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-image>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1409,9 +1383,7 @@
                 "name-for-methods": "Origin",
                 "fill-layer-property": true,
                 "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-origin>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -3782,9 +3754,7 @@
                 "related-property": "-webkit-mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-mask-clip>#"
             },
             "specification": {
                 "category": "css-masking",
@@ -3796,9 +3766,7 @@
                 "related-property": "-webkit-mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-mask-composite>#"
             },
             "specification": {
                 "category": "css-masking",
@@ -3812,9 +3780,7 @@
                 ],
                 "name-for-methods": "Image",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-mask-image>#"
             },
             "specification": {
                 "category": "css-masking",
@@ -3826,9 +3792,7 @@
                 "related-property": "-webkit-mask-source-type",
                 "name-for-methods": "MaskMode",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-mask-mode>#"
             },
             "specification": {
                 "category": "css-masking",
@@ -3842,9 +3806,7 @@
                 ],
                 "name-for-methods": "Origin",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-mask-origin>#"
             },
             "specification": {
                 "category": "css-masking",
@@ -5523,9 +5485,7 @@
                 ],
                 "name-for-methods": "Delay",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<time>#"
             },
             "specification": {
                 "category": "css-transitions",
@@ -5540,9 +5500,7 @@
                 ],
                 "name-for-methods": "Duration",
                 "separator": ",",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<time [0,inf]>#"
             },
             "specification": {
                 "category": "css-transitions",
@@ -5556,9 +5514,13 @@
                     "-webkit-transition-property"
                 ],
                 "name-for-methods": "Property",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": [
+                    "none",
+                    {
+                        "value": "<single-transition-property>#",
+                        "single-value-optimization": true
+                    }
+                ]
             },
             "specification": {
                 "category": "css-transitions",
@@ -5572,9 +5534,7 @@
                     "-webkit-transition-timing-function"
                 ],
                 "name-for-methods": "TimingFunction",
-                "parser-function": "consumeAnimationPropertyList",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<timing-function>#"
             },
             "specification": {
                 "category": "css-transitions",
@@ -6076,9 +6036,7 @@
                 "related-property": "background-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-webkit-background-clip>#"
             }
         },
         "-webkit-background-origin": {
@@ -6086,9 +6044,7 @@
                 "related-property": "background-origin",
                 "name-for-methods": "Origin",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-webkit-background-origin>#"
             }
         },
         "-webkit-background-size": {
@@ -7409,9 +7365,7 @@
                 "related-property": "mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-webkit-mask-clip>#"
             },
             "status": {
                 "status": "experimental"
@@ -7426,9 +7380,7 @@
                 "related-property": "mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-webkit-mask-composite>#"
             },
             "status": {
                 "status": "experimental"
@@ -7443,9 +7395,7 @@
                 "related-property": "mask-mode",
                 "synonym": "mask-mode",
                 "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-webkit-mask-source-type>#"
             },
             "status": "non-standard",
             "specification": {
@@ -9163,6 +9113,280 @@
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#typedef-font-palette-palette-identifier"
+            }
+        },
+        "<shape-radius>": {
+            "grammar": ["<length-percentage [0,inf]>", "closest-side", "farthest-side"],
+            "specification": {
+                "category": "css-shapes",
+                "url": "https://www.w3.org/TR/css-shapes-1/#typedef-shape-radius"
+            }
+        },
+        "<attachment>": {
+            "grammar": ["scroll", "fixed", "local"],
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-attachment"
+            }
+        },
+        "<blend-mode>": {
+            "grammar": [
+                "normal",
+                "multiply",
+                "screen",
+                "overlay",
+                "darken",
+                "lighten",
+                "color-dodge",
+                "color-burn",
+                "hard-light",
+                "soft-light",
+                "difference",
+                "exclusion",
+                "hue",
+                "saturation",
+                "color",
+                "luminosity"
+            ],
+            "specification": {
+                "category": "css-compositing",
+                "url": "https://www.w3.org/TR/compositing-1/#ltblendmodegt"
+            }
+        },
+        "<box>": {
+            "grammar": ["border-box", "padding-box", "content-box"],
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#typedef-box"
+            }
+        },
+        "<shape-box>": {
+            "grammar": ["<box>", "margin-box"],
+            "specification": {
+                "category": "css-shapes",
+                "url": "https://www.w3.org/TR/css-shapes-1/#typedef-shape-box"
+            }
+        },
+        "<geometry-box>": {
+            "grammar": ["<shape-box>", "fill-box", "stroke-box", "view-box"],
+            "exported": true,
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#typedef-geometry-box"
+            }
+        },
+        "<compositing-operator>": {
+            "grammar": ["add", "subtract", "intersect", "exclude"],
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#typedef-compositing-operator"
+            }
+        },
+        "<masking-mode>": {
+            "grammar": ["alpha", "luminance", "match-source"],
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#typedef-masking-mode"
+            }
+        },
+        "<bg-image>": {
+            "grammar": ["<image>", "none"],
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#typedef-bg-image"
+            }
+        },
+        "<mask-reference>": {
+            "grammar": ["<image>", "none"],
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-masking-1/#typedef-mask-reference"
+            }
+        },
+        "<-webkit-origin-box>": {
+            "grammar": ["<box>", "border", "content", "padding", "-webkit-text"],
+            "status": "non-standard"
+        },
+        "<-webkit-clip-box>": {
+            "grammar": ["<-webkit-origin-box>", "text"],
+            "status": "non-standard"
+        },
+        "<-webkit-compositing-operator>": {
+            "grammar": [
+                "clear",
+                "copy",
+                "source-over",
+                "source-in",
+                "source-out",
+                "source-atop",
+                "destination-over",
+                "destination-in",
+                "destination-out",
+                "destination-atop",
+                "xor",
+                "plus-darker",
+                "plus-lighter"
+            ],
+            "status": "non-standard"
+        },
+        "<-webkit-masking-source-type>": {
+            "grammar": ["auto", "alpha", "luminance"],
+            "status": "non-standard"
+        },
+        "<single-background-blend-mode>": {
+            "grammar": ["<blend-mode>"],
+            "exported": true,
+            "specification": {
+                "category": "css-compositing",
+                "url": "https://www.w3.org/TR/compositing-1/#propdef-background-blend-mode"
+            }
+        },
+        "<single-background-attachment>": {
+            "grammar": ["<attachment>"],
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-attachment"
+            }
+        },
+        "<single-background-clip>": {
+            "grammar": ["<box>", "text", "-webkit-text"],
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-clip"
+            },
+            "comment": "Out of spec. 'background-clip' is currently defined to '<box>#'."
+        },
+        "<single-background-origin>": {
+            "grammar": ["<box>"],
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-origin"
+            }
+        },
+        "<single-background-image>": {
+            "grammar": ["<bg-image>"],
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-image"
+            }
+        },
+        "<single-mask-clip>": {
+            "grammar": ["<box>", "no-clip"],
+            "exported": true,
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#the-mask-clip"
+            },
+            "comment": "Out of spec. 'mask-clip' is currently defined to '[ <geometry-box> | no-clip ]#'."
+        },
+        "<single-mask-origin>": {
+            "grammar": ["<box>", "border", "content", "padding", "-webkit-text"],
+            "exported": true,
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#the-mask-origin"
+            },
+            "comment": "Out of spec. 'mask-origin' is currently defined to '<geometry-box>#'."
+        },
+        "<single-mask-image>": {
+            "grammar": ["<mask-reference>"],
+            "exported": true,
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#the-mask-image"
+            }
+        },
+        "<single-mask-composite>": {
+            "grammar": ["<compositing-operator>"],
+            "exported": true,
+            "specification": {
+                "category": "css-masking",
+                "url": "https://drafts.fxtf.org/css-masking-1/#the-mask-composite"
+            }
+        },
+        "<single-mask-mode>": {
+            "grammar": ["<masking-mode>"],
+            "exported": true,
+            "specification": {
+                "category": "css-masking",
+                "url": "https://drafts.fxtf.org/css-masking-1/#the-mask-mode"
+            }
+        },
+        "<single-webkit-background-clip>": {
+            "grammar": ["<-webkit-clip-box>"],
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-background-origin>": {
+            "grammar": ["<-webkit-origin-box>"],
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-mask-composite>": {
+            "grammar": ["<-webkit-compositing-operator>"],
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-mask-clip>": {
+            "grammar": ["<-webkit-clip-box>"],
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-mask-source-type>": {
+            "grammar": ["<-webkit-masking-source-type>"],
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-animation-composition>": {
+            "grammar": ["replace", "add", "accumulate"],
+            "exported": true,
+            "specification": {
+                "category": "css-animations",
+                "url": "https://drafts.csswg.org/css-animations-2/#animation-composition"
+            }
+        },
+        "<single-animation-direction>": {
+            "grammar": ["normal", "reverse", "alternate", "alternate-reverse"],
+            "exported": true,
+            "specification": {
+                "category": "css-animations",
+                "url": "https://www.w3.org/TR/css-animations-1/#typedef-single-animation-direction"
+            }
+        },
+        "<single-animation-fill-mode>": {
+            "grammar": ["none", "forwards", "backwards", "both"],
+            "exported": true,
+            "specification": {
+                "category": "css-animations",
+                "url": "https://www.w3.org/TR/css-animations-1/#typedef-single-animation-fill-mode"
+            }
+        },
+        "<single-animation-iteration-count>": {
+            "grammar": ["infinite", "<number [0,inf]>"],
+            "exported": true,
+            "specification": {
+                "category": "css-animations",
+                "url": "https://www.w3.org/TR/css-animations-1/#typedef-single-animation-iteration-count"
+            }
+        },
+        "<single-animation-name>": {
+            "grammar": ["none", "<keyframes-name>"],
+            "exported": true,
+            "specification": {
+                "category": "css-animations",
+                "url": "https://www.w3.org/TR/css-animations-1/#animation-name"
+            }
+        },
+        "<single-animation-play-state>": {
+            "grammar": ["running", "paused"],
+            "exported": true,
+            "specification": {
+                "category": "css-animations",
+                "url": "https://www.w3.org/TR/css-animations-1/#typedef-single-animation-play-state"
             }
         }
     }

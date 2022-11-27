@@ -5127,15 +5127,8 @@ RefPtr<CSSValue> consumeFontVariationSettings(CSSParserTokenRange& range)
     if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
     
-    auto settings = CSSValueList::createCommaSeparated();
-    do {
-        RefPtr<CSSValue> variationValue = consumeFontVariationTag(range);
-        if (!variationValue)
-            return nullptr;
-        settings->append(variationValue.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    
-    if (!settings->length())
+    auto settings = consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeFontVariationTag);
+    if (!settings || !settings->length())
         return nullptr;
 
     return settings;
@@ -5427,18 +5420,11 @@ static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range)
 
 RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange& range)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-    do {
+    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [] (auto& range) -> RefPtr<CSSValue> {
         if (auto parsedValue = consumeGenericFamily(range))
-            list->append(parsedValue.releaseNonNull());
-        else {
-            if (auto parsedValue = consumeFamilyName(range))
-                list->append(parsedValue.releaseNonNull());
-            else
-                return nullptr;
-        }
-    } while (consumeCommaIncludingWhitespace(range));
-    return list;
+            return parsedValue;
+        return consumeFamilyName(range);
+    });
 }
 
 RefPtr<CSSValue> consumeFontFamilyDescriptor(CSSParserTokenRange& range)
@@ -5662,17 +5648,11 @@ RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
     return list;
 }
 
-RefPtr<CSSValue> consumeAnimationIterationCount(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, const CSSParserContext&)
 {
-    if (range.peek().id() == CSSValueInfinite)
-        return consumeIdent(range);
-    return consumeNumber(range, ValueRange::NonNegative);
-}
-
-RefPtr<CSSValue> consumeAnimationName(CSSParserTokenRange& range)
-{
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
+    // https://www.w3.org/TR/css-animations-1/#typedef-keyframes-name
+    //
+    // <keyframes-name> = <custom-ident> | <string>
 
     if (range.peek().type() == StringToken) {
         const CSSParserToken& token = range.consumeIncludingWhitespace();
@@ -5684,22 +5664,50 @@ RefPtr<CSSValue> consumeAnimationName(CSSParserTokenRange& range)
     return consumeCustomIdent(range);
 }
 
-RefPtr<CSSValue> consumeTransitionProperty(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeSingleTransitionPropertyIdent(CSSParserTokenRange& range, const CSSParserToken& token)
 {
-    const CSSParserToken& token = range.peek();
-    if (token.type() != IdentToken)
-        return nullptr;
-    if (token.id() == CSSValueNone)
-        return consumeIdent(range);
-
-    if (CSSPropertyID property = token.parseAsCSSPropertyID()) {
+    if (auto property = token.parseAsCSSPropertyID()) {
         range.consumeIncludingWhitespace();
         return CSSValuePool::singleton().createIdentifierValue(property);
     }
     return consumeCustomIdent(range);
 }
 
-RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange& range)
+{
+    // This variant of consumeSingleTransitionProperty is used for the slightly different
+    // parse rules used for the 'transition' shorthand which allows 'none':
+    //
+    // <single-transition> = [ none | <single-transition-property> ] || <time> || <timing-function> || <time>
+
+    auto& token = range.peek();
+    if (token.type() != IdentToken)
+        return nullptr;
+    if (token.id() == CSSValueNone)
+        return consumeIdent(range);
+
+    return consumeSingleTransitionPropertyIdent(range, token);
+}
+
+RefPtr<CSSValue> consumeSingleTransitionProperty(CSSParserTokenRange& range, const CSSParserContext&)
+{
+    // https://www.w3.org/TR/css-transitions-1/#single-transition-property
+    //
+    // <single-transition-property> = all | <custom-ident>;
+    //
+    // "The <custom-ident> production in <single-transition-property> also excludes the keyword
+    //  none, in addition to the keywords always excluded from <custom-ident>."
+
+    auto& token = range.peek();
+    if (token.type() != IdentToken)
+        return nullptr;
+    if (token.id() == CSSValueNone)
+        return nullptr;
+
+    return consumeSingleTransitionPropertyIdent(range, token);
+}
+
+static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
 {
     // https://drafts.csswg.org/css-easing-1/#funcdef-step-easing-function-steps
 
@@ -5753,7 +5761,7 @@ RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
     return CSSStepsTimingFunctionValue::create(*stepsValue, stepPosition);
 }
 
-RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueCubicBezier);
     CSSParserTokenRange rangeCopy = range;
@@ -5791,7 +5799,7 @@ RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
     return CSSCubicBezierTimingFunctionValue::create(x1->value, y1->value, x2->value, y2->value);
 }
 
-RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueSpring);
     CSSParserTokenRange rangeCopy = range;
@@ -5825,7 +5833,7 @@ RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
     return CSSSpringTimingFunctionValue::create(mass->value, stiffness->value, damping->value, initialVelocity->value);
 }
 
-RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeTimingFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     switch (range.peek().id()) {
     case CSSValueLinear:
@@ -5857,95 +5865,12 @@ RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& range, cons
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeAnimationValue(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    switch (property) {
-    case CSSPropertyAnimationDelay:
-    case CSSPropertyTransitionDelay:
-        return consumeTime(range, context.mode, ValueRange::All, UnitlessQuirk::Forbid);
-    case CSSPropertyAnimationDirection:
-        return consumeIdent<CSSValueNormal, CSSValueAlternate, CSSValueReverse, CSSValueAlternateReverse>(range);
-    case CSSPropertyAnimationDuration:
-    case CSSPropertyTransitionDuration:
-        return consumeTime(range, context.mode, ValueRange::NonNegative, UnitlessQuirk::Forbid);
-    case CSSPropertyAnimationFillMode:
-        return consumeIdent<CSSValueNone, CSSValueForwards, CSSValueBackwards, CSSValueBoth>(range);
-    case CSSPropertyAnimationIterationCount:
-        return consumeAnimationIterationCount(range);
-    case CSSPropertyAnimationName:
-        return consumeAnimationName(range);
-    case CSSPropertyAnimationPlayState:
-        return consumeIdent<CSSValueRunning, CSSValuePaused>(range);
-    case CSSPropertyAnimationComposition:
-        return consumeIdent<CSSValueAccumulate, CSSValueAdd, CSSValueReplace>(range);
-    case CSSPropertyTransitionProperty:
-        return consumeTransitionProperty(range);
-    case CSSPropertyAnimationTimingFunction:
-    case CSSPropertyTransitionTimingFunction:
-        return consumeAnimationTimingFunction(range, context);
-    default:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-}
-
-bool isValidAnimationPropertyList(CSSPropertyID property, const CSSValueList& valueList)
-{
-    if (property != CSSPropertyTransitionProperty || valueList.length() < 2)
-        return true;
-    for (auto& value : valueList) {
-        if (value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get()).isValueID()
-            && downcast<CSSPrimitiveValue>(value.get()).valueID() == CSSValueNone)
-            return false;
-    }
-    return true;
-}
-
-RefPtr<CSSValue> consumeAnimationPropertyList(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    RefPtr<CSSValueList> list;
-    RefPtr<CSSValue> singleton;
-    do {
-        RefPtr<CSSValue> currentValue = consumeAnimationValue(property, range, context);
-        if (!currentValue)
-            return nullptr;
-        
-        if (singleton && !list) {
-            list = CSSValueList::createCommaSeparated();
-            list->append(singleton.releaseNonNull());
-        }
-        
-        if (list)
-            list->append(currentValue.releaseNonNull());
-        else
-            singleton = WTFMove(currentValue);
-        
-    } while (consumeCommaIncludingWhitespace(range));
-
-    if (list) {
-        if (!isValidAnimationPropertyList(property, *list))
-            return nullptr;
-    
-        ASSERT(list->length());
-        return list;
-    }
-    
-    return singleton;
-}
-
-RefPtr<CSSValue> consumeShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool isBoxShadowProperty)
+static RefPtr<CSSValue> consumeShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool isBoxShadowProperty)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
-    RefPtr<CSSValueList> shadowValueList = CSSValueList::createCommaSeparated();
-    do {
-        if (auto shadowValue = consumeSingleShadow(range, context, isBoxShadowProperty, isBoxShadowProperty))
-            shadowValueList->append(shadowValue.releaseNonNull());
-        else
-            return nullptr;
-    } while (consumeCommaIncludingWhitespace(range));
-    return shadowValueList;
+    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeSingleShadow, context, isBoxShadowProperty, isBoxShadowProperty);
 }
 
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -6667,7 +6592,7 @@ RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range)
 
 RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
 {
-    RefPtr<CSSValueList> typeValue = CSSValueList::createSpaceSeparated();
+    auto typeValue = CSSValueList::createSpaceSeparated();
 
     auto firstValue = consumeIdent<CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
     if (!firstValue)
@@ -6909,7 +6834,9 @@ static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const
             componentValue = consumeBasicShape(range, context);
             shapeFound = true;
         } else if (range.peek().type() == IdentToken && !boxFound) {
-            componentValue = consumeIdent<CSSValueContentBox, CSSValuePaddingBox, CSSValueBorderBox, CSSValueMarginBox, CSSValueFillBox, CSSValueStrokeBox, CSSValueViewBox>(range);
+            // FIXME: The current Motion Path spec calls for this to be a <coord-box>, not a <geometry-box>, the difference being that the former does not contain "margin-box" as a valid term.
+            // However, the spec also has a few examples using "margin-box", so there seems to be some abiguity to be resolved. Tracked at https://github.com/w3c/fxtf-drafts/issues/481.
+            componentValue = CSSPropertyParsing::consumeGeometryBox(range);
             boxFound = true;
         }
         if (!componentValue)
@@ -7049,7 +6976,7 @@ static CSSValueID getBaselineKeyword(const CSSValue& value)
     return CSSValueBaseline;
 }
 
-RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
 {
     RefPtr<CSSPrimitiveValue> preference = consumeIdent<CSSValueFirst, CSSValueLast>(range);
     RefPtr<CSSPrimitiveValue> baseline = consumeIdent<CSSValueBaseline>(range);
@@ -7279,69 +7206,13 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserConte
     return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), WTFMove(mask));
 }
 
-RefPtr<CSSValue> consumeBackgroundBlendMode(CSSParserTokenRange& range)
+template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    CSSValueID id = range.peek().id();
-    if (id == CSSValueNormal || id == CSSValueOverlay || (id >= CSSValueMultiply && id <= CSSValueLuminosity))
-        return consumeIdent(range);
-    return nullptr;
-}
+    // https://www.w3.org/TR/css-backgrounds-3/#typedef-bg-size
+    //
+    //    <bg-size> = [ <length-percentage [0,∞]> | auto ]{1,2} | cover | contain
+    //
 
-RefPtr<CSSValue> consumeBackgroundAttachment(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueScroll, CSSValueFixed, CSSValueLocal>(range);
-}
-
-RefPtr<CSSValue> consumeBackgroundBox(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueBorderBox, CSSValuePaddingBox, CSSValueContentBox>(range);
-}
-
-RefPtr<CSSValue> consumeMaskClip(CSSParserTokenRange& range)
-{
-    // TODO: Also handle fill-box, stroke-box and view-box.
-    return consumeIdent<CSSValueBorderBox, CSSValuePaddingBox, CSSValueContentBox, CSSValueNoClip>(range);
-}
-
-RefPtr<CSSValue> consumeBackgroundClip(CSSParserTokenRange& range)
-{
-    if (auto value = consumeBackgroundBox(range))
-        return value;
-    return consumeIdent<CSSValueText, CSSValueWebkitText>(range);
-}
-
-RefPtr<CSSValue> consumePrefixedMaskComposite(CSSParserTokenRange& range)
-{
-    return consumeIdentRange(range, CSSValueClear, CSSValuePlusLighter);
-}
-
-RefPtr<CSSValue> consumeMaskComposite(CSSParserTokenRange& range)
-{
-    return consumeIdentRange(range, CSSValueAdd, CSSValueExclude);
-}
-
-RefPtr<CSSValue> consumeWebkitMaskSourceType(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueAuto, CSSValueAlpha, CSSValueLuminance>(range);
-}
-
-RefPtr<CSSValue> consumeWebkitMaskMode(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueAlpha, CSSValueLuminance, CSSValueMatchSource>(range);
-}
-
-static RefPtr<CSSValue> consumePrefixedBackgroundBox(CSSPropertyID property, CSSParserTokenRange& range)
-{
-    // The values 'border', 'padding' and 'content' are deprecated and do not apply to the version of the property that has the -webkit- prefix removed.
-    if (RefPtr<CSSPrimitiveValue> value = consumeIdentRange(range, CSSValueBorder, CSSValuePaddingBox))
-        return value;
-    if (range.peek().id() == CSSValueWebkitText || ((property == CSSPropertyWebkitBackgroundClip || property == CSSPropertyWebkitMaskClip) && range.peek().id() == CSSValueText))
-        return consumeIdent(range);
-    return nullptr;
-}
-
-RefPtr<CSSValue> consumeBackgroundSize(CSSPropertyID property, CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
     if (identMatches<CSSValueContain, CSSValueCover>(range.peek().id()))
         return consumeIdent(range);
 
@@ -7366,13 +7237,14 @@ RefPtr<CSSValue> consumeBackgroundSize(CSSPropertyID property, CSSParserTokenRan
     }
 
     if (!vertical) {
-        if (property == CSSPropertyWebkitBackgroundSize) {
+        if constexpr (property == CSSPropertyWebkitBackgroundSize) {
             // Legacy syntax: "-webkit-background-size: 10px" is equivalent to "background-size: 10px 10px".
             vertical = horizontal;
-        } else if (property == CSSPropertyBackgroundSize)
+        } else if constexpr (property == CSSPropertyBackgroundSize) {
             vertical = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
-        else
+        } else if constexpr (property == CSSPropertyMaskSize) {
             return horizontal;
+        }
     }
 
     return createPrimitiveValuePair(horizontal.releaseNonNull(), vertical.releaseNonNull(), identicalValueEncoding);
@@ -7423,8 +7295,9 @@ static bool consumeRepeatStyleComponent(CSSParserTokenRange& range, RefPtr<CSSPr
     return true;
 }
 
-RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range)
 {
+    // https://www.w3.org/TR/css-backgrounds-3/#typedef-repeat-style
     RefPtr<CSSPrimitiveValue> repeatX;
     RefPtr<CSSPrimitiveValue> repeatY;
     if (!consumeRepeatStyleComponent(range, repeatX, repeatY))
@@ -7435,81 +7308,128 @@ RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range)
     return CSSBackgroundRepeatValue::create(repeatX.releaseNonNull(), repeatY.releaseNonNull());
 }
 
+static RefPtr<CSSValue> consumeSingleBackgroundRepeat(CSSParserTokenRange& range)
+{
+    // https://www.w3.org/TR/css-backgrounds-3/#background-repeat
+    return consumeRepeatStyle(range);
+}
+
+static RefPtr<CSSValue> consumeSingleBackgroundPositionX(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // https://www.w3.org/TR/css-backgrounds-3/#background-position
+    return consumePositionX(range, context.mode);
+}
+
+static RefPtr<CSSValue> consumeSingleBackgroundPositionY(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // https://www.w3.org/TR/css-backgrounds-3/#background-position
+    return consumePositionY(range, context.mode);
+}
+
+RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // https://www.w3.org/TR/css-backgrounds-3/#background-size
+    return consumeBackgroundSize<CSSPropertyBackgroundSize>(range, context.mode);
+}
+
+static RefPtr<CSSValue> consumeSingleMaskRepeat(CSSParserTokenRange& range)
+{
+    // https://www.w3.org/TR/css-masking-1/#the-mask-repeat
+    return consumeRepeatStyle(range);
+}
+
+RefPtr<CSSValue> consumeSingleMaskSize(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // https://www.w3.org/TR/css-masking-1/#the-mask-size
+    return consumeBackgroundSize<CSSPropertyMaskSize>(range, context.mode);
+}
+
+static RefPtr<CSSValue> consumeSingleWebkitBackgroundSize(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    return consumeBackgroundSize<CSSPropertyWebkitBackgroundSize>(range, context.mode);
+}
+
+static RefPtr<CSSValue> consumeSingleWebkitMaskPositionX(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    return consumePositionX(range, context.mode);
+}
+
+static RefPtr<CSSValue> consumeSingleWebkitMaskPositionY(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    return consumePositionY(range, context.mode);
+}
+
 RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
 {
     switch (property) {
+    // background-*
     case CSSPropertyBackgroundClip:
-        return consumeBackgroundClip(range);
+        return CSSPropertyParsing::consumeSingleBackgroundClip(range);
     case CSSPropertyBackgroundBlendMode:
-        return consumeBackgroundBlendMode(range);
+        return CSSPropertyParsing::consumeSingleBackgroundBlendMode(range);
     case CSSPropertyBackgroundAttachment:
-        return consumeBackgroundAttachment(range);
+        return CSSPropertyParsing::consumeSingleBackgroundAttachment(range);
     case CSSPropertyBackgroundOrigin:
-        return consumeBackgroundBox(range);
-    case CSSPropertyMaskComposite:
-        return consumeMaskComposite(range);
-    case CSSPropertyWebkitMaskComposite:
-        return consumePrefixedMaskComposite(range);
-    case CSSPropertyWebkitBackgroundClip:
-    case CSSPropertyWebkitBackgroundOrigin:
-    case CSSPropertyWebkitMaskClip:
-    case CSSPropertyMaskOrigin:
-        return consumePrefixedBackgroundBox(property, range);
-    case CSSPropertyMaskClip:
-        return consumeMaskClip(range);
+        return CSSPropertyParsing::consumeSingleBackgroundOrigin(range);
     case CSSPropertyBackgroundImage:
-    case CSSPropertyMaskImage:
-        return consumeImageOrNone(range, context);
+        return CSSPropertyParsing::consumeSingleBackgroundImage(range, context);
     case CSSPropertyBackgroundRepeat:
-    case CSSPropertyMaskRepeat:
-        return consumeRepeatStyle(range);
-    case CSSPropertyMaskMode:
-        return consumeWebkitMaskMode(range);
-    case CSSPropertyWebkitMaskSourceType:
-        return consumeWebkitMaskSourceType(range);
+        return consumeSingleBackgroundRepeat(range);
     case CSSPropertyBackgroundPositionX:
-    case CSSPropertyWebkitMaskPositionX:
-        return consumePositionX(range, context.mode);
+        return consumeSingleBackgroundPositionX(range, context);
     case CSSPropertyBackgroundPositionY:
-    case CSSPropertyWebkitMaskPositionY:
-        return consumePositionY(range, context.mode);
+        return consumeSingleBackgroundPositionY(range, context);
     case CSSPropertyBackgroundSize:
-    case CSSPropertyWebkitBackgroundSize:
-    case CSSPropertyMaskSize:
-        return consumeBackgroundSize(property, range, context.mode);
+        return consumeSingleBackgroundSize(range, context);
     case CSSPropertyBackgroundColor:
         return consumeColor(range, context);
-    default:
-        break;
-    };
-    return nullptr;
-}
 
-void addBackgroundValue(RefPtr<CSSValue>& list, Ref<CSSValue>&& value)
-{
-    if (list) {
-        if (!list->isBaseValueList()) {
-            RefPtr<CSSValue> firstValue = list;
-            list = CSSValueList::createCommaSeparated();
-            downcast<CSSValueList>(*list).append(firstValue.releaseNonNull());
-        }
-        downcast<CSSValueList>(*list).append(WTFMove(value));
-    } else {
-        // To conserve memory we don't actually wrap a single value in a list.
-        list = WTFMove(value);
-    }
+    // mask-*
+    case CSSPropertyMaskComposite:
+        return CSSPropertyParsing::consumeSingleMaskComposite(range);
+    case CSSPropertyMaskOrigin:
+        return CSSPropertyParsing::consumeSingleMaskOrigin(range);
+    case CSSPropertyMaskClip:
+        return CSSPropertyParsing::consumeSingleMaskClip(range);
+    case CSSPropertyMaskImage:
+        return CSSPropertyParsing::consumeSingleMaskImage(range, context);
+    case CSSPropertyMaskMode:
+        return CSSPropertyParsing::consumeSingleMaskMode(range);
+    case CSSPropertyMaskRepeat:
+        return consumeSingleMaskRepeat(range);
+    case CSSPropertyMaskSize:
+        return consumeSingleMaskSize(range, context);
+
+    // -webkit-background-*
+    case CSSPropertyWebkitBackgroundSize:
+        return consumeSingleWebkitBackgroundSize(range, context);
+    case CSSPropertyWebkitBackgroundClip:
+        return CSSPropertyParsing::consumeSingleWebkitBackgroundClip(range);
+    case CSSPropertyWebkitBackgroundOrigin:
+        return CSSPropertyParsing::consumeSingleWebkitBackgroundOrigin(range);
+
+    // -webkit-mask-*
+    case CSSPropertyWebkitMaskClip:
+        return CSSPropertyParsing::consumeSingleWebkitMaskClip(range);
+    case CSSPropertyWebkitMaskComposite:
+        return CSSPropertyParsing::consumeSingleWebkitMaskComposite(range);
+    case CSSPropertyWebkitMaskSourceType:
+        return CSSPropertyParsing::consumeSingleWebkitMaskSourceType(range);
+    case CSSPropertyWebkitMaskPositionX:
+        return consumeSingleWebkitMaskPositionX(range, context);
+    case CSSPropertyWebkitMaskPositionY:
+        return consumeSingleWebkitMaskPositionY(range, context);
+
+    default:
+        return nullptr;
+    };
 }
 
 RefPtr<CSSValue> consumeCommaSeparatedBackgroundComponent(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    RefPtr<CSSValue> result;
-    do {
-        RefPtr<CSSValue> value = consumeBackgroundComponent(property, range, context);
-        if (!value)
-            return nullptr;
-        addBackgroundValue(result, value.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    return result;
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, [] (auto& range, auto property, auto context) -> RefPtr<CSSValue> {
+        return consumeBackgroundComponent(property, range, context);
+    }, property, context);
 }
 
 bool isSelfPositionKeyword(CSSValueID id)

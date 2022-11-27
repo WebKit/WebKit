@@ -395,6 +395,56 @@ inline double CSSPrimitiveValue::computeDegrees(CSSUnitType type, double angle)
     }
 }
 
+inline CSSValueID valueID(const CSSPrimitiveValue& value)
+{
+    return value.valueID();
+}
+
+inline CSSValueID valueID(const CSSPrimitiveValue* value)
+{
+    return value ? valueID(*value) : CSSValueInvalid;
+}
+
+inline CSSValueID valueID(const CSSValue& value)
+{
+    return value.isPrimitiveValue() ? valueID(downcast<CSSPrimitiveValue>(value)) : CSSValueInvalid;
+}
+
+inline CSSValueID valueID(const CSSValue* value)
+{
+    return value ? valueID(*value) : CSSValueInvalid;
+}
+
+inline bool isValueID(const CSSPrimitiveValue& value, CSSValueID id)
+{
+    return valueID(value) == id;
+}
+
+inline bool isValueID(const CSSPrimitiveValue* value, CSSValueID id)
+{
+    return valueID(value) == id;
+}
+
+inline bool isValueID(const CSSValue& value, CSSValueID id)
+{
+    return valueID(value) == id;
+}
+
+inline bool isValueID(const CSSValue* value, CSSValueID id)
+{
+    return valueID(value) == id;
+}
+
+inline bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
+{
+    return isValueID(value.get(), id);
+}
+
+inline bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
+{
+    return isValueID(value.get(), id);
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPrimitiveValue, isPrimitiveValue())

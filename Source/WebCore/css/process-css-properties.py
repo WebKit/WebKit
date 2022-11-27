@@ -1009,7 +1009,9 @@ class Term:
     @staticmethod
     def from_json(parsing_context, key_path, json_value):
         if type(json_value) is str:
-            if ReferenceTerm.is_reference_string(json_value):
+            if RepetitionTerm.is_repetition_term(json_value):
+                return RepetitionTerm.from_json(parsing_context, key_path, {"kind": "repetition", "value": json_value})
+            elif ReferenceTerm.is_reference_term(json_value):
                 return ReferenceTerm.from_json(parsing_context, key_path, {"kind": "reference", "value": json_value})
             else:
                 return KeywordTerm.from_json(parsing_context, key_path, {"kind": "keyword", "value": json_value})
@@ -1022,15 +1024,16 @@ class Term:
             raise Exception(f"Invalid Term found at {key_path}. All terms must have a 'value' specified.")
 
         if "kind" not in json_value:
-            # As a shorthand, allow 'keyword' and 'reference' terms to skip specifying a kind, as it is umambiguous
-            # what kind they are.
-            if type(json_value["value"] is str):
-                if ReferenceTerm.is_reference_string(json_value["value"]):
+            # If "kind" is not explicitly defined, check to see if one of the shorthands is being used.
+            if type(json_value["value"]) is str:
+                if RepetitionTerm.is_repetition_term(json_value["value"]):
+                    return RepetitionTerm.from_json(parsing_context, key_path, {"kind": "repetition", **json_value})
+                elif ReferenceTerm.is_reference_term(json_value["value"]):
                     return ReferenceTerm.from_json(parsing_context, key_path, {"kind": "reference", **json_value})
                 else:
                     return KeywordTerm.from_json(parsing_context, key_path, {"kind": "keyword", **json_value})
 
-            raise Exception(f"Invalid Term found at {key_path}. All terms with non-string values must have a 'kind' specified.")
+            raise Exception(f"Unknown Term found at {key_path}. The kind of term could not be determined from the value. Please add an explicit 'kind' property.")
 
         kind = json_value["kind"]
         if kind == "match-one":
@@ -1039,6 +1042,8 @@ class Term:
             return ReferenceTerm.from_json(parsing_context, key_path, json_value)
         elif kind == "keyword":
             return KeywordTerm.from_json(parsing_context, key_path, json_value)
+        elif kind == "repetition":
+            return RepetitionTerm.from_json(parsing_context, key_path, json_value)
         else:
             raise Exception(f"Invalid Term found at {key_path}. Unknown 'kind' specified: '{kind}'.")
 
@@ -1207,7 +1212,7 @@ class ReferenceTerm:
         return self.__str__()
 
     @staticmethod
-    def is_reference_string(string):
+    def is_reference_term(string):
         string = string.strip()
         return string.startswith('<') and string.endswith('>')
 
@@ -1396,6 +1401,60 @@ class MatchOneTerm:
     @property
     def has_only_fast_path_keyword_terms(self):
         return all(isinstance(term, KeywordTerm) and term.is_eligible_for_fast_path for term in self.terms)
+
+
+class RepetitionTerm:
+    schema = Term.schema + Schema(
+        Schema.Entry("single-value-optimization", allowed_types=[bool], default_value=True),
+        Schema.Entry("value", allowed_types=[list, dict, str], required=True),
+    )
+
+    def __init__(self, repeated_term, **dictionary):
+        RepetitionTerm.schema.set_attributes_from_dictionary(dictionary, instance=self)
+        self.repeated_term = repeated_term
+
+    def __str__(self):
+        return f"[{str(self.repeated_term)}#]"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @staticmethod
+    def is_repetition_term(string):
+        return string.strip().endswith('#')
+
+    @staticmethod
+    def extract_subterm(string):
+        assert(RepetitionTerm.is_repetition_term(string))
+        return string.strip()[:-1]
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value):
+        assert(type(json_value) is dict)
+        RepetitionTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"RepetitionTerm")
+
+        if "enable-if" in json_value and not parsing_context.is_enabled(conditional=json_value["enable-if"]):
+            if parsing_context.verbose:
+                print(f"SKIPPED grammar term {json_value['value']} in {key_path} due to failing to satisfy 'enable-if' condition, '{json_value['enable-if']}', with active macro set")
+            return None
+
+        if type(json_value["value"]) is str:
+            if not RepetitionTerm.is_repetition_term(json_value["value"]):
+                raise Exception(f"Invalid string value '{json_value['value']}' for repetition term at '{key_path}.")
+            repeated_term = Term.from_json(parsing_context, key_path, RepetitionTerm.extract_subterm(json_value["value"]))
+        else:
+            repeated_term = json_value["value"]
+        del json_value["value"]
+
+        return RepetitionTerm(repeated_term, **json_value)
+
+    def perform_fixups(self, all_rules):
+        self.repeated_term = self.repeated_term.perform_fixups(all_rules)
+        return self
+
+    def perform_fixups_for_values_references(self, values):
+        self.repeated_term = self.repeated_term.perform_fixups_for_values_references(values)
+        return self
 
 
 # Container for the name and root term for a grammar. Used for both shared rules and property specific grammars.
@@ -3397,8 +3456,47 @@ class TermGenerator(object):
     def make(term, keyword_fast_path_generator=None):
         if isinstance(term, MatchOneTerm):
             return TermGeneratorMatchOneTerm(term, keyword_fast_path_generator)
+        elif isinstance(term, RepetitionTerm):
+            return TermGeneratorRepetitionTerm(term)
+        elif isinstance(term, ReferenceTerm):
+            return TermGeneratorReferenceTerm(term)
         else:
-            raise Exception(f"Unexpected root term - {term}")
+            raise Exception(f"Unknown term type - {type(term)} - {term}")
+
+
+class TermGeneratorRepetitionTerm(TermGenerator):
+    def __init__(self, term):
+        self.term = term
+        self.repeated_term_generator = TermGenerator.make(term.repeated_term, None)
+        self.requires_context = self.repeated_term_generator.requires_context
+
+    def generate_conditional(self, *, to, range_string, context_string):
+        self._generate_lambda(to=to, range_string=range_string, context_string=context_string)
+        to.write(f"if (auto result = {self._generate_call_string(range_string=range_string, context_string=context_string)})")
+        with to.indent():
+            to.write(f"return result;")
+
+    def generate_unconditional(self, *, to, range_string, context_string):
+        self._generate_lambda(to=to, range_string=range_string, context_string=context_string)
+        to.write(f"return {self._generate_call_string(range_string=range_string, context_string=context_string)};")
+
+    def _generate_lambda(self, *, to, range_string, context_string):
+        lambda_declaration_paramaters = ["CSSParserTokenRange& range"]
+        if self.repeated_term_generator.requires_context:
+            lambda_declaration_paramaters += ["const CSSParserContext& context"]
+
+        to.write(f"auto lambda = []({', '.join(lambda_declaration_paramaters)}) -> RefPtr<CSSValue> {{")
+        with to.indent():
+            self.repeated_term_generator.generate_unconditional(to=to, range_string="range", context_string="context")
+        to.write(f"}};")
+
+    def _generate_call_string(self, *, range_string, context_string):
+        parameters = [range_string, "lambda"]
+        if self.repeated_term_generator.requires_context:
+            parameters += [context_string]
+
+        with_or_without = 'With' if self.term.single_value_optimization else 'Without'
+        return f"consumeCommaSeparatedList{with_or_without}SingleValueOptimization({', '.join(parameters)})"
 
 
 class TermGeneratorMatchOneTerm(TermGenerator):
@@ -3414,6 +3512,7 @@ class TermGeneratorMatchOneTerm(TermGenerator):
         fast_path_keyword_terms = []
         non_fast_path_keyword_terms = []
         reference_terms = []
+        repetition_terms = []
 
         for sub_term in term.terms:
             if isinstance(sub_term, KeywordTerm):
@@ -3423,8 +3522,10 @@ class TermGeneratorMatchOneTerm(TermGenerator):
                     non_fast_path_keyword_terms.append(sub_term)
             elif isinstance(sub_term, ReferenceTerm):
                 reference_terms.append(sub_term)
+            elif isinstance(sub_term, RepetitionTerm):
+                repetition_terms.append(sub_term)
             else:
-                raise Exception(f"Only KeywordTerm and ReferenceTerm terms are supported inside MatchOneTerm at this time: '{term}' - {sub_term}")
+                raise Exception(f"Only KeywordTerm, ReferenceTerm and RepetitionTerm terms are supported inside MatchOneTerm at this time: '{term}' - {sub_term}")
 
         # Build a list of generators for the terms, starting with all (if any) the keywords at once.
         term_generators = []
@@ -3435,6 +3536,8 @@ class TermGeneratorMatchOneTerm(TermGenerator):
             term_generators += [TermGeneratorNonFastPathKeywordTerm(non_fast_path_keyword_terms)]
         if reference_terms:
             term_generators += [TermGeneratorReferenceTerm(sub_term) for sub_term in reference_terms]
+        if repetition_terms:
+            term_generators += [TermGeneratorRepetitionTerm(sub_term) for sub_term in repetition_terms]
         return term_generators
 
     def generate_conditional(self, *, to, range_string, context_string):
