@@ -306,10 +306,15 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyGridColumn:
     case CSSPropertyGridRow:
         return getGridRowColumnShorthandValue(shorthand);
+    case CSSPropertyPageBreakInside:
+    case CSSPropertyWebkitColumnBreakInside:
+        return breakInsideShorthandValue(shorthand);
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:
-    case CSSPropertyPageBreakInside:
-        return pageBreakPropertyValue(shorthand);
+        return pageBreakValue(shorthand);
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+        return webkitColumnBreakValue(shorthand);
     case CSSPropertyPlaceContent:
     case CSSPropertyPlaceItems:
     case CSSPropertyPlaceSelf:
@@ -323,6 +328,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyTextDecorationSkip:
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyWebkitPerspective:
     case CSSPropertyWebkitTextOrientation:
         ASSERT(shorthand.length() == 1);
         if (auto value = getPropertyCSSValue(shorthand.properties()[0]))
@@ -333,12 +339,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         // FIXME: Stop ignoring marker-mid and marker-end (http://webkit.org/b/248308).
         if (auto value = getPropertyCSSValue(CSSPropertyMarkerStart))
             return value->cssText();
-        return String();
-    case CSSPropertyWebkitColumnBreakAfter:
-    case CSSPropertyWebkitColumnBreakBefore:
-    case CSSPropertyWebkitColumnBreakInside:
-    case CSSPropertyWebkitPerspective:
-        // FIXME: Provide a serialization.
         return String();
     default:
         ASSERT_NOT_REACHED();
@@ -1275,30 +1275,70 @@ String StyleProperties::borderPropertyValue(const StylePropertyShorthand& width,
     return result.toString();
 }
 
-String StyleProperties::pageBreakPropertyValue(const StylePropertyShorthand& shorthand) const
+String StyleProperties::breakInsideShorthandValue(const StylePropertyShorthand& shorthand) const
 {
     ASSERT(shorthand.length() == 1);
-    auto value = getPropertyCSSValue(shorthand.properties()[0]);
-    if (!value)
-        return String();
+    CSSPropertyID longhand = shorthand.properties()[0];
+    ASSERT(longhand == CSSPropertyBreakInside);
+    auto valueID = propertyAsValueID(longhand);
+    if (!valueID)
+        return nullString();
     // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
-    if (value->isCSSWideKeyword())
-        return value->cssText();
-    
-    if (!is<CSSPrimitiveValue>(*value))
-        return String();
-    
-    CSSValueID valueId = downcast<CSSPrimitiveValue>(*value).valueID();
-    switch (valueId) {
+    if (isCSSWideKeyword(*valueID))
+        return nameString(*valueID);
+    switch (*valueID) {
+    case CSSValueAuto:
+    case CSSValueAvoid:
+        return nameString(*valueID);
+    default:
+        return nullString();
+    }
+}
+
+String StyleProperties::pageBreakValue(const StylePropertyShorthand& shorthand) const
+{
+    ASSERT(shorthand.length() == 1);
+    CSSPropertyID longhand = shorthand.properties()[0];
+    ASSERT(longhand == CSSPropertyBreakAfter || longhand == CSSPropertyBreakBefore);
+    auto valueID = propertyAsValueID(longhand);
+    if (!valueID)
+        return nullString();
+    // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
+    if (isCSSWideKeyword(*valueID))
+        return nameString(*valueID);
+    switch (*valueID) {
     case CSSValuePage:
         return "always"_s;
     case CSSValueAuto:
     case CSSValueAvoid:
     case CSSValueLeft:
     case CSSValueRight:
-        return value->cssText();
+        return nameString(*valueID);
     default:
-        return String();
+        return nullString();
+    }
+}
+
+String StyleProperties::webkitColumnBreakValue(const StylePropertyShorthand& shorthand) const
+{
+    ASSERT(shorthand.length() == 1);
+    CSSPropertyID longhand = shorthand.properties()[0];
+    ASSERT(longhand == CSSPropertyBreakAfter || longhand == CSSPropertyBreakBefore);
+    auto valueID = propertyAsValueID(longhand);
+    if (!valueID)
+        return nullString();
+    // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
+    if (isCSSWideKeyword(*valueID))
+        return nameString(*valueID);
+    switch (*valueID) {
+    case CSSValueColumn:
+        return "always"_s;
+    case CSSValueAvoidColumn:
+        return "avoid"_s;
+    case CSSValueAuto:
+        return nameString(*valueID);
+    default:
+        return nullString();
     }
 }
 
