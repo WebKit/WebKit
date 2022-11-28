@@ -165,31 +165,6 @@ if (NOT ${CMAKE_CXX_FLAGS} STREQUAL "")
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(/W4)
 endif ()
 
-if (MSVC_STATIC_RUNTIME)
-    message(STATUS "Using multithreaded, static version of the run-time library")
-    set(MSVC_RUNTIME_COMPILE_FLAG "/MT")
-    set(MSVC_RUNTIME_LINKER_FLAGS "/NODEFAULTLIB:MSVCRT /NODEFAULTLIB:MSVCRTD")
-else ()
-    message(STATUS "Using multithreaded, dynamic version of the run-time library")
-    set(MSVC_RUNTIME_COMPILE_FLAG "/MD")
-    # No linker flags are required
-endif ()
-
-foreach (flag_var
-    CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-    CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-    CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-    CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-    # Use the multithreaded static runtime library instead of the default DLL runtime.
-    string(REGEX REPLACE "/MD" "${MSVC_RUNTIME_COMPILE_FLAG}" ${flag_var} "${${flag_var}}")
-
-    # No debug runtime, even in debug builds.
-    if (NOT DEBUG_SUFFIX)
-        string(REGEX REPLACE "${MSVC_RUNTIME_COMPILE_FLAG}d" "${MSVC_RUNTIME_COMPILE_FLAG}" ${flag_var} "${${flag_var}}")
-        string(REGEX REPLACE "/D_DEBUG" "" ${flag_var} "${${flag_var}}")
-    endif ()
-endforeach ()
-
 # Make sure incremental linking is turned off, as it creates unacceptably long link times.
 string(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replace_CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS})
 set(CMAKE_SHARED_LINKER_FLAGS "${replace_CMAKE_SHARED_LINKER_FLAGS} /INCREMENTAL:NO")
