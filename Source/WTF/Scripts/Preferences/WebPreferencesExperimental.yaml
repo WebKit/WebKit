@@ -394,6 +394,18 @@ CSSInputSecurityEnabled:
     WebCore:
       default: false
 
+CSSLeadingTrimEnabled:
+  type: bool
+  humanReadableName: "CSS leading-trim property"
+  humanReadableDescription: "Enable leading-trim"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSMotionPathEnabled:
   type: bool
   humanReadableName: "CSS Motion Path"

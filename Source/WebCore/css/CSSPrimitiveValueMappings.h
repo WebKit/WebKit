@@ -1086,6 +1086,47 @@ template<> inline CSSPrimitiveValue::operator Clear() const
     return Clear::None;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LeadingTrim value)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (value) {
+    case LeadingTrim::Normal:
+        m_value.valueID = CSSValueNormal;
+        break;
+    case LeadingTrim::Start:
+        m_value.valueID = CSSValueStart;
+        break;
+    case LeadingTrim::End:
+        m_value.valueID = CSSValueEnd;
+        break;
+    case LeadingTrim::Both:
+        m_value.valueID = CSSValueBoth;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator LeadingTrim() const
+{
+    ASSERT(isValueID());
+
+    switch (m_value.valueID) {
+    case CSSValueNormal:
+        return LeadingTrim::Normal;
+    case CSSValueStart:
+        return LeadingTrim::Start;
+    case CSSValueEnd:
+        return LeadingTrim::End;
+    case CSSValueBoth:
+        return LeadingTrim::Both;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return LeadingTrim::Normal;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CursorType e)
     : CSSValue(PrimitiveClass)
 {

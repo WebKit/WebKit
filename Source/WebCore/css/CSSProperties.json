@@ -3292,6 +3292,21 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#KerningProperty"
             }
         },
+        "leading-trim": {
+            "values": [
+                "normal",
+                "start",
+                "end",
+                "both"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssLeadingTrimEnabled"
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-inline-3/#leading-trim"
+            }
+        },
         "left": {
             "codegen-properties": {
                 "initial": "initialOffset",
