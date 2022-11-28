@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSAnimation.h"
 
-#include "Animation.h"
 #include "AnimationEffect.h"
 #include "CSSAnimationEvent.h"
 #include "InspectorInstrumentation.h"
@@ -281,9 +280,9 @@ void CSSAnimation::updateKeyframesIfNeeded(const RenderStyle* oldStyle, const Re
         keyframeEffect.computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
 }
 
-Ref<DeclarativeAnimationEvent> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, PseudoId pseudoId)
+Ref<DeclarativeAnimationEvent> CSSAnimation::createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId)
 {
-    return CSSAnimationEvent::create(eventType, this, std::nullopt, elapsedTime, pseudoId, m_animationName);
+    return CSSAnimationEvent::create(eventType, this, scheduledTime, elapsedTime, pseudoId, m_animationName);
 }
 
 } // namespace WebCore

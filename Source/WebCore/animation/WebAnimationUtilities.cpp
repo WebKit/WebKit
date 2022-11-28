@@ -181,6 +181,35 @@ bool compareAnimationsByCompositeOrder(const WebAnimation& a, const WebAnimation
     return a.globalPosition() < b.globalPosition();
 }
 
+template <typename T>
+static std::optional<bool> compareDeclarativeAnimationEvents(const AnimationEventBase& a, const AnimationEventBase& b)
+{
+    bool aIsDeclarativeEvent = is<T>(a);
+    bool bIsDeclarativeEvent = is<T>(b);
+    if (!aIsDeclarativeEvent && !bIsDeclarativeEvent)
+        return std::nullopt;
+
+    if (aIsDeclarativeEvent != bIsDeclarativeEvent)
+        return !bIsDeclarativeEvent;
+
+    auto aScheduledTime = a.scheduledTime();
+    auto bScheduledTime = b.scheduledTime();
+    if (aScheduledTime != bScheduledTime)
+        return aScheduledTime < bScheduledTime;
+
+    auto* aTarget = a.target();
+    auto* bTarget = b.target();
+    if (aTarget == bTarget)
+        return false;
+
+    RELEASE_ASSERT(is<Element>(aTarget));
+    RELEASE_ASSERT(is<Element>(bTarget));
+
+    auto aStyleable = Styleable(downcast<Element>(*aTarget), downcast<T>(a).pseudoId());
+    auto bStyleable = Styleable(downcast<Element>(*bTarget), downcast<T>(b).pseudoId());
+    return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(aStyleable, bStyleable);
+}
+
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const AnimationEventBase& b)
 {
     // AnimationPlaybackEvent instances sort first.
@@ -197,8 +226,8 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
         // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before
         // events scheduled to occur later and events whose scheduled event time is unresolved sort before events with a
         // resolved scheduled event time.
-        auto aScheduledTime = downcast<AnimationPlaybackEvent>(a).scheduledTime();
-        auto bScheduledTime = downcast<AnimationPlaybackEvent>(b).scheduledTime();
+        auto aScheduledTime = a.scheduledTime();
+        auto bScheduledTime = b.scheduledTime();
         if (aScheduledTime != bScheduledTime) {
             if (aScheduledTime && bScheduledTime)
                 return *aScheduledTime < *bScheduledTime;
@@ -238,22 +267,12 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
     }
 
     // CSSTransitionEvent instances sort next.
-    bool aIsCSSTransition = is<CSSTransitionEvent>(a);
-    bool bIsCSSTransition = is<CSSTransitionEvent>(b);
-    if (aIsCSSTransition || bIsCSSTransition) {
-        if (aIsCSSTransition == bIsCSSTransition)
-            return false;
-        return !bIsCSSTransition;
-    }
+    if (auto sorted = compareDeclarativeAnimationEvents<CSSTransitionEvent>(a, b))
+        return *sorted;
 
     // CSSAnimationEvent instances sort last.
-    bool aIsCSSAnimation = is<CSSAnimationEvent>(a);
-    bool bIsCSSAnimation = is<CSSAnimationEvent>(b);
-    if (aIsCSSAnimation || bIsCSSAnimation) {
-        if (aIsCSSAnimation == bIsCSSAnimation)
-            return false;
-        return !bIsCSSAnimation;
-    }
+    if (auto sorted = compareDeclarativeAnimationEvents<CSSAnimationEvent>(a, b))
+        return *sorted;
 
     return false;
 }
