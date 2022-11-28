@@ -53,6 +53,8 @@ PLATFORM_HEADER_DIR := $(realpath $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLD
 PLATFORM_HEADER_DEPENDENCIES := $(filter $(PLATFORM_HEADER_DIR)/%,$(realpath $(shell $(call platform_h_compiler_command,-M) | $(PERL) -e "local \$$/; my (\$$target, \$$deps) = split(/:/, <>); print split(/\\\\/, \$$deps);")))
 FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = DerivedSources.make $(PLATFORM_HEADER_DEPENDENCIES)
 
+TEXT_PREPROCESSOR_FLAGS=-E -P -w
+
 # --------
 
 VPATH = \
@@ -102,45 +104,56 @@ BUILTINS_GENERATOR_SCRIPTS = \
     $(JavaScriptCore_SCRIPTS_DIR)/lazywriter.py \
 #
 
-JavaScriptCore_BUILTINS_SOURCES = \
-    $(JavaScriptCore)/builtins/AsyncFromSyncIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/ArrayConstructor.js \
-    $(JavaScriptCore)/builtins/ArrayIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/ArrayPrototype.js \
-    $(JavaScriptCore)/builtins/AsyncIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/AsyncFunctionPrototype.js \
-    $(JavaScriptCore)/builtins/AsyncGeneratorPrototype.js \
-    $(JavaScriptCore)/builtins/DatePrototype.js \
-    $(JavaScriptCore)/builtins/FunctionPrototype.js \
-    $(JavaScriptCore)/builtins/GeneratorPrototype.js \
-    $(JavaScriptCore)/builtins/GlobalObject.js \
-    $(JavaScriptCore)/builtins/GlobalOperations.js \
-    $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
-    $(JavaScriptCore)/builtins/IteratorHelpers.js \
-    $(JavaScriptCore)/builtins/IteratorPrototype.js \
-    $(JavaScriptCore)/builtins/MapIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/MapPrototype.js \
-    $(JavaScriptCore)/builtins/ModuleLoader.js \
-    $(JavaScriptCore)/builtins/NumberConstructor.js \
-    $(JavaScriptCore)/builtins/ObjectConstructor.js \
-    $(JavaScriptCore)/builtins/PromiseConstructor.js \
-    $(JavaScriptCore)/builtins/PromiseOperations.js \
-    $(JavaScriptCore)/builtins/PromisePrototype.js \
-    $(JavaScriptCore)/builtins/ProxyHelpers.js \
-    $(JavaScriptCore)/builtins/ReflectObject.js \
-    $(JavaScriptCore)/builtins/RegExpPrototype.js \
-    ${JavaScriptCore}/builtins/RegExpStringIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/SetIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/SetPrototype.js \
-    $(JavaScriptCore)/builtins/ShadowRealmPrototype.js \
-    $(JavaScriptCore)/builtins/StringConstructor.js \
-    $(JavaScriptCore)/builtins/StringIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/StringPrototype.js \
-    $(JavaScriptCore)/builtins/TypedArrayConstructor.js \
-    $(JavaScriptCore)/builtins/TypedArrayPrototype.js \
-    $(JavaScriptCore)/builtins/WebAssembly.js \
-    $(JavaScriptCore)/inspector/InjectedScriptSource.js \
+JavaScriptCore_BUILTINS_SOURCE_NAMES = \
+    builtins/AsyncFromSyncIteratorPrototype.js \
+    builtins/ArrayConstructor.js \
+    builtins/ArrayIteratorPrototype.js \
+    builtins/ArrayPrototype.js \
+    builtins/AsyncIteratorPrototype.js \
+    builtins/AsyncFunctionPrototype.js \
+    builtins/AsyncGeneratorPrototype.js \
+    builtins/DatePrototype.js \
+    builtins/FunctionPrototype.js \
+    builtins/GeneratorPrototype.js \
+    builtins/GlobalObject.js \
+    builtins/GlobalOperations.js \
+    builtins/InternalPromiseConstructor.js \
+    builtins/IteratorHelpers.js \
+    builtins/IteratorPrototype.js \
+    builtins/MapIteratorPrototype.js \
+    builtins/MapPrototype.js \
+    builtins/ModuleLoader.js \
+    builtins/NumberConstructor.js \
+    builtins/ObjectConstructor.js \
+    builtins/PromiseConstructor.js \
+    builtins/PromiseOperations.js \
+    builtins/PromisePrototype.js \
+    builtins/ProxyHelpers.js \
+    builtins/ReflectObject.js \
+    builtins/RegExpPrototype.js \
+    builtins/RegExpStringIteratorPrototype.js \
+    builtins/SetIteratorPrototype.js \
+    builtins/SetPrototype.js \
+    builtins/ShadowRealmPrototype.js \
+    builtins/StringConstructor.js \
+    builtins/StringIteratorPrototype.js \
+    builtins/StringPrototype.js \
+    builtins/TypedArrayConstructor.js \
+    builtins/TypedArrayPrototype.js \
+    builtins/WebAssembly.js \
+    inspector/InjectedScriptSource.js \
 #
+
+JavaScriptCore_BUILTINS_SOURCES = $(addprefix preprocessed/,$(JavaScriptCore_BUILTINS_SOURCE_NAMES))
+
+$(JavaScriptCore_BUILTINS_SOURCES): preprocessed/%.js : $(addprefix $(JavaScriptCore)/,%.js) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES) $(JavaScriptCore)/builtins/JSCBuiltinConfig.h
+	@echo Pre-processing $< JS file...
+	@mkdir -p $(@D)
+	cat $< | $(CC) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "$(JavaScriptCore)/builtins/JSCBuiltinConfig.h" - > $@
+
+preprocessed/JSCBuiltinLicense.js : $(addprefix $(JavaScriptCore)/,$(JavaScriptCore_BUILTINS_SOURCE_NAMES))
+	@mkdir -p $(@D)
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/collect-copyright-comments.py $^ --output $@
 
 # The combined output file depends on the contents of builtins and generator scripts, so
 # adding, modifying, or removing builtins or scripts will trigger regeneration of files.
@@ -150,8 +163,8 @@ JavaScriptCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/Update
 
 JSC_BUILTINS_FILES_PATTERNS = $(subst .,%,$(JSC_BUILTINS_FILES))
 
-$(JSC_BUILTINS_FILES_PATTERNS) : $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --combined --output-directory . --framework JavaScriptCore $(JavaScriptCore_BUILTINS_SOURCES)
+$(JSC_BUILTINS_FILES_PATTERNS) : $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) preprocessed/JSCBuiltinLicense.js JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --combined --output-directory . --copyright preprocessed/JSCBuiltinLicense.js --framework JavaScriptCore $(JavaScriptCore_BUILTINS_SOURCES)
 
 # Perfect hash lookup tables for JavaScript classes.
 
@@ -397,4 +410,6 @@ WasmB3IRGeneratorInlines.h: $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInli
 
 all : \
     $(OBJECT_LUT_HEADERS) \
+    $(JavaScriptCore_BUILTINS_SOURCES) \
+    $(preprocessed/JSCBuiltinLicense.js) \
 #
