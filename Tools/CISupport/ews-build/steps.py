@@ -1729,7 +1729,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
     descriptionDone = ['Validated commiter and reviewer']
     VALIDATORS_FOR = {
         # FIXME: This should be a bot, for now validation is manual
-        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'jbedard', 'ryanhaddad'],
+        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'JonWBedard', 'ryanhaddad'],
     }
 
     def __init__(self, *args, **kwargs):
@@ -1828,7 +1828,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         remote = self.getProperty('remote', DEFAULT_REMOTE)
         validators = self.VALIDATORS_FOR.get(remote, [])
-        if validators and not any([validator in reviewers for validator in validators]):
+        lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
+        if validators and not any([validator.lower() in lower_case_reviewers for validator in validators]):
             self.fail_build_due_to_no_validators(validators)
             return None
 

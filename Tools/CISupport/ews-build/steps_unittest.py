@@ -5410,6 +5410,19 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
 
+    def test_success_pr_validators_case(self):
+        self.setupStep(ValidateCommitterAndReviewer())
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'jonwbedard']
+        self.setProperty('github.number', '1234')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'apple')
+        self.expectHidden(False)
+        self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
+        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        return rc
+
     def test_success_no_pr_validators(self):
         self.setupStep(ValidateCommitterAndReviewer())
         ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer']
@@ -5431,7 +5444,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee, @rjepstein, @jbedard or @ryanhaddad")
+        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee, @rjepstein, @JonWBedard or @ryanhaddad")
         return self.runStep()
 
 
