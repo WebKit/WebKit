@@ -177,7 +177,7 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
 static inline RetainPtr<ASCWebAuthenticationExtensionsClientInputs> toASCExtensions(const AuthenticationExtensionsClientInputs& extensions)
 {
     if ([allocASCWebAuthenticationExtensionsClientInputsInstance() respondsToSelector:@selector(initWithAppID:isGoogleLegacyAppIDSupport:)])
-        return adoptNS([allocASCWebAuthenticationExtensionsClientInputsInstance() initWithAppID:extensions.appid isGoogleLegacyAppIDSupport:extensions.googleLegacyAppidSupport]);
+        return adoptNS([allocASCWebAuthenticationExtensionsClientInputsInstance() initWithAppID:(extensions.appid ? nsStringNilIfEmpty(*extensions.appid) : nil) isGoogleLegacyAppIDSupport:extensions.googleLegacyAppidSupport && *extensions.googleLegacyAppidSupport]);
 
     return nil;
 }

@@ -158,7 +158,7 @@ static void processGoogleLegacyAppIdSupportExtension(const std::optional<Authent
         ASSERT_NOT_REACHED();
         return;
     }
-    if (!extensions->googleLegacyAppidSupport)
+    if (!extensions->googleLegacyAppidSupport || !*extensions->googleLegacyAppidSupport)
         return;
     transports.remove(AuthenticatorTransport::Internal);
 }
