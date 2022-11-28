@@ -50,7 +50,6 @@ public:
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
-    FilterStyleVector createFilterStyles(const FilterStyle& sourceStyle) const final;
 
     static bool isIdentity(RenderElement&, const FilterOperations&);
     static IntOutsets calculateOutsets(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);

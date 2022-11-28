@@ -3833,11 +3833,7 @@ OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes() const
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
     if (settings().acceleratedFiltersEnabled())
-        modes.add(FilterRenderingMode::Accelerated);
-#endif
-#if USE(GRAPHICS_CONTEXT_FILTERS)
-    if (settings().graphicsContextFiltersEnabled())
-        modes.add(FilterRenderingMode::GraphicsContext);
+        modes = modes | FilterRenderingMode::Accelerated;
 #endif
     return modes;
 }

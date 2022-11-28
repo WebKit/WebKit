@@ -62,7 +62,7 @@ OptionSet<FilterRenderingMode> FEComponentTransfer::supportedFilterRenderingMode
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
     if (FEComponentTransferCoreImageApplier::supportsCoreImageRendering(*this))
-        modes.add(FilterRenderingMode::Accelerated);
+        modes = modes | FilterRenderingMode::Accelerated;
 #endif
     return modes;
 }
