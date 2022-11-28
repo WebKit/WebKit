@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script>
+async function test()
+{
+    const cache = await self.caches.open("cacheTest");
+    const blob = new Blob();
+    parent.document.getElementsByTagName('iframe')[0].remove();
+
+    cache.put(new Request("test"), new Response(blob)).then(() => {
+        assert_unreached('Promise was resolved');
+    }, () => {
+        assert_unreached('Promise was rejected');
+    });
+}
+
+window.onload = test;
+</script>
