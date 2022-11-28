@@ -29,6 +29,7 @@
 #include <cstring>
 #include <memory>
 #include <type_traits>
+#include <utility>
 #include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
@@ -645,6 +646,27 @@ struct remove_cvref {
 
 template <typename T>
 using remove_cvref_t = typename remove_cvref<T>::type;
+}
+#endif
+
+#if !(defined(__cpp_lib_forward_like) && __cpp_lib_forward_like >= 202207L)
+namespace std {
+template<typename T, typename U>
+constexpr auto&& forward_like(U&& value)
+{
+    constexpr bool is_adding_const = std::is_const_v<std::remove_reference_t<T>>;
+    if constexpr (std::is_lvalue_reference_v<T&&>) {
+        if constexpr (is_adding_const)
+            return std::as_const(value);
+        else
+            return static_cast<U&>(value);
+    } else {
+        if constexpr (is_adding_const)
+            return std::move(std::as_const(value));
+        else
+            return std::move(value);
+    }
+}
 }
 #endif
 
