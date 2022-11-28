@@ -24,40 +24,35 @@
  */
 
 #include "config.h"
-#include "FilterTargetSwitcher.h"
+#include "FilterStyleTargetSwitcher.h"
 
 #include "Filter.h"
-#include "FilterImageTargetSwitcher.h"
-#include "FilterStyleTargetSwitcher.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
 
-std::unique_ptr<FilterTargetSwitcher> FilterTargetSwitcher::create(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
-{
-    if (filter.filterRenderingMode() == FilterRenderingMode::GraphicsContext)
-        return makeUnique<FilterStyleTargetSwitcher>(destinationContext, filter, sourceImageRect);
-    return makeUnique<FilterImageTargetSwitcher>(destinationContext, filter, sourceImageRect, colorSpace, results);
-}
-
-FilterTargetSwitcher::FilterTargetSwitcher(Filter& filter)
-    : m_filter(&filter)
+FilterStyleTargetSwitcher::FilterStyleTargetSwitcher(GraphicsContext&, Filter& filter, const FloatRect& sourceImageRect)
+    : FilterTargetSwitcher(filter)
+    , m_filterStyles(filter.createFilterStyles(sourceImageRect))
 {
 }
 
-void FilterTargetSwitcher::willDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect)
+void FilterStyleTargetSwitcher::willDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&)
 {
-    if (auto* context = drawingContext(destinationContext)) {
-        context->save();
-        context->clearRect(repaintRect);
-        context->clip(repaintRect);
+    for (auto& filterStyle : m_filterStyles) {
+        destinationContext.save();
+        destinationContext.clip(filterStyle.imageRect);
+        destinationContext.setStyle(filterStyle.style);
+        destinationContext.beginTransparencyLayer(1);
     }
 }
 
-void FilterTargetSwitcher::didDrawSourceImage(GraphicsContext& destinationContext)
+void FilterStyleTargetSwitcher::didDrawSourceImage(GraphicsContext& destinationContext)
 {
-    if (auto* context = drawingContext(destinationContext))
-        context->restore();
+    for ([[maybe_unused]] auto& filterStyle : makeReversedRange(m_filterStyles)) {
+        destinationContext.endTransparencyLayer();
+        destinationContext.restore();
+    }
 }
 
 } // namespace WebCore

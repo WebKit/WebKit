@@ -415,6 +415,20 @@ GetUserMediaRequiresFocus:
     WebCore:
       default: true
 
+GraphicsContextFiltersEnabled:
+   type: bool
+   webcoreOnChange: setNeedsRelayoutAllFrames
+   humanReadableName: "GraphicsContext Filter Rendering"
+   humanReadableDescription: "GraphicsContext Filter Rendering"
+   condition: USE(GRAPHICS_CONTEXT_FILTERS)
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+     WebCore:
+       default: false
+
 ICECandidateFilteringEnabled:
   type: bool
   webcoreOnChange: iceCandidateFilteringEnabledChanged

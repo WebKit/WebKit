@@ -121,6 +121,9 @@ public:
     bool hasBlurredShadow() const { return dropShadow().isBlurred(); }
     bool hasShadow() const { return dropShadow().hasOutsets(); }
 
+    std::optional<GraphicsStyle> style() const { return m_state.style(); }
+    void setStyle(const std::optional<GraphicsStyle>& style) { m_state.setStyle(style); didUpdateState(m_state); }
+
     CompositeMode compositeMode() const { return m_state.compositeMode(); }
     CompositeOperator compositeOperation() const { return compositeMode().operation; }
     BlendMode blendMode() const { return compositeMode().blendMode; }
