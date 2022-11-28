@@ -1388,9 +1388,13 @@
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
        (global-name "com.apple.logd")
-       (global-name "com.apple.logd.events")
-       (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
-)
+       (global-name "com.apple.logd.events"))
+
+(allow mach-register
+    (global-name "com.apple.WebKit.WebContent.CARenderServer"))
+(allow mach-lookup
+    (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
+    (global-name "com.apple.WebKit.WebContent.CARenderServer")) ; Needed for [CAContext remoteContextWithOptions]
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
@@ -2166,6 +2170,8 @@
 
 (define (syscall-mach-common)
     (machtrap-number
+        MSC__kernelrpc_mach_port_move_member_trap
+        MSC_task_self_trap
         MSC__kernelrpc_mach_port_allocate_trap
         MSC__kernelrpc_mach_port_construct_trap
         MSC__kernelrpc_mach_port_deallocate_trap

@@ -158,6 +158,8 @@
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
+#import "LayerHostingContext.h"
+
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #endif
@@ -479,6 +481,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::IOSurface::setBytesPerRowAlignment(parameters.bytesPerRowIOSurfaceAlignment);
 #endif
 
+    const char* serverName = "com.apple.WebKit.WebContent.CARenderServer";
+    CARenderServerStart();
+    CARenderServerRegister(serverName);
+    LayerHostingContext::setServerName(serverName);
+    
     accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
 #if PLATFORM(IOS_FAMILY)
     _AXSApplicationAccessibilitySetEnabled(parameters.applicationAccessibilityEnabled);

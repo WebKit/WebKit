@@ -355,6 +355,11 @@
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
 
+    (allow mach-register
+        (global-name "com.apple.WebKit.WebContent.CARenderServer"))
+    (allow mach-lookup
+        (global-name "com.apple.WebKit.WebContent.CARenderServer")) ; Needed for [CAContext remoteContextWithOptions]
+
     ; UIKit-required IOKit nodes.
     (deny iokit-open (with telemetry)
         (iokit-user-client-class "IOSurfaceSendRight")
@@ -1375,6 +1380,7 @@
         MSC__kernelrpc_mach_port_insert_member_trap
         MSC__kernelrpc_mach_port_insert_right_trap
         MSC__kernelrpc_mach_port_mod_refs_trap
+        MSC__kernelrpc_mach_port_move_member_trap
         MSC__kernelrpc_mach_port_request_notification_trap
         MSC__kernelrpc_mach_port_type_trap
         MSC__kernelrpc_mach_port_unguard_trap
