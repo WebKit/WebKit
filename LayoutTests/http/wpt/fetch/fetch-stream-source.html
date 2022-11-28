@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch and source</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test(async () => {
+    let counter = 0;
+    Object.prototype.__defineGetter__("type", function() {
+        counter++;
+    });
+
+    const response = await fetch('/');
+    const fetchReadableStream = response.body;
+    const [r1, r2] = fetchReadableStream.tee();
+    assert_equals(counter, 0);
+}, "Only JS streams should check type");
+    </script>
+  </body>
+</html>
