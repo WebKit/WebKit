@@ -1,4 +1,23 @@
 ================
+WebKitGTK 2.39.2
+================
+
+What's new in WebKitGTK 2.39.2?
+
+  - Add API to support asynchronously returning values from user script messages.
+  - Deprecate WebKitConsoleMessage API.
+  - Deprecate event parameter of WebKitWebView::context-menu and WebKitWebView::show-option-menu signals
+    in favor of a getter in WebKitConextMenu and WebKitOptionMenu.
+  - Do not emit context-menu signals for media settings popup menu.
+  - Use async scrolling also for keyboard scrolling.
+  - Add support for client side certificates on WebSocket connections.
+  - Fix first party for cookies set on every media request.
+  - Fix a crash on authentication dialog with GTK4.
+  - Fix web process leak when webkit_download_set_destination is called with empty destination.
+  - Fix several warnings when building for ARMv7 (32-bits).
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.39.1
 ================
 
