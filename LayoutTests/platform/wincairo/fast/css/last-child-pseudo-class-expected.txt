@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2339
+layer at (0,0) size 785x2321
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2339
-  RenderBlock {HTML} at (0,0) size 785x2339
-    RenderBody {BODY} at (8,16) size 769x2275 [bgcolor=#FFFFFF]
+layer at (0,0) size 785x2321
+  RenderBlock {HTML} at (0,0) size 785x2321
+    RenderBody {BODY} at (8,16) size 769x2257 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 162x18
           text run at (0,0) width 162: "This page is part of the "
@@ -22,75 +22,75 @@ layer at (0,0) size 785x2339
         RenderText {#text} at (609,0) size 4x18
           text run at (609,0) width 4: "."
       RenderBlock {DIV} at (0,35) size 769x0 [bgcolor=#009900]
-      RenderBlock {OL} at (0,35) size 769x2240
-        RenderListItem {LI} at (40,0) size 616x251 [bgcolor=#AAAAAA]
+      RenderBlock {OL} at (0,35) size 769x2222
+        RenderListItem {LI} at (40,0) size 616x248 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 584x112 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "1"
-            RenderText {#text} at (6,9) size 137x97
-              text run at (6,9) width 137: "div :last-child {"
-              text run at (142,9) width 1: " "
-              text run at (6,25) width 9: "}"
-              text run at (14,25) width 1: " "
-              text run at (6,41) width 1: " "
-              text run at (6,57) width 41: "<div>"
-              text run at (46,57) width 1: " "
-              text run at (6,73) width 113: "   <div></div>"
-              text run at (118,73) width 1: " "
-              text run at (6,89) width 49: "</div>"
-          RenderBlock {P} at (16,181) size 584x38
+          RenderBlock {PRE} at (16,53) size 584x109 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,3) size 17x19: "1"
+            RenderText {#text} at (6,6) size 137x97
+              text run at (6,6) width 137: "div :last-child {"
+              text run at (142,6) width 1: " "
+              text run at (6,22) width 9: "}"
+              text run at (14,22) width 1: " "
+              text run at (6,38) width 1: " "
+              text run at (6,54) width 41: "<div>"
+              text run at (46,54) width 1: " "
+              text run at (6,70) width 113: "   <div></div>"
+              text run at (118,70) width 1: " "
+              text run at (6,86) width 49: "</div>"
+          RenderBlock {P} at (16,178) size 584x38
             RenderText {#text} at (0,0) size 569x37
               text run at (0,0) width 569: "The CSS selector should match the inner div element, because it is the only child of"
               text run at (0,19) width 143: "the outer div element"
-        RenderListItem {LI} at (40,299) size 616x267 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,296) size 616x264 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {BLOCKQUOTE} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 584x128 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "2"
-            RenderText {#text} at (6,9) size 225x113
-              text run at (6,9) width 137: "div :last-child {"
-              text run at (142,9) width 1: " "
-              text run at (6,25) width 9: "}"
-              text run at (14,25) width 1: " "
-              text run at (6,41) width 1: " "
-              text run at (6,57) width 49: "<div> "
-              text run at (54,57) width 1: " "
-              text run at (6,73) width 225: "   <blockquote></blockquote>"
-              text run at (230,73) width 1: " "
-              text run at (6,89) width 113: "   <div></div>"
-              text run at (118,89) width 1: " "
-              text run at (6,105) width 49: "</div>"
-          RenderBlock {P} at (16,197) size 584x38
+          RenderBlock {PRE} at (16,53) size 584x125 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,3) size 17x19: "2"
+            RenderText {#text} at (6,6) size 225x113
+              text run at (6,6) width 137: "div :last-child {"
+              text run at (142,6) width 1: " "
+              text run at (6,22) width 9: "}"
+              text run at (14,22) width 1: " "
+              text run at (6,38) width 1: " "
+              text run at (6,54) width 49: "<div> "
+              text run at (54,54) width 1: " "
+              text run at (6,70) width 225: "   <blockquote></blockquote>"
+              text run at (230,70) width 1: " "
+              text run at (6,86) width 113: "   <div></div>"
+              text run at (118,86) width 1: " "
+              text run at (6,102) width 49: "</div>"
+          RenderBlock {P} at (16,194) size 584x38
             RenderText {#text} at (0,0) size 566x37
               text run at (0,0) width 566: "The CSS selector should match the inner div element, because it is the last child of"
               text run at (0,19) width 143: "the outer div element"
-        RenderListItem {LI} at (40,614) size 616x286 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,608) size 616x283 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 584x128 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "3"
-            RenderText {#text} at (6,9) size 209x113
-              text run at (6,9) width 137: "div :last-child {"
-              text run at (142,9) width 1: " "
-              text run at (6,25) width 9: "}"
-              text run at (14,25) width 1: " "
-              text run at (6,41) width 1: " "
-              text run at (6,57) width 49: "<div> "
-              text run at (54,57) width 1: " "
-              text run at (6,73) width 113: "   <div></div>"
-              text run at (118,73) width 1: " "
-              text run at (6,89) width 209: "   <!-- Just a comment -->"
-              text run at (214,89) width 1: " "
-              text run at (6,105) width 49: "</div>"
-          RenderBlock {P} at (16,197) size 584x57
+          RenderBlock {PRE} at (16,53) size 584x125 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,3) size 17x19: "3"
+            RenderText {#text} at (6,6) size 209x113
+              text run at (6,6) width 137: "div :last-child {"
+              text run at (142,6) width 1: " "
+              text run at (6,22) width 9: "}"
+              text run at (14,22) width 1: " "
+              text run at (6,38) width 1: " "
+              text run at (6,54) width 49: "<div> "
+              text run at (54,54) width 1: " "
+              text run at (6,70) width 113: "   <div></div>"
+              text run at (118,70) width 1: " "
+              text run at (6,86) width 209: "   <!-- Just a comment -->"
+              text run at (214,86) width 1: " "
+              text run at (6,102) width 49: "</div>"
+          RenderBlock {P} at (16,194) size 584x57
             RenderText {#text} at (0,0) size 577x56
               text run at (0,0) width 566: "The CSS selector should match the inner div element, because it is the last child of"
               text run at (0,19) width 147: "the outer div element "
               text run at (147,19) width 430: "Comments are not elements, so they should not be considered"
               text run at (0,38) width 215: "when determining the last child."
-        RenderListItem {LI} at (40,948) size 616x302 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,939) size 616x302 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x43 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
             RenderBlock (anonymous) at (0,24) size 584x19
@@ -117,77 +117,77 @@ layer at (0,0) size 785x2339
               text run at (0,19) width 151: "the outer div element. "
               text run at (151,19) width 418: "Regular text is not an element, so it should not be considered"
               text run at (0,38) width 215: "when determining the last child."
-        RenderListItem {LI} at (40,1298) size 616x267 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,1289) size 616x264 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#990000]
-          RenderBlock {PRE} at (16,53) size 584x128 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "5"
-            RenderText {#text} at (6,9) size 225x113
-              text run at (6,9) width 137: "div :last-child {"
-              text run at (142,9) width 1: " "
-              text run at (6,25) width 9: "}"
-              text run at (14,25) width 1: " "
-              text run at (6,41) width 1: " "
-              text run at (6,57) width 49: "<div> "
-              text run at (54,57) width 1: " "
-              text run at (6,73) width 113: "   <div></div>"
-              text run at (118,73) width 1: " "
-              text run at (6,89) width 225: "   <blockquote></blockquote>"
-              text run at (230,89) width 1: " "
-              text run at (6,105) width 49: "</div>"
-          RenderBlock {P} at (16,197) size 584x38
+          RenderBlock {PRE} at (16,53) size 584x125 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,3) size 17x19: "5"
+            RenderText {#text} at (6,6) size 225x113
+              text run at (6,6) width 137: "div :last-child {"
+              text run at (142,6) width 1: " "
+              text run at (6,22) width 9: "}"
+              text run at (14,22) width 1: " "
+              text run at (6,38) width 1: " "
+              text run at (6,54) width 49: "<div> "
+              text run at (54,54) width 1: " "
+              text run at (6,70) width 113: "   <div></div>"
+              text run at (118,70) width 1: " "
+              text run at (6,86) width 225: "   <blockquote></blockquote>"
+              text run at (230,86) width 1: " "
+              text run at (6,102) width 49: "</div>"
+          RenderBlock {P} at (16,194) size 584x38
             RenderText {#text} at (0,0) size 575x37
               text run at (0,0) width 575: "The CSS selector should not match the inner div element, because it is the first child"
               text run at (0,19) width 160: "of the outer div element"
-        RenderListItem {LI} at (40,1613) size 616x299 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,1601) size 616x296 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 584x160 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "6"
-            RenderText {#text} at (6,9) size 481x145
-              text run at (6,9) width 137: "div :last-child {"
-              text run at (142,9) width 1: " "
-              text run at (6,25) width 9: "}"
-              text run at (14,25) width 1: " "
-              text run at (6,41) width 1: " "
-              text run at (6,57) width 41: "<div>"
-              text run at (46,57) width 1: " "
-              text run at (6,73) width 249: "   <div id='insertAfter'></div>"
-              text run at (254,73) width 1: " "
-              text run at (6,89) width 49: "</div>"
-              text run at (54,89) width 1: " "
-              text run at (6,105) width 1: " "
-              text run at (6,121) width 385: "var ib = document.getElementById('insertAfter');"
-              text run at (390,121) width 1: " "
-              text run at (6,137) width 481: "ib.parentElement.appendChild(document.createElement(\"div\"));"
-          RenderBlock {P} at (16,229) size 584x38
+          RenderBlock {PRE} at (16,53) size 584x157 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,3) size 17x19: "6"
+            RenderText {#text} at (6,6) size 481x145
+              text run at (6,6) width 137: "div :last-child {"
+              text run at (142,6) width 1: " "
+              text run at (6,22) width 9: "}"
+              text run at (14,22) width 1: " "
+              text run at (6,38) width 1: " "
+              text run at (6,54) width 41: "<div>"
+              text run at (46,54) width 1: " "
+              text run at (6,70) width 249: "   <div id='insertAfter'></div>"
+              text run at (254,70) width 1: " "
+              text run at (6,86) width 49: "</div>"
+              text run at (54,86) width 1: " "
+              text run at (6,102) width 1: " "
+              text run at (6,118) width 385: "var ib = document.getElementById('insertAfter');"
+              text run at (390,118) width 1: " "
+              text run at (6,134) width 481: "ib.parentElement.appendChild(document.createElement(\"div\"));"
+          RenderBlock {P} at (16,226) size 584x38
             RenderText {#text} at (0,0) size 551x37
               text run at (0,0) width 551: "The CSS selector should match the div element that is inserted by the Javascript"
               text run at (0,19) width 39: "code."
-        RenderListItem {LI} at (40,1960) size 616x280 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,1945) size 616x277 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0 [bgcolor=#990000]
-          RenderBlock {PRE} at (16,53) size 584x160 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "7"
-            RenderText {#text} at (6,9) size 481x145
-              text run at (6,9) width 137: "div :last-child {"
-              text run at (142,9) width 1: " "
-              text run at (6,25) width 9: "}"
-              text run at (14,25) width 1: " "
-              text run at (6,41) width 1: " "
-              text run at (6,57) width 41: "<div>"
-              text run at (46,57) width 1: " "
-              text run at (6,73) width 249: "   <div id='insertAfter'></div>"
-              text run at (254,73) width 1: " "
-              text run at (6,89) width 49: "</div>"
-              text run at (54,89) width 1: " "
-              text run at (6,105) width 1: " "
-              text run at (6,121) width 385: "var ib = document.getElementById('insertAfter');"
-              text run at (390,121) width 1: " "
-              text run at (6,137) width 481: "ib.parentElement.appendChild(document.createElement(\"div\"));"
-          RenderBlock {P} at (16,229) size 584x19
+          RenderBlock {PRE} at (16,53) size 584x157 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,3) size 17x19: "7"
+            RenderText {#text} at (6,6) size 481x145
+              text run at (6,6) width 137: "div :last-child {"
+              text run at (142,6) width 1: " "
+              text run at (6,22) width 9: "}"
+              text run at (14,22) width 1: " "
+              text run at (6,38) width 1: " "
+              text run at (6,54) width 41: "<div>"
+              text run at (46,54) width 1: " "
+              text run at (6,70) width 249: "   <div id='insertAfter'></div>"
+              text run at (254,70) width 1: " "
+              text run at (6,86) width 49: "</div>"
+              text run at (54,86) width 1: " "
+              text run at (6,102) width 1: " "
+              text run at (6,118) width 385: "var ib = document.getElementById('insertAfter');"
+              text run at (390,118) width 1: " "
+              text run at (6,134) width 481: "ib.parentElement.appendChild(document.createElement(\"div\"));"
+          RenderBlock {P} at (16,226) size 584x19
             RenderText {#text} at (0,0) size 498x18
               text run at (0,0) width 498: "The original div element should not be a match for the :last-child selector."

@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 8: "2"
         RenderText {#text} at (38,8) size 24x19
           text run at (38,8) width 24: " bar"
-      RenderBlock {UL} at (0,92) size 784x20
-        RenderListItem {LI} at (40,0) size 744x20
-          RenderBlock {PRE} at (0,0) size 744x20
-            RenderListMarker at (-18,0) size 7x19: bullet
-            RenderText {#text} at (0,3) size 64x16
-              text run at (0,3) width 64: "Success!"
+      RenderBlock {UL} at (0,92) size 784x16
+        RenderListItem {LI} at (40,0) size 744x16
+          RenderBlock {PRE} at (0,0) size 744x16
+            RenderListMarker at (-18,-3) size 7x19: bullet
+            RenderText {#text} at (0,0) size 64x16
+              text run at (0,0) width 64: "Success!"

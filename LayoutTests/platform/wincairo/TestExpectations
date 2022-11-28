@@ -2454,3 +2454,6 @@ fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 fast/filter-image/clipped-filter.html [ ImageOnlyFailure ]
 fast/text/initial-advance-selected-text.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
+
+editing/selection/user-select-all-with-shift-live-range.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/path/default.html [ Failure ]
