@@ -1848,6 +1848,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.setupStep(RunWebKitTests())
         self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
         self.property_failures = 'first_run_failures'
+        RunWebKitTests.filter_failures_using_results_db = lambda x, failing_tests: ''
 
     def test_success(self):
         self.configureStep()

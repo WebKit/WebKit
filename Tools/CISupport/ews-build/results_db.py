@@ -33,6 +33,7 @@ class ResultsDatabase(object):
     # TODO: Support more suites (Note, the API we're talking to already does)
     SUITE = 'layout-tests'
     PERCENT_THRESHOLD = 10
+    PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE = 50
     CONFIGURATION_KEYS = [
         'architecture',
         'platform',
@@ -48,25 +49,44 @@ class ResultsDatabase(object):
     @classmethod
     def get_results_summary(cls, test, commit=None, configuration=None):
         params = dict()
+        logs = ''
+        if not test:
+            return ({}, 'Test name not provided')
+        if not configuration:
+            configuration = {}
         for key, value in configuration.items():
             if key not in cls.CONFIGURATION_KEYS:
-                sys.stderr.write(f"'{key}' is not a valid configuration key\n")
+                logs += f"'{key}' is not a valid configuration key\n"
             params[key] = value
         if commit:
             params['ref'] = commit
         response = requests.get(f'{cls.HOSTNAME}/api/results-summary/{cls.SUITE}/{test}', params=params)
         if response.status_code != 200:
-            sys.stderr.write(f"Failed to query results summary with status code '{response.status_code}'\n")
-            return None
+            logs += f'Failed to query results summary with status code {response.status_code}\n'
+            return ({}, logs)
         try:
-            return response.json()
+            return (response.json(), logs)
         except json.decoder.JSONDecodeError:
-            sys.stderr.write('Non-json response from results summary query\n')
-            return None
+            logs += 'Non-json response from results summary query\n'
+            return ({}, logs)
+
+    @classmethod
+    def is_test_pre_existing_failure(cls, test, commit=None, configuration=None):
+        data, logs = cls.get_results_summary(test, commit, configuration)
+        pass_rate = data.get('pass', 100) + data.get('warning', 0)
+        is_existing_failure = (pass_rate <= cls.PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE)
+        output = {
+            'is_existing_failure': is_existing_failure,
+            'pass_rate': data.get('pass', 'Unknown'),
+            'raw_data': data,
+            'logs': logs,
+        }
+        return output
 
     @classmethod
     def is_test_expected_to(cls, test, result_type=None, commit=None, configuration=None, log=False):
-        data = cls.get_results_summary(test, commit=commit, configuration=configuration)
+        data, logs = cls.get_results_summary(test, commit=commit, configuration=configuration)
+        print(logs)
         if log:
             print(test)
             for key, value in (data or dict()).items():
