@@ -337,8 +337,7 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
         return;
 
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
-    auto pseudoId = pseudoIdAsString(m_owningPseudoId);
-    auto event = createEvent(eventType, time, pseudoId);
+    auto event = createEvent(eventType, time, m_owningPseudoId);
     event->setTarget(RefPtr { m_owningElement.get() });
     enqueueAnimationEvent(WTFMove(event));
 }

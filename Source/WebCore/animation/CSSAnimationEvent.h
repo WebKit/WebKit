@@ -32,9 +32,9 @@ namespace WebCore {
 class CSSAnimationEvent final : public DeclarativeAnimationEvent {
     WTF_MAKE_ISO_ALLOCATED(CSSAnimationEvent);
 public:
-    static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const String& pseudoElement, const String& animationName)
+    static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId, const String& animationName)
     {
-        return adoptRef(*new CSSAnimationEvent(type, animation, scheduledTime, elapsedTime, pseudoElement, animationName));
+        return adoptRef(*new CSSAnimationEvent(type, animation, scheduledTime, elapsedTime, pseudoId, animationName));
     }
 
     struct Init : EventInit {
@@ -57,7 +57,7 @@ public:
     EventInterface eventInterface() const override { return CSSAnimationEventInterfaceType; }
 
 private:
-    CSSAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const String& pseudoElement, const String& animationName);
+    CSSAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId, const String& animationName);
     CSSAnimationEvent(const AtomString&, const Init&, IsTrusted);
 
     String m_animationName;

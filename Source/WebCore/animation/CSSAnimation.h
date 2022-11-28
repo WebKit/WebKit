@@ -54,7 +54,7 @@ private:
     CSSAnimation(const Styleable&, const Animation&);
 
     void syncPropertiesWithBackingAnimation() final;
-    Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId) final;
+    Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, double elapsedTime, PseudoId) final;
 
     ExceptionOr<void> bindingsPlay() final;
     ExceptionOr<void> bindingsPause() final;

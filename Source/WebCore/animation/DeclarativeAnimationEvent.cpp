@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DeclarativeAnimationEvent.h"
+#include "WebAnimationUtilities.h"
 
 #include <wtf/IsoMallocInlines.h>
 
@@ -32,10 +33,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimationEvent);
 
-DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const String& pseudoElement)
+DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId)
     : AnimationEventBase(type, animation, scheduledTime)
     , m_elapsedTime(elapsedTime)
-    , m_pseudoElement(pseudoElement)
+    , m_pseudoId(pseudoId)
 {
 }
 
@@ -44,8 +45,18 @@ DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, con
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {
+    auto pseudoIdOrException = pseudoIdFromString(m_pseudoElement);
+    if (!pseudoIdOrException.hasException())
+        m_pseudoId = pseudoIdOrException.returnValue();
 }
 
 DeclarativeAnimationEvent::~DeclarativeAnimationEvent() = default;
+
+const String& DeclarativeAnimationEvent::pseudoElement()
+{
+    if (m_pseudoElement.isNull())
+        m_pseudoElement = pseudoIdAsString(m_pseudoId);
+    return m_pseudoElement;
+}
 
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include "AnimationPlaybackEvent.h"
 #include "CSSAnimation.h"
 #include "CSSAnimationEvent.h"
+#include "CSSSelector.h"
 #include "CSSTransition.h"
 #include "CSSTransitionEvent.h"
 #include "DeclarativeAnimation.h"
@@ -287,6 +288,28 @@ String pseudoIdAsString(PseudoId pseudoId)
     default:
         return emptyString();
     }
+}
+
+ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
+{
+    // https://drafts.csswg.org/web-animations/#dom-keyframeeffect-pseudoelement
+
+    // - If the provided value is not null and is an invalid <pseudo-element-selector>, the user agent must throw a DOMException with error
+    // name SyntaxError and leave the target pseudo-selector of this animation effect unchanged. Note, that invalid in this context follows
+    // the definition of an invalid selector defined in [SELECTORS-4] such that syntactically invalid pseudo-elements as well as pseudo-elements
+    // for which the user agent has no usable level of support are both deemed invalid.
+    // - If one of the legacy Selectors Level 2 single-colon selectors (':before', ':after', ':first-letter', or ':first-line') is specified,
+    // the target pseudo-selector must be set to the equivalent two-colon selector (e.g. '::before').
+    if (pseudoElement.isNull())
+        return PseudoId::None;
+
+    auto isLegacy = pseudoElement == ":before"_s || pseudoElement == ":after"_s || pseudoElement == ":first-letter"_s || pseudoElement == ":first-line"_s;
+    if (!isLegacy && !pseudoElement.startsWith("::"_s))
+        return Exception { SyntaxError };
+    auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2));
+    if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
+        return Exception { SyntaxError };
+    return CSSSelector::pseudoId(pseudoType);
 }
 
 } // namespace WebCore

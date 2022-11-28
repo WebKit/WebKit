@@ -27,6 +27,7 @@
 
 #include "AnimationEffect.h"
 #include "AnimationEffectPhase.h"
+#include "RenderStyleConstants.h"
 #include "Styleable.h"
 #include "WebAnimation.h"
 #include <wtf/Ref.h>
@@ -75,7 +76,7 @@ protected:
 
     void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
-    virtual Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId) = 0;
+    virtual Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, double elapsedTime, PseudoId) = 0;
     void invalidateDOMEvents(Seconds elapsedTime = 0_s);
 
 private:

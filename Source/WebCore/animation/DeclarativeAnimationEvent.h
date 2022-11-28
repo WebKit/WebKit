@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationEventBase.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
@@ -35,15 +36,17 @@ public:
     virtual ~DeclarativeAnimationEvent();
 
     double elapsedTime() const { return m_elapsedTime; }
-    const String& pseudoElement() const { return m_pseudoElement; }
+    const String& pseudoElement();
+    PseudoId pseudoId() const { return m_pseudoId; }
 
 protected:
-    DeclarativeAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const String&);
+    DeclarativeAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, PseudoId);
     DeclarativeAnimationEvent(const AtomString&, const EventInit&, IsTrusted, double, const String&);
 
 private:
     double m_elapsedTime;
     String m_pseudoElement;
+    PseudoId m_pseudoId { PseudoId::None };
 };
 
 } // namespace WebCore

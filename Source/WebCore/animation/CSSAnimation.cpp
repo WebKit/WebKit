@@ -281,7 +281,7 @@ void CSSAnimation::updateKeyframesIfNeeded(const RenderStyle* oldStyle, const Re
         keyframeEffect.computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
 }
 
-Ref<DeclarativeAnimationEvent> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId)
+Ref<DeclarativeAnimationEvent> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, PseudoId pseudoId)
 {
     return CSSAnimationEvent::create(eventType, this, std::nullopt, elapsedTime, pseudoId, m_animationName);
 }

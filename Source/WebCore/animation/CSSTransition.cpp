@@ -93,7 +93,7 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     unsuspendEffectInvalidation();
 }
 
-Ref<DeclarativeAnimationEvent> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId)
+Ref<DeclarativeAnimationEvent> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, PseudoId pseudoId)
 {
     return CSSTransitionEvent::create(eventType, this, std::nullopt, elapsedTime, pseudoId, nameString(m_property));
 }
