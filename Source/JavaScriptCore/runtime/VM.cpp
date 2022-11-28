@@ -110,6 +110,7 @@
 #include "VMInlines.h"
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
+#include "WaiterListManager.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -212,6 +213,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , m_codeCache(makeUnique<CodeCache>())
     , m_intlCache(makeUnique<IntlCache>())
     , m_builtinExecutables(makeUnique<BuiltinExecutables>(*this))
+    , m_syncWaiter(adoptRef(*new Waiter(this)))
 {
     if (UNLIKELY(vmCreationShouldCrash))
         CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
@@ -395,7 +397,10 @@ void waitForVMDestruction()
 VM::~VM()
 {
     Locker destructionLocker { s_destructionLock.read() };
-    
+
+    if (Options::useAtomicsWaitAsync() && vmType == Default)
+        WaiterListManager::singleton().unregisterVM(this);
+
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
@@ -1378,6 +1383,12 @@ bool VM::isScratchBuffer(void* ptr)
             return true;
     }
     return false;
+}
+
+Ref<Waiter> VM::syncWaiter()
+{
+    m_syncWaiter->setVM(this);
+    return m_syncWaiter;
 }
 
 void VM::ensureShadowChicken()

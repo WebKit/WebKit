@@ -55,13 +55,7 @@ public:
         WebAssembly,
     };
 
-    ~SharedArrayBufferContents()
-    {
-        if (m_destructor) {
-            // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
-            m_destructor->run(m_data.getUnsafe());
-        }
-    }
+    JS_EXPORT_PRIVATE ~SharedArrayBufferContents();
 
     static Ref<SharedArrayBufferContents> create(void* data, size_t size, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
     {

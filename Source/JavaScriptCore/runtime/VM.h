@@ -144,6 +144,7 @@ class TypeProfiler;
 class TypeProfilerLog;
 class Watchdog;
 class WatchpointSet;
+class Waiter;
 
 #if ENABLE(DFG_JIT) && ASSERT_ENABLED
 #define ENABLE_DFG_DOES_GC_VALIDATION 1
@@ -916,6 +917,8 @@ public:
     template<typename Func>
     void forEachDebugger(const Func&);
 
+    Ref<Waiter> syncWaiter();
+
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
@@ -1034,6 +1037,8 @@ private:
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
+
+    Ref<Waiter> m_syncWaiter;
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

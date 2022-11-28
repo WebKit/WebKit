@@ -24,6 +24,7 @@
 
 #include "APICast.h"
 #include "ArrayBuffer.h"
+#include "AtomicsObject.h"
 #include "BigIntConstructor.h"
 #include "BytecodeCacheError.h"
 #include "CatchScope.h"
@@ -383,6 +384,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentBroadcast);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentGetReport);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentLeaving);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentMonotonicNow);
+static JSC_DECLARE_HOST_FUNCTION(functionWaiterListSize);
 static JSC_DECLARE_HOST_FUNCTION(functionWaitForReport);
 static JSC_DECLARE_HOST_FUNCTION(functionHeapCapacity);
 static JSC_DECLARE_HOST_FUNCTION(functionFlashHeapAccess);
@@ -683,6 +685,8 @@ private:
         addFunction(vm, agent, "getReport"_s, functionDollarAgentGetReport, 0);
         addFunction(vm, agent, "leaving"_s, functionDollarAgentLeaving, 0);
         addFunction(vm, agent, "monotonicNow"_s, functionDollarAgentMonotonicNow, 0);
+
+        addFunction(vm, "waiterListSize"_s, functionWaiterListSize, 2);
 
         addFunction(vm, "waitForReport"_s, functionWaitForReport, 0);
 
@@ -2398,6 +2402,11 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentMonotonicNow, (JSGlobalObject*, Call
     return JSValue::encode(jsNumber(MonotonicTime::now().secondsSinceEpoch().milliseconds()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionWaiterListSize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return getWaiterListSize(globalObject, callFrame);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionWaitForReport, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
@@ -2633,11 +2642,11 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
         });
     };
 
+    // We need to add the dispatch callback to the run loop even the delay is 0 secs, otherwise 
+    // it will cause setTimeout starvation problem (see stress test settimeout-starvation.js).
     JSValue timeout = callFrame->argument(1);
-    if (timeout.isNumber() && timeout.asNumber())
-        RunLoop::current().dispatchAfter(Seconds::fromMilliseconds(timeout.asNumber()), WTFMove(dispatch));
-    else
-        dispatch();
+    Seconds delay = timeout.isNumber() ? Seconds::fromMilliseconds(timeout.asNumber()) : Seconds(0);
+    RunLoop::current().dispatchAfter(delay, WTFMove(dispatch));
 
     return JSValue::encode(jsUndefined());
 }

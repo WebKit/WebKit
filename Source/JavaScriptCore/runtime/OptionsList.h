@@ -545,12 +545,14 @@ bool canUseWebAssemblyFastMemory();
     /* Feature Flags */\
     \
     v(Bool, useArrayGroupMethod, true, Normal, "Expose the group() and groupToMap() methods on Array.") \
+    v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics.") \
     v(Bool, useImportAssertion, true, Normal, "Enable import assertion.") \
     v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat.") \
     v(Bool, useResizableArrayBuffer, true, Normal, "Expose ResizableArrayBuffer feature.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object.") \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
+    v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal.") \
     v(Bool, useWebAssemblySIMD, false, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \

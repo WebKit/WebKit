@@ -11,7 +11,6 @@ flags:
   resizable-arraybuffer: useResizableArrayBuffer
 skip:
   features:
-    - Atomics.waitAsync
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
     - regexp-v-flag

@@ -2162,6 +2162,7 @@
 		FEF5B430262A338B0016E776 /* ExceptionExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF90A8D28AC135F00C14B84 /* APIIntegrityPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF90A8C28AC135C00C14B84 /* APIIntegrityPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41590C28FF3C6B00F80B96 /* WaiterListManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -5875,6 +5876,8 @@
 		FEF90A8C28AC135C00C14B84 /* APIIntegrityPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIIntegrityPrivate.h; sourceTree = "<group>"; };
 		FEF90A8E28AC187A00C14B84 /* APIIntegrity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIIntegrity.cpp; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
+		FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaiterListManager.h; sourceTree = "<group>"; };
+		FFB77C2828FF561B00F3C55B /* WaiterListManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaiterListManager.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -8480,6 +8483,8 @@
 				FE6F56DC1E64E92000D17801 /* VMTraps.cpp */,
 				FE6F56DD1E64E92000D17801 /* VMTraps.h */,
 				FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */,
+				FFB77C2828FF561B00F3C55B /* WaiterListManager.cpp */,
+				FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */,
 				FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */,
 				FED94F2C171E3E2300BE77A4 /* Watchdog.h */,
 				BCE2FAFE26091782000A510F /* WeakGCHashTable.h */,
@@ -11368,6 +11373,7 @@
 				FEC5797323105B5100BCA83F /* VMInspectorInlines.h in Headers */,
 				FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */,
 				FEF5B42C2628CBC80016E776 /* VMTrapsInlines.h in Headers */,
+				FF41590C28FF3C6B00F80B96 /* WaiterListManager.h in Headers */,
 				52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */,
 				53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */,
 				53CA730A1EA533D80076049D /* WasmBBQPlan.h in Headers */,
