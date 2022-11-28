@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Error: PASS
+
+
+PASS MutationObserver reports the exception from its callback in the callback's global object
+
