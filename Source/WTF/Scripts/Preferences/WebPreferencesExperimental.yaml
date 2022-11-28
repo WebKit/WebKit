@@ -142,18 +142,6 @@ AudioDescriptionsEnabled:
     WebCore:
       default: false
 
-BlankAnchorTargetImpliesNoOpenerEnabled:
-  type: bool
-  humanReadableName: "Blank anchor target implies rel=noopener"
-  humanReadableDescription: "target=_blank on anchor elements implies rel=noopener"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # We would have to partition BroadcastChannel based on PageGroups if we wanted to enable this for WebKitLegacy.
 BroadcastChannelEnabled:
   type: bool
