@@ -33,10 +33,10 @@ class UnixFileDescriptor;
 
 namespace IPC {
 
-template<> struct ArgumentCoder<UnixFileDescriptor> {
-    static void encode(Encoder&, const UnixFileDescriptor&);
-    static void encode(Encoder&, UnixFileDescriptor&&);
-    static std::optional<UnixFileDescriptor> decode(Decoder&);
+template<> struct ArgumentCoder<WTF::UnixFileDescriptor> {
+    static void encode(Encoder&, const WTF::UnixFileDescriptor&);
+    static void encode(Encoder&, WTF::UnixFileDescriptor&&);
+    static std::optional<WTF::UnixFileDescriptor> decode(Decoder&);
 };
 
 }
