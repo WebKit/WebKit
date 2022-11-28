@@ -88,6 +88,22 @@
             }
         }
     },
+    "TestConsoleMessage": {
+        "subtests": {
+            "/webkit/WebKitConsoleMessage/console-api": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/248382"}}
+            },
+            "/webkit/WebKitConsoleMessage/js-exception": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/248382"}}
+            },
+            "/webkit/WebKitConsoleMessage/network-error": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/248382"}}
+            },
+            "/webkit/WebKitConsoleMessage/security-error": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/248382"}}
+            }
+        }
+    },
     "TestWebExtensions": {
         "subtests": {
             "/webkit/WebKitWebView/install-missing-plugins-permission-request": {
