@@ -121,7 +121,7 @@ RefPtr<CDMInstance> RemoteCDM::createInstance()
         return nullptr;
 
     auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMProxy::CreateInstance(), m_identifier);
-    auto [identifier, configuration] = sendResult.takeReplyOr(RemoteCDMInstanceIdentifier { }, RemoteCDMInstanceConfiguration { });
+    auto [identifier, configuration] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     if (!identifier)
         return nullptr;
     return RemoteCDMInstance::create(m_factory.get(), WTFMove(identifier), WTFMove(configuration));

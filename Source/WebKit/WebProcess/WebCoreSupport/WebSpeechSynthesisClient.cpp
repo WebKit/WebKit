@@ -40,7 +40,7 @@ const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisC
     // get the list of voices and pass it on to the WebContent processes, see
     // https://bugs.webkit.org/show_bug.cgi?id=195723
     auto sendResult = m_page.sendSync(Messages::WebPageProxy::SpeechSynthesisVoiceList());
-    auto [voiceList] = sendResult.takeReplyOr(Vector<WebSpeechSynthesisVoice> { });
+    auto [voiceList] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
 
     m_voices = voiceList.map([](auto& voice) -> RefPtr<WebCore::PlatformSpeechSynthesisVoice> {
         return WebCore::PlatformSpeechSynthesisVoice::create(voice.voiceURI, voice.name, voice.lang, voice.localService, voice.defaultLang);

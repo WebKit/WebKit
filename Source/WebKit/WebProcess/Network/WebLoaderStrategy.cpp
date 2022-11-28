@@ -971,21 +971,21 @@ void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 ResourceResponse WebLoaderStrategy::responseFromResourceLoadIdentifier(ResourceLoaderIdentifier resourceLoadIdentifier)
 {
     auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, 0);
-    auto [response] = sendResult.takeReplyOr(ResourceResponse { });
+    auto [response] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return response;
 }
 
 Vector<NetworkTransactionInformation> WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
 {
     auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, 0);
-    auto [information] = sendResult.takeReplyOr(Vector<NetworkTransactionInformation> { });
+    auto [information] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return information;
 }
 
 NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
 {
     auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, 0);
-    auto [networkMetrics] = sendResult.takeReplyOr(NetworkLoadMetrics { });
+    auto [networkMetrics] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return networkMetrics;
 }
 

@@ -279,10 +279,32 @@ public:
             return WTFMove(replyArguments).value();
         }
 
-        template<typename... U>
+        template<typename U> struct ValidInvocableReplyArgumentsConstructorType
+            : std::is_invocable_r<typename T::ReplyArguments, U>
+        { };
+
+        template<typename U> struct ValidDefaultReplyArgumentType
+            : std::bool_constant<!ValidInvocableReplyArgumentsConstructorType<U>::value
+                && (std::is_trivial_v<U> || std::is_same_v<U, std::nullptr_t> || std::is_same_v<U, std::nullopt_t>)>
+        { };
+
+        template<typename... U, std::enable_if_t<(ValidDefaultReplyArgumentType<std::remove_cvref_t<U>>::value && ...)>* = nullptr>
         typename T::ReplyArguments takeReplyOr(U&&... defaultValues)
         {
             return WTFMove(replyArguments).value_or(typename T::ReplyArguments { std::forward<U>(defaultValues)... });
+        }
+
+        template<typename F, std::enable_if_t<ValidInvocableReplyArgumentsConstructorType<F>::value>* = nullptr>
+        typename T::ReplyArguments takeReplyOr(const F& functor)
+        {
+            if (!replyArguments)
+                return functor();
+            return WTFMove(replyArguments).value();
+        }
+
+        static typename T::ReplyArguments defaultReplyArguments()
+        {
+            return { };
         }
     };
 

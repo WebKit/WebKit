@@ -209,7 +209,7 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
     auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution));
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmapHandle { });
+    auto [handle] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     if (handle.isNull())
         return { };
     handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
@@ -219,7 +219,7 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
 RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
 {
     auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }));
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmapHandle { });
+    auto [handle] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     if (handle.isNull())
         return { };
 

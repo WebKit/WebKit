@@ -291,7 +291,10 @@ void StorageAreaMap::sendConnectMessage(SendMode mode)
 
     if (mode == SendMode::Sync) {
         auto sendResult = ipcConnection.sendSync(Messages::NetworkStorageManager::ConnectToStorageAreaSync(type, m_identifier, namespaceIdentifier, origin), 0);
-        auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReplyOr(StorageAreaIdentifier { }, HashMap<String, String> { }, 0);
+        auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReplyOr(
+            []() -> Messages::NetworkStorageManager::ConnectToStorageAreaSync::ReplyArguments {
+                return { StorageAreaIdentifier { }, HashMap<String, String> { }, 0 };
+            });
         didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
         return;
     }

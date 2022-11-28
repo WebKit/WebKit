@@ -110,7 +110,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
         return;
 
     auto sendResult = m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item.identifier()));
-    auto [backForwardListCounts] = sendResult.takeReplyOr(WebBackForwardListCounts { });
+    auto [backForwardListCounts] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     m_cachedBackForwardListCounts = backForwardListCounts;
 }
 

@@ -76,7 +76,10 @@ WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
         return DestinationColorSpace::SRGB();
 
     auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
-    auto [colorSpace] = sendResult.takeReplyOr(DestinationColorSpace::SRGB());
+    auto [colorSpace] = sendResult.takeReplyOr(
+        []() -> Messages::RemoteMediaPlayerProxy::ColorSpace::ReplyArguments {
+            return { DestinationColorSpace::SRGB() };
+        });
     return colorSpace;
 }
 

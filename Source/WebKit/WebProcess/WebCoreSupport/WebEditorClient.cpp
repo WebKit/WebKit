@@ -180,7 +180,7 @@ void WebEditorClient::didRemoveAttachmentWithIdentifier(const String& identifier
 Vector<SerializedAttachmentData> WebEditorClient::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers)
 {
     auto sendResult = m_page->sendSync(Messages::WebPageProxy::SerializedAttachmentDataForIdentifiers(identifiers));
-    auto [serializedData] = sendResult.takeReplyOr(Vector<WebCore::SerializedAttachmentData> { });
+    auto [serializedData] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return serializedData;
 }
 
@@ -539,7 +539,7 @@ static uint64_t insertionPointFromCurrentSelection(const VisibleSelection& curre
 Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, OptionSet<WebCore::TextCheckingType> checkingTypes, const VisibleSelection& currentSelection)
 {
     auto sendResult = m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes, insertionPointFromCurrentSelection(currentSelection)));
-    auto [results] = sendResult.takeReplyOr(Vector<TextCheckingResult> { });
+    auto [results] = sendResult.takeReplyOr(sendResult.defaultReplyArguments);
     return results;
 }
 

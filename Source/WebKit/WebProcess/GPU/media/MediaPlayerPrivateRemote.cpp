@@ -894,14 +894,20 @@ NSArray* MediaPlayerPrivateRemote::timedMetadata() const
 String MediaPlayerPrivateRemote::accessLog() const
 {
     auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::AccessLog(), m_id);
-    auto [log] = sendResult.takeReplyOr(emptyString());
+    auto [log] = sendResult.takeReplyOr(
+        []() -> Messages::RemoteMediaPlayerProxy::AccessLog::ReplyArguments {
+            return { emptyString() };
+        });
     return log;
 }
 
 String MediaPlayerPrivateRemote::errorLog() const
 {
     auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::ErrorLog(), m_id);
-    auto [log] = sendResult.takeReplyOr(emptyString());
+    auto [log] = sendResult.takeReplyOr(
+        []() -> Messages::RemoteMediaPlayerProxy::ErrorLog::ReplyArguments {
+            return { emptyString() };
+        });
     return log;
 }
 #endif
