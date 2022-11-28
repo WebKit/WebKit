@@ -448,3 +448,6 @@ endif ()
 if (COMPILER_IS_GCC_OR_CLANG)
     set(COMPILE_C_AS_CXX "-xc++")
 endif ()
+
+# FIXME: Enable pre-compiled headers for all ports <https://webkit.org/b/139438>
+set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)

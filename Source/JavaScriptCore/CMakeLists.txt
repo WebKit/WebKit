@@ -1538,6 +1538,8 @@ WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 WEBKIT_FRAMEWORK(JavaScriptCore)
 WEBKIT_FRAMEWORK_TARGET(JavaScriptCore)
 
+target_precompile_headers(JavaScriptCore PRIVATE JavaScriptCorePrefix.h)
+
 if (NOT "${PORT}" STREQUAL "Mac")
     if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
         WEBKIT_POPULATE_LIBRARY_VERSION(JAVASCRIPTCORE)

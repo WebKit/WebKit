@@ -2598,9 +2598,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Namespace.cpp)
 
 WEBKIT_COMPUTE_SOURCES(WebCore)
 
-if (MSVC)
-    WEBKIT_ADD_PRECOMPILED_HEADER("WebCorePrefix.h" "WebCorePrefix.cpp" WebCore_SOURCES)
-endif ()
+target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore
@@ -2631,9 +2629,7 @@ if (CMAKE_COMPILER_IS_GNUCXX AND "${LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR}" MATC
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebCore -fno-tree-sra)
 endif ()
 
-if (MSVC)
-    WEBKIT_ADD_PRECOMPILED_HEADER("WebCoreTestSupportPrefix.h" "testing/js/WebCoreTestSupportPrefix.cpp" WebCoreTestSupport_SOURCES)
-endif ()
+target_precompile_headers(WebCoreTestSupport PRIVATE testing/js/WebCoreTestSupportPrefix.h)
 
 WEBKIT_COPY_FILES(Copy_WebCoreTestSupportPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
