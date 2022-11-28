@@ -336,6 +336,7 @@ class Driver {
                 globalObject = runString("");
 
             globalObject.console = {log:globalObject.print}
+            globalObject.self = globalObject;
             globalObject.top = {
                 currentResolve,
                 currentReject
@@ -1198,6 +1199,8 @@ const RexBenchGroup = Symbol.for("RexBench");
 const SeaMonsterGroup = Symbol.for("SeaMonster");
 const SimpleGroup = Symbol.for("Simple");
 const SunSpiderGroup = Symbol.for("SunSpider");
+const BigIntNobleGroup = Symbol.for("BigIntNoble");
+const BigIntMiscGroup = Symbol.for("BigIntMisc");
 const WasmGroup = Symbol.for("Wasm");
 const WorkerTestsGroup = Symbol.for("WorkerTests");
 const WSLGroup = Symbol.for("WSL");
@@ -1570,6 +1573,61 @@ let testPlans = [
         worstCaseCount: 2,
         testGroup: SeaMonsterGroup
     },
+    // BigInt
+    {
+        name: "bigint-noble-bls12-381",
+        files: [
+            "./bigint/web-crypto-sham.js",
+            "./bigint/noble-bls12-381-bundle.js",
+            "./bigint/noble-benchmark.js",
+        ],
+        iterations: 4,
+        worstCaseCount: 1,
+        benchmarkClass: AsyncBenchmark,
+        testGroup: BigIntNobleGroup,
+    },
+    {
+        name: "bigint-noble-secp256k1",
+        files: [
+            "./bigint/web-crypto-sham.js",
+            "./bigint/noble-secp256k1-bundle.js",
+            "./bigint/noble-benchmark.js",
+        ],
+        benchmarkClass: AsyncBenchmark,
+        testGroup: BigIntNobleGroup,
+    },
+    {
+        name: "bigint-noble-ed25519",
+        files: [
+            "./bigint/web-crypto-sham.js",
+            "./bigint/noble-ed25519-bundle.js",
+            "./bigint/noble-benchmark.js",
+        ],
+        iterations: 30,
+        benchmarkClass: AsyncBenchmark,
+        testGroup: BigIntNobleGroup,
+    },
+    {
+        name: "bigint-paillier",
+        files: [
+            "./bigint/web-crypto-sham.js",
+            "./bigint/paillier-bundle.js",
+            "./bigint/paillier-benchmark.js",
+        ],
+        iterations: 10,
+        worstCaseCount: 2,
+        testGroup: BigIntMiscGroup,
+    },
+    {
+        name: "bigint-bigdenary",
+        files: [
+            "./bigint/bigdenary-bundle.js",
+            "./bigint/bigdenary-benchmark.js",
+        ],
+        iterations: 160,
+        worstCaseCount: 16,
+        testGroup: BigIntMiscGroup,
+    },
     // Wasm
     {
         name: "HashSet-wasm",
@@ -1827,6 +1885,8 @@ let runWSL = true;
 let runRexBench = true;
 let runWTB = true;
 let runSunSpider = true;
+let runBigIntNoble = true;
+let runBigIntMisc = true;
 let runSimple = true;
 let runCDJS = true;
 let runWorkerTests = !!isInBrowser;
@@ -1843,6 +1903,8 @@ if (false) {
     runRexBench = false;
     runWTB = false;
     runSunSpider = false;
+    runBigIntNoble = false;
+    runBigIntMisc = false;
     runSimple = false;
     runCDJS = false;
     runWorkerTests = false;
@@ -1879,6 +1941,12 @@ if (typeof testList !== "undefined") {
 
     if (runSunSpider)
         addTestsByGroup(SunSpiderGroup);
+
+    if (runBigIntNoble)
+        addTestsByGroup(BigIntNobleGroup);
+
+    if (runBigIntMisc)
+        addTestsByGroup(BigIntMiscGroup);
 
     if (runWasm)
         addTestsByGroup(WasmGroup);
