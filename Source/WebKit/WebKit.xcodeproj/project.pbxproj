@@ -6067,6 +6067,8 @@
 		869055832912C6B000B5ECD3 /* Model.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Model.serialization.in; sourceTree = "<group>"; };
 		86AA520C292522460065399E /* WebGPUFeatureName.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUFeatureName.serialization.in; sourceTree = "<group>"; };
 		86AA520D292523AF0065399E /* XRSystem.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = XRSystem.serialization.in; sourceTree = "<group>"; };
+		86AA521929264F5D0065399E /* WebHitTestResultData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebHitTestResultData.serialization.in; sourceTree = "<group>"; };
+		86AA521A292653700065399E /* WebHitTestResultPlatformData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebHitTestResultPlatformData.serialization.in; sourceTree = "<group>"; };
 		86AE2A9628D61EDD007F5A1C /* WebCoreArgumentCodersCocoa.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCoreArgumentCodersCocoa.serialization.in; sourceTree = "<group>"; };
 		86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusedElementInformation.serialization.in; sourceTree = "<group>"; };
 		86DA60CA28EB11830044FE4D /* InteractionInformationAtPosition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationAtPosition.serialization.in; path = ios/InteractionInformationAtPosition.serialization.in; sourceTree = "<group>"; };
@@ -6137,7 +6139,6 @@
 		93A253EE1C922E8E00F9F68D /* WKPreviewActionItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreviewActionItem.mm; sourceTree = "<group>"; };
 		93A253F21C92411200F9F68D /* WKPreviewActionItemIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreviewActionItemIdentifiers.h; sourceTree = "<group>"; };
 		93A253F41C92413200F9F68D /* WKPreviewActionItemIdentifiers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreviewActionItemIdentifiers.mm; sourceTree = "<group>"; };
-		93A88B2E1BC6E98F00ABA5C2 /* WebHitTestResultData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHitTestResultData.mm; sourceTree = "<group>"; };
 		93A88B311BC6E9C000ABA5C2 /* WebHitTestResultData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHitTestResultData.h; sourceTree = "<group>"; };
 		93A88B341BC6EABA00ABA5C2 /* WebHitTestResultData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHitTestResultData.cpp; sourceTree = "<group>"; };
 		93A88B371BC70F2E00ABA5C2 /* _WKHitTestResult.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKHitTestResult.mm; sourceTree = "<group>"; };
@@ -8483,6 +8484,7 @@
 				BC0E607112D6BC200012A72A /* WebGeolocationPosition.h */,
 				93A88B341BC6EABA00ABA5C2 /* WebHitTestResultData.cpp */,
 				93A88B311BC6E9C000ABA5C2 /* WebHitTestResultData.h */,
+				86AA521929264F5D0065399E /* WebHitTestResultData.serialization.in */,
 				BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */,
 				BCCF6ABB12C91EF9008F9C35 /* WebImage.h */,
 				C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */,
@@ -12881,7 +12883,7 @@
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
 				2D5036731BCED19F00E20BB3 /* WebGestureEvent.cpp */,
 				2D5036741BCED19F00E20BB3 /* WebGestureEvent.h */,
-				93A88B2E1BC6E98F00ABA5C2 /* WebHitTestResultData.mm */,
+				86AA521A292653700065399E /* WebHitTestResultPlatformData.serialization.in */,
 				905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */,
 			);
 			path = mac;

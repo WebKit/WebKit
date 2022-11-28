@@ -44,6 +44,15 @@ class HitTestResult;
 
 namespace WebKit {
 
+#if PLATFORM(MAC)
+struct WebHitTestResultPlatformData {
+    RetainPtr<DDActionContext> detectedDataActionContext;
+    WebCore::FloatRect detectedDataBoundingBox;
+    RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
+    WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
+};
+#endif
+
 struct WebHitTestResultData {
     String absoluteImageURL;
     String absolutePDFURL;
@@ -54,7 +63,7 @@ struct WebHitTestResultData {
     String linkSuggestedFilename;
     bool isContentEditable;
     WebCore::IntRect elementBoundingBox;
-    enum class IsScrollbar { No, Vertical, Horizontal };
+    enum class IsScrollbar : uint8_t { No, Vertical, Horizontal };
     IsScrollbar isScrollbar;
     bool isSelected;
     bool isTextNode;
@@ -69,12 +78,9 @@ struct WebHitTestResultData {
     String sourceImageMIMEType;
 
 #if PLATFORM(MAC)
-    RetainPtr<DDActionContext> detectedDataActionContext;
+    WebHitTestResultPlatformData platformData;
 #endif
-    WebCore::FloatRect detectedDataBoundingBox;
-    RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
-    WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
-
+    
     WebCore::DictionaryPopupInfo dictionaryPopupInfo;
 
     RefPtr<WebCore::TextIndicator> linkTextIndicator;
@@ -82,27 +88,16 @@ struct WebHitTestResultData {
     WebHitTestResultData();
     WebHitTestResultData(const WebCore::HitTestResult&, const String& toolTipText);
     WebHitTestResultData(const WebCore::HitTestResult&, bool includeImage);
+    WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar&, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, const String& lookupText, const String& toolTipText, const String& imageText, const std::optional<WebKit::SharedMemory::Handle>& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,
+#if PLATFORM(MAC)
+        const WebHitTestResultPlatformData&,
+#endif
+        const WebCore::DictionaryPopupInfo&, const RefPtr<WebCore::TextIndicator>&);
     ~WebHitTestResultData();
 
-    void encode(IPC::Encoder&) const;
-    void platformEncode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebHitTestResultData&);
-    static WARN_UNUSED_RETURN bool platformDecode(IPC::Decoder&, WebHitTestResultData&);
-
     WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult&);
+
+    std::optional<WebKit::SharedMemory::Handle> getImageSharedMemoryHandle() const;
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebHitTestResultData::IsScrollbar> {
-    using values = EnumValues<
-    WebKit::WebHitTestResultData::IsScrollbar,
-    WebKit::WebHitTestResultData::IsScrollbar::No,
-    WebKit::WebHitTestResultData::IsScrollbar::Vertical,
-    WebKit::WebHitTestResultData::IsScrollbar::Horizontal
-    >;
-};
-
-} // namespace WTF
