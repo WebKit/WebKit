@@ -43,8 +43,10 @@ public:
             if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
                 if (UNLIKELY(!thisObject))
                     return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
-            } else
+            } else {
+                UNUSED_PARAM(operationName);
                 ASSERT(thisObject);
+            }
 
             ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
             

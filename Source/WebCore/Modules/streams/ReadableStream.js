@@ -48,10 +48,10 @@ function initializeReadableStream(underlyingSource, strategy)
 
     // FIXME: We should introduce https://streams.spec.whatwg.org/#create-readable-stream.
     // For now, we emulate this with underlyingSource with private properties.
-    if (@getByIdDirectPrivate(underlyingSource, "pull") !== @undefined) {
+    if (underlyingSource.@pull !== @undefined) {
         const size = @getByIdDirectPrivate(strategy, "size");
         const highWaterMark = @getByIdDirectPrivate(strategy, "highWaterMark");
-        @setupReadableStreamDefaultController(this, underlyingSource, size, highWaterMark !== @undefined ? highWaterMark : 1, @getByIdDirectPrivate(underlyingSource, "start"), @getByIdDirectPrivate(underlyingSource, "pull"), @getByIdDirectPrivate(underlyingSource, "cancel"));
+        @setupReadableStreamDefaultController(this, underlyingSource, size, highWaterMark !== @undefined ? highWaterMark : 1, underlyingSource.@start, underlyingSource.@pull, underlyingSource.@cancel);
         return this;
     }
 
