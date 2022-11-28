@@ -168,7 +168,6 @@ private:
     String fontValue(const StylePropertyShorthand&) const;
     String fontVariantValue(const StylePropertyShorthand&) const;
     String fontSynthesisValue() const;
-    String textDecorationSkipValue() const;
     String offsetValue() const;
     String commonShorthandChecks(const StylePropertyShorthand&) const;
     StringBuilder asTextInternal() const;

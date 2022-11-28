@@ -321,7 +321,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyFontSynthesis:
         return fontSynthesisValue();
     case CSSPropertyTextDecorationSkip:
-        return textDecorationSkipValue();
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitBackgroundSize:
     case CSSPropertyWebkitTextOrientation:
@@ -568,18 +567,6 @@ String StyleProperties::offsetValue() const
     }
 
     return result.toString();
-}
-
-String StyleProperties::textDecorationSkipValue() const
-{
-    ASSERT(textDecorationSkipShorthand().length() == 1);
-    int textDecorationSkipInkPropertyIndex = findPropertyIndex(CSSPropertyTextDecorationSkipInk);
-    if (textDecorationSkipInkPropertyIndex == -1)
-        return emptyString();
-    PropertyReference textDecorationSkipInkProperty = propertyAt(textDecorationSkipInkPropertyIndex);
-    if (textDecorationSkipInkProperty.isImplicit())
-        return emptyString();
-    return textDecorationSkipInkProperty.value()->cssText();
 }
 
 String StyleProperties::fontVariantValue(const StylePropertyShorthand& shorthand) const
@@ -1626,6 +1613,11 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyWebkitTextOrientation:
         return false;
 
+    // No other browser currently supports text-decoration-skip, so it's currently more web
+    // compatible to avoid collapsing text-decoration-skip-ink, its only longhand.
+    case CSSPropertyTextDecorationSkip:
+        return false;
+
     // FIXME: -webkit-mask is a legacy shorthand but it's used to serialize -webkit-mask-clip,
     // which should be a legacy shorthand of mask-clip, but it's implemented as a longhand.
     case CSSPropertyWebkitMask:
@@ -1662,7 +1654,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyPlaceContent:
     case CSSPropertyPlaceItems:
     case CSSPropertyPlaceSelf:
-    case CSSPropertyTextDecorationSkip:
     case CSSPropertyTextEmphasis:
     case CSSPropertyWebkitTextStroke:
         return false;
