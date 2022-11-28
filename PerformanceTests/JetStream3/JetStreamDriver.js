@@ -406,6 +406,9 @@ class Driver {
 
     reportError(benchmark)
     {
+        if (!isInBrowser)
+            return;
+
         for (let id of benchmark.scoreIdentifiers())
             document.getElementById(id).innerHTML = "error";
     }
@@ -958,7 +961,7 @@ class AsyncBenchmark extends DefaultBenchmark {
                 __benchmark.validate();
             top.currentResolve(results);
         }
-        doRun();`
+        doRun().catch((error) => { top.currentReject(error); });`
     }
 };
 
