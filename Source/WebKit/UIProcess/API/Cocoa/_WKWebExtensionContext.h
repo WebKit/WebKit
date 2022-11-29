@@ -295,6 +295,14 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) BOOL hasAccessToAllHosts;
 
 /*!
+ @abstract Checks if the extension has script or stylesheet content that can be injected into the specified URL.
+ @param url The webpage URL to check.
+ @result Returns `YES` if the extension has content that can be injected by matching the `url` against the extension's requested match patterns.
+ @discussion The extension context will still need to be loaded and have granted website permissions for its content to actually be injected.
+ */
+- (BOOL)hasInjectedContentForURL:(NSURL *)url;
+
+/*!
  @abstract Checks the specified permission against the currently denied, granted, and requested permissions.
  @discussion Permissions can be granted on a per-tab basis. When the tab is known, access checks should always use the method that checks in a tab.
  @seealso permissionStateForPermission:inTab:

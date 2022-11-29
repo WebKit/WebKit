@@ -434,6 +434,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return _webExtensionContext->hasAccessToAllHosts();
 }
 
+- (BOOL)hasInjectedContentForURL:(NSURL *)url
+{
+    return _webExtensionContext->hasInjectedContentForURL(url);
+}
+
 - (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab
 {
     NSParameterAssert(tab);
@@ -657,6 +662,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 }
 
 - (BOOL)hasAccessToAllHosts
+{
+    return NO;
+}
+
+- (BOOL)hasInjectedContentForURL:(NSURL *)url
 {
     return NO;
 }

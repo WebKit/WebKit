@@ -63,11 +63,8 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
         return false;
     }
 
-    if (!extensionContext.load(*this, outError)) {
-        m_extensionContexts.remove(extensionContext);
-        m_extensionContextBaseURLMap.remove(extensionContext.baseURL());
-        return false;
-    }
+    for (auto& processPool : m_processPools)
+        processPool.addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier(), extensionContext);
 
     auto scheme = extensionContext.baseURL().protocol().toString();
     m_registeredSchemeHandlers.ensure(scheme, [&]() {
@@ -79,8 +76,15 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
         return handler;
     });
 
-    for (auto& processPool : m_processPools)
-        processPool.addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier(), extensionContext);
+    if (!extensionContext.load(*this, outError)) {
+        m_extensionContexts.remove(extensionContext);
+        m_extensionContextBaseURLMap.remove(extensionContext.baseURL());
+
+        for (auto& processPool : m_processPools)
+            processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), extensionContext.identifier());
+
+        return false;
+    }
 
     sendToAllProcesses(Messages::WebExtensionControllerProxy::Load(extensionContext.parameters()), m_identifier);
 
@@ -126,12 +130,11 @@ void WebExtensionController::addPage(WebPageProxy& page)
     ASSERT(!m_pages.contains(page));
     m_pages.add(page);
 
-    auto& processPool = page.process().processPool();
-    if (m_processPools.add(processPool))
-        processPool.addMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier, *this);
-
     for (auto& entry : m_registeredSchemeHandlers)
         page.setURLSchemeHandlerForScheme(entry.value.copyRef(), entry.key);
+
+    addProcessPool(page.process().processPool());
+    addUserContentController(page.userContentController());
 }
 
 void WebExtensionController::removePage(WebPageProxy& page)
@@ -139,11 +142,23 @@ void WebExtensionController::removePage(WebPageProxy& page)
     ASSERT(m_pages.contains(page));
     m_pages.remove(page);
 
-    // The process pool might have already been deallocated and removed from the weak set.
-    auto& processPool = page.process().processPool();
-    if (!m_processPools.contains(processPool))
+    removeProcessPool(page.process().processPool());
+    removeUserContentController(page.userContentController());
+}
+
+void WebExtensionController::addProcessPool(WebProcessPool& processPool)
+{
+    if (!m_processPools.add(processPool))
         return;
 
+    processPool.addMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier, *this);
+
+    for (auto& context : m_extensionContexts)
+        processPool.addMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->identifier(), context);
+}
+
+void WebExtensionController::removeProcessPool(WebProcessPool& processPool)
+{
     // Only remove the message receiver and process pool if no other pages use the same process pool.
     for (auto& knownPage : m_pages) {
         if (knownPage.process().processPool() == processPool)
@@ -151,7 +166,34 @@ void WebExtensionController::removePage(WebPageProxy& page)
     }
 
     processPool.removeMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier);
+
+    for (auto& context : m_extensionContexts)
+        processPool.removeMessageReceiver(Messages::WebExtensionContext::messageReceiverName(), context->identifier());
+
     m_processPools.remove(processPool);
+}
+
+void WebExtensionController::addUserContentController(WebUserContentControllerProxy& userContentController)
+{
+    if (!m_userContentControllers.add(userContentController))
+        return;
+
+    for (auto& context : m_extensionContexts)
+        context->addInjectedContent(userContentController);
+}
+
+void WebExtensionController::removeUserContentController(WebUserContentControllerProxy& userContentController)
+{
+    // Only remove the user content controller if no other pages use the same one.
+    for (auto& knownPage : m_pages) {
+        if (knownPage.userContentController() == userContentController)
+            return;
+    }
+
+    for (auto& context : m_extensionContexts)
+        context->removeInjectedContent(userContentController);
+
+    m_userContentControllers.remove(userContentController);
 }
 
 RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebExtension& extension) const

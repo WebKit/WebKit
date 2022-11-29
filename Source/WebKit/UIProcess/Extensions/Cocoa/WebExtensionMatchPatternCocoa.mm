@@ -76,9 +76,9 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(NSString 
 
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(NSString *scheme, NSString *host, NSString *path)
 {
-    ASSERT(scheme);
-    ASSERT(host);
-    ASSERT(path);
+    scheme = scheme.length ? scheme : @"*";
+    host = host.length ? host : @"*";
+    path = path.length ? path : @"/*";
 
     NSString *pattern = [NSString stringWithFormat:patternFormat, scheme, host, path];
 
@@ -95,6 +95,16 @@ Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allURLsMatchPattern()
 Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allHostsAndSchemesMatchPattern()
 {
     return getOrCreate(allHostsAndSchemesPattern).releaseNonNull();
+}
+
+bool WebExtensionMatchPattern::patternsMatchAllHosts(HashSet<Ref<WebExtensionMatchPattern>>& patterns)
+{
+    for (auto& pattern : patterns) {
+        if (pattern->matchesAllHosts())
+            return true;
+    }
+
+    return false;
 }
 
 WebExtensionMatchPattern::WebExtensionMatchPattern(NSString *pattern, NSError **outError)

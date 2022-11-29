@@ -197,14 +197,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*! @abstract A Boolean value indicating whether the extension has background content that stays in memory as long as the extension is loaded. */
 @property (nonatomic, readonly) BOOL backgroundContentIsPersistent;
 
-/*!
- @abstract Checks if the extension has script or stylesheet content that can be injected into the specified URL.
- @param url The webpage URL to check.
- @result Returns `YES` if the extension has content that can be injected by matching the `url` against the extension's requested match patterns.
- @discussion The extension will still need to be loaded and have granted website permissions for its content to actually be injected.
- */
-- (BOOL)hasInjectedContentForURL:(NSURL *)url;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -54,7 +54,7 @@ WebExtensionURLSchemeHandler::WebExtensionURLSchemeHandler(WebExtensionControlle
 
 void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
-    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([&, protectedThis = Ref { *this }]() {
+    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, &task, protectedThis = Ref { *this }, protectedTask = Ref { task }]() {
         // If a frame is loading, the frame request URL will be an empty string, since the request is actually the frame URL being loaded.
         // In this case, consider the firstPartyForCookies() to be the document including the frame. This fails for nested frames, since
         // it is always the main frame URL, not the immediate parent frame.

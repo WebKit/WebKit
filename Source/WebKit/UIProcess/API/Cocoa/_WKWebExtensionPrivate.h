@@ -34,7 +34,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
 
+/*! @abstract A Boolean value indicating whether the extension use modules for the background content. */
 @property (readonly, nonatomic) BOOL _backgroundContentUsesModules;
+
+/*!
+ @abstract Checks if the extension has script or stylesheet content that can be injected into the specified URL.
+ @param url The webpage URL to check.
+ @result Returns `YES` if the extension has content that can be injected by matching the `url` against the extension's requested match patterns.
+ @discussion The extension will still need to be loaded and have granted website permissions for its content to actually be injected.
+ */
+- (BOOL)_hasStaticInjectedContentForURL:(NSURL *)url;
 
 @end
 

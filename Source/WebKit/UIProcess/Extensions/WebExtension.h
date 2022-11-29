@@ -35,7 +35,6 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(COCOA)
 #import "CocoaImage.h"
 
 OBJC_CLASS NSArray;
@@ -49,7 +48,6 @@ OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS _WKWebExtension;
 OBJC_CLASS _WKWebExtensionMatchPattern;
-#endif
 
 #if PLATFORM(MAC)
 #include <Security/CSCommon.h>
@@ -71,12 +69,10 @@ public:
         return adoptRef(*new WebExtension(std::forward<Args>(args)...));
     }
 
-#if PLATFORM(COCOA)
     explicit WebExtension(NSBundle *appExtensionBundle);
     explicit WebExtension(NSURL *resourceBaseURL);
     explicit WebExtension(NSDictionary *manifest, NSDictionary *resources);
     explicit WebExtension(NSDictionary *resources);
-#endif
 
     ~WebExtension() { }
 
@@ -120,10 +116,10 @@ public:
 
         InjectionTime injectionTime = InjectionTime::DocumentIdle;
 
-        bool matchesAboutBlank = false;
-        bool injectsIntoAllFrames = false;
+        bool matchesAboutBlank { false };
+        bool injectsIntoAllFrames { false };
+        bool forMainWorld { false };
 
-#if PLATFORM(COCOA)
         RetainPtr<NSArray> scriptPaths;
         RetainPtr<NSArray> styleSheetPaths;
 
@@ -132,12 +128,10 @@ public:
 
         NSArray *expandedIncludeMatchPatternStrings() const;
         NSArray *expandedExcludeMatchPatternStrings() const;
-#endif
     };
 
     using InjectedContentVector = Vector<InjectedContentData>;
 
-#if PLATFORM(COCOA)
     static const PermissionsSet& supportedPermissions();
 
     bool operator==(const WebExtension& other) const { return (this == &other); }
@@ -157,6 +151,8 @@ public:
     bool isAccessibleResourcePath(NSString *, NSURL *frameDocumentURL);
 
     NSURL *resourceFileURLForPath(NSString *);
+
+    NSString *resourceStringForPath(NSString *, CacheResult = CacheResult::No);
     NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No);
 
     NSString *webProcessDisplayName();
@@ -187,8 +183,8 @@ public:
     NSString *backgroundContentPath();
     NSString *generatedBackgroundContent();
 
-    const InjectedContentVector& injectedContents();
-    bool hasInjectedContentForURL(NSURL *);
+    const InjectedContentVector& staticInjectedContents();
+    bool hasStaticInjectedContentForURL(NSURL *);
 
     // Permissions requested by the extension in their manifest.
     // These are not the currently allowed permissions.
@@ -217,10 +213,8 @@ public:
 #ifdef __OBJC__
     _WKWebExtension *wrapper() const { return (_WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
 #endif
-#endif
 
 private:
-#if PLATFORM(COCOA)
     bool parseManifest(NSData *);
 
     void populateDisplayStringsIfNeeded();
@@ -228,9 +222,8 @@ private:
     void populateBackgroundPropertiesIfNeeded();
     void populateContentScriptPropertiesIfNeeded();
     void populatePermissionsPropertiesIfNeeded();
-#endif
 
-    InjectedContentVector m_injectedContents;
+    InjectedContentVector m_staticInjectedContents;
 
     MatchPatternSet m_permissionMatchPatterns;
     MatchPatternSet m_optionalPermissionMatchPatterns;
@@ -242,7 +235,6 @@ private:
     RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
 #endif
 
-#if PLATFORM(COCOA)
     RetainPtr<NSBundle> m_bundle;
     RetainPtr<NSURL> m_resourceBaseURL;
     RetainPtr<NSDictionary> m_manifest;
@@ -276,7 +268,6 @@ private:
     bool m_parsedManifestBackgroundProperties = false;
     bool m_parsedManifestContentScriptProperties = false;
     bool m_parsedManifestPermissionProperties = false;
-#endif
 };
 
 #ifdef __OBJC__
