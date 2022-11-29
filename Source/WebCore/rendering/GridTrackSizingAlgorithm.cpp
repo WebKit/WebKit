@@ -211,6 +211,9 @@ const GridTrackSize& GridTrackSizingAlgorithm::rawGridTrackSize(GridTrackSizingD
 
 LayoutUnit GridTrackSizingAlgorithm::computeTrackBasedSize() const
 {
+    if (m_renderGrid->style().gridMasonryRows() || m_renderGrid->style().gridMasonryColumns())
+        return m_renderGrid->masonryContentSize();
+    
     LayoutUnit size;
     auto& allTracks = tracks(m_direction);
     for (auto& track : allTracks)

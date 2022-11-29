@@ -106,7 +106,7 @@ void StyleGridData::setRows(const GridTrackList& list)
 void StyleGridData::setColumns(const GridTrackList& list)
 {
     m_columns = list;
-    computeCachedTrackData(m_columns, m_gridColumns, m_namedGridColumnLines, m_orderedNamedGridColumnLines, m_gridAutoRepeatColumns, m_autoRepeatNamedGridColumnLines, m_autoRepeatOrderedNamedGridColumnLines, m_autoRepeatColumnsInsertionPoint, m_autoRepeatColumnsType, m_subgridColumns, m_subgridColumns);
+    computeCachedTrackData(m_columns, m_gridColumns, m_namedGridColumnLines, m_orderedNamedGridColumnLines, m_gridAutoRepeatColumns, m_autoRepeatNamedGridColumnLines, m_autoRepeatOrderedNamedGridColumnLines, m_autoRepeatColumnsInsertionPoint, m_autoRepeatColumnsType, m_subgridColumns, m_masonryColumns);
 }
 
 static void createGridLineNamesList(const Vector<String>& names, unsigned currentNamedGridLine, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines)
