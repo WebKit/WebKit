@@ -905,7 +905,10 @@
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow file-map-executable))
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+(deny system-necp-client-action)
+(deny necp-client-open)
+#else
 ;; Allow ManagedPreference access
 (allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
 #endif
