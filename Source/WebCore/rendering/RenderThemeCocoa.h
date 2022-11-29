@@ -30,7 +30,6 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDateComponentsFormatter;
-struct AttachmentLayout;
 
 namespace WebCore {
 
@@ -40,10 +39,6 @@ public:
 
 protected:
     virtual Color pictureFrameColor(const RenderObject&);
-#if ENABLE(ATTACHMENT_ELEMENT)
-    int attachmentBaseline(const RenderAttachment& attachment) const final;
-    void paintAttachmentText(GraphicsContext&, AttachmentLayout*) final;
-#endif
 
 private:
     void purgeCaches() override;
