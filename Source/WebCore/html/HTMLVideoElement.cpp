@@ -370,9 +370,6 @@ bool HTMLVideoElement::webkitSupportsFullscreen()
 
 bool HTMLVideoElement::webkitDisplayingFullscreen()
 {
-    if (document().quirks().needsAkamaiMediaPlayerQuirk(*this))
-        return isFullscreen() || isChangingVideoFullscreenMode();
-
     return isFullscreen();
 }
 

@@ -134,7 +134,6 @@ public:
     bool needsVP9FullRangeFlagQuirk() const;
     bool needsHDRPixelDepthQuirk() const;
     
-    bool needsAkamaiMediaPlayerQuirk(const HTMLVideoElement&) const;
     bool needsFlightAwareSerializationQuirk() const;
 
     bool needsBlackFullscreenBackgroundQuirk() const;
