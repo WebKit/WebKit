@@ -1077,7 +1077,7 @@ void GraphicsContextCG::clearCGShadow()
     CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 }
 
-#if HAVE(CORE_GRAPHICS_STYLES)
+#if PLATFORM(COCOA)
 static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>& style)
 {
     if (!style) {
@@ -1087,18 +1087,36 @@ static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>&
 
     auto cgStyle = WTF::switchOn(*style,
         [&] (const GraphicsDropShadow& dropShadow) -> RetainPtr<CGStyleRef> {
+#if HAVE(CGSTYLE_CREATE_SHADOW2)
             return adoptCF(CGStyleCreateShadow2(dropShadow.offset, dropShadow.radius.width(), cachedCGColor(dropShadow.color).get()));
+#else
+            ASSERT_NOT_REACHED();
+            UNUSED_PARAM(dropShadow);
+            return nullptr;
+#endif
         },
         [&] (const GraphicsGaussianBlur& gaussianBlur) -> RetainPtr<CGStyleRef> {
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
             ASSERT(gaussianBlur.radius.width() == gaussianBlur.radius.height());
             CGGaussianBlurStyle gaussianBlurStyle = { 1, gaussianBlur.radius.width() };
             return adoptCF(CGStyleCreateGaussianBlur(&gaussianBlurStyle));
+#else
+            ASSERT_NOT_REACHED();
+            UNUSED_PARAM(gaussianBlur);
+            return nullptr;
+#endif
         },
         [&] (const GraphicsColorMatrix& colorMatrix) -> RetainPtr<CGStyleRef> {
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
             CGColorMatrixStyle colorMatrixStyle = { 1, { 0 } };
-            for (auto value : colorMatrix.values)
-                colorMatrixStyle.matrix[i] = value;
+            for (size_t i = 0; i < colorMatrix.values.size(); ++i)
+                colorMatrixStyle.matrix[i] = colorMatrix.values[i];
             return adoptCF(CGStyleCreateColorMatrix(&colorMatrixStyle));
+#else
+            ASSERT_NOT_REACHED();
+            UNUSED_PARAM(colorMatrix);
+            return nullptr;
+#endif
         }
     );
 
@@ -1137,7 +1155,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::Style:
-#if HAVE(CORE_GRAPHICS_STYLES)
+#if PLATFORM(COCOA)
             setCGStyle(context, state.style());
 #endif
             break;

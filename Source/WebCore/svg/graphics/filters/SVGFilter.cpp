@@ -243,7 +243,7 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
 
     for (auto& term : m_expression) {
         auto& effect = term.effect;
-        auto geometry = term.geometry;
+        auto& geometry = term.geometry;
 
         if (effect->filterType() == FilterEffect::Type::SourceGraphic) {
             if (auto result = results.effectResult(effect)) {
@@ -261,7 +261,7 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
         // Need to remove the inputs here in case the effect already has a result.
         auto inputs = effect->takeImageInputs(stack);
 
-        auto result = term.effect->apply(*this, inputs, results, geometry);
+        auto result = effect->apply(*this, inputs, results, geometry);
         if (!result)
             return nullptr;
 
@@ -270,6 +270,36 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
     
     ASSERT(stack.size() == 1);
     return stack.takeLast();
+}
+
+FilterStyleVector SVGFilter::createFilterStyles(const Filter&, const FilterStyle& sourceStyle) const
+{
+    return createFilterStyles(sourceStyle);
+}
+
+FilterStyleVector SVGFilter::createFilterStyles(const FilterStyle& sourceStyle) const
+{
+    ASSERT(!m_expression.isEmpty());
+    ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
+
+    FilterStyleVector styles;
+    FilterStyle lastStyle = sourceStyle;
+
+    for (auto& term : m_expression) {
+        auto& effect = term.effect;
+        auto& geometry = term.geometry;
+
+        if (effect->filterType() == FilterEffect::Type::SourceGraphic)
+            continue;
+        
+        ASSERT(effect->numberOfImageInputs() == 1);
+        auto style = effect->createFilterStyle(*this, lastStyle, geometry);
+
+        lastStyle = style;
+        styles.append(style);
+    }
+
+    return styles;
 }
 
 TextStream& SVGFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

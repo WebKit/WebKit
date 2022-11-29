@@ -37,6 +37,7 @@ class FilterResults;
 
 class Filter : public FilterFunction {
     using FilterFunction::apply;
+    using FilterFunction::createFilterStyles;
 
 public:
     enum class ClipOperation { Intersect, Unite };
@@ -70,12 +71,15 @@ public:
 
     bool clampFilterRegionIfNeeded();
 
-    virtual RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) = 0;
     WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults&);
+    WEBCORE_EXPORT FilterStyleVector createFilterStyles(const FloatRect& sourceImageRect) const;
 
 protected:
     using FilterFunction::FilterFunction;
     Filter(Filter::Type, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion = { });
+
+    virtual RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) = 0;
+    virtual FilterStyleVector createFilterStyles(const FilterStyle& sourceStyle) const = 0;
 
 private:
     FilterRenderingMode m_filterRenderingMode { FilterRenderingMode::Software };
