@@ -222,16 +222,6 @@ void ResourceLoader::start()
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     if (m_documentLoader && m_documentLoader->scheduleArchiveLoad(*this, m_request))
         return;
-
-#if ENABLE(WEB_ARCHIVE)
-    constexpr auto webArchivePrefix { "webarchive+"_s };
-    if (m_request.url().protocol().startsWith(webArchivePrefix)) {
-        auto url { m_request.url() };
-        const auto unprefixedScheme { url.protocol().substring(webArchivePrefix.length()) };
-        url.setProtocol(unprefixedScheme);
-        m_request.setURL(url);
-    }
-#endif
 #endif
 
     if (m_documentLoader && m_documentLoader->applicationCacheHost().maybeLoadResource(*this, m_request, m_request.url()))

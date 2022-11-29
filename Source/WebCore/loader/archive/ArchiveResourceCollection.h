@@ -48,7 +48,7 @@ public:
     void addResource(Ref<ArchiveResource>&&);
     void addAllResources(Archive&);
     
-    WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(URL);
+    WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&);
     RefPtr<Archive> popSubframeArchive(const String& frameName, const URL&);
     
 private:    
