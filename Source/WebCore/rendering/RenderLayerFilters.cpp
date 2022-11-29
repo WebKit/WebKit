@@ -189,7 +189,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_targetSwitcher)
         return nullptr;
 
-    m_targetSwitcher->willDrawSourceImage(context, m_repaintRect);
+    m_targetSwitcher->beginClipAndDrawSourceImage(context, m_repaintRect);
 
     return m_targetSwitcher->drawingContext(context);
 }
@@ -199,7 +199,7 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
     LOG_WITH_STREAM(Filters, stream << "\nRenderLayerFilters " << this << " applyFilterEffect");
 
     ASSERT(m_targetSwitcher);
-    m_targetSwitcher->didDrawSourceImage(destinationContext);
+    m_targetSwitcher->endClipAndDrawSourceImage(destinationContext);
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");
 }

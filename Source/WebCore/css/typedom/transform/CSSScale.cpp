@@ -31,6 +31,7 @@
 #include "CSSScale.h"
 
 #include "CSSFunctionValue.h"
+#include "CSSMathValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
 #include "CSSStyleValueFactory.h"
@@ -44,6 +45,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSScale);
 
+static bool isValidScaleCoord(const CSSNumericValue& coord)
+{
+    if (auto* mathValue = dynamicDowncast<CSSMathValue>(coord)) {
+        auto node = mathValue->toCalcExpressionNode();
+        if (!node)
+            return false;
+        auto resolvedType = node->primitiveType();
+        return resolvedType == CSSUnitType::CSS_NUMBER || resolvedType == CSSUnitType::CSS_INTEGER;
+    }
+    return coord.type().matchesNumber();
+}
+
 ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish>&& z)
 {
     auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
@@ -51,9 +64,7 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std:
     auto rectifiedZ = z ? CSSNumericValue::rectifyNumberish(WTFMove(*z)) : Ref<CSSNumericValue> { CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER) };
 
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssscale-cssscale
-    if (!rectifiedX->type().matchesNumber()
-        || !rectifiedY->type().matchesNumber()
-        || (!rectifiedZ->type().matchesNumber()))
+    if (!isValidScaleCoord(rectifiedX) || !isValidScaleCoord(rectifiedY) || !isValidScaleCoord(rectifiedZ))
         return Exception { TypeError };
 
     return adoptRef(*new CSSScale(z ? Is2D::No : Is2D::Yes, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ)));

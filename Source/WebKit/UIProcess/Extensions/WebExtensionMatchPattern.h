@@ -32,14 +32,12 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS _WKWebExtensionMatchPattern;
-#endif
 
 namespace WebKit {
 
@@ -54,17 +52,17 @@ public:
         return result && result->isValid() ? WTFMove(result) : nullptr;
     }
 
-#if PLATFORM(COCOA)
     static RefPtr<WebExtensionMatchPattern> getOrCreate(NSString *pattern);
     static RefPtr<WebExtensionMatchPattern> getOrCreate(NSString *scheme, NSString *host, NSString *path);
 
     static Ref<WebExtensionMatchPattern> allURLsMatchPattern();
     static Ref<WebExtensionMatchPattern> allHostsAndSchemesMatchPattern();
 
+    static bool patternsMatchAllHosts(HashSet<Ref<WebExtensionMatchPattern>>&);
+
     explicit WebExtensionMatchPattern() { }
     explicit WebExtensionMatchPattern(NSString *pattern, NSError **outError = nullptr);
     explicit WebExtensionMatchPattern(NSString *scheme, NSString *host, NSString *path, NSError **outError = nullptr);
-#endif
 
     ~WebExtensionMatchPattern() { }
 
@@ -76,7 +74,6 @@ public:
         MatchBidirectionally = 1 << 2, // Match two patterns in either direction (A matches B, or B matches A). Invalid for matching URLs.
     };
 
-#if PLATFORM(COCOA)
     static const URLSchemeSet& validSchemes();
     static const URLSchemeSet& supportedSchemes();
 
@@ -104,10 +101,8 @@ public:
 #ifdef __OBJC__
     _WKWebExtensionMatchPattern *wrapper() const { return (_WKWebExtensionMatchPattern *)API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper(); }
 #endif
-#endif
 
 private:
-#if PLATFORM(COCOA)
     NSString *stringWithScheme(NSString *differentScheme) const;
 
     static bool isValidScheme(NSString *);
@@ -126,7 +121,6 @@ private:
     bool m_matchesAllURLs = false;
     bool m_valid = false;
     unsigned m_hash = 0;
-#endif
 };
 
 } // namespace WebKit

@@ -38,7 +38,6 @@ public:
     static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
 
     static Vector<const MQ::FeatureSchema*> featureSchemas();
-    static bool rejectInvalidFeatures() { return false; }
 
     std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
     std::optional<MQ::Feature> consumeFeature(CSSParserTokenRange&);

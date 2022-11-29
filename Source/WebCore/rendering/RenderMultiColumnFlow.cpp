@@ -309,13 +309,7 @@ void RenderMultiColumnFlow::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode
     // Once we have a good guess as to which fragment we hit tested through (and yes, this was just a heuristic, but it's
     // the best we could do), then we can map from the fragment into the flow thread.
     LayoutSize translationOffset = physicalTranslationFromFragmentToFlow(candidateColumnSet, candidatePoint) + candidateContainerOffset;
-    bool preserve3D = mode.contains(UseTransforms) && (parent()->style().preserves3D() || style().preserves3D());
-    if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(parent())) {
-        TransformationMatrix t;
-        getTransformFromContainer(parent(), translationOffset, t);
-        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-    } else
-        transformState.move(translationOffset.width(), translationOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    pushOntoTransformState(transformState, mode, nullptr, parent(), translationOffset, false);
 }
 
 LayoutSize RenderMultiColumnFlow::physicalTranslationFromFragmentToFlow(const RenderMultiColumnSet* columnSet, const LayoutPoint& physicalPoint) const

@@ -1,32 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html id="html" aria-label="Test Webpage">
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
 
 Nothing to see.
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
-    description("This tests that aria-label will become the accessible name of the AXWebArea when used on the HTML tag.");
-
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        let output = "This tests that aria-label will become the accessible name of the AXWebArea when used on the HTML tag.\n\n";
 
-        // Test the values in a multi-select list box.
         var root = accessibilityController.rootElement.childAtIndex(0);
-        shouldBe("root.role", "'AXRole: AXWebArea'");
-        shouldBe("root.description", "'AXDescription: Test Webpage'");
+        output += expect("root.role", "'AXRole: AXWebArea'");
+        output += expect("root.description", "'AXDescription: Test Webpage'");
 
         document.getElementById("html").setAttribute("aria-label", "New Title");
-        shouldBe("root.description", "'AXDescription: New Title'");
+        setTimeout(async () => {
+            output += expect("root.description", "'AXDescription: New Title'");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

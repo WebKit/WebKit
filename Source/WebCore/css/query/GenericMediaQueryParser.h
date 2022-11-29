@@ -144,7 +144,8 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
         if (auto condition = consumeCondition(conditionRange))
             return { condition };
 
-        if (auto feature = concreteParser().consumeFeature(blockRange))
+        auto featureRange = blockRange;
+        if (auto feature = concreteParser().consumeFeature(featureRange))
             return { *feature };
 
         return GeneralEnclosed { { }, blockRange.serialize() };
@@ -160,7 +161,7 @@ std::optional<Feature> GenericMediaQueryParser<ConcreteParser>::consumeFeature(C
     if (!feature)
         return { };
 
-    if (!validateFeature(*feature) && ConcreteParser::rejectInvalidFeatures())
+    if (!validateFeature(*feature))
         return { };
 
     return feature;
@@ -169,7 +170,7 @@ std::optional<Feature> GenericMediaQueryParser<ConcreteParser>::consumeFeature(C
 template<typename ConcreteParser>
 bool GenericMediaQueryParser<ConcreteParser>::validateFeature(Feature& feature)
 {
-    auto* schema = schemaForFeatureName(feature.name);
+    auto* schema = concreteParser().schemaForFeatureName(feature.name);
     if (!schema)
         return false;
     return validateFeatureAgainstSchema(feature, *schema);

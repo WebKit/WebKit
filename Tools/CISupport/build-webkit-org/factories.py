@@ -129,7 +129,6 @@ class TestFactory(Factory):
                 self.addStep(RunWebDriverTests())
         if platform == "wpe":
             self.addStep(RunWPEAPITests())
-            self.addStep(RunWebDriverTests())
 
 
 class BuildAndTestFactory(TestFactory):

@@ -351,8 +351,6 @@ UIProcess/API/Cocoa/WKWindowFeatures.mm
 UIProcess/API/ios/WKWebViewIOS.mm
 UIProcess/API/ios/WKWebViewTestingIOS.mm
 
-UIProcess/API/mac/WKContentViewMac.mm
-UIProcess/API/mac/WKScrollViewMac.mm
 UIProcess/API/mac/WKView.mm
 UIProcess/API/mac/WKWebViewMac.mm
 UIProcess/API/mac/WKWebViewTestingMac.mm

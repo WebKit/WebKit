@@ -97,6 +97,9 @@ void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state, c
         case toIndex(Change::DropShadow):
             mergeChange(&GraphicsContextState::m_dropShadow);
             break;
+        case toIndex(Change::Style):
+            mergeChange(&GraphicsContextState::m_style);
+            break;
 
         case toIndex(Change::Alpha):
             mergeChange(&GraphicsContextState::m_alpha);
@@ -128,6 +131,8 @@ void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state, c
             mergeChange(&GraphicsContextState::m_useDarkAppearance);
             break;
 #endif
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 }

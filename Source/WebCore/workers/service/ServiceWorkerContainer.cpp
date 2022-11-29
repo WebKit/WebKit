@@ -636,7 +636,9 @@ void ServiceWorkerContainer::getNotifications(const URL& serviceWorkerRegistrati
 
         auto data = result.releaseReturnValue();
         auto notifications = map(data, [context](auto&& data) {
-            return Notification::create(*context, WTFMove(data));
+            auto notification = Notification::create(*context, WTFMove(data));
+            notification->markAsShown();
+            return notification;
         });
         promise.resolve(WTFMove(notifications));
     });

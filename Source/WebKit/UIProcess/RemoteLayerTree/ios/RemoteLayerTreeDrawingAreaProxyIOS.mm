@@ -30,6 +30,8 @@
 
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
+#import <QuartzCore/CADisplayLink.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 @interface WKDisplayLinkHandler : NSObject {
     WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;

@@ -184,11 +184,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->backgroundContentUsesModules();
 }
 
-- (BOOL)hasInjectedContentForURL:(NSURL *)url
+- (BOOL)_hasStaticInjectedContentForURL:(NSURL *)url
 {
     NSParameterAssert(url);
 
-    return _webExtension->hasInjectedContentForURL(url);
+    return _webExtension->hasStaticInjectedContentForURL(url);
 }
 
 #pragma mark WKObject protocol implementation
@@ -310,7 +310,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return NO;
 }
 
-- (BOOL)hasInjectedContentForURL:(NSURL *)url
+- (BOOL)_hasStaticInjectedContentForURL:(NSURL *)url
 {
     return NO;
 }

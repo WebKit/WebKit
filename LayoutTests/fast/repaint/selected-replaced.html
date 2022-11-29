@@ -18,7 +18,10 @@
     {
       var selection = window.getSelection();
       var image = document.getElementById('test');
-      selection.setBaseAndExtent(image, 0, image, 1);
+      const range = new Range;
+      range.selectNode(image);
+      selection.removeAllRanges();
+      selection.addRange(range);
       runRepaintTest();
     }
     function repaintTest()

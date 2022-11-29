@@ -545,7 +545,7 @@ class PortTestCase(unittest.TestCase):
         self.assertEqual(port.path_to_test_expectations_file(), '/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations')
 
     def test_skipped_layout_tests(self):
-        self.assertEqual(TestWebKitPort().skipped_layout_tests(test_list=[]), set(['media']))
+        self.assertEqual(TestWebKitPort().skipped_layout_tests(), set(['media']))
 
     def test_expectations_files(self):
         port = TestWebKitPort()

@@ -956,7 +956,8 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
     // FIXME: Because of the problem mentioned at the top of this function, we must also use nbsps at the start/end of the string because
     // this function doesn't get all surrounding whitespace, just the whitespace in the current text node.
     String rebalancedString = stringWithRebalancedWhitespace(string, isStartOfParagraph(visibleUpstreamPos) || !upstream,
-        isEndOfParagraph(visibleDownstreamPos) || downstream == text.length());
+        (isEndOfParagraph(visibleDownstreamPos) || downstream == text.length())
+        && !(textNode.nextSibling() && textNode.nextSibling()->isTextNode()));
 
     if (string != rebalancedString)
         replaceTextInNodePreservingMarkers(textNode, upstream, length, rebalancedString);

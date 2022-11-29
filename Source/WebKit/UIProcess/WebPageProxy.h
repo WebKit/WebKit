@@ -573,6 +573,8 @@ public:
 
     void loadServiceWorker(const URL&, bool usingModules, CompletionHandler<void(bool success)>&&);
 
+    WebUserContentControllerProxy& userContentController() { return m_userContentController.get(); }
+
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy* fullScreenManager();
 

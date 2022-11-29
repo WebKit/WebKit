@@ -104,6 +104,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureOutput)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureSession)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureVideoDataOutput)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVFrameRateRange)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureDeviceDiscoverySession)
 #endif
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString *)
@@ -333,6 +334,32 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionRouteChangeNotifi
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionRouteChangeReasonKey, NSString *)
 #define AVAudioSessionRouteChangeReasonKey PAL::get_AVFoundation_AVAudioSessionRouteChangeReasonKey()
 #endif // PLATFORM(IOS_FAMILY)
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInWideAngleCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInWideAngleCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInWideAngleCamera()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTelephotoCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInTelephotoCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInTelephotoCamera()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInUltraWideCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInUltraWideCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInUltraWideCamera()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInDualCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInDualCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInDualCamera()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInDualWideCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInDualWideCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTripleCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInTripleCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTrueDepthCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInTrueDepthCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInTrueDepthCamera()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInLiDARDepthCamera, NSString *)
+#define AVCaptureDeviceTypeBuiltInLiDARDepthCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInLiDARDepthCamera()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeDeskViewCamera, NSString *)
+#define AVCaptureDeviceTypeDeskViewCamera PAL::get_AVFoundation_AVCaptureDeviceTypeDeskViewCamera()
+#endif
+
+#if PLATFORM(MAC)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeExternalUnknown, NSString *)
+#define AVCaptureDeviceTypeExternalUnknown PAL::get_AVFoundation_AVCaptureDeviceTypeExternalUnknown()
+#endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AVFoundation, AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout, void, (AVCaptureSession *session), (session))

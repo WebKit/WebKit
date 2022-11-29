@@ -191,16 +191,8 @@ PASS CSSUnitValue rejected by set() for syntax <length>+ [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <length>+ [styleMap]
 PASS CSSUnitValue rejected by set() for syntax <length># [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <length># [styleMap]
-FAIL Appending a string to * is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to * is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Appending a string to * is not allowed [attributeStyleMap]
+PASS Appending a string to * is not allowed [styleMap]
 FAIL Appending a string to foo+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to foo+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <angle>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -211,46 +203,14 @@ FAIL Appending a string to <custom-ident>+ is not allowed [attributeStyleMap] Th
 FAIL Appending a string to <custom-ident>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <image>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <image>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <integer>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <integer>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <length-percentage>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <length-percentage>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <length>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <length>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <number>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <number>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Appending a string to <integer>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <integer>+ is not allowed [styleMap]
+PASS Appending a string to <length-percentage>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <length-percentage>+ is not allowed [styleMap]
+PASS Appending a string to <length>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <length>+ is not allowed [styleMap]
+PASS Appending a string to <number>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <number>+ is not allowed [styleMap]
 FAIL Appending a string to <percentage>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <percentage>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <resolution>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -263,26 +223,10 @@ FAIL Appending a string to <transform-list> is not allowed [attributeStyleMap] T
 FAIL Appending a string to <transform-list> is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <url>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <url>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <length># is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a string to <length># is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSKeywordValue to * is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSKeywordValue to * is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Appending a string to <length># is not allowed [attributeStyleMap]
+PASS Appending a string to <length># is not allowed [styleMap]
+PASS Appending a CSSKeywordValue to * is not allowed [attributeStyleMap]
+PASS Appending a CSSKeywordValue to * is not allowed [styleMap]
 FAIL Appending a CSSKeywordValue to foo+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSKeywordValue to foo+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSUnitValue to <angle>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -291,46 +235,14 @@ FAIL Appending a CSSKeywordValue to <custom-ident>+ is not allowed [attributeSty
 FAIL Appending a CSSKeywordValue to <custom-ident>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSImageValue to <image>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSImageValue to <image>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSUnitValue to <integer>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <integer>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <length-percentage>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <length-percentage>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <length>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <length>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <number>+ is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <number>+ is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Appending a CSSUnitValue to <integer>+ is not allowed [attributeStyleMap]
+PASS Appending a CSSUnitValue to <integer>+ is not allowed [styleMap]
+PASS Appending a CSSUnitValue to <length-percentage>+ is not allowed [attributeStyleMap]
+PASS Appending a CSSUnitValue to <length-percentage>+ is not allowed [styleMap]
+PASS Appending a CSSUnitValue to <length>+ is not allowed [attributeStyleMap]
+PASS Appending a CSSUnitValue to <length>+ is not allowed [styleMap]
+PASS Appending a CSSUnitValue to <number>+ is not allowed [attributeStyleMap]
+PASS Appending a CSSUnitValue to <number>+ is not allowed [styleMap]
 FAIL Appending a CSSUnitValue to <percentage>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSUnitValue to <percentage>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSUnitValue to <resolution>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -339,16 +251,8 @@ FAIL Appending a CSSUnitValue to <time>+ is not allowed [attributeStyleMap] The 
 FAIL Appending a CSSUnitValue to <time>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSKeywordValue to <transform-list> is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSKeywordValue to <transform-list> is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSUnitValue to <length># is not allowed [attributeStyleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Appending a CSSUnitValue to <length># is not allowed [styleMap] assert_throws_js: function "() => {
-        map.append(name, value);
-    }" threw object "NotSupportedError: append() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Appending a CSSUnitValue to <length># is not allowed [attributeStyleMap]
+PASS Appending a CSSUnitValue to <length># is not allowed [styleMap]
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax *
 FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <angle> The given initial value does not parse for the given syntax.
 FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <color> The given initial value does not parse for the given syntax.

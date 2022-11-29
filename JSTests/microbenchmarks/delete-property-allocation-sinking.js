@@ -1,5 +1,5 @@
 //@ skip if $model == "Apple Watch Series 3"
-//@ $skipModes << :lockdown if $buildType == "debug"
+//@ $skipModes << :lockdown if ($buildType == "debug") or ($architecture == "mips")
 
 function assert(condition) {
     if (!condition)

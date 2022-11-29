@@ -2267,22 +2267,10 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
     // order to avoid piping this flag down the method chain.
     if (mode.contains(IgnoreStickyOffsets) && isStickilyPositioned())
         containerOffset -= stickyPositionOffset();
-    
-    bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
-    if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-    } else
-        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 
-    if (containerSkipped) {
-        // There can't be a transform between ancestorContainer and o, because transforms create containers, so it should be safe
-        // to just subtract the delta between the ancestorContainer and o.
-        LayoutSize containerOffset = ancestorContainer->offsetFromAncestorContainer(*container);
-        transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
+    if (containerSkipped)
         return;
-    }
 
     mode.remove(ApplyContainerFlip);
 
@@ -2298,29 +2286,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     if (!container)
         return nullptr;
 
-    bool isFixedPos = isFixedPositioned();
-    LayoutSize adjustmentForSkippedAncestor;
-    if (ancestorSkipped) {
-        // There can't be a transform between repaintContainer and container, because transforms create containers, so it should be safe
-        // to just subtract the delta between the ancestor and container.
-        adjustmentForSkippedAncestor = -ancestorToStopAt->offsetFromAncestorContainer(*container);
-    }
-
-    bool offsetDependsOnPoint = false;
-    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(), &offsetDependsOnPoint);
-
-    bool preserve3D = container->style().preserves3D() || style().preserves3D();
-    if (shouldUseTransformFromContainer(container) && (geometryMap.mapCoordinatesFlags() & UseTransforms)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        t.translateRight(adjustmentForSkippedAncestor.width(), adjustmentForSkippedAncestor.height());
-        
-        geometryMap.push(this, t, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
-    } else {
-        containerOffset += adjustmentForSkippedAncestor;
-        geometryMap.push(this, containerOffset, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
-    }
-    
+    pushOntoGeometryMap(geometryMap, ancestorToStopAt, container, ancestorSkipped);
     return ancestorSkipped ? ancestorToStopAt : container;
 }
 

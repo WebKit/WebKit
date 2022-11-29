@@ -1093,8 +1093,7 @@ class TestExpectations(object):
         self.parse_default_port_expectations()
         self.parse_override_expectations()
 
-        # FIXME: move ignore_tests into port.skipped_layout_tests()
-        self.add_skipped_tests(self._port.skipped_layout_tests(self._full_test_list, device_type=self._device_type).union(set(self._port.get_option('ignore_tests', []))))
+        self.add_skipped_tests(self._port.skipped_layout_tests(device_type=self._device_type))
 
         self._report_warnings()
         self._process_tests_without_expectations()

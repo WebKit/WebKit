@@ -44,10 +44,13 @@ public:
 
     virtual GraphicsContext* drawingContext(GraphicsContext& destinationContext) const { return &destinationContext; }
 
-    virtual bool needsRedrawSourceImage() { return false; }
+    virtual bool needsRedrawSourceImage() const { return false; }
 
-    virtual void willDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect);
-    virtual void didDrawSourceImage(GraphicsContext& destinationContext);
+    virtual void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&) { beginDrawSourceImage(destinationContext); }
+    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext) { endDrawSourceImage(destinationContext); }
+
+    virtual void beginDrawSourceImage(GraphicsContext&) { }
+    virtual void endDrawSourceImage(GraphicsContext&) { }
 
 protected:
     FilterTargetSwitcher(Filter&);

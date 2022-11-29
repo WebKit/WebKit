@@ -57,9 +57,7 @@ WebExtensionController::WebExtensionController()
 
 WebExtensionController::~WebExtensionController()
 {
-#if PLATFORM(COCOA)
     unloadAll();
-#endif
 }
 
 WebExtensionControllerParameters WebExtensionController::parameters() const
@@ -68,7 +66,6 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
 
     parameters.identifier = identifier();
 
-#if PLATFORM(COCOA)
     Vector<WebExtensionContextParameters> contextParameters;
     contextParameters.reserveInitialCapacity(extensionContexts().size());
 
@@ -76,9 +73,16 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
         contextParameters.append(context->parameters());
 
     parameters.contextParameters = contextParameters;
-#endif
 
     return parameters;
+}
+
+WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses() const
+{
+    WebProcessProxySet processes;
+    for (auto& page : m_pages)
+        processes.add(page.process());
+    return processes;
 }
 
 } // namespace WebKit

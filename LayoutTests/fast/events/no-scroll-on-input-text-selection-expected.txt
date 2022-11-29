@@ -3,7 +3,7 @@ Verify selecting text does not cause any scrolling.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.getSelection().toString().length > 1 is true
+PASS ta.selectionStart < ta.selectionEnd is true
 PASS pageXOffset is 0
 PASS pageYOffset is originalPageYOffset
 PASS document.scrollingElement.scrollLeft is 0

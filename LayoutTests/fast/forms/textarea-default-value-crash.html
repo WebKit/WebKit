@@ -1,0 +1,11 @@
+<script>
+function load() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var textarea = document.createElement("textarea");
+    textarea.defaultValue = String.fromCharCode(13);
+}
+</script>
+<body onload=load()>
+<div>PASS if this doesn't crash.</div>

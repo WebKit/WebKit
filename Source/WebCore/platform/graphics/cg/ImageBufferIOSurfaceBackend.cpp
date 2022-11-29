@@ -28,6 +28,7 @@
 
 #if HAVE(IOSURFACE)
 
+#include "GraphicsClient.h"
 #include "GraphicsContextCG.h"
 #include "IOSurface.h"
 #include "IOSurfacePool.h"
@@ -93,7 +94,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (!surface)
         return nullptr;
 
-    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(creationContext.hostWindow);
+    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(creationContext.graphicsClient ? creationContext.graphicsClient->displayID() : 0);
     if (!cgContext)
         return nullptr;
 

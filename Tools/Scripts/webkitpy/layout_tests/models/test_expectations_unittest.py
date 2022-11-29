@@ -290,7 +290,7 @@ class SkippedTests(Base):
         if overrides:
             expectations_dict['overrides'] = overrides
         port.expectations_dict = lambda **kwargs: expectations_dict
-        port.skipped_layout_tests = lambda tests, **kwargs: set(skips)
+        port.skipped_layout_tests = lambda **kwargs: set(skips)
         expectations_to_lint = expectations_dict if lint else None
         exp = TestExpectations(port, ['failures/expected/text.html'], expectations_to_lint=expectations_to_lint)
         exp.parse_all_expectations()
@@ -327,7 +327,7 @@ class SkippedTests(Base):
         expectations_dict = OrderedDict()
         expectations_dict['expectations'] = ''
         port.expectations_dict = lambda **kwargs: expectations_dict
-        port.skipped_layout_tests = lambda tests, **kwargs: {'foo/bar/baz.html'}
+        port.skipped_layout_tests = lambda **kwargs: {'foo/bar/baz.html'}
         with OutputCapture() as captured:
             exp = TestExpectations(port)
             exp.parse_all_expectations()

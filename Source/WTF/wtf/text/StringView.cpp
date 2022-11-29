@@ -460,7 +460,7 @@ template<typename CharacterType> static String makeStringBySimplifyingNewLinesSl
             resultCharacters[resultLength++] = characters[i];
         else {
             resultCharacters[resultLength++] = '\n';
-            if (i < length + 1 && characters[i + 1] == '\n')
+            if (i + 1 < length && characters[i + 1] == '\n')
                 ++i;
         }
     }

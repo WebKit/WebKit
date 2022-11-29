@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCoreCALayerExtras.h"
 
+#import "TransformationMatrix.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -118,3 +119,45 @@
 }
 
 @end
+
+namespace WebCore {
+
+void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint point, const std::function<bool(CALayer *, CGPoint)>& pointInLayerFunction)
+{
+    if (parent.masksToBounds && ![parent containsPoint:point])
+        return;
+
+    if (parent.mask && ![parent _web_maskContainsPoint:point])
+        return;
+
+    for (CALayer *layer in [parent sublayers]) {
+        CALayer *layerWithResolvedAnimations = layer;
+
+        if ([[layer animationKeys] count])
+            layerWithResolvedAnimations = [layer presentationLayer];
+
+        auto transform = TransformationMatrix { [layerWithResolvedAnimations transform] };
+        if (!transform.isInvertible())
+            continue;
+
+        CGPoint subviewPoint = [layerWithResolvedAnimations convertPoint:point fromLayer:parent];
+
+        auto handlesEvent = [&] {
+            if (CGRectIsEmpty([layerWithResolvedAnimations frame]))
+                return false;
+
+            if (![layerWithResolvedAnimations containsPoint:subviewPoint])
+                return false;
+
+            return pointInLayerFunction(layer, subviewPoint);
+        }();
+
+        if (handlesEvent)
+            layersAtPoint.append(std::make_pair(layer, subviewPoint));
+
+        if ([layer sublayers])
+            collectDescendantLayersAtPoint(layersAtPoint, layer, subviewPoint, pointInLayerFunction);
+    };
+}
+
+} // namespace WebCore

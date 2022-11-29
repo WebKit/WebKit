@@ -1142,8 +1142,8 @@ String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& s
         if (!value)
             return String();
 
-        // Omit implicit initial values. However, border-image-width and border-image-outset require border-image-slice.
-        if (value->isInitialValue() && isPropertyImplicit(longhand)) {
+        // FIXME: We should omit values based on them being equal to the initial value, not based on the implicit flag.
+        if (isPropertyImplicit(longhand)) {
             if (longhand == CSSPropertyBorderImageSlice)
                 omittedSlice = true;
             else if (longhand == CSSPropertyBorderImageWidth)
@@ -1166,7 +1166,7 @@ String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& s
         } else
             valueText = value->cssText();
 
-        // If a longhand is set to a css-wide keyword, the others should be the same.
+        // If any longhand is set to a CSS-wide keyword, the others must be the same.
         if (isCSSWideValueKeyword(valueText)) {
             if (!i)
                 commonWideValueText = valueText;

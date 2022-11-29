@@ -3400,6 +3400,14 @@ class ReRunWebKitTests(RunWebKitTests):
         flaky_failures = sorted(list(flaky_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
 
+        if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+            # This means all the tests which failed in this run were also failing or flaky in results database
+            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.finished(WARNINGS)
+            self.build.buildFinished([message], SUCCESS)
+
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
@@ -3436,6 +3444,9 @@ class ReRunWebKitTests(RunWebKitTests):
             self.setProperty('second_run_flakies', sorted(second_results.flaky_tests))
             if second_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
+                self.filter_failures_using_results_db(second_results.failing_tests)
+                self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
+                self.setProperty('results-db-second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
         self._parseRunWebKitTestsOutput(logText)
 
     def send_email_for_flaky_failure(self, test_name):

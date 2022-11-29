@@ -194,7 +194,7 @@ bool deprecatedIsCollapsibleWhitespace(UChar);
 
 bool isAmbiguousBoundaryCharacter(UChar);
 
-String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool endIsEndOfParagraph);
+String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd);
 const String& nonBreakingSpaceString();
 
 // Miscellaneous functions for caret rendering.

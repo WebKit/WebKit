@@ -18,7 +18,7 @@ textInputController.insertText('abcd');  // Debug WebKit crashed by this without
 // Check the current value without input.value.
 // In Release WebKit, input.value was 'ab' though the user-visible value was 'abcd'.
 document.execCommand('SelectAll');
-shouldBe('document.getSelection().toString()', '"ab"');
+shouldBeEqualToString('input.value.substring(input.selectionStart, input.selectionEnd)', 'ab');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

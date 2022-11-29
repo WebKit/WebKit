@@ -38,7 +38,7 @@
 namespace WebCore {
 
 class Filter;
-class HostWindow;
+class GraphicsClient;
 #if HAVE(IOSURFACE)
 class IOSurfacePool;
 #endif
@@ -48,11 +48,11 @@ enum class ImageBufferOptions : uint8_t {
     UseDisplayList  = 1 << 1
 };
 
-class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
+class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
 public:
     struct CreationContext {
         // clang 13.1.6 throws errors if we use default initializers here.
-        HostWindow* hostWindow;
+        GraphicsClient* graphicsClient;
 #if HAVE(IOSURFACE)
         IOSurfacePool* surfacePool;
 #endif
@@ -63,7 +63,7 @@ public:
         UseCGDisplayListImageCache useCGDisplayListImageCache;
 #endif
 
-        CreationContext(HostWindow* window = nullptr
+        CreationContext(GraphicsClient* client = nullptr
 #if HAVE(IOSURFACE)
             , IOSurfacePool* pool = nullptr
 #endif
@@ -72,7 +72,7 @@ public:
             , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
 #endif
         )
-            : hostWindow(window)
+            : graphicsClient(client)
 #if HAVE(IOSURFACE)
             , surfacePool(pool)
 #endif
@@ -135,6 +135,7 @@ public:
     static FloatRect clampedRect(const FloatRect&);
 
     RefPtr<ImageBuffer> clone() const;
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> cloneForDifferentThread();
 
     WEBCORE_EXPORT virtual GraphicsContext& context() const;
     WEBCORE_EXPORT virtual void flushContext();
@@ -177,6 +178,8 @@ public:
     static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(RefPtr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
 
+    static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
+
     WEBCORE_EXPORT virtual void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
     WEBCORE_EXPORT virtual void drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&);
 
@@ -215,6 +218,7 @@ public:
 protected:
     WEBCORE_EXPORT ImageBuffer(const ImageBufferBackend::Parameters&, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread();
     ImageBufferBackend::Parameters m_parameters;
     ImageBufferBackend::Info m_backendInfo;
     std::unique_ptr<ImageBufferBackend> m_backend;

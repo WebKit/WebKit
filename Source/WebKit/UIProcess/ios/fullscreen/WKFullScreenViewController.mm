@@ -137,8 +137,10 @@ private:
     RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
     RetainPtr<UIView> _animatingView;
     RetainPtr<UIStackView> _stackView;
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     RetainPtr<UIStackView> _banner;
     RetainPtr<_WKInsetLabel> _bannerLabel;
+#endif
     RetainPtr<_WKExtrinsicButton> _cancelButton;
     RetainPtr<_WKExtrinsicButton> _pipButton;
     RetainPtr<UIButton> _locationButton;
@@ -189,7 +191,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _valid = NO;
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBanner) object:nil];
+#endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     _playbackClient.setParent(nullptr);
     _playbackClient.setInterface(nullptr);
@@ -271,6 +275,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)showBanner
 {
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     ASSERT(_valid);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBanner) object:nil];
 
@@ -280,10 +285,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
 
     [self performSelector:@selector(hideBanner) withObject:nil afterDelay:autoHideDelay];
+#endif
 }
 
 - (void)hideBanner
 {
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     ASSERT(_valid);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBanner) object:nil];
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
@@ -294,6 +301,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         [_banner setHidden:YES];
     }];
+#endif
 }
 
 - (void)videoControlsManagerDidChange
@@ -410,7 +418,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _location = location;
 
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [_bannerLabel setText:[NSString stringWithFormat:WEB_UI_NSSTRING(@"”%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), (NSString *)self.location]];
+#endif
 }
 
 #pragma mark - UIViewController Overrides
@@ -494,6 +504,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_animatingView addSubview:_stackView.get()];
 
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     _bannerLabel = adoptNS([[_WKInsetLabel alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
     [_bannerLabel setEdgeInsets:UIEdgeInsetsMake(16, 16, 16, 16)];
     [_bannerLabel setBackgroundColor:[UIColor clearColor]];
@@ -508,6 +519,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_banner setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     [_animatingView addSubview:_banner.get()];
+#endif
 
     UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
     UILayoutGuide *margins = self.view.layoutMarginsGuide;
@@ -524,9 +536,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [NSLayoutConstraint activateConstraints:@[
         _topConstraint.get(),
         stackViewToTopGuideConstraint,
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
         [[_banner centerYAnchor] constraintEqualToAnchor:margins.centerYAnchor],
         [[_banner centerXAnchor] constraintEqualToAnchor:margins.centerXAnchor],
         [[_banner widthAnchor] constraintEqualToAnchor:margins.widthAnchor],
+#endif
         [[_stackView leadingAnchor] constraintEqualToAnchor:margins.leadingAnchor],
     ]];
 
@@ -534,8 +548,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_stackView setHidden:YES];
     [self videoControlsManagerDidChange];
 
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [_banner setAlpha:0];
     [_banner setHidden:YES];
+#endif
 
     _touchGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_touchDetected:)]);
     [_touchGestureRecognizer setCancelsTouchesInView:NO];

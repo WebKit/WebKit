@@ -317,23 +317,27 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
     return CSSStyleValue::create(WTFMove(cssValue));
 }
 
-Vector<Ref<CSSStyleValue>> CSSStyleValueFactory::vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values)
+ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values)
 {
     Vector<Ref<CSSStyleValue>> styleValues;
     for (auto&& value : WTFMove(values)) {
+        std::optional<Exception> exception;
         switchOn(WTFMove(value), [&](RefPtr<CSSStyleValue>&& styleValue) {
             ASSERT(styleValue);
             styleValues.append(styleValue.releaseNonNull());
         }, [&](String&& string) {
             constexpr bool parseMultiple = true;
             auto result = CSSStyleValueFactory::parseStyleValue(property, string, parseMultiple);
-            if (result.hasException())
+            if (result.hasException()) {
+                exception = result.releaseException();
                 return;
+            }
             styleValues.appendVector(result.releaseReturnValue());
         });
+        if (exception)
+            return { WTFMove(*exception) };
     }
-    return styleValues;
+    return { WTFMove(styleValues) };
 }
-
 
 } // namespace WebCore

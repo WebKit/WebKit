@@ -265,6 +265,36 @@ NSURL *WebExtension::resourceFileURLForPath(NSString *path)
     return resourceURL;
 }
 
+NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheResult)
+{
+    ASSERT(path);
+
+    // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
+    if ([path hasPrefix:@"/"])
+        path = [path substringFromIndex:1];
+
+    if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
+        return cachedString;
+
+    if ([path isEqualToString:generatedBackgroundPageFilename])
+        return generatedBackgroundContent();
+
+    NSData *data = resourceDataForPath(path, CacheResult::No);
+
+    NSString *string;
+    [NSString stringEncodingForData:data encodingOptions:nil convertedString:&string usedLossyConversion:nil];
+    if (!string)
+        return nil;
+
+    if (cacheResult == CacheResult::Yes) {
+        if (!m_resources)
+            m_resources = [NSMutableDictionary dictionary];
+        [m_resources setObject:string forKey:path];
+    }
+
+    return string;
+}
+
 NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResult)
 {
     ASSERT(path);
@@ -276,23 +306,15 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
     if (NSData *cachedData = objectForKey<NSData>(m_resources, path))
         return cachedData;
 
-    if (NSString *cachedString = objectForKey<NSString>(m_resources, path)) {
-        NSData *cachedData = [cachedString dataUsingEncoding:NSUTF8StringEncoding];
-        ASSERT(cachedData);
-        [m_resources setObject:cachedData forKey:path];
-        return cachedData;
-    }
+    if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
+        return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
 
     if ([path isEqualToString:generatedBackgroundPageFilename])
         return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
 
     NSURL *resourceURL = resourceFileURLForPath(path);
     if (!resourceURL) {
-        if (m_resources)
-            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path)));
-        else
-            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path)));
-
+        recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path)));
         return nil;
     }
 
@@ -499,8 +521,8 @@ void WebExtension::removeError(Error error, SuppressNotification suppressNotific
     if (suppressNotification == SuppressNotification::Yes)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:WebKit::wrapper(this) userInfo:nil];
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
     }).get());
 }
 
@@ -516,8 +538,8 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
     if (suppressNotification == SuppressNotification::Yes)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:WebKit::wrapper(this) userInfo:nil];
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
     }).get());
 }
 
@@ -989,19 +1011,19 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
 #endif
 }
 
-const Vector<WebExtension::InjectedContentData>& WebExtension::injectedContents()
+const Vector<WebExtension::InjectedContentData>& WebExtension::staticInjectedContents()
 {
     populateContentScriptPropertiesIfNeeded();
-    return m_injectedContents;
+    return m_staticInjectedContents;
 }
 
-bool WebExtension::hasInjectedContentForURL(NSURL *url)
+bool WebExtension::hasStaticInjectedContentForURL(NSURL *url)
 {
     ASSERT(url);
 
     populateContentScriptPropertiesIfNeeded();
 
-    for (auto& injectedContent : m_injectedContents) {
+    for (auto& injectedContent : m_staticInjectedContents) {
         // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
         bool isExcluded = false;
         for (auto& excludeMatchPattern : injectedContent.excludeMatchPatterns) {
@@ -1145,7 +1167,7 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         else
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `run_at` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value")));
 
-        m_injectedContents.append({ WTFMove(includeMatchPatterns), WTFMove(excludeMatchPatterns), injectionTime, matchesAboutBlank, injectsIntoAllFrames, scriptPaths, styleSheetPaths, includeGlobPatternStrings, excludeGlobPatternStrings });
+        m_staticInjectedContents.append({ WTFMove(includeMatchPatterns), WTFMove(excludeMatchPatterns), injectionTime, matchesAboutBlank, injectsIntoAllFrames, false, scriptPaths, styleSheetPaths, includeGlobPatternStrings, excludeGlobPatternStrings });
     };
 
     for (NSDictionary<NSString *, id> *contentScriptsManifestEntry in contentScriptsManifestArray)
@@ -1197,7 +1219,7 @@ WebExtension::MatchPatternSet WebExtension::allRequestedMatchPatterns()
 
     // FIXME: <https://webkit.org/b/246491> Add externally connectable match patterns.
 
-    for (auto& injectedContent : m_injectedContents) {
+    for (auto& injectedContent : m_staticInjectedContents) {
         for (auto& matchPattern : injectedContent.includeMatchPatterns)
             result.add(matchPattern);
     }

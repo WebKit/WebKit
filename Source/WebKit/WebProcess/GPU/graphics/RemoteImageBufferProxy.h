@@ -74,6 +74,9 @@ private:
     RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
 
+    RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;
+    RefPtr<ImageBuffer> cloneForDifferentThread() final;
+
     RefPtr<WebCore::Image> filteredImage(WebCore::Filter&) final;
 
     void drawConsuming(WebCore::GraphicsContext& destContext, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;

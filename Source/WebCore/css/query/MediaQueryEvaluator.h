@@ -36,6 +36,7 @@ namespace MQ {
 class MediaQueryEvaluator : public GenericMediaQueryEvaluator<MediaQueryEvaluator> {
 public:
     MediaQueryEvaluator(const AtomString& mediaType, const Document&, const RenderStyle* rootElementStyle);
+    MediaQueryEvaluator(const AtomString& mediaType = nullAtom(), EvaluationResult mediaConditionResult = EvaluationResult::False);
 
     bool evaluate(const MediaQueryList&) const;
     bool evaluate(const MediaQuery&) const;
@@ -45,10 +46,13 @@ public:
     OptionSet<MediaQueryDynamicDependency> collectDynamicDependencies(const MediaQueryList&) const;
     OptionSet<MediaQueryDynamicDependency> collectDynamicDependencies(const MediaQuery&) const;
 
+    bool isPrintMedia() const;
+
 private:
-    const AtomString m_mediaType;
-    const Document& m_document;
-    const RenderStyle* m_rootElementStyle;
+    AtomString m_mediaType;
+    const Document* m_document { nullptr };
+    const RenderStyle* m_rootElementStyle { nullptr };
+    EvaluationResult m_staticMediaConditionResult { EvaluationResult::Unknown };
 };
 
 }

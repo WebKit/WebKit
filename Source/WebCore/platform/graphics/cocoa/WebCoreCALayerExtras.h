@@ -25,6 +25,11 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#ifdef __cplusplus
+#import "FloatPoint.h"
+#import <wtf/Vector.h>
+#endif
+
 @interface CALayer (WebCoreCALayerExtras)
 
 + (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID;
@@ -36,3 +41,14 @@
 - (BOOL)_web_maskMayIntersectRect:(CGRect)rect;
 
 @end
+
+#ifdef __cplusplus
+
+namespace WebCore {
+
+using LayerAndPoint = std::pair<CALayer *, FloatPoint>;
+WEBCORE_EXPORT void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint, const std::function<bool(CALayer *, CGPoint localPoint)>& pointInLayerFunction);
+
+} // namespace WebCore
+
+#endif // __cplusplus

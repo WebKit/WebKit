@@ -121,6 +121,25 @@ IntOutsets FEDropShadow::calculateOutsets(const FloatSize& offset, const FloatSi
     return { top, right, bottom, left };
 }
 
+OptionSet<FilterRenderingMode> FEDropShadow::supportedFilterRenderingModes() const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if HAVE(CGSTYLE_CREATE_SHADOW2)
+    if (m_stdX == m_stdY)
+        modes.add(FilterRenderingMode::GraphicsContext);
+#endif
+    return modes;
+}
+
+std::optional<GraphicsStyle> FEDropShadow::createGraphicsStyle(const Filter& filter) const
+{
+    auto offset = filter.resolvedSize({ m_dx, m_dy });
+    auto radius = FEGaussianBlur::calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
+    auto color = m_shadowColor.colorWithAlpha(m_shadowOpacity);
+
+    return GraphicsDropShadow { offset, radius, color };
+}
+
 std::unique_ptr<FilterEffectApplier> FEDropShadow::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FEDropShadowSoftwareApplier>(*this);

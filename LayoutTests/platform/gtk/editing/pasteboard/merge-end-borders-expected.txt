@@ -29,9 +29,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,104) size 784x38
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 95x17
-            text run at (0,0) width 28: "First"
-            text run at (28,0) width 4: " "
-            text run at (32,0) width 63: "paragraph"
+            text run at (0,0) width 95: "First paragraph"
         RenderBlock {DIV} at (0,18) size 784x20 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,1) size 299x17
             text run at (1,1) width 299: "This text should be surrounded by a red border."

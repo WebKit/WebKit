@@ -39,7 +39,9 @@ public:
 private:
     GraphicsContext* drawingContext(GraphicsContext& destinationContext) const override;
 
-    void didDrawSourceImage(GraphicsContext& destinationContext) override;
+    void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect) override;
+    void endClipAndDrawSourceImage(GraphicsContext& destinationContext) override;
+    void endDrawSourceImage(GraphicsContext& destinationContext) override;
 
     RefPtr<ImageBuffer> m_sourceImage;
     FloatRect m_sourceImageRect;

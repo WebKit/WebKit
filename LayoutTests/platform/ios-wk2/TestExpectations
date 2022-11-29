@@ -2345,13 +2345,6 @@ webkit.org/b/245091 http/wpt/shared-workers/connect-event-ordering.html [ Pass F
 
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]
 
-# webkit.org/b/245543 New Test(254408@main): [ iOS16 ] 5X css3/filters/effect-(Layout tests) are constant image failures
-css3/filters/effect-contrast-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-grayscale-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-saturate-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-sepia-hw.html [ ImageOnlyFailure ]
-
 # webkit.org/b/245586 [ iOS16 ] 3X imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/(Layout tests) are constant failures
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
