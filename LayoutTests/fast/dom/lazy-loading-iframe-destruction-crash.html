@@ -1,0 +1,24 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+function runTest() {
+    description("This test passes if it doesn't crash.");
+
+    inputElement.selectionDirection = "forward";
+    inputElement.setRangeText("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    setTimeout(finishJSTest, 100);
+}
+
+function inputSelectHandler() {
+    outputElement.innerHTML = rpElement.innerHTML;;
+    gc();
+}
+</script>
+<body onload="runTest()">
+<rp id="rpElement" onfocusin="f3()" onfocusout="f2()">
+<iframe inputmode="numeric" loading="lazy" 1px" scrolling="yes">
+</iframe>
+</rp>
+<input id="inputElement" contextmenu="x26" onselect="inputSelectHandler()" height="1024">
+<output id="outputElement" dir="auto">
