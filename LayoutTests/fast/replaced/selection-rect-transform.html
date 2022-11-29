@@ -13,7 +13,11 @@
         }
     </style>
 </head>
-<body onload="getSelection().setBaseAndExtent(q, 0, q, 1)">
+<body onload="
+range = new Range;
+range.selectNode(q);
+getSelection().removeAllRanges();
+getSelection().addRange(range);">
     <p>Tests selection painting on a transformed, replaced element<br>
       <a href="https://bugs.webkit.org/show_bug.cgi?id=15739">https://bugs.webkit.org/show_bug.cgi?id=15739</a>
     </p>
