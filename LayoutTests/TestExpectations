@@ -1924,7 +1924,7 @@ imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-tech-001.ht
 
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
-webkit.org/b/137883 transitions/border-radius-transition.html [ Failure Pass ]
+webkit.org/b/137883 transitions/border-radius-transition.html [ Failure Pass Timeout ]
 webkit.org/b/137883 transitions/change-values-during-transition.html [ Failure Pass ]
 webkit.org/b/137883 transitions/clip-transition.html [ Failure Pass ]
 webkit.org/b/137883 transitions/color-transition-all.html [ Failure Pass ]
@@ -1959,7 +1959,7 @@ webkit.org/b/137883 transitions/repeated-firing-background-color.html [ Pass Fai
 webkit.org/b/137883 transitions/retargetted-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/rounded-rect-becomes-non-renderable-while-transitioning.html [ Pass Failure ]
 webkit.org/b/137883 transitions/shorthand-border-transitions.html [ Pass Failure ]
-webkit.org/b/137883 transitions/shorthand-transitions.html [ Pass Failure ]
+webkit.org/b/137883 transitions/shorthand-transitions.html [ Pass Failure Timeout ]
 webkit.org/b/137883 transitions/started-while-suspended.html [ Pass Failure ]
 webkit.org/b/137883 transitions/transition-shorthand-delay.html
 webkit.org/b/137883 transitions/transition-timing-function.html [ Pass Failure ]
