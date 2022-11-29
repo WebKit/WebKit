@@ -190,25 +190,42 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParse
     return Feature { WTFMove(featureName), Syntax::Range, WTFMove(leftComparison), WTFMove(rightComparison) };
 }
 
+static RefPtr<CSSValue> consumeRatioWithSlash(CSSParserTokenRange& range)
+{
+    auto leftValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    if (!leftValue)
+        return nullptr;
+
+    if (!CSSPropertyParserHelpers::consumeSlashIncludingWhitespace(range))
+        return nullptr;
+
+    auto rightValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    if (!rightValue)
+        return nullptr;
+
+    return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
+}
+
 RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& range)
 {
     if (range.atEnd())
         return nullptr;
+
     if (auto value = CSSPropertyParserHelpers::consumeIdent(range))
         return value;
+
     auto rangeCopy = range;
-    if (auto value = CSSPropertyParserHelpers::consumeInteger(range)) {
-        if (range.atEnd())
-            return value;
-        range = rangeCopy;
-    }
-    if (auto value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
+    if (auto value = consumeRatioWithSlash(range))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeAspectRatioValue(range))
-        return value;
-    if (auto value = CSSPropertyParserHelpers::consumeResolution(range))
+    range = rangeCopy;
+
+    if (auto value = CSSPropertyParserHelpers::consumeInteger(range))
         return value;
     if (auto value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::All))
+        return value;
+    if (auto value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
+        return value;
+    if (auto value = CSSPropertyParserHelpers::consumeResolution(range))
         return value;
 
     return nullptr;
@@ -216,44 +233,52 @@ RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& 
 
 bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
 {
+    auto isNegative = [&](auto& value) {
+        // Calc is supposed to clamp but let's just let the value through as we deal with negative values just fine.
+        if (value.isCalculated())
+            return false;
+        // FIXME: The spec allows negative values for some features but we use the legacy behavior for now.
+        return value.doubleValue() < 0;
+    };
+
     auto validateValue = [&](auto& value) {
         auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
         switch (schema.valueType) {
         case FeatureSchema::ValueType::Integer:
-            return primitiveValue && primitiveValue->isInteger();
+            if (!primitiveValue || !primitiveValue->isInteger())
+                return false;
+            return !isNegative(*primitiveValue);
 
         case FeatureSchema::ValueType::Number:
-            return primitiveValue && primitiveValue->isNumberOrInteger();
+            if (!primitiveValue || !primitiveValue->isNumberOrInteger())
+                return false;
+            return !isNegative(*primitiveValue);
 
         case FeatureSchema::ValueType::Length:
             if (!primitiveValue)
                 return false;
             if (primitiveValue->isInteger() && !primitiveValue->intValue())
                 return true;
-            return primitiveValue->isLength();
+            if (!primitiveValue->isLength())
+                return false;
+            return !isNegative(*primitiveValue);
 
         case FeatureSchema::ValueType::Resolution:
-            return primitiveValue && primitiveValue->isResolution();
+            if (!primitiveValue || !primitiveValue->isResolution())
+                return false;
+            return primitiveValue->doubleValue() > 0;
 
         case FeatureSchema::ValueType::Identifier:
             return primitiveValue && primitiveValue->isValueID() && schema.valueIdentifiers.contains(primitiveValue->valueID());
 
         case FeatureSchema::ValueType::Ratio:
             if (primitiveValue && primitiveValue->isNumberOrInteger()) {
+                if (primitiveValue->floatValue() < 0)
+                    return false;
                 value = CSSAspectRatioValue::create(primitiveValue->floatValue(), 1);
                 return true;
             }
-            if (auto* list = dynamicDowncast<CSSValueList>(value.get())) {
-                if (list->length() != 2 || list->separator() != CSSValue::SlashSeparator)
-                    return false;
-                auto first = dynamicDowncast<CSSPrimitiveValue>(list->item(0));
-                auto second = dynamicDowncast<CSSPrimitiveValue>(list->item(1));
-                if (first && second && first->isNumberOrInteger() && second->isNumberOrInteger()) {
-                    value = CSSAspectRatioValue::create(first->floatValue(), second->floatValue());
-                    return true;
-                }
-            }
-            return false;
+            return is<CSSAspectRatioValue>(value.get());
         }
         ASSERT_NOT_REACHED();
         return false;

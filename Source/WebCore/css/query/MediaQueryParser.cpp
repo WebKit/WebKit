@@ -51,7 +51,11 @@ MediaQueryList MediaQueryParser::parse(const String& string, const MediaQueryPar
         return { };
 
     auto range = tokenizer->tokenRange();
+    return parse(range, context);
+}
 
+MediaQueryList MediaQueryParser::parse(CSSParserTokenRange range, const MediaQueryParserContext& context)
+{
     MediaQueryParser parser { context };
     return parser.consumeMediaQueryList(range);
 }
@@ -104,8 +108,11 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     // <media-condition>
 
     auto rangeCopy = range;
-    if (auto condition = consumeCondition(range))
+    if (auto condition = consumeCondition(range)) {
+        if (!range.atEnd())
+            return { };
         return MediaQuery { { }, { }, condition };
+    }
 
     range = rangeCopy;
 
@@ -156,10 +163,25 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     if (!condition)
         return { };
 
+    if (!range.atEnd())
+        return { };
+
     if (condition->logicalOperator == LogicalOperator::Or)
         return { };
 
     return MediaQuery { prefix, mediaType, condition };
+}
+
+const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& name) const
+{
+    auto* schema = GenericMediaQueryParser<MediaQueryParser>::schemaForFeatureName(name);
+
+    if (schema == &Features::prefersDarkInterface()) {
+        if (!m_context.useSystemAppearance && !isUASheetBehavior(m_context.mode))
+            return nullptr;
+    }
+    
+    return schema;
 }
 
 void serialize(StringBuilder& builder, const MediaQueryList& list)
@@ -184,7 +206,7 @@ void serialize(StringBuilder& builder, const MediaQuery& query)
         }
     }
 
-    if (!query.mediaType.isEmpty()) {
+    if (!query.mediaType.isEmpty() && (!query.condition || query.prefix || query.mediaType != "all"_s)) {
         serializeIdentifier(query.mediaType, builder);
         if (query.condition)
             builder.append(" and ");

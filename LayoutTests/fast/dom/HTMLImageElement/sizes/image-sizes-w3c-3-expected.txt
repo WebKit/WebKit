@@ -45,7 +45,7 @@ PASS "green-1x1.png" is "green-1x1.png"
 PASS "green-1x1.png" is "green-1x1.png"
 PASS "green-1x1.png" is "green-1x1.png"
 PASS "green-1x1.png" is "green-1x1.png"
-FAIL "green-16x16.png" should be green-1x1.png. Was green-16x16.png.
+PASS "green-1x1.png" is "green-1x1.png"
 PASS "green-1x1.png" is "green-1x1.png"
 PASS "green-1x1.png" is "green-1x1.png"
 PASS "green-1x1.png" is "green-1x1.png"

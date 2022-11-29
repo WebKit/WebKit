@@ -149,8 +149,7 @@ const FeatureSchema& aspectRatio()
 
         EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData&) const override
         {
-            auto boxRatio = renderer.contentWidth().toDouble() / renderer.contentHeight().toDouble();
-            return evaluateRatioFeature(feature, boxRatio);
+            return evaluateRatioFeature(feature, renderer.contentSize());
         }
     };
 

@@ -110,7 +110,7 @@ private:
 };
 
 struct RatioSchema : public FeatureSchema {
-    using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
+    using ValueFunction = Function<FloatSize(const FeatureEvaluationContext&)>;
 
     RatioSchema(const AtomString& name, ValueFunction&& valueFunction)
         : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio)
@@ -237,7 +237,7 @@ const FeatureSchema& aspectRatio()
         "aspect-ratio"_s,
         [](auto& context) {
             auto& view = *context.document.view();
-            return static_cast<double>(view.layoutWidth()) / view.layoutHeight();
+            return FloatSize(view.layoutWidth(), view.layoutHeight());
         }
     };
     return schema;
@@ -287,7 +287,7 @@ const FeatureSchema& deviceAspectRatio()
         "device-aspect-ratio"_s,
         [](auto& context) {
             auto screenSize = context.document.frame()->mainFrame().screenSize();
-            return static_cast<double>(screenSize.width()) / screenSize.height();
+            return FloatSize { screenSize.width(), screenSize.height() };
         }
     };
     return schema;
@@ -378,7 +378,10 @@ const FeatureSchema& height()
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "height"_s,
         [](auto& context) {
-            return context.document.view()->layoutHeight();
+            auto height = context.document.view()->layoutHeight();
+            if (auto* renderView = context.document.renderView())
+                height = adjustForAbsoluteZoom(height, *renderView);
+            return height;
         }
     };
     return schema;
@@ -572,7 +575,7 @@ const FeatureSchema& scan()
         "scan"_s,
         Vector { CSSValueInterlace, CSSValueProgressive },
         [](auto&) {
-            return MatchingIdentifiers { CSSValueProgressive };
+            return MatchingIdentifiers { };
         }
     };
     return schema;
@@ -590,7 +593,7 @@ const FeatureSchema& transform2d()
 const FeatureSchema& transform3d()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
-        "-webkit-transform-2d"_s,
+        "-webkit-transform-3d"_s,
         [](auto& context) {
 #if ENABLE(3D_TRANSFORMS)
             auto* view = context.document.renderView();
@@ -629,7 +632,10 @@ const FeatureSchema& width()
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "width"_s,
         [](auto& context) {
-            return context.document.view()->layoutWidth();
+            auto width = context.document.view()->layoutWidth();
+            if (auto* renderView = context.document.renderView())
+                width = adjustForAbsoluteZoom(width, *renderView);
+            return width;
         }
     };
     return schema;
@@ -642,7 +648,7 @@ const FeatureSchema& displayMode()
         "display-mode"_s,
         Vector { CSSValueFullscreen, CSSValueStandalone, CSSValueMinimalUi, CSSValueBrowser },
         [](auto& context) {
-            bool identifier = [&] {
+            auto identifier = [&] {
                 auto& frame = *context.document.frame();
                 auto manifest = frame.page() ? frame.page()->applicationManifest() : std::nullopt;
                 if (!manifest)
@@ -658,6 +664,8 @@ const FeatureSchema& displayMode()
                 case ApplicationManifest::Display::Browser:
                     return CSSValueBrowser;
                 }
+                ASSERT_NOT_REACHED();
+                return CSSValueBrowser;
             }();
 
             return MatchingIdentifiers { identifier };
