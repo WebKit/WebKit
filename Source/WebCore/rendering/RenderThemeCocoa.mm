@@ -26,9 +26,7 @@
 #import "config.h"
 #import "RenderThemeCocoa.h"
 
-#import "AttachmentLayout.h"
 #import "ApplePayLogoSystemImage.h"
-#import "DrawGlyphsRecorder.h"
 #import "FloatRoundedRect.h"
 #import "FontCacheCoreText.h"
 #import "GraphicsContextCG.h"
@@ -243,23 +241,5 @@ static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
     }
     return FontSelectionValue(900);
 }
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-int RenderThemeCocoa::attachmentBaseline(const RenderAttachment& attachment) const
-{
-    AttachmentLayout layout(attachment, AttachmentLayoutStyle::NonSelected);
-    return layout.baseline;
-}
-
-void RenderThemeCocoa::paintAttachmentText(GraphicsContext& context, AttachmentLayout* layout)
-{
-    DrawGlyphsRecorder recorder(context, 1, DrawGlyphsRecorder::DeriveFontFromContext::Yes);
-
-    for (const auto& line : layout->lines)
-        recorder.drawNativeText(line.font.get(), CTFontGetSize(line.font.get()), line.line.get(), line.rect);
-}
-
-#endif
 
 }
