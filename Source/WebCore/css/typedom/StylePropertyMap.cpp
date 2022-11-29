@@ -56,7 +56,10 @@ static RefPtr<CSSValue> cssValueFromStyleValues(std::optional<CSSPropertyID> pro
 ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values)
 {
     if (isCustomPropertyName(property)) {
-        auto styleValues = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
+        auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
+        if (styleValuesOrException.hasException())
+            return styleValuesOrException.releaseException();
+        auto styleValues = styleValuesOrException.releaseReturnValue();
         if (styleValues.size() != 1 || !is<CSSUnparsedValue>(styleValues[0].get()))
             return Exception { TypeError, "Invalid values"_s };
 
@@ -87,7 +90,10 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
         return { };
     }
 
-    auto styleValues = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
+    auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
+    if (styleValuesOrException.hasException())
+        return styleValuesOrException.releaseException();
+    auto styleValues = styleValuesOrException.releaseReturnValue();
     if (styleValues.size() > 1) {
         for (auto& styleValue : styleValues) {
             if (is<CSSUnparsedValue>(styleValue.get()))
@@ -105,9 +111,46 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
 }
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-append
-ExceptionOr<void> StylePropertyMap::append(Document&, const AtomString&, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&&)
+ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values)
 {
-    return Exception { NotSupportedError, "append() is not yet supported"_s };
+    if (values.isEmpty())
+        return { };
+
+    if (isCustomPropertyName(property))
+        return Exception { TypeError, "Cannot append to custom properties"_s };
+
+    auto propertyID = cssPropertyID(property);
+    if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, document.settings()))
+        return Exception { TypeError, makeString("Invalid property ", property) };
+
+    if (!CSSProperty::isListValuedProperty(propertyID))
+        return Exception { TypeError, makeString(property, " does not support multiple values"_s) };
+
+    RefPtr<CSSValueList> list;
+    auto currentValue = propertyValue(propertyID);
+    if (!currentValue || !is<CSSValueList>(*currentValue)) {
+        list = CSSProperty::createListForProperty(propertyID);
+        if (currentValue)
+            list->append(currentValue.releaseNonNull());
+    } else
+        list = &downcast<CSSValueList>(*currentValue);
+
+    auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
+    if (styleValuesOrException.hasException())
+        return styleValuesOrException.releaseException();
+
+    auto styleValues = styleValuesOrException.releaseReturnValue();
+    for (auto& styleValue : styleValues) {
+        if (is<CSSUnparsedValue>(styleValue.get()))
+            return Exception { TypeError, "Values cannot contain a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
+        if (auto cssValue = styleValue->toCSSValue())
+            list->append(cssValue.releaseNonNull());
+    }
+
+    if (!setProperty(propertyID, list.releaseNonNull()))
+        return Exception { TypeError, "Invalid values"_s };
+
+    return { };
 }
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-delete
