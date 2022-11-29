@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] --> 
+<meta charset="utf-8">
+<style>
+  body {
+      font-family: Arial,sans-serif
+  }
+  #container1 {
+      display: inline-block;
+      margin: 1e+21em;
+      line-break: anywhere;
+      font-variant-caps: petite-caps;
+  }
+  #container2 {
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
+</style>
+<div id="container1">
+  <span id="container2">Tastaturen und Mäuse</span>
+</div>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+setTimeout(() => { document.write('PASS if no crash.'); testRunner.notifyDone(); }, 0);
+</script>
