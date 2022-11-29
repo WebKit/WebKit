@@ -136,7 +136,9 @@
                     { "name": "wpe-linux-bot-9", "platform": "wpe" },
                     { "name": "wpe-linux-bot-10", "platform": "wpe" },
                     { "name": "wpe-linux-bot-11", "platform": "wpe" },
-                    { "name": "wpe-linux-bot-12", "platform": "wpe" }
+                    { "name": "wpe-linux-bot-12", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-13", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-14", "platform": "wpe" }
                   ],
 
     "builders":   [
@@ -596,7 +598,7 @@
                     {
                       "name": "WPE-Linux-64-bit-Release-Build", "factory": "BuildFactory",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js"],
+                      "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js", "wpe-linux-64-release-tests-webdriver"],
                       "workernames": ["wpe-linux-bot-1"]
                     },
                     {
@@ -612,7 +614,7 @@
                     {
                       "name": "WPE-Linux-64-bit-Debug-Build", "factory": "BuildFactory",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["wpe-linux-64-debug-tests", "wpe-linux-64-debug-tests-js"],
+                      "triggers": ["wpe-linux-64-debug-tests", "wpe-linux-64-debug-tests-js", "wpe-linux-64-debug-tests-webdriver"],
                       "workernames": ["wpe-linux-bot-3"]
                     },
                     {
@@ -653,6 +655,16 @@
                       "name": "WPE-Linux-64-bit-Release-Clang-Build", "factory": "BuildFactory",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "workernames": ["wpe-linux-bot-12"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-WebDriver-Tests", "factory": "TestWebDriverFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-13"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Debug-WebDriver-Tests", "factory": "TestWebDriverFactory",
+                      "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-14"]
                     }
                   ],
 
@@ -866,11 +878,17 @@
                     { "type": "Triggerable", "name": "wpe-linux-64-release-tests-js",
                       "builderNames": ["WPE-Linux-64-bit-Release-JS-Tests"]
                     },
+                    { "type": "Triggerable", "name": "wpe-linux-64-release-tests-webdriver",
+                      "builderNames": ["WPE-Linux-64-bit-Release-WebDriver-Tests"]
+                    },
                     { "type": "Triggerable", "name": "wpe-linux-64-debug-tests",
                       "builderNames": ["WPE-Linux-64-bit-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-js",
                       "builderNames": ["WPE-Linux-64-bit-Debug-JS-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-webdriver",
+                      "builderNames": ["WPE-Linux-64-bit-Debug-WebDriver-Tests"]
                     },
                     { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
                       "branch": "main", "hour": 22, "minute": 0,

@@ -1675,7 +1675,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'bindings-generation-tests',
             'builtins-generator-tests',
             'API-tests',
-            'webdriver-test'
         ],
         'WPE-Linux-64-bit-Release-JS-Tests': [
             'configure-build',
@@ -1691,6 +1690,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'jscore-test',
             'test262-test'
+        ],
+        'WPE-Linux-64-bit-Release-WebDriver-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'download-built-product',
+            'extract-built-product',
+            'webdriver-test'
         ],
         'WPE-Linux-64-bit-Debug-Build': [
             'configure-build',
@@ -1731,7 +1744,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'bindings-generation-tests',
             'builtins-generator-tests',
             'API-tests',
-            'webdriver-test'
         ],
         'WPE-Linux-64-bit-Debug-JS-Tests': [
             'configure-build',
@@ -1747,6 +1759,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'jscore-test',
             'test262-test'
+        ],
+        'WPE-Linux-64-bit-Debug-WebDriver-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'download-built-product',
+            'extract-built-product',
+            'webdriver-test'
         ],
         'WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004': [
             'configure-build',
