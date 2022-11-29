@@ -317,7 +317,7 @@ class TestGitHub(unittest.TestCase):
                 dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
             )
 
-    def test_create_projects(self):
+    def test_create_prompt(self):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS, environment=wkmocks.Environment(
             GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
             GITHUB_EXAMPLE_COM_TOKEN='token',
@@ -338,6 +338,50 @@ class TestGitHub(unittest.TestCase):
 
             self.assertEqual(created.project, 'WebKit')
             self.assertEqual(created.component, 'SVG')
+            self.assertEqual(created.version, 'Other')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''What component in 'WebKit' should the bug be associated with?:
+    1) IPv4
+    2) IPv6
+    3) SVG
+    4) Scrolling
+    5) Tables
+    6) Text
+: 
+What version of 'WebKit' should the bug be associated with?:
+    1) All
+    2) Other
+    3) Safari 15
+    4) Safari Technology Preview
+    5) WebKit Local Build
+: 
+''',
+        )
+
+    def test_create_prompt_default_version(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )), wkmocks.Terminal.input('3', '2'), OutputCapture() as captured:
+            created = github.Tracker(self.URL, default_version='All').create('New bug', 'Creating new bug')
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
+            )
+
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'SVG')
+            self.assertEqual(created.version, 'All')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -350,7 +394,7 @@ class TestGitHub(unittest.TestCase):
     6) Text
 : 
 ''',
-        )
+            )
 
     def test_get_component(self):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):

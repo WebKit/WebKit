@@ -85,6 +85,8 @@ class Tracker(GenericTracker):
         def default(context, obj):
             if isinstance(obj, Tracker):
                 return dict(type='radar', projects=obj._projects)
+            if obj.default_version:
+                result['default_version'] = obj.default_version
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
@@ -98,8 +100,8 @@ class Tracker(GenericTracker):
         except ImportError:
             return None
 
-    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None):
-        super(Tracker, self).__init__(users=users, redact=redact)
+    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None, default_version=None):
+        super(Tracker, self).__init__(users=users, redact=redact, default_version=default_version)
         self._projects = [project] if project else (projects or [])
 
         self.library = self.radarclient()
@@ -420,7 +422,9 @@ class Tracker(GenericTracker):
             versions = self.projects.get(project, {}).get('components', {}).get(component, {}).get('versions', [])
         else:
             versions = self.projects.get(project, {}).get('versions', [])
-        if not version and len(versions) == 1:
+        if not version and self.default_version:
+            version = self.default_version
+        elif not version and len(versions) == 1:
             version = versions[0]
         elif not version and versions:
             version = webkitcorepy.Terminal.choose(

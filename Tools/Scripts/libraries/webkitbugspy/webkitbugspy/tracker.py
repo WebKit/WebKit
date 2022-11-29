@@ -120,8 +120,9 @@ class Tracker(object):
             return cls._trackers[0]
         return None
 
-    def __init__(self, users=None, redact=None):
+    def __init__(self, users=None, redact=None, default_version=None):
         self.users = users or User.Mapping()
+        self.default_version = default_version
         if redact is None:
             self._redact = {re.compile('.*'): False}
         elif isinstance(redact, dict):

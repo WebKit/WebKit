@@ -14,7 +14,7 @@
             "name": "Radar WebKit Bug Importer",
             "emails": ["webkit-bug-importer@group.apple.com"],
             "username": "webkit-bug-importer@group.apple.com"
-        }
+        }, "default_version" : "WebKit Nightly Build"
     },
     {
         "type" : "radar",

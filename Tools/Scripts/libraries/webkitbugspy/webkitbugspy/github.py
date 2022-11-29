@@ -69,6 +69,8 @@ class Tracker(GenericTracker):
                 )
                 if obj._res[len(Tracker.RE_TEMPLATES):]:
                     result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
+                if obj.default_version:
+                    result['default_version'] = obj.default_version
                 return result
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
@@ -79,8 +81,9 @@ class Tracker(GenericTracker):
             component_color=DEFAULT_COMPONENT_COLOR,
             version_color=DEFAULT_VERSION_COLOR,
             session=None, redact=None,
+            default_version=None,
     ):
-        super(Tracker, self).__init__(users=users, redact=redact)
+        super(Tracker, self).__init__(users=users, redact=redact, default_version=default_version)
 
         self.session = session or requests.Session()
         self.component_color = component_color
@@ -523,9 +526,17 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if component not in self.projects[project]['components']:
                 raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
 
-            if version:
-                if version not in self.projects[project]['versions']:
-                    raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
+            if not version and self.default_version:
+                version = self.default_version
+            elif not version and len(self.projects[project]['versions']) == 1:
+                version = self.projects[project]['versions'][0]
+            elif not version:
+                version = webkitcorepy.Terminal.choose(
+                    "What version of '{}' should the bug be associated with?".format(project),
+                    options=self.projects[project]['versions'], numbered=True,
+                )
+            if version not in self.projects[project]['versions']:
+                raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
 
         else:
             if project:

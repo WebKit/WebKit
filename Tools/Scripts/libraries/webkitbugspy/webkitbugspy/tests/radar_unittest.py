@@ -321,6 +321,43 @@ What version of 'WebKit Text' should the bug be associated with?:
 ''',
         )
 
+    def test_create_prompt(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS), \
+            wkmocks.Terminal.input('2', '4', '4'), OutputCapture() as captured:
+
+            created = radar.Tracker(projects=['CFNetwork', 'WebKit'], default_version='Other').create('New bug', 'Creating new bug')
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'Text')
+            self.assertEqual(created.version, 'Other')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''What project should the bug be associated with?:
+    1) CFNetwork
+    2) WebKit
+: 
+What component in 'WebKit' should the bug be associated with?:
+    1) SVG
+    2) Scrolling
+    3) Tables
+    4) Text
+: 
+''',
+            )
+
     def test_get_component(self):
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
             issue = radar.Tracker(project='WebKit').issue(1)

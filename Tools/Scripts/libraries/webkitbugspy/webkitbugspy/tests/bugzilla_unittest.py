@@ -335,6 +335,54 @@ class TestBugzilla(unittest.TestCase):
 
             self.assertEqual(created.project, 'WebKit')
             self.assertEqual(created.component, 'SVG')
+            self.assertEqual(created.version, 'Safari 15')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''What project should the bug be associated with?:
+    1) CFNetwork
+    2) WebKit
+: 
+What component in 'WebKit' should the bug be associated with?:
+    1) SVG
+    2) Scrolling
+    3) Tables
+    4) Text
+: 
+What version of 'WebKit' should the bug be associated with?:
+    1) Other
+    2) Safari 15
+    3) Safari Technology Preview
+    4) WebKit Local Build
+: 
+''',
+        )
+
+    def test_create_prompt_default_version(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES), wkmocks.Terminal.input('2', '1',
+                                                                                     '2'), OutputCapture() as captured:
+            created = bugzilla.Tracker(self.URL, default_version='Other').create('New bug', 'Creating new bug')
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username='tcontributor@example.com',
+                     emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username='tcontributor@example.com',
+                     emails=['tcontributor@example.com']),
+            )
+
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'SVG')
+            self.assertEqual(created.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -349,7 +397,7 @@ What component in 'WebKit' should the bug be associated with?:
     4) Text
 : 
 ''',
-        )
+            )
 
     def test_get_component(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
