@@ -116,12 +116,12 @@ void DeferredWorkTimer::doWork(VM& vm)
             task(ticket);
             ticketData = nullptr;
             if (Exception* exception = scope.exception()) {
-                if (scope.clearExceptionExceptTermination())
-                    globalObject->globalObjectMethodTable()->reportUncaughtExceptionAtEventLoop(globalObject, exception);
+                scope.clearException();
+                globalObject->globalObjectMethodTable()->reportUncaughtExceptionAtEventLoop(globalObject, exception);
             }
 
             vm.drainMicrotasks();
-            ASSERT(!vm.exceptionForInspection() || vm.hasPendingTerminationException());
+            ASSERT(!vm.exceptionForInspection());
         }
         m_currentlyRunningTask = false;
     }
