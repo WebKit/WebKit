@@ -77,10 +77,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-cssstyledeclaration-set.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-fontfacerule-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-fontfacerule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-getPropertyValue-common-checks.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-pagerule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-ruleTypeAndOrder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-setProperty-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-cssfontrule.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-all-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-final-delimiter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-important.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext.html
@@ -102,6 +104,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/flex-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-family-serialization-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-shorthand-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-variant-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-animations-replaced-into-ib-split.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-display-none-001.html
