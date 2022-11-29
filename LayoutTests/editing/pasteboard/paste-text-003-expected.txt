@@ -106,12 +106,12 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 This test copies and pastes "is a tide in the affairs of men,\nWhich taken at the flood leads on to fortune.\nOmitted" twice.
 
-There is a tide in the affairs of men,
+There is a tide in the affairs of men,
 Which taken at the flood leads on to fortune.
 Omittedis a tide in the affairs of men,
 Which taken at the flood leads on to fortune.
 Omitted, all the voyage of their life,
 Is bound in shallows and in miseries.
 execCopyCommand: <div id="test" class="editing">There is a tide in the affairs of men, <div class="editing">Which taken at the flood leads on to fortune. <div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>
-execPasteCommand: <div id="test" class="editing">There&nbsp;is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing"><div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>
-execPasteCommand: <div id="test" class="editing">There&nbsp;is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing"><div class="editing">Omittedis a tide in the affairs of men,</div><div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>
+execPasteCommand: <div id="test" class="editing">There is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing"><div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>
+execPasteCommand: <div id="test" class="editing">There is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing"><div class="editing">Omittedis a tide in the affairs of men,</div><div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>

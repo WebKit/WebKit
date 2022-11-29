@@ -1,13 +1,13 @@
-The Test test TEST.
+The Test test TEST.
 
 This tests that find and replace will match the capitalization of the replaced word.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.getElementById('text').innerHTML is 'The&nbsp;Test&nbsp;jumped high.'
-PASS document.getElementById('text').innerHTML is 'The&nbsp;Test&nbsp;test&nbsp;high.'
-PASS document.getElementById('text').innerHTML is 'The&nbsp;Test&nbsp;test&nbsp;TEST.'
+PASS document.getElementById('text').innerHTML is 'The Test&nbsp;jumped high.'
+PASS document.getElementById('text').innerHTML is 'The Test test&nbsp;high.'
+PASS document.getElementById('text').innerHTML is 'The Test test TEST.'
 PASS successfullyParsed is true
 
 TEST COMPLETE

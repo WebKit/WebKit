@@ -50,7 +50,5 @@ layer at (0,0) size 800x600
                 text run at (0,1) width 77: "line one"
             RenderBlock (anonymous) at (0,30) size 780x30
               RenderText {#text} at (0,1) size 84x28
-                text run at (0,1) width 7: "l"
-                text run at (6,1) width 7: " "
-                text run at (12,1) width 72: "ine two"
+                text run at (0,1) width 84: "l ine two"
 caret: position 2 of child 1 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
