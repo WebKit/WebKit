@@ -136,8 +136,6 @@
 		07E19EFD23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E19EFA23D401F00094FFB4 /* MediaPlayerPrivateRemoteMessagesReplies.h */; };
 		0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */; };
 		0EDE85032004E75D00030560 /* WebsitePopUpPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */; };
-		0F04159C23C7CC730060A3E2 /* WKScrollViewMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04159823C7CC720060A3E2 /* WKScrollViewMac.h */; };
-		0F04159E23C7CC730060A3E2 /* WKContentViewMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04159A23C7CC730060A3E2 /* WKContentViewMac.h */; };
 		0F08CF521D63C13A00B48DF1 /* WKFormSelectPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F08CF511D63C13A00B48DF1 /* WKFormSelectPicker.h */; };
 		0F08CF541D63C14000B48DF1 /* WKFormSelectPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F08CF531D63C14000B48DF1 /* WKFormSelectPopover.h */; };
 		0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F174AA2142A4CB60039250F /* APIGeometry.h */; };
@@ -3067,10 +3065,6 @@
 		0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticatorCoordinatorProxy.mm; sourceTree = "<group>"; };
 		0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingSPI.h; sourceTree = "<group>"; };
 		0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsitePopUpPolicy.h; sourceTree = "<group>"; };
-		0F04159823C7CC720060A3E2 /* WKScrollViewMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScrollViewMac.h; sourceTree = "<group>"; };
-		0F04159923C7CC730060A3E2 /* WKContentViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentViewMac.mm; sourceTree = "<group>"; };
-		0F04159A23C7CC730060A3E2 /* WKContentViewMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentViewMac.h; sourceTree = "<group>"; };
-		0F04159B23C7CC730060A3E2 /* WKScrollViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScrollViewMac.mm; sourceTree = "<group>"; };
 		0F08CF511D63C13A00B48DF1 /* WKFormSelectPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormSelectPicker.h; path = ios/forms/WKFormSelectPicker.h; sourceTree = "<group>"; };
 		0F08CF531D63C14000B48DF1 /* WKFormSelectPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormSelectPopover.h; path = ios/forms/WKFormSelectPopover.h; sourceTree = "<group>"; };
 		0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeHostIOS.mm; sourceTree = "<group>"; };
@@ -12840,10 +12834,6 @@
 		BC111B47112F616900337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				0F04159A23C7CC730060A3E2 /* WKContentViewMac.h */,
-				0F04159923C7CC730060A3E2 /* WKContentViewMac.mm */,
-				0F04159823C7CC720060A3E2 /* WKScrollViewMac.h */,
-				0F04159B23C7CC730060A3E2 /* WKScrollViewMac.mm */,
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
 				0FFED99023A3203800EEF459 /* WKWebViewMac.h */,
@@ -15922,7 +15912,6 @@
 				5CD286581E7235D10094FDC8 /* WKContentRuleListStorePrivate.h in Headers */,
 				0FCB4E4C18BBE044000FCFC9 /* WKContentView.h in Headers */,
 				0FCB4E6C18BBF26A000FCFC9 /* WKContentViewInteraction.h in Headers */,
-				0F04159E23C7CC730060A3E2 /* WKContentViewMac.h in Headers */,
 				511065FC23EC9572005443D6 /* WKContentWorld.h in Headers */,
 				511065FD23EC957B005443D6 /* WKContentWorldInternal.h in Headers */,
 				DF462E1223F338BE00EFF35F /* WKContentWorldPrivate.h in Headers */,
@@ -16158,7 +16147,6 @@
 				5109099723DACBF2003B1E4C /* WKScriptMessageHandlerWithReply.h in Headers */,
 				7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */,
 				0FCB4E5418BBE044000FCFC9 /* WKScrollView.h in Headers */,
-				0F04159C23C7CC730060A3E2 /* WKScrollViewMac.h in Headers */,
 				51CD1C651B34B9D400142CA5 /* WKSecurityOrigin.h in Headers */,
 				51CD1C671B34B9DF00142CA5 /* WKSecurityOriginInternal.h in Headers */,
 				51CD1C5E1B3493B400142CA5 /* WKSecurityOriginRef.h in Headers */,

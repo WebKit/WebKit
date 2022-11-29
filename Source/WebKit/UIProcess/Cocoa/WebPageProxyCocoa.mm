@@ -44,6 +44,8 @@
 #import "SharedBufferReference.h"
 #import "SynapseSPI.h"
 #import "VideoFullscreenManagerProxy.h"
+#import "WKErrorInternal.h"
+#import "WKWebView.h"
 #import "WebContextMenuProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
@@ -52,7 +54,6 @@
 #import "WebProcessProxy.h"
 #import "WebScreenOrientationManagerProxy.h"
 #import "WebsiteDataStore.h"
-#import "WKErrorInternal.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/ApplePayAMSUIRequest.h>
 #import <WebCore/DragItem.h>

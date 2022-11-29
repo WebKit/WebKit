@@ -27,7 +27,6 @@
 
 #if PLATFORM(MAC)
 
-#import "WKScrollViewMac.h"
 #import "WebViewImpl.h"
 #import <WebCore/ScrollTypes.h>
 #import <WebKit/_WKOverlayScrollbarStyle.h>
@@ -35,9 +34,7 @@
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle>);
 std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScrollbarStyle);
 
-@interface WKWebView (WKInternalMac) <WebViewImplDelegate, WKScrollViewDelegate>
-
-- (void)_setupScrollAndContentViews;
+@interface WKWebView (WKInternalMac) <WebViewImplDelegate>
 
 - (void)_takeFindStringFromSelectionInternal:(id)sender;
 - (void)insertText:(id)string replacementRange:(NSRange)replacementRange;
