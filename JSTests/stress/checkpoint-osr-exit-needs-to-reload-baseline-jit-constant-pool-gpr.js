@@ -1,4 +1,4 @@
-//@ $skipModes << :lockdown if $buildType == "debug"
+//@ $skipModes << :lockdown if ($buildType == "debug") or ($architecture == "mips")
 
 function empty() {}
 function empty2() {}
