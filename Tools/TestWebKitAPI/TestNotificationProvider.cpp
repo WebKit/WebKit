@@ -160,4 +160,21 @@ bool TestNotificationProvider::simulateNotificationClick()
     return true;
 }
 
+bool TestNotificationProvider::simulateNotificationClose()
+{
+    if (!m_pendingNotification.first)
+        return false;
+
+    callOnMainThread([pair = std::exchange(m_pendingNotification, { })] {
+        auto id = adoptWK(WKUInt64Create(pair.second));
+        auto idRef = static_cast<WKTypeRef>(id.get());
+        auto wkArray = adoptWK(WKArrayCreate(&idRef, 1));
+
+        WKNotificationManagerProviderDidCloseNotifications(pair.first, wkArray.get());
+        WKRelease(pair.first);
+    });
+
+    return true;
+}
+
 } // namespace TestWebKitAPI

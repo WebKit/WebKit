@@ -47,6 +47,7 @@ public:
     void showWebNotification(WKPageRef, WKNotificationRef);
     void closeWebNotification(WKNotificationRef);
     bool simulateNotificationClick();
+    bool simulateNotificationClose();
 
     bool hasReceivedShowNotification() const { return m_hasReceivedShowNotification; }
     bool hasReceivedCloseNotification() const { return m_hasReceivedCloseNotification; }

@@ -670,6 +670,10 @@ self.addEventListener("notificationclick", async (event) => {
     for (let client of await self.clients.matchAll({includeUncontrolled:true}))
         client.postMessage("Received notificationclick");
 });
+self.addEventListener("notificationclose", async (event) => {
+    for (let client of await self.clients.matchAll({includeUncontrolled:true}))
+        client.postMessage("Received notificationclose");
+});
 )SWRESOURCE"_s;
 
 TEST(PushAPI, fireNotificationClickEvent)
@@ -722,6 +726,61 @@ TEST(PushAPI, fireNotificationClickEvent)
 
     done = false;
     expectedMessage = "Received notificationclick"_s;
+    TestWebKitAPI::Util::run(&done);
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+}
+
+TEST(PushAPI, fireNotificationCloseEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { fireNotificationClickEventMainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, fireNotificationClickEventScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    expectedMessage = "Ready"_s;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    provider.resetHasReceivedNotification();
+    auto& providerRef = provider;
+
+    done = false;
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"Sweet Potatoes";
+    expectedMessage = "Received: Sweet Potatoes"_s;
+
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        EXPECT_TRUE(providerRef.hasReceivedShowNotification());
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
+
+    EXPECT_TRUE(provider.simulateNotificationClose());
+
+    done = false;
+    expectedMessage = "Received notificationclose"_s;
     TestWebKitAPI::Util::run(&done);
 
     clearWebsiteDataStore([configuration websiteDataStore]);
@@ -787,7 +846,7 @@ self.addEventListener("push", (event) => {
 });
 )SWRESOURCE"_s;
 
-TEST(PushAPI, fireNotificationCloseEvent)
+TEST(PushAPI, callNotificationClose)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { closeNotificationMainBytes } },
@@ -851,6 +910,7 @@ TEST(PushAPI, fireNotificationCloseEvent)
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
+
 #endif // WK_HAVE_C_SPI
 
 #endif // ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT)
