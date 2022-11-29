@@ -186,13 +186,6 @@ GridSpan Grid::gridItemSpan(const RenderBox& gridItem, GridTrackSizingDirection 
     return direction == ForColumns ? area.columns : area.rows;
 }
 
-void Grid::setupGridForMasonryLayout()
-{
-    // FIXME: See if we can resize grid instead of clearing it here: https://bugs.webkit.org/show_bug.cgi?id=248472
-    m_grid.clear();
-    m_gridItemArea.clear();
-}
-
 void Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
 {
     m_needsItemsPlacement = needsItemsPlacement;

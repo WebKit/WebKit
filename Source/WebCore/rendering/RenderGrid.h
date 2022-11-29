@@ -27,7 +27,6 @@
 #pragma once
 
 #include "Grid.h"
-#include "GridMasonryLayout.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "RenderBlock.h"
 
@@ -114,10 +113,8 @@ public:
     LayoutUnit gridGap(GridTrackSizingDirection) const;
     LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
-    LayoutUnit masonryContentSize() const;
 private:
     friend class GridTrackSizingAlgorithm;
-    friend class GridMasonryLayout;
 
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {
@@ -150,15 +147,10 @@ private:
     std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
-    void placeItemUsingMasonryPositioning(Grid&, RenderBox*) const;
     typedef std::pair<unsigned, unsigned> AutoPlacementCursor;
     void placeAutoMajorAxisItemOnGrid(RenderBox&, AutoPlacementCursor&);
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
-
-    void allocateSpaceForMasonryVectors(Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition); 
-    void collectMasonryItems(Grid&, unsigned gridAxisTracksCount, GridTrackSizingDirection masonryDirection, HashMap<RenderBox*, GridArea>& itemsOnFirstTrack, Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition) const;
-    bool hasDefiniteGridAxisPosition(const RenderBox* child, GridTrackSizingDirection masonryDirection) const;
 
     bool canPerformSimplifiedLayout() const final;
     void prepareChildForPositionedLayout(RenderBox&);
@@ -248,8 +240,6 @@ private:
     ContentAlignmentData m_offsetBetweenColumns;
     ContentAlignmentData m_offsetBetweenRows;
 
-    mutable GridMasonryLayout m_masonryLayout;
-
     typedef HashMap<const RenderBox*, std::optional<size_t>> OutOfFlowPositionsMap;
     OutOfFlowPositionsMap m_outOfFlowItemColumn;
     OutOfFlowPositionsMap m_outOfFlowItemRow;
@@ -258,8 +248,6 @@ private:
     bool m_hasAspectRatioBlockSizeDependentItem { false };
     bool m_baselineItemsCached {false};
     bool m_hasAnyBaselineAlignmentItem { false };
-    const unsigned m_masonryDefiniteItemsHalfCapacity = 4;
-    const unsigned m_masonryIndefiniteItemsQuarterCapacity = 2;
 };
 
 } // namespace WebCore

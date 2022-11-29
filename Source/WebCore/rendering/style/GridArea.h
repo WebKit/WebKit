@@ -58,11 +58,6 @@ public:
         return GridSpan(0, 1, Indefinite);
     }
 
-    static constexpr GridSpan masonryAxisTranslatedDefiniteGridSpan()
-    {
-        return GridSpan(0, 1, TranslatedDefinite);
-    }
-
     bool operator==(const GridSpan& o) const
     {
         return m_type == o.m_type && m_startLine == o.m_startLine && m_endLine == o.m_endLine;
@@ -188,7 +183,7 @@ private:
 
     enum GridSpanType {UntranslatedDefinite, TranslatedDefinite, Indefinite};
 
-    constexpr GridSpan(int startLine, int endLine, GridSpanType type)
+    GridSpan(int startLine, int endLine, GridSpanType type)
         : m_type(type)
     {
 #if ASSERT_ENABLED

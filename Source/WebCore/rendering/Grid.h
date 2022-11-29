@@ -85,8 +85,6 @@ public:
     void setNeedsItemsPlacement(bool);
     bool needsItemsPlacement() const { return m_needsItemsPlacement; };
 
-    void setupGridForMasonryLayout();
-
 private:
     void ensureStorageForRow(unsigned row);
 
