@@ -249,6 +249,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
                 'enable-if': self.validate_string,
                 'kind': self.validate_string,
                 'settings-flag': self.validate_string,
+                'single-value-optimization': self.validate_boolean,
                 'status': self.validate_status,
                 'value': self.validate_grammar_term,
             }

@@ -142,18 +142,6 @@ AudioDescriptionsEnabled:
     WebCore:
       default: false
 
-BlankAnchorTargetImpliesNoOpenerEnabled:
-  type: bool
-  humanReadableName: "Blank anchor target implies rel=noopener"
-  humanReadableDescription: "target=_blank on anchor elements implies rel=noopener"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # We would have to partition BroadcastChannel based on PageGroups if we wanted to enable this for WebKitLegacy.
 BroadcastChannelEnabled:
   type: bool
@@ -386,6 +374,18 @@ CSSInputSecurityEnabled:
   type: bool
   humanReadableName: "CSS Input Security"
   humanReadableDescription: "Enable input-security CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CSSLeadingTrimEnabled:
+  type: bool
+  humanReadableName: "CSS leading-trim property"
+  humanReadableDescription: "Enable leading-trim"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1890,11 +1890,11 @@ WebAnimationsIterationCompositeEnabled:
   humanReadableDescription: "Support for the KeyframeEffect.iterationComposite property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WebAnimationsMutableTimelinesEnabled:
   type: bool

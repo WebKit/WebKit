@@ -1550,3 +1550,7 @@ enum class WebCore::PixelFormat : uint8_t {
     WebCore::PixelFormat pixelFormat;
     WebCore::DestinationColorSpace colorSpace;
 };
+
+[Return=Ref] class WebCore::TextIndicator {
+    WebCore::TextIndicatorData data();
+};

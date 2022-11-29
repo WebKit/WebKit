@@ -33,41 +33,17 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimationEvent);
 
 CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : AnimationEventBase(type, initializer, isTrusted)
+    : DeclarativeAnimationEvent(type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)
     , m_animationName(initializer.animationName)
-    , m_elapsedTime(initializer.elapsedTime)
-    , m_pseudoElement(initializer.pseudoElement)
 {
 }
 
-CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, WebAnimation* animation, double elapsedTime, const String& animationName, const String& pseudoElement)
-    : AnimationEventBase(type, animation)
+CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId, const String& animationName)
+    : DeclarativeAnimationEvent(type, animation, scheduledTime, elapsedTime, pseudoId)
     , m_animationName(animationName)
-    , m_elapsedTime(elapsedTime)
-    , m_pseudoElement(pseudoElement)
 {
 }
 
 CSSAnimationEvent::~CSSAnimationEvent() = default;
-
-const String& CSSAnimationEvent::animationName() const
-{
-    return m_animationName;
-}
-
-double CSSAnimationEvent::elapsedTime() const
-{
-    return m_elapsedTime;
-}
-
-const String& CSSAnimationEvent::pseudoElement() const
-{
-    return m_pseudoElement;
-}
-
-EventInterface CSSAnimationEvent::eventInterface() const
-{
-    return CSSAnimationEventInterfaceType;
-}
 
 } // namespace WebCore

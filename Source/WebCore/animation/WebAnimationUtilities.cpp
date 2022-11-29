@@ -32,6 +32,7 @@
 #include "AnimationPlaybackEvent.h"
 #include "CSSAnimation.h"
 #include "CSSAnimationEvent.h"
+#include "CSSSelector.h"
 #include "CSSTransition.h"
 #include "CSSTransitionEvent.h"
 #include "DeclarativeAnimation.h"
@@ -180,6 +181,35 @@ bool compareAnimationsByCompositeOrder(const WebAnimation& a, const WebAnimation
     return a.globalPosition() < b.globalPosition();
 }
 
+template <typename T>
+static std::optional<bool> compareDeclarativeAnimationEvents(const AnimationEventBase& a, const AnimationEventBase& b)
+{
+    bool aIsDeclarativeEvent = is<T>(a);
+    bool bIsDeclarativeEvent = is<T>(b);
+    if (!aIsDeclarativeEvent && !bIsDeclarativeEvent)
+        return std::nullopt;
+
+    if (aIsDeclarativeEvent != bIsDeclarativeEvent)
+        return !bIsDeclarativeEvent;
+
+    auto aScheduledTime = a.scheduledTime();
+    auto bScheduledTime = b.scheduledTime();
+    if (aScheduledTime != bScheduledTime)
+        return aScheduledTime < bScheduledTime;
+
+    auto* aTarget = a.target();
+    auto* bTarget = b.target();
+    if (aTarget == bTarget)
+        return false;
+
+    RELEASE_ASSERT(is<Element>(aTarget));
+    RELEASE_ASSERT(is<Element>(bTarget));
+
+    auto aStyleable = Styleable(downcast<Element>(*aTarget), downcast<T>(a).pseudoId());
+    auto bStyleable = Styleable(downcast<Element>(*bTarget), downcast<T>(b).pseudoId());
+    return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(aStyleable, bStyleable);
+}
+
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const AnimationEventBase& b)
 {
     // AnimationPlaybackEvent instances sort first.
@@ -196,8 +226,8 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
         // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before
         // events scheduled to occur later and events whose scheduled event time is unresolved sort before events with a
         // resolved scheduled event time.
-        auto aScheduledTime = downcast<AnimationPlaybackEvent>(a).scheduledTime();
-        auto bScheduledTime = downcast<AnimationPlaybackEvent>(b).scheduledTime();
+        auto aScheduledTime = a.scheduledTime();
+        auto bScheduledTime = b.scheduledTime();
         if (aScheduledTime != bScheduledTime) {
             if (aScheduledTime && bScheduledTime)
                 return *aScheduledTime < *bScheduledTime;
@@ -237,22 +267,12 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
     }
 
     // CSSTransitionEvent instances sort next.
-    bool aIsCSSTransition = is<CSSTransitionEvent>(a);
-    bool bIsCSSTransition = is<CSSTransitionEvent>(b);
-    if (aIsCSSTransition || bIsCSSTransition) {
-        if (aIsCSSTransition == bIsCSSTransition)
-            return false;
-        return !bIsCSSTransition;
-    }
+    if (auto sorted = compareDeclarativeAnimationEvents<CSSTransitionEvent>(a, b))
+        return *sorted;
 
     // CSSAnimationEvent instances sort last.
-    bool aIsCSSAnimation = is<CSSAnimationEvent>(a);
-    bool bIsCSSAnimation = is<CSSAnimationEvent>(b);
-    if (aIsCSSAnimation || bIsCSSAnimation) {
-        if (aIsCSSAnimation == bIsCSSAnimation)
-            return false;
-        return !bIsCSSAnimation;
-    }
+    if (auto sorted = compareDeclarativeAnimationEvents<CSSAnimationEvent>(a, b))
+        return *sorted;
 
     return false;
 }
@@ -287,6 +307,28 @@ String pseudoIdAsString(PseudoId pseudoId)
     default:
         return emptyString();
     }
+}
+
+ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
+{
+    // https://drafts.csswg.org/web-animations/#dom-keyframeeffect-pseudoelement
+
+    // - If the provided value is not null and is an invalid <pseudo-element-selector>, the user agent must throw a DOMException with error
+    // name SyntaxError and leave the target pseudo-selector of this animation effect unchanged. Note, that invalid in this context follows
+    // the definition of an invalid selector defined in [SELECTORS-4] such that syntactically invalid pseudo-elements as well as pseudo-elements
+    // for which the user agent has no usable level of support are both deemed invalid.
+    // - If one of the legacy Selectors Level 2 single-colon selectors (':before', ':after', ':first-letter', or ':first-line') is specified,
+    // the target pseudo-selector must be set to the equivalent two-colon selector (e.g. '::before').
+    if (pseudoElement.isNull())
+        return PseudoId::None;
+
+    auto isLegacy = pseudoElement == ":before"_s || pseudoElement == ":after"_s || pseudoElement == ":first-letter"_s || pseudoElement == ":first-line"_s;
+    if (!isLegacy && !pseudoElement.startsWith("::"_s))
+        return Exception { SyntaxError };
+    auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2));
+    if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
+        return Exception { SyntaxError };
+    return CSSSelector::pseudoId(pseudoType);
 }
 
 } // namespace WebCore

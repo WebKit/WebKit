@@ -114,7 +114,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
             jsFunctionWindow->setCurrentEvent(savedEvent.get());
 
         if (exception)
-            reportException(globalObject, exception);
+            reportException(jsFunction->globalObject(), exception);
         else {
             if (returnValue.isTrue())
                 event.preventDefault();

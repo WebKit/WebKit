@@ -247,6 +247,8 @@ public:
 
     unsigned containerType : 2; // ContainerType
 
+    unsigned leadingTrim : 2; // LeadingTrim
+
     unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
 
     Vector<AtomString> containerNames;

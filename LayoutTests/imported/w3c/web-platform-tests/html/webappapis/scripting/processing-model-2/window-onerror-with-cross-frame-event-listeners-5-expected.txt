@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Error: PASS
+
+
+PASS window.onerror listener reports the exception in global object of its callback
+

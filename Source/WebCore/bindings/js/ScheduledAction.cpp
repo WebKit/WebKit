@@ -46,7 +46,7 @@
 namespace WebCore {
 using namespace JSC;
 
-std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, JSC::Strong<JSC::Unknown>&& function)
+std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, Strong<JSObject>&& function)
 {
     return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTFMove(function)));
 }
@@ -56,7 +56,7 @@ std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolat
     return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTFMove(code)));
 }
 
-ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, JSC::Strong<JSC::Unknown>&& function)
+ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, Strong<JSObject>&& function)
     : m_isolatedWorld(isolatedWorld)
     , m_function(WTFMove(function))
 {
@@ -96,9 +96,12 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto callData = JSC::getCallData(m_function.get());
+    JSObject* jsFunction = m_function.get();
+    auto callData = JSC::getCallData(jsFunction);
     if (callData.type == CallData::Type::None)
         return;
+
+    auto* jsFunctionGlobalObject = jsFunction->globalObject();
 
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
@@ -106,20 +109,20 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     for (auto& argument : m_arguments)
         arguments.append(argument.get());
     if (UNLIKELY(arguments.hasOverflowed())) {
-        reportException(lexicalGlobalObject, JSC::Exception::create(vm, createOutOfMemoryError(lexicalGlobalObject)));
+        reportException(jsFunctionGlobalObject, JSC::Exception::create(vm, createOutOfMemoryError(lexicalGlobalObject)));
         return;
     }
 
     JSExecState::instrumentFunction(&context, callData);
 
     NakedPtr<JSC::Exception> exception;
-    JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, m_function.get(), callData, thisValue, arguments, exception);
+    JSExecState::profiledCall(lexicalGlobalObject, ProfilingReason::Other, jsFunction, callData, thisValue, arguments, exception);
     catchScope.assertNoExceptionExceptTermination();
     
     InspectorInstrumentation::didCallFunction(&context);
 
     if (exception)
-        reportException(lexicalGlobalObject, exception);
+        reportException(jsFunctionGlobalObject, exception);
 }
 
 void ScheduledAction::execute(Document& document)

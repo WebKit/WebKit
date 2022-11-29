@@ -32,6 +32,7 @@ from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
 from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
+from results_db import ResultsDatabase
 
 import json
 import os
@@ -1729,7 +1730,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
     descriptionDone = ['Validated commiter and reviewer']
     VALIDATORS_FOR = {
         # FIXME: This should be a bot, for now validation is manual
-        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'jbedard', 'ryanhaddad'],
+        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'JonWBedard', 'ryanhaddad'],
     }
 
     def __init__(self, *args, **kwargs):
@@ -1828,7 +1829,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         remote = self.getProperty('remote', DEFAULT_REMOTE)
         validators = self.VALIDATORS_FOR.get(remote, [])
-        if validators and not any([validator in reviewers for validator in validators]):
+        lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
+        if validators and not any([validator.lower() in lower_case_reviewers for validator in validators]):
             self.fail_build_due_to_no_validators(validators)
             return None
 
@@ -3159,6 +3161,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     def __init__(self, **kwargs):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
         self.incorrectLayoutLines = []
+        self.failing_tests_filtered = []
+        self.preexisting_failures_in_results_db = []
 
     def doStepIf(self, step):
         return not ((self.getProperty('buildername', '').lower() in ['commit-queue', 'merge-queue']) and
@@ -3247,7 +3251,30 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             self.setProperty('first_run_flakies', sorted(first_results.flaky_tests))
             if first_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(first_results.failing_tests))
+                self.filter_failures_using_results_db(first_results.failing_tests)
+                self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
+                self.setProperty('results-db_first_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
+
         self._parseRunWebKitTestsOutput(logText)
+
+    def filter_failures_using_results_db(self, failing_tests):
+        self.failing_tests_filtered = failing_tests.copy()
+        identifier = self.getProperty('identifier', None)
+        platform = self.getProperty('platform', None)
+        configuration = {}
+        if platform:
+            configuration['platform'] = platform
+        style = self.getProperty('configuration', None)
+        if style and style in ['debug', 'release']:
+            configuration['style'] = style
+
+        self._addToLog('stdio', f'\nChecking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
+        for test in failing_tests:
+            data = ResultsDatabase().is_test_pre_existing_failure(test, commit=identifier, configuration=configuration)
+            self._addToLog('stdio', f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
+            if data['is_existing_failure']:
+                self.preexisting_failures_in_results_db.append(test)
+                self.failing_tests_filtered.remove(test)
 
     def evaluateResult(self, cmd):
         result = SUCCESS
@@ -3273,6 +3300,13 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
+        if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+            # This means all the tests which failed in this run were also failing or flaky in results database
+            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+            self.descriptionDone = message
+            self.finished(WARNINGS)
+            self.build.buildFinished([message], SUCCESS)
+
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
@@ -3292,9 +3326,13 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     def getResultSummary(self):
         status = self.name
 
-        if self.results != SUCCESS and self.incorrectLayoutLines:
-            status = ' '.join(self.incorrectLayoutLines)
-            return {'step': status}
+        if self.results != SUCCESS:
+            if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+                status = f"Ignored {len(self.preexisting_failures_in_results_db)} pre-existing failure based on results-db"
+                return {'step': status}
+            if self.incorrectLayoutLines:
+                status = ' '.join(self.incorrectLayoutLines)
+                return {'step': status}
         if self.results == SKIPPED:
             if self.getProperty('fast_commit_queue'):
                 return {'step': 'Skipped layout-tests in fast-cq mode'}

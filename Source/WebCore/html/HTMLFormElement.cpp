@@ -444,7 +444,7 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
         return;
 
     auto relAttributes = parseFormRelAttributes(getAttribute(HTMLNames::relAttr));
-    if (relAttributes.noopener || relAttributes.noreferrer || (!relAttributes.opener && document().settings().blankAnchorTargetImpliesNoOpenerEnabled() && isBlankTargetFrameName(formSubmission->target()) && !formSubmission->requestURL().protocolIsJavaScript()))
+    if (relAttributes.noopener || relAttributes.noreferrer || (!relAttributes.opener && isBlankTargetFrameName(formSubmission->target()) && !formSubmission->requestURL().protocolIsJavaScript()))
         formSubmission->setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
     if (relAttributes.noreferrer)
         formSubmission->setReferrerPolicy(ReferrerPolicy::NoReferrer);

@@ -457,8 +457,7 @@ static RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range)
     if (auto autoValue = consumeIdent<CSSValueAuto>(range))
         return autoValue;
 
-    auto rangeList = CSSValueList::createCommaSeparated();
-    do {
+    auto rangeList = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [](auto& range) -> RefPtr<CSSValue> {
         auto lowerBound = consumeCounterStyleRangeBound(range);
         if (!lowerBound)
             return nullptr;
@@ -470,9 +469,11 @@ static RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range)
         // ignored.
         if (lowerBound->isInteger() && upperBound->isInteger() && lowerBound->intValue() > upperBound->intValue())
             return nullptr;
-        rangeList->append(createPrimitiveValuePair(lowerBound.releaseNonNull(), upperBound.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce));
-    } while (consumeCommaIncludingWhitespace(range));
-    if (!range.atEnd() || !rangeList->length())
+        
+        return createPrimitiveValuePair(lowerBound.releaseNonNull(), upperBound.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
+    });
+
+    if (!range.atEnd() || !rangeList || !rangeList->length())
         return nullptr;
     return rangeList;
 }
@@ -521,9 +522,8 @@ static RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange& range, c
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols
 static RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    auto values = CSSValueList::createCommaSeparated();
     std::optional<int> lastWeight;
-    do {
+    auto values = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&lastWeight](auto& range, auto& context) -> RefPtr<CSSValue> {
         auto integer = consumeNonNegativeInteger(range);
         auto symbol = consumeCounterStyleSymbol(range, context);
         if (!integer) {
@@ -543,9 +543,10 @@ static RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& 
         auto pair = CSSValueList::createSpaceSeparated();
         pair->append(integer.releaseNonNull());
         pair->append(symbol.releaseNonNull());
-        values->append(WTFMove(pair));
-    } while (consumeCommaIncludingWhitespace(range));
-    if (!range.atEnd() || !values->length())
+        return pair;
+    }, context);
+
+    if (!range.atEnd() || !values || !values->length())
         return nullptr;
     return values;
 }
@@ -702,8 +703,7 @@ static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRang
 
 static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-    do {
+    auto list = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [](auto& range, auto& context) -> RefPtr<CSSValue> {
         auto key = consumeNonNegativeInteger(range);
         if (!key)
             return nullptr;
@@ -712,11 +712,10 @@ static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange&
         if (!color)
             return nullptr;
 
-        RefPtr<CSSValue> value = CSSFontPaletteValuesOverrideColorsValue::create(key.releaseNonNull(), color.releaseNonNull());
-        list->append(value.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    
-    if (!range.atEnd() || !list->length())
+        return CSSFontPaletteValuesOverrideColorsValue::create(key.releaseNonNull(), color.releaseNonNull());
+    }, context);
+
+    if (!range.atEnd() || !list || !list->length())
         return nullptr;
 
     return list;
@@ -1327,6 +1326,53 @@ bool CSSPropertyParser::consumeLegacyTextOrientation(bool important)
     return true;
 }
 
+static bool isValidAnimationPropertyList(CSSPropertyID property, const CSSValueList& valueList)
+{
+    // If there is more than one <single-transition> in the shorthand, and any of the transitions
+    // has none as the <single-transition-property>, then the declaration is invalid.
+
+    if (property != CSSPropertyTransitionProperty || valueList.length() < 2)
+        return true;
+
+    for (auto& value : valueList) {
+        if (isValueID(value, CSSValueNone))
+            return false;
+    }
+    return true;
+}
+
+static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    switch (property) {
+    case CSSPropertyAnimationDelay:
+    case CSSPropertyTransitionDelay:
+        return consumeTime(range, context.mode, ValueRange::All, UnitlessQuirk::Forbid);
+    case CSSPropertyAnimationDirection:
+        return CSSPropertyParsing::consumeSingleAnimationDirection(range);
+    case CSSPropertyAnimationDuration:
+    case CSSPropertyTransitionDuration:
+        return consumeTime(range, context.mode, ValueRange::NonNegative, UnitlessQuirk::Forbid);
+    case CSSPropertyAnimationFillMode:
+        return CSSPropertyParsing::consumeSingleAnimationFillMode(range);
+    case CSSPropertyAnimationIterationCount:
+        return CSSPropertyParsing::consumeSingleAnimationIterationCount(range);
+    case CSSPropertyAnimationName:
+        return CSSPropertyParsing::consumeSingleAnimationName(range, context);
+    case CSSPropertyAnimationPlayState:
+        return CSSPropertyParsing::consumeSingleAnimationPlayState(range);
+    case CSSPropertyAnimationComposition:
+        return CSSPropertyParsing::consumeSingleAnimationComposition(range);
+    case CSSPropertyTransitionProperty:
+        return consumeSingleTransitionPropertyOrNone(range);
+    case CSSPropertyAnimationTimingFunction:
+    case CSSPropertyTransitionTimingFunction:
+        return consumeTimingFunction(range, context);
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
 bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
     const unsigned longhandCount = shorthand.length();
@@ -1343,7 +1389,7 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
                 if (parsedLonghand[i])
                     continue;
 
-                if (auto value = consumeAnimationValue(shorthand.properties()[i], m_range, m_context)) {
+                if (auto value = consumeAnimationValueForShorthand(shorthand.properties()[i], m_range, m_context)) {
                     parsedLonghand[i] = true;
                     foundProperty = true;
                     longhands[i]->append(*value);
@@ -1371,6 +1417,11 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
         addProperty(shorthand.properties()[i], shorthand.id(), *longhands[i], important);
 
     return m_range.atEnd();
+}
+
+static void addBackgroundValue(RefPtr<CSSValue>& list, Ref<CSSValue>&& value)
+{
+    assignOrDowngradeToListAndAppend(list, WTFMove(value));
 }
 
 static bool consumeBackgroundPosition(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, RefPtr<CSSValue>& resultX, RefPtr<CSSValue>& resultY)
@@ -1414,10 +1465,16 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                     value = WTFMove(position->x);
                     valueY = WTFMove(position->y);
                     m_range = rangeCopy;
-                } else if (property == CSSPropertyBackgroundSize || property == CSSPropertyMaskSize) {
+                } else if (property == CSSPropertyBackgroundSize) {
                     if (!consumeSlashIncludingWhitespace(m_range))
                         continue;
-                    value = consumeBackgroundSize(property, m_range, m_context.mode);
+                    value = consumeSingleBackgroundSize(m_range, m_context);
+                    if (!value || !parsedLonghand[i - 1]) // Position must have been parsed in the current layer.
+                        return false;
+                } else if (property == CSSPropertyMaskSize) {
+                    if (!consumeSlashIncludingWhitespace(m_range))
+                        continue;
+                    value = consumeSingleMaskSize(m_range, m_context);
                     if (!value || !parsedLonghand[i - 1]) // Position must have been parsed in the current layer.
                         return false;
                 } else if (property == CSSPropertyBackgroundPositionY || property == CSSPropertyWebkitMaskPositionY) {

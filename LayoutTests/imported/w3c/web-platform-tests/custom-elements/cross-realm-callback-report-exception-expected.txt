@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Error: PASS
+CONSOLE MESSAGE: Error: PASS
+CONSOLE MESSAGE: Error: PASS
+CONSOLE MESSAGE: Error: PASS
+CONSOLE MESSAGE: Error: PASS
+
+
+PASS constructor
+PASS connectedCallback
+PASS disconnectedCallback
+PASS attributeChangedCallback
+PASS adoptedCallback
+

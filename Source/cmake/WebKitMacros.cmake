@@ -90,35 +90,6 @@ macro(WEBKIT_ADD_SOURCE_DEPENDENCIES _source _deps)
     unset(_tmp)
 endmacro()
 
-macro(WEBKIT_ADD_PRECOMPILED_HEADER _header _cpp _source)
-    if (MSVC)
-        get_filename_component(PrecompiledBasename ${_cpp} NAME_WE)
-        file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${_source}")
-        set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${_source}/${PrecompiledBasename}.pch")
-        set(_sources ${${_source}})
-
-        # clang-cl requires /FI with /Yc
-        if (COMPILER_IS_CLANG_CL)
-            set_source_files_properties(${_cpp}
-                PROPERTIES COMPILE_FLAGS "/Yc\"${_header}\" /Fp\"${PrecompiledBinary}\" /FI\"${_header}\""
-                OBJECT_OUTPUTS "${PrecompiledBinary}")
-        else ()
-            set_source_files_properties(${_cpp}
-                PROPERTIES COMPILE_FLAGS "/Yc\"${_header}\" /Fp\"${PrecompiledBinary}\""
-                OBJECT_OUTPUTS "${PrecompiledBinary}")
-        endif ()
-        set_source_files_properties(${_sources}
-            PROPERTIES COMPILE_FLAGS "/Yu\"${_header}\" /FI\"${_header}\" /Fp\"${PrecompiledBinary}\"")
-
-        foreach (_src ${_sources})
-            WEBKIT_ADD_SOURCE_DEPENDENCIES(${_src} ${PrecompiledBinary})
-        endforeach ()
-
-        list(APPEND ${_source} ${_cpp})
-    endif ()
-    #FIXME: Add support for Xcode.
-endmacro()
-
 macro(WEBKIT_FRAMEWORK_DECLARE _target)
     # add_library() without any source files triggers CMake warning
     # Addition of dummy "source" file does not result in any changes in generated build.ninja file

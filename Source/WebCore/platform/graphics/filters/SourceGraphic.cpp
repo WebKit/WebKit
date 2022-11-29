@@ -45,10 +45,7 @@ OptionSet<FilterRenderingMode> SourceGraphic::supportedFilterRenderingModes() co
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
-    modes.add(FilterRenderingMode::Accelerated);
-#endif
-#if USE(GRAPHICS_CONTEXT_FILTERS)
-    modes.add(FilterRenderingMode::GraphicsContext);
+    modes = modes | FilterRenderingMode::Accelerated;
 #endif
     return modes;
 }

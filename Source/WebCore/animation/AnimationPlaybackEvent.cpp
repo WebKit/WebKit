@@ -47,10 +47,9 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const Ani
         m_timelineTime = std::nullopt;
 }
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> timelineTime, std::optional<Seconds> scheduledTime, std::optional<Seconds> currentTime)
-    : AnimationEventBase(type, animation)
+AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime)
+    : AnimationEventBase(type, animation, scheduledTime)
     , m_timelineTime(timelineTime)
-    , m_scheduledTime(scheduledTime)
     , m_currentTime(currentTime)
 {
 }

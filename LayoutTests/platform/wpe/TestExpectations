@@ -182,10 +182,6 @@ webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transition
 webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Timeout ]
 webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Timeout ]
 
-# CSS scroll-snap
-webkit.org/b/222259 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
-webkit.org/b/222259 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
-
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure Pass ]
 

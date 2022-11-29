@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const valuesForLonghand = new Map([
+    ["break-after", ["auto", "avoid", "avoid-column", "avoid-page", "column", "left", "page", "recto", "right", "verso"]],
+    ["break-before", ["auto", "avoid", "avoid-column", "avoid-page", "column", "left", "page", "recto", "right", "verso"]],
+    ["break-inside", ["auto", "avoid", "avoid-column", "avoid-page"]],
+]);
+
+const valuesForShorthand = new Map([
+    ["-webkit-column-break-after", ["always", "auto", "avoid"]],
+    ["-webkit-column-break-before", ["always", "auto", "avoid"]],
+    ["-webkit-column-break-inside", ["auto", "avoid"]],
+    ["page-break-after", ["always", "auto", "avoid", "left", "right"]],
+    ["page-break-before", ["always", "auto", "avoid", "left", "right"]],
+    ["page-break-inside", ["auto", "avoid"]],
+]);
+
+const shorthandsForLonghand = new Map([
+    ["break-after", ["-webkit-column-break-after", "page-break-after"]],
+    ["break-before", ["-webkit-column-break-before", "page-break-before"]],
+    ["break-inside", ["-webkit-column-break-inside", "page-break-inside"]],
+]);
+
+const style = document.createElement("div").style;
+
+for (let [shorthand, values] of valuesForShorthand) {
+    for (let value of values) {
+        const cssText = shorthand + ": " + value + ";";
+        test(() => {
+            style.cssText = cssText;
+            assert_equals(style[shorthand], value, shorthand);
+        }, cssText);
+    }
+}
+
+for (let [longhand, values] of valuesForLonghand) {
+    for (let value of values) {
+        const cssText = longhand + ": " + value + ";";
+        test(() => {
+            style.cssText = cssText;
+            assert_equals(style.cssText, cssText, "cssText");
+            assert_equals(style[longhand], value, longhand);
+            for (shorthand of shorthandsForLonghand.get(longhand)) {
+                const shorthandValue = style[shorthand];
+                if (shorthandValue) {
+                    style.cssText = shorthand + ": " + shorthandValue + ";";
+                    assert_equals(style[longhand], value, longhand + " via " + shorthand);
+                }
+            }
+        }, cssText);
+    }
+}
+</script>

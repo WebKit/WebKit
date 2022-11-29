@@ -192,27 +192,6 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color)
     Cairo::fillRect(*this, rect, color, Cairo::ShadowState(state()));
 }
 
-void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient)
-{
-    auto pattern = gradient.createPattern(1.0, fillGradientSpaceTransform());
-    if (!pattern)
-        return;
-
-    save();
-    Cairo::fillRect(*this, rect, pattern.get());
-    restore();
-}
-
-void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
-{
-    auto& state = this->state();
-    CompositeOperator previousOperator = compositeOperation();
-
-    Cairo::State::setCompositeOperation(*this, compositeOperator, blendMode);
-    Cairo::fillRect(*this, rect, color, Cairo::ShadowState(state));
-    Cairo::State::setCompositeOperation(*this, previousOperator, BlendMode::Normal);
-}
-
 void GraphicsContextCairo::clip(const FloatRect& rect)
 {
     Cairo::clip(*this, rect);

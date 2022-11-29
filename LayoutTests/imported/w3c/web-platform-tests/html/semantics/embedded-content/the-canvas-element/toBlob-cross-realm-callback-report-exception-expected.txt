@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Error: PASS
+
+
+PASS toBlob() reports the exception from its callback in the callback's global object
+

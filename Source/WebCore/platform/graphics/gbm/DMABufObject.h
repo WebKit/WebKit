@@ -51,7 +51,6 @@ struct DMABufObject {
     DMABufObject(DMABufObject&&) = default;
     DMABufObject& operator=(DMABufObject&&) = default;
 
-    template<class Encoder> void encode(Encoder&) const &;
     template<class Encoder> void encode(Encoder&) &&;
     template<class Decoder> static std::optional<DMABufObject> decode(Decoder&);
 
@@ -66,18 +65,6 @@ struct DMABufObject {
     std::array<uint32_t, DMABufFormat::c_maxPlanes> stride { 0, 0, 0, 0 };
     std::array<uint64_t, DMABufFormat::c_maxPlanes> modifier { 0, 0, 0, 0 };
 };
-
-template<class Encoder>
-void DMABufObject::encode(Encoder& encoder) const &
-{
-    encoder << handle << uint32_t(format.fourcc) << uint32_t(colorSpace) << width << height;
-    encoder << releaseFlag.fd.duplicate();
-
-    for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
-        encoder << fd[i].duplicate();
-        encoder << offset[i] << stride[i] << modifier[i];
-    }
-}
 
 template<class Encoder>
 void DMABufObject::encode(Encoder& encoder) &&

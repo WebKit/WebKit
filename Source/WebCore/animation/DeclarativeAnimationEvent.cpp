@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DeclarativeAnimationEvent.h"
+#include "WebAnimationUtilities.h"
 
-#include "FloatRect.h"
-#include "GraphicsStyle.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-struct FilterStyle {
-    std::optional<GraphicsStyle> style;
-    FloatRect primitiveSubregion;
-    FloatRect imageRect;
-};
+WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimationEvent);
 
-using FilterStyleVector = Vector<FilterStyle>;
+DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId)
+    : AnimationEventBase(type, animation, scheduledTime)
+    , m_elapsedTime(elapsedTime)
+    , m_pseudoId(pseudoId)
+{
+}
+
+DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
+    : AnimationEventBase(type, init, isTrusted)
+    , m_elapsedTime(elapsedTime)
+    , m_pseudoElement(pseudoElement)
+{
+    auto pseudoIdOrException = pseudoIdFromString(m_pseudoElement);
+    if (!pseudoIdOrException.hasException())
+        m_pseudoId = pseudoIdOrException.returnValue();
+}
+
+DeclarativeAnimationEvent::~DeclarativeAnimationEvent() = default;
+
+const String& DeclarativeAnimationEvent::pseudoElement()
+{
+    if (m_pseudoElement.isNull())
+        m_pseudoElement = pseudoIdAsString(m_pseudoId);
+    return m_pseudoElement;
+}
 
 } // namespace WebCore

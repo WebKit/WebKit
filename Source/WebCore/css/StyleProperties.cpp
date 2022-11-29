@@ -32,6 +32,7 @@
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
@@ -69,26 +70,6 @@ static bool isCSSWideValueKeyword(StringView value)
     return value == "initial"_s || value == "inherit"_s || value == "unset"_s || value == "revert"_s || value == "revert-layer"_s;
 }
 
-static bool isNoneValue(const RefPtr<CSSValue>& value)
-{
-    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNone;
-}
-
-static bool isNormalValue(const RefPtr<CSSValue>& value)
-{
-    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNormal;
-}
-
-static bool isValueID(const CSSValue& value, CSSValueID id)
-{
-    return value.isPrimitiveValue() && downcast<CSSPrimitiveValue>(value).isValueID() && downcast<CSSPrimitiveValue>(value).valueID() == id;
-}
-
-static bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
-{
-    return value && isValueID(*value, id);
-}
-
 static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 {
     if (is<CSSValueList>(value)) {
@@ -104,16 +85,6 @@ static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 static bool isValueIDIncludingList(const RefPtr<CSSValue>& value, CSSValueID id)
 {
     return value && isValueIDIncludingList(*value, id);
-}
-
-static CSSValueID valueID(const CSSPrimitiveValue* value)
-{
-    return value ? value->valueID() : CSSValueInvalid;
-}
-
-static CSSValueID valueID(const CSSValue* value)
-{
-    return valueID(dynamicDowncast<CSSPrimitiveValue>(value));
 }
 
 Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
@@ -319,7 +290,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return offsetValue();
     case CSSPropertyContainer:
         if (auto type = getPropertyCSSValue(CSSPropertyContainerType)) {
-            if (isNormalValue(type)) {
+            if (isValueID(type, CSSValueNormal)) {
                 if (auto name = getPropertyCSSValue(CSSPropertyContainerName))
                     return name->cssText();
                 return { };
@@ -335,10 +306,15 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyGridColumn:
     case CSSPropertyGridRow:
         return getGridRowColumnShorthandValue(shorthand);
+    case CSSPropertyPageBreakInside:
+    case CSSPropertyWebkitColumnBreakInside:
+        return breakInsideShorthandValue(shorthand);
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:
-    case CSSPropertyPageBreakInside:
-        return pageBreakPropertyValue(shorthand);
+        return pageBreakValue(shorthand);
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+        return webkitColumnBreakValue(shorthand);
     case CSSPropertyPlaceContent:
     case CSSPropertyPlaceItems:
     case CSSPropertyPlaceSelf:
@@ -350,9 +326,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyFontSynthesis:
         return fontSynthesisValue();
     case CSSPropertyTextDecorationSkip:
-        return textDecorationSkipValue();
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyWebkitPerspective:
     case CSSPropertyWebkitTextOrientation:
         ASSERT(shorthand.length() == 1);
         if (auto value = getPropertyCSSValue(shorthand.properties()[0]))
@@ -363,12 +339,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         // FIXME: Stop ignoring marker-mid and marker-end (http://webkit.org/b/248308).
         if (auto value = getPropertyCSSValue(CSSPropertyMarkerStart))
             return value->cssText();
-        return String();
-    case CSSPropertyWebkitColumnBreakAfter:
-    case CSSPropertyWebkitColumnBreakBefore:
-    case CSSPropertyWebkitColumnBreakInside:
-    case CSSPropertyWebkitPerspective:
-        // FIXME: Provide a serialization.
         return String();
     default:
         ASSERT_NOT_REACHED();
@@ -597,18 +567,6 @@ String StyleProperties::offsetValue() const
     }
 
     return result.toString();
-}
-
-String StyleProperties::textDecorationSkipValue() const
-{
-    ASSERT(textDecorationSkipShorthand().length() == 1);
-    int textDecorationSkipInkPropertyIndex = findPropertyIndex(CSSPropertyTextDecorationSkipInk);
-    if (textDecorationSkipInkPropertyIndex == -1)
-        return emptyString();
-    PropertyReference textDecorationSkipInkProperty = propertyAt(textDecorationSkipInkPropertyIndex);
-    if (textDecorationSkipInkProperty.isImplicit())
-        return emptyString();
-    return textDecorationSkipInkProperty.value()->cssText();
 }
 
 String StyleProperties::fontVariantValue(const StylePropertyShorthand& shorthand) const
@@ -929,16 +887,14 @@ String StyleProperties::getGridTemplateValue() const
 
     auto areas = propertyAt(areasIndex);
     if (!is<CSSGridTemplateAreasValue>(areas.value())) {
-        String rowsText = rows->cssText();
+        auto rowsText = rows->cssText();
         result.append(rowsText);
 
-        String columnsText = columns->cssText();
+        auto columnsText = columns->cssText();
         // If the values are identical, and either a css wide keyword
         // or 'none', then we can just output it once.
-        if (columnsText != rowsText || (!isCSSWideValueKeyword(columnsText) && !isValueID(columns, CSSValueNone))) {
-            result.append(" / ");
-            result.append(columnsText);
-        }
+        if (columnsText != rowsText || (!isCSSWideValueKeyword(columnsText) && !isValueID(columns, CSSValueNone)))
+            result.append(" / ", columnsText);
         return result.toString();
     }
     // We only want to try serializing the interleaved areas/templates
@@ -955,29 +911,22 @@ String StyleProperties::getGridTemplateValue() const
     unsigned row = 0;
     for (auto& currentValue : downcast<CSSValueList>(*rows)) {
         if (!first)
-            result.append(" ");
+            result.append(' ');
         first = false;
 
         if (is<CSSGridLineNamesValue>(currentValue))
             result.append(currentValue->cssText());
         else {
-            result.append("\"");
-            result.append(areasValue.stringForRow(row));
-            result.append("\"");
+            result.append('"', areasValue.stringForRow(row), '"');
 
-            if (!isValueID(currentValue, CSSValueAuto)) {
-                result.append(" ");
-                result.append(currentValue->cssText());
-            }
+            if (!isValueID(currentValue, CSSValueAuto))
+                result.append(' ', currentValue->cssText());
             row++;
         }
     }
 
-    String columnsText = columns->cssText();
-    if (!isNoneValue(columns)) {
-        result.append(" / ");
-        result.append(columnsText);
-    }
+    if (!isValueID(columns, CSSValueNone))
+        result.append(" / ", columns->cssText());
 
     return result.toString();
 }
@@ -1025,10 +974,8 @@ String StyleProperties::getGridValue() const
         if (gridAutoFlowContains(autoFlow, CSSValueDense))
             result.append(" dense");
 
-        if (!isValueIDIncludingList(autoColumns, CSSValueAuto)) {
-            result.append(" ");
-            result.append(autoColumns->cssText());
-        }
+        if (!isValueIDIncludingList(autoColumns, CSSValueAuto))
+            result.append(' ', autoColumns->cssText());
 
         return result.toString();
     }
@@ -1328,30 +1275,70 @@ String StyleProperties::borderPropertyValue(const StylePropertyShorthand& width,
     return result.toString();
 }
 
-String StyleProperties::pageBreakPropertyValue(const StylePropertyShorthand& shorthand) const
+String StyleProperties::breakInsideShorthandValue(const StylePropertyShorthand& shorthand) const
 {
     ASSERT(shorthand.length() == 1);
-    auto value = getPropertyCSSValue(shorthand.properties()[0]);
-    if (!value)
-        return String();
+    CSSPropertyID longhand = shorthand.properties()[0];
+    ASSERT(longhand == CSSPropertyBreakInside);
+    auto valueID = propertyAsValueID(longhand);
+    if (!valueID)
+        return nullString();
     // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
-    if (value->isCSSWideKeyword())
-        return value->cssText();
-    
-    if (!is<CSSPrimitiveValue>(*value))
-        return String();
-    
-    CSSValueID valueId = downcast<CSSPrimitiveValue>(*value).valueID();
-    switch (valueId) {
+    if (isCSSWideKeyword(*valueID))
+        return nameString(*valueID);
+    switch (*valueID) {
+    case CSSValueAuto:
+    case CSSValueAvoid:
+        return nameString(*valueID);
+    default:
+        return nullString();
+    }
+}
+
+String StyleProperties::pageBreakValue(const StylePropertyShorthand& shorthand) const
+{
+    ASSERT(shorthand.length() == 1);
+    CSSPropertyID longhand = shorthand.properties()[0];
+    ASSERT(longhand == CSSPropertyBreakAfter || longhand == CSSPropertyBreakBefore);
+    auto valueID = propertyAsValueID(longhand);
+    if (!valueID)
+        return nullString();
+    // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
+    if (isCSSWideKeyword(*valueID))
+        return nameString(*valueID);
+    switch (*valueID) {
     case CSSValuePage:
         return "always"_s;
     case CSSValueAuto:
     case CSSValueAvoid:
     case CSSValueLeft:
     case CSSValueRight:
-        return value->cssText();
+        return nameString(*valueID);
     default:
-        return String();
+        return nullString();
+    }
+}
+
+String StyleProperties::webkitColumnBreakValue(const StylePropertyShorthand& shorthand) const
+{
+    ASSERT(shorthand.length() == 1);
+    CSSPropertyID longhand = shorthand.properties()[0];
+    ASSERT(longhand == CSSPropertyBreakAfter || longhand == CSSPropertyBreakBefore);
+    auto valueID = propertyAsValueID(longhand);
+    if (!valueID)
+        return nullString();
+    // FIXME: Remove this isCSSWideKeyword check after we do this consistently for all shorthands in getPropertyValue.
+    if (isCSSWideKeyword(*valueID))
+        return nameString(*valueID);
+    switch (*valueID) {
+    case CSSValueColumn:
+        return "always"_s;
+    case CSSValueAvoidColumn:
+        return "avoid"_s;
+    case CSSValueAuto:
+        return nameString(*valueID);
+    default:
+        return nullString();
     }
 }
 
@@ -1666,6 +1653,11 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyWebkitTextOrientation:
         return false;
 
+    // No other browser currently supports text-decoration-skip, so it's currently more web
+    // compatible to avoid collapsing text-decoration-skip-ink, its only longhand.
+    case CSSPropertyTextDecorationSkip:
+        return false;
+
     // FIXME: -webkit-mask is a legacy shorthand but it's used to serialize -webkit-mask-clip,
     // which should be a legacy shorthand of mask-clip, but it's implemented as a longhand.
     case CSSPropertyWebkitMask:
@@ -1702,7 +1694,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyPlaceContent:
     case CSSPropertyPlaceItems:
     case CSSPropertyPlaceSelf:
-    case CSSPropertyTextDecorationSkip:
     case CSSPropertyTextEmphasis:
     case CSSPropertyWebkitTextStroke:
         return false;

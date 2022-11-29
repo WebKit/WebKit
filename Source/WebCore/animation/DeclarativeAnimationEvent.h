@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebCorePrefix.h"
+#pragma once
+
+#include "AnimationEventBase.h"
+#include "RenderStyleConstants.h"
+
+namespace WebCore {
+
+class DeclarativeAnimationEvent : public AnimationEventBase {
+    WTF_MAKE_ISO_ALLOCATED(DeclarativeAnimationEvent);
+public:
+    virtual ~DeclarativeAnimationEvent();
+
+    double elapsedTime() const { return m_elapsedTime; }
+    const String& pseudoElement();
+    PseudoId pseudoId() const { return m_pseudoId; }
+
+protected:
+    DeclarativeAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, PseudoId);
+    DeclarativeAnimationEvent(const AtomString&, const EventInit&, IsTrusted, double, const String&);
+
+private:
+    double m_elapsedTime;
+    String m_pseudoElement;
+    PseudoId m_pseudoId { PseudoId::None };
+};
+
+} // namespace WebCore

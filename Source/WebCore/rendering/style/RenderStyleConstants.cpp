@@ -1149,6 +1149,17 @@ TextStream& operator<<(TextStream& ts, TextUnderlinePosition underlinePosition)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, LeadingTrim leadingTrim)
+{
+    switch (leadingTrim) {
+    case LeadingTrim::Normal: ts << "Normal"; break;
+    case LeadingTrim::Start: ts << "Start"; break;
+    case LeadingTrim::End: ts << "End"; break;
+    case LeadingTrim::Both: ts << "Both"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextZoom zoom)
 {
     switch (zoom) {

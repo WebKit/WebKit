@@ -1,4 +1,4 @@
-//@ requireOptions("--useResizableArrayBuffer=1")
+//@ requireOptions("--useResizableArrayBuffer=1", "--useAtomicsWaitAsync=1")
 // Copyright 2022 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -10,28 +10,42 @@
 load("./resources/v8-mjsunit.js", "caller relative");
 load("./resources/v8-typedarray-helpers.js", "caller relative");
 
-/*
 (function AtomicsWait() {
   const gsab = CreateGrowableSharedArrayBuffer(16, 32);
   const i32a = new Int32Array(gsab);
 
-  const workerScript = function() {
-      onmessage = function(msg) {
-        const i32a = new Int32Array(msg.gsab, msg.offset);
-        const result = Atomics.wait(i32a, 0, 0, 5000);
-        postMessage(result);
-      };
-  }
+  const workerScript = `
+      $262.agent.receiveBroadcast(function(buffer) {
+        const i32a = new Int32Array(buffer, 0);
+        try {
+          const result = Atomics.wait(i32a, 0, 0, 5000);
+          if (result !== 'ok')
+            throw new Error(result);
+          $262.agent.report("PASS");
+        } catch (e) {
+          $262.agent.report("FAIL");
+        } finally {
+          $262.agent.leaving();
+        }
+      });
+    `;
 
-  const worker = new Worker(workerScript, {type: 'function'});
-  worker.postMessage({gsab: gsab, offset: 0});
+  $.agent.start(workerScript);
+  $262.agent.broadcast(gsab);
 
   // Spin until the worker is waiting on the futex.
-  while (%AtomicsNumWaitersForTesting(i32a, 0) != 1) {}
+  while (waiterListSize(i32a, 0) != 1) {}
 
   Atomics.notify(i32a, 0, 1);
-  assertEquals("ok", worker.getMessage());
-  worker.terminate();
+  while (true) {
+      let report = $262.agent.getReport();
+      if (report === null) {
+          $262.agent.sleep(1);
+          continue;
+      }
+      assertEquals(report, "PASS");
+      break;
+  }
 })();
 
 (function AtomicsWaitAfterGrowing() {
@@ -41,23 +55,38 @@ load("./resources/v8-typedarray-helpers.js", "caller relative");
   gsab.grow(6 * 4);
   const index = 5;
 
-  const workerScript = function() {
-      onmessage = function(msg) {
-        const i32a = new Int32Array(msg.gsab, msg.offset);
-        const result = Atomics.wait(i32a, 5, 0, 5000);
-        postMessage(result);
-      };
-  }
+  const workerScript = `
+      $262.agent.receiveBroadcast(function(buffer) {
+        const i32a = new Int32Array(buffer, 0);
+        try {
+          const result = Atomics.wait(i32a, 5, 0, 5000);
+          if (result !== 'ok')
+            throw new Error(result);
+          $262.agent.report("PASS");
+        } catch (e) {
+          $262.agent.report("FAIL");
+        } finally {
+          $262.agent.leaving();
+        }
+      });
+    `;
 
-  const worker = new Worker(workerScript, {type: 'function'});
-  worker.postMessage({gsab: gsab, offset: 0});
+  $.agent.start(workerScript);
+  $262.agent.broadcast(gsab);
 
   // Spin until the worker is waiting on the futex.
-  while (%AtomicsNumWaitersForTesting(i32a, index) != 1) {}
+  while (waiterListSize(i32a, index) != 1) {}
 
   Atomics.notify(i32a, index, 1);
-  assertEquals("ok", worker.getMessage());
-  worker.terminate();
+  while (true) {
+      let report = $262.agent.getReport();
+      if (report === null) {
+          $262.agent.sleep(1);
+          continue;
+      }
+      assertEquals(report, "PASS");
+      break;
+  }
 })();
 
 (function AtomicsWaitAsync() {
@@ -144,8 +173,6 @@ load("./resources/v8-typedarray-helpers.js", "caller relative");
                      TypeError);
       });
 })();
-
-*/
 
 (function TestAtomics() {
   for (let ctor of intCtors) {
