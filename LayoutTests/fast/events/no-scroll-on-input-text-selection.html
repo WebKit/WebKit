@@ -37,7 +37,7 @@
                 if (window.eventSender)
                     eventSender.mouseUp();
 
-                shouldBeTrue('document.getSelection().toString().length > 1');
+                shouldBeTrue('ta.selectionStart < ta.selectionEnd');
                 shouldBe('pageXOffset', '0');
                 shouldBe('pageYOffset', 'originalPageYOffset');
                 shouldBe('document.scrollingElement.scrollLeft', '0');
