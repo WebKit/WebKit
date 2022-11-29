@@ -185,6 +185,11 @@ RefPtr<ImageBuffer> ImageBuffer::clone() const
     return copyImageBuffer(const_cast<ImageBuffer&>(*this), PreserveResolution::Yes);
 }
 
+RefPtr<ImageBuffer> ImageBuffer::cloneForDifferentThread()
+{
+    return clone();
+}
+
 GraphicsContext& ImageBuffer::context() const
 {
     ASSERT(m_backend);
@@ -232,6 +237,20 @@ RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage()
         return backend->sinkIntoNativeImage();
     }
     return nullptr;
+}
+
+RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer> buffer)
+{
+    if (!buffer)
+        return nullptr;
+    ASSERT(buffer->hasOneRef());
+    return buffer->sinkIntoBufferForDifferentThread();
+}
+
+RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread()
+{
+    ASSERT(hasOneRef());
+    return this;
 }
 
 RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)

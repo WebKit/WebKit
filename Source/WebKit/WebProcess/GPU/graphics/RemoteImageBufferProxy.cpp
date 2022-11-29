@@ -194,6 +194,23 @@ RefPtr<NativeImage> RemoteImageBufferProxy::sinkIntoNativeImage()
     return copyNativeImage();
 }
 
+RefPtr<ImageBuffer> RemoteImageBufferProxy::sinkIntoBufferForDifferentThread()
+{
+    ASSERT(hasOneRef());
+    // We can't use these on a different thread, so make a local clone instead.
+    return cloneForDifferentThread();
+}
+
+RefPtr<ImageBuffer> RemoteImageBufferProxy::cloneForDifferentThread()
+{
+    auto copyBuffer = ImageBuffer::create(logicalSize(), renderingPurpose(), resolutionScale(), colorSpace(), pixelFormat());
+    if (!copyBuffer)
+        return nullptr;
+
+    copyBuffer->context().drawImageBuffer(*this, FloatPoint { }, CompositeOperator::Copy);
+    return copyBuffer;
+}
+
 RefPtr<Image> RemoteImageBufferProxy::filteredImage(Filter& filter)
 {
     if (UNLIKELY(!m_remoteRenderingBackendProxy))

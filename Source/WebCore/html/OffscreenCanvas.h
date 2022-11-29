@@ -178,7 +178,7 @@ private:
 #endif
 
     void createImageBuffer() const final;
-    RefPtr<ImageBuffer> takeImageBuffer() const;
+    RefPtr<ImageBuffer> takeImageBufferForDifferentThread() const;
 
     void reset();
 
