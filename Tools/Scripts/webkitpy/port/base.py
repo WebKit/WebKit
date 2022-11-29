@@ -675,9 +675,11 @@ class Port(object):
     def perf_tests_dir(self):
         return self._webkit_finder.perf_tests_dir()
 
-    def skipped_layout_tests(self, test_list, device_type=None):
+    def skipped_layout_tests(self, device_type=None):
         """Returns tests skipped outside of the TestExpectations files."""
-        return set(self._tests_for_other_platforms(device_type=device_type)).union(self._skipped_tests_for_unsupported_features(test_list))
+        return set(self._tests_for_other_platforms(device_type=device_type)) | set(
+            self.get_option("ignore_tests", [])
+        )
 
     @memoized
     def skipped_perf_tests(self):
@@ -1489,9 +1491,6 @@ class Port(object):
                 basename = self._filesystem.basename(entry)
                 dirs_to_skip.append('platform/%s' % basename)
         return dirs_to_skip
-
-    def _skipped_tests_for_unsupported_features(self, test_list):
-        return []
 
     def _wk2_port_name(self):
         # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc,
