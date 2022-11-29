@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,32 +20,49 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __WebKitAvailability__
-#define __WebKitAvailability__
+"use strict";
 
-#if defined(__APPLE__)
+const { reactive, watchEffect, watch } = Vue;
 
-#include <AvailabilityMacros.h>
-#include <CoreFoundation/CoreFoundation.h>
+class ObservableReminderStore extends ReminderStore {
+    constructor(...args) {
+        super(...args);
+        return reactive(this);
+    }
+}
 
-#if defined(BUILDING_GTK__) || defined(BUILDING_JSCONLY__)
-#undef JSC_API_AVAILABLE
-#define JSC_API_AVAILABLE(...)
+class ObservableReminderList extends ReminderList {
+    constructor(...args) {
+        super(...args);
+        return reactive(this);
+    }
+}
 
-#undef JSC_API_DEPRECATED
-#define JSC_API_DEPRECATED(...)
+class ObservableReminder extends Reminder {
+    constructor(...args) {
+        super(...args);
 
-#undef JSC_API_DEPRECATED_WITH_REPLACEMENT
-#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-#endif
+        const reactiveThis = reactive(this);
 
-#else
-#define JSC_API_AVAILABLE(...)
-#define JSC_API_DEPRECATED(...)
-#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-#endif
+        watch(() => reactiveThis.isCompleted, newValue => {
+            reactiveThis._isCompletedChanged(newValue);
+        }, { immediate: true, flush: "sync" });
 
-#endif /* __WebKitAvailability__ */
+        return reactiveThis;
+    }
+}
+
+class Benchmark {
+    constructor() {
+        this._verbose = false;
+    }
+    
+    runIteration() {
+        const store = new ObservableReminderStore();
+        watchEffect(() => { store.render(); }, { flush: "sync" });
+        test(store);
+    }
+}

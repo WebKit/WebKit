@@ -446,8 +446,8 @@ macro(WEBKIT_CHECK_HAVE_INCLUDE _variable _header)
     SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 
-macro(WEBKIT_CHECK_HAVE_FUNCTION _variable _function)
-    check_function_exists(${_function} ${_variable}_value)
+macro(WEBKIT_CHECK_HAVE_FUNCTION _variable _function _header)
+    check_symbol_exists(${_function} ${_header} ${_variable}_value)
     SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 

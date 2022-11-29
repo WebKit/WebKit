@@ -1753,6 +1753,9 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
 
     auto webViewToUpdate = useSeparateServiceWorkerProcess == UseSeparateServiceWorkerProcess::Yes ? webView : webView2;
 
+    if (useSeparateServiceWorkerProcess == UseSeparateServiceWorkerProcess::Yes)
+        [webView2 _setThrottleStateForTesting:0];
+
     [webViewToUpdate _setThrottleStateForTesting:1];
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
         return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting] && [webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting];

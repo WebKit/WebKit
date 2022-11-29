@@ -61,7 +61,6 @@ const webCryptoSham = {
                 default:
                     throw new TypeError(`Unsupported digest() algorithm: ${algorithm}.`);
             }
-            throw "foo"
             return shajs(internalAlgorithm).update(data).digest();
         },
 

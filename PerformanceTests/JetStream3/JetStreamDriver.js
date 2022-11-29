@@ -877,6 +877,8 @@ class DefaultBenchmark extends Benchmark {
         this.firstIteration = null;
         this.worst4 = null;
         this.average = null;
+
+        assert(this.iterations > this.worstCaseCount);
     }
 
     processResults(results) {
@@ -1204,6 +1206,7 @@ const SimpleGroup = Symbol.for("Simple");
 const SunSpiderGroup = Symbol.for("SunSpider");
 const BigIntNobleGroup = Symbol.for("BigIntNoble");
 const BigIntMiscGroup = Symbol.for("BigIntMisc");
+const ProxyGroup = Symbol.for("ProxyGroup");
 const WasmGroup = Symbol.for("Wasm");
 const WorkerTestsGroup = Symbol.for("WorkerTests");
 const WSLGroup = Symbol.for("WSL");
@@ -1631,6 +1634,27 @@ let testPlans = [
         worstCaseCount: 16,
         testGroup: BigIntMiscGroup,
     },
+    // Proxy
+    {
+        name: "proxy-mobx",
+        files: [
+            "./proxy/common.js",
+            "./proxy/mobx-bundle.js",
+            "./proxy/mobx-benchmark.js",
+        ],
+        testGroup: ProxyGroup,
+    },
+    {
+        name: "proxy-vue",
+        files: [
+            "./proxy/common.js",
+            "./proxy/vue-bundle.js",
+            "./proxy/vue-benchmark.js",
+        ],
+        iterations: 20,
+        worstCaseCount: 2,
+        testGroup: ProxyGroup,
+    },
     // Wasm
     {
         name: "HashSet-wasm",
@@ -1890,6 +1914,7 @@ let runWTB = true;
 let runSunSpider = true;
 let runBigIntNoble = true;
 let runBigIntMisc = true;
+let runProxy = true;
 let runSimple = true;
 let runCDJS = true;
 let runWorkerTests = !!isInBrowser;
@@ -1908,6 +1933,7 @@ if (false) {
     runSunSpider = false;
     runBigIntNoble = false;
     runBigIntMisc = false;
+    runProxy = false;
     runSimple = false;
     runCDJS = false;
     runWorkerTests = false;
@@ -1950,6 +1976,9 @@ if (typeof testList !== "undefined") {
 
     if (runBigIntMisc)
         addTestsByGroup(BigIntMiscGroup);
+
+    if (runProxy)
+        addTestsByGroup(ProxyGroup);
 
     if (runWasm)
         addTestsByGroup(WasmGroup);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,32 +20,46 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __WebKitAvailability__
-#define __WebKitAvailability__
+"use strict";
 
-#if defined(__APPLE__)
+const { makeAutoObservable, autorun, reaction } = mobx;
 
-#include <AvailabilityMacros.h>
-#include <CoreFoundation/CoreFoundation.h>
+class ObservableReminderStore extends ReminderStore {
+    constructor(...args) {
+        super(...args);
+        makeAutoObservable(this);
+    }
+}
 
-#if defined(BUILDING_GTK__) || defined(BUILDING_JSCONLY__)
-#undef JSC_API_AVAILABLE
-#define JSC_API_AVAILABLE(...)
+class ObservableReminderList extends ReminderList {
+    constructor(...args) {
+        super(...args);
+        makeAutoObservable(this);
+    }
+}
 
-#undef JSC_API_DEPRECATED
-#define JSC_API_DEPRECATED(...)
+class ObservableReminder extends Reminder {
+    constructor(...args) {
+        super(...args);
 
-#undef JSC_API_DEPRECATED_WITH_REPLACEMENT
-#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-#endif
+        makeAutoObservable(this);
+        reaction(() => this.isCompleted, newValue => {
+            this._isCompletedChanged(newValue);
+        });
+    }
+}
 
-#else
-#define JSC_API_AVAILABLE(...)
-#define JSC_API_DEPRECATED(...)
-#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-#endif
-
-#endif /* __WebKitAvailability__ */
+class Benchmark {
+    constructor() {
+        this._verbose = false;
+    }
+    
+    runIteration() {
+        const store = new ObservableReminderStore();
+        autorun(() => { store.render(); });
+        test(store);
+    }
+}

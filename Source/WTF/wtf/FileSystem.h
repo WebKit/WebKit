@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <sys/types.h>
 #include <time.h>
 #include <utility>
 #include <wtf/Forward.h>
