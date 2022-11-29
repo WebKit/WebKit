@@ -156,7 +156,6 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
 
     @putByIdDirectPrivate(source, "disturbed", true);
 
-    pipeState.finalized = false;
     pipeState.shuttingDown = false;
     pipeState.promiseCapability = @newPromiseCapability(@Promise);
     pipeState.pendingReadPromiseCapability = @newPromiseCapability(@Promise);
@@ -165,9 +164,6 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
 
     if (signal !== @undefined) {
         const algorithm = () => {
-            if (pipeState.finalized)
-                return;
-
             const error = @makeDOMException("AbortError", "abort pipeTo from signal");
 
             @pipeToShutdownWithAction(pipeState, () => {
@@ -194,8 +190,10 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
                 return promiseCapability.@promise;
             }, error);
         };
-        if (@whenSignalAborted(signal, algorithm))
+        pipeState.abortAlgorithmIdentifier = @addAbortAlgorithmToSignal(signal, algorithm)
+        if (!pipeState.abortAlgorithmIdentifier)
             return pipeState.promiseCapability.@promise;
+        pipeState.signal = signal;
     }
 
     @pipeToErrorsMustBePropagatedForward(pipeState);
@@ -377,8 +375,8 @@ function pipeToFinalize(pipeState)
     @writableStreamDefaultWriterRelease(pipeState.writer);
     @readableStreamReaderGenericRelease(pipeState.reader);
 
-    // Instead of removing the abort algorithm as per spec, we make it a no-op which is equivalent.
-    pipeState.finalized = true;
+    if (pipeState.signal)
+        @removeAbortAlgorithmFromSignal(pipeState.signal, pipeState.abortAlgorithmIdentifier)
 
     if (arguments.length > 1)
         pipeState.promiseCapability.@reject.@call(@undefined, arguments[1]);
