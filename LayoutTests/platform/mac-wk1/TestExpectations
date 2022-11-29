@@ -2556,3 +2556,4 @@ http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-im
 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
 
+webkit.org/b/248493 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ Pass Failure ]
