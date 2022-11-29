@@ -22,7 +22,7 @@ PASS number.value is ""
 The element losts focus. The element state should not be changed.
 PASS colorOf(number) is invalidStyleColor
 PASS number.validity.badInput is true
-PASS document.getSelection().toString() is "-1a"
+PASS visibleValue(number) is "-1a"
 PASS number.value is ""
 The element losts a renderer. The element state should not be changed.
 PASS number.style.display = "none"; number.validity.badInput is true
