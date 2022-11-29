@@ -56,14 +56,30 @@ GraphicsContext* FilterImageTargetSwitcher::drawingContext(GraphicsContext& cont
     return m_sourceImage ? &m_sourceImage->context() : &context;
 }
 
-void FilterImageTargetSwitcher::didDrawSourceImage(GraphicsContext& destinationContext)
+void FilterImageTargetSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect)
 {
-    FilterTargetSwitcher::didDrawSourceImage(destinationContext);
-
-    if (m_filter) {
-        FilterResults results;
-        destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, *m_filter, m_results ? *m_results : results);
+    if (auto* context = drawingContext(destinationContext)) {
+        context->save();
+        context->clearRect(repaintRect);
+        context->clip(repaintRect);
     }
+}
+
+void FilterImageTargetSwitcher::endClipAndDrawSourceImage(GraphicsContext& destinationContext)
+{
+    if (auto* context = drawingContext(destinationContext))
+        context->restore();
+
+    endDrawSourceImage(destinationContext);
+}
+
+void FilterImageTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext)
+{
+    if (!m_filter)
+        return;
+
+    FilterResults results;
+    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, *m_filter, m_results ? *m_results : results);
 }
 
 } // namespace WebCore

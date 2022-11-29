@@ -24,25 +24,35 @@
  */
 
 #include "config.h"
-#include "FilterTargetSwitcher.h"
+#include "FilterStyleTargetSwitcher.h"
 
 #include "Filter.h"
-#include "FilterImageTargetSwitcher.h"
-#include "FilterStyleTargetSwitcher.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
 
-std::unique_ptr<FilterTargetSwitcher> FilterTargetSwitcher::create(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
+FilterStyleTargetSwitcher::FilterStyleTargetSwitcher(GraphicsContext&, Filter& filter, const FloatRect& sourceImageRect)
+    : FilterTargetSwitcher(filter)
+    , m_filterStyles(filter.createFilterStyles(sourceImageRect))
 {
-    if (filter.filterRenderingMode() == FilterRenderingMode::GraphicsContext)
-        return makeUnique<FilterStyleTargetSwitcher>(destinationContext, filter, sourceImageRect);
-    return makeUnique<FilterImageTargetSwitcher>(destinationContext, filter, sourceImageRect, colorSpace, results);
 }
 
-FilterTargetSwitcher::FilterTargetSwitcher(Filter& filter)
-    : m_filter(&filter)
+void FilterStyleTargetSwitcher::beginDrawSourceImage(GraphicsContext& destinationContext)
 {
+    for (auto& filterStyle : m_filterStyles) {
+        destinationContext.save();
+        destinationContext.clip(filterStyle.imageRect);
+        destinationContext.setStyle(filterStyle.style);
+        destinationContext.beginTransparencyLayer(1);
+    }
+}
+
+void FilterStyleTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext)
+{
+    for ([[maybe_unused]] auto& filterStyle : makeReversedRange(m_filterStyles)) {
+        destinationContext.endTransparencyLayer();
+        destinationContext.restore();
+    }
 }
 
 } // namespace WebCore

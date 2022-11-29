@@ -23,26 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FilterTargetSwitcher.h"
+#pragma once
 
-#include "Filter.h"
-#include "FilterImageTargetSwitcher.h"
-#include "FilterStyleTargetSwitcher.h"
-#include "GraphicsContext.h"
+#include "FilterStyle.h"
+#include "FilterTargetSwitcher.h"
 
 namespace WebCore {
 
-std::unique_ptr<FilterTargetSwitcher> FilterTargetSwitcher::create(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
-{
-    if (filter.filterRenderingMode() == FilterRenderingMode::GraphicsContext)
-        return makeUnique<FilterStyleTargetSwitcher>(destinationContext, filter, sourceImageRect);
-    return makeUnique<FilterImageTargetSwitcher>(destinationContext, filter, sourceImageRect, colorSpace, results);
-}
+class FilterStyleTargetSwitcher : public FilterTargetSwitcher {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FilterStyleTargetSwitcher(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect);
 
-FilterTargetSwitcher::FilterTargetSwitcher(Filter& filter)
-    : m_filter(&filter)
-{
-}
+private:
+    void beginDrawSourceImage(GraphicsContext& destinationContext) override;
+    void endDrawSourceImage(GraphicsContext& destinationContext) override;
+
+    FilterStyleVector m_filterStyles;
+};
 
 } // namespace WebCore
