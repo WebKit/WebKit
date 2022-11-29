@@ -1,29 +1,22 @@
-This test ensures WebKit uses shorthand notations for cssText
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS normalizeCssText(element.style.cssText) is "border: 1px"
-PASS normalizeCssText(element.style.cssText) is "border: 1px solid red"
-PASS normalizeCssText(element.style.cssText) is "border: 1px red"
-PASS normalizeCssText(element.style.cssText) is "border: red"
-PASS normalizeCssText(element.style.cssText) is "border: 1px"
-PASS normalizeCssText(element.style.cssText) is "border-width: 1px 2px 3px 4px"
-PASS normalizeCssText(element.style.cssText) is "border-width: 2px 1px 1px"
-PASS normalizeCssText(element.style.cssText) is "border-bottom-width: 1px; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px !important"
-PASS normalizeCssText(element.style.cssText) is "border-top-color: red; border-width: 1px"
-PASS normalizeCssText(element.style.cssText) is "border: dotted"
-PASS normalizeCssText(element.style.cssText) is "border-width: 1px"
-PASS normalizeCssText(element.style.cssText) is "border-spacing: 1px 2px"
-PASS normalizeCssText(element.style.cssText) is "font-family: sans-serif; font-size: 3em; font-style: italic; font-weight: bold; line-height: 2em"
-PASS normalizeCssText(element.style.cssText) is "list-style: inside circle"
-PASS normalizeCssText(element.style.cssText) is "margin: 1px 2px 3px 4px"
-PASS normalizeCssText(element.style.cssText) is "outline: blue dotted 2px"
-PASS normalizeCssText(element.style.cssText) is "overflow: scroll hidden"
-PASS normalizeCssText(element.style.cssText) is "overflow: scroll"
-PASS normalizeCssText(element.style.cssText) is "padding: 1px 2px 3px 4px"
-PASS normalizeCssText(element.style.cssText) is "list-style-type: lower-alpha"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+PASS cssText set to "border: 1px; border-top: 1px;" is read back as "border: 1px;"
+PASS cssText set to "border: 1px solid red;" is read back as "border: 1px solid red;"
+PASS cssText set to "border: 1px red;" is read back as "border: 1px red;"
+PASS cssText set to "border: red;" is read back as "border: red;"
+PASS cssText set to "border-top: 1px; border-right: 1px; border-bottom: 1px; border-left: 1px;" is read back as "border: 1px;"
+PASS cssText set to "border-top: 1px; border-right: 2px; border-bottom: 3px; border-left: 4px;" is read back as "border-color: initial; border-style: initial; border-width: 1px 2px 3px 4px;"
+PASS cssText set to "border: 1px; border-top: 2px;" is read back as "border-color: initial; border-style: initial; border-width: 2px 1px 1px;"
+PASS cssText set to "border: 1px; border-top: 1px !important;" is read back as "border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-width: 1px !important;"
+PASS cssText set to "border: 1px; border-top-color: red;" is read back as "border-style: initial; border-top-color: red; border-width: 1px;"
+PASS cssText set to "border: solid; border-style: dotted" is read back as "border: dotted;"
+PASS cssText set to "border-width: 1px;" is read back as "border-width: 1px;"
+PASS cssText set to "-webkit-border-horizontal-spacing: 1px; -webkit-border-vertical-spacing: 2px;" is read back as "border-spacing: 1px 2px;"
+PASS cssText set to "font-family: sans-serif; line-height: 2em; font-size: 3em; font-style: italic; font-weight: bold;" is read back as "font-family: sans-serif; line-height: 2em; font-size: 3em; font-style: italic; font-weight: bold;"
+PASS cssText set to "list-style-type: circle; list-style-position: inside; list-style-image: initial;" is read back as "list-style: circle inside;"
+PASS cssText set to "margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px;" is read back as "margin: 1px 2px 3px 4px;"
+PASS cssText set to "outline-width: 2px; outline-style: dotted; outline-color: blue;" is read back as "outline: blue dotted 2px;"
+PASS cssText set to "overflow-x: scroll; overflow-y: hidden;" is read back as "overflow-x: scroll; overflow-y: hidden;"
+PASS cssText set to "overflow-x: scroll; overflow-y: scroll;" is read back as "overflow: scroll;"
+PASS cssText set to "padding-top: 1px; padding-right: 2px; padding-bottom: 3px; padding-left: 4px;" is read back as "padding: 1px 2px 3px 4px;"
+PASS cssText set to "padding: initial; padding-top: initial !important" is read back as "padding-top: initial !important; padding-right: initial; padding-bottom: initial; padding-left: initial;"
+PASS cssText set to "list-style-type: lower-alpha;" is read back as "list-style-type: lower-alpha;"
 

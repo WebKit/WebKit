@@ -705,16 +705,17 @@ String StyleProperties::get4Values(const StylePropertyShorthand& shorthand) cons
     if (!top.value() || !right.value() || !bottom.value() || !left.value())
         return String();
 
+    if (top.isImportant() != right.isImportant() || right.isImportant() != bottom.isImportant() || bottom.isImportant() != left.isImportant())
+        return String();
+
     if (top.isInherited() && right.isInherited() && bottom.isInherited() && left.isInherited())
         return nameString(CSSValueInherit);
 
-    if (top.value()->isInitialValue() || right.value()->isInitialValue() || bottom.value()->isInitialValue() || left.value()->isInitialValue()) {
-        if (top.value()->isInitialValue() && right.value()->isInitialValue() && bottom.value()->isInitialValue() && left.value()->isInitialValue() && !top.isImplicit()) {
-            // All components are "initial" and "top" is not implicit.
+    unsigned numInitial = top.value()->isInitialValue() + right.value()->isInitialValue() + bottom.value()->isInitialValue() + left.value()->isInitialValue();
+        if (numInitial == 4)
             return nameString(CSSValueInitial);
-        }
-        return String();
-    }
+        if (numInitial > 0)
+            return String();
 
     bool showLeft = !right.value()->equals(*left.value());
     bool showBottom = !top.value()->equals(*bottom.value()) || showLeft;
