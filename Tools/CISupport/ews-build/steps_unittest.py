@@ -2073,6 +2073,7 @@ class TestReRunWebKitTests(TestRunWebKitTests):
         self.setupStep(ReRunWebKitTests())
         self.property_exceed_failure_limit = 'second_results_exceed_failure_limit'
         self.property_failures = 'second_run_failures'
+        ReRunWebKitTests.filter_failures_using_results_db = lambda x, failing_tests: ''
 
     def test_flaky_failures_in_first_run(self):
         self.configureStep()
