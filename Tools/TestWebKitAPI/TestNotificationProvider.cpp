@@ -44,6 +44,11 @@ static void showWebNotification(WKPageRef page, WKNotificationRef notification, 
     static_cast<TestNotificationProvider*>(const_cast<void*>(clientInfo))->showWebNotification(page, notification);
 }
 
+static void closeWebNotification(WKNotificationRef notification, const void* clientInfo)
+{
+    static_cast<TestNotificationProvider*>(const_cast<void*>(clientInfo))->closeWebNotification(notification);
+}
+
 static WKDictionaryRef notificationPermissions(const void* clientInfo)
 {
     return static_cast<TestNotificationProvider*>(const_cast<void*>(clientInfo))->notificationPermissions();
@@ -53,9 +58,9 @@ TestNotificationProvider::TestNotificationProvider(Vector<WKNotificationManagerR
     : m_managers(WTFMove(managers))
 {
     m_provider = {
-        { 0, this },
+        WKNotificationProviderBase { 0, this },
         &TestWebKitAPI::showWebNotification,
-        0, // closeWebNotification
+        &TestWebKitAPI::closeWebNotification,
         0, // didDestroyNotification
         0, // addNotificationManager
         0, // removeNotificationManager
@@ -120,7 +125,7 @@ static WKNotificationManagerRef notificationManagerForPage(WKPageRef page)
 
 void TestNotificationProvider::showWebNotification(WKPageRef page, WKNotificationRef notification)
 {
-    m_hasReceivedNotification = true;
+    m_hasReceivedShowNotification = true;
 
     auto notificationManager = notificationManagerForPage(page);
     uint64_t identifier = WKNotificationGetID(notification);
@@ -128,6 +133,18 @@ void TestNotificationProvider::showWebNotification(WKPageRef page, WKNotificatio
 
     WKRetain(notificationManager);
     m_pendingNotification = std::make_pair(notificationManager, identifier);
+}
+
+void TestNotificationProvider::closeWebNotification(WKNotificationRef notification)
+{
+    ASSERT(!m_hasReceivedCloseNotification);
+    m_hasReceivedCloseNotification = true;
+}
+
+void TestNotificationProvider::resetHasReceivedNotification()
+{
+    m_hasReceivedShowNotification = false;
+    m_hasReceivedCloseNotification = false;
 }
 
 bool TestNotificationProvider::simulateNotificationClick()

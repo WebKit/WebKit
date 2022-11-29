@@ -707,7 +707,7 @@ TEST(PushAPI, fireNotificationClickEvent)
     expectedMessage = "Received: Sweet Potatoes"_s;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
-        EXPECT_TRUE(providerRef.hasReceivedNotification());
+        EXPECT_TRUE(providerRef.hasReceivedShowNotification());
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
@@ -727,6 +727,130 @@ TEST(PushAPI, fireNotificationClickEvent)
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
+static constexpr auto closeNotificationMainBytes = R"SWRESOURCE(
+<script>
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+const channel = new MessageChannel();
+channel.port1.onmessage = (event) => log(event.data);
+navigator.serviceWorker.onmessage = (event) => log(event.data);
+
+let swRegistration;
+navigator.serviceWorker.register('/sw.js').then((registration) => {
+    swRegistration = registration;
+    if (registration.active) {
+        registration.active.postMessage({port: channel.port2}, [channel.port2]);
+        return;
+    }
+    worker = registration.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            worker.postMessage({port: channel.port2}, [channel.port2]);
+    });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+
+function closeNotification()
+{
+    const notifications = swRegistration.getNotifications().then(notifications => {
+        notifications[0].close();
+        log("PASS close notification");
+    });
+}
+</script>
+)SWRESOURCE"_s;
+
+static constexpr auto closeNotificationScriptBytes = R"SWRESOURCE(
+let port;
+self.addEventListener("message", (event) => {
+    if (port)
+        return;
+    port = event.data.port;
+    port.postMessage("Ready");
+});
+self.addEventListener("push", (event) => {
+    self.registration.showNotification("notification");
+    try {
+        if (!event.data) {
+            port.postMessage("Received: null data");
+            return;
+        }
+        const value = event.data.text();
+        port.postMessage("Received: " + value);
+    } catch (e) {
+        port.postMessage("Got exception " + e);
+    }
+});
+)SWRESOURCE"_s;
+
+TEST(PushAPI, fireNotificationCloseEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { closeNotificationMainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, closeNotificationScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    expectedMessage = "Ready"_s;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    provider.resetHasReceivedNotification();
+    auto& providerRef = provider;
+
+    done = false;
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"Sweet Potatoes";
+    expectedMessage = "Received: Sweet Potatoes"_s;
+
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        EXPECT_TRUE(providerRef.hasReceivedShowNotification());
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
+
+    [webView evaluateJavaScript:@"closeNotification()" completionHandler:nil];
+
+    EXPECT_FALSE(providerRef.hasReceivedCloseNotification());
+
+    done = false;
+    expectedMessage = "PASS close notification"_s;
+    TestWebKitAPI::Util::run(&done);
+
+    int counter = 0;
+    while (!providerRef.hasReceivedCloseNotification() && ++counter < 10)
+        TestWebKitAPI::Util::spinRunLoop(10);
+
+    EXPECT_LT(counter, 10);
+
+    providerRef.resetHasReceivedNotification();
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+}
 #endif // WK_HAVE_C_SPI
 
 #endif // ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT)
