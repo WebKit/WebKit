@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+var activeWorker;
+var uuid = token();
+var url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?getResponseFromRequestWithCustomHeader=yes&customHeader=1&token=" + uuid;
+var frame;
+const channel = new MessageChannel();
+
+function waitUntilActivating()
+{
+    return new Promise(resolve => {
+        channel.port2.onmessage = (event) => {
+            if (event.data === "activating")
+                resolve();
+        };
+    });
+}
+
+function triggerActivation()
+{
+    activeWorker.postMessage("activate");
+}
+
+promise_test(async (test) => {
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+
+    let registration = await navigator.serviceWorker.register("/WebKit/service-workers/fetch-service-worker-preload-worker.js", { scope : url });
+    if (!registration.installing) {
+        registration.unregister();
+        registration = await navigator.serviceWorker.register("/WebKit/service-workers/fetch-service-worker-preload-worker.js", { scope : url });
+    }
+
+    activeWorker = registration.installing;
+    activeWorker.postMessage({ port: channel.port1 }, [channel.port1]);
+
+    return waitUntilActivating();
+}, "Setup activating worker");
+
+promise_test(async (test) => {
+    fetch(url + "&value=use-preload", { method: 'POST' });
+
+    // Load iframe, with activating worker, so only preload will start.
+    const promise = withIframe(url);
+
+    triggerActivation();
+
+    const frame = await promise;
+    assert_equals(frame.contentWindow.value, "my-custom-header");
+
+    // We should have only one GET fetch to url: the service worker preload
+    const response = await fetch(url + "&count=True");
+    assert_equals(await response.text(), "1");
+}, "Service worker load uses preload through calling fetch on the fetch event request");
+</script>
+</body>
+</html>

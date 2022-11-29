@@ -41,5 +41,8 @@ def main(request, response):
         response.headers.set(b"Content-Type", b"text/vcard")
         return value.decode()
 
+    if b"customHeader" in request.GET:
+        value = request.headers.get(b"x-custom-header", b"no custom header")
+
     response.headers.set(b"Content-Type", b"text/html")
     return "<html><body><script>window.value = '%s';</script></body></html>" % value.decode()

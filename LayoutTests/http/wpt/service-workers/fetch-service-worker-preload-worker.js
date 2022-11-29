@@ -41,6 +41,13 @@ self.addEventListener('fetch', async (event) => {
         return;
     }
 
+    if (event.request.url.includes("getResponseFromRequestWithCustomHeader")) {
+        const newRequest = new Request(event.request, {
+            headers: { "x-custom-header": "my-custom-header" },
+        });
+        event.respondWith(fetch(newRequest));
+        return;
+    }
 
     if (event.request.url.includes("getCloneResponseFromNavigationPreload") && event.preloadResponse) {
         event.respondWith((async () => {
