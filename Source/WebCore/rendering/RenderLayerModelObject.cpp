@@ -363,13 +363,7 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
 
     auto containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
 
-    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
-    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-    } else
-        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    pushOntoTransformState(transformState, mode, nullptr, container, containerOffset, false);
 
     mode.remove(ApplyContainerFlip);
 

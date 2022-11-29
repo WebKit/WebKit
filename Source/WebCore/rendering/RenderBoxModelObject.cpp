@@ -901,13 +901,7 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>
 
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint());
 
-    bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
-    if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-    } else
-        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    pushOntoTransformState(transformState, mode, nullptr, container, containerOffset, false);
 }
 
 bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const

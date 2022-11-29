@@ -1492,6 +1492,50 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
 #endif
 }
 
+void RenderObject::pushOntoTransformState(TransformState& transformState, OptionSet<MapCoordinatesMode> mode, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const
+{
+    bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
+    if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
+        TransformationMatrix matrix;
+        getTransformFromContainer(container, offsetInContainer, matrix);
+        transformState.applyTransform(matrix, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    } else
+        transformState.move(offsetInContainer.width(), offsetInContainer.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+
+    if (containerSkipped) {
+        // There can't be a transform between repaintContainer and container, because transforms create containers, so it should be safe
+        // to just subtract the delta between the repaintContainer and container.
+        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*container);
+        transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    }
+}
+
+void RenderObject::pushOntoGeometryMap(RenderGeometryMap& geometryMap, const RenderLayerModelObject* repaintContainer, RenderElement* container, bool containerSkipped) const
+{
+    bool isFixedPos = isFixedPositioned();
+    LayoutSize adjustmentForSkippedAncestor;
+    if (containerSkipped) {
+        // There can't be a transform between repaintContainer and container, because transforms create containers, so it should be safe
+        // to just subtract the delta between the ancestor and container.
+        adjustmentForSkippedAncestor = -repaintContainer->offsetFromAncestorContainer(*container);
+    }
+
+    bool offsetDependsOnPoint = false;
+    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(), &offsetDependsOnPoint);
+
+    bool preserve3D = container->style().preserves3D() || style().preserves3D();
+    if (shouldUseTransformFromContainer(container) && (geometryMap.mapCoordinatesFlags() & UseTransforms)) {
+        TransformationMatrix t;
+        getTransformFromContainer(container, containerOffset, t);
+        t.translateRight(adjustmentForSkippedAncestor.width(), adjustmentForSkippedAncestor.height());
+
+        geometryMap.push(this, t, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
+    } else {
+        containerOffset += adjustmentForSkippedAncestor;
+        geometryMap.push(this, containerOffset, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
+    }
+}
+
 FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, const RenderLayerModelObject* container, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     // Track the point at the center of the quad's bounding box. As mapLocalToContainer() calls offsetFromContainer(),
@@ -1526,7 +1570,7 @@ LayoutSize RenderObject::offsetFromContainer(RenderElement& container, const Lay
     return offset;
 }
 
-LayoutSize RenderObject::offsetFromAncestorContainer(RenderElement& container) const
+LayoutSize RenderObject::offsetFromAncestorContainer(const RenderElement& container) const
 {
     LayoutSize offset;
     LayoutPoint referencePoint;
