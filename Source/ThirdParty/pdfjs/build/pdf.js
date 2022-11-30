@@ -42,20 +42,18 @@ return /******/ (() => { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.VerbosityLevel = exports.Util = exports.UnknownErrorException = exports.UnexpectedResponseException = exports.UNSUPPORTED_FEATURES = exports.TextRenderingMode = exports.StreamType = exports.RenderingIntentFlag = exports.PermissionFlag = exports.PasswordResponses = exports.PasswordException = exports.PageActionEventType = exports.OPS = exports.MissingPDFException = exports.LINE_FACTOR = exports.LINE_DESCENT_FACTOR = exports.InvalidPDFException = exports.ImageKind = exports.IDENTITY_MATRIX = exports.FormatError = exports.FontType = exports.FeatureTest = exports.FONT_IDENTITY_MATRIX = exports.DocumentActionEventType = exports.CMapCompressionType = exports.BaseException = exports.AnnotationType = exports.AnnotationStateModelType = exports.AnnotationReviewState = exports.AnnotationReplyType = exports.AnnotationMode = exports.AnnotationMarkedState = exports.AnnotationFlag = exports.AnnotationFieldFlag = exports.AnnotationEditorType = exports.AnnotationEditorPrefix = exports.AnnotationEditorParamsType = exports.AnnotationBorderStyleType = exports.AnnotationActionEventType = exports.AbortException = void 0;
+exports.VerbosityLevel = exports.Util = exports.UnknownErrorException = exports.UnexpectedResponseException = exports.UNSUPPORTED_FEATURES = exports.TextRenderingMode = exports.StreamType = exports.RenderingIntentFlag = exports.PermissionFlag = exports.PasswordResponses = exports.PasswordException = exports.PageActionEventType = exports.OPS = exports.MissingPDFException = exports.LINE_FACTOR = exports.LINE_DESCENT_FACTOR = exports.InvalidPDFException = exports.ImageKind = exports.IDENTITY_MATRIX = exports.FormatError = exports.FontType = exports.FeatureTest = exports.FONT_IDENTITY_MATRIX = exports.DocumentActionEventType = exports.CMapCompressionType = exports.BaseException = exports.BASELINE_FACTOR = exports.AnnotationType = exports.AnnotationStateModelType = exports.AnnotationReviewState = exports.AnnotationReplyType = exports.AnnotationMode = exports.AnnotationMarkedState = exports.AnnotationFlag = exports.AnnotationFieldFlag = exports.AnnotationEditorType = exports.AnnotationEditorPrefix = exports.AnnotationEditorParamsType = exports.AnnotationBorderStyleType = exports.AnnotationActionEventType = exports.AbortException = void 0;
 exports.arrayByteLength = arrayByteLength;
 exports.arraysToBytes = arraysToBytes;
 exports.assert = assert;
 exports.bytesToString = bytesToString;
 exports.createPromiseCapability = createPromiseCapability;
 exports.createValidAbsoluteUrl = createValidAbsoluteUrl;
-exports.escapeString = escapeString;
 exports.getModificationDate = getModificationDate;
 exports.getVerbosityLevel = getVerbosityLevel;
 exports.info = info;
 exports.isArrayBuffer = isArrayBuffer;
 exports.isArrayEqual = isArrayEqual;
-exports.isAscii = isAscii;
 exports.objectFromMap = objectFromMap;
 exports.objectSize = objectSize;
 exports.setVerbosityLevel = setVerbosityLevel;
@@ -63,7 +61,6 @@ exports.shadow = shadow;
 exports.string32 = string32;
 exports.stringToBytes = stringToBytes;
 exports.stringToPDFString = stringToPDFString;
-exports.stringToUTF16BEString = stringToUTF16BEString;
 exports.stringToUTF8String = stringToUTF8String;
 exports.unreachable = unreachable;
 exports.utf8StringToString = utf8StringToString;
@@ -77,10 +74,13 @@ const LINE_FACTOR = 1.35;
 exports.LINE_FACTOR = LINE_FACTOR;
 const LINE_DESCENT_FACTOR = 0.35;
 exports.LINE_DESCENT_FACTOR = LINE_DESCENT_FACTOR;
+const BASELINE_FACTOR = LINE_DESCENT_FACTOR / LINE_FACTOR;
+exports.BASELINE_FACTOR = BASELINE_FACTOR;
 const RenderingIntentFlag = {
   ANY: 0x01,
   DISPLAY: 0x02,
   PRINT: 0x04,
+  SAVE: 0x08,
   ANNOTATIONS_FORMS: 0x10,
   ANNOTATIONS_STORAGE: 0x20,
   ANNOTATIONS_DISABLE: 0x40,
@@ -492,10 +492,10 @@ function createValidAbsoluteUrl(url, baseUrl = null, options = null) {
   } catch (ex) {}
   return null;
 }
-function shadow(obj, prop, value) {
+function shadow(obj, prop, value, nonSerializable = false) {
   Object.defineProperty(obj, prop, {
     value,
-    enumerable: true,
+    enumerable: !nonSerializable,
     configurable: true,
     writable: false
   });
@@ -858,27 +858,6 @@ function stringToPDFString(str) {
   }
   return strBuf.join("");
 }
-function escapeString(str) {
-  return str.replace(/([()\\\n\r])/g, match => {
-    if (match === "\n") {
-      return "\\n";
-    } else if (match === "\r") {
-      return "\\r";
-    }
-    return `\\${match}`;
-  });
-}
-function isAscii(str) {
-  return /^[\x00-\x7F]*$/.test(str);
-}
-function stringToUTF16BEString(str) {
-  const buf = ["\xFE\xFF"];
-  for (let i = 0, ii = str.length; i < ii; i++) {
-    const char = str.charCodeAt(i);
-    buf.push(String.fromCharCode(char >> 8 & 0xff), String.fromCharCode(char & 0xff));
-  }
-  return buf.join("");
-}
 function stringToUTF8String(str) {
   return decodeURIComponent(escape(str));
 }
@@ -1149,7 +1128,7 @@ async function _fetchDocument(worker, source, pdfDataRangeTransport, docId) {
   }
   const workerId = await worker.messageHandler.sendWithPromise("GetDocRequest", {
     docId,
-    apiVersion: '3.0.279',
+    apiVersion: '3.1.81',
     data: source.data,
     password: source.password,
     disableAutoFetch: source.disableAutoFetch,
@@ -2738,7 +2717,9 @@ class InternalRenderTask {
       transform,
       background
     } = this.params;
-    this.gfx = new _canvas.CanvasGraphics(canvasContext, this.commonObjs, this.objs, this.canvasFactory, optionalContentConfig, this.annotationCanvasMap, this.pageColors);
+    this.gfx = new _canvas.CanvasGraphics(canvasContext, this.commonObjs, this.objs, this.canvasFactory, {
+      optionalContentConfig
+    }, this.annotationCanvasMap, this.pageColors);
     this.gfx.beginDrawing({
       transform,
       viewport,
@@ -2808,9 +2789,9 @@ class InternalRenderTask {
     }
   }
 }
-const version = '3.0.279';
+const version = '3.1.81';
 exports.version = version;
-const build = 'd0823066c';
+const build = '0766898d5';
 exports.build = build;
 
 /***/ }),
@@ -2827,30 +2808,30 @@ var _util = __w_pdfjs_require__(1);
 var _editor = __w_pdfjs_require__(4);
 var _murmurhash = __w_pdfjs_require__(8);
 class AnnotationStorage {
+  #modified = false;
+  #storage = new Map();
   constructor() {
-    this._storage = new Map();
-    this._modified = false;
     this.onSetModified = null;
     this.onResetModified = null;
     this.onAnnotationEditor = null;
   }
   getValue(key, defaultValue) {
-    const value = this._storage.get(key);
+    const value = this.#storage.get(key);
     if (value === undefined) {
       return defaultValue;
     }
     return Object.assign(defaultValue, value);
   }
   getRawValue(key) {
-    return this._storage.get(key);
+    return this.#storage.get(key);
   }
   remove(key) {
-    this._storage.delete(key);
-    if (this._storage.size === 0) {
+    this.#storage.delete(key);
+    if (this.#storage.size === 0) {
       this.resetModified();
     }
     if (typeof this.onAnnotationEditor === "function") {
-      for (const value of this._storage.values()) {
+      for (const value of this.#storage.values()) {
         if (value instanceof _editor.AnnotationEditor) {
           return;
         }
@@ -2859,7 +2840,7 @@ class AnnotationStorage {
     }
   }
   setValue(key, value) {
-    const obj = this._storage.get(key);
+    const obj = this.#storage.get(key);
     let modified = false;
     if (obj !== undefined) {
       for (const [entry, val] of Object.entries(value)) {
@@ -2870,7 +2851,7 @@ class AnnotationStorage {
       }
     } else {
       modified = true;
-      this._storage.set(key, value);
+      this.#storage.set(key, value);
     }
     if (modified) {
       this.#setModified();
@@ -2880,25 +2861,25 @@ class AnnotationStorage {
     }
   }
   has(key) {
-    return this._storage.has(key);
+    return this.#storage.has(key);
   }
   getAll() {
-    return this._storage.size > 0 ? (0, _util.objectFromMap)(this._storage) : null;
+    return this.#storage.size > 0 ? (0, _util.objectFromMap)(this.#storage) : null;
   }
   get size() {
-    return this._storage.size;
+    return this.#storage.size;
   }
   #setModified() {
-    if (!this._modified) {
-      this._modified = true;
+    if (!this.#modified) {
+      this.#modified = true;
       if (typeof this.onSetModified === "function") {
         this.onSetModified();
       }
     }
   }
   resetModified() {
-    if (this._modified) {
-      this._modified = false;
+    if (this.#modified) {
+      this.#modified = false;
       if (typeof this.onResetModified === "function") {
         this.onResetModified();
       }
@@ -2908,11 +2889,11 @@ class AnnotationStorage {
     return new PrintAnnotationStorage(this);
   }
   get serializable() {
-    if (this._storage.size === 0) {
+    if (this.#storage.size === 0) {
       return null;
     }
     const clone = new Map();
-    for (const [key, val] of this._storage) {
+    for (const [key, val] of this.#storage) {
       const serialized = val instanceof _editor.AnnotationEditor ? val.serialize() : val;
       if (serialized) {
         clone.set(key, serialized);
@@ -4093,11 +4074,11 @@ function isDataScheme(url) {
 function isPdfFile(filename) {
   return typeof filename === "string" && /\.pdf$/i.test(filename);
 }
-function getFilenameFromUrl(url) {
-  const anchor = url.indexOf("#");
-  const query = url.indexOf("?");
-  const end = Math.min(anchor > 0 ? anchor : url.length, query > 0 ? query : url.length);
-  return url.substring(url.lastIndexOf("/", end) + 1, end);
+function getFilenameFromUrl(url, onlyStripPath = false) {
+  if (!onlyStripPath) {
+    [url] = url.split(/[#?]/, 1);
+  }
+  return url.substring(url.lastIndexOf("/") + 1);
 }
 function getPdfFilenameFromUrl(url, defaultFilename = "document.pdf") {
   if (typeof url !== "string") {
@@ -4122,10 +4103,8 @@ function getPdfFilenameFromUrl(url, defaultFilename = "document.pdf") {
   return suggestedFilename || defaultFilename;
 }
 class StatTimer {
-  constructor() {
-    this.started = Object.create(null);
-    this.times = [];
-  }
+  started = Object.create(null);
+  times = [];
   time(name) {
     if (name in this.started) {
       (0, _util.warn)(`Timer is already running for ${name}`);
@@ -4146,15 +4125,17 @@ class StatTimer {
   toString() {
     const outBuf = [];
     let longest = 0;
-    for (const time of this.times) {
-      const name = time.name;
-      if (name.length > longest) {
-        longest = name.length;
-      }
+    for (const {
+      name
+    } of this.times) {
+      longest = Math.max(name.length, longest);
     }
-    for (const time of this.times) {
-      const duration = time.end - time.start;
-      outBuf.push(`${time.name.padEnd(longest)} ${duration}ms\n`);
+    for (const {
+      name,
+      start,
+      end
+    } of this.times) {
+      outBuf.push(`${name.padEnd(longest)} ${end - start}ms\n`);
     }
     return outBuf.join("");
   }
@@ -4533,9 +4514,7 @@ class MurmurHash3_64 {
     h1 = h1 * 0x1a85ec53 & MASK_HIGH | h1 * 0xec53 & MASK_LOW;
     h2 = h2 * 0xc4ceb9fe & MASK_HIGH | ((h2 << 16 | h1 >>> 16) * 0xb9fe1a85 & MASK_HIGH) >>> 16;
     h1 ^= h2 >>> 1;
-    const hex1 = (h1 >>> 0).toString(16),
-      hex2 = (h2 >>> 0).toString(16);
-    return hex1.padStart(8, "0") + hex2.padStart(8, "0");
+    return (h1 >>> 0).toString(16).padStart(8, "0") + (h2 >>> 0).toString(16).padStart(8, "0");
   }
 }
 exports.MurmurHash3_64 = MurmurHash3_64;
@@ -5534,7 +5513,10 @@ const LINE_JOIN_STYLES = ["miter", "round", "bevel"];
 const NORMAL_CLIP = {};
 const EO_CLIP = {};
 class CanvasGraphics {
-  constructor(canvasCtx, commonObjs, objs, canvasFactory, optionalContentConfig, annotationCanvasMap, pageColors) {
+  constructor(canvasCtx, commonObjs, objs, canvasFactory, {
+    optionalContentConfig,
+    markedContentStack = null
+  }, annotationCanvasMap, pageColors) {
     this.ctx = canvasCtx;
     this.current = new CanvasExtraState(this.ctx.canvas.width, this.ctx.canvas.height);
     this.stateStack = [];
@@ -5555,7 +5537,7 @@ class CanvasGraphics {
     this.tempSMask = null;
     this.suspendedCtx = null;
     this.contentVisible = true;
-    this.markedContentStack = [];
+    this.markedContentStack = markedContentStack || [];
     this.optionalContentConfig = optionalContentConfig;
     this.cachedCanvases = new CachedCanvases(this.canvasFactory);
     this.cachedPatterns = new Map();
@@ -6355,6 +6337,19 @@ class CanvasGraphics {
       lineWidth /= fontSizeScale;
     }
     ctx.lineWidth = lineWidth;
+    if (font.isInvalidPDFjsFont) {
+      const chars = [];
+      let width = 0;
+      for (const glyph of glyphs) {
+        chars.push(glyph.unicode);
+        width += glyph.width;
+      }
+      ctx.fillText(chars.join(""), 0, 0);
+      current.x += width * widthAdvanceScale * textHScale;
+      ctx.restore();
+      this.compose();
+      return undefined;
+    }
     let x = 0,
       i;
     for (i = 0; i < glyphsLength; ++i) {
@@ -6490,7 +6485,10 @@ class CanvasGraphics {
       const baseTransform = this.baseTransform || (0, _display_utils.getCurrentTransform)(this.ctx);
       const canvasGraphicsFactory = {
         createCanvasGraphics: ctx => {
-          return new CanvasGraphics(ctx, this.commonObjs, this.objs, this.canvasFactory);
+          return new CanvasGraphics(ctx, this.commonObjs, this.objs, this.canvasFactory, {
+            optionalContentConfig: this.optionalContentConfig,
+            markedContentStack: this.markedContentStack
+          });
         }
       };
       pattern = new _pattern_helper.TilingPattern(IR, color, this.ctx, canvasGraphicsFactory, baseTransform);
@@ -6778,7 +6776,7 @@ class CanvasGraphics {
     const currentTransform = (0, _display_utils.getCurrentTransform)(ctx);
     ctx.transform(scaleX, skewX, skewY, scaleY, 0, 0);
     const mask = this._createMaskCanvas(img);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, mask.offsetX - currentTransform[4], mask.offsetY - currentTransform[5]);
     for (let i = 0, ii = positions.length; i < ii; i += 2) {
       const trans = _util.Util.transform(currentTransform, [scaleX, skewX, skewY, scaleY, positions[i], positions[i + 1]]);
       const [x, y] = _util.Util.applyTransform([0, 0], trans);
@@ -9149,12 +9147,7 @@ class FreeTextEditor extends _editor.AnnotationEditor {
     }
     const buffer = [];
     for (const div of divs) {
-      const first = div.firstChild;
-      if (first?.nodeName === "#text") {
-        buffer.push(first.data);
-      } else {
-        buffer.push("");
-      }
+      buffer.push(div.innerText.replace(/\r\n?|\n/, ""));
     }
     return buffer.join("\n");
   }
@@ -10722,6 +10715,9 @@ class LinkAnnotationElement extends AnnotationElement {
     }
     return this.container;
   }
+  #setInternalLink() {
+    this.container.setAttribute("data-internal-link", "");
+  }
   _bindLink(link, destination) {
     link.href = this.linkService.getDestinationHash(destination);
     link.onclick = () => {
@@ -10731,7 +10727,7 @@ class LinkAnnotationElement extends AnnotationElement {
       return false;
     };
     if (destination || destination === "") {
-      link.className = "internalLink";
+      this.#setInternalLink();
     }
   }
   _bindNamedAction(link, action) {
@@ -10740,7 +10736,7 @@ class LinkAnnotationElement extends AnnotationElement {
       this.linkService.executeNamedAction(action);
       return false;
     };
-    link.className = "internalLink";
+    this.#setInternalLink();
   }
   _bindAttachment(link, attachment) {
     link.href = this.linkService.getAnchorUrl("");
@@ -10748,7 +10744,7 @@ class LinkAnnotationElement extends AnnotationElement {
       this.downloadManager?.openOrDownloadData(this.container, attachment.content, attachment.filename);
       return false;
     };
-    link.className = "internalLink";
+    this.#setInternalLink();
   }
   #bindSetOCGState(link, action) {
     link.href = this.linkService.getAnchorUrl("");
@@ -10756,7 +10752,7 @@ class LinkAnnotationElement extends AnnotationElement {
       this.linkService.executeSetOCGState(action);
       return false;
     };
-    link.className = "internalLink";
+    this.#setInternalLink();
   }
   _bindJSAction(link, data) {
     link.href = this.linkService.getAnchorUrl("");
@@ -10780,14 +10776,14 @@ class LinkAnnotationElement extends AnnotationElement {
     if (!link.onclick) {
       link.onclick = () => false;
     }
-    link.className = "internalLink";
+    this.#setInternalLink();
   }
   _bindResetFormAction(link, resetForm) {
     const otherClickAction = link.onclick;
     if (!otherClickAction) {
       link.href = this.linkService.getAnchorUrl("");
     }
-    link.className = "internalLink";
+    this.#setInternalLink();
     if (!this._fieldObjects) {
       (0, _util.warn)(`_bindResetFormAction - "resetForm" action not supported, ` + "ensure that the `fieldObjects` parameter is provided.");
       if (!otherClickAction) {
@@ -12133,7 +12129,7 @@ class FileAttachmentAnnotationElement extends AnnotationElement {
       filename,
       content
     } = this.data.file;
-    this.filename = (0, _display_utils.getFilenameFromUrl)(filename);
+    this.filename = (0, _display_utils.getFilenameFromUrl)(filename, true);
     this.content = content;
     this.linkService.eventBus?.dispatch("fileattachmentannotation", {
       source: this,
@@ -12550,6 +12546,7 @@ Object.defineProperty(exports, "__esModule", ({
 exports.TextLayerRenderTask = void 0;
 exports.renderTextLayer = renderTextLayer;
 var _util = __w_pdfjs_require__(1);
+var _display_utils = __w_pdfjs_require__(6);
 const MAX_TEXT_DIVS_TO_RENDER = 100000;
 const DEFAULT_FONT_SIZE = 30;
 const DEFAULT_FONT_ASCENT = 0.8;
@@ -12708,7 +12705,6 @@ class TextLayerRenderTask {
     this._canceled = false;
     this._capability = (0, _util.createPromiseCapability)();
     this._renderTimer = null;
-    this._bounds = [];
     this._devicePixelRatio = globalThis.devicePixelRatio || 1;
     this._capability.promise.finally(() => {
       this._textDivProperties = null;
@@ -12829,6 +12825,7 @@ class TextLayerRenderTask {
       if (!timeout) {
         render(this);
       } else {
+        (0, _display_utils.deprecated)("The TextLayerRender `timeout` parameter will be removed in the " + "future, since streaming of textContent has made it obsolete.");
         this._renderTimer = setTimeout(() => {
           render(this);
           this._renderTimer = null;
@@ -15583,8 +15580,8 @@ var _is_node = __w_pdfjs_require__(12);
 var _text_layer = __w_pdfjs_require__(29);
 var _svg = __w_pdfjs_require__(30);
 var _xfa_layer = __w_pdfjs_require__(28);
-const pdfjsVersion = '3.0.279';
-const pdfjsBuild = 'd0823066c';
+const pdfjsVersion = '3.1.81';
+const pdfjsBuild = '0766898d5';
 {
   if (_is_node.isNodeJS) {
     const {
