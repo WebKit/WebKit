@@ -74,8 +74,8 @@ BrowserDriverFactory.add_browser_driver("fake", None, FakeBrowserDriver)
 class FakeBenchmarkRunner(BenchmarkRunner):
     name = 'fake'
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path):
-        super(FakeBenchmarkRunner, self).__init__(plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path)
+    def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform, browser, browser_path):
+        super(FakeBenchmarkRunner, self).__init__(plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform, browser, browser_path)
 
     def execute(self):
         return True
@@ -95,6 +95,6 @@ class BrowserPerfDashRunnerTest(unittest.TestCase):
         plan_list = BenchmarkRunner.available_plans()
         build_dir = os.path.abspath(os.curdir)
         runner = FakeBenchmarkRunner(
-            plan_list[0], False, 1, build_dir, "/tmp/testOutput.txt", "fake", None, None
+            plan_list[0], False, None, None, build_dir, "/tmp/testOutput.txt", "fake", None, None
         )
         self.assertTrue(runner.execute())
