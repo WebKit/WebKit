@@ -461,7 +461,8 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, arrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
         if (Options::useResizableArrayBuffer()) {
             JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->resize, arrayBufferProtoFuncResize, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
-            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->transfer, arrayBufferProtoFuncTransfer, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+            if (Options::useArrayBufferTransfer())
+                JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->transfer, arrayBufferProtoFuncTransfer, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
             JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->resizable, arrayBufferProtoGetterFuncResizable, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
             JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->maxByteLength, arrayBufferProtoGetterFuncMaxByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
         }

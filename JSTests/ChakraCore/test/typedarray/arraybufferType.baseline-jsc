@@ -9,7 +9,6 @@ bar = 42
 slice
 byteLength
 resize
-transfer
 resizable
 maxByteLength
 constructor
@@ -24,7 +23,6 @@ bar = 42
 slice
 byteLength
 resize
-transfer
 resizable
 maxByteLength
 constructor
