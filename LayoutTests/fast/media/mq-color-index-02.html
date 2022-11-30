@@ -24,15 +24,15 @@
     var rules = document.styleSheets[0].cssRules;
 
     test(function(){
-      assert_equals(rules[0].media.mediaText, "not all");
+      assert_equals(rules[0].media.mediaText, "(color-index: 0)");
     }, "(color-index: 0.0) is invalid");
 
     test(function(){
-      assert_equals(rules[1].media.mediaText, "not all");
+      assert_equals(rules[1].media.mediaText, "(color-index: -1)");
     }, "(color-index: -1) is invalid");
 
     test(function(){
-      assert_equals(rules[2].media.mediaText, "not all");
+      assert_equals(rules[2].media.mediaText, "(color-index: 2.1)");
     }, "(color-index: 2.1) is invalid");
   </script>
 </body>

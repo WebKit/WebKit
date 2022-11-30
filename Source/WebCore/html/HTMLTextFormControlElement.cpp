@@ -733,7 +733,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
         return value();
 
     auto innerText = innerTextElement();
-    if (!innerText)
+    if (!innerText || innerText->textContent().isEmpty())
         return value();
 
     RenderTextControlInnerBlock* renderer = innerText->renderer();

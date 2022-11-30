@@ -49,8 +49,8 @@ public:
     enum Mode {
         Incomplete, Normal, Failed, Connected
     };
-    WebSocketHandshake(const URL&, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated);
-    ~WebSocketHandshake();
+    WEBCORE_EXPORT WebSocketHandshake(const URL&, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated);
+    WEBCORE_EXPORT ~WebSocketHandshake();
 
     const URL& url() const;
     void setURL(const URL&);
@@ -64,25 +64,25 @@ public:
 
     String clientLocation() const;
 
-    CString clientHandshakeMessage() const;
+    WEBCORE_EXPORT CString clientHandshakeMessage() const;
     ResourceRequest clientHandshakeRequest(const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const;
 
-    void reset();
+    WEBCORE_EXPORT void reset();
 
-    int readServerHandshake(const uint8_t* header, size_t len);
-    Mode mode() const;
-    String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
+    WEBCORE_EXPORT int readServerHandshake(const uint8_t* header, size_t len);
+    WEBCORE_EXPORT Mode mode() const;
+    WEBCORE_EXPORT String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
 
-    String serverWebSocketProtocol() const;
-    String serverSetCookie() const;
+    WEBCORE_EXPORT String serverWebSocketProtocol() const;
+    WEBCORE_EXPORT String serverSetCookie() const;
     String serverUpgrade() const;
     String serverConnection() const;
     String serverWebSocketAccept() const;
-    String acceptedExtensions() const;
+    WEBCORE_EXPORT String acceptedExtensions() const;
 
-    const ResourceResponse& serverHandshakeResponse() const;
+    WEBCORE_EXPORT const ResourceResponse& serverHandshakeResponse() const;
 
-    void addExtensionProcessor(std::unique_ptr<WebSocketExtensionProcessor>);
+    WEBCORE_EXPORT void addExtensionProcessor(std::unique_ptr<WebSocketExtensionProcessor>);
 
     static String getExpectedWebSocketAccept(const String& secWebSocketKey);
 

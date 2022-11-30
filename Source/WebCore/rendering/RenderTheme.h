@@ -156,8 +156,8 @@ public:
     Color inactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
     // List box selection colors
-    Color activeListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
-    Color activeListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
+    WEBCORE_EXPORT Color activeListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    WEBCORE_EXPORT Color activeListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
     Color inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
     Color inactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 

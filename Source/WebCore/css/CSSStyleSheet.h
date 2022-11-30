@@ -24,6 +24,7 @@
 #include "CommonAtomStrings.h"
 #include "ExceptionOr.h"
 #include "MediaList.h"
+#include "MediaQuery.h"
 #include "StyleSheet.h"
 #include <memory>
 #include <variant>
@@ -45,7 +46,6 @@ class DeferredPromise;
 class Document;
 class Element;
 class WeakPtrImplWithEventTargetData;
-class MediaQuerySet;
 class ShadowRoot;
 class StyleRuleKeyframes;
 class StyleSheetContents;
@@ -115,8 +115,8 @@ public:
     const CSSStyleSheet& rootStyleSheet() const;
     Style::Scope* styleScope();
 
-    MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
-    void setMediaQueries(Ref<MediaQuerySet>&&);
+    const MQ::MediaQueryList& mediaQueries() const { return m_mediaQueries; }
+    void setMediaQueries(MQ::MediaQueryList&&);
     void setTitle(const String& title) { m_title = title; }
 
     bool hadRulesMutation() const { return m_mutatedRules; }
@@ -177,7 +177,7 @@ private:
     bool m_wasConstructedByJS { false }; // constructed flag in the spec.
     std::optional<bool> m_isOriginClean;
     String m_title;
-    RefPtr<MediaQuerySet> m_mediaQueries;
+    MQ::MediaQueryList m_mediaQueries;
     WeakPtr<Style::Scope> m_styleScope;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
     WeakHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_adoptingShadowRoots;

@@ -154,9 +154,9 @@ Resolver::Resolver(Document& document)
     // is always from the document that owns the style selector
     FrameView* view = m_document.view();
     if (view)
-        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { view->mediaType() };
+        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { AtomString(view->mediaType()) };
     else
-        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { };
+        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { };
 
     if (auto* documentElement = m_document.documentElement()) {
         m_rootDefaultStyle = styleForElement(*documentElement, { m_document.initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
@@ -168,7 +168,7 @@ Resolver::Resolver(Document& document)
     }
 
     if (m_rootDefaultStyle && view)
-        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { view->mediaType(), m_document, m_rootDefaultStyle.get() };
+        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { AtomString(view->mediaType()), m_document, m_rootDefaultStyle.get() };
 
     m_ruleSets.resetAuthorStyle();
     m_ruleSets.resetUserAgentMediaQueryStyle();
@@ -247,7 +247,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
     UserAgentStyle::ensureDefaultStyleSheetsForElement(element);
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    collector.setMedium(&m_mediaQueryEvaluator);
+    collector.setMedium(m_mediaQueryEvaluator);
 
     if (matchingBehavior == RuleMatchingBehavior::MatchOnlyUserAgentRules)
         collector.matchUARules();
@@ -309,7 +309,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     if (hasRevert) {
         // In the animation origin, 'revert' rolls back the cascaded value to the user level.
         // Therefore, we need to collect UA and user rules.
-        collector.setMedium(&m_mediaQueryEvaluator);
+        collector.setMedium(m_mediaQueryEvaluator);
         collector.matchUARules();
         collector.matchUserRules();
     }
@@ -455,7 +455,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
     collector.setPseudoElementRequest(pseudoElementRequest);
-    collector.setMedium(&m_mediaQueryEvaluator);
+    collector.setMedium(m_mediaQueryEvaluator);
     collector.matchUARules();
 
     if (m_matchAuthorAndUserStyles) {
@@ -540,7 +540,7 @@ Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Eleme
     ElementRuleCollector collector(*element, m_ruleSets, nullptr);
     collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoElementRequest({ pseudoId });
-    collector.setMedium(&m_mediaQueryEvaluator);
+    collector.setMedium(m_mediaQueryEvaluator);
     collector.setIncludeEmptyRules(rulesToInclude & EmptyCSSRules);
 
     if (rulesToInclude & UAAndUserCSSRules) {

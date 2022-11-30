@@ -104,7 +104,7 @@ public:
     const CurlShareHandle& shareHandle() { return m_shareHandle; }
 
     CurlRequestScheduler& scheduler() { return *m_scheduler; }
-    CurlStreamScheduler& streamScheduler();
+    WEBCORE_EXPORT CurlStreamScheduler& streamScheduler();
 
     // Proxy
     const CurlProxySettings& proxySettings() const { return m_proxySettings; }

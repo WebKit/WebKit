@@ -94,6 +94,7 @@ class Preference
   attr_accessor :name
   attr_accessor :opts
   attr_accessor :type
+  attr_accessor :status
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
   attr_accessor :webcoreBinding
@@ -106,6 +107,7 @@ class Preference
     @name = name
     @opts = opts
     @type = opts["type"]
+    @status = opts["status"]
     @humanReadableName = (opts["humanReadableName"] || "")
     if not humanReadableName.start_with? "WebKitAdditions"
         @humanReadableName = '"' + humanReadableName + '"'
@@ -153,6 +155,13 @@ class Preference
     end
   end
 
+  def webFeatureStatus
+    "WebFeatureStatus" + @status.capitalize
+  end
+
+  def apiStatus
+    "API::FeatureStatus::" + @status.capitalize
+  end
 
   # WebKitLegacy specific helpers.
 
@@ -187,10 +196,10 @@ class Preferences
     @frontend = frontend
 
     @preferences = []
-    @preferencesNotDebug = initializeParsedPreferences(parsedBasePreferences, false)
-    @preferencesDebug = initializeParsedPreferences(parsedDebugPreferences, false)
-    @experimentalFeatures = initializeParsedPreferences(parsedExperimentalPreferences, true)
-    @internalFeatures = initializeParsedPreferences(parsedInternalPreferences, true)
+    @preferencesNotDebug = initializeParsedPreferences(parsedBasePreferences, false, "embedder")
+    @preferencesDebug = initializeParsedPreferences(parsedDebugPreferences, false, "unstable")
+    @experimentalFeatures = initializeParsedPreferences(parsedExperimentalPreferences, true, "developer")
+    @internalFeatures = initializeParsedPreferences(parsedInternalPreferences, true, "internal")
 
     @preferences.sort! { |x, y| x.name <=> y.name }
     @preferencesNotDebug.sort! { |x, y| x.name <=> y.name }
@@ -210,7 +219,7 @@ class Preferences
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
   end
 
-  def initializeParsedPreferences(parsedPreferences, requireHumanReadableName)
+  def initializeParsedPreferences(parsedPreferences, requireHumanReadableName, defaultStatus)
     result = []
     if parsedPreferences
       parsedPreferences.each do |name, options|
@@ -219,6 +228,11 @@ class Preferences
         end
         if requireHumanReadableName && !options["humanReadableName"]
           raise "ERROR: Preference #{name} has no humanReadableName, which is required."
+        end
+        statuses = ["embedder", "unstable", "internal", "developer", "testable", "preview", "stable"]
+        options["status"] ||= defaultStatus
+        if !statuses.include? options["status"]
+          raise "ERROR: #{options["status"]} not one of the known statuses: #{statuses}"
         end
         if options["defaultValue"].include?(@frontend)
           preference = Preference.new(name, options, @frontend)

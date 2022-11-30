@@ -276,6 +276,9 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
 
         auto identifier = task->serviceWorkerIdentifier();
         server().runServiceWorkerIfNecessary(identifier, [weakThis = WTFMove(weakThis), this, task = WTFMove(task)](auto* contextConnection) mutable {
+#if RELEASE_LOG_DISABLED
+            UNUSED_PARAM(this);
+#endif
             if (!task)
                 return;
             

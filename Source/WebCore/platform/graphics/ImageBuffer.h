@@ -172,7 +172,7 @@ public:
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
     WEBCORE_EXPORT virtual RefPtr<Image> filteredImage(Filter&);
 #if USE(CAIRO)
-    RefPtr<cairo_surface_t> createCairoSurface();
+    WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
     static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIFeatureStatus.h"
 #include "APIObject.h"
 #include <wtf/text/WTFString.h>
 
@@ -32,20 +33,22 @@ namespace API {
 
 class InternalDebugFeature final : public ObjectImpl<Object::Type::InternalDebugFeature> {
 public:
-    static Ref<InternalDebugFeature> create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
+    static Ref<InternalDebugFeature> create(const WTF::String& name, const WTF::String& key, FeatureStatus, const WTF::String& details, bool defaultValue, bool hidden);
     virtual ~InternalDebugFeature() = default;
 
     WTF::String name() const { return m_name; }
     WTF::String key() const { return m_key; }
+    FeatureStatus status() const { return m_status; }
     WTF::String details() const { return m_details; }
     bool defaultValue() const { return m_defaultValue; }
     bool isHidden() const { return m_hidden; }
 
 private:
-    explicit InternalDebugFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden);
+    explicit InternalDebugFeature(const WTF::String& name, const WTF::String& key, FeatureStatus, const WTF::String& details, bool defaultValue, bool hidden);
 
     WTF::String m_name;
     WTF::String m_key;
+    FeatureStatus m_status;
     WTF::String m_details;
     bool m_defaultValue;
     bool m_hidden;

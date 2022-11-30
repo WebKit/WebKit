@@ -35,7 +35,7 @@
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
 #include "HTMLNames.h"
-#include "LegacyMediaQueryEvaluator.h"
+#include "MediaQueryEvaluator.h"
 #include "RuleSetBuilder.h"
 #include "SVGElement.h"
 #include "SecurityOrigin.h"
@@ -338,7 +338,7 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseVector(m_universalRules);
 }
 
-std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator& evaluator)
+std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator& evaluator)
 {
     auto collectedChanges = evaluateDynamicMediaQueryRules(evaluator, 0);
 
@@ -350,7 +350,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQ
 
     auto& ruleSet = m_mediaQueryInvalidationRuleSetCache.ensure(collectedChanges.changedQueryIndexes, [&] {
         auto ruleSet = RuleSet::create();
-        RuleSetBuilder builder(ruleSet, LegacyMediaQueryEvaluator(true));
+        RuleSetBuilder builder(ruleSet, MQ::MediaQueryEvaluator("screen"_s, MQ::EvaluationResult::True));
         for (auto* rules : collectedChanges.affectedRules) {
             for (auto& rule : *rules)
                 builder.addStyleRule(rule);
@@ -361,7 +361,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQ
     return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { ruleSet.copyRef() } } };
 }
 
-RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator& evaluator, size_t startIndex)
+RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator& evaluator, size_t startIndex)
 {
     CollectedMediaQueryChanges collectedChanges;
 
@@ -370,8 +370,8 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(cons
     for (size_t i = startIndex; i < m_dynamicMediaQueryRules.size(); ++i) {
         auto& dynamicRules = m_dynamicMediaQueryRules[i];
         bool result = true;
-        for (auto& set : dynamicRules.mediaQuerySets) {
-            if (!evaluator.evaluate(set.get())) {
+        for (auto& queryList : dynamicRules.mediaQueries) {
+            if (!evaluator.evaluate(queryList)) {
                 result = false;
                 break;
             }

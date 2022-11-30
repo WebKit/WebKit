@@ -49,7 +49,6 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "Logging.h"
-#include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
@@ -423,7 +422,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
         originClean = cachedStyleSheet.isCORSSameOrigin();
 
     m_sheet = CSSStyleSheet::create(WTFMove(styleSheet), *this, originClean);
-    m_sheet->setMediaQueries(MediaQuerySet::create(m_media, context));
+    m_sheet->setMediaQueries(MQ::MediaQueryParser::parse(m_media, context));
     if (!isInShadowTree())
         m_sheet->setTitle(title());
 

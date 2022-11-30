@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT int64_t lastModified() const; // Number of milliseconds since Epoch.
     const std::optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
 
-    static String contentTypeForFile(const String& path);
+    WEBCORE_EXPORT static String contentTypeForFile(const String& path);
 
 #if ENABLE(FILE_REPLACEMENT)
     static bool shouldReplaceFile(const String& path);

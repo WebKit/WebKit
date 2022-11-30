@@ -8,7 +8,7 @@ flags:
   ShadowRealm: useShadowRealm
   import-assertions: useImportAssertion
   json-modules: useImportAssertion
-  resizable-arraybuffer: useResizableArrayBuffer
+  resizable-arraybuffer: useArrayBufferTransfer
 skip:
   features:
     # https://bugs.webkit.org/show_bug.cgi?id=174931

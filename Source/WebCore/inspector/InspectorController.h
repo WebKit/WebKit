@@ -71,7 +71,7 @@ public:
 
     void inspectedPageDestroyed();
 
-    bool enabled() const;
+    WEBCORE_EXPORT bool enabled() const;
     Page& inspectedPage() const;
 
     WEBCORE_EXPORT void show();

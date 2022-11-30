@@ -629,11 +629,6 @@ sub AddToIncludesForIDLType
         return;
     }
 
-    if ($type->name eq "ReadableStream") {
-        AddToIncludes("ReadableStream.h", $includesRef, $conditional);
-        return;
-    }
-
     if ($type->name eq "XPathNSResolver") {
         AddToIncludes("JSXPathNSResolver.h", $includesRef, $conditional);
         AddToIncludes("JSDOMConvertXPathNSResolver.h", $includesRef, $conditional);

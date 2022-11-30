@@ -44,6 +44,7 @@ public:
 protected:
     CSSGroupingRule(StyleRuleGroup&, CSSStyleSheet* parent);
     const StyleRuleGroup& groupRule() const { return m_groupRule; }
+    StyleRuleGroup& groupRule() { return m_groupRule; }
     void reattach(StyleRuleBase&) override;
     void appendCSSTextForItems(StringBuilder&) const;
 

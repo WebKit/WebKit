@@ -374,8 +374,8 @@ private:
     virtual bool supportsTransparencyLayers() const { return true; }
 
 protected:
-    void fillEllipseAsPath(const FloatRect&);
-    void strokeEllipseAsPath(const FloatRect&);
+    WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
+    WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatRect&, bool printing, Color&);
 

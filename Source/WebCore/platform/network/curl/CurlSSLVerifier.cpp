@@ -36,12 +36,12 @@ namespace WebCore {
 CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
 {
     auto* ctx = static_cast<SSL_CTX*>(sslCtx);
-    const auto& sslHandle = CurlContext::singleton().sslHandle();
 
     SSL_CTX_set_app_data(ctx, this);
     SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), verifyCallback);
 
-#if (!defined(LIBRESSL_VERSION_NUMBER))
+#if !defined(LIBRESSL_VERSION_NUMBER)
+    const auto& sslHandle = CurlContext::singleton().sslHandle();
     if (const auto& signatureAlgorithmsList = sslHandle.signatureAlgorithmsList(); !signatureAlgorithmsList.isNull())
         SSL_CTX_set1_sigalgs_list(ctx, signatureAlgorithmsList.data());
 #endif

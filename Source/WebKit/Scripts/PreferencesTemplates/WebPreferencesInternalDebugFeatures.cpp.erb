@@ -40,7 +40,7 @@ const Vector<RefPtr<API::Object>>& WebPreferences::internalDebugFeatures()
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        API::InternalDebugFeature::create(<%= @pref.humanReadableName %>""_s, "<%= @pref.name %>"_s, <%= @pref.humanReadableDescription %>""_s, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
+        API::InternalDebugFeature::create(<%= @pref.humanReadableName %>""_s, "<%= @pref.name %>"_s, <%= @pref.apiStatus %>, <%= @pref.humanReadableDescription %>""_s, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

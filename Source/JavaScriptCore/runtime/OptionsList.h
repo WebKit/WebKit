@@ -544,6 +544,7 @@ bool canUseWebAssemblyFastMemory();
     \
     /* Feature Flags */\
     \
+    v(Bool, useArrayBufferTransfer, false, Normal, "Expose ArrayBuffer.transfer feature.") \
     v(Bool, useArrayGroupMethod, true, Normal, "Expose the group() and groupToMap() methods on Array.") \
     v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics.") \
     v(Bool, useImportAssertion, true, Normal, "Enable import assertion.") \

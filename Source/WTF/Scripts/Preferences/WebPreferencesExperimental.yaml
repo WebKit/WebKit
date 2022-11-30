@@ -479,6 +479,19 @@ CSSTextJustifyEnabled:
     WebCore:
       default: false
 
+CSSTypedOMColorEnabled:
+  type: bool
+  humanReadableName: "CSS Typed OM: Color Support"
+  humanReadableDescription: "Enable the CSS Typed OM Color support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(EXPERIMENTAL_FEATURES)": true
+      default: false
+    WebCore:
+      default: false
+
 CSSTypedOMEnabled:
   type: bool
   humanReadableName: "CSS Typed OM"

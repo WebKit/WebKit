@@ -22,12 +22,15 @@
 #include "MediaList.h"
 
 #include "CSSImportRule.h"
+#include "CSSMediaRule.h"
 #include "CSSStyleSheet.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "LegacyMediaQuery.h"
 #include "LegacyMediaQueryParser.h"
 #include "MediaFeatureNames.h"
+#include "MediaQuery.h"
+#include "MediaQueryParser.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -61,7 +64,7 @@ namespace WebCore {
  * document.styleSheets[0].cssRules[0].media.mediaText = "screen and resolution > 40dpi" will
  * throw SyntaxError exception.
  */
-    
+
 Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString, MediaQueryParserContext context)
 {
     if (mediaString.isEmpty())
@@ -77,8 +80,7 @@ Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString, MediaQueryPa
 MediaQuerySet::MediaQuerySet() = default;
 
 MediaQuerySet::MediaQuerySet(const MediaQuerySet& o)
-    : RefCounted()
-    , m_queries(o.m_queries)
+    : m_queries(o.m_queries)
 {
 }
 
@@ -165,62 +167,103 @@ void MediaQuerySet::shrinkToFit()
         query.shrinkToFit();
 }
 
-MediaList::MediaList(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
-    : m_mediaQueries(mediaQueries)
-    , m_parentStyleSheet(parentSheet)
+MediaList::MediaList(CSSStyleSheet* parentSheet)
+    : m_parentStyleSheet(parentSheet)
 {
 }
 
-MediaList::MediaList(MediaQuerySet* mediaQueries, CSSRule* parentRule)
-    : m_mediaQueries(mediaQueries)
-    , m_parentRule(parentRule)
+MediaList::MediaList(CSSRule* parentRule)
+    : m_parentRule(parentRule)
 {
 }
 
 MediaList::~MediaList() = default;
 
+void MediaList::detachFromParent()
+{
+    m_detachedMediaQueries = mediaQueries();
+    m_parentStyleSheet = nullptr;
+    m_parentRule = nullptr;
+}
+
+unsigned MediaList::length() const
+{
+    return mediaQueries().size();
+}
+
+const MQ::MediaQueryList& MediaList::mediaQueries() const
+{
+    if (m_detachedMediaQueries)
+        return *m_detachedMediaQueries;
+    if (auto* rule = dynamicDowncast<CSSImportRule>(m_parentRule))
+        return rule->mediaQueries();
+    if (auto* rule = dynamicDowncast<CSSMediaRule>(m_parentRule))
+        return rule->mediaQueries();
+    return m_parentStyleSheet->mediaQueries();
+}
+
+void MediaList::setMediaQueries(MQ::MediaQueryList&& queries)
+{
+    if (m_parentStyleSheet) {
+        m_parentStyleSheet->setMediaQueries(WTFMove(queries));
+        m_parentStyleSheet->didMutate();
+        return;
+    }
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
+    if (auto* rule = dynamicDowncast<CSSImportRule>(m_parentRule))
+        rule->setMediaQueries(WTFMove(queries));
+    if (auto* rule = dynamicDowncast<CSSMediaRule>(m_parentRule))
+        rule->setMediaQueries(WTFMove(queries));
+}
+
+String MediaList::mediaText() const
+{
+    StringBuilder builder;
+    MQ::serialize(builder, mediaQueries());
+    return builder.toString();
+}
+
 void MediaList::setMediaText(const String& value)
 {
-    CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
-    m_mediaQueries->set(value);
-    if (m_parentStyleSheet)
-        m_parentStyleSheet->didMutate();
+    setMediaQueries(MQ::MediaQueryParser::parse(value, { }));
 }
 
 String MediaList::item(unsigned index) const
 {
-    auto& queries = m_mediaQueries->queryVector();
-    if (index < queries.size())
-        return queries[index].cssText();
-    return String();
-}
-
-ExceptionOr<void> MediaList::deleteMedium(const String& medium)
-{
-    CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
-
-    bool success = m_mediaQueries->remove(medium);
-    if (!success)
-        return Exception { NotFoundError };
-    if (m_parentStyleSheet)
-        m_parentStyleSheet->didMutate();
+    auto& queries = mediaQueries();
+    if (index < queries.size()) {
+        StringBuilder builder;
+        MQ::serialize(builder, queries[index]);
+        return builder.toString();
+    }
     return { };
 }
 
-void MediaList::appendMedium(const String& medium)
+ExceptionOr<void> MediaList::deleteMedium(const String& value)
 {
-    CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
-
-    if (!m_mediaQueries->add(medium))
-        return;
-    if (m_parentStyleSheet)
-        m_parentStyleSheet->didMutate();
+    auto valueToRemove = value.convertToASCIILowercase();
+    auto queries = mediaQueries();
+    for (unsigned i = 0; i < queries.size(); ++i) {
+        if (item(i) == valueToRemove) {
+            queries.remove(i);
+            setMediaQueries(WTFMove(queries));
+            return { };
+        }
+    }
+    return Exception { NotFoundError };
 }
 
-void MediaList::reattach(MediaQuerySet* mediaQueries)
+void MediaList::appendMedium(const String& value)
 {
-    ASSERT(mediaQueries);
-    m_mediaQueries = mediaQueries;
+    if (value.isEmpty())
+        return;
+
+    auto newQuery = MQ::MediaQueryParser::parse(value, { });
+
+    auto queries = mediaQueries();
+    queries.appendVector(newQuery);
+    setMediaQueries(WTFMove(queries));
 }
 
 TextStream& operator<<(TextStream& ts, const MediaQuerySet& querySet)

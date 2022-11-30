@@ -111,7 +111,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI, const CreationData* = nullptr);
+    WEBCORE_EXPORT FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI, const CreationData* = nullptr);
 #if USE(CORE_TEXT)
     FontPlatformData(GDIObject<HFONT>, CTFontRef, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #endif

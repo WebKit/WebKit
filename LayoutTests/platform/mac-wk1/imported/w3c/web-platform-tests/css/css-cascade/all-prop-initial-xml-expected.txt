@@ -172,6 +172,7 @@ PASS justify-content
 PASS justify-items
 PASS justify-self
 PASS kerning
+PASS leading-trim
 PASS left
 PASS letter-spacing
 PASS lighting-color

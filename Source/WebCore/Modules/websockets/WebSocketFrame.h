@@ -55,11 +55,11 @@ struct WebSocketFrame {
     static bool isNonControlOpCode(OpCode opCode) { return opCode == OpCodeContinuation || opCode == OpCodeText || opCode == OpCodeBinary; }
     static bool isControlOpCode(OpCode opCode) { return opCode == OpCodeClose || opCode == OpCodePing || opCode == OpCodePong; }
     static bool isReservedOpCode(OpCode opCode) { return !isNonControlOpCode(opCode) && !isControlOpCode(opCode); }
-    static bool needsExtendedLengthField(size_t payloadLength);
-    static ParseFrameResult parseFrame(uint8_t* data, size_t dataLength, WebSocketFrame&, const uint8_t*& frameEnd, String& errorString); // May modify part of data to unmask the frame.
+    WEBCORE_EXPORT static bool needsExtendedLengthField(size_t payloadLength);
+    WEBCORE_EXPORT static ParseFrameResult parseFrame(uint8_t* data, size_t dataLength, WebSocketFrame&, const uint8_t*& frameEnd, String& errorString); // May modify part of data to unmask the frame.
 
     WEBCORE_EXPORT WebSocketFrame(OpCode = OpCodeInvalid, bool final = false, bool compress = false, bool masked = false, const uint8_t* payload = nullptr, size_t payloadLength = 0);
-    void makeFrameData(Vector<uint8_t>& frameData);
+    WEBCORE_EXPORT void makeFrameData(Vector<uint8_t>& frameData);
 
     OpCode opCode;
     bool final;

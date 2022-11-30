@@ -71,14 +71,14 @@ public:
 
     virtual ~CurlRequest();
 
-    void invalidateClient();
+    WEBCORE_EXPORT void invalidateClient();
     WEBCORE_EXPORT void setAuthenticationScheme(ProtectionSpace::AuthenticationScheme);
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
     bool isServerTrustEvaluationDisabled() { return m_shouldDisableServerTrustEvaluation; }
     void disableServerTrustEvaluation() { m_shouldDisableServerTrustEvaluation = true; }
 
-    void start();
-    void cancel();
+    WEBCORE_EXPORT void start();
+    WEBCORE_EXPORT void cancel();
     WEBCORE_EXPORT void suspend();
     WEBCORE_EXPORT void resume();
 
@@ -105,7 +105,7 @@ private:
         FinishTransfer
     };
 
-    CurlRequest(const ResourceRequest&, CurlRequestClient*, ShouldSuspend, EnableMultipart, CaptureNetworkLoadMetrics, RefPtr<SynchronousLoaderMessageQueue>&&);
+    WEBCORE_EXPORT CurlRequest(const ResourceRequest&, CurlRequestClient*, ShouldSuspend, EnableMultipart, CaptureNetworkLoadMetrics, RefPtr<SynchronousLoaderMessageQueue>&&);
 
     void retain() override { ref(); }
     void release() override { deref(); }

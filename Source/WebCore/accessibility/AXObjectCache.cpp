@@ -3695,26 +3695,22 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXColumnIndex);
             break;
         case AXDisabledStateChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetFocusAttribute);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::IsEnabled);
+            tree->updatePropertiesForSelfAndDescendants(*notification.first, { AXPropertyName::CanSetFocusAttribute, AXPropertyName::IsEnabled });
             break;
         case AXExpandedChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsExpanded);
             break;
         case AXMaximumValueChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::MaxValueForRange);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::MaxValueForRange, AXPropertyName::ValueForRange });
             break;
         case AXMinimumValueChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::MinValueForRange);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::MinValueForRange, AXPropertyName::ValueForRange });
             break;
         case AXOrientationChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::Orientation);
             break;
         case AXPositionInSetChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::PosInSet);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsPosInSet);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::PosInSet, AXPropertyName::SupportsPosInSet });
             break;
         case AXSortDirectionChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
@@ -3723,8 +3719,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::IdentifierAttribute);
             break;
         case AXReadOnlyStatusChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetValueAttribute);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::ReadOnlyValue);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::CanSetValueAttribute, AXPropertyName::ReadOnlyValue });
             break;
         case AXRequiredStatusChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsRequired);
@@ -3739,8 +3734,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;
         case AXSetSizeChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SetSize);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsSetSize);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::SetSize, AXPropertyName::SupportsSetSize });
             break;
         case AXTableHeadersChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::ColumnHeaders);

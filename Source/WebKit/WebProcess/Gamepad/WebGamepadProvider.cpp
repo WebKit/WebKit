@@ -41,7 +41,7 @@ using namespace WebCore;
 
 #define WP_MESSAGE_CHECK(assertion, ...) { \
     if (UNLIKELY(!(assertion))) { \
-        RELEASE_LOG_FAULT(IPC, "Exiting: %{public}s is false", #assertion); \
+        RELEASE_LOG_FAULT(IPC, "Exiting: %" PUBLIC_LOG_STRING " is false", #assertion); \
         CRASH_WITH_INFO(__VA_ARGS__); \
     } \
 }

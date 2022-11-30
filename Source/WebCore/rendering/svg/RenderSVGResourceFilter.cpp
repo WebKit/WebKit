@@ -87,9 +87,17 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     if (m_rendererFilterDataMap.contains(&renderer)) {
         FilterData* filterData = m_rendererFilterDataMap.get(&renderer);
-        if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying)
+        if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying) {
             filterData->state = FilterData::CycleDetected;
-        return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
+            return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
+        }
+        
+        ASSERT(filterData->targetSwitcher);
+        if (!filterData->targetSwitcher->needsRedrawSourceImage())
+            return false;
+
+        filterData->targetSwitcher->beginDrawSourceImage(*context);
+        return true;
     }
 
     auto addResult = m_rendererFilterDataMap.set(&renderer, makeUnique<FilterData>());
@@ -128,8 +136,19 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false;
     }
 
-    if (filterData->filter->clampFilterRegionIfNeeded())
-        filterScale = filterData->filter->filterScale();
+    filterData->filter->clampFilterRegionIfNeeded();
+
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    auto colorSpace = DestinationColorSpace::LinearSRGB();
+#else
+    auto colorSpace = DestinationColorSpace::SRGB();
+#endif
+
+    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace, &filterData->results);
+    if (!filterData->targetSwitcher) {
+        m_rendererFilterDataMap.remove(&renderer);
+        return false;
+    }
     
     // If the sourceImageRect is empty, we have something like <g filter=".."/>.
     // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
@@ -139,21 +158,10 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false;
     }
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    auto colorSpace = DestinationColorSpace::LinearSRGB();
-#else
-    auto colorSpace = DestinationColorSpace::SRGB();
-#endif
-
-    filterData->sourceImage = context->createScaledImageBuffer(filterData->sourceImageRect, filterScale, colorSpace, filterData->filter->renderingMode());
-    if (!filterData->sourceImage) {
-        ASSERT(m_rendererFilterDataMap.contains(&renderer));
-        filterData->savedContext = context;
-        return false;
-    }
+    filterData->targetSwitcher->beginDrawSourceImage(*context);
 
     filterData->savedContext = context;
-    context = &filterData->sourceImage->context();
+    context = filterData->targetSwitcher->drawingContext(*context);
 
     ASSERT(m_rendererFilterDataMap.contains(&renderer));
     return true;
@@ -200,9 +208,9 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         break;
     }
 
-    if (filterData.filter) {
+    if (filterData.targetSwitcher) {
         filterData.state = FilterData::Built;
-        context->drawFilteredImageBuffer(filterData.sourceImage.get(), filterData.sourceImageRect, *filterData.filter, filterData.results);
+        filterData.targetSwitcher->endDrawSourceImage(*context);
     }
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");

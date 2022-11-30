@@ -24,9 +24,9 @@
 #include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
 #include "ElementInlines.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
@@ -175,7 +175,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
         return;
     }
 
-    auto mediaQueries = MediaQuerySet::create(m_media, MediaQueryParserContext(document));
+    auto mediaQueries = MQ::MediaQueryParser::parse(m_media, MediaQueryParserContext(document));
 
     if (m_styleScope)
         m_styleScope->addPendingSheet(element);

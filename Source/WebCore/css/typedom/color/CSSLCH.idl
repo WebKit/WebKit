@@ -30,7 +30,7 @@ typedef (CSSNumberish or CSSKeywordish) CSSColorPercent;
 
 // https://drafts.css-houdini.org/css-typed-om/#csslch
 [
-    EnabledBySetting=CSSTypedOMEnabled,
+    EnabledBySetting=CSSTypedOMEnabled&CSSTypedOMColorEnabled,
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
 ] interface CSSLCH : CSSColorValue {
