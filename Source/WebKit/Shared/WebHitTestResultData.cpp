@@ -140,7 +140,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , dictionaryPopupInfo(dictionaryPopupInfo)
         , linkTextIndicator(linkTextIndicator)
 {
-    if (!imageHandle->isNull())
+    if (imageHandle && !imageHandle->isNull())
         imageSharedMemory = WebKit::SharedMemory::map(*imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
 }
 
