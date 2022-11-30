@@ -157,6 +157,8 @@ inline bool canUseArrayBufferViewRawFieldsDirectly(TypedArrayMode mode)
     return (static_cast<uint8_t>(mode) & resizabilityAndAutoLengthMask) <= isGrowableSharedMode;
 }
 
+template<typename Getter> bool isArrayBufferViewOutOfBounds(JSArrayBufferView*, Getter&);
+
 template<typename Getter> std::optional<size_t> integerIndexedObjectLength(JSArrayBufferView*, Getter&);
 template<typename Getter> size_t integerIndexedObjectByteLength(JSArrayBufferView*, Getter&);
 template<typename Getter> bool isIntegerIndexedObjectOutOfBounds(JSArrayBufferView*, Getter&);
@@ -264,7 +266,7 @@ public:
     JSArrayBuffer* possiblySharedJSBuffer(JSGlobalObject* globalObject);
     RefPtr<ArrayBufferView> unsharedImpl();
     JS_EXPORT_PRIVATE RefPtr<ArrayBufferView> possiblySharedImpl();
-    bool isDetached() { return hasArrayBuffer() && !hasVector(); }
+    bool isDetached() const { return hasArrayBuffer() && !hasVector(); }
     bool isResizableOrGrowableShared() const { return JSC::isResizableOrGrowableShared(m_mode); }
     bool isGrowableShared() const { return JSC::isGrowableShared(m_mode); };
     bool isResizableNonShared() const { return JSC::isResizableNonShared(m_mode); };
@@ -288,7 +290,7 @@ public:
             return byteOffsetRaw();
 
         IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-        if (UNLIKELY(isIntegerIndexedObjectOutOfBounds(const_cast<JSArrayBufferView*>(this), getter)))
+        if (UNLIKELY(isArrayBufferViewOutOfBounds(const_cast<JSArrayBufferView*>(this), getter)))
             return 0;
         return byteOffsetRaw();
     }
@@ -326,6 +328,17 @@ public:
 #else
         return lengthRaw() << logElementSize(type());
 #endif
+    }
+
+    bool isOutOfBounds() const
+    {
+        // https://tc39.es/proposal-resizablearraybuffer/#sec-isarraybufferviewoutofbounds
+        if (UNLIKELY(isDetached()))
+            return true;
+        if (LIKELY(!isResizableNonShared()))
+            return false;
+        IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+        return isArrayBufferViewOutOfBounds(const_cast<JSArrayBufferView*>(this), getter);
     }
 
     DECLARE_EXPORT_INFO;
