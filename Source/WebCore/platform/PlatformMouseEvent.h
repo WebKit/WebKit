@@ -81,7 +81,7 @@ const double ForceAtForceClick = 2;
 #endif
 
 #if PLATFORM(WIN)
-        PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool didActivateWebView = false);
+        WEBCORE_EXPORT PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool didActivateWebView = false);
         void setClickCount(int count) { m_clickCount = count; }
         bool didActivateWebView() const { return m_didActivateWebView; }
 #endif

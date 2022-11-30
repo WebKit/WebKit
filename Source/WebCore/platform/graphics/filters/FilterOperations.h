@@ -35,7 +35,7 @@ namespace WebCore {
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    bool operator==(const FilterOperations&) const;
+    WEBCORE_EXPORT bool operator==(const FilterOperations&) const;
     bool operator!=(const FilterOperations& other) const { return !(*this == other); }
 
     void clear() { m_operations.clear(); }

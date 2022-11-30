@@ -46,7 +46,7 @@ public:
     };
 
     explicit WebSocketDeflater(int windowBits, ContextTakeOverMode = TakeOverContext);
-    ~WebSocketDeflater();
+    WEBCORE_EXPORT ~WebSocketDeflater();
 
     bool initialize();
     bool addBytes(const uint8_t*, size_t);
@@ -66,7 +66,7 @@ class WebSocketInflater {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebSocketInflater(int windowBits = 15);
-    ~WebSocketInflater();
+    WEBCORE_EXPORT ~WebSocketInflater();
 
     bool initialize();
     bool addBytes(const uint8_t*, size_t);

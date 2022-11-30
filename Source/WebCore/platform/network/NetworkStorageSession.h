@@ -142,7 +142,7 @@ public:
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
 #elif USE(CURL)
     WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID);
-    ~NetworkStorageSession();
+    WEBCORE_EXPORT ~NetworkStorageSession();
 
     CookieJarDB& cookieDatabase() const;
     WEBCORE_EXPORT void setCookieDatabase(UniqueRef<CookieJarDB>&&);

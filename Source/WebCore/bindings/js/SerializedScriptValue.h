@@ -91,7 +91,7 @@ public:
 
     static uint32_t wireFormatVersion();
 
-    String toString() const;
+    WEBCORE_EXPORT String toString() const;
 
     // API implementation helpers. These don't expose special behavior for ArrayBuffers or MessagePorts.
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);

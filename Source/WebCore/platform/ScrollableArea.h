@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT void scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
-    void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
+    WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
 
     // Should be called when the scroll position changes externally, for example if the scroll layer position
     // is updated on the scrolling thread and we need to notify the main thread.
@@ -248,8 +248,8 @@ public:
     bool scrollOriginChanged() const { return m_scrollOriginChanged; }
 
     virtual ScrollPosition scrollPosition() const = 0;
-    virtual ScrollPosition minimumScrollPosition() const;
-    virtual ScrollPosition maximumScrollPosition() const;
+    WEBCORE_EXPORT virtual ScrollPosition minimumScrollPosition() const;
+    WEBCORE_EXPORT virtual ScrollPosition maximumScrollPosition() const;
 
     ScrollPosition constrainedScrollPosition(const ScrollPosition& position) const
     {

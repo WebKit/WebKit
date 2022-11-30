@@ -46,7 +46,7 @@ struct BitmapInfo : public BITMAPINFO {
 
     BitmapInfo();
     WEBCORE_EXPORT static BitmapInfo create(const IntSize&, BitCount bitCount = BitCount32);
-    static BitmapInfo createBottomUp(const IntSize&, BitCount bitCount = BitCount32);
+    WEBCORE_EXPORT static BitmapInfo createBottomUp(const IntSize&, BitCount bitCount = BitCount32);
 
     bool is16bit() const { return bmiHeader.biBitCount == 16; }
     bool is32bit() const { return bmiHeader.biBitCount == 32; }
