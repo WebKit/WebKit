@@ -1198,7 +1198,7 @@ imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/redirect/ [ Skip ]
-imported/w3c/web-platform-tests/fetch/stale-while-revalidate/revalidate-not-blocked-by-csp.html [ Skip ]
+
 # These tests have unreliable ordering and are flakey
 
 # Not supported
