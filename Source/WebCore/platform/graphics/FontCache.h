@@ -195,8 +195,9 @@ public:
     static bool configurePatternForFontDescription(FcPattern*, const FontDescription&);
 #endif
 
-private:
     void invalidate();
+
+private:
     void releaseNoncriticalMemory();
     void platformReleaseNoncriticalMemory();
     void platformInvalidate();
