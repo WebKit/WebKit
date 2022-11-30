@@ -95,14 +95,21 @@
 /Source/WebCore/editing @rniwa
 /LayoutTests/editing @rniwa
 
+/Source/WebCore/Modules/applicationmanifest/ @marcoscaceres
 /Source/WebCore/Modules/beacon @cdumez
+/Source/WebCore/Modules/contact-picker @marcoscaceres
 /Source/WebCore/Modules/entriesapi @cdumez
-/Source/WebCore/Modules/geolocation @cdumez
+/Source/WebCore/Modules/geolocation @cdumez @marcoscaceres
+/Source/WebCore/Modules/model-element @graouts @marcoscaceres
 /Source/WebCore/Modules/notifications @cdumez
+/Source/WebCore/Modules/paymentrequest @marcoscaceres
+/Source/WebCore/Modules/permissions @marcoscaceres
+/Source/WebCore/Modules/screen-wake-lock @marcoscaceres
 /Source/WebCore/Modules/web-locks @cdumez
 /Source/WebCore/Modules/webaudio @cdumez
 /Source/WebCore/bindings @cdumez
 /Source/WebCore/html @cdumez @rniwa
+/Source/WebCore/html/UserActivation.* @marcoscaceres
 /Source/WebCore/loader @cdumez
 /Source/WebCore/workers @cdumez
 /Source/WebCore/worklets @cdumez
@@ -110,9 +117,16 @@
 /Source/WebCore/page @cdumez
 
 /Source/WebCore/animation @graouts
-/Source/WebCore/Modules/model-element @graouts
+
 
 /Source/WebCore/crypto/ @zdobersek
+
+/LayoutTests/http/tests/paymentrequest @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/payment-request @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/web-share @marcoscaceres
 
 # ================================================================================
 # WebKit
