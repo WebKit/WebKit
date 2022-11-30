@@ -43,41 +43,6 @@
 namespace IPC {
 using namespace WebCore;
 
-template<typename Encoder>
-void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
-{
-    GRefPtr<GTlsCertificate> certificate = certificateInfo.certificate();
-    encoder << certificate;
-    if (!certificate)
-        return;
-
-    encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
-}
-template void ArgumentCoder<CertificateInfo>::encode<Encoder>(Encoder&, const CertificateInfo&);
-
-template<typename Decoder>
-std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
-{
-    std::optional<GRefPtr<GTlsCertificate>> certificate;
-    decoder >> certificate;
-    if (!certificate)
-        return std::nullopt;
-
-    CertificateInfo certificateInfo;
-    if (certificate.value()) {
-        std::optional<uint32_t> tlsErrors;
-        decoder >> tlsErrors;
-        if (!tlsErrors)
-            return std::nullopt;
-
-        certificateInfo.setCertificate(certificate->get());
-        certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(*tlsErrors));
-    }
-
-    return certificateInfo;
-}
-template std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode<Decoder>(Decoder&);
-
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {
     encoder << resourceError.domain();
@@ -112,7 +77,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     if (!decoder.decode(certificateInfo))
         return false;
 
-    resourceError.setCertificate(certificateInfo.certificate());
+    resourceError.setCertificate(certificateInfo.certificate().get());
     resourceError.setTLSErrors(certificateInfo.tlsErrors());
     return true;
 }

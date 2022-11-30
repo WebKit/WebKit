@@ -388,7 +388,7 @@ static std::optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& deco
 void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
     encoder << LegacyCertificateInfoType::Trust;
-    encodeSecTrustRef(encoder, certificateInfo.trust());
+    encodeSecTrustRef(encoder, certificateInfo.trust().get());
 }
 
 std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decoder& decoder)
@@ -481,7 +481,7 @@ template<> struct Coder<GRefPtr<GByteArray>> {
 
 static Vector<GRefPtr<GByteArray>> certificatesDataListFromCertificateInfo(const WebCore::CertificateInfo &certificateInfo)
 {
-    auto* certificate = certificateInfo.certificate();
+    auto* certificate = certificateInfo.certificate().get();
     if (!certificate)
         return { };
 

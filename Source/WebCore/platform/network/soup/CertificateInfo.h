@@ -45,12 +45,12 @@ public:
     CertificateInfo();
     explicit CertificateInfo(const WebCore::ResourceResponse&);
     explicit CertificateInfo(const WebCore::ResourceError&);
-    CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
+    CertificateInfo(GRefPtr<GTlsCertificate>&&, GTlsCertificateFlags);
     WEBCORE_EXPORT ~CertificateInfo();
 
     CertificateInfo isolatedCopy() const;
 
-    GTlsCertificate* certificate() const { return m_certificate.get(); }
+    const GRefPtr<GTlsCertificate>& certificate() const { return m_certificate; }
     void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
     GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
     void setTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }

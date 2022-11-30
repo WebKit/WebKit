@@ -92,14 +92,14 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 #if PLATFORM(COCOA)
     if (m_trust) {
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-        auto chain = adoptCF(SecTrustCopyCertificateChain(trust()));
+        auto chain = adoptCF(SecTrustCopyCertificateChain(trust().get()));
 #endif
         // Allow only the root certificate (the last in the chain) to be SHA1.
-        for (CFIndex i = 0, size = SecTrustGetCertificateCount(trust()) - 1; i < size; ++i) {
+        for (CFIndex i = 0, size = SecTrustGetCertificateCount(trust().get()) - 1; i < size; ++i) {
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
             auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), i));
 #else
-            auto certificate = SecTrustGetCertificateAtIndex(trust(), i);
+            auto certificate = SecTrustGetCertificateAtIndex(trust().get(), i);
 #endif
             if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
                 return true;

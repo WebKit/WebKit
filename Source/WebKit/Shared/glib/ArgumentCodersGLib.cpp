@@ -160,6 +160,19 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     return certificate;
 }
 
+void ArgumentCoder<GTlsCertificateFlags>::encode(Encoder& encoder, GTlsCertificateFlags flags)
+{
+    encoder << static_cast<uint32_t>(flags);
+}
+
+std::optional<GTlsCertificateFlags> ArgumentCoder<GTlsCertificateFlags>::decode(Decoder& decoder)
+{
+    auto flags = decoder.decode<uint32_t>();
+    if (!flags)
+        return std::nullopt;
+    return static_cast<GTlsCertificateFlags>(*flags);
+}
+
 void ArgumentCoder<GRefPtr<GUnixFDList>>::encode(Encoder& encoder, const GRefPtr<GUnixFDList>& fdList)
 {
     if (!fdList) {

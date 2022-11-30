@@ -50,7 +50,7 @@ public:
         : m_trust(WTFMove(trust))
     {
     }
-    SecTrustRef trust() const { return m_trust.get(); }
+    const RetainPtr<SecTrustRef>& trust() const { return m_trust; }
 #elif PLATFORM(WIN)
     CertificateInfo(RetainPtr<CFArrayRef>&& certificateChain)
         : m_certificateChain(WTFMove(certificateChain))

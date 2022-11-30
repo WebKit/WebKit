@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <gio/gio.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GTlsCertificate GTlsCertificate;
@@ -42,6 +43,11 @@ template<> struct ArgumentCoder<GRefPtr<GVariant>> {
 template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
     static void encode(Encoder&, const GRefPtr<GTlsCertificate>&);
     static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<GTlsCertificateFlags> {
+    static void encode(Encoder&, GTlsCertificateFlags);
+    static std::optional<GTlsCertificateFlags> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {

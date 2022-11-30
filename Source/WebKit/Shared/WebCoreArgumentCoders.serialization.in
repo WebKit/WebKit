@@ -1554,3 +1554,20 @@ enum class WebCore::PixelFormat : uint8_t {
 [Return=Ref] class WebCore::TextIndicator {
     WebCore::TextIndicatorData data();
 };
+
+#if USE(SOUP)
+header: "ArgumentCodersGLib.h"
+#endif
+class WebCore::CertificateInfo {
+#if PLATFORM(COCOA)
+    RetainPtr<SecTrustRef> trust()
+#endif
+#if USE(CURL)
+    int verificationError()
+    Vector<Vector<uint8_t>> certificateChain()
+#endif
+#if USE(SOUP)
+    GRefPtr<GTlsCertificate> certificate()
+    GTlsCertificateFlags tlsErrors()
+#endif
+}
