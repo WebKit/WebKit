@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -14,45 +14,65 @@
     <option>Option 3</option>
 </select>
 
+<fieldset id="fieldset">
+    <input type="radio" id="fieldset-radio1" name="foo">
+    <label for="fieldset-radio1">Foo label</label>
+
+    <input type="radio" id="fieldset-radio2" name="bar">
+    <label for="fieldset-radio2">Bar label</label>
+</fieldset>
+
 <script>
-    description("This test ensures that dynamically changing elements disabled and aria-disabled attributes properly updates their isEnabled property.");
+    var output = "This test ensures that dynamically changing elements disabled and aria-disabled attributes properly updates their isEnabled property.\n\n";
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
         var axOption = accessibilityController.accessibleElementById("option1");
-        var domOption = document.getElementById("option1");
         var axButton = accessibilityController.accessibleElementById("button");
-        var domButton = document.getElementById("button");
-        debug("Verifying initial element enabled state.");
-        shouldBe("axButton.isEnabled", "true");
-        shouldBe("axOption.isEnabled", "true");
+        var axRadio1 = accessibilityController.accessibleElementById("fieldset-radio1");
+        var axRadio2 = accessibilityController.accessibleElementById("fieldset-radio2");
+
+        output += "Verifying initial element enabled state.\n";
+        output += expect("axButton.isEnabled", "true");
+        output += expect("axOption.isEnabled", "true");
+        output += expect("axRadio1.isEnabled", "true");
+        output += expect("axRadio2.isEnabled", "true");
 
         setTimeout(async function() {
-            evalAndLog("domButton.ariaDisabled = true");
-            await expectAsyncExpression("axButton.isEnabled", "false");
+            output += evalAndReturn("document.getElementById('button').ariaDisabled = true");
+            output += await expectAsync("axButton.isEnabled", "false");
 
-            evalAndLog("domButton.ariaDisabled = false");
-            await expectAsyncExpression("axButton.isEnabled", "true");
+            output += evalAndReturn("document.getElementById('button').ariaDisabled = false");
+            output += await expectAsync("axButton.isEnabled", "true");
 
-            evalAndLog("domButton.disabled = true");
-            await expectAsyncExpression("axButton.isEnabled", "false");
+            output += evalAndReturn("document.getElementById('button').disabled = true");
+            output += await expectAsync("axButton.isEnabled", "false");
 
-            evalAndLog("domButton.disabled = false");
-            await expectAsyncExpression("axButton.isEnabled", "true");
+            output += evalAndReturn("document.getElementById('button').disabled = false");
+            output += await expectAsync("axButton.isEnabled", "true");
 
-            evalAndLog("domOption.ariaDisabled = true");
-            await expectAsyncExpression("axOption.isEnabled", "false");
+            output += evalAndReturn("document.getElementById('option1').ariaDisabled = true");
+            output += await expectAsync("axOption.isEnabled", "false");
 
-            evalAndLog("domOption.ariaDisabled = false");
-            await expectAsyncExpression("axOption.isEnabled", "true");
+            output += evalAndReturn("document.getElementById('option1').ariaDisabled = false");
+            output += await expectAsync("axOption.isEnabled", "true");
 
-            evalAndLog("domOption.disabled = true");
-            await expectAsyncExpression("axOption.isEnabled", "false");
+            output += evalAndReturn("document.getElementById('option1').disabled = true");
+            output += await expectAsync("axOption.isEnabled", "false");
 
-            evalAndLog("domOption.disabled = false");
-            await expectAsyncExpression("axOption.isEnabled", "true");
+            output += evalAndReturn("document.getElementById('option1').disabled = false");
+            output += await expectAsync("axOption.isEnabled", "true");
 
+            output += evalAndReturn("document.getElementById('fieldset').ariaDisabled = true");
+            output += await expectAsync("axRadio1.isEnabled", "false");
+            output += await expectAsync("axRadio2.isEnabled", "false");
+
+            output += evalAndReturn("document.getElementById('fieldset').ariaDisabled = false");
+            output += await expectAsync("axRadio1.isEnabled", "true");
+            output += await expectAsync("axRadio2.isEnabled", "true");
+
+            debug(output);
             finishJSTest();
         }, 0);
     }

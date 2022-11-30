@@ -155,6 +155,17 @@ function expect(expression, expectedValue) {
     return `FAIL: ${expression} !== ${expectedValue}, was ${eval(expression)}\n`;
 }
 
+async function expectAsync(expression, expectedValue) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in expectAsync should be a string.");
+
+    const evalExpression = `${expression} === ${expectedValue}`;
+    await waitFor(() => {
+        return eval(evalExpression);
+    });
+    return `PASS: ${evalExpression}\n`;
+}
+
 async function expectAsyncExpression(expression, expectedValue) {
     if (typeof expression !== "string")
         debug("WARN: The expression arg in waitForExpression() should be a string.");
@@ -166,3 +177,10 @@ async function expectAsyncExpression(expression, expectedValue) {
     debug(`PASS ${evalExpression}`);
 }
 
+function evalAndReturn(expression) {
+    if (typeof expression !== "string")
+        debug("FAIL: evalAndReturn() expects a string argument");
+
+    eval(expression);
+    return `${expression}\n`;
+}

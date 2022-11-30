@@ -310,8 +310,10 @@ public:
     void updateNode(AXCoreObject&);
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
-    void updateNodeProperty(AXCoreObject&, AXPropertyName);
+    void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); };
+    void updateNodeProperties(AXCoreObject&, const Vector<AXPropertyName>&);
     void updateNodeAndDependentProperties(AXCoreObject&);
+    void updatePropertiesForSelfAndDescendants(AXCoreObject&, const Vector<AXPropertyName>&);
 
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);
