@@ -37,7 +37,7 @@ using namespace JSC;
 JSC::JSValue JSWebXRView::projectionMatrix(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
-    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().cachedProjectionMatrix(), [&] {
+    return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedProjectionMatrix(), [&](JSC::ThrowScope& throwScope) {
         JSC::JSValue matrix = toJS<IDLFloat32Array>(lexicalGlobalObject, *globalObject(), throwScope, wrapped().projectionMatrix());
         return matrix;
     });
