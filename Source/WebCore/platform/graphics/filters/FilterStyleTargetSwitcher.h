@@ -36,6 +36,8 @@ public:
     FilterStyleTargetSwitcher(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect);
 
 private:
+    bool needsRedrawSourceImage() const override { return true; }
+
     void beginDrawSourceImage(GraphicsContext& destinationContext) override;
     void endDrawSourceImage(GraphicsContext& destinationContext) override;
 
