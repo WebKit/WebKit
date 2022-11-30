@@ -3569,7 +3569,6 @@
 				31CDFDF22491819E00486F27 /* Frameworks */,
 				31CD00CE2491974C00486F27 /* CopyFiles */,
 				31CD00CF2491976800486F27 /* CopyFiles */,
-				31CD00D2249197FD00486F27 /* Adjust ANGLE Paths */,
 				6517572227CEED7200D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
@@ -3640,24 +3639,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		31CD00D2249197FD00486F27 /* Adjust ANGLE Paths */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Adjust ANGLE Paths";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.py\"\n";
-		};
 		6517572227CEED7200D9FE40 /* Copy Frameworks to Secondary Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
