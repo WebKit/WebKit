@@ -1,5 +1,7 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL 'font' does not supported '1.2em "Fira Sans", sans-serif' Bad value for shorthand CSS property
+FAIL 'font' does not supported 'italic 1.2em "Fira Sans", serif' Bad value for shorthand CSS property
+FAIL 'font' does not supported 'italic small-caps bold 16px/2 cursive' Bad value for shorthand CSS property
+FAIL 'font' does not supported 'small-caps bold 24px/1 sans-serif' Bad value for shorthand CSS property
+FAIL 'font' does not supported 'caption' assert_not_equals: Unsupported value must not be null got disallowed value null
 

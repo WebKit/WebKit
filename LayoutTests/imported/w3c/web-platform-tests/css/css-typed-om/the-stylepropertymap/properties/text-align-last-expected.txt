@@ -1,6 +1,19 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'text-align-last' to CSS-wide keywords
+FAIL Can set 'text-align-last' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'text-align-last' to the 'auto' keyword
+PASS Can set 'text-align-last' to the 'start' keyword
+PASS Can set 'text-align-last' to the 'end' keyword
+PASS Can set 'text-align-last' to the 'left' keyword
+PASS Can set 'text-align-last' to the 'right' keyword
+PASS Can set 'text-align-last' to the 'center' keyword
+PASS Can set 'text-align-last' to the 'justify' keyword
+PASS Setting 'text-align-last' to a length throws TypeError
+PASS Setting 'text-align-last' to a percent throws TypeError
+PASS Setting 'text-align-last' to a time throws TypeError
+PASS Setting 'text-align-last' to an angle throws TypeError
+PASS Setting 'text-align-last' to a flexible length throws TypeError
+PASS Setting 'text-align-last' to a number throws TypeError
+PASS Setting 'text-align-last' to a URL throws TypeError
+PASS Setting 'text-align-last' to a transform throws TypeError
 

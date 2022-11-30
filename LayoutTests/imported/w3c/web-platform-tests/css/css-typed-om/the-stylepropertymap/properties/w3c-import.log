@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/accent-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/alignment-baseline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/animation-delay-end.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/animation-delay-start.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/animation-delay.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/animation-direction.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/animation-duration.html

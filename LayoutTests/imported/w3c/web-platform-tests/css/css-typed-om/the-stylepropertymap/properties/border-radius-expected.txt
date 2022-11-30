@@ -1,6 +1,46 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'border-top-left-radius' to CSS-wide keywords
+FAIL Can set 'border-top-left-radius' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'border-top-left-radius' to a length assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-top-left-radius' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Setting 'border-top-left-radius' to a time throws TypeError
+PASS Setting 'border-top-left-radius' to an angle throws TypeError
+PASS Setting 'border-top-left-radius' to a flexible length throws TypeError
+FAIL Setting 'border-top-left-radius' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-top-left-radius' to a URL throws TypeError
+PASS Setting 'border-top-left-radius' to a transform throws TypeError
+PASS Can set 'border-top-right-radius' to CSS-wide keywords
+FAIL Can set 'border-top-right-radius' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'border-top-right-radius' to a length assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-top-right-radius' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Setting 'border-top-right-radius' to a time throws TypeError
+PASS Setting 'border-top-right-radius' to an angle throws TypeError
+PASS Setting 'border-top-right-radius' to a flexible length throws TypeError
+FAIL Setting 'border-top-right-radius' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-top-right-radius' to a URL throws TypeError
+PASS Setting 'border-top-right-radius' to a transform throws TypeError
+PASS Can set 'border-bottom-left-radius' to CSS-wide keywords
+FAIL Can set 'border-bottom-left-radius' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'border-bottom-left-radius' to a length assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-bottom-left-radius' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Setting 'border-bottom-left-radius' to a time throws TypeError
+PASS Setting 'border-bottom-left-radius' to an angle throws TypeError
+PASS Setting 'border-bottom-left-radius' to a flexible length throws TypeError
+FAIL Setting 'border-bottom-left-radius' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-bottom-left-radius' to a URL throws TypeError
+PASS Setting 'border-bottom-left-radius' to a transform throws TypeError
+PASS Can set 'border-bottom-right-radius' to CSS-wide keywords
+FAIL Can set 'border-bottom-right-radius' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'border-bottom-right-radius' to a length assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-bottom-right-radius' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Setting 'border-bottom-right-radius' to a time throws TypeError
+PASS Setting 'border-bottom-right-radius' to an angle throws TypeError
+PASS Setting 'border-bottom-right-radius' to a flexible length throws TypeError
+FAIL Setting 'border-bottom-right-radius' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-bottom-right-radius' to a URL throws TypeError
+PASS Setting 'border-bottom-right-radius' to a transform throws TypeError
+PASS 'border-radius' does not supported '30px'
+PASS 'border-radius' does not supported '25% 10%'
+FAIL 'border-radius' does not supported '10% / 50%' Bad value for shorthand CSS property
+FAIL 'border-radius' does not supported '50% 20% / 10% 40%' Bad value for shorthand CSS property
 

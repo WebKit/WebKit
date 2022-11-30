@@ -1,6 +1,13 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'word-spacing' to CSS-wide keywords
+FAIL Can set 'word-spacing' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'word-spacing' to the 'normal' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'word-spacing' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'word-spacing' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'word-spacing' to a time throws TypeError
+PASS Setting 'word-spacing' to an angle throws TypeError
+PASS Setting 'word-spacing' to a flexible length throws TypeError
+FAIL Setting 'word-spacing' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'word-spacing' to a URL throws TypeError
+PASS Setting 'word-spacing' to a transform throws TypeError
 

@@ -1,6 +1,22 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'pointer-events' to CSS-wide keywords
+FAIL Can set 'pointer-events' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'pointer-events' to the 'bounding-box' keyword
+FAIL Can set 'pointer-events' to the 'visiblepainted' keyword assert_equals: expected "visiblepainted" but got "visiblePainted"
+FAIL Can set 'pointer-events' to the 'visiblefill' keyword assert_equals: expected "visiblefill" but got "visibleFill"
+FAIL Can set 'pointer-events' to the 'visiblestroke' keyword assert_equals: expected "visiblestroke" but got "visibleStroke"
+PASS Can set 'pointer-events' to the 'visible' keyword
+PASS Can set 'pointer-events' to the 'painted' keyword
+PASS Can set 'pointer-events' to the 'fill' keyword
+PASS Can set 'pointer-events' to the 'stroke' keyword
+PASS Can set 'pointer-events' to the 'all' keyword
+PASS Can set 'pointer-events' to the 'none' keyword
+PASS Setting 'pointer-events' to a length throws TypeError
+PASS Setting 'pointer-events' to a percent throws TypeError
+PASS Setting 'pointer-events' to a time throws TypeError
+PASS Setting 'pointer-events' to an angle throws TypeError
+PASS Setting 'pointer-events' to a flexible length throws TypeError
+PASS Setting 'pointer-events' to a number throws TypeError
+PASS Setting 'pointer-events' to a URL throws TypeError
+PASS Setting 'pointer-events' to a transform throws TypeError
 

@@ -1,6 +1,34 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'inline-size' to CSS-wide keywords
+FAIL Can set 'inline-size' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'inline-size' to the 'auto' keyword
+FAIL Can set 'inline-size' to a percent Invalid values
+FAIL Can set 'inline-size' to a length Invalid values
+PASS Setting 'inline-size' to a time throws TypeError
+PASS Setting 'inline-size' to an angle throws TypeError
+PASS Setting 'inline-size' to a flexible length throws TypeError
+FAIL Setting 'inline-size' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'inline-size' to a URL throws TypeError
+PASS Setting 'inline-size' to a transform throws TypeError
+PASS Can set 'min-inline-size' to CSS-wide keywords
+FAIL Can set 'min-inline-size' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'min-inline-size' to a percent Invalid values
+FAIL Can set 'min-inline-size' to a length Invalid values
+PASS Setting 'min-inline-size' to a time throws TypeError
+PASS Setting 'min-inline-size' to an angle throws TypeError
+PASS Setting 'min-inline-size' to a flexible length throws TypeError
+FAIL Setting 'min-inline-size' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'min-inline-size' to a URL throws TypeError
+PASS Setting 'min-inline-size' to a transform throws TypeError
+PASS Can set 'max-inline-size' to CSS-wide keywords
+FAIL Can set 'max-inline-size' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'max-inline-size' to the 'none' keyword
+FAIL Can set 'max-inline-size' to a percent Invalid values
+FAIL Can set 'max-inline-size' to a length Invalid values
+PASS Setting 'max-inline-size' to a time throws TypeError
+PASS Setting 'max-inline-size' to an angle throws TypeError
+PASS Setting 'max-inline-size' to a flexible length throws TypeError
+FAIL Setting 'max-inline-size' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'max-inline-size' to a URL throws TypeError
+PASS Setting 'max-inline-size' to a transform throws TypeError
 

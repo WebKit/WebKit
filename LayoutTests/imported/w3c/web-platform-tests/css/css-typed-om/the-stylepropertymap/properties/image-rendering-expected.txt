@@ -1,6 +1,17 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'image-rendering' to CSS-wide keywords
+FAIL Can set 'image-rendering' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'image-rendering' to the 'auto' keyword
+FAIL Can set 'image-rendering' to the 'smooth' keyword Invalid values
+FAIL Can set 'image-rendering' to the 'high-quality' keyword Invalid values
+PASS Can set 'image-rendering' to the 'crisp-edges' keyword
+PASS Can set 'image-rendering' to the 'pixelated' keyword
+PASS Setting 'image-rendering' to a length throws TypeError
+PASS Setting 'image-rendering' to a percent throws TypeError
+PASS Setting 'image-rendering' to a time throws TypeError
+PASS Setting 'image-rendering' to an angle throws TypeError
+PASS Setting 'image-rendering' to a flexible length throws TypeError
+PASS Setting 'image-rendering' to a number throws TypeError
+PASS Setting 'image-rendering' to a URL throws TypeError
+PASS Setting 'image-rendering' to a transform throws TypeError
 

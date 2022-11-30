@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'scroll-snap-stop' to CSS-wide keywords
+FAIL Can set 'scroll-snap-stop' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'scroll-snap-stop' to the 'normal' keyword
+PASS Can set 'scroll-snap-stop' to the 'always' keyword
+PASS Setting 'scroll-snap-stop' to a length throws TypeError
+PASS Setting 'scroll-snap-stop' to a percent throws TypeError
+PASS Setting 'scroll-snap-stop' to a time throws TypeError
+PASS Setting 'scroll-snap-stop' to an angle throws TypeError
+PASS Setting 'scroll-snap-stop' to a flexible length throws TypeError
+PASS Setting 'scroll-snap-stop' to a number throws TypeError
+PASS Setting 'scroll-snap-stop' to a URL throws TypeError
+PASS Setting 'scroll-snap-stop' to a transform throws TypeError
 

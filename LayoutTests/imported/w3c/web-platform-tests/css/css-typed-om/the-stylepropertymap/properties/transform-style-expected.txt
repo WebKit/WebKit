@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'transform-style' to CSS-wide keywords
+FAIL Can set 'transform-style' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'transform-style' to the 'auto' keyword Invalid values
+PASS Can set 'transform-style' to the 'flat' keyword
+PASS Can set 'transform-style' to the 'preserve-3d' keyword
+PASS Setting 'transform-style' to a length throws TypeError
+PASS Setting 'transform-style' to a percent throws TypeError
+PASS Setting 'transform-style' to a time throws TypeError
+PASS Setting 'transform-style' to an angle throws TypeError
+PASS Setting 'transform-style' to a flexible length throws TypeError
+PASS Setting 'transform-style' to a number throws TypeError
+PASS Setting 'transform-style' to a URL throws TypeError
+PASS Setting 'transform-style' to a transform throws TypeError
 

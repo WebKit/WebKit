@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'column-rule-width' to CSS-wide keywords
+FAIL Can set 'column-rule-width' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'column-rule-width' to the 'thin' keyword
+PASS Can set 'column-rule-width' to the 'medium' keyword
+PASS Can set 'column-rule-width' to the 'thick' keyword
+FAIL Can set 'column-rule-width' to a length Invalid values
+PASS Setting 'column-rule-width' to a percent throws TypeError
+PASS Setting 'column-rule-width' to a time throws TypeError
+PASS Setting 'column-rule-width' to an angle throws TypeError
+PASS Setting 'column-rule-width' to a flexible length throws TypeError
+FAIL Setting 'column-rule-width' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'column-rule-width' to a URL throws TypeError
+PASS Setting 'column-rule-width' to a transform throws TypeError
 

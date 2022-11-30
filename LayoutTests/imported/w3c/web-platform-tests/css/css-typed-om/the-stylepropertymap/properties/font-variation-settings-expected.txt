@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-variation-settings' to CSS-wide keywords
+FAIL Can set 'font-variation-settings' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-variation-settings' to the 'normal' keyword
+PASS Setting 'font-variation-settings' to a length throws TypeError
+PASS Setting 'font-variation-settings' to a percent throws TypeError
+PASS Setting 'font-variation-settings' to a time throws TypeError
+PASS Setting 'font-variation-settings' to an angle throws TypeError
+PASS Setting 'font-variation-settings' to a flexible length throws TypeError
+PASS Setting 'font-variation-settings' to a number throws TypeError
+PASS Setting 'font-variation-settings' to a URL throws TypeError
+PASS Setting 'font-variation-settings' to a transform throws TypeError
+PASS 'font-variation-settings' does not supported '"XHGT" 0.7'
 

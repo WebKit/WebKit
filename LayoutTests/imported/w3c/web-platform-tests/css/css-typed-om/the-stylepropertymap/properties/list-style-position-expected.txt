@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'list-style-position' to CSS-wide keywords
+FAIL Can set 'list-style-position' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'list-style-position' to the 'inside' keyword
+PASS Can set 'list-style-position' to the 'outside' keyword
+PASS Setting 'list-style-position' to a length throws TypeError
+PASS Setting 'list-style-position' to a percent throws TypeError
+PASS Setting 'list-style-position' to a time throws TypeError
+PASS Setting 'list-style-position' to an angle throws TypeError
+PASS Setting 'list-style-position' to a flexible length throws TypeError
+PASS Setting 'list-style-position' to a number throws TypeError
+PASS Setting 'list-style-position' to a URL throws TypeError
+PASS Setting 'list-style-position' to a transform throws TypeError
 

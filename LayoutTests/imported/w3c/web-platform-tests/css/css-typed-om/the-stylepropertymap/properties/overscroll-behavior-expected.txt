@@ -1,6 +1,28 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'overscroll-behavior-x' to CSS-wide keywords
+FAIL Can set 'overscroll-behavior-x' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'overscroll-behavior-x' to the 'contain' keyword
+PASS Can set 'overscroll-behavior-x' to the 'none' keyword
+PASS Can set 'overscroll-behavior-x' to the 'auto' keyword
+PASS Setting 'overscroll-behavior-x' to a length throws TypeError
+PASS Setting 'overscroll-behavior-x' to a percent throws TypeError
+PASS Setting 'overscroll-behavior-x' to a time throws TypeError
+PASS Setting 'overscroll-behavior-x' to an angle throws TypeError
+PASS Setting 'overscroll-behavior-x' to a flexible length throws TypeError
+PASS Setting 'overscroll-behavior-x' to a number throws TypeError
+PASS Setting 'overscroll-behavior-x' to a URL throws TypeError
+PASS Setting 'overscroll-behavior-x' to a transform throws TypeError
+PASS Can set 'overscroll-behavior-y' to CSS-wide keywords
+FAIL Can set 'overscroll-behavior-y' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'overscroll-behavior-y' to the 'contain' keyword
+PASS Can set 'overscroll-behavior-y' to the 'none' keyword
+PASS Can set 'overscroll-behavior-y' to the 'auto' keyword
+PASS Setting 'overscroll-behavior-y' to a length throws TypeError
+PASS Setting 'overscroll-behavior-y' to a percent throws TypeError
+PASS Setting 'overscroll-behavior-y' to a time throws TypeError
+PASS Setting 'overscroll-behavior-y' to an angle throws TypeError
+PASS Setting 'overscroll-behavior-y' to a flexible length throws TypeError
+PASS Setting 'overscroll-behavior-y' to a number throws TypeError
+PASS Setting 'overscroll-behavior-y' to a URL throws TypeError
+PASS Setting 'overscroll-behavior-y' to a transform throws TypeError
 

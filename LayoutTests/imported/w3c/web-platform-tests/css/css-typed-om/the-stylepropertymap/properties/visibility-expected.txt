@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'visibility' to CSS-wide keywords
+FAIL Can set 'visibility' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'visibility' to the 'visible' keyword
+PASS Can set 'visibility' to the 'hidden' keyword
+PASS Can set 'visibility' to the 'collapse' keyword
+PASS Setting 'visibility' to a length throws TypeError
+PASS Setting 'visibility' to a percent throws TypeError
+PASS Setting 'visibility' to a time throws TypeError
+PASS Setting 'visibility' to an angle throws TypeError
+PASS Setting 'visibility' to a flexible length throws TypeError
+PASS Setting 'visibility' to a number throws TypeError
+PASS Setting 'visibility' to a URL throws TypeError
+PASS Setting 'visibility' to a transform throws TypeError
 

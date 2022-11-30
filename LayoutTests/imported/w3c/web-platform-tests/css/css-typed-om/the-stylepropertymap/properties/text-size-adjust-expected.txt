@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'text-size-adjust' to CSS-wide keywords Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to var() references Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to the 'none' keyword Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to the 'auto' keyword Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to a percent Invalid property text-size-adjust
+PASS Setting 'text-size-adjust' to a length throws TypeError
+PASS Setting 'text-size-adjust' to a time throws TypeError
+PASS Setting 'text-size-adjust' to an angle throws TypeError
+PASS Setting 'text-size-adjust' to a flexible length throws TypeError
+PASS Setting 'text-size-adjust' to a number throws TypeError
+PASS Setting 'text-size-adjust' to a URL throws TypeError
+PASS Setting 'text-size-adjust' to a transform throws TypeError
 

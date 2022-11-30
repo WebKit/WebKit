@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'grid-template-areas' to CSS-wide keywords
+FAIL Can set 'grid-template-areas' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'grid-template-areas' to the 'none' keyword
+PASS Setting 'grid-template-areas' to a length throws TypeError
+PASS Setting 'grid-template-areas' to a percent throws TypeError
+PASS Setting 'grid-template-areas' to a time throws TypeError
+PASS Setting 'grid-template-areas' to an angle throws TypeError
+PASS Setting 'grid-template-areas' to a flexible length throws TypeError
+PASS Setting 'grid-template-areas' to a number throws TypeError
+PASS Setting 'grid-template-areas' to a URL throws TypeError
+PASS Setting 'grid-template-areas' to a transform throws TypeError
+PASS 'grid-template-areas' does not supported '"a a a"'
+PASS 'grid-template-areas' does not supported '"a a a" "b b b"'
 

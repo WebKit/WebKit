@@ -1,6 +1,13 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'transform' to CSS-wide keywords
+FAIL Can set 'transform' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'transform' to the 'none' keyword
+FAIL Can set 'transform' to a transform assert_equals: expected "CSSSkewY" but got "CSSSkewX"
+PASS Setting 'transform' to a length throws TypeError
+PASS Setting 'transform' to a percent throws TypeError
+PASS Setting 'transform' to a time throws TypeError
+PASS Setting 'transform' to an angle throws TypeError
+PASS Setting 'transform' to a flexible length throws TypeError
+PASS Setting 'transform' to a number throws TypeError
+PASS Setting 'transform' to a URL throws TypeError
 

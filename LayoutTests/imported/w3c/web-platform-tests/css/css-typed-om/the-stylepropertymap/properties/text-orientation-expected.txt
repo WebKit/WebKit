@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'text-orientation' to CSS-wide keywords
+FAIL Can set 'text-orientation' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'text-orientation' to the 'mixed' keyword
+PASS Can set 'text-orientation' to the 'upright' keyword
+PASS Can set 'text-orientation' to the 'sideways' keyword
+PASS Setting 'text-orientation' to a length throws TypeError
+PASS Setting 'text-orientation' to a percent throws TypeError
+PASS Setting 'text-orientation' to a time throws TypeError
+PASS Setting 'text-orientation' to an angle throws TypeError
+PASS Setting 'text-orientation' to a flexible length throws TypeError
+PASS Setting 'text-orientation' to a number throws TypeError
+PASS Setting 'text-orientation' to a URL throws TypeError
+PASS Setting 'text-orientation' to a transform throws TypeError
 

@@ -1,6 +1,16 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-palette' to CSS-wide keywords
+FAIL Can set 'font-palette' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-palette' to the 'normal' keyword
+PASS Can set 'font-palette' to the 'light' keyword
+PASS Can set 'font-palette' to the 'dark' keyword
+PASS Setting 'font-palette' to a length throws TypeError
+PASS Setting 'font-palette' to a percent throws TypeError
+PASS Setting 'font-palette' to a time throws TypeError
+PASS Setting 'font-palette' to an angle throws TypeError
+PASS Setting 'font-palette' to a flexible length throws TypeError
+PASS Setting 'font-palette' to a number throws TypeError
+PASS Setting 'font-palette' to a URL throws TypeError
+PASS Setting 'font-palette' to a transform throws TypeError
+FAIL 'font-palette' does not supported 'Augusta' assert_not_equals: Unsupported value must not be null got disallowed value null
 

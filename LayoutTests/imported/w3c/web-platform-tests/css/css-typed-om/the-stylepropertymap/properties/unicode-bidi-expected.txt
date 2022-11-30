@@ -1,6 +1,18 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'unicode-bidi' to CSS-wide keywords
+FAIL Can set 'unicode-bidi' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'unicode-bidi' to the 'normal' keyword
+PASS Can set 'unicode-bidi' to the 'embed' keyword
+PASS Can set 'unicode-bidi' to the 'isolate' keyword
+PASS Can set 'unicode-bidi' to the 'bidi-override' keyword
+PASS Can set 'unicode-bidi' to the 'isolate-override' keyword
+PASS Can set 'unicode-bidi' to the 'plaintext' keyword
+PASS Setting 'unicode-bidi' to a length throws TypeError
+PASS Setting 'unicode-bidi' to a percent throws TypeError
+PASS Setting 'unicode-bidi' to a time throws TypeError
+PASS Setting 'unicode-bidi' to an angle throws TypeError
+PASS Setting 'unicode-bidi' to a flexible length throws TypeError
+PASS Setting 'unicode-bidi' to a number throws TypeError
+PASS Setting 'unicode-bidi' to a URL throws TypeError
+PASS Setting 'unicode-bidi' to a transform throws TypeError
 

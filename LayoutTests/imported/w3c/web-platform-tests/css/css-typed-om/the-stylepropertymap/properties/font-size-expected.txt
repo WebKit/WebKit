@@ -1,6 +1,60 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-size' to CSS-wide keywords
+FAIL Can set 'font-size' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-size' to the 'xx-small' keyword
+PASS Can set 'font-size' to the 'x-small' keyword
+PASS Can set 'font-size' to the 'small' keyword
+PASS Can set 'font-size' to the 'medium' keyword
+PASS Can set 'font-size' to the 'large' keyword
+PASS Can set 'font-size' to the 'x-large' keyword
+PASS Can set 'font-size' to the 'xx-large' keyword
+PASS Can set 'font-size' to the 'larger' keyword
+PASS Can set 'font-size' to the 'smaller' keyword
+FAIL Can set 'font-size' to a length Invalid values
+FAIL Can set 'font-size' to a percent Invalid values
+PASS Setting 'font-size' to a time throws TypeError
+PASS Setting 'font-size' to an angle throws TypeError
+PASS Setting 'font-size' to a flexible length throws TypeError
+FAIL Setting 'font-size' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'font-size' to a URL throws TypeError
+PASS Setting 'font-size' to a transform throws TypeError
+FAIL Can set 'font-min-size' to CSS-wide keywords Invalid property font-min-size
+FAIL Can set 'font-min-size' to var() references Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'xx-small' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'x-small' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'small' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'medium' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'large' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'x-large' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'xx-large' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'larger' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'smaller' keyword Invalid property font-min-size
+FAIL Can set 'font-min-size' to a length Invalid property font-min-size
+FAIL Can set 'font-min-size' to a percent Invalid property font-min-size
+PASS Setting 'font-min-size' to a time throws TypeError
+PASS Setting 'font-min-size' to an angle throws TypeError
+PASS Setting 'font-min-size' to a flexible length throws TypeError
+PASS Setting 'font-min-size' to a number throws TypeError
+PASS Setting 'font-min-size' to a URL throws TypeError
+PASS Setting 'font-min-size' to a transform throws TypeError
+FAIL Can set 'font-max-size' to CSS-wide keywords Invalid property font-max-size
+FAIL Can set 'font-max-size' to var() references Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'infinity' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'xx-small' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'x-small' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'small' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'medium' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'large' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'x-large' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'xx-large' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'larger' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'smaller' keyword Invalid property font-max-size
+FAIL Can set 'font-max-size' to a length Invalid property font-max-size
+FAIL Can set 'font-max-size' to a percent Invalid property font-max-size
+PASS Setting 'font-max-size' to a time throws TypeError
+PASS Setting 'font-max-size' to an angle throws TypeError
+PASS Setting 'font-max-size' to a flexible length throws TypeError
+PASS Setting 'font-max-size' to a number throws TypeError
+PASS Setting 'font-max-size' to a URL throws TypeError
+PASS Setting 'font-max-size' to a transform throws TypeError
 

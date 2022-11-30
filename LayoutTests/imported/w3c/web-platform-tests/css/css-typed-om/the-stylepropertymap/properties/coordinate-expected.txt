@@ -1,6 +1,22 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'x' to CSS-wide keywords
+FAIL Can set 'x' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'x' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'x' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'x' to a time throws TypeError
+PASS Setting 'x' to an angle throws TypeError
+PASS Setting 'x' to a flexible length throws TypeError
+FAIL Setting 'x' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'x' to a URL throws TypeError
+PASS Setting 'x' to a transform throws TypeError
+PASS Can set 'y' to CSS-wide keywords
+FAIL Can set 'y' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'y' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'y' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'y' to a time throws TypeError
+PASS Setting 'y' to an angle throws TypeError
+PASS Setting 'y' to a flexible length throws TypeError
+FAIL Setting 'y' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'y' to a URL throws TypeError
+PASS Setting 'y' to a transform throws TypeError
 

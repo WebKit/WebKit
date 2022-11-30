@@ -22,8 +22,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssKeywordValue.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssMatrixComponent.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPerspective.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPositionValue-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPositionValue.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRGB.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRotate.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssScale.tentative.html

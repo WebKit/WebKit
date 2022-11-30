@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'page' to CSS-wide keywords assert_not_equals: Computed value must not be null got disallowed value null
+FAIL Can set 'page' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'page' to the 'auto' keyword assert_not_equals: Computed value must not be null got disallowed value null
+FAIL Can set 'page' to the 'custom-ident' keyword Invalid values
+PASS Setting 'page' to a length throws TypeError
+PASS Setting 'page' to a percent throws TypeError
+PASS Setting 'page' to a time throws TypeError
+PASS Setting 'page' to an angle throws TypeError
+PASS Setting 'page' to a flexible length throws TypeError
+PASS Setting 'page' to a number throws TypeError
+PASS Setting 'page' to a URL throws TypeError
+PASS Setting 'page' to a transform throws TypeError
 

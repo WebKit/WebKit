@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'counter-increment' to CSS-wide keywords
+FAIL Can set 'counter-increment' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'counter-increment' to the 'none' keyword
+PASS Setting 'counter-increment' to a length throws TypeError
+PASS Setting 'counter-increment' to a percent throws TypeError
+PASS Setting 'counter-increment' to a time throws TypeError
+PASS Setting 'counter-increment' to an angle throws TypeError
+PASS Setting 'counter-increment' to a flexible length throws TypeError
+PASS Setting 'counter-increment' to a number throws TypeError
+PASS Setting 'counter-increment' to a URL throws TypeError
+PASS Setting 'counter-increment' to a transform throws TypeError
+PASS 'counter-increment' does not supported 'chapter'
+PASS 'counter-increment' does not supported 'chapter 3'
 

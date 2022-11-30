@@ -1,6 +1,28 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'background-blend-mode' to CSS-wide keywords
+FAIL Can set 'background-blend-mode' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'background-blend-mode' to the 'normal' keyword
+PASS Can set 'background-blend-mode' to the 'multiply' keyword
+PASS Can set 'background-blend-mode' to the 'screen' keyword
+PASS Can set 'background-blend-mode' to the 'overlay' keyword
+PASS Can set 'background-blend-mode' to the 'darken' keyword
+PASS Can set 'background-blend-mode' to the 'lighten' keyword
+PASS Can set 'background-blend-mode' to the 'color-dodge' keyword
+PASS Can set 'background-blend-mode' to the 'color-burn' keyword
+PASS Can set 'background-blend-mode' to the 'hard-light' keyword
+PASS Can set 'background-blend-mode' to the 'soft-light' keyword
+PASS Can set 'background-blend-mode' to the 'difference' keyword
+PASS Can set 'background-blend-mode' to the 'exclusion' keyword
+PASS Can set 'background-blend-mode' to the 'hue' keyword
+PASS Can set 'background-blend-mode' to the 'saturation' keyword
+PASS Can set 'background-blend-mode' to the 'color' keyword
+PASS Can set 'background-blend-mode' to the 'luminosity' keyword
+PASS Setting 'background-blend-mode' to a length throws TypeError
+PASS Setting 'background-blend-mode' to a percent throws TypeError
+PASS Setting 'background-blend-mode' to a time throws TypeError
+PASS Setting 'background-blend-mode' to an angle throws TypeError
+PASS Setting 'background-blend-mode' to a flexible length throws TypeError
+PASS Setting 'background-blend-mode' to a number throws TypeError
+PASS Setting 'background-blend-mode' to a URL throws TypeError
+PASS Setting 'background-blend-mode' to a transform throws TypeError
 

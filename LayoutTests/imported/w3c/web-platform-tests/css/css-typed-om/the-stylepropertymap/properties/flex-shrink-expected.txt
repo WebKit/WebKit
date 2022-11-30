@@ -1,6 +1,12 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'flex-shrink' to CSS-wide keywords
+FAIL Can set 'flex-shrink' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'flex-shrink' to a number Invalid values
+PASS Setting 'flex-shrink' to a length throws TypeError
+PASS Setting 'flex-shrink' to a percent throws TypeError
+PASS Setting 'flex-shrink' to a time throws TypeError
+PASS Setting 'flex-shrink' to an angle throws TypeError
+PASS Setting 'flex-shrink' to a flexible length throws TypeError
+PASS Setting 'flex-shrink' to a URL throws TypeError
+PASS Setting 'flex-shrink' to a transform throws TypeError
 

@@ -17,7 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-serialization/cssImageValue.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-serialization/cssKeywordValue.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-serialization/cssMathValue.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-serialization/cssPositionValue.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-serialization/cssStyleValue-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-serialization/cssStyleValue-string.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-serialization/cssTransformValue.tentative.html

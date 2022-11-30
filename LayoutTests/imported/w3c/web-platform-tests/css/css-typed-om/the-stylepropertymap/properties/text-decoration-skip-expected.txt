@@ -1,6 +1,20 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'text-decoration-skip' to CSS-wide keywords
+FAIL Can set 'text-decoration-skip' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'text-decoration-skip' to the 'none' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'text-decoration-skip' to the 'objects' keyword Bad value for shorthand CSS property
+FAIL Can set 'text-decoration-skip' to the 'edges' keyword Bad value for shorthand CSS property
+FAIL Can set 'text-decoration-skip' to the 'box-decoration' keyword Bad value for shorthand CSS property
+FAIL Can set 'text-decoration-skip' to the 'spaces' keyword Bad value for shorthand CSS property
+PASS Setting 'text-decoration-skip' to a length throws TypeError
+PASS Setting 'text-decoration-skip' to a percent throws TypeError
+PASS Setting 'text-decoration-skip' to a time throws TypeError
+PASS Setting 'text-decoration-skip' to an angle throws TypeError
+PASS Setting 'text-decoration-skip' to a flexible length throws TypeError
+PASS Setting 'text-decoration-skip' to a number throws TypeError
+PASS Setting 'text-decoration-skip' to a URL throws TypeError
+PASS Setting 'text-decoration-skip' to a transform throws TypeError
+FAIL 'text-decoration-skip' does not supported 'objects spaces' assert_not_equals: Unsupported value must not be null got disallowed value null
+FAIL 'text-decoration-skip' does not supported 'leading-spaces trailing-spaces' assert_not_equals: Unsupported value must not be null got disallowed value null
+FAIL 'text-decoration-skip' does not supported 'objects edges box-decoration' assert_not_equals: Unsupported value must not be null got disallowed value null
 

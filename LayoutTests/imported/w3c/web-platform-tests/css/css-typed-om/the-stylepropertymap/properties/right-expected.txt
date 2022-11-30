@@ -1,6 +1,13 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'right' to CSS-wide keywords
+FAIL Can set 'right' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'right' to the 'auto' keyword
+FAIL Can set 'right' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'right' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'right' to a time throws TypeError
+PASS Setting 'right' to an angle throws TypeError
+PASS Setting 'right' to a flexible length throws TypeError
+FAIL Setting 'right' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'right' to a URL throws TypeError
+PASS Setting 'right' to a transform throws TypeError
 

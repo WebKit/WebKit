@@ -1,6 +1,8 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
+CONSOLE MESSAGE: Error: '<position>' is not a valid CSS component
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
+Harness Error (FAIL), message = Error: '<position>' is not a valid CSS component
 
+FAIL Can set 'perspective-origin' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'perspective-origin' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'perspective-origin' to the 'none' keyword Bad value for shorthand CSS property
 

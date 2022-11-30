@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'font-language-override' to CSS-wide keywords Invalid property font-language-override
+FAIL Can set 'font-language-override' to var() references Invalid property font-language-override
+FAIL Can set 'font-language-override' to the 'normal' keyword Invalid property font-language-override
+PASS Setting 'font-language-override' to a length throws TypeError
+PASS Setting 'font-language-override' to a percent throws TypeError
+PASS Setting 'font-language-override' to a time throws TypeError
+PASS Setting 'font-language-override' to an angle throws TypeError
+PASS Setting 'font-language-override' to a flexible length throws TypeError
+PASS Setting 'font-language-override' to a number throws TypeError
+PASS Setting 'font-language-override' to a URL throws TypeError
+PASS Setting 'font-language-override' to a transform throws TypeError
+FAIL 'font-language-override' does not supported '"SRB"' Invalid property font-language-override
 

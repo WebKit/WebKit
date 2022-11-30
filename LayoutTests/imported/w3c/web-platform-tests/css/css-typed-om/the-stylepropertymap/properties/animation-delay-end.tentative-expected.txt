@@ -1,0 +1,12 @@
+
+FAIL Can set 'animation-delay-end' to CSS-wide keywords Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to var() references Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to a time Invalid property animation-delay-end
+PASS Setting 'animation-delay-end' to a length throws TypeError
+PASS Setting 'animation-delay-end' to a percent throws TypeError
+PASS Setting 'animation-delay-end' to an angle throws TypeError
+PASS Setting 'animation-delay-end' to a flexible length throws TypeError
+PASS Setting 'animation-delay-end' to a number throws TypeError
+PASS Setting 'animation-delay-end' to a URL throws TypeError
+PASS Setting 'animation-delay-end' to a transform throws TypeError
+

@@ -1,6 +1,16 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'overflow-wrap' to CSS-wide keywords
+FAIL Can set 'overflow-wrap' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'overflow-wrap' to the 'normal' keyword
+PASS Can set 'overflow-wrap' to the 'break-word' keyword
+FAIL Can set 'overflow-wrap' to the 'break-spaces' keyword Invalid values
+PASS Setting 'overflow-wrap' to a length throws TypeError
+PASS Setting 'overflow-wrap' to a percent throws TypeError
+PASS Setting 'overflow-wrap' to a time throws TypeError
+PASS Setting 'overflow-wrap' to an angle throws TypeError
+PASS Setting 'overflow-wrap' to a flexible length throws TypeError
+PASS Setting 'overflow-wrap' to a number throws TypeError
+PASS Setting 'overflow-wrap' to a URL throws TypeError
+PASS Setting 'overflow-wrap' to a transform throws TypeError
+FAIL 'overflow-wrap' does not supported 'break-overflow break-spaces' assert_not_equals: Unsupported value must not be null got disallowed value null
 

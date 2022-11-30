@@ -1,6 +1,58 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'margin-top' to CSS-wide keywords
+FAIL Can set 'margin-top' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'margin-top' to the 'auto' keyword
+FAIL Can set 'margin-top' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'margin-top' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'margin-top' to a time throws TypeError
+PASS Setting 'margin-top' to an angle throws TypeError
+PASS Setting 'margin-top' to a flexible length throws TypeError
+FAIL Setting 'margin-top' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-top' to a URL throws TypeError
+PASS Setting 'margin-top' to a transform throws TypeError
+PASS Can set 'margin-left' to CSS-wide keywords
+FAIL Can set 'margin-left' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'margin-left' to the 'auto' keyword
+FAIL Can set 'margin-left' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'margin-left' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'margin-left' to a time throws TypeError
+PASS Setting 'margin-left' to an angle throws TypeError
+PASS Setting 'margin-left' to a flexible length throws TypeError
+FAIL Setting 'margin-left' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-left' to a URL throws TypeError
+PASS Setting 'margin-left' to a transform throws TypeError
+PASS Can set 'margin-right' to CSS-wide keywords
+FAIL Can set 'margin-right' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'margin-right' to the 'auto' keyword
+FAIL Can set 'margin-right' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'margin-right' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'margin-right' to a time throws TypeError
+PASS Setting 'margin-right' to an angle throws TypeError
+PASS Setting 'margin-right' to a flexible length throws TypeError
+FAIL Setting 'margin-right' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-right' to a URL throws TypeError
+PASS Setting 'margin-right' to a transform throws TypeError
+PASS Can set 'margin-bottom' to CSS-wide keywords
+FAIL Can set 'margin-bottom' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'margin-bottom' to the 'auto' keyword
+FAIL Can set 'margin-bottom' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'margin-bottom' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'margin-bottom' to a time throws TypeError
+PASS Setting 'margin-bottom' to an angle throws TypeError
+PASS Setting 'margin-bottom' to a flexible length throws TypeError
+FAIL Setting 'margin-bottom' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-bottom' to a URL throws TypeError
+PASS Setting 'margin-bottom' to a transform throws TypeError
+FAIL Can set 'margin' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'margin' to var() references assert_equals: expected 2 but got 1
+FAIL Setting 'margin' to a length throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+FAIL Setting 'margin' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin' to a time throws TypeError
+PASS Setting 'margin' to an angle throws TypeError
+PASS Setting 'margin' to a flexible length throws TypeError
+FAIL Setting 'margin' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin' to a URL throws TypeError
+PASS Setting 'margin' to a transform throws TypeError
+PASS 'margin' does not supported '1px'
+PASS 'margin' does not supported '1px 2px 3px 4px'
 

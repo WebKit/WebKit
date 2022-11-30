@@ -1,6 +1,23 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-variant-numeric' to CSS-wide keywords
+FAIL Can set 'font-variant-numeric' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-variant-numeric' to the 'normal' keyword
+PASS Can set 'font-variant-numeric' to the 'lining-nums' keyword
+PASS Can set 'font-variant-numeric' to the 'oldstyle-nums' keyword
+PASS Can set 'font-variant-numeric' to the 'proportional-nums' keyword
+PASS Can set 'font-variant-numeric' to the 'tabular-nums' keyword
+PASS Can set 'font-variant-numeric' to the 'diagonal-fractions' keyword
+PASS Can set 'font-variant-numeric' to the 'stacked-fractions' keyword
+PASS Can set 'font-variant-numeric' to the 'ordinal' keyword
+PASS Can set 'font-variant-numeric' to the 'slashed-zero' keyword
+PASS Setting 'font-variant-numeric' to a length throws TypeError
+PASS Setting 'font-variant-numeric' to a percent throws TypeError
+PASS Setting 'font-variant-numeric' to a time throws TypeError
+PASS Setting 'font-variant-numeric' to an angle throws TypeError
+PASS Setting 'font-variant-numeric' to a flexible length throws TypeError
+PASS Setting 'font-variant-numeric' to a number throws TypeError
+PASS Setting 'font-variant-numeric' to a URL throws TypeError
+PASS Setting 'font-variant-numeric' to a transform throws TypeError
+FAIL 'font-variant-numeric' does not supported 'lining-nums ordinal' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL 'font-variant-numeric' does not supported 'oldstyle-nums tabular-nums stacked-fractions ordinal slashed-zero' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
 

@@ -1,0 +1,12 @@
+
+FAIL Can set 'animation-delay-start' to CSS-wide keywords Invalid property animation-delay-start
+FAIL Can set 'animation-delay-start' to var() references Invalid property animation-delay-start
+FAIL Can set 'animation-delay-start' to a time Invalid property animation-delay-start
+PASS Setting 'animation-delay-start' to a length throws TypeError
+PASS Setting 'animation-delay-start' to a percent throws TypeError
+PASS Setting 'animation-delay-start' to an angle throws TypeError
+PASS Setting 'animation-delay-start' to a flexible length throws TypeError
+PASS Setting 'animation-delay-start' to a number throws TypeError
+PASS Setting 'animation-delay-start' to a URL throws TypeError
+PASS Setting 'animation-delay-start' to a transform throws TypeError
+

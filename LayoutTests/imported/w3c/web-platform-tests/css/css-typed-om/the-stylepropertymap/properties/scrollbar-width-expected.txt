@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'scrollbar-width' to CSS-wide keywords Invalid property scrollbar-width
+FAIL Can set 'scrollbar-width' to var() references Invalid property scrollbar-width
+FAIL Can set 'scrollbar-width' to the 'auto' keyword Invalid property scrollbar-width
+FAIL Can set 'scrollbar-width' to the 'thin' keyword Invalid property scrollbar-width
+FAIL Can set 'scrollbar-width' to the 'none' keyword Invalid property scrollbar-width
+PASS Setting 'scrollbar-width' to a length throws TypeError
+PASS Setting 'scrollbar-width' to a percent throws TypeError
+PASS Setting 'scrollbar-width' to a time throws TypeError
+PASS Setting 'scrollbar-width' to an angle throws TypeError
+PASS Setting 'scrollbar-width' to a flexible length throws TypeError
+PASS Setting 'scrollbar-width' to a number throws TypeError
+PASS Setting 'scrollbar-width' to a URL throws TypeError
+PASS Setting 'scrollbar-width' to a transform throws TypeError
 

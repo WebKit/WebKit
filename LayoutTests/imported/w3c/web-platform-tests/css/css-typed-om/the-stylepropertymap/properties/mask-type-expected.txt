@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'mask-type' to CSS-wide keywords
+FAIL Can set 'mask-type' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'mask-type' to the 'luminance' keyword
+PASS Can set 'mask-type' to the 'alpha' keyword
+PASS Setting 'mask-type' to a length throws TypeError
+PASS Setting 'mask-type' to a percent throws TypeError
+PASS Setting 'mask-type' to a time throws TypeError
+PASS Setting 'mask-type' to an angle throws TypeError
+PASS Setting 'mask-type' to a flexible length throws TypeError
+PASS Setting 'mask-type' to a number throws TypeError
+PASS Setting 'mask-type' to a URL throws TypeError
+PASS Setting 'mask-type' to a transform throws TypeError
 

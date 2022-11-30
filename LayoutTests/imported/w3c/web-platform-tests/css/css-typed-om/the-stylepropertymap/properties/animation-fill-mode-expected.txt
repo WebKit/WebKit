@@ -1,6 +1,16 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'animation-fill-mode' to CSS-wide keywords
+FAIL Can set 'animation-fill-mode' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'animation-fill-mode' to the 'none' keyword
+PASS Can set 'animation-fill-mode' to the 'forwards' keyword
+PASS Can set 'animation-fill-mode' to the 'backwards' keyword
+PASS Can set 'animation-fill-mode' to the 'both' keyword
+PASS Setting 'animation-fill-mode' to a length throws TypeError
+PASS Setting 'animation-fill-mode' to a percent throws TypeError
+PASS Setting 'animation-fill-mode' to a time throws TypeError
+PASS Setting 'animation-fill-mode' to an angle throws TypeError
+PASS Setting 'animation-fill-mode' to a flexible length throws TypeError
+PASS Setting 'animation-fill-mode' to a number throws TypeError
+PASS Setting 'animation-fill-mode' to a URL throws TypeError
+PASS Setting 'animation-fill-mode' to a transform throws TypeError
 

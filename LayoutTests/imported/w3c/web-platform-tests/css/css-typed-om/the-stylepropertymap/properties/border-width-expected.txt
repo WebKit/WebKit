@@ -1,6 +1,54 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'border-top-width' to CSS-wide keywords
+FAIL Can set 'border-top-width' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-top-width' to the 'thin' keyword
+PASS Can set 'border-top-width' to the 'medium' keyword
+PASS Can set 'border-top-width' to the 'thick' keyword
+FAIL Can set 'border-top-width' to a length Invalid values
+PASS Setting 'border-top-width' to a percent throws TypeError
+PASS Setting 'border-top-width' to a time throws TypeError
+PASS Setting 'border-top-width' to an angle throws TypeError
+PASS Setting 'border-top-width' to a flexible length throws TypeError
+FAIL Setting 'border-top-width' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-top-width' to a URL throws TypeError
+PASS Setting 'border-top-width' to a transform throws TypeError
+PASS Can set 'border-left-width' to CSS-wide keywords
+FAIL Can set 'border-left-width' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-left-width' to the 'thin' keyword
+PASS Can set 'border-left-width' to the 'medium' keyword
+PASS Can set 'border-left-width' to the 'thick' keyword
+FAIL Can set 'border-left-width' to a length Invalid values
+PASS Setting 'border-left-width' to a percent throws TypeError
+PASS Setting 'border-left-width' to a time throws TypeError
+PASS Setting 'border-left-width' to an angle throws TypeError
+PASS Setting 'border-left-width' to a flexible length throws TypeError
+FAIL Setting 'border-left-width' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-left-width' to a URL throws TypeError
+PASS Setting 'border-left-width' to a transform throws TypeError
+PASS Can set 'border-right-width' to CSS-wide keywords
+FAIL Can set 'border-right-width' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-right-width' to the 'thin' keyword
+PASS Can set 'border-right-width' to the 'medium' keyword
+PASS Can set 'border-right-width' to the 'thick' keyword
+FAIL Can set 'border-right-width' to a length Invalid values
+PASS Setting 'border-right-width' to a percent throws TypeError
+PASS Setting 'border-right-width' to a time throws TypeError
+PASS Setting 'border-right-width' to an angle throws TypeError
+PASS Setting 'border-right-width' to a flexible length throws TypeError
+FAIL Setting 'border-right-width' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-right-width' to a URL throws TypeError
+PASS Setting 'border-right-width' to a transform throws TypeError
+PASS Can set 'border-bottom-width' to CSS-wide keywords
+FAIL Can set 'border-bottom-width' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-bottom-width' to the 'thin' keyword
+PASS Can set 'border-bottom-width' to the 'medium' keyword
+PASS Can set 'border-bottom-width' to the 'thick' keyword
+FAIL Can set 'border-bottom-width' to a length Invalid values
+PASS Setting 'border-bottom-width' to a percent throws TypeError
+PASS Setting 'border-bottom-width' to a time throws TypeError
+PASS Setting 'border-bottom-width' to an angle throws TypeError
+PASS Setting 'border-bottom-width' to a flexible length throws TypeError
+FAIL Setting 'border-bottom-width' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-bottom-width' to a URL throws TypeError
+PASS Setting 'border-bottom-width' to a transform throws TypeError
 

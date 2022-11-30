@@ -1,7 +1,0 @@
-
-FAIL CSSPositionValue with length and percent serializes by concantenating x and y Can't find variable: CSSPositionValue
-FAIL CSSPositionValue from DOMString modified by "x" setter serializes to its new value assert_equals: expected "-3.14% 1px" but got "1px"
-FAIL CSSPositionValue from DOMString modified by "y" setter serializes to its new value assert_equals: expected "1px -3.14%" but got "1px"
-FAIL CSSPositionValue from CSSOM modified by "x" setter serializes to its new value assert_equals: expected "-3.14% 1px" but got "1px"
-FAIL CSSPositionValue from CSSOM modified by "y" setter serializes to its new value assert_equals: expected "1px -3.14%" but got "1px"
-
