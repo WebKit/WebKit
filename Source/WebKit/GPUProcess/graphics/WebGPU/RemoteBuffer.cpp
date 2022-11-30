@@ -69,6 +69,16 @@ void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU:
     });
 }
 
+void RemoteBuffer::getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+{
+    auto mappedRange = m_backing->getMappedRange(offset, size);
+    m_mappedRange = mappedRange;
+    m_mapModeFlags = { PAL::WebGPU::MapMode::Write };
+    m_isMapped = true;
+
+    callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
+}
+
 void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 {
     if (!m_mappedRange)
@@ -78,6 +88,7 @@ void RemoteBuffer::unmap(Vector<uint8_t>&& data)
     if (m_mapModeFlags.contains(PAL::WebGPU::MapMode::Write))
         memcpy(m_mappedRange->source, data.data(), data.size());
 
+    m_backing->unmap();
     m_isMapped = false;
     m_mappedRange = std::nullopt;
     m_mapModeFlags = { };

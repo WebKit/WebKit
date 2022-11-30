@@ -47,12 +47,21 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
 
 Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
-    auto mappedRange = m_backing->getMappedRange(offset.value_or(0), size);
-    return ArrayBuffer::create(mappedRange.source, mappedRange.byteLength);
+    // size is <= the size of the buffer is validated in WebGPU.framework
+    m_mappedRange = m_backing->getMappedRange(offset.value_or(0), size);
+    auto arrayBuffer = ArrayBuffer::create(m_mappedRange.source, m_mappedRange.byteLength);
+    m_arrayBuffer = arrayBuffer.ptr();
+
+    return arrayBuffer;
 }
 
 void GPUBuffer::unmap()
 {
+    if (m_arrayBuffer) {
+        memcpy(m_mappedRange.source, m_arrayBuffer->data(), m_mappedRange.byteLength);
+        m_arrayBuffer = nullptr;
+    }
+
     m_backing->unmap();
 }
 

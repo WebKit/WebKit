@@ -163,10 +163,9 @@ void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
 
 void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    UNUSED_PARAM(groupIndex);
-    UNUSED_PARAM(group);
     UNUSED_PARAM(dynamicOffsetCount);
     UNUSED_PARAM(dynamicOffsets);
+    [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 
 void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
@@ -208,20 +207,13 @@ void RenderPassEncoder::setStencilReference(uint32_t reference)
 
 void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, uint64_t offset, uint64_t size)
 {
-    UNUSED_PARAM(slot);
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(offset);
     UNUSED_PARAM(size);
+    [m_renderCommandEncoder setVertexBuffer:buffer.buffer() offset:offset atIndex:slot];
 }
 
 void RenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)
 {
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(minDepth);
-    UNUSED_PARAM(maxDepth);
+    [m_renderCommandEncoder setViewport: { x, y, width, height, minDepth, maxDepth } ];
 }
 
 void RenderPassEncoder::setLabel(String&& label)
