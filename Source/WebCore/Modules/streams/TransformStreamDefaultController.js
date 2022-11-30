@@ -39,7 +39,7 @@ function desiredSize()
         throw @makeThisTypeError("TransformStreamDefaultController", "enqueue");
 
     const stream = @getByIdDirectPrivate(this, "stream");
-    const readable = @getByIdDirectPrivate(stream, "readable");
+    const readable = @getByIdDirectPrivate(stream, "internalReadable");
     const readableController = @getByIdDirectPrivate(readable, "readableStreamController");
 
     return @readableStreamDefaultControllerGetDesiredSize(readableController);

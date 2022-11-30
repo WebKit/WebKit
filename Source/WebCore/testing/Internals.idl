@@ -890,7 +890,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setShowAllPlugins(boolean showAll);
 
     [CallWith=CurrentGlobalObject] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
-    [CallWith=CurrentGlobalObject] boolean isReadableStreamDisturbed(any stream);
+    boolean isReadableStreamDisturbed(ReadableStream stream);
 
     DOMString resourceLoadStatisticsForURL(DOMURL url);
     undefined setTrackingPreventionEnabled(boolean enable);

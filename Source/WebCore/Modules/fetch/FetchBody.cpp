@@ -65,9 +65,9 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
         Ref<const ArrayBufferView> buffer = value.releaseNonNull();
         return FetchBody(WTFMove(buffer));
     }, [&](RefPtr<ReadableStream>& stream) mutable -> ExceptionOr<FetchBody> {
-        if (stream->isDisturbed())
+        if (stream->disturbed())
             return Exception { TypeError, "Input body is disturbed."_s };
-        if (stream->isLocked())
+        if (stream->locked())
             return Exception { TypeError, "Input body is locked."_s };
 
         return FetchBody(stream.releaseNonNull());
@@ -314,10 +314,12 @@ FetchBody FetchBody::clone()
     else if (isURLSearchParams())
         clone.m_data = urlSearchParamsBody();
     else if (m_readableStream) {
-        auto clones = m_readableStream->tee();
-        if (clones) {
-            m_readableStream = WTFMove(clones->first);
-            clone.m_readableStream = WTFMove(clones->second);
+        auto clones = m_readableStream->tee(true);
+        ASSERT(!clones.hasException());
+        if (!clones.hasException()) {
+            auto pair = clones.releaseReturnValue();
+            m_readableStream = WTFMove(pair[0]);
+            clone.m_readableStream = WTFMove(pair[1]);
         }
     }
     return clone;

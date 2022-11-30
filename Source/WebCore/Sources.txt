@@ -301,6 +301,7 @@ Modules/speech/SpeechSynthesisUtterance.cpp
 Modules/speech/SpeechSynthesisVoice.cpp
 Modules/storage/StorageManager.cpp
 Modules/storage/WorkerStorageConnection.cpp
+Modules/streams/ReadableStream.cpp
 Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
 Modules/streams/WritableStream.cpp
@@ -513,6 +514,7 @@ bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
+bindings/js/InternalReadableStream.cpp
 bindings/js/InternalWritableStream.cpp
 bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSAbstractRangeCustom.cpp
@@ -653,7 +655,6 @@ bindings/js/JSWorkletGlobalScopeBase.cpp
 bindings/js/JSXMLDocumentCustom.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/JSXPathResultCustom.cpp
-bindings/js/ReadableStream.cpp
 bindings/js/ReadableStreamDefaultController.cpp
 bindings/js/ScheduledAction.cpp
 bindings/js/ScriptCachedFrameData.cpp
