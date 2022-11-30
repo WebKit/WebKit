@@ -423,6 +423,28 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     return result;
 }
 
+bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
+{
+    if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    auto iterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
+    if (iterator == m_allowedFirstPartiesForCookies.end()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    if (!decltype(iterator->value)::isValidValue(firstPartyDomain)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    auto result = iterator->value.contains(firstPartyDomain);
+    ASSERT(result);
+    return result;
+}
+
 void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)
 {
     if (auto* session = networkSession(sessionID)) {

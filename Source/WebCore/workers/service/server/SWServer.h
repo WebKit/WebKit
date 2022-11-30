@@ -133,7 +133,7 @@ public:
     using SoftUpdateCallback = Function<void(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&&, CompletionHandler<void(WorkerFetchResult&&)>&&)>;
     using CreateContextConnectionCallback = Function<void(const RegistrableDomain&, std::optional<ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&)>;
     using AppBoundDomainsCallback = Function<void(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&)>;
-    using AddAllowedFirstPartyForCookiesCallback = Function<void(ProcessIdentifier, WebCore::RegistrableDomain&&)>;
+    using AddAllowedFirstPartyForCookiesCallback = Function<void(ProcessIdentifier, std::optional<ProcessIdentifier> requestingProcessIdentifier, WebCore::RegistrableDomain&&)>;
     WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, SoftUpdateCallback&&, CreateContextConnectionCallback&&, AppBoundDomainsCallback&&, AddAllowedFirstPartyForCookiesCallback&&);
 
     WEBCORE_EXPORT ~SWServer();
@@ -157,9 +157,9 @@ public:
     void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved);
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
     void startScriptFetch(const ServiceWorkerJobData&, SWServerRegistration&);
-    void refreshImportedScripts(const ServiceWorkerJobData&, SWServerRegistration&, const Vector<URL>&);
+    void refreshImportedScripts(const ServiceWorkerJobData&, SWServerRegistration&, const Vector<URL>&, const std::optional<ProcessIdentifier>&);
 
-    void updateWorker(const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, const String& referrerPolicy, WorkerType, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
+    void updateWorker(const ServiceWorkerJobDataIdentifier&, const std::optional<ProcessIdentifier>&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, const String& referrerPolicy, WorkerType, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
 
@@ -180,7 +180,7 @@ public:
 
     SWOriginStore& originStore() { return m_originStore; }
 
-    void refreshImportedScriptsFinished(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const Vector<std::pair<URL, ScriptBuffer>>&);
+    void refreshImportedScriptsFinished(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const Vector<std::pair<URL, ScriptBuffer>>&, const std::optional<ProcessIdentifier>&);
     void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, const String& message);
     void scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&);
     void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, bool wasSuccessful);
@@ -262,7 +262,7 @@ private:
     bool allowLoopbackIPAddress(const String&);
     void validateRegistrationDomain(RegistrableDomain, ServiceWorkerJobType, bool, CompletionHandler<void(bool)>&&);
 
-    void scriptFetchFinished(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, WorkerFetchResult&&);
+    void scriptFetchFinished(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const std::optional<ProcessIdentifier>&, WorkerFetchResult&&);
 
     void didResolveRegistrationPromise(Connection*, const ServiceWorkerRegistrationKey&);
 
@@ -274,7 +274,7 @@ private:
     WEBCORE_EXPORT SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL);
     bool runServiceWorker(ServiceWorkerIdentifier);
 
-    void tryInstallContextData(ServiceWorkerContextData&&);
+    void tryInstallContextData(const std::optional<ProcessIdentifier>&, ServiceWorkerContextData&&);
     void installContextData(const ServiceWorkerContextData&);
 
     SWServerRegistration* registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);
