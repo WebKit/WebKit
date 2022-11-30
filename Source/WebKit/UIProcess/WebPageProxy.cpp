@@ -6229,10 +6229,20 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
         userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
 
     bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
+    auto newPageDomain = RegistrableDomain { request.url() };
+    auto currentDomain = RegistrableDomain { mainFrameURL };
     auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
-    trySOAuthorization(WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = Ref { *this }, windowFeatures = WTFMove(windowFeatures)] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
-        m_uiClient->createNewPage(*this, WTFMove(windowFeatures), WTFMove(navigationAction), WTFMove(completionHandler));
+    trySOAuthorization(WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = Ref { *this }, windowFeatures = WTFMove(windowFeatures), frameID = *originatingFrameInfoData.frameID, newPageDomain = WTFMove(newPageDomain), currentDomain = WTFMove(currentDomain)] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
+        if (currentDomain != newPageDomain) {
+            m_uiClient->requestCrossSitePopup(*this, WebFrameProxy::webFrame(frameID), currentDomain, newPageDomain, [this, protectedThis = Ref { *this }, windowFeatures = WTFMove(windowFeatures), navigationAction = WTFMove(navigationAction), completionHandler = WTFMove(completionHandler)](bool ok) mutable {
+                if (ok)
+                    m_uiClient->createNewPage(*this, WTFMove(windowFeatures), WTFMove(navigationAction), WTFMove(completionHandler));
+                else
+                    completionHandler(nullptr);
+            });
+        } else
+            m_uiClient->createNewPage(*this, WTFMove(windowFeatures), WTFMove(navigationAction), WTFMove(completionHandler));
     });
 }
     

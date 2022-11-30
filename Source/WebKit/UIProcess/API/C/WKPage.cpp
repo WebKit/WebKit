@@ -129,7 +129,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17, WKPageUIClientV18, WKPageUIClientV19> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17, WKPageUIClientV18, WKPageUIClientV19, WKPageUIClientV20> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1503,11 +1503,37 @@ private:
     CompletionHandler<void(bool)> m_completionHandler;
 };
 
+class RequestCrossSitePopupResultListener : public API::ObjectImpl<API::Object::Type::RequestCrossSitePopupResultListener> {
+public:
+    static Ref<RequestCrossSitePopupResultListener> create(CompletionHandler<void(bool)>&& completionHandler)
+    {
+        return adoptRef(*new RequestCrossSitePopupResultListener(WTFMove(completionHandler)));
+    }
+
+    virtual ~RequestCrossSitePopupResultListener()
+    {
+    }
+
+    void call(bool result)
+    {
+        m_completionHandler(result);
+    }
+
+private:
+    explicit RequestCrossSitePopupResultListener(CompletionHandler<void(bool)>&& completionHandler)
+        : m_completionHandler(WTFMove(completionHandler))
+    {
+    }
+
+    CompletionHandler<void(bool)> m_completionHandler;
+};
+
 WK_ADD_API_MAPPING(WKPageRunBeforeUnloadConfirmPanelResultListenerRef, RunBeforeUnloadConfirmPanelResultListener)
 WK_ADD_API_MAPPING(WKPageRunJavaScriptAlertResultListenerRef, RunJavaScriptAlertResultListener)
 WK_ADD_API_MAPPING(WKPageRunJavaScriptConfirmResultListenerRef, RunJavaScriptConfirmResultListener)
 WK_ADD_API_MAPPING(WKPageRunJavaScriptPromptResultListenerRef, RunJavaScriptPromptResultListener)
 WK_ADD_API_MAPPING(WKPageRequestStorageAccessConfirmResultListenerRef, RequestStorageAccessConfirmResultListener)
+WK_ADD_API_MAPPING(WKPageRequestCrossSitePopupResultListenerRef, RequestCrossSitePopupResultListener)
 
 }
 
@@ -1557,6 +1583,16 @@ WKTypeID WKPageRequestStorageAccessConfirmResultListenerGetTypeID()
 }
 
 void WKPageRequestStorageAccessConfirmResultListenerCall(WKPageRequestStorageAccessConfirmResultListenerRef listener, bool result)
+{
+    toImpl(listener)->call(result);
+}
+
+WKTypeID WKPageRequestCrossSitePopupResultListenerGetTypeID()
+{
+    return toAPI(RequestStorageAccessConfirmResultListener::APIType);
+}
+
+void WKPageRequestCrossSitePopupResultListenerCall(WKPageRequestCrossSitePopupResultListenerRef listener, bool result)
 {
     toImpl(listener)->call(result);
 }
@@ -1946,6 +1982,15 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return completionHandler(false);
 
             m_client.decidePolicyForNotificationPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(NotificationPermissionRequest::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
+        }
+
+        void requestCrossSitePopup(WebKit::WebPageProxy& page, WebKit::WebFrameProxy* frame, const WebCore::RegistrableDomain& newPageDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&& completionHandler)
+        {
+            if (!m_client.requestCrossSitePopup)
+                completionHandler(true);
+
+            auto listener = RequestCrossSitePopupResultListener::create(WTFMove(completionHandler));
+            m_client.requestCrossSitePopup(toAPI(&page), toAPI(frame), toAPI(newPageDomain.string().impl()), toAPI(currentDomain.string().impl()), toAPI(listener.ptr()), m_client.base.clientInfo);
         }
 
         void requestStorageAccessConfirm(WebPageProxy& page, WebFrameProxy* frame, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&& completionHandler) final
