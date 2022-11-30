@@ -155,9 +155,9 @@ InlineLevelBox::LayoutBounds LineBoxBuilder::adjustedLayoutBoundsWithFallbackFon
         InlineLayoutUnit descent = fontMetrics.descent(fontBaseline);
         if (shouldUseLineGapToAdjustAscentDescent) {
             auto logicalHeight = ascent + descent;
-            auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
-            ascent = ascent + halfLineGap;
-            descent = descent + halfLineGap;
+            auto halfLeading = (fontMetrics.lineSpacing() - logicalHeight) / 2;
+            ascent = ascent + halfLeading;
+            descent = descent + halfLeading;
         }
         maxAscent = std::max(maxAscent, ascent);
         maxDescent = std::max(maxDescent, descent);
@@ -200,7 +200,7 @@ struct AscentAndDescent {
 };
 struct TextMetrics {
     AscentAndDescent ascentAndDescent { };
-    InlineLayoutUnit lineSpacing { 0 };
+    InlineLayoutUnit lineGap { 0 };
     std::optional<InlineLayoutUnit> preferredLineHeight { };
 };
 static TextMetrics primaryFontMetricsForInlineBox(const InlineLevelBox& inlineBox, FontBaseline fontBaseline = AlphabeticBaseline)
@@ -209,8 +209,8 @@ static TextMetrics primaryFontMetricsForInlineBox(const InlineLevelBox& inlineBo
     auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
     InlineLayoutUnit ascent = fontMetrics.ascent(fontBaseline);
     InlineLayoutUnit descent = fontMetrics.descent(fontBaseline);
-    InlineLayoutUnit lineSpacing = fontMetrics.lineSpacing();
-    return { { ascent, descent }, lineSpacing, inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight()) };
+    InlineLayoutUnit lineGap = fontMetrics.lineSpacing();
+    return { { ascent, descent }, lineGap, inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight()) };
 }
 
 void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineBox, InlineLevelBox& inlineLevelBox) const
@@ -232,7 +232,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
             halfLeading = (*textMetrics.preferredLineHeight - logicalHeight) / 2;
         } else {
             // Preferred line height is purely font metrics based (i.e glyphs stretch the line).
-            halfLeading = (textMetrics.lineSpacing - logicalHeight) / 2;
+            halfLeading = (textMetrics.lineGap - logicalHeight) / 2;
         }
         inlineLevelBox.setLayoutBounds({ floorf(textMetrics.ascentAndDescent.ascent + halfLeading), ceilf(textMetrics.ascentAndDescent.descent + halfLeading) });
     };
@@ -461,7 +461,7 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(const L
 
             auto primaryTextMetrics = primaryFontMetricsForInlineBox(inlineBox, lineBox.baselineType());
             auto logicalHeight = primaryTextMetrics.ascentAndDescent.ascent + primaryTextMetrics.ascentAndDescent.descent;
-            auto halfLeading = (primaryTextMetrics.lineSpacing - logicalHeight) / 2;
+            auto halfLeading = (primaryTextMetrics.lineGap - logicalHeight) / 2;
             auto ascent = primaryTextMetrics.ascentAndDescent.ascent + halfLeading;
             auto descent = primaryTextMetrics.ascentAndDescent.descent + halfLeading;
             if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineBox); !fallbackFonts.isEmpty()) {
