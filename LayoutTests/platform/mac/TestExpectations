@@ -1356,6 +1356,10 @@ webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/win
 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
 
+# fetch ORB image tests which fail
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-mislabeled-as-html.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-unlabeled.sub.html [ ImageOnlyFailure ]
+
 webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]
 
 webkit.org/b/177388 inspector/canvas/shaderProgram-add-remove-webgl.html [ Pass Failure ]

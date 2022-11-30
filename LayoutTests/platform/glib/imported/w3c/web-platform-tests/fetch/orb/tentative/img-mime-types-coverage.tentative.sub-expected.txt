@@ -1,0 +1,66 @@
+
+PASS ORB should allow the response if Content-Type is: 'text/css'.
+PASS ORB should allow the response if Content-Type is: 'image/svg+xml'.
+PASS ORB should allow the response if Content-Type is: 'application/ecmascript'.
+PASS ORB should allow the response if Content-Type is: 'application/javascript'.
+PASS ORB should allow the response if Content-Type is: 'application/x-ecmascript'.
+PASS ORB should allow the response if Content-Type is: 'application/x-javascript'.
+PASS ORB should allow the response if Content-Type is: 'text/ecmascript'.
+PASS ORB should allow the response if Content-Type is: 'text/javascript'.
+PASS ORB should allow the response if Content-Type is: 'text/javascript1.0'.
+PASS ORB should allow the response if Content-Type is: 'text/javascript1.1'.
+PASS ORB should allow the response if Content-Type is: 'text/javascript1.2'.
+PASS ORB should allow the response if Content-Type is: 'text/javascript1.3'.
+PASS ORB should allow the response if Content-Type is: 'text/javascript1.4'.
+PASS ORB should allow the response if Content-Type is: 'text/javascript1.5'.
+PASS ORB should allow the response if Content-Type is: 'text/jscript'.
+PASS ORB should allow the response if Content-Type is: 'text/livescript'.
+PASS ORB should allow the response if Content-Type is: 'text/x-ecmascript'.
+PASS ORB should allow the response if Content-Type is: 'text/x-javascript'.
+FAIL ORB should block the response if Content-Type is: 'text/html'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/json'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'text/json'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/ld+json'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'text/xml'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/xml'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/xhtml+xml'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/dash+xml'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/gzip'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/msexcel'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/mspowerpoint'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/msword'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/msword-template'.   assert_unreached: Unexpected load event Reached unreachable code
+PASS ORB should block the response if Content-Type is: 'application/pdf'.
+FAIL ORB should block the response if Content-Type is: 'application/vnd.apple.mpegurl'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ces-quickpoint'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ces-quicksheet'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ces-quickword'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ms-excel'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ms-excel.sheet.macroenabled.12'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ms-powerpoint'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ms-powerpoint.presentation.macroenabled.12'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ms-word'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ms-word.document.12'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.ms-word.document.macroenabled.12'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.msword'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.presentationml.template'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.spreadsheetml.template'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.wordprocessingml.template'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.presentation-openxml'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.presentation-openxmlm'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.spreadsheet-openxml'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/vnd.wordprocessing-openxml'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/x-gzip'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/x-protobuf'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/x-protobuffer'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'application/zip'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'audio/mpegurl'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'multipart/byteranges'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'multipart/signed'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'text/event-stream'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'text/csv'.   assert_unreached: Unexpected load event Reached unreachable code
+FAIL ORB should block the response if Content-Type is: 'text/vtt'.   assert_unreached: Unexpected load event Reached unreachable code
+

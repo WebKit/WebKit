@@ -9,7 +9,8 @@ PASS response.formData() rejects if already aborted
 PASS response.json() rejects if already aborted
 PASS response.text() rejects if already aborted
 PASS Stream errors once aborted.
-FAIL fetch() rejects with abort reason promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'promise.then.bind')"
+FAIL fetch() rejects with abort reason promise_rejects_exactly: function "function () { throw e }" threw object "AbortError: Fetch is aborted" but we expected it to throw object "error1: error1"
+FAIL fetch() response body has abort reason assert_unreached: Should have rejected: undefined Reached unreachable code
 TIMEOUT Service Worker can observe the fetch abort and associated abort reason Test timed out
 NOTRUN Abort reason serialization happens on abort
 

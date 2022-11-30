@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.js

@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/README.md
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/fetch.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/fetch.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/mixed-content-fetch.tentative.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/nested-worker.https.window.js
