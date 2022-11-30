@@ -58,6 +58,11 @@ public:
         return GridSpan(0, 1, Indefinite);
     }
 
+    static GridSpan masonryAxisTranslatedDefiniteGridSpan()
+    {
+        return GridSpan(0, 1, TranslatedDefinite);
+    }
+
     bool operator==(const GridSpan& o) const
     {
         return m_type == o.m_type && m_startLine == o.m_startLine && m_endLine == o.m_endLine;

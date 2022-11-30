@@ -2400,6 +2400,7 @@ rendering/FloatingObjects.cpp
 rendering/Grid.cpp
 rendering/GridBaselineAlignment.cpp
 rendering/GridLayoutFunctions.cpp
+rendering/GridMasonryLayout.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/GlyphDisplayListCache.cpp
 rendering/HighlightData.cpp
