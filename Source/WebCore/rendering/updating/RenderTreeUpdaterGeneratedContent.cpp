@@ -27,6 +27,7 @@
 #include "RenderTreeUpdaterGeneratedContent.h"
 
 #include "ContentData.h"
+#include "HTMLDialogElement.h"
 #include "InspectorInstrumentation.h"
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
@@ -193,9 +194,11 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
         newBackdropRenderer->initializeStyle();
         renderer.setBackdropRenderer(*newBackdropRenderer.get());
 
-        // Use the renderer as parent when we can for hit-testing purposes.
-        RenderElement& parentRenderer = renderer.canHaveGeneratedChildren() ? renderer : renderer.view();
-        m_updater.m_builder.attach(parentRenderer, WTFMove(newBackdropRenderer), parentRenderer.lastChild());
+        // For hit-testing purposes, ::backdrop on <dialog> is appended as a child.
+        // FIXME: Make this consistent in webkit.org/b/248551.
+        bool shouldUseDialogAsParent = is<HTMLDialogElement>(renderer.element()) && renderer.canHaveGeneratedChildren();
+        RenderElement& parent = shouldUseDialogAsParent ? renderer : renderer.view();
+        m_updater.m_builder.attach(parent, WTFMove(newBackdropRenderer), parent.lastChild());
     }
 }
 
