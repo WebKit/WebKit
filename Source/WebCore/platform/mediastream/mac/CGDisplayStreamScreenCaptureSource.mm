@@ -132,6 +132,7 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
     ASSERT(frameRate());
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame rate ", frameRate(), ", size ", width, "x", height);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSDictionary* streamOptions = @{
         (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
         (__bridge NSString *)kCGDisplayStreamQueueDepth : @(screenQueueMaximumLength),
@@ -139,7 +140,9 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
         (__bridge NSString *)kCGDisplayStreamShowCursor : @YES,
     };
 
-    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width, height, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, captureQueue(), frameAvailableHandler()));
+    auto stream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width, height, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, captureQueue(), frameAvailableHandler()));
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    return stream;
 }
 
 IntSize CGDisplayStreamScreenCaptureSource::intrinsicSize() const
