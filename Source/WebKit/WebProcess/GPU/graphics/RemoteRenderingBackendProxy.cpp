@@ -110,16 +110,16 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_streamConnection = nullptr;
 }
 
-RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
+bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (!streamConnection().waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives))
-        return DidReceiveBackendCreationResult::TimeoutOrIPCFailure;
-    return DidReceiveBackendCreationResult::ReceivedAnyResponse;
-}
-
-bool RemoteRenderingBackendProxy::waitForDidFlush()
-{
-    return streamConnection().waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    if (decoder.messageReceiverName() == Messages::RemoteImageBufferProxy::messageReceiverName()) {
+        auto* buffer = m_remoteResourceCacheProxy.cachedImageBuffer(makeObjectIdentifier<RenderingResourceIdentifierType>(decoder.destinationID()));
+        if (buffer)
+            buffer->didReceiveMessage(connection, decoder);
+        // Messages like flush or create backend may be confirmed after the instance was released.
+        return true;
+    }
+    return false;
 }
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
@@ -388,20 +388,6 @@ void RemoteRenderingBackendProxy::didPaintLayers()
     if (!m_gpuProcessConnection)
         return;
     m_remoteResourceCacheProxy.didPaintLayers();
-}
-
-void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackendHandle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
-    if (!imageBuffer)
-        return;
-    imageBuffer->didCreateImageBufferBackend(WTFMove(handle));
-}
-
-void RemoteRenderingBackendProxy::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier))
-        imageBuffer->didFlush(flushIdentifier);
 }
 
 void RemoteRenderingBackendProxy::didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID)

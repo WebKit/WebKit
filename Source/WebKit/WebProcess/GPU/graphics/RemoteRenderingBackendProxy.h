@@ -150,10 +150,10 @@ public:
         sendToStream(WTFMove(message), renderingBackendIdentifier());
     }
 
+    IPC::StreamClientConnection& streamConnection();
+
 private:
     explicit RemoteRenderingBackendProxy(WebPage&);
-
-    IPC::StreamClientConnection& streamConnection();
 
     template<typename T>
     auto sendSyncToStream(T&& message, IPC::Timeout timeout = { Seconds::infinity() })
@@ -171,11 +171,11 @@ private:
     std::optional<SharedMemory::Handle> updateSharedMemoryForGetPixelBuffer(size_t dataSize);
     void destroyGetPixelBufferSharedMemory();
 
-    // Messages to be received.
-    void didCreateImageBufferBackend(ImageBufferBackendHandle&&, WebCore::RenderingResourceIdentifier);
-    void didFlush(DisplayListRecorderFlushIdentifier, WebCore::RenderingResourceIdentifier);
+    // Messages
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
+
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     GPUProcessConnection* m_gpuProcessConnection { nullptr };
     RefPtr<IPC::Connection> m_connection;

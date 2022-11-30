@@ -56,11 +56,12 @@ public:
     void waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier);
 
     WebCore::ImageBufferBackend* ensureBackendCreated() const final;
-    void didFlush(DisplayListRecorderFlushIdentifier);
 
     void clearBackend();
     void backingStoreWillChange();
-    void didCreateImageBufferBackend(ImageBufferBackendHandle&&);
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
 private:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&);
 
@@ -68,7 +69,11 @@ private:
     // only gets modified on the main thread.
     bool hasPendingFlush() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
 
-    void waitForDidFlushWithTimeout();
+    // Messages
+    void didFlush(DisplayListRecorderFlushIdentifier);
+    void didCreateBackend(ImageBufferBackendHandle&&);
+
+    void markLost();
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
     RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
@@ -97,6 +102,8 @@ private:
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final;
     void prepareForBackingStoreChange();
+
+    static inline Seconds defaultSendTimeout = 3_s;
 
     DisplayListRecorderFlushIdentifier m_sentFlushIdentifier;
     Lock m_receivedFlushIdentifierLock;
