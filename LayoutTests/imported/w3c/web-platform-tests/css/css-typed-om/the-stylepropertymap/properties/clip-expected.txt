@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'clip' to CSS-wide keywords
+FAIL Can set 'clip' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'clip' to the 'auto' keyword
+PASS Setting 'clip' to a length throws TypeError
+PASS Setting 'clip' to a percent throws TypeError
+PASS Setting 'clip' to a time throws TypeError
+PASS Setting 'clip' to an angle throws TypeError
+PASS Setting 'clip' to a flexible length throws TypeError
+PASS Setting 'clip' to a number throws TypeError
+PASS Setting 'clip' to a URL throws TypeError
+PASS Setting 'clip' to a transform throws TypeError
+PASS 'clip' does not supported 'rect(0px, 1px, 2px, 3px)'
 

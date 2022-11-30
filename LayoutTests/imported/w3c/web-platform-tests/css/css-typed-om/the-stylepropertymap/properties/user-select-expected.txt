@@ -1,6 +1,17 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'user-select' to CSS-wide keywords Invalid property user-select
+FAIL Can set 'user-select' to var() references Invalid property user-select
+FAIL Can set 'user-select' to the 'auto' keyword Invalid property user-select
+FAIL Can set 'user-select' to the 'text' keyword Invalid property user-select
+FAIL Can set 'user-select' to the 'none' keyword Invalid property user-select
+FAIL Can set 'user-select' to the 'contain' keyword Invalid property user-select
+FAIL Can set 'user-select' to the 'all' keyword Invalid property user-select
+PASS Setting 'user-select' to a length throws TypeError
+PASS Setting 'user-select' to a percent throws TypeError
+PASS Setting 'user-select' to a time throws TypeError
+PASS Setting 'user-select' to an angle throws TypeError
+PASS Setting 'user-select' to a flexible length throws TypeError
+PASS Setting 'user-select' to a number throws TypeError
+PASS Setting 'user-select' to a URL throws TypeError
+PASS Setting 'user-select' to a transform throws TypeError
 

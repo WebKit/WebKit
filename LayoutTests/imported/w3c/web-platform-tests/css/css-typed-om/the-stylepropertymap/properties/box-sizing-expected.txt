@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'box-sizing' to CSS-wide keywords
+FAIL Can set 'box-sizing' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'box-sizing' to the 'content-box' keyword
+PASS Can set 'box-sizing' to the 'border-box' keyword
+PASS Setting 'box-sizing' to a length throws TypeError
+PASS Setting 'box-sizing' to a percent throws TypeError
+PASS Setting 'box-sizing' to a time throws TypeError
+PASS Setting 'box-sizing' to an angle throws TypeError
+PASS Setting 'box-sizing' to a flexible length throws TypeError
+PASS Setting 'box-sizing' to a number throws TypeError
+PASS Setting 'box-sizing' to a URL throws TypeError
+PASS Setting 'box-sizing' to a transform throws TypeError
 

@@ -1,6 +1,41 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-synthesis-weight' to CSS-wide keywords
+FAIL Can set 'font-synthesis-weight' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-synthesis-weight' to the 'auto' keyword
+PASS Can set 'font-synthesis-weight' to the 'none' keyword
+PASS Setting 'font-synthesis-weight' to a length throws TypeError
+PASS Setting 'font-synthesis-weight' to a percent throws TypeError
+PASS Setting 'font-synthesis-weight' to a time throws TypeError
+PASS Setting 'font-synthesis-weight' to an angle throws TypeError
+PASS Setting 'font-synthesis-weight' to a flexible length throws TypeError
+PASS Setting 'font-synthesis-weight' to a number throws TypeError
+PASS Setting 'font-synthesis-weight' to a URL throws TypeError
+PASS Setting 'font-synthesis-weight' to a transform throws TypeError
+PASS Can set 'font-synthesis-style' to CSS-wide keywords
+FAIL Can set 'font-synthesis-style' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-synthesis-style' to the 'auto' keyword
+PASS Can set 'font-synthesis-style' to the 'none' keyword
+PASS Setting 'font-synthesis-style' to a length throws TypeError
+PASS Setting 'font-synthesis-style' to a percent throws TypeError
+PASS Setting 'font-synthesis-style' to a time throws TypeError
+PASS Setting 'font-synthesis-style' to an angle throws TypeError
+PASS Setting 'font-synthesis-style' to a flexible length throws TypeError
+PASS Setting 'font-synthesis-style' to a number throws TypeError
+PASS Setting 'font-synthesis-style' to a URL throws TypeError
+PASS Setting 'font-synthesis-style' to a transform throws TypeError
+PASS Can set 'font-synthesis-small-caps' to CSS-wide keywords
+FAIL Can set 'font-synthesis-small-caps' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-synthesis-small-caps' to the 'auto' keyword
+PASS Can set 'font-synthesis-small-caps' to the 'none' keyword
+PASS Setting 'font-synthesis-small-caps' to a length throws TypeError
+PASS Setting 'font-synthesis-small-caps' to a percent throws TypeError
+PASS Setting 'font-synthesis-small-caps' to a time throws TypeError
+PASS Setting 'font-synthesis-small-caps' to an angle throws TypeError
+PASS Setting 'font-synthesis-small-caps' to a flexible length throws TypeError
+PASS Setting 'font-synthesis-small-caps' to a number throws TypeError
+PASS Setting 'font-synthesis-small-caps' to a URL throws TypeError
+PASS Setting 'font-synthesis-small-caps' to a transform throws TypeError
+FAIL 'font-synthesis' does not supported 'weight style' Bad value for shorthand CSS property
+FAIL 'font-synthesis' does not supported 'style small-caps' Bad value for shorthand CSS property
+FAIL 'font-synthesis' does not supported 'small-caps weight style' Bad value for shorthand CSS property
 

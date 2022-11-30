@@ -1,6 +1,32 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'grid-auto-columns' to CSS-wide keywords
+FAIL Can set 'grid-auto-columns' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-columns' to the 'min-content' keyword
+PASS Can set 'grid-auto-columns' to the 'max-content' keyword
+PASS Can set 'grid-auto-columns' to the 'auto' keyword
+FAIL Can set 'grid-auto-columns' to a length Invalid values
+FAIL Can set 'grid-auto-columns' to a percent Invalid values
+FAIL Can set 'grid-auto-columns' to a flexible length Invalid values
+PASS Setting 'grid-auto-columns' to a time throws TypeError
+PASS Setting 'grid-auto-columns' to an angle throws TypeError
+FAIL Setting 'grid-auto-columns' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'grid-auto-columns' to a URL throws TypeError
+PASS Setting 'grid-auto-columns' to a transform throws TypeError
+PASS 'grid-auto-columns' does not supported 'minmax(100px, auto)'
+PASS 'grid-auto-columns' does not supported 'fit-content(400px)'
+PASS Can set 'grid-auto-rows' to CSS-wide keywords
+FAIL Can set 'grid-auto-rows' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-rows' to the 'min-content' keyword
+PASS Can set 'grid-auto-rows' to the 'max-content' keyword
+PASS Can set 'grid-auto-rows' to the 'auto' keyword
+FAIL Can set 'grid-auto-rows' to a length Invalid values
+FAIL Can set 'grid-auto-rows' to a percent Invalid values
+FAIL Can set 'grid-auto-rows' to a flexible length Invalid values
+PASS Setting 'grid-auto-rows' to a time throws TypeError
+PASS Setting 'grid-auto-rows' to an angle throws TypeError
+FAIL Setting 'grid-auto-rows' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'grid-auto-rows' to a URL throws TypeError
+PASS Setting 'grid-auto-rows' to a transform throws TypeError
+PASS 'grid-auto-rows' does not supported 'minmax(100px, auto)'
+PASS 'grid-auto-rows' does not supported 'fit-content(400px)'
 

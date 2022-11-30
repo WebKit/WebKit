@@ -55,6 +55,34 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     if (descriptor.nextInChain)
         return BindGroup::createInvalid(*this);
 
+#if HAVE(TIER2_ARGUMENT_BUFFERS)
+    if ([m_device argumentBuffersSupport] != MTLArgumentBuffersTier1) {
+        // FIXME: support more than 1 buffer in the bind group
+        auto vertexArgumentBuffer = safeCreateBuffer(sizeof(float*), MTLStorageModeShared);
+        for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
+            const WGPUBindGroupEntry& entry = descriptor.entries[i];
+
+            if (entry.nextInChain)
+                return BindGroup::createInvalid(*this);
+
+            bool bufferIsPresent = WebGPU::bufferIsPresent(entry);
+            bool samplerIsPresent = WebGPU::samplerIsPresent(entry);
+            bool textureViewIsPresent = WebGPU::textureViewIsPresent(entry);
+            if (bufferIsPresent) {
+                id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
+                *(float**)vertexArgumentBuffer.contents = (float*)buffer.gpuAddress;
+                // FIXME: support more than 1 buffer in the bind group
+                break;
+            }
+
+            UNUSED_PARAM(samplerIsPresent);
+            UNUSED_PARAM(textureViewIsPresent);
+        }
+
+        return BindGroup::create(vertexArgumentBuffer, nil, nil, *this);
+    }
+#endif // HAVE(TIER2_ARGUMENT_BUFFERS)
+
     // FIXME: Validate this according to the spec.
 
     const BindGroupLayout& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);

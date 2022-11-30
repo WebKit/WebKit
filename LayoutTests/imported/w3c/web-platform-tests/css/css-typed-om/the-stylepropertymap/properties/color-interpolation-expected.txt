@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'color-interpolation' to CSS-wide keywords
+FAIL Can set 'color-interpolation' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'color-interpolation' to the 'auto' keyword
+FAIL Can set 'color-interpolation' to the 'srgb' keyword assert_equals: expected "srgb" but got "sRGB"
+FAIL Can set 'color-interpolation' to the 'linearrgb' keyword assert_equals: expected "linearrgb" but got "linearRGB"
+PASS Setting 'color-interpolation' to a length throws TypeError
+PASS Setting 'color-interpolation' to a percent throws TypeError
+PASS Setting 'color-interpolation' to a time throws TypeError
+PASS Setting 'color-interpolation' to an angle throws TypeError
+PASS Setting 'color-interpolation' to a flexible length throws TypeError
+PASS Setting 'color-interpolation' to a number throws TypeError
+PASS Setting 'color-interpolation' to a URL throws TypeError
+PASS Setting 'color-interpolation' to a transform throws TypeError
 

@@ -53,7 +53,7 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const PA
         if (!convertedBufferBinding)
             return std::nullopt;
 
-        return { { bindGroupEntry.binding, WTFMove(*convertedBufferBinding), { }, BindingResourceType::TextureView } };
+        return { { bindGroupEntry.binding, WTFMove(*convertedBufferBinding), convertedBufferBinding->buffer, BindingResourceType::BufferBinding } };
     }, [&] (std::reference_wrapper<PAL::WebGPU::ExternalTexture> externalTexture) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(externalTexture);
         if (!identifier)

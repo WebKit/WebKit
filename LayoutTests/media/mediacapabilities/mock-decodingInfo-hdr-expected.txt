@@ -1,6 +1,5 @@
 RUN(internals.enableMockMediaCapabilities())
 RUN(internals.settings.setMediaCapabilitiesExtensionsEnabled(true))
-RUN(internals.settings.setHDRMediaCapabilitiesEnabled(true))
 RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="mock-with-hdr"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 }});)
 Promise resolved OK
 EXPECTED (info.supported == 'true') OK

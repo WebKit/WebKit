@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'text-align' to CSS-wide keywords
+FAIL Can set 'text-align' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'text-align' to the 'center' keyword
+PASS Can set 'text-align' to the 'justify' keyword
+PASS Setting 'text-align' to a length throws TypeError
+PASS Setting 'text-align' to a percent throws TypeError
+PASS Setting 'text-align' to a time throws TypeError
+PASS Setting 'text-align' to an angle throws TypeError
+PASS Setting 'text-align' to a flexible length throws TypeError
+PASS Setting 'text-align' to a number throws TypeError
+PASS Setting 'text-align' to a URL throws TypeError
+PASS Setting 'text-align' to a transform throws TypeError
 

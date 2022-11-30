@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/fetcher.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/fetcher.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/private-network-access/resources/iframed.html

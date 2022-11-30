@@ -1,6 +1,8 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
+CONSOLE MESSAGE: Error: '<position>' is not a valid CSS component
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
+Harness Error (FAIL), message = Error: '<position>' is not a valid CSS component
 
+PASS Can set 'offset-anchor' to CSS-wide keywords
+FAIL Can set 'offset-anchor' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'offset-anchor' to the 'auto' keyword
 

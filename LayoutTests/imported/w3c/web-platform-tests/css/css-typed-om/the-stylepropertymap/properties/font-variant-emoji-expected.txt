@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'font-variant-emoji' to CSS-wide keywords Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to var() references Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to the 'auto' keyword Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to the 'text' keyword Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to the 'emoji' keyword Invalid property font-variant-emoji
+PASS Setting 'font-variant-emoji' to a length throws TypeError
+PASS Setting 'font-variant-emoji' to a percent throws TypeError
+PASS Setting 'font-variant-emoji' to a time throws TypeError
+PASS Setting 'font-variant-emoji' to an angle throws TypeError
+PASS Setting 'font-variant-emoji' to a flexible length throws TypeError
+PASS Setting 'font-variant-emoji' to a number throws TypeError
+PASS Setting 'font-variant-emoji' to a URL throws TypeError
+PASS Setting 'font-variant-emoji' to a transform throws TypeError
 

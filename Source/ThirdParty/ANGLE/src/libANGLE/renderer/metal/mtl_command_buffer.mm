@@ -362,22 +362,36 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
     [encoder setVisibilityResultMode:mode offset:offset];
 }
 
+#if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_15) || \
+    (defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_0)
+#   define ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE 1
+#endif
+
+#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
+    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
+#   define ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED 1
+#endif
+
 inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
 {
     id<MTLResource> resource = stream->fetch<id<MTLResource>>();
     MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
     mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
     ANGLE_UNUSED_VARIABLE(stages);
-#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+#if ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED
+    [encoder useResource:resource usage:usage stages:stages];
+#else
+#   if ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE
     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13.0))
     {
         [encoder useResource:resource usage:usage stages:stages];
     }
     else
-#endif
+#   endif
     {
         [encoder useResource:resource usage:usage];
     }
+#endif
     [resource ANGLE_MTL_RELEASE];
 }
 

@@ -15,3 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/resources/bad-gzip-body.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/resources/foo.octetstream.gz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/resources/foo.octetstream.gz.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/resources/foo.text.gz
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/resources/foo.text.gz.headers

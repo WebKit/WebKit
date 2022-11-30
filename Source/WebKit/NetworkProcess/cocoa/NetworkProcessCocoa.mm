@@ -179,7 +179,7 @@ void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
 {
     // FIXME: Remove this once rdar://30655740 is fixed.
-    [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(certificateInfo.trust()).get() forHost:host];
+    [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(certificateInfo.trust().get()).get() forHost:host];
 }
 
 void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedSince)

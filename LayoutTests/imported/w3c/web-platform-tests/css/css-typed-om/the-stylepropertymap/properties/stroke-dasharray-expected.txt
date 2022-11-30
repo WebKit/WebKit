@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'stroke-dasharray' to CSS-wide keywords
+FAIL Can set 'stroke-dasharray' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'stroke-dasharray' to the 'none' keyword
+FAIL Setting 'stroke-dasharray' to a length throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+FAIL Setting 'stroke-dasharray' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'stroke-dasharray' to a time throws TypeError
+PASS Setting 'stroke-dasharray' to an angle throws TypeError
+PASS Setting 'stroke-dasharray' to a flexible length throws TypeError
+FAIL Setting 'stroke-dasharray' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'stroke-dasharray' to a URL throws TypeError
+PASS Setting 'stroke-dasharray' to a transform throws TypeError
+FAIL 'stroke-dasharray' does not supported '5% 1em 2%' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
 

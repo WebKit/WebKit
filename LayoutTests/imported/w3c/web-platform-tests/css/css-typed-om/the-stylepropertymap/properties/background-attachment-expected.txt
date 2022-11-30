@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'background-attachment' to CSS-wide keywords
+FAIL Can set 'background-attachment' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'background-attachment' to the 'scroll' keyword
+PASS Can set 'background-attachment' to the 'fixed' keyword
+PASS Can set 'background-attachment' to the 'local' keyword
+PASS Setting 'background-attachment' to a length throws TypeError
+PASS Setting 'background-attachment' to a percent throws TypeError
+PASS Setting 'background-attachment' to a time throws TypeError
+PASS Setting 'background-attachment' to an angle throws TypeError
+PASS Setting 'background-attachment' to a flexible length throws TypeError
+PASS Setting 'background-attachment' to a number throws TypeError
+PASS Setting 'background-attachment' to a URL throws TypeError
+PASS Setting 'background-attachment' to a transform throws TypeError
 

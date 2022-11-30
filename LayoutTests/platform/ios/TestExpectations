@@ -250,6 +250,10 @@ fast/history/page-cache-media-source-opened.html [ Skip ]
 fast/history/page-cache-removed-source-buffer.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/basic/mediasource.window.html [ Skip ]
 
+# fetch ORB image tests which fail
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-mislabeled-as-html.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-unlabeled.sub.html [ ImageOnlyFailure ]
+
 # Quota API is not supported on iOS
 storage/domstorage/quota.html
 storage/storageinfo-missing-arguments.html

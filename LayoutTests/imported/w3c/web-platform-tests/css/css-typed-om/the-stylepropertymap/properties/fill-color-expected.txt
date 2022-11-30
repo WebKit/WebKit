@@ -1,6 +1,18 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'fill-color' to CSS-wide keywords Invalid property fill-color
+FAIL Can set 'fill-color' to var() references Invalid property fill-color
+FAIL Can set 'fill-color' to the 'currentcolor' keyword Invalid property fill-color
+PASS Setting 'fill-color' to a length throws TypeError
+PASS Setting 'fill-color' to a percent throws TypeError
+PASS Setting 'fill-color' to a time throws TypeError
+PASS Setting 'fill-color' to an angle throws TypeError
+PASS Setting 'fill-color' to a flexible length throws TypeError
+PASS Setting 'fill-color' to a number throws TypeError
+PASS Setting 'fill-color' to a URL throws TypeError
+PASS Setting 'fill-color' to a transform throws TypeError
+FAIL 'fill-color' does not supported 'red' Invalid property fill-color
+FAIL 'fill-color' does not supported '#bbff00' Invalid property fill-color
+FAIL 'fill-color' does not supported 'rgb(255, 255, 128)' Invalid property fill-color
+FAIL 'fill-color' does not supported 'hsl(50, 33%, 25%)' Invalid property fill-color
+FAIL 'fill-color' does not supported 'transparent' Invalid property fill-color
 

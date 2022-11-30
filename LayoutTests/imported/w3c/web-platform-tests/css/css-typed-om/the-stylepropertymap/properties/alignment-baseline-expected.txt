@@ -1,6 +1,23 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'alignment-baseline' to CSS-wide keywords
+FAIL Can set 'alignment-baseline' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'alignment-baseline' to the 'baseline' keyword
+FAIL Can set 'alignment-baseline' to the 'text-bottom' keyword Invalid values
+PASS Can set 'alignment-baseline' to the 'alphabetic' keyword
+PASS Can set 'alignment-baseline' to the 'ideographic' keyword
+PASS Can set 'alignment-baseline' to the 'middle' keyword
+PASS Can set 'alignment-baseline' to the 'central' keyword
+PASS Can set 'alignment-baseline' to the 'mathematical' keyword
+FAIL Can set 'alignment-baseline' to the 'text-top' keyword Invalid values
+FAIL Can set 'alignment-baseline' to the 'bottom' keyword Invalid values
+FAIL Can set 'alignment-baseline' to the 'center' keyword Invalid values
+FAIL Can set 'alignment-baseline' to the 'top' keyword Invalid values
+PASS Setting 'alignment-baseline' to a length throws TypeError
+PASS Setting 'alignment-baseline' to a percent throws TypeError
+PASS Setting 'alignment-baseline' to a time throws TypeError
+PASS Setting 'alignment-baseline' to an angle throws TypeError
+PASS Setting 'alignment-baseline' to a flexible length throws TypeError
+PASS Setting 'alignment-baseline' to a number throws TypeError
+PASS Setting 'alignment-baseline' to a URL throws TypeError
+PASS Setting 'alignment-baseline' to a transform throws TypeError
 

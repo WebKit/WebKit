@@ -1,6 +1,12 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'tab-size' to CSS-wide keywords
+FAIL Can set 'tab-size' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'tab-size' to a number Invalid values
+FAIL Can set 'tab-size' to a length Invalid values
+PASS Setting 'tab-size' to a percent throws TypeError
+PASS Setting 'tab-size' to a time throws TypeError
+PASS Setting 'tab-size' to an angle throws TypeError
+PASS Setting 'tab-size' to a flexible length throws TypeError
+PASS Setting 'tab-size' to a URL throws TypeError
+PASS Setting 'tab-size' to a transform throws TypeError
 

@@ -77,9 +77,8 @@ void SVGStyleElement::setType(const AtomString& type)
 
 const AtomString& SVGStyleElement::media() const
 {
-    static MainThreadNeverDestroyed<const AtomString> defaultValue("all"_s);
-    const AtomString& n = attributeWithoutSynchronization(SVGNames::mediaAttr);
-    return n.isNull() ? defaultValue.get() : n;
+    auto& value = attributeWithoutSynchronization(SVGNames::mediaAttr);
+    return value.isNull() ? allAtom() : value;
 }
 
 void SVGStyleElement::setMedia(const AtomString& media)

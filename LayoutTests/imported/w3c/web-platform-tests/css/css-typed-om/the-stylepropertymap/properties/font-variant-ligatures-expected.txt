@@ -1,6 +1,24 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-variant-ligatures' to CSS-wide keywords
+FAIL Can set 'font-variant-ligatures' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-variant-ligatures' to the 'normal' keyword
+PASS Can set 'font-variant-ligatures' to the 'none' keyword
+PASS Can set 'font-variant-ligatures' to the 'common-ligatures' keyword
+PASS Can set 'font-variant-ligatures' to the 'no-common-ligatures' keyword
+PASS Can set 'font-variant-ligatures' to the 'discretionary-ligatures' keyword
+PASS Can set 'font-variant-ligatures' to the 'no-discretionary-ligatures' keyword
+PASS Can set 'font-variant-ligatures' to the 'historical-ligatures' keyword
+PASS Can set 'font-variant-ligatures' to the 'no-historical-ligatures' keyword
+PASS Can set 'font-variant-ligatures' to the 'contextual' keyword
+PASS Can set 'font-variant-ligatures' to the 'no-contextual' keyword
+PASS Setting 'font-variant-ligatures' to a length throws TypeError
+PASS Setting 'font-variant-ligatures' to a percent throws TypeError
+PASS Setting 'font-variant-ligatures' to a time throws TypeError
+PASS Setting 'font-variant-ligatures' to an angle throws TypeError
+PASS Setting 'font-variant-ligatures' to a flexible length throws TypeError
+PASS Setting 'font-variant-ligatures' to a number throws TypeError
+PASS Setting 'font-variant-ligatures' to a URL throws TypeError
+PASS Setting 'font-variant-ligatures' to a transform throws TypeError
+FAIL 'font-variant-ligatures' does not supported 'common-ligatures contextual' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL 'font-variant-ligatures' does not supported 'no-common-ligatures discretionary-ligatures no-historical-ligatures no-contextual' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
 

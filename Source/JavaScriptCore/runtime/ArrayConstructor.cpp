@@ -43,7 +43,7 @@ const ClassInfo ArrayConstructor::s_info = { "Function"_s, &InternalFunction::s_
 /* Source for ArrayConstructor.lut.h
 @begin arrayConstructorTable
   of        JSBuiltin                   DontEnum|Function 0
-  from      JSBuiltin                   DontEnum|Function 0
+  from      JSBuiltin                   DontEnum|Function 1
 @end
 */
 
@@ -63,6 +63,9 @@ void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Arra
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArrayCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fromPrivateName(), arrayConstructorFromCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (Options::useArrayFromAsync())
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fromAsyncPublicName(), arrayConstructorFromAsyncCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // ------------------------------ Functions ---------------------------

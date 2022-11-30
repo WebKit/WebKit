@@ -1037,6 +1037,11 @@ private:
         else
             return false;
 
+        if (UNLIKELY(jsCast<JSArrayBufferView*>(obj)->isOutOfBounds())) {
+            code = SerializationReturnCode::DataCloneError;
+            return true;
+        }
+
         RefPtr<ArrayBufferView> arrayBufferView = toPossiblySharedArrayBufferView(vm, obj);
         if (arrayBufferView->isResizableOrGrowableShared()) {
             uint64_t byteOffset = arrayBufferView->byteOffsetRaw();

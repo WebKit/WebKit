@@ -353,7 +353,7 @@ std::optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& reque
 
 void SoupNetworkSession::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
-    allowedCertificates().add(host, HostTLSCertificateSet()).iterator->value.add(certificateInfo.certificate());
+    allowedCertificates().add(host, HostTLSCertificateSet()).iterator->value.add(certificateInfo.certificate().get());
 }
 
 } // namespace WebCore

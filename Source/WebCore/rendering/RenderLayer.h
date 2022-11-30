@@ -752,6 +752,7 @@ public:
     FloatPoint perspectiveOrigin() const;
     FloatPoint3D transformOriginPixelSnappedIfNeeded() const;
     bool preserves3D() const { return renderer().style().preserves3D(); }
+    bool hasPerspective() const { return renderer().style().hasPerspective(); }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
 

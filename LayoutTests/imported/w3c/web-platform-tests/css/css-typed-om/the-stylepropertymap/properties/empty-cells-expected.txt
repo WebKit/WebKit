@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'empty-cells' to CSS-wide keywords
+FAIL Can set 'empty-cells' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'empty-cells' to the 'show' keyword
+PASS Can set 'empty-cells' to the 'hide' keyword
+PASS Setting 'empty-cells' to a length throws TypeError
+PASS Setting 'empty-cells' to a percent throws TypeError
+PASS Setting 'empty-cells' to a time throws TypeError
+PASS Setting 'empty-cells' to an angle throws TypeError
+PASS Setting 'empty-cells' to a flexible length throws TypeError
+PASS Setting 'empty-cells' to a number throws TypeError
+PASS Setting 'empty-cells' to a URL throws TypeError
+PASS Setting 'empty-cells' to a transform throws TypeError
 

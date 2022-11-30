@@ -1,6 +1,13 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'vertical-align' to CSS-wide keywords
+FAIL Can set 'vertical-align' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'vertical-align' to the 'baseline' keyword
+FAIL Can set 'vertical-align' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+FAIL Can set 'vertical-align' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Setting 'vertical-align' to a time throws TypeError
+PASS Setting 'vertical-align' to an angle throws TypeError
+PASS Setting 'vertical-align' to a flexible length throws TypeError
+FAIL Setting 'vertical-align' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'vertical-align' to a URL throws TypeError
+PASS Setting 'vertical-align' to a transform throws TypeError
 

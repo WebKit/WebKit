@@ -37,7 +37,7 @@ using namespace JSC;
 JSC::JSValue JSWebXRRigidTransform::matrix(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
-    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().cachedMatrix(), [&] {
+    return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedMatrix(), [&](JSC::ThrowScope& throwScope) {
         JSC::JSValue matrix = toJS<IDLFloat32Array>(lexicalGlobalObject, *globalObject(), throwScope, wrapped().matrix());
         return matrix;
     });

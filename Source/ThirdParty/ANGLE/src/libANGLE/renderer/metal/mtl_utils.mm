@@ -1338,6 +1338,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
 #endif      // TARGET_OS_IOS || TARGET_OS_TV
 }
 
+#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
+    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0) || \
+    (defined(__TVOS_16_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_16_0)
+#   define ANGLE_MTL_FEATURE_SET_DEPRECATED 1
+#   define ANGLE_MTL_GPU_FAMILY_MAC1_DEPRECATED 1
+#endif
+
+#if ANGLE_MTL_GPU_FAMILY_MAC1_DEPRECATED
+#   define ANGLE_MTL_GPU_FAMILY_MAC1 MTLGPUFamilyMac2
+#   define ANGLE_MTL_GPU_FAMILY_MAC2 MTLGPUFamilyMac2
+#elif TARGET_OS_MACCATALYST
+#   define ANGLE_MTL_GPU_FAMILY_MAC1 MTLGPUFamilyMacCatalyst1
+#   define ANGLE_MTL_GPU_FAMILY_MAC2 MTLGPUFamilyMacCatalyst2
+#else // !ANGLE_MTL_GPU_FAMILY_MAC1_DEPRECATED && !TARGET_OS_MACCATALYST
+#   define ANGLE_MTL_GPU_FAMILY_MAC1 MTLGPUFamilyMac1
+#   define ANGLE_MTL_GPU_FAMILY_MAC2 MTLGPUFamilyMac2
+#endif
+
 bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
@@ -1349,21 +1367,12 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
 
         switch (macFamily)
         {
-#        if TARGET_OS_MACCATALYST
             case 1:
-                family = MTLGPUFamilyMacCatalyst1;
+                family = ANGLE_MTL_GPU_FAMILY_MAC1;
                 break;
             case 2:
-                family = MTLGPUFamilyMacCatalyst2;
+                family = ANGLE_MTL_GPU_FAMILY_MAC2;
                 break;
-#        else   // TARGET_OS_MACCATALYST
-            case 1:
-                family = MTLGPUFamilyMac1;
-                break;
-            case 2:
-                family = MTLGPUFamilyMac2;
-                break;
-#        endif  // TARGET_OS_MACCATALYST
             default:
                 return false;
         }
@@ -1374,10 +1383,11 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
 
     // If device doesn't support [MTLDevice supportsFamily:], then use
     // [MTLDevice supportsFeatureSet:].
-#    if TARGET_OS_MACCATALYST
+#    if TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATED
     UNREACHABLE();
     return false;
-#    else
+#    else // !(TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATEZD)
+
     MTLFeatureSet featureSet;
     switch (macFamily)
     {
@@ -1393,7 +1403,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
             return false;
     }
     return [device supportsFeatureSet:featureSet];
-#    endif  // TARGET_OS_MACCATALYST
+#    endif  // TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATED
 #else       // #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 
     return false;
@@ -1472,7 +1482,12 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
     const mtl::ContextDevice &device)
 {
     NSUInteger currentRenderTargetSize = 0;
-    bool isMsaa                        = descriptor.sampleCount > 1;
+#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
+    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
+    bool isMsaa = descriptor.rasterSampleCount > 1;
+#else
+    bool isMsaa = descriptor.sampleCount > 1;
+#endif
     for (NSUInteger i = 0; i < GetMaxNumberOfRenderTargetsForDevice(device); i++)
     {
         MTLRenderPipelineColorAttachmentDescriptor *color = descriptor.colorAttachments[i];

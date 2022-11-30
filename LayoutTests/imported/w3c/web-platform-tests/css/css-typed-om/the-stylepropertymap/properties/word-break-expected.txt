@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'word-break' to CSS-wide keywords
+FAIL Can set 'word-break' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'word-break' to the 'normal' keyword
+PASS Can set 'word-break' to the 'keep-all' keyword
+PASS Can set 'word-break' to the 'break-all' keyword
+PASS Setting 'word-break' to a length throws TypeError
+PASS Setting 'word-break' to a percent throws TypeError
+PASS Setting 'word-break' to a time throws TypeError
+PASS Setting 'word-break' to an angle throws TypeError
+PASS Setting 'word-break' to a flexible length throws TypeError
+PASS Setting 'word-break' to a number throws TypeError
+PASS Setting 'word-break' to a URL throws TypeError
+PASS Setting 'word-break' to a transform throws TypeError
 

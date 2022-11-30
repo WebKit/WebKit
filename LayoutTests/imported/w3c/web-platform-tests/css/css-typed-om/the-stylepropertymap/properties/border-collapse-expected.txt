@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'border-collapse' to CSS-wide keywords
+FAIL Can set 'border-collapse' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-collapse' to the 'separate' keyword
+PASS Can set 'border-collapse' to the 'collapse' keyword
+PASS Setting 'border-collapse' to a length throws TypeError
+PASS Setting 'border-collapse' to a percent throws TypeError
+PASS Setting 'border-collapse' to a time throws TypeError
+PASS Setting 'border-collapse' to an angle throws TypeError
+PASS Setting 'border-collapse' to a flexible length throws TypeError
+PASS Setting 'border-collapse' to a number throws TypeError
+PASS Setting 'border-collapse' to a URL throws TypeError
+PASS Setting 'border-collapse' to a transform throws TypeError
 

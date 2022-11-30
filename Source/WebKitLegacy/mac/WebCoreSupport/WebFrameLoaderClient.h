@@ -211,7 +211,7 @@ private:
     void redirectDataToPlugin(WebCore::Widget&) final;
 
     WebCore::ObjectContentType objectContentType(const URL&, const WTF::String& mimeType) final;
-    WTF::String overrideMediaType() const final;
+    WTF::AtomString overrideMediaType() const final;
     
     void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) final;
 

@@ -110,7 +110,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCond
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return MQ::MediaQueryEvaluator { "screen"_s, m_document, &style }.evaluate(mediaCondition);
+    return MQ::MediaQueryEvaluator { screenAtom(), m_document, &style }.evaluate(mediaCondition);
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)
@@ -136,7 +136,7 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
         if (!mediaCondition)
             continue;
         bool matches = mediaConditionMatches(*mediaCondition);
-        MQ::MediaQueryEvaluator evaluator { "screen"_s, m_document, nullptr };
+        MQ::MediaQueryEvaluator evaluator { screenAtom(), m_document, nullptr };
         if (!evaluator.collectDynamicDependencies(*mediaCondition).isEmpty())
             m_dynamicMediaQueryResults.append({ MQ::MediaQueryList { *mediaCondition }, matches });
         if (!matches)

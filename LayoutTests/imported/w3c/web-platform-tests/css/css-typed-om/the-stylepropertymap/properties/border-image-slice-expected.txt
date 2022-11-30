@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'border-image-slice' to CSS-wide keywords
+FAIL Can set 'border-image-slice' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'border-image-slice' to a number assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-slice' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Setting 'border-image-slice' to a length throws TypeError
+PASS Setting 'border-image-slice' to a time throws TypeError
+PASS Setting 'border-image-slice' to an angle throws TypeError
+PASS Setting 'border-image-slice' to a flexible length throws TypeError
+PASS Setting 'border-image-slice' to a URL throws TypeError
+PASS Setting 'border-image-slice' to a transform throws TypeError
+PASS 'border-image-slice' does not supported '30 fill'
+PASS 'border-image-slice' does not supported '30 40 50'
+PASS 'border-image-slice' does not supported '30 40 50 60 fill'
 

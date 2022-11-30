@@ -175,8 +175,6 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
 
 void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer)
 {
-    if (!renderer.canHaveGeneratedChildren())
-        return;
     // ::backdrop does not inherit style, hence using the view style as parent style
     auto style = renderer.getCachedPseudoStyle(PseudoId::Backdrop, &renderer.view().style());
 
@@ -194,7 +192,10 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
         auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
         newBackdropRenderer->initializeStyle();
         renderer.setBackdropRenderer(*newBackdropRenderer.get());
-        m_updater.m_builder.attach(renderer, WTFMove(newBackdropRenderer), renderer.firstChild());
+
+        // Use the renderer as parent when we can for hit-testing purposes.
+        RenderElement& parentRenderer = renderer.canHaveGeneratedChildren() ? renderer : renderer.view();
+        m_updater.m_builder.attach(parentRenderer, WTFMove(newBackdropRenderer), parentRenderer.lastChild());
     }
 }
 

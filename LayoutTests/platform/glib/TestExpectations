@@ -1180,6 +1180,8 @@ http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSCon
 imported/w3c/web-platform-tests/fetch/metadata/generated [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access [ DumpJSConsoleLogInStdErr ]
 
+webkit.org/b/248536 imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.html [ Failure ]
+
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Pass Failure ]
 
 # Timeouts. Some flaky, others timing out routinely.

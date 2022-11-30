@@ -31,5 +31,5 @@
 
 SecTrustRef WKFrameGetServerTrust(WKFrameRef frame)
 {
-    return WebKit::toImpl(frame)->certificateInfo().trust();
+    return WebKit::toImpl(frame)->certificateInfo().trust().get();
 }

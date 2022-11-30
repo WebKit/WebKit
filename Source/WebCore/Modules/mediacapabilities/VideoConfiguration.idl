@@ -33,7 +33,7 @@
   required unsigned long long bitrate;
   required double framerate;
   [EnabledBySetting=MediaCapabilitiesExtensionsEnabled] boolean alphaChannel;
-  [EnabledBySetting=HDRMediaCapabilitiesEnabled] HdrMetadataType hdrMetadataType;
-  [EnabledBySetting=HDRMediaCapabilitiesEnabled] ColorGamut colorGamut;
-  [EnabledBySetting=HDRMediaCapabilitiesEnabled] TransferFunction transferFunction;
+  HdrMetadataType hdrMetadataType;
+  ColorGamut colorGamut;
+  TransferFunction transferFunction;
 };

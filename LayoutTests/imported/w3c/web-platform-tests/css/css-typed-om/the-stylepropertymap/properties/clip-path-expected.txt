@@ -1,6 +1,21 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'clip-path' to CSS-wide keywords
+FAIL Can set 'clip-path' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'clip-path' to the 'none' keyword
+PASS Can set 'clip-path' to the 'fill-box' keyword
+PASS Can set 'clip-path' to the 'stroke-box' keyword
+PASS Can set 'clip-path' to the 'view-box' keyword
+PASS Can set 'clip-path' to the 'margin-box' keyword
+PASS Can set 'clip-path' to the 'border-box' keyword
+PASS Can set 'clip-path' to the 'padding-box' keyword
+PASS Can set 'clip-path' to the 'content-box' keyword
+PASS Can set 'clip-path' to a URL
+PASS Setting 'clip-path' to a length throws TypeError
+PASS Setting 'clip-path' to a percent throws TypeError
+PASS Setting 'clip-path' to a time throws TypeError
+PASS Setting 'clip-path' to an angle throws TypeError
+PASS Setting 'clip-path' to a flexible length throws TypeError
+PASS Setting 'clip-path' to a number throws TypeError
+PASS Setting 'clip-path' to a transform throws TypeError
+FAIL 'clip' does not supported 'inset(22% 12% 15px 35px)' assert_not_equals: Unsupported value must not be null got disallowed value null
 

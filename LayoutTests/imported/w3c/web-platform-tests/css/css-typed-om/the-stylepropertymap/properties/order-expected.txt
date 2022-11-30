@@ -1,6 +1,12 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'order' to CSS-wide keywords
+FAIL Can set 'order' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'order' to a number assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Setting 'order' to a length throws TypeError
+PASS Setting 'order' to a percent throws TypeError
+PASS Setting 'order' to a time throws TypeError
+PASS Setting 'order' to an angle throws TypeError
+PASS Setting 'order' to a flexible length throws TypeError
+PASS Setting 'order' to a URL throws TypeError
+PASS Setting 'order' to a transform throws TypeError
 

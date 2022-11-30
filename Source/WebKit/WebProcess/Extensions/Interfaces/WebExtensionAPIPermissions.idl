@@ -1,0 +1,54 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=WK_WEB_EXTENSIONS,
+    MainWorldOnly,
+    NeedsPageWithCallbackHandler,
+    ReturnsPromiseWhenCallbackIsOmitted,
+] interface WebExtensionAPIPermissions {
+
+    // Checks if the extension has the specified permissions.
+    void getAll([Optional, CallbackHandler] function callback);
+
+    // Checks if the extension has the specified permissions.
+    [RaisesException] void contains([NSDictionary] any permissions, [Optional, CallbackHandler] function callback);
+
+    // Requests access to the specified permissions, displaying a prompt to the user if necessary. These permissions must either be defined
+    // in the optional_permissions field of the manifest or be required permissions that were withheld by the user. Paths on origin patterns
+    // will be ignored. You can request subsets of optional origin permissions; for example, if you specify *://*/* in the optional_permissions
+    // section of the manifest, you can request http://example.com/. If there are any problems requesting the permissions, runtime.lastError will be set.
+    [RaisesException] void request([NSDictionary] any permissions, [Optional, CallbackHandler] function callback);
+
+    // Removes access to the specified permissions. If there are any problems removing the permissions, runtime.lastError will be set.
+    [RaisesException] void remove([NSDictionary] any permissions, [Optional, CallbackHandler] function callback);
+
+    // Fired when the extension acquires new permissions.
+    readonly attribute WebExtensionAPIEvent onAdded;
+
+    // Fired when access to permissions has been removed from the extension.
+    readonly attribute WebExtensionAPIEvent onRemoved;
+
+};

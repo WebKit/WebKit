@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    async function testOverridePreference({cssPropertyName, mediaQuery, testCases})
+    {
+        for (let {preferenceName, preferenceValue, expectedMatchMedia, expectedValue} of testCases) {
+            if (preferenceName && preferenceValue) {
+                InspectorTest.log(`Overriding ${preferenceName} value to ${preferenceValue}`);
+                await PageAgent.overrideUserPreference(preferenceName, preferenceValue);
+            } else if (preferenceName && !preferenceValue) {
+                InspectorTest.log(`Removing ${preferenceName} override`);
+                await PageAgent.overrideUserPreference(preferenceName);
+            }
+
+            let matches = await InspectorTest.evaluateInPage(`window.matchMedia("${mediaQuery}").matches`);
+            let value = await InspectorTest.evaluateInPage(`window.getComputedStyle(document.body).getPropertyValue("${cssPropertyName}")`);
+
+            if (expectedMatchMedia)
+                InspectorTest.expectTrue(matches, `${mediaQuery} media query matches.`);
+            else
+                InspectorTest.expectFalse(matches, `${mediaQuery} media query does not match.`);
+
+            InspectorTest.expectEqual(value, expectedValue, `${cssPropertyName}: ${expectedValue}`);
+        }
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Page.overrideUserPreference");
+
+    suite.addTestCase({
+        name: "Page.overrideUserPreference.PrefersReducedMotion",
+        description: "",
+        async test() {
+            let cssPropertyName = "--test-prefers-reduced-motion";
+            let mediaQuery = "(prefers-reduced-motion)";
+            let testCases = [
+                {
+                    expectedValue: "no-preference",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersReducedMotion,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Reduce,
+                    expectedValue: "reduce",
+                    expectedMatchMedia: true,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersReducedMotion,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.NoPreference,
+                    expectedValue: "no-preference",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersReducedMotion,
+                    preferenceValue: null,
+                    expectedValue: "no-preference",
+                    expectedMatchMedia: false,
+                },
+            ];
+
+            await testOverridePreference({cssPropertyName, mediaQuery, testCases});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.overrideUserPreference.PrefersContrast",
+        description: "",
+        async test() {
+            let cssPropertyName = "--test-prefers-contrast";
+            let mediaQuery = "(prefers-contrast)";
+            let testCases = [
+                {
+                    expectedValue: "no-preference",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersContrast,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.More,
+                    expectedValue: "more",
+                    expectedMatchMedia: true,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersContrast,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.NoPreference,
+                    expectedValue: "no-preference",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersContrast,
+                    preferenceValue: null,
+                    expectedValue: "no-preference",
+                    expectedMatchMedia: false,
+                },
+            ];
+
+            await testOverridePreference({cssPropertyName, mediaQuery, testCases});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideUserPreference command.</p>
+
+    <style>
+    body {
+        --test-prefers-reduced-motion: no-preference;
+        --test-prefers-contrast: no-preference;
+    }
+
+    @media (prefers-reduced-motion) {
+        body {
+            --test-prefers-reduced-motion: reduce;
+        }
+    }
+
+    @media (prefers-contrast) {
+        body {
+            --test-prefers-contrast: more;
+        }
+    }
+    </style>
+</body>
+</html>

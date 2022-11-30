@@ -228,11 +228,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
     if (source.isObject() && isTypedView(asObject(source)->type())) {
         JSArrayBufferView* sourceView = jsCast<JSArrayBufferView*>(source);
         IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-        size_t length = integerIndexedObjectLength(sourceView, getter).value_or(0);
-        if (isIntegerIndexedObjectOutOfBounds(sourceView, getter))
+        auto lengthValue = integerIndexedObjectLength(sourceView, getter);
+        if (UNLIKELY(!lengthValue))
             return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
         scope.release();
-        thisObject->setFromTypedArray(globalObject, offset, sourceView, 0, length, CopyType::Unobservable);
+        thisObject->setFromTypedArray(globalObject, offset, sourceView, 0, lengthValue.value(), CopyType::Unobservable);
         return JSValue::encode(jsUndefined());
     }
 

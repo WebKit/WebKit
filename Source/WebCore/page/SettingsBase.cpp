@@ -325,7 +325,7 @@ void SettingsBase::mediaTypeOverrideChanged()
 
     FrameView* view = m_page->mainFrame().view();
     if (view)
-        view->setMediaType(m_page->settings().mediaTypeOverride());
+        view->setMediaType(AtomString(m_page->settings().mediaTypeOverride()));
 
     m_page->setNeedsRecalcStyleInAllFrames();
 }

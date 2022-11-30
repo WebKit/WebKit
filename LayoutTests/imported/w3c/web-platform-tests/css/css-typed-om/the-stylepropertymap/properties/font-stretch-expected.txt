@@ -1,6 +1,21 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-stretch' to CSS-wide keywords
+FAIL Can set 'font-stretch' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'font-stretch' to the 'normal' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'ultra-condensed' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'extra-condensed' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'condensed' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'semi-condensed' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'semi-expanded' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'expanded' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'extra-expanded' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to the 'ultra-expanded' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL Can set 'font-stretch' to a percent Invalid values
+PASS Setting 'font-stretch' to a length throws TypeError
+PASS Setting 'font-stretch' to a time throws TypeError
+PASS Setting 'font-stretch' to an angle throws TypeError
+PASS Setting 'font-stretch' to a flexible length throws TypeError
+PASS Setting 'font-stretch' to a number throws TypeError
+PASS Setting 'font-stretch' to a URL throws TypeError
+PASS Setting 'font-stretch' to a transform throws TypeError
 

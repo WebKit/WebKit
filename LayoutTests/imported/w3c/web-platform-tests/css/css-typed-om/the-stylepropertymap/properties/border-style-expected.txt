@@ -1,6 +1,50 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'border-top-style' to CSS-wide keywords
+FAIL Can set 'border-top-style' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-top-style' to the 'none' keyword
+PASS Can set 'border-top-style' to the 'solid' keyword
+PASS Setting 'border-top-style' to a length throws TypeError
+PASS Setting 'border-top-style' to a percent throws TypeError
+PASS Setting 'border-top-style' to a time throws TypeError
+PASS Setting 'border-top-style' to an angle throws TypeError
+PASS Setting 'border-top-style' to a flexible length throws TypeError
+PASS Setting 'border-top-style' to a number throws TypeError
+PASS Setting 'border-top-style' to a URL throws TypeError
+PASS Setting 'border-top-style' to a transform throws TypeError
+PASS Can set 'border-left-style' to CSS-wide keywords
+FAIL Can set 'border-left-style' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-left-style' to the 'none' keyword
+PASS Can set 'border-left-style' to the 'solid' keyword
+PASS Setting 'border-left-style' to a length throws TypeError
+PASS Setting 'border-left-style' to a percent throws TypeError
+PASS Setting 'border-left-style' to a time throws TypeError
+PASS Setting 'border-left-style' to an angle throws TypeError
+PASS Setting 'border-left-style' to a flexible length throws TypeError
+PASS Setting 'border-left-style' to a number throws TypeError
+PASS Setting 'border-left-style' to a URL throws TypeError
+PASS Setting 'border-left-style' to a transform throws TypeError
+PASS Can set 'border-right-style' to CSS-wide keywords
+FAIL Can set 'border-right-style' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-right-style' to the 'none' keyword
+PASS Can set 'border-right-style' to the 'solid' keyword
+PASS Setting 'border-right-style' to a length throws TypeError
+PASS Setting 'border-right-style' to a percent throws TypeError
+PASS Setting 'border-right-style' to a time throws TypeError
+PASS Setting 'border-right-style' to an angle throws TypeError
+PASS Setting 'border-right-style' to a flexible length throws TypeError
+PASS Setting 'border-right-style' to a number throws TypeError
+PASS Setting 'border-right-style' to a URL throws TypeError
+PASS Setting 'border-right-style' to a transform throws TypeError
+PASS Can set 'border-bottom-style' to CSS-wide keywords
+FAIL Can set 'border-bottom-style' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'border-bottom-style' to the 'none' keyword
+PASS Can set 'border-bottom-style' to the 'solid' keyword
+PASS Setting 'border-bottom-style' to a length throws TypeError
+PASS Setting 'border-bottom-style' to a percent throws TypeError
+PASS Setting 'border-bottom-style' to a time throws TypeError
+PASS Setting 'border-bottom-style' to an angle throws TypeError
+PASS Setting 'border-bottom-style' to a flexible length throws TypeError
+PASS Setting 'border-bottom-style' to a number throws TypeError
+PASS Setting 'border-bottom-style' to a URL throws TypeError
+PASS Setting 'border-bottom-style' to a transform throws TypeError
 

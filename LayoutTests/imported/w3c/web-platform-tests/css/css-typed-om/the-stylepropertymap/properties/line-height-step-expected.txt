@@ -1,6 +1,12 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'line-height-step' to CSS-wide keywords Invalid property line-height-step
+FAIL Can set 'line-height-step' to var() references Invalid property line-height-step
+FAIL Can set 'line-height-step' to a length Invalid property line-height-step
+PASS Setting 'line-height-step' to a percent throws TypeError
+PASS Setting 'line-height-step' to a time throws TypeError
+PASS Setting 'line-height-step' to an angle throws TypeError
+PASS Setting 'line-height-step' to a flexible length throws TypeError
+PASS Setting 'line-height-step' to a number throws TypeError
+PASS Setting 'line-height-step' to a URL throws TypeError
+PASS Setting 'line-height-step' to a transform throws TypeError
 

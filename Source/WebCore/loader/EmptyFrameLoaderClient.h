@@ -173,7 +173,7 @@ private:
     RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
 
     ObjectContentType objectContentType(const URL&, const String&) final;
-    String overrideMediaType() const final;
+    AtomString overrideMediaType() const final;
 
     void redirectDataToPlugin(Widget&) final;
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) final;

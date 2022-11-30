@@ -108,9 +108,9 @@ bool MediaQueryEvaluator::evaluateMediaType(const MediaQuery& query) const
 {
     if (query.mediaType.isEmpty())
         return true;
-    if (equalLettersIgnoringASCIICase(query.mediaType, "all"_s))
+    if (query.mediaType == allAtom())
         return true;
-    return equalIgnoringASCIICase(query.mediaType, m_mediaType);
+    return query.mediaType == m_mediaType;
 };
 
 OptionSet<MediaQueryDynamicDependency> MediaQueryEvaluator::collectDynamicDependencies(const MediaQueryList& queries) const
@@ -142,7 +142,7 @@ OptionSet<MediaQueryDynamicDependency> MediaQueryEvaluator::collectDynamicDepend
 
 bool MediaQueryEvaluator::isPrintMedia() const
 {
-    return equalIgnoringASCIICase(m_mediaType, "print"_s);
+    return m_mediaType == printAtom();
 }
 
 }

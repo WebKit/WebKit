@@ -1,0 +1,33 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useResizableArrayBuffer=true,--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<title>Resizable ArrayBuffers serialization</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Resizable ArrayBuffers should be serializable OOB");
+var arrayBuffer = new ArrayBuffer(36, { maxByteLength: 128 });
+var view = new DataView(arrayBuffer, 4);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`view.byteLength`, `32`);
+shouldBe(`view.byteOffset`, `4`);
+arrayBuffer.resize(0);
+shouldThrow(`structuredClone(view)`);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `0`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldThrow(`view.byteLength`);
+shouldThrow(`view.byteOffset`);
+arrayBuffer.resize(36);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`view.byteLength`, `32`);
+shouldBe(`view.byteOffset`, `4`);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -8,16 +8,17 @@ PASS arrayBuffer.byteLength is 36
 PASS arrayBuffer.maxByteLength is 128
 PASS int32Array.length is 4
 PASS int32Array.byteOffset is 4
-PASS cloned.buffer.resizable is true
-PASS cloned.buffer.byteLength is 0
-PASS cloned.buffer.maxByteLength is 128
-PASS cloned.length is 0
-PASS cloned.byteOffset is 0
-PASS cloned[0] is undefined
-PASS cloned.buffer.byteLength is 128
-PASS cloned.buffer.maxByteLength is 128
-PASS cloned.length is 4
-PASS cloned.byteOffset is 4
+PASS structuredClone(int32Array) threw exception DataCloneError: The object can not be cloned..
+PASS arrayBuffer.resizable is true
+PASS arrayBuffer.byteLength is 0
+PASS arrayBuffer.maxByteLength is 128
+PASS int32Array.length is 0
+PASS int32Array.byteOffset is 0
+PASS arrayBuffer.resizable is true
+PASS arrayBuffer.byteLength is 36
+PASS arrayBuffer.maxByteLength is 128
+PASS int32Array.length is 4
+PASS int32Array.byteOffset is 4
 PASS successfullyParsed is true
 
 TEST COMPLETE

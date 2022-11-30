@@ -409,9 +409,6 @@ static bool dynamicRangeEvaluate(CSSValue* value, const CSSToLengthConversionDat
     if (!value)
         return false;
 
-    if (!frame.settings().hdrMediaCapabilitiesEnabled())
-        return false;
-
     bool supportsHighDynamicRange;
 
     if (frame.settings().forcedSupportsHighDynamicRangeValue() == ForcedAccessibilityValue::On)

@@ -56,8 +56,7 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSetBuilder, Offse
     unsigned index = 0;
 
     registerSetBuilder.forEachWithWidth([&] (Reg reg, Width width) {
-        size_t registerSize = bytesForWidth(width);
-        offset = WTF::roundUpToMultipleOf(registerSize, offset);
+        offset = WTF::roundUpToMultipleOf(alignmentForWidth(width), offset);
         m_registers[index++] = RegisterAtOffset(reg, offset, width);
         offset += bytesForWidth(width);
     });

@@ -1,6 +1,22 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'outline-style' to CSS-wide keywords
+FAIL Can set 'outline-style' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'outline-style' to the 'auto' keyword
+PASS Can set 'outline-style' to the 'none' keyword
+PASS Can set 'outline-style' to the 'dotted' keyword
+PASS Can set 'outline-style' to the 'dashed' keyword
+PASS Can set 'outline-style' to the 'solid' keyword
+PASS Can set 'outline-style' to the 'double' keyword
+PASS Can set 'outline-style' to the 'groove' keyword
+PASS Can set 'outline-style' to the 'ridge' keyword
+PASS Can set 'outline-style' to the 'inset' keyword
+PASS Can set 'outline-style' to the 'outset' keyword
+PASS Setting 'outline-style' to a length throws TypeError
+PASS Setting 'outline-style' to a percent throws TypeError
+PASS Setting 'outline-style' to a time throws TypeError
+PASS Setting 'outline-style' to an angle throws TypeError
+PASS Setting 'outline-style' to a flexible length throws TypeError
+PASS Setting 'outline-style' to a number throws TypeError
+PASS Setting 'outline-style' to a URL throws TypeError
+PASS Setting 'outline-style' to a transform throws TypeError
 

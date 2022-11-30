@@ -1,6 +1,16 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'resize' to CSS-wide keywords
+FAIL Can set 'resize' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'resize' to the 'none' keyword
+PASS Can set 'resize' to the 'both' keyword
+PASS Can set 'resize' to the 'horizontal' keyword
+PASS Can set 'resize' to the 'vertical' keyword
+PASS Setting 'resize' to a length throws TypeError
+PASS Setting 'resize' to a percent throws TypeError
+PASS Setting 'resize' to a time throws TypeError
+PASS Setting 'resize' to an angle throws TypeError
+PASS Setting 'resize' to a flexible length throws TypeError
+PASS Setting 'resize' to a number throws TypeError
+PASS Setting 'resize' to a URL throws TypeError
+PASS Setting 'resize' to a transform throws TypeError
 

@@ -110,30 +110,39 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrappedAllowShared(VM&, JSVa
 }
 
 template<typename Getter>
-bool isIntegerIndexedObjectOutOfBounds(JSArrayBufferView* typedArray, Getter& getter)
+bool isArrayBufferViewOutOfBounds(JSArrayBufferView* view, Getter& getter)
 {
     // https://tc39.es/proposal-resizablearraybuffer/#sec-isintegerindexedobjectoutofbounds
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-isarraybufferviewoutofbounds
+    //
+    // This function should work with DataView too.
 
-    if (UNLIKELY(typedArray->isDetached()))
+    if (UNLIKELY(view->isDetached()))
         return true;
 
-    if (LIKELY(!typedArray->isResizableOrGrowableShared()))
+    if (LIKELY(!view->isResizableOrGrowableShared()))
         return false;
 
-    ASSERT(isWastefulTypedArray(typedArray->mode()) && isResizableOrGrowableShared(typedArray->mode()));
-    RefPtr<ArrayBuffer> buffer = typedArray->possiblySharedBuffer();
+    ASSERT(isWastefulTypedArray(view->mode()) && isResizableOrGrowableShared(view->mode()));
+    RefPtr<ArrayBuffer> buffer = view->possiblySharedBuffer();
     if (!buffer)
         return true;
 
     size_t bufferByteLength = getter(*buffer);
-    size_t byteOffsetStart = typedArray->byteOffsetRaw();
+    size_t byteOffsetStart = view->byteOffsetRaw();
     size_t byteOffsetEnd = 0;
-    if (typedArray->isAutoLength())
+    if (view->isAutoLength())
         byteOffsetEnd = bufferByteLength;
     else
-        byteOffsetEnd = byteOffsetStart + typedArray->byteLengthRaw();
+        byteOffsetEnd = byteOffsetStart + view->byteLengthRaw();
 
     return byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength;
+}
+
+template<typename Getter>
+bool isIntegerIndexedObjectOutOfBounds(JSArrayBufferView* typedArray, Getter& getter)
+{
+    return isArrayBufferViewOutOfBounds(typedArray, getter);
 }
 
 template<typename Getter>

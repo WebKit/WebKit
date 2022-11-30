@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'scrollbar-gutter' to CSS-wide keywords Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to var() references Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to the 'auto' keyword Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to the 'stable' keyword Invalid property scrollbar-gutter
+PASS Setting 'scrollbar-gutter' to a length throws TypeError
+PASS Setting 'scrollbar-gutter' to a percent throws TypeError
+PASS Setting 'scrollbar-gutter' to a time throws TypeError
+PASS Setting 'scrollbar-gutter' to an angle throws TypeError
+PASS Setting 'scrollbar-gutter' to a flexible length throws TypeError
+PASS Setting 'scrollbar-gutter' to a number throws TypeError
+PASS Setting 'scrollbar-gutter' to a URL throws TypeError
+PASS Setting 'scrollbar-gutter' to a transform throws TypeError
+FAIL 'scrollbar-gutter' does not supported 'stable both-edges' Invalid property scrollbar-gutter
 

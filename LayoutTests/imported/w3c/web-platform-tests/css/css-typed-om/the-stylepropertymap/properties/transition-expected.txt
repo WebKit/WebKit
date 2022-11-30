@@ -1,5 +1,6 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS 'transition' does not supported 'none'
+FAIL 'transition' does not supported 'none, none' assert_not_equals: Unsupported value must not be null got disallowed value null
+PASS 'transition' does not supported 'margin-right 4s'
+FAIL 'transition' does not supported 'all 0.5s ease-out, color 1s' assert_equals: Unsupported value can be set on different element expected "all 0.5s ease-out 0s, color 1s ease 0s" but got "all 0s ease 0s, color 0.5s ease 0s, all 1s ease-out 0s, all 0s ease 0s, all 0s ease 0s"
 

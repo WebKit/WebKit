@@ -15,18 +15,18 @@ shouldBe(`arrayBuffer.maxByteLength`, `128`);
 shouldBe(`int32AutoArray.length`, `8`);
 shouldBe(`int32AutoArray.byteOffset`, `4`);
 arrayBuffer.resize(0);
-var cloned = structuredClone(int32AutoArray);
-shouldBeTrue(`cloned.buffer.resizable`);
-shouldBe(`cloned.buffer.byteLength`, `0`);
-shouldBe(`cloned.buffer.maxByteLength`, `128`);
-shouldBe(`cloned.length`, `0`);
-shouldBe(`cloned.byteOffset`, `0`);
-shouldBe(`cloned[0]`, `undefined`);
-cloned.buffer.resize(128);
-shouldBe(`cloned.buffer.byteLength`, `128`);
-shouldBe(`cloned.buffer.maxByteLength`, `128`);
-shouldBe(`cloned.length`, `31`);
-shouldBe(`cloned.byteOffset`, `4`);
+shouldThrow(`structuredClone(int32AutoArray)`);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `0`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32AutoArray.length`, `0`);
+shouldBe(`int32AutoArray.byteOffset`, `0`);
+arrayBuffer.resize(36);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32AutoArray.length`, `8`);
+shouldBe(`int32AutoArray.byteOffset`, `4`);
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

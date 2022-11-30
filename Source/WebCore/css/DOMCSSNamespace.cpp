@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  * Copyright (C) 2012 Motorola Mobility Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,25 +43,11 @@
 
 namespace WebCore {
 
-static String valueWithoutImportant(const String& value)
-{
-    if (!value.endsWithIgnoringASCIICase("important"_s))
-        return value;
-
-    String newValue = value;
-    int bangIndex = newValue.length() - 9 - 1;
-    if (newValue[bangIndex] == ' ')
-        bangIndex--;
-    newValue = newValue.left(bangIndex);
-
-    return newValue;
-}
-
 bool DOMCSSNamespace::supports(Document& document, const String& property, const String& value)
 {
     CSSParserContext parserContext(document);
 
-    auto propertyNameWithoutWhitespace = property.stripWhiteSpace();
+    auto propertyNameWithoutWhitespace = property;
     CSSPropertyID propertyID = cssPropertyID(propertyNameWithoutWhitespace);
     if (propertyID == CSSPropertyInvalid && isCustomPropertyName(propertyNameWithoutWhitespace)) {
         auto dummyStyle = MutableStyleProperties::create();
@@ -77,17 +64,8 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
     if (propertyID == CSSPropertyInvalid)
         return false;
 
-    // CSSParser::parseValue() won't work correctly if !important is present,
-    // so just get rid of it. It doesn't matter to supports() if it's actually
-    // there or not, provided how it's specified in the value is correct.
-    String normalizedValue = value.stripWhiteSpace().simplifyWhiteSpace();
-    normalizedValue = valueWithoutImportant(normalizedValue);
-
-    if (normalizedValue.isEmpty())
-        return false;
-
     auto dummyStyle = MutableStyleProperties::create();
-    return CSSParser::parseValue(dummyStyle, propertyID, normalizedValue, false, parserContext) != CSSParser::ParseResult::Error;
+    return CSSParser::parseValue(dummyStyle, propertyID, value, false, parserContext) != CSSParser::ParseResult::Error;
 }
 
 bool DOMCSSNamespace::supports(Document& document, const String& conditionText)

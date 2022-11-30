@@ -1,6 +1,37 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL 'marker' does not supported 'none' Bad value for shorthand CSS property
+FAIL 'marker' does not supported 'url(#m1)' Bad value for shorthand CSS property
+PASS Can set 'marker-start' to CSS-wide keywords
+FAIL Can set 'marker-start' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'marker-start' to the 'none' keyword
+PASS Can set 'marker-start' to a URL
+PASS Setting 'marker-start' to a length throws TypeError
+PASS Setting 'marker-start' to a percent throws TypeError
+PASS Setting 'marker-start' to a time throws TypeError
+PASS Setting 'marker-start' to an angle throws TypeError
+PASS Setting 'marker-start' to a flexible length throws TypeError
+PASS Setting 'marker-start' to a number throws TypeError
+PASS Setting 'marker-start' to a transform throws TypeError
+PASS Can set 'marker-mid' to CSS-wide keywords
+FAIL Can set 'marker-mid' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'marker-mid' to the 'none' keyword
+PASS Can set 'marker-mid' to a URL
+PASS Setting 'marker-mid' to a length throws TypeError
+PASS Setting 'marker-mid' to a percent throws TypeError
+PASS Setting 'marker-mid' to a time throws TypeError
+PASS Setting 'marker-mid' to an angle throws TypeError
+PASS Setting 'marker-mid' to a flexible length throws TypeError
+PASS Setting 'marker-mid' to a number throws TypeError
+PASS Setting 'marker-mid' to a transform throws TypeError
+PASS Can set 'marker-end' to CSS-wide keywords
+FAIL Can set 'marker-end' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'marker-end' to the 'none' keyword
+PASS Can set 'marker-end' to a URL
+PASS Setting 'marker-end' to a length throws TypeError
+PASS Setting 'marker-end' to a percent throws TypeError
+PASS Setting 'marker-end' to a time throws TypeError
+PASS Setting 'marker-end' to an angle throws TypeError
+PASS Setting 'marker-end' to a flexible length throws TypeError
+PASS Setting 'marker-end' to a number throws TypeError
+PASS Setting 'marker-end' to a transform throws TypeError
 

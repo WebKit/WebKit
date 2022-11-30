@@ -15,18 +15,18 @@ shouldBe(`arrayBuffer.maxByteLength`, `128`);
 shouldBe(`int32Array.length`, `4`);
 shouldBe(`int32Array.byteOffset`, `4`);
 arrayBuffer.resize(0);
-var cloned = structuredClone(int32Array);
-shouldBeTrue(`cloned.buffer.resizable`);
-shouldBe(`cloned.buffer.byteLength`, `0`);
-shouldBe(`cloned.buffer.maxByteLength`, `128`);
-shouldBe(`cloned.length`, `0`);
-shouldBe(`cloned.byteOffset`, `0`);
-shouldBe(`cloned[0]`, `undefined`);
-cloned.buffer.resize(128);
-shouldBe(`cloned.buffer.byteLength`, `128`);
-shouldBe(`cloned.buffer.maxByteLength`, `128`);
-shouldBe(`cloned.length`, `4`);
-shouldBe(`cloned.byteOffset`, `4`);
+shouldThrow(`structuredClone(int32Array)`);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `0`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32Array.length`, `0`);
+shouldBe(`int32Array.byteOffset`, `0`);
+arrayBuffer.resize(36);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32Array.length`, `4`);
+shouldBe(`int32Array.byteOffset`, `4`);
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

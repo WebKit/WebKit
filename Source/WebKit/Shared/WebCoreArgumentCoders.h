@@ -233,13 +233,6 @@ template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::EventTrackingRegions&);
 };
 
-template<> struct ArgumentCoder<WebCore::CertificateInfo> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::CertificateInfo&);
-    template<typename Decoder>
-    static std::optional<WebCore::CertificateInfo> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::RectEdges<bool>&);

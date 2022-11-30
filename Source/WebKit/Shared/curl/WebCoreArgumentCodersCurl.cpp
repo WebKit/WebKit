@@ -40,44 +40,6 @@ namespace IPC {
 
 using namespace WebCore;
 
-template<typename Encoder>
-void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
-{
-    encoder << certificateInfo.verificationError();
-    encoder << certificateInfo.certificateChain().size();
-
-    for (auto certificate : certificateInfo.certificateChain())
-        encoder << certificate;
-}
-template void ArgumentCoder<WebCore::CertificateInfo>::encode<Encoder>(Encoder&, const WebCore::CertificateInfo&);
-
-template<typename Decoder>
-std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
-{
-    std::optional<int> verificationError;
-    decoder >> verificationError;
-    if (!verificationError)
-        return std::nullopt;
-
-    std::optional<size_t> certificateChainSize;
-    decoder >> certificateChainSize;
-    if (!certificateChainSize)
-        return std::nullopt;
-
-    CertificateInfo::CertificateChain certificateChain;
-    for (size_t i = 0; i < *certificateChainSize; i++) {
-        std::optional<CertificateInfo::Certificate> certificate;
-        decoder >> certificate;
-        if (!certificate)
-            return std::nullopt;
-
-        certificateChain.append(WTFMove(*certificate));
-    }
-
-    return CertificateInfo { *verificationError, WTFMove(certificateChain) };
-}
-template std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode<Decoder>(Decoder&);
-
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {
     encoder << resourceError.type();

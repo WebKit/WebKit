@@ -1,6 +1,18 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'scroll-snap-align' to CSS-wide keywords
+FAIL Can set 'scroll-snap-align' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-snap-align' to the 'none' keyword assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL Can set 'scroll-snap-align' to the 'start' keyword assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL Can set 'scroll-snap-align' to the 'end' keyword assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL Can set 'scroll-snap-align' to the 'center' keyword assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+PASS Setting 'scroll-snap-align' to a length throws TypeError
+PASS Setting 'scroll-snap-align' to a percent throws TypeError
+PASS Setting 'scroll-snap-align' to a time throws TypeError
+PASS Setting 'scroll-snap-align' to an angle throws TypeError
+PASS Setting 'scroll-snap-align' to a flexible length throws TypeError
+PASS Setting 'scroll-snap-align' to a number throws TypeError
+PASS Setting 'scroll-snap-align' to a URL throws TypeError
+PASS Setting 'scroll-snap-align' to a transform throws TypeError
+FAIL 'scroll-snap-align' does not supported 'none center' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL 'scroll-snap-align' does not supported 'end start' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
 

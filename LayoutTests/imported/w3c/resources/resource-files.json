@@ -3936,6 +3936,8 @@
         "web-platform-tests/fetch/corb/img-svg-invalid.sub-ref.html",
         "web-platform-tests/fetch/corb/img-svg.sub-ref.html",
         "web-platform-tests/fetch/http-cache/basic-auth-cache-test-ref.html",
+        "web-platform-tests/fetch/orb/tentative/img-png-mislabeled-as-html.sub-ref.html",
+        "web-platform-tests/fetch/orb/tentative/img-png-unlabeled.sub-ref.html",
         "web-platform-tests/fetch/security/support/embedded-credential-window.sub.html",
         "web-platform-tests/fullscreen/api/fullscreen-display-contents-ref.html",
         "web-platform-tests/fullscreen/crashtests/chrome-1312699.html",
