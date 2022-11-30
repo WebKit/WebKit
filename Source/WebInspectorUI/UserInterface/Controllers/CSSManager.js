@@ -48,7 +48,8 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._modifiedStyles = new Map;
         this._defaultAppearance = null;
         this._forcedAppearance = null;
-
+        this._defaultUserPreferences = new Map;
+        this._overridenUserPreferences = new Map;
         this._propertyNameCompletions = null;
     }
 
@@ -291,6 +292,10 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     get propertyNameCompletions() { return this._propertyNameCompletions; }
 
+    get overridenUserPreferences() { return this._overridenUserPreferences; }
+
+    get defaultUserPreferences() { return this._defaultUserPreferences; }
+
     get preferredColorFormat()
     {
         return this._colorFormatSetting.value;
@@ -387,6 +392,23 @@ WI.CSSManager = class CSSManager extends WI.Object
 
         console.assert(false, "Unknown pseudo class", pseudoClass);
         return false;
+    }
+
+    overrideUserPreference(preference, value)
+    {
+        for (let target of WI.targets) {
+            // COMPATIBILITY (macOS 13.0, iOS 16.0): `Page.overrideUserPreference()` did not exist yet.
+            if (target.hasCommand("Page.overrideUserPreference")) {
+                target.PageAgent.overrideUserPreference(preference, value);
+
+                if (value)
+                    this._overridenUserPreferences.set(preference, value);
+                else
+                    this._overridenUserPreferences.delete(preference);
+            }
+        }
+
+        this.dispatchEventToListeners(WI.CSSManager.Event.OverridenUserPreferencesDidChange);
     }
 
     propertyNameHasOtherVendorPrefix(name)
@@ -529,6 +551,14 @@ WI.CSSManager = class CSSManager extends WI.Object
         this.mediaQueryResultChanged();
 
         this.dispatchEventToListeners(WI.CSSManager.Event.DefaultAppearanceDidChange, {appearance});
+    }
+
+    defaultUserPreferencesDidChange(userPreferences)
+    {
+        for (let userPreference of userPreferences)
+            this._defaultUserPreferences.set(userPreference.name, userPreference.value)
+
+        this.dispatchEventToListeners(WI.CSSManager.Event.DefaultUserPreferencesDidChange);
     }
 
     // CSSObserver
@@ -814,7 +844,11 @@ WI.CSSManager.Event = {
     ModifiedStylesChanged: "css-manager-modified-styles-changed",
     DefaultAppearanceDidChange: "css-manager-default-appearance-did-change",
     ForcedAppearanceDidChange: "css-manager-forced-appearance-did-change",
+    DefaultUserPreferencesDidChange: "css-manager-default-user-preferences-did-change",
+    OverridenUserPreferencesDidChange: "css-manager-overriden-user-preferences-did-change",
 };
+
+WI.CSSManager.UserPreferenceDefaultValue = "System";
 
 WI.CSSManager.Appearance = {
     Light: Symbol("light"),
