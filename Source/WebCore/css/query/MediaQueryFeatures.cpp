@@ -334,8 +334,6 @@ const FeatureSchema& dynamicRange()
         [](auto& context) {
             bool supportsHighDynamicRange = [&] {
                 auto& frame = *context.document.frame();
-                if (!frame.settings().hdrMediaCapabilitiesEnabled())
-                    return false;
                 if (frame.settings().forcedSupportsHighDynamicRangeValue() == ForcedAccessibilityValue::On)
                     return true;
                 if (frame.settings().forcedSupportsHighDynamicRangeValue() == ForcedAccessibilityValue::Off)
