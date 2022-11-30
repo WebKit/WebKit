@@ -27,7 +27,7 @@
 
 @implementation WebFeature
 
-- (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden
+- (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name status:(WebFeatureStatus)status details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden
 {
     if (!(self = [super init]))
         return nil;
@@ -35,6 +35,7 @@
     _key = [key copy];
     _preferenceKey = [preferenceKey copy];
     _name = [name copy];
+    _status = status;
     _details = [details copy];
     _defaultValue = defaultValue;
     _hidden = hidden;

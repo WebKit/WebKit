@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-#import <WebKit/WebFeature.h>
+#pragma once
 
-#import <Foundation/Foundation.h>
-
-WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
-@interface _WKInternalDebugFeature : NSObject
-
-@property (nonatomic, readonly, copy) NSString *key;
-@property (nonatomic, readonly, copy) NSString *name;
-@property (nonatomic, readonly) WebFeatureStatus status;
-@property (nonatomic, readonly, copy) NSString *details;
-@property (nonatomic, readonly) BOOL defaultValue;
-@property (nonatomic, readonly, getter=isHidden) BOOL hidden;
-
-@end
+namespace API {
+enum class FeatureStatus : uint8_t {
+    // For customizing WebKit behavior in embedding applications.
+    Embedder,
+    // Feature in active development. Unfinished, no promise it is usable or safe.
+    Unstable,
+    // Tools for debugging the WebKit engine. Not generally useful to web developers.
+    Internal,
+    // Tools for web developers.
+    Developer,
+    // Enabled by default in test infrastructure, but not ready to ship yet.
+    Testable,
+    // Enabled by default in Safari Technology Preview, but not considered ready to ship yet.
+    Preview,
+    // Enabled by default and ready for general use.
+    Stable
+};
+}
