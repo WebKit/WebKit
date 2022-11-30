@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2010 Daniel Bates (dbates@intudata.com)
  *
@@ -1622,14 +1622,13 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     switch (style().listStyleType()) {
     case ListStyleType::Disc:
-        context.drawEllipse(markerRect);
+        context.fillEllipse(markerRect);
         return;
     case ListStyleType::Circle:
-        context.setFillColor(Color::transparentBlack);
-        context.drawEllipse(markerRect);
+        context.strokeEllipse(markerRect);
         return;
     case ListStyleType::Square:
-        context.drawRect(markerRect);
+        context.fillRect(markerRect);
         return;
     default:
         break;
