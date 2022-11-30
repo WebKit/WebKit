@@ -386,21 +386,21 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
     m_childRules.remove(index);
 }
 
-StyleRuleMedia::StyleRuleMedia(Ref<MediaQuerySet>&& media, Vector<RefPtr<StyleRuleBase>>&& rules)
+StyleRuleMedia::StyleRuleMedia(MQ::MediaQueryList&& mediaQueries, Vector<RefPtr<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Media, WTFMove(rules))
-    , m_mediaQueries(WTFMove(media))
+    , m_mediaQueries(WTFMove(mediaQueries))
 {
 }
 
 StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& other)
     : StyleRuleGroup(other)
-    , m_mediaQueries(other.m_mediaQueries->copy())
+    , m_mediaQueries(other.m_mediaQueries)
 {
 }
 
-Ref<StyleRuleMedia> StyleRuleMedia::create(Ref<MediaQuerySet>&& media, Vector<RefPtr<StyleRuleBase>>&& rules)
+Ref<StyleRuleMedia> StyleRuleMedia::create(MQ::MediaQueryList&& mediaQueries, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
-    return adoptRef(*new StyleRuleMedia(WTFMove(media), WTFMove(rules)));
+    return adoptRef(*new StyleRuleMedia(WTFMove(mediaQueries), WTFMove(rules)));
 }
 
 Ref<StyleRuleMedia> StyleRuleMedia::copy() const

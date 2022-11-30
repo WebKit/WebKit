@@ -26,6 +26,7 @@
 #include "ContainerQuery.h"
 #include "FontFeatureValues.h"
 #include "FontPaletteValues.h"
+#include "MediaQuery.h"
 #include "StyleRuleType.h"
 #include <map>
 #include <variant>
@@ -38,7 +39,6 @@ namespace WebCore {
 class CSSRule;
 class CSSGroupingRule;
 class CSSStyleSheet;
-class MediaQuerySet;
 class MutableStyleProperties;
 class StyleRuleKeyframe;
 class StyleProperties;
@@ -264,16 +264,17 @@ private:
 
 class StyleRuleMedia final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleMedia> create(Ref<MediaQuerySet>&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleMedia> create(MQ::MediaQueryList&&, Vector<RefPtr<StyleRuleBase>>&&);
     Ref<StyleRuleMedia> copy() const;
 
-    MediaQuerySet& mediaQueries() const { return m_mediaQueries; }
+    const MQ::MediaQueryList& mediaQueries() const { return m_mediaQueries; }
+    void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTFMove(queries); }
 
 private:
-    StyleRuleMedia(Ref<MediaQuerySet>&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleMedia(MQ::MediaQueryList&&, Vector<RefPtr<StyleRuleBase>>&&);
     StyleRuleMedia(const StyleRuleMedia&);
 
-    Ref<MediaQuerySet> m_mediaQueries;
+    MQ::MediaQueryList m_mediaQueries;
 };
 
 class StyleRuleSupports final : public StyleRuleGroup {

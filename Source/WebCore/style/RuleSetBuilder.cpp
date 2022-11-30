@@ -31,7 +31,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
-#include "LegacyMediaQueryEvaluator.h"
+#include "MediaQueryEvaluator.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
@@ -41,7 +41,7 @@
 namespace WebCore {
 namespace Style {
 
-RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const LegacyMediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
+RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
     : m_ruleSet(&ruleSet)
     , m_mediaQueryCollector({ evaluator })
     , m_resolver(resolver)
@@ -49,7 +49,7 @@ RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const LegacyMediaQueryEvaluator
 {
 }
 
-RuleSetBuilder::RuleSetBuilder(const LegacyMediaQueryEvaluator& evaluator)
+RuleSetBuilder::RuleSetBuilder(const MQ::MediaQueryEvaluator& evaluator)
     : m_mediaQueryCollector({ evaluator, true })
 {
 }
@@ -67,7 +67,7 @@ RuleSetBuilder::~RuleSetBuilder()
         m_ruleSet->shrinkToFit();
 }
 
-void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const MediaQuerySet* sheetQuery)
+void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const MQ::MediaQueryList& sheetQuery)
 {
     auto canUseDynamicMediaQueryEvaluation = [&] {
         if (!m_resolver)
@@ -106,9 +106,9 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
         }
         if (is<StyleRuleMedia>(*rule)) {
             auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if (m_mediaQueryCollector.pushAndEvaluate(&mediaRule.mediaQueries()))
+            if (m_mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
                 addChildRules(mediaRule.childRules());
-            m_mediaQueryCollector.pop(&mediaRule.mediaQueries());
+            m_mediaQueryCollector.pop(mediaRule.mediaQueries());
             continue;
         }
         if (is<StyleRuleContainer>(*rule)) {
@@ -363,34 +363,34 @@ void RuleSetBuilder::updateDynamicMediaQueries()
 
 RuleSetBuilder::MediaQueryCollector::~MediaQueryCollector() = default;
 
-bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* set)
+bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MQ::MediaQueryList& mediaQueries)
 {
-    if (!set)
+    if (mediaQueries.isEmpty())
         return true;
 
-    auto dynamicDependencies = mediaQueryDynamicDependencies(*set, evaluator);
+    auto dynamicDependencies = evaluator.collectDynamicDependencies(mediaQueries);
 
     allDynamicDependencies.add(dynamicDependencies);
 
     if (!dynamicDependencies.isEmpty()) {
-        dynamicContextStack.append({ *set });
+        dynamicContextStack.append({ mediaQueries });
         if (collectDynamic)
             return true;
     }
 
-    return evaluator.evaluate(*set);
+    return evaluator.evaluate(mediaQueries);
 }
 
-void RuleSetBuilder::MediaQueryCollector::pop(const MediaQuerySet* set)
+void RuleSetBuilder::MediaQueryCollector::pop(const MQ::MediaQueryList& mediaQueries)
 {
-    if (!set || dynamicContextStack.isEmpty() || set != &dynamicContextStack.last().set.get())
+    if (mediaQueries.isEmpty() || dynamicContextStack.isEmpty())
         return;
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
         RuleSet::DynamicMediaQueryRules rules;
-        rules.mediaQuerySets.reserveCapacity(rules.mediaQuerySets.size() + dynamicContextStack.size());
+        rules.mediaQueries.reserveCapacity(rules.mediaQueries.size() + dynamicContextStack.size());
         for (auto& context : dynamicContextStack)
-            rules.mediaQuerySets.uncheckedAppend(context.set.get());
+            rules.mediaQueries.uncheckedAppend(context.queries);
 
         if (collectDynamic) {
             rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);

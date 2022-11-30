@@ -4773,15 +4773,7 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-per
 webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-fixed.html [ ImageOnlyFailure ]
 webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-ink-skip-dilation.html [ ImageOnlyFailure ]
 
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-004.html [ ImageOnlyFailure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-005.html [ ImageOnlyFailure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/aspect-ratio-006.html [ ImageOnlyFailure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-002.html [ ImageOnlyFailure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-004.html [ ImageOnlyFailure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-negative-range-001.html [ ImageOnlyFailure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-range-001.html [ ImageOnlyFailure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-004.html [ ImageOnlyFailure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-layer-001.html [ ImageOnlyFailure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image.html [ ImageOnlyFailure ]
 

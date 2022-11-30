@@ -30,7 +30,7 @@
 #include "EventNames.h"
 #include "EventSender.h"
 #include "HTMLNames.h"
-#include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
@@ -82,7 +82,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomStrin
     else if (name == mediaAttr) {
         m_styleSheetOwner.setMedia(value);
         if (sheet()) {
-            sheet()->setMediaQueries(MediaQuerySet::create(value, MediaQueryParserContext(document())));
+            sheet()->setMediaQueries(MQ::MediaQueryParser::parse(value, MediaQueryParserContext(document())));
             if (auto* scope = m_styleSheetOwner.styleScope())
                 scope->didChangeStyleSheetContents();
         } else

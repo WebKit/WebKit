@@ -82,7 +82,7 @@ static bool shouldDirtyAllStyle(const Vector<StyleSheetContents*>& sheets)
     return false;
 }
 
-Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const LegacyMediaQueryEvaluator& mediaQueryEvaluator)
+Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
     : m_ownedRuleSet(RuleSet::create())
     , m_ruleSets({ m_ownedRuleSet })
     , m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))

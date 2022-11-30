@@ -30,14 +30,14 @@ namespace Style {
 class RuleSetBuilder {
 public:
     enum class ShrinkToFit { Enable, Disable };
-    RuleSetBuilder(RuleSet&, const LegacyMediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable);
+    RuleSetBuilder(RuleSet&, const MQ::MediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable);
     ~RuleSetBuilder();
 
-    void addRulesFromSheet(const StyleSheetContents&, const MediaQuerySet* sheetQuery = nullptr);
+    void addRulesFromSheet(const StyleSheetContents&, const MQ::MediaQueryList& sheetQuery = { });
     void addStyleRule(const StyleRule&);
 
 private:
-    RuleSetBuilder(const LegacyMediaQueryEvaluator&);
+    RuleSetBuilder(const MQ::MediaQueryEvaluator&);
 
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
@@ -53,11 +53,11 @@ private:
     struct MediaQueryCollector {
         ~MediaQueryCollector();
 
-        const LegacyMediaQueryEvaluator& evaluator;
+        const MQ::MediaQueryEvaluator& evaluator;
         bool collectDynamic { false };
 
         struct DynamicContext {
-            Ref<const MediaQuerySet> set;
+            const MQ::MediaQueryList& queries;
             Vector<size_t> affectedRulePositions { };
             HashSet<Ref<const StyleRule>> affectedRules { };
         };
@@ -66,8 +66,8 @@ private:
         Vector<RuleSet::DynamicMediaQueryRules> dynamicMediaQueryRules { };
         OptionSet<MQ::MediaQueryDynamicDependency> allDynamicDependencies { };
 
-        bool pushAndEvaluate(const MediaQuerySet*);
-        void pop(const MediaQuerySet*);
+        bool pushAndEvaluate(const MQ::MediaQueryList&);
+        void pop(const MQ::MediaQueryList&);
         void addRuleIfNeeded(const RuleData&);
     };
 

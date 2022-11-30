@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "Node.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
@@ -140,10 +141,10 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Document& docum
     m_contents->registerClient(this);
 
     WTF::switchOn(WTFMove(options.media), [this](RefPtr<MediaList>&& mediaList) {
-        if (auto* queries = mediaList->queries())
-            setMediaQueries(*queries);
+        if (auto queries = mediaList->mediaQueries(); !queries.isEmpty())
+            setMediaQueries(WTFMove(queries));
     }, [this](String&& mediaString) {
-        setMediaQueries(MediaQuerySet::create(WTFMove(mediaString)));
+        setMediaQueries(MQ::MediaQueryParser::parse(mediaString, { }));
     });
 }
 
@@ -157,7 +158,7 @@ CSSStyleSheet::~CSSStyleSheet()
             m_childRuleCSSOMWrappers[i]->setParentStyleSheet(0);
     }
     if (m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper->clearParentStyleSheet();
+        m_mediaCSSOMWrapper->detachFromParent();
 
     m_contents->unregisterClient(this);
 }
@@ -273,11 +274,9 @@ void CSSStyleSheet::setDisabled(bool disabled)
     });
 }
 
-void CSSStyleSheet::setMediaQueries(Ref<MediaQuerySet>&& mediaQueries)
+void CSSStyleSheet::setMediaQueries(MQ::MediaQueryList&& mediaQueries)
 {
     m_mediaQueries = WTFMove(mediaQueries);
-    if (m_mediaCSSOMWrapper && m_mediaQueries)
-        m_mediaCSSOMWrapper->reattach(m_mediaQueries.get());
 }
 
 unsigned CSSStyleSheet::length() const
@@ -409,10 +408,8 @@ bool CSSStyleSheet::isLoading() const
 
 MediaList* CSSStyleSheet::media() const 
 {
-    if (!m_mediaQueries)
-        return nullptr;
     if (!m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper = MediaList::create(m_mediaQueries.get(), const_cast<CSSStyleSheet*>(this));
+        m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSStyleSheet*>(this));
     return m_mediaCSSOMWrapper.get();
 }
 

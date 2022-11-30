@@ -21,8 +21,8 @@ PASS document.styleSheets[1].cssRules[0].media.mediaText is "(hover: hover)"
 PASS document.styleSheets[1].cssRules[0].media.mediaText is "(hover: hover)"
 PASS document.styleSheets[1].cssRules[0].media.mediaText is "(hover: hover)"
 PASS document.styleSheets[1].cssRules[0].media.mediaText is "(hover: hover)"
-PASS document.styleSheets[1].cssRules[0].media.mediaText is "not all"
-PASS document.styleSheets[1].cssRules[0].media.mediaText is "not all"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(hover: ON-DEMAND)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(Hover: On-demand)"
 PASS successfullyParsed is true
 
 TEST COMPLETE
