@@ -38,9 +38,9 @@ using namespace JSC;
 
 JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     auto result = wrapped().result();
     if (UNLIKELY(result.hasException())) {
-        auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
         propagateException(lexicalGlobalObject, throwScope, result.releaseException());
         return jsNull();
     }
@@ -54,34 +54,31 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
     }, [] (uint64_t number) {
         return toJS<IDLUnsignedLongLong>(number);
     }, [&] (const RefPtr<IDBCursor>& cursor) {
-        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
-            auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+        return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope& throwScope) {
             return toJS<IDLInterface<IDBCursor>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, cursor.get());
         });
     }, [&] (const RefPtr<IDBDatabase>& database) {
-        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
-            auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+        return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope& throwScope) {
             return toJS<IDLInterface<IDBDatabase>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, database.get());
         });
     }, [&] (const IDBKeyData& keyData) {
-        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
+        return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {
             return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyData);
         });
     }, [&] (const Vector<IDBKeyData>& keyDatas) {
-        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
+        return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {
             return toJS<IDLSequence<IDLIDBKeyData>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyDatas);
         });
     }, [&] (const IDBGetResult& getResult) {
-        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
+        return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {
             auto result = deserializeIDBValueWithKeyInjection(lexicalGlobalObject, getResult.value(), getResult.keyData(), getResult.keyPath());
             return result ? result.value() : jsNull();
         });
     }, [&] (const IDBGetAllResult& getAllResult) {
-        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
+        return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope& throwScope) {
             auto& keys = getAllResult.keys();
             auto& values = getAllResult.values();
             auto& keyPath = getAllResult.keyPath();
-            auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
             JSC::MarkedArgumentBuffer list;
             for (unsigned i = 0; i < values.size(); i ++) {
                 auto result = deserializeIDBValueWithKeyInjection(lexicalGlobalObject, values[i], keys[i], keyPath);
@@ -89,7 +86,7 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
                     return jsNull();
                 list.append(result.value());
                 if (UNLIKELY(list.hasOverflowed())) {
-                    propagateException(lexicalGlobalObject, scope, Exception(UnknownError));
+                    propagateException(lexicalGlobalObject, throwScope, Exception(UnknownError));
                     return jsNull();
                 }
             }

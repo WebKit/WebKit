@@ -32,7 +32,8 @@ namespace WebCore {
 
 JSC::JSValue JSPaymentMethodChangeEvent::methodDetails(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().cachedMethodDetails(), [this, &lexicalGlobalObject] {
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedMethodDetails(), [this, &lexicalGlobalObject](JSC::ThrowScope&) {
         return WTF::switchOn(wrapped().methodDetails(), [](const JSValueInWrappedObject& methodDetails) -> JSC::JSValue {
             return methodDetails.getValue(JSC::jsNull());
         }, [&lexicalGlobalObject](const PaymentMethodChangeEvent::MethodDetailsFunction& function) -> JSC::JSValue {

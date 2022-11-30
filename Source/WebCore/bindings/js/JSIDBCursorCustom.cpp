@@ -37,14 +37,16 @@ using namespace JSC;
 
 JSC::JSValue JSIDBCursor::key(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().keyWrapper(), [&] {
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().keyWrapper(), [&](JSC::ThrowScope&) {
         return toJS(lexicalGlobalObject, lexicalGlobalObject, wrapped().key());
     });
 }
 
 JSC::JSValue JSIDBCursor::primaryKey(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().primaryKeyWrapper(), [&] {
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().primaryKeyWrapper(), [&](JSC::ThrowScope&) {
         return toJS(lexicalGlobalObject, lexicalGlobalObject, wrapped().primaryKey());
     });
 }

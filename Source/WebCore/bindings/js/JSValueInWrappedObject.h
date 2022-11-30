@@ -60,7 +60,7 @@ private:
     JSC::Weak<JSC::JSCell> m_cell { };
 };
 
-JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const Function<JSC::JSValue()>&);
+JSC::JSValue cachedPropertyValue(JSC::ThrowScope&, JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const Function<JSC::JSValue(JSC::ThrowScope&)>&);
 
 inline JSValueInWrappedObject::JSValueInWrappedObject(JSC::JSValue value)
 {
@@ -121,11 +121,14 @@ inline void JSValueInWrappedObject::setWithoutBarrier(JSValueInWrappedObject& ot
     m_cell = WTFMove(weak);
 }
 
-inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const Function<JSC::JSValue()>& function)
+inline JSC::JSValue cachedPropertyValue(JSC::ThrowScope& throwScope, JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const Function<JSC::JSValue(JSC::ThrowScope&)>& function)
 {
     if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue.getValue()))
         return cachedValue.getValue();
-    auto value = function();
+
+    auto value = function(throwScope);
+    RETURN_IF_EXCEPTION(throwScope, { });
+
     cachedValue.set(lexicalGlobalObject.vm(), &owner, cloneAcrossWorlds(lexicalGlobalObject, owner, value));
     ASSERT(isWorldCompatible(lexicalGlobalObject, cachedValue.getValue()));
     return cachedValue.getValue();
