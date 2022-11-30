@@ -28,10 +28,11 @@ function domValueOf(id) {
     return document.getElementById(id).value;
 }
 function visibleValueOf(id) {
-    var el = document.getElementById(id);
-    el.focus();
-    document.execCommand('SelectAll');
-    return document.getSelection().toString();
+    const element = document.getElementById(id);
+    const shadowRoot = internals.shadowRoot(element);
+    const range = new Range;
+    range.selectNodeContents(shadowRoot);
+    return internals.rangeAsText(range);
 }
 
 var fancyX = "x" + String.fromCharCode(0x305) + String.fromCharCode(0x332);
