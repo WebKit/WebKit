@@ -46,7 +46,7 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction)
 {
     auto scheduleWorkBlock = makeBlockPtr([scheduleWorkFunction = WTFMove(scheduleWorkFunction)](WGPUWorkItem workItem)
     {
-        scheduleWorkFunction(makeBlockPtr(WTFMove(workItem)));
+        scheduleWorkFunction(CompletionHandler<void(void)>(makeBlockPtr(WTFMove(workItem)), CompletionHandlerCallThread::AnyThread));
     });
     WGPUInstanceCocoaDescriptor cocoaDescriptor {
         {
