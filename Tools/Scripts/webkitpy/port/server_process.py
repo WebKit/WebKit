@@ -184,7 +184,7 @@ class ServerProcess(object):
         try:
             self._proc.stdin.write(string_utils.encode(bytes))
             self._proc.stdin.flush()
-        except (IOError, ValueError):
+        except (IOError, ValueError, BrokenPipeError):
             self.stop(0.0)
             # stop() calls _reset(), so we have to set crashed to True after calling stop()
             # unless we already know that this is a timeout.
@@ -398,9 +398,12 @@ class ServerProcess(object):
             for child_process_name in self._child_processes.keys():
                 for child_process_id in self._child_processes[child_process_name]:
                     self._port.check_for_leaks(child_process_name, child_process_id)
-
-        if self._proc.stdin:
-            self._proc.stdin.close()
+        try:
+            if self._proc.stdin:
+                self._proc.stdin.close()
+        except (IOError, ValueError, BrokenPipeError):
+            pass
+        finally:
             self._proc.stdin = None
 
         return self._wait_for_stop(timeout_secs)
