@@ -4520,7 +4520,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter
 imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors.html [ ImageOnlyFailure ]
 
 # CSS Masonry Layout not supported.
-imported/w3c/web-platform-tests/css/css-grid/masonry.tentative [ Skip ]
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-002.html [ ImageOnlyFailure ]
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-003.html [ ImageOnlyFailure ]
