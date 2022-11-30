@@ -1407,15 +1407,15 @@ void FrameView::removeEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObjec
     m_embeddedObjectsToUpdate->remove(&embeddedObject);
 }
 
-void FrameView::setMediaType(const String& mediaType)
+void FrameView::setMediaType(const AtomString& mediaType)
 {
     m_mediaType = mediaType;
 }
 
-String FrameView::mediaType() const
+AtomString FrameView::mediaType() const
 {
     // See if we have an override type.
-    String overrideType = frame().loader().client().overrideMediaType();
+    auto overrideType = frame().loader().client().overrideMediaType();
     InspectorInstrumentation::applyEmulatedMedia(frame(), overrideType);
     if (!overrideType.isNull())
         return overrideType;
@@ -1427,11 +1427,11 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
     if (printing) {
         if (m_mediaTypeWhenNotPrinting.isNull())
             m_mediaTypeWhenNotPrinting = mediaType();
-        setMediaType("print"_s);
+        setMediaType(printAtom());
     } else {
         if (!m_mediaTypeWhenNotPrinting.isNull())
             setMediaType(m_mediaTypeWhenNotPrinting);
-        m_mediaTypeWhenNotPrinting = String();
+        m_mediaTypeWhenNotPrinting = nullAtom();
     }
 }
 

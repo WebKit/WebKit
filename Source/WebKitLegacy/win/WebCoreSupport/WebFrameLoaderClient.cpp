@@ -984,10 +984,10 @@ WebHistory* WebFrameLoaderClient::webHistory() const
     return WebHistory::sharedHistory();
 }
 
-String WebFrameLoaderClient::overrideMediaType() const
+AtomString WebFrameLoaderClient::overrideMediaType() const
 {
     notImplemented();
-    return String();
+    return nullAtom();
 }
 
 void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)

@@ -98,13 +98,13 @@ StyleSheetContents* UserAgentStyle::alternateFormControlDesignStyleSheet;
 
 static const MQ::MediaQueryEvaluator& screenEval()
 {
-    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticScreenEval("screen"_s);
+    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticScreenEval(screenAtom());
     return staticScreenEval;
 }
 
 static const MQ::MediaQueryEvaluator& printEval()
 {
-    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticPrintEval("print"_s);
+    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticPrintEval(printAtom());
     return staticPrintEval;
 }
 

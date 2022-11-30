@@ -31,6 +31,7 @@
 namespace WebCore {
 
 #define WEBCORE_COMMON_ATOM_STRINGS_FOR_EACH_KEYWORD(macro) \
+    macro(all, "all") \
     macro(alternative, "alternative") \
     macro(auto, "auto") \
     macro(captions, "captions") \
@@ -45,7 +46,9 @@ namespace WebCore {
     macro(off, "off") \
     macro(on, "on") \
     macro(plaintextOnly, "plaintext-only") \
+    macro(print, "print") \
     macro(reset, "reset") \
+    macro(screen, "screen") \
     macro(search, "search") \
     macro(star, "*") \
     macro(submit, "submit") \

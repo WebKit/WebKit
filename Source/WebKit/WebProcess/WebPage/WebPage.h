@@ -1459,7 +1459,7 @@ public:
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);
 #endif
 
-    const String& overriddenMediaType() const { return m_overriddenMediaType; }
+    const AtomString& overriddenMediaType() const { return m_overriddenMediaType; }
     void setOverriddenMediaType(const String&);
 
     void updateCORSDisablingPatterns(Vector<String>&&);
@@ -2487,7 +2487,7 @@ private:
     HashSet<WebCore::RegistrableDomain> m_loadedSubresourceDomains;
 #endif
 
-    String m_overriddenMediaType;
+    AtomString m_overriddenMediaType;
     String m_processDisplayName;
     WebCore::AllowsContentJavaScript m_allowsContentJavaScriptFromMostRecentNavigation { WebCore::AllowsContentJavaScript::Yes };
 

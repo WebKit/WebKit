@@ -173,10 +173,10 @@ static double deviceScaleFactor(const FeatureEvaluationContext& context)
     auto& frame = *context.document.frame();
     auto mediaType = frame.view()->mediaType();
     
-    if (equalLettersIgnoringASCIICase(mediaType, "screen"_s))
+    if (mediaType == screenAtom())
         return frame.page() ? frame.page()->deviceScaleFactor() : 1;
 
-    if (equalLettersIgnoringASCIICase(mediaType, "print"_s)) {
+    if (mediaType == printAtom()) {
         // The resolution of images while printing should not depend on the dpi
         // of the screen. Until we support proper ways of querying this info
         // we use 300px which is considered minimum for current printers.

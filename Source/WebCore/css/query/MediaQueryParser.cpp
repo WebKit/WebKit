@@ -65,7 +65,7 @@ std::optional<MediaQuery> MediaQueryParser::parseCondition(CSSParserTokenRange r
     range.consumeWhitespace();
 
     if (range.atEnd())
-        return MediaQuery { { }, "all"_s };
+        return MediaQuery { { }, allAtom() };
 
     MediaQueryParser parser { context };
     
@@ -94,7 +94,7 @@ MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& rang
             if (auto query = consumeMediaQuery(subrange))
                 return *query;
             // "A media query that does not match the grammar in the previous section must be replaced by not all during parsing."
-            return MediaQuery { Prefix::Not, "all"_s };
+            return MediaQuery { Prefix::Not, allAtom() };
         };
 
         list.append(consumeMediaQueryOrNotAll());
@@ -206,7 +206,7 @@ void serialize(StringBuilder& builder, const MediaQuery& query)
         }
     }
 
-    if (!query.mediaType.isEmpty() && (!query.condition || query.prefix || query.mediaType != "all"_s)) {
+    if (!query.mediaType.isEmpty() && (!query.condition || query.prefix || query.mediaType != allAtom())) {
         serializeIdentifier(query.mediaType, builder);
         if (query.condition)
             builder.append(" and ");

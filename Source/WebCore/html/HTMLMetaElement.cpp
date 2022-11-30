@@ -78,7 +78,7 @@ bool HTMLMetaElement::mediaAttributeMatches()
     AtomString mediaType;
     if (auto* frame = document.frame()) {
         if (auto* frameView = frame->view())
-            mediaType = AtomString(frameView->mediaType());
+            mediaType = frameView->mediaType();
     }
 
     auto evaluator = MQ::MediaQueryEvaluator { mediaType, document, documentStyle ? &*documentStyle : nullptr };

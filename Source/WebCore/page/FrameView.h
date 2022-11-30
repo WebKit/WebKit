@@ -330,8 +330,8 @@ public:
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
     void updatePlayStateForAllAnimationsIncludingSubframes();
 
-    String mediaType() const;
-    WEBCORE_EXPORT void setMediaType(const String&);
+    AtomString mediaType() const;
+    WEBCORE_EXPORT void setMediaType(const AtomString&);
     void adjustMediaTypeForPrinting(bool printing);
 
     void setCannotBlitToWindow();
@@ -939,8 +939,8 @@ private:
     Color m_baseBackgroundColor { Color::white };
     IntSize m_lastViewportSize;
 
-    String m_mediaType { "screen"_s };
-    String m_mediaTypeWhenNotPrinting;
+    AtomString m_mediaType { screenAtom() };
+    AtomString m_mediaTypeWhenNotPrinting;
 
     Vector<FloatRect> m_trackedRepaintRects;
     

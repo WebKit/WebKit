@@ -1050,9 +1050,9 @@ ObjectContentType EmptyFrameLoaderClient::objectContentType(const URL&, const St
     return ObjectContentType::None;
 }
 
-String EmptyFrameLoaderClient::overrideMediaType() const
+AtomString EmptyFrameLoaderClient::overrideMediaType() const
 {
-    return { };
+    return nullAtom();
 }
 
 void EmptyFrameLoaderClient::redirectDataToPlugin(Widget&)

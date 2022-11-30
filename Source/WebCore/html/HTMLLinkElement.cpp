@@ -513,7 +513,7 @@ bool HTMLLinkElement::mediaAttributeMatches() const
     auto mediaQueryList = MQ::MediaQueryParser::parse(m_media, { document() });
     LOG(MediaQueries, "HTMLLinkElement::mediaAttributeMatches");
 
-    MQ::MediaQueryEvaluator evaluator(AtomString(document().frame()->view()->mediaType()), document(), documentStyle ? &*documentStyle : nullptr);
+    MQ::MediaQueryEvaluator evaluator(document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr);
     return evaluator.evaluate(mediaQueryList);
 }
 

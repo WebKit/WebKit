@@ -1042,7 +1042,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(const String&
     if (media == m_emulatedMedia)
         return { };
 
-    m_emulatedMedia = media;
+    m_emulatedMedia = AtomString(media);
 
     // FIXME: Schedule a rendering update instead of synchronously updating the layout.
     m_inspectedPage.updateStyleAfterChangeInEnvironment();
@@ -1086,7 +1086,7 @@ void InspectorPageAgent::applyUserAgentOverride(String& userAgent)
         userAgent = m_userAgentOverride;
 }
 
-void InspectorPageAgent::applyEmulatedMedia(String& media)
+void InspectorPageAgent::applyEmulatedMedia(AtomString& media)
 {
     if (!m_emulatedMedia.isEmpty())
         media = m_emulatedMedia;
