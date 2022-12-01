@@ -286,24 +286,23 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     m_pendingAppends.append(WTFMove(nodeChange));
 }
 
-void AXIsolatedTree::queueRemovals(const Vector<AXID>& subtreeRemovals)
+void AXIsolatedTree::queueRemovals(Vector<AXID>&& subtreeRemovals)
 {
     ASSERT(isMainThread());
 
     Locker locker { m_changeLogLock };
-    queueRemovalsLocked(subtreeRemovals);
+    queueRemovalsLocked(WTFMove(subtreeRemovals));
 }
 
-void AXIsolatedTree::queueRemovalsLocked(const Vector<AXID>& subtreeRemovals)
+void AXIsolatedTree::queueRemovalsLocked(Vector<AXID>&& subtreeRemovals)
 {
     ASSERT(isMainThread());
     ASSERT(m_changeLogLock.isLocked());
 
-    for (const auto& axID : subtreeRemovals)
-        m_pendingSubtreeRemovals.append(axID);
+    m_pendingSubtreeRemovals.appendVector(WTFMove(subtreeRemovals));
 }
 
-void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(const Vector<AXID>& subtreeRemovals)
+void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(Vector<AXID>&& subtreeRemovals)
 {
     ASSERT(isMainThread());
 
@@ -324,7 +323,7 @@ void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(const Vector<AXID>& subtr
     Locker locker { m_changeLogLock };
     for (const auto& resolvedAppend : resolvedAppends)
         queueChange(resolvedAppend);
-    queueRemovalsLocked(subtreeRemovals);
+    queueRemovalsLocked(WTFMove(subtreeRemovals));
 }
 
 void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
@@ -637,9 +636,9 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     }
 
     if (resolveNodeChanges == ResolveNodeChanges::Yes)
-        queueRemovalsAndUnresolvedChanges(oldChildrenIDs);
+        queueRemovalsAndUnresolvedChanges(WTFMove(oldChildrenIDs));
     else
-        queueRemovals(oldChildrenIDs);
+        queueRemovals(WTFMove(oldChildrenIDs));
 
     // Also queue updates to the target node itself and any properties that depend on children().
     updateNodeAndDependentProperties(*axAncestor);
@@ -828,8 +827,10 @@ void AXIsolatedTree::applyPendingChanges()
     while (m_pendingSubtreeRemovals.size()) {
         auto axID = m_pendingSubtreeRemovals.takeLast();
         AXLOG(makeString("removing subtree axID ", axID.loggingString()));
-        if (auto object = nodeForID(axID)) {
-            object->detach(AccessibilityDetachmentType::ElementDestroyed);
+        if (RefPtr object = nodeForID(axID)) {
+            // There's no need to call the more comprehensive AXCoreObject::detach here since
+            // we're deleting the entire subtree of this object and thus don't need to `detachRemoteParts`.
+            object->detachWrapper(AccessibilityDetachmentType::ElementDestroyed);
             m_pendingSubtreeRemovals.appendVector(object->m_childrenIDs);
             m_readerThreadNodeMap.remove(axID);
         }
