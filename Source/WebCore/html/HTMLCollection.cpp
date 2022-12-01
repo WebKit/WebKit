@@ -86,13 +86,13 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case TableRows:
     case TRCells:
     case SelectOptions:
+    case DataListOptions:
     case MapAreas:
         return DoNotInvalidateOnAttributeChanges;
     case DocApplets:
-    case SelectedOptions:
-    case DataListOptions:
-        // FIXME: We can do better some day.
         return InvalidateOnAnyAttrChange;
+    case SelectedOptions:
+        return InvalidateOnSelectedAttrChange;
     case ByClass:
         return InvalidateOnClassAttrChange;
     case DocAnchors:

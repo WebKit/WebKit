@@ -7,4 +7,8 @@ PASS .selectedOptions without the 'multiple' attribute but more than one selecte
 PASS .selectedOptions should return `HTMLCollection` instance
 PASS .selectedOptions should always return the same value - [SameObject]
 PASS .selectedOptions should return the same object after selection changes - [SameObject]
+PASS .selectedOptions should return the same object after selection changes via setAttribute() - [SameObject]
+PASS .selectedOptions should return the same object after selection changes via setAttribute() on disconnected root - [SameObject]
+PASS .selectedOptions should return the same object after selection changes via removeAttribute() - [SameObject]
+PASS .selectedOptions should return the same object after selection changes via removeAttribute() on disconnected root - [SameObject]
 
