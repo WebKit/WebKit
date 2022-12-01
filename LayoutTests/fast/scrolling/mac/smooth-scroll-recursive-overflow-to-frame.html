@@ -41,7 +41,10 @@
 
             // Click inside scroller
             await UIHelper.activateAt(30,30);
-            await UIHelper.keyDown("downArrow");
+
+            // The down arrow needs to be pressed twice to "escape" the rubber-banding
+            await UIHelper.rawKeyDown("downArrow");
+            await UIHelper.rawKeyDown("downArrow");
         }
     </script>
 </head>

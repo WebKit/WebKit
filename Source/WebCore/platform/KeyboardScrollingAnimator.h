@@ -61,9 +61,9 @@ public:
     WEBCORE_EXPORT void stopScrollingImmediately();
 
 private:
-    RectEdges<bool> scrollableDirectionsFromPosition(FloatPoint) const;
     std::optional<KeyboardScroll> makeKeyboardScroll(ScrollDirection, ScrollGranularity) const;
     float scrollDistance(ScrollDirection, ScrollGranularity) const;
+    RectEdges<bool> rubberbandableDirections() const;
 
     ScrollableArea& m_scrollableArea;
     bool m_scrollTriggeringKeyIsPressed { false };

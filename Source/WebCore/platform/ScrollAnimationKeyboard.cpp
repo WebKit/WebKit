@@ -49,22 +49,6 @@ static FloatSize perpendicularAbsoluteUnitVector(ScrollDirection direction)
     return { };
 }
 
-static BoxSide boxSideForDirection(ScrollDirection direction)
-{
-    switch (direction) {
-    case ScrollDirection::ScrollUp:
-        return BoxSide::Top;
-    case ScrollDirection::ScrollDown:
-        return BoxSide::Bottom;
-    case ScrollDirection::ScrollLeft:
-        return BoxSide::Left;
-    case ScrollDirection::ScrollRight:
-        return BoxSide::Right;
-    }
-    ASSERT_NOT_REACHED();
-    return BoxSide::Top;
-}
-
 static FloatPoint farthestPointInDirection(FloatPoint a, FloatPoint b, ScrollDirection direction)
 {
     switch (direction) {
