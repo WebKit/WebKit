@@ -25,7 +25,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, WANTS_CONNECTION_ATTRIBUTE, MessageReceiver, Message
+from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, WANTS_CONNECTION_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
@@ -60,6 +60,11 @@ NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
 NOT_STREAM_ENCODABLE_ATTRIBUTE = 'NotStreamEncodable'
 NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE = 'NotStreamEncodableReply'
 STREAM_BATCHED_ATTRIBUTE = 'StreamBatched'
+
+attributes_to_generate_validators = {
+    "messageAllowedWhenWaitingForSyncReply": [ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, STREAM_ATTRIBUTE],
+    "messageAllowedWhenWaitingForUnboundedSyncReply": [ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE],
+}
 
 def receiver_enumerator_order_key(receiver_name):
     if receiver_name == 'IPC':
@@ -1125,6 +1130,10 @@ def generate_message_names_header(receivers):
         result.append('    return false;\n')
     result.append('}\n')
     result.append('\n')
+
+    for fname, _ in sorted(attributes_to_generate_validators.items()):
+        result.append('bool %s(MessageName);\n' % fname)
+
     result.append('} // namespace IPC\n')
     result.append('\n')
     result.append('namespace WTF {\n')
@@ -1171,6 +1180,20 @@ def generate_message_names_implementation(receivers):
     result.append('    ASSERT_NOT_REACHED();\n')
     result.append('    return ReceiverName::Invalid;\n')
     result.append('}\n')
+    for fnam, attr_list in sorted(attributes_to_generate_validators.items()):
+        result.append('bool %s(MessageName name)\n' % fnam)
+        result.append('{\n')
+        result.append('    switch (name) {\n')
+        for e in message_enumerators:
+            if set(attr_list).intersection(set(e.messages[0].attributes).union(set(e.receiver.attributes))):
+                result.append('    case MessageName::%s:\n' % e)
+        if [e for e in message_enumerators if set(attr_list).intersection(set(e.messages[0].attributes).union(set(e.receiver.attributes)))]:
+            result.append('        return true;\n')
+        result.append('    default:\n')
+        result.append('        return false;\n')
+        result.append('    }\n')
+        result.append('}\n')
+        result.append('\n')
     result.append('\n')
     result.append('} // namespace IPC\n')
     result.append('\n')

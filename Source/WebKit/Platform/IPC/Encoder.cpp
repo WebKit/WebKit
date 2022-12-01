@@ -104,6 +104,11 @@ void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhen
     }
 }
 
+bool Encoder::isFullySynchronousModeForTesting() const
+{
+    return messageFlags().contains(MessageFlags::UseFullySynchronousModeForTesting);
+}
+
 void Encoder::setFullySynchronousModeForTesting()
 {
     messageFlags().add(MessageFlags::UseFullySynchronousModeForTesting);
