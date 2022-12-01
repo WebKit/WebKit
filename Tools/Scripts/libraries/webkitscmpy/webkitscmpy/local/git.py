@@ -183,6 +183,9 @@ class Git(Scm):
                     order -= 1
                     break
                 order -= 1
+            else:
+                if order == 0 and hashes[0] == self._ordered_commits[branch][0]:
+                    order = -1
 
             self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
             self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
