@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "FontBaseline.h"
 #include "FrameView.h"
 #include "RenderBoxModelObject.h"
 #include "RenderOverflow.h"
@@ -569,6 +570,7 @@ override;
     virtual std::optional<LayoutUnit> firstLineBaseline() const { return std::optional<LayoutUnit>(); }
     virtual std::optional<LayoutUnit> lastLineBaseline() const { return std::optional<LayoutUnit> (); }
     virtual std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const { return std::optional<LayoutUnit>(); } // Returns empty if we should skip this box when computing the baseline of an inline-block.
+    LayoutUnit synthesizeBaseline(FontBaseline baselineType, BaselineSynthesisEdge) const;
 
     bool shrinkToAvoidFloats() const;
     virtual bool avoidsFloats() const;
@@ -921,7 +923,7 @@ inline void RenderBox::setInlineBoxWrapper(LegacyInlineElementBox* boxWrapper)
     m_inlineBoxWrapper = boxWrapper;
 }
 
-LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox&, LineDirectionMode);
+LayoutUnit synthesizedBaseline(const RenderBox&, const RenderStyle& parentStyle, LineDirectionMode, BaselineSynthesisEdge);
 
 } // namespace WebCore
 
