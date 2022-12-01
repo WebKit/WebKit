@@ -1768,7 +1768,7 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Monterey+ ] fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
 [ BigSur+ ] fast/canvas/webgl/lose-context-on-timeout.html [ Timeout ]
 [ BigSur+ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
-[ Ventura+ ] fast/images/animated-heics-verify.html [ Timeout Crash ]
+[ BigSur+ ] fast/images/animated-heics-verify.html [ Timeout Crash ]
 [ Ventura+ ] model-element/model-element-ready.html [ Pass Failure ]
 [ Monterey+ ] model-element/model-element-graphics-layers-opacity.html [ Failure ]
 [ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
@@ -1776,3 +1776,4 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
 [ Monterey+ ] http/tests/media/video-webm-stall.html  [ Failure ]
 [ BigSur+ ] fast/images/animated-heics-draw.html [ Timeout Crash ]
+[ BigSur+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
