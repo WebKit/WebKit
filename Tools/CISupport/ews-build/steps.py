@@ -3147,6 +3147,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     jsonFileName = 'layout-test-results/full_results.json'
     logfiles = {'json': jsonFileName}
     test_failures_log_name = 'test-failures'
+    results_db_log_name = 'results-db'
     ENABLE_GUARD_MALLOC = False
     EXIT_AFTER_FAILURES = '30'
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
@@ -3271,10 +3272,10 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         else:
             configuration['flavor'] = 'wk2'
 
-        self._addToLog('stdio', f'\nChecking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
+        self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
         for test in failing_tests:
             data = ResultsDatabase().is_test_pre_existing_failure(test, commit=identifier, configuration=configuration)
-            self._addToLog('stdio', f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
+            self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
             if data['is_existing_failure']:
                 self.preexisting_failures_in_results_db.append(test)
                 self.failing_tests_filtered.remove(test)
