@@ -2183,12 +2183,6 @@ webkit.org/b/238691 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Tim
 
 ############ end of test failures related to GPU Process on by default
 
-# rdar://86037417 WindowServer returned not alive with context:,unresponsive work processor(s)
-http/tests/model/model-document.html [ Skip ]
-http/tests/model/model-document-interactive.html [ Skip ]
-accessibility/model-element-attributes.html [ Skip ]
-model-element/model-element-interactive.html [ Skip ]
-
 webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
 
 webkit.org/b/233621 http/tests/webgpu [ Skip ]

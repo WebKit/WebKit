@@ -1595,12 +1595,6 @@ webkit.org/b/236328 [ Monterey ] webaudio/decode-audio-data-webm-vorbis.html [ F
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
 
 
-# rdar://86037417 WindowServer returned not alive with context:,unresponsive work processor(s)
-[ Monterey+ ] http/tests/model/model-document.html [ Skip ]
-[ Monterey+ ] http/tests/model/model-document-interactive.html [ Skip ]
-[ Monterey+ ] accessibility/model-element-attributes.html [ Skip ]
-[ Monterey+ ] model-element/model-element-interactive.html [ Skip ]
-
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
