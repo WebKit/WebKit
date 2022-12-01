@@ -103,8 +103,6 @@ def arm64FPRName(name, kind)
         "s" + name[1..-1]
     when :vector
         "v" + name[1..-1]
-    when :vector_with_interpretation
-        "q" + name[1..-1]
     else
         raise "bad FPR kind #{kind}"
     end
@@ -380,7 +378,7 @@ def arm64LowerLabelReferences(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbsi", "loadbsq", "loadh", "loadhsi", "loadhsq", "leap", "loadv"
+            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbsi", "loadbsq", "loadh", "loadhsi", "loadhsq", "leap"
                 labelRef = node.operands[0]
                 if labelRef.is_a? LabelReference
                     dest = node.operands[1]
@@ -463,7 +461,7 @@ class Sequence
             when "loadp", "storep", "loadq", "storeq", "loadd", "stored", "lshiftp", "lshiftq", "negp", "negq", "rshiftp", "rshiftq",
                 "urshiftp", "urshiftq", "addp", "addq", "mulp", "mulq", "andp", "andq", "orp", "orq", "subp", "subq", "xorp", "xorq", "addd",
                 "divd", "subd", "muld", "sqrtd", /^bp/, /^bq/, /^btp/, /^btq/, /^cp/, /^cq/, /^tp/, /^tq/, /^bd/,
-                "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/, "loadv", "storev"
+                "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/
                 size = $currentSettings["ADDRESS64"] ? 8 : 4
             when "loadpairq", "storepairq", "loadpaird", "storepaird"
                 size = 16
@@ -910,10 +908,6 @@ class Instruction
             emitARM64Access("ldr", "ldur", operands[1], operands[0], :double)
         when "stored"
             emitARM64Unflipped("str", operands, :double)
-        when "loadv"
-            emitARM64Access("ldr", "ldur", operands[1], operands[0], :vector_with_interpretation)
-        when "storev"
-            emitARM64Unflipped("str", operands, :vector_with_interpretation)
         when "addd"
             emitARM64TAC("fadd", operands, :double)
         when "divd"

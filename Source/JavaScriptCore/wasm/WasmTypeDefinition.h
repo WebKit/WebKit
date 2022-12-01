@@ -171,16 +171,6 @@ public:
         return n;
     }
 
-    size_t numReturnVectors() const
-    {
-        size_t n = 0;
-        for (size_t i = 0; i < returnCount(); ++i) {
-            if (returnType(i).isV128())
-                ++n;
-        }
-        return n;
-    }
-
     bool operator==(const FunctionSignature& other) const
     {
         // Function signatures are unique because it is just an view class over TypeDefinition and

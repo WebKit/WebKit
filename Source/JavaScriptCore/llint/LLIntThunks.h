@@ -112,7 +112,6 @@ MacroAssemblerCodeRef<JSEntryPtrTag> returnLocationThunk(OpcodeID, OpcodeSize);
 
 #if ENABLE(WEBASSEMBLY)
 MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk();
-MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD();
 #endif // ENABLE(WEBASSEMBLY)
 
 } } // namespace JSC::LLInt

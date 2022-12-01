@@ -234,7 +234,6 @@ public:
 
     void setEntrypoint(CodePtr<WasmEntryPtrTag> entrypoint)
     {
-        ASSERT(!m_entrypoint);
         m_entrypoint = entrypoint;
     }
 
