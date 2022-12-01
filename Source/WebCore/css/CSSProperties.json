@@ -4859,6 +4859,7 @@
         },
         "size": {
             "codegen-properties": {
+                "computable": false,
                 "custom": "All",
                 "custom-parser": true,
                 "parser-requires-context-mode": true

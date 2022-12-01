@@ -275,13 +275,8 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmax(primitiveValue->doubleValue()) };
         
         case CSSUnitType::CSS_IDENT:
-        case CSSUnitType::CSS_STRING: {
-            auto value = CSSKeywordValue::create(primitiveValue->stringValue());
-            if (value.hasException())
-                return value.releaseException();
-            
-            return Ref<CSSStyleValue> { value.releaseReturnValue() };
-        }
+        case CSSUnitType::CSS_STRING:
+            return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(primitiveValue->stringValue()));
         default:
             break;
         }

@@ -279,7 +279,6 @@ PASS shape-image-threshold
 PASS shape-margin
 PASS shape-outside
 PASS shape-rendering
-PASS size
 PASS speak-as
 PASS stop-color
 PASS stop-opacity
