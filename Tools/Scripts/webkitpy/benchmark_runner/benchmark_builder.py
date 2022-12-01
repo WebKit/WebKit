@@ -129,8 +129,8 @@ class BenchmarkBuilder(object):
         relpath_in_repo = match.group('path').lstrip('/')
         reference = match.group('reference')
         with tempfile.TemporaryDirectory() as temp_dir:
-            output = os.path.join(temp_dir, 'temp.tar')
-            subprocess.check_call(['git', 'archive', '--format=tar', reference, relpath_in_repo, '-o', output],
+            output = os.path.join(temp_dir, 'temp.tar.gz')
+            subprocess.check_call(['git', 'archive', '--format=tar.gz', reference, relpath_in_repo, '-o', output],
                                   cwd=get_path_from_project_root('../../../../'))
             temp_extract_path = os.path.join(temp_dir, 'extract')
             os.makedirs(temp_extract_path)
