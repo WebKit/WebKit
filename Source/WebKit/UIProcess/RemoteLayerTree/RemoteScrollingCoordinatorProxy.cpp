@@ -34,6 +34,7 @@
 #include "RemoteScrollingCoordinatorTransaction.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/ScrollingStateTree.h>
 #include <WebCore/ScrollingTreeFrameScrollingNode.h>
@@ -270,6 +271,11 @@ void RemoteScrollingCoordinatorProxy::resetStateAfterProcessExited()
     m_currentHorizontalSnapPointIndex = 0;
     m_currentVerticalSnapPointIndex = 0;
     m_uiState.reset();
+}
+
+void RemoteScrollingCoordinatorProxy::reportExposedUnfilledArea(MonotonicTime timestamp, unsigned unfilledArea)
+{
+    m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea), timestamp, unfilledArea);
 }
 
 } // namespace WebKit
