@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing muting video</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <div>Video should be running, go to black and running.</div>
+        <div>Following, should be a snapshot of the video, a black frame and a snapshot of the video.</div>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <canvas id="canvas1" width="320" height="240"></canvas>
+        <canvas id="canvas2" width="320" height="240"></canvas>
+        <canvas id="canvas3" width="320" height="240"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+promise_test(async (test) => {
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    assert_true(codecs.some((codec) => { return codec.mimeType.indexOf("AV1") >= 0 }), "AV1 is listed as a codec");
+
+    codecs.forEach((codec) => {
+       if (codec.mimeType.indexOf("AV1") >=0)
+           assert_equals(codec.sdpFmtpLine, undefined, "AV1 codec.sdpFmtpLine is undefined");
+    });
+
+    const pc = new RTCPeerConnection();
+    pc.addTransceiver("video");
+    const description = await pc.createOffer();
+    pc.close();
+    assert_true(description.sdp.indexOf("AV1") !== -1, "AV1 codec is in the SDP");
+}, "Verify AV1 activation")
+
+var track;
+var remoteTrack;
+var receivingConnection;
+promise_test((test) => {
+    return navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240, facingMode: "environment"}}).then((localStream) => {
+        return new Promise((resolve, reject) => {
+            track = localStream.getVideoTracks()[0];
+
+            createConnections((firstConnection) => {
+                firstConnection.addTrack(track, localStream);
+                firstConnection.getTransceivers()[0].setCodecPreferences([{mimeType: "video/AV1", clockRate: 90000}]);
+            }, (secondConnection) => {
+                receivingConnection = secondConnection;
+                secondConnection.ontrack = (trackEvent) => {
+                    remoteTrack = trackEvent.track;
+                    resolve(trackEvent.streams[0]);
+                };
+            }, { observeOffer : test.step_func((offer) => {
+                assert_false(offer.sdp.includes("H264"), "No H264");
+                assert_true(offer.sdp.includes("AV1"), "AV1");
+                return offer;
+            })
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((remoteStream) => {
+        video.srcObject = remoteStream;
+        return video.play();
+    });
+}, "Setting video exchange");
+
+promise_test(() => {
+    if (receivingConnection.connectionState === "connected")
+        return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        receivingConnection.onconnectionstatechange = () => {
+            if (receivingConnection.connectionState === "connected")
+                resolve();
+        };
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}, "Ensuring connection state is connected");
+
+promise_test((test) => {
+    return checkVideoBlack(false, canvas1, video);
+}, "Track is enabled, video should not be black");
+
+promise_test((test) => {
+    track.enabled = false;
+    return checkVideoBlack(true, canvas2, video);
+}, "Track is disabled, video should be black");
+
+async function getInboundRTPStatsNumberOfDecodedFrames(connection)
+{
+    var report = await connection.getStats();
+    var framesDecoded;
+    report.forEach((statItem) => {
+        if (statItem.type === "inbound-rtp")
+            framesDecoded = statItem.framesDecoded;
+    });
+    return framesDecoded;
+}
+
+async function testFrameDecodedIncreased(connection, count, previousFramesNumber)
+{
+    if (previousFramesNumber === undefined) {
+        let number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+        await waitFor(1000);
+        return testFrameDecodedIncreased(connection, 0, number);
+    }
+
+    var number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+    if (previousFramesNumber && number > previousFramesNumber)
+        return;
+
+    if (count >= 20)
+        return Promise.reject("test increasing frame encoded timed out");
+
+    await waitFor(1000);
+    return testFrameDecodedIncreased(connection, ++count, previousFramesNumber);
+}
+
+promise_test((test) => {
+    return testFrameDecodedIncreased(receivingConnection);
+}, "If disabled, black frames should still be coming");
+
+promise_test((test) => {
+    track.enabled = true;
+    return checkVideoBlack(false, canvas2, video);
+}, "Track is enabled, video should not be black 2");
+
+        </script>
+    </body>
+</html>

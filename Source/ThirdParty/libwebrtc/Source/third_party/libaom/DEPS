@@ -1,0 +1,7 @@
+include_rules = [
+  '+av1',
+  '+aom',
+  '+aom_dsp',
+  '+aom_ports',
+  '+config',
+]

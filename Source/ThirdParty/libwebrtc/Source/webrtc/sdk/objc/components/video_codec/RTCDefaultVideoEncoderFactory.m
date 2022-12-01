@@ -22,15 +22,19 @@
 #import "RTCH265ProfileLevelId.h"
 #import "RTCVideoEncoderH265.h"
 #endif
+#if !defined(DISABLE_LIBAOM_AV1_ENCODER)
+#import "sdk/objc/api/video_codec/RTCVideoEncoderAV1.h"
+#endif
 
 @implementation RTCDefaultVideoEncoderFactory {
   bool _supportsH265;
   bool _supportsVP9Profile0;
   bool _supportsVP9Profile2;
   bool _useLowLatencyH264;
+  bool _supportsAv1;
 }
 
-- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 lowLatencyH264:(bool)useLowLatencyH264
+- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 lowLatencyH264:(bool)useLowLatencyH264 av1:(bool)supportsAv1
 {
   self = [super init];
   if (self) {
@@ -38,15 +42,16 @@
     _supportsVP9Profile0 = supportsVP9Profile0;
     _supportsVP9Profile2 = supportsVP9Profile2;
     _useLowLatencyH264 = useLowLatencyH264;
+    _supportsAv1 = supportsAv1;
   }
   return self;
 }
 
 + (NSArray<RTCVideoCodecInfo *> *)supportedCodecs {
-    return [self supportedCodecsWithH265:true vp9Profile0:true vp9Profile2:true];
+    return [self supportedCodecsWithH265:true vp9Profile0:true vp9Profile2:true av1:true];
 }
 
-+ (NSArray<RTCVideoCodecInfo *> *)supportedCodecsWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 {
++ (NSArray<RTCVideoCodecInfo *> *)supportedCodecsWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 av1:(bool)supportsAv1 {
 
    NSMutableArray<RTCVideoCodecInfo *> *codecs = [[NSMutableArray alloc] initWithCapacity:8];
 
@@ -93,6 +98,11 @@
     }]];
   }
 #endif
+#if !defined(DISABLE_LIBAOM_AV1)
+  if (supportsAv1) {
+    [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecAv1Name]];
+  }
+#endif
 
   return codecs;
 }
@@ -115,12 +125,17 @@
     }
 #endif
   }
+#if !defined(DISABLE_LIBAOM_AV1)
+  if ([info.name isEqualToString:kRTCVideoCodecAv1Name]) {
+    return [RTCVideoEncoderAV1 av1Encoder];
+  }
+#endif
 
   return nil;
 }
 
 - (NSArray<RTCVideoCodecInfo *> *)supportedCodecs {
-  return [[self class] supportedCodecsWithH265:_supportsH265 vp9Profile0:_supportsVP9Profile0 vp9Profile2: _supportsVP9Profile2];
+  return [[self class] supportedCodecsWithH265:_supportsH265 vp9Profile0:_supportsVP9Profile0 vp9Profile2: _supportsVP9Profile2 av1: _supportsAv1];
 }
 
 @end

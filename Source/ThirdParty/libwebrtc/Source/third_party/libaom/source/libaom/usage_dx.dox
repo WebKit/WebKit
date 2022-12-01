@@ -1,0 +1,22 @@
+/*! \page usage_decode Decoding
+
+    The aom_codec_decode() function is at the core of the decode loop. It
+    processes packets of compressed data passed by the application, producing
+    decoded images. The decoder expects packets to comprise exactly one image
+    frame of data. Packets \ref MUST be passed in decode order. If the
+    application wishes to associate some data with the frame, the
+    <code>user_priv</code> member may be set.
+
+    \ref samples
+
+
+    \section usage_frame_iter Frame Iterator Based Decoding
+    Decoded frames are made available to the application
+    through the aom_codec_get_frame() iterator. The application initializes the
+    iterator storage (of type #aom_codec_iter_t) to NULL, then calls
+    aom_codec_get_frame repeatedly until it returns NULL, indicating that all
+    images have been returned. This process may result in zero, one, or many
+    frames that are ready for display, depending on the codec.
+
+
+*/

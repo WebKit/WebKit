@@ -42,7 +42,7 @@ class VideoFrame;
 struct SdpVideoFormat;
 class Settings;
 
-std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265, WebKitVP9, WebKitH264LowLatency);
+std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265, WebKitVP9, WebKitH264LowLatency, WebKitAv1);
 
 using WebKitVideoEncoder = void*;
 using VideoEncoderCreateCallback = WebKitVideoEncoder(*)(const SdpVideoFormat& format);
