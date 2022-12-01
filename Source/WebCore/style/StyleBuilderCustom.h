@@ -1468,7 +1468,8 @@ inline std::pair<StyleColor, SVGPaintType> colorAndSVGPaintType(BuilderState& bu
     } else if (localValue.isValueID() && localValue.valueID() == CSSValueNone)
         paintType = url.isEmpty() ? SVGPaintType::None : SVGPaintType::URINone;
     else if (StyleColor::isCurrentColor(localValue)) {
-        color = StyleColor::currentColor();
+        // FIXME: We should resolve currentcolor at use time, not now.
+        color = builderState.style().color();
         paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
         builderState.style().setDisallowsFastPathInheritance();
     } else {
