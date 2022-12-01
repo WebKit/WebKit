@@ -52,11 +52,6 @@ WI.PageObserver = class PageObserver extends InspectorBackend.Dispatcher
         WI.cssManager.defaultAppearanceDidChange(appearance);
     }
 
-    defaultUserPreferencesDidChange(userPreferences)
-    {
-        WI.cssManager.defaultUserPreferencesDidChange(userPreferences);
-    }
-
     frameStartedLoading(frameId)
     {
         // Not handled yet.
