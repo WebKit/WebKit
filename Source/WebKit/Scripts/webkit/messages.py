@@ -149,25 +149,6 @@ def reply_arguments_type(message):
     return 'std::tuple<%s>' % (', '.join(parameter.type for parameter in message.reply_parameters))
 
 
-def message_to_reply_forward_declaration(message):
-    result = []
-
-    if message.reply_parameters is not None:
-        send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
-        completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
-
-        if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-            result.append('using %sDelayedReply' % message.name)
-        else:
-            result.append('using %sAsyncReply' % message.name)
-        result.append(' = CompletionHandler<void(%s)>;\n' % completion_handler_parameters)
-
-    if not result:
-        return None
-
-    return surround_in_condition(''.join(result), message.condition)
-
-
 def message_to_struct_declaration(receiver, message):
     result = []
     function_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.parameters]
@@ -189,13 +170,8 @@ def message_to_struct_declaration(receiver, message):
 
     result.append('\n')
     if message.reply_parameters != None:
-        send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
-        completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
-        if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-            result.append('    using DelayedReply = %sDelayedReply;\n' % message.name)
-        else:
+        if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
-            result.append('    using AsyncReply = %sAsyncReply;\n' % message.name)
         if message.has_attribute(MAINTHREADCALLBACK_ATTRIBUTE):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;\n')
         else:
@@ -403,7 +379,6 @@ def forward_declarations_and_headers(receiver):
         '"MessageNames.h"',
         '<wtf/Forward.h>',
         '<wtf/ThreadSafeRefCounted.h>',
-        '"%sMessagesReplies.h"' % receiver.name,
     ])
 
     non_template_wtf_types = frozenset([
@@ -451,97 +426,6 @@ def forward_declarations_and_headers(receiver):
             header_includes.append('#include %s\n' % header)
 
     return (forward_declarations, header_includes)
-
-
-def forward_declarations_and_headers_for_replies(receiver):
-    types_by_namespace = collections.defaultdict(set)
-
-    headers = set([
-        '<wtf/Forward.h>',
-        '"MessageNames.h"',
-    ])
-
-    non_template_wtf_types = frozenset([
-        'MachSendRight',
-        'MediaTime',
-        'String',
-        'UUID',
-    ])
-
-    no_forward_declaration_types = types_that_cannot_be_forward_declared()
-    for message in receiver.messages:
-        if message.reply_parameters is None:
-            continue
-
-        for parameter in message.reply_parameters:
-            kind = parameter.kind
-            type = parameter.type
-
-            if type.find('<') != -1 or type in no_forward_declaration_types:
-                # Don't forward declare class templates.
-                headers.update(headers_for_type(type))
-                continue
-
-            split = type.split('::')
-
-            # Handle WTF types even if the WTF:: prefix is not given
-            if split[0] in non_template_wtf_types:
-                split.insert(0, 'WTF')
-
-            if len(split) == 2:
-                namespace = split[0]
-                inner_type = split[1]
-                types_by_namespace[namespace].add((kind, inner_type))
-            elif len(split) > 2:
-                # We probably have a nested struct, which means we can't forward declare it.
-                # Include its header instead.
-                headers.update(headers_for_type(type))
-
-    forward_declarations = '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(types_by_namespace.items())])
-
-    header_includes = []
-    for header in sorted(headers):
-        conditions = conditions_for_header(header)
-        if conditions and not None in conditions:
-            header_include = '#if %s\n' % ' || '.join(sorted(set(conditions)))
-            header_include += '#include %s\n' % header
-            header_include += '#endif\n'
-            header_includes.append(header_include)
-        else:
-            header_includes.append('#include %s\n' % header)
-
-    return (forward_declarations, header_includes)
-
-
-def generate_messages_reply_header(receiver):
-    result = []
-
-    result.append(_license_header)
-
-    result.append('#pragma once\n')
-    result.append('\n')
-
-    if receiver.condition:
-        result.append('#if %s\n\n' % receiver.condition)
-
-    forward_declarations, headers = forward_declarations_and_headers_for_replies(receiver)
-
-    result += headers
-    result.append('\n')
-
-    result.append(forward_declarations)
-    result.append('\n')
-
-    result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
-    result.append('\n')
-    result.append('\n'.join(filter(None, [message_to_reply_forward_declaration(x) for x in receiver.messages])))
-    result.append('\n')
-    result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
-
-    if receiver.condition:
-        result.append('\n#endif // %s\n' % receiver.condition)
-
-    return ''.join(result)
 
 
 def generate_messages_header(receiver):

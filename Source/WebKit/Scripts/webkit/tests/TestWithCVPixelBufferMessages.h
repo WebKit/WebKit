@@ -27,7 +27,6 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
-#include "TestWithCVPixelBufferMessagesReplies.h"
 #if PLATFORM(COCOA)
 #include <WebCore/CVUtilities.h>
 #endif
@@ -76,7 +75,6 @@ public:
     static constexpr bool isSync = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
-    using AsyncReply = ReceiveCVPixelBufferAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
     const Arguments& arguments() const

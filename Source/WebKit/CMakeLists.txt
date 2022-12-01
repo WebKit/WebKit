@@ -490,7 +490,6 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
         list(APPEND _outputs
             ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp
             ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h
-            ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
         )
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp)
     endforeach ()
