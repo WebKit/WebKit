@@ -1774,7 +1774,7 @@ UserActivationAPIEnabled:
      WebKitLegacy:
        default: false
      WebKit:
-       default: false
+       default: true
      WebCore:
        default: false
 
