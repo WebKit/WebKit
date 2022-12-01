@@ -1,0 +1,55 @@
+<html>
+<head>
+  <style type="text/css">
+    body {
+      margin: 0;
+    }
+    #container {
+      width: 200px;
+      height: 200px;
+      margin: 50px;
+      border: 1px solid black;
+      -webkit-perspective: 500px;
+    }
+
+    .box {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: gray;
+      opacity: 0.75;
+    }
+
+    #target {
+      -webkit-transform-origin: 10% 50%;
+      -webkit-transform: rotateY(45deg);
+    }
+
+    .box:hover {
+      background-color: orange;
+    }
+  </style>
+  <script src="resources/hit-test-utils.js"></script>
+  <script>
+      var hitTestData = [
+        { 'point': [56, 100], 'target' : 'container' },
+        { 'point': [57, 100], 'target' : 'target' },
+        { 'point': [100, 100], 'target' : 'target' },
+        { 'point': [195, 100], 'target' : 'target' },
+        { 'point': [180, 60], 'target' : 'target' },
+        { 'point': [180, 240], 'target' : 'target' },
+      ];
+      window.addEventListener('load', runTest, false);
+  </script>
+</head>
+<body>
+
+<div id="container">
+  <div id="spacer">
+      <div class="box" id="target"></div>
+  </div>
+</div>
+
+<div id="results"></div>
+</body>
+</html>

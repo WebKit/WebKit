@@ -22,6 +22,10 @@
 			-moz-transform-style: preserve-3d;
 		}
 
+		.last {
+			top: 500px;
+		}
+
 		.box {
 				width: 100%;
 				position: absolute;
@@ -56,7 +60,7 @@
 		}
 
 		#results {
-			margin-top: 460px;
+			margin-top: 710px;
 		}
 	</style>
 	<script src="resources/hit-test-utils.js"></script>
@@ -65,6 +69,7 @@
 
 			{ 'point': [10, 100], 'target' : 'container-nopreserve' },
 			{ 'point': [20, 100], 'target' : 'target2' },
+			{ 'point': [50, 100], 'target' : 'target1' },
 			{ 'point': [80, 100], 'target' : 'target1' },
 			{ 'point': [100, 100], 'target' : 'target1' },
 			{ 'point': [120, 100], 'target' : 'target1' },
@@ -78,6 +83,15 @@
 			{ 'point': [120, 250], 'target' : 'target3' },
 			{ 'point': [180, 250], 'target' : 'target3' },
 			{ 'point': [190, 250], 'target' : 'container-preserve' },
+
+			{ 'point': [10, 550], 'target' : 'container-preserve' },
+			{ 'point': [20, 550], 'target' : 'target5' },
+			{ 'point': [50, 550], 'target' : 'target6' },
+			{ 'point': [80, 550], 'target' : 'target6' },
+			{ 'point': [100, 550], 'target' : 'target6' },
+			{ 'point': [120, 550], 'target' : 'target6' },
+			{ 'point': [180, 550], 'target' : 'target6' },
+			{ 'point': [190, 550], 'target' : 'container-preserve' },
 
 		];
 
@@ -97,6 +111,15 @@
 		<div id="target3" class="box blue">
 		</div>
 		<div id="target4" class="box red">
+		</div>
+	</div>
+
+	<div id="container-preserve" class="container preserve last">
+		<div id="spacer">
+			<div id="target5" class="box red">
+			</div>
+			<div id="target6" class="box blue">
+			</div>
 		</div>
 	</div>
 
