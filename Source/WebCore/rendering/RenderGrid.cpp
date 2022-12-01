@@ -698,16 +698,6 @@ static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& are
     return clamped;
 }
 
-static inline bool isMasonryRows(const RenderStyle& style)
-{
-    return style.gridMasonryRows();
-}
-
-static inline bool isMasonryColumns(const RenderStyle& style)
-{
-    return !isMasonryRows(style) && style.gridMasonryColumns();
-}
-
 // FIXME: We shouldn't have to pass the available logical width as argument. The problem is that
 // availableLogicalWidth() does always return a value even if we cannot resolve it like when
 // computing the intrinsic size (preferred widths). That's why we pass the responsibility to the
@@ -738,9 +728,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
         // Grid items should use the grid area sizes instead of the containing block (grid container)
         // sizes, we initialize the overrides here if needed to ensure it.
-        if (!child->hasOverridingContainingBlockContentLogicalWidth() && !isMasonryColumns(style()))
+        if (!child->hasOverridingContainingBlockContentLogicalWidth() && !style().gridMasonryColumns())
             child->setOverridingContainingBlockContentLogicalWidth(LayoutUnit());
-        if (!child->hasOverridingContainingBlockContentLogicalHeight() && !isMasonryRows(style()))
+        if (!child->hasOverridingContainingBlockContentLogicalHeight() && !style().gridMasonryRows())
             child->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
         GridArea area = currentGrid().gridItemArea(*child);
@@ -798,9 +788,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
         m_masonryLayout.performMasonryPlacement(firstTrackItems, itemsWithDefiniteGridAxisPosition, itemsWithIndefinitePosition, masonryAxisDirection);
     };
 
-    if (isMasonryRows(style())) 
+    if (style().gridMasonryRows()) 
         performMasonryPlacement(ForRows);
-    else if (isMasonryColumns(style()))
+    else if (style().gridMasonryRows())
         performMasonryPlacement(ForColumns);
     else
         performAutoPlacement();
@@ -1226,9 +1216,9 @@ void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren,
 LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox& child, GridTrackSizingDirection direction) const
 {
     if (direction == ForRows) {
-        if (isMasonryRows(style()))
+        if (style().gridMasonryRows())
             return isHorizontalWritingMode() ? child.height() + child.verticalMarginExtent() : child.width() + child.horizontalMarginExtent();
-    } else if (isMasonryColumns(style()))
+    } else if (style().gridMasonryColumns())
         return isHorizontalWritingMode() ? child.width() + child.horizontalMarginExtent() : child.height() + child.verticalMarginExtent();
 
     // We need the cached value when available because Content Distribution alignment properties
@@ -1758,7 +1748,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
     gridAreaPositionForChild(child, ForRows, startOfRow, endOfRow);
     LayoutUnit startPosition = startOfRow + marginBeforeForChild(child);
     LayoutUnit columnAxisChildSize = GridLayoutFunctions::isOrthogonalChild(*this, child) ? child.logicalWidth() + child.marginLogicalWidth() : child.logicalHeight() + child.marginLogicalHeight();
-    LayoutUnit masonryOffset = isMasonryRows(style()) ? m_masonryLayout.offsetForChild(child) : 0_lu;
+    LayoutUnit masonryOffset = style().gridMasonryRows() ? m_masonryLayout.offsetForChild(child) : 0_lu;
     auto overflow = alignSelfForChild(child).overflow();
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfRow - startOfRow, columnAxisChildSize);
     if (hasAutoMarginsInColumnAxis(child))
@@ -1783,7 +1773,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
     LayoutUnit endOfColumn;
     gridAreaPositionForChild(child, ForColumns, startOfColumn, endOfColumn);
     LayoutUnit startPosition = startOfColumn + marginStartForChild(child);
-    LayoutUnit masonryOffset = isMasonryColumns(style()) ? m_masonryLayout.offsetForChild(child) : 0_lu;
+    LayoutUnit masonryOffset = style().gridMasonryColumns() ? m_masonryLayout.offsetForChild(child) : 0_lu;
     if (hasAutoMarginsInRowAxis(child))
         return startPosition;
     GridAxisPosition axisPosition = rowAxisPositionForChild(child);

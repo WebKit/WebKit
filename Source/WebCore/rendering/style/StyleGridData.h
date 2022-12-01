@@ -117,14 +117,34 @@ public:
     const unsigned& autoRepeatColumnsInsertionPoint() const { return m_autoRepeatColumnsInsertionPoint; }
     const unsigned& autoRepeatRowsInsertionPoint() const { return m_autoRepeatRowsInsertionPoint; }
 
-    const AutoRepeatType& autoRepeatColumnsType() const { return m_autoRepeatColumnsType; }
-    const AutoRepeatType& autoRepeatRowsType() const { return m_autoRepeatRowsType; }
-
     const bool& subgridRows() const { return m_subgridRows; };
     const bool& subgridColumns() const { return m_subgridColumns; }
 
+    // Masonry Spec Section 2
+    // "If masonry is specified for both grid-template-columns and grid-template-rows, then the used value for grid-template-columns is none, 
+    // and thus the inline axis will be the grid axis."
+
     bool masonryRows() const { return m_masonryRows; }
-    bool masonryColumns() const { return m_masonryColumns; }
+    bool masonryColumns() const { return !m_masonryRows && m_masonryColumns; }
+
+    // Masonry Spec Section 2.3.1 repeat(auto-fit)
+    // "repeat(auto-fit) behaves as repeat(auto-fill) when the other axis is a masonry axis."
+    // We need to lie here that we are are really an auto-fill instead of an auto-fit.
+
+    AutoRepeatType autoRepeatColumnsType() const 
+    { 
+        if (masonryRows() && m_autoRepeatColumnsType == AutoRepeatType::Fit) 
+            return AutoRepeatType::Fill;
+        return m_autoRepeatColumnsType; 
+    }
+    
+    AutoRepeatType autoRepeatRowsType() const 
+    { 
+        if (masonryColumns() && m_autoRepeatRowsType == AutoRepeatType::Fit) 
+            return AutoRepeatType::Fill;
+        return m_autoRepeatRowsType; 
+    }
+
 
     const GridTrackList& columns() const { return m_columns; };
     const GridTrackList& rows() const { return m_rows; };
