@@ -1582,12 +1582,12 @@ FloatSize PDFPlugin::pdfDocumentSizeForPrinting() const
 
 JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
 {
-    static JSStaticFunction jsPDFDocStaticFunctions[] = {
+    static const JSStaticFunction jsPDFDocStaticFunctions[] = {
         { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 },
     };
 
-    static JSClassDefinition jsPDFDocClassDefinition = {
+    static const JSClassDefinition jsPDFDocClassDefinition = {
         0,
         kJSClassAttributeNone,
         "Doc",

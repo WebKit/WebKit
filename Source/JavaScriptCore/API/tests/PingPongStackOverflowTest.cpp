@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ static bool PingPongStackOverflowObject_hasInstance(JSContextRef context, JSObje
     return result && JSValueToBoolean(context, result);
 }
 
-JSClassDefinition PingPongStackOverflowObject_definition = {
+static const JSClassDefinition PingPongStackOverflowObject_definition = {
     0,
     kJSClassAttributeNone,
     

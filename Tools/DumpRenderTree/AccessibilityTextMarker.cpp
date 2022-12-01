@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,16 +62,16 @@ JSObjectRef AccessibilityTextMarker::makeJSAccessibilityTextMarker(JSContextRef 
 
 JSClassRef AccessibilityTextMarker::getJSClass()
 {
-    static JSStaticValue staticValues[] = {
+    static const JSStaticValue staticValues[] = {
         { 0, 0, 0, 0 }
     };
     
-    static JSStaticFunction staticFunctions[] = {
+    static const JSStaticFunction staticFunctions[] = {
         { "isEqual", isMarkerEqualCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
     
-    static JSClassDefinition classDefinition = {
+    static const JSClassDefinition classDefinition = {
         0, kJSClassAttributeNone, "AccessibilityTextMarker", 0, staticValues, staticFunctions,
         0, markerFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
@@ -114,16 +114,16 @@ JSObjectRef AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(JSC
 
 JSClassRef AccessibilityTextMarkerRange::getJSClass()
 {
-    static JSStaticValue staticValues[] = {
+    static const JSStaticValue staticValues[] = {
         { 0, 0, 0, 0 }
     };
     
-    static JSStaticFunction staticFunctions[] = {
+    static const JSStaticFunction staticFunctions[] = {
         { "isEqual", isMarkerRangeEqualCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
     
-    static JSClassDefinition classDefinition = {
+    static const JSClassDefinition classDefinition = {
         0, kJSClassAttributeNone, "AccessibilityTextMarkerRange", 0, staticValues, staticFunctions,
         0, markerRangeFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
