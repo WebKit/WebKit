@@ -128,11 +128,13 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
 
     if (image->sourceURL().protocolIsData())
         return false;
-    
-    if (!image->hasSingleSecurityOrigin())
+
+    // FIXME: SVG image shouldn't taint the canvas if their cross-origin data says not to.
+    // https://bugs.webkit.org/show_bug.cgi?id=248437
+    if (image->isSVGImage() && !image->hasSingleSecurityOrigin())
         return true;
 
-    if (!cachedImage->isCORSSameOrigin())
+    if (cachedImage->isCORSCrossOrigin())
         return true;
 
     ASSERT(m_canvas.securityOrigin());
@@ -144,17 +146,13 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
 bool CanvasRenderingContext::wouldTaintOrigin(const HTMLVideoElement* video)
 {
 #if ENABLE(VIDEO)
-    // FIXME: This check is likely wrong when a redirect is involved. We need
-    // to test the finalURL. Please be careful when fixing this issue not to
-    // make currentSrc be the final URL because then the
-    // HTMLMediaElement.currentSrc DOM API would leak redirect destinations!
     if (!video || !m_canvas.originClean())
         return false;
 
-    if (!video->hasSingleSecurityOrigin())
-        return true;
-
-    if (!(video->player() && video->player()->didPassCORSAccessCheck()) && video->wouldTaintOrigin(*m_canvas.securityOrigin()))
+    // FIXME: video->wouldTainOrigin is incorrectly implemented, it only checks that the origin
+    // doesn't change, rather than being based on CORS cross-origin data.
+    // This is tracked in https://bugs.webkit.org/show_bug.cgi?id=242889
+    if (!video->didPassCORSAccessCheck() && video->wouldTaintOrigin(*m_canvas.securityOrigin()))
         return true;
 
 #else
