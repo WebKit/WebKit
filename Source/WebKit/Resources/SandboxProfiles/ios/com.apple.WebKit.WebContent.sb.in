@@ -212,7 +212,7 @@
                 "IOAccelDevice2"
                 "IOAccelSharedUserClient2"))
 
-    ;; Items with known uses
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
@@ -222,6 +222,19 @@
         (require-all
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AGXDeviceUserClient"))) ;; Used by WebGL
+
+    ;; <rdar://problem/47268166>
+    (allow mach-lookup
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (xpc-service-name "com.apple.MTLCompilerService")))
+
+    ;; Remove when GPU process is enabled by default.
+    (allow mach-lookup
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.mach"))
+            (xpc-service-name "com.apple.MTLCompilerService")))
+#endif
 
     (allow iokit-get-properties
         (iokit-property "IOGLBundleName")
@@ -234,21 +247,6 @@
 
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
-
-    ;; <rdar://problem/47268166>
-    (allow mach-lookup
-        (require-all
-            (extension "com.apple.webkit.extension.mach")
-            (xpc-service-name "com.apple.MTLCompilerService")
-        )
-    )
-    ;; Remove when GPU process is enabled by default.
-    (allow mach-lookup
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.mach"))
-            (xpc-service-name "com.apple.MTLCompilerService")
-        )
-    )
 
     (mobile-preferences-read
         "com.apple.Metal" ;; <rdar://problem/25535471>
@@ -360,6 +358,7 @@
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
     ; WebKit-required IOKit classes
     (allow iokit-open
         (require-all
@@ -386,6 +385,7 @@
         (require-all
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "IOSurfaceRootUserClient"))) ;; Needed by Tiled Grid code.
+#endif
 
     ;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
     ;; <rdar://problem/13796537>
@@ -933,31 +933,29 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
 (allow iokit-open
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "IOSurfaceRootUserClient")))
 
-(deny iokit-open
-    (require-all
-        (require-not (extension "com.apple.webkit.extension.iokit"))
-        (iokit-user-client-class
-            "IOSurfaceAcceleratorClient")))
-
-(deny iokit-open (with no-log)
-    (iokit-user-client-class
-        "AppleJPEGDriverUserClient"
-    )
-)
-
 (allow iokit-open (with report) (with telemetry-backtrace)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
-        (iokit-connection "IOGPU")
-    )
-)
+        (iokit-connection "IOGPU")))
+#endif
 
-#if HAVE(SANDBOX_STATE_FLAGS)
+(deny iokit-open
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+
+(deny iokit-open (with no-log)
+    (iokit-user-client-class "AppleJPEGDriverUserClient"))
+
+#if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+(deny iokit-open-service)
+#elif HAVE(SANDBOX_STATE_FLAGS)
 ;; This rule enables the WebContent process to enable the "BlockIOKitInWebContentSandbox" sandbox variable
 ;; by reading a preference from the domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox".
 (deny user-preference-read (with enable-state-flag "BlockIOKitInWebContentSandbox")
