@@ -744,7 +744,7 @@ void dump()
             }
         }
 
-        if (::gTestRunner->dumpAsText()) {
+        if (::gTestRunner->dumpAsText() || ::gTestRunner->dumpChildFramesAsText()) {
             resultString = dumpFramesAsText(frame).data();
         } else {
             COMPtr<IWebFramePrivate> framePrivate;

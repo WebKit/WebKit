@@ -1632,7 +1632,7 @@ void dump()
         if (gTestRunner->dumpAsAudio()) {
             resultData = dumpAudio();
             resultMimeType = @"audio/wav";
-        } else if (gTestRunner->dumpAsText()) {
+        } else if (gTestRunner->dumpAsText() || gTestRunner->dumpChildFramesAsText()) {
             resultString = dumpFramesAsText(mainFrame);
         } else if (gTestRunner->dumpAsPDF()) {
             resultData = dumpFrameAsPDF(mainFrame);
