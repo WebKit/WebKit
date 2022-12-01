@@ -1,0 +1,17 @@
+Blocked access to external URL http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js
+Blocked access to external URL http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js
+External scripts with matching SRI hash should be allowed.
+
+
+PASS Load all the tests.
+PASS matching integrity
+PASS multiple matching integrity
+PASS no integrity
+PASS matching plus unsupported integrity
+PASS mismatched integrity
+PASS multiple mismatched integrity
+PASS partially matching integrity
+FAIL crossorigin no integrity but allowed host assert_unreached: Script should load! http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js Reached unreachable code
+FAIL crossorigin mismatched integrity but allowed host assert_unreached: Script should load! http://www.localhost:8800/content-security-policy/script-src/crossoriginScript.js Reached unreachable code
+PASS External script in a script tag with matching SRI hash should run.
+

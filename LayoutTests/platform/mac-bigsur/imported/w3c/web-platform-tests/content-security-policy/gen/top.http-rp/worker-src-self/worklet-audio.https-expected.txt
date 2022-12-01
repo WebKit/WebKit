@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=e1b1cebf-f5ec-4463-aa1a-55bb8ebb6d91&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=dca025be-7ea6-489b-84b0-7ebf5d537c0b&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=c08f09d6-e141-4a41-ad48-38ed968c9761&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=c267e601-9339-4fa0-aff2-74fb7168ea9e&path=%2Fmixed-content
+
+FAIL Content Security Policy: Expects allowed for worklet-audio to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "AbortError: Cross-origin script load denied by Cross-Origin Resource Sharing policy."
+PASS Content Security Policy: Expects allowed for worklet-audio to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-audio to cross-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "AbortError: Cross-origin script load denied by Cross-Origin Resource Sharing policy."
+PASS Content Security Policy: Expects allowed for worklet-audio to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-audio to cross-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "AbortError: Cross-origin script load denied by Cross-Origin Resource Sharing policy."
+PASS Content Security Policy: Expects allowed for worklet-audio to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and keep-origin redirection from https context.
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and no-redirect redirection from https context.
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-audio to same-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "AbortError: Importing a module script is canceled."
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and swap-origin redirection from https context.: securitypolicyviolation
+

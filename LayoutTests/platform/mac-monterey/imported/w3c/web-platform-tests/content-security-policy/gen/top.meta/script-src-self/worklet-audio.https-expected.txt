@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=a024fbd2-8407-4815-9005-421f55598e0e&path=%2Fmixed-content because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=1e5ca611-1eef-4eda-83ce-fcacff39949d&path=%2Fmixed-content because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=b8f70a89-6ac3-4229-b003-68ace645424f&path=%2Fmixed-content because it does not appear in the script-src directive of the Content Security Policy.
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=c4257a82-1bc1-4b7b-b164-1ec2bdeee34d&path=%2Fmixed-content
+
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and keep-origin redirection from https context.
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and no-redirect redirection from https context.
+PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worklet-audio to cross-https origin and keep-origin redirection from https context.
+PASS Content Security Policy: Expects blocked for worklet-audio to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worklet-audio to cross-https origin and no-redirect redirection from https context.
+PASS Content Security Policy: Expects blocked for worklet-audio to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worklet-audio to cross-https origin and swap-origin redirection from https context.
+PASS Content Security Policy: Expects blocked for worklet-audio to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worklet-audio to same-https origin and swap-origin redirection from https context.
+FAIL Content Security Policy: Expects blocked for worklet-audio to same-https origin and swap-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+

@@ -1,0 +1,23 @@
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-referrer-checker.py
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-referrer-checker.py
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-referrer-checker.py
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-referrer-checker.py
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-referrer-checker.py
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-referrer-checker.py
+
+PASS Same-origin top-level module script loading with "no-referrer" referrer policy
+PASS Same-origin top-level module script loading with "origin" referrer policy
+PASS Same-origin top-level module script loading with "same-origin" referrer policy
+PASS Same-origin static import with "no-referrer" referrer policy.
+PASS Same-origin static import with "origin" referrer policy.
+PASS Same-origin static import with "same-origin" referrer policy.
+FAIL Cross-origin static import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin static import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin static import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Same-origin dynamic import with "no-referrer" referrer policy.
+PASS Same-origin dynamic import with "origin" referrer policy.
+PASS Same-origin dynamic import with "same-origin" referrer policy.
+FAIL Cross-origin dynamic import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin dynamic import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin dynamic import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

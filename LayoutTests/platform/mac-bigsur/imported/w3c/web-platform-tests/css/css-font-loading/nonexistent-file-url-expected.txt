@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Not allowed to load local resource: thisisnotarealfile.otf
+
+PASS nonexistent-file-url
+

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Domain is malformed!
+
+Harness Error (FAIL), message = Domain is malformed!
+
+PASS Test cookie domain attribute parsing
+

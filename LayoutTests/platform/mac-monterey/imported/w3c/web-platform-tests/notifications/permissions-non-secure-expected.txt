@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Notification prompting can only be done from a user gesture.
+
+PASS Notification.requestPermission must be called from a secure context
+FAIL Notification.permission must be called from a secure context assert_equals: expected "denied" but got "granted"
+

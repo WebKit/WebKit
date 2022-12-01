@@ -1,0 +1,10 @@
+
+PASS global setup
+PASS FetchEvent.handled should resolve when respondWith() is not called for a navigation request
+PASS FetchEvent.handled should resolve when respondWith() is not called for a sub-resource request
+PASS FetchEvent.handled should reject when respondWith() is not called and the event is canceled
+PASS FetchEvent.handled should resolve when the promise provided to respondWith() is resolved
+PASS FetchEvent.handled should reject when the promise provided to respondWith() is resolved to an invalid response
+PASS FetchEvent.handled should reject when the promise provided to respondWith() is rejected
+PASS global cleanup
+

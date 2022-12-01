@@ -1,0 +1,6 @@
+
+PASS setup global state
+PASS MIME checking of CSS resources fetched via service worker when Content-Type is not set.
+FAIL Same-origin policy for access to CSS resources fetched via service worker promise_test: Unhandled rejection with value: object "SecurityError: Not allowed to access cross-origin stylesheet"
+PASS cleanup global state
+

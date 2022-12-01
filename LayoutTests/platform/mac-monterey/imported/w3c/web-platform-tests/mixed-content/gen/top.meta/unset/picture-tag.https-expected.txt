@@ -1,0 +1,16 @@
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/image.py?redirection=keep-scheme&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/image.py?redirection=keep-scheme&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/image.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/image.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/image.py?redirection=swap-scheme&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/image.py?redirection=swap-scheme&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+
+PASS Mixed-Content: Expects allowed for picture-tag to same-https origin and keep-scheme redirection from https context.
+PASS Mixed-Content: Expects allowed for picture-tag to same-https origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for picture-tag to cross-http origin and keep-scheme redirection from https context.
+PASS Mixed-Content: Expects blocked for picture-tag to cross-http origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for picture-tag to cross-http origin and swap-scheme redirection from https context.
+FAIL Mixed-Content: Expects blocked for picture-tag to same-http origin and keep-scheme redirection from https context. assert_equals: The resource request should be 'blocked'. expected "blocked" but got "allowed"
+FAIL Mixed-Content: Expects blocked for picture-tag to same-http origin and no-redirect redirection from https context. assert_equals: The resource request should be 'blocked'. expected "blocked" but got "allowed"
+FAIL Mixed-Content: Expects blocked for picture-tag to same-http origin and swap-scheme redirection from https context. assert_equals: The resource request should be 'blocked'. expected "blocked" but got "allowed"
+

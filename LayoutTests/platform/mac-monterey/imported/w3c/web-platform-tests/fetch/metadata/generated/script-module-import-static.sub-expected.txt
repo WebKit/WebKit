@@ -1,0 +1,21 @@
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination
+FAIL sec-fetch-user - Not sent to non-trustworthy same-site destination promise_test: Unhandled rejection with value: "Failed to load script"
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination
+PASS sec-fetch-site - HTTPS downgrade (header not sent)
+FAIL sec-fetch-site - HTTPS upgrade assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - HTTPS downgrade-upgrade assert_own_property: expected property "sec-fetch-site" missing
+

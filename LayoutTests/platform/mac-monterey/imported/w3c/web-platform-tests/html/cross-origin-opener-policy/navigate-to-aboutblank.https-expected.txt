@@ -1,0 +1,13 @@
+Non-initial empty documents (about:blank) should inherit their cross-origin-opener-policy from the navigation's initiator top level document, if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
+
+Create the opener popup with a given COOP openerCOOP.
+Add iframe to the opener popup that is either same-origin or cross-origin.
+Opener's iframe opens a new window, to a network document with openeeCOOP.
+Opener's iframe navigates the openee popup to about:blank.
+
+PASS Navigate to about:blank from iframe with opener.top COOP: |header(Cross-Origin-Opener-Policy,same-origin), iframe origin: https://localhost:9443, openee COOP: |header(Cross-Origin-Opener-Policy,same-origin), openee origin: https://localhost:9443.
+PASS Navigate to about:blank from iframe with opener.top COOP: |header(Cross-Origin-Opener-Policy,same-origin)|header(Cross-Origin-Embedder-Policy,require-corp), iframe origin: https://localhost:9443, openee COOP: |header(Cross-Origin-Opener-Policy,same-origin)|header(Cross-Origin-Embedder-Policy,require-corp), openee origin: https://localhost:9443.
+PASS Navigate to about:blank from iframe with opener.top COOP: |header(Cross-Origin-Opener-Policy,same-origin-allow-popups), iframe origin: https://localhost:9443, openee COOP: |header(Cross-Origin-Opener-Policy,same-origin-allow-popups), openee origin: https://localhost:9443.
+PASS Navigate to about:blank from iframe with opener.top COOP: |header(Cross-Origin-Opener-Policy,same-origin-allow-popups), iframe origin: https://localhost:9443, openee COOP: |header(Cross-Origin-Opener-Policy,unsafe-none), openee origin: https://127.0.0.1:9443.
+PASS Navigate to about:blank from iframe with opener.top COOP: |header(Cross-Origin-Opener-Policy,same-origin-allow-popups), iframe origin: https://127.0.0.1:9443, openee COOP: |header(Cross-Origin-Opener-Policy,unsafe-none), openee origin: https://127.0.0.1:9443.
+

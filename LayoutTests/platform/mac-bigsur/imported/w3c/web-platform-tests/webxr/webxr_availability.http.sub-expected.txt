@@ -1,0 +1,4 @@
+
+FAIL Test webxr not available in insecure context assert_equals: navigator.xr was defined in insecure context. expected (undefined) undefined but got (object) object "[object XRSystem]"
+FAIL Test webxr not available in secure context in insecure context assert_equals: Some objects were defined in insecure context: navigator.xr,XRSession,XRFrame,XRLayer,XRView,XRViewport,XRViewerPose,XRWebGLLayer,XRSessionEvent expected 0 but got 9
+

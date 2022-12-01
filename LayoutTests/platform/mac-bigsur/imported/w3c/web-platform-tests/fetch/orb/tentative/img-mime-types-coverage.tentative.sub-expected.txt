@@ -1,0 +1,130 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fcss
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=image%2Fsvg%2Bxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fecmascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fjavascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fx-ecmascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fx-javascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fecmascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjavascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjavascript1.0
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjavascript1.1
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjavascript1.2
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjavascript1.3
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjavascript1.4
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjavascript1.5
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjscript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Flivescript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fx-ecmascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fx-javascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fhtml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fld%2Bjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fxhtml%2Bxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fdash%2Bxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fgzip
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fmsexcel
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fmspowerpoint
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fmsword
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fmsword-template
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fpdf
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.apple.mpegurl
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ces-quickpoint
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ces-quicksheet
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ces-quickword
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ms-excel
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ms-excel.sheet.macroenabled.12
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ms-powerpoint
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ms-powerpoint.presentation.macroenabled.12
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ms-word
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ms-word.document.12
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.ms-word.document.macroenabled.12
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.msword
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.openxmlformats-officedocument.presentationml.presentation
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.openxmlformats-officedocument.presentationml.template
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.openxmlformats-officedocument.spreadsheetml.sheet
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.openxmlformats-officedocument.spreadsheetml.template
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.openxmlformats-officedocument.wordprocessingml.document
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.openxmlformats-officedocument.wordprocessingml.template
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.presentation-openxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.presentation-openxmlm
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.spreadsheet-openxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fvnd.wordprocessing-openxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fx-gzip
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fx-protobuf
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fx-protobuffer
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fzip
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=audio%2Fmpegurl
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=multipart%2Fbyteranges
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=multipart%2Fsigned
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fevent-stream
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fcsv
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fvtt
+
+FAIL ORB should allow the response if Content-Type is: 'text/css'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'image/svg+xml'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'application/ecmascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'application/javascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'application/x-ecmascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'application/x-javascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/ecmascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/javascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/javascript1.0'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/javascript1.1'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/javascript1.2'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/javascript1.3'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/javascript1.4'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/javascript1.5'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/jscript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/livescript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/x-ecmascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL ORB should allow the response if Content-Type is: 'text/x-javascript'.   assert_unreached: Unexpected error event Reached unreachable code
+PASS ORB should block the response if Content-Type is: 'text/html'.
+PASS ORB should block the response if Content-Type is: 'application/json'.
+PASS ORB should block the response if Content-Type is: 'text/json'.
+PASS ORB should block the response if Content-Type is: 'application/ld+json'.
+PASS ORB should block the response if Content-Type is: 'text/xml'.
+PASS ORB should block the response if Content-Type is: 'application/xml'.
+PASS ORB should block the response if Content-Type is: 'application/xhtml+xml'.
+PASS ORB should block the response if Content-Type is: 'application/dash+xml'.
+PASS ORB should block the response if Content-Type is: 'application/gzip'.
+PASS ORB should block the response if Content-Type is: 'application/msexcel'.
+PASS ORB should block the response if Content-Type is: 'application/mspowerpoint'.
+PASS ORB should block the response if Content-Type is: 'application/msword'.
+PASS ORB should block the response if Content-Type is: 'application/msword-template'.
+PASS ORB should block the response if Content-Type is: 'application/pdf'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.apple.mpegurl'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ces-quickpoint'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ces-quicksheet'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ces-quickword'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ms-excel'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ms-excel.sheet.macroenabled.12'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ms-powerpoint'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ms-powerpoint.presentation.macroenabled.12'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ms-word'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ms-word.document.12'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.ms-word.document.macroenabled.12'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.msword'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.presentationml.template'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.spreadsheetml.template'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.openxmlformats-officedocument.wordprocessingml.template'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.presentation-openxml'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.presentation-openxmlm'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.spreadsheet-openxml'.
+PASS ORB should block the response if Content-Type is: 'application/vnd.wordprocessing-openxml'.
+PASS ORB should block the response if Content-Type is: 'application/x-gzip'.
+PASS ORB should block the response if Content-Type is: 'application/x-protobuf'.
+PASS ORB should block the response if Content-Type is: 'application/x-protobuffer'.
+PASS ORB should block the response if Content-Type is: 'application/zip'.
+PASS ORB should block the response if Content-Type is: 'audio/mpegurl'.
+PASS ORB should block the response if Content-Type is: 'multipart/byteranges'.
+PASS ORB should block the response if Content-Type is: 'multipart/signed'.
+PASS ORB should block the response if Content-Type is: 'text/event-stream'.
+PASS ORB should block the response if Content-Type is: 'text/csv'.
+PASS ORB should block the response if Content-Type is: 'text/vtt'.
+

@@ -1,0 +1,11 @@
+
+PASS __Host: Non-secure origin: 'Path=/;'
+PASS __Host: Non-secure origin: 'Secure; Path=/;'
+PASS __Host: Non-secure origin: 'Path=/;domain=localhost'
+PASS __Host: Non-secure origin: 'Secure; Path=/;domain=localhost'
+PASS __Host: Non-secure origin: 'Path=/;MaxAge=10'
+PASS __Host: Non-secure origin: 'Secure; Path=/;MaxAge=10'
+PASS __Host: Non-secure origin: 'Path=/;HttpOnly'
+PASS __Host: Non-secure origin: 'Secure; Path=/;HttpOnly'
+PASS __Host: Non-secure origin: 'Secure; Path=/cookies/resources/list.py'
+

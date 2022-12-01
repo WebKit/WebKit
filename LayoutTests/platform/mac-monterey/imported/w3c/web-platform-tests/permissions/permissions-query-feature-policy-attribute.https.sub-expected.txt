@@ -1,0 +1,10 @@
+Blocked access to external URL https://www.localhost:9443/permissions/feature-policy-permissions-query.html
+Blocked access to external URL https://www.localhost:9443/permissions/feature-policy-permissions-query.html
+
+Harness Error (TIMEOUT), message = null
+
+PASS Permissions.state is "prompt" with allow="geolocation" in same-origin iframes.
+TIMEOUT Permissions.state is "prompt" with allow="geolocation" in cross-origin iframes. Test timed out
+PASS Permission.state is "prompt" in same-origin iframes.
+TIMEOUT Permission.state is "denied" in cross-origin iframes. Test timed out
+

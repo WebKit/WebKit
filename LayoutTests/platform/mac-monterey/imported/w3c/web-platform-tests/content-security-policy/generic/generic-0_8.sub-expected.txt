@@ -1,0 +1,7 @@
+Blocked access to external URL http://www.localhost:8800/content-security-policy/generic/wildcardHostTestSuceeds.js
+test wildcard host name matching (asterisk as a subdomain of the current domain)
+
+
+FAIL Test that script does not fire violation event assert_true: expected true got false
+FAIL Wildcard host matching works. assert_true: Script should have ran. expected true got false
+

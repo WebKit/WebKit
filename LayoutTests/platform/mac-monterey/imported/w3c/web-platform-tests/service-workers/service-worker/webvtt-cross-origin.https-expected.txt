@@ -1,0 +1,12 @@
+
+PASS initialize global state
+PASS same-origin text track should load
+PASS cross-origin text track with no-cors request should not load
+PASS cross-origin text track with rejected cors request should not load
+PASS cross-origin text track with approved cors request should not load
+PASS same-origin text track that redirects same-origin should load
+PASS same-origin text track that redirects cross-origin should not load
+PASS same-origin text track that redirects to a cross-origin text track with rejected cors should not load
+PASS same-origin text track that redirects to a cross-origin text track with approved cors should not load
+PASS restore global state
+

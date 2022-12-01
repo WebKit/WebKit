@@ -1,0 +1,14 @@
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
+
+Harness Error (FAIL), message = Error in remote: Importing a module script failed.
+
+PASS Static import.
+TIMEOUT Static import (cross-origin). Test timed out
+NOTRUN Static import (redirect).
+NOTRUN Nested static import.
+NOTRUN Static import and then dynamic import.
+NOTRUN Dynamic import.
+NOTRUN Nested dynamic import.
+NOTRUN Dynamic import and then static import.
+NOTRUN eval(import()).
+

@@ -1,0 +1,8 @@
+
+PASS __Secure: Secure origin: Should not set 'Path=/;'
+PASS __Secure: Secure origin: Should set 'Secure; Path=/;'
+PASS __Secure: Secure origin: Should not set 'Path=/;MaxAge=10'
+PASS __Secure: Secure origin: Should set 'Secure; Path=/;MaxAge=10'
+PASS __Secure: Secure origin: Should not set 'Path=/;domain=localhost'
+PASS __Secure: Secure origin: Should set 'Secure; Path=/;domain=localhost'
+

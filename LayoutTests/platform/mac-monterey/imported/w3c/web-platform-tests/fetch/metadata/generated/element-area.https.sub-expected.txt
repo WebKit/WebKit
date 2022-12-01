@@ -1,0 +1,25 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL sec-fetch-site - Same origin - no attributes assert_array_equals: expected property 0 to be "same-origin" but got "none" (expected array ["same-origin"] got ["none"])
+FAIL sec-fetch-site - Cross-site - no attributes assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+TIMEOUT sec-fetch-site - Same site - no attributes Test timed out
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin - no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site - no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site - no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin - no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site - no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site - no attributes
+NOTRUN sec-fetch-site - Same-Site -> Same Origin - no attributes
+NOTRUN sec-fetch-site - Same-Site -> Same-Site - no attributes
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site - no attributes
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade - no attributes
+NOTRUN sec-fetch-mode - no attributes
+NOTRUN sec-fetch-mode - attributes: download
+NOTRUN sec-fetch-dest - no attributes
+NOTRUN sec-fetch-dest - attributes: download
+NOTRUN sec-fetch-user - no attributes
+NOTRUN sec-fetch-user - no attributes with user activation
+

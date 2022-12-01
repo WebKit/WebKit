@@ -1,0 +1,8 @@
+
+PASS Cannot reuse attached transforms
+PASS SFrameTransform exposes readable and writable
+PASS readable/writable are locked when attached and after being attached
+PASS SFrame with array buffer - authentication size 10
+PASS SFrame decryption with array buffer that is too small
+PASS SFrame transform gets errored if trying to process unexpected value types
+

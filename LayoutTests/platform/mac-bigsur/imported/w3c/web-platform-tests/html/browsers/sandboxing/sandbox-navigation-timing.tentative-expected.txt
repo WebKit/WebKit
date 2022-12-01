@@ -1,0 +1,4 @@
+
+
+FAIL setting sandbox attribute should not affect current document in iframe assert_equals: expected "iframe not sandboxed" but got "iframe sandboxed(Sandbox access violation: Blocked a frame at \"http://localhost:8800\" from accessing a cross-origin frame.  The frame requesting access is sandboxed and lacks the \"allow-same-origin\" flag.)"
+

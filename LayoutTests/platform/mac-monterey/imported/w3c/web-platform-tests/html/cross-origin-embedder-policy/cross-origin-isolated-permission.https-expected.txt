@@ -1,0 +1,26 @@
+
+PASS frame: origin = https://localhost:9443, value = undefined
+PASS frame: origin = https://localhost:9443, value = *
+PASS frame: origin = https://localhost:9443, value = self
+FAIL frame: origin = https://localhost:9443, value = (\) assert_equals: expected false but got true
+FAIL frame: origin = https://127.0.0.1:9443, value = undefined assert_equals: expected false but got true
+FAIL frame: origin = https://127.0.0.1:9443, value = * assert_equals: expected false but got true
+FAIL frame: origin = https://127.0.0.1:9443, value = self assert_equals: expected false but got true
+FAIL frame: origin = https://127.0.0.1:9443, value = (\) assert_equals: expected false but got true
+PASS dedicated worker: scheme = https, value = undefined
+PASS dedicated worker: scheme = https, value = *
+PASS dedicated worker: scheme = https, value = self
+FAIL dedicated worker: scheme = https, value = (\) assert_equals: expected false but got true
+FAIL dedicated worker: scheme = data, value = undefined assert_equals: expected false but got true
+FAIL dedicated worker: scheme = data, value = * assert_equals: expected false but got true
+FAIL dedicated worker: scheme = data, value = self assert_equals: expected false but got true
+FAIL dedicated worker: scheme = data, value = (\) assert_equals: expected false but got true
+PASS dedicated worker: scheme = blob, value = undefined
+PASS dedicated worker: scheme = blob, value = *
+PASS dedicated worker: scheme = blob, value = self
+FAIL dedicated worker: scheme = blob, value = (\) assert_equals: expected false but got true
+PASS shared worker: withCoopCoep = false
+FAIL shared worker: withCoopCoep = true assert_equals: expected true but got false
+PASS service worker: withCoopCoep = false
+FAIL service worker: withCoopCoep = true assert_equals: expected true but got false
+

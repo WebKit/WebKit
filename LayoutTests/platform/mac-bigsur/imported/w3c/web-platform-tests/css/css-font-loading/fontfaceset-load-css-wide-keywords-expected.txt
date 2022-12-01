@@ -1,0 +1,10 @@
+
+PASS Loading CSS-wide keyword "initial" causes SyntaxError (document)
+PASS Loading CSS-wide keyword "inherit" causes SyntaxError (document)
+PASS Loading CSS-wide keyword "unset" causes SyntaxError (document)
+PASS Loading CSS-wide keyword "revert" causes SyntaxError (document)
+PASS Loading CSS-wide keyword "initial" causes SyntaxError (worker)
+PASS Loading CSS-wide keyword "inherit" causes SyntaxError (worker)
+PASS Loading CSS-wide keyword "unset" causes SyntaxError (worker)
+PASS Loading CSS-wide keyword "revert" causes SyntaxError (worker)
+

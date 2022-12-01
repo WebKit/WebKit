@@ -1,0 +1,26 @@
+
+FAIL Initial value of ascentOverride should be 'normal' assert_equals: expected (string) "normal" but got (undefined) undefined
+FAIL Initialize ascentOverride with 'normal' should succeed assert_equals: expected (string) "normal" but got (undefined) undefined
+FAIL Initialize ascentOverride with a percentage should succeed assert_equals: expected (string) "50%" but got (undefined) undefined
+FAIL Initialize ascentOverride with a negative percentage should fail assert_throws_dom: function "() => {throw error}" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Initialize ascentOverride with a non-percentage should fail assert_throws_dom: function "() => {throw error}" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+PASS Changing ascentOverride from 'normal' to percentage should succeed
+PASS Changing ascentOverride from percentage to 'normal' should succeed
+FAIL Changing ascentOverride to invalid value should fail assert_throws_dom: function "() => {face.ascentOverride = '10px'}" did not throw
+FAIL Initial value of descentOverride should be 'normal' assert_equals: expected (string) "normal" but got (undefined) undefined
+FAIL Initialize descentOverride with 'normal' should succeed assert_equals: expected (string) "normal" but got (undefined) undefined
+FAIL Initialize descentOverride with a percentage should succeed assert_equals: expected (string) "50%" but got (undefined) undefined
+FAIL Initialize descentOverride with a negative percentage should fail assert_throws_dom: function "() => {throw error}" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Initialize descentOverride with a non-percentage should fail assert_throws_dom: function "() => {throw error}" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+PASS Changing descentOverride from 'normal' to percentage should succeed
+PASS Changing descentOverride from percentage to 'normal' should succeed
+FAIL Changing descentOverride to invalid value should fail assert_throws_dom: function "() => {face.descentOverride = '10px'}" did not throw
+FAIL Initial value of lineGapOverride should be 'normal' assert_equals: expected (string) "normal" but got (undefined) undefined
+FAIL Initialize lineGapOverride with 'normal' should succeed assert_equals: expected (string) "normal" but got (undefined) undefined
+FAIL Initialize lineGapOverride with a percentage should succeed assert_equals: expected (string) "50%" but got (undefined) undefined
+FAIL Initialize lineGapOverride with a negative percentage should fail assert_throws_dom: function "() => {throw error}" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Initialize lineGapOverride with a non-percentage should fail assert_throws_dom: function "() => {throw error}" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+PASS Changing lineGapOverride from 'normal' to percentage should succeed
+PASS Changing lineGapOverride from percentage to 'normal' should succeed
+FAIL Changing lineGapOverride to invalid value should fail assert_throws_dom: function "() => {face.lineGapOverride = '10px'}" did not throw
+

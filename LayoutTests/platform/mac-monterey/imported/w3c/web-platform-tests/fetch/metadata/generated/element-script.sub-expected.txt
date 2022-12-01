@@ -1,0 +1,40 @@
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination, no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination, attributes: type=module assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination, attributes: type=module promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination, no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination, attributes: type=module assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination, no attributes assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination, attributes: type=module assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination, attributes: type=module promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination, no attributes assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination, attributes: type=module assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination, no attributes assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination, attributes: type=module assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination, attributes: type=module promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination, no attributes assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination, attributes: type=module assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination, attributes: type=module
+FAIL sec-fetch-user - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-user - Not sent to non-trustworthy same-site destination, attributes: type=module promise_test: Unhandled rejection with value: "Failed to load script"
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination, attributes: type=module
+FAIL sec-fetch-site - HTTPS downgrade (header not sent), no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+PASS sec-fetch-site - HTTPS downgrade (header not sent), attributes: type=module
+PASS sec-fetch-site - HTTPS upgrade, no attributes
+FAIL sec-fetch-site - HTTPS upgrade, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - HTTPS downgrade-upgrade, no attributes
+FAIL sec-fetch-site - HTTPS downgrade-upgrade, attributes: type=module assert_own_property: expected property "sec-fetch-site" missing
+

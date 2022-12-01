@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/page-with-top-navigating-iframe.html?parent_user_gesture=true' from frame with URL 'http://127.0.0.1:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/top-navigating-page.html'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.
+
+
+PASS Cross-origin top navigation is blocked without user activation, even if the parent has user activation
+

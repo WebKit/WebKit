@@ -1,0 +1,5 @@
+
+PASS Check that browsing context has new, ready HTML document
+PASS Check that new document nodes extant, empty
+FAIL Check the document properties corresponding to the creator browsing context assert_equals: The document's referrer should be its creator document's URL. expected "http://localhost:8800/html/browsers/windows/browsing-context.html" but got "http://localhost:8800/"
+

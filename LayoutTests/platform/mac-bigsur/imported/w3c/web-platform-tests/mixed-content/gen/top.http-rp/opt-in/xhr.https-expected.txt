@@ -1,0 +1,13 @@
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/xhr.py?redirection=swap-scheme&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+
+PASS Mixed-Content: Expects allowed for xhr to same-https origin and keep-scheme redirection from https context.
+PASS Mixed-Content: Expects allowed for xhr to same-https origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to cross-http origin and keep-scheme redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to cross-http origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to cross-http origin and swap-scheme redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to cross-https origin and swap-scheme redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to same-http origin and keep-scheme redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to same-http origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to same-http origin and swap-scheme redirection from https context.
+PASS Mixed-Content: Expects blocked for xhr to same-https origin and swap-scheme redirection from https context.
+

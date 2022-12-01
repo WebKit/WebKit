@@ -1,0 +1,4 @@
+
+
+FAIL Fetch client and URL resolution for location.assign() assert_equals: Referrer should use the incumbent settings object expected "http://localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/multiple-globals/incumbent/empty.html" but got "http://localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/multiple-globals/relevant/empty.html"
+

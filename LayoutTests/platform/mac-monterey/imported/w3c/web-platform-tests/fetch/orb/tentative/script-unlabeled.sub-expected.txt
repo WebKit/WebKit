@@ -1,0 +1,5 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/orb/resources/js-unlabeled.js
+Blocked access to external URL http://www1.localhost:8800/fetch/orb/resources/js-unlabeled.js
+
+FAIL script-unlabeled Error: assert_true: The cross-origin script should execute expected true got false
+

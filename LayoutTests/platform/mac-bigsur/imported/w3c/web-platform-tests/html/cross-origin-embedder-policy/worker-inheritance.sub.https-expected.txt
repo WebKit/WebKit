@@ -1,0 +1,14 @@
+Blocked access to external URL https://www.localhost:9444/common/blank.html
+Blocked access to external URL https://www.localhost:9444/common/blank.html
+Blocked access to external URL https://www.localhost:9444/common/blank.html
+
+PASS Test that local scheme workers inherit COEP: require-corp from the creating document
+PASS blob URL dedicated worker: Same origin should be allowed.
+PASS blob URL dedicated worker: Cross origin should be blocked.
+PASS blob URL shared worker: Same origin should be allowed.
+PASS blob URL shared worker: Cross origin should be blocked.
+FAIL data URL dedicated worker: Same origin should be blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS data URL dedicated worker: Cross origin should be blocked.
+FAIL data URL shared worker: Same origin should be blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS data URL shared worker: Cross origin should be blocked.
+

@@ -1,0 +1,26 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY%26mime%3Dapplication%252Fjavascript&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY%2526mime%253Dapplication%25252Fjavascript&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY%26mime%3Dapplication%252Fjavascript&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&mime=application%2Fjavascript&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY%26mime%3Dapplication%252Fjavascript&count=1
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY%26mime%3Dapplication%252Fjavascript
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY%26mime%3Dapplication%252Fjavascript
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2F127.0.0.1%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY%26mime%3Dapplication%252Fjavascript
+
+PASS sec-fetch-site - Same origin
+PASS sec-fetch-site - Cross-site
+FAIL sec-fetch-site - Same site promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Cross-Site -> Same Origin assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Cross-Site -> Same-Site promise_test: Unhandled rejection with value: "Failed to load script"
+PASS sec-fetch-site - Cross-Site -> Cross-Site
+PASS sec-fetch-site - Same-Origin -> Same Origin
+FAIL sec-fetch-site - Same-Origin -> Same-Site promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Same-Origin -> Cross-Site assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Same-Site -> Same Origin promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Same-Site -> Same-Site promise_test: Unhandled rejection with value: "Failed to load script"
+FAIL sec-fetch-site - Same-Site -> Cross-Site promise_test: Unhandled rejection with value: "Failed to load script"
+PASS sec-fetch-mode
+PASS sec-fetch-dest
+PASS sec-fetch-user
+

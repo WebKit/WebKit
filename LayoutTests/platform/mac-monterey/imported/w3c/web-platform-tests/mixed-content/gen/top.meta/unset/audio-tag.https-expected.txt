@@ -1,0 +1,13 @@
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/audio.py?redirection=keep-scheme&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/audio.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/audio.py?redirection=swap-scheme&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+
+FAIL Mixed-Content: Expects allowed for audio-tag to cross-http origin and keep-scheme redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+FAIL Mixed-Content: Expects allowed for audio-tag to cross-http origin and no-redirect redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+FAIL Mixed-Content: Expects allowed for audio-tag to cross-http origin and swap-scheme redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Mixed-Content: Expects allowed for audio-tag to same-http origin and keep-scheme redirection from https context.
+PASS Mixed-Content: Expects allowed for audio-tag to same-http origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects allowed for audio-tag to same-http origin and swap-scheme redirection from https context.
+PASS Mixed-Content: Expects allowed for audio-tag to same-https origin and keep-scheme redirection from https context.
+PASS Mixed-Content: Expects allowed for audio-tag to same-https origin and no-redirect redirection from https context.
+

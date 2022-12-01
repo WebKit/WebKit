@@ -1,0 +1,5 @@
+Blocked access to external URL http://nonexistent.localhost:8800/
+
+PASS onerror should be called
+PASS error while reading body should report zeros for loaded and total
+

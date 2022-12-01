@@ -1,0 +1,9 @@
+
+FAIL Non-secure context window does not have access to crypto.subtle assert_equals: expected (undefined) undefined but got (object) object "[object SubtleCrypto]"
+FAIL Non-secure context window does not have access to SubtleCrypto assert_equals: expected (undefined) undefined but got (function) function "function SubtleCrypto() {
+    [native code]
+}"
+FAIL Non-secure context window does not have access to CryptoKey assert_equals: expected (undefined) undefined but got (function) function "function CryptoKey() {
+    [native code]
+}"
+

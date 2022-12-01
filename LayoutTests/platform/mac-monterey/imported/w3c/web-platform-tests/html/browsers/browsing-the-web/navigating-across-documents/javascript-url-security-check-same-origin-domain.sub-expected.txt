@@ -1,0 +1,5 @@
+Blocked access to external URL http://www.localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/document-domain-set-to-site.sub.html
+
+
+PASS javascript: URL security check for same-origin-domain but not same-origin
+

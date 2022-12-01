@@ -1,0 +1,14 @@
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination, no options assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination, no options assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination, no options assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination, no options
+FAIL sec-fetch-user - Not sent to non-trustworthy same-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL sec-fetch-user - Not sent to non-trustworthy cross-site destination, no options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+
