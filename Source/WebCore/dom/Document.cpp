@@ -6904,6 +6904,12 @@ void Document::serviceRequestAnimationFrameCallbacks()
         m_scriptedAnimationController->serviceRequestAnimationFrameCallbacks(domWindow()->frozenNowTimestamp());
 }
 
+void Document::serviceCaretAnimation()
+{
+    if (auto* window = domWindow())
+        selection().caretAnimator().serviceCaretAnimation(window->frozenNowTimestamp());
+}
+
 void Document::serviceRequestVideoFrameCallbacks()
 {
 #if ENABLE(VIDEO)

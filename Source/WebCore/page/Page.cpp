@@ -1730,6 +1730,10 @@ void Page::updateRendering()
         document.serviceRequestAnimationFrameCallbacks();
     });
 
+    runProcessingStep(RenderingUpdateStep::CaretAnimation, [] (Document& document) {
+        document.serviceCaretAnimation();
+    });
+
     layoutIfNeeded();
 
     runProcessingStep(RenderingUpdateStep::ResizeObservations, [&] (Document& document) {
@@ -3935,6 +3939,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #endif
     case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
     case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
+    case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
     }
     return ts;
 }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AXTextStateChangeIntent.h"
+#include "CaretAnimator.h"
 #include "Color.h"
 #include "EditingStyle.h"
 #include "Element.h"
@@ -111,7 +112,7 @@ private:
     VisiblePosition m_position;
 };
 
-class FrameSelection : private CaretBase {
+class FrameSelection final : private CaretBase, public CaretAnimationClient {
     WTF_MAKE_NONCOPYABLE(FrameSelection);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -135,6 +136,8 @@ public:
     static constexpr OptionSet<SetSelectionOption> defaultSetSelectionOptions(EUserTriggered = NotUserTriggered);
 
     WEBCORE_EXPORT explicit FrameSelection(Document* = nullptr);
+
+    WEBCORE_EXPORT virtual ~FrameSelection();
 
     WEBCORE_EXPORT Element* rootEditableElementOrDocumentElement() const;
      
@@ -199,8 +202,8 @@ public:
     void paintCaret(GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect);
 
     // Used to suspend caret blinking while the mouse is down.
-    void setCaretBlinkingSuspended(bool suspended) { m_isCaretBlinkingSuspended = suspended; }
-    bool isCaretBlinkingSuspended() const { return m_isCaretBlinkingSuspended; }
+    WEBCORE_EXPORT void setCaretBlinkingSuspended(bool);
+    WEBCORE_EXPORT bool isCaretBlinkingSuspended() const;
 
     void setFocused(bool);
     bool isFocused() const { return m_focused; }
@@ -226,7 +229,6 @@ public:
     WEBCORE_EXPORT std::optional<SimpleRange> rangeByMovingCurrentSelection(int amount) const;
     WEBCORE_EXPORT std::optional<SimpleRange> rangeByExtendingCurrentSelection(int amount) const;
     WEBCORE_EXPORT void clearCurrentSelection();
-    void setCaretBlinks(bool caretBlinks = true);
     WEBCORE_EXPORT void setCaretColor(const Color&);
     WEBCORE_EXPORT static VisibleSelection wordSelectionContainingCaretSelection(const VisibleSelection&);
     bool isUpdateAppearanceEnabled() const { return m_updateAppearanceEnabled; }
@@ -268,6 +270,10 @@ public:
     void disassociateLiveRange();
     void updateFromAssociatedLiveRange();
 
+    CaretAnimator& caretAnimator() { return m_caretAnimator.get(); }
+
+    const CaretAnimator& caretAnimator() const { return m_caretAnimator.get(); }
+
 private:
     void updateSelectionAppearanceNow();
     void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, RevealExtentOption = RevealExtentOption::RevealExtent, ForceCenterScrollOption = ForceCenterScrollOption::DoNotForceCenterScroll);
@@ -306,8 +312,6 @@ private:
     void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();
 
-    void caretBlinkTimerFired();
-
     void updateAppearanceAfterLayoutOrStyleChange();
     void appearanceUpdateTimerFired();
 
@@ -316,6 +320,10 @@ private:
 
     bool recomputeCaretRect();
     void invalidateCaretRect();
+
+    void caretAnimationDidUpdate(CaretAnimator&) final;
+
+    Document* document() final;
 
     bool dispatchSelectStart();
 
@@ -335,10 +343,6 @@ private:
     RefPtr<Node> m_previousCaretNode; // The last node which painted the caret. Retained for clearing the old caret when it moves.
 
     RefPtr<EditingStyle> m_typingStyle;
-
-#if ENABLE(TEXT_CARET)
-    Timer m_caretBlinkTimer;
-#endif
     Timer m_appearanceUpdateTimer;
     // The painted bounds of the caret in absolute coordinates
     IntRect m_absCaretBounds;
@@ -346,10 +350,10 @@ private:
     SelectionRevealMode m_selectionRevealMode { SelectionRevealMode::DoNotReveal };
     AXTextStateChangeIntent m_selectionRevealIntent;
 
+    UniqueRef<CaretAnimator> m_caretAnimator;
+
     bool m_caretInsidePositionFixed : 1;
     bool m_absCaretBoundsDirty : 1;
-    bool m_caretPaint : 1;
-    bool m_isCaretBlinkingSuspended : 1;
     bool m_focused : 1;
     bool m_isActive : 1;
     bool m_shouldShowBlockCursor : 1;
@@ -358,7 +362,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_updateAppearanceEnabled : 1;
-    bool m_caretBlinks : 1;
     Color m_caretColor;
     int m_scrollingSuppressCount { 0 };
 #endif

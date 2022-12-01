@@ -1151,6 +1151,8 @@ public:
     void serviceRequestAnimationFrameCallbacks();
     void serviceRequestVideoFrameCallbacks();
 
+    void serviceCaretAnimation();
+
     void windowScreenDidChange(PlatformDisplayID);
 
     void finishedParsing();

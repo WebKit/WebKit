@@ -1331,6 +1331,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/ThreadedScrollingTree.h
 
     platform/AbortableTaskQueue.h
+    platform/CaretAnimator.h
     platform/CPUMonitor.h
     platform/ColorChooser.h
     platform/ColorChooserClient.h
@@ -1454,6 +1455,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SharedBuffer.h
     platform/SharedBufferChunkReader.h
     platform/SharedStringHash.h
+    platform/SimpleCaretAnimator.h
     platform/SleepDisabler.h
     platform/SleepDisablerClient.h
     platform/SleepDisablerIdentifier.h
