@@ -1160,6 +1160,20 @@ TextStream& operator<<(TextStream& ts, LeadingTrim leadingTrim)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, TextEdgeType textEdgeType)
+{
+    switch (textEdgeType) {
+    case TextEdgeType::Leading: ts << "half-leading"; break;
+    case TextEdgeType::Text: ts << "text-over/under baseline"; break;
+    case TextEdgeType::CapHeight: ts << "cap-height baseline"; break;
+    case TextEdgeType::ExHeight: ts << "x-height baseline"; break;
+    case TextEdgeType::Alphabetic: ts << "alphabetic baseline"; break;
+    case TextEdgeType::CJKIdeographic: ts << "ideographic-over baseline"; break;
+    case TextEdgeType::CJKIdeographicInk: ts << "ideographic-ink-over/ink-under baseline"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextZoom zoom)
 {
     switch (zoom) {

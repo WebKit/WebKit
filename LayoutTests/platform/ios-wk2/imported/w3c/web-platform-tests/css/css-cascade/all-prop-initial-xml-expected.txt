@@ -303,6 +303,7 @@ PASS text-decoration-line
 PASS text-decoration-skip-ink
 PASS text-decoration-style
 PASS text-decoration-thickness
+PASS text-edge
 PASS text-emphasis-color
 PASS text-emphasis-position
 PASS text-emphasis-style
