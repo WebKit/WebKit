@@ -36,21 +36,37 @@
 #include "FrameView.h"
 #include "LogInitialization.h"
 #include "Logging.h"
+#include <algorithm>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-static bool shouldLog()
+#if !LOG_DISABLED
+
+bool AXLogger::shouldLog()
 {
     // Modify the initializer list below to choose what thread you want to log messages from.
     static constexpr OptionSet<AXLoggingOptions> loggingOptions { AXLoggingOptions::MainThread, AXLoggingOptions::OffMainThread };
 
-    return (isMainThread() && loggingOptions & AXLoggingOptions::MainThread)
-        || (!isMainThread() && loggingOptions & AXLoggingOptions::OffMainThread);
-}
+    // Add strings to the Vector below to just log from instances whose m_methodName includes any of the strings.
+    // For instance, if you want to just log from the wrapper and the AXIsolatedTree class:
+    // static NeverDestroyed nameFilter = Vector<String> { "WebAccessibilityObjectWrapper"_s, "AXIsolatedTree"_s };
+    static NeverDestroyed nameFilter = Vector<String> { };
 
-#if !LOG_DISABLED
+    if (!nameFilter->isEmpty()) {
+        auto it = std::find_if(nameFilter->begin(), nameFilter->end(), [this] (const auto& name) {
+            return m_methodName.contains(name);
+        });
+        if (it == nameFilter->end())
+            return false;
+    }
+
+    if (isMainThread())
+        return loggingOptions.contains(AXLoggingOptions::MainThread);
+    return loggingOptions.contains(AXLoggingOptions::OffMainThread);
+}
 
 AXLogger::AXLogger(const String& methodName)
     : m_methodName(methodName)
@@ -136,6 +152,9 @@ void AXLogger::log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotifi
 
 void AXLogger::log(const AccessibilitySearchCriteria& criteria)
 {
+    if (!shouldLog())
+        return;
+
     TextStream stream(TextStream::LineMode::MultipleLine);
     stream << criteria;
     LOG(Accessibility, "%s", stream.release().utf8().data());
@@ -143,6 +162,9 @@ void AXLogger::log(const AccessibilitySearchCriteria& criteria)
 
 void AXLogger::log(AccessibilityObjectInclusion inclusion)
 {
+    if (!shouldLog())
+        return;
+
     TextStream stream(TextStream::LineMode::SingleLine);
     stream.dumpProperty("ObjectInclusion", inclusion);
     LOG(Accessibility, "%s", stream.release().utf8().data());
@@ -611,9 +633,6 @@ void streamIsolatedSubtreeOnMainThread(TextStream& stream, const AXIsolatedTree&
 {
     ASSERT(isMainThread());
 
-    if (!shouldLog())
-        return;
-
     stream.increaseIndent();
     TextStream::GroupScope groupScope(stream);
 
@@ -687,7 +706,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
 
 void streamSubtree(TextStream& stream, const RefPtr<AXCoreObject>& object, const OptionSet<AXStreamOptions>& options)
 {
-    if (!object || !shouldLog())
+    if (!object)
         return;
 
     stream.increaseIndent();

@@ -261,6 +261,7 @@ void AXIsolatedTree::queueChange(const NodeChange& nodeChange)
 
 void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
 {
+    AXTRACE("AXIsolatedTree::addUnconnectedNode"_s);
     ASSERT(isMainThread());
 
     if (axObject->isDetached() || !axObject->wrapper()) {
