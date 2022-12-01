@@ -77,6 +77,8 @@ static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncEndsWith);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncIncludes);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncNormalize);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncIterator);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncIsWellFormed);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncToWellFormed);
 
 }
 
@@ -163,6 +165,11 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().substrPrivateName(), stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().endsWithPrivateName(), stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+
+    if (Options::useStringWellFormed()) {
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isWellFormed, stringProtoFuncIsWellFormed, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toWellFormed, stringProtoFuncToWellFormed, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+    }
 
     // The constructor will be added later, after StringConstructor has been built
 }
@@ -1755,6 +1762,119 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(normalize(globalObject, string, form)));
+}
+
+static inline std::optional<unsigned> illFormedIndex(const UChar* characters, unsigned length)
+{
+    for (unsigned index = 0; index < length; ++index) {
+        UChar character = characters[index];
+        if (!U16_IS_SURROGATE(character))
+            continue;
+
+        if (U16_IS_SURROGATE_TRAIL(character))
+            return index;
+
+        ASSERT(U16_IS_SURROGATE_LEAD(character));
+        if ((index + 1) == length)
+            return index;
+        UChar nextCharacter = characters[index + 1];
+
+        if (!U16_IS_SURROGATE(nextCharacter))
+            return index;
+
+        if (!U16_IS_SURROGATE_TRAIL(nextCharacter))
+            return index;
+
+        ++index; // Increment additionally.
+    }
+    return std::nullopt;
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIsWellFormed, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(globalObject, scope);
+
+    // Latin-1 characters do not have surrogates.
+    if (thisValue.isString() && asString(thisValue)->is8Bit())
+        return JSValue::encode(jsBoolean(true));
+
+    String string = thisValue.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (string.is8Bit())
+        return JSValue::encode(jsBoolean(true));
+    return JSValue::encode(jsBoolean(!illFormedIndex(string.characters16(), string.length())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(globalObject, scope);
+
+    // Latin-1 characters do not have surrogates.
+    if (thisValue.isString() && asString(thisValue)->is8Bit())
+        return JSValue::encode(thisValue);
+
+    String string = thisValue.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (string.is8Bit())
+        return JSValue::encode(thisValue);
+
+    const UChar* characters = string.characters16();
+    unsigned length = string.length();
+    auto firstIllFormedIndex = illFormedIndex(characters, length);
+    if (!firstIllFormedIndex)
+        return JSValue::encode(thisValue);
+
+    Vector<UChar> buffer;
+    buffer.reserveInitialCapacity(length);
+    buffer.append(characters, firstIllFormedIndex.value());
+    for (unsigned index = firstIllFormedIndex.value(); index < length; ++index) {
+        UChar character = characters[index];
+
+        if (!U16_IS_SURROGATE(character)) {
+            buffer.append(character);
+            continue;
+        }
+
+        if (U16_IS_SURROGATE_TRAIL(character)) {
+            buffer.append(replacementCharacter);
+            continue;
+        }
+
+        ASSERT(U16_IS_SURROGATE_LEAD(character));
+        if ((index + 1) == length) {
+            buffer.append(replacementCharacter);
+            continue;
+        }
+        UChar nextCharacter = characters[index + 1];
+
+        if (!U16_IS_SURROGATE(nextCharacter)) {
+            buffer.append(replacementCharacter);
+            continue;
+        }
+
+        if (!U16_IS_SURROGATE_TRAIL(nextCharacter)) {
+            buffer.append(replacementCharacter);
+            continue;
+        }
+
+        buffer.append(character);
+        buffer.append(nextCharacter);
+        index += 1;
+    }
+
+    return JSValue::encode(jsString(vm, String::adopt(WTFMove(buffer))));
 }
 
 } // namespace JSC

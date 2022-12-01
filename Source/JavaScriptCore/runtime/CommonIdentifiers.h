@@ -171,6 +171,7 @@
     macro(isPrototypeOf) \
     macro(isView) \
     macro(isWatchpoint) \
+    macro(isWellFormed) \
     macro(isWordLike) \
     macro(jettisonReason) \
     macro(join) \
@@ -270,6 +271,7 @@
     macro(toPrecision) \
     macro(toString) \
     macro(toTemporalInstant) \
+    macro(toWellFormed) \
     macro(trailingZeroDisplay) \
     macro(transfer) \
     macro(type) \
