@@ -3266,6 +3266,11 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         if style and style in ['debug', 'release']:
             configuration['style'] = style
 
+        if self.getProperty('use-dump-render-tree', False):
+            configuration['flavor'] = 'wk1'
+        else:
+            configuration['flavor'] = 'wk2'
+
         self._addToLog('stdio', f'\nChecking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
         for test in failing_tests:
             data = ResultsDatabase().is_test_pre_existing_failure(test, commit=identifier, configuration=configuration)
