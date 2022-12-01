@@ -1312,14 +1312,6 @@ static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alig
     return value;
 }
 
-static Ref<CSSValueList> valueForTextEdge(const TextEdge& textEdge)
-{
-    auto value = CSSValueList::createSpaceSeparated();
-    value->append(CSSPrimitiveValue::create(textEdge.over));
-    value->append(CSSPrimitiveValue::create(textEdge.under));
-    return value;
-}
-
 static Ref<CSSValue> willChangePropertyValue(const WillChangeData* willChangeData)
 {
     auto& cssValuePool = CSSValuePool::singleton();
@@ -4089,8 +4081,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForScrollSnapType(style.scrollSnapType());
     case CSSPropertyOverflowAnchor:
         return cssValuePool.createValue(style.overflowAnchor());
-    case CSSPropertyTextEdge:
-        return valueForTextEdge(style.textEdge());
 
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle:

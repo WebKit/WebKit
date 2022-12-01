@@ -6606,27 +6606,6 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
     return typeValue;
 }
 
-RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange& range)
-{
-    auto typeValue = CSSValueList::createSpaceSeparated();
-    if (range.peek().id() == CSSValueLeading) {
-        typeValue->append(consumeIdent(range).releaseNonNull());
-        return typeValue;
-    }
-
-    auto firstGroupValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);
-    if (!firstGroupValue)
-        return nullptr;
-    typeValue->append(firstGroupValue.releaseNonNull());
-
-    auto secondGroupValue = consumeIdent<CSSValueText, CSSValueAlphabetic, CSSValueIdeographic, CSSValueIdeographicInk>(range);
-    if (secondGroupValue)
-        typeValue->append(secondGroupValue.releaseNonNull());
-
-    return typeValue;
-}
-
-    
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     RefPtr<CSSPrimitiveValue> parsedValue1 = consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative);

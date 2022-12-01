@@ -28,7 +28,6 @@
 #include "RenderStyleConstants.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
-#include "StyleTextEdge.h"
 #include "TabSize.h"
 #include "TextUnderlineOffset.h"
 #include "TouchAction.h"
@@ -97,8 +96,6 @@ public:
     float effectiveZoom;
 
     TextUnderlineOffset textUnderlineOffset;
-
-    TextEdge textEdge;
     
     Length wordSpacing;
     float miterLimit;

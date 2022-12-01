@@ -62,7 +62,6 @@
 #include "StyleBuilderState.h"
 #include "StyleGridData.h"
 #include "StyleScrollSnapPoints.h"
-#include "StyleTextEdge.h"
 #include "TabSize.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
@@ -116,7 +115,6 @@ public:
     static TextUnderlineOffset convertTextUnderlineOffset(BuilderState&, const CSSValue&);
     static TextDecorationThickness convertTextDecorationThickness(BuilderState&, const CSSValue&);
     static RefPtr<StyleReflection> convertReflection(BuilderState&, const CSSValue&);
-    static TextEdge convertTextEdge(BuilderState&, const CSSValue&);
     static IntSize convertInitialLetter(BuilderState&, const CSSValue&);
     static float convertTextStrokeWidth(BuilderState&, const CSSValue&);
     static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
@@ -842,59 +840,6 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     reflection->setMask(mask);
 
     return reflection;
-}
-
-inline TextEdge BuilderConverter::convertTextEdge(BuilderState&, const CSSValue& value)
-{
-    auto& values = downcast<CSSValueList>(value);
-    auto& firstValue = downcast<CSSPrimitiveValue>(*values.item(0));
-
-    auto overValue = [&] {
-        switch (firstValue.valueID()) {
-        case CSSValueLeading:
-            return TextEdgeType::Leading;
-        case CSSValueText:
-            return TextEdgeType::Text;
-        case CSSValueCap:
-            return TextEdgeType::CapHeight;
-        case CSSValueEx:
-            return TextEdgeType::ExHeight;
-        case CSSValueIdeographic:
-            return TextEdgeType::CJKIdeographic;
-        case CSSValueIdeographicInk:
-            return TextEdgeType::CJKIdeographicInk;
-        default:
-            ASSERT_NOT_REACHED();
-            return TextEdgeType::Leading;
-        }
-    };
-
-    auto underValue = [&] {
-        if (firstValue.valueID() == CSSValueLeading)
-            return TextEdgeType::Leading;
-        if (values.length() == 1) {
-            // https://www.w3.org/TR/css-inline-3/#text-edges
-            // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
-            // FIXME: Figure out what "if possible" means here.
-            return TextEdgeType::Text;
-        }
-
-        auto& secondValue = downcast<CSSPrimitiveValue>(*values.item(1));
-        switch (secondValue.valueID()) {
-        case CSSValueText:
-            return TextEdgeType::Text;
-        case CSSValueAlphabetic:
-            return TextEdgeType::Alphabetic;
-        case CSSValueIdeographic:
-            return TextEdgeType::CJKIdeographic;
-        case CSSValueIdeographicInk:
-            return TextEdgeType::CJKIdeographicInk;
-        default:
-            ASSERT_NOT_REACHED();
-            return TextEdgeType::Leading;
-        }
-    };
-    return { overValue(), underValue() };
 }
 
 inline IntSize BuilderConverter::convertInitialLetter(BuilderState&, const CSSValue& value)

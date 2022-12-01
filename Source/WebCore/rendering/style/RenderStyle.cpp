@@ -49,7 +49,6 @@
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
-#include "StyleTextEdge.h"
 #include "StyleTreeResolver.h"
 #include "WillChangeData.h"
 #include <wtf/MathExtras.h>
@@ -2804,21 +2803,6 @@ bool RenderStyle::hasSnapPosition() const
 {
     const ScrollSnapAlign& alignment = this->scrollSnapAlign();
     return alignment.blockAlign != ScrollSnapAxisAlignType::None || alignment.inlineAlign != ScrollSnapAxisAlignType::None;
-}
-
-TextEdge RenderStyle::textEdge() const
-{
-    return m_rareInheritedData->textEdge;
-}
-
-void RenderStyle::setTextEdge(TextEdge textEdgeValue)
-{
-    SET_VAR(m_rareInheritedData, textEdge, textEdgeValue);
-}
-
-TextEdge RenderStyle::initialTextEdge()
-{
-    return { TextEdgeType::Leading, TextEdgeType::Leading };
 }
 
 bool RenderStyle::hasReferenceFilterOnly() const

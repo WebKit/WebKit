@@ -510,17 +510,6 @@
                 "url": "https://www.w3.org/TR/css-fonts-4/#font-stretch-prop"
             }
         },
-        "text-edge": {
-            "codegen-properties": {
-                "converter": "TextEdge",
-                "custom-parser": true,
-                "settings-flag": "cssLeadingTrimEnabled"
-            },
-            "specification": {
-                "category": "css-inline",
-                "url": "https://www.w3.org/TR/css-inline-3/#text-edges"
-            }
-        },
         "text-rendering": {
             "inherited": true,
             "values": [
