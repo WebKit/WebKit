@@ -34,13 +34,13 @@
 #include "HTMLSrcsetParser.h"
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "LinkLoader.h"
 #include "LinkRelAttribute.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
-#include "MediaQueryParserContext.h"
+#include "MediaQueryEvaluator.h"
+#include "MediaQueryParser.h"
 #include "RenderView.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
@@ -227,10 +227,10 @@ private:
             }
             if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
                 m_mediaAttribute = attributeValue.toString();
-                auto mediaSet = MediaQuerySet::create(m_mediaAttribute, MediaQueryParserContext(m_document));
+                auto mediaQueries = MQ::MediaQueryParser::parse(m_mediaAttribute, { m_document });
                 RefPtr documentElement = m_document.documentElement();
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
-                m_mediaMatched = LegacyMediaQueryEvaluator { m_document.printing() ? "print"_s : "screen"_s, m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
+                m_mediaMatched = MQ::MediaQueryEvaluator { m_document.printing() ? printAtom() : screenAtom(), m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaQueries);
             }
             if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
                 // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)

@@ -28,7 +28,6 @@
 #pragma once
 
 #include "LayoutSize.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "StyleScopeOrdinal.h"
 #include "Timer.h"
 #include <memory>
@@ -187,6 +186,9 @@ private:
     void clearPendingUpdate();
 
     TreeScope& treeScope();
+
+    using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
+    static MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
 
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };

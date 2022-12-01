@@ -50,8 +50,6 @@
 #import <WebCore/Image.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/KeyboardEvent.h>
-#import <WebCore/LegacyMediaQueryEvaluator.h>
-#import <WebCore/MediaList.h>
 #import <WebCore/NodeFilter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
@@ -708,15 +706,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 - (BOOL)_mediaQueryMatches
 {
-    HTMLLinkElement& link = *static_cast<HTMLLinkElement*>(core(self));
-
-    auto& media = link.attributeWithoutSynchronization(HTMLNames::mediaAttr);
-    if (media.isEmpty())
-        return true;
-
-    Document& document = link.document();
-    auto mediaQuerySet = MediaQuerySet::create(media, MediaQueryParserContext(document));
-    return LegacyMediaQueryEvaluator { "screen"_s, document, document.renderView() ? &document.renderView()->style() : nullptr }.evaluate(mediaQuerySet.get());
+    return downcast<HTMLLinkElement>(core(self))->mediaAttributeMatches();
 }
 
 @end

@@ -47,7 +47,6 @@
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
 #include "NodeRenderStyle.h"

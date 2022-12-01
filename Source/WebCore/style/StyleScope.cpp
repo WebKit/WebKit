@@ -699,6 +699,12 @@ void Scope::scheduleUpdate(UpdateType update)
     m_pendingUpdateTimer.startOneShot(0_s);
 }
 
+auto Scope::mediaQueryViewportStateForDocument(const Document& document) -> MediaQueryViewportState
+{
+    // These things affect evaluation of viewport dependent media queries.
+    return { document.view()->layoutSize(), document.frame()->pageZoomFactor(), document.printing() };
+}
+
 void Scope::evaluateMediaQueriesForViewportChange()
 {
     auto viewportState = mediaQueryViewportStateForDocument(m_document);
