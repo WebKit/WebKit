@@ -1527,8 +1527,6 @@ webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/har/har-page-a
 
 webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Pass Timeout ]
 
-webkit.org/b/229523 [ Debug ] fast/canvas/webgl/lose-context-on-timeout.html [ Pass Timeout ]
-
 webkit.org/b/229561 http/tests/navigation/page-cache-video.html [ Pass Failure ]
 
 webkit.org/b/229579 [ BigSur Debug ] http/tests/loading/preload-img-test.html [ Pass Failure ]
@@ -1593,8 +1591,6 @@ platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
 webkit.org/b/232492 [ BigSur Debug ] webrtc/video-receivers.html [ Pass Crash ]
 
 webkit.org/b/236328 [ Monterey ] webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
-
-webkit.org/b/236788 [ Monterey ] http/tests/media/video-webm-stall.html [ Failure ]
 
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
 
@@ -1748,3 +1744,41 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load.html [ Skip ]
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
+
+#webkit.org/b/248537 Batch mark expectations for Ventura test failures
+[ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]
+[ Ventura+ ] webrtc/canvas-to-peer-connection.html [ Pass Failure Timeout ]
+[ Ventura+ ] webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Pass Failure Timeout ]
+[ Ventura+ ] scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Pass Failure ]
+[ Ventura+ ] webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
+[ Ventura+ x86_64 ] svg/gradients/spreadMethodAlpha.svg [ ImageOnlyFailure ]
+[ Ventura+ x86_64 ] scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/webstorage/storage_local_window_open.window.html [ Pass Timeout ]
+[ BigSur+ x86_64 ] imported/mozilla/svg/blend-color.svg [ ImageOnlyFailure ]
+[ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-frame.https.html [ Crash ]
+[ BigSur+ x86_64 ] imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html [ ImageOnlyFailure ]
+[ BigSur+ x86_64 ] imported/mozilla/svg/blend-luminosity.svg [ ImageOnlyFailure ]
+[ Ventura+ Debug x86_64 ] fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Pass Failure ]
+[ Ventura+ Debug x86_64 ] fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]
+[ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up.html [ Failure ]
+[ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down.html [ Failure ]
+[ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html [ Failure ]
+[ BigSur+ ] fast/speechrecognition/start-recognition-then-stop.html [ Pass Failure ]
+[ BigSur+ x86_64 ] fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass Timeout Crash ]
+[ BigSur+ x86_64 ] fast/frames/message-port-postMessage-unload-event.html [ Pass Failure ]
+[ BigSur+ x86_64 ] fast/mediastream/getUserMedia-to-canvas-1.html [ Pass Timeout ]
+[ BigSur+ x86_64 ] fast/mediastream/getUserMedia-to-canvas-2.html [ Pass Timeout ]
+[ Monterey+ ] fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
+[ Monterey+ ] fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
+[ BigSur+ ] fast/canvas/webgl/lose-context-on-timeout.html [ Timeout ]
+[ BigSur+ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
+[ Ventura+ ] fast/images/animated-heics-verify.html [ Timeout Crash ]
+[ Ventura+ ] model-element/model-element-ready.html [ Pass Failure ]
+[ Monterey+ ] model-element/model-element-graphics-layers-opacity.html [ Failure ]
+[ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
+[ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
+[ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
+[ Monterey+ ] http/tests/media/video-webm-stall.html  [ Failure ]
+[ BigSur+ ] fast/images/animated-heics-draw.html [ Timeout Crash ]
