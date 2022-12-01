@@ -2,17 +2,17 @@
 PASS Should be known: '(prefers-reduced-motion)'
 PASS Should be known: '(prefers-reduced-motion: no-preference)'
 PASS Should be known: '(prefers-reduced-motion: reduce)'
-FAIL Should be parseable: '(prefers-reduced-motion: 0)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-motion: 0)'
 PASS Should be unknown: '(prefers-reduced-motion: 0)'
-FAIL Should be parseable: '(prefers-reduced-motion: none)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-motion: none)'
 PASS Should be unknown: '(prefers-reduced-motion: none)'
-FAIL Should be parseable: '(prefers-reduced-motion: 10px)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-motion: 10px)'
 PASS Should be unknown: '(prefers-reduced-motion: 10px)'
-FAIL Should be parseable: '(prefers-reduced-motion: no-preference reduce)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-motion: no-preference reduce)'
 PASS Should be unknown: '(prefers-reduced-motion: no-preference reduce)'
-FAIL Should be parseable: '(prefers-reduced-motion: reduced)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-motion: reduced)'
 PASS Should be unknown: '(prefers-reduced-motion: reduced)'
-FAIL Should be parseable: '(prefers-reduced-motion: no-preference/reduce)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-motion: no-preference/reduce)'
 PASS Should be unknown: '(prefers-reduced-motion: no-preference/reduce)'
 PASS Check that no-preference evaluates to false in the boolean context
 

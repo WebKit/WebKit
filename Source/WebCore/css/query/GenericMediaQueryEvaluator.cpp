@@ -110,12 +110,12 @@ static EvaluationResult evaluateIntegerComparison(int number, const std::optiona
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-static EvaluationResult evaluateResolutionComparison(double resolution, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateResolutionComparison(float resolution, const std::optional<Comparison>& comparison, Side side)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionResolution = dynamicDowncast<CSSPrimitiveValue>(comparison->value.get())->doubleValue(CSSUnitType::CSS_DPPX);
+    auto expressionResolution = dynamicDowncast<CSSPrimitiveValue>(comparison->value.get())->floatValue(CSSUnitType::CSS_DPPX);
 
     auto left = side == Side::Left ? expressionResolution : resolution;
     auto right = side == Side::Left ? resolution : expressionResolution;
@@ -203,7 +203,7 @@ EvaluationResult evaluateNumberFeature(const Feature& feature, double currentVal
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateResolutionFeature(const Feature& feature, double currentValue)
+EvaluationResult evaluateResolutionFeature(const Feature& feature, float currentValue)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!currentValue);

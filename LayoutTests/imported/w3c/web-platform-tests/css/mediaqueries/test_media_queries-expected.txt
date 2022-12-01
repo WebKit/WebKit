@@ -1271,8 +1271,11 @@ PASS expression_should_be_unknown: max-resolution: 0dppx
 PASS expression_should_be_parseable: max-resolution: 0x
 PASS expression_should_be_unknown: max-resolution: 0x
 PASS find_resolution
-PASS resolution is inexact: should_not_apply: (resolution: ${resolution}dpi)
-PASS resolution is inexact: should_not_apply: (resolution: ${resolution - 1}dpi)
+PASS resolution is exact: should_apply: (resolution: ${resolution}dpi)
+PASS resolution is exact: should_apply: (resolution: ${Math.floor(resolution/96)}dppx)
+PASS resolution is exact: should_apply: (resolution: ${Math.floor(resolution/96)}x)
+PASS resolution is exact: should_not_apply: (resolution: ${resolution + 1}dpi)
+PASS resolution is exact: should_not_apply: (resolution: ${resolution - 1}dpi)
 PASS should_apply: (min-resolution: ${dpi_low}dpi)
 PASS should_not_apply: not all and (min-resolution: ${dpi_low}dpi)
 PASS should_apply: not all and (min-resolution: ${dpi_high}dpi)
