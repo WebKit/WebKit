@@ -1027,7 +1027,6 @@ webkit.org/b/173419 fast/events/page-visibility-iframe-move-test.html [ Timeout 
 webkit.org/b/173419 fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-onvisibilitychange.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-transition-test.html [ Timeout ]
-webkit.org/b/173419 fast/events/scroll-after-click-on-tab-index.html [ Timeout ]
 webkit.org/b/173419 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/selectstart-by-drag.html [ Failure ]
 webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
