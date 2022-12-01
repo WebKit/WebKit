@@ -6003,6 +6003,11 @@
 		86AA520D292523AF0065399E /* XRSystem.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = XRSystem.serialization.in; sourceTree = "<group>"; };
 		86AA521929264F5D0065399E /* WebHitTestResultData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebHitTestResultData.serialization.in; sourceTree = "<group>"; };
 		86AA521A292653700065399E /* WebHitTestResultPlatformData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebHitTestResultPlatformData.serialization.in; sourceTree = "<group>"; };
+		86AA524F293653C50065399E /* WebPopupItem.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPopupItem.serialization.in; sourceTree = "<group>"; };
+		86AA5250293655B30065399E /* ApplePayPaymentSetupFeatures.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayPaymentSetupFeatures.serialization.in; sourceTree = "<group>"; };
+		86AA525129366FFC0065399E /* PaymentSetupConfiguration.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PaymentSetupConfiguration.serialization.in; sourceTree = "<group>"; };
+		86AA5252293674E30065399E /* DataDetectionResult.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DataDetectionResult.serialization.in; sourceTree = "<group>"; };
+		86AA5253293676AA0065399E /* RevealItem.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RevealItem.serialization.in; sourceTree = "<group>"; };
 		86AE2A9628D61EDD007F5A1C /* WebCoreArgumentCodersCocoa.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCoreArgumentCodersCocoa.serialization.in; sourceTree = "<group>"; };
 		86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusedElementInformation.serialization.in; sourceTree = "<group>"; };
 		86DA60CA28EB11830044FE4D /* InteractionInformationAtPosition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationAtPosition.serialization.in; path = ios/InteractionInformationAtPosition.serialization.in; sourceTree = "<group>"; };
@@ -6822,7 +6827,6 @@
 		C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormSelectControl.h; path = ios/forms/WKFormSelectControl.h; sourceTree = "<group>"; };
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
 		C55F916C1C595E440029E92D /* DataDetectionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectionResult.h; sourceTree = "<group>"; };
-		C55F916D1C595E440029E92D /* DataDetectionResult.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectionResult.mm; sourceTree = "<group>"; };
 		C57193B918C149D0002D0F12 /* WKFormSelectPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectPicker.mm; path = ios/forms/WKFormSelectPicker.mm; sourceTree = "<group>"; };
 		C57193BA18C149D0002D0F12 /* WKFormSelectPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectPopover.mm; path = ios/forms/WKFormSelectPopover.mm; sourceTree = "<group>"; };
 		C57193BD18C14A43002D0F12 /* WKFormSelectControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectControl.mm; path = ios/forms/WKFormSelectControl.mm; sourceTree = "<group>"; };
@@ -8417,6 +8421,7 @@
 				C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */,
 				BC5744ED12638FB3006F0F12 /* WebPopupItem.cpp */,
 				BC5744EE12638FB3006F0F12 /* WebPopupItem.h */,
+				86AA524F293653C50065399E /* WebPopupItem.serialization.in */,
 				3110ED6220127CB300350B20 /* WebPreferencesDefaultValues.cpp */,
 				7CDE73A01F9DA37B00390312 /* WebPreferencesDefaultValues.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,
@@ -8510,9 +8515,11 @@
 				1AB1F77A1D1B30A9007C9BD1 /* ios */,
 				1AB1F77C1D1B30A9007C9BD1 /* mac */,
 				5C53DCDD24465BF900A93124 /* ApplePayPaymentSetupFeatures.mm */,
+				86AA5250293655B30065399E /* ApplePayPaymentSetupFeatures.serialization.in */,
 				5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeaturesWebKit.h */,
 				950FECF0285026EA0002DE4E /* AutomaticReloadPaymentRequest.h */,
 				5C53DCE024465BF900A93124 /* PaymentSetupConfiguration.mm */,
+				86AA525129366FFC0065399E /* PaymentSetupConfiguration.serialization.in */,
 				5C53DCDE24465BF900A93124 /* PaymentSetupConfigurationWebKit.h */,
 				950FECF32850271F0002DE4E /* PaymentTokenContext.h */,
 				950FECF22850271E0002DE4E /* RecurringPaymentRequest.h */,
@@ -10400,7 +10407,7 @@
 				1C739E872347BD0F00C621EC /* CoreTextHelpers.h */,
 				1C739E852347BCF600C621EC /* CoreTextHelpers.mm */,
 				C55F916C1C595E440029E92D /* DataDetectionResult.h */,
-				C55F916D1C595E440029E92D /* DataDetectionResult.mm */,
+				86AA5252293674E30065399E /* DataDetectionResult.serialization.in */,
 				49DAA38D24CBA1BD00793D75 /* DefaultWebBrowserChecks.h */,
 				49DAA38B24CBA1A800793D75 /* DefaultWebBrowserChecks.mm */,
 				CE550E132283744400D28791 /* InsertTextOptions.cpp */,
@@ -10411,6 +10418,7 @@
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
 				442E7BEA27B4581300C69AC1 /* RevealItem.h */,
 				442E7BE827B4572B00C69AC1 /* RevealItem.mm */,
+				86AA5253293676AA0065399E /* RevealItem.serialization.in */,
 				7AB4EA3F22777C460085BBAA /* SandboxExtensionCocoa.mm */,
 				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,

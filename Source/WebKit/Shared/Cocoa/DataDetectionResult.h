@@ -36,9 +36,6 @@ namespace WebKit {
 
 struct DataDetectionResult {
     RetainPtr<NSArray> results;
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<DataDetectionResult> decode(IPC::Decoder&);
 };
 
 }

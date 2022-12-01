@@ -474,6 +474,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
+	Shared/Cocoa/DataDetectionResult.serialization.in \
+	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
@@ -492,8 +494,11 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebEvent.serialization.in \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
+	Shared/WebPopupItem.serialization.in \
 	Shared/WebPushDaemonConnectionConfiguration.serialization.in \
 	Shared/WebPushMessage.serialization.in \
+	Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in \
+	Shared/ApplePay/PaymentSetupConfiguration.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/mac/WebHitTestResultPlatformData.serialization.in \

@@ -48,12 +48,10 @@ public:
     PaymentSetupConfiguration() = default;
     PaymentSetupConfiguration(const WebCore::ApplePaySetupConfiguration&, const URL&);
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<PaymentSetupConfiguration> decode(IPC::Decoder&);
-
     PKPaymentSetupConfiguration *platformConfiguration() const { return m_configuration.get(); }
 
 private:
+    friend struct IPC::ArgumentCoder<PaymentSetupConfiguration, void>;
     explicit PaymentSetupConfiguration(RetainPtr<PKPaymentSetupConfiguration>&&);
 
     RetainPtr<PKPaymentSetupConfiguration> m_configuration;

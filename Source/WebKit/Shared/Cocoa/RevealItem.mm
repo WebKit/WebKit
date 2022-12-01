@@ -39,28 +39,6 @@ RevealItem::RevealItem(RetainPtr<RVItem>&& item)
 {
 }
 
-void RevealItem::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_item;
-}
-
-std::optional<RevealItem> RevealItem::decode(IPC::Decoder& decoder)
-{
-    static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        auto allowed = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
-        if (auto rvItemClass = PAL::getRVItemClass())
-            [allowed addObject:rvItemClass];
-        allowedClasses.get() = adoptNS([allowed copy]);
-    });
-    
-    auto item = IPC::decode<RVItem>(decoder, allowedClasses.get().get());
-    if (!item)
-        return std::nullopt;
-
-    return RevealItem { WTFMove(*item) };
-}
 #endif
 
 }
