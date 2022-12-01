@@ -77,6 +77,26 @@ static LicenseType thunderLicenseType(WebCore::CDMInstanceSession::LicenseType l
 
 namespace WebCore {
 
+KeyHandleThunder::KeyHandleThunder(KeyStatus status, KeyIDType&& keyID, KeyHandleValueVariant&& keyHandleValue)
+    : KeyHandle(status, WTFMove(keyID), WTFMove(keyHandleValue))
+    , m_lastUsed(MonotonicTime::now())
+{
+}
+
+void KeyHandleThunder::pruneIfNeeded()
+{
+    ASSERT(std::holds_alternative<BoxPtr<OpenCDMSession>>(m_value));
+    if (MonotonicTime::now() - m_lastUsed > 120_s) {
+        GST_MEMDUMP("pruning key id", m_id.data(), m_id.size());
+        takeValueIfDifferent(BoxPtr<OpenCDMSession>());
+    }
+}
+
+void KeyHandleThunder::markUsed() const
+{
+    m_lastUsed = MonotonicTime::now();
+}
+
 static CDMInstanceSession::SessionLoadFailure sessionLoadFailureFromThunder(const StringView& loadStatus)
 {
     if (loadStatus == "None"_s)
@@ -439,7 +459,7 @@ void CDMInstanceSessionThunder::keyUpdatedCallback(KeyIDType&& keyID)
 
     auto keyStatus = status(keyID);
     GST_DEBUG("updated with with key status %s", toString(keyStatus));
-    m_doesKeyStoreNeedMerging |= m_keyStore.add(KeyHandle::create(keyStatus, WTFMove(keyID), BoxPtr<OpenCDMSession>(m_session)));
+    m_doesKeyStoreNeedMerging |= m_keyStore.add(KeyHandleThunder::create(keyStatus, WTFMove(keyID), BoxPtr<OpenCDMSession>(m_session)));
 }
 
 void CDMInstanceSessionThunder::keysUpdateDoneCallback()

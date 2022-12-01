@@ -38,6 +38,7 @@
 #include "GStreamerEMEUtilities.h"
 #include "MediaKeyStatus.h"
 #include "SharedBuffer.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,6 +52,21 @@ struct ThunderSystemDeleter {
 using UniqueThunderSystem = std::unique_ptr<OpenCDMSystem, ThunderSystemDeleter>;
 
 } // namespace Thunder
+
+class KeyHandleThunder : public KeyHandle {
+public:
+    virtual ~KeyHandleThunder() = default;
+
+    static RefPtr<KeyHandle> create(KeyStatus status, KeyIDType&& keyID, KeyHandleValueVariant&& keyHandleValue)
+    {
+        return adoptRef(*new KeyHandleThunder(status, WTFMove(keyID), WTFMove(keyHandleValue)));
+    }
+    void pruneIfNeeded() final;
+    void markUsed() const final;
+private:
+    KeyHandleThunder(KeyStatus, KeyIDType&&, KeyHandleValueVariant&&);
+    mutable MonotonicTime m_lastUsed;
+};
 
 class CDMFactoryThunder final : public CDMFactory, public CDMProxyFactory {
     WTF_MAKE_FAST_ALLOCATED;

@@ -101,11 +101,30 @@ String KeyHandle::idAsString() const
 
 bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
 {
+    markUsed();
     if (m_value != value) {
         m_value = WTFMove(value);
         return true;
     }
     return false;
+}
+
+KeyStore::KeyStore()
+    : m_pruningTimer(*this, &KeyStore::pruneKeysIfNeeded)
+{
+    m_pruningTimer.startRepeating(300_s);
+}
+
+KeyStore::KeyStore(const KeyStore& other)
+    : m_keys(other.m_keys)
+    , m_pruningTimer(*this, &KeyStore::pruneKeysIfNeeded)
+{
+    m_pruningTimer.startRepeating(300_s);
+}
+
+KeyStore::~KeyStore()
+{
+    m_pruningTimer.stop();
 }
 
 bool KeyStore::containsKeyID(const KeyIDType& keyID) const
@@ -127,6 +146,12 @@ void KeyStore::merge(const KeyStore& other)
     for (const auto& key : m_keys)
         LOG(EME, "\tEME - CDMProxy - Key ID: %s", key->idAsString().ascii().data());
 #endif // !LOG_DISABLED
+}
+
+void KeyStore::pruneKeysIfNeeded()
+{
+    for (const auto& key : m_keys)
+        key->pruneIfNeeded();
 }
 
 CDMInstanceSession::KeyStatusVector KeyStore::allKeysAs(CDMInstanceSession::KeyStatus status) const

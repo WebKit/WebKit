@@ -33,6 +33,7 @@
 #include "CDMInstance.h"
 #include "CDMInstanceSession.h"
 #include "SharedBuffer.h"
+#include "Timer.h"
 #include <wtf/BoxPtr.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
@@ -58,6 +59,8 @@ class KeyHandle : public ThreadSafeRefCounted<KeyHandle> {
 public:
     using KeyStatus = CDMInstanceSession::KeyStatus;
 
+    virtual ~KeyHandle() = default;
+
     static RefPtr<KeyHandle> create(KeyStatus status, KeyIDType&& keyID, KeyHandleValueVariant&& keyHandleValue)
     {
         return adoptRef(*new KeyHandle(status, WTFMove(keyID), WTFMove(keyHandleValue)));
@@ -67,8 +70,8 @@ public:
     bool takeValueIfDifferent(KeyHandleValueVariant&&);
 
     const KeyIDType& id() const { return m_id; }
-    const KeyHandleValueVariant& value() const { return m_value; }
-    KeyHandleValueVariant& value() { return m_value; }
+    const KeyHandleValueVariant& value() const { markUsed(); return m_value; }
+    KeyHandleValueVariant& value() { markUsed(); return m_value; }
     KeyStatus status() const { return m_status; }
     void mergeKeyInto(RefPtr<KeyHandle>&& other)
     {
@@ -83,6 +86,9 @@ public:
     }
 
     String idAsString() const;
+
+    virtual void pruneIfNeeded() { }
+    virtual void markUsed() const { }
 
     // Two keys are equal if they have the same ID, ignoring key value and status.
     friend bool operator==(const KeyHandle &k1, const KeyHandle &k2) { return k1.m_id == k2.m_id; }
@@ -104,6 +110,18 @@ public:
         return k1.m_id.size() < k2.m_id.size();
     }
 
+protected:
+    KeyHandle(KeyStatus status, KeyIDType&& keyID, KeyHandleValueVariant&& keyHandleValue)
+        : m_status(status)
+        , m_id(WTFMove(keyID))
+        , m_value(WTFMove(keyHandleValue))
+    {
+    }
+
+    KeyStatus m_status;
+    KeyIDType m_id;
+    KeyHandleValueVariant m_value;
+
 private:
     void addSessionReference() { ASSERT(isMainThread()); m_numSessionReferences++; }
     void removeSessionReference() { ASSERT(isMainThread()); m_numSessionReferences--; }
@@ -112,12 +130,6 @@ private:
     friend class KeyStore;
     friend class ReferenceAwareKeyStore;
 
-    KeyHandle(KeyStatus status, KeyIDType&& keyID, KeyHandleValueVariant&& keyHandleValue)
-        : m_status(status), m_id(WTFMove(keyID)), m_value(WTFMove(keyHandleValue)) { }
-
-    KeyStatus m_status;
-    KeyIDType m_id;
-    KeyHandleValueVariant m_value;
     int m_numSessionReferences { 0 };
 };
 
@@ -125,8 +137,9 @@ class KeyStore {
 public:
     using KeyStatusVector = CDMInstanceSession::KeyStatusVector;
 
-    KeyStore() = default;
-    virtual ~KeyStore() = default;
+    KeyStore();
+    KeyStore(const KeyStore&);
+    virtual ~KeyStore();
 
     bool containsKeyID(const KeyIDType&) const;
     void merge(const KeyStore&);
@@ -154,7 +167,10 @@ public:
     auto rend() const { return m_keys.rend(); }
 
 private:
+    void pruneKeysIfNeeded();
+
     Vector<RefPtr<KeyHandle>> m_keys;
+    Timer m_pruningTimer;
 };
 
 class ReferenceAwareKeyStore : public KeyStore {
