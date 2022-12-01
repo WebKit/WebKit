@@ -83,6 +83,10 @@ PASS not (width <= 500px)
 PASS Container name: foo
 PASS Container name:  foo
 PASS Container name:  foo
+PASS Container name: normal
+PASS Container name: Normal
+PASS Container name: auto
+PASS Container name: Auto
 PASS Container name: foo foo
 PASS Container name: 1px
 PASS Container name: 50gil
@@ -90,12 +94,12 @@ PASS Container name: name(foo)
 PASS Container name: type(inline-size)
 PASS Container name: "foo"
 PASS Container name: "inherit"
+PASS Container name: inherit
+PASS Container name: INITIAL
+PASS Container name: Unset
+PASS Container name: deFAULT
 PASS Container name: none
 PASS Container name: None
-PASS Container name: normal
-PASS Container name: Normal
-PASS Container name: auto
-PASS Container name: Auto
 PASS Container name: and
 PASS Container name: or
 PASS Container name: not
@@ -106,9 +110,9 @@ FAIL style(--my-prop: foo) assert_equals: expected "true" but got ""
 FAIL style(--my-prop: foo - bar ()) assert_equals: expected "true" but got ""
 FAIL style(not ((--foo: calc(10px + 2em)) and ((--foo: url(x))))) assert_equals: expected "true" but got ""
 FAIL style((--foo: bar) or (--bar: 10px)) assert_equals: expected "true" but got ""
-FAIL style(--foo: bar !important) assert_equals: expected "true" but got ""
 FAIL style(--my-prop:) assert_equals: expected "true" but got ""
 FAIL style(--my-prop: ) assert_equals: expected "true" but got ""
+FAIL style(--foo: bar !important) assert_equals: expected "true" but got ""
 PASS style(--foo: bar;)
 PASS style(--foo)
 PASS style(style(--foo: bar))

@@ -3,4 +3,5 @@ FAIL em units respond to changes assert_equals: expected "rgb(0, 128, 0)" but go
 PASS rem units respond to changes
 FAIL ex units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 FAIL ch units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL lh units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 
