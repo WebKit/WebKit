@@ -81,7 +81,7 @@ struct _WebKitWebPageClass {
 WEBKIT_API GType
 webkit_web_page_get_type                    (void);
 
-WEBKIT_API WebKitDOMDocument *
+WEBKIT_DEPRECATED WebKitDOMDocument *
 webkit_web_page_get_dom_document            (WebKitWebPage *web_page);
 
 WEBKIT_API guint64
