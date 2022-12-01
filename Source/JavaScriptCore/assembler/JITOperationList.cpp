@@ -112,6 +112,8 @@ LLINT_DECLARE_ROUTINE_VALIDATE(llint_program_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_module_program_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_no_tls);
+LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_simd);
+LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_no_tls_simd);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_throw_during_call_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_handle_uncaught_exception);
 LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_trampoline);
@@ -165,6 +167,8 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(llint_module_program_prologue)
             LLINT_ROUTINE(wasm_function_prologue)
             LLINT_ROUTINE(wasm_function_prologue_no_tls)
+            LLINT_ROUTINE(wasm_function_prologue_simd)
+            LLINT_ROUTINE(wasm_function_prologue_no_tls_simd)
             LLINT_ROUTINE(llint_throw_during_call_trampoline)
             LLINT_ROUTINE(llint_handle_uncaught_exception)
             LLINT_ROUTINE(checkpoint_osr_exit_trampoline)

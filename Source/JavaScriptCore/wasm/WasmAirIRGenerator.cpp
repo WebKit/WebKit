@@ -410,6 +410,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // SIMD
+    void notifyFunctionUsesSIMD() { ASSERT(m_info.isSIMDFunction(m_functionIndex)); }
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN addSIMDSplat(SIMDLane, ExpressionType scalar, ExpressionType& result);
@@ -659,6 +660,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
+    PartialResult WARN_UNUSED_RETURN addCrash();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&);
     std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const TypeDefinition&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
 
@@ -1245,6 +1247,8 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     , m_numImportFunctions(info.importFunctionCount())
     , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
 {
+    if (m_info.isSIMDFunction(m_functionIndex))
+        m_tierUp = nullptr;
     m_currentBlock = m_code.addBlock();
     m_rootBlock = m_currentBlock;
 
@@ -1800,6 +1804,17 @@ auto AirIRGenerator::addUnreachable() -> PartialResult
     B3::PatchpointValue* unreachable = addPatchpoint(B3::Void);
     unreachable->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::Unreachable);
+    });
+    unreachable->effects.terminal = true;
+    emitPatchpoint(unreachable, Tmp());
+    return { };
+}
+
+auto AirIRGenerator::addCrash() -> PartialResult
+{
+    B3::PatchpointValue* unreachable = addPatchpoint(B3::Void);
+    unreachable->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.breakpoint();
     });
     unreachable->effects.terminal = true;
     emitPatchpoint(unreachable, Tmp());

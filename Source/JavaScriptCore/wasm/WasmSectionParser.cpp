@@ -221,7 +221,7 @@ auto SectionParser::parseFunction() -> PartialResult
         size_t start = 0;
         size_t end = 0;
         m_info->internalFunctionTypeIndices.uncheckedAppend(typeIndex);
-        m_info->functions.uncheckedAppend({ start, end, Vector<uint8_t>() });
+        m_info->functions.uncheckedAppend({ start, end, false, false, Vector<uint8_t>() });
     }
 
     return { };

@@ -331,7 +331,7 @@ end
 
 class FPRegisterID
     def x86Operand(kind)
-        raise unless [:float, :double].include? kind
+        raise unless [:float, :double, :vector].include? kind
         case name
         when "ft0", "fa0", "fr", "wfa0"
             register("xmm0")
@@ -1230,12 +1230,16 @@ class Instruction
             $asm.puts "movss #{x86Operands(:float, :float)}"
         when "loadd"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
+        when "loadv"
+            $asm.puts "movdqu #{x86Operands(:int, :double)}"
         when "moved"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
         when "storef"
             $asm.puts "movss #{x86Operands(:float, :float)}"
         when "stored"
             $asm.puts "movsd #{x86Operands(:double, :double)}"
+        when "storev"
+            $asm.puts "movups #{x86Operands(:vector, :vector)}"
         when "addf"
             handleX86AddFP(:float)
         when "addd"
