@@ -693,6 +693,10 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     // Fallback to the more general maxTimeLoaded() if no range has been found.
     if (!timeRanges->length()) {
         MediaTime loaded = maxTimeLoaded();
+        // Checking maxTimeLoaded is a non-zero value and re-calculating if it is.
+        // This can occur when buffering completes before the duration is known.
+        if (loaded == MediaTime::zeroTime())
+            loaded = MediaTime(m_bufferingPercentage * static_cast<double>(toGstUnsigned64Time(mediaDuration)) / 100, GST_SECOND);
         if (loaded.isValid() && loaded)
             timeRanges->add(MediaTime::zeroTime(), loaded);
     }
