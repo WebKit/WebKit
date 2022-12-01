@@ -75,6 +75,8 @@ public:
 
     virtual RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const = 0;
 
+    static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcExpressionNode&);
+
 protected:
     ExceptionOr<Ref<CSSNumericValue>> addInternal(Vector<Ref<CSSNumericValue>>&&);
     ExceptionOr<Ref<CSSNumericValue>> multiplyInternal(Vector<Ref<CSSNumericValue>>&&);
