@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<head>
+<body contenteditable="true"><div contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="false"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span contenteditable="true"><span>foo</span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol><head>
+
+</head></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></span><ol>bar</ol></div><div></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+document.execCommand("SelectAll");
+document.execCommand("Indent");
+
+window.setTimeout(function() {
+    document.write("PASS");
+    if (window.testRunner)
+    testRunner.notifyDone();
+}, 0);
+</script>
