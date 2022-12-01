@@ -114,6 +114,19 @@ function parseClipPath(s)
     return null;
 }
 
+function parseLengthPair(s)
+{
+    var pathMatch;
+    if (pathMatch = s.match(/^([\d.]+)px\s+([\d.]+)px$/))
+        return [pathMatch[1], pathMatch[2]];
+
+    // A pair can be coalesced if both lengths were the same.
+    if (pathMatch = s.match(/^([\d.]+)px$/))
+        return [pathMatch[1], pathMatch[1]];
+
+    return null;
+}
+
 function hasFloatValue(value)
 {
     switch (value.primitiveType) {
@@ -267,6 +280,18 @@ function checkExpectedValue(expected, index)
             for (var i = 0; i < values.length; ++i)
                 pass &= isCloseEnough(values[i], expectedValues[i], tolerance);
         }
+    } else if (/(?:-webkit-)?border-(?:top|bottom)-(?:left|right)-radius$/.test(property)) {
+        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).cssText;
+
+        var expectedValues = [expectedValue, expectedValue];
+        var values = parseLengthPair(computedValue);
+
+        pass = false;
+        if (values && values.length == expectedValues.length) {
+            pass = true
+            for (var i = 0; i < values.length; ++i)
+                pass &= isCloseEnough(values[i], expectedValues[i], tolerance);
+        }
     } else {
         var computedStyle = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property);
         if (computedStyle.cssValueType == CSSValue.CSS_VALUE_LIST) {
@@ -395,7 +420,11 @@ function runTest(expected, usePauseAPI)
               if (!pauseTransitionAtTimeOnElement(property, time, element))
                 window.console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
             }
-            checkExpectedValue(expected, i);
+            try {
+                checkExpectedValue(expected, i);
+            } catch (err) {
+                result += "EXCEPTION for \"" + property + "\" - " + err + "<br>";
+            }
         } else {
             if (time > maxTime)
                 maxTime = time;

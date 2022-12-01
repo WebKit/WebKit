@@ -69,7 +69,7 @@ public:
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
     DOMTokenList& sizes();
 
-    bool mediaAttributeMatches() const;
+    WEBCORE_EXPORT bool mediaAttributeMatches() const;
 
     WEBCORE_EXPORT void setCrossOrigin(const AtomString&);
     WEBCORE_EXPORT String crossOrigin() const;

@@ -1,5 +1,5 @@
 
-FAIL Computed StylePropertyMap contains every CSS property assert_not_equals: got disallowed value null
+PASS Computed StylePropertyMap contains every CSS property
 PASS Computed StylePropertyMap contains CSS property declarations in style rules
 PASS Computed StylePropertyMap contains custom property declarations in style rules
 PASS Computed StylePropertyMap contains CSS property declarations in inline styles

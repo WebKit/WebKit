@@ -350,7 +350,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQ
 
     auto& ruleSet = m_mediaQueryInvalidationRuleSetCache.ensure(collectedChanges.changedQueryIndexes, [&] {
         auto ruleSet = RuleSet::create();
-        RuleSetBuilder builder(ruleSet, MQ::MediaQueryEvaluator("screen"_s, MQ::EvaluationResult::True));
+        RuleSetBuilder builder(ruleSet, MQ::MediaQueryEvaluator { screenAtom(), MQ::EvaluationResult::True });
         for (auto* rules : collectedChanges.affectedRules) {
             for (auto& rule : *rules)
                 builder.addStyleRule(rule);

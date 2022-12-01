@@ -3842,14 +3842,14 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
             hitTestArea.intersect(renderer().view().frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
     }
 
-    RenderLayer* insideLayer = hitTestLayer(this, nullptr, request, result, hitTestArea, hitTestLocation, false);
-    if (!insideLayer) {
+    auto insideLayer = hitTestLayer(this, nullptr, request, result, hitTestArea, hitTestLocation, false);
+    if (!insideLayer.layer) {
         // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
         // exited the WebView, and so hit testing over a scrollbar hits the content document.
         if (!request.isChildFrameHitTest() && (request.active() || request.release()) && isRenderViewLayer()) {
             renderer().updateHitTestResult(result, downcast<RenderView>(renderer()).flipForWritingMode(hitTestLocation.point()));
-            insideLayer = this;
+            insideLayer = { this };
         }
     }
 
@@ -3860,7 +3860,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
 
     // Now return whether we were inside this layer (this will always be true for the root
     // layer).
-    return insideLayer;
+    return insideLayer.layer;
 }
 
 Element* RenderLayer::enclosingElement() const
@@ -3967,8 +3967,16 @@ Ref<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer
     return transformState.releaseNonNull();
 }
 
+static bool parentLayerIsDOMParent(const RenderLayer& layer)
+{
+    if (!layer.parent())
+        return false;
+    if (!layer.renderer().element() || !layer.renderer().element()->parentElement())
+        return false;
+    return layer.parent()->renderer().element() == layer.renderer().element()->parentElement();
+}
 
-static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, double* zOffset, const HitTestingTransformState* transformState)
+static bool isHitCandidateLegacy(const RenderLayer* hitLayer, bool canDepthSort, double* zOffset, const HitTestingTransformState* transformState)
 {
     if (!hitLayer)
         return false;
@@ -3976,7 +3984,7 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
     // The hit layer is depth-sorting with other layers, so just say that it was hit.
     if (canDepthSort)
         return true;
-    
+
     // We need to look at z-depth to decide if this layer was hit.
     if (zOffset) {
         ASSERT(transformState);
@@ -3992,6 +4000,11 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
     return true;
 }
 
+bool RenderLayer::participatesInPreserve3D() const
+{
+    return parentLayerIsDOMParent(*this) && parent()->preserves3D() && (transform() || renderer().style().backfaceVisibility() == BackfaceVisibility::Hidden || preserves3D());
+}
+
 // hitTestLocation and hitTestRect are relative to rootLayer.
 // A 'flattening' layer is one preserves3D() == false.
 // transformState.m_accumulatedTransform holds the transform from the containing flattening layer.
@@ -4000,14 +4013,14 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
 // 
 // If zOffset is non-null (which indicates that the caller wants z offset information), 
 //  *zOffset on return is the z offset of the hit point relative to the containing flattening layer.
-RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
-                                       const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, bool appliedTransform,
-                                       const HitTestingTransformState* transformState, double* zOffset)
+RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
+    const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, bool appliedTransform,
+    const HitTestingTransformState* transformState, double* zOffset)
 {
     updateLayerListsIfNeeded();
 
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
-        return nullptr;
+        return { nullptr };
 
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
 
@@ -4022,7 +4035,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
             ClipRect clipRect = backgroundClipRect(clipRectsContext);
             // Test the enclosing clip now.
             if (!clipRect.intersects(hitTestLocation))
-                return nullptr;
+                return { nullptr };
         }
 
         return hitTestLayerByApplyingTransform(rootLayer, containerLayer, request, result, hitTestRect, hitTestLocation, transformState, zOffset);
@@ -4046,11 +4059,12 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         std::optional<TransformationMatrix> invertedMatrix = localTransformState->m_accumulatedTransform.inverse();
         // If the z-vector of the matrix is negative, the back is facing towards the viewer.
         if (invertedMatrix && invertedMatrix.value().m33() < 0)
-            return nullptr;
+            return { nullptr, 0 };
     }
 
+    bool using3DTransformsInterop = renderer().settings().css3DTransformInteroperabilityEnabled();
     RefPtr<HitTestingTransformState> unflattenedTransformState = localTransformState;
-    if (localTransformState && !preserves3D()) {
+    if (!using3DTransformsInterop && localTransformState && !preserves3D()) {
         // Keep a copy of the pre-flattening state, for computing z-offsets for the container
         unflattenedTransformState = HitTestingTransformState::create(*localTransformState);
         // This layer is flattening, so flatten the state passed to descendants.
@@ -4062,7 +4076,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     double localZOffset = -std::numeric_limits<double>::infinity();
     double* zOffsetForDescendantsPtr = nullptr;
     double* zOffsetForContentsPtr = nullptr;
-    
+
     bool depthSortDescendants = false;
     if (preserves3D()) {
         depthSortDescendants = true;
@@ -4075,8 +4089,10 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         zOffsetForContentsPtr = zOffset;
     }
 
+    double selfZOffset = localTransformState ? computeZOffset(*localTransformState) : 0;
+
     // This variable tracks which layer the mouse ends up being inside.
-    RenderLayer* candidateLayer = nullptr;
+    auto candidateLayer = HitLayer { nullptr, -std::numeric_limits<double>::infinity() };
 #if ASSERT_ENABLED
     LayerListMutationDetector mutationChecker(*this);
 #endif
@@ -4084,24 +4100,30 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     auto offsetFromRoot = offsetFromAncestor(rootLayer);
     // FIXME: We need to correctly hit test the clip-path when we have a RenderInline too.
     if (auto* rendererBox = this->renderBox(); rendererBox && !rendererBox->hitTestClipPath(hitTestLocation, toLayoutPoint(offsetFromRoot - toLayoutSize(rendererLocation()))))
-        return nullptr;
+        return { nullptr };
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
-    auto* hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
-                                        localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-    if (hitLayer) {
+    auto hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+    if (hitLayer.layer) {
         if (!depthSortDescendants)
             return hitLayer;
-        candidateLayer = hitLayer;
+        if (using3DTransformsInterop) {
+            if (hitLayer.zOffset > candidateLayer.zOffset)
+                candidateLayer = hitLayer;
+        } else
+            candidateLayer = hitLayer;
     }
 
     // Now check our overflow objects.
-    hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
-                           localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-    if (hitLayer) {
+    hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+    if (hitLayer.layer) {
         if (!depthSortDescendants)
             return hitLayer;
-        candidateLayer = hitLayer;
+        if (using3DTransformsInterop) {
+            if (hitLayer.zOffset > candidateLayer.zOffset)
+                candidateLayer = hitLayer;
+        } else
+            candidateLayer = hitLayer;
     }
 
     // Collect the fragments. This will compute the clip rectangles for each layer fragment.
@@ -4111,8 +4133,14 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     LayoutPoint localPoint;
     if (canResize() && m_scrollableArea && m_scrollableArea->hitTestResizerInFragments(layerFragments, hitTestLocation, localPoint)) {
         renderer().updateHitTestResult(result, localPoint);
-        return this;
+        return { this, selfZOffset };
     }
+
+    auto isHitCandidate = [&]() {
+        if (using3DTransformsInterop)
+            return !depthSortDescendants || selfZOffset > candidateLayer.zOffset;
+        return isHitCandidateLegacy(this, false, zOffsetForContentsPtr, unflattenedTransformState.get());
+    };
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer. Check
     // every fragment in reverse order.
@@ -4120,49 +4148,52 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         // Hit test with a temporary HitTestResult, because we only want to commit to 'result' if we know we're frontmost.
         HitTestResult tempResult(result.hitTestLocation());
         bool insideFragmentForegroundRect = false;
-        if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestDescendants, insideFragmentForegroundRect)
-            && isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
+        if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestDescendants, insideFragmentForegroundRect) && isHitCandidate()) {
             if (request.resultIsElementList())
                 result.append(tempResult, request);
             else
                 result = tempResult;
             if (!depthSortDescendants)
-                return this;
+                return { this, selfZOffset };
             // Foreground can depth-sort with descendant layers, so keep this as a candidate.
-            candidateLayer = this;
+            candidateLayer = { this, selfZOffset };
         } else if (insideFragmentForegroundRect && request.resultIsElementList())
             result.append(tempResult, request);
     }
 
     // Now check our negative z-index children.
-    hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
-        localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-    if (hitLayer) {
+    hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+    if (hitLayer.layer) {
         if (!depthSortDescendants)
             return hitLayer;
-        candidateLayer = hitLayer;
+        if (using3DTransformsInterop) {
+            if (hitLayer.zOffset > candidateLayer.zOffset)
+                candidateLayer = hitLayer;
+        } else
+            candidateLayer = hitLayer;
     }
 
     // If we found a layer, return. Child layers, and foreground always render in front of background.
-    if (candidateLayer)
+    if (candidateLayer.layer && (!depthSortDescendants || !using3DTransformsInterop))
         return candidateLayer;
 
     if (isSelfPaintingLayer()) {
         HitTestResult tempResult(result.hitTestLocation());
         bool insideFragmentBackgroundRect = false;
-        if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestSelf, insideFragmentBackgroundRect)
-            && isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
+            if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestSelf, insideFragmentBackgroundRect)  && isHitCandidate()) {
             if (request.resultIsElementList())
                 result.append(tempResult, request);
             else
                 result = tempResult;
-            return this;
+            if (!depthSortDescendants)
+                return { this, selfZOffset };
+            candidateLayer = { this, selfZOffset };
         }
         if (insideFragmentBackgroundRect && request.resultIsElementList())
             result.append(tempResult, request);
     }
 
-    return nullptr;
+    return candidateLayer;
 }
 
 bool RenderLayer::hitTestContentsForFragments(const LayerFragments& layerFragments, const HitTestRequest& request, HitTestResult& result,
@@ -4184,7 +4215,7 @@ bool RenderLayer::hitTestContentsForFragments(const LayerFragments& layerFragmen
     return false;
 }
 
-RenderLayer* RenderLayer::hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
+RenderLayer::HitLayer RenderLayer::hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
     const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffset)
 {
     LayerFragments enclosingPaginationFragments;
@@ -4214,25 +4245,24 @@ RenderLayer* RenderLayer::hitTestTransformedLayerInFragments(RenderLayer* rootLa
         if (!hitTestLocation.intersects(clipRect))
             continue;
 
-        RenderLayer* hitLayer = hitTestLayerByApplyingTransform(rootLayer, containerLayer, request, result, hitTestRect, hitTestLocation,
+        auto hitLayer = hitTestLayerByApplyingTransform(rootLayer, containerLayer, request, result, hitTestRect, hitTestLocation,
             transformState, zOffset, fragment.paginationOffset);
-        if (hitLayer)
+        if (hitLayer.layer)
             return hitLayer;
     }
     
-    return nullptr;
+    return { nullptr };
 }
 
-RenderLayer* RenderLayer::hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
-    const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffset,
-    const LayoutSize& translationOffset)
+RenderLayer::HitLayer RenderLayer::hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
+    const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffset, const LayoutSize& translationOffset)
 {
     // Create a transform state to accumulate this transform.
     Ref<HitTestingTransformState> newTransformState = createLocalTransformState(rootLayer, containerLayer, hitTestRect, hitTestLocation, transformState, translationOffset);
 
     // If the transform can't be inverted, then don't hit test this layer at all.
     if (!newTransformState->m_accumulatedTransform.isInvertible())
-        return nullptr;
+        return { nullptr };
 
     // Compute the point and the hit test rect in the coords of this layer by using the values
     // from the transformState, which store the point and quad in the coords of the last flattened
@@ -4279,27 +4309,35 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
     return true;
 }
 
-RenderLayer* RenderLayer::hitTestList(LayerList layerIterator, RenderLayer* rootLayer,
-                                      const HitTestRequest& request, HitTestResult& result,
-                                      const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation,
-                                      const HitTestingTransformState* transformState, 
-                                      double* zOffsetForDescendants, double* zOffset,
-                                      const HitTestingTransformState* unflattenedTransformState,
-                                      bool depthSortDescendants)
+RenderLayer::HitLayer RenderLayer::hitTestList(LayerList layerIterator, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffsetForDescendants, double* zOffset, const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants)
 {
     if (layerIterator.begin() == layerIterator.end())
-        return nullptr;
+        return { nullptr };
 
     if (!hasSelfPaintingLayerDescendant())
-        return nullptr;
+        return { nullptr };
 
-    RenderLayer* resultLayer = nullptr;
+    auto resultLayer = HitLayer { nullptr, -std::numeric_limits<double>::infinity() };
 
+    RefPtr<HitTestingTransformState> flattenedTransformState;
+    double unflattenedZOffset = 0;
     for (auto iter = layerIterator.rbegin(); iter != layerIterator.rend(); ++iter) {
         auto* childLayer = *iter;
 
+        // If we're about to cross a flattening boundary, then pass the (lazily-initialized)
+        // flattened transfomState to the child layer.
+        auto* transformStateForChild = transformState;
+        if (transformState && !childLayer->participatesInPreserve3D() && renderer().settings().css3DTransformInteroperabilityEnabled()) {
+            if (!flattenedTransformState) {
+                flattenedTransformState = HitTestingTransformState::create(*transformState);
+                flattenedTransformState->flatten();
+                unflattenedZOffset = computeZOffset(*transformState);
+            }
+            transformStateForChild = flattenedTransformState.get();
+        }
+
         HitTestResult tempResult(result.hitTestLocation());
-        auto* hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
+        auto hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformStateForChild, zOffsetForDescendants);
 
         // If it is a list-based test, we can safely append the temporary result since it might had hit
         // nodes but not necessarily had hitLayer set.
@@ -4307,12 +4345,29 @@ RenderLayer* RenderLayer::hitTestList(LayerList layerIterator, RenderLayer* root
         if (request.resultIsElementList())
             result.append(tempResult, request);
 
-        if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
-            resultLayer = hitLayer;
-            if (!request.resultIsElementList())
-                result = tempResult;
-            if (!depthSortDescendants)
-                break;
+        if (renderer().settings().css3DTransformInteroperabilityEnabled()) {
+            if (hitLayer.layer) {
+                // If the child was flattened, then override the returned depth with the depth of the
+                // plane we flattened into (ourselves) instead.
+                if (transformStateForChild == flattenedTransformState)
+                    hitLayer.zOffset = unflattenedZOffset;
+
+                if (!depthSortDescendants || hitLayer.zOffset > resultLayer.zOffset) {
+                    resultLayer = hitLayer;
+                    if (!request.resultIsElementList())
+                        result = tempResult;
+                    if (!depthSortDescendants)
+                        break;
+                }
+            }
+        } else {
+            if (isHitCandidateLegacy(hitLayer.layer, depthSortDescendants, zOffset, unflattenedTransformState)) {
+                resultLayer = hitLayer;
+                if (!request.resultIsElementList())
+                    result = tempResult;
+                if (!depthSortDescendants)
+                    break;
+            }
         }
     }
 

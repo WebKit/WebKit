@@ -28,7 +28,6 @@
 #include "Connection.h"
 #include "MessageNames.h"
 #include "TestClassName.h"
-#include "TestWithSuperclassMessagesReplies.h"
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -76,7 +75,6 @@ public:
     static constexpr bool isSync = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply; }
-    using AsyncReply = TestAsyncMessageAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;
     using ReplyArguments = std::tuple<uint64_t>;
     explicit TestAsyncMessage(WebKit::TestTwoStateEnum twoStateEnum)
@@ -103,7 +101,6 @@ public:
     static constexpr bool isSync = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
-    using AsyncReply = TestAsyncMessageWithNoArgumentsAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     const Arguments& arguments() const
@@ -125,7 +122,6 @@ public:
     static constexpr bool isSync = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
-    using AsyncReply = TestAsyncMessageWithMultipleArgumentsAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool, uint64_t>;
     const Arguments& arguments() const
@@ -147,7 +143,6 @@ public:
     static constexpr bool isSync = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply; }
-    using AsyncReply = TestAsyncMessageWithConnectionAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
     explicit TestAsyncMessageWithConnection(const int& value)
@@ -172,7 +167,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSyncMessage; }
     static constexpr bool isSync = true;
 
-    using DelayedReply = TestSyncMessageDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     explicit TestSyncMessage(uint32_t param)
@@ -196,7 +190,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSynchronousMessage; }
     static constexpr bool isSync = true;
 
-    using DelayedReply = TestSynchronousMessageDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<std::optional<WebKit::TestClassName>>;
     explicit TestSynchronousMessage(bool value)

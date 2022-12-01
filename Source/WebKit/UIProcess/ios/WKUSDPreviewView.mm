@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKUSDPreviewView.h"
 
-#if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if USE(SYSTEM_PREVIEW)
 
 #import "APIFindClient.h"
 #import "APIUIClient.h"

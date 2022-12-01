@@ -396,7 +396,7 @@ public:
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
-    operator XFORM() const;
+    WEBCORE_EXPORT operator XFORM() const;
 #endif
 
     bool isIdentityOrTranslation() const

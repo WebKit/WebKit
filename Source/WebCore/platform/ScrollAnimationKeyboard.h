@@ -45,6 +45,8 @@ public:
 
     void stopKeyboardScrollAnimation();
 
+    ScrollClamping clamping() const override { return ScrollClamping::Unclamped; }
+
 private:
     void serviceAnimation(MonotonicTime) final;
     bool retargetActiveAnimation(const FloatPoint&) final;

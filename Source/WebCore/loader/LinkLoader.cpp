@@ -48,13 +48,14 @@
 #include "FrameView.h"
 #include "HTMLSrcsetParser.h"
 #include "JSFetchRequestDestination.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "LinkHeader.h"
 #include "LinkPreloadResourceClients.h"
 #include "LinkRelAttribute.h"
 #include "LoaderStrategy.h"
 #include "MIMETypeRegistry.h"
-#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
+#include "MediaQueryParser.h"
+#include "NodeRenderStyle.h"
 #include "PlatformStrategies.h"
 #include "ResourceError.h"
 #include "Settings.h"
@@ -305,7 +306,8 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
             document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> has an invalid `imagesrcset` value"_s);
         return nullptr;
     }
-    if (!LegacyMediaQueryEvaluator::mediaAttributeMatches(document, params.media))
+    auto queries = MQ::MediaQueryParser::parse(params.media, { document });
+    if (!MQ::MediaQueryEvaluator { screenAtom(), document, document.renderStyle() }.evaluate(queries))
         return nullptr;
     if (!isSupportedType(type.value(), params.mimeType, document))
         return nullptr;

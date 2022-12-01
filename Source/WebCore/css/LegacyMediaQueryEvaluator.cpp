@@ -98,12 +98,6 @@ static bool isAppearanceDependent(const AtomString& mediaFeature)
     return mediaFeature == MediaFeatureNames::prefersDarkInterface;
 }
 
-MediaQueryViewportState mediaQueryViewportStateForDocument(const Document& document)
-{
-    // These things affect evaluation of viewport dependent media queries.
-    return { document.view()->layoutSize(), document.frame()->pageZoomFactor(), document.printing() };
-}
-
 LegacyMediaQueryEvaluator::LegacyMediaQueryEvaluator(bool mediaFeatureResult)
     : m_fallbackResult(mediaFeatureResult)
 {

@@ -3756,6 +3756,9 @@ imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrollin
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-ltr-painting.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-rtl-painting.html [ ImageOnlyFailure ]
 
+webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/htb-ltr-ltr.html [ ImageOnlyFailure ]
+webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vlr-ltr-ltr.html [ ImageOnlyFailure ]
+
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure Slow ]
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure Slow ]
 

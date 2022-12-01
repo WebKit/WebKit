@@ -37,72 +37,36 @@ FAIL .target > * 1 assert_equals:
 <div data-offset-x="105"><span></span></div>
 offsetLeft expected 105 but got 40
 PASS .target > * 2
-FAIL .target > * 3 assert_equals:
-<div data-offset-x="25"><span></span></div>
-offsetLeft expected 25 but got 10
-FAIL .target > * 4 assert_equals:
-<div class="line-clamp" data-offset-x="10">
-    <span></span><br><span></span><br><span></span><br><span></span><br><span></span>
-  </div>
-offsetLeft expected 10 but got 25
+PASS .target > * 3
+PASS .target > * 4
 FAIL .target > * 5 assert_equals:
 <div data-offset-x="65"><span></span></div>
 offsetLeft expected 65 but got 40
 PASS .target > * 6
-FAIL .target > * 7 assert_equals:
-<div data-offset-x="25"><span></span></div>
-offsetLeft expected 25 but got 10
-FAIL .target > * 8 assert_equals:
-<div class="line-clamp" data-offset-x="10">
-    <span></span><br><span></span>
-  </div>
-offsetLeft expected 10 but got 25
+PASS .target > * 7
+PASS .target > * 8
 FAIL .target > * 9 assert_equals:
 <div data-offset-x="105"><span></span></div>
 offsetLeft expected 105 but got 40
 PASS .target > * 10
-FAIL .target > * 11 assert_equals:
-<div data-offset-x="25"><span></span></div>
-offsetLeft expected 25 but got 10
-FAIL .target > * 12 assert_equals:
-<div class="line-clamp" data-offset-x="10">
-    <span></span><br><span></span><br><span></span>
-  </div>
-offsetLeft expected 10 but got 25
+PASS .target > * 11
+PASS .target > * 12
 FAIL .target > * 13 assert_equals:
 <div data-offset-x="105"><span></span></div>
 offsetLeft expected 105 but got 40
 PASS .target > * 14
-FAIL .target > * 15 assert_equals:
-<div data-offset-x="25"><span></span></div>
-offsetLeft expected 25 but got 10
-FAIL .target > * 16 assert_equals:
-<div class="line-clamp" data-offset-x="10">
-    <div><span></span><br><span></span><br><span></span><br><span></span><br><span></span></div>
-  </div>
-offsetLeft expected 10 but got 25
+PASS .target > * 15
+PASS .target > * 16
 FAIL .target > * 17 assert_equals:
 <div data-offset-x="105"><span></span></div>
 offsetLeft expected 105 but got 40
 PASS .target > * 18
-FAIL .target > * 19 assert_equals:
-<div data-offset-x="25"><span></span></div>
-offsetLeft expected 25 but got 10
-FAIL .target > * 20 assert_equals:
-<div class="line-clamp" data-offset-x="10">
-    <span></span><div><span></span><br><span></span><br><span></span><br><span></span></div>
-  </div>
-offsetLeft expected 10 but got 25
+PASS .target > * 19
+PASS .target > * 20
 FAIL .target > * 21 assert_equals:
 <div data-offset-x="105"><span></span></div>
 offsetLeft expected 105 but got 40
 PASS .target > * 22
-FAIL .target > * 23 assert_equals:
-<div data-offset-x="25"><span></span></div>
-offsetLeft expected 25 but got 10
-FAIL .target > * 24 assert_equals:
-<div class="line-clamp" data-offset-x="10">
-    <span></span><br><i><span></span><div><span></span><br><span></span><br><span></span></div></i>
-  </div>
-offsetLeft expected 10 but got 25
+PASS .target > * 23
+PASS .target > * 24
 

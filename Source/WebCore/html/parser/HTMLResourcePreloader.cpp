@@ -30,7 +30,9 @@
 #include "CrossOriginAccessControl.h"
 #include "DefaultResourceLoadPriority.h"
 #include "Document.h"
-#include "LegacyMediaQueryEvaluator.h"
+#include "MediaQueryEvaluator.h"
+#include "MediaQueryParser.h"
+#include "NodeRenderStyle.h"
 #include "RenderView.h"
 #include "ScriptElementCachedScriptFetcher.h"
 
@@ -81,11 +83,12 @@ void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
 {
     ASSERT(m_document.frame());
     ASSERT(m_document.renderView());
-    if (!preload->media().isEmpty() && !LegacyMediaQueryEvaluator::mediaAttributeMatches(m_document, preload->media()))
+
+    auto queries = MQ::MediaQueryParser::parse(preload->media(), { m_document });
+    if (!MQ::MediaQueryEvaluator { screenAtom(), m_document, m_document.renderStyle() }.evaluate(queries))
         return;
 
     m_document.cachedResourceLoader().preload(preload->resourceType(), preload->resourceRequest(m_document));
 }
-
 
 }

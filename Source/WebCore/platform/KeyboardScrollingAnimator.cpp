@@ -40,37 +40,6 @@ KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollableArea& scrollableA
 {
 }
 
-RectEdges<bool> KeyboardScrollingAnimator::scrollableDirectionsFromPosition(FloatPoint position) const
-{
-    auto minimumScrollPosition = m_scrollableArea.minimumScrollPosition();
-    auto maximumScrollPosition = m_scrollableArea.maximumScrollPosition();
-
-    RectEdges<bool> edges;
-
-    edges.setTop(position.y() > minimumScrollPosition.y());
-    edges.setBottom(position.y() < maximumScrollPosition.y());
-    edges.setLeft(position.x() > minimumScrollPosition.x());
-    edges.setRight(position.x() < maximumScrollPosition.x());
-
-    return edges;
-}
-
-static BoxSide boxSideForDirection(ScrollDirection direction)
-{
-    switch (direction) {
-    case ScrollDirection::ScrollUp:
-        return BoxSide::Top;
-    case ScrollDirection::ScrollDown:
-        return BoxSide::Bottom;
-    case ScrollDirection::ScrollLeft:
-        return BoxSide::Left;
-    case ScrollDirection::ScrollRight:
-        return BoxSide::Right;
-    }
-    ASSERT_NOT_REACHED();
-    return BoxSide::Top;
-}
-
 const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(const KeyboardEvent& event)
 {
     auto* platformEvent = event.underlyingPlatformEvent();
@@ -195,6 +164,18 @@ float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, Scrol
     return step;
 }
 
+RectEdges<bool> KeyboardScrollingAnimator::rubberbandableDirections() const
+{
+    RectEdges<bool> edges;
+
+    edges.setTop(m_scrollableArea.allowsVerticalScrolling());
+    edges.setBottom(edges.top());
+    edges.setLeft(m_scrollableArea.allowsHorizontalScrolling());
+    edges.setRight(edges.left());
+
+    return edges;
+}
+
 std::optional<KeyboardScroll> KeyboardScrollingAnimator::makeKeyboardScroll(ScrollDirection direction, ScrollGranularity granularity) const
 {
     float distance = scrollDistance(direction, granularity);
@@ -219,14 +200,11 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     if (!scroll)
         return false;
 
-    auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollableArea.scrollAnimator().currentPosition());
-    if (!scrollableDirections.at(boxSideForDirection(direction))) {
-        stopScrollingImmediately();
-        return false;
-    }
-
     if (m_scrollTriggeringKeyIsPressed)
-        return true;
+        return false;
+
+    if (!rubberbandableDirections().at(boxSideForDirection(direction)))
+        return false;
 
     if (granularity == ScrollGranularity::Document) {
         m_scrollableArea.endKeyboardScroll(false);

@@ -27,7 +27,6 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
-#include "TestWithStreamBufferMessagesReplies.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

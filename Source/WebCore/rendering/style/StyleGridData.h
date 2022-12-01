@@ -150,7 +150,7 @@ private:
     GridTrackList m_columns;
     GridTrackList m_rows;
 
-    // Cached data computed from m_colmns/rows;
+    // Cached data computed from m_columns/m_rows.
     Vector<GridTrackSize> m_gridColumns;
     Vector<GridTrackSize> m_gridRows;
 

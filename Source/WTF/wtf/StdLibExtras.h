@@ -651,23 +651,13 @@ using remove_cvref_t = typename remove_cvref<T>::type;
 
 #if !(defined(__cpp_lib_forward_like) && __cpp_lib_forward_like >= 202207L)
 namespace std {
-template<typename T, typename U>
-constexpr auto&& forward_like(U&& value)
-{
-    constexpr bool is_adding_const = std::is_const_v<std::remove_reference_t<T>>;
-    if constexpr (std::is_lvalue_reference_v<T&&>) {
-        if constexpr (is_adding_const)
-            return std::as_const(value);
-        else
-            return static_cast<U&>(value);
-    } else {
-        if constexpr (is_adding_const)
-            return std::move(std::as_const(value));
-        else
-            return std::move(value);
-    }
-}
-}
+namespace detail {
+template<typename T, typename U> using copy_const = conditional_t<is_const_v<T>, const U, U>;
+template<typename T, typename U> using override_ref = conditional_t<is_rvalue_reference_v<T>, remove_reference_t<U>&&, U&>;
+template<typename T, typename U> using forward_like_impl = override_ref<T&&, copy_const<remove_reference_t<T>, remove_reference_t<U>>>;
+} // namespace detail
+template<typename T, typename U> constexpr auto forward_like(U&& value) -> detail::forward_like_impl<T, U> { return static_cast<detail::forward_like_impl<T, U>>(value); }
+} // namespace std
 #endif
 
 using WTF::GB;

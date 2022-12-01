@@ -76,6 +76,8 @@ public:
 
     bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
 
+    const CSSCalcExpressionNode& expressionNode() const { return m_expression; }
+
 private:
     CSSCalcValue(Ref<CSSCalcExpressionNode>&&, bool shouldClampToNonNegative);
 

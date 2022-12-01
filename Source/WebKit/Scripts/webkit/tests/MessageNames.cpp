@@ -328,6 +328,36 @@ ReceiverName receiverName(MessageName messageName)
     ASSERT_NOT_REACHED();
     return ReceiverName::Invalid;
 }
+bool messageAllowedWhenWaitingForSyncReply(MessageName name)
+{
+    switch (name) {
+    case MessageName::TestWithStreamBatched_SendString:
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+    case MessageName::TestWithStream_SendMachSendRight:
+    case MessageName::TestWithStream_SendString:
+    case MessageName::TestWithStream_SendStringSynchronized:
+    case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
+    case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+    case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
+    case MessageName::TestWithoutAttributes_TestMultipleAttributes:
+    case MessageName::WrappedAsyncMessageForTesting:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName name)
+{
+    switch (name) {
+    default:
+        return false;
+    }
+}
+
 
 } // namespace IPC
 

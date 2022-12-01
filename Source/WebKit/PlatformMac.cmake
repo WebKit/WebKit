@@ -259,6 +259,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 )
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/Cocoa/DataDetectionResult.serialization.in
+    Shared/Cocoa/RevealItem.serialization.in
     Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 )
 

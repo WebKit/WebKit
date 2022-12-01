@@ -340,9 +340,8 @@ FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebKit2)/DerivedSources.make $(PLAT
 
 MESSAGE_RECEIVER_FILES := $(addsuffix MessageReceiver.cpp,$(notdir $(MESSAGE_RECEIVERS)))
 MESSAGES_FILES := $(addsuffix Messages.h,$(notdir $(MESSAGE_RECEIVERS)))
-MESSAGE_REPLIES_FILES := $(addsuffix MessagesReplies.h,$(notdir $(MESSAGE_RECEIVERS)))
 
-GENERATED_MESSAGES_FILES := $(MESSAGE_RECEIVER_FILES) $(MESSAGES_FILES) $(MESSAGE_REPLIES_FILES) MessageNames.h MessageNames.cpp MessageArgumentDescriptions.cpp
+GENERATED_MESSAGES_FILES := $(MESSAGE_RECEIVER_FILES) $(MESSAGES_FILES) MessageNames.h MessageNames.cpp MessageArgumentDescriptions.cpp
 GENERATED_MESSAGES_FILES_AS_PATTERNS := $(subst .,%,$(GENERATED_MESSAGES_FILES))
 
 MESSAGES_IN_FILES := $(addsuffix .messages.in,$(MESSAGE_RECEIVERS))
@@ -475,6 +474,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
+	Shared/Cocoa/DataDetectionResult.serialization.in \
+	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
@@ -493,8 +494,11 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebEvent.serialization.in \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
+	Shared/WebPopupItem.serialization.in \
 	Shared/WebPushDaemonConnectionConfiguration.serialization.in \
 	Shared/WebPushMessage.serialization.in \
+	Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in \
+	Shared/ApplePay/PaymentSetupConfiguration.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/mac/WebHitTestResultPlatformData.serialization.in \

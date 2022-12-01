@@ -490,7 +490,6 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
         list(APPEND _outputs
             ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp
             ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h
-            ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
         )
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp)
     endforeach ()
@@ -545,6 +544,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebHitTestResultData.serialization.in
+    Shared/WebPopupItem.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
     Shared/WebPushMessage.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in

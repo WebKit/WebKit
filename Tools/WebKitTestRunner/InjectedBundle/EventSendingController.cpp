@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,12 +88,12 @@ static JSValueRef getMenuItemChildrenCallback(JSContextRef context, JSObjectRef 
     return array;
 }
 
-static JSStaticFunction staticMenuItemFunctions[] = {
+static const JSStaticFunction staticMenuItemFunctions[] = {
     { "click", menuItemClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 
-static JSStaticValue staticMenuItemValues[] = {
+static const JSStaticValue staticMenuItemValues[] = {
     { "title", getMenuItemTitleCallback, 0, kJSPropertyAttributeReadOnly },
     { "children", getMenuItemChildrenCallback, 0, kJSPropertyAttributeReadOnly },
     { "enabled", getMenuItemEnabledCallback, 0, kJSPropertyAttributeReadOnly },

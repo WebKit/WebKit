@@ -29,6 +29,8 @@
 #include "WebKitDOMEventTarget.h"
 #endif
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMDocument* kit(WebCore::Document* obj)
@@ -56,9 +58,7 @@ WebKitDOMDocument* wrapDocument(WebCore::Document* coreObject)
 } // namespace WebKit
 
 #if PLATFORM(GTK)
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocument, webkit_dom_document, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkitDOMDocumentDOMEventTargetInit))
-G_GNUC_END_IGNORE_DEPRECATIONS;
 #else
 G_DEFINE_TYPE(WebKitDOMDocument, webkit_dom_document, WEBKIT_DOM_TYPE_NODE)
 #endif
@@ -74,3 +74,5 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* documentClass
 static void webkit_dom_document_init(WebKitDOMDocument*)
 {
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS;

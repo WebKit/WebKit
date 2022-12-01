@@ -2,19 +2,19 @@
 PASS Should be known: '(prefers-color-scheme)'
 PASS Should be known: '(prefers-color-scheme: light)'
 PASS Should be known: '(prefers-color-scheme: dark)'
-FAIL Should be parseable: '(prefers-color-scheme: 0)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-color-scheme: 0)'
 PASS Should be unknown: '(prefers-color-scheme: 0)'
-FAIL Should be parseable: '(prefers-color-scheme: none)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-color-scheme: none)'
 PASS Should be unknown: '(prefers-color-scheme: none)'
-FAIL Should be parseable: '(prefers-color-scheme: 10px)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-color-scheme: 10px)'
 PASS Should be unknown: '(prefers-color-scheme: 10px)'
-FAIL Should be parseable: '(prefers-color-scheme: dark 0)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-color-scheme: dark 0)'
 PASS Should be unknown: '(prefers-color-scheme: dark 0)'
-FAIL Should be parseable: '(prefers-color-scheme: dark light)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-color-scheme: dark light)'
 PASS Should be unknown: '(prefers-color-scheme: dark light)'
-FAIL Should be parseable: '(prefers-color-scheme: light/dark)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-color-scheme: light/dark)'
 PASS Should be unknown: '(prefers-color-scheme: light/dark)'
-FAIL Should be parseable: '(prefers-color-scheme: no-preference)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-color-scheme: no-preference)'
 PASS Should be unknown: '(prefers-color-scheme: no-preference)'
 PASS Check that prefer-color-scheme evaluates to true in the boolean context
 

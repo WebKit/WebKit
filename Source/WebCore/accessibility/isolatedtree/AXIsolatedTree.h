@@ -357,9 +357,9 @@ private:
     void collectNodeChangesForSubtree(AXCoreObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovals(const Vector<AXID>&);
-    void queueRemovalsLocked(const Vector<AXID>&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovalsAndUnresolvedChanges(const Vector<AXID>&);
+    void queueRemovals(Vector<AXID>&&);
+    void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
+    void queueRemovalsAndUnresolvedChanges(Vector<AXID>&&);
 
     AXIsolatedTreeID m_treeID;
     unsigned m_maxTreeDepth { 0 };

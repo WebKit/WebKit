@@ -29,10 +29,13 @@ namespace WebCore {
 
 class Document;
 class MediaQueryList;
-class LegacyMediaQueryEvaluator;
-class MediaQuerySet;
 class RenderStyle;
 class WeakPtrImplWithEventTargetData;
+
+namespace MQ {
+struct MediaQuery;
+using MediaQueryList = Vector<MediaQuery>;
+}
 
 // MediaQueryMatcher class is responsible for evaluating the queries whenever it
 // is needed and dispatch "change" event on MediaQueryLists if the corresponding
@@ -54,12 +57,13 @@ public:
     enum class EventMode : uint8_t { Schedule, DispatchNow };
     void evaluateAll(EventMode);
 
-    bool evaluate(const MediaQuerySet&);
+    bool evaluate(const MQ::MediaQueryList&);
+
+    AtomString mediaType() const;
 
 private:
     explicit MediaQueryMatcher(Document&);
     std::unique_ptr<RenderStyle> documentElementUserAgentStyle() const;
-    AtomString mediaType() const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<WeakPtr<MediaQueryList, WeakPtrImplWithEventTargetData>> m_mediaQueryLists;

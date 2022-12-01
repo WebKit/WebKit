@@ -127,7 +127,7 @@ private:
 };
 
 struct ResolutionSchema : public FeatureSchema {
-    using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
+    using ValueFunction = Function<float(const FeatureEvaluationContext&)>;
 
     ResolutionSchema(const AtomString& name, ValueFunction&& valueFunction)
         : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Resolution)
@@ -168,7 +168,7 @@ private:
     ValueFunction valueFunction;
 };
 
-static double deviceScaleFactor(const FeatureEvaluationContext& context)
+static float deviceScaleFactor(const FeatureEvaluationContext& context)
 {
     auto& frame = *context.document.frame();
     auto mediaType = frame.view()->mediaType();

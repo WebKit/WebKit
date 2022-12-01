@@ -160,8 +160,8 @@ static void emitDocumentLoaded(GDBusConnection* connection)
 static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* extension)
 {
 #if PLATFORM(GTK)
-    WebKitDOMDocument* document = webkit_web_page_get_dom_document(webPage);
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+    WebKitDOMDocument* document = webkit_web_page_get_dom_document(webPage);
     GRefPtr<WebKitDOMDOMWindow> window = adoptGRef(webkit_dom_document_get_default_view(document));
     webkit_dom_dom_window_webkit_message_handlers_post_message(window.get(), "dom", "DocumentLoaded");
     G_GNUC_END_IGNORE_DEPRECATIONS;
@@ -593,10 +593,9 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         if (!page)
             return;
 
-        WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
-        GRefPtr<JSCValue> jsDocument = adoptGRef(webkit_frame_get_js_value_for_dom_object(frame, WEBKIT_DOM_OBJECT(document)));
+        GRefPtr<JSCValue> jsDocument = adoptGRef(jsc_context_get_value(jsContext.get(), "document"));
         GRefPtr<JSCValue> jsInputElement = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, elementID, G_TYPE_NONE));
         WebKitDOMNode* node = webkit_dom_node_for_js_value(jsInputElement.get());
         gboolean isUserEdited = webkit_dom_element_html_input_element_is_user_edited(WEBKIT_DOM_ELEMENT(node));

@@ -14,14 +14,13 @@
 #import "RTCVideoEncoder.h"
 
 RTC_OBJC_EXPORT
-@interface RTC_OBJC_TYPE (RTCVideoEncoderAV1) : NSObject
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderAV1")))
+@interface RTCVideoEncoderAV1 : NSObject
 
 /* This returns a AV1 encoder that can be returned from a RTCVideoEncoderFactory injected into
  * RTCPeerConnectionFactory. Even though it implements the RTCVideoEncoder protocol, it can not be
  * used independently from the RTCPeerConnectionFactory.
  */
-+ (id<RTC_OBJC_TYPE(RTCVideoEncoder)>)av1Encoder;
-
-+ (bool)isSupported;
++ (id<RTCVideoEncoder>)av1Encoder;
 
 @end

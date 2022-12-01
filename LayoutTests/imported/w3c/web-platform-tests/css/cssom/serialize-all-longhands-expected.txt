@@ -1,4 +1,4 @@
 
 PASS Specified style
-FAIL Computed style assert_array_equals: lengths differ, expected array [] length 0, got ["size"] length 1
+PASS Computed style
 

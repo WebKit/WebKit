@@ -658,6 +658,8 @@ void webkitWebPageDidReceiveUserMessage(WebKitWebPage* webPage, UserMessage&& me
  *
  * Returns: (transfer none): the #WebKitDOMDocument currently loaded, or %NULL
  *    if no document is currently loaded.
+ *
+ * Deprecated: 2.40. Use JavaScriptCore API instead.
  */
 WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
 {

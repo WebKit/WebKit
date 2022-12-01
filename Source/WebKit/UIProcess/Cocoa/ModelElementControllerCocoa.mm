@@ -296,8 +296,10 @@ void ModelElementController::modelElementSizeDidChange(const String& uuid, WebCo
 
         RetainPtr strongFenceHandle = fenceHandle;
         callOnMainRunLoop([weakThis = WTFMove(weakThis), handler = WTFMove(handler), uuid, strongFenceHandle = WTFMove(strongFenceHandle)] () mutable {
-            if (!weakThis)
+            if (!weakThis) {
+                [strongFenceHandle invalidate];
                 return;
+            }
 
             auto fenceSendRight = MachSendRight::adopt([strongFenceHandle copyPort]);
             [strongFenceHandle invalidate];

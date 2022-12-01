@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if USE(SYSTEM_PREVIEW)
 
 #import "WKApplicationStateTrackingView.h"
 #import "WKWebViewContentProvider.h"

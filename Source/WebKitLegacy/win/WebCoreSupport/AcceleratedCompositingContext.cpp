@@ -302,6 +302,9 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
+    if (!prepareForRendering())
+        return false;
+
     FrameView* frameView = core(&m_webView)->mainFrame().view();
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
@@ -326,9 +329,6 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
     core(&m_webView)->isolatedUpdateRendering();
 
     if (!enabled())
-        return;
-
-    if (m_context && !m_context->makeContextCurrent())
         return;
 
     if (!flushPendingLayerChanges())

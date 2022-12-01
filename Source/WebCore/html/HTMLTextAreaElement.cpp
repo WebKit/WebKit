@@ -291,6 +291,7 @@ void HTMLTextAreaElement::subtreeHasChanged()
 {
     setFormControlValueMatchesRenderer(false);
     updateValidity();
+    updatePlaceholderVisibility();
 
     if (!focused())
         return;

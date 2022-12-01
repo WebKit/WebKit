@@ -164,35 +164,35 @@ PASS CSSMathSum interface: existence and properties of interface prototype objec
 PASS CSSMathSum interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSMathSum interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSMathSum interface: attribute values
-FAIL CSSMathSum must be primary interface of mathSum assert_equals: mathSum's prototype is not CSSMathSum.prototype expected [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object] but got [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object]
-FAIL Stringification of mathSum assert_class_string: class string of mathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL CSSMathSum interface: mathSum must inherit property "values" with the proper type assert_inherits: property "values" not found in prototype chain
-FAIL CSSMathValue interface: mathSum must inherit property "operator" with the proper type assert_inherits: property "operator" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "add(CSSNumberish...)" with the proper type assert_inherits: property "add" not found in prototype chain
-FAIL CSSNumericValue interface: calling add(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "add" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "sub(CSSNumberish...)" with the proper type assert_inherits: property "sub" not found in prototype chain
-FAIL CSSNumericValue interface: calling sub(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "sub" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "mul(CSSNumberish...)" with the proper type assert_inherits: property "mul" not found in prototype chain
-FAIL CSSNumericValue interface: calling mul(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "mul" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "div(CSSNumberish...)" with the proper type assert_inherits: property "div" not found in prototype chain
-FAIL CSSNumericValue interface: calling div(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "div" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "min(CSSNumberish...)" with the proper type assert_inherits: property "min" not found in prototype chain
-FAIL CSSNumericValue interface: calling min(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "min" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "max(CSSNumberish...)" with the proper type assert_inherits: property "max" not found in prototype chain
-FAIL CSSNumericValue interface: calling max(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "max" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "equals(CSSNumberish...)" with the proper type assert_inherits: property "equals" not found in prototype chain
-FAIL CSSNumericValue interface: calling equals(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "equals" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "to(USVString)" with the proper type assert_inherits: property "to" not found in prototype chain
-FAIL CSSNumericValue interface: calling to(USVString) on mathSum with too few arguments must throw TypeError assert_inherits: property "to" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "toSum(USVString...)" with the proper type assert_inherits: property "toSum" not found in prototype chain
-FAIL CSSNumericValue interface: calling toSum(USVString...) on mathSum with too few arguments must throw TypeError assert_inherits: property "toSum" not found in prototype chain
-FAIL CSSNumericValue interface: mathSum must inherit property "type()" with the proper type assert_inherits: property "type" not found in prototype chain
+PASS CSSMathSum must be primary interface of mathSum
+PASS Stringification of mathSum
+PASS CSSMathSum interface: mathSum must inherit property "values" with the proper type
+PASS CSSMathValue interface: mathSum must inherit property "operator" with the proper type
+PASS CSSNumericValue interface: mathSum must inherit property "add(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling add(CSSNumberish...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "sub(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling sub(CSSNumberish...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "mul(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling mul(CSSNumberish...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "div(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling div(CSSNumberish...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "min(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling min(CSSNumberish...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "max(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling max(CSSNumberish...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "equals(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling equals(CSSNumberish...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "to(USVString)" with the proper type
+PASS CSSNumericValue interface: calling to(USVString) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "toSum(USVString...)" with the proper type
+PASS CSSNumericValue interface: calling toSum(USVString...) on mathSum with too few arguments must throw TypeError
+PASS CSSNumericValue interface: mathSum must inherit property "type()" with the proper type
 PASS CSSNumericValue interface: mathSum must inherit property "parse(USVString)" with the proper type
-PASS CSSNumericValue interface: calling parse(USVString) on mathSum with too few arguments must throw TypeError
+FAIL CSSNumericValue interface: calling parse(USVString) on mathSum with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parse" missing
 PASS CSSStyleValue interface: mathSum must inherit property "parse(USVString, USVString)" with the proper type
-PASS CSSStyleValue interface: calling parse(USVString, USVString) on mathSum with too few arguments must throw TypeError
+FAIL CSSStyleValue interface: calling parse(USVString, USVString) on mathSum with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parse" missing
 PASS CSSStyleValue interface: mathSum must inherit property "parseAll(USVString, USVString)" with the proper type
-PASS CSSStyleValue interface: calling parseAll(USVString, USVString) on mathSum with too few arguments must throw TypeError
+FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on mathSum with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseAll" missing
 PASS CSSMathProduct interface: existence and properties of interface object
 PASS CSSMathProduct interface object length
 PASS CSSMathProduct interface object name

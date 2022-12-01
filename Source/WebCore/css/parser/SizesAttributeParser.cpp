@@ -136,7 +136,7 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
         if (!mediaCondition)
             continue;
         bool matches = mediaConditionMatches(*mediaCondition);
-        MQ::MediaQueryEvaluator evaluator { screenAtom(), m_document, nullptr };
+        MQ::MediaQueryEvaluator evaluator { screenAtom() };
         if (!evaluator.collectDynamicDependencies(*mediaCondition).isEmpty())
             m_dynamicMediaQueryResults.append({ MQ::MediaQueryList { *mediaCondition }, matches });
         if (!matches)

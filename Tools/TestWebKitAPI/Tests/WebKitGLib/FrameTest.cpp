@@ -72,9 +72,11 @@ private:
         g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
 
         GRefPtr<JSCValue> jsDocument = adoptGRef(webkit_frame_get_js_value_for_dom_object(frame, WEBKIT_DOM_OBJECT(document)));
         g_assert_true(JSC_IS_VALUE(jsDocument.get()));

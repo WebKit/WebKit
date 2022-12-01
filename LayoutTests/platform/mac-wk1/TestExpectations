@@ -1277,7 +1277,6 @@ webkit.org/b/244308 imported/w3c/web-platform-tests/cookies/attributes/attribute
 # WebKit1 frames use native scrollbars causing these tests to fail.
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change.html [ Failure ]
-css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 
 # Lack of ways to control the cross-frame scroll chaining in WK1.
 fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Skip ]
@@ -2058,9 +2057,6 @@ webkit.org/b/244891 webanimations/accelerated-css-transition-with-easing-y-axis-
 
 webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
 
-# rdar://80346975
-[ Debug ] media/track/track-in-band-cues-added-once.html [ Pass Failure Crash ]
-
 # rdar://80343074 ([ Mac wk1 ] http/tests/websocket/tests/hybi/client-close-2.html [ Failure ])
 http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
 
@@ -2558,6 +2554,35 @@ http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ P
 
 webkit.org/b/248493 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ Pass Failure ]
 
-# webkit.org/b/248517 REGRESSION(257006@Main): [BigSur+ wk1 EWS ] 2X imported/w3c/web-platform-tests/geolocation-API (layout-tests) are constant text failures
-imported/w3c/web-platform-tests/geolocation-API/PositionOptions.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ Pass Failure ]
+#webkit.org/b/248537 Batch mark expectations for Ventura test failures
+[ Ventura+ ] transitions/extra-transition.html [ Pass Failure ]
+[ Ventura+ arm64 ] svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
+[ Ventura+ ] media/accessiblity-describes-video.html [ Crash ]
+[ Ventura+ ] media/track/track-mode.html  [ Crash ]
+[ Ventura+ ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
+[ Ventura+ ] media/audio-playback-restriction-removed-track-enabled.html  [ Crash ]
+[ Ventura+ ] media/media-captions.html  [ Crash ]
+[ Ventura+ ] media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html  [ Crash ]
+[ Ventura+ ] media/modern-media-controls/media-controls/media-controls-display-above-captions.html  [ Crash ]
+[ Ventura+ ] media/track/track-delete-during-setup.html  [ Crash ]
+[ Ventura+ ] media/track/track-in-band-cues-added-once.html  [ Crash ]
+[ Ventura+ ] media/track/track-in-band-legacy-api.html  [ Crash ]
+[ Ventura+ ] media/track/track-in-band.html  [ Crash ]
+[ Ventura+ ] media/track/track-legacyapi-with-automatic-mode.html  [ Crash ]
+[ Ventura+ ] media/track/track-long-captions-file.html  [ Crash ]
+[ Ventura+ ] media/track/track-mode-disabled-crash.html  [ Crash ]
+[ BigSur+ ] imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.html [ Pass Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/geolocation-API/PositionOptions.https.html [ Failure ]
+[ Ventura+ ] http/wpt/webaudio/audioworklet-addModule-cors.sub.https.html
+[ Monterey+ ] http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
+[ BigSur+ ] http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html [ Pass Failure ]
+[ Monterey+ ] http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout Crash ]
+[ Ventura+ ] http/tests/media/hls/hls-webvtt-default.html [ Crash ]
+[ Ventura+ ] http/tests/inspector/network/resource-timing.html [ Failure ]
+[ Monterey+ ] http/tests/inspector/network/resource-security-certificate.html [ Pass Failure ]
+[ Ventura+ ] http/tests/inspector/network/getSerializedCertificate.html [ Failure ]
+[ Ventura+ ] fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
+[ Ventura+ arm64 ] fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
+[ BigSur+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
+[ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ ImageOnlyFailure ]

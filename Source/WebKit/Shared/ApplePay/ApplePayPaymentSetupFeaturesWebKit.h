@@ -46,13 +46,11 @@ public:
     PaymentSetupFeatures(Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&);
     PaymentSetupFeatures(RetainPtr<NSArray>&& = nullptr);
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<PaymentSetupFeatures> decode(IPC::Decoder&);
-
     NSArray *platformFeatures() const { return m_platformFeatures.get(); }
     operator Vector<Ref<WebCore::ApplePaySetupFeature>>() const;
 
 private:
+    friend struct IPC::ArgumentCoder<PaymentSetupFeatures, void>;
     RetainPtr<NSArray> m_platformFeatures;
 };
 

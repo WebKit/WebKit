@@ -42,8 +42,10 @@ private:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(page));
 
         // Transfer none
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_autoptr(WebKitDOMDocument) document = WEBKIT_DOM_DOCUMENT(g_object_ref(G_OBJECT(webkit_web_page_get_dom_document(page))));
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
         // Transfer full

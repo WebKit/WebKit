@@ -755,6 +755,7 @@ public:
     bool hasPerspective() const { return renderer().style().hasPerspective(); }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
+    bool participatesInPreserve3D() const;
 
     bool hasFixedContainingBlockAncestor() const { return m_hasFixedContainingBlockAncestor; }
 
@@ -1108,13 +1109,17 @@ private:
     RenderLayer* transparentPaintingAncestor();
     void beginTransparencyLayers(GraphicsContext&, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
 
-    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
+    struct HitLayer {
+        RenderLayer* layer;
+        double zOffset = 0;
+    };
+    HitLayer hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, bool appliedTransform,
         const HitTestingTransformState* = nullptr, double* zOffset = nullptr);
-    RenderLayer* hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
+    HitLayer hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = nullptr, double* zOffset = nullptr,
         const LayoutSize& translationOffset = LayoutSize());
-    RenderLayer* hitTestList(LayerList, RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&,
+    HitLayer hitTestList(LayerList, RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState*, double* zOffsetForDescendants, double* zOffset,
         const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
@@ -1126,7 +1131,7 @@ private:
     
     bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const HitTestLocation&, HitTestFilter) const;
     bool hitTestContentsForFragments(const LayerFragments&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, HitTestFilter, bool& insideClipRect) const;
-    RenderLayer* hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
+    HitLayer hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = nullptr, double* zOffset = nullptr);
 
     bool listBackgroundIsKnownToBeOpaqueInRect(const LayerList&, const LayoutRect&) const;

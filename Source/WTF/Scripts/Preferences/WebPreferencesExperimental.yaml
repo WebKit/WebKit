@@ -1774,7 +1774,7 @@ UserActivationAPIEnabled:
      WebKitLegacy:
        default: false
      WebKit:
-       default: false
+       default: true
      WebCore:
        default: false
 
@@ -2002,6 +2002,19 @@ WebLocksAPIEnabled:
       default: true
     WebCore:
       default: true
+
+WebRTCAV1CodecEnabled:
+  type: bool
+  humanReadableName: "WebRTC AV1 codec"
+  humanReadableDescription: "Enable WebRTC AV1 codec"
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 WebRTCEncodedTransformEnabled:
   type: bool

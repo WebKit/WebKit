@@ -37,6 +37,8 @@ function beginfullscreen() {
         run('iframe.src = "about:blank"');
         setTimeout(endTest, 100);
     }, 1000);
+    video.removeEventListener('webkitbeginfullscreen', beginfullscreen);
+    video.removeEventListener('webkitfullscreenchange', beginfullscreen);
 }
 </script>
 </head>

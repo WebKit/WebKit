@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -407,18 +407,18 @@ static bool MyObject_set_nullGetForwardSet(JSContextRef ctx, JSObjectRef object,
     return false; // Forward to parent class.
 }
 
-static JSStaticValue evilStaticValues[] = {
+static const JSStaticValue evilStaticValues[] = {
     { "nullGetSet", 0, 0, kJSPropertyAttributeNone },
     { "nullGetForwardSet", 0, MyObject_set_nullGetForwardSet, kJSPropertyAttributeNone },
     { 0, 0, 0, 0 }
 };
 
-static JSStaticFunction evilStaticFunctions[] = {
+static const JSStaticFunction evilStaticFunctions[] = {
     { "nullCall", 0, kJSPropertyAttributeNone },
     { 0, 0, 0 }
 };
 
-JSClassDefinition MyObject_definition = {
+static const JSClassDefinition MyObject_definition = {
     0,
     kJSClassAttributeNone,
     
@@ -441,7 +441,7 @@ JSClassDefinition MyObject_definition = {
     MyObject_convertToType,
 };
 
-JSClassDefinition MyObject_convertToTypeWrapperDefinition = {
+static const JSClassDefinition MyObject_convertToTypeWrapperDefinition = {
     0,
     kJSClassAttributeNone,
     
@@ -464,7 +464,7 @@ JSClassDefinition MyObject_convertToTypeWrapperDefinition = {
     MyObject_convertToTypeWrapper,
 };
 
-JSClassDefinition MyObject_nullWrapperDefinition = {
+static const JSClassDefinition MyObject_nullWrapperDefinition = {
     0,
     kJSClassAttributeNone,
     
@@ -493,11 +493,13 @@ static JSClassRef MyObject_class(JSContextRef context)
 
     static JSClassRef jsClass;
     if (!jsClass) {
+        JSClassDefinition classDefinition = MyObject_convertToTypeWrapperDefinition;
+        JSClassDefinition nullClassDefinition = MyObject_nullWrapperDefinition;
         JSClassRef baseClass = JSClassCreate(&MyObject_definition);
-        MyObject_convertToTypeWrapperDefinition.parentClass = baseClass;
-        JSClassRef wrapperClass = JSClassCreate(&MyObject_convertToTypeWrapperDefinition);
-        MyObject_nullWrapperDefinition.parentClass = wrapperClass;
-        jsClass = JSClassCreate(&MyObject_nullWrapperDefinition);
+        classDefinition.parentClass = baseClass;
+        JSClassRef wrapperClass = JSClassCreate(&classDefinition);
+        nullClassDefinition.parentClass = wrapperClass;
+        jsClass = JSClassCreate(&nullClassDefinition);
     }
 
     return jsClass;
@@ -579,7 +581,7 @@ static void PropertyCatchalls_getPropertyNames(JSContextRef context, JSObjectRef
     JSStringRelease(propertyName);
 }
 
-JSClassDefinition PropertyCatchalls_definition = {
+static const JSClassDefinition PropertyCatchalls_definition = {
     0,
     kJSClassAttributeNone,
     
@@ -659,7 +661,7 @@ static JSValueRef EvilExceptionObject_convertToType(JSContextRef context, JSObje
     return value;
 }
 
-JSClassDefinition EvilExceptionObject_definition = {
+static const JSClassDefinition EvilExceptionObject_definition = {
     0,
     kJSClassAttributeNone,
 
@@ -693,7 +695,7 @@ static JSClassRef EvilExceptionObject_class(JSContextRef context)
     return jsClass;
 }
 
-JSClassDefinition EmptyObject_definition = {
+static const JSClassDefinition EmptyObject_definition = {
     0,
     kJSClassAttributeNone,
     
@@ -770,14 +772,14 @@ static JSValueRef Base_returnHardNull(JSContextRef ctx, JSObjectRef function, JS
     return 0; // should convert to undefined!
 }
 
-static JSStaticFunction Base_staticFunctions[] = {
+static const JSStaticFunction Base_staticFunctions[] = {
     { "baseProtoDup", NULL, kJSPropertyAttributeNone },
     { "baseProto", Base_callAsFunction, kJSPropertyAttributeNone },
     { "baseHardNull", Base_returnHardNull, kJSPropertyAttributeNone },
     { 0, 0, 0 }
 };
 
-static JSStaticValue Base_staticValues[] = {
+static const JSStaticValue Base_staticValues[] = {
     { "baseDup", Base_get, Base_set, kJSPropertyAttributeNone },
     { "baseOnly", Base_get, Base_set, kJSPropertyAttributeNone },
     { 0, 0, 0, 0 }
@@ -851,14 +853,14 @@ static JSValueRef Derived_callAsFunction(JSContextRef ctx, JSObjectRef function,
     return JSValueMakeNumber(ctx, 2); // distinguish base call from derived call
 }
 
-static JSStaticFunction Derived_staticFunctions[] = {
+static const JSStaticFunction Derived_staticFunctions[] = {
     { "protoOnly", Derived_callAsFunction, kJSPropertyAttributeNone },
     { "protoDup", NULL, kJSPropertyAttributeNone },
     { "baseProtoDup", Derived_callAsFunction, kJSPropertyAttributeNone },
     { 0, 0, 0 }
 };
 
-static JSStaticValue Derived_staticValues[] = {
+static const JSStaticValue Derived_staticValues[] = {
     { "derivedOnly", Derived_get, Derived_set, kJSPropertyAttributeNone },
     { "protoDup", Derived_get, Derived_set, kJSPropertyAttributeNone },
     { "baseDup", Derived_get, Derived_set, kJSPropertyAttributeNone },
@@ -1016,13 +1018,13 @@ static JSValueRef functionGC(JSContextRef context, JSObjectRef function, JSObjec
     return JSValueMakeUndefined(context);
 }
 
-static JSStaticValue globalObject_staticValues[] = {
+static const JSStaticValue globalObject_staticValues[] = {
     { "globalStaticValue", globalObject_get, globalObject_set, kJSPropertyAttributeNone },
     { "globalStaticValue2", globalObject_get, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontEnum },
     { 0, 0, 0, 0 }
 };
 
-static JSStaticFunction globalObject_staticFunctions[] = {
+static const JSStaticFunction globalObject_staticFunctions[] = {
     { "globalStaticFunction", globalObject_call, kJSPropertyAttributeNone },
     { "globalStaticFunction2", globalObject_call, kJSPropertyAttributeNone },
     { "globalStaticFunction3", globalObject_call, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontEnum },

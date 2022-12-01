@@ -1,5 +1,5 @@
 
-PASS Serialization of conditionText
+FAIL Serialization of conditionText assert_equals: expected "\\!-name (inline-size > 200px)" but got "(inline-size > 200px)"
 PASS Serialization of inner @container rule
 PASS Serialization of nested @container rule
 PASS Serialization of boolean condition syntax

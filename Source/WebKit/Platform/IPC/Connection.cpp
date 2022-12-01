@@ -544,6 +544,13 @@ bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption>
         wrappedMessage->wrapForTesting(WTFMove(encoder));
         return static_cast<bool>(sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), Timeout::infinity(), { }));
     }
+    
+    if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForSyncReply))
+        ASSERT(encoder->isAllowedWhenWaitingForSyncReply());
+    else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
+        ASSERT(encoder->isAllowedWhenWaitingForUnboundedSyncReply());
+    else
+        ASSERT(!encoder->isAllowedWhenWaitingForSyncReply() && !encoder->isAllowedWhenWaitingForUnboundedSyncReply());
 
     if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForSyncReply)
         && (!m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
@@ -909,6 +916,11 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
             enqueueIncomingMessage(WTFMove(message));
             return;
         }
+    }
+
+    if ((message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC && !message->isAllowedWhenWaitingForUnboundedSyncReply()) || (message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::Yes && !message->isAllowedWhenWaitingForSyncReply())) {
+        dispatchDidReceiveInvalidMessage(message->messageName());
+        return;
     }
 
     // Check if this is a sync message or if it's a message that should be dispatched even when waiting for

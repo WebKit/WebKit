@@ -599,6 +599,7 @@ void Page::settingsDidChange()
 #if USE(LIBWEBRTC)
     m_webRTCProvider->setH265Support(settings().webRTCH265CodecEnabled());
     m_webRTCProvider->setVP9Support(settings().webRTCVP9Profile0CodecEnabled(), settings().webRTCVP9Profile2CodecEnabled());
+    m_webRTCProvider->setAV1Support(settings().webRTCAV1CodecEnabled());
 #endif
 }
 
@@ -1727,6 +1728,10 @@ void Page::updateRendering()
 
     runProcessingStep(RenderingUpdateStep::AnimationFrameCallbacks, [] (Document& document) {
         document.serviceRequestAnimationFrameCallbacks();
+    });
+
+    runProcessingStep(RenderingUpdateStep::CaretAnimation, [] (Document& document) {
+        document.serviceCaretAnimation();
     });
 
     layoutIfNeeded();
@@ -3394,8 +3399,6 @@ void Page::accessibilitySettingsDidChange()
         document.updateElementsAffectedByMediaQueries();
         document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
     });
-
-    InspectorInstrumentation::accessibilitySettingsDidChange(*this);
 }
 
 void Page::appearanceDidChange()
@@ -3936,6 +3939,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #endif
     case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
     case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
+    case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
     }
     return ts;
 }

@@ -55,6 +55,11 @@ TextEncoding::TextEncoding(StringView name)
 {
 }
 
+TextEncoding::TextEncoding(const String& name)
+    : TextEncoding(StringView { name })
+{
+}
+
 String TextEncoding::decode(const char* data, size_t length, bool stopOnError, bool& sawError) const
 {
     if (!m_name)

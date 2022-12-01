@@ -569,11 +569,14 @@ std::optional<MediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCap
         }
         info.powerEfficient = decodingInfo ? decodingInfo->powerEfficient : true;
         info.smooth = decodingInfo ? decodingInfo->smooth : isVPSoftwareDecoderSmooth(configuration);
-    } else {
+    } else if (equalLettersIgnoringASCIICase(containerType, "video/h264"_s)) {
         // FIXME: Provide more granular H.264 decoder information.
-        info.powerEfficient = true;
-        info.smooth = true;
-    }
+        info.powerEfficient = info.smooth = isH264EncoderSmooth(configuration);
+    } else if (equalLettersIgnoringASCIICase(containerType, "video/h265"_s))
+        info.powerEfficient = info.smooth = true;
+    else if (equalLettersIgnoringASCIICase(containerType, "video/av1"_s))
+        info.powerEfficient = false;
+
     info.supported = true;
     return { info };
 }
@@ -583,16 +586,16 @@ std::optional<MediaCapabilitiesEncodingInfo> LibWebRTCProvider::videoEncodingCap
     MediaCapabilitiesEncodingInfo info;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
-    if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s) || equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
+    if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s) || equalLettersIgnoringASCIICase(containerType, "video/vp9"_s))
         info.powerEfficient = info.smooth = isVPXEncoderSmooth(configuration);
-        info.supported = true;
-    } else if (equalLettersIgnoringASCIICase(containerType, "video/h264"_s)) {
+    else if (equalLettersIgnoringASCIICase(containerType, "video/h264"_s))
         info.powerEfficient = info.smooth = isH264EncoderSmooth(configuration);
-        info.supported = true;
-    } else if (equalLettersIgnoringASCIICase(containerType, "video/h265"_s)) {
+    else if (equalLettersIgnoringASCIICase(containerType, "video/h265"_s))
         info.powerEfficient = info.smooth = true;
-        info.supported = true;
-    }
+    else if (equalLettersIgnoringASCIICase(containerType, "video/av1"_s))
+        info.powerEfficient = info.smooth = false;
+
+    info.supported = true;
     return { info };
 }
 

@@ -227,6 +227,7 @@ public:
 
     void setCrossOrigin();
     bool isCrossOrigin() const;
+    bool isCORSCrossOrigin() const;
     bool isCORSSameOrigin() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 

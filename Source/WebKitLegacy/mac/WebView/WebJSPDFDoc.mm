@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,12 +52,12 @@ static JSValueRef jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSObject
     return JSValueMakeUndefined(ctx);
 }
 
-static JSStaticFunction jsPDFDocStaticFunctions[] = {
+static const JSStaticFunction jsPDFDocStaticFunctions[] = {
     { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 },
 };
 
-static JSClassDefinition jsPDFDocClassDefinition = {
+static const JSClassDefinition jsPDFDocClassDefinition = {
     0,
     kJSClassAttributeNone,
     "Doc",

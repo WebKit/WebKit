@@ -34,6 +34,7 @@
 #include "EventHandler.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
+#include "FontBaseline.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -85,6 +86,7 @@
 #include "TransformState.h"
 #include <algorithm>
 #include <math.h>
+#include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
@@ -5451,9 +5453,18 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
         minimumValueForLength(padding.bottom(), viewportRect.height()), minimumValueForLength(padding.left(), viewportRect.width()));
 }
 
-LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
+LayoutUnit synthesizedBaseline(const RenderBox& box, const RenderStyle& parentStyle, LineDirectionMode direction, BaselineSynthesisEdge edge)
 {
-    return direction == HorizontalLine ? box.height() : box.width();
+    auto boxSize = direction == HorizontalLine ? box.height() : box.width();
+
+    if (edge == ContentBox)
+        boxSize -= direction == HorizontalLine ? box.verticalBorderAndPaddingExtent() : box.horizontalBorderAndPaddingExtent();
+    else if (edge == MarginBox)
+        boxSize += direction == HorizontalLine ? box.verticalMarginExtent() : box.horizontalMarginExtent();
+    
+    if (parentStyle.isHorizontalWritingMode() || parentStyle.textOrientation() == TextOrientation::Sideways)
+        return boxSize;
+    return boxSize / 2;
 }
 
 LayoutUnit RenderBox::intrinsicLogicalWidth() const

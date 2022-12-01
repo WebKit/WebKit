@@ -119,6 +119,7 @@ public:
     WebCore::ScrollingTreeScrollingNode* rootNode() const;
 
     virtual void displayDidRefresh(WebCore::PlatformDisplayID);
+    void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }

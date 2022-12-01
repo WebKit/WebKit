@@ -113,8 +113,6 @@ localizedStrings["720p"] = "720p";
 /* Text indicating that the local override will block the network activity with an access error. */
 localizedStrings["Access Control @ Local Override Type"] = "Access Control";
 localizedStrings["Accessibility"] = "Accessibility";
-/* Header for section with accessibility user preferences. */
-localizedStrings["Accessibility Preferences @ User Preferences Overrides"] = "Accessibility Preferences";
 localizedStrings["Action"] = "Action";
 /* Tooltip for a time range bar that represents when a CSS animation/transition is running */
 localizedStrings["Active"] = "Active";
@@ -857,8 +855,6 @@ localizedStrings["Imported \u2014 %s"] = "Imported \u2014 %s";
 localizedStrings["Include original request data"] = "Include original request data";
 localizedStrings["Include original response data"] = "Include original response data";
 localizedStrings["Incomplete"] = "Incomplete";
-/* Label for input to override the preference for high contrast. */
-localizedStrings["Increase contrast @ User Preferences Overrides"] = "Increase contrast";
 localizedStrings["Indent width:"] = "Indent width:";
 localizedStrings["Index"] = "Index";
 localizedStrings["Index Key \u2014 %s"] = "Index Key \u2014 %s";
@@ -1104,16 +1100,12 @@ localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
-/* Label for a preference that is turned off. */
-localizedStrings["Off @ User Preferences Overrides"] = "Off";
 /* Input label for the x-axis of the offset of a CSS box shadow */
 localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
 /* Input label for the y-axis of the offset of a CSS box shadow */
 localizedStrings["Offset Y @ Box Shadow Editor"] = "Offset Y";
 /* Property value for `font-variant-numeric: oldstyle-nums`. */
 localizedStrings["Old-Style Numerals @ Font Details Sidebar Property Value"] = "Old-Style Numerals";
-/* Label for a preference that is turned on. */
-localizedStrings["On @ User Preferences Overrides"] = "On";
 localizedStrings["Once"] = "Once";
 localizedStrings["Online"] = "Online";
 localizedStrings["Only show resources with issues"] = "Only show resources with issues";
@@ -1146,7 +1138,6 @@ localizedStrings["Outgoing message"] = "Outgoing message";
 localizedStrings["Output: "] = "Output: ";
 localizedStrings["Over 1 ms"] = "Over 1 ms";
 localizedStrings["Over 15 ms"] = "Over 15 ms";
-localizedStrings["Override user preferences"] = "Override user preferences";
 localizedStrings["Overview"] = "Overview";
 localizedStrings["Owns"] = "Owns";
 localizedStrings["PDF"] = "PDF";
@@ -1260,8 +1251,6 @@ localizedStrings["Recordings"] = "Recordings";
 localizedStrings["Redirect"] = "Redirect";
 localizedStrings["Redirect Response"] = "Redirect Response";
 localizedStrings["Redirects"] = "Redirects";
-/* Label for input to override the preference for reduced motion. */
-localizedStrings["Reduce motion @ User Preferences Overrides"] = "Reduce motion";
 localizedStrings["Reduction"] = "Reduction";
 localizedStrings["Reference Issue"] = "Reference Issue";
 localizedStrings["Reflection"] = "Reflection";
@@ -1580,8 +1569,6 @@ localizedStrings["Symbol"] = "Symbol";
 localizedStrings["Symbolic Breakpoint\u2026 @ Sources Navigation Sidebar Panel"] = "Symbolic Breakpoint\u2026";
 /* Label of dropdown item used for forcing Web Inspector to be shown using the system's theme */
 localizedStrings["System @ Settings General Appearance"] = "System";
-/* Label for a preference that matches the default system value. The system value is shown in parentheses. */
-localizedStrings["System @ User Preferences Overrides"] = "System (%s)";
 localizedStrings["TCP"] = "TCP";
 localizedStrings["TIFF"] = "TIFF";
 localizedStrings["Tab width:"] = "Tab width:";
@@ -1741,7 +1728,6 @@ localizedStrings["User Agent"] = "User Agent";
 localizedStrings["User Agent Style Sheet"] = "User Agent Style Sheet";
 localizedStrings["User Agent:"] = "User Agent:";
 localizedStrings["User Style Sheet"] = "User Style Sheet";
-localizedStrings["User preferences overriden"] = "User preferences overriden";
 localizedStrings["Valid From"] = "Valid From";
 localizedStrings["Valid Until"] = "Valid Until";
 localizedStrings["Value"] = "Value";

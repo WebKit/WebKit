@@ -4654,9 +4654,7 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range)
 {
     switch (range.peek().id()) {
-    case CSSValueNormal:
     case CSSValueNone:
-    case CSSValueAuto:
     case CSSValueAnd:
     case CSSValueOr:
     case CSSValueNot:

@@ -85,7 +85,7 @@ class BenchmarkRunner(object):
         plans = [os.path.splitext(plan_file)[0] for plan_file in os.listdir(BenchmarkRunner.plan_directory()) if plan_file.endswith(".plan")]
         return plans
 
-    def _run_one_test(self, web_root, test_file):
+    def _run_one_test(self, web_root, test_file, iteration):
         raise NotImplementedError('BenchmarkRunner is an abstract class and shouldn\'t be instantiated.')
 
     def _run_benchmark(self, count, web_root):

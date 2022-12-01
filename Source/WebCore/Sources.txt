@@ -1927,6 +1927,7 @@ page/scrolling/ScrollingTreeStickyNode.cpp
 page/scrolling/ThreadedScrollingCoordinator.cpp
 page/scrolling/ThreadedScrollingTree.cpp
 page/scrolling/ThreadedScrollingTreeScrollingNodeDelegate.cpp
+platform/CaretAnimator.cpp
 platform/CommonAtomStrings.cpp
 platform/ContentType.cpp
 platform/ContextMenu.cpp
@@ -2000,6 +2001,7 @@ platform/SerializedPlatformDataCue.cpp
 platform/SharedBuffer.cpp
 platform/SharedBufferChunkReader.cpp
 platform/SharedStringHash.cpp
+platform/SimpleCaretAnimator.cpp
 platform/SleepDisabler.cpp
 platform/SleepDisablerClient.cpp
 platform/SystemSoundManager.cpp

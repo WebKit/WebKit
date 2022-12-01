@@ -6,8 +6,6 @@ PASS Property container value 'none / inline-size'
 PASS Property container value 'none / size'
 PASS Property container value 'inline-size / inline-size'
 PASS Property container value 'block-size / size'
-FAIL Property container value 'name / size style' assert_true: 'name / size style' is a supported value for container. expected true got false
-FAIL Property container value 'name /inline-size style' assert_true: 'name /inline-size style' is a supported value for container. expected true got false
 PASS Property container value 'foo / inline-size'
 PASS Property container value 'foo /inline-size'
 PASS Property container value 'foo/ inline-size'

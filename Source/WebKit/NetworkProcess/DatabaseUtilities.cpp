@@ -55,7 +55,6 @@ WebCore::SQLiteStatementAutoResetScope DatabaseUtilities::scopedStatement(std::u
         auto statementOrError = m_database.prepareHeapStatement(query);
         if (!statementOrError) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::%s failed to prepare statement, error message: %" PUBLIC_LOG_STRING, this, logString.characters(), m_database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
             return WebCore::SQLiteStatementAutoResetScope { };
         }
         statement = statementOrError.value().moveToUniquePtr();
@@ -83,7 +82,6 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
     if (!FileSystem::fileExists(m_storageFilePath)) {
         if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_storageFilePath))) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: Failed to create directory database path: %" PUBLIC_LOG_STRING, this, m_storageFilePath.utf8().data());
-            ASSERT_NOT_REACHED();
             return createdNewFile;
         }
         createdNewFile = CreatedNewFile::Yes;
@@ -91,7 +89,6 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
 
     if (!m_database.open(m_storageFilePath)) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageFilePath.utf8().data());
-        ASSERT_NOT_REACHED();
         return createdNewFile;
     }
     
@@ -101,13 +98,11 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
     auto setBusyTimeout = m_database.prepareStatement("PRAGMA busy_timeout = 5000"_s);
     if (!setBusyTimeout || setBusyTimeout->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::setBusyTimeout failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
     }
 
     if (createdNewFile == CreatedNewFile::Yes) {
         if (!createSchema()) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageFilePath.utf8().data());
-            ASSERT_NOT_REACHED();
         }
     }
     return createdNewFile;
@@ -118,7 +113,6 @@ void DatabaseUtilities::enableForeignKeys()
     auto enableForeignKeys = m_database.prepareStatement("PRAGMA foreign_keys = ON"_s);
     if (!enableForeignKeys || enableForeignKeys->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::enableForeignKeys failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
     }
 }
 
@@ -213,19 +207,16 @@ TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& t
     auto getTableStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'table'"_s);
     if (!getTableStatement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to prepare statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return { };
     }
 
     if (getTableStatement->bindText(1, tableName) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to bind statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return { };
     }
 
     if (getTableStatement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries error executing statement to fetch table schema, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return { };
     }
 
@@ -234,13 +225,11 @@ TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& t
     auto getIndexStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'index'"_s);
     if (!getIndexStatement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to prepare statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return { };
     }
 
     if (getIndexStatement->bindText(1, tableName) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::currentTableAndIndexQueries Unable to bind statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return { };
     }
 
@@ -285,14 +274,12 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
         if (!alterTable || alterTable->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to rename table, error message: %s", this, m_database.lastErrorMsg());
             transaction.rollback();
-            ASSERT_NOT_REACHED();
             return;
         }
     }
 
     if (!createSchema()) {
         transaction.rollback();
-        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -302,7 +289,6 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
         if (!migrateTableData || migrateTableData->step() != SQLITE_DONE) {
             transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary (table %s) failed to migrate schema, error message: %s", this, table.characters(), m_database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
             return;
         }
     }
@@ -313,7 +299,6 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
         if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE) {
             transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
             return;
         }
     }
@@ -321,7 +306,6 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     if (!createUniqueIndices()) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to create unique indices, error message: %s", this, m_database.lastErrorMsg());
         transaction.rollback();
-        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -334,7 +318,6 @@ Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
 
     if (!statement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::columnsForTable Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return { };
     }
 
@@ -352,12 +335,10 @@ bool DatabaseUtilities::addMissingColumnToTable(ASCIILiteral tableName, ASCIILit
     auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", columnName));
     if (!statement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable Unable to prepare statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return false;
     }
     if (statement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable error executing statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
         return false;
     }
     return true;

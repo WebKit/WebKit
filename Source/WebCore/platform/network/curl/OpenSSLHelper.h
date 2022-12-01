@@ -37,6 +37,6 @@ std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_
 
 String tlsVersion(const SSL*);
 String tlsCipherName(const SSL*);
-String canonicalizeIPv6Address(Span<uint8_t, 16> data);
+WEBCORE_EXPORT String canonicalizeIPv6Address(Span<uint8_t, 16> data);
 
 } // namespace OpenSSL
