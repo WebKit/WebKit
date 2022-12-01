@@ -292,6 +292,14 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
             if (auto* axObject = getOrCreate(node)) {
                 if (!axObject->computeAccessibilityIsIgnored())
                     return true;
+
+#if USE(ATSPI)
+                // When using ATSPI, an accessibility object with 'StaticText' role is ignored.
+                // Its content is exposed by its parent.
+                // Treat such elements as having accessible content.
+                if (axObject->roleValue() == AccessibilityRole::StaticText)
+                    return true;
+#endif
             }
 
             // Don't descend into subtrees for non-visible nodes.
