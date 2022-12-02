@@ -1,46 +1,56 @@
- 825
+This test ensures slider increment and decrement actions work as expected, and verifies other general properties of sliders.
 
+** Verify basic slider accessibility attributes
+PASS: sliderAXObject.minValue === 0
+PASS: sliderAXObject.maxValue === 100
+PASS: sliderAXObject.childrenCount === 1
+PASS: sliderAXObject.role === 'AXRole: AXSlider'
 
+** Verify basic thumb accessibility attributes
+thumbAXObject = sliderAXObject.childAtIndex(0)
 
-** Test slider accessibility attributes
-RUN(sliderAXObject = accessibilityController.focusedElement)
-EXPECTED (sliderAXObject.minValue == '0') OK
-EXPECTED (sliderAXObject.maxValue == '100') OK
-EXPECTED (sliderAXObject.childrenCount == '1') OK
-EXPECTED (sliderAXObject.role == 'AXRole: AXSlider') OK
-
-** Test thumb accessibility attributes
-RUN(thumbAXObject = sliderAXObject.childAtIndex(0))
-EXPECTED (thumbAXObject.childrenCount == '0') OK
-thumbAXObject.role = AXRole: AXValueIndicator
-EXPECTED (thumbAXObject.role == 'AXRole: AXValueIndicator') OK
+PASS: thumbAXObject.childrenCount === 0
+PASS: thumbAXObject.role === 'AXRole: AXValueIndicator'
 
 ** Increment the slider, test slider value and div set on 'update' event
-RUN(sliderAXObject.increment())
-EXPECTED (sliderInput.value == '55') OK
-EXPECTED (valueDiv.innerText == '55') OK
+sliderAXObject.increment()
+
+PASS: slider.value === '55'
+PASS: valueDiv.innerText === '55'
 
 ** Decrement the slider, test slider value and div set on 'update' event
-RUN(sliderInput.value = 22)
-RUN(sliderAXObject.decrement())
-EXPECTED (sliderInput.value == '17') OK
-EXPECTED (valueDiv.innerText == '17') OK
+slider.value = 22
+
+sliderAXObject.decrement()
+
+PASS: slider.value === '17'
+PASS: valueDiv.innerText === '17'
 
 ** Change slider range
-RUN(sliderInput.setAttribute('max', 1000))
-RUN(sliderInput.setAttribute('min', 500))
-EXPECTED (sliderAXObject.minValue == '500') OK
-EXPECTED (sliderAXObject.maxValue == '1000') OK
+slider.setAttribute('max', 1000)
+
+slider.setAttribute('min', 500)
+
+PASS: sliderAXObject.minValue === 500
+PASS: sliderAXObject.maxValue === 1000
 
 ** Re-test incrementing the slider
-RUN(sliderInput.value = 600)
-RUN(sliderAXObject.increment())
-EXPECTED (sliderInput.value == '625') OK
-EXPECTED (valueDiv.innerText == '625') OK
+slider.value = 600
+
+sliderAXObject.increment()
+
+PASS: slider.value === '625'
+PASS: valueDiv.innerText === '625'
 
 ** Re-test decrementing the slider
-RUN(sliderInput.value = 850)
-RUN(sliderAXObject.decrement())
-EXPECTED (sliderInput.value == '825') OK
-EXPECTED (valueDiv.innerText == '825') OK
+slider.value = 850
 
+sliderAXObject.decrement()
+
+PASS: slider.value === '825'
+PASS: valueDiv.innerText === '825'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 825
