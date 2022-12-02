@@ -161,7 +161,7 @@ private:
 
 class RemoteVideoDecoder final : public webrtc::VideoDecoder {
 public:
-    RemoteVideoDecoder(WebKitVideoDecoder::Value, bool isVP9);
+    RemoteVideoDecoder(WebKitVideoDecoder, bool isVP9);
     ~RemoteVideoDecoder();
 
     bool isVP9() const { return m_isVP9; }
@@ -173,7 +173,7 @@ private:
     int32_t Release() final;
     const char* ImplementationName() const final { return "RemoteVideoToolBox"; }
 
-    WebKitVideoDecoder::Value m_internalDecoder;
+    WebKitVideoDecoder m_internalDecoder;
     bool m_isVP9 { false };
 };
 
@@ -198,7 +198,7 @@ void setVideoDecoderCallbacks(VideoDecoderCreateCallback createCallback, VideoDe
     callbacks.registerDecodeCompleteCallback = registerDecodeCompleteCallback;
 }
 
-RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder::Value internalDecoder, bool isVP9)
+RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder internalDecoder, bool isVP9)
     : m_internalDecoder(internalDecoder)
     , m_isVP9(isVP9)
 {
@@ -280,14 +280,11 @@ std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::CreateVideoDecoder(cons
     if (!videoDecoderCallbacks().createCallback)
         return m_internalFactory->CreateVideoDecoder(format);
 
-    auto createdDecoder = videoDecoderCallbacks().createCallback(format);
-    if (!createdDecoder.value)
+    auto identifier = videoDecoderCallbacks().createCallback(format);
+    if (!identifier)
         return m_internalFactory->CreateVideoDecoder(format);
 
-    if (createdDecoder.isWebRTCVideoDecoder)
-        return std::unique_ptr<VideoDecoder> { static_cast<VideoDecoder*>(createdDecoder.value) };
-
-    auto decoder = std::make_unique<RemoteVideoDecoder>(createdDecoder.value, format.name == "VP9");
+    auto decoder = std::make_unique<RemoteVideoDecoder>(identifier, format.name == "VP9");
     if (!decoder->isVP9())
         return decoder;
     return webrtc::CreateVideoDecoderSoftwareFallbackWrapper(m_internalFactory->CreateVideoDecoder(format), std::move(decoder));
