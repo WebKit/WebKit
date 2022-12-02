@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-FilterStyleTargetSwitcher::FilterStyleTargetSwitcher(GraphicsContext&, Filter& filter, const FloatRect& sourceImageRect)
+FilterStyleTargetSwitcher::FilterStyleTargetSwitcher(Filter& filter, const FloatRect& sourceImageRect)
     : FilterTargetSwitcher(filter)
     , m_filterStyles(filter.createFilterStyles(sourceImageRect))
 {

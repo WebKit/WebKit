@@ -5193,9 +5193,9 @@ void Internals::setShowAllPlugins(bool show)
     page->setShowAllPlugins(show);
 }
 
-bool Internals::isReadableStreamDisturbed(ReadableStream& stream)
+bool Internals::isReadableStreamDisturbed(JSC::JSGlobalObject& lexicalGlobalObject, JSValue stream)
 {
-    return stream.disturbed();
+    return ReadableStream::isDisturbed(lexicalGlobalObject, stream);
 }
 
 JSValue Internals::cloneArrayBuffer(JSC::JSGlobalObject& lexicalGlobalObject, JSValue buffer, JSValue srcByteOffset, JSValue srcLength)

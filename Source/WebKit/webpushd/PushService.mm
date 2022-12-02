@@ -501,11 +501,6 @@ void PushService::didCompleteUnsubscribeRequest(UnsubscribeRequest& request)
     finishedPushServiceRequest(m_unsubscribeRequests, request);
 }
 
-void PushService::getOriginsWithPushSubscriptions(const String& bundleIdentifier, CompletionHandler<void(Vector<String>&&)>&& handler)
-{
-    m_database->getOriginsWithPushSubscriptions(bundleIdentifier, WTFMove(handler));
-}
-
 void PushService::incrementSilentPushCount(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
 {
     if (bundleIdentifier.isEmpty() || securityOrigin.isEmpty()) {

@@ -23,9 +23,27 @@ var C = class {
 
 let c = new C();
 
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, 'accessor'), false);
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, '$'), false);
-assert.sameValue(Object.hasOwnProperty.call(C, 'accessor'), true);
-assert.sameValue(Object.hasOwnProperty.call(C, '$'), false);
-assert.sameValue(Object.hasOwnProperty.call(c, 'accessor'), true);
-assert.sameValue(Object.hasOwnProperty.call(c, '$'), true);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, 'accessor'),
+  "accessor doesn't appear as an own property on C prototype"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, '$'),
+  "$ doesn't appear as an own property on C prototype"
+);
+assert(
+  Object.prototype.hasOwnProperty.call(C, 'accessor'),
+  "C constructor has an own property accessor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, '$'),
+  "$ doesn't appear as an own property on C constructor"
+);
+assert(
+  Object.prototype.hasOwnProperty.call(c, 'accessor'),
+  "C instance has an own property accessor"
+);
+assert(
+  Object.prototype.hasOwnProperty.call(c, '$'),
+  "C instance has an own property $"
+);

@@ -28,18 +28,18 @@
  */
 
 [
-    ExportMacro=WEBCORE_EXPORT,
     Exposed=*,
+    JSBuiltin,
     PrivateIdentifier,
     PublicIdentifier
 ] interface ReadableStream {
-    [CallWith=CurrentGlobalObject] constructor(optional object underlyingSource, optional object options);
+    constructor(optional any underlyingSource, optional any options);
 
-    [Custom, ReturnsOwnPromise] Promise<any> cancel(optional any reason);
-    [Custom] Object getReader(optional any options);
-    [Custom, ReturnsOwnPromise] Promise<any> pipeTo(any streams, optional any options);
-    [Custom] Object pipeThrough(any dest, optional any options);
-    sequence<ReadableStream> tee();
+    [NotEnumerable] Promise<any> cancel(optional any reason);
+    [NotEnumerable] Object getReader(optional any options);
+    [NotEnumerable] Promise<any> pipeTo(any streams, optional any options);
+    [NotEnumerable] Object pipeThrough(any dest, any options);
+    [NotEnumerable] Object tee();
 
-    readonly attribute boolean locked;
+    [NotEnumerable] readonly attribute boolean locked;
 };

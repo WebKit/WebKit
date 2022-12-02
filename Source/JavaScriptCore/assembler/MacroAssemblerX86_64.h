@@ -2140,9 +2140,9 @@ public:
         m_assembler.pinsr(dest, src, simdLane, lane.m_value);
     }
 
-    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest, RegisterID scratch)
     {
-        RegisterID scratch = scratchRegister();
+        // FIXME: Maybe we can use INSERTPS instead to get rid of the scratch register.
         moveDoubleTo64(src, scratch);
         m_assembler.pinsr(dest, scratch, simdLane, lane.m_value);
     }
@@ -2158,11 +2158,22 @@ public:
 
     void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
-        RELEASE_ASSERT(lane.m_value < 4);
-        RELEASE_ASSERT(simdLane == SIMDLane::f32x4);
-        if (src != dest)
-            m_assembler.movaps_rr(src, dest);
-        m_assembler.shufps(dest, dest, lane.m_value);
+        switch (simdLane) {
+        case SIMDLane::f32x4:
+            ASSERT(lane.m_value < 4);
+            if (src != dest)
+                m_assembler.movaps_rr(src, dest);
+            m_assembler.shufps(dest, dest, lane.m_value);
+            return;
+        case SIMDLane::f64x2:
+            ASSERT(lane.m_value < 2);
+            if (src != dest)
+                m_assembler.movapd_rr(src, dest);
+            m_assembler.shufpd(dest, dest, lane.m_value);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     DEFINE_SIGNED_SIMD_FUNCS(vectorExtractLane);

@@ -43,7 +43,7 @@ assert.sameValue(
 );
 
 assert(
-    Object.hasOwnProperty.call(obj, '__proto__'),
+    Object.prototype.hasOwnProperty.call(obj, '__proto__'),
     'has own property __proto__'
 );
 

@@ -2350,6 +2350,7 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/streams/CountQueuingStrategy.js \
     $(WebCore)/Modules/streams/ReadableByteStreamController.js \
     $(WebCore)/Modules/streams/ReadableByteStreamInternals.js \
+    $(WebCore)/Modules/streams/ReadableStream.js \
     $(WebCore)/Modules/streams/ReadableStreamBYOBRequest.js \
     $(WebCore)/Modules/streams/ReadableStreamDefaultController.js \
     $(WebCore)/Modules/streams/ReadableStreamInternals.js \

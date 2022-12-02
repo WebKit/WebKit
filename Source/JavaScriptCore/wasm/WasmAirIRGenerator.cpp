@@ -505,7 +505,10 @@ public:
         auto airOp = airOpForSIMDReplaceLane(info);
         result = tmpForType(Types::V128);
         append(MoveVector, v, result);
-        append(airOp, Arg::imm(imm), s, result);
+        if (isValidForm(airOp, Arg::Imm, Arg::Tmp, Arg::Tmp, Arg::Tmp))
+            append(airOp, Arg::imm(imm), s, result, airOp == VectorReplaceLaneFloat64 ? tmpForType(Types::I64) : tmpForType(Types::I32));
+        else
+            append(airOp, Arg::imm(imm), s, result);
         return { };
     }
 

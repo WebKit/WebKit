@@ -583,8 +583,8 @@ public:
     const StyleSelfAlignmentData& justifyItems() const { return m_rareNonInheritedData->justifyItems; }
     const StyleSelfAlignmentData& justifySelf() const { return m_rareNonInheritedData->justifySelf; }
 
-    const Vector<GridTrackSize>& gridColumns() const { return m_rareNonInheritedData->grid->gridColumns(); }
-    const Vector<GridTrackSize>& gridRows() const { return m_rareNonInheritedData->grid->gridRows(); }
+    const Vector<GridTrackSize>& gridColumnTrackSizes() const { return m_rareNonInheritedData->grid->gridColumnTrackSizes(); }
+    const Vector<GridTrackSize>& gridRowTrackSizes() const { return m_rareNonInheritedData->grid->gridRowTrackSizes(); }
     const GridTrackList& gridColumnList() const { return m_rareNonInheritedData->grid->columns(); }
     const GridTrackList& gridRowList() const { return m_rareNonInheritedData->grid->rows(); }
     const Vector<GridTrackSize>& gridAutoRepeatColumns() const { return m_rareNonInheritedData->grid->gridAutoRepeatColumns(); }
@@ -1820,8 +1820,8 @@ public:
 #endif
 
     // The initial value is 'none' for grid tracks.
-    static Vector<GridTrackSize> initialGridColumns() { return Vector<GridTrackSize>(); }
-    static Vector<GridTrackSize> initialGridRows() { return Vector<GridTrackSize>(); }
+    static Vector<GridTrackSize> initialGridColumnTrackSizes() { return Vector<GridTrackSize>(); }
+    static Vector<GridTrackSize> initialGridRowTrackSizes() { return Vector<GridTrackSize>(); }
 
     static Vector<GridTrackSize> initialGridAutoRepeatTracks() { return Vector<GridTrackSize>(); }
     static unsigned initialGridAutoRepeatInsertionPoint() { return 0; }

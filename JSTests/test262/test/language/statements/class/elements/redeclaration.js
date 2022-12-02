@@ -42,8 +42,14 @@ class C {
 
 var c = new C();
 
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "y"), false);
-assert.sameValue(Object.hasOwnProperty.call(C, "y"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, "y"),
+  "y does not appear as an own property on C prototype"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, "y"),
+  "y does not appear as an own property on C constructor"
+);
 
 verifyProperty(c, "y", {
   value: "same_value",

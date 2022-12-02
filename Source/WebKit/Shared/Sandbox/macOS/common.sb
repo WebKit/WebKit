@@ -21,54 +21,24 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "Shared/Sandbox/common.sb"
+
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-macos.defs>
 #endif
 
-(deny nvram*)
-(deny system-privilege)
-(allow system-audit file-read-metadata)
-
-;; Silence spurious logging due to rdar://20117923 and rdar://72366475
-(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
-
-#if USE(SANDBOX_VERSION_2)
-(allow file-link (with telemetry))
-(allow system-fcntl (with telemetry))
-(allow file-map-executable (with telemetry))
-(allow iokit-open-service (with telemetry))
-(allow system-mac-syscall (with telemetry))
-(allow syscall-mach)
-
-;; FIXME: Add telemetry to these
-(allow darwin-notification-post)
-(allow dynamic-code-generation)
-(allow file-clone)
-(allow fs-quota*)
-(allow fs-snapshot-mount)
-(allow mach-bootstrap)
-(allow mach-cross-domain-lookup)
-(allow mach-kernel-endpoint)
-(allow process-info-codesignature)
-(allow socket-ioctl)
-(allow socket-option-get)
-(allow socket-option-set)
-(allow system-memorystatus-control)
-
+#if USE(SANDBOX_VERSION_3)
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 2 4 6 7)))
 
 (with-filter (mac-policy-name "Quarantine")
     (allow system-mac-syscall (mac-syscall-number 84 87)))
-
-(allow file-test-existence)
-
 #define IOKIT_OPEN_USER_CLIENT iokit-open-user-client
 #define IOKIT_OPEN_SERVICE iokit-open-service
 #else
 #define IOKIT_OPEN_USER_CLIENT iokit-open
 #define IOKIT_OPEN_SERVICE iokit-open
-#endif // USE(SANDBOX_VERSION_2)
+#endif // USE(SANDBOX_VERSION_3)
 
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
@@ -79,16 +49,3 @@
 
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
-
-;; Sandbox extensions
-(define (apply-read-and-issue-extension op path-filter)
-    (op file-read* path-filter)
-    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
-(define (apply-write-and-issue-extension op path-filter)
-    (op file-write* path-filter)
-    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
-(define (read-only-and-issue-extensions path-filter)
-    (apply-read-and-issue-extension allow path-filter))
-(define (read-write-and-issue-extensions path-filter)
-    (apply-read-and-issue-extension allow path-filter)
-    (apply-write-and-issue-extension allow path-filter))

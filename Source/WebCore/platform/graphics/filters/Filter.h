@@ -44,9 +44,8 @@ public:
 
     RenderingMode renderingMode() const;
 
-    FilterRenderingMode filterRenderingMode() const { return m_filterRenderingMode; }
-    void setFilterRenderingMode(FilterRenderingMode filterRenderingMode) { m_filterRenderingMode = filterRenderingMode; }
-    void setFilterRenderingMode(OptionSet<FilterRenderingMode> preferredFilterRenderingMode);
+    OptionSet<FilterRenderingMode> filterRenderingModes() const { return m_filterRenderingModes; }
+    WEBCORE_EXPORT void setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes);
 
     FloatSize filterScale() const { return m_filterScale; }
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
@@ -82,7 +81,7 @@ protected:
     virtual FilterStyleVector createFilterStyles(const FilterStyle& sourceStyle) const = 0;
 
 private:
-    FilterRenderingMode m_filterRenderingMode { FilterRenderingMode::Software };
+    OptionSet<FilterRenderingMode> m_filterRenderingModes { FilterRenderingMode::Software };
     FloatSize m_filterScale;
     ClipOperation m_clipOperation;
     FloatRect m_filterRegion;

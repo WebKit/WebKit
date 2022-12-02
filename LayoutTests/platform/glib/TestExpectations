@@ -454,6 +454,7 @@ webkit.org/b/228915 accessibility/selected-state-changed-notifications.html [ Ti
 
 # Not supported
 accessibility/embedded-image-description.html [ Skip ]
+accessibility/aria-keyshortcuts.html [ Skip ]
 
 # Not supported. Skipped also in mac-wk1 and win ports.
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]

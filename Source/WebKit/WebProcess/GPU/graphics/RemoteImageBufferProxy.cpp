@@ -57,6 +57,14 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(*this);
 }
 
+
+void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
+{
+    if (m_remoteRenderingBackendProxy)
+        assertIsCurrent(m_remoteRenderingBackendProxy->dispatcher());
+}
+
+
 void RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier targetFlushIdentifier)
 {
     ASSERT(!isMainRunLoop());
@@ -75,13 +83,13 @@ bool RemoteImageBufferProxy::hasPendingFlush() const
 {
     // It is safe to access m_receivedFlushIdentifier from the main thread without locking since it
     // only gets modified on the main thread.
-    ASSERT(isMainRunLoop());
+    assertDispatcherIsCurrent();
     return m_sentFlushIdentifier != m_receivedFlushIdentifier;
 }
 
 void RemoteImageBufferProxy::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier)
 {
-    ASSERT(isMainRunLoop());
+    assertDispatcherIsCurrent();
     Locker locker { m_receivedFlushIdentifierLock };
     m_receivedFlushIdentifier = flushIdentifier;
     m_receivedFlushIdentifierChangedCondition.notifyAll();

@@ -34,7 +34,10 @@ class C {
 var c = new C();
 
 assert.sameValue(c.m(), 42);
-assert.sameValue(Object.hasOwnProperty.call(c, "m"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(c, "m"),
+  "m doesn't appear as an own property on the C instance"
+);
 assert.sameValue(c.m, C.prototype.m);
 
 verifyProperty(C.prototype, "m", {
@@ -44,7 +47,10 @@ verifyProperty(C.prototype, "m", {
 });
 
 assert.sameValue(c.m2(), 39);
-assert.sameValue(Object.hasOwnProperty.call(c, "m2"), false);
+assert(!
+  Object.prototype.hasOwnProperty.call(c, "m2"),
+  "m2 doesn't appear as an own property on the C instance"
+);
 assert.sameValue(c.m2, C.prototype.m2);
 
 verifyProperty(C.prototype, "m2", {
@@ -54,8 +60,14 @@ verifyProperty(C.prototype, "m2", {
 });
 
 assert.sameValue(c.foo, "foobar");
-assert.sameValue(Object.hasOwnProperty.call(C, "foo"), false);
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "foo"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, "foo"),
+  "foo doesn't appear as an own property on the C constructor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, "foo"),
+  "foo doesn't appear as an own property on the C prototype"
+);
 
 verifyProperty(c, "foo", {
   value: "foobar",
@@ -65,8 +77,14 @@ verifyProperty(c, "foo", {
 });
 
 assert.sameValue(c.bar, "barbaz");
-assert.sameValue(Object.hasOwnProperty.call(C, "bar"), false);
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "bar"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, "bar"),
+  "bar doesn't appear as an own property on the C constructor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, "bar"),
+  "bar doesn't appear as an own property on the C prototype"
+);
 
 verifyProperty(c, "bar", {
   value: "barbaz",
@@ -75,8 +93,14 @@ verifyProperty(c, "bar", {
   writable: true,
 });
 
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "a"), false);
-assert.sameValue(Object.hasOwnProperty.call(C, "a"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, "a"),
+  "a doesn't appear as an own property on C prototype"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, "a"),
+  "a doesn't appear as an own property on C constructor"
+);
 
 verifyProperty(c, "a", {
   value: undefined,
@@ -85,8 +109,14 @@ verifyProperty(c, "a", {
   configurable: true
 });
 
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "b"), false);
-assert.sameValue(Object.hasOwnProperty.call(C, "b"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, "b"),
+  "b doesn't appear as an own property on C prototype"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, "b"),
+  "b doesn't appear as an own property on C constructor"
+);
 
 verifyProperty(c, "b", {
   value: 42,

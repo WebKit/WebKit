@@ -1,0 +1,91 @@
+; Copyright (C) 2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "Shared/Sandbox/common.sb"
+#include "Shared/Sandbox/util.sb"
+
+#if USE(SANDBOX_VERSION_3)
+(define file-write-mount file-mount)
+(define file-write-unmount file-unmount)
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 2 4 6)))
+
+(with-filter (mac-policy-name "AMFI")
+    (allow system-mac-syscall (mac-syscall-number 90)))
+#endif
+
+(define-once (allow-read-and-issue-generic-extensions . filters)
+    (allow file-read*
+           (apply require-any filters))
+    (allow file-issue-extension
+        (require-all
+            (extension-class "com.apple.app-sandbox.read")
+            (apply require-any filters))))
+
+(define-once (allow-read-write-and-issue-generic-extensions . filters)
+    (allow file-read* file-write*
+           (apply require-any filters))
+    (allow file-read-metadata
+           (apply require-any filters))
+    (allow file-issue-extension
+        (require-all
+            (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
+            (apply require-any filters))))
+
+(define-once (managed-configuration-read-public)
+    (allow file-read*
+           (well-known-system-group-container-subpath "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/PublicInfo")
+           (front-user-home-subpath "/Library/ConfigurationProfiles/PublicInfo")
+           (front-user-home-subpath "/Library/UserConfigurationProfiles/PublicInfo")))
+
+(define-once (managed-configuration-read . files)
+    (if (null? files)
+        (allow file-read*
+               (well-known-system-group-container-subpath "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles")
+               (front-user-home-subpath "/Library/ConfigurationProfiles")
+               (front-user-home-subpath "/Library/UserConfigurationProfiles"))
+        (for-each
+            (lambda (file)
+                (allow file-read*
+                    (well-known-system-group-container-literal
+                        (string-append "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/" file))
+                    (front-user-home-literal
+                        (string-append "/Library/ConfigurationProfiles/" file)
+                        (string-append "/Library/UserConfigurationProfiles/" file))))
+            files)))
+
+(define-once (allow-preferences-common)
+    (allow file-read-metadata
+           (home-literal "")
+           (home-literal "/Library/Preferences")))
+
+(define-once (mobile-preferences-read . domains)
+    (allow-preferences-common)
+    (for-each (lambda (domain)
+        (begin
+            (allow user-preference-read (preference-domain domain))
+            (allow file-read*
+                (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
+        domains))
+

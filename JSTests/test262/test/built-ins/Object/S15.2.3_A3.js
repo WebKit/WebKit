@@ -7,8 +7,8 @@ es5id: 15.2.3_A3
 description: Checking Object.length
 ---*/
 assert(
-  !!Object.hasOwnProperty("length"),
-  'The value of !!Object.hasOwnProperty("length") is expected to be true'
+  Object.prototype.hasOwnProperty.call(Object, "length"),
+  "The Object constructor has a 'length' own property"
 );
 
 assert.sameValue(Object.length, 1, 'The value of Object.length is expected to be 1');

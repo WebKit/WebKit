@@ -347,25 +347,6 @@ public:
         return result;
     }
 
-    Vector<String> getOriginsWithPushSubscriptions(const String& bundleID)
-    {
-        bool done = false;
-        Vector<String> result;
-
-        db->getOriginsWithPushSubscriptions(bundleID, [&done, &result](Vector<String>&& origins) mutable {
-            result = WTFMove(origins);
-            done = true;
-        });
-        Util::run(&done);
-
-        // Sort to make comparison easier.
-        std::sort(result.begin(), result.end(), [](const String& lhs, const String& rhs) {
-            return codePointCompare(lhs, rhs) < 0;
-        });
-
-        return result;
-    }
-
     void SetUp() final
     {
         db = createDatabaseSync(SQLiteDatabase::inMemoryPath());
@@ -556,32 +537,6 @@ TEST_F(PushDatabaseTest, SetPushesEnabledForOrigin)
 
     result = setPushesEnabledForOrigin("com.apple.nonexistent"_s, "https://www.apple.com"_s, false);
     EXPECT_FALSE(result);
-}
-
-TEST_F(PushDatabaseTest, GetOriginsWithPushSubscriptions)
-{
-    {
-        auto result = getOriginsWithPushSubscriptions("com.apple.webapp"_s);
-        auto expected = Vector<String> { "https://www.apple.com"_s };
-        EXPECT_EQ(result, expected);
-    }
-
-    {
-        auto result = getOriginsWithPushSubscriptions("com.apple.Safari"_s);
-        Vector<String> expected { "https://www.apple.com"_s, "https://www.webkit.org"_s };
-        EXPECT_EQ(result, expected);
-    }
-
-    {
-        bool result = setPushesEnabledForOrigin("com.apple.Safari"_s, "https://www.apple.com"_s, false);
-        EXPECT_TRUE(result);
-    }
-
-    {
-        auto result = getOriginsWithPushSubscriptions("com.apple.Safari"_s);
-        auto expected = Vector<String> { "https://www.webkit.org"_s };
-        EXPECT_EQ(result, expected);
-    }
 }
 
 TEST(PushDatabase, ManyInFlightOps)

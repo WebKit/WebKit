@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="content">
+    <div id="test1" role="button">X</div>
+    <div id="test2" role="button" aria-keyshortcuts="Shift+2">X</div>
+    <div id="test3" role="button" aria-keyshortcuts="Shift+3 Option+4">X</div>
+</div>
+
+<script>
+    let output = "This test ensures aria-keyshortcuts is exposed to accessibility correctly.\n\n";
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var axItem1 = accessibilityController.accessibleElementById("test1");
+        var axItem2 = accessibilityController.accessibleElementById("test2");
+        var axItem3 = accessibilityController.accessibleElementById("test3");
+        output += expect("axItem1.isAttributeSupported('AXKeyShortcutsValue')", "false");
+        output += expect("axItem2.isAttributeSupported('AXKeyShortcutsValue')", "true");
+        output += expect("axItem3.isAttributeSupported('AXKeyShortcutsValue')", "true");
+
+        output += expect("axItem1.stringAttributeValue('AXKeyShortcutsValue')", "''");
+        output += expect("axItem2.stringAttributeValue('AXKeyShortcutsValue')", "'Shift+2'");
+        output += expect("axItem3.stringAttributeValue('AXKeyShortcutsValue')", "'Shift+3 Option+4'");
+
+        output += "Update aria-keyshortcuts to Command+5 for #test1\n";
+        document.getElementById("test1").setAttribute("aria-keyshortcuts", "Command+5");
+        setTimeout(async function() {
+            await waitFor(() => axItem1.stringAttributeValue('AXKeyShortcutsValue') === "Command+5");
+            output += expect("axItem1.isAttributeSupported('AXKeyShortcutsValue')", "true");
+            output += expect("axItem1.stringAttributeValue('AXKeyShortcutsValue')", "'Command+5'");
+
+            output += "Remove aria-keyshortcuts for #test2\n";
+            document.getElementById("test2").removeAttribute("aria-keyshortcuts");
+            await waitFor(() => axItem2.stringAttributeValue('AXKeyShortcutsValue') === "");
+            output += expect("axItem2.isAttributeSupported('AXKeyShortcutsValue')", "false");
+            output += expect("axItem2.stringAttributeValue('AXKeyShortcutsValue')", "''");
+
+            output += "Update aria-keyshortcuts to Shift+Command+1 for #test3\n";
+            document.getElementById("test3").setAttribute("aria-keyshortcuts", "Shift+Command+1");
+            await waitFor(() => axItem3.stringAttributeValue('AXKeyShortcutsValue') === "Shift+Command+1");
+            output += expect("axItem3.isAttributeSupported('AXKeyShortcutsValue')", "true");
+            output += expect("axItem3.stringAttributeValue('AXKeyShortcutsValue')", "'Shift+Command+1'");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

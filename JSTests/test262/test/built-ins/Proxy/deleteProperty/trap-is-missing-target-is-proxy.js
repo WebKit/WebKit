@@ -29,18 +29,26 @@ var plainObjectTarget = new Proxy(plainObject, {});
 var plainObjectProxy = new Proxy(plainObjectTarget, {});
 
 assert(delete plainObjectProxy.foo);
-assert(!plainObject.hasOwnProperty("foo"));
+assert(
+  !Object.prototype.hasOwnProperty.call(plainObject, "foo"),
+  "'foo' property was deleted from original object"
+);
 
 assert(!Reflect.deleteProperty(plainObjectProxy, "bar"));
-assert(plainObject.hasOwnProperty("bar"));
-
+assert(
+  Object.prototype.hasOwnProperty.call(plainObject, "bar"),
+  "'bar' property was not deleted from original object"
+);
 
 var func = function() {};
 var funcTarget = new Proxy(func, {});
 var funcProxy = new Proxy(funcTarget, {});
 
 assert(delete funcProxy.length);
-assert(!func.hasOwnProperty("length"));
+assert(
+  !Object.prototype.hasOwnProperty.call(func, "length"),
+  "'length' property was deleted from original object"
+);
 
 assert.throws(TypeError, function() {
   "use strict";

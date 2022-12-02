@@ -113,8 +113,8 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
 bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
 {
-    return oldStyle.gridColumns().size() != style().gridColumns().size()
-        || oldStyle.gridRows().size() != style().gridRows().size()
+    return oldStyle.gridColumnTrackSizes().size() != style().gridColumnTrackSizes().size()
+        || oldStyle.gridRowTrackSizes().size() != style().gridRowTrackSizes().size()
         || oldStyle.namedGridAreaColumnCount() != style().namedGridAreaColumnCount()
         || oldStyle.namedGridAreaRowCount() != style().namedGridAreaRowCount()
         || oldStyle.gridAutoRepeatColumns().size() != style().gridAutoRepeatColumns().size()
@@ -600,7 +600,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
 
     // There will be always at least 1 auto-repeat track, so take it already into account when computing the total track size.
     LayoutUnit tracksSize = autoRepeatTracksSize;
-    auto& trackSizes = isRowAxis ? style().gridColumns() : style().gridRows();
+    auto& trackSizes = isRowAxis ? style().gridColumnTrackSizes() : style().gridRowTrackSizes();
 
     for (const auto& track : trackSizes) {
         bool hasDefiniteMaxTrackBreadth = track.maxTrackBreadth().isLength() && !track.maxTrackBreadth().isContentSized();

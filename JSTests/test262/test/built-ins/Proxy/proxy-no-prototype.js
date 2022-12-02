@@ -9,4 +9,7 @@ description: >
 features: [Proxy]
 ---*/
 
-assert.sameValue(Object.hasOwnProperty.call(Proxy, 'prototype'), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(Proxy, 'prototype'),
+  "Proxy constructor does not have a prototype property"
+);

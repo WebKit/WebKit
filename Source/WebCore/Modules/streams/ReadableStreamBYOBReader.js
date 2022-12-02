@@ -26,14 +26,8 @@ function initializeReadableStreamBYOBReader(stream)
 {
     "use strict";
 
-    if (!@isReadableStream(stream)) {
-        // FIXME: We should pass a single type.
-        let potentialInternalStream = @getInternalReadableStream(stream);
-        if (potentialInternalStream === @undefined)
-            @throwTypeError("ReadableStreamBYOBReader needs a ReadableStream");
-        stream = potentialInternalStream;
-    }
-
+    if (!@isReadableStream(stream))
+        @throwTypeError("ReadableStreamBYOBReader needs a ReadableStream");
     if (!@isReadableByteStreamController(@getByIdDirectPrivate(stream, "readableStreamController")))
         @throwTypeError("ReadableStreamBYOBReader needs a ReadableByteStreamController");
     if (@isReadableStreamLocked(stream))

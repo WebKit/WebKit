@@ -113,7 +113,6 @@ class MockPaymentCoordinator;
 class NodeList;
 class Page;
 class RTCPeerConnection;
-class ReadableStream;
 class Range;
 class RenderedDocumentMarker;
 class SVGSVGElement;
@@ -837,7 +836,7 @@ public:
     String resourceLoadStatisticsForURL(const DOMURL&);
     void setTrackingPreventionEnabled(bool);
 
-    bool isReadableStreamDisturbed(ReadableStream&);
+    bool isReadableStreamDisturbed(JSC::JSGlobalObject&, JSC::JSValue);
     JSC::JSValue cloneArrayBuffer(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
 
     String composedTreeAsText(Node&);

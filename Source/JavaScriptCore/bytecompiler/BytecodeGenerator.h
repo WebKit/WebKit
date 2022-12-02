@@ -663,28 +663,14 @@ namespace JSC {
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src, ResultType);
 
         template<typename BinaryOp>
-        std::enable_if_t<
-            BinaryOp::opcodeID != op_add
-            && BinaryOp::opcodeID != op_mul
-            && BinaryOp::opcodeID != op_sub
-            && BinaryOp::opcodeID != op_div,
-            RegisterID*>
-        emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes = OperandTypes())
+        RegisterID* emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types = { })
         {
-            BinaryOp::emit(this, dst, src1, src2);
-            return dst;
-        }
-
-        template<typename BinaryOp>
-        std::enable_if_t<
-            BinaryOp::opcodeID == op_add
-            || BinaryOp::opcodeID == op_mul
-            || BinaryOp::opcodeID == op_sub
-            || BinaryOp::opcodeID == op_div,
-            RegisterID*>
-        emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)
-        {
-            BinaryOp::emit(this, dst, src1, src2, m_codeBlock->addBinaryArithProfile(), types);
+            if constexpr (BinaryOp::opcodeID == op_add || BinaryOp::opcodeID == op_mul || BinaryOp::opcodeID == op_sub || BinaryOp::opcodeID == op_div)
+                BinaryOp::emit(this, dst, src1, src2, m_codeBlock->addBinaryArithProfile(), types);
+            else {
+                UNUSED_PARAM(types);
+                BinaryOp::emit(this, dst, src1, src2);
+            }
             return dst;
         }
 

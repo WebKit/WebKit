@@ -103,7 +103,7 @@ uint64_t RTCRtpSFrameTransform::keyIdForTesting() const
 
 bool RTCRtpSFrameTransform::isAttached() const
 {
-    return m_isAttached || (m_readable && m_readable->locked()) || (m_writable && m_writable->locked());
+    return m_isAttached || (m_readable && m_readable->isLocked()) || (m_writable && m_writable->locked());
 }
 
 static RTCRtpSFrameTransformErrorEvent::Type errorTypeFromInformation(const RTCRtpSFrameTransformer::ErrorInformation& errorInformation)
@@ -216,12 +216,12 @@ void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameT
 
 ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
 {
-    auto* globalObject = scriptExecutionContext() ? JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()) : nullptr;
+    auto* globalObject = scriptExecutionContext() ? scriptExecutionContext()->globalObject() : nullptr;
     if (!globalObject)
         return Exception { InvalidStateError };
 
     m_readableStreamSource = SimpleReadableStreamSource::create();
-    auto readable = ReadableStream::create(*globalObject, *m_readableStreamSource);
+    auto readable = ReadableStream::create(*globalObject, m_readableStreamSource.copyRef());
     if (readable.hasException())
         return readable.releaseException();
 

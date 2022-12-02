@@ -1067,7 +1067,8 @@ public:
     virtual AccessibilityCurrentState currentState() const = 0;
     virtual bool supportsCurrent() const = 0;
     String currentValue() const;
-    virtual const String keyShortcutsValue() const = 0;
+    virtual bool supportsKeyShortcuts() const = 0;
+    virtual String keyShortcuts() const = 0;
 
     virtual bool isModalNode() const = 0;
 

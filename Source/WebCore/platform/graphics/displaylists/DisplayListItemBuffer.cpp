@@ -447,15 +447,14 @@ template<typename, typename = void> inline constexpr bool HasIsValid = false;
 template<typename T> inline constexpr bool HasIsValid<T, std::void_t<decltype(std::declval<T>().isValid())>> = true;
 
 template<typename Item>
-static inline typename std::enable_if_t<!HasIsValid<Item>, bool> isValid(const Item&)
+static inline bool isValid(const Item& item)
 {
-    return true;
-}
-
-template<typename Item>
-static inline typename std::enable_if_t<HasIsValid<Item>, bool> isValid(const Item& item)
-{
-    return item.isValid();
+    if constexpr (HasIsValid<Item>)
+        return item.isValid();
+    else {
+        UNUSED_PARAM(item);
+        return true;
+    }
 }
 
 template<typename Item>

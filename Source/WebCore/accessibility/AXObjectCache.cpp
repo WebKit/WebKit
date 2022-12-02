@@ -2101,6 +2101,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXFlowToChanged);
     else if (attrName == aria_grabbedAttr)
         postNotification(element, AXGrabbedStateChanged);
+    else if (attrName == aria_keyshortcutsAttr)
+        postNotification(element, AXKeyShortcutsChanged);
     else if (attrName == aria_levelAttr)
         postNotification(element, AXLevelChanged);
     else if (attrName == aria_liveAttr)
@@ -3749,6 +3751,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXURLChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::URL);
+            break;
+        case AXKeyShortcutsChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::KeyShortcuts);
             break;
         case AXActiveDescendantChanged:
         case AXRoleChanged:

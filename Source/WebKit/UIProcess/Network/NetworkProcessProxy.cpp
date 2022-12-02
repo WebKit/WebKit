@@ -1783,11 +1783,6 @@ void NetworkProcessProxy::getOriginsWithPushAndNotificationPermissions(PAL::Sess
     sendWithAsyncReply(Messages::NetworkProcess::GetOriginsWithPushAndNotificationPermissions { sessionID }, WTFMove(callback));
 }
 
-void NetworkProcessProxy::getOriginsWithPushSubscriptions(PAL::SessionID sessionID, CompletionHandler<void(const Vector<SecurityOriginData>&)>&& callback)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::GetOriginsWithPushSubscriptions { sessionID }, WTFMove(callback));
-}
-
 void NetworkProcessProxy::hasPushSubscriptionForTesting(PAL::SessionID sessionID, const URL& scopeURL, CompletionHandler<void(bool)>&& callback)
 {
     sendWithAsyncReply(Messages::NetworkProcess::HasPushSubscriptionForTesting { sessionID, scopeURL }, WTFMove(callback));

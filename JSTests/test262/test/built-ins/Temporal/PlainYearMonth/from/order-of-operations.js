@@ -9,7 +9,13 @@ features: [Temporal]
 ---*/
 
 const expected = [
+  // GetTemporalCalendarWithISODefault
   "get fields.calendar",
+  "has fields.calendar.calendar",
+  // CalendarFields
+  "get fields.calendar.fields",
+  "call fields.calendar.fields",
+  // PrepareTemporalFields
   "get fields.month",
   "get fields.month.valueOf",
   "call fields.month.valueOf",
@@ -19,14 +25,24 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
+  // CalendarYearMonthFromFields
+  "get fields.calendar.yearMonthFromFields",
+  "call fields.calendar.yearMonthFromFields",
+  // inside Calendar.p.yearMonthFromFields
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 const actual = [];
+
 const fields = TemporalHelpers.propertyBagObserver(actual, {
   year: 1.7,
   month: 1.7,
   monthCode: "M01",
+  calendar: TemporalHelpers.calendarObserver(actual, "fields.calendar"),
 }, "fields");
-const result = Temporal.PlainYearMonth.from(fields);
-TemporalHelpers.assertPlainYearMonth(result, 1, 1, "M01");
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
+
+const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constrain" }, "options");
+
+Temporal.PlainYearMonth.from(fields, options);
 assert.compareArray(actual, expected, "order of operations");

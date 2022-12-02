@@ -41,7 +41,7 @@ var callCount = 0;
 
 (function(obj) {
   assert.sameValue(obj[symbol], 1);
-  assert(Object.hasOwnProperty.call(obj, symbol));
+  assert(Object.prototype.hasOwnProperty.call(obj, symbol), "symbol is an own property");
   assert.sameValue(obj.c, 4);
   assert.sameValue(obj.d, 5);
   assert.sameValue(Object.keys(obj).length, 2);

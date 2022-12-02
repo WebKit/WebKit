@@ -11,6 +11,9 @@ class CustomUTCSubclass extends Temporal.TimeZone {
   constructor() {
     super("UTC");
   }
+  get id() {
+    return "Etc/Custom/UTC_Subclass";
+  }
   toString() {
     return "Etc/Custom/UTC_Subclass";
   }

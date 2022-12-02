@@ -298,6 +298,7 @@ public:
         AXIdAttributeChanged,
         AXImageOverlayChanged,
         AXIsAtomicChanged,
+        AXKeyShortcutsChanged,
         AXLanguageChanged,
         AXLayoutComplete,
         AXLevelChanged,

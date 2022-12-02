@@ -321,7 +321,8 @@ public:
     Vector<String> classList() const override;
     AccessibilityCurrentState currentState() const override;
     bool supportsCurrent() const override;
-    const String keyShortcutsValue() const override;
+    bool supportsKeyShortcuts() const override;
+    String keyShortcuts() const override;
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     virtual bool ignoredFromModalPresence() const;

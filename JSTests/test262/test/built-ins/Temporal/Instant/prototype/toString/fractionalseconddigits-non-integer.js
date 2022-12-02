@@ -17,10 +17,13 @@ features: [Temporal]
 const instant = new Temporal.Instant(1_000_000_000_987_650_000n);
 
 let string = instant.toString({ fractionalSecondDigits: 2.5 });
-assert.sameValue(string, "2001-09-09T01:46:40.98Z", "fractionalSecondDigits 2.5 truncates to 2");
+assert.sameValue(string, "2001-09-09T01:46:40.98Z", "fractionalSecondDigits 2.5 floors to 2");
 
 string = instant.toString({ fractionalSecondDigits: 9.7 });
-assert.sameValue(string, "2001-09-09T01:46:40.987650000Z", "fractionalSecondDigits 9.7 truncates to 9 and is not out of range");
+assert.sameValue(string, "2001-09-09T01:46:40.987650000Z", "fractionalSecondDigits 9.7 floors to 9 and is not out of range");
 
-string = instant.toString({ fractionalSecondDigits: -0.6 });
-assert.sameValue(string, "2001-09-09T01:46:40Z", "fractionalSecondDigits -0.6 truncates to 0 and is not out of range");
+assert.throws(
+  RangeError,
+  () => instant.toString({ fractionalSecondDigits: -0.6 }),
+  "fractionalSecondDigits -0.6 floors to -1 and is out of range"
+);

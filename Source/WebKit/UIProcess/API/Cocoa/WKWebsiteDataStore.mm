@@ -928,18 +928,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
-- (void)_getOriginsWithPushSubscriptions:(void(^)(NSSet<WKSecurityOrigin *> *))completionHandler {
-    auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    _websiteDataStore->networkProcess().getOriginsWithPushSubscriptions(_websiteDataStore->sessionID(), [completionHandlerCopy](const Vector<WebCore::SecurityOriginData>& origins) {
-        auto set = adoptNS([[NSMutableSet alloc] initWithCapacity:origins.size()]);
-        for (auto& origin : origins) {
-            auto apiOrigin = API::SecurityOrigin::create(origin);
-            [set addObject:wrapper(apiOrigin.get())];
-        }
-        completionHandlerCopy(set.get());
-    });
-}
-
 -(void)_scopeURL:(NSURL *)scopeURL hasPushSubscriptionForTesting:(void(^)(BOOL))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);

@@ -63,10 +63,22 @@ assert.sameValue(C.g, undefined);
 assert.sameValue(C.h, undefined);
 assert.sameValue(C[0], undefined);
 
-assert.sameValue(Object.hasOwnProperty.call(C, 'f'), false);
-assert.sameValue(Object.hasOwnProperty.call(C, 'g'), false);
-assert.sameValue(Object.hasOwnProperty.call(C, 'h'), false);
-assert.sameValue(Object.hasOwnProperty.call(C, 0), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, 'f'),
+  "f does not appear as an own property on C constructor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, 'g'),
+  "g does not appear as an own property on C constructor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, 'h'),
+  "h does not appear as an own property on C constructor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, 0),
+  "0 does not appear as an own property on C constructor"
+);
 
 verifyProperty(c, 'f', {
   value: 'test262',

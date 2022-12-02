@@ -11,6 +11,9 @@ class SubminuteTimeZone extends Temporal.TimeZone {
   constructor() {
     super("-00:00:01.111111111");
   }
+  get id() {
+    return "Custom/Subminute";
+  }
   toString() {
     return "Custom/Subminute";
   }

@@ -96,8 +96,6 @@ public:
     WEBCORE_EXPORT void getIdentifiers(CompletionHandler<void(HashSet<PushSubscriptionIdentifier>&&)>&&);
     WEBCORE_EXPORT void getTopics(CompletionHandler<void(PushTopics&&)>&&);
 
-    WEBCORE_EXPORT void getOriginsWithPushSubscriptions(const String& bundleID, CompletionHandler<void(Vector<String>&&)>&&);
-
     WEBCORE_EXPORT void incrementSilentPushCount(const String& bundleID, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
     WEBCORE_EXPORT void removeRecordsByBundleIdentifier(const String& bundleID, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);

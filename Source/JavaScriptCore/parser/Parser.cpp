@@ -5226,21 +5226,20 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArgument(Tre
     return parseAssignmentExpression(context);
 }
 
-template <typename TreeBuilder, typename ParserType, typename = typename std::enable_if<std::is_same<TreeBuilder, ASTBuilder>::value>::type>
-static inline void recordCallOrApplyDepth(ParserType* parser, VM& vm, std::optional<typename ParserType::CallOrApplyDepthScope>& callOrApplyDepthScope, ExpressionNode* expression)
+IGNORE_GCC_WARNINGS_BEGIN("unused-but-set-parameter")
+template <typename TreeBuilder, typename ParserType>
+static inline void recordCallOrApplyDepth(ParserType* parser, VM& vm, std::optional<typename ParserType::CallOrApplyDepthScope>& callOrApplyDepthScope, typename TreeBuilder::Expression expression)
 {
-    if (expression->isDotAccessorNode()) {
-        DotAccessorNode* dot = static_cast<DotAccessorNode*>(expression);
-        bool isCallOrApply = dot->identifier() == vm.propertyNames->builtinNames().callPublicName() || dot->identifier() == vm.propertyNames->builtinNames().applyPublicName();
-        if (isCallOrApply)
-            callOrApplyDepthScope.emplace(parser);
+    if constexpr (std::is_same_v<TreeBuilder, ASTBuilder>) {
+        if (expression->isDotAccessorNode()) {
+            DotAccessorNode* dot = static_cast<DotAccessorNode*>(expression);
+            bool isCallOrApply = dot->identifier() == vm.propertyNames->builtinNames().callPublicName() || dot->identifier() == vm.propertyNames->builtinNames().applyPublicName();
+            if (isCallOrApply)
+                callOrApplyDepthScope.emplace(parser);
+        }
     }
 }
-
-template <typename TreeBuilder, typename ParserType, typename = typename std::enable_if<std::is_same<TreeBuilder, SyntaxChecker>::value>::type>
-static inline void recordCallOrApplyDepth(ParserType*, VM&, std::optional<typename ParserType::CallOrApplyDepthScope>&, SyntaxChecker::Expression)
-{
-}
+IGNORE_GCC_WARNINGS_END
 
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpression(TreeBuilder& context)

@@ -95,18 +95,6 @@ void NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions(Co
     sendMessageWithReply<WebPushD::MessageType::GetOriginsWithPushAndNotificationPermissions>(WTFMove(replyHandler));
 }
 
-void NetworkNotificationManager::getOriginsWithPushSubscriptions(CompletionHandler<void(const Vector<SecurityOriginData>&)>&& completionHandler)
-{
-    CompletionHandler<void(Vector<String>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<String> originStrings) mutable {
-        auto origins = originStrings.map([](auto& originString) {
-            return SecurityOriginData::fromURL({ { }, originString });
-        });
-        completionHandler(WTFMove(origins));
-    };
-
-    sendMessageWithReply<WebPushD::MessageType::GetOriginsWithPushSubscriptions>(WTFMove(replyHandler));
-}
-
 void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
 {
     CompletionHandler<void(Vector<WebPushMessage>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<WebPushMessage>&& messages) mutable {

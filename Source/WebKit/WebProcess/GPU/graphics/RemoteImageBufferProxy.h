@@ -98,6 +98,8 @@ private:
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final;
     void prepareForBackingStoreChange();
 
+    void assertDispatcherIsCurrent() const;
+
     DisplayListRecorderFlushIdentifier m_sentFlushIdentifier;
     Lock m_receivedFlushIdentifierLock;
     Condition m_receivedFlushIdentifierChangedCondition;

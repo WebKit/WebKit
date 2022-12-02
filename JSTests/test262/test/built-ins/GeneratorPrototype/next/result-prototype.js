@@ -12,9 +12,9 @@ function* g() {}
 var result = g().next();
 
 assert(
-  Object.hasOwnProperty.call(result, 'value'), 'Has "own" property `value`'
+  Object.prototype.hasOwnProperty.call(result, 'value'), 'Has "own" property `value`'
 );
 assert(
-  Object.hasOwnProperty.call(result, 'done'), 'Has "own" property `done`'
+  Object.prototype.hasOwnProperty.call(result, 'done'), 'Has "own" property `done`'
 );
 assert.sameValue(Object.getPrototypeOf(result), Object.prototype);

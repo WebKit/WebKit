@@ -97,8 +97,8 @@ public:
     void setRows(const GridTrackList&);
     void setColumns(const GridTrackList&);
 
-    const Vector<GridTrackSize>& gridColumns() const { return m_gridColumns; }
-    const Vector<GridTrackSize>& gridRows() const { return m_gridRows; }
+    const Vector<GridTrackSize>& gridColumnTrackSizes() const { return m_gridColumnTrackSizes; }
+    const Vector<GridTrackSize>& gridRowTrackSizes() const { return m_gridRowTrackSizes; }
 
     const NamedGridLinesMap& namedGridColumnLines() const { return m_namedGridColumnLines; };
     const NamedGridLinesMap& namedGridRowLines() const { return m_namedGridRowLines; };
@@ -150,9 +150,9 @@ private:
     GridTrackList m_columns;
     GridTrackList m_rows;
 
-    // Cached data computed from m_columns/m_rows.
-    Vector<GridTrackSize> m_gridColumns;
-    Vector<GridTrackSize> m_gridRows;
+    // Grid track sizes are computed from m_columns/m_rows.
+    Vector<GridTrackSize> m_gridColumnTrackSizes;
+    Vector<GridTrackSize> m_gridRowTrackSizes;
 
     NamedGridLinesMap m_namedGridColumnLines;
     NamedGridLinesMap m_namedGridRowLines;

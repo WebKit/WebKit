@@ -678,19 +678,6 @@ DirPseudoEnabled:
     WebCore:
       default: true
 
-# FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
-DisableMediaExperiencePIDInheritance:
-  type: bool
-  webcoreBinding: DeprecatedGlobalSettings
-  humanReadableName: "Disable Media Experience PID Inheritance"
-  humanReadableDescription: "Disable Media Experience PID Inheritance"
-  condition: HAVE(CELESTIAL)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 DisallowSyncXHRDuringPageDismissalEnabled:
   type: bool
   humanReadableName: "Disallow sync XHR during page dismissal"

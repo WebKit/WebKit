@@ -243,6 +243,10 @@ using namespace WebCore;
 #define NSAccessibilityARIACurrentAttribute @"AXARIACurrent"
 #endif
 
+#ifndef NSAccessibilityKeyShortcutsAttribute
+#define NSAccessibilityKeyShortcutsAttribute @"AXKeyShortcutsValue"
+#endif
+
 // Table/grid attributes
 #ifndef NSAccessibilityARIAColumnIndexAttribute
 #define NSAccessibilityARIAColumnIndexAttribute @"AXARIAColumnIndex"
@@ -1186,6 +1190,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if (backingObject->supportsPosInSet())
         [additional addObject:NSAccessibilityARIAPosInSetAttribute];
+
+    if (backingObject->supportsKeyShortcuts())
+        [additional addObject:NSAccessibilityKeyShortcutsAttribute];
 
     AccessibilitySortDirection sortDirection = backingObject->sortDirection();
     if (sortDirection != AccessibilitySortDirection::None && sortDirection != AccessibilitySortDirection::Invalid)
@@ -2587,8 +2594,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityPopupValueAttribute])
         return backingObject->popupValue();
 
-    if ([attributeName isEqualToString:@"AXKeyShortcutsValue"])
-        return backingObject->keyShortcutsValue();
+    if ([attributeName isEqualToString:NSAccessibilityKeyShortcutsAttribute])
+        return backingObject->keyShortcuts();
 
     if ([attributeName isEqualToString:@"AXARIAPressedIsPresent"])
         return [NSNumber numberWithBool:backingObject->pressedIsPresent()];

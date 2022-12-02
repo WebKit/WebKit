@@ -1160,7 +1160,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     bool isRenderGrid = is<RenderGrid>(renderer);
     bool isSubgrid = isRowAxis ? style.gridSubgridColumns() : style.gridSubgridRows();
     bool isMasonry = (direction == ForRows) ? style.gridMasonryRows() : style.gridMasonryColumns();
-    auto& trackSizes = isRowAxis ? style.gridColumns() : style.gridRows();
+    auto& trackSizes = isRowAxis ? style.gridColumnTrackSizes() : style.gridRowTrackSizes();
     auto& autoRepeatTrackSizes = isRowAxis ? style.gridAutoRepeatColumns() : style.gridAutoRepeatRows();
 
     // Handle the 'none' case.

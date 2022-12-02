@@ -93,6 +93,8 @@ public:
     // FIXME: expose the tree and pass this to that?
     bool handleWheelEvent(const WebCore::PlatformWheelEvent&);
     void handleMouseEvent(const WebCore::PlatformMouseEvent&);
+    
+    virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
     WebCore::ScrollingNodeID rootScrollingNodeID() const;
 

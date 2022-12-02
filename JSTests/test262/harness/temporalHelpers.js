@@ -252,7 +252,7 @@ var TemporalHelpers = {
     Object.entries(expectedLargestUnitCalls).forEach(([largestUnit, expected], index) => {
       func(calendar, largestUnit, index);
       assert.compareArray(actual, expected, `largestUnit passed to calendar.dateUntil() for largestUnit ${largestUnit}`);
-      actual.splice(0, actual.length); // empty it for the next check
+      actual.splice(0); // empty it for the next check
     });
   },
 
@@ -1449,7 +1449,7 @@ var TemporalHelpers = {
       }
     };
     // Automatically generate the other methods that don't need any custom code
-    ["toString", "dateUntil", "era", "eraYear", "year", "month", "monthCode", "day", "fields", "mergeFields"].forEach((methodName) => {
+    ["toString", "dateUntil", "era", "eraYear", "year", "month", "monthCode", "day", "daysInMonth", "fields", "mergeFields"].forEach((methodName) => {
       trackingMethods[methodName] = function (...args) {
         actual.push(`call ${formatPropertyName(methodName, objectName)}`);
         if (methodName in methodOverrides) {
@@ -1845,11 +1845,14 @@ var TemporalHelpers = {
     plainTimeStringsAmbiguous() {
       const ambiguousStrings = [
         "2021-12",  // ambiguity between YYYY-MM and HHMM-UU
+        "2021-12[-12:00]",  // ditto, TZ does not disambiguate
         "1214",     // ambiguity between MMDD and HHMM
         "0229",     //   ditto, including MMDD that doesn't occur every year
         "1130",     //   ditto, including DD that doesn't occur in every month
         "12-14",    // ambiguity between MM-DD and HH-UU
+        "12-14[-14:00]",  // ditto, TZ does not disambiguate
         "202112",   // ambiguity between YYYYMM and HHMMSS
+        "202112[UTC]",  // ditto, TZ does not disambiguate
       ];
       // Adding a calendar annotation to one of these strings must not cause
       // disambiguation in favour of time.
@@ -1879,8 +1882,6 @@ var TemporalHelpers = {
         "0631",             // 31 is not a day in June
         "0000",             // 0 is neither a month nor a day
         "00-00",            //   ditto
-        "2021-12[-12:00]",  // HHMM-UU is ambiguous with YYYY-MM, but TZ disambiguates
-        "202112[UTC]",      // HHMMSS is ambiguous with YYYYMM, but TZ disambiguates
       ];
     },
 

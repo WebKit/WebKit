@@ -2485,6 +2485,7 @@ set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/streams/CountQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/ReadableByteStreamController.js
     ${WEBCORE_DIR}/Modules/streams/ReadableByteStreamInternals.js
+    ${WEBCORE_DIR}/Modules/streams/ReadableStream.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamBYOBReader.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamBYOBRequest.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamDefaultController.js

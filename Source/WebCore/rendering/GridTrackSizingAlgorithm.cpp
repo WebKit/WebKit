@@ -173,7 +173,7 @@ const GridTrackSize& GridTrackSizingAlgorithm::rawGridTrackSize(GridTrackSizingD
 {
     bool isRowAxis = direction == ForColumns;
     auto& renderStyle = m_renderGrid->style();
-    auto& trackStyles = isRowAxis ? renderStyle.gridColumns() : renderStyle.gridRows();
+    auto& trackStyles = isRowAxis ? renderStyle.gridColumnTrackSizes() : renderStyle.gridRowTrackSizes();
     auto& autoRepeatTrackStyles = isRowAxis ? renderStyle.gridAutoRepeatColumns() : renderStyle.gridAutoRepeatRows();
     auto& autoTrackStyles = isRowAxis ? renderStyle.gridAutoColumns() : renderStyle.gridAutoRows();
     unsigned insertionPoint = isRowAxis ? renderStyle.gridAutoRepeatColumnsInsertionPoint() : renderStyle.gridAutoRepeatRowsInsertionPoint();

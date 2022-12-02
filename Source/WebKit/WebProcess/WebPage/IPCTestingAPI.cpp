@@ -225,11 +225,13 @@ private:
     // Current tests expect that actions and their induced messages are waited on during same
     // run loop invocation (in JS). This means that messages of interest do not ever enter here.
     // Due to JSIPCStreamClientConnection supporting WeakPtr and IPC::MessageReceiver forcing WeakPtr, we store this as a member.
-    class MessageReceiver : public IPC::MessageReceiver {
+    class MessageReceiver : public IPC::Connection::Client {
     public:
         // IPC::MessageReceiver overrides.
         void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
         bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); return false; }
+        void didClose(IPC::Connection&) final { }
+        void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { ASSERT_NOT_REACHED(); }
     } m_dummyMessageReceiver;
 };
 

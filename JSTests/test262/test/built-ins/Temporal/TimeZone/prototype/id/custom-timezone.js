@@ -3,17 +3,13 @@
 
 /*---
 esid: sec-get-temporal.timezone.prototype.id
-description: Getter calls toString() and returns its value
+description: Getter does not call toString(), returns the ID from internal slot
 includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 const actual = [];
-const expected = [
-  "get [Symbol.toPrimitive]",
-  "get toString",
-  "call timeZone.toString",
-];
+const expected = [];
 
 const timeZone = new Temporal.TimeZone("UTC");
 TemporalHelpers.observeProperty(actual, timeZone, Symbol.toPrimitive, undefined);
@@ -24,4 +20,4 @@ TemporalHelpers.observeProperty(actual, timeZone, "toString", function () {
 
 const result = timeZone.id;
 assert.compareArray(actual, expected);
-assert.sameValue(result, "time zone");
+assert.sameValue(result, "UTC");
