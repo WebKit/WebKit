@@ -47,6 +47,14 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
     clearDecomposedGlyphsMap();
 }
 
+void RemoteResourceCacheProxy::clear()
+{
+    clearNativeImageMap();
+    clearImageBufferBackends();
+    m_imageBuffers.clear();
+    clearDecomposedGlyphsMap();
+}
+
 void RemoteResourceCacheProxy::cacheImageBuffer(RemoteImageBufferProxy& imageBuffer)
 {
     auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), imageBuffer);
@@ -60,14 +68,18 @@ RemoteImageBufferProxy* RemoteResourceCacheProxy::cachedImageBuffer(RenderingRes
 
 void RemoteResourceCacheProxy::releaseImageBuffer(RemoteImageBufferProxy& imageBuffer)
 {
-    auto identifier = imageBuffer.renderingResourceIdentifier();
+    forgetImageBuffer(imageBuffer.renderingResourceIdentifier());
+
+    m_remoteRenderingBackendProxy.releaseRemoteResource(imageBuffer.renderingResourceIdentifier());
+}
+
+void RemoteResourceCacheProxy::forgetImageBuffer(RenderingResourceIdentifier identifier)
+{
     auto iterator = m_imageBuffers.find(identifier);
     RELEASE_ASSERT(iterator != m_imageBuffers.end());
 
     auto success = m_imageBuffers.remove(iterator);
     ASSERT_UNUSED(success, success);
-
-    m_remoteRenderingBackendProxy.releaseRemoteResource(identifier);
 }
 
 inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(NativeImage& image)

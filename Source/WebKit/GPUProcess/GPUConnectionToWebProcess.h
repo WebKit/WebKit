@@ -234,6 +234,7 @@ private:
 
     void createRenderingBackend(RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     void releaseRenderingBackend(RenderingBackendIdentifier);
+    void releaseRenderingResource(RenderingBackendIdentifier, WebCore::RenderingResourceIdentifier);
 
 #if ENABLE(WEBGL)
     void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);

@@ -73,6 +73,7 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
     ensureOnMainRunLoop([ident = renderingBackendIdentifier()]() {
         WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(ident), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     });
+    m_remoteResourceCacheProxy.clear();
     disconnectGPUProcess();
 }
 
@@ -84,8 +85,9 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_streamConnection = WTFMove(streamConnection);
         m_streamConnection->open(*this, m_dispatcher);
 
-        ensureOnMainRunLoop([params = m_parameters, serverHandle = WTFMove(serverHandle)]() mutable {
-            WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(params, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        callOnMainRunLoopAndWait([this, serverHandle = WTFMove(serverHandle)]() mutable {
+            m_connection = &WebProcess::singleton().ensureGPUProcessConnection().connection();
+            m_connection->send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         });
     }
 }
@@ -153,6 +155,16 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     }
 
     return nullptr;
+}
+
+void RemoteRenderingBackendProxy::transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> existing, ImageBuffer& imageBuffer)
+{
+    // This sends a message to the GPUP, asking it to transfer ownership of the 'real' ImageBuffer from the old ImageBufferProxy to the new.
+    // Once we receive a response to confirm that the transfer has happened, we notify the SerializedImageBuffer that
+    // we've completed and ownership of the reference belongs to the new buffer.
+    auto reply = streamConnection().sendSync(Messages::RemoteRenderingBackend::TransferImageBuffer(existing->renderingBackendIdentifier(), existing->renderingResourceIdentifier(), imageBuffer.renderingResourceIdentifier()), renderingBackendIdentifier(), Seconds::infinity());
+    if (std::get<0>(reply.takeReplyOr(false)))
+        existing->sinkIntoImageBufferCompleted();
 }
 
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, Span<uint8_t> result)

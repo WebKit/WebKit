@@ -100,6 +100,8 @@ public:
 #endif
 
     const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
+
+    void releaseResource(WebCore::RenderingResourceIdentifier);
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     void startListeningForIPC();
@@ -121,7 +123,6 @@ private:
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheFont(Ref<WebCore::Font>&&);
     void releaseAllResources();
-    void releaseResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
     void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);

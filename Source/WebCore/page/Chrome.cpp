@@ -537,6 +537,11 @@ RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMo
     return m_client.createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidBackendSizeCheck);
 }
 
+RefPtr<ImageBuffer> Chrome::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
+{
+    return m_client.sinkIntoImageBuffer(WTFMove(imageBuffer));
+}
+
 std::unique_ptr<WorkerClient> Chrome::createWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
     return m_client.createWorkerClient(dispatcher);

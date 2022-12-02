@@ -577,6 +577,17 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
+void GPUConnectionToWebProcess::releaseRenderingResource(RenderingBackendIdentifier renderingBackendIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    auto* backend = remoteRenderingBackend(renderingBackendIdentifier);
+    if (!backend)
+        return;
+
+    backend->dispatch([backend = Ref { *backend }, renderingResourceIdentifier]() {
+        backend->releaseResource(renderingResourceIdentifier);
+    });
+}
+
 #if ENABLE(WEBGL)
 void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
