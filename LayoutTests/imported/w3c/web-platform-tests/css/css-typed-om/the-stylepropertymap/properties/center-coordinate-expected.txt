@@ -1,8 +1,8 @@
 
 PASS Can set 'cx' to CSS-wide keywords
 FAIL Can set 'cx' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'cx' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'cx' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'cx' to a percent
+PASS Can set 'cx' to a length
 PASS Setting 'cx' to a time throws TypeError
 PASS Setting 'cx' to an angle throws TypeError
 PASS Setting 'cx' to a flexible length throws TypeError
@@ -11,8 +11,8 @@ PASS Setting 'cx' to a URL throws TypeError
 PASS Setting 'cx' to a transform throws TypeError
 PASS Can set 'cy' to CSS-wide keywords
 FAIL Can set 'cy' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'cy' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'cy' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'cy' to a percent
+PASS Can set 'cy' to a length
 PASS Setting 'cy' to a time throws TypeError
 PASS Setting 'cy' to an angle throws TypeError
 PASS Setting 'cy' to a flexible length throws TypeError

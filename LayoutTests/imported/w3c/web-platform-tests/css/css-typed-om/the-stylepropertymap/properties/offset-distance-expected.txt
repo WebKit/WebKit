@@ -1,8 +1,8 @@
 
 PASS Can set 'offset-distance' to CSS-wide keywords
 FAIL Can set 'offset-distance' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'offset-distance' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'offset-distance' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'offset-distance' to a length
+PASS Can set 'offset-distance' to a percent
 PASS Setting 'offset-distance' to a time throws TypeError
 PASS Setting 'offset-distance' to an angle throws TypeError
 PASS Setting 'offset-distance' to a flexible length throws TypeError

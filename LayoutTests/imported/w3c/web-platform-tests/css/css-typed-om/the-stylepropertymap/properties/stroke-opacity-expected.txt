@@ -1,7 +1,7 @@
 
 PASS Can set 'stroke-opacity' to CSS-wide keywords
 FAIL Can set 'stroke-opacity' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'stroke-opacity' to a number assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'stroke-opacity' to a number
 PASS Setting 'stroke-opacity' to a length throws TypeError
 FAIL Setting 'stroke-opacity' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'stroke-opacity' to a time throws TypeError

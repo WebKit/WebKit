@@ -2,8 +2,8 @@
 PASS Can set 'left' to CSS-wide keywords
 FAIL Can set 'left' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'left' to the 'auto' keyword
-FAIL Can set 'left' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'left' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'left' to a percent
+PASS Can set 'left' to a length
 PASS Setting 'left' to a time throws TypeError
 PASS Setting 'left' to an angle throws TypeError
 PASS Setting 'left' to a flexible length throws TypeError

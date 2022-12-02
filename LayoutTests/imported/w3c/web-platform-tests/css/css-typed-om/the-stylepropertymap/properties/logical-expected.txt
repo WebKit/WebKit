@@ -1,8 +1,8 @@
 
 PASS Can set 'margin-block-start' to CSS-wide keywords
 FAIL Can set 'margin-block-start' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'margin-block-start' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-block-start' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-block-start' to a percent
+PASS Can set 'margin-block-start' to a length
 PASS Setting 'margin-block-start' to a time throws TypeError
 PASS Setting 'margin-block-start' to an angle throws TypeError
 PASS Setting 'margin-block-start' to a flexible length throws TypeError
@@ -11,8 +11,8 @@ PASS Setting 'margin-block-start' to a URL throws TypeError
 PASS Setting 'margin-block-start' to a transform throws TypeError
 PASS Can set 'margin-block-end' to CSS-wide keywords
 FAIL Can set 'margin-block-end' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'margin-block-end' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-block-end' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-block-end' to a percent
+PASS Can set 'margin-block-end' to a length
 PASS Setting 'margin-block-end' to a time throws TypeError
 PASS Setting 'margin-block-end' to an angle throws TypeError
 PASS Setting 'margin-block-end' to a flexible length throws TypeError
@@ -21,8 +21,8 @@ PASS Setting 'margin-block-end' to a URL throws TypeError
 PASS Setting 'margin-block-end' to a transform throws TypeError
 PASS Can set 'margin-inline-start' to CSS-wide keywords
 FAIL Can set 'margin-inline-start' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'margin-inline-start' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-inline-start' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-inline-start' to a percent
+PASS Can set 'margin-inline-start' to a length
 PASS Setting 'margin-inline-start' to a time throws TypeError
 PASS Setting 'margin-inline-start' to an angle throws TypeError
 PASS Setting 'margin-inline-start' to a flexible length throws TypeError
@@ -31,8 +31,8 @@ PASS Setting 'margin-inline-start' to a URL throws TypeError
 PASS Setting 'margin-inline-start' to a transform throws TypeError
 PASS Can set 'margin-inline-end' to CSS-wide keywords
 FAIL Can set 'margin-inline-end' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'margin-inline-end' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-inline-end' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-inline-end' to a percent
+PASS Can set 'margin-inline-end' to a length
 PASS Setting 'margin-inline-end' to a time throws TypeError
 PASS Setting 'margin-inline-end' to an angle throws TypeError
 PASS Setting 'margin-inline-end' to a flexible length throws TypeError
@@ -61,8 +61,8 @@ PASS Setting 'margin-inline' to a URL throws TypeError
 PASS Setting 'margin-inline' to a transform throws TypeError
 PASS Can set 'inset-block-start' to CSS-wide keywords
 FAIL Can set 'inset-block-start' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'inset-block-start' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'inset-block-start' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'inset-block-start' to a percent
+PASS Can set 'inset-block-start' to a length
 PASS Setting 'inset-block-start' to a time throws TypeError
 PASS Setting 'inset-block-start' to an angle throws TypeError
 PASS Setting 'inset-block-start' to a flexible length throws TypeError
@@ -71,8 +71,8 @@ PASS Setting 'inset-block-start' to a URL throws TypeError
 PASS Setting 'inset-block-start' to a transform throws TypeError
 PASS Can set 'inset-block-end' to CSS-wide keywords
 FAIL Can set 'inset-block-end' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'inset-block-end' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'inset-block-end' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'inset-block-end' to a percent
+PASS Can set 'inset-block-end' to a length
 PASS Setting 'inset-block-end' to a time throws TypeError
 PASS Setting 'inset-block-end' to an angle throws TypeError
 PASS Setting 'inset-block-end' to a flexible length throws TypeError
@@ -81,8 +81,8 @@ PASS Setting 'inset-block-end' to a URL throws TypeError
 PASS Setting 'inset-block-end' to a transform throws TypeError
 PASS Can set 'inset-inline-start' to CSS-wide keywords
 FAIL Can set 'inset-inline-start' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'inset-inline-start' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'inset-inline-start' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'inset-inline-start' to a percent
+PASS Can set 'inset-inline-start' to a length
 PASS Setting 'inset-inline-start' to a time throws TypeError
 PASS Setting 'inset-inline-start' to an angle throws TypeError
 PASS Setting 'inset-inline-start' to a flexible length throws TypeError
@@ -91,8 +91,8 @@ PASS Setting 'inset-inline-start' to a URL throws TypeError
 PASS Setting 'inset-inline-start' to a transform throws TypeError
 PASS Can set 'inset-inline-end' to CSS-wide keywords
 FAIL Can set 'inset-inline-end' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'inset-inline-end' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'inset-inline-end' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'inset-inline-end' to a percent
+PASS Can set 'inset-inline-end' to a length
 PASS Setting 'inset-inline-end' to a time throws TypeError
 PASS Setting 'inset-inline-end' to an angle throws TypeError
 PASS Setting 'inset-inline-end' to a flexible length throws TypeError

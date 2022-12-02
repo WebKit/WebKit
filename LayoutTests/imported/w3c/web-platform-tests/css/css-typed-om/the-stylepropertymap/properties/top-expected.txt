@@ -2,8 +2,8 @@
 PASS Can set 'top' to CSS-wide keywords
 FAIL Can set 'top' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'top' to the 'auto' keyword
-FAIL Can set 'top' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'top' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'top' to a percent
+PASS Can set 'top' to a length
 PASS Setting 'top' to a time throws TypeError
 PASS Setting 'top' to an angle throws TypeError
 PASS Setting 'top' to a flexible length throws TypeError

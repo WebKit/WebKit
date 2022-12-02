@@ -1,7 +1,7 @@
 
 PASS Can set 'animation-delay' to CSS-wide keywords
 FAIL Can set 'animation-delay' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'animation-delay' to a time assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'animation-delay' to a time
 PASS Setting 'animation-delay' to a length throws TypeError
 PASS Setting 'animation-delay' to a percent throws TypeError
 PASS Setting 'animation-delay' to an angle throws TypeError

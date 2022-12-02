@@ -1,7 +1,7 @@
 
 PASS Can set 'fill-opacity' to CSS-wide keywords
 FAIL Can set 'fill-opacity' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'fill-opacity' to a number assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'fill-opacity' to a number
 PASS Setting 'fill-opacity' to a length throws TypeError
 FAIL Setting 'fill-opacity' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'fill-opacity' to a time throws TypeError

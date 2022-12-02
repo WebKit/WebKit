@@ -1,8 +1,8 @@
 
 PASS Can set 'text-indent' to CSS-wide keywords
 FAIL Can set 'text-indent' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'text-indent' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'text-indent' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'text-indent' to a length
+PASS Can set 'text-indent' to a percent
 PASS Setting 'text-indent' to a time throws TypeError
 PASS Setting 'text-indent' to an angle throws TypeError
 PASS Setting 'text-indent' to a flexible length throws TypeError

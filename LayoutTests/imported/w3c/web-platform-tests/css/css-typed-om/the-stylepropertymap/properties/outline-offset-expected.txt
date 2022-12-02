@@ -1,7 +1,7 @@
 
 PASS Can set 'outline-offset' to CSS-wide keywords
 FAIL Can set 'outline-offset' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'outline-offset' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'outline-offset' to a length
 PASS Setting 'outline-offset' to a percent throws TypeError
 PASS Setting 'outline-offset' to a time throws TypeError
 PASS Setting 'outline-offset' to an angle throws TypeError
