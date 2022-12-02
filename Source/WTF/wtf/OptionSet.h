@@ -68,33 +68,27 @@ struct OptionSetValueChecker<T, EnumValues<E>> {
     }
 };
 
-
-template<typename E, std::enable_if_t<std::is_enum<E>::value && IsTypeComplete<EnumTraits<E>>>* = nullptr>
-constexpr bool isValidOptionSetEnum(E e)
+template<typename E>
+constexpr std::enable_if_t<std::is_enum_v<E>, bool> isValidOptionSetEnum(E e)
 {
-    return OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::isValidOptionSetEnum(static_cast<std::underlying_type_t<E>>(e));
+    if constexpr (IsTypeComplete<EnumTraits<E>>)
+        return OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::isValidOptionSetEnum(static_cast<std::underlying_type_t<E>>(e));
+    else {
+        // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
+        return hasOneBitSet(static_cast<typename OptionSet<E>::StorageType>(e));
+    }
 }
 
-template<typename E, std::enable_if_t<std::is_enum<E>::value && !IsTypeComplete<EnumTraits<E>>>* = nullptr>
-constexpr bool isValidOptionSetEnum(E e)
+template<typename E>
+constexpr std::enable_if_t<std::is_enum_v<E>, typename OptionSet<E>::StorageType> maskRawValue(typename OptionSet<E>::StorageType rawValue)
 {
-    // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
-    return hasOneBitSet(static_cast<typename OptionSet<E>::StorageType>(e));
-}
-
-
-template<typename E, std::enable_if_t<std::is_enum<E>::value && IsTypeComplete<EnumTraits<E>>>* = nullptr>
-constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
-{
-    auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::allValidBits();
-    return rawValue & allValidBitsValue;
-}
-
-template<typename E, std::enable_if_t<std::is_enum<E>::value && !IsTypeComplete<EnumTraits<E>>>* = nullptr>
-constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
-{
-    // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
-    return rawValue;
+    if constexpr (IsTypeComplete<EnumTraits<E>>) {
+        auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::allValidBits();
+        return rawValue & allValidBitsValue;
+    } else {
+        // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
+        return rawValue;
+    }
 }
 
 

@@ -130,21 +130,18 @@ static inline bool shouldEscapeUChar(UChar character, UChar previousCharacter, U
 
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
-template<typename ClockType, typename = void> struct has_to_time_t : std::false_type { };
-template<typename ClockType> struct has_to_time_t<ClockType, std::void_t<
+template<typename, typename = void> inline constexpr bool HasToTimeT = false;
+template<typename ClockType> inline constexpr bool HasToTimeT<ClockType, std::void_t<
     std::enable_if_t<std::is_same_v<std::time_t, decltype(ClockType::to_time_t(std::filesystem::file_time_type()))>>
->> : std::true_type { };
+>> = true;
 
 template <typename FileTimeType>
-typename std::enable_if_t<has_to_time_t<typename FileTimeType::clock>::value, std::time_t> toTimeT(FileTimeType fileTime)
+typename std::time_t toTimeT(FileTimeType fileTime)
 {
-    return decltype(fileTime)::clock::to_time_t(fileTime);
-}
-
-template <typename FileTimeType>
-typename std::enable_if_t<!has_to_time_t<typename FileTimeType::clock>::value, std::time_t> toTimeT(FileTimeType fileTime)
-{
-    return std::chrono::system_clock::to_time_t(std::chrono::time_point_cast<std::chrono::system_clock::duration>(fileTime - decltype(fileTime)::clock::now() + std::chrono::system_clock::now()));
+    if constexpr (HasToTimeT<typename FileTimeType::clock>)
+        return decltype(fileTime)::clock::to_time_t(fileTime);
+    else
+        return std::chrono::system_clock::to_time_t(std::chrono::time_point_cast<std::chrono::system_clock::duration>(fileTime - decltype(fileTime)::clock::now() + std::chrono::system_clock::now()));
 }
 
 static WallTime toWallTime(std::filesystem::file_time_type fileTime)

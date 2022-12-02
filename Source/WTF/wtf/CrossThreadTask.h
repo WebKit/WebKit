@@ -87,20 +87,18 @@ void callMemberFunctionForCrossThreadTask(C* object, MF function, ArgsTuple&& ar
     callMemberFunctionForCrossThreadTaskImpl(object, function, std::forward<ArgsTuple>(args), ArgsIndices());
 }
 
-template<typename T, typename std::enable_if<std::is_base_of<ThreadSafeRefCountedBase, T>::value, int>::type = 0, typename... Parameters, typename... Arguments>
+template<typename T, typename... Parameters, typename... Arguments>
 CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...), const Arguments&... arguments)
 {
-    return CrossThreadTask([callee = RefPtr { &callee }, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
-        callMemberFunctionForCrossThreadTask(callee.get(), method, WTFMove(arguments));
-    });
-}
-
-template<typename T, typename std::enable_if<!std::is_base_of<ThreadSafeRefCountedBase, T>::value, int>::type = 0, typename... Parameters, typename... Arguments>
-CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...), const Arguments&... arguments)
-{
-    return CrossThreadTask([callee = &callee, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
-        callMemberFunctionForCrossThreadTask(callee, method, WTFMove(arguments));
-    });
+    if constexpr (std::is_base_of_v<ThreadSafeRefCountedBase, T>) {
+        return CrossThreadTask([callee = RefPtr { &callee }, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
+            callMemberFunctionForCrossThreadTask(callee.get(), method, WTFMove(arguments));
+        });
+    } else {
+        return CrossThreadTask([callee = &callee, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
+            callMemberFunctionForCrossThreadTask(callee, method, WTFMove(arguments));
+        });
+    }
 }
 
 } // namespace WTF

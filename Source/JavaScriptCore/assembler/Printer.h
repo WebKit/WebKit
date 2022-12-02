@@ -182,18 +182,15 @@ struct Printer<RawPointer> : public PrintRecord {
     { }
 };
 
-template<typename T, typename = typename std::enable_if_t<std::is_integral<T>::value && std::numeric_limits<T>::is_signed>>
-void setPrinter(PrintRecord& record, T value, intptr_t = 0)
+template<typename T>
+std::enable_if_t<std::is_integral_v<T>>
+setPrinter(PrintRecord& record, T value, intptr_t = 0)
 {
     record.data.value = static_cast<uintptr_t>(value);
-    record.printer = printIntptr;
-}
-
-template<typename T, typename = typename std::enable_if_t<std::is_integral<T>::value && !std::numeric_limits<T>::is_signed>>
-void setPrinter(PrintRecord& record, T value, uintptr_t = 0)
-{
-    record.data.value = static_cast<uintptr_t>(value);
-    record.printer = printUintptr;
+    if constexpr (std::numeric_limits<T>::is_signed)
+        record.printer = printIntptr;
+    else
+        record.printer = printUintptr;
 }
 
 template<typename T>
