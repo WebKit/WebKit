@@ -609,6 +609,9 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::HTTPSFirst))
         policy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst;
 
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::HTTPSOnly))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly;
+
     return policy;
 }
 
@@ -621,6 +624,9 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
     if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst)
         webCorePolicy.add(WebCore::NetworkConnectionIntegrity::HTTPSFirst);
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::HTTPSOnly);
 
     _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
 }
