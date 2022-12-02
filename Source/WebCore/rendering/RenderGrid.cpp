@@ -635,8 +635,8 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
 std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepeat(GridTrackSizingDirection direction) const
 {
     bool isRowAxis = direction == ForColumns;
-    if ((isRowAxis && style().gridAutoRepeatColumnsType() != AutoRepeatType::Fit)
-        || (!isRowAxis && style().gridAutoRepeatRowsType() != AutoRepeatType::Fit))
+    if ((isRowAxis && autoRepeatColumnsType() != AutoRepeatType::Fit)
+        || (!isRowAxis && autoRepeatRowsType() != AutoRepeatType::Fit))
         return nullptr;
 
     std::unique_ptr<OrderedTrackIndexSet> emptyTrackIndexes;
@@ -698,15 +698,43 @@ static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& are
     return clamped;
 }
 
-static inline bool isMasonryRows(const RenderStyle& style)
+// TODO: Update name of functions to 'areMasonryRows'.
+bool RenderGrid::isMasonryRows() const
 {
-    return style.gridMasonryRows();
+    return style().gridMasonryRows();
 }
 
-static inline bool isMasonryColumns(const RenderStyle& style)
+// Masonry Spec Section 2
+// "If masonry is specified for both grid-template-columns and grid-template-rows, then the used value for grid-template-columns is none,
+// and thus the inline axis will be the grid axis."
+bool RenderGrid::isMasonryColumns() const
 {
-    return !isMasonryRows(style) && style.gridMasonryColumns();
+    return !isMasonryRows() && style().gridMasonryColumns();
 }
+
+// Masonry Spec Section 2.3.1 repeat(auto-fit)
+// "repeat(auto-fit) behaves as repeat(auto-fill) when the other axis is a masonry axis."
+// We need to lie here that we are really an auto-fill instead of an auto-fit.
+AutoRepeatType RenderGrid::autoRepeatColumnsType() const
+{
+    auto autoRepeatColumns = style().gridAutoRepeatColumnsType();
+
+    if (isMasonryRows() && autoRepeatColumns == AutoRepeatType::Fit)
+        return AutoRepeatType::Fill;
+
+    return autoRepeatColumns;
+}
+
+AutoRepeatType RenderGrid::autoRepeatRowsType() const
+{
+    auto autoRepeatRow = style().gridAutoRepeatRowsType();
+
+    if (isMasonryColumns() && autoRepeatRow == AutoRepeatType::Fit)
+        return AutoRepeatType::Fill;
+
+    return autoRepeatRow;
+}
+
 
 // FIXME: We shouldn't have to pass the available logical width as argument. The problem is that
 // availableLogicalWidth() does always return a value even if we cannot resolve it like when
@@ -738,9 +766,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
         // Grid items should use the grid area sizes instead of the containing block (grid container)
         // sizes, we initialize the overrides here if needed to ensure it.
-        if (!child->hasOverridingContainingBlockContentLogicalWidth() && !isMasonryColumns(style()))
+        if (!child->hasOverridingContainingBlockContentLogicalWidth() && !isMasonryColumns())
             child->setOverridingContainingBlockContentLogicalWidth(LayoutUnit());
-        if (!child->hasOverridingContainingBlockContentLogicalHeight() && !isMasonryRows(style()))
+        if (!child->hasOverridingContainingBlockContentLogicalHeight() && !isMasonryRows())
             child->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
         GridArea area = currentGrid().gridItemArea(*child);
@@ -798,9 +826,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
         m_masonryLayout.performMasonryPlacement(firstTrackItems, itemsWithDefiniteGridAxisPosition, itemsWithIndefinitePosition, masonryAxisDirection);
     };
 
-    if (isMasonryRows(style())) 
+    if (isMasonryRows())
         performMasonryPlacement(ForRows);
-    else if (isMasonryColumns(style()))
+    else if (isMasonryColumns())
         performMasonryPlacement(ForColumns);
     else
         performAutoPlacement();
@@ -1226,9 +1254,9 @@ void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren,
 LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox& child, GridTrackSizingDirection direction) const
 {
     if (direction == ForRows) {
-        if (isMasonryRows(style()))
+        if (isMasonryRows())
             return isHorizontalWritingMode() ? child.height() + child.verticalMarginExtent() : child.width() + child.horizontalMarginExtent();
-    } else if (isMasonryColumns(style()))
+    } else if (isMasonryColumns())
         return isHorizontalWritingMode() ? child.width() + child.horizontalMarginExtent() : child.height() + child.verticalMarginExtent();
 
     // We need the cached value when available because Content Distribution alignment properties
@@ -1758,7 +1786,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
     gridAreaPositionForChild(child, ForRows, startOfRow, endOfRow);
     LayoutUnit startPosition = startOfRow + marginBeforeForChild(child);
     LayoutUnit columnAxisChildSize = GridLayoutFunctions::isOrthogonalChild(*this, child) ? child.logicalWidth() + child.marginLogicalWidth() : child.logicalHeight() + child.marginLogicalHeight();
-    LayoutUnit masonryOffset = isMasonryRows(style()) ? m_masonryLayout.offsetForChild(child) : 0_lu;
+    LayoutUnit masonryOffset = isMasonryRows() ? m_masonryLayout.offsetForChild(child) : 0_lu;
     auto overflow = alignSelfForChild(child).overflow();
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfRow - startOfRow, columnAxisChildSize);
     if (hasAutoMarginsInColumnAxis(child))
@@ -1783,7 +1811,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
     LayoutUnit endOfColumn;
     gridAreaPositionForChild(child, ForColumns, startOfColumn, endOfColumn);
     LayoutUnit startPosition = startOfColumn + marginStartForChild(child);
-    LayoutUnit masonryOffset = isMasonryColumns(style()) ? m_masonryLayout.offsetForChild(child) : 0_lu;
+    LayoutUnit masonryOffset = isMasonryColumns() ? m_masonryLayout.offsetForChild(child) : 0_lu;
     if (hasAutoMarginsInRowAxis(child))
         return startPosition;
     GridAxisPosition axisPosition = rowAxisPositionForChild(child);
