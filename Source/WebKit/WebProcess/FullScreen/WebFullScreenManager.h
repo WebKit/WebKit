@@ -107,7 +107,6 @@ private:
     void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
 
     void setElement(WebCore::Element&);
-    void clearElement();
 
 #if ENABLE(VIDEO)
     void scheduleTextRecognitionForMainVideo();
