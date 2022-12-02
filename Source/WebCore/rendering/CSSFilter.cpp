@@ -56,7 +56,7 @@ RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperati
 
     LOG_WITH_STREAM(Filters, stream << "CSSFilter::create built filter " << filter.get() << " for " << operations);
 
-    filter->setFilterRenderingMode(preferredFilterRenderingModes);
+    filter->setFilterRenderingModes(preferredFilterRenderingModes);
     return filter;
 }
 

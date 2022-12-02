@@ -47,7 +47,7 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, OptionSet<F
     ASSERT(!expression->isEmpty());
     filter->setExpression(WTFMove(*expression));
 
-    filter->setFilterRenderingMode(preferredFilterRenderingModes);
+    filter->setFilterRenderingModes(preferredFilterRenderingModes);
     return filter;
 }
 

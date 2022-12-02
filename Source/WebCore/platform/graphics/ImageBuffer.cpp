@@ -32,6 +32,7 @@
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FilterResults.h"
+#include "FilterStyleTargetSwitcher.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "MIMETypeRegistry.h"
@@ -255,6 +256,8 @@ RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread()
 
 RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
 {
+    ASSERT(!filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
+
     auto* backend = ensureBackendCreated();
     if (!backend)
         return nullptr;
@@ -271,6 +274,28 @@ RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
         return nullptr;
 
     return imageBuffer->copyImage();
+}
+
+RefPtr<Image> ImageBuffer::filteredImage(Filter& filter, std::function<void(GraphicsContext&)> drawCallback)
+{
+    std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
+
+    if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
+        targetSwitcher = makeUnique<FilterStyleTargetSwitcher>(filter, FloatRect { { }, logicalSize() });
+        if (!targetSwitcher)
+            return nullptr;
+        targetSwitcher->beginDrawSourceImage(context());
+    }
+
+    drawCallback(context());
+
+    if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
+        ASSERT(targetSwitcher);
+        targetSwitcher->endDrawSourceImage(context());
+        return copyImage();
+    }
+
+    return filteredImage(filter);
 }
 
 #if USE(CAIRO)

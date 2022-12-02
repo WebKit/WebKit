@@ -101,14 +101,11 @@ FloatRect FilterEffect::calculateImageRect(const Filter& filter, Span<const Floa
 
 std::unique_ptr<FilterEffectApplier> FilterEffect::createApplier(const Filter& filter) const
 {
-    if (filter.filterRenderingMode() == FilterRenderingMode::Accelerated)
+    if (filter.filterRenderingModes().contains(FilterRenderingMode::Accelerated))
         return createAcceleratedApplier();
 
-    if (filter.filterRenderingMode() == FilterRenderingMode::Software)
-        return createSoftwareApplier();
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    ASSERT(filter.filterRenderingModes() == FilterRenderingMode::Software);
+    return createSoftwareApplier();
 }
 
 void FilterEffect::transformInputsColorSpace(const FilterImageVector& inputs) const

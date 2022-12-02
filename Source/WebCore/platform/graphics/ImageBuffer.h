@@ -171,6 +171,8 @@ public:
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
     WEBCORE_EXPORT virtual RefPtr<Image> filteredImage(Filter&);
+    RefPtr<Image> filteredImage(Filter&, std::function<void(GraphicsContext&)> drawCallback);
+
 #if USE(CAIRO)
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 #endif

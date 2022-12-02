@@ -33,7 +33,7 @@ namespace WebCore {
 class FilterStyleTargetSwitcher : public FilterTargetSwitcher {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FilterStyleTargetSwitcher(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect);
+    FilterStyleTargetSwitcher(Filter&, const FloatRect &sourceImageRect);
 
 private:
     bool needsRedrawSourceImage() const override { return true; }
