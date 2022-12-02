@@ -1,0 +1,5 @@
+# Skip WPT layout tests in iOS continuous integration for performance reasons.
+# These tests will continue to run in automation in the mac-wk2 configuration,
+# and they will still be able to be run locally.
+
+imported/w3c/web-platform-tests [ Skip ]
