@@ -29,6 +29,7 @@
 
 #import "GraphicsLayerClient.h"
 #import "SimpleRange.h"
+#import "Timer.h"
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -88,6 +89,8 @@ private:
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& inClip, GraphicsLayerPaintBehavior) override;
     float deviceScaleFactor() const override;
 
+    void fadeAnimationTimerFired();
+    void startFadeAnimation();
     void didFinishFadeOutAnimation();
 
     WeakPtr<DataDetectorHighlightClient> m_client;
@@ -96,6 +99,12 @@ private:
     SimpleRange m_range;
     Ref<GraphicsLayer> m_graphicsLayer;
     Type m_type { Type::None };
+
+    Timer m_fadeAnimationTimer;
+    WallTime m_fadeAnimationStartTime;
+
+    enum class FadeAnimationState : uint8_t { NotAnimating, FadingIn, FadingOut };
+    FadeAnimationState m_fadeAnimationState { FadeAnimationState::NotAnimating };
 };
 
 bool areEquivalent(const DataDetectorHighlight*, const DataDetectorHighlight*);
