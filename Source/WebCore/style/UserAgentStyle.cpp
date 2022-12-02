@@ -49,7 +49,6 @@
 #include "MathMLElement.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
-#include "Quirks.h"
 #include "RenderTheme.h"
 #include "RuleSetBuilder.h"
 #include "SVGElement.h"
@@ -230,12 +229,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 
 #if ENABLE(FULLSCREEN_API)
     if (!fullscreenStyleSheet && element.document().fullscreenManager().isFullscreen()) {
-        StringBuilder fullscreenRules;
-        fullscreenRules.appendCharacters(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet));
-        fullscreenRules.append(RenderTheme::singleton().extraFullScreenStyleSheet());
-        if (element.document().quirks().needsBlackFullscreenBackgroundQuirk())
-            fullscreenRules.append(":-webkit-full-screen { background-color: black; }"_s);
-        fullscreenStyleSheet = parseUASheet(fullscreenRules.toString());
+        fullscreenStyleSheet = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)));
         addToDefaultStyle(*fullscreenStyleSheet);
     }
 #endif // ENABLE(FULLSCREEN_API)

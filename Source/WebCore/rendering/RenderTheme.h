@@ -92,9 +92,6 @@ public:
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
 #endif // ENABLE(VIDEO)
-#if ENABLE(FULLSCREEN_API)
-    virtual String extraFullScreenStyleSheet() { return String(); }
-#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual String attachmentStyleSheet() const;
 #endif

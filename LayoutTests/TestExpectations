@@ -5439,9 +5439,6 @@ imported/w3c/web-platform-tests/performance-timeline/idlharness-shadowrealm.wind
 imported/w3c/web-platform-tests/streams/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html [ Pass Failure ]
-js/ShadowRealm-evaluate.html [ Pass Failure ]
-js/ShadowRealm-globalThis.html [ Pass Failure ]
-js/ShadowRealm-iframe-detach.html [ Pass Failure ]
-js/ShadowRealm-iframe-sandboxed.html [ Pass Failure ]
-js/ShadowRealm-importValue.html [ Pass Failure ]
-js/ShadowRealm-worker.html [ Pass Failure ]
+
+# This test isn't working as expected, it will be fixed in webkit.org/b/248148.
+webkit.org/b/248148 fullscreen/full-screen-layer-dump.html [ Failure ]

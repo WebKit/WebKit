@@ -25,7 +25,6 @@
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
 
 :-webkit-full-screen {
-    background-color: white;
     z-index: 2147483647 !important;
     width: 100%;
     height: 100%;
