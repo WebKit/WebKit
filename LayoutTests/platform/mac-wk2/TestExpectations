@@ -1705,8 +1705,6 @@ webkit.org/b/227555 http/tests/privateClickMeasurement/attribution-conversion-th
 
 webkit.org/b/242462 [ Monterey Release ] imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm [ Pass Crash ]
 
-webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
-
 webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html [ Pass Failure ]
 
 # Cocoa ports run WPT tests over localhost so the URL is treated as secure even though not HTTPs.
