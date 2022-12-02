@@ -1,8 +1,8 @@
 
-FAIL 'grid-template' does not supported 'none' Bad value for shorthand CSS property
-FAIL 'grid-template' does not supported '100px 1fr / 50px 1fr' Bad value for shorthand CSS property
-FAIL 'grid-template' does not supported '[linename] 100px / [columnname1] 30% [columname2] 70%' Bad value for shorthand CSS property
-FAIL 'grid-template' does not supported 'fit-content(100px) / fit-content(40%)' Bad value for shorthand CSS property
-FAIL 'grid-template' does not supported '"a a a" "b b b"' Bad value for shorthand CSS property
-FAIL 'grid-template' does not supported '[header-top] "a a a" [header-bottom] [main-top] "b b b" 1fr [main-bottom] / auto 1fr auto' Bad value for shorthand CSS property
+PASS 'grid-template' does not supported 'none'
+PASS 'grid-template' does not supported '100px 1fr / 50px 1fr'
+PASS 'grid-template' does not supported '[linename] 100px / [columnname1] 30% [columname2] 70%'
+PASS 'grid-template' does not supported 'fit-content(100px) / fit-content(40%)'
+PASS 'grid-template' does not supported '"a a a" "b b b"'
+PASS 'grid-template' does not supported '[header-top] "a a a" [header-bottom] [main-top] "b b b" 1fr [main-bottom] / auto 1fr auto'
 

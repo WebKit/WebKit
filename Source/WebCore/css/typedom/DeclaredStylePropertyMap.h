@@ -48,6 +48,7 @@ private:
 
     void clear() final;
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
+    String shorthandPropertySerialization(CSSPropertyID) const final;
     RefPtr<CSSValue> customPropertyValue(const AtomString&) const final;
     void removeProperty(CSSPropertyID) final;
     void removeCustomProperty(const AtomString&) final;

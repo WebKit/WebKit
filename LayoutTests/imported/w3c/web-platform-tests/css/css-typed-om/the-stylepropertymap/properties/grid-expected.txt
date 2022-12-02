@@ -1,5 +1,5 @@
 
-FAIL 'grid' does not supported 'auto-flow / 1fr 1fr 1fr' Bad value for shorthand CSS property
-FAIL 'grid' does not supported 'auto-flow dense / 40px 40px 1fr' Bad value for shorthand CSS property
-FAIL 'grid' does not supported 'repeat(3, 80px) / auto-flow' Bad value for shorthand CSS property
+PASS 'grid' does not supported 'auto-flow / 1fr 1fr 1fr'
+PASS 'grid' does not supported 'auto-flow dense / 40px 40px 1fr'
+PASS 'grid' does not supported 'repeat(3, 80px) / auto-flow'
 

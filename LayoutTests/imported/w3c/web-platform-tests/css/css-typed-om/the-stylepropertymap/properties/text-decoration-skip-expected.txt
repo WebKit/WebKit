@@ -1,5 +1,5 @@
 
-PASS Can set 'text-decoration-skip' to CSS-wide keywords
+FAIL Can set 'text-decoration-skip' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 FAIL Can set 'text-decoration-skip' to var() references assert_equals: expected 2 but got 1
 FAIL Can set 'text-decoration-skip' to the 'none' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 FAIL Can set 'text-decoration-skip' to the 'objects' keyword Bad value for shorthand CSS property

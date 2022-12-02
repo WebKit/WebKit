@@ -1,9 +1,9 @@
 
-FAIL 'grid-area' does not supported 'a' Bad value for shorthand CSS property
-FAIL 'grid-area' does not supported 'a / a' Bad value for shorthand CSS property
-FAIL 'grid-area' does not supported 'auto' Bad value for shorthand CSS property
-FAIL 'grid-area' does not supported 'auto / auto' Bad value for shorthand CSS property
-FAIL 'grid-area' does not supported '2 / 1 / 2' Bad value for shorthand CSS property
-FAIL 'grid-area' does not supported 'span 3' Bad value for shorthand CSS property
-FAIL 'grid-area' does not supported '2 span / a span' Bad value for shorthand CSS property
+PASS 'grid-area' does not supported 'a'
+PASS 'grid-area' does not supported 'a / a'
+PASS 'grid-area' does not supported 'auto'
+PASS 'grid-area' does not supported 'auto / auto'
+PASS 'grid-area' does not supported '2 / 1 / 2'
+PASS 'grid-area' does not supported 'span 3'
+PASS 'grid-area' does not supported '2 span / a span'
 

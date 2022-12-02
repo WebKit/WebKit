@@ -94,6 +94,13 @@ private:
         return nullptr;
     }
 
+    String shorthandPropertySerialization(CSSPropertyID propertyID) const final
+    {
+        if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
+            return inlineStyle->getPropertyValue(propertyID);
+        return String();
+    }
+
     RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final
     {
         if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)

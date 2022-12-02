@@ -9,9 +9,9 @@ PASS Setting 'background' to a flexible length throws TypeError
 FAIL Setting 'background' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'background' to a URL throws TypeError
 PASS Setting 'background' to a transform throws TypeError
-FAIL 'background' does not supported 'green' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+PASS 'background' does not supported 'green'
 PASS 'background' does not supported 'content-box radial-gradient(crimson, skyblue)'
 PASS 'background' does not supported 'no-repeat url("http://foo.com")'
-FAIL 'background' does not supported 'left 5% / 15% 60% repeat-x url("http://foo.com")' Bad value for shorthand CSS property
-FAIL 'background' does not supported 'center / contain no-repeat url("foo.com"), red' Bad value for shorthand CSS property
+PASS 'background' does not supported 'left 5% / 15% 60% repeat-x url("http://foo.com")'
+PASS 'background' does not supported 'center / contain no-repeat url("foo.com"), red'
 

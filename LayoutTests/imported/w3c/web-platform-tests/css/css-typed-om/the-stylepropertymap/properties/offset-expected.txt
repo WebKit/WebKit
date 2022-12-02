@@ -1,8 +1,8 @@
 
-FAIL 'offset' does not supported 'auto' Bad value for shorthand CSS property
-FAIL 'offset' does not supported '10px 30px' Bad value for shorthand CSS property
-FAIL 'offset' does not supported 'none' Bad value for shorthand CSS property
-FAIL 'offset' does not supported 'ray(45deg closest-side)' Bad value for shorthand CSS property
-FAIL 'offset' does not supported 'path("M 100 100 L 300 100 L 200 300 z")' Bad value for shorthand CSS property
-FAIL 'offset' does not supported 'ray(45deg closest-side) / 40px 20px' Bad value for shorthand CSS property
+PASS 'offset' does not supported 'auto'
+PASS 'offset' does not supported '10px 30px'
+PASS 'offset' does not supported 'none'
+PASS 'offset' does not supported 'ray(45deg closest-side)'
+PASS 'offset' does not supported 'path("M 100 100 L 300 100 L 200 300 z")'
+PASS 'offset' does not supported 'ray(45deg closest-side) / 40px 20px'
 

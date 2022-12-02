@@ -106,6 +106,12 @@ private:
         return m_map.get(nameString(propertyID));
     }
 
+    String shorthandPropertySerialization(CSSPropertyID) const final
+    {
+        // FIXME: Not supported.
+        return { };
+    }
+
     RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final
     {
         return m_map.get(property);
