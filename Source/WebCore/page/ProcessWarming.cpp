@@ -33,7 +33,7 @@
 #include "FontCascadeDescription.h"
 #include "HTMLNames.h"
 #include "MathMLNames.h"
-#include "MediaFeatureNames.h"
+#include "MediaQueryFeatures.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"
 #include "TagName.h"
@@ -55,7 +55,6 @@ void ProcessWarming::initializeNames()
     initializeCommonAtomStrings();
     HTMLNames::init();
     QualifiedName::init();
-    MediaFeatureNames::init();
     SVGNames::init();
     XLinkNames::init();
     MathMLNames::init();
@@ -71,6 +70,7 @@ void ProcessWarming::prewarmGlobally()
     
     // Prewarms user agent stylesheet.
     Style::UserAgentStyle::initDefaultStyleSheet();
+    MQ::Features::allSchemas();
     
     // Prewarms JS VM.
     commonVM();

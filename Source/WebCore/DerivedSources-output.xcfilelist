@@ -3090,6 +3090,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamBYOBReaderBuiltins.cp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamBYOBReaderBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamBYOBRequestBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamBYOBRequestBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamBuiltins.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultControllerBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultControllerBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins.cpp

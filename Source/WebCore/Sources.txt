@@ -822,11 +822,7 @@ css/DeprecatedCSSOMValueList.cpp
 css/FontFace.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
-css/LegacyMediaQueryEvaluator.cpp
-css/LegacyMediaQuery.cpp
-css/MediaFeatureNames.cpp
 css/MediaList.cpp
-css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
 css/MediaQueryListEvent.cpp
 css/MediaQueryMatcher.cpp
@@ -872,7 +868,6 @@ css/parser/CSSSupportsParser.cpp
 css/parser/CSSTokenizer.cpp
 css/parser/CSSTokenizerInputStream.cpp
 css/parser/CSSVariableParser.cpp
-css/parser/LegacyMediaQueryParser.cpp
 css/parser/MediaQueryBlockWatcher.cpp
 css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
