@@ -135,8 +135,6 @@ public:
     
     bool needsFlightAwareSerializationQuirk() const;
 
-    bool needsBlackFullscreenBackgroundQuirk() const;
-
     bool requiresUserGestureToPauseInPictureInPicture() const;
     bool requiresUserGestureToLoadInPictureInPicture() const;
 
