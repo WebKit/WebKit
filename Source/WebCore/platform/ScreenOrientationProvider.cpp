@@ -39,7 +39,7 @@ ScreenOrientationProvider::ScreenOrientationProvider() = default;
 
 ScreenOrientationProvider::~ScreenOrientationProvider()
 {
-    platformDestroy();
+    platformStopListeningForChanges();
 }
 
 void ScreenOrientationProvider::addObserver(Observer& observer)
@@ -92,10 +92,6 @@ void ScreenOrientationProvider::platformStartListeningForChanges()
 }
 
 void ScreenOrientationProvider::platformStopListeningForChanges()
-{
-}
-
-void ScreenOrientationProvider::platformDestroy()
 {
 }
 #endif
