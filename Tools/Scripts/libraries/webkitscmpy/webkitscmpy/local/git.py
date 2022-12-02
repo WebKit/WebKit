@@ -177,18 +177,20 @@ class Git(Scm):
             hashes.reverse()
             revisions.reverse()
 
+            intersected = False
             order = len(self._ordered_commits[branch]) - 1
             while order > 0:
                 if hashes[0] == self._ordered_commits[branch][order]:
                     order -= 1
+                    intersected = True
                     break
                 order -= 1
+            if intersected or branch == self.repo.default_branch:
+                self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
+                self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
             else:
-                if order == 0 and hashes[0] == self._ordered_commits[branch][0]:
-                    order = -1
-
-            self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
-            self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
+                self._ordered_commits[branch] = hashes
+                self._ordered_revisions[branch] = revisions
             self._fill(branch)
 
             try:
