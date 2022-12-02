@@ -134,6 +134,10 @@ private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
+    // StyledElement
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void didAttachRenderers() final;
