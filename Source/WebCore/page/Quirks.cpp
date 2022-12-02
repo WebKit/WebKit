@@ -235,15 +235,6 @@ bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
     return equalLettersIgnoringASCIICase(host, "www.icourse163.org"_s);
 }
 
-bool Quirks::shouldStripQuotationMarkInFontFaceSetFamily() const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "docs.google.com"_s);
-}
-
 bool Quirks::isTouchBarUpdateSupressedForHiddenContentEditable() const
 {
 #if PLATFORM(MAC)

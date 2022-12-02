@@ -35,7 +35,6 @@
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "JSFontFace.h"
-#include "Quirks.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -175,14 +174,9 @@ ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, const Str
     if (family.isEmpty())
         return Exception { SyntaxError };
 
-    String familyNameToUse = family;
-    // FIXME: Quirks currently aren't present on workers, would be better to inherit from the parent document where applicable.
-    if (familyNameToUse.contains('\'') && is<Document>(context) && downcast<Document>(context).quirks().shouldStripQuotationMarkInFontFaceSetFamily())
-        familyNameToUse = family.removeCharacters([](auto character) { return character == '\''; });
-
     // FIXME: Don't use a list here. https://bugs.webkit.org/show_bug.cgi?id=196381
     auto list = CSSValueList::createCommaSeparated();
-    list->append(context.cssValuePool().createFontFamilyValue(familyNameToUse));
+    list->append(context.cssValuePool().createFontFamilyValue(family));
     m_backing->setFamilies(list);
     return { };
 }
