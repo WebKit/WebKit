@@ -1,6 +1,6 @@
 
-FAIL 'font-variant' does not supported 'normal' Bad value for shorthand CSS property
+PASS 'font-variant' does not supported 'normal'
 PASS 'font-variant' does not supported 'no-common-ligatures proportional-nums'
 PASS 'font-variant' does not supported 'common-ligatures tabular-nums'
-FAIL 'font-variant' does not supported 'small-caps slashed-zero' Bad value for shorthand CSS property
+PASS 'font-variant' does not supported 'small-caps slashed-zero'
 

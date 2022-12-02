@@ -30,6 +30,7 @@ namespace WebCore {
 enum class NetworkConnectionIntegrity : uint8_t {
     Enabled = 1 << 0,
     HTTPSFirst = 1 << 1,
+    HTTPSOnly = 1 << 2,
 };
 
 }
@@ -40,7 +41,8 @@ template<> struct EnumTraits<WebCore::NetworkConnectionIntegrity> {
     using values = EnumValues<
         WebCore::NetworkConnectionIntegrity,
         WebCore::NetworkConnectionIntegrity::Enabled,
-        WebCore::NetworkConnectionIntegrity::HTTPSFirst
+        WebCore::NetworkConnectionIntegrity::HTTPSFirst,
+        WebCore::NetworkConnectionIntegrity::HTTPSOnly
     >;
 };
 

@@ -33,43 +33,8 @@ class TextStream;
 
 namespace WebCore {
 
-class CSSParser;
 class CSSRule;
 class CSSStyleSheet;
-class Document;
-class LegacyMediaQuery;
-
-class MediaQuerySet final : public RefCounted<MediaQuerySet> {
-public:
-    static Ref<MediaQuerySet> create()
-    {
-        return adoptRef(*new MediaQuerySet);
-    }
-    static WEBCORE_EXPORT Ref<MediaQuerySet> create(const String& mediaString, MediaQueryParserContext = MediaQueryParserContext());
-
-    WEBCORE_EXPORT ~MediaQuerySet();
-
-    bool set(const String&);
-    bool add(const String&);
-    bool remove(const String&);
-
-    void addMediaQuery(LegacyMediaQuery&&);
-
-    const Vector<LegacyMediaQuery>& queryVector() const { return m_queries; }
-
-    WEBCORE_EXPORT String mediaText() const;
-
-    Ref<MediaQuerySet> copy() const { return adoptRef(*new MediaQuerySet(*this)); }
-
-    void shrinkToFit();
-
-private:
-    MediaQuerySet();
-    WEBCORE_EXPORT MediaQuerySet(const String& mediaQuery);
-    MediaQuerySet(const MediaQuerySet&);
-
-    Vector<LegacyMediaQuery> m_queries;
-};
 
 class MediaList final : public RefCounted<MediaList> {
 public:
@@ -109,7 +74,6 @@ private:
     std::optional<MQ::MediaQueryList> m_detachedMediaQueries;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const MediaQuerySet&);
 WTF::TextStream& operator<<(WTF::TextStream&, const MediaList&);
 
 } // namespace

@@ -41,6 +41,6 @@ PASS Setting 'border-bottom-right-radius' to a URL throws TypeError
 PASS Setting 'border-bottom-right-radius' to a transform throws TypeError
 PASS 'border-radius' does not supported '30px'
 PASS 'border-radius' does not supported '25% 10%'
-FAIL 'border-radius' does not supported '10% / 50%' Bad value for shorthand CSS property
-FAIL 'border-radius' does not supported '50% 20% / 10% 40%' Bad value for shorthand CSS property
+PASS 'border-radius' does not supported '10% / 50%'
+PASS 'border-radius' does not supported '50% 20% / 10% 40%'
 

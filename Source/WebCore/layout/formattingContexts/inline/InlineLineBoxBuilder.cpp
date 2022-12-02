@@ -220,26 +220,25 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         inlineLevelBox.setDescent(ascentAndDescent.descent);
     };
 
-    auto setLayoutBounds = [&] (auto& textMetrics) {
-        auto logicalHeight = textMetrics.ascentAndDescent.ascent + textMetrics.ascentAndDescent.descent;
-        auto halfLeading = InlineLayoutUnit { };
-        if (textMetrics.preferredLineHeight) {
-            // If line-height computes to normal and either text-edge is leading or this is the root inline box,
-            // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
-            // https://www.w3.org/TR/css-inline-3/#inline-height
-            // Since text-edge is not supported yet and the initial value is leading, we should just apply it to
-            // all inline boxes.
-            halfLeading = (*textMetrics.preferredLineHeight - logicalHeight) / 2;
-        } else {
-            // Preferred line height is purely font metrics based (i.e glyphs stretch the line).
-            halfLeading = (textMetrics.lineGap - logicalHeight) / 2;
-        }
-        inlineLevelBox.setLayoutBounds({ floorf(textMetrics.ascentAndDescent.ascent + halfLeading), ceilf(textMetrics.ascentAndDescent.descent + halfLeading) });
-    };
-
     if (inlineLevelBox.isInlineBox()) {
         auto textMetrics = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType());
-        setLayoutBounds(textMetrics);
+        auto setLayoutBounds = [&] {
+            auto logicalHeight = textMetrics.ascentAndDescent.ascent + textMetrics.ascentAndDescent.descent;
+            auto halfLeading = InlineLayoutUnit { };
+            if (textMetrics.preferredLineHeight) {
+                // If line-height computes to normal and either text-edge is leading or this is the root inline box,
+                // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
+                // https://www.w3.org/TR/css-inline-3/#inline-height
+                // Since text-edge is not supported yet and the initial value is leading, we should just apply it to
+                // all inline boxes.
+                halfLeading = (*textMetrics.preferredLineHeight - logicalHeight) / 2;
+            } else {
+                // Preferred line height is purely font metrics based (i.e glyphs stretch the line).
+                halfLeading = (textMetrics.lineGap - logicalHeight) / 2;
+            }
+            inlineLevelBox.setLayoutBounds({ floorf(textMetrics.ascentAndDescent.ascent + halfLeading), ceilf(textMetrics.ascentAndDescent.descent + halfLeading) });
+        };
+        setLayoutBounds();
         // We need floor/ceil to match legacy layout integral positioning.
         setAscentAndDescent(AscentAndDescent { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
         inlineLevelBox.setLogicalHeight(textMetrics.ascentAndDescent.height());
@@ -247,7 +246,6 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
     }
     if (inlineLevelBox.isLineBreakBox()) {
         auto parentTextMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType());
-        setLayoutBounds(parentTextMetrics);
         // We need floor/ceil to match legacy layout integral positioning.
         setAscentAndDescent(AscentAndDescent { floorf(parentTextMetrics.ascentAndDescent.ascent), ceilf(parentTextMetrics.ascentAndDescent.descent) });
         inlineLevelBox.setLogicalHeight(parentTextMetrics.ascentAndDescent.height());
@@ -263,14 +261,12 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         if (lineBox.baselineType() == IdeographicBaseline) {
             // FIXME: We should rely on the integration baseline.
             auto parentTextMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType());
-            setLayoutBounds(parentTextMetrics);
             // We need floor/ceil to match legacy layout integral positioning.
             setAscentAndDescent(AscentAndDescent { floorf(parentTextMetrics.ascentAndDescent.ascent), ceilf(parentTextMetrics.ascentAndDescent.descent) });
             return;
         }
         if (auto ascent = downcast<ElementBox>(layoutBox).baselineForIntegration()) {
             auto textMetrics = TextMetrics { { *ascent, marginBoxHeight - *ascent }, { }, { } };
-            setLayoutBounds(textMetrics);
             // We need floor/ceil to match legacy layout integral positioning.
             setAscentAndDescent(AscentAndDescent { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
             return;
@@ -417,6 +413,9 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft);
             setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
+
+            if (layoutState().inStandardsMode() || InlineFormattingQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
+                lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
             continue;
         }
         if (run.isWordBreakOpportunity()) {
@@ -559,7 +558,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
             inlineLevelBox.setAscent(ideographicBaseline);
         }
 
-        auto needsFontFallbackAdjustment = inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox();
+        auto needsFontFallbackAdjustment = inlineLevelBox.isInlineBox();
         if (needsFontFallbackAdjustment) {
             if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineLevelBox); !fallbackFonts.isEmpty() && inlineLevelBox.isPreferredLineHeightFontMetricsBased())
                 inlineLevelBox.setLayoutBounds(adjustedLayoutBoundsWithFallbackFonts(inlineLevelBox, fallbackFonts, IdeographicBaseline));

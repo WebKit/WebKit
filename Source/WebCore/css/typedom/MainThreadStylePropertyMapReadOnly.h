@@ -43,10 +43,8 @@ protected:
     static Document* documentFromContext(ScriptExecutionContext&);
 
     virtual RefPtr<CSSValue> propertyValue(CSSPropertyID) const = 0;
+    virtual String shorthandPropertySerialization(CSSPropertyID) const = 0;
     virtual RefPtr<CSSValue> customPropertyValue(const AtomString&) const = 0;
-
-private:
-    RefPtr<CSSStyleValue> shorthandPropertyValue(Document&, CSSPropertyID) const;
 };
 
 } // namespace WebCore

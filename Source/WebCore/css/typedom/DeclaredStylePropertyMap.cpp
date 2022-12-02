@@ -81,6 +81,14 @@ RefPtr<CSSValue> DeclaredStylePropertyMap::propertyValue(CSSPropertyID propertyI
     return styleRule->properties().getPropertyCSSValue(propertyID);
 }
 
+String DeclaredStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
+{
+    auto* styleRule = this->styleRule();
+    if (!styleRule)
+        return { };
+    return styleRule->properties().getPropertyValue(propertyID);
+}
+
 RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(const AtomString& propertyName) const
 {
     auto* styleRule = this->styleRule();

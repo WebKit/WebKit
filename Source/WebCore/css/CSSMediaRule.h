@@ -27,7 +27,6 @@
 namespace WebCore {
 
 class MediaList;
-class MediaQuerySet;
 class StyleRuleMedia;
 
 namespace MQ {

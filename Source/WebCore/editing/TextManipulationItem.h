@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebIDBResult.h"
+#pragma once
+#include "TextManipulationToken.h"
 
-#include "WebCoreArgumentCoders.h"
+namespace WebCore {
 
-namespace WebKit {
+enum TextManipulationItemIdentifierType { };
+using TextManipulationItemIdentifier = ObjectIdentifier<TextManipulationItemIdentifierType>;
 
-void WebIDBResult::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_resultData;
-    encoder << m_handles;
-}
+struct TextManipulationItem {
+    TextManipulationItemIdentifier identifier;
+    Vector<TextManipulationToken> tokens;
+};
 
-bool WebIDBResult::decode(IPC::Decoder& decoder, WebIDBResult& result)
-{
-    std::optional<WebCore::IDBResultData> resultData;
-    decoder >> resultData;
-    if (!resultData)
-        return false;
-    result.m_resultData = WTFMove(*resultData);
-
-    std::optional<Vector<SandboxExtension::Handle>> handles;
-    decoder >> handles;
-    if (!handles)
-        return false;
-    result.m_handles = WTFMove(*handles);
-
-    return true;
-}
-
-} // namespace WebKit
+} // namespace WebCore

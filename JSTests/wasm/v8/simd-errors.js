@@ -9,7 +9,7 @@
 load("wasm-module-builder.js");
 
 (function TestS128InSignatureThrows() {
-  print(arguments.callee.name);
+  // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
   builder.addFunction('foo', kSig_s_i)
     .addBody([
@@ -22,7 +22,7 @@ load("wasm-module-builder.js");
 })();
 
 (function TestS128ParamInSignatureThrows() {
-  print(arguments.callee.name);
+  // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
   builder.addFunction('foo', kSig_i_s)
       .addBody([
@@ -35,7 +35,7 @@ load("wasm-module-builder.js");
 })();
 
 (function TestImportS128Return() {
-  print(arguments.callee.name);
+  // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
   builder.addImport('', 'f', makeSig([], [kWasmS128]));
   builder.addFunction('foo', kSig_v_v)
@@ -46,7 +46,7 @@ load("wasm-module-builder.js");
 })();
 
 (function TestS128ImportThrows() {
-  print(arguments.callee.name);
+  // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
   let sig_index = builder.addType(kSig_i_i);
   let sig_s128_index = builder.addType(kSig_i_s);

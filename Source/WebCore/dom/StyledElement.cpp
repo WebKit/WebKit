@@ -41,6 +41,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
+#include "InlineStylePropertyMap.h"
 #include "InspectorInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "ScriptableDocumentParser.h"
@@ -79,115 +80,10 @@ CSSStyleDeclaration& StyledElement::cssomStyle()
     return ensureMutableInlineStyle().ensureInlineCSSStyleDeclaration(*this);
 }
 
-class StyledElementInlineStylePropertyMap final : public StylePropertyMap {
-public:
-    static Ref<StylePropertyMap> create(StyledElement& element)
-    {
-        return adoptRef(*new StyledElementInlineStylePropertyMap(element));
-    }
-
-private:
-    RefPtr<CSSValue> propertyValue(CSSPropertyID propertyID) const final
-    {
-        if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
-            return inlineStyle->getPropertyCSSValue(propertyID);
-        return nullptr;
-    }
-
-    RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final
-    {
-        if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
-            return inlineStyle->getCustomPropertyCSSValue(property.string());
-        return nullptr;
-    }
-
-    unsigned size() const final
-    {
-        auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr;
-        return inlineStyle ? inlineStyle->propertyCount() : 0;
-    }
-
-    Vector<StylePropertyMapEntry> entries(ScriptExecutionContext* context) const final
-    {
-        if (!m_element || !context)
-            return { };
-
-        auto& document = downcast<Document>(*context);
-        Vector<StylePropertyMapEntry> result;
-        auto* inlineStyle = m_element->inlineStyle();
-        if (!inlineStyle)
-            return { };
-
-        result.reserveInitialCapacity(inlineStyle->propertyCount());
-        for (unsigned i = 0; i < inlineStyle->propertyCount(); ++i) {
-            auto propertyReference = inlineStyle->propertyAt(i);
-            result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(RefPtr<CSSValue> { propertyReference.value() }, document)));
-        }
-        return result;
-    }
-
-    void removeProperty(CSSPropertyID propertyID) final
-    {
-        if (m_element)
-            m_element->removeInlineStyleProperty(propertyID);
-    }
-
-    bool setShorthandProperty(CSSPropertyID propertyID, const String& value) final
-    {
-        if (!m_element)
-            return false;
-        bool didFailParsing = false;
-        bool important = false;
-        m_element->setInlineStyleProperty(propertyID, value, important, &didFailParsing);
-        return !didFailParsing;
-    }
-
-    bool setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value) final
-    {
-        if (!m_element)
-            return false;
-        bool didFailParsing = false;
-        bool important = false;
-        m_element->setInlineStyleProperty(propertyID, value->cssText(), important, &didFailParsing);
-        return !didFailParsing;
-    }
-
-    bool setCustomProperty(Document&, const AtomString& property, Ref<CSSVariableReferenceValue>&& value) final
-    {
-        if (!m_element)
-            return false;
-
-        auto customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTFMove(value));
-        m_element->setInlineStyleCustomProperty(WTFMove(customPropertyValue));
-        return true;
-    }
-
-    void removeCustomProperty(const AtomString& property) final
-    {
-        if (m_element)
-            m_element->removeInlineStyleCustomProperty(property);
-    }
-
-    void clear() final
-    {
-        if (m_element)
-            m_element->removeAllInlineStyleProperties();
-    }
-
-    explicit StyledElementInlineStylePropertyMap(StyledElement& element)
-        : m_element(&element)
-    {
-    }
-
-    void clearElement() override { m_element = nullptr; }
-
-    StyledElement* m_element { nullptr };
-};
-
 StylePropertyMap& StyledElement::ensureAttributeStyleMap()
 {
     if (!attributeStyleMap())
-        setAttributeStyleMap(StyledElementInlineStylePropertyMap::create(*this));
+        setAttributeStyleMap(InlineStylePropertyMap::create(*this));
     return *attributeStyleMap();
 }
 

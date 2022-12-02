@@ -28,17 +28,17 @@ PASS ReadableStream interface: calling pipeThrough(ReadableWritablePair, optiona
 PASS ReadableStream interface: new ReadableStream() must inherit property "pipeTo(WritableStream, optional StreamPipeOptions)" with the proper type
 PASS ReadableStream interface: calling pipeTo(WritableStream, optional StreamPipeOptions) on new ReadableStream() with too few arguments must throw TypeError
 PASS ReadableStream interface: new ReadableStream() must inherit property "tee()" with the proper type
-FAIL ReadableStreamDefaultReader interface: existence and properties of interface object assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface object length assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface object name assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: operation read() assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: operation releaseLock() assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: attribute closed assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader interface: operation cancel(optional any) assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
-FAIL ReadableStreamDefaultReader must be primary interface of (new ReadableStream()).getReader() assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
+PASS ReadableStreamDefaultReader interface: existence and properties of interface object
+PASS ReadableStreamDefaultReader interface object length
+PASS ReadableStreamDefaultReader interface object name
+PASS ReadableStreamDefaultReader interface: existence and properties of interface prototype object
+PASS ReadableStreamDefaultReader interface: existence and properties of interface prototype object's "constructor" property
+PASS ReadableStreamDefaultReader interface: existence and properties of interface prototype object's @@unscopables property
+PASS ReadableStreamDefaultReader interface: operation read()
+PASS ReadableStreamDefaultReader interface: operation releaseLock()
+PASS ReadableStreamDefaultReader interface: attribute closed
+PASS ReadableStreamDefaultReader interface: operation cancel(optional any)
+PASS ReadableStreamDefaultReader must be primary interface of (new ReadableStream()).getReader()
 PASS Stringification of (new ReadableStream()).getReader()
 PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "read()" with the proper type
 PASS ReadableStreamDefaultReader interface: (new ReadableStream()).getReader() must inherit property "releaseLock()" with the proper type
@@ -63,17 +63,17 @@ PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' }))
 PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "closed" with the proper type
 PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "cancel(optional any)" with the proper type
 PASS ReadableStreamBYOBReader interface: calling cancel(optional any) on (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) with too few arguments must throw TypeError
-FAIL ReadableStreamDefaultController interface: existence and properties of interface object assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface object length assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface object name assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface: attribute desiredSize assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface: operation close() assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface: operation enqueue(optional any) assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController interface: operation error(optional any) assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
-FAIL ReadableStreamDefaultController must be primary interface of self.readableStreamDefaultController assert_own_property: self does not have own property "ReadableStreamDefaultController" expected property "ReadableStreamDefaultController" missing
+PASS ReadableStreamDefaultController interface: existence and properties of interface object
+PASS ReadableStreamDefaultController interface object length
+PASS ReadableStreamDefaultController interface object name
+PASS ReadableStreamDefaultController interface: existence and properties of interface prototype object
+PASS ReadableStreamDefaultController interface: existence and properties of interface prototype object's "constructor" property
+PASS ReadableStreamDefaultController interface: existence and properties of interface prototype object's @@unscopables property
+PASS ReadableStreamDefaultController interface: attribute desiredSize
+PASS ReadableStreamDefaultController interface: operation close()
+PASS ReadableStreamDefaultController interface: operation enqueue(optional any)
+PASS ReadableStreamDefaultController interface: operation error(optional any)
+PASS ReadableStreamDefaultController must be primary interface of self.readableStreamDefaultController
 PASS Stringification of self.readableStreamDefaultController
 PASS ReadableStreamDefaultController interface: self.readableStreamDefaultController must inherit property "desiredSize" with the proper type
 PASS ReadableStreamDefaultController interface: self.readableStreamDefaultController must inherit property "close()" with the proper type
@@ -147,10 +147,10 @@ PASS WritableStreamDefaultWriter interface: existence and properties of interfac
 PASS WritableStreamDefaultWriter interface: attribute closed
 PASS WritableStreamDefaultWriter interface: attribute desiredSize
 PASS WritableStreamDefaultWriter interface: attribute ready
-FAIL WritableStreamDefaultWriter interface: operation abort(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS WritableStreamDefaultWriter interface: operation abort(optional any)
 PASS WritableStreamDefaultWriter interface: operation close()
 PASS WritableStreamDefaultWriter interface: operation releaseLock()
-FAIL WritableStreamDefaultWriter interface: operation write(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS WritableStreamDefaultWriter interface: operation write(optional any)
 PASS WritableStreamDefaultWriter must be primary interface of (new WritableStream()).getWriter()
 PASS Stringification of (new WritableStream()).getWriter()
 PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "closed" with the proper type
@@ -162,9 +162,7 @@ PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() m
 PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "releaseLock()" with the proper type
 PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "write(optional any)" with the proper type
 PASS WritableStreamDefaultWriter interface: calling write(optional any) on (new WritableStream()).getWriter() with too few arguments must throw TypeError
-FAIL WritableStreamDefaultController interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function () {
-                new interface_object();
-            }" did not throw
+PASS WritableStreamDefaultController interface: existence and properties of interface object
 PASS WritableStreamDefaultController interface object length
 PASS WritableStreamDefaultController interface object name
 PASS WritableStreamDefaultController interface: existence and properties of interface prototype object
@@ -189,17 +187,15 @@ PASS TransformStream must be primary interface of new TransformStream()
 PASS Stringification of new TransformStream()
 PASS TransformStream interface: new TransformStream() must inherit property "readable" with the proper type
 PASS TransformStream interface: new TransformStream() must inherit property "writable" with the proper type
-FAIL TransformStreamDefaultController interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function () {
-                new interface_object();
-            }" did not throw
+PASS TransformStreamDefaultController interface: existence and properties of interface object
 PASS TransformStreamDefaultController interface object length
 PASS TransformStreamDefaultController interface object name
 PASS TransformStreamDefaultController interface: existence and properties of interface prototype object
 PASS TransformStreamDefaultController interface: existence and properties of interface prototype object's "constructor" property
 PASS TransformStreamDefaultController interface: existence and properties of interface prototype object's @@unscopables property
 PASS TransformStreamDefaultController interface: attribute desiredSize
-FAIL TransformStreamDefaultController interface: operation enqueue(optional any) assert_equals: property has wrong .length expected 0 but got 1
-FAIL TransformStreamDefaultController interface: operation error(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS TransformStreamDefaultController interface: operation enqueue(optional any)
+PASS TransformStreamDefaultController interface: operation error(optional any)
 PASS TransformStreamDefaultController interface: operation terminate()
 PASS TransformStreamDefaultController must be primary interface of self.transformStreamDefaultController
 PASS Stringification of self.transformStreamDefaultController

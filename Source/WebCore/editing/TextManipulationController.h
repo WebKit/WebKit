@@ -27,6 +27,7 @@
 
 #include "Position.h"
 #include "QualifiedName.h"
+#include "TextManipulationItem.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
@@ -43,40 +44,6 @@ class TextManipulationController : public CanMakeWeakPtr<TextManipulationControl
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TextManipulationController(Document&);
-
-    enum TokenIdentifierType { };
-    using TokenIdentifier = ObjectIdentifier<TokenIdentifierType>;
-
-    struct ManipulationTokenInfo {
-        String tagName;
-        String roleAttribute;
-        URL documentURL;
-        bool isVisible { false };
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<ManipulationTokenInfo> decode(Decoder&);
-    };
-
-    struct ManipulationToken {
-        TokenIdentifier identifier;
-        String content;
-        std::optional<ManipulationTokenInfo> info;
-        bool isExcluded { false };
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<ManipulationToken> decode(Decoder&);
-    };
-
-    enum ItemIdentifierType { };
-    using ItemIdentifier = ObjectIdentifier<ItemIdentifierType>;
-
-    struct ManipulationItem {
-        ItemIdentifier identifier;
-        Vector<ManipulationToken> tokens;
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<ManipulationItem> decode(Decoder&);
-    };
 
     struct ExclusionRule {
         enum class Type : uint8_t { Exclude, Include };
@@ -112,7 +79,7 @@ public:
         template<class Decoder> static std::optional<ExclusionRule> decode(Decoder&);
     };
 
-    using ManipulationItemCallback = Function<void(Document&, const Vector<ManipulationItem>&)>;
+    using ManipulationItemCallback = Function<void(Document&, const Vector<TextManipulationItem>&)>;
     WEBCORE_EXPORT void startObservingParagraphs(ManipulationItemCallback&&, Vector<ExclusionRule>&& = { });
 
     void didUpdateContentForNode(Node&);
@@ -127,7 +94,7 @@ public:
     };
 
     struct ManipulationFailure {
-        ItemIdentifier identifier;
+        TextManipulationItemIdentifier identifier;
         uint64_t index;
         ManipulationFailureType type;
 
@@ -135,7 +102,7 @@ public:
         template<class Decoder> static std::optional<ManipulationFailure> decode(Decoder&);
     };
 
-    WEBCORE_EXPORT Vector<ManipulationFailure> completeManipulation(const Vector<ManipulationItem>&);
+    WEBCORE_EXPORT Vector<ManipulationFailure> completeManipulation(const Vector<TextManipulationItem>&);
 
 private:
     void observeParagraphs(const Position& start, const Position& end);
@@ -148,12 +115,12 @@ private:
         WeakPtr<Element, WeakPtrImplWithEventTargetData> element;
         QualifiedName attributeName { nullQName() };
 
-        Vector<ManipulationToken> tokens;
+        Vector<TextManipulationToken> tokens;
     };
 
     struct ManipulationUnit {
         Ref<Node> node;
-        Vector<ManipulationToken> tokens;
+        Vector<TextManipulationToken> tokens;
         bool areAllTokensExcluded { true };
         bool firstTokenContainsDelimiter { false };
         bool lastTokenContainsDelimiter { false };
@@ -176,7 +143,7 @@ private:
     using NodeEntry = std::pair<Ref<Node>, Ref<Node>>;
     Vector<Ref<Node>> getPath(Node*, Node*);
     void updateInsertions(Vector<NodeEntry>&, const Vector<Ref<Node>>&, Node*, HashSet<Ref<Node>>&, Vector<NodeInsertion>&);
-    std::optional<ManipulationFailureType> replace(const ManipulationItemData&, const Vector<ManipulationToken>&, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement);
+    std::optional<ManipulationFailureType> replace(const ManipulationItemData&, const Vector<TextManipulationToken>&, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement);
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithNewRenderer;
@@ -190,79 +157,13 @@ private:
     bool m_didScheduleObservationUpdate { false };
 
     ManipulationItemCallback m_callback;
-    Vector<ManipulationItem> m_pendingItemsForCallback;
+    Vector<TextManipulationItem> m_pendingItemsForCallback;
 
     Vector<ExclusionRule> m_exclusionRules;
-    HashMap<ItemIdentifier, ManipulationItemData> m_items;
-    ItemIdentifier m_itemIdentifier;
-    TokenIdentifier m_tokenIdentifier;
+    HashMap<TextManipulationItemIdentifier, ManipulationItemData> m_items;
+    TextManipulationItemIdentifier m_itemIdentifier;
+    TextManipulationTokenIdentifier m_tokenIdentifier;
 };
-
-template<class Encoder>
-void TextManipulationController::ManipulationTokenInfo::encode(Encoder& encoder) const
-{
-    encoder << tagName;
-    encoder << roleAttribute;
-    encoder << documentURL;
-    encoder << isVisible;
-}
-
-template<class Decoder>
-std::optional<TextManipulationController::ManipulationTokenInfo> TextManipulationController::ManipulationTokenInfo::decode(Decoder& decoder)
-{
-    ManipulationTokenInfo result;
-    if (!decoder.decode(result.tagName))
-        return std::nullopt;
-
-    if (!decoder.decode(result.roleAttribute))
-        return std::nullopt;
-
-    if (!decoder.decode(result.documentURL))
-        return std::nullopt;
-
-    if (!decoder.decode(result.isVisible))
-        return std::nullopt;
-
-    return result;
-}
-
-template<class Encoder>
-void TextManipulationController::ManipulationToken::encode(Encoder& encoder) const
-{
-    encoder << identifier << content << info << isExcluded;
-}
-
-template<class Decoder>
-std::optional<TextManipulationController::ManipulationToken> TextManipulationController::ManipulationToken::decode(Decoder& decoder)
-{
-    ManipulationToken result;
-    if (!decoder.decode(result.identifier))
-        return std::nullopt;
-    if (!decoder.decode(result.content))
-        return std::nullopt;
-    if (!decoder.decode(result.info))
-        return std::nullopt;
-    if (!decoder.decode(result.isExcluded))
-        return std::nullopt;
-    return result;
-}
-
-template<class Encoder>
-void TextManipulationController::ManipulationItem::encode(Encoder& encoder) const
-{
-    encoder << identifier << tokens;
-}
-
-template<class Decoder>
-std::optional<TextManipulationController::ManipulationItem> TextManipulationController::ManipulationItem::decode(Decoder& decoder)
-{
-    ManipulationItem result;
-    if (!decoder.decode(result.identifier))
-        return std::nullopt;
-    if (!decoder.decode(result.tokens))
-        return std::nullopt;
-    return result;
-}
 
 template<class Encoder>
 void TextManipulationController::ExclusionRule::encode(Encoder& encoder) const

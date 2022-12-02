@@ -125,6 +125,8 @@ class TransformationMatrix;
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 
+struct TextEdge;
+
 using PseudoStyleCache = Vector<std::unique_ptr<RenderStyle>, 4>;
 
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<const T&>(u); }
@@ -397,6 +399,7 @@ public:
     TextJustify textJustify() const { return static_cast<TextJustify>(m_rareInheritedData->textJustify); }
 
     LeadingTrim leadingTrim() const { return static_cast<LeadingTrim>(m_rareNonInheritedData->leadingTrim); }
+    TextEdge textEdge() const;
 
     const Length& wordSpacing() const;
     float letterSpacing() const;
@@ -1056,6 +1059,7 @@ public:
     void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, static_cast<unsigned>(v)); }
 
     void setLeadingTrim(LeadingTrim value) { SET_VAR(m_rareNonInheritedData, leadingTrim, static_cast<unsigned>(value)); }
+    void setTextEdge(TextEdge);
 
 #if ENABLE(TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(Length&&);
@@ -1671,6 +1675,7 @@ public:
     static Length initialPadding() { return Length(LengthType::Fixed); }
     static Length initialTextIndent() { return Length(LengthType::Fixed); }
     static LeadingTrim initialLeadingTrim() { return LeadingTrim::Normal; }
+    static TextEdge initialTextEdge();
     static Length initialZeroLength() { return Length(LengthType::Fixed); }
     static Length initialOneLength() { return Length(1, LengthType::Fixed); }
     static unsigned short initialWidows() { return 2; }

@@ -1,6 +1,6 @@
 
-FAIL 'marker' does not supported 'none' Bad value for shorthand CSS property
-FAIL 'marker' does not supported 'url(#m1)' Bad value for shorthand CSS property
+PASS 'marker' does not supported 'none'
+PASS 'marker' does not supported 'url(#m1)'
 PASS Can set 'marker-start' to CSS-wide keywords
 FAIL Can set 'marker-start' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'marker-start' to the 'none' keyword

@@ -2,8 +2,8 @@
 PASS Can set 'margin-top' to CSS-wide keywords
 FAIL Can set 'margin-top' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'margin-top' to the 'auto' keyword
-FAIL Can set 'margin-top' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-top' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-top' to a percent
+PASS Can set 'margin-top' to a length
 PASS Setting 'margin-top' to a time throws TypeError
 PASS Setting 'margin-top' to an angle throws TypeError
 PASS Setting 'margin-top' to a flexible length throws TypeError
@@ -13,8 +13,8 @@ PASS Setting 'margin-top' to a transform throws TypeError
 PASS Can set 'margin-left' to CSS-wide keywords
 FAIL Can set 'margin-left' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'margin-left' to the 'auto' keyword
-FAIL Can set 'margin-left' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-left' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-left' to a percent
+PASS Can set 'margin-left' to a length
 PASS Setting 'margin-left' to a time throws TypeError
 PASS Setting 'margin-left' to an angle throws TypeError
 PASS Setting 'margin-left' to a flexible length throws TypeError
@@ -24,8 +24,8 @@ PASS Setting 'margin-left' to a transform throws TypeError
 PASS Can set 'margin-right' to CSS-wide keywords
 FAIL Can set 'margin-right' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'margin-right' to the 'auto' keyword
-FAIL Can set 'margin-right' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-right' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-right' to a percent
+PASS Can set 'margin-right' to a length
 PASS Setting 'margin-right' to a time throws TypeError
 PASS Setting 'margin-right' to an angle throws TypeError
 PASS Setting 'margin-right' to a flexible length throws TypeError
@@ -35,8 +35,8 @@ PASS Setting 'margin-right' to a transform throws TypeError
 PASS Can set 'margin-bottom' to CSS-wide keywords
 FAIL Can set 'margin-bottom' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'margin-bottom' to the 'auto' keyword
-FAIL Can set 'margin-bottom' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'margin-bottom' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'margin-bottom' to a percent
+PASS Can set 'margin-bottom' to a length
 PASS Setting 'margin-bottom' to a time throws TypeError
 PASS Setting 'margin-bottom' to an angle throws TypeError
 PASS Setting 'margin-bottom' to a flexible length throws TypeError

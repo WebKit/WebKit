@@ -147,11 +147,12 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperat
     Vector<Ref<CSSNumericValue>> values;
     const CSSCalcExpressionNode* currentNode = &root;
     do {
-        auto* binaryOperation = downcast<CSSCalcOperationNode>(currentNode);
-        ASSERT(binaryOperation->children().size() == 2);
-        CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(binaryOperation->children()[1].get()));
-        values.append(negateOrInvertIfRequired(binaryOperation->calcOperator(), WTFMove(value)));
-        currentNode = binaryOperation->children()[0].ptr();
+        auto* operationNode = downcast<CSSCalcOperationNode>(currentNode);
+        if (operationNode->children().size() == 2) {
+            CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(operationNode->children()[1].get()));
+            values.append(negateOrInvertIfRequired(operationNode->calcOperator(), WTFMove(value)));
+        }
+        currentNode = operationNode->children()[0].ptr();
     } while (canCombineNodes(root, *currentNode));
 
     ASSERT(currentNode);

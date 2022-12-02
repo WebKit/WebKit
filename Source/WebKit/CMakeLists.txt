@@ -551,6 +551,8 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/API/APIGeometry.serialization.in
 
+    Shared/Databases/IndexedDB/WebIDBResult.serialization.in
+
     Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
     Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
     Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.serialization.in

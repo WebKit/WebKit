@@ -38,6 +38,7 @@
 #include "CSSUnparsedValue.h"
 #include "CustomPaintCanvas.h"
 #include "GraphicsContext.h"
+#include "HashMapStylePropertyMapReadOnly.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "JSCSSPaintCallback.h"
@@ -74,61 +75,6 @@ static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element&
     return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
 }
 
-class HashMapStylePropertyMap final : public MainThreadStylePropertyMapReadOnly {
-public:
-    static Ref<HashMapStylePropertyMap> create(HashMap<AtomString, RefPtr<CSSValue>>&& map)
-    {
-        return adoptRef(*new HashMapStylePropertyMap(WTFMove(map)));
-    }
-
-    static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
-    {
-        ComputedStyleExtractor extractor(&element);
-
-        if (isCustomPropertyName(name))
-            return extractor.customPropertyValue(name);
-
-        CSSPropertyID propertyID = cssPropertyID(name);
-        if (!propertyID)
-            return nullptr;
-
-        return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
-    }
-
-private:
-    HashMapStylePropertyMap(HashMap<AtomString, RefPtr<CSSValue>>&& map)
-        : m_map(WTFMove(map))
-    {
-    }
-
-    RefPtr<CSSValue> propertyValue(CSSPropertyID propertyID) const final
-    {
-        return m_map.get(nameString(propertyID));
-    }
-
-    RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final
-    {
-        return m_map.get(property);
-    }
-
-    unsigned size() const final { return m_map.size(); }
-
-    Vector<StylePropertyMapEntry> entries(ScriptExecutionContext* context) const final
-    {
-        auto* document = context ? documentFromContext(*context) : nullptr;
-        if (!document)
-            return { };
-
-        Vector<StylePropertyMapEntry> result;
-        result.reserveInitialCapacity(m_map.size());
-        for (auto& [propertyName, cssValue] : m_map)
-            result.uncheckedAppend(makeKeyValuePair(propertyName,  Vector<RefPtr<CSSStyleValue>> { reifyValue(cssValue.get(), *document) }));
-        return result;
-    }
-
-    HashMap<AtomString, RefPtr<CSSValue>> m_map;
-};
-
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
 {
     if (!m_element || !m_element->element() || !m_paintDefinition)
@@ -158,7 +104,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     }
 
     auto size = CSSPaintSize::create(destSize.width(), destSize.height());
-    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMap::create(WTFMove(propertyValues));
+    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMapReadOnly::create(WTFMove(propertyValues));
 
     auto& vm = paintConstructor.getObject()->vm();
     JSC::JSLockHolder lock(vm);

@@ -2,8 +2,8 @@
 PASS Can set 'word-spacing' to CSS-wide keywords
 FAIL Can set 'word-spacing' to var() references assert_equals: expected 2 but got 1
 FAIL Can set 'word-spacing' to the 'normal' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'word-spacing' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
-FAIL Can set 'word-spacing' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'word-spacing' to a length
+PASS Can set 'word-spacing' to a percent
 PASS Setting 'word-spacing' to a time throws TypeError
 PASS Setting 'word-spacing' to an angle throws TypeError
 PASS Setting 'word-spacing' to a flexible length throws TypeError

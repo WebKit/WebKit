@@ -52,7 +52,7 @@ function createWritableStream(startAlgorithm, writeAlgorithm, closeAlgorithm, ab
 
     const internalStream = { };
     @initializeWritableStreamSlots(internalStream, { });
-    const controller = new @WritableStreamDefaultController();
+    const controller = new @WritableStreamDefaultController(@isWritableStream);
 
     @setUpWritableStreamDefaultController(internalStream, controller, startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
 
@@ -604,7 +604,7 @@ function setUpWritableStreamDefaultController(stream, controller, startAlgorithm
 
 function setUpWritableStreamDefaultControllerFromUnderlyingSink(stream, underlyingSink, underlyingSinkDict, highWaterMark, sizeAlgorithm)
 {
-    const controller = new @WritableStreamDefaultController();
+    const controller = new @WritableStreamDefaultController(@isWritableStream);
 
     let startAlgorithm = () => { };
     let writeAlgorithm = () => { return @Promise.@resolve(); };

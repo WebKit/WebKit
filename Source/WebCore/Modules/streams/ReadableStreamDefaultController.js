@@ -23,17 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function initializeReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark)
+function initializeReadableStreamDefaultController()
 {
     "use strict";
 
     if (arguments.length !== 5 && arguments[4] !== @isReadableStream)
         @throwTypeError("ReadableStreamDefaultController constructor should not be called directly");
 
+    const stream = arguments[0];
+    const underlyingSource = arguments[1];
+    const size = arguments[2];
+    const highWaterMark = arguments[3];
     return @privateInitializeReadableStreamDefaultController.@call(this, stream, underlyingSource, size, highWaterMark);
 }
 
-function enqueue(chunk)
+function enqueue()
 {
     "use strict";
 
@@ -43,16 +47,18 @@ function enqueue(chunk)
     if (!@readableStreamDefaultControllerCanCloseOrEnqueue(this))
         @throwTypeError("ReadableStreamDefaultController is not in a state where chunk can be enqueued");
 
+    const chunk = arguments[0];
     return @readableStreamDefaultControllerEnqueue(this, chunk);
 }
 
-function error(error)
+function error()
 {
     "use strict";
 
     if (!@isReadableStreamDefaultController(this))
         throw @makeThisTypeError("ReadableStreamDefaultController", "error");
 
+    const error = arguments[0];
     @readableStreamDefaultControllerError(this, error);
 }
 

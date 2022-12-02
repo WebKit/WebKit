@@ -3,7 +3,7 @@ PASS Can set 'baseline-shift' to CSS-wide keywords
 FAIL Can set 'baseline-shift' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'baseline-shift' to the 'sub' keyword
 PASS Can set 'baseline-shift' to the 'super' keyword
-FAIL Can set 'baseline-shift' to a percent assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'baseline-shift' to a percent
 FAIL Can set 'baseline-shift' to a length assert_equals: unit expected "px" but got "em"
 PASS Setting 'baseline-shift' to a time throws TypeError
 PASS Setting 'baseline-shift' to an angle throws TypeError

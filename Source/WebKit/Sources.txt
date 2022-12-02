@@ -300,7 +300,6 @@ Shared/API/c/WKUserContentURLPattern.cpp
 Shared/Authentication/AuthenticationManager.cpp
 
 Shared/Databases/IndexedDB/IDBUtilities.cpp
-Shared/Databases/IndexedDB/WebIDBResult.cpp
 
 Shared/Gamepad/GamepadData.cpp
 

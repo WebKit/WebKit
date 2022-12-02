@@ -59,7 +59,7 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
     const startPromiseCapability = @newPromiseCapability(@Promise);
     @initializeTransformStream(stream, startPromiseCapability.@promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
 
-    const controller = new @TransformStreamDefaultController();
+    const controller = new @TransformStreamDefaultController(@isTransformStream);
     @setUpTransformStreamDefaultController(stream, controller, transformAlgorithm, flushAlgorithm);
 
     startAlgorithm().@then(() => {
@@ -164,7 +164,7 @@ function setUpTransformStreamDefaultControllerFromTransformer(stream, transforme
 {
     "use strict";
 
-    const controller = new @TransformStreamDefaultController();
+    const controller = new @TransformStreamDefaultController(@isTransformStream);
     let transformAlgorithm = (chunk) => {
         try {
             @transformStreamDefaultControllerEnqueue(controller, chunk);

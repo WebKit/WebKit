@@ -822,11 +822,7 @@ css/DeprecatedCSSOMValueList.cpp
 css/FontFace.cpp
 css/FontFaceSet.cpp
 css/FontVariantBuilder.cpp
-css/LegacyMediaQueryEvaluator.cpp
-css/LegacyMediaQuery.cpp
-css/MediaFeatureNames.cpp
 css/MediaList.cpp
-css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
 css/MediaQueryListEvent.cpp
 css/MediaQueryMatcher.cpp
@@ -884,6 +880,7 @@ css/query/MediaQueryEvaluator.cpp
 css/query/MediaQueryFeatures.cpp
 css/query/MediaQueryParser.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
+css/typedom/InlineStylePropertyMap.cpp
 css/typedom/StylePropertyMapReadOnly.cpp
 css/typedom/CSSKeywordValue.cpp
 css/typedom/CSSStyleImageValue.cpp
@@ -895,6 +892,7 @@ css/typedom/CSSUnitValue.cpp
 css/typedom/CSSUnparsedValue.cpp
 css/typedom/CSSOMVariableReferenceValue.cpp
 css/typedom/DeclaredStylePropertyMap.cpp
+css/typedom/HashMapStylePropertyMapReadOnly.cpp
 css/typedom/MainThreadStylePropertyMapReadOnly.cpp
 css/typedom/StylePropertyMap.cpp
 css/typedom/color/CSSColor.cpp

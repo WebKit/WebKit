@@ -38,7 +38,7 @@ function initializeReadableStreamDefaultReader(stream)
     return this;
 }
 
-function cancel(reason)
+function cancel()
 {
     "use strict";
 
@@ -48,6 +48,7 @@ function cancel(reason)
     if (!@getByIdDirectPrivate(this, "ownerReadableStream"))
         return @Promise.@reject(@makeTypeError("cancel() called on a reader owned by no readable stream"));
 
+    const reason = arguments[0];
     return @readableStreamReaderGenericCancel(this, reason);
 }
 

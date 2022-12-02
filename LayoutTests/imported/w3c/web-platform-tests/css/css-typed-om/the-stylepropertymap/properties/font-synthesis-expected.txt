@@ -35,7 +35,7 @@ PASS Setting 'font-synthesis-small-caps' to a flexible length throws TypeError
 PASS Setting 'font-synthesis-small-caps' to a number throws TypeError
 PASS Setting 'font-synthesis-small-caps' to a URL throws TypeError
 PASS Setting 'font-synthesis-small-caps' to a transform throws TypeError
-FAIL 'font-synthesis' does not supported 'weight style' Bad value for shorthand CSS property
-FAIL 'font-synthesis' does not supported 'style small-caps' Bad value for shorthand CSS property
-FAIL 'font-synthesis' does not supported 'small-caps weight style' Bad value for shorthand CSS property
+PASS 'font-synthesis' does not supported 'weight style'
+PASS 'font-synthesis' does not supported 'style small-caps'
+PASS 'font-synthesis' does not supported 'small-caps weight style'
 

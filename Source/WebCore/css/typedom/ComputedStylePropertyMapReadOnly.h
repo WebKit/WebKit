@@ -25,21 +25,21 @@
 
 #pragma once
 
-#include "StylePropertyMapReadOnly.h"
+#include "MainThreadStylePropertyMapReadOnly.h"
 
 namespace WebCore {
 class Element;
 
-class ComputedStylePropertyMapReadOnly final : public StylePropertyMapReadOnly {
+class ComputedStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
     static Ref<ComputedStylePropertyMapReadOnly> create(Element&);
 
 private:
     explicit ComputedStylePropertyMapReadOnly(Element&);
 
-    ExceptionOr<RefPtr<CSSStyleValue>> get(ScriptExecutionContext&, const AtomString&) const final;
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, const AtomString&) const final;
-    ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const final;
+    RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
+    String shorthandPropertySerialization(CSSPropertyID) const final;
+    RefPtr<CSSValue> customPropertyValue(const AtomString&) const final;
     unsigned size() const final;
     Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 

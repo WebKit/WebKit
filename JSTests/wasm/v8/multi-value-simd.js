@@ -9,7 +9,7 @@
 load("wasm-module-builder.js");
 
 (function MultiReturnS128Test() {
-  print("MultiReturnS128Test");
+  // print("MultiReturnS128Test");
   // Most backends only support 2 fp return registers, so the third v128
   // onwards here will written to caller stack slot.
   let builder = new WasmModuleBuilder();

@@ -136,6 +136,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StringUtilities.h>
 #import <WebCore/TextManipulationController.h>
+#import <WebCore/TextManipulationItem.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
@@ -2181,7 +2182,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _textManipulationDelegate = delegate;
 }
 
-static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optional<WebCore::TextManipulationController::ManipulationTokenInfo>& info)
+static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optional<WebCore::TextManipulationTokenInfo>& info)
 {
     if (!info)
         return { };
@@ -2221,7 +2222,7 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
         }
     }
 
-    _page->startTextManipulations(exclusionRules, [weakSelf = WeakObjCPtr<WKWebView>(self)] (const Vector<WebCore::TextManipulationController::ManipulationItem>& itemReferences) {
+    _page->startTextManipulations(exclusionRules, [weakSelf = WeakObjCPtr<WKWebView>(self)] (const Vector<WebCore::TextManipulationItem>& itemReferences) {
         if (!weakSelf)
             return;
 
@@ -2230,7 +2231,7 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
         if (!delegate)
             return;
 
-        auto createWKItem = [] (const WebCore::TextManipulationController::ManipulationItem& item) {
+        auto createWKItem = [] (const WebCore::TextManipulationItem& item) {
             auto tokens = createNSArray(item.tokens, [] (auto& token) {
                 auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
                 [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
@@ -2253,14 +2254,14 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
     });
 }
 
-static WebCore::TextManipulationController::ItemIdentifier coreTextManipulationItemIdentifierFromString(NSString *identifier)
+static WebCore::TextManipulationItemIdentifier coreTextManipulationItemIdentifierFromString(NSString *identifier)
 {
-    return makeObjectIdentifier<WebCore::TextManipulationController::ItemIdentifierType>(identifier.longLongValue);
+    return makeObjectIdentifier<WebCore::TextManipulationItemIdentifierType>(identifier.longLongValue);
 }
 
-static WebCore::TextManipulationController::TokenIdentifier coreTextManipulationTokenIdentifierFromString(NSString *identifier)
+static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentifierFromString(NSString *identifier)
 {
-    return makeObjectIdentifier<WebCore::TextManipulationController::TokenIdentifierType>(identifier.longLongValue);
+    return makeObjectIdentifier<WebCore::TextManipulationTokenIdentifierType>(identifier.longLongValue);
 }
 
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler
@@ -2273,13 +2274,13 @@ static WebCore::TextManipulationController::TokenIdentifier coreTextManipulation
 
     auto itemID = coreTextManipulationItemIdentifierFromString(item.identifier);
 
-    Vector<WebCore::TextManipulationController::ManipulationToken> tokens;
+    Vector<WebCore::TextManipulationToken> tokens;
     for (_WKTextManipulationToken *wkToken in item.tokens)
-        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
+        tokens.append(WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
 
-    Vector<WebCore::TextManipulationController::ManipulationItem> coreItems;
+    Vector<WebCore::TextManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(1);
-    coreItems.uncheckedAppend(WebCore::TextManipulationController::ManipulationItem { itemID, WTFMove(tokens) });
+    coreItems.uncheckedAppend(WebCore::TextManipulationItem { itemID, WTFMove(tokens) });
     _page->completeTextManipulation(coreItems, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (bool allFailed, auto& failures) {
         capturedCompletionBlock(!allFailed && failures.isEmpty());
     });
@@ -2329,14 +2330,14 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         return;
     }
 
-    Vector<WebCore::TextManipulationController::ManipulationItem> coreItems;
+    Vector<WebCore::TextManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(items.count);
     for (_WKTextManipulationItem *wkItem in items) {
-        Vector<WebCore::TextManipulationController::ManipulationToken> coreTokens;
+        Vector<WebCore::TextManipulationToken> coreTokens;
         coreTokens.reserveInitialCapacity(wkItem.tokens.count);
         for (_WKTextManipulationToken *wkToken in wkItem.tokens)
-            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
-        coreItems.uncheckedAppend(WebCore::TextManipulationController::ManipulationItem { coreTextManipulationItemIdentifierFromString(wkItem.identifier), WTFMove(coreTokens) });
+            coreTokens.uncheckedAppend(WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
+        coreItems.uncheckedAppend(WebCore::TextManipulationItem { coreTextManipulationItemIdentifierFromString(wkItem.identifier), WTFMove(coreTokens) });
     }
 
     RetainPtr<NSArray<_WKTextManipulationItem *>> retainedItems = items;

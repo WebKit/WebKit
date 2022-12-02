@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+description("Checks that calling StylePropertyMap.set() with a CSSMathSum value.");
+
+target = document.getElementById("target");
+shouldNotThrow("target.attributeStyleMap.set('width', new CSSMathSum(new CSSUnitValue(1, 'percent'), new CSSUnitValue(2, 'percent')))");
+shouldBeTrue("target.style.width == 'calc(3%)' || target.style.width == 'calc(1% + 2%)'");
+</script>
+</body>
+</html>

@@ -277,6 +277,11 @@ auto FunctionParser<Context>::parse() -> Result
 
     WASM_PARSER_FAIL_IF(!m_signature.is<FunctionSignature>(), "type signature was not a function signature");
     const auto& signature = *m_signature.as<FunctionSignature>();
+    if (signature.numVectors() || signature.numReturnVectors()) {
+        m_context.notifyFunctionUsesSIMD();
+        if (!Context::tierSupportsSIMD)
+            WASM_TRY_ADD_TO_CONTEXT(addCrash());
+    }
     WASM_PARSER_FAIL_IF(!m_context.addArguments(m_signature), "can't add ", signature.argumentCount(), " arguments to Function");
     WASM_PARSER_FAIL_IF(!parseVarUInt32(localGroupsCount), "can't get local groups count");
 
@@ -294,6 +299,12 @@ auto FunctionParser<Context>::parse() -> Result
         WASM_PARSER_FAIL_IF(totalNumberOfLocals > maxFunctionLocals, "Function's number of locals is too big ", totalNumberOfLocals, " maximum ", maxFunctionLocals);
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, typeOfLocal), "can't get Function local's type in group ", i);
         WASM_PARSER_FAIL_IF(!isDefaultableType(typeOfLocal), "Function locals must have a defaultable type");
+
+        if (typeOfLocal.isV128()) {
+            m_context.notifyFunctionUsesSIMD();
+            if (!Context::tierSupportsSIMD)
+                WASM_TRY_ADD_TO_CONTEXT(addCrash());
+        }
 
         WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(totalNumberOfLocals), "can't allocate enough memory for function's ", totalNumberOfLocals, " locals");
         for (uint32_t i = 0; i < numberOfLocals; ++i)
@@ -589,6 +600,10 @@ template<typename Context>
 template<bool isReachable, typename>
 auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSignMode signMode, B3::Air::Arg optionalRelation) -> PartialResult
 {
+    if (!Context::tierSupportsSIMD)
+        WASM_TRY_ADD_TO_CONTEXT(addCrash());
+    m_context.notifyFunctionUsesSIMD();
+
     auto pushUnreachable = [&](auto type) -> PartialResult {
         // Appease generators without SIMD support.
         m_expressionStack.constructAndAppend(type, m_context.addConstant(Types::F64, 0));
@@ -1950,6 +1965,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         Type resultType = m_info.globals[index].type;
         ASSERT(isValueType(resultType));
 
+        if (resultType.isV128()) {
+            m_context.notifyFunctionUsesSIMD();
+            if (!Context::tierSupportsSIMD)
+                WASM_TRY_ADD_TO_CONTEXT(addCrash());
+        }
+
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(getGlobal(index, result));
         m_expressionStack.constructAndAppend(resultType, result);
@@ -1967,7 +1988,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         Type globalType = m_info.globals[index].type;
         ASSERT(isValueType(globalType));
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), globalType), "set_global ", index, " with type ", globalType, " with a variable of type ", value.type());
+
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), globalType), "set_global ", index, " with type ", globalType.kind, " with a variable of type ", value.type().kind);
+
+        if (globalType.isV128()) {
+            m_context.notifyFunctionUsesSIMD();
+            if (!Context::tierSupportsSIMD)
+                WASM_TRY_ADD_TO_CONTEXT(addCrash());
+        }
 
         WASM_TRY_ADD_TO_CONTEXT(setGlobal(index, value));
         return { };
@@ -2417,6 +2445,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 #if ENABLE(B3_JIT)
     case ExtSIMD: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "wasm-simd is not enabled");
+        m_context.notifyFunctionUsesSIMD();
         uint8_t simdOp;
         WASM_PARSER_FAIL_IF(!parseUInt8(simdOp), "can't parse wasm extended opcode");
 
@@ -2845,6 +2874,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 #if ENABLE(B3_JIT)
     case ExtSIMD: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "wasm-simd is not enabled");
+        m_context.notifyFunctionUsesSIMD();
         uint8_t simdOp;
         WASM_PARSER_FAIL_IF(!parseUInt8(simdOp), "can't parse wasm extended opcode");
 

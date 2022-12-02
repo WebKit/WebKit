@@ -123,7 +123,7 @@ bool isArrayBufferViewOutOfBounds(JSArrayBufferView* view, Getter& getter)
     if (LIKELY(!view->isResizableOrGrowableShared()))
         return false;
 
-    ASSERT(isWastefulTypedArray(view->mode()) && isResizableOrGrowableShared(view->mode()));
+    ASSERT(hasArrayBuffer(view->mode()) && isResizableOrGrowableShared(view->mode()));
     RefPtr<ArrayBuffer> buffer = view->possiblySharedBuffer();
     if (!buffer)
         return true;
@@ -156,7 +156,7 @@ std::optional<size_t> integerIndexedObjectLength(JSArrayBufferView* typedArray, 
     if (LIKELY(!typedArray->isAutoLength()))
         return typedArray->lengthRaw();
 
-    ASSERT(isWastefulTypedArray(typedArray->mode()) && isResizableOrGrowableShared(typedArray->mode()));
+    ASSERT(hasArrayBuffer(typedArray->mode()) && isResizableOrGrowableShared(typedArray->mode()));
     RefPtr<ArrayBuffer> buffer = typedArray->possiblySharedBuffer();
     if (!buffer)
         return std::nullopt;

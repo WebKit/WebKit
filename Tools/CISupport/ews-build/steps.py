@@ -178,7 +178,7 @@ class GitHubMixin(object):
             )
             if response.status_code // 100 != 2:
                 self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-                return None
+                return False if response.status_code // 100 == 4 else None
         except Exception as e:
             # Catching all exceptions here to safeguard access token.
             self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
@@ -193,7 +193,7 @@ class GitHubMixin(object):
         pr_url = '{}/pulls/{}'.format(api_url, pr_number)
         content = self.fetch_data_from_url_with_authentication_github(pr_url)
         if not content:
-            return None
+            return content
 
         for attempt in range(retry + 1):
             try:
@@ -248,6 +248,9 @@ class GitHubMixin(object):
         return sorted([reviewer for reviewer, _id in last_approved.items() if _id > last_rejected.get(reviewer, 0)])
 
     def _is_pr_closed(self, pr_json):
+        # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
+        if pr_json is False:
+            return 1
         if not pr_json or not pr_json.get('state'):
             self._addToLog('stdio', 'Cannot determine pull request status.\n')
             return -1
@@ -256,6 +259,9 @@ class GitHubMixin(object):
         return 0
 
     def _is_hash_outdated(self, pr_json):
+        # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
+        if pr_json is False:
+            return 1
         pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
         if not pr_sha:
             self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')
@@ -3394,13 +3400,14 @@ class ReRunWebKitTests(RunWebKitTests):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
-        first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit')
+        first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit', False)
         first_results_failing_tests = set(self.getProperty('first_run_failures', []))
-        second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit')
+        second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit', False)
         second_results_failing_tests = set(self.getProperty('second_run_failures', []))
         # FIXME: here it can be a good idea to also use the info from second_run_flakies and first_run_flakies
         tests_that_consistently_failed = first_results_failing_tests.intersection(second_results_failing_tests)
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
+        num_flaky_failures = len(flaky_failures)
         flaky_failures = sorted(list(flaky_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
 
@@ -3423,6 +3430,19 @@ class ReRunWebKitTests(RunWebKitTests):
                     self.send_email_for_flaky_failure(flaky_failure)
             self.setProperty('build_summary', message)
         else:
+            if (second_results_failing_tests and len(tests_that_consistently_failed) == 0 and num_flaky_failures <= 10
+                    and not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit):
+                # This means that test failures in first and second run were different and limited.
+                pluralSuffix = 's' if len(flaky_failures) > 1 else ''
+                message = 'Found flaky test{} in re-run: {}'.format(pluralSuffix, flaky_failures_string)
+                for flaky_failure in flaky_failures:
+                    self.send_email_for_flaky_failure(flaky_failure)
+                self.descriptionDone = message
+                self.build.results = SUCCESS
+                self.finished(WARNINGS)
+                self.build.buildFinished([message], SUCCESS)
+                return rc
+
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
@@ -3520,11 +3540,11 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
     descriptionDone = ['analyze-layout-tests-results']
     NUM_FAILURES_TO_DISPLAY = 10
 
-    def report_failure(self, new_failures, exceed_failure_limit=False):
+    def report_failure(self, new_failures=None, exceed_failure_limit=False, failure_message=''):
         self.finished(FAILURE)
         self.build.results = FAILURE
         if not new_failures:
-            message = 'Found unexpected failure with change'
+            message = 'Found unexpected failure with change' if not failure_message else failure_message
         else:
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             if exceed_failure_limit:
@@ -3703,6 +3723,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         clean_tree_results_did_exceed_test_failure_limit = self.getProperty('clean_tree_results_exceed_failure_limit')
         clean_tree_results_failing_tests = set(self.getProperty('clean_tree_run_failures', []))
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
+        num_flaky_failures = len(flaky_failures)
+        flaky_failures_string = ', '.join(sorted(flaky_failures))
 
         if (not first_results_failing_tests) and (not second_results_failing_tests):
             # If we've made it here, then layout-tests and re-run-layout-tests failed, which means
@@ -3752,6 +3774,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 failures_introduced_by_patch = tests_that_consistently_failed - clean_tree_results_failing_tests
                 if failures_introduced_by_patch:
                     return self.report_failure(failures_introduced_by_patch)
+            elif num_flaky_failures > 10:
+                return self.report_failure(failure_message=f'Too many flaky failures: {flaky_failures_string}')
 
             # At this point we know that at least one test flaked, but no consistent failures
             # were introduced. This is a bit of a grey-zone. It's possible that the patch introduced some flakiness.

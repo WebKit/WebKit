@@ -682,14 +682,14 @@ void Options::recomputeDependentOptions()
     
     // FIXME: This should be removed when we add LLint/OMG support for WASM SIMD
     if (Options::useWebAssemblySIMD()) {
-        Options::useWasmLLInt() = false;
         Options::useBBQJIT() = true;
         Options::useOMGJIT() = false;
-        Options::wasmBBQUsesAir() = true;
         Options::webAssemblyBBQAirModeThreshold() = 0;
         Options::webAssemblyBBQAirOptimizationLevel() = 0;
         Options::defaultB3OptLevel() = 0;
-        Options::airRandomizeRegs() = 0;
+        Options::wasmBBQUsesAir() = true;
+        Options::useWasmLLInt() = true;
+        Options::wasmLLIntTiersUpToBBQ() = true;
     }
 
 #if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)

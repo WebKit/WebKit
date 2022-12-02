@@ -31,7 +31,6 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerQueryFeatures.h"
 #include "Document.h"
-#include "MediaFeatureNames.h"
 #include "MediaList.h"
 #include "NodeRenderStyle.h"
 #include "RenderView.h"

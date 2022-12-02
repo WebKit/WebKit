@@ -1,8 +1,5 @@
 /*
- * CSS Media Query
- *
- * Copyright (C) 2006 Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
@@ -28,39 +25,27 @@
 
 #pragma once
 
-#include "MediaQueryExpression.h"
-#include <wtf/Vector.h>
+#include "MainThreadStylePropertyMapReadOnly.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
-class LegacyMediaQuery {
-    WTF_MAKE_FAST_ALLOCATED;
+class HashMapStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
-    enum Restrictor { Only, Not, None };
+    static Ref<HashMapStylePropertyMapReadOnly> create(HashMap<AtomString, RefPtr<CSSValue>>&&);
+    ~HashMapStylePropertyMapReadOnly();
 
-    LegacyMediaQuery(Restrictor, const String& mediaType, Vector<MediaQueryExpression>&&);
-
-    Restrictor restrictor() const { return m_restrictor; }
-    const Vector<MediaQueryExpression>& expressions() const { return m_expressions; }
-    const String& mediaType() const { return m_mediaType; }
-    bool ignored() const { return m_ignored; }
-
-    const String& cssText() const;
-
-    bool operator==(const LegacyMediaQuery& other) const;
-
-    void shrinkToFit() { m_expressions.shrinkToFit(); }
+    RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
+    String shorthandPropertySerialization(CSSPropertyID) const final;
+    RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final;
+    unsigned size() const final;
+    Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 
 private:
-    String serialize() const;
+    HashMapStylePropertyMapReadOnly(HashMap<AtomString, RefPtr<CSSValue>>&&);
 
-    String m_mediaType;
-    mutable String m_serializationCache;
-    Vector<MediaQueryExpression> m_expressions;
-    Restrictor m_restrictor;
-    bool m_ignored { false };
+    HashMap<AtomString, RefPtr<CSSValue>> m_map;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const LegacyMediaQuery&);
-
-} // namespace
+} // namespace WebCore

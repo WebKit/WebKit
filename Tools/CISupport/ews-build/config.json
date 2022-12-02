@@ -182,14 +182,14 @@
       "factory": "macOSWK1Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews100", "ews101", "ews103"]
+      "workernames": ["ews100", "ews101", "ews103", "ews112", "ews117", "ews129"]
     },
     {
       "name": "macOS-BigSur-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
       "factory": "macOSWK2Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115"]
+      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews153"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
@@ -197,20 +197,6 @@
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-release-build-ews"],
       "workernames": ["ews181", "ews182"]
-    },
-    {
-      "name": "macOS-BigSur-Debug-Build-EWS", "shortname": "mac-debug", "icon": "buildOnly",
-      "factory": "macOSBuildFactory", "platform": "mac-bigsur",
-      "configuration": "debug", "architectures": ["x86_64"],
-      "triggers": ["macos-bigsur-debug-wk1-tests-ews"],
-      "workernames": ["ews117", "ews129", "ews153", "ews169", "ews105"]
-    },
-    {
-      "name": "macOS-BigSur-Debug-WK1-Tests-EWS", "shortname": "mac-debug-wk1", "icon": "testOnly",
-      "factory": "macOSWK1Factory", "platform": "mac-bigsur",
-      "configuration": "debug", "architectures": ["x86_64"],
-      "triggered_by": ["macos-bigsur-debug-build-ews"],
-      "workernames": ["ews112"]
     },
     {
       "name": "watchOS-9-Build-EWS", "shortname": "watch", "icon": "buildOnly",
@@ -320,7 +306,7 @@
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews116", "ews150", "ews155"]
+      "workernames": ["ews105", "ews116", "ews150", "ews155", "ews169"]
     },
     {
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
@@ -359,7 +345,7 @@
       "builderNames": [
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
-            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
@@ -373,7 +359,7 @@
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
-            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
@@ -385,14 +371,6 @@
     {
       "type": "AnyBranchScheduler", "name": "unsafe_merge_queue",
       "builderNames": ["Unsafe-Merge-Queue"]
-    },
-    {
-      "type": "Triggerable", "name": "macos-bigsur-debug-build-ews",
-      "builderNames": ["macOS-BigSur-Debug-Build-EWS"]
-    },
-    {
-      "type": "Triggerable", "name": "macos-bigsur-debug-wk1-tests-ews",
-      "builderNames": ["macOS-BigSur-Debug-WK1-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "macos-bigsur-release-build-ews",

@@ -55,10 +55,8 @@ public:
     const WebCore::IDBResultData& resultData() const { return m_resultData; }
     const Vector<SandboxExtension::Handle>& handles() const { return m_handles; }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebIDBResult&);
-
 private:
+    friend struct IPC::ArgumentCoder<WebIDBResult, void>;
     WebCore::IDBResultData m_resultData;
     Vector<SandboxExtension::Handle> m_handles;
 };

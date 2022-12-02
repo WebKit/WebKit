@@ -2750,6 +2750,14 @@ op(wasm_function_prologue_no_tls, macro ()
     crash()
 end)
 
+op(wasm_function_prologue_simd, macro ()
+    crash()
+end)
+
+op(wasm_function_prologue_no_tls_simd, macro ()
+    crash()
+end)
+
 _wasm_trampoline_wasm_call:
 _wasm_trampoline_wasm_call_no_tls:
 _wasm_trampoline_wasm_call_indirect:

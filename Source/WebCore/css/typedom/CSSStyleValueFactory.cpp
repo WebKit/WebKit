@@ -57,35 +57,15 @@
 
 namespace WebCore {
 
-ExceptionOr<RefPtr<CSSStyleValue>> CSSStyleValueFactory::constructStyleValueForShorthandProperty(CSSPropertyID propertyID, const Function<RefPtr<CSSValue>(CSSPropertyID)>& propertyValue, Document* document)
+RefPtr<CSSStyleValue> CSSStyleValueFactory::constructStyleValueForShorthandSerialization(const String& serialization)
 {
-    auto shorthand = shorthandForProperty(propertyID);
-    Vector<Ref<CSSValue>> values;
-    for (auto& longhand : shorthand) {
-        RefPtr value = propertyValue(longhand);
-        if (!value)
-            return nullptr;
-        if (value->isImplicitInitialValue())
-            continue;
-        values.append(value.releaseNonNull());
-        // VariableReference set from the shorthand, value will be the same for all longhands.
-        if (is<CSSPendingSubstitutionValue>(values.last().get()))
-            break;
-    }
-    if (values.isEmpty())
+    if (serialization.isNull())
         return nullptr;
 
-    if (values.size() == 1) {
-        auto reifiedValue = reifyValue(values[0].copyRef(), document);
-        if (reifiedValue.hasException())
-            return reifiedValue.releaseException();
-        return { reifiedValue.releaseReturnValue() };
-    }
-
-    auto valueList = CSSValueList::createSpaceSeparated();
-    for (auto& value : values)
-        valueList->append(WTFMove(value));
-    return { CSSStyleValue::create(WTFMove(valueList)) };
+    CSSTokenizer tokenizer(serialization);
+    if (serialization.contains("var("_s))
+        return CSSUnparsedValue::create(tokenizer.tokenRange());
+    return CSSStyleValue::create(CSSVariableReferenceValue::create(tokenizer.tokenRange(), strictCSSParserContext()));
 }
 
 ExceptionOr<RefPtr<CSSValue>> CSSStyleValueFactory::extractCSSValue(const CSSPropertyID& propertyID, const String& cssText)
@@ -111,9 +91,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> CSSStyleValueFactory::extractShorthandCSSValu
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { TypeError, makeString(cssText, " cannot be parsed.")};
 
-    return constructStyleValueForShorthandProperty(propertyID, [&](auto longhandPropertyID) {
-        return styleDeclaration->getPropertyCSSValue(longhandPropertyID);
-    });
+    return constructStyleValueForShorthandSerialization(styleDeclaration->getPropertyValue(propertyID));
 }
 
 ExceptionOr<Ref<CSSUnparsedValue>> CSSStyleValueFactory::extractCustomCSSValues(const String& cssText)

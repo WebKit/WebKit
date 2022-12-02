@@ -1,7 +1,7 @@
 
 PASS Can set 'transition-delay' to CSS-wide keywords
 FAIL Can set 'transition-delay' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'transition-delay' to a time assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'transition-delay' to a time
 PASS Setting 'transition-delay' to a length throws TypeError
 PASS Setting 'transition-delay' to a percent throws TypeError
 PASS Setting 'transition-delay' to an angle throws TypeError

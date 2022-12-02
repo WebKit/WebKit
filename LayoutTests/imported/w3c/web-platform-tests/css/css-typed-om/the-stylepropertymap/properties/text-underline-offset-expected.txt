@@ -2,7 +2,7 @@
 PASS Can set 'text-underline-offset' to CSS-wide keywords
 FAIL Can set 'text-underline-offset' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'text-underline-offset' to the 'auto' keyword
-FAIL Can set 'text-underline-offset' to a length assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSUnitValue]"
+PASS Can set 'text-underline-offset' to a length
 FAIL Can set 'text-underline-offset' to a percent Invalid values
 PASS Setting 'text-underline-offset' to a time throws TypeError
 PASS Setting 'text-underline-offset' to an angle throws TypeError

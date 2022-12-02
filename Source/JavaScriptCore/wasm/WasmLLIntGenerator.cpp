@@ -256,6 +256,7 @@ public:
     }
 
     void didPopValueFromStack() { --m_stackSize; }
+    void notifyFunctionUsesSIMD() { ASSERT(Options::useWebAssemblySIMD()); m_usesSIMD = true; }
 
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -355,6 +356,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
+    PartialResult WARN_UNUSED_RETURN addCrash();
 
     void didFinishParsingLocals();
 
@@ -545,6 +547,7 @@ private:
     Checked<unsigned> m_maxStackSize { 0 };
     Checked<unsigned> m_tryDepth { 0 };
     bool m_usesExceptions { false };
+    bool m_usesSIMD { false };
 };
 
 Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
@@ -1381,6 +1384,9 @@ auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionS
 auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressionStack) -> PartialResult
 {
     RELEASE_ASSERT(expressionStack.size() == signature->as<FunctionSignature>()->returnCount());
+    if (m_usesSIMD)
+        m_info.addSIMDFunction(m_functionIndex);
+    m_info.doneSeeingFunction(m_functionIndex);
 
     if (!signature->as<FunctionSignature>()->returnCount()) {
         WasmRetVoid::emit(this);
@@ -1521,6 +1527,13 @@ auto LLIntGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex
 auto LLIntGenerator::addUnreachable() -> PartialResult
 {
     WasmUnreachable::emit(this);
+
+    return { };
+}
+
+auto LLIntGenerator::addCrash() -> PartialResult
+{
+    WasmCrash::emit(this);
 
     return { };
 }
