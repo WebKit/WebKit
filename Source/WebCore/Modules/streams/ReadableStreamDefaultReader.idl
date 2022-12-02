@@ -30,13 +30,14 @@
 [
     Exposed=*,
     JSBuiltin,
-    PrivateIdentifier
+    PrivateIdentifier,
+    PublicIdentifier
 ] interface ReadableStreamDefaultReader {
     constructor(ReadableStream stream);
 
-    [NotEnumerable] Promise<any> read();
-    [NotEnumerable] Promise<any> cancel(optional any reason);
-    [NotEnumerable] undefined releaseLock();
+    Promise<any> read();
+    undefined releaseLock();
 
-    [NotEnumerable] readonly attribute Promise<boolean> closed;
+    readonly attribute Promise<boolean> closed;
+    Promise<any> cancel(optional any reason);
 };

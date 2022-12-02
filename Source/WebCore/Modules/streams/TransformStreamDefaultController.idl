@@ -30,6 +30,8 @@
     PrivateIdentifier,
     PublicIdentifier
 ] interface TransformStreamDefaultController {
+    constructor();
+
     readonly attribute unrestricted double? desiredSize;
 
     undefined enqueue(optional any chunk);
