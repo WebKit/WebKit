@@ -145,8 +145,6 @@ constexpr bool messageIsSync(MessageName name)
     return name >= MessageName::TestWithLegacyReceiver_GetPluginProcessConnection;
 }
 
-bool messageAllowedWhenWaitingForSyncReply(MessageName);
-bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName);
 } // namespace IPC
 
 namespace WTF {

@@ -24,12 +24,12 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 messages -> RemoteVideoFrameObjectHeap NotRefCounted {
 #if PLATFORM(COCOA)
-    GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read, bool canSendIOSurface) AllowedWhenWaitingForSyncReply
+    GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read, bool canSendIOSurface)
     PixelBuffer(WebKit::RemoteVideoFrameReadReference read) -> (RetainPtr<CVPixelBufferRef> result) Synchronous
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
     SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle)
     ConvertFrameBuffer(struct WebKit::SharedVideoFrame frame) -> (WebCore::DestinationColorSpace space) Synchronous
 #endif
-    ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference write) AllowedWhenWaitingForSyncReply
+    ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference write)
 }
 #endif

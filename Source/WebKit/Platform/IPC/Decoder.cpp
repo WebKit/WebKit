@@ -148,9 +148,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    std::unique_ptr<Decoder> wrappedDecoder = Decoder::create(wrappedMessage.data(), wrappedMessage.size(), WTFMove(attachments));
-    wrappedDecoder->setIsAllowedWhenWaitingForSyncReplyOverride(true);
-    return wrappedDecoder;
+    return Decoder::create(wrappedMessage.data(), wrappedMessage.size(), WTFMove(attachments));
 }
 
 const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t alignment)
