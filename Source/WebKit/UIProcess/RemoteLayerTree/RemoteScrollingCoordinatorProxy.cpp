@@ -106,7 +106,10 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
     if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
-    auto result = m_scrollingTree->handleWheelEvent(wheelEvent);
+    m_scrollingTree->willProcessWheelEvent();
+
+    auto filteredEvent = filteredWheelEvent(wheelEvent);
+    auto result = m_scrollingTree->handleWheelEvent(filteredEvent);
     didReceiveWheelEvent(result.wasHandled);
     return result.wasHandled;
 }

@@ -38,13 +38,28 @@
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
+#import <WebCore/WheelEventDeltaFilter.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
+    , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
 {
+}
+
+PlatformWheelEvent RemoteScrollingCoordinatorProxyMac::filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent)
+{
+    m_recentWheelEventDeltaFilter->updateFromEvent(wheelEvent);
+
+    auto filteredEvent = wheelEvent;
+    if (WheelEventDeltaFilter::shouldApplyFilteringForEvent(wheelEvent))
+        filteredEvent = m_recentWheelEventDeltaFilter->eventCopyWithFilteredDeltas(wheelEvent);
+    else if (WheelEventDeltaFilter::shouldIncludeVelocityForEvent(wheelEvent))
+        filteredEvent = m_recentWheelEventDeltaFilter->eventCopyWithVelocity(wheelEvent);
+
+    return filteredEvent;
 }
 
 void RemoteScrollingCoordinatorProxyMac::didReceiveWheelEvent(bool /* wasHandled */)
