@@ -10,8 +10,10 @@ features: [Temporal]
 
 const instance = new Temporal.PlainTime(12, 34, 56, 987, 654, 321);
 const expected = [
+  // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
+  // ToTemporalTimeRecord
   "get fields.hour",
   "get fields.hour.valueOf",
   "call fields.hour.valueOf",
@@ -30,8 +32,13 @@ const expected = [
   "get fields.second",
   "get fields.second.valueOf",
   "call fields.second.valueOf",
+  // ToTemporalOverflow
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 const actual = [];
+
 const fields = TemporalHelpers.propertyBagObserver(actual, {
   hour: 1.7,
   minute: 1.7,
@@ -40,7 +47,10 @@ const fields = TemporalHelpers.propertyBagObserver(actual, {
   microsecond: 1.7,
   nanosecond: 1.7,
 }, "fields");
-const result = instance.with(fields);
-TemporalHelpers.assertPlainTime(result, 1, 1, 1, 1, 1, 1);
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
+
+const options = TemporalHelpers.propertyBagObserver(actual, {
+  overflow: "constrain",
+}, "options");
+
+const result = instance.with(fields, options);
 assert.compareArray(actual, expected, "order of operations");

@@ -18,6 +18,7 @@ const rangeErrorTests = [
   ["", "empty string"],
   [1, "number that doesn't convert to a valid ISO string"],
   [1n, "bigint"],
+  [new Temporal.TimeZone("UTC"), "time zone instance"],
 ];
 
 for (const [calendar, description] of rangeErrorTests) {

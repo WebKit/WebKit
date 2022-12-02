@@ -13,7 +13,7 @@ class CustomCalendar extends Temporal.Calendar {
     super("iso8601");
   }
   dateFromFields(fields) {
-    assert.compareArray(Object.keys(fields), ["b", "a"]);
+    assert.compareArray(Object.keys(fields), ["a", "b"]);
     return new Temporal.PlainDate(2020, 7, 4);
   }
   fields(fields) {
@@ -30,6 +30,6 @@ const plainDate = Temporal.PlainDate.from(item);
 TemporalHelpers.assertPlainDate(plainDate, 2020, 7, "M07", 4);
 assert.compareArray(actual, [
   "get item.calendar",
-  "get item.b",
   "get item.a",
+  "get item.b",
 ]);

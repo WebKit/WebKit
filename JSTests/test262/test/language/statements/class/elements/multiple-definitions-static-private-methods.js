@@ -47,7 +47,10 @@ class C {
 var c = new C();
 
 assert.sameValue(c.m(), 42);
-assert.sameValue(Object.hasOwnProperty.call(c, "m"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(c, "m"),
+  "m doesn't appear as an own property on the C instance"
+);
 assert.sameValue(c.m, C.prototype.m);
 
 verifyProperty(C.prototype, "m", {
@@ -57,7 +60,10 @@ verifyProperty(C.prototype, "m", {
 });
 
 assert.sameValue(c.m2(), 39);
-assert.sameValue(Object.hasOwnProperty.call(c, "m2"), false);
+assert(!
+  Object.prototype.hasOwnProperty.call(c, "m2"),
+  "m2 doesn't appear as an own property on the C instance"
+);
 assert.sameValue(c.m2, C.prototype.m2);
 
 verifyProperty(C.prototype, "m2", {
@@ -67,8 +73,14 @@ verifyProperty(C.prototype, "m2", {
 });
 
 assert.sameValue(c.foo, "foobar");
-assert.sameValue(Object.hasOwnProperty.call(C, "foo"), false);
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "foo"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, "foo"),
+  "foo doesn't appear as an own property on the C constructor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, "foo"),
+  "foo doesn't appear as an own property on the C prototype"
+);
 
 verifyProperty(c, "foo", {
   value: "foobar",
@@ -78,8 +90,14 @@ verifyProperty(c, "foo", {
 });
 
 assert.sameValue(c.bar, "barbaz");
-assert.sameValue(Object.hasOwnProperty.call(C, "bar"), false);
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "bar"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(C, "bar"),
+  "bar doesn't appear as an own property on the C constructor"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(C.prototype, "bar"),
+  "bar doesn't appear as an own property on the C prototype"
+);
 
 verifyProperty(c, "bar", {
   value: "barbaz",
@@ -89,18 +107,18 @@ verifyProperty(c, "bar", {
 });
 
 // Test the private methods do not appear as properties before set to value
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "#x"), false, "test 1");
-assert.sameValue(Object.hasOwnProperty.call(C, "#x"), false, "test 2");
-assert.sameValue(Object.hasOwnProperty.call(c, "#x"), false, "test 3");
+assert(!Object.prototype.hasOwnProperty.call(C.prototype, "#x"), "test 1");
+assert(!Object.prototype.hasOwnProperty.call(C, "#x"), "test 2");
+assert(!Object.prototype.hasOwnProperty.call(c, "#x"), "test 3");
 
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "#y"), false, "test 4");
-assert.sameValue(Object.hasOwnProperty.call(C, "#y"), false, "test 5");
-assert.sameValue(Object.hasOwnProperty.call(c, "#y"), false, "test 6");
+assert(!Object.prototype.hasOwnProperty.call(C.prototype, "#y"), "test 4");
+assert(!Object.prototype.hasOwnProperty.call(C, "#y"), "test 5");
+assert(!Object.prototype.hasOwnProperty.call(c, "#y"), "test 6");
 
 // Test if private fields can be sucessfully accessed and set to value
 assert.sameValue(C.x(), 42, "test 7");
 assert.sameValue(C.y(), 86, "test 8");
 
 // Test the private fields do not appear as properties before after set to value
-assert.sameValue(Object.hasOwnProperty.call(C, "#x"), false, "test 9");
-assert.sameValue(Object.hasOwnProperty.call(C, "#y"), false, "test 10");
+assert(!Object.prototype.hasOwnProperty.call(C, "#x"), "test 9");
+assert(!Object.prototype.hasOwnProperty.call(C, "#y"), "test 10");

@@ -38,19 +38,23 @@ const expected = [
   "get other.nanosecond",
   "get other.nanosecond.valueOf",
   "call other.nanosecond.valueOf",
+  "get other.offset",
+  "get other.offset.toString",
+  "call other.offset.toString",
   "get other.second",
   "get other.second.valueOf",
   "call other.second.valueOf",
+  "get other.timeZone",
   "get other.year",
   "get other.year.valueOf",
   "call other.year.valueOf",
-  "get other.timeZone",
-  "get other.offset",
   "has other.timeZone.timeZone",
   "get other.calendar.dateFromFields",
   "call other.calendar.dateFromFields",
   "get other.timeZone.getPossibleInstantsFor",
   "call other.timeZone.getPossibleInstantsFor",
+  "get other.timeZone.getOffsetNanosecondsFor",
+  "call other.timeZone.getOffsetNanosecondsFor",
   // CalendarEquals
   "get this.calendar[Symbol.toPrimitive]",
   "get this.calendar.toString",
@@ -59,18 +63,18 @@ const expected = [
   "get other.calendar.toString",
   "call other.calendar.toString",
   // GetDifferenceSettings
-  "get options.smallestUnit",
-  "get options.smallestUnit.toString",
-  "call options.smallestUnit.toString",
   "get options.largestUnit",
   "get options.largestUnit.toString",
   "call options.largestUnit.toString",
-  "get options.roundingMode",
-  "get options.roundingMode.toString",
-  "call options.roundingMode.toString",
   "get options.roundingIncrement",
   "get options.roundingIncrement.valueOf",
   "call options.roundingIncrement.valueOf",
+  "get options.roundingMode",
+  "get options.roundingMode.toString",
+  "call options.roundingMode.toString",
+  "get options.smallestUnit",
+  "get options.smallestUnit.toString",
+  "call options.smallestUnit.toString",
 ];
 const actual = [];
 
@@ -89,6 +93,7 @@ const otherDateTimePropertyBag = TemporalHelpers.propertyBagObserver(actual, {
   millisecond: 250,
   microsecond: 500,
   nanosecond: 750,
+  offset: "+00:00",
   calendar: TemporalHelpers.calendarObserver(actual, "other.calendar"),
   timeZone: TemporalHelpers.timeZoneObserver(actual, "other.timeZone"),
 }, "other");
@@ -106,12 +111,12 @@ function createOptionsObserver({ smallestUnit = "nanoseconds", largestUnit = "au
 }
 
 // clear any observable things that happened while constructing the objects
-actual.splice(0, actual.length);
+actual.splice(0);
 
 // basic order of observable operations, without rounding:
 instance.since(otherDateTimePropertyBag, createOptionsObserver());
 assert.compareArray(actual, expected, "order of operations");
-actual.splice(0, actual.length); // clear
+actual.splice(0); // clear
 
 // Making largestUnit a calendar unit adds the following observable operations:
 const expectedOpsForCalendarDifference = [
@@ -211,7 +216,7 @@ const expectedOpsForYearRounding = expected.concat(expectedOpsForCalendarDiffere
 ]);
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ smallestUnit: "years" }));
 assert.compareArray(actual, expectedOpsForYearRounding, "order of operations with smallestUnit = years");
-actual.splice(0, actual.length); // clear
+actual.splice(0); // clear
 
 // code path through RoundDuration that rounds to the nearest month:
 const expectedOpsForMonthRounding = expected.concat(expectedOpsForCalendarDifference, [
@@ -222,7 +227,7 @@ const expectedOpsForMonthRounding = expected.concat(expectedOpsForCalendarDiffer
 ]);  // (10.n.iii MoveRelativeDate not called because weeks == 0)
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ smallestUnit: "months" }));
 assert.compareArray(actual, expectedOpsForMonthRounding, "order of operations with smallestUnit = months");
-actual.splice(0, actual.length); // clear
+actual.splice(0); // clear
 
 // code path through RoundDuration that rounds to the nearest week:
 const expectedOpsForWeekRounding = expected.concat(expectedOpsForCalendarDifference, [
@@ -231,4 +236,3 @@ const expectedOpsForWeekRounding = expected.concat(expectedOpsForCalendarDiffere
 ]);  // (11.g.iii MoveRelativeDate not called because days already balanced)
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ smallestUnit: "weeks" }));
 assert.compareArray(actual.slice(expected.length), expectedOpsForWeekRounding.slice(expected.length), "order of operations with smallestUnit = weeks");
-actual.slice(0, actual.length); // clear

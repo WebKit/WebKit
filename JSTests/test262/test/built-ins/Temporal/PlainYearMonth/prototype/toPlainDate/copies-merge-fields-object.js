@@ -13,15 +13,15 @@ features: [Temporal]
 ---*/
 
 const expected = [
+  "get day",
+  "get day.valueOf",
+  "call day.valueOf",
   "get monthCode",
   "get monthCode.toString",
   "call monthCode.toString",
   "get year",
   "get year.valueOf",
   "call year.valueOf",
-  "get day",  // first receiver fields, then input fields
-  "get day.valueOf",
-  "call day.valueOf",
 ];
 
 const calendar = TemporalHelpers.calendarMergeFieldsGetters();

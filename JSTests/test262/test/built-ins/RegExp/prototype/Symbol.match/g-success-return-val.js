@@ -25,17 +25,15 @@ var result = /.(.)./g[Symbol.match]('abcdefghi');
 
 assert(Array.isArray(result));
 
-assert.sameValue(
-  Object.hasOwnProperty.call(result, 'index'),
-  false,
+assert(
+  !Object.prototype.hasOwnProperty.call(result, 'index'),
   'Does not define an `index` "own" property'
 );
 assert.sameValue(
   result.index, undefined, 'Does not define an `index` property'
 );
-assert.sameValue(
-  Object.hasOwnProperty.call(result, 'input'),
-  false,
+assert(
+  !Object.prototype.hasOwnProperty.call(result, 'input'),
   'Does not define an `input` "own" property'
 );
 assert.sameValue(

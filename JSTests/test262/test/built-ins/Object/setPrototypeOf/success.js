@@ -24,5 +24,8 @@ var result;
 result = Object.setPrototypeOf(obj, newProto);
 
 assert.sameValue(result, obj, 'Return value');
-assert.sameValue(Object.hasOwnProperty.call(obj, 'test262prop'), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(obj, 'test262prop'),
+  "'test262prop' isn't copied to an own property"
+);
 assert.sameValue(obj.test262prop, propValue);

@@ -33,18 +33,18 @@ const expected = [
   "get other.calendar.toString",
   "call other.calendar.toString",
   // GetDifferenceSettings
-  "get options.smallestUnit",
-  "get options.smallestUnit.toString",
-  "call options.smallestUnit.toString",
   "get options.largestUnit",
   "get options.largestUnit.toString",
   "call options.largestUnit.toString",
-  "get options.roundingMode",
-  "get options.roundingMode.toString",
-  "call options.roundingMode.toString",
   "get options.roundingIncrement",
   "get options.roundingIncrement.valueOf",
   "call options.roundingIncrement.valueOf",
+  "get options.roundingMode",
+  "get options.roundingMode.toString",
+  "call options.roundingMode.toString",
+  "get options.smallestUnit",
+  "get options.smallestUnit.toString",
+  "call options.smallestUnit.toString",
   // CalendarFields / PrepareTemporalFields / CalendarDateFromFields
   "get this.calendar.fields",
   "call this.calendar.fields",
@@ -101,7 +101,7 @@ function createOptionsObserver({ smallestUnit = "months", largestUnit = "auto", 
 }
 
 // clear any observable things that happened while constructing the objects
-actual.splice(0, actual.length);
+actual.splice(0);
 
 // code path through RoundDuration that rounds to the nearest year:
 const expectedOpsForYearRounding = expected.concat([
@@ -116,7 +116,7 @@ const expectedOpsForYearRounding = expected.concat([
 ]);
 instance.until(otherYearMonthPropertyBag, createOptionsObserver({ smallestUnit: "years" }));
 assert.compareArray(actual, expectedOpsForYearRounding, "order of operations with smallestUnit = years");
-actual.splice(0, actual.length); // clear
+actual.splice(0); // clear
 
 // code path through RoundDuration that rounds to the nearest month:
 const expectedOpsForMonthRounding = expected.concat([
@@ -127,4 +127,4 @@ const expectedOpsForMonthRounding = expected.concat([
 ]);  // (10.n.iii MoveRelativeDate not called because weeks == 0)
 instance.until(otherYearMonthPropertyBag, createOptionsObserver({ smallestUnit: "months", roundingIncrement: 2 }));
 assert.compareArray(actual, expectedOpsForMonthRounding, "order of operations with smallestUnit = months");
-actual.splice(0, actual.length); // clear
+actual.splice(0); // clear

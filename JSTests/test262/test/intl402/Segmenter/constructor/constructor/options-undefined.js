@@ -43,6 +43,7 @@ for (const args of optionsArguments) {
   const resolvedOptions = segmenter.resolvedOptions();
   assert.sameValue(resolvedOptions.granularity, "grapheme",
     `Calling with ${args.length} empty arguments should yield the correct value for "granularity"`);
-  assert.sameValue(Object.hasOwnProperty(resolvedOptions, "lineBreakStyle"), false,
+  assert(
+    !Object.prototype.hasOwnProperty.call(resolvedOptions, "lineBreakStyle"),
     `Calling with ${args.length} empty arguments should yield the correct value for "lineBreakStyle"`);
 }

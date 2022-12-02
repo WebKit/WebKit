@@ -26,4 +26,4 @@ for (const unscopable of ["toReversed", "toSorted", "toSpliced"]) {
     })
 };
 
-assert.sameValue(Object.hasOwnProperty.call(unscopables, "with"), false, "does not have `with`");
+assert(!Object.prototype.hasOwnProperty.call(unscopables, "with"), "does not have `with`");

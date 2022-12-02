@@ -21,5 +21,8 @@ var result;
 
 result = Object.assign(target, source);
 
-assert.sameValue(Object.hasOwnProperty.call(target, 'attr'), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(target, 'attr'),
+  "Non-enumerable property 'attr' does not get copied to target"
+);
 assert.sameValue(result, target);

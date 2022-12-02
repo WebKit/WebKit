@@ -29,7 +29,10 @@ class C {
 
 var c = new C();
 
-assert.sameValue(Object.hasOwnProperty.call(c, "m"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(c, "m"),
+  "m doesn't appear as an own property on the C instance"
+);
 assert.sameValue(c.m, C.prototype.m);
 
 verifyProperty(C.prototype, "m", {
@@ -49,8 +52,14 @@ c.m().next().then(function(v) {
         throw new Test262Error('Test262:AsyncTestFailure')
       }
     }
-    assert.sameValue(Object.hasOwnProperty.call(C.prototype, "a"), false);
-    assert.sameValue(Object.hasOwnProperty.call(C, "a"), false);
+    assert(
+      !Object.prototype.hasOwnProperty.call(C.prototype, "a"),
+      "a does not appear as an own property on C prototype"
+    );
+    assert(
+      !Object.prototype.hasOwnProperty.call(C, "a"),
+      "a does not appear as an own property on C constructor"
+    );
 
     verifyProperty(c, "a", {
       value: undefined,
@@ -59,8 +68,14 @@ c.m().next().then(function(v) {
       configurable: true
     });
 
-    assert.sameValue(Object.hasOwnProperty.call(C.prototype, "b"), false);
-    assert.sameValue(Object.hasOwnProperty.call(C, "b"), false);
+    assert(
+      !Object.prototype.hasOwnProperty.call(C.prototype, "b"),
+      "b does not appear as an own property on C prototype"
+    );
+    assert(
+      !Object.prototype.hasOwnProperty.call(C, "b"),
+      "b does not appear as an own property on C constructor"
+    );
 
     verifyProperty(c, "b", {
       value: undefined,
@@ -69,8 +84,14 @@ c.m().next().then(function(v) {
       configurable: true
     });
 
-    assert.sameValue(Object.hasOwnProperty.call(C.prototype, "c"), false);
-    assert.sameValue(Object.hasOwnProperty.call(C, "c"), false);
+    assert(
+      !Object.prototype.hasOwnProperty.call(C.prototype, "c"),
+      "c does not appear as an own property on C prototype"
+    );
+    assert(
+      !Object.prototype.hasOwnProperty.call(C, "c"),
+      "c does not appear as an own property on C constructor"
+    );
 
     verifyProperty(c, "c", {
       value: 39,
@@ -79,8 +100,14 @@ c.m().next().then(function(v) {
       configurable: true
     });
 
-    assert.sameValue(Object.hasOwnProperty.call(C.prototype, "d"), false);
-    assert.sameValue(Object.hasOwnProperty.call(C, "d"), false);
+    assert(
+      !Object.prototype.hasOwnProperty.call(C.prototype, "d"),
+      "d does not appear as an own property on C prototype"
+    );
+    assert(
+      !Object.prototype.hasOwnProperty.call(C, "d"),
+      "d does not appear as an own property on C constructor"
+    );
 
     verifyProperty(c, "d", {
       value: 42,

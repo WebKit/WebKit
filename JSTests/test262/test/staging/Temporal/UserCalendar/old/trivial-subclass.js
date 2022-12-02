@@ -11,6 +11,9 @@ class TwoBasedCalendar extends Temporal.Calendar {
   constructor() {
     super("iso8601");
   }
+  get id() {
+    return "two-based";
+  }
   toString() {
     return "two-based";
   }

@@ -25,9 +25,11 @@ assert.sameValue(obj, null);
 
 iter.next('propNameViaExpression');
 
-assert.sameValue(
-  Object.hasOwnProperty.call(obj, 'propNameViaIdentifier'), false
+assert(
+  !Object.prototype.hasOwnProperty.call(obj, 'propNameViaIdentifier'),
+  "The property name is not taken from the 'yield' variable"
 );
-assert.sameValue(
-  Object.hasOwnProperty.call(obj, 'propNameViaExpression'), true
+assert(
+  Object.prototype.hasOwnProperty.call(obj, 'propNameViaExpression'),
+  "The property name is taken from the yield expression"
 );

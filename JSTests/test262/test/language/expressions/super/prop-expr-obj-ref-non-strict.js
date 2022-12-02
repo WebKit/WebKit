@@ -48,5 +48,11 @@ var obj = {
 
 obj.method();
 
-assert.sameValue(Object.hasOwnProperty.call(obj, 'x'), true);
-assert.sameValue(Object.hasOwnProperty.call(obj, 'y'), false);
+assert(
+  Object.prototype.hasOwnProperty.call(obj, 'x'),
+  "x is defined as an own property"
+);
+assert(
+  !Object.prototype.hasOwnProperty.call(obj, 'y'),
+  "y is not defined as an own property after the object is frozen"
+);

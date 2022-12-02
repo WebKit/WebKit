@@ -32,7 +32,7 @@ assert.compareArray(actual, expected1, "operations");
 // There is a second path, through BalanceDurationRelative, that calls
 // dateUntil() in a loop for each year in the duration plus one extra time
 
-actual.splice(0, actual.length); // reset calls for next test
+actual.splice(0); // reset calls for next test
 const expected2 = [
   "call dateUntil",
   "call dateUntil",

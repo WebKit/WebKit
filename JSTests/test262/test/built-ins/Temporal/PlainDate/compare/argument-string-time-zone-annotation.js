@@ -8,14 +8,10 @@ features: [Temporal]
 ---*/
 
 const tests = [
-  ["2000-05-02[Asia/Kolkata]", "named, with no time and no offset"],
-  ["2000-05-02[!Europe/Vienna]", "named, with !, no time, and no offset"],
-  ["2000-05-02[+00:00]", "numeric, with no time and no offset"],
-  ["2000-05-02[!-02:30]", "numeric, with !, no time, and no offset"],
-  ["2000-05-02+00:00[UTC]", "named, with offset and no time"],
-  ["2000-05-02+00:00[!Africa/Abidjan]", "named, with offset, !, and no time"],
-  ["2000-05-02+00:00[-08:00]", "numeric, with offset and no time"],
-  ["2000-05-02+00:00[!+01:00]", "numeric, with offset, !, and no time"],
+  ['2000-05-02[Asia/Kolkata]', 'named, with no time'],
+  ['2000-05-02[!Europe/Vienna]', 'named, with ! and no time'],
+  ['2000-05-02[+00:00]', 'numeric, with no time'],
+  ['2000-05-02[!-02:30]', 'numeric, with ! and no time'],
   ["2000-05-02T15:23[America/Sao_Paulo]", "named, with no offset"],
   ["2000-05-02T15:23[!Asia/Tokyo]", "named, with ! and no offset"],
   ["2000-05-02T15:23[-02:30]", "numeric, with no offset"],
