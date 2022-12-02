@@ -4667,10 +4667,13 @@
    },
    {
       "emails" : [
-         "lingho@apple.com"
+         "lingho@apple.com",
+         "ling@aliko.com"
       ],
       "expertise" : "webkit.org admin",
-      "name" : "Ling Ho"
+      "github" : "lingcherd",
+      "name" : "Ling Ho",
+      "status" : "committer"
    },
    {
       "emails" : [
