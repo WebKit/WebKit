@@ -25,15 +25,18 @@
 
 #pragma once
 
+#include "GetVM.h"
 #include "Identifier.h"
 #include "JSCJSValue.h"
 #include <array>
+#include <wtf/Range.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 enum ParserMode : uint8_t { StrictJSON, NonStrictJSON, JSONP };
+enum class JSONReviverMode : uint8_t { Disabled, Enabled };
 
 enum JSONPPathEntryType : uint8_t {
     JSONPPathEntryTypeDeclareVar, // var pathEntryName = JSON
@@ -63,6 +66,28 @@ struct JSONPPathEntry {
 struct JSONPData {
     Vector<JSONPPathEntry> m_path;
     Strong<Unknown> m_value;
+};
+
+class JSONRanges {
+public:
+    struct Entry;
+    using Object = HashMap<RefPtr<UniquedStringImpl>, Entry, IdentifierRepHash>;
+    using Array = Vector<Entry>;
+    struct Entry {
+        WTF::Range<unsigned> range;
+        std::variant<std::monostate, Object, Array> properties;
+    };
+
+    JSONRanges() = default;
+
+    JSONRanges(Entry entry)
+        : m_root(WTFMove(entry))
+    { }
+
+    const Entry& root() const { return m_root; }
+
+private:
+    Entry m_root { };
 };
 
 template <typename CharType>
@@ -114,12 +139,25 @@ public:
     
     JSValue tryLiteralParse()
     {
+        return tryLiteralParseImpl<JSONReviverMode::Disabled>(nullptr);
+    }
+
+    JSValue tryLiteralParse(JSONRanges* sourceRanges)
+    {
+        return tryLiteralParseImpl<JSONReviverMode::Enabled>(sourceRanges);
+    }
+
+    JSValue tryLiteralParsePrimitiveValue()
+    {
+        ASSERT(m_mode == StrictJSON);
         m_lexer.next();
-        JSValue result = parse(m_mode == StrictJSON ? StartParseExpression : StartParseStatement);
-        if (m_lexer.currentToken()->type == TokSemi)
-            m_lexer.next();
-        if (m_lexer.currentToken()->type != TokEnd)
-            return JSValue();
+        JSValue result = parsePrimitiveValue(getVM(m_globalObject));
+        if (result) {
+            if (m_lexer.currentToken()->type != TokEnd) {
+                m_parseErrorMessage = "Unexpected content at end of JSON literal"_s;
+                return JSValue();
+            }
+        }
         return result;
     }
     
@@ -130,6 +168,7 @@ private:
     public:
         Lexer(const CharType* characters, unsigned length, ParserMode mode)
             : m_mode(mode)
+            , m_start(characters)
             , m_ptr(characters)
             , m_end(characters + length)
         {
@@ -173,6 +212,8 @@ private:
 #endif // ASSERT_ENABLED
         
         String getErrorMessage() { return m_lexErrorMessage; }
+
+        const CharType* start() const { return m_start; }
         
     private:
         TokenType lex(LiteralParserToken<CharType>&);
@@ -184,6 +225,7 @@ private:
         String m_lexErrorMessage;
         LiteralParserToken<CharType> m_currentToken;
         ParserMode m_mode;
+        const CharType* m_start;
         const CharType* m_ptr;
         const CharType* m_end;
         StringBuilder m_builder;
@@ -192,8 +234,20 @@ private:
 #endif
     };
     
+    template<JSONReviverMode reviverMode>
+    inline JSValue tryLiteralParseImpl(JSONRanges* sourceRanges = nullptr)
+    {
+        m_lexer.next();
+        JSValue result = parse<reviverMode>(m_mode == StrictJSON ? StartParseExpression : StartParseStatement, sourceRanges);
+        if (m_lexer.currentToken()->type == TokSemi)
+            m_lexer.next();
+        if (m_lexer.currentToken()->type != TokEnd)
+            return JSValue();
+        return result;
+    }
+
     class StackGuard;
-    JSValue parse(ParserState);
+    template<JSONReviverMode reviverMode> JSValue parse(ParserState, JSONRanges*);
 
     JSValue parsePrimitiveValue(VM&);
 

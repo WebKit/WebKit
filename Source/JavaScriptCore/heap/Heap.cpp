@@ -52,6 +52,7 @@
 #include "JITStubRoutineSet.h"
 #include "JITWorklistInlines.h"
 #include "JSFinalizationRegistry.h"
+#include "JSRawJSONObject.h"
 #include "JSRemoteFunction.h"
 #include "JSVirtualMachineInternal.h"
 #include "JSWeakMap.h"

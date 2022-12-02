@@ -34,6 +34,7 @@
 #include "Lexer.h"
 #include "ObjectConstructor.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/Range.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -125,7 +126,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
     startJSON:
         m_lexer.next();
         results.append(JSONPData());
-        JSValue startParseExpressionValue = parse(StartParseExpression);
+        JSValue startParseExpressionValue = parse<JSONReviverMode::Disabled>(StartParseExpression, nullptr);
         RETURN_IF_EXCEPTION(scope, false);
         results.last().m_value.set(vm, startParseExpressionValue);
         if (!results.last().m_value)
@@ -1200,16 +1201,25 @@ ALWAYS_INLINE JSValue LiteralParser<CharType>::parsePrimitiveValue(VM& vm)
 }
 
 template <typename CharType>
-JSValue LiteralParser<CharType>::parse(ParserState initialState)
+template <JSONReviverMode reviverMode>
+JSValue LiteralParser<CharType>::parse(ParserState initialState, JSONRanges* sourceRanges)
 {
     VM& vm = m_globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ParserState state = initialState;
     MarkedArgumentBuffer objectStack;
+    std::optional<Vector<JSONRanges::Entry, 8>> rangesStack;
     JSValue lastValue;
+    JSONRanges::Entry lastValueRange;
     Vector<ParserState, 16, UnsafeVectorOverflow> stateStack;
     Vector<Identifier, 16, UnsafeVectorOverflow> identifierStack;
     HashSet<JSObject*> visitedUnderscoreProto;
+
+    if constexpr (reviverMode == JSONReviverMode::Enabled) {
+        if (sourceRanges)
+            rangesStack.emplace();
+    }
+
     while (1) {
         switch(state) {
         startParseArray:
@@ -1217,6 +1227,15 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             JSArray* array = constructEmptyArray(m_globalObject, nullptr);
             RETURN_IF_EXCEPTION(scope, { });
             objectStack.appendWithCrashOnOverflow(array);
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges) {
+                    unsigned startOffset = static_cast<unsigned>(m_lexer.currentToken()->start - m_lexer.start());
+                    rangesStack->append({
+                        WTF::Range<unsigned> { startOffset, startOffset },
+                        JSONRanges::Array { }
+                    });
+                }
+            }
         }
         doParseArrayStartExpression:
         FALLTHROUGH;
@@ -1226,6 +1245,13 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 if (UNLIKELY(lastToken == TokComma)) {
                     m_parseErrorMessage = "Unexpected comma at the end of array expression"_s;
                     return { };
+                }
+                if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                    if (sourceRanges) {
+                        auto entry = rangesStack->takeLast();
+                        entry.range = { entry.range.begin(), static_cast<unsigned>(m_lexer.currentToken()->end - m_lexer.start()) };
+                        lastValueRange = WTFMove(entry);
+                    }
                 }
                 m_lexer.next();
                 lastValue = objectStack.takeLast();
@@ -1239,6 +1265,10 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             JSArray* array = asArray(objectStack.last());
             array->putDirectIndex(m_globalObject, array->length(), lastValue);
             RETURN_IF_EXCEPTION(scope, { });
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges)
+                    std::get<JSONRanges::Array>(rangesStack->last().properties).append(WTFMove(lastValueRange));
+            }
 
             if (m_lexer.currentToken()->type == TokComma)
                 goto doParseArrayStartExpression;
@@ -1248,6 +1278,13 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 return { };
             }
             
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges) {
+                    auto entry = rangesStack->takeLast();
+                    entry.range = { entry.range.begin(), static_cast<unsigned>(m_lexer.currentToken()->end - m_lexer.start()) };
+                    lastValueRange = WTFMove(entry);
+                }
+            }
             m_lexer.next();
             lastValue = objectStack.takeLast();
             break;
@@ -1255,6 +1292,15 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
         startParseObject:
         case StartParseObject: {
             JSObject* object = constructEmptyObject(m_globalObject);
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges) {
+                    unsigned startOffset = static_cast<unsigned>(m_lexer.currentToken()->start - m_lexer.start());
+                    rangesStack->append({
+                        WTF::Range<unsigned> { startOffset, startOffset },
+                        JSONRanges::Object { }
+                    });
+                }
+            }
 
             TokenType type = m_lexer.next();
             if (type == TokString || (m_mode != StrictJSON && type == TokIdentifier)) {
@@ -1278,11 +1324,16 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     }
 
                     // Leaf object construction fast path.
+                    WTF::Range<unsigned> propertyRange {
+                        static_cast<unsigned>(m_lexer.currentToken()->start - m_lexer.start()),
+                        static_cast<unsigned>(m_lexer.currentToken()->end - m_lexer.start())
+                    };
                     JSValue primitive = parsePrimitiveValue(vm);
                     if (UNLIKELY(!primitive))
                         return { };
 
                     if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
+                        ASSERT(!sourceRanges);
                         if (UNLIKELY(!visitedUnderscoreProto.add(object).isNewEntry)) {
                             m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
                             return { };
@@ -1296,6 +1347,11 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                             RETURN_IF_EXCEPTION(scope, { });
                         } else
                             object->putDirect(vm, ident, primitive);
+
+                        if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                            if (sourceRanges)
+                                std::get<JSONRanges::Object>(rangesStack->last().properties).set(ident.impl(), JSONRanges::Entry { propertyRange, { } });
+                        }
                     }
 
                     if (m_lexer.currentToken()->type != TokComma)
@@ -1312,6 +1368,14 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     setErrorMessageForToken(TokRBrace);
                     return { };
                 }
+
+                if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                    if (sourceRanges) {
+                        auto entry = rangesStack->takeLast();
+                        entry.range = { entry.range.begin(), static_cast<unsigned>(m_lexer.currentToken()->end - m_lexer.start()) };
+                        lastValueRange = WTFMove(entry);
+                    }
+                }
                 m_lexer.next();
                 lastValue = object;
                 break;
@@ -1322,6 +1386,13 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 return { };
             }
 
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges) {
+                    auto entry = rangesStack->takeLast();
+                    entry.range = { entry.range.begin(), static_cast<unsigned>(m_lexer.currentToken()->end - m_lexer.start()) };
+                    lastValueRange = WTFMove(entry);
+                }
+            }
             m_lexer.next();
             lastValue = object;
             break;
@@ -1350,6 +1421,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             JSObject* object = asObject(objectStack.last());
             Identifier ident = identifierStack.takeLast();
             if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
+                ASSERT(!sourceRanges);
                 if (UNLIKELY(!visitedUnderscoreProto.add(object).isNewEntry)) {
                     m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
                     return { };
@@ -1363,12 +1435,25 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     RETURN_IF_EXCEPTION(scope, { });
                 } else
                     object->putDirect(vm, ident, lastValue);
+
+                if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                    if (sourceRanges)
+                        std::get<JSONRanges::Object>(rangesStack->last().properties).set(ident.impl(), WTFMove(lastValueRange));
+                }
             }
             if (m_lexer.currentToken()->type == TokComma)
                 goto doParseObjectStartExpression;
             if (UNLIKELY(m_lexer.currentToken()->type != TokRBrace)) {
                 setErrorMessageForToken(TokRBrace);
                 return { };
+            }
+
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges) {
+                    auto entry = rangesStack->takeLast();
+                    entry.range = { entry.range.begin(), static_cast<unsigned>(m_lexer.currentToken()->end - m_lexer.start()) };
+                    lastValueRange = WTFMove(entry);
+                }
             }
             m_lexer.next();
             lastValue = objectStack.takeLast();
@@ -1381,12 +1466,25 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 goto startParseArray;
             if (type == TokLBrace)
                 goto startParseObject;
+
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges) {
+                    lastValueRange = JSONRanges::Entry {
+                        {
+                            static_cast<unsigned>(m_lexer.currentToken()->start - m_lexer.start()),
+                            static_cast<unsigned>(m_lexer.currentToken()->end - m_lexer.start())
+                        },
+                        { }
+                    };
+                }
+            }
             lastValue = parsePrimitiveValue(vm);
             if (UNLIKELY(!lastValue))
                 return { };
             break;
         }
         case StartParseStatement: {
+            ASSERT(!sourceRanges);
             switch (m_lexer.currentToken()->type) {
             case TokLBracket:
             case TokNumber:
@@ -1452,6 +1550,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             break;
         }
         case StartParseStatementEndStatement: {
+            ASSERT(!sourceRanges);
             ASSERT(stateStack.isEmpty());
             if (m_lexer.currentToken()->type != TokRParen)
                 return { };
@@ -1463,8 +1562,13 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
-        if (stateStack.isEmpty())
+        if (stateStack.isEmpty()) {
+            if constexpr (reviverMode == JSONReviverMode::Enabled) {
+                if (sourceRanges)
+                    *sourceRanges = JSONRanges(WTFMove(lastValueRange));
+            }
             return lastValue;
+        }
         state = stateStack.takeLast();
         continue;
     }

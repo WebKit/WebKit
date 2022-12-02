@@ -402,6 +402,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_callbackConstructorStructure;
     LazyProperty<JSGlobalObject, Structure> m_callbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_callbackObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_rawJSONObjectStructure;
 #if JSC_OBJC_API_ENABLED
     LazyProperty<JSGlobalObject, Structure> m_objcCallbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_objcWrapperObjectStructure;
@@ -934,6 +935,7 @@ public:
     Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(this); }
     Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(this); }
     Structure* callbackObjectStructure() const { return m_callbackObjectStructure.get(this); }
+    Structure* rawJSONObjectStructure() const { return m_rawJSONObjectStructure.get(this); }
 #if JSC_OBJC_API_ENABLED
     Structure* objcCallbackFunctionStructure() const { return m_objcCallbackFunctionStructure.get(this); }
     Structure* objcWrapperObjectStructure() const { return m_objcWrapperObjectStructure.get(this); }

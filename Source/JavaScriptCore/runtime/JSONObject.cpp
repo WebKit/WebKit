@@ -32,6 +32,7 @@
 #include "BooleanObject.h"
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
+#include "JSRawJSONObject.h"
 #include "LiteralParser.h"
 #include "ObjectConstructorInlines.h"
 #include "PropertyNameArray.h"
@@ -48,6 +49,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSONObject);
 
 static JSC_DECLARE_HOST_FUNCTION(jsonProtoFuncParse);
 static JSC_DECLARE_HOST_FUNCTION(jsonProtoFuncStringify);
+static JSC_DECLARE_HOST_FUNCTION(jsonProtoFuncIsRawJSON);
+static JSC_DECLARE_HOST_FUNCTION(jsonProtoFuncRawJSON);
 
 }
 
@@ -60,11 +63,15 @@ JSONObject::JSONObject(VM& vm, Structure* structure)
 {
 }
 
-void JSONObject::finishCreation(VM& vm)
+void JSONObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+    if (Options::useJSONSourceTextAccess()) {
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isRawJSON, jsonProtoFuncIsRawJSON, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->rawJSON, jsonProtoFuncRawJSON, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    }
 }
 
 // PropertyNameForFunctionCall objects must be on the stack, since the JSValue that they create is not marked.
@@ -363,14 +370,22 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if ((value.isUndefined() || value.isSymbol()) && !holder.isArray())
         return StringifyFailedDueToUndefinedOrSymbolValue;
 
+    if (value.isObject()) {
+        JSObject* object = asObject(value);
+        if (object->inherits<JSRawJSONObject>()) {
+            String string = jsCast<JSRawJSONObject*>(object)->rawJSON(vm)->value(m_globalObject);
+            RETURN_IF_EXCEPTION(scope, StringifyFailed);
+            builder.append(WTFMove(string));
+            return StringifySucceeded;
+
+        }
+        value = unwrapBoxedPrimitive(m_globalObject, object);
+        RETURN_IF_EXCEPTION(scope, StringifyFailed);
+    }
+
     if (value.isNull()) {
         builder.append("null"_s);
         return StringifySucceeded;
-    }
-
-    if (value.isObject()) {
-        value = unwrapBoxedPrimitive(m_globalObject, asObject(value));
-        RETURN_IF_EXCEPTION(scope, StringifyFailed);
     }
 
     if (value.isBoolean()) {
@@ -1204,28 +1219,47 @@ class Walker {
     WTF_MAKE_NONCOPYABLE(Walker);
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    Walker(JSGlobalObject* globalObject, JSObject* function, CallData callData)
+    Walker(JSGlobalObject* globalObject, JSString* source, JSObject* function, CallData callData, const JSONRanges* sourceRanges)
         : m_globalObject(globalObject)
+        , m_source(source)
         , m_function(function)
         , m_callData(callData)
+        , m_sourceRanges(sourceRanges)
     {
     }
     JSValue walk(JSValue unfiltered);
 private:
-    JSValue callReviver(JSObject* thisObj, JSValue property, JSValue unfiltered)
+    JSValue callReviver(JSObject* thisObj, JSValue property, JSValue unfiltered, WTF::Range<unsigned> range)
     {
+        VM& vm = m_globalObject->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        JSObject* context = nullptr;
+        if (m_sourceRanges) {
+            context = constructEmptyObject(m_globalObject);
+            if (!unfiltered.isObject()) {
+                JSString* substring = jsSubstring(m_globalObject, m_source, range.begin(), range.distance());
+                RETURN_IF_EXCEPTION(scope, { });
+                context->putDirect(vm, vm.propertyNames->source, substring);
+            }
+        }
+
         MarkedArgumentBuffer args;
         args.append(property);
         args.append(unfiltered);
+        if (context)
+            args.append(context);
         ASSERT(!args.hasOverflowed());
-        return call(m_globalObject, m_function, m_callData, thisObj, args);
+        RELEASE_AND_RETURN(scope, call(m_globalObject, m_function, m_callData, thisObj, args));
     }
 
     friend class Holder;
 
     JSGlobalObject* m_globalObject;
+    JSString* m_source;
     JSObject* m_function;
     CallData m_callData;
+    const JSONRanges* m_sourceRanges;
 };
 
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember, 
@@ -1238,11 +1272,14 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     Vector<PropertyNameArray, 16, UnsafeVectorOverflow> propertyStack;
     Vector<uint32_t, 16, UnsafeVectorOverflow> indexStack;
     MarkedArgumentBuffer markedStack;
+    Vector<const JSONRanges::Entry*, 16> entryStack;
     Vector<unsigned, 16, UnsafeVectorOverflow> arrayLengthStack;
     
     Vector<WalkerState, 16, UnsafeVectorOverflow> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = unfiltered;
+    const JSONRanges::Entry* inValueRange = m_sourceRanges ? &m_sourceRanges->root() : nullptr;
+    const JSONRanges::Entry* outValueRange = m_sourceRanges ? &m_sourceRanges->root() : nullptr;
     JSValue outValue = jsNull();
     
     while (1) {
@@ -1258,6 +1295,13 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 
                 JSObject* array = asObject(inValue);
                 markedStack.appendWithCrashOnOverflow(array);
+                if (m_sourceRanges) {
+                    // FIXME: This check should be removed once spec is fixed not to encounter this issue.
+                    // https://github.com/tc39/proposal-json-parse-with-source/issues/39
+                    if (!std::holds_alternative<JSONRanges::Array>(inValueRange->properties))
+                        return throwTypeError(m_globalObject, scope);
+                    entryStack.append(inValueRange);
+                }
                 uint64_t length = toLength(m_globalObject, array);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (UNLIKELY(length > std::numeric_limits<uint32_t>::max())) {
@@ -1276,11 +1320,14 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 unsigned arrayLength = arrayLengthStack.last();
                 if (index == arrayLength) {
                     outValue = array;
+                    if (m_sourceRanges)
+                        outValueRange = entryStack.takeLast();
                     markedStack.removeLast();
                     arrayLengthStack.removeLast();
                     indexStack.removeLast();
                     break;
                 }
+
                 if (isJSArray(array) && array->canGetIndexQuickly(index))
                     inValue = array->getIndexQuickly(index);
                 else {
@@ -1288,16 +1335,27 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     RETURN_IF_EXCEPTION(scope, { });
                 }
 
+                if (m_sourceRanges) {
+                    // FIXME: This check should be removed once spec is fixed not to encounter this issue.
+                    // https://github.com/tc39/proposal-json-parse-with-source/issues/39
+                    auto& arrayRangeVector = std::get<JSONRanges::Array>(entryStack.last()->properties);
+                    if (index >= arrayRangeVector.size())
+                        return throwTypeError(m_globalObject, scope);
+                    inValueRange = &arrayRangeVector[index];
+                }
+
                 if (inValue.isObject()) {
                     stateStack.append(ArrayEndVisitMember);
                     goto stateUnknown;
-                } else
+                } else {
                     outValue = inValue;
+                    outValueRange = inValueRange;
+                }
                 FALLTHROUGH;
             }
             case ArrayEndVisitMember: {
                 JSObject* array = asObject(markedStack.last());
-                JSValue filteredValue = callReviver(array, jsString(vm, String::number(indexStack.last())), outValue);
+                JSValue filteredValue = callReviver(array, jsString(vm, String::number(indexStack.last())), outValue, outValueRange ? outValueRange->range : WTF::Range<unsigned> { });
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
                     array->methodTable()->deletePropertyByIndex(array, m_globalObject, indexStack.last());
@@ -1316,6 +1374,13 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 
                 JSObject* object = asObject(inValue);
                 markedStack.appendWithCrashOnOverflow(object);
+                if (m_sourceRanges) {
+                    // FIXME: This check should be removed once spec is fixed not to encounter this issue.
+                    // https://github.com/tc39/proposal-json-parse-with-source/issues/39
+                    if (!std::holds_alternative<JSONRanges::Object>(inValueRange->properties))
+                        return throwTypeError(m_globalObject, scope);
+                    entryStack.append(inValueRange);
+                }
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                 object->methodTable()->getOwnPropertyNames(object, m_globalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
@@ -1329,6 +1394,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 PropertyNameArray& properties = propertyStack.last();
                 if (index == properties.size()) {
                     outValue = object;
+                    if (m_sourceRanges)
+                        outValueRange = entryStack.takeLast();
                     markedStack.removeLast();
                     indexStack.removeLast();
                     propertyStack.removeLast();
@@ -1338,17 +1405,28 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 // The holder may be modified by the reviver function so any lookup may throw
                 RETURN_IF_EXCEPTION(scope, { });
 
+                if (m_sourceRanges) {
+                    // FIXME: This check should be removed once spec is fixed not to encounter this issue.
+                    // https://github.com/tc39/proposal-json-parse-with-source/issues/39
+                    auto iterator = std::get<JSONRanges::Object>(entryStack.last()->properties).find(properties[index].impl());
+                    if (iterator == std::get<JSONRanges::Object>(entryStack.last()->properties).end())
+                        return throwTypeError(m_globalObject, scope);
+                    inValueRange = &iterator->value;
+                }
+
                 if (inValue.isObject()) {
                     stateStack.append(ObjectEndVisitMember);
                     goto stateUnknown;
-                } else
+                } else {
                     outValue = inValue;
+                    outValueRange = inValueRange;
+                }
                 FALLTHROUGH;
             }
             case ObjectEndVisitMember: {
                 JSObject* object = jsCast<JSObject*>(markedStack.last());
                 Identifier prop = propertyStack.last()[indexStack.last()];
-                JSValue filteredValue = callReviver(object, jsString(vm, prop.string()), outValue);
+                JSValue filteredValue = callReviver(object, jsString(vm, prop.string()), outValue, outValueRange ? outValueRange->range : WTF::Range<unsigned> { });
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
                     JSCell::deleteProperty(object, m_globalObject, prop);
@@ -1371,6 +1449,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             case StateUnknown:
                 if (!inValue.isObject()) {
                     outValue = inValue;
+                    outValueRange = inValueRange;
                     break;
                 }
                 bool valueIsArray = isArray(m_globalObject, inValue);
@@ -1387,7 +1466,39 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     }
     JSObject* finalHolder = constructEmptyObject(m_globalObject);
     finalHolder->putDirect(vm, vm.propertyNames->emptyIdentifier, outValue);
-    RELEASE_AND_RETURN(scope, callReviver(finalHolder, jsEmptyString(vm), outValue));
+    RELEASE_AND_RETURN(scope, callReviver(finalHolder, jsEmptyString(vm), outValue, outValueRange ? outValueRange->range : WTF::Range<unsigned> { }));
+}
+
+static NEVER_INLINE JSValue jsonParseSlow(JSGlobalObject* globalObject, JSString* string, StringView view, CallData callData, JSObject* function)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSONRanges ranges;
+    JSValue unfiltered;
+    if (view.is8Bit()) {
+        LiteralParser<LChar> jsonParser(globalObject, view.characters8(), view.length(), StrictJSON);
+        unfiltered = jsonParser.tryLiteralParse(Options::useJSONSourceTextAccess() ? &ranges : nullptr);
+        EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
+        if (!unfiltered) {
+            RETURN_IF_EXCEPTION(scope, { });
+            throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+            return { };
+        }
+    } else {
+        LiteralParser<UChar> jsonParser(globalObject, view.characters16(), view.length(), StrictJSON);
+        unfiltered = jsonParser.tryLiteralParse(Options::useJSONSourceTextAccess() ? &ranges : nullptr);
+        EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
+        if (!unfiltered) {
+            RETURN_IF_EXCEPTION(scope, { });
+            throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+            return { };
+        }
+    }
+
+    scope.release();
+    Walker walker(globalObject, string, function, callData, Options::useJSONSourceTextAccess() ? &ranges : nullptr);
+    return walker.walk(unfiltered);
 }
 
 // ECMA-262 v5 15.12.2
@@ -1401,35 +1512,34 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, Call
     RETURN_IF_EXCEPTION(scope, { });
     StringView view = viewWithString.view;
 
-    JSValue unfiltered;
+    if (callFrame->argumentCount() >= 2) {
+        JSValue function = callFrame->uncheckedArgument(1);
+        CallData callData = JSC::getCallData(function);
+        if (callData.type != CallData::Type::None)
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsonParseSlow(globalObject, string, view, WTFMove(callData), asObject(function))));
+    }
+
     if (view.is8Bit()) {
         LiteralParser<LChar> jsonParser(globalObject, view.characters8(), view.length(), StrictJSON);
-        unfiltered = jsonParser.tryLiteralParse();
+        JSValue unfiltered = jsonParser.tryLiteralParse();
         EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
         if (!unfiltered) {
             RETURN_IF_EXCEPTION(scope, { });
-            return throwVMError(globalObject, scope, createSyntaxError(globalObject, jsonParser.getErrorMessage()));
+            throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+            return { };
         }
-    } else {
-        LiteralParser<UChar> jsonParser(globalObject, view.characters16(), view.length(), StrictJSON);
-        unfiltered = jsonParser.tryLiteralParse();
-        EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
-        if (!unfiltered) {
-            RETURN_IF_EXCEPTION(scope, { });
-            return throwVMError(globalObject, scope, createSyntaxError(globalObject, jsonParser.getErrorMessage()));
-        }
+        return JSValue::encode(unfiltered);
     }
-    
-    if (callFrame->argumentCount() < 2)
-        return JSValue::encode(unfiltered);
-    
-    JSValue function = callFrame->uncheckedArgument(1);
-    auto callData = JSC::getCallData(function);
-    if (callData.type == CallData::Type::None)
-        return JSValue::encode(unfiltered);
-    scope.release();
-    Walker walker(globalObject, asObject(function), callData);
-    return JSValue::encode(walker.walk(unfiltered));
+
+    LiteralParser<UChar> jsonParser(globalObject, view.characters16(), view.length(), StrictJSON);
+    JSValue unfiltered = jsonParser.tryLiteralParse();
+    EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
+    if (!unfiltered) {
+        RETURN_IF_EXCEPTION(scope, { });
+        throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+        return { };
+    }
+    return JSValue::encode(unfiltered);
 }
 
 // ECMA-262 v5 15.12.3
@@ -1486,6 +1596,73 @@ String JSONStringify(JSGlobalObject* globalObject, JSValue value, JSValue space)
 String JSONStringify(JSGlobalObject* globalObject, JSValue value, unsigned indent)
 {
     return stringify(*globalObject, value, jsNull(), jsNumber(indent));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncIsRawJSON, (JSGlobalObject*, CallFrame* callFrame))
+{
+    // https://tc39.es/proposal-json-parse-with-source/#sec-json.israwjson
+    return JSValue::encode(jsBoolean(callFrame->argument(0).inherits<JSRawJSONObject>()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncRawJSON, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    // https://tc39.es/proposal-json-parse-with-source/#sec-json.rawjson
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSString* jsString = callFrame->argument(0).toString(globalObject);
+
+    auto isJSONWhitespace = [](UChar character) {
+        return character == 0x0009 || character == 0x000A || character == 0x000D || character == 0x0020;
+    };
+
+    String string = jsString->value(globalObject);
+    if (UNLIKELY(string.isEmpty())) {
+        throwSyntaxError(globalObject, scope, "JSON.rawJSON cannot accept empty string"_s);
+        return { };
+    }
+
+    UChar firstCharacter = string[0];
+    if (UNLIKELY(isJSONWhitespace(firstCharacter))) {
+        throwSyntaxError(globalObject, scope, makeString("JSON.rawJSON cannot accept string starting with '"_s, firstCharacter, "'"_s));
+        return { };
+    }
+
+    UChar lastCharacter = string[string.length() - 1];
+    if (UNLIKELY(isJSONWhitespace(lastCharacter))) {
+        throwSyntaxError(globalObject, scope, makeString("JSON.rawJSON cannot accept string ending with '"_s, lastCharacter, "'"_s));
+        return { };
+    }
+
+    {
+        JSValue result;
+        if (string.is8Bit()) {
+            LiteralParser<LChar> jsonParser(globalObject, string.characters8(), string.length(), StrictJSON);
+            result = jsonParser.tryLiteralParsePrimitiveValue();
+            RETURN_IF_EXCEPTION(scope, { });
+            if (!result) {
+                throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+                return { };
+            }
+        } else {
+            LiteralParser<UChar> jsonParser(globalObject, string.characters16(), string.length(), StrictJSON);
+            result = jsonParser.tryLiteralParsePrimitiveValue();
+            RETURN_IF_EXCEPTION(scope, { });
+            if (!result) {
+                throwSyntaxError(globalObject, scope, jsonParser.getErrorMessage());
+                return { };
+            }
+        }
+    }
+
+    auto* object = JSRawJSONObject::tryCreate(vm, globalObject->rawJSONObjectStructure(), jsString);
+    if (UNLIKELY(!object)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    return JSValue::encode(object);
 }
 
 } // namespace JSC

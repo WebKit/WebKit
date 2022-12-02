@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,49 +20,48 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "JSObject.h"
+#include "JSWrapperObject.h"
 
 namespace JSC {
 
-class JSONObject final : public JSNonFinalObject {
+constexpr PropertyOffset rawJSONObjectRawJSONPropertyOffset = firstOutOfLineOffset;
+
+class JSRawJSONObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    using Base::StructureFlags;
 
-    template<typename CellType, SubspaceAccess>
+    template<typename, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSONObject, Base);
-        return &vm.plainObjectSpace();
+        return vm.rawJSONObjectSpace<mode>();
     }
 
-    static JSONObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    static JSRawJSONObject* tryCreate(VM& vm, Structure* structure, JSString* string)
     {
-        JSONObject* object = new (NotNull, allocateCell<JSONObject>(vm)) JSONObject(vm, structure);
-        object->finishCreation(vm, globalObject);
+        constexpr bool hasIndexingHeader = false;
+        Butterfly* butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure->outOfLineCapacity(), hasIndexingHeader, IndexingHeader(), 0);
+        if (!butterfly)
+            return nullptr;
+        JSRawJSONObject* object = new (NotNull, allocateCell<JSRawJSONObject>(vm)) JSRawJSONObject(vm, structure, butterfly);
+        object->finishCreation(vm, string);
         return object;
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
+    DECLARE_EXPORT_INFO;
 
-    DECLARE_INFO;
+    JSString* rawJSON(VM&);
 
-private:
-    JSONObject(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+protected:
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSString*);
+    JS_EXPORT_PRIVATE JSRawJSONObject(VM&, Structure*, Butterfly*);
 };
 
-JS_EXPORT_PRIVATE JSValue JSONParse(JSGlobalObject*, StringView);
-JSValue JSONParseWithException(JSGlobalObject*, StringView);
-JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, JSValue space);
-JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, unsigned indent);
-    
 } // namespace JSC

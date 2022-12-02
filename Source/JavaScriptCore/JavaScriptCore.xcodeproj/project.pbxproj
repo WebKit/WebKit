@@ -2018,6 +2018,7 @@
 		E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39E44912748E3F800EDD2A5 /* Repatch.h in Headers */ = {isa = PBXBuildFile; fileRef = E39E448E2748E3F800EDD2A5 /* Repatch.h */; };
 		E39E44932748E3F800EDD2A5 /* RepatchInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39E44902748E3F800EDD2A5 /* RepatchInlines.h */; };
+		E39E578329380FC6000D0D3B /* JSRawJSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E39E578129380FC1000D0D3B /* JSRawJSONObject.h */; };
 		E39EEAF322812450008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */; };
 		E39FEBE32339C5D900B40AB0 /* JSAsyncGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E39FEBE22339C5D400B40AB0 /* JSAsyncGenerator.h */; };
 		E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A0531621342B660022EC14 /* WasmStreamingParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5565,6 +5566,8 @@
 		E39E448E2748E3F800EDD2A5 /* Repatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Repatch.h; sourceTree = "<group>"; };
 		E39E448F2748E3F800EDD2A5 /* Repatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Repatch.cpp; sourceTree = "<group>"; };
 		E39E44902748E3F800EDD2A5 /* RepatchInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepatchInlines.h; sourceTree = "<group>"; };
+		E39E578129380FC1000D0D3B /* JSRawJSONObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRawJSONObject.h; sourceTree = "<group>"; };
+		E39E578229380FC1000D0D3B /* JSRawJSONObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRawJSONObject.cpp; sourceTree = "<group>"; };
 		E39EEAF12281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CachedSpecialPropertyAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
 		E39FEBE12339C5D400B40AB0 /* JSAsyncGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAsyncGenerator.cpp; sourceTree = "<group>"; };
@@ -8125,6 +8128,8 @@
 				2A05ABD41961DF2400341750 /* JSPropertyNameEnumerator.h */,
 				862553CE16136AA5009F17D0 /* JSProxy.cpp */,
 				862553CF16136AA5009F17D0 /* JSProxy.h */,
+				E39E578229380FC1000D0D3B /* JSRawJSONObject.cpp */,
+				E39E578129380FC1000D0D3B /* JSRawJSONObject.h */,
 				5B40327F2798D1FD00F37939 /* JSRemoteFunction.cpp */,
 				5B40327E2798D1FD00F37939 /* JSRemoteFunction.h */,
 				534638721E70D01500F12AC1 /* JSRunLoopTimer.cpp */,
@@ -10879,6 +10884,7 @@
 				996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */,
 				2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
+				E39E578329380FC6000D0D3B /* JSRawJSONObject.h in Headers */,
 				5B4032802798D20600F37939 /* JSRemoteFunction.h in Headers */,
 				A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,

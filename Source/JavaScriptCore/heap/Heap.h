@@ -241,6 +241,7 @@ class Heap;
     v(nativeStdFunctionSpace, nativeStdFunctionHeapCellType, JSNativeStdFunction) \
     v(proxyObjectSpace, cellHeapCellType, ProxyObject) \
     v(proxyRevokeSpace, cellHeapCellType, ProxyRevoke) \
+    v(rawJSONObjectSpace, cellHeapCellType, JSRawJSONObject) \
     v(remoteFunctionSpace, cellHeapCellType, JSRemoteFunction) \
     v(scopedArgumentsTableSpace, destructibleCellHeapCellType, ScopedArgumentsTable) \
     v(scriptFetchParametersSpace, destructibleCellHeapCellType, JSScriptFetchParameters) \

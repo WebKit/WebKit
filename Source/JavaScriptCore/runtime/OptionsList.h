@@ -550,6 +550,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics.") \
     v(Bool, useImportAssertion, true, Normal, "Enable import assertion.") \
     v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat.") \
+    v(Bool, useJSONSourceTextAccess, false, Normal, "Expose JSON source text access feature.") \
     v(Bool, useResizableArrayBuffer, true, Normal, "Expose ResizableArrayBuffer feature.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object.") \
