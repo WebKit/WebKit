@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
 #import "InjectUserScriptImmediately.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
@@ -43,16 +44,21 @@
 #import "WebPageProxy.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKWebExtensionContextInternal.h"
+#import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionTab.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/UserScript.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/FileSystem.h>
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
+
+static constexpr NSString *lastSeenBaseURLStateKey = @"LastSeenBaseURL";
+static constexpr NSString *lastSeenVersionStateKey = @"LastSeenVersion";
 
 @interface _WKWebExtensionContextDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
     WeakPtr<WebKit::WebExtensionContext> _webExtensionContext;
@@ -119,12 +125,7 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     : WebExtensionContext()
 {
     m_extension = extension.ptr();
-
-    StringBuilder baseURLBuilder;
-    baseURLBuilder.append("webkit-extension://", uniqueIdentifier(), "/");
-
-    m_baseURL = URL { baseURLBuilder.toString() };
-
+    m_baseURL = URL { makeString("webkit-extension://", uniqueIdentifier(), '/') };
     m_delegate = [[_WKWebExtensionContextDelegate alloc] initWithWebExtensionContext:*this];
 }
 
@@ -175,7 +176,7 @@ NSError *WebExtensionContext::createError(Error error, NSString *customLocalized
     return [[NSError alloc] initWithDomain:_WKWebExtensionContextErrorDomain code:errorCode userInfo:userInfo];
 }
 
-bool WebExtensionContext::load(WebExtensionController& controller, NSError **outError)
+bool WebExtensionContext::load(WebExtensionController& controller, String storageDirectory, NSError **outError)
 {
     if (outError)
         *outError = nil;
@@ -186,8 +187,11 @@ bool WebExtensionContext::load(WebExtensionController& controller, NSError **out
         return false;
     }
 
+    m_storageDirectory = storageDirectory;
     m_extensionController = controller;
     m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-", m_uniqueIdentifier));
+
+    readStateFromStorage();
 
     // FIXME: <https://webkit.org/b/248430> Move local storage (if base URL changed).
 
@@ -211,13 +215,73 @@ bool WebExtensionContext::unload(NSError **outError)
         return false;
     }
 
+    writeStateToStorage();
+
     unloadBackgroundWebView();
     removeInjectedContent();
 
+    m_storageDirectory = nullString();
     m_extensionController = nil;
     m_contentScriptWorld = nullptr;
 
     return true;
+}
+
+String WebExtensionContext::stateFilePath() const
+{
+    if (!isPersistent())
+        return nullString();
+    return FileSystem::pathByAppendingComponent(m_storageDirectory, "State.plist"_s);
+}
+
+NSDictionary *WebExtensionContext::currentState() const
+{
+    [m_state setObject:(NSString *)m_baseURL.string() forKey:lastSeenBaseURLStateKey];
+    [m_state setObject:m_extension->version() ?: @"" forKey:lastSeenVersionStateKey];
+
+    return [m_state.get() copy];
+}
+
+NSDictionary *WebExtensionContext::readStateFromStorage()
+{
+    if (!isPersistent()) {
+        m_state = [NSMutableDictionary dictionary];
+        return @{ };
+    }
+
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+
+    __block NSMutableDictionary *savedState;
+
+    NSError *coordinatorError;
+    [fileCoordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:stateFilePath()] options:NSFileCoordinatorReadingWithoutChanges error:&coordinatorError byAccessor:^(NSURL *fileURL) {
+        savedState = [NSMutableDictionary dictionaryWithContentsOfURL:fileURL] ?: [NSMutableDictionary dictionary];
+    }];
+
+    if (coordinatorError)
+        RELEASE_LOG(Extensions, "Failed to coordinate reading extension state %{public}@", coordinatorError.debugDescription);
+
+    m_state = savedState;
+
+    return [savedState copy];
+}
+
+void WebExtensionContext::writeStateToStorage() const
+{
+    if (!isPersistent())
+        return;
+
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+
+    NSError *coordinatorError;
+    [fileCoordinator coordinateWritingItemAtURL:[NSURL fileURLWithPath:stateFilePath()] options:NSFileCoordinatorWritingForReplacing error:&coordinatorError byAccessor:^(NSURL *fileURL) {
+        NSError *error;
+        if (![currentState() writeToURL:fileURL error:&error])
+            RELEASE_LOG(Extensions, "Unable to save extension state: %{public}@", error.debugDescription);
+    }];
+
+    if (coordinatorError)
+        RELEASE_LOG(Extensions, "Failed to coordinate writing extension state %{public}@", coordinatorError.debugDescription);
 }
 
 void WebExtensionContext::setBaseURL(URL&& url)
@@ -229,15 +293,7 @@ void WebExtensionContext::setBaseURL(URL&& url)
     if (!url.isValid())
         return;
 
-    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(url.protocol());
-    ASSERT(canonicalScheme);
-    if (!canonicalScheme)
-        return;
-
-    StringBuilder baseURLBuilder;
-    baseURLBuilder.append(canonicalScheme.value(), "://", url.host(), "/");
-
-    m_baseURL = URL { baseURLBuilder.toString() };
+    m_baseURL = URL { makeString(url.protocol(), "://", url.host(), '/') };
 }
 
 bool WebExtensionContext::isURLForThisExtension(const URL& url)
@@ -251,8 +307,10 @@ void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
     if (isLoaded())
         return;
 
+    m_customUniqueIdentifier = !uniqueIdentifier.isEmpty();
+
     if (uniqueIdentifier.isEmpty())
-        uniqueIdentifier = m_baseURL.host().toString();
+        uniqueIdentifier = UUID::createVersion4().toString();
 
     m_uniqueIdentifier = uniqueIdentifier;
 }

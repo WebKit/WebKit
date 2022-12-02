@@ -106,6 +106,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #import "_WKWebExtensionContextInternal.h"
+#import "_WKWebExtensionControllerConfigurationInternal.h"
 #import "_WKWebExtensionControllerInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
@@ -409,6 +410,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::WebExtensionController:
         wrapper = [_WKWebExtensionController alloc];
+        break;
+
+    case Type::WebExtensionControllerConfiguration:
+        wrapper = [_WKWebExtensionControllerConfiguration alloc];
         break;
 
     case Type::WebExtensionMatchPattern:

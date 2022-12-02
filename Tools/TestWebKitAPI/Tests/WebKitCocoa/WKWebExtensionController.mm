@@ -39,6 +39,24 @@
 
 namespace TestWebKitAPI {
 
+TEST(WKWebExtensionController, Configuration)
+{
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+    EXPECT_TRUE(testController.configuration.persistent);
+    EXPECT_NULL(testController.configuration.identifier);
+
+    testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    EXPECT_FALSE(testController.configuration.persistent);
+    EXPECT_NULL(testController.configuration.identifier);
+
+    NSUUID *identifier = [NSUUID UUID];
+    _WKWebExtensionControllerConfiguration *configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
+
+    testController = [[_WKWebExtensionController alloc] initWithConfiguration:configuration];
+    EXPECT_TRUE(testController.configuration.persistent);
+    EXPECT_NS_EQUAL(testController.configuration.identifier, identifier);
+}
+
 TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 {
     _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];

@@ -175,6 +175,7 @@ public:
         WebExtension,
         WebExtensionContext,
         WebExtensionController,
+        WebExtensionControllerConfiguration,
         WebExtensionMatchPattern,
 #endif
         WebResourceLoadStatisticsManager,
@@ -429,6 +430,7 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::WebExtension,
         API::Object::Type::WebExtensionContext,
         API::Object::Type::WebExtensionController,
+        API::Object::Type::WebExtensionControllerConfiguration,
         API::Object::Type::WebExtensionMatchPattern,
 #endif
         API::Object::Type::WebResourceLoadStatisticsManager,

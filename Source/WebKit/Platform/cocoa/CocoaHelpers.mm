@@ -213,24 +213,6 @@ NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscap
     return result;
 }
 
-NSUUID *toAPI(const UUID& uuid)
-{
-    if (!uuid)
-        return nil;
-
-    return [[NSUUID alloc] initWithUUIDBytes:uuid.toSpan().data()];
-}
-
-UUID toImpl(NSUUID *uuid)
-{
-    if (!uuid)
-        return UUID(UInt128 { 0 });
-
-    uuid_t bytes;
-    [uuid getUUIDBytes:bytes];
-    return UUID(bytes);
-}
-
 NSDate *toAPI(const WallTime& time)
 {
     if (std::isnan(time))

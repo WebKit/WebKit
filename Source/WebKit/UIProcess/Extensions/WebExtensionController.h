@@ -32,6 +32,7 @@
 #include "MessageReceiver.h"
 #include "WebExtensionContext.h"
 #include "WebExtensionContextIdentifier.h"
+#include "WebExtensionControllerConfiguration.h"
 #include "WebExtensionControllerIdentifier.h"
 #include "WebExtensionURLSchemeHandler.h"
 #include "WebPageProxy.h"
@@ -55,10 +56,10 @@ class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExte
     WTF_MAKE_NONCOPYABLE(WebExtensionController);
 
 public:
-    static Ref<WebExtensionController> create() { return adoptRef(*new WebExtensionController); }
+    static Ref<WebExtensionController> create(Ref<WebExtensionControllerConfiguration> configuration) { return adoptRef(*new WebExtensionController(configuration)); }
     static WebExtensionController* get(WebExtensionControllerIdentifier);
 
-    explicit WebExtensionController();
+    explicit WebExtensionController(Ref<WebExtensionControllerConfiguration>);
     ~WebExtensionController();
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
@@ -71,11 +72,17 @@ public:
     using WebPageProxySet = WeakHashSet<WebPageProxy>;
     using UserContentControllerProxySet = WeakHashSet<WebUserContentControllerProxy>;
 
+    WebExtensionControllerConfiguration& configuration() const { return m_configuration.get(); }
     WebExtensionControllerIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerParameters parameters() const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
     bool operator!=(const WebExtensionController& other) const { return !(this == &other); }
+
+    bool isPersistent() const { return m_configuration->isPersistent(); }
+    String storageDirectory(WebExtensionContext&) const;
+
+    bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
 
     bool load(WebExtensionContext&, NSError ** = nullptr);
     bool unload(WebExtensionContext&, NSError ** = nullptr);
@@ -114,8 +121,8 @@ private:
     void addUserContentController(WebUserContentControllerProxy&);
     void removeUserContentController(WebUserContentControllerProxy&);
 
+    Ref<WebExtensionControllerConfiguration> m_configuration;
     WebExtensionControllerIdentifier m_identifier;
-    String m_storageDirectory;
 
     WebExtensionContextSet m_extensionContexts;
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;
