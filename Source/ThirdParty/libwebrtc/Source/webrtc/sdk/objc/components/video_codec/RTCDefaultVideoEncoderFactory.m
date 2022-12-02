@@ -22,7 +22,7 @@
 #import "RTCH265ProfileLevelId.h"
 #import "RTCVideoEncoderH265.h"
 #endif
-#if !defined(DISABLE_LIBAOM_AV1_ENCODER)
+#if !defined(DISABLE_RTC_AV1)
 #import "sdk/objc/api/video_codec/RTCVideoEncoderAV1.h"
 #endif
 
@@ -98,7 +98,7 @@
     }]];
   }
 #endif
-#if !defined(DISABLE_LIBAOM_AV1)
+#if !defined(DISABLE_RTC_AV1)
   if (supportsAv1) {
     [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecAv1Name]];
   }
@@ -125,7 +125,7 @@
     }
 #endif
   }
-#if !defined(DISABLE_LIBAOM_AV1)
+#if !defined(DISABLE_RTC_AV1)
   if ([info.name isEqualToString:kRTCVideoCodecAv1Name]) {
     return [RTCVideoEncoderAV1 av1Encoder];
   }

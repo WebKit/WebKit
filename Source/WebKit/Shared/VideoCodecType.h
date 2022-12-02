@@ -32,7 +32,8 @@ namespace WebKit {
 enum class VideoCodecType : uint8_t {
     H264,
     H265,
-    VP9
+    VP9,
+    AV1
 };
 
 } // namespace WebKit
@@ -45,7 +46,8 @@ template<> struct EnumTraits<WebKit::VideoCodecType> {
         WebKit::VideoCodecType,
         WebKit::VideoCodecType::H264,
         WebKit::VideoCodecType::H265,
-        WebKit::VideoCodecType::VP9
+        WebKit::VideoCodecType::VP9,
+        WebKit::VideoCodecType::AV1
     >;
 };
 

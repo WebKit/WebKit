@@ -126,6 +126,8 @@ void* LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier
         return webrtc::createLocalH265Decoder(block.get());
     case VideoCodecType::VP9:
         return webrtc::createLocalVP9Decoder(block.get());
+    default:
+        break;
     }
     ASSERT_NOT_REACHED();
     return nullptr;
