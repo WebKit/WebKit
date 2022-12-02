@@ -119,15 +119,17 @@ ContentHeightAndMargin InlineFormattingGeometry::inlineBlockContentHeightAndMarg
     return complicatedCases(layoutBox, horizontalConstraints, overriddenVerticalValues);
 }
 
-bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
+bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
 {
     if (!inlineLevelBox.lineBoxContain())
         return false;
 
-    if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox())
-        return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
+    if (inlineLevelBox.isLineBreakBox())
+        return false;
     if (inlineLevelBox.isListMarker())
-        return inlineLevelBox.logicalHeight();
+        return downcast<ElementBox>(inlineLevelBox.layoutBox()).isListMarkerImage();
+    if (inlineLevelBox.isInlineBox())
+        return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineBoxAffectsLineBox(inlineLevelBox);
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         if (inlineLevelBox.logicalHeight())
             return true;
