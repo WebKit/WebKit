@@ -205,9 +205,22 @@ MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk()
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         if (Wasm::Context::useFastTLS())
-            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue, "function for call"));
+            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue, "function for wasm call"));
         else
-            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_no_tls, "function for call"));
+            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_no_tls, "function for wasm call"));
+    });
+    return codeRef;
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD()
+{
+    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        if (Wasm::Context::useFastTLS())
+            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_simd, "function for wasm SIMD call"));
+        else
+            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_no_tls_simd, "function for wasm SIMD call"));
     });
     return codeRef;
 }

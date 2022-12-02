@@ -83,6 +83,13 @@ namespace JSC { namespace LLInt {
 #if ENABLE(WEBASSEMBLY_B3JIT)
 enum class RequiredWasmJIT { Any, OMG };
 
+extern "C" void wasm_log_crash(CallFrame*, Wasm::Instance* instance)
+{
+    dataLogLn("Reached LLInt code that should never have been executed.");
+    dataLogLn("Module internal function count: ", instance->module().moduleInformation().internalFunctionCount());
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
 {
     if (requiredJIT == RequiredWasmJIT::OMG) {
@@ -101,6 +108,8 @@ inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = R
 
 inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
 {
+    ASSERT(!instance->module().moduleInformation().isSIMDFunction(callee->functionIndex()));
+
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
         dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
@@ -145,6 +154,46 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance
     }
 
     return !!callee->replacement(instance->memory()->mode());
+}
+
+inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
+{
+    Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
+
+    if (callee->replacement(instance->memory()->mode()))  {
+        dataLogLnIf(Options::verboseOSR(), "    SIMD code was already compiled.");
+        return true;
+    }
+
+    bool compile = false;
+    while (!compile) {
+        Locker locker { tierUpCounter.m_lock };
+        switch (tierUpCounter.m_compilationStatus) {
+        case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
+            compile = true;
+            tierUpCounter.m_compilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+            break;
+        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
+            // This spinlock is bad, but this is only temporary.
+            continue;
+        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
+            RELEASE_ASSERT(!!callee->replacement(instance->memory()->mode()));
+            return true;
+        }
+    }
+
+    uint32_t functionIndex = callee->functionIndex();
+    ASSERT(instance->module().moduleInformation().isSIMDFunction(functionIndex));
+    RefPtr<Wasm::Plan> plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
+
+    Wasm::ensureWorklist().enqueue(*plan);
+    plan->waitForCompletion();
+
+    Locker locker { tierUpCounter.m_lock };
+    RELEASE_ASSERT(tierUpCounter.m_compilationStatus == Wasm::LLIntTierUpCounter::CompilationStatus::Compiled);
+    RELEASE_ASSERT(!!callee->replacement(instance->memory()->mode()));
+
+    return true;
 }
 
 WASM_SLOW_PATH_DECL(prologue_osr)
@@ -280,6 +329,21 @@ WASM_SLOW_PATH_DECL(epilogue_osr)
 
     jitCompileAndSetHeuristics(callee, instance);
     WASM_END_IMPL();
+}
+
+WASM_SLOW_PATH_DECL(simd_go_straight_to_bbq_osr)
+{
+    UNUSED_PARAM(pc);
+    Wasm::LLIntCallee* callee = CALLEE();
+
+    if (!Options::useWebAssemblySIMD())
+        RELEASE_ASSERT_NOT_REACHED();
+    RELEASE_ASSERT(shouldJIT(callee));
+
+    dataLogLnIf(Options::verboseOSR(), *callee, ": Entered simd_go_straight_to_bbq_osr with tierUpCounter = ", callee->tierUpCounter());
+
+    RELEASE_ASSERT(jitCompileSIMDFunction(callee, instance));
+    WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().taggedPtr(), nullptr);
 }
 #endif
 

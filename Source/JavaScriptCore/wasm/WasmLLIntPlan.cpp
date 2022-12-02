@@ -116,7 +116,11 @@ void LLIntPlan::didCompleteCompilation()
                 BytecodeDumper::dumpBlock(m_wasmInternalFunctions[i].get(), m_moduleInformation, WTF::dataFile());
 
             m_calleesVector[i] = LLIntCallee::create(*m_wasmInternalFunctions[i], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
+            ASSERT(!m_calleesVector[i]->entrypoint());
             entrypoints[i] = jit.label();
+            if (m_moduleInformation->isSIMDFunction(i))
+                JIT_COMMENT(jit, "SIMD function entrypoint");
+            JIT_COMMENT(jit, "Entrypoint for function[", i, "]");
 #if CPU(X86_64)
             CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CPURegister));
 #elif CPU(ARM64) || CPU(RISCV64) || CPU(ARM)
@@ -139,7 +143,10 @@ void LLIntPlan::didCompleteCompilation()
 
         for (unsigned i = 0; i < functionCount; ++i) {
             m_calleesVector[i]->setEntrypoint(linkBuffer.locationOf<WasmEntryPtrTag>(entrypoints[i]));
-            linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunk().code()));
+            if (m_moduleInformation->isSIMDFunction(i))
+                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunkSIMD().code()));
+            else
+                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunk().code()));
         }
 
         m_entryThunks = FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Wasm LLInt entry thunks");

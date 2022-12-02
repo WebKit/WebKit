@@ -10,7 +10,7 @@ load("wasm-module-builder.js");
 load("exceptions-utils.js");
 
 (function TestThrowS128Default() {
-  print(arguments.callee.name);
+  // print(arguments.callee.name);
   var builder = new WasmModuleBuilder();
   var kSig_v_s = makeSig([kWasmS128], []);
   var except = builder.addTag(kSig_v_s);
@@ -28,7 +28,7 @@ load("exceptions-utils.js");
 })();
 
 (function TestThrowCatchS128Default() {
-  print(arguments.callee.name);
+  // print(arguments.callee.name);
   var builder = new WasmModuleBuilder();
   var kSig_v_s = makeSig([kWasmS128], []);
   var except = builder.addTag(kSig_v_s);
@@ -51,7 +51,7 @@ load("exceptions-utils.js");
 })();
 
 (function TestThrowCatchS128WithValue() {
-  print(arguments.callee.name);
+  // print(arguments.callee.name);
   var builder = new WasmModuleBuilder();
   var kSig_v_s = makeSig([kWasmS128], []);
   var except = builder.addTag(kSig_v_s);

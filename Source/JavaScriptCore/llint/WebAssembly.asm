@@ -424,6 +424,110 @@ end
 .zeroInitializeLocalsDone:
 end
 
+macro forEachVectorArgument(fn)
+     const base = NumberOfWasmArgumentJSRs * 8
+     fn(base + 0 * 16, -(base + 0 * 16 + 8), wfa0)
+     fn(base + 1 * 16, -(base + 1 * 16 + 8), wfa1)
+     fn(base + 2 * 16, -(base + 2 * 16 + 8), wfa2)
+     fn(base + 3 * 16, -(base + 3 * 16 + 8), wfa3)
+     fn(base + 4 * 16, -(base + 4 * 16 + 8), wfa4)
+     fn(base + 5 * 16, -(base + 5 * 16 + 8), wfa5)
+     fn(base + 6 * 16, -(base + 6 * 16 + 8), wfa6)
+     fn(base + 7 * 16, -(base + 7 * 16 + 8), wfa7)
+end
+
+# Tier up immediately, while saving full vectors in argument FPRs
+macro wasmPrologueSIMD(loadWasmInstance)
+if WEBASSEMBLY_B3JIT
+    preserveCallerPCAndCFR()
+    preserveCalleeSavesUsedByWasm()
+    loadWasmInstance()
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+
+    loadp Wasm::Instance::m_owner[wasmInstance], ws0
+    storep ws0, ThisArgumentOffset[cfr]
+if not JSVALUE64
+    storei CellTag, TagOffset + ThisArgumentOffset[cfr]
+end
+
+    loadp Callee[cfr], ws0
+    andp ~3, ws0
+    storep ws0, CodeBlock[cfr]
+
+    # Get new sp in ws1 and check stack height.
+    # This should match the calculation of m_stackSize, but with double the size for fpr arg storage and no locals.
+    move 8 + 8 * 2 + constexpr CallFrame::headerSizeInRegisters + 1, ws1
+    lshiftp 3, ws1
+    addp maxFrameExtentForSlowPathCall, ws1
+    subp cfr, ws1, ws1
+
+if not JSVALUE64
+    subp 8, ws1 # align stack pointer
+end
+
+    bpa ws1, cfr, .stackOverflow
+    bpbeq Wasm::Instance::m_cachedStackLimit[wasmInstance], ws1, .stackHeightOK
+
+.stackOverflow:
+    throwException(StackOverflow)
+
+.stackHeightOK:
+    move ws1, sp
+
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        storepairq gpr2, gpr1, -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
+    end)
+elsif JSVALUE64
+    forEachArgumentJSR(macro (offset, gpr)
+        storeq gpr, -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
+    end)
+else
+    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
+        store2ia gpLsw, gprMsw, -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
+    end)
+end
+
+    forEachVectorArgument(macro (offset, negOffset, fpr)
+        storev fpr, negOffset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
+    end)
+
+    move cfr, a0
+    move PC, a1
+    move wasmInstance, a2
+    cCall4(_slow_path_wasm_simd_go_straight_to_bbq_osr)
+    move r0, ws0
+
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        loadpairq -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpr2, gpr1
+    end)
+elsif JSVALUE64
+    forEachArgumentJSR(macro (offset, gpr)
+        loadq -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpr
+    end)
+else
+    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
+        load2ia -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpLsw, gprMsw
+    end)
+end
+
+    forEachVectorArgument(macro (offset, negOffset, fpr)
+        loadv negOffset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
+    end)
+
+    restoreCalleeSavesUsedByWasm()
+    restoreCallerPCAndCFR()
+    if ARM64E
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmOSREntry) * PtrSize, ws1
+        jmp [ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+    else
+        jmp ws0, WasmEntryPtrTag
+    end
+end
+    break
+end
+
 macro traceExecution()
     if TRACING
         callWasmSlowPath(_slow_path_wasm_trace)
@@ -647,6 +751,24 @@ op(wasm_function_prologue_no_tls, macro ()
     wasmNextInstruction()
 end)
 
+op(wasm_function_prologue_simd, macro ()
+    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+        error
+    end
+
+    wasmPrologueSIMD(loadWasmInstanceFromTLS)
+    break
+end)
+
+op(wasm_function_prologue_no_tls_simd, macro ()
+    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+        error
+    end
+
+    wasmPrologueSIMD(macro () end)
+    break
+end)
+
 macro jumpToException()
     if ARM64E
         move r0, a0
@@ -857,6 +979,19 @@ end)
 
 wasmOp(unreachable, WasmUnreachable, macro(ctx)
     throwException(Unreachable)
+end)
+
+unprefixedWasmOp(wasm_crash, WasmCrash, macro(ctx)
+if WEBASSEMBLY_B3JIT
+    probe(
+        macro()
+            move cfr, a0
+            move wasmInstance, a1
+            cCall2(_wasm_log_crash)
+        end
+    )
+end
+    break
 end)
 
 wasmOp(ret_void, WasmRetVoid, macro(ctx)

@@ -330,6 +330,8 @@ struct FunctionData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     size_t start;
     size_t end;
+    bool isSIMDFunction = false;
+    bool finishedValidating = false;
     Vector<uint8_t> data;
 };
 

@@ -988,6 +988,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, CallFra
     for (unsigned i = 0; i < tag.parameterCount(); ++i)
         values[i] = arguments[i];
 
+    ASSERT(tag.type().returnsVoid());
     if (tag.type().numVectors()) {
         // Note: the spec is still in flux on what to do here, so we conservatively just disallow throwing any vectors.
         throwException(globalObject, throwScope, createTypeError(globalObject, errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use)));
