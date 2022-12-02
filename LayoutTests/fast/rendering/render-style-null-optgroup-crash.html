@@ -1,0 +1,22 @@
+<style>
+.class4:optional,*:focus-within { auto;display: contents }
+</style>
+<script>
+function f1() {
+    try { x = document.caretRangeFromPoint(); } catch { }
+    try { y = x.commonAncestorContainer; } catch { }
+    try { z.selectionDirection = "backward"; } catch { }
+    try { y.innerHTML = "PASS"; } catch { }
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+</script>
+<iframe translate="yes">
+</iframe>
+<details open="" onfocusin="f1()">
+<select autofocus="" multiple="" required="">
+<optgroup webkitdropzone="copy">
+<textarea id="z" rows="1024">
