@@ -68,43 +68,6 @@ void WebPage::getPlatformEditorState(Frame&, EditorState&) const
 {
 }
 
-bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
-{
-    if (keyboardEvent.type() != WebEvent::KeyDown && keyboardEvent.type() != WebEvent::RawKeyDown)
-        return false;
-
-    switch (keyboardEvent.windowsVirtualKeyCode()) {
-    case VK_LEFT:
-        scroll(m_page.get(), ScrollLeft, ScrollGranularity::Line);
-        break;
-    case VK_RIGHT:
-        scroll(m_page.get(), ScrollRight, ScrollGranularity::Line);
-        break;
-    case VK_UP:
-        scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
-        break;
-    case VK_DOWN:
-        scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
-        break;
-    case VK_HOME:
-        executeEditCommand("ScrollToBeginningOfDocument"_s, { });
-        break;
-    case VK_END:
-        executeEditCommand("ScrollToEndOfDocument"_s, { });
-        break;
-    case VK_PRIOR:
-        executeEditCommand("ScrollPageBackward"_s, { });
-        break;
-    case VK_NEXT:
-        executeEditCommand("ScrollPageForward"_s, { });
-        break;
-    default:
-        return false;
-    }
-
-    return true;
-}
-
 bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 {
     notImplemented();

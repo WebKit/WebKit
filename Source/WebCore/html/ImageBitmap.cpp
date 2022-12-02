@@ -39,6 +39,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "HostWindow.h"
 #include "ImageBitmapOptions.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -92,15 +93,17 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
 
     auto bufferOptions = bufferOptionsForRendingMode(renderingMode);
 
+    GraphicsClient* client = nullptr;
     if (scriptExecutionContext.isDocument()) {
         auto& document = downcast<Document>(scriptExecutionContext);
         if (document.view() && document.view()->root()) {
-            auto hostWindow = document.view()->root()->hostWindow();
-            return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { hostWindow });
+            client = document.view()->root()->hostWindow();
         }
     }
 
-    // FIXME <https://webkit.org/b/218482> Enable worker based ImageBitmap and OffscreenCanvas drawing to use GPU Process rendering
+    if (client)
+        return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { client });
+
     return ImageBuffer::create(size, RenderingPurpose::Unspecified, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions);
 }
 
@@ -113,10 +116,20 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     );
 }
 
+RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, DestinationColorSpace colorSpace, float resolutionScale)
+{
+    return createImageBuffer(scriptExecutionContext, size, bufferRenderingMode, colorSpace, resolutionScale);
+}
+
 Vector<std::optional<ImageBitmapBacking>> ImageBitmap::detachBitmaps(Vector<RefPtr<ImageBitmap>>&& bitmaps)
 {
-    return WTF::map(WTFMove(bitmaps), [](auto&& bitmap) {
-        return bitmap->takeImageBitmapBacking();
+    return WTF::map(WTFMove(bitmaps), [](auto&& bitmap) -> std::optional<ImageBitmapBacking> {
+        std::optional<ImageBitmapBacking> backing = bitmap->takeImageBitmapBacking();
+        if (!backing)
+            return std::nullopt;
+        if (auto copyBuffer = backing->takeImageBufferForDifferentThread())
+            return ImageBitmapBacking(WTFMove(copyBuffer), backing->serializationState());
+        return std::nullopt;
     });
 }
 
@@ -897,10 +910,6 @@ ImageBitmap::ImageBitmap(std::optional<ImageBitmapBacking>&& backingStore)
 
 ImageBitmap::~ImageBitmap()
 {
-    if (isMainThread())
-        return;
-    if (auto imageBuffer = takeImageBuffer())
-        callOnMainThread([imageBuffer = WTFMove(imageBuffer)] { });
 }
 
 std::optional<ImageBitmapBacking> ImageBitmap::takeImageBitmapBacking()

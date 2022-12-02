@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'container-type' to CSS-wide keywords
+FAIL Can set 'container-type' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'container-type' to the 'normal' keyword
+PASS Can set 'container-type' to the 'size' keyword
+PASS Can set 'container-type' to the 'inline-size' keyword
+PASS Setting 'container-type' to a length throws TypeError
+PASS Setting 'container-type' to a percent throws TypeError
+PASS Setting 'container-type' to a time throws TypeError
+PASS Setting 'container-type' to an angle throws TypeError
+PASS Setting 'container-type' to a flexible length throws TypeError
+PASS Setting 'container-type' to a number throws TypeError
+PASS Setting 'container-type' to a URL throws TypeError
+PASS Setting 'container-type' to a transform throws TypeError
 

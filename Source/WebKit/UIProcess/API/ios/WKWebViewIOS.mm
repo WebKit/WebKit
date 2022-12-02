@@ -35,7 +35,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteLayerTreeViews.h"
-#import "RemoteScrollingCoordinatorProxy.h"
+#import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
@@ -126,11 +126,14 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
 
 - (void)setFrame:(CGRect)frame
 {
-    CGRect oldFrame = self.frame;
+    bool sizeChanged = !CGSizeEqualToSize(self.frame.size, frame.size);
+    if (sizeChanged)
+        [self _frameOrBoundsWillChange];
+
     [super setFrame:frame];
 
-    if (!CGSizeEqualToSize(oldFrame.size, frame.size)) {
-        [self _frameOrBoundsChanged];
+    if (sizeChanged) {
+        [self _frameOrBoundsMayHaveChanged];
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
         [self _acquireResizeAssertionForReason:@"-[WKWebView setFrame:]"];
@@ -140,12 +143,15 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
 
 - (void)setBounds:(CGRect)bounds
 {
-    CGRect oldBounds = self.bounds;
+    bool sizeChanged = !CGSizeEqualToSize(self.bounds.size, bounds.size);
+    if (sizeChanged)
+        [self _frameOrBoundsWillChange];
+
     [super setBounds:bounds];
     [_customContentFixedOverlayView setFrame:self.bounds];
 
-    if (!CGSizeEqualToSize(oldBounds.size, bounds.size)) {
-        [self _frameOrBoundsChanged];
+    if (sizeChanged) {
+        [self _frameOrBoundsMayHaveChanged];
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
         [self _acquireResizeAssertionForReason:@"-[WKWebView setBounds:]"];
@@ -157,7 +163,7 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
 {
     [_safeBrowsingWarning setFrame:self.bounds];
     [super layoutSubviews];
-    [self _frameOrBoundsChanged];
+    [self _frameOrBoundsMayHaveChanged];
 }
 
 #pragma mark - iOS implementation methods
@@ -1081,12 +1087,11 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
 
 - (void)_updateOverlayRegions:(const WebKit::RemoteLayerTreeTransaction::LayerPropertiesMap&)changedLayerPropertiesMap destroyedLayers:(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&)destroyedLayers
 {
-    if (!changedLayerPropertiesMap.size() && !destroyedLayers.size())
-        return;
+    BOOL skipRecursiveRegionUpdate = !changedLayerPropertiesMap.size() && !destroyedLayers.size();
 
     auto& layerTreeProxy = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea());
     auto& layerTreeHost = layerTreeProxy.remoteLayerTreeHost();
-    auto* scrollingCoordinatorProxy = _page->scrollingCoordinatorProxy();
+    auto* scrollingCoordinatorProxy = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
     if (!scrollingCoordinatorProxy)
         return;
 
@@ -1097,8 +1102,10 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
     for (auto layerID : destroyedLayers)
         overlayRegionIDs.remove(layerID);
 
-    for (auto layerID : fixedIDs)
-        addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionIDs, layerTreeHost);
+    if (!skipRecursiveRegionUpdate) {
+        for (auto layerID : fixedIDs)
+            addOverlayEventRegions(layerID, changedLayerPropertiesMap, overlayRegionIDs, layerTreeHost);
+    }
 
     Vector<CGRect> overlayRegions;
     for (const auto layerID : overlayRegionIDs) {
@@ -1665,8 +1672,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         _page->setIsWindowResizingEnabled(self._isWindowResizingEnabled);
     [self _invalidateResizeAssertions];
 #endif
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
     [self _destroyEndLiveResizeObserver];
     [self _endLiveResize];
+#endif
 }
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -1792,7 +1801,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 #if ENABLE(ASYNC_SCROLLING)
     // FIXME: We will want to detect whether snapping will occur before beginning to drag. See WebPageProxy::didCommitLayerTree.
-    WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
+    auto* coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
     ASSERT(scrollView == _scrollView.get());
     [_scrollView _setDecelerationRateInternal:(coordinator && coordinator->shouldSetScrollViewDecelerationRateFast()) ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal];
 
@@ -1829,7 +1838,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             targetContentOffset->y = scrollView.contentOffset.y;
     }
 #if ENABLE(ASYNC_SCROLLING)
-    if (WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy()) {
+    if (auto* coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
         // FIXME: Here, I'm finding the maximum horizontal/vertical scroll offsets. There's probably a better way to do this.
         CGSize maxScrollOffsets = CGSizeMake(scrollView.contentSize.width - scrollView.bounds.size.width, scrollView.contentSize.height - scrollView.bounds.size.height);
 
@@ -2104,6 +2113,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 }
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
 - (void)_beginAutomaticLiveResizeIfNeeded
 {
     if (_perProcessState.liveResizeParameters)
@@ -2112,14 +2123,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!self.window)
         return;
 
-    // FIXME: This should use explicit live resize notifications instead of inferring it,
-    // especially since this means we may do some spurious live resizes.
-    if (self.window.windowScene.activationState != UISceneActivationStateForegroundInactive)
+    if (!self.window.windowScene._isInLiveResize)
         return;
 
     [self _beginLiveResize];
     
-    _endLiveResizeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UISceneDidActivateNotification object:self.window.windowScene queue:NSOperationQueue.mainQueue usingBlock:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] (NSNotification *) {
+    _endLiveResizeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:_UIWindowSceneDidEndLiveResizeNotification object:self.window.windowScene queue:NSOperationQueue.mainQueue usingBlock:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] (NSNotification *) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -2152,17 +2161,26 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_resizeAnimationView setTransform:transform];
 }
 
-- (void)_frameOrBoundsChanged
+#endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
+- (void)_frameOrBoundsWillChange
+{
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+    if (_page && _page->preferences().automaticLiveResizeEnabled())
+        [self _beginAutomaticLiveResizeIfNeeded];
+#endif
+}
+
+- (void)_frameOrBoundsMayHaveChanged
 {
     CGRect bounds = self.bounds;
     [_scrollView setFrame:bounds];
 
-    if (_page && _page->preferences().automaticLiveResizeEnabled())
-        [self _beginAutomaticLiveResizeIfNeeded];
-
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
     if (_perProcessState.liveResizeParameters)
         [self _updateLiveResizeTransform];
-    
+#endif
+
     if (!self._shouldDeferGeometryUpdates) {
         if (!_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
@@ -2497,7 +2515,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
 #if ENABLE(ASYNC_SCROLLING)
     if (viewStability.isEmpty()) {
-        WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
+        auto* coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
         if (coordinator && coordinator->hasActiveSnapPoint()) {
             CGPoint currentPoint = [_scrollView contentOffset];
             CGPoint activePoint = coordinator->nearestActiveContentInsetAdjustedSnapOffset(unobscuredRect.origin.y, currentPoint);
@@ -2961,6 +2979,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return [_contentView _shouldAvoidSecurityHeuristicScoreUpdates];
 }
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
 - (void)_beginLiveResize
 {
     if (_perProcessState.liveResizeParameters) {
@@ -3001,6 +3021,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         [liveResizeSnapshotView removeFromSuperview];
     }];    
 }
+
+#endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 
 #if HAVE(UIFINDINTERACTION)
 
@@ -3590,7 +3612,7 @@ static bool isLockdownModeWarningNeeded()
             _perProcessState.waitingForEndAnimatedResize = YES;
         }
 
-        [self _frameOrBoundsChanged];
+        [self _frameOrBoundsMayHaveChanged];
         if (_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:newViewLayoutSize];
         if (_minimumUnobscuredSizeOverride)

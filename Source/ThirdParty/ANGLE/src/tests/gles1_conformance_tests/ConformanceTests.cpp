@@ -109,6 +109,8 @@ void StateSetup(void);
 
 #define CONFORMANCE_TEST_ERROR (-1)
 
+#include "conform.h"
+
 #ifdef __cplusplus
 }
 
@@ -120,8 +122,8 @@ class GLES1ConformanceTest : public ANGLETest<>
   protected:
     GLES1ConformanceTest()
     {
-        setWindowWidth(48);
-        setWindowHeight(48);
+        setWindowWidth(WINDSIZEX);
+        setWindowHeight(WINDSIZEY);
         setConfigRedBits(8);
         setConfigGreenBits(8);
         setConfigBlueBits(8);
@@ -135,6 +137,13 @@ class GLES1ConformanceTest : public ANGLETest<>
         BufferSetup();
         EpsilonSetup();
         StateSetup();
+
+        machine = {};
+        // Default parameters taken from shell.c.  Verbosity is increased so test failures come with
+        // information.
+        machine.randSeed       = 1;
+        machine.verboseLevel   = 2;
+        machine.stateCheckFlag = GL_TRUE;
     }
 };
 
@@ -422,8 +431,6 @@ TEST_P(GLES1ConformanceTest, SpotExpPos)
 
 TEST_P(GLES1ConformanceTest, SpotExpDir)
 {
-    // http://crbug.com/1136238
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SpotExpDirExec());
 }
 
@@ -434,7 +441,7 @@ TEST_P(GLES1ConformanceTest, TexDecal)
 
 TEST_P(GLES1ConformanceTest, TexPalet)
 {
-    ANGLE_SKIP_TEST_IF(true);
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, TexPaletExec());
 }
 
@@ -536,18 +543,6 @@ TEST_P(GLES1ConformanceTest, UserClip)
     // detect previously drawn fragments from one clip plane that lie exactly
     // on the half space boundary, and avoid drawing them if the same primitive
     // is issued next draw with a negated version of the clip plane.
-    //
-    // TODO(lfy@google.com)
-    // We can skip the test for now, or seed the test with a sufficiently nice
-    // random number so that it still test clip planes, but doesn't have any
-    // pixels exactly on half space boundaries.
-    //
-    // Proper fix would either involve a more complex scheme to track fragments
-    // on the half space boundary and discard or not next draw based on whether
-    // they are hit again, or to pass through to a hardware clip plane
-    // implementation (available in desktop GL or Vulkan)
-
-    ANGLE_SKIP_TEST_IF(true);
     ASSERT_NE(CONFORMANCE_TEST_ERROR, UserClipExec());
 }
 

@@ -1,0 +1,8 @@
+text aom_codec_dec_init_ver
+text aom_codec_decode
+text aom_codec_get_frame
+text aom_codec_get_stream_info
+text aom_codec_peek_stream_info
+text aom_codec_set_frame_buffer_functions
+text aom_obu_type_to_string
+text aom_read_obu_header

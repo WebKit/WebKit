@@ -34,11 +34,13 @@
 #include <WebKit/WKCertificateInfoCurl.h>
 #include <WebKit/WKContextConfigurationRef.h>
 #include <WebKit/WKCredential.h>
+#include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKProtectionSpaceCurl.h>
 #include <WebKit/WKSecurityOriginRef.h>
+#include <WebKit/WKWebsiteDataStoreConfigurationRef.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <WebKit/WKWebsiteDataStoreRefCurl.h>
 #include <filesystem>
@@ -128,33 +130,37 @@ WKRetainPtr<WKStringRef> injectedBundlePath()
 
 Ref<BrowserWindow> WebKitBrowserWindow::create(BrowserWindowClient& client, HWND mainWnd, bool)
 {
-    auto conf = adoptWK(WKPageConfigurationCreate());
+    auto websiteDataStoreConf = adoptWK(WKWebsiteDataStoreConfigurationCreate());
 
-    auto prefs = adoptWK(WKPreferencesCreate());
-
-    auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(createWKString("WinMiniBrowser").get()));
-    WKPageConfigurationSetPageGroup(conf.get(), pageGroup.get());
-    WKPageGroupSetPreferences(pageGroup.get(), prefs.get());
-
-    WKPreferencesSetMediaCapabilitiesEnabled(prefs.get(), false);
-    WKPreferencesSetDeveloperExtrasEnabled(prefs.get(), true);
-    WKPageConfigurationSetPreferences(conf.get(), prefs.get());
+    auto websiteDataStore = adoptWK(WKWebsiteDataStoreCreateWithConfiguration(websiteDataStoreConf.get()));
 
     auto contextConf = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(contextConf.get(), injectedBundlePath().get());
 
     auto context = adoptWK(WKContextCreateWithConfiguration(contextConf.get()));
-    WKPageConfigurationSetContext(conf.get(), context.get());
 
-    return adoptRef(*new WebKitBrowserWindow(client, conf.get(), mainWnd));
+    auto preferences = adoptWK(WKPreferencesCreate());
+    WKPreferencesSetMediaCapabilitiesEnabled(preferences.get(), false);
+    WKPreferencesSetDeveloperExtrasEnabled(preferences.get(), true);
+
+    auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(createWKString("WinMiniBrowser").get()));
+    WKPageGroupSetPreferences(pageGroup.get(), preferences.get());
+
+    auto pageConf = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetWebsiteDataStore(pageConf.get(), websiteDataStore.get());
+    WKPageConfigurationSetContext(pageConf.get(), context.get());
+    WKPageConfigurationSetPreferences(pageConf.get(), preferences.get());
+    WKPageConfigurationSetPageGroup(pageConf.get(), pageGroup.get());
+
+    return adoptRef(*new WebKitBrowserWindow(client, pageConf.get(), mainWnd));
 }
 
-WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConfigurationRef conf, HWND mainWnd)
+WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConfigurationRef pageConf, HWND mainWnd)
     : m_client(client)
     , m_hMainWnd(mainWnd)
 {
     RECT rect = { };
-    m_view = adoptWK(WKViewCreate(rect, conf, mainWnd));
+    m_view = adoptWK(WKViewCreate(rect, pageConf, mainWnd));
     WKViewSetIsInWindow(m_view.get(), true);
 
     auto page = WKViewGetPage(m_view.get());
@@ -191,22 +197,22 @@ WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConf
 
 void WebKitBrowserWindow::updateProxySettings()
 {
-    auto context = WKPageGetContext(WKViewGetPage(m_view.get()));
-    auto store = WKWebsiteDataStoreGetDefaultDataStore();
+    auto page = WKViewGetPage(m_view.get());
+    auto websiteDataStore = WKPageGetWebsiteDataStore(page);
 
     if (!m_proxy.enable) {
-        WKWebsiteDataStoreDisableNetworkProxySettings(store);
+        WKWebsiteDataStoreDisableNetworkProxySettings(websiteDataStore);
         return;
     }
 
     if (!m_proxy.custom) {
-        WKWebsiteDataStoreEnableDefaultNetworkProxySettings(store);
+        WKWebsiteDataStoreEnableDefaultNetworkProxySettings(websiteDataStore);
         return;
     }
 
     auto url = createWKURL(m_proxy.url);
     auto excludeHosts = createWKString(m_proxy.excludeHosts);
-    WKWebsiteDataStoreEnableCustomNetworkProxySettings(store, url.get(), excludeHosts.get());
+    WKWebsiteDataStoreEnableCustomNetworkProxySettings(websiteDataStore, url.get(), excludeHosts.get());
 }
 
 HRESULT WebKitBrowserWindow::init()
@@ -400,6 +406,58 @@ void WebKitBrowserWindow::zoomOut()
     WKPageSetPageZoomFactor(page, s * 0.8);
 }
 
+static void deleteAllCookiesCallback(void*)
+{
+
+}
+
+void WebKitBrowserWindow::clearCookies()
+{
+    auto page = WKViewGetPage(m_view.get());
+    auto websiteDataStore = WKPageGetWebsiteDataStore(page);
+
+    WKHTTPCookieStoreRef cookieStore = WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore);
+    if (cookieStore)
+        WKHTTPCookieStoreDeleteAllCookies(cookieStore, this, deleteAllCookiesCallback);
+}
+
+static void removeAllFetchCachesCallback(void*)
+{
+}
+
+static void removeNetworkCacheCallback(void*)
+{
+}
+
+static void removeMemoryCachesCallback(void*)
+{
+}
+
+static void removeAllServiceWorkerRegistrationsCallback(void*)
+{
+}
+
+static void removeAllIndexedDatabasesCallback(void*)
+{
+}
+
+static void removeLocalStorageCallback(void*)
+{
+}
+    
+void WebKitBrowserWindow::clearWebsiteData()
+{
+    auto page = WKViewGetPage(m_view.get());
+    auto websiteDataStore = WKPageGetWebsiteDataStore(page);
+
+    WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore, this, removeAllFetchCachesCallback);
+    WKWebsiteDataStoreRemoveNetworkCache(websiteDataStore, this, removeNetworkCacheCallback);
+    WKWebsiteDataStoreRemoveMemoryCaches(websiteDataStore, this, removeMemoryCachesCallback);
+    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore, this, removeAllServiceWorkerRegistrationsCallback);
+    WKWebsiteDataStoreRemoveAllIndexedDatabases(websiteDataStore, this, removeAllIndexedDatabasesCallback);
+    WKWebsiteDataStoreRemoveLocalStorage(websiteDataStore, this, removeLocalStorageCallback);
+}
+
 static WebKitBrowserWindow& toWebKitBrowserWindow(const void *clientInfo)
 {
     return *const_cast<WebKitBrowserWindow*>(static_cast<const WebKitBrowserWindow*>(clientInfo));
@@ -500,11 +558,11 @@ bool WebKitBrowserWindow::canTrustServerCertificate(WKProtectionSpaceRef protect
     return false;
 }
 
-WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
+WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfigurationRef pageConf, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     auto& newWindow = MainWindow::create().leakRef();
-    auto factory = [configuration](BrowserWindowClient& client, HWND mainWnd, bool) -> auto {
-        return adoptRef(*new WebKitBrowserWindow(client, configuration, mainWnd));
+    auto factory = [pageConf](BrowserWindowClient& client, HWND mainWnd, bool) -> auto {
+        return adoptRef(*new WebKitBrowserWindow(client, pageConf, mainWnd));
     };
     bool ok = newWindow.init(factory, hInst);
     if (!ok)

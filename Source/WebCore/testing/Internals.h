@@ -105,6 +105,7 @@ class MallocStatistics;
 class MediaStream;
 class MediaStreamTrack;
 class MemoryInfo;
+class MessagePort;
 class MockCDMFactory;
 class MockContentFilterSettings;
 class MockPageOverlay;
@@ -325,7 +326,6 @@ public:
     ExceptionOr<void> setMarkedTextMatchesAreHighlighted(bool);
 
     void invalidateFontCache();
-    void setFontSmoothingEnabled(bool);
 
     ExceptionOr<void> setLowPowerModeEnabled(bool);
     ExceptionOr<void> setOutsideViewportThrottlingEnabled(bool);
@@ -448,6 +448,8 @@ public:
     unsigned workerThreadCount() const;
     ExceptionOr<bool> areSVGAnimationsPaused() const;
     ExceptionOr<double> svgAnimationsInterval(SVGSVGElement&) const;
+    // Some SVGSVGElements are not accessible via JavaScript (e.g. those in CSS `background: url(data:image/svg+xml;utf8,<svg>...)`, but we need access to them for testing.
+    Vector<Ref<SVGSVGElement>> allSVGSVGElements() const;
 
     enum {
         // Values need to be kept in sync with Internals.idl.
@@ -529,6 +531,9 @@ public:
 
     String documentIdentifier(const Document&) const;
     bool isDocumentAlive(const String& documentIdentifier) const;
+
+    uint64_t messagePortIdentifier(const MessagePort&) const;
+    bool isMessagePortAlive(uint64_t messagePortIdentifier) const;
 
     uint64_t storageAreaMapCount() const;
 
@@ -829,7 +834,7 @@ public:
     void setShowAllPlugins(bool);
 
     String resourceLoadStatisticsForURL(const DOMURL&);
-    void setResourceLoadStatisticsEnabled(bool);
+    void setTrackingPreventionEnabled(bool);
 
     bool isReadableStreamDisturbed(JSC::JSGlobalObject&, JSC::JSValue);
     JSC::JSValue cloneArrayBuffer(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
@@ -845,6 +850,8 @@ public:
     bool userIsInteracting();
 
     bool hasTransientActivation();
+
+    bool consumeTransientActivation();
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 
@@ -1351,6 +1358,8 @@ public:
 
     void avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement&);
     bool hasSleepDisabler() const;
+
+    void acceptTypedArrays(Int32Array&);
 
 private:
     explicit Internals(Document&);

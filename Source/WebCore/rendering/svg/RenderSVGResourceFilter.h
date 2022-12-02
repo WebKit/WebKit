@@ -24,7 +24,7 @@
 #pragma once
 
 #include "FilterResults.h"
-#include "ImageBuffer.h"
+#include "FilterTargetSwitcher.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGFilter.h"
 #include "SVGUnitTypes.h"
@@ -47,7 +47,7 @@ public:
     RefPtr<SVGFilter> filter;
     FilterResults results;
 
-    RefPtr<ImageBuffer> sourceImage;
+    std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
     FloatRect sourceImageRect;
 
     GraphicsContext* savedContext { nullptr };

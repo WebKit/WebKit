@@ -50,7 +50,7 @@ public:
 
     void appendFontFace(Ref<CSSFontFace>&&);
 
-    FontRanges fontRanges(const FontDescription&, const FontPaletteValues&);
+    FontRanges fontRanges(const FontDescription&, const FontPaletteValues&, RefPtr<FontFeatureValues>);
 
     Vector<Ref<CSSFontFace>, 1>& constituentFaces() { return m_fontFaces; }
 

@@ -1470,6 +1470,8 @@ op :op_iterator_open_return_location
 op :op_iterator_next_return_location
 op :wasm_function_prologue
 op :wasm_function_prologue_no_tls
+op :wasm_function_prologue_simd
+op :wasm_function_prologue_no_tls_simd
 
 op :op_call_slow_return_location
 op :op_construct_slow_return_location
@@ -1572,6 +1574,7 @@ op :switch,
 # Wasm specific bytecodes
 
 op :unreachable
+op :crash
 op :ret_void
 
 op :drop_keep,

@@ -43,7 +43,7 @@ UScriptCode scriptNameToCode(StringView scriptName)
     // treated as a single script for assigning a per-script font in Settings. For example, "hira" is mapped to
     // USCRIPT_KATAKANA_OR_HIRAGANA instead of USCRIPT_HIRAGANA, since we want all Japanese scripts to be rendered
     // using the same font setting.
-    using ScriptName = PackedASCIILowerCodes<uint32_t>;
+    using ScriptName = PackedLettersLiteral<uint32_t>;
     static constexpr std::pair<ScriptName, UScriptCode> scriptNameCodeList[] = {
         { "arab", USCRIPT_ARABIC },
         { "armn", USCRIPT_ARMENIAN },

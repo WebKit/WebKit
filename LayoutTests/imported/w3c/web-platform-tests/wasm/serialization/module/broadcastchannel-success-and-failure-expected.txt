@@ -1,10 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: DataCloneError: The object can not be cloned.
 
-Harness Error (FAIL), message = Unhandled rejection: The object can not be cloned.
-
-TIMEOUT WebAssembly.Module cannot cross agent clusters, BroadcastChannel edition Test timed out
-
-Harness Error (FAIL), message = Unhandled rejection: The object can not be cloned.
-
-TIMEOUT WebAssembly.Module cannot cross agent clusters, BroadcastChannel edition Test timed out
+PASS WebAssembly.Module cannot cross agent clusters, BroadcastChannel edition
 

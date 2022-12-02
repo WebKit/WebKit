@@ -138,7 +138,7 @@ public:
     void defaultAppearanceDidChange(bool useDarkAppearance);
 #endif
     void applyUserAgentOverride(String&);
-    void applyEmulatedMedia(String&);
+    void applyEmulatedMedia(AtomString&);
     void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
     void didPaint(RenderObject&, const LayoutRect&);
     void didLayout();
@@ -171,7 +171,7 @@ private:
     MemoryCompactRobinHoodHashMap<String, WeakPtr<Frame>> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     String m_userAgentOverride;
-    String m_emulatedMedia;
+    AtomString m_emulatedMedia;
     String m_bootstrapScript;
     bool m_isFirstLayoutAfterOnLoad { false };
     bool m_showPaintRects { false };

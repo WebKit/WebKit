@@ -55,6 +55,8 @@ public:
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::Rotate; }
+
+    RefPtr<CSSValue> toCSSValue() const final;
     
 private:
     CSSRotate(CSSTransformComponent::Is2D, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>);

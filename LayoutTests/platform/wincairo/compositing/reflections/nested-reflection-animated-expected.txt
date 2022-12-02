@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x336
+  RenderBlock {HTML} at (0,0) size 800x336
+    RenderBody {BODY} at (8,16) size 784x312
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 593x19
+          text run at (0,0) width 593: "Animation on original and reflection should both be paused half way through, giving 45deg rotation."
+      RenderBlock {DIV} at (0,292) size 784x20
+        RenderText {#text} at (0,0) size 570x19
+          text run at (0,0) width 570: "PASS - \"webkitTransform.0\" property for \"inner\" element at 0.5s saw something close to: 0.76"
+        RenderBR {BR} at (570,0) size 0x19
+layer at (108,56) size 122x232
+  RenderBlock {DIV} at (100,40) size 122x232 [border: (1px solid #000000)]
+layer at (119,67) size 100x100
+  RenderBlock {DIV} at (11,11) size 100x100 [bgcolor=#008000]
+    RenderText {#text} at (33,1) size 34x76
+      text run at (33,1) width 34: "1"

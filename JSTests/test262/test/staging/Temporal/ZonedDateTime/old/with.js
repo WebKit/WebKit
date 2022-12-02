@@ -4,6 +4,7 @@
 /*---
 esid: sec-temporal-zoneddatetime-objects
 description: Temporal.ZonedDateTime.prototype.with()
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
@@ -52,22 +53,23 @@ assert.sameValue(`${ zdt.with({
 }) }`, "1976-05-18T15:23:15.123456789+00:00[UTC]");
 
 // Overflow options
-// constrain 
+// constrain
 var overflow = "constrain";
 assert.sameValue(`${ zdt.with({ month: 29 }, { overflow }) }`, "1976-12-18T15:23:30.123456789+00:00[UTC]");
 assert.sameValue(`${ zdt.with({ day: 31 }, { overflow }) }`, "1976-11-30T15:23:30.123456789+00:00[UTC]");
 assert.sameValue(`${ zdt.with({ hour: 29 }, { overflow }) }`, "1976-11-18T23:23:30.123456789+00:00[UTC]");
 assert.sameValue(`${ zdt.with({ nanosecond: 9000 }, { overflow }) }`, "1976-11-18T15:23:30.123456999+00:00[UTC]");
 
-// reject 
+// reject
 var overflow = "reject";
 assert.throws(RangeError, () => zdt.with({ month: 29 }, { overflow }));
 assert.throws(RangeError, () => zdt.with({ day: 31 }, { overflow }));
 assert.throws(RangeError, () => zdt.with({ hour: 29 }, { overflow }));
 assert.throws(RangeError, () => zdt.with({ nanosecond: 9000 }, { overflow }));
 
-var dstStartDay = Temporal.ZonedDateTime.from("2019-03-10T12:00:01-02:30[America/St_Johns]");
-var dstEndDay = Temporal.ZonedDateTime.from("2019-11-03T12:00:01-03:30[America/St_Johns]");
+var dst = TemporalHelpers.springForwardFallBackTimeZone();
+var dstStartDay = Temporal.PlainDateTime.from("2000-04-02T12:00:01").toZonedDateTime(dst);
+var dstEndDay = Temporal.PlainDateTime.from("2000-10-29T12:00:01").toZonedDateTime(dst);
 var oneThirty = {
 hour: 1,
 minute: 30
@@ -77,45 +79,45 @@ hour: 2,
 minute: 30
 };
 
-// Disambiguation options 
+// Disambiguation options
 var offset = "ignore";
-// compatible, skipped wall time 
+// compatible, skipped wall time
 assert.sameValue(`${ dstStartDay.with(twoThirty, {
   offset,
   disambiguation: "compatible"
-}) }`, "2019-03-10T03:30:01-02:30[America/St_Johns]");
+}) }`, "2000-04-02T03:30:01-07:00[Custom/Spring_Fall]");
 
-// earlier, skipped wall time 
+// earlier, skipped wall time
 assert.sameValue(`${ dstStartDay.with(twoThirty, {
   offset,
   disambiguation: "earlier"
-}) }`, "2019-03-10T01:30:01-03:30[America/St_Johns]");
+}) }`, "2000-04-02T01:30:01-08:00[Custom/Spring_Fall]");
 
-// later, skipped wall time 
+// later, skipped wall time
 assert.sameValue(`${ dstStartDay.with(twoThirty, {
   offset,
   disambiguation: "later"
-}) }`, "2019-03-10T03:30:01-02:30[America/St_Johns]");
+}) }`, "2000-04-02T03:30:01-07:00[Custom/Spring_Fall]");
 
-// compatible, repeated wall time 
+// compatible, repeated wall time
 assert.sameValue(`${ dstEndDay.with(oneThirty, {
   offset,
   disambiguation: "compatible"
-}) }`, "2019-11-03T01:30:01-02:30[America/St_Johns]");
+}) }`, "2000-10-29T01:30:01-07:00[Custom/Spring_Fall]");
 
-// earlier, repeated wall time 
+// earlier, repeated wall time
 assert.sameValue(`${ dstEndDay.with(oneThirty, {
   offset,
   disambiguation: "earlier"
-}) }`, "2019-11-03T01:30:01-02:30[America/St_Johns]");
+}) }`, "2000-10-29T01:30:01-07:00[Custom/Spring_Fall]");
 
-// later, repeated wall time 
+// later, repeated wall time
 assert.sameValue(`${ dstEndDay.with(oneThirty, {
   offset,
   disambiguation: "later"
-}) }`, "2019-11-03T01:30:01-03:30[America/St_Johns]");
+}) }`, "2000-10-29T01:30:01-08:00[Custom/Spring_Fall]");
 
-// reject 
+// reject
 assert.throws(RangeError, () => dstStartDay.with(twoThirty, {
   offset,
   disambiguation: "reject"
@@ -125,7 +127,7 @@ assert.throws(RangeError, () => dstEndDay.with(oneThirty, {
   disambiguation: "reject"
 }));
 
-// compatible is the default 
+// compatible is the default
 assert.sameValue(`${ dstStartDay.with(twoThirty, { offset }) }`, `${ dstStartDay.with(twoThirty, {
   offset,
   disambiguation: "compatible"
@@ -135,92 +137,92 @@ assert.sameValue(`${ dstEndDay.with(twoThirty, { offset }) }`, `${ dstEndDay.wit
   disambiguation: "compatible"
 }) }`);
 
-// invalid disambiguation 
+// invalid disambiguation
 [
   "",
   "EARLIER",
   "balance"
 ].forEach(disambiguation => assert.throws(RangeError, () => zdt.with({ day: 5 }, { disambiguation })));
 
-// Offset options 
+// Offset options
 var bogus = {
   ...twoThirty,
   offset: "+23:59"
 };
-// use, with bogus offset, changes to the exact time with the offset 
+// use, with bogus offset, changes to the exact time with the offset
 var preserveExact = dstStartDay.with(bogus, { offset: "use" });
-assert.sameValue(`${ preserveExact }`, "2019-03-08T23:01:01-03:30[America/St_Johns]");
-assert.sameValue(preserveExact.epochNanoseconds, Temporal.Instant.from("2019-03-10T02:30:01+23:59").epochNanoseconds);
+assert.sameValue(`${ preserveExact }`, "2000-03-31T18:31:01-08:00[Custom/Spring_Fall]");
+assert.sameValue(preserveExact.epochNanoseconds, Temporal.Instant.from("2000-04-02T02:30:01+23:59").epochNanoseconds);
 
-// ignore, with bogus offset, defers to disambiguation option 
+// ignore, with bogus offset, defers to disambiguation option
 var offset = "ignore";
 assert.sameValue(`${ dstStartDay.with(bogus, {
   offset,
   disambiguation: "earlier"
-}) }`, "2019-03-10T01:30:01-03:30[America/St_Johns]");
+}) }`, "2000-04-02T01:30:01-08:00[Custom/Spring_Fall]");
 assert.sameValue(`${ dstStartDay.with(bogus, {
   offset,
   disambiguation: "later"
-}) }`, "2019-03-10T03:30:01-02:30[America/St_Johns]");
+}) }`, "2000-04-02T03:30:01-07:00[Custom/Spring_Fall]");
 
-// prefer, with bogus offset, defers to disambiguation option 
+// prefer, with bogus offset, defers to disambiguation option
 var offset = "prefer";
 assert.sameValue(`${ dstStartDay.with(bogus, {
   offset,
   disambiguation: "earlier"
-}) }`, "2019-03-10T01:30:01-03:30[America/St_Johns]");
+}) }`, "2000-04-02T01:30:01-08:00[Custom/Spring_Fall]");
 assert.sameValue(`${ dstStartDay.with(bogus, {
   offset,
   disambiguation: "later"
-}) }`, "2019-03-10T03:30:01-02:30[America/St_Johns]");
+}) }`, "2000-04-02T03:30:01-07:00[Custom/Spring_Fall]");
 
-// reject, with bogus offset, throws 
+// reject, with bogus offset, throws
 assert.throws(RangeError, () => dstStartDay.with({
   ...twoThirty,
   offset: "+23:59"
 }, { offset: "reject" }));
 
-var doubleTime = Temporal.ZonedDateTime.from("2019-11-03T01:30:01-03:30[America/St_Johns]");
-// use changes to the exact time with the offset 
-var preserveExact = doubleTime.with({ offset: "-02:30" }, { offset: "use" });
-assert.sameValue(preserveExact.offset, "-02:30");
-assert.sameValue(preserveExact.epochNanoseconds, Temporal.Instant.from("2019-11-03T01:30:01-02:30").epochNanoseconds);
+var doubleTime = new Temporal.ZonedDateTime(972811801_000_000_000n, dst);
+// use changes to the exact time with the offset
+var preserveExact = doubleTime.with({ offset: "-07:00" }, { offset: "use" });
+assert.sameValue(preserveExact.offset, "-07:00");
+assert.sameValue(preserveExact.epochNanoseconds, Temporal.Instant.from("2000-10-29T01:30:01-07:00").epochNanoseconds);
 
-// ignore defers to disambiguation option 
+// ignore defers to disambiguation option
 var offset = "ignore";
-assert.sameValue(doubleTime.with({ offset: "-02:30" }, {
+assert.sameValue(doubleTime.with({ offset: "-07:00" }, {
   offset,
   disambiguation: "earlier"
-}).offset, "-02:30");
-assert.sameValue(doubleTime.with({ offset: "-02:30" }, {
+}).offset, "-07:00");
+assert.sameValue(doubleTime.with({ offset: "-07:00" }, {
   offset,
   disambiguation: "later"
-}).offset, "-03:30");
+}).offset, "-08:00");
 
-// prefer adjusts offset of repeated clock time 
-assert.sameValue(doubleTime.with({ offset: "-02:30" }, { offset: "prefer" }).offset, "-02:30");
+// prefer adjusts offset of repeated clock time
+assert.sameValue(doubleTime.with({ offset: "-07:00" }, { offset: "prefer" }).offset, "-07:00");
 
-// reject adjusts offset of repeated clock time 
-assert.sameValue(doubleTime.with({ offset: "-02:30" }, { offset: "reject" }).offset, "-02:30");
+// reject adjusts offset of repeated clock time
+assert.sameValue(doubleTime.with({ offset: "-07:00" }, { offset: "reject" }).offset, "-07:00");
 
-// use does not cause the offset to change when adjusting repeated clock time 
-assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "use" }).offset, "-03:30");
+// use does not cause the offset to change when adjusting repeated clock time
+assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "use" }).offset, "-08:00");
 
-// ignore may cause the offset to change when adjusting repeated clock time 
-assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "ignore" }).offset, "-02:30");
+// ignore may cause the offset to change when adjusting repeated clock time
+assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "ignore" }).offset, "-07:00");
 
-// prefer does not cause the offset to change when adjusting repeated clock time 
-assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "prefer" }).offset, "-03:30");
+// prefer does not cause the offset to change when adjusting repeated clock time
+assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "prefer" }).offset, "-08:00");
 
-// reject does not cause the offset to change when adjusting repeated clock time 
-assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "reject" }).offset, "-03:30");
+// reject does not cause the offset to change when adjusting repeated clock time
+assert.sameValue(doubleTime.with({ minute: 31 }, { offset: "reject" }).offset, "-08:00");
 
-// prefer is the default 
+// prefer is the default
 assert.sameValue(`${ dstStartDay.with(twoThirty) }`, `${ dstStartDay.with(twoThirty, { offset: "prefer" }) }`);
 assert.sameValue(`${ dstEndDay.with(twoThirty) }`, `${ dstEndDay.with(twoThirty, { offset: "prefer" }) }`);
 assert.sameValue(`${ doubleTime.with({ minute: 31 }) }`, `${ doubleTime.with({ minute: 31 }, { offset: "prefer" }) }`);
 
-// invalid offset 
+// invalid offset
 [
   "",
   "PREFER",
@@ -240,7 +242,7 @@ assert.sameValue(`${ zdt.with({
 // throws if timeZone is included
 assert.throws(TypeError, () => zdt.with({
   month: 2,
-  timeZone: "Asia/Ulaanbaatar"
+  timeZone: "UTC"
 }));
 
 // throws if given a Temporal object with a time zone
@@ -249,7 +251,7 @@ assert.throws(TypeError, () => zdt.with(dstStartDay));
 // throws if calendarName is included
 assert.throws(TypeError, () => zdt.with({
   month: 2,
-  calendar: "japanese"
+  calendar: "iso8601"
 }));
 
 // throws if given a Temporal object with a calendar

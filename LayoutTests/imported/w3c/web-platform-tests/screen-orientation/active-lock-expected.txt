@@ -1,5 +1,8 @@
+fragment
 
-Harness Error (FAIL), message = Test named 'When performing a fragment navigation, the change must not abort' specified 1 'cleanup' function, and 1 failed.
+Harness Error (FAIL), message = Test named 'Performing a fragment navigation must not abort the screen orientation change' specified 1 'cleanup' function, and 1 failed.
 
-FAIL When performing a fragment navigation, the change must not abort promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+FAIL Performing a fragment navigation must not abort the screen orientation change promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+NOTRUN Performing a fragment navigation within an iframe must not abort the lock promise
+NOTRUN Unloading an iframe by navigating it must abort the lock promise
 

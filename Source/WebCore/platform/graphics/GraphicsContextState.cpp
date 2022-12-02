@@ -97,6 +97,9 @@ void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state, c
         case toIndex(Change::DropShadow):
             mergeChange(&GraphicsContextState::m_dropShadow);
             break;
+        case toIndex(Change::Style):
+            mergeChange(&GraphicsContextState::m_style);
+            break;
 
         case toIndex(Change::Alpha):
             mergeChange(&GraphicsContextState::m_alpha);
@@ -128,6 +131,8 @@ void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state, c
             mergeChange(&GraphicsContextState::m_useDarkAppearance);
             break;
 #endif
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 }
@@ -207,6 +212,9 @@ static const char* stateChangeName(GraphicsContextState::Change change)
     case GraphicsContextState::Change::DropShadow:
         return "drop-shadow";
 
+    case GraphicsContextState::Change::Style:
+        return "style";
+
     case GraphicsContextState::Change::Alpha:
         return "alpha";
 
@@ -258,6 +266,7 @@ TextStream& GraphicsContextState::dump(TextStream& ts) const
 
     dump(Change::CompositeMode,                 &GraphicsContextState::m_compositeMode);
     dump(Change::DropShadow,                    &GraphicsContextState::m_dropShadow);
+    dump(Change::Style,                         &GraphicsContextState::m_style);
 
     dump(Change::Alpha,                         &GraphicsContextState::m_alpha);
     dump(Change::ImageInterpolationQuality,     &GraphicsContextState::m_imageInterpolationQuality);

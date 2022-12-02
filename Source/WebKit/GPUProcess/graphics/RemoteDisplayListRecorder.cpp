@@ -553,7 +553,7 @@ void RemoteDisplayListRecorder::applyDeviceScaleFactor(float scaleFactor)
     handleItem(DisplayList::ApplyDeviceScaleFactor(scaleFactor));
 }
 
-void RemoteDisplayListRecorder::flushContext(GraphicsContextFlushIdentifier identifier)
+void RemoteDisplayListRecorder::flushContext(DisplayListRecorderFlushIdentifier identifier)
 {
     m_imageBuffer->flushContext();
     m_renderingBackend->didFlush(identifier, m_imageBufferIdentifier);

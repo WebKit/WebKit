@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -37,6 +37,7 @@
 #include "ElementName.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "HTMLBodyElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
@@ -53,6 +54,7 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "SVGElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
@@ -60,6 +62,7 @@
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleUpdate.h"
 #include "Text.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
@@ -298,7 +301,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             }
 
             if (m_element->hasTagName(legendTag))
-                style.setEffectiveDisplay(DisplayType::Block);
+                style.setEffectiveDisplay(equivalentBlockDisplay(style));
         }
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
@@ -591,6 +594,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         }
     }
 
+    if (style.contentVisibility() == ContentVisibility::Hidden)
+        style.setEffectiveSkipsContent(true);
+
     adjustForSiteSpecificQuirks(style);
 }
 
@@ -765,6 +771,78 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         }
     }
 #endif
+}
+
+void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)
+{
+    auto* body = document.body();
+    auto* bodyStyle = body ? update.elementStyle(*body) : nullptr;
+    auto* documentElementStyle = update.elementStyle(*document.documentElement());
+
+    if (!documentElementStyle)
+        return;
+
+    // https://drafts.csswg.org/css-contain-2/#contain-property
+    // "Additionally, when any containments are active on either the HTML html or body elements, propagation of
+    // properties from the body element to the initial containing block, the viewport, or the canvas background, is disabled."
+    auto shouldPropagateFromBody = [&] {
+        if (bodyStyle && !bodyStyle->effectiveContainment().isEmpty())
+            return false;
+        return documentElementStyle->effectiveContainment().isEmpty();
+    }();
+
+    auto writingMode = [&] {
+        // FIXME: The spec says body should win.
+        if (documentElementStyle->hasExplicitlySetWritingMode())
+            return documentElementStyle->writingMode();
+        if (shouldPropagateFromBody && bodyStyle && bodyStyle->hasExplicitlySetWritingMode())
+            return bodyStyle->writingMode();
+        return RenderStyle::initialWritingMode();
+    }();
+
+    auto direction = [&] {
+        if (documentElementStyle->hasExplicitlySetDirection())
+            return documentElementStyle->direction();
+        if (shouldPropagateFromBody && bodyStyle && bodyStyle->hasExplicitlySetDirection())
+            return bodyStyle->direction();
+        return RenderStyle::initialDirection();
+    }();
+
+    // https://drafts.csswg.org/css-writing-modes-3/#icb
+    auto& viewStyle = document.renderView()->style();
+    if (writingMode != viewStyle.writingMode() || direction != viewStyle.direction()) {
+        auto newRootStyle = RenderStyle::clonePtr(viewStyle);
+        newRootStyle->setWritingMode(writingMode);
+        newRootStyle->setDirection(direction);
+        newRootStyle->setColumnStylesFromPaginationMode(document.view()->pagination().mode);
+        update.addInitialContainingBlockUpdate(WTFMove(newRootStyle));
+    }
+
+    // https://drafts.csswg.org/css-writing-modes-3/#principal-flow
+    if (writingMode != documentElementStyle->writingMode() || direction != documentElementStyle->direction()) {
+        auto* documentElementUpdate = update.elementUpdate(*document.documentElement());
+        if (!documentElementUpdate) {
+            update.addElement(*document.documentElement(), nullptr, { RenderStyle::clonePtr(*documentElementStyle) });
+            documentElementUpdate = update.elementUpdate(*document.documentElement());
+        }
+        documentElementUpdate->style->setWritingMode(writingMode);
+        documentElementUpdate->style->setDirection(direction);
+        documentElementUpdate->change = determineChange(*documentElementStyle, *documentElementUpdate->style);
+    }
+}
+
+std::unique_ptr<RenderStyle> Adjuster::restoreUsedDocumentElementStyleToComputed(const RenderStyle& style)
+{
+    if (style.writingMode() == RenderStyle::initialWritingMode() && style.direction() == RenderStyle::initialDirection())
+        return { };
+
+    auto adjusted = RenderStyle::clonePtr(style);
+    if (!style.hasExplicitlySetWritingMode())
+        adjusted->setWritingMode(RenderStyle::initialWritingMode());
+    if (!style.hasExplicitlySetDirection())
+        adjusted->setDirection(RenderStyle::initialDirection());
+
+    return adjusted;
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

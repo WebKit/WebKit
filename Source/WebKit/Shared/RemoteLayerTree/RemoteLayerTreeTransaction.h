@@ -38,6 +38,7 @@
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformCALayer.h>
+#include <WebCore/ScrollTypes.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -93,15 +94,16 @@ public:
         BackingStoreAttachmentChanged       = 1LLU << 32,
         FiltersChanged                      = 1LLU << 33,
         AnimationsChanged                   = 1LLU << 34,
-        EdgeAntialiasingMaskChanged         = 1LLU << 35,
+        AntialiasesEdgesChanged             = 1LLU << 35,
         CustomAppearanceChanged             = 1LLU << 36,
         UserInteractionEnabledChanged       = 1LLU << 37,
         EventRegionChanged                  = 1LLU << 38,
+        ScrollingNodeIDChanged              = 1LLU << 39,
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-        SeparatedChanged                    = 1LLU << 39,
+        SeparatedChanged                    = 1LLU << 40,
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-        SeparatedPortalChanged              = 1LLU << 40,
-        DescendentOfSeparatedPortalChanged  = 1LLU << 41,
+        SeparatedPortalChanged              = 1LLU << 41,
+        DescendentOfSeparatedPortalChanged  = 1LLU << 42,
 #endif
 #endif
     };
@@ -157,42 +159,46 @@ public:
         HashSet<String> keyPathsOfAnimationsToRemove;
 
         WebCore::FloatPoint3D position;
-        WebCore::FloatPoint3D anchorPoint;
+        WebCore::FloatPoint3D anchorPoint { 0.5, 0.5, 0 };
         WebCore::FloatRect bounds;
-        WebCore::FloatRect contentsRect;
+        WebCore::FloatRect contentsRect { 0, 0, 1, 1 };
         std::unique_ptr<RemoteLayerBackingStore> backingStore;
         std::unique_ptr<WebCore::FilterOperations> filters;
         WebCore::Path shapePath;
-        WebCore::GraphicsLayer::PlatformLayerID maskLayerID;
-        WebCore::GraphicsLayer::PlatformLayerID clonedLayerID;
-        double timeOffset;
-        float speed;
-        float contentsScale;
-        float cornerRadius;
-        float borderWidth;
-        float opacity;
-        WebCore::Color backgroundColor;
-        WebCore::Color borderColor;
-        unsigned edgeAntialiasingMask;
-        WebCore::GraphicsLayer::CustomAppearance customAppearance;
-        WebCore::PlatformCALayer::FilterType minificationFilter;
-        WebCore::PlatformCALayer::FilterType magnificationFilter;
-        WebCore::BlendMode blendMode;
-        WebCore::WindRule windRule;
-        bool hidden;
-        bool backingStoreAttached;
-        bool geometryFlipped;
-        bool doubleSided;
-        bool masksToBounds;
-        bool opaque;
-        bool contentsHidden;
-        bool userInteractionEnabled;
+        WebCore::GraphicsLayer::PlatformLayerID maskLayerID { 0 };
+        WebCore::GraphicsLayer::PlatformLayerID clonedLayerID { 0 };
+#if ENABLE(SCROLLING_THREAD)
+        WebCore::ScrollingNodeID scrollingNodeID { 0 };
+#endif
+        double timeOffset { 0 };
+        float speed { 1 };
+        float contentsScale { 1 };
+        float cornerRadius { 0 };
+        float borderWidth { 0 };
+        float opacity { 1 };
+        WebCore::Color backgroundColor { WebCore::Color::transparentBlack };
+        WebCore::Color borderColor { WebCore::Color::black };
+        WebCore::GraphicsLayer::CustomAppearance customAppearance { WebCore::GraphicsLayer::CustomAppearance::None };
+        WebCore::PlatformCALayer::FilterType minificationFilter { WebCore::PlatformCALayer::FilterType::Linear };
+        WebCore::PlatformCALayer::FilterType magnificationFilter { WebCore::PlatformCALayer::FilterType::Linear };
+        WebCore::BlendMode blendMode { WebCore::BlendMode::Normal };
+        WebCore::WindRule windRule { WebCore::WindRule::NonZero };
+        bool antialiasesEdges { true };
+        bool hidden { false };
+        bool backingStoreAttached { true };
+        bool geometryFlipped { false };
+        bool doubleSided { false };
+        bool masksToBounds { false };
+        bool opaque { false };
+        bool contentsHidden { false };
+        bool userInteractionEnabled { true };
         WebCore::EventRegion eventRegion;
+
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-        bool isSeparated;
+        bool isSeparated { false };
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-        bool isSeparatedPortal;
-        bool isDescendentOfSeparatedPortal;
+        bool isSeparatedPortal { false };
+        bool isDescendentOfSeparatedPortal { false };
 #endif
 #endif
     };
@@ -397,10 +403,11 @@ template<> struct EnumTraits<WebKit::RemoteLayerTreeTransaction::LayerChange> {
         WebKit::RemoteLayerTreeTransaction::LayerChange::BackingStoreAttachmentChanged,
         WebKit::RemoteLayerTreeTransaction::LayerChange::FiltersChanged,
         WebKit::RemoteLayerTreeTransaction::LayerChange::AnimationsChanged,
-        WebKit::RemoteLayerTreeTransaction::LayerChange::EdgeAntialiasingMaskChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::AntialiasesEdgesChanged,
         WebKit::RemoteLayerTreeTransaction::LayerChange::CustomAppearanceChanged,
         WebKit::RemoteLayerTreeTransaction::LayerChange::UserInteractionEnabledChanged,
-        WebKit::RemoteLayerTreeTransaction::LayerChange::EventRegionChanged
+        WebKit::RemoteLayerTreeTransaction::LayerChange::EventRegionChanged,
+        WebKit::RemoteLayerTreeTransaction::LayerChange::ScrollingNodeIDChanged
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         , WebKit::RemoteLayerTreeTransaction::LayerChange::SeparatedChanged
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)

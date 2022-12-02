@@ -13,7 +13,7 @@
 namespace angle
 {
 
-bool LoggingAnnotator::getStatus()
+bool LoggingAnnotator::getStatus(const gl::Context *context)
 {
     return false;
 }
@@ -31,7 +31,7 @@ void LoggingAnnotator::endEvent(gl::Context *context, const char *eventName, Ent
     ANGLE_TRACE_EVENT_END0("gpu.angle", eventName);
 }
 
-void LoggingAnnotator::setMarker(const char *markerName)
+void LoggingAnnotator::setMarker(gl::Context *context, const char *markerName)
 {
     ANGLE_TRACE_EVENT_INSTANT0("gpu.angle", markerName);
 }

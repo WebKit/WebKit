@@ -1940,16 +1940,16 @@ bool HTMLInputElement::shouldAppearIndeterminate() const
 MediaCaptureType HTMLInputElement::mediaCaptureType() const
 {
     if (!isFileUpload())
-        return MediaCaptureTypeNone;
+        return MediaCaptureType::MediaCaptureTypeNone;
     
     auto& captureAttribute = attributeWithoutSynchronization(captureAttr);
     if (captureAttribute.isNull())
-        return MediaCaptureTypeNone;
+        return MediaCaptureType::MediaCaptureTypeNone;
     
     if (equalLettersIgnoringASCIICase(captureAttribute, "user"_s))
-        return MediaCaptureTypeUser;
+        return MediaCaptureType::MediaCaptureTypeUser;
     
-    return MediaCaptureTypeEnvironment;
+    return MediaCaptureType::MediaCaptureTypeEnvironment;
 }
 #endif
 
@@ -2145,18 +2145,23 @@ ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(unsigned start,
     return { };
 }
 
-static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
+static Ref<StyleGradientImage> autoFillStrongPasswordMaskImage()
 {
-    CSSGradientColorStopList stops {
-        { CSSValuePool::singleton().createColorValue(Color::black), CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE), { } },
-        { CSSValuePool::singleton().createColorValue(Color::transparentBlack), CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE), { } }
+    Vector<StyleGradientImage::Stop> stops {
+        { Color::black, CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE) },
+        { Color::transparentBlack, CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE) }
     };
 
-    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied);
-    auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient, colorInterpolationMethod, WTFMove(stops));
-    gradient->setAngle(CSSValuePool::singleton().createValue(90, CSSUnitType::CSS_DEG));
-    gradient->resolveRGBColors();
-    return gradient;
+    return StyleGradientImage::create(
+        StyleGradientImage::LinearData {
+            {
+                CSSLinearGradientValue::Angle { CSSValuePool::singleton().createValue(90, CSSUnitType::CSS_DEG) }
+            },
+            CSSGradientRepeat::NonRepeating
+        },
+        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied),
+        WTFMove(stops)
+    );
 }
 
 RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
@@ -2178,7 +2183,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
         textBlockStyle.setMaxWidth(Length { 100, LengthType::Percent });
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
         textBlockStyle.setTextOverflow(TextOverflow::Clip);
-        textBlockStyle.setMaskImage(StyleGradientImage::create(autoFillStrongPasswordMaskImage()));
+        textBlockStyle.setMaskImage(autoFillStrongPasswordMaskImage());
         // A stacking context is needed for the mask.
         if (textBlockStyle.hasAutoUsedZIndex())
             textBlockStyle.setUsedZIndex(0);

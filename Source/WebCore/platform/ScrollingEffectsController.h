@@ -28,6 +28,7 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 
+#include "KeyboardScroll.h"
 #include "RectEdges.h"
 #include "ScrollAnimation.h"
 #include "ScrollSnapAnimatorState.h"
@@ -50,6 +51,7 @@ class WheelEventTestMonitor;
 struct ScrollExtents;
 
 class ScrollingEffectsControllerTimer : public RunLoop::TimerBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScrollingEffectsControllerTimer(RunLoop& runLoop, Function<void()>&& callback)
         : RunLoop::TimerBase(runLoop)
@@ -77,7 +79,6 @@ public:
     virtual void startAnimationCallback(ScrollingEffectsController&) = 0;
     virtual void stopAnimationCallback(ScrollingEffectsController&) = 0;
 
-    virtual void updateKeyboardScrollPosition(MonotonicTime) { }
     virtual KeyboardScrollingAnimator *keyboardScrollingAnimator() const { return nullptr; }
 
     virtual bool allowsHorizontalScrolling() const = 0;
@@ -146,6 +147,10 @@ public:
 
     void willBeginKeyboardScrolling();
     void didStopKeyboardScrolling();
+
+    bool startKeyboardScroll(const KeyboardScroll&);
+
+    void finishKeyboardScroll(bool immediate);
     
     // Should be called periodically by the client. Started by startAnimationCallback(), stopped by stopAnimationCallback().
     void animationCallback(MonotonicTime);
@@ -186,7 +191,6 @@ public:
 
 private:
     void updateRubberBandAnimatingState();
-    void updateKeyboardScrollingAnimatingState(MonotonicTime);
 
     void setIsAnimatingRubberBand(bool);
     void setIsAnimatingScrollSnap(bool);

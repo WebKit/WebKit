@@ -28,29 +28,58 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "MessageReceiver.h"
-#include "WebExtensionContextIdentifier.h"
+#include "WebExtensionContextParameters.h"
+#include <WebCore/DOMWrapperWorld.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {
 
-class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, private IPC::MessageReceiver {
+class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebExtensionContextProxy);
 
 public:
-    static Ref<WebExtensionContextProxy> getOrCreate(WebExtensionContextIdentifier);
+    static RefPtr<WebExtensionContextProxy> get(WebExtensionContextIdentifier);
+    static Ref<WebExtensionContextProxy> getOrCreate(WebExtensionContextParameters);
 
     ~WebExtensionContextProxy();
 
     WebExtensionContextIdentifier identifier() { return m_identifier; }
 
+    bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
+    bool operator!=(const WebExtensionContextProxy& other) const { return !(this == &other); }
+
+#if PLATFORM(COCOA)
+    const URL& baseURL() { return m_baseURL; }
+    const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
+
+    NSDictionary *manifest() { return m_manifest.get(); }
+
+    double manifestVersion() { return m_manifestVersion; }
+    bool usesManifestVersion(double version) { return manifestVersion() >= version; }
+
+    bool inTestingMode() { return m_testingMode; }
+
+    WebCore::DOMWrapperWorld* contentScriptWorld() { return m_contentScriptWorld.get(); }
+    void setContentScriptWorld(WebCore::DOMWrapperWorld* world) { m_contentScriptWorld = world; }
+#endif
+
 private:
-    explicit WebExtensionContextProxy(WebExtensionContextIdentifier);
+    explicit WebExtensionContextProxy(WebExtensionContextParameters);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebExtensionContextIdentifier m_identifier;
+
+#if PLATFORM(COCOA)
+    URL m_baseURL;
+    String m_uniqueIdentifier;
+    RetainPtr<NSDictionary> m_manifest;
+    double m_manifestVersion { 0 };
+    bool m_testingMode { false };
+    RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
+#endif
 };
 
 } // namespace WebKit

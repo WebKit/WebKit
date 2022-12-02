@@ -14,12 +14,12 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x69 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,14) size 756x41
-          RenderInline {SPAN} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 0x14
           RenderBR {BR} at (0,0) size 0x26
           RenderInline {SPAN} at (0,0) size 29x14
             RenderText {#text} at (0,27) size 29x14
               text run at (0,27) width 29: "- Ken"
           RenderBR {BR} at (28,17) size 1x26
-          RenderInline {SPAN} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 0x14
           RenderText {#text} at (0,0) size 0x0
 caret: position 5 of child 0 {#text} of child 4 {SPAN} of child 1 {DIV} of child 1 {DIV} of body

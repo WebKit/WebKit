@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Error: Script error.
+
+FAIL The fetch metadata for paint worklet assert_not_equals: got disallowed value "No header has been recorded"
+

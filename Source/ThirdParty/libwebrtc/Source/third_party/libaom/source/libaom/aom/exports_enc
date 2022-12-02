@@ -1,0 +1,17 @@
+text aom_codec_enc_config_default
+text aom_codec_enc_config_set
+text aom_codec_enc_init_ver
+text aom_codec_encode
+text aom_codec_get_cx_data
+text aom_codec_get_global_headers
+text aom_codec_get_preview_frame
+text aom_codec_set_cx_data_buf
+text aom_film_grain_table_append
+text aom_film_grain_table_free
+text aom_film_grain_table_write
+text aom_flat_block_finder_init
+text aom_flat_block_finder_run
+text aom_noise_model_init
+text aom_noise_model_get_grain_parameters
+text aom_noise_model_save_latest
+text aom_noise_model_update

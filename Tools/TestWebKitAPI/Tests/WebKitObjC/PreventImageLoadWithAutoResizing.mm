@@ -27,10 +27,9 @@
 
 #if WK_HAVE_C_SPI && PLATFORM(MAC)
 
-#import "Test.h"
-
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
+#import "Test.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>

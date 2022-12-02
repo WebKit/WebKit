@@ -35,6 +35,7 @@
 #include "HTTPHeaderMap.h"
 #include "NavigationPreloadState.h"
 #include "RegistrationDatabase.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/persistence/PersistentCoders.h>
 
@@ -177,6 +178,109 @@ std::optional<WebCore::ImportedScriptAttributes> Coder<WebCore::ImportedScriptAt
 }
 #endif
 
+void Coder<WebCore::ResourceRequest>::encode(Encoder& encoder, const WebCore::ResourceRequest& instance)
+{
+    ASSERT(!instance.httpBody());
+    ASSERT(!instance.platformRequestUpdated());
+    encoder << instance.url();
+    encoder << instance.timeoutInterval();
+    encoder << instance.firstPartyForCookies().string();
+    encoder << instance.httpMethod();
+    encoder << instance.httpHeaderFields();
+    encoder << instance.responseContentDispositionEncodingFallbackArray();
+    encoder << instance.cachePolicy();
+    encoder << instance.allowCookies();
+    encoder << instance.sameSiteDisposition();
+    encoder << instance.isTopSite();
+    encoder << instance.priority();
+    encoder << instance.requester();
+    encoder << instance.isAppInitiated();
+}
+
+std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decode(Decoder& decoder)
+{
+    std::optional<URL> url;
+    decoder >> url;
+    if (!url)
+        return std::nullopt;
+
+    std::optional<double> timeoutInterval;
+    decoder >> timeoutInterval;
+    if (!timeoutInterval)
+        return std::nullopt;
+
+    std::optional<String> firstPartyForCookies;
+    decoder >> firstPartyForCookies;
+    if (!firstPartyForCookies)
+        return std::nullopt;
+
+    std::optional<String> httpMethod;
+    decoder >> httpMethod;
+    if (!httpMethod)
+        return std::nullopt;
+
+    std::optional<WebCore::HTTPHeaderMap> fields;
+    decoder >> fields;
+    if (!fields)
+        return std::nullopt;
+
+    std::optional<Vector<String>> array;
+    decoder >> array;
+    if (!array)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceRequestCachePolicy> cachePolicy;
+    decoder >> cachePolicy;
+    if (!cachePolicy)
+        return std::nullopt;
+
+    std::optional<bool> allowCookies;
+    decoder >> allowCookies;
+    if (!allowCookies)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceRequestBase::SameSiteDisposition> sameSiteDisposition;
+    decoder >> sameSiteDisposition;
+    if (!sameSiteDisposition)
+        return std::nullopt;
+
+    std::optional<bool> isTopSite;
+    decoder >> isTopSite;
+    if (!isTopSite)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceLoadPriority> priority;
+    decoder >> priority;
+    if (!priority)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceRequestRequester> requester;
+    decoder >> requester;
+    if (!requester)
+        return std::nullopt;
+
+    std::optional<bool> isAppInitiated;
+    decoder >> isAppInitiated;
+    if (!isAppInitiated)
+        return std::nullopt;
+
+    WebCore::ResourceRequest request;
+    request.setURL(WTFMove(*url));
+    request.setTimeoutInterval(WTFMove(*timeoutInterval));
+    request.setFirstPartyForCookies(URL({ }, *firstPartyForCookies));
+    request.setHTTPMethod(WTFMove(*httpMethod));
+    request.setHTTPHeaderFields(WTFMove(*fields));
+    request.setResponseContentDispositionEncodingFallbackArray(WTFMove(*array));
+    request.setCachePolicy(*cachePolicy);
+    request.setAllowCookies(*allowCookies);
+    request.setSameSiteDisposition(*sameSiteDisposition);
+    request.setIsTopSite(*isTopSite);
+    request.setPriority(*priority);
+    request.setRequester(*requester);
+    request.setIsAppInitiated(*isAppInitiated);
+    return { request };
+}
+
 #if PLATFORM(COCOA)
 
 } // namespace WTF::Persistence
@@ -284,7 +388,7 @@ static std::optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& deco
 void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
     encoder << LegacyCertificateInfoType::Trust;
-    encodeSecTrustRef(encoder, certificateInfo.trust());
+    encodeSecTrustRef(encoder, certificateInfo.trust().get());
 }
 
 std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decoder& decoder)
@@ -377,7 +481,7 @@ template<> struct Coder<GRefPtr<GByteArray>> {
 
 static Vector<GRefPtr<GByteArray>> certificatesDataListFromCertificateInfo(const WebCore::CertificateInfo &certificateInfo)
 {
-    auto* certificate = certificateInfo.certificate();
+    auto* certificate = certificateInfo.certificate().get();
     if (!certificate)
         return { };
 
@@ -508,22 +612,53 @@ std::optional<WebCore::ContentSecurityPolicyResponseHeaders> Coder<WebCore::Cont
 
 void Coder<WebCore::ClientOrigin>::encode(Encoder& encoder, const WebCore::ClientOrigin& instance)
 {
-    instance.encode(encoder);
+    encoder << instance.topOrigin;
+    encoder << instance.clientOrigin;
 }
 
 std::optional<WebCore::ClientOrigin> Coder<WebCore::ClientOrigin>::decode(Decoder& decoder)
 {
-    return WebCore::ClientOrigin::decode(decoder);
+    std::optional<WebCore::SecurityOriginData> topOrigin;
+    std::optional<WebCore::SecurityOriginData> clientOrigin;
+    decoder >> topOrigin;
+    if (!topOrigin || topOrigin->isNull())
+        return std::nullopt;
+    decoder >> clientOrigin;
+    if (!clientOrigin || clientOrigin->isNull())
+        return std::nullopt;
+
+    return WebCore::ClientOrigin { WTFMove(*topOrigin), WTFMove(*clientOrigin) };
 }
 
 void Coder<WebCore::SecurityOriginData>::encode(Encoder& encoder, const WebCore::SecurityOriginData& instance)
 {
-    instance.encode(encoder);
+    encoder << instance.protocol;
+    encoder << instance.host;
+    encoder << instance.port;
 }
 
 std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData>::decode(Decoder& decoder)
 {
-    return WebCore::SecurityOriginData::decode(decoder);
+    std::optional<String> protocol;
+    decoder >> protocol;
+    if (!protocol)
+        return std::nullopt;
+
+    std::optional<String> host;
+    decoder >> host;
+    if (!host)
+        return std::nullopt;
+
+    std::optional<std::optional<uint16_t>> port;
+    decoder >> port;
+    if (!port)
+        return std::nullopt;
+
+    WebCore::SecurityOriginData data { WTFMove(*protocol), WTFMove(*host), WTFMove(*port) };
+    if (data.isHashTableDeletedValue())
+        return std::nullopt;
+
+    return data;
 }
 
 void Coder<WebCore::ResourceResponse>::encode(Encoder& encoder, const WebCore::ResourceResponse& instance)

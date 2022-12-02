@@ -39,6 +39,16 @@ typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 
 namespace WebCore {
 
+struct ResourceRequestPlatformData {
+#if PLATFORM(COCOA)
+    RetainPtr<NSURLRequest> m_urlRequest;
+    std::optional<bool> m_isAppInitiated;
+    std::optional<ResourceRequestRequester> m_requester;
+#endif
+};
+
+using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
+
 class ResourceRequest : public ResourceRequestBase {
 public:
     explicit ResourceRequest(const String& url) 
@@ -71,15 +81,47 @@ public:
 #else
     WEBCORE_EXPORT ResourceRequest(NSURLRequest *);
 #endif
+    
+
+    ResourceRequest(ResourceRequestBase&& base
+    , const String& cachePartition
+    , bool hiddenFromInspector
+#if USE(SYSTEM_PREVIEW)
+    , const std::optional<SystemPreviewInfo>& systemPreviewInfo
+#endif
+    )
+        : ResourceRequestBase(WTFMove(base))
+    {
+        m_cachePartition = cachePartition;
+        m_hiddenFromInspector = hiddenFromInspector;
+#if USE(SYSTEM_PREVIEW)
+        m_systemPreviewInfo = systemPreviewInfo;
+#endif
+    }
+
+    ResourceRequest(ResourceRequestPlatformData&&, const String& cachePartition, bool hiddenFromInspector
+#if USE(SYSTEM_PREVIEW)
+    , const std::optional<SystemPreviewInfo>&
+#endif
+    );
+
+    WEBCORE_EXPORT static ResourceRequest fromResourceRequestData(ResourceRequestData, const String& cachePartition, bool hiddenFromInspector
+#if USE(SYSTEM_PREVIEW)
+    , const std::optional<SystemPreviewInfo>&
+#endif
+    );
 
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
-
+    
 #if PLATFORM(COCOA)
     bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
     WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 
     WEBCORE_EXPORT static CFStringRef isUserInitiatedKey();
+    WEBCORE_EXPORT ResourceRequestPlatformData getResourceRequestPlatformData() const;
 #endif
+    
+    WEBCORE_EXPORT ResourceRequestData getRequestDataToSerialize() const;
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     WEBCORE_EXPORT CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;

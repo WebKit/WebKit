@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    Test passing WASM module to an AudioWorklet
+  </title>
+  <meta charset="utf-8">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+   <script src="/webaudio/resources/audit.js"></script>
+ </head>
+ <body>
+   <script id="layout-test-code">
+     let audit = Audit.createTaskRunner();
+
+     let context = new AudioContext();
+     let module = null;
+
+     let filePath = 'processors/wasm-module-processor.js';
+
+     function createWasmModule() {
+       return fetch('/wasm/serialization/module/resources/incrementer.wasm')
+       .then(response => {
+         if (!response.ok)
+           throw new Error(response.statusText);
+         return response.arrayBuffer();
+       })
+       .then(WebAssembly.compile);
+     }
+
+     audit.define(
+         'Test postMessage from AudioWorkletProcessor to AudioWorkletNode',
+         (task, should) => {
+           let workletNode =
+               new AudioWorkletNode(context, 'wasm-module-processor');
+
+           workletNode.port.onmessage = (event) => {
+             let data = event.data;
+             switch (data.state) {
+               case 'created':
+                 // Send a WASM module back to the worklet.
+                 createWasmModule().then(module => {
+                   workletNode.port.postMessage({ message: "send module", module });
+                 });
+                 break;
+
+               case 'received message':
+                 should(data.isValidModule, 'event.module from main thread is an valid WASM module')
+                     .beTrue();
+                 task.done();
+                 break;
+
+               default:
+                 should(false,
+                        `Got unexpected message from worklet: ${data.state}`)
+                     .beTrue();
+                 task.done();
+                 break;
+             }
+           };
+
+           workletNode.port.onmessageerror = (event) => {
+             should(false, 'Got messageerror from worklet').beTrue();
+             task.done();
+           };
+         });
+
+       context.audioWorklet.addModule(filePath).then(() => {
+         audit.run();
+       });
+   </script>
+ </body>
+</html>

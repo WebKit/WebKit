@@ -243,9 +243,16 @@ SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& va
     return lengthType == SVGLengthType::Unknown ? SVGLengthValue() : SVGLengthValue(value.floatValue(), lengthType);
 }
 
-Ref<CSSPrimitiveValue> SVGLengthValue::toCSSPrimitiveValue(const SVGLengthValue& length)
+Ref<CSSPrimitiveValue> SVGLengthValue::toCSSPrimitiveValue(const Element* element) const
 {
-    return CSSPrimitiveValue::create(length.valueInSpecifiedUnits(), lengthTypeToPrimitiveType(length.lengthType()));
+    if (is<SVGElement>(element)) {
+        SVGLengthContext context { downcast<SVGElement>(element) };
+        auto computedValue = context.convertValueToUserUnits(valueInSpecifiedUnits(), lengthType(), lengthMode());
+        if (!computedValue.hasException())
+            return CSSPrimitiveValue::create(computedValue.releaseReturnValue(), CSSUnitType::CSS_PX);
+    }
+
+    return CSSPrimitiveValue::create(valueInSpecifiedUnits(), lengthTypeToPrimitiveType(lengthType()));
 }
 
 ExceptionOr<void> SVGLengthValue::setValueAsString(StringView valueAsString, SVGLengthMode lengthMode)

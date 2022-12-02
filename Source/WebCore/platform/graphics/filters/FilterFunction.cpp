@@ -28,6 +28,7 @@
 
 #include "ImageBuffer.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -68,6 +69,11 @@ AtomString FilterFunction::filterName(Type filterType)
     
     ASSERT(namesMap.tryGet(filterType));
     return namesMap.get(filterType, ""_s);
+}
+
+TextStream& operator<<(TextStream& ts, const FilterFunction& filterFunction)
+{
+    return filterFunction.externalRepresentation(ts, FilterRepresentation::Debugging);
 }
 
 } // namespace WebCore

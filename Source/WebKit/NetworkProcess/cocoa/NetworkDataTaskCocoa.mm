@@ -36,6 +36,7 @@
 #import "NetworkSessionCocoa.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/AuthenticationChallenge.h>
+#import <WebCore/NetworkConnectionIntegrity.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/RegistrableDomain.h>
@@ -59,7 +60,7 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
 namespace WebKit {
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool /* isThirdParty */) { }
+void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool) { }
 }
 #endif
 
@@ -111,17 +112,17 @@ static float toNSURLSessionTaskPriority(WebCore::ResourceLoadPriority priority)
     return NSURLSessionTaskPriorityDefault;
 }
 
-void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>& nsRequest, bool shouldContentSniff, bool shouldContentEncodingSniff)
+void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>& nsRequest, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy)
 {
 #if !USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-    UNUSED_PARAM(shouldContentEncodingSniff);
+    UNUSED_PARAM(contentEncodingSniffingPolicy);
 #endif
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     auto& boundInterfaceIdentifier = cocoaSession.boundInterfaceIdentifier();
     if (shouldContentSniff
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-        && shouldContentEncodingSniff
+        && contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Default 
 #endif
         && boundInterfaceIdentifier.isNull())
         return;
@@ -129,7 +130,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     auto mutableRequest = adoptNS([nsRequest mutableCopy]);
 
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-    if (!shouldContentEncodingSniff)
+    if (contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Disable)
         [mutableRequest _setProperty:@YES forKey:(NSString *)kCFURLRequestContentDecoderSkipURLCheck];
 #endif
 
@@ -169,7 +170,7 @@ static WebCore::RegistrableDomain lastCNAMEDomain(NSArray<NSString *> *cnames)
 bool NetworkDataTaskCocoa::shouldApplyCookiePolicyForThirdPartyCloaking() const
 {
     auto* session = networkSession();
-    return session && session->networkStorageSession() && session->networkStorageSession()->resourceLoadStatisticsEnabled();
+    return session && session->networkStorageSession() && session->networkStorageSession()->trackingPreventionEnabled();
 }
 
 void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
@@ -220,7 +221,7 @@ void NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore:
     auto firstPartyHostCNAME = networkSession()->firstPartyHostCNAMEDomain(firstPartyHostName);
     auto firstPartyAddress = networkSession()->firstPartyHostIPAddress(firstPartyHostName);
 
-    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->resourceLoadStatisticsDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
+    m_task.get()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(networkSession()->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionDataTask>(m_task.get()), debugLoggingEnabled = networkSession()->networkStorageSession()->trackingPreventionDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
         auto task = weakTask.get();
         if (!task || ![cookiesSetInResponse count])
             return cookiesSetInResponse;
@@ -397,11 +398,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         [mutableRequest _setProhibitPrivacyProxy:YES];
 #endif
 
-    if (parameters.networkConnectionIntegrityEnabled) {
-        // FIXME: This should eventually just check whether or not the request is for a main resource,
-        // once platform support for network connection integrity handles all other cases.
-        enableNetworkConnectionIntegrity(mutableRequest.get(), request.url().host() != request.firstPartyForCookies().host());
-    }
+    if (parameters.networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled))
+        enableNetworkConnectionIntegrity(mutableRequest.get(), NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(request));
 
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
@@ -415,7 +413,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     m_session->appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
 #endif
 
-    applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Sniff);
+    applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy);
 
     m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
 
@@ -581,11 +579,6 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
-    if (auto authorization = m_firstRequest.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull()
-        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects)
-        && protocolHostAndPortAreEqual(m_firstRequest.url(), request.url()))
-        request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
-
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         // The network layer might carry over some headers from the original request that
         // we want to strip here because the redirect is cross-origin.
@@ -635,7 +628,8 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     if (m_client)
         m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = WeakPtr { *this }] (auto&& request) mutable {
-            if (!weakThis || !m_session)
+            auto strongThis = weakThis.get();
+            if (!strongThis || !m_session)
                 return completionHandler({ });
             if (!request.isNull())
                 restrictRequestReferrerToOriginIfNeeded(request);

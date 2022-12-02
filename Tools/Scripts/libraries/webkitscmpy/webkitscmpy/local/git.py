@@ -177,15 +177,20 @@ class Git(Scm):
             hashes.reverse()
             revisions.reverse()
 
+            intersected = False
             order = len(self._ordered_commits[branch]) - 1
             while order > 0:
                 if hashes[0] == self._ordered_commits[branch][order]:
                     order -= 1
+                    intersected = True
                     break
                 order -= 1
-
-            self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
-            self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
+            if intersected or branch == self.repo.default_branch:
+                self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
+                self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
+            else:
+                self._ordered_commits[branch] = hashes
+                self._ordered_revisions[branch] = revisions
             self._fill(branch)
 
             try:
@@ -914,15 +919,20 @@ class Git(Scm):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
         parsed_commit = Commit.parse(argument, do_assert=False)
-        if parsed_commit and not parsed_commit.hash:
-            return self.commit(
-                hash=parsed_commit.hash,
-                revision=parsed_commit.revision,
-                identifier=parsed_commit.identifier,
-                branch=parsed_commit.branch,
-                include_log=False,
-                include_identifier=False,
-            ).hash
+        try:
+            if parsed_commit and not parsed_commit.hash:
+                # It's possible that a branch can look like a hash (or revision), if this call fails,
+                # we should return the unsanitized argument to our caller assumeing this is the case.
+                return self.commit(
+                    hash=parsed_commit.hash,
+                    revision=parsed_commit.revision,
+                    identifier=parsed_commit.identifier,
+                    branch=parsed_commit.branch,
+                    include_log=False,
+                    include_identifier=False,
+                ).hash
+        except self.Exception:
+            pass
         return argument
 
     def checkout(self, argument):

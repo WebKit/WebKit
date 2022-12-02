@@ -93,6 +93,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
         auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.hint.layout));
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
+
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
     auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label));
     if (!library)
@@ -114,6 +115,11 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
         if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
             return result.releaseNonNull();
+    } else {
+        // FIXME: remove shader library generation from MSL after compiler bringup
+        auto library = ShaderModule::createLibrary(device(), String::fromUTF8(shaderModuleParameters->wgsl.code), fromAPI(descriptor.label));
+        if (library)
+            return ShaderModule::create(WTFMove(checkResult), { }, { }, library, *this);
     }
 
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
@@ -231,6 +237,11 @@ void ShaderModule::setLabel(String&& label)
 {
     if (m_library)
         m_library.label = label;
+}
+
+id<MTLFunction> ShaderModule::getNamedFunction(const String& name) const
+{
+    return [m_library newFunctionWithName:name];
 }
 
 WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& pipelineLayout)

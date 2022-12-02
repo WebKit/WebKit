@@ -41,7 +41,8 @@ inline const T *OffsetDataPointer(const uint8_t *data,
 
 }  // namespace priv
 
-void LoadS8D24S8ToD32FX24S8(size_t width,
+void LoadS8D24S8ToD32FX24S8(const angle::ImageLoadContext &context,
+                            size_t width,
                             size_t height,
                             size_t depth,
                             const uint8_t *input,

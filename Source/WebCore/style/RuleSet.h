@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "MediaList.h"
+#include "MediaQuery.h"
 #include "RuleData.h"
 #include "RuleFeature.h"
 #include "SelectorCompiler.h"
@@ -35,8 +35,11 @@
 namespace WebCore {
 
 class CSSSelector;
-class LegacyMediaQueryEvaluator;
 class StyleSheetContents;
+
+namespace MQ {
+class MediaQueryEvaluator;
+}
 
 namespace Style {
 
@@ -80,7 +83,7 @@ public:
 
     bool hasViewportDependentMediaQueries() const { return m_hasViewportDependentMediaQueries; }
 
-    std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator&);
+    std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 
     const RuleFeatureSet& features() const { return m_features; }
 
@@ -135,7 +138,7 @@ private:
         Vector<size_t> changedQueryIndexes { };
         Vector<Vector<Ref<const StyleRule>>*> affectedRules { };
     };
-    CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const LegacyMediaQueryEvaluator&, size_t startIndex);
+    CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&, size_t startIndex);
 
     template<typename Function> void traverseRuleDatas(Function&&);
 
@@ -154,7 +157,7 @@ private:
     };
 
     struct DynamicMediaQueryRules {
-        Vector<Ref<const MediaQuerySet>> mediaQuerySets;
+        Vector<MQ::MediaQueryList> mediaQueries;
         Vector<size_t> affectedRulePositions;
         Vector<Ref<const StyleRule>> affectedRules;
         bool requiresFullReset { false };
@@ -162,7 +165,7 @@ private:
 
         void shrinkToFit()
         {
-            mediaQuerySets.shrinkToFit();
+            mediaQueries.shrinkToFit();
             affectedRulePositions.shrinkToFit();
             affectedRules.shrinkToFit();
         }

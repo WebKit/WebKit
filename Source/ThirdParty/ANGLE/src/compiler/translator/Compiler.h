@@ -111,6 +111,7 @@ class TCompiler : public TShHandleBase
     int getShaderVersion() const { return mShaderVersion; }
     TInfoSink &getInfoSink() { return mInfoSink; }
 
+    bool specifyEarlyFragmentTests() { return mEarlyFragmentTestsSpecified = true; }
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
     bool hasDiscard() const { return mHasDiscard; }
     bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
@@ -187,6 +188,8 @@ class TCompiler : public TShHandleBase
     bool hasAnyPreciseType() const { return mHasAnyPreciseType; }
 
     AdvancedBlendEquations getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
+
+    bool hasPixelLocalStorageUniforms() const { return mHasPixelLocalStorageUniforms; }
 
     unsigned int getSharedMemorySize() const;
 
@@ -353,6 +356,9 @@ class TCompiler : public TShHandleBase
 
     // advanced blend equation parameters
     AdvancedBlendEquations mAdvancedBlendEquations;
+
+    // ANGLE_shader_pixel_local_storage.
+    bool mHasPixelLocalStorageUniforms;
 
     // name hashing.
     NameMap mNameMap;

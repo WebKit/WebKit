@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+
+        .fixed {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid black;
+        }
+
+        .scroller {
+            position: relative;
+            overflow: scroll;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+        }
+
+        .inner {
+            position: absolute;
+            will-change: transform;
+        }
+
+        .filler {
+            height: 200px;
+            width: 10px;
+            margin: 10px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <div class="fixed">
+        This test should not assert in debug builds.
+        <div class="scroller">
+            <div class="filler"></div>
+            <div class="inner">inner</div>
+            <div class="filler"></div>
+        </div>
+    </div>
+<pre id="tree"></pre>
+</body>
+</html>

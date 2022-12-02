@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+var defaultInit = {
+  timestamp : 100,
+  duration : 33,
+}
+
+function createDefaultVideoFrame() {
+  const init = {
+    format: 'I420',
+    timestamp: 1234,
+    codedWidth: 4,
+    codedHeight: 2,
+    timestamp: defaultInit.timestamp,
+    duration: defaultInit.duration
+  };
+  const data = new Uint8Array([
+    1, 2, 3, 4, 5, 6, 7, 8,  // y
+    1, 2,                    // u
+    1, 2,                    // v
+  ]);
+  return new VideoFrame(data, init);
+}
+
+async function createWorker(script)
+{
+  script += "self.postMessage('ready');";
+  const blob = new Blob([script], { type: 'text/javascript' });
+  const url = URL.createObjectURL(blob);
+  const worker = new Worker(URL.createObjectURL(blob));
+  await new Promise(resolve => worker.onmessage = () => {
+      resolve();
+  });
+  URL.revokeObjectURL(url);
+  return worker;
+}
+
+promise_test(async t => {
+  let localFrame = createDefaultVideoFrame();
+
+  const worker = await createWorker(`
+    self.onmessage = (event) => {
+      let externalFrame = event.data;
+      externalFrame.close();
+      self.postMessage("Done");
+    }
+  `);
+
+  const promise = new Promise(resolve => worker.onmessage = resolve);  
+  worker.postMessage(localFrame);
+  await promise;
+
+  assert_equals(localFrame.timestamp, defaultInit.timestamp);
+  localFrame.close();
+}, 'Verify closing frames does not propagate accross contexts with Worker.postMessage.');
+
+promise_test(async t => {
+  let localFrame = createDefaultVideoFrame();
+
+  const worker = await createWorker(`
+    self.onmessage = (event) => {
+      let externalFrame = event.data;
+      self.postMessage(externalFrame.timestamp);
+      externalFrame.close();
+    }
+  `);
+
+  const promise = new Promise(resolve => worker.onmessage = event => resolve(event.data));  
+  worker.postMessage(localFrame);
+
+  assert_equals(await promise, defaultInit.timestamp);
+  localFrame.close();
+}, 'Verify transferring frames closes them with Worker.postMessage.');
+</script>
+</body>
+</html>

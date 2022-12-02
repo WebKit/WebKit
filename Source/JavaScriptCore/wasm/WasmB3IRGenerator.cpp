@@ -95,6 +95,8 @@ public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
 
+    static constexpr bool tierSupportsSIMD = false;
+
     struct ControlData {
         ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
             : controlBlockType(type)
@@ -307,6 +309,8 @@ public:
 
     B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount*);
 
+    void notifyFunctionUsesSIMD() NO_RETURN { ASSERT(m_info.isSIMDFunction(m_functionIndex)); RELEASE_ASSERT_NOT_REACHED(); }
+
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
@@ -407,6 +411,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
+    PartialResult WARN_UNUSED_RETURN addCrash();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, const TypeDefinition&, Vector<ExpressionType>& args, ResultList&);
     B3::Value* createCallPatchpoint(BasicBlock*, Origin, const TypeDefinition&, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
 
@@ -1136,6 +1141,16 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
     return { };
 }
 
+auto B3IRGenerator::addCrash() -> PartialResult
+{
+    B3::PatchpointValue* unreachable = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+    unreachable->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    unreachable->effects.terminal = true;
+    return { };
+}
+
 auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     // Do a context switch if needed.
@@ -1243,7 +1258,7 @@ auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 
     Value* memory = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfMemory()));
     Value* handle = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), memory, safeCast<int32_t>(Memory::offsetOfHandle()));
-    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), handle, safeCast<int32_t>(MemoryHandle::offsetOfSize()));
+    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), handle, safeCast<int32_t>(BufferMemoryHandle::offsetOfSize()));
 
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
@@ -1340,11 +1355,11 @@ auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partial
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register))));
+        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value))));
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
         ASSERT(global.mutability == Wasm::Mutability::Mutable);
-        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value)));
         result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), pointer));
         break;
     }
@@ -1359,13 +1374,13 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value)));
         if (isRefType(global.type))
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
         ASSERT(global.mutability == Wasm::Mutability::Mutable);
-        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
+        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value)));
         m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), pointer);
         // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.
         if (isRefType(global.type)) {
@@ -2835,19 +2850,16 @@ auto B3IRGenerator::addIf(ExpressionType condition, BlockSignature signature, St
     FrequencyClass takenFrequency = FrequencyClass::Normal;
     FrequencyClass notTakenFrequency = FrequencyClass::Normal;
 
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            takenFrequency = FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            notTakenFrequency = FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
+    BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+    switch (hint) {
+    case BranchHint::Unlikely:
+        takenFrequency = FrequencyClass::Rare;
+        break;
+    case BranchHint::Likely:
+        notTakenFrequency = FrequencyClass::Rare;
+        break;
+    case BranchHint::Invalid:
+        break;
     }
 
     m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), get(condition));
@@ -3097,19 +3109,16 @@ auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
     FrequencyClass targetFrequency = FrequencyClass::Normal;
     FrequencyClass continuationFrequency = FrequencyClass::Normal;
 
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            targetFrequency = FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            continuationFrequency = FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
+    BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+    switch (hint) {
+    case BranchHint::Unlikely:
+        targetFrequency = FrequencyClass::Rare;
+        break;
+    case BranchHint::Likely:
+        continuationFrequency = FrequencyClass::Rare;
+        break;
+    case BranchHint::Invalid:
+        break;
     }
 
     if (condition) {

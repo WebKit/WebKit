@@ -1227,19 +1227,32 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
         size_t startLocal = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
         int startOffset = virtualRegisterForLocal(startLocal).offset();
         ASSERT(startOffset <= 0);
-        jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(-startOffset * sizeof(Register)), iteratorGPR);
+        jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32((-startOffset - 1) * sizeof(Register)), endGPR);
         jit.mul32(TrustedImm32(sizeof(Register)), localsToInitGPR, localsToInitGPR);
-        jit.subPtr(iteratorGPR, localsToInitGPR, endGPR);
+        jit.subPtr(endGPR, localsToInitGPR, iteratorGPR);
         jit.moveTrustedValue(jsUndefined(), undefinedJSR);
 
+#if CPU(ARM64)
+        auto evenCase = jit.branchTest32(Zero, localsToInitGPR, TrustedImm32(sizeof(Register)));
+        jit.store64(undefinedJSR.payloadGPR(), PostIndexAddress(iteratorGPR, sizeof(Register)));
+        evenCase.link(&jit);
         auto initLoop = jit.label();
-        Jump initDone = jit.branch32(LessThanOrEqual, iteratorGPR, endGPR);
+        Jump initDone = jit.branch32(GreaterThanOrEqual, iteratorGPR, endGPR);
         {
-            jit.storeValue(undefinedJSR, Address(iteratorGPR));
-            jit.subPtr(TrustedImm32(sizeof(Register)), iteratorGPR);
+            jit.storePair64(undefinedJSR.payloadGPR(), undefinedJSR.payloadGPR(), PostIndexAddress(iteratorGPR, sizeof(Register) * 2));
             jit.jump(initLoop);
         }
         initDone.link(&jit);
+#else
+        auto initLoop = jit.label();
+        Jump initDone = jit.branch32(GreaterThanOrEqual, iteratorGPR, endGPR);
+        {
+            jit.storeValue(undefinedJSR, Address(iteratorGPR));
+            jit.addPtr(TrustedImm32(sizeof(Register)), iteratorGPR);
+            jit.jump(initLoop);
+        }
+        initDone.link(&jit);
+#endif
     }
 
     // emitWriteBarrier(m_codeBlock).

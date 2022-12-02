@@ -26,6 +26,7 @@
 #include "CSSMarkup.h"
 #include "CSSStyleSheet.h"
 #include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include <wtf/text/StringBuilder.h>
@@ -43,7 +44,7 @@ CSSImportRule::~CSSImportRule()
     if (m_styleSheetCSSOMWrapper)
         m_styleSheetCSSOMWrapper->clearOwnerRule();
     if (m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper->clearParentRule();
+        m_mediaCSSOMWrapper->detachFromParent();
 }
 
 String CSSImportRule::href() const
@@ -54,7 +55,7 @@ String CSSImportRule::href() const
 MediaList& CSSImportRule::media() const
 {
     if (!m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper = MediaList::create(m_importRule.get().mediaQueries(), const_cast<CSSImportRule*>(this));
+        m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSImportRule*>(this));
     return *m_mediaCSSOMWrapper;
 }
 
@@ -80,9 +81,9 @@ String CSSImportRule::cssText() const
             builder.append(" layer(", layerName, ')');
     }
 
-    if (auto queries = m_importRule.get().mediaQueries()) {
-        if (auto mediaText = queries->mediaText(); !mediaText.isEmpty())
-            builder.append(' ', mediaText);
+    if (!mediaQueries().isEmpty()) {
+        builder.append(' ');
+        MQ::serialize(builder, mediaQueries());
     }
 
     builder.append(';');
@@ -104,5 +105,16 @@ void CSSImportRule::reattach(StyleRuleBase&)
     // FIXME: Implement when enabling caching for stylesheets with import rules.
     ASSERT_NOT_REACHED();
 }
+
+const MQ::MediaQueryList& CSSImportRule::mediaQueries() const
+{
+    return m_importRule->mediaQueries();
+}
+
+void CSSImportRule::setMediaQueries(MQ::MediaQueryList&& queries)
+{
+    m_importRule->setMediaQueries(WTFMove(queries));
+}
+
 
 } // namespace WebCore

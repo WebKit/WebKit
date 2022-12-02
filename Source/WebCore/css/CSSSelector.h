@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,9 +23,18 @@
 
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
+#include <wtf/FixedVector.h>
 
 namespace WebCore {
-    class CSSSelectorList;
+
+class CSSSelectorList;
+
+struct PossiblyQuotedIdentifier {
+    AtomString identifier;
+    bool wasQuoted { false };
+
+    bool isNull() const { return identifier.isNull(); }
+};
 
     enum class SelectorSpecificityIncrement {
         ClassA = 0x10000,
@@ -33,36 +42,28 @@ namespace WebCore {
         ClassC = 1
     };
 
-    // this class represents a selector for a StyleRule
+    // Selector for a StyleRule.
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
     class CSSSelector {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        CSSSelector();
+        CSSSelector() = default;
         CSSSelector(const CSSSelector&);
         explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
         ~CSSSelector();
 
-        /**
-         * Re-create selector text from selector's data
-         */
-        String selectorText(const String& = emptyString()) const;
+        // Re-create selector text from selector's data.
+        String selectorText(StringView separator = { }, StringView rightSide = { }) const;
 
-        // checks if the 2 selectors (including sub selectors) agree.
+        // Check if the 2 selectors (including sub selectors) agree.
         bool operator==(const CSSSelector&) const;
 
-        static const unsigned maxValueMask = 0xffffff;
-        static const unsigned idMask = 0xff0000;
-        static const unsigned classMask = 0xff00;
-        static const unsigned elementMask = 0xff;
-
         unsigned computeSpecificity() const;
+        std::array<uint8_t, 3> computeSpecificityTuple() const;
         unsigned specificityForPage() const;
-        unsigned simpleSelectorSpecificity() const;
-        static unsigned addSpecificities(unsigned, unsigned);
 
-        /* how the attribute value has to match.... Default is Exact */
+        // How the attribute value has to match. Default is Exact.
         enum Match {
             Unknown = 0,
             Tag,
@@ -159,6 +160,7 @@ namespace WebCore {
             PseudoClassFullScreenAncestor,
             PseudoClassAnimatingFullScreenTransition,
             PseudoClassFullScreenControlsHidden,
+            PseudoClassFullScreenParent,
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
             PseudoClassPictureInPicture,
@@ -239,16 +241,11 @@ namespace WebCore {
             RightBottomMarginBox,
         };
 
-        enum AttributeMatchType {
-            CaseSensitive,
-            CaseInsensitive,
-        };
-
         static PseudoElementType parsePseudoElementType(StringView);
         static PseudoId pseudoId(PseudoElementType);
 
-        // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
-        // the next item in the array.
+        // Selectors are kept in an array by CSSSelectorList.
+        // The next component of the selector is the next item in the array.
         const CSSSelector* tagHistory() const { return m_isLastInTagHistory ? nullptr : this + 1; }
         const CSSSelector* firstInCompound() const;
 
@@ -259,17 +256,18 @@ namespace WebCore {
         const AtomString& serializingValue() const;
         const QualifiedName& attribute() const;
         const AtomString& attributeCanonicalLocalName() const;
-        const AtomString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom(); }
+        const AtomString& argument() const { return m_hasRareData ? m_data.rareData->argument : nullAtom(); }
         bool attributeValueMatchingIsCaseInsensitive() const;
-        const Vector<AtomString>* argumentList() const { return m_hasRareData ? m_data.m_rareData->m_argumentList.get() : nullptr; }
-        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
+        const FixedVector<PossiblyQuotedIdentifier>* argumentList() const { return m_hasRareData ? &m_data.rareData->argumentList : nullptr; }
+        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
 
         void setValue(const AtomString&, bool matchLowerCase = false);
-        
+
+        enum AttributeMatchType { CaseSensitive, CaseInsensitive };
         void setAttribute(const QualifiedName&, bool convertToLowercase, AttributeMatchType);
         void setNth(int a, int b);
         void setArgument(const AtomString&);
-        void setArgumentList(std::unique_ptr<Vector<AtomString>>);
+        void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
         void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
         bool matchNth(int count) const;
@@ -280,38 +278,14 @@ namespace WebCore {
 
         bool hasDescendantOrChildRelation() const { return relation() == Child || hasDescendantRelation(); }
 
-        PseudoClassType pseudoClassType() const
-        {
-            ASSERT(match() == PseudoClass);
-            return static_cast<PseudoClassType>(m_pseudoType);
-        }
-        void setPseudoClassType(PseudoClassType pseudoType)
-        {
-            m_pseudoType = pseudoType;
-            ASSERT(m_pseudoType == pseudoType);
-        }
+        PseudoClassType pseudoClassType() const;
+        void setPseudoClassType(PseudoClassType);
 
-        PseudoElementType pseudoElementType() const
-        {
-            ASSERT(match() == PseudoElement);
-            return static_cast<PseudoElementType>(m_pseudoType);
-        }
-        void setPseudoElementType(PseudoElementType pseudoElementType)
-        {
-            m_pseudoType = pseudoElementType;
-            ASSERT(m_pseudoType == pseudoElementType);
-        }
+        PseudoElementType pseudoElementType() const;
+        void setPseudoElementType(PseudoElementType);
 
-        PagePseudoClassType pagePseudoClassType() const
-        {
-            ASSERT(match() == PagePseudoClass);
-            return static_cast<PagePseudoClassType>(m_pseudoType);
-        }
-        void setPagePseudoType(PagePseudoClassType pagePseudoType)
-        {
-            m_pseudoType = pagePseudoType;
-            ASSERT(m_pseudoType == pagePseudoType);
-        }
+        PagePseudoClassType pagePseudoClassType() const;
+        void setPagePseudoType(PagePseudoClassType);
 
         bool matchesPseudoElement() const;
         bool isUnknownPseudoElement() const;
@@ -321,18 +295,10 @@ namespace WebCore {
         bool isAttributeSelector() const;
 
         RelationType relation() const { return static_cast<RelationType>(m_relation); }
-        void setRelation(RelationType relation)
-        {
-            m_relation = relation;
-            ASSERT(m_relation == relation);
-        }
+        void setRelation(RelationType);
 
         Match match() const { return static_cast<Match>(m_match); }
-        void setMatch(Match match)
-        {
-            m_match = match;
-            ASSERT(m_match == match);
-        }
+        void setMatch(Match);
 
         bool isLastInSelectorList() const { return m_isLastInSelectorList; }
         void setLastInSelectorList() { m_isLastInSelectorList = true; }
@@ -345,29 +311,28 @@ namespace WebCore {
         void setForPage() { m_isForPage = true; }
 
     private:
-        unsigned m_relation              : 4; // enum RelationType.
-        mutable unsigned m_match         : 4; // enum Match.
-        mutable unsigned m_pseudoType    : 8; // PseudoType.
-        unsigned m_isLastInSelectorList  : 1;
-        unsigned m_isFirstInTagHistory   : 1;
-        unsigned m_isLastInTagHistory    : 1;
-        unsigned m_hasRareData           : 1;
-        unsigned m_hasNameWithCase       : 1;
-        unsigned m_isForPage             : 1;
-        unsigned m_tagIsForNamespaceRule : 1;
-        unsigned m_caseInsensitiveAttributeValueMatching : 1;
+        unsigned m_relation : 4 { DescendantSpace }; // enum RelationType.
+        mutable unsigned m_match : 4 { Unknown }; // enum Match.
+        mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
+        unsigned m_isLastInSelectorList : 1 { false };
+        unsigned m_isFirstInTagHistory : 1 { true };
+        unsigned m_isLastInTagHistory : 1 { true };
+        unsigned m_hasRareData : 1 { false };
+        unsigned m_hasNameWithCase : 1 { false };
+        unsigned m_isForPage : 1 { false };
+        unsigned m_tagIsForNamespaceRule : 1 { false };
+        unsigned m_caseInsensitiveAttributeValueMatching : 1 { false };
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-        unsigned m_destructorHasBeenCalled : 1;
+        unsigned m_destructorHasBeenCalled : 1 { false };
 #endif
 
         unsigned simpleSelectorSpecificityForPage() const;
 
-        // Hide.
-        CSSSelector& operator=(const CSSSelector&);
+        CSSSelector& operator=(const CSSSelector&) = delete;
 
         struct RareData : public RefCounted<RareData> {
             WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
-            static Ref<RareData> create(AtomString&& value) { return adoptRef(*new RareData(WTFMove(value))); }
+            static Ref<RareData> create(AtomString);
             ~RareData();
 
             bool matchNth(int count);
@@ -375,17 +340,17 @@ namespace WebCore {
             // For quirks mode, class and id are case-insensitive. In the case where uppercase
             // letters are used in quirks mode, |m_matchingValue| holds the lowercase class/id
             // and |m_serializingValue| holds the original string.
-            AtomString m_matchingValue;
-            AtomString m_serializingValue;
-            
-            int m_a; // Used for :nth-*
-            int m_b; // Used for :nth-*
-            QualifiedName m_attribute; // used for attribute selector
-            AtomString m_attributeCanonicalLocalName;
-            AtomString m_argument; // Used for :contains and :nth-*
-            std::unique_ptr<Vector<AtomString>> m_argumentList; // Used for :lang and ::part arguments.
-            std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :is(), :matches(), and :not().
-        
+            AtomString matchingValue;
+            AtomString serializingValue;
+
+            int a { 0 }; // Used for :nth-*
+            int b { 0 }; // Used for :nth-*
+            QualifiedName attribute; // used for attribute selector
+            AtomString attributeCanonicalLocalName;
+            AtomString argument; // Used for :contains and :nth-*
+            FixedVector<PossiblyQuotedIdentifier> argumentList; // Used for :lang and ::part arguments.
+            std::unique_ptr<CSSSelectorList> selectorList; // Used for :is(), :matches(), and :not().
+
         private:
             RareData(AtomString&& value);
         };
@@ -393,37 +358,41 @@ namespace WebCore {
 
         struct NameWithCase : public RefCounted<NameWithCase> {
             NameWithCase(const QualifiedName& originalName, const AtomString& lowercaseName)
-                : m_originalName(originalName)
-                , m_lowercaseLocalName(lowercaseName)
+                : originalName(originalName)
+                , lowercaseLocalName(lowercaseName)
             {
                 ASSERT(originalName.localName() != lowercaseName);
             }
 
-            const QualifiedName m_originalName;
-            const AtomString m_lowercaseLocalName;
+            const QualifiedName originalName;
+            const AtomString lowercaseLocalName;
         };
 
         union DataUnion {
-            DataUnion() : m_value(0) { }
-            AtomStringImpl* m_value;
-            QualifiedName::QualifiedNameImpl* m_tagQName;
-            RareData* m_rareData;
-            NameWithCase* m_nameWithCase;
+            AtomStringImpl* value { nullptr };
+            QualifiedName::QualifiedNameImpl* tagQName;
+            RareData* rareData;
+            NameWithCase* nameWithCase;
         } m_data;
     };
+
+inline bool operator==(const AtomString& a, const PossiblyQuotedIdentifier& b) { return a == b.identifier; }
+inline bool operator==(const PossiblyQuotedIdentifier& a, const AtomString& b) { return a.identifier == b; }
+inline bool operator!=(const AtomString& a, const PossiblyQuotedIdentifier& b) { return a != b.identifier; }
+inline bool operator!=(const PossiblyQuotedIdentifier& a, const AtomString& b) { return a.identifier != b; }
 
 inline const QualifiedName& CSSSelector::attribute() const
 {
     ASSERT(isAttributeSelector());
     ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_attribute;
+    return m_data.rareData->attribute;
 }
 
 inline const AtomString& CSSSelector::attributeCanonicalLocalName() const
 {
     ASSERT(isAttributeSelector());
     ASSERT(m_hasRareData);
-    return m_data.m_rareData->m_attributeCanonicalLocalName;
+    return m_data.rareData->attributeCanonicalLocalName;
 }
 
 inline bool CSSSelector::matchesPseudoElement() const
@@ -493,7 +462,7 @@ inline bool CSSSelector::isSiblingSelector() const
 inline bool CSSSelector::isAttributeSelector() const
 {
     return match() == CSSSelector::Exact
-        || match() ==  CSSSelector::Set
+        || match() == CSSSelector::Set
         || match() == CSSSelector::List
         || match() == CSSSelector::Hyphen
         || match() == CSSSelector::Contain
@@ -510,33 +479,15 @@ inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
     
     // Need to do ref counting manually for the union.
     if (!m_hasRareData) {
-        if (m_data.m_value)
-            m_data.m_value->deref();
-        m_data.m_value = value.impl();
-        m_data.m_value->ref();
+        if (m_data.value)
+            m_data.value->deref();
+        m_data.value = value.impl();
+        m_data.value->ref();
         return;
     }
 
-    m_data.m_rareData->m_matchingValue = WTFMove(matchingValue);
-    m_data.m_rareData->m_serializingValue = value;
-}
-
-inline CSSSelector::CSSSelector()
-    : m_relation(DescendantSpace)
-    , m_match(Unknown)
-    , m_pseudoType(0)
-    , m_isLastInSelectorList(false)
-    , m_isFirstInTagHistory(true)
-    , m_isLastInTagHistory(true)
-    , m_hasRareData(false)
-    , m_hasNameWithCase(false)
-    , m_isForPage(false)
-    , m_tagIsForNamespaceRule(false)
-    , m_caseInsensitiveAttributeValueMatching(false)
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    , m_destructorHasBeenCalled(false)
-#endif
-{
+    m_data.rareData->matchingValue = WTFMove(matchingValue);
+    m_data.rareData->serializingValue = value;
 }
 
 inline CSSSelector::CSSSelector(const CSSSelector& o)
@@ -551,22 +502,19 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     , m_isForPage(o.m_isForPage)
     , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
     , m_caseInsensitiveAttributeValueMatching(o.m_caseInsensitiveAttributeValueMatching)
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    , m_destructorHasBeenCalled(false)
-#endif
 {
     if (o.m_hasRareData) {
-        m_data.m_rareData = o.m_data.m_rareData;
-        m_data.m_rareData->ref();
+        m_data.rareData = o.m_data.rareData;
+        m_data.rareData->ref();
     } else if (o.m_hasNameWithCase) {
-        m_data.m_nameWithCase = o.m_data.m_nameWithCase;
-        m_data.m_nameWithCase->ref();
+        m_data.nameWithCase = o.m_data.nameWithCase;
+        m_data.nameWithCase->ref();
     } if (o.match() == Tag) {
-        m_data.m_tagQName = o.m_data.m_tagQName;
-        m_data.m_tagQName->ref();
-    } else if (o.m_data.m_value) {
-        m_data.m_value = o.m_data.m_value;
-        m_data.m_value->ref();
+        m_data.tagQName = o.m_data.tagQName;
+        m_data.tagQName->ref();
+    } else if (o.m_data.value) {
+        m_data.value = o.m_data.value;
+        m_data.value->ref();
     }
 }
 
@@ -577,20 +525,20 @@ inline CSSSelector::~CSSSelector()
     m_destructorHasBeenCalled = true;
 #endif
     if (m_hasRareData) {
-        m_data.m_rareData->deref();
-        m_data.m_rareData = nullptr;
+        m_data.rareData->deref();
+        m_data.rareData = nullptr;
         m_hasRareData = false;
     } else if (m_hasNameWithCase) {
-        m_data.m_nameWithCase->deref();
-        m_data.m_nameWithCase = nullptr;
+        m_data.nameWithCase->deref();
+        m_data.nameWithCase = nullptr;
         m_hasNameWithCase = false;
     } else if (match() == Tag) {
-        m_data.m_tagQName->deref();
-        m_data.m_tagQName = nullptr;
+        m_data.tagQName->deref();
+        m_data.tagQName = nullptr;
         m_match = Unknown;
-    } else if (m_data.m_value) {
-        m_data.m_value->deref();
-        m_data.m_value = nullptr;
+    } else if (m_data.value) {
+        m_data.value->deref();
+        m_data.value = nullptr;
     }
 }
 
@@ -598,40 +546,88 @@ inline const QualifiedName& CSSSelector::tagQName() const
 {
     ASSERT(match() == Tag);
     if (m_hasNameWithCase)
-        return m_data.m_nameWithCase->m_originalName;
-    return *reinterpret_cast<const QualifiedName*>(&m_data.m_tagQName);
+        return m_data.nameWithCase->originalName;
+    return *reinterpret_cast<const QualifiedName*>(&m_data.tagQName);
 }
 
 inline const AtomString& CSSSelector::tagLowercaseLocalName() const
 {
     if (m_hasNameWithCase)
-        return m_data.m_nameWithCase->m_lowercaseLocalName;
-    return m_data.m_tagQName->m_localName;
+        return m_data.nameWithCase->lowercaseLocalName;
+    return m_data.tagQName->m_localName;
 }
 
 inline const AtomString& CSSSelector::value() const
 {
     ASSERT(match() != Tag);
     if (m_hasRareData)
-        return m_data.m_rareData->m_matchingValue;
+        return m_data.rareData->matchingValue;
 
     // AtomString is really just an AtomStringImpl* so the cast below is safe.
-    return *reinterpret_cast<const AtomString*>(&m_data.m_value);
+    return *reinterpret_cast<const AtomString*>(&m_data.value);
 }
 
 inline const AtomString& CSSSelector::serializingValue() const
 {
     ASSERT(match() != Tag);
     if (m_hasRareData)
-        return m_data.m_rareData->m_serializingValue;
+        return m_data.rareData->serializingValue;
     
     // AtomString is really just an AtomStringImpl* so the cast below is safe.
-    return *reinterpret_cast<const AtomString*>(&m_data.m_value);
+    return *reinterpret_cast<const AtomString*>(&m_data.value);
 }
-    
+
 inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
 {
     return m_caseInsensitiveAttributeValueMatching;
+}
+
+inline auto CSSSelector::pseudoClassType() const -> PseudoClassType
+{
+    ASSERT(match() == PseudoClass);
+    return static_cast<PseudoClassType>(m_pseudoType);
+}
+
+inline void CSSSelector::setPseudoClassType(PseudoClassType pseudoType)
+{
+    m_pseudoType = pseudoType;
+    ASSERT(m_pseudoType == pseudoType);
+}
+
+inline auto CSSSelector::pseudoElementType() const -> PseudoElementType
+{
+    ASSERT(match() == PseudoElement);
+    return static_cast<PseudoElementType>(m_pseudoType);
+}
+
+inline void CSSSelector::setPseudoElementType(PseudoElementType pseudoElementType)
+{
+    m_pseudoType = pseudoElementType;
+    ASSERT(m_pseudoType == pseudoElementType);
+}
+
+inline auto CSSSelector::pagePseudoClassType() const -> PagePseudoClassType
+{
+    ASSERT(match() == PagePseudoClass);
+    return static_cast<PagePseudoClassType>(m_pseudoType);
+}
+
+inline void CSSSelector::setPagePseudoType(PagePseudoClassType pagePseudoType)
+{
+    m_pseudoType = pagePseudoType;
+    ASSERT(m_pseudoType == pagePseudoType);
+}
+
+inline void CSSSelector::setRelation(RelationType relation)
+{
+    m_relation = relation;
+    ASSERT(m_relation == relation);
+}
+
+inline void CSSSelector::setMatch(Match match)
+{
+    m_match = match;
+    ASSERT(m_match == match);
 }
 
 } // namespace WebCore

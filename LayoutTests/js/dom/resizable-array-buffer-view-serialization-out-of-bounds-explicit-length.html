@@ -1,0 +1,33 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useResizableArrayBuffer=true,--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<title>Resizable ArrayBuffers serialization</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Resizable ArrayBuffers should be serializable OOB explicit length");
+var arrayBuffer = new ArrayBuffer(36, { maxByteLength: 128 });
+var int32Array = new Int32Array(arrayBuffer, 4, 4);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32Array.length`, `4`);
+shouldBe(`int32Array.byteOffset`, `4`);
+arrayBuffer.resize(0);
+shouldThrow(`structuredClone(int32Array)`);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `0`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32Array.length`, `0`);
+shouldBe(`int32Array.byteOffset`, `0`);
+arrayBuffer.resize(36);
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32Array.length`, `4`);
+shouldBe(`int32Array.byteOffset`, `4`);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

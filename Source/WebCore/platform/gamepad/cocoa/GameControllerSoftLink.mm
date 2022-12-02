@@ -31,8 +31,25 @@
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, GameController)
-SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebCore, GameController, GCController)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCController, WEBCORE_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebCore, GameController, GCControllerButtonInput)
+
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputButtonA, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputButtonB, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputButtonX, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputButtonY, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputButtonHome, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputButtonMenu, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputButtonOptions, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputDirectionPad, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputLeftShoulder, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputLeftTrigger, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputLeftThumbstick, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputLeftThumbstickButton, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputRightShoulder, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputRightTrigger, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputRightThumbstick, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCInputRightThumbstickButton, NSString *)
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCControllerDidConnectNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCControllerDidDisconnectNotification, NSString *)

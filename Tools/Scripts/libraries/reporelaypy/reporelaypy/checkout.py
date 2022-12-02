@@ -264,7 +264,8 @@ class Checkout(object):
 
         branch = branch or self.repository.default_branch
         if branch == self.repository.default_branch:
-            self.repository.pull(remote=remote)
+            if self.repository.pull(remote=remote):
+                return False
             self.repository.cache.populate(branch=branch)
             return True
         elif not self.repository.prod_branches.match(branch):
@@ -304,8 +305,10 @@ class Checkout(object):
         print('Forwarding updates from {}'.format(remote))
 
         self.fetch(remote)
-        self.repository.pull(remote=remote)
-        self.repository.cache.populate(branch=self.repository.default_branch)
+        if self.repository.pull(remote=remote):
+            print("    Failed to pull from '{}'".format(remote))
+        else:
+            self.repository.cache.populate(branch=self.repository.default_branch)
 
         # First, update all branches we're already tracking
         print('Updating branches...')
@@ -314,7 +317,8 @@ class Checkout(object):
             if branch not in all_branches:
                 continue
             all_branches.remove(branch)
-            self.update_for(branch=branch, remote=remote)
+            if not self.update_for(branch=branch, remote=remote):
+                print("    Failed to update '{}' from '{}'".format(branch, remote or self.repository.default_remote))
             self.forward_update(branch=branch, remote=remote)
 
         # Then, track all untracked branches

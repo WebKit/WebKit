@@ -1,0 +1,24 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&body=%0A++++++%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+width%3D%22123%22+height%3D%22123%22%3E%0A++++++++%3Crect+fill%3D%22lime%22+width%3D%22123%22+height%3D%22123%22%2F%3E%0A++++++%3C%2Fsvg%3E%0A++++&mime=image%2Fsvg%2Bxml
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS sec-fetch-site - Same origin
+PASS sec-fetch-site - Cross-site
+TIMEOUT sec-fetch-site - Same site Test timed out
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site
+NOTRUN sec-fetch-site - Same-Site -> Same Origin
+NOTRUN sec-fetch-site - Same-Site -> Same-Site
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade
+NOTRUN sec-fetch-mode
+NOTRUN sec-fetch-dest
+NOTRUN sec-fetch-user
+

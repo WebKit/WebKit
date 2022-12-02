@@ -186,15 +186,6 @@ void TileController::setWantsDeepColorBackingStore(bool wantsDeepColorBackingSto
     tileGrid().updateTileLayerProperties();
 }
 
-void TileController::setSupportsSubpixelAntialiasedText(bool supportsSubpixelAntialiasedText)
-{
-    if (m_supportsSubpixelAntialiasedText == supportsSubpixelAntialiasedText)
-        return;
-
-    m_supportsSubpixelAntialiasedText = supportsSubpixelAntialiasedText;
-    tileGrid().updateTileLayerProperties();
-}
-
 void TileController::setTilesOpaque(bool opaque)
 {
     if (opaque == m_tilesAreOpaque)
@@ -763,13 +754,12 @@ Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, Ti
     layer->setPosition(tileRect.location());
     layer->setBorderColor(m_tileDebugBorderColor);
     layer->setBorderWidth(m_tileDebugBorderWidth);
-    layer->setEdgeAntialiasingMask(0);
+    layer->setAntialiasesEdges(false);
     layer->setOpaque(m_tilesAreOpaque);
     layer->setName(makeString("tile at ", tileRect.location().x(), ',', tileRect.location().y()));
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
     layer->setWantsDeepColorBackingStore(m_wantsDeepColorBackingStore);
-    layer->setSupportsSubpixelAntialiasedText(m_supportsSubpixelAntialiasedText);
     layer->setNeedsDisplay();
     return layer;
 }

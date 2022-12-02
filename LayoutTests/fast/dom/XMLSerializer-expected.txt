@@ -1,6 +1,7 @@
-This tests XMLSerializer on different node types. If the test is successful, there should be five lines of output. The first line should be the child1 tag. The second should be the child2 tag. The third one should be a comment, the fourth one should be the complete document and the fifth one should be the complete document but serialized from a document fragment node.
-<child1>First child</child1>
-<child2 attr="an attribute">Second child</child2>
-<!-- A comment -->
-<test><child1>First child</child1><child2 attr="an attribute">Second child</child2><!-- A comment --></test>
-<test><child1>First child</child1><child2 attr="an attribute">Second child</child2><!-- A comment --></test>
+
+PASS Check Element serialization.
+PASS Check Comment serialization.
+PASS Check Document serialization.
+PASS Check DocumentFragment serialization.
+PASS Check Attr serializiation.
+

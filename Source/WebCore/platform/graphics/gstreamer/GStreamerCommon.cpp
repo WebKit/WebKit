@@ -725,6 +725,281 @@ GstClockTime webkitGstElementGetCurrentRunningTime(GstElement* element)
 }
 #endif
 
+PlatformVideoColorSpace videoColorSpaceFromCaps(const GstCaps* caps)
+{
+    GstVideoInfo info;
+    if (!gst_video_info_from_caps(&info, caps))
+        return { };
+
+    return videoColorSpaceFromInfo(info);
 }
+
+PlatformVideoColorSpace videoColorSpaceFromInfo(const GstVideoInfo& info)
+{
+    ensureGStreamerInitialized();
+#ifndef GST_DISABLE_GST_DEBUG
+    GUniquePtr<char> colorimetry(gst_video_colorimetry_to_string(&GST_VIDEO_INFO_COLORIMETRY(&info)));
+#endif
+    PlatformVideoColorSpace colorSpace;
+    switch (GST_VIDEO_INFO_COLORIMETRY(&info).matrix) {
+    case GST_VIDEO_COLOR_MATRIX_RGB:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Rgb;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_BT709:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_BT601:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Smpte170m;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_SMPTE240M:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Smpte240m;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_FCC:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Fcc;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_BT2020:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance;
+        break;
+    case GST_VIDEO_COLOR_MATRIX_UNKNOWN:
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Unspecified;
+        break;
+    default:
+#ifndef GST_DISABLE_GST_DEBUG
+        GST_WARNING("Unhandled colorspace matrix from %s", colorimetry.get());
+#endif
+        break;
+    }
+
+    switch (GST_VIDEO_INFO_COLORIMETRY(&info).transfer) {
+    case GST_VIDEO_TRANSFER_SRGB:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
+        break;
+    case GST_VIDEO_TRANSFER_BT709:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
+        break;
+#if GST_CHECK_VERSION(1, 18, 0)
+    case GST_VIDEO_TRANSFER_BT601:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Smpte170m;
+        break;
+    case GST_VIDEO_TRANSFER_SMPTE2084:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::SmpteSt2084;
+        break;
+    case GST_VIDEO_TRANSFER_ARIB_STD_B67:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::AribStdB67Hlg;
+        break;
+    case GST_VIDEO_TRANSFER_BT2020_10:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt2020_10bit;
+        break;
+#endif
+    case GST_VIDEO_TRANSFER_BT2020_12:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt2020_12bit;
+        break;
+    case GST_VIDEO_TRANSFER_GAMMA10:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Linear;
+        break;
+    case GST_VIDEO_TRANSFER_GAMMA22:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Gamma22curve;
+        break;
+    case GST_VIDEO_TRANSFER_GAMMA28:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Gamma28curve;
+        break;
+    case GST_VIDEO_TRANSFER_SMPTE240M:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Smpte240m;
+        break;
+    case GST_VIDEO_TRANSFER_LOG100:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Log;
+        break;
+    case GST_VIDEO_TRANSFER_LOG316:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::LogSqrt;
+        break;
+    case GST_VIDEO_TRANSFER_UNKNOWN:
+        colorSpace.transfer = PlatformVideoTransferCharacteristics::Unspecified;
+        break;
+    default:
+#ifndef GST_DISABLE_GST_DEBUG
+        GST_WARNING("Unhandled colorspace transfer from %s", colorimetry.get());
+#endif
+        break;
+    }
+
+    switch (GST_VIDEO_INFO_COLORIMETRY(&info).primaries) {
+    case GST_VIDEO_COLOR_PRIMARIES_BT709:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_BT470BG:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Bt470bg;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_BT470M:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Bt470m;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_SMPTE170M:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_SMPTERP431:
+        colorSpace.primaries = PlatformVideoColorPrimaries::SmpteRp431;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_SMPTEEG432:
+        colorSpace.primaries = PlatformVideoColorPrimaries::SmpteEg432;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_FILM:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Film;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_BT2020:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Bt2020;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_SMPTE240M:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Smpte240m;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_EBU3213:
+        colorSpace.primaries = PlatformVideoColorPrimaries::JedecP22Phosphors;
+        break;
+    case GST_VIDEO_COLOR_PRIMARIES_UNKNOWN:
+        colorSpace.primaries = PlatformVideoColorPrimaries::Unspecified;
+        break;
+    default:
+#ifndef GST_DISABLE_GST_DEBUG
+        GST_WARNING("Unhandled colorspace primaries from %s", colorimetry.get());
+#endif
+        break;
+    }
+
+    if (GST_VIDEO_INFO_COLORIMETRY(&info).range != GST_VIDEO_COLOR_RANGE_UNKNOWN)
+        colorSpace.fullRange = GST_VIDEO_INFO_COLORIMETRY(&info).range == GST_VIDEO_COLOR_RANGE_0_255;
+
+    return colorSpace;
+}
+
+void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVideoColorSpace& colorSpace)
+{
+    ensureGStreamerInitialized();
+    if (colorSpace.matrix) {
+        switch (*colorSpace.matrix) {
+        case PlatformVideoMatrixCoefficients::Rgb:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_RGB;
+            break;
+        case PlatformVideoMatrixCoefficients::Bt709:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT709;
+            break;
+        case PlatformVideoMatrixCoefficients::Smpte170m:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT601;
+            break;
+        case PlatformVideoMatrixCoefficients::Smpte240m:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_SMPTE240M;
+            break;
+        case PlatformVideoMatrixCoefficients::Fcc:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_FCC;
+            break;
+        case PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT2020;
+            break;
+        case PlatformVideoMatrixCoefficients::Unspecified:
+            GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_UNKNOWN;
+            break;
+        default:
+            break;
+        };
+    } else
+        GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_UNKNOWN;
+
+    if (colorSpace.transfer) {
+        switch (*colorSpace.transfer) {
+        case PlatformVideoTransferCharacteristics::Iec6196621:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_SRGB;
+            break;
+        case PlatformVideoTransferCharacteristics::Bt709:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT709;
+            break;
+#if GST_CHECK_VERSION(1, 18, 0)
+        case PlatformVideoTransferCharacteristics::Smpte170m:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT601;
+            break;
+        case PlatformVideoTransferCharacteristics::SmpteSt2084:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_SMPTE2084;
+            break;
+        case PlatformVideoTransferCharacteristics::AribStdB67Hlg:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_ARIB_STD_B67;
+            break;
+        case PlatformVideoTransferCharacteristics::Bt2020_10bit:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT2020_10;
+            break;
+#endif
+        case PlatformVideoTransferCharacteristics::Bt2020_12bit:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_BT2020_12;
+            break;
+        case PlatformVideoTransferCharacteristics::Linear:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_GAMMA10;
+            break;
+        case PlatformVideoTransferCharacteristics::Gamma22curve:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_GAMMA22;
+            break;
+        case PlatformVideoTransferCharacteristics::Gamma28curve:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_GAMMA28;
+            break;
+        case PlatformVideoTransferCharacteristics::Smpte240m:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_SMPTE240M;
+            break;
+        case PlatformVideoTransferCharacteristics::Log:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_LOG100;
+            break;
+        case PlatformVideoTransferCharacteristics::LogSqrt:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_LOG316;
+            break;
+        case PlatformVideoTransferCharacteristics::Unspecified:
+            GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_UNKNOWN;
+            break;
+        default:
+            break;
+        }
+    } else
+        GST_VIDEO_INFO_COLORIMETRY(info).transfer = GST_VIDEO_TRANSFER_UNKNOWN;
+
+    if (colorSpace.primaries) {
+        switch (*colorSpace.primaries) {
+        case PlatformVideoColorPrimaries::Bt709:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT709;
+            break;
+        case PlatformVideoColorPrimaries::Bt470bg:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT470BG;
+            break;
+        case PlatformVideoColorPrimaries::Bt470m:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT470M;
+            break;
+        case PlatformVideoColorPrimaries::Smpte170m:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE170M;
+            break;
+        case PlatformVideoColorPrimaries::SmpteRp431:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTERP431;
+            break;
+        case PlatformVideoColorPrimaries::SmpteEg432:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTEEG432;
+            break;
+        case PlatformVideoColorPrimaries::Film:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_FILM;
+            break;
+        case PlatformVideoColorPrimaries::Bt2020:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT2020;
+            break;
+        case PlatformVideoColorPrimaries::Smpte240m:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE240M;
+            break;
+        case PlatformVideoColorPrimaries::JedecP22Phosphors:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_EBU3213;
+            break;
+        case PlatformVideoColorPrimaries::Unspecified:
+            GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_UNKNOWN;
+            break;
+        default:
+            break;
+        }
+    } else
+        GST_VIDEO_INFO_COLORIMETRY(info).primaries = GST_VIDEO_COLOR_PRIMARIES_UNKNOWN;
+
+    if (colorSpace.fullRange)
+        GST_VIDEO_INFO_COLORIMETRY(info).range = *colorSpace.fullRange ? GST_VIDEO_COLOR_RANGE_0_255 : GST_VIDEO_COLOR_RANGE_16_235;
+    else
+        GST_VIDEO_INFO_COLORIMETRY(info).range = GST_VIDEO_COLOR_RANGE_UNKNOWN;
+}
+
+} // namespace WebCore
 
 #endif // USE(GSTREAMER)

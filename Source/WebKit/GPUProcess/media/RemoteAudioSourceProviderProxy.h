@@ -28,7 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
 
 #include "Connection.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/AudioSourceProviderClient.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -47,13 +47,11 @@ public:
     static Ref<RemoteAudioSourceProviderProxy> create(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::AudioSourceProviderAVFObjC&);
     ~RemoteAudioSourceProviderProxy();
 
-    UniqueRef<WebCore::CARingBuffer> createRingBuffer();
     void newAudioSamples(uint64_t startFrame, uint64_t endFrame);
 
 private:
     RemoteAudioSourceProviderProxy(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&);
-
-    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
+    std::unique_ptr<WebCore::CARingBuffer> configureAudioStorage(const WebCore::CAAudioStreamDescription&, size_t frameCount);
 
     // AudioSourceProviderClient
     void setFormat(size_t numberOfChannels, float sampleRate) final { }

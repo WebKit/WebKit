@@ -55,7 +55,7 @@ void DebugAnnotatorVk::endEvent(gl::Context *context,
     }
 }
 
-bool DebugAnnotatorVk::getStatus()
+bool DebugAnnotatorVk::getStatus(const gl::Context *context)
 {
     return true;
 }

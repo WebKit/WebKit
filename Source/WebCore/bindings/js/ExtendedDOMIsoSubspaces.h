@@ -32,7 +32,6 @@ namespace WebCore {
 class ExtendedDOMIsoSubspaces : public DOMIsoSubspaces {
 public:
     ExtendedDOMIsoSubspaces() = default;
-    std::unique_ptr<JSC::IsoSubspace> m_subspaceForFileSystemDirectoryHandleIterator;
 };
 
 } // namespace WebCore

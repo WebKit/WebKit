@@ -41,6 +41,7 @@ class Tracker(GenericTracker):
         r'\Ahttps?://{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
         r'\A{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
     ]
+    NAME = 'Bugzilla'
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
@@ -433,13 +434,13 @@ class Tracker(GenericTracker):
         if component not in self.projects[project]['components']:
             raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
 
-        if not version and len(self.projects[project]['versions']) == 1:
-            version = self.projects[project]['versions'][0]
-        elif not version:
-            version = webkitcorepy.Terminal.choose(
-                "What version of '{}' should the bug be associated with?".format(project),
-                options=self.projects[project]['versions'], numbered=True,
-            )
+        if not version:
+            # This is the default option, aligned to webkit-patch behavior.
+            # FIXME: We should make this class project agnostic by specifying this in trackers.json.
+            version = "WebKit Nightly Build"
+            if version not in self.projects[project]['versions']:
+                # If the default option does not exist on the list, we pick the last one from versions.
+                version = self.projects[project]['versions'][-1]
         if version not in self.projects[project]['versions']:
             raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
 

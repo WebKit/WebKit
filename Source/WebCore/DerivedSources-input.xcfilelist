@@ -55,7 +55,6 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
-$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasContext.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorWrite.idl
@@ -233,6 +232,7 @@ $(PROJECT_DIR)/Modules/beacon/Navigator+Beacon.idl
 $(PROJECT_DIR)/Modules/cache/CacheQueryOptions.idl
 $(PROJECT_DIR)/Modules/cache/DOMCache.idl
 $(PROJECT_DIR)/Modules/cache/DOMCacheStorage.idl
+$(PROJECT_DIR)/Modules/cache/MultiCacheQueryOptions.idl
 $(PROJECT_DIR)/Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
 $(PROJECT_DIR)/Modules/compression/CompressionStream.idl
 $(PROJECT_DIR)/Modules/compression/CompressionStream.js
@@ -866,13 +866,16 @@ $(PROJECT_DIR)/accessibility/AccessibilityRole.idl
 $(PROJECT_DIR)/accessibility/AriaAttributes.idl
 $(PROJECT_DIR)/animation/Animatable.idl
 $(PROJECT_DIR)/animation/AnimationEffect.idl
+$(PROJECT_DIR)/animation/AnimationEvent.idl
 $(PROJECT_DIR)/animation/AnimationFrameProvider.idl
 $(PROJECT_DIR)/animation/AnimationFrameRatePreset.idl
 $(PROJECT_DIR)/animation/AnimationPlaybackEvent.idl
 $(PROJECT_DIR)/animation/AnimationPlaybackEventInit.idl
 $(PROJECT_DIR)/animation/AnimationTimeline.idl
 $(PROJECT_DIR)/animation/CSSAnimation.idl
+$(PROJECT_DIR)/animation/CSSAnimationEvent.idl
 $(PROJECT_DIR)/animation/CSSTransition.idl
+$(PROJECT_DIR)/animation/CSSTransitionEvent.idl
 $(PROJECT_DIR)/animation/CompositeOperation.idl
 $(PROJECT_DIR)/animation/CompositeOperationOrAuto.idl
 $(PROJECT_DIR)/animation/ComputedEffectTiming.idl
@@ -894,6 +897,7 @@ $(PROJECT_DIR)/animation/KeyframeEffect.idl
 $(PROJECT_DIR)/animation/KeyframeEffectOptions.idl
 $(PROJECT_DIR)/animation/OptionalEffectTiming.idl
 $(PROJECT_DIR)/animation/PlaybackDirection.idl
+$(PROJECT_DIR)/animation/TransitionEvent.idl
 $(PROJECT_DIR)/animation/WebAnimation.idl
 $(PROJECT_DIR)/bindings/js/JSDOMBindingInternals.js
 $(PROJECT_DIR)/bindings/scripts/CodeGenerator.pm
@@ -994,16 +998,17 @@ $(PROJECT_DIR)/css/WebKitCSSViewportRule.idl
 $(PROJECT_DIR)/css/WebKitFontFamilyNames.in
 $(PROJECT_DIR)/css/dialog.css
 $(PROJECT_DIR)/css/fullscreen.css
+$(PROJECT_DIR)/css/horizontalFormControls.css
 $(PROJECT_DIR)/css/html.css
 $(PROJECT_DIR)/css/legacyFormControlsIOS.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
 $(PROJECT_DIR)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py
 $(PROJECT_DIR)/css/makeSelectorPseudoElementsMap.py
-$(PROJECT_DIR)/css/makeprop.pl
-$(PROJECT_DIR)/css/makevalues.pl
 $(PROJECT_DIR)/css/mathml.css
 $(PROJECT_DIR)/css/mediaControls.css
 $(PROJECT_DIR)/css/plugIns.css
+$(PROJECT_DIR)/css/process-css-properties.py
+$(PROJECT_DIR)/css/process-css-values.py
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/svg.css
 $(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
@@ -1308,6 +1313,7 @@ $(PROJECT_DIR)/html/SubmitEvent.idl
 $(PROJECT_DIR)/html/TextMetrics.idl
 $(PROJECT_DIR)/html/TimeRanges.idl
 $(PROJECT_DIR)/html/URLSearchParams.idl
+$(PROJECT_DIR)/html/UserActivation.idl
 $(PROJECT_DIR)/html/ValidityState.idl
 $(PROJECT_DIR)/html/VideoFrameMetadata.idl
 $(PROJECT_DIR)/html/VideoFrameRequestCallback.idl
@@ -1345,13 +1351,13 @@ $(PROJECT_DIR)/html/canvas/EXTColorBufferFloat.idl
 $(PROJECT_DIR)/html/canvas/EXTColorBufferHalfFloat.idl
 $(PROJECT_DIR)/html/canvas/EXTFloatBlend.idl
 $(PROJECT_DIR)/html/canvas/EXTFragDepth.idl
-$(PROJECT_DIR)/html/canvas/EXTProvokingVertex.idl
 $(PROJECT_DIR)/html/canvas/EXTShaderTextureLOD.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureCompressionBPTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureCompressionRGTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureFilterAnisotropic.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureNorm16.idl
 $(PROJECT_DIR)/html/canvas/EXTsRGB.idl
+$(PROJECT_DIR)/html/canvas/GPUCanvasContext.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContext.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContextSettings.idl
 $(PROJECT_DIR)/html/canvas/ImageSmoothingQuality.idl
@@ -1374,7 +1380,6 @@ $(PROJECT_DIR)/html/canvas/WebGLActiveInfo.idl
 $(PROJECT_DIR)/html/canvas/WebGLBuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLColorBufferFloat.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureASTC.idl
-$(PROJECT_DIR)/html/canvas/WebGLCompressedTextureATC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC1.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTexturePVRTC.idl
@@ -1392,6 +1397,7 @@ $(PROJECT_DIR)/html/canvas/WebGLLoseContext.idl
 $(PROJECT_DIR)/html/canvas/WebGLMultiDraw.idl
 $(PROJECT_DIR)/html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.idl
 $(PROJECT_DIR)/html/canvas/WebGLProgram.idl
+$(PROJECT_DIR)/html/canvas/WebGLProvokingVertex.idl
 $(PROJECT_DIR)/html/canvas/WebGLQuery.idl
 $(PROJECT_DIR)/html/canvas/WebGLRenderbuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLRenderingContext.idl
@@ -1459,6 +1465,7 @@ $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
+$(PROJECT_DIR)/page/Navigator+UserActivation.idl
 $(PROJECT_DIR)/page/Navigator.idl
 $(PROJECT_DIR)/page/NavigatorCookies.idl
 $(PROJECT_DIR)/page/NavigatorID.idl

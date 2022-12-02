@@ -1,6 +1,24 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'touch-action' to CSS-wide keywords
+FAIL Can set 'touch-action' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'touch-action' to the 'auto' keyword
+PASS Can set 'touch-action' to the 'none' keyword
+PASS Can set 'touch-action' to the 'pan-x' keyword
+FAIL Can set 'touch-action' to the 'pan-left' keyword Invalid values
+FAIL Can set 'touch-action' to the 'pan-right' keyword Invalid values
+PASS Can set 'touch-action' to the 'pan-y' keyword
+FAIL Can set 'touch-action' to the 'pan-up' keyword Invalid values
+FAIL Can set 'touch-action' to the 'pan-down' keyword Invalid values
+PASS Can set 'touch-action' to the 'pinch-zoom' keyword
+PASS Can set 'touch-action' to the 'manipulation' keyword
+PASS Setting 'touch-action' to a length throws TypeError
+PASS Setting 'touch-action' to a percent throws TypeError
+PASS Setting 'touch-action' to a time throws TypeError
+PASS Setting 'touch-action' to an angle throws TypeError
+PASS Setting 'touch-action' to a flexible length throws TypeError
+PASS Setting 'touch-action' to a number throws TypeError
+PASS Setting 'touch-action' to a URL throws TypeError
+PASS Setting 'touch-action' to a transform throws TypeError
+FAIL 'touch-action' does not supported 'pan-x pan-down' assert_not_equals: Unsupported value must not be null got disallowed value null
+FAIL 'touch-action' does not supported 'pan-down pinch-zoom pan-right' assert_not_equals: Unsupported value must not be null got disallowed value null
 

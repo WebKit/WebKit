@@ -27,8 +27,12 @@
 namespace WebCore {
 
 class MediaList;
-class MediaQuerySet;
 class StyleRuleMedia;
+
+namespace MQ {
+struct MediaQuery;
+using MediaQueryList = Vector<MediaQuery>;
+}
 
 class CSSMediaRule final : public CSSConditionRule {
 public:
@@ -38,14 +42,16 @@ public:
     WEBCORE_EXPORT MediaList* media() const;
 
 private:
+    friend class MediaList;
+
     CSSMediaRule(StyleRuleMedia&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Media; }
-    void reattach(StyleRuleBase&) final;
     String cssText() const final;
     String conditionText() const final;
 
-    MediaQuerySet& mediaQueries() const;
+    const MQ::MediaQueryList& mediaQueries() const;
+    void setMediaQueries(MQ::MediaQueryList&&);
 
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
 };

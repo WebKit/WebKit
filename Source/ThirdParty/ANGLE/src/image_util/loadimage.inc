@@ -29,7 +29,7 @@ inline const T *OffsetDataPointer(const uint8_t *data, size_t y, size_t z, size_
 }  // namespace priv
 
 template <typename type, size_t componentCount>
-inline void LoadToNative(size_t width, size_t height, size_t depth,
+inline void LoadToNative(const ImageLoadContext &context, size_t width, size_t height, size_t depth,
                          const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
                          uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
 {
@@ -67,9 +67,10 @@ inline void LoadToNative(size_t width, size_t height, size_t depth,
 }
 
 template <typename type, uint32_t fourthComponentBits>
-inline void LoadToNative3To4(size_t width, size_t height, size_t depth,
-                             const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
-                             uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
+inline void LoadToNative3To4(const ImageLoadContext &context, size_t width, size_t height,
+                             size_t depth, const uint8_t *input, size_t inputRowPitch,
+                             size_t inputDepthPitch, uint8_t *output, size_t outputRowPitch,
+                             size_t outputDepthPitch)
 {
     const type fourthValue = gl::bitCast<type>(fourthComponentBits);
 
@@ -89,7 +90,7 @@ inline void LoadToNative3To4(size_t width, size_t height, size_t depth,
 }
 
 template <size_t componentCount>
-inline void Load32FTo16F(size_t width, size_t height, size_t depth,
+inline void Load32FTo16F(const ImageLoadContext &context, size_t width, size_t height, size_t depth,
                          const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
                          uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
 {
@@ -111,9 +112,10 @@ inline void Load32FTo16F(size_t width, size_t height, size_t depth,
 }
 
 template <size_t blockWidth, size_t blockHeight, size_t blockDepth, size_t blockSize>
-inline void LoadCompressedToNative(size_t width, size_t height, size_t depth,
-                                   const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
-                                   uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
+inline void LoadCompressedToNative(const ImageLoadContext &context, size_t width, size_t height,
+                                   size_t depth, const uint8_t *input, size_t inputRowPitch,
+                                   size_t inputDepthPitch, uint8_t *output, size_t outputRowPitch,
+                                   size_t outputDepthPitch)
 {
     const size_t columns = (width + (blockWidth - 1)) / blockWidth;
     const size_t rows = (height + (blockHeight - 1)) / blockHeight;
@@ -160,7 +162,8 @@ inline void Initialize4ComponentData(size_t width, size_t height, size_t depth,
 }
 
 template <size_t blockWidth, size_t blockHeight>
-inline void LoadASTCToRGBA8(size_t width,
+inline void LoadASTCToRGBA8(const ImageLoadContext &context,
+                            size_t width,
                             size_t height,
                             size_t depth,
                             const uint8_t *input,
@@ -170,12 +173,13 @@ inline void LoadASTCToRGBA8(size_t width,
                             size_t outputRowPitch,
                             size_t outputDepthPitch)
 {
-    LoadASTCToRGBA8Inner(width, height, depth, blockWidth, blockHeight, input, inputRowPitch,
+    LoadASTCToRGBA8Inner(context, width, height, depth, blockWidth, blockHeight, input, inputRowPitch,
                          inputDepthPitch, output, outputRowPitch, outputDepthPitch);
 }
 
 template <uint32_t indexBits, uint32_t redBlueBits, uint32_t greenBits, uint32_t alphaBits>
-inline void LoadPalettedToRGBA8(size_t width,
+inline void LoadPalettedToRGBA8(const ImageLoadContext &context,
+                                size_t width,
                                 size_t height,
                                 size_t depth,
                                 const uint8_t *input,
@@ -185,7 +189,160 @@ inline void LoadPalettedToRGBA8(size_t width,
                                 size_t outputRowPitch,
                                 size_t outputDepthPitch)
 {
-    UNREACHABLE();
+    static_assert(indexBits == 4 || indexBits == 8);
+    static_assert(redBlueBits == 4 || redBlueBits == 5 || redBlueBits == 8);
+    static_assert(greenBits == 4 || greenBits == 5 || greenBits == 6 || greenBits == 8);
+    static_assert(alphaBits == 0 || alphaBits == 1 || alphaBits == 4 || alphaBits == 8);
+    constexpr uint32_t colorBits = 2 * redBlueBits + greenBits + alphaBits;
+    static_assert(colorBits == 16 || colorBits == 24 || colorBits == 32);
+
+    LoadPalettedToRGBA8Impl(context, width, height, depth,
+                            indexBits, redBlueBits, greenBits, alphaBits,
+                            input, inputRowPitch, inputDepthPitch,
+                            output, outputRowPitch, outputDepthPitch);
+}
+
+// Temporary overload functions; need to have no-context overloads of the following functions used
+// by Chromium.  A Chromium change will switch to the with-context overloads, and then these can be
+// removed.
+inline void LoadEACR11ToR8(size_t width,
+                           size_t height,
+                           size_t depth,
+                           const uint8_t *input,
+                           size_t inputRowPitch,
+                           size_t inputDepthPitch,
+                           uint8_t *output,
+                           size_t outputRowPitch,
+                           size_t outputDepthPitch)
+{
+    LoadEACR11ToR8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                   outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadEACR11SToR8(size_t width,
+                            size_t height,
+                            size_t depth,
+                            const uint8_t *input,
+                            size_t inputRowPitch,
+                            size_t inputDepthPitch,
+                            uint8_t *output,
+                            size_t outputRowPitch,
+                            size_t outputDepthPitch)
+{
+    LoadEACR11SToR8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                    outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadEACRG11ToRG8(size_t width,
+                             size_t height,
+                             size_t depth,
+                             const uint8_t *input,
+                             size_t inputRowPitch,
+                             size_t inputDepthPitch,
+                             uint8_t *output,
+                             size_t outputRowPitch,
+                             size_t outputDepthPitch)
+{
+    LoadEACRG11ToRG8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                     outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadEACRG11SToRG8(size_t width,
+                              size_t height,
+                              size_t depth,
+                              const uint8_t *input,
+                              size_t inputRowPitch,
+                              size_t inputDepthPitch,
+                              uint8_t *output,
+                              size_t outputRowPitch,
+                              size_t outputDepthPitch)
+{
+    LoadEACRG11SToRG8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                      outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadETC2RGB8ToRGBA8(size_t width,
+                                size_t height,
+                                size_t depth,
+                                const uint8_t *input,
+                                size_t inputRowPitch,
+                                size_t inputDepthPitch,
+                                uint8_t *output,
+                                size_t outputRowPitch,
+                                size_t outputDepthPitch)
+{
+    LoadETC2RGB8ToRGBA8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                        outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadETC2SRGB8ToRGBA8(size_t width,
+                                 size_t height,
+                                 size_t depth,
+                                 const uint8_t *input,
+                                 size_t inputRowPitch,
+                                 size_t inputDepthPitch,
+                                 uint8_t *output,
+                                 size_t outputRowPitch,
+                                 size_t outputDepthPitch)
+{
+    LoadETC2SRGB8ToRGBA8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                         outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadETC2RGBA8ToRGBA8(size_t width,
+                                 size_t height,
+                                 size_t depth,
+                                 const uint8_t *input,
+                                 size_t inputRowPitch,
+                                 size_t inputDepthPitch,
+                                 uint8_t *output,
+                                 size_t outputRowPitch,
+                                 size_t outputDepthPitch)
+{
+    LoadETC2RGBA8ToRGBA8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                         outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadETC2RGB8A1ToRGBA8(size_t width,
+                                  size_t height,
+                                  size_t depth,
+                                  const uint8_t *input,
+                                  size_t inputRowPitch,
+                                  size_t inputDepthPitch,
+                                  uint8_t *output,
+                                  size_t outputRowPitch,
+                                  size_t outputDepthPitch)
+{
+    LoadETC2RGB8A1ToRGBA8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                          outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadETC2SRGBA8ToSRGBA8(size_t width,
+                                   size_t height,
+                                   size_t depth,
+                                   const uint8_t *input,
+                                   size_t inputRowPitch,
+                                   size_t inputDepthPitch,
+                                   uint8_t *output,
+                                   size_t outputRowPitch,
+                                   size_t outputDepthPitch)
+{
+    LoadETC2SRGBA8ToSRGBA8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                           outputRowPitch, outputDepthPitch);
+}
+
+inline void LoadETC2SRGB8A1ToRGBA8(size_t width,
+                                   size_t height,
+                                   size_t depth,
+                                   const uint8_t *input,
+                                   size_t inputRowPitch,
+                                   size_t inputDepthPitch,
+                                   uint8_t *output,
+                                   size_t outputRowPitch,
+                                   size_t outputDepthPitch)
+{
+    LoadETC2SRGB8A1ToRGBA8({}, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                           outputRowPitch, outputDepthPitch);
 }
 
 } // namespace angle

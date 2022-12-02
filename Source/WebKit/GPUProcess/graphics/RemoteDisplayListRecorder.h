@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Decoder.h"
+#include "DisplayListRecorderFlushIdentifier.h"
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamMessageReceiver.h"
@@ -129,7 +130,7 @@ public:
     void applyFillPattern();
 #endif
     void applyDeviceScaleFactor(float);
-    void flushContext(WebCore::GraphicsContextFlushIdentifier);
+    void flushContext(DisplayListRecorderFlushIdentifier);
 
 private:
     RemoteDisplayListRecorder(WebCore::ImageBuffer&, QualifiedRenderingResourceIdentifier, WebCore::ProcessIdentifier webProcessIdentifier, RemoteRenderingBackend&);

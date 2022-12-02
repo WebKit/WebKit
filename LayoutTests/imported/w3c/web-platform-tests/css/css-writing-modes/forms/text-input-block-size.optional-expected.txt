@@ -1,0 +1,17 @@
+
+
+PASS Test input[type=text] block-size in writing-mode: vertical-lr
+PASS Test input[type=text] block-size in writing-mode: vertical-rl
+PASS Test input[type=email] block-size in writing-mode: vertical-lr
+PASS Test input[type=email] block-size in writing-mode: vertical-rl
+PASS Test input[type=password] block-size in writing-mode: vertical-lr
+PASS Test input[type=password] block-size in writing-mode: vertical-rl
+PASS Test input[type=search] block-size in writing-mode: vertical-lr
+PASS Test input[type=search] block-size in writing-mode: vertical-rl
+PASS Test input[type=tel] block-size in writing-mode: vertical-lr
+PASS Test input[type=tel] block-size in writing-mode: vertical-rl
+PASS Test input[type=url] block-size in writing-mode: vertical-lr
+PASS Test input[type=url] block-size in writing-mode: vertical-rl
+PASS Test input[type=number] block-size in writing-mode: vertical-lr
+PASS Test input[type=number] block-size in writing-mode: vertical-rl
+

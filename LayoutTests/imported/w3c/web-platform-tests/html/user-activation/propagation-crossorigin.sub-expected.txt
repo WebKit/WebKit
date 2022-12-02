@@ -1,0 +1,17 @@
+User activation propagation across cross-origin frame boundary
+
+Tests that user activation does not propagate across cross-origin frame boundary.
+
+Click anywhere on the green area (child frame).
+
+
+PASS Propagation test
+PASS Child1 frame initial state
+PASS Child2 frame initial state
+PASS Grandchild frame initial state
+PASS Parent frame initial state
+PASS Child2 frame final state
+PASS Child1 frame final state
+PASS Grand child frame final state
+PASS Parent frame final state
+

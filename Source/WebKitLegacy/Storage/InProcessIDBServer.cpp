@@ -452,9 +452,12 @@ void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIde
     });
 }
 
-void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
 {
-    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = transactionIdentifier.isolatedCopy()] {
+    std::optional<WebCore::IDBResourceIdentifier> transactionIdentifierCopy;
+    if (transactionIdentifier)
+        transactionIdentifierCopy = transactionIdentifier->isolatedCopy();
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = WTFMove(transactionIdentifierCopy)] {
         Locker locker { m_serverLock };
         m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
     });

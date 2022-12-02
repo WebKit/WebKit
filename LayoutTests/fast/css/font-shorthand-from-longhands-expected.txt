@@ -4,42 +4,43 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS style.font is ''
-PASS computedStyle.font is 'normal normal normal normal 20px/normal foobar'
+PASS computedStyle.font is '20px foobar'
 PASS computedStyle.fontSize is '20px'
 PASS checkFontStyleValue() is true
 PASS style.font is '20px sans-serif'
-PASS computedStyle.font is 'normal normal normal normal 20px/normal sans-serif'
+PASS computedStyle.font is '20px sans-serif'
 PASS computedStyle.fontFamily is 'sans-serif'
 PASS checkFontStyleValue() is true
 PASS style.font is 'italic 20px sans-serif'
-PASS computedStyle.font is 'italic normal normal normal 20px/normal sans-serif'
+PASS computedStyle.font is 'italic 20px sans-serif'
 PASS computedStyle.fontStyle is 'italic'
 PASS checkFontStyleValue() is true
 PASS style.font is 'italic small-caps 20px sans-serif'
-PASS computedStyle.font is 'italic small-caps normal normal 20px/normal sans-serif'
+PASS computedStyle.font is 'italic small-caps 20px sans-serif'
 PASS computedStyle.fontVariant is 'small-caps'
 PASS checkFontStyleValue() is true
 PASS style.font is 'italic small-caps bold 20px sans-serif'
-PASS computedStyle.font is 'italic small-caps bold normal 20px/normal sans-serif'
+PASS computedStyle.font is 'italic small-caps 700 20px sans-serif'
 PASS computedStyle.fontWeight is '700'
 PASS checkFontStyleValue() is true
-PASS style.font is 'italic small-caps bold 20px/40px sans-serif'
-PASS computedStyle.font is 'italic small-caps bold normal 20px/40px sans-serif'
+PASS style.font is 'italic small-caps bold 20px / 40px sans-serif'
+PASS computedStyle.font is 'italic small-caps 700 20px / 40px sans-serif'
 PASS computedStyle.lineHeight is '40px'
 PASS checkFontStyleValue() is true
 PASS style.font is ''
-PASS computedStyle.font is 'normal normal normal normal 16px/normal foobar'
+PASS computedStyle.font is '16px foobar'
 PASS checkFontStyleValue() is true
 PASS style.font is ''
-PASS computedStyle.font is 'normal normal bold normal 16px/normal foobar'
+FAIL computedStyle.font should be bold 16px foobar. Was 700 16px foobar.
 PASS computedStyle.fontWeight is '700'
 PASS checkFontStyleValue() is true
 PASS style.font is 'bold 40px sans-serif'
-PASS computedStyle.font is 'normal normal bold normal 40px/normal sans-serif'
+PASS computedStyle.font is '700 40px sans-serif'
 PASS computedStyle.fontSize is '40px'
 PASS computedStyle.fontFamily is 'sans-serif'
 PASS checkFontStyleValue() is true
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

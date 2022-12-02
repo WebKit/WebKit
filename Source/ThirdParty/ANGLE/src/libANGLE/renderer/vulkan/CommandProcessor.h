@@ -267,6 +267,7 @@ class DeviceQueueMap : public angle::PackedEnumMap<egl::ContextPriority, VkQueue
     DeviceQueueMap(uint32_t queueFamilyIndex, bool isProtected)
         : mIndex(queueFamilyIndex), mIsProtected(isProtected)
     {}
+    DeviceQueueMap(const DeviceQueueMap &other) = default;
     ~DeviceQueueMap();
     DeviceQueueMap &operator=(const DeviceQueueMap &other);
 

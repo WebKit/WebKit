@@ -72,6 +72,8 @@ public:
     void expandToContain(const Rect&);
     bool intersects(const Rect& rect) const { return m_rect.intersects(rect); }
 
+    bool isEmpty() const { return m_rect.isEmpty(); }
+
     Rect clone() const;
     operator LayoutRect() const;
 

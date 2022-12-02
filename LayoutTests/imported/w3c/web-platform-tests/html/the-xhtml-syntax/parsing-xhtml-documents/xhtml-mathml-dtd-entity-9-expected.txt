@@ -27,7 +27,7 @@ PASS XHTML Mobile parsing &Amacr;
 PASS XHTML Mobile parsing &amacr;
 PASS XHTML Mobile parsing &amalg;
 PASS XHTML Mobile parsing &amp;
-FAIL XHTML Mobile parsing &AMP; assert_true: expected true got false
+PASS XHTML Mobile parsing &AMP;
 PASS XHTML Mobile parsing &andand;
 PASS XHTML Mobile parsing &And;
 PASS XHTML Mobile parsing &and;
@@ -1007,7 +1007,7 @@ PASS XHTML Mobile parsing &lstrok;
 PASS XHTML Mobile parsing &ltcc;
 PASS XHTML Mobile parsing &ltcir;
 PASS XHTML Mobile parsing &lt;
-FAIL XHTML Mobile parsing &LT; assert_true: expected true got false
+PASS XHTML Mobile parsing &LT;
 PASS XHTML Mobile parsing &Lt;
 PASS XHTML Mobile parsing &ltdot;
 PASS XHTML Mobile parsing &lthree;
@@ -1294,7 +1294,7 @@ PASS XHTML Mobile parsing &nvHarr;
 PASS XHTML Mobile parsing &nvinfin;
 PASS XHTML Mobile parsing &nvlArr;
 PASS XHTML Mobile parsing &nvle;
-FAIL XHTML Mobile parsing &nvlt; assert_equals: XHTML Mobile parsing the entity reference caused a parse error; expected 3 but got 1
+PASS XHTML Mobile parsing &nvlt;
 PASS XHTML Mobile parsing &nvltrie;
 PASS XHTML Mobile parsing &nvrArr;
 PASS XHTML Mobile parsing &nvrtrie;

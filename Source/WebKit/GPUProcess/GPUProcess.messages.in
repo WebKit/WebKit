@@ -44,6 +44,7 @@ messages -> GPUProcess LegacyReceiver {
     AddMockMediaDevice(struct WebCore::MockMediaDevice device)
     ClearMockMediaDevices()
     RemoveMockMediaDevice(String persistentId)
+    SetMockMediaDeviceIsEphemeral(String persistentId, bool isEphemeral)
     ResetMockMediaDevices()
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
     TriggerMockMicrophoneConfigurationChange()

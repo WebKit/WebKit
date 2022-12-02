@@ -21,12 +21,14 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "Font.h"
 #include "FontCache.h"
 #include "FontCacheCoreText.h"
 #include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
+#include "StyleFontSizeFunctions.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
@@ -46,10 +48,14 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     int size = fontDescription.computedPixelSize();
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
+
     auto font = adoptCF(CTFontCreateWithFontDescriptor(modifiedFontDescriptor.get(), size, nullptr));
     font = preparePlatformFont(font.get(), fontDescription, fontCreationContext);
     ASSERT(font);
-    return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), &creationData);
+    FontPlatformData platformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), &creationData);
+
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    return platformData;
 }
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)

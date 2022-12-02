@@ -101,6 +101,7 @@ class State : angle::NonCopyable
           bool robustResourceInit,
           bool programBinaryCacheEnabled,
           EGLenum contextPriority,
+          bool hasRobustAccess,
           bool hasProtectedContent);
     ~State();
 
@@ -112,6 +113,7 @@ class State : angle::NonCopyable
     EGLenum getClientType() const { return mClientType; }
     EGLint getProfileMask() const { return mProfileMask; }
     EGLenum getContextPriority() const { return mContextPriority; }
+    bool hasRobustAccess() const { return mHasRobustAccess; }
     bool hasProtectedContent() const { return mHasProtectedContent; }
     bool isDebugContext() const { return mIsDebugContext; }
     GLint getClientMajorVersion() const { return mClientVersion.major; }
@@ -614,8 +616,8 @@ class State : angle::NonCopyable
     GLuint getPatchVertices() const { return mPatchVertices; }
 
     // GL_ANGLE_shader_pixel_local_storage
-    void setPixelLocalStorageActive(bool active);
-    bool getPixelLocalStorageActive() const { return mPixelLocalStorageActive; }
+    void setPixelLocalStorageActivePlanes(GLsizei n);
+    GLsizei getPixelLocalStorageActivePlanes() const { return mPixelLocalStorageActivePlanes; }
 
     // State query functions
     void getBooleanv(GLenum pname, GLboolean *params) const;
@@ -627,6 +629,11 @@ class State : angle::NonCopyable
     void getBooleani_v(GLenum target, GLuint index, GLboolean *data) const;
 
     bool isRobustResourceInitEnabled() const { return mRobustResourceInit; }
+
+    bool isDrawFramebufferBindingDirty() const
+    {
+        return mDirtyBits.test(DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
+    }
 
     // Sets the dirty bit for the program executable.
     angle::Result onProgramExecutableChange(const Context *context, Program *program);
@@ -1024,6 +1031,7 @@ class State : angle::NonCopyable
     EGLenum mClientType;
     EGLint mProfileMask;
     EGLenum mContextPriority;
+    bool mHasRobustAccess;
     bool mHasProtectedContent;
     bool mIsDebugContext;
     Version mClientVersion;
@@ -1187,7 +1195,7 @@ class State : angle::NonCopyable
     GLuint mPatchVertices;
 
     // GL_ANGLE_shader_pixel_local_storage
-    bool mPixelLocalStorageActive;
+    GLsizei mPixelLocalStorageActivePlanes;
 
     // GLES1 emulation: state specific to GLES1
     GLES1State mGLES1State;

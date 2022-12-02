@@ -262,7 +262,7 @@ void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool val
 
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession())
-            storageSession->setResourceLoadStatisticsDebugLoggingEnabled(value);
+            storageSession->setTrackingPreventionDebugLoggingEnabled(value);
     }
 
     postTask([this, value, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -676,6 +676,35 @@ void WebResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomai
         if (m_statisticsStore) {
             m_statisticsStore->setAppBoundDomains(WTFMove(domains));
             m_statisticsStore->setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains);
+        }
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+#endif
+
+#if ENABLE(MANAGED_DOMAINS)
+void WebResourceLoadStatisticsStore::setManagedDomains(HashSet<RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral() || domains.isEmpty()) {
+        completionHandler();
+        return;
+    }
+
+    auto domainsCopy = crossThreadCopy(domains);
+
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession()) {
+            storageSession->setManagedDomains(WTFMove(domains));
+            storageSession->setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode::AllExceptManagedDomains);
+        }
+    }
+
+    postTask([this, domains = WTFMove(domainsCopy), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore) {
+            m_statisticsStore->setManagedDomains(WTFMove(domains));
+            m_statisticsStore->setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode::AllExceptManagedDomains);
         }
         postTaskReply(WTFMove(completionHandler));
     });
@@ -1332,6 +1361,13 @@ void WebResourceLoadStatisticsStore::resetParametersToDefaultValues(CompletionHa
     }
 #endif
 
+#if ENABLE(MANAGED_DOMAINS)
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->resetManagedDomains();
+    }
+#endif
+
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)
             m_statisticsStore->resetParametersToDefaultValues();
@@ -1382,6 +1418,12 @@ void WebResourceLoadStatisticsStore::removeDataForDomain(RegistrableDomain domai
 void WebResourceLoadStatisticsStore::registrableDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler({ });
+        return;
+    }
+
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
         auto domains = m_statisticsStore ? m_statisticsStore->allDomains() : Vector<RegistrableDomain>();
         postTaskReply([domains = crossThreadCopy(WTFMove(domains)), completionHandler = WTFMove(completionHandler)]() mutable {

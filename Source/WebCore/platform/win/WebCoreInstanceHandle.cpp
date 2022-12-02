@@ -28,6 +28,17 @@
 
 namespace WebCore {
 
-HINSTANCE s_instanceHandle;
+// The global DLL or application instance used for all windows.
+HINSTANCE s_instanceHandle = nullptr;
+
+void setInstanceHandle(HINSTANCE instanceHandle)
+{
+    s_instanceHandle = instanceHandle;
+}
+
+HINSTANCE instanceHandle()
+{
+    return s_instanceHandle;
+}
 
 } // namespace WebCore

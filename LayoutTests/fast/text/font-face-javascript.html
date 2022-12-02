@@ -15,7 +15,7 @@ shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).featur
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'normal'}).style", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'inherit'}).status","error");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'italic'}).style", "italic");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'oblique'}).style", "italic");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'oblique'}).style", "oblique");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'asdf'}).status", "error");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'normal'}).weight", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': '200'}).weight", "200");

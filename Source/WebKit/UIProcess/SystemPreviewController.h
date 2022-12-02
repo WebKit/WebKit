@@ -51,6 +51,7 @@ public:
     bool canPreview(const String& mimeType) const;
 
     void start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo&);
+    void setDestinationURL(URL);
     void updateProgress(float);
     void finish(URL);
     void cancel();
@@ -66,6 +67,7 @@ public:
 private:
     WebPageProxy& m_webPageProxy;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
+    URL m_destinationURL;
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> m_qlPreviewController;
     RetainPtr<_WKPreviewControllerDelegate> m_qlPreviewControllerDelegate;

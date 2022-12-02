@@ -80,6 +80,7 @@ interface TestRunner {
     undefined setAcceptsEditing(boolean value);
     undefined preventPopupWindows();
     undefined setCustomPolicyDelegate(boolean enabled, boolean permissive);
+    undefined skipPolicyDelegateNotifyDone();
     undefined addOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined removeOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined setUserStyleSheetEnabled(boolean value);
@@ -193,7 +194,7 @@ interface TestRunner {
     // Cookies testing
     undefined setAlwaysAcceptCookies(boolean accept);
     undefined setOnlyAcceptFirstPartyCookies(boolean accept);
-    undefined removeAllCookies();
+    undefined removeAllCookies(object callback);
 
     // Page Visibility API
     undefined setPageVisibility(DOMString state);
@@ -388,6 +389,7 @@ interface TestRunner {
     undefined addMockScreenDevice(DOMString persistentId, DOMString label);
     undefined clearMockMediaDevices();
     undefined removeMockMediaDevice(DOMString persistentId);
+    undefined setMockMediaDeviceIsEphemeral(DOMString persistentId, boolean isEphemeral);
     undefined resetMockMediaDevices();
     undefined setMockCameraOrientation(unsigned long orientation);
     boolean isMockRealtimeMediaSourceCenterEnabled();
@@ -399,6 +401,8 @@ interface TestRunner {
     undefined setAppBoundDomains(object originsArray, object callback);
     boolean didLoadAppInitiatedRequest();
     boolean didLoadNonAppInitiatedRequest();
+
+    undefined setManagedDomains(object originsArray, object callback);
 
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;

@@ -35,7 +35,7 @@ namespace Layout {
 class FlexFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(FlexFormattingState);
 public:
-    FlexFormattingState(Ref<FloatingState>&&, LayoutState&);
+    FlexFormattingState(LayoutState&);
     ~FlexFormattingState();
 
     const auto& lines() const { return m_lines; }

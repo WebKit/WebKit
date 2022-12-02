@@ -114,10 +114,10 @@ void VisitedLinkStore::sendStoreHandleToProcess(WebProcessProxy& process)
 {
     ASSERT(process.processPool().processes().containsIf([&](auto& item) { return item.ptr() == &process; }));
 
-    SharedMemory::Handle handle;
-    if (!m_linkHashStore.createSharedMemoryHandle(handle))
+    auto handle = m_linkHashStore.createSharedMemoryHandle();
+    if (!handle)
         return;
-    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(WTFMove(handle)), identifier());
+    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(WTFMove(*handle)), identifier());
 }
 
 void VisitedLinkStore::didInvalidateSharedMemory()

@@ -151,7 +151,7 @@ const PropertyCascade::Property* PropertyCascade::lastDeferredPropertyResolvingR
 {
     auto relatedID = [&] {
         if (!CSSProperty::isInLogicalPropertyGroup(propertyID))
-            return getRelatedPropertyId(propertyID);
+            return relatedProperty(propertyID);
         if (CSSProperty::isDirectionAwareProperty(propertyID))
             return CSSProperty::resolveDirectionAwareProperty(propertyID, direction, writingMode);
         return CSSProperty::unresolvePhysicalProperty(propertyID, direction, writingMode);

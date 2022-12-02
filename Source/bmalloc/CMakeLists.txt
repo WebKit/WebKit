@@ -683,7 +683,7 @@ set_source_files_properties(
     libpas/src/libpas/bmalloc_heap_config.c
     libpas/src/libpas/pas_heap_config_kind.c
     libpas/src/libpas/pas_segregated_page_config_kind.c
-    PROPERTIES LANGUAGE CXX
+    PROPERTIES COMPILE_OPTIONS ${COMPILE_C_AS_CXX}
 )
 
 WEBKIT_FRAMEWORK_DECLARE(bmalloc)

@@ -108,6 +108,9 @@ def main(
 
     args = args or sys.argv[1:]
     parsed, unknown = parser.parse_known_args(args=args)
+    if not getattr(parsed, 'program', None):
+        parser.print_help()
+        return 255
     if unknown:
         program_index = 0
         for candidate in [parsed.program] + parsed.aliases:

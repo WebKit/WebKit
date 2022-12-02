@@ -33,6 +33,7 @@
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
+#import "GraphicsLayerContentsDisplayDelegate.h"
 #import "IOSurfacePool.h"
 #import "Logging.h"
 #import "PixelBuffer.h"
@@ -228,6 +229,7 @@ RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLA
 GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& creationAttributes, ProcessIdentity&& resourceOwner)
     : GraphicsContextGLANGLE(WTFMove(creationAttributes))
     , m_resourceOwner(WTFMove(resourceOwner))
+    , m_drawingBufferColorSpace(DestinationColorSpace::SRGB())
 {
 }
 
@@ -578,15 +580,26 @@ bool GraphicsContextGLCocoa::reshapeDisplayBufferBacking()
     return allocateAndBindDisplayBufferBacking();
 }
 
+void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSpace& colorSpace)
+{
+    if (m_drawingBufferColorSpace != colorSpace) {
+        m_drawingBufferColorSpace = colorSpace;
+
+        if (!getInternalFramebufferSize().isEmpty() && !reshapeDisplayBufferBacking()) {
+            RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", getInternalFramebufferSize().width(), getInternalFramebufferSize().height());
+            forceContextLost();
+        }
+    }
+}
+
 bool GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
-    auto backing = IOSurface::create(nullptr, getInternalFramebufferSize(), DestinationColorSpace::SRGB());
+    auto backing = IOSurface::create(nullptr, getInternalFramebufferSize(), m_drawingBufferColorSpace);
     if (!backing)
         return false;
     if (m_resourceOwner)
         backing->setOwnershipIdentity(m_resourceOwner);
-    backing->migrateColorSpaceToProperties();
 
     const bool usingAlpha = contextAttributes().alpha;
     const auto size = getInternalFramebufferSize();
@@ -757,7 +770,7 @@ void GraphicsContextGLCocoa::prepareForDisplay()
     m_displayBufferPbuffer = EGL_NO_SURFACE;
 
     bool hasNewBacking = false;
-    if (recycledBuffer.surface && recycledBuffer.surface->size() == getInternalFramebufferSize()) {
+    if (recycledBuffer.surface && recycledBuffer.surface->size() == getInternalFramebufferSize() && recycledBuffer.surface->colorSpace() == m_drawingBufferColorSpace) {
         hasNewBacking = bindDisplayBufferBacking(WTFMove(recycledBuffer.surface), recycledBuffer.handle);
         recycledBuffer.handle = nullptr;
     }

@@ -28,9 +28,9 @@
 #include "DiagnosticLoggingDomain.h"
 #include "DiagnosticLoggingResultType.h"
 #include <variant>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -62,7 +62,7 @@ inline bool DiagnosticLoggingClient::shouldLogAfterSampling(ShouldSample shouldS
         return true;
 
     static const double selectionProbability = 0.05;
-    return randomNumber() <= selectionProbability;
+    return cryptographicallyRandomUnitInterval() <= selectionProbability;
 }
 
 } // namespace WebCore

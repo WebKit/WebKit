@@ -1,6 +1,42 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'padding-top' to CSS-wide keywords
+FAIL Can set 'padding-top' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'padding-top' to a percent Invalid values
+FAIL Can set 'padding-top' to a length Invalid values
+PASS Setting 'padding-top' to a time throws TypeError
+PASS Setting 'padding-top' to an angle throws TypeError
+PASS Setting 'padding-top' to a flexible length throws TypeError
+FAIL Setting 'padding-top' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-top' to a URL throws TypeError
+PASS Setting 'padding-top' to a transform throws TypeError
+PASS Can set 'padding-left' to CSS-wide keywords
+FAIL Can set 'padding-left' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'padding-left' to a percent Invalid values
+FAIL Can set 'padding-left' to a length Invalid values
+PASS Setting 'padding-left' to a time throws TypeError
+PASS Setting 'padding-left' to an angle throws TypeError
+PASS Setting 'padding-left' to a flexible length throws TypeError
+FAIL Setting 'padding-left' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-left' to a URL throws TypeError
+PASS Setting 'padding-left' to a transform throws TypeError
+PASS Can set 'padding-right' to CSS-wide keywords
+FAIL Can set 'padding-right' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'padding-right' to a percent Invalid values
+FAIL Can set 'padding-right' to a length Invalid values
+PASS Setting 'padding-right' to a time throws TypeError
+PASS Setting 'padding-right' to an angle throws TypeError
+PASS Setting 'padding-right' to a flexible length throws TypeError
+FAIL Setting 'padding-right' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-right' to a URL throws TypeError
+PASS Setting 'padding-right' to a transform throws TypeError
+PASS Can set 'padding-bottom' to CSS-wide keywords
+FAIL Can set 'padding-bottom' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'padding-bottom' to a percent Invalid values
+FAIL Can set 'padding-bottom' to a length Invalid values
+PASS Setting 'padding-bottom' to a time throws TypeError
+PASS Setting 'padding-bottom' to an angle throws TypeError
+PASS Setting 'padding-bottom' to a flexible length throws TypeError
+FAIL Setting 'padding-bottom' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-bottom' to a URL throws TypeError
+PASS Setting 'padding-bottom' to a transform throws TypeError
 

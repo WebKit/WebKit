@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebFullScreenController_h
-#define WebFullScreenController_h
+#pragma once
 
 #if ENABLE(FULLSCREEN_API)
 
@@ -57,8 +56,6 @@ protected:
     std::unique_ptr<FullScreenController::Private> m_private;
 };
 
-}
+} // namespace WebCore
 
-#endif
-
-#endif
+#endif // ENABLE(FULLSCREEN_API)

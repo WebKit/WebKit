@@ -32,6 +32,7 @@ struct WebKitWebSrc;
 typedef struct _GstGLDisplay GstGLDisplay;
 typedef struct _GstGLContext GstGLContext;
 typedef struct _GstEGLImage GstEGLImage;
+typedef struct _GstGLColorConvert GstGLColorConvert;
 #endif
 
 #if USE(GSTREAMER_WEBRTC)
@@ -156,6 +157,11 @@ template<> void derefGPtr<GstGLContext>(GstGLContext* ptr);
 template<> GRefPtr<GstEGLImage> adoptGRef(GstEGLImage* ptr);
 template<> GstEGLImage* refGPtr<GstEGLImage>(GstEGLImage* ptr);
 template<> void derefGPtr<GstEGLImage>(GstEGLImage* ptr);
+
+template<> GRefPtr<GstGLColorConvert> adoptGRef(GstGLColorConvert* ptr);
+template<> GstGLColorConvert* refGPtr<GstGLColorConvert>(GstGLColorConvert* ptr);
+template<> void derefGPtr<GstGLColorConvert>(GstGLColorConvert* ptr);
+
 #endif
 
 template<> GRefPtr<GstEncodingProfile> adoptGRef(GstEncodingProfile*);

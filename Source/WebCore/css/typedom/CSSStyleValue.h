@@ -122,6 +122,8 @@ IGNORE_GCC_WARNINGS_END
     static Ref<CSSStyleValue> create(RefPtr<CSSValue>&&, String&& = String());
     static Ref<CSSStyleValue> create();
 
+    virtual RefPtr<CSSValue> toCSSValue() const { return m_propertyValue; }
+
 protected:
     CSSStyleValue(RefPtr<CSSValue>&&, String&& = String());
     CSSStyleValue() = default;

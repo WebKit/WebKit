@@ -44,7 +44,7 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontStyleRangeValue.h"
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariationValue.h"
@@ -75,6 +75,7 @@
 #include "CSSVariableReferenceValue.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
+#include "EventTarget.h"
 
 namespace WebCore {
 
@@ -114,18 +115,24 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCursorImageValue>(*this));
     case CustomPropertyClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCustomPropertyValue>(*this));
+    case DeprecatedLinearGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSDeprecatedLinearGradientValue>(*this));
+    case DeprecatedRadialGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSDeprecatedRadialGradientValue>(*this));
     case FilterImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFilterImageValue>(*this));
     case FontClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontValue>(*this));
-    case FontFaceSrcClass:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFaceSrcValue>(*this));
+    case FontFaceSrcLocalClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFaceSrcLocalValue>(*this));
+    case FontFaceSrcResourceClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFaceSrcResourceValue>(*this));
     case FontFeatureClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFeatureValue>(*this));
     case FontPaletteValuesOverrideColorsClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontPaletteValuesOverrideColorsValue>(*this));
-    case FontStyleClass:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleValue>(*this));
+    case FontStyleWithAngleClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleWithAngleValue>(*this));
     case FontStyleRangeClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleRangeValue>(*this));
     case FontVariantAlternatesClass:
@@ -152,6 +159,10 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLinearGradientValue>(*this));
     case NamedImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSNamedImageValue>(*this));
+    case PrefixedLinearGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPrefixedLinearGradientValue>(*this));
+    case PrefixedRadialGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPrefixedRadialGradientValue>(*this));
     case RadialGradientClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRadialGradientValue>(*this));
     case OffsetRotateClass:

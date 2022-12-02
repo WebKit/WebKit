@@ -1,4 +1,4 @@
 Body needed for test_driver.click()
 
-FAIL Verify write and read unsanitized content to the clipboard given standard and custom formats as input promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL Verify write and read unsanitized content to the clipboard given standard and custom formats as input promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
 

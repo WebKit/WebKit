@@ -34,6 +34,7 @@
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerServerConnection.h"
 #include "WebSharedWorkerServerToContextConnection.h"
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerOptions.h>
 
@@ -113,7 +114,7 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
     if (auto* connection = m_contextConnections.get(sharedWorker.registrableDomain()))
         sharedWorker.launch(*connection);
     else
-        createContextConnection(sharedWorker.registrableDomain(), sharedWorker.firstSharedWorkerObjectProcess());
+        createContextConnection(sharedWorker.registrableDomain(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host), sharedWorker.firstSharedWorkerObjectProcess());
 }
 
 bool WebSharedWorkerServer::needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain& registrableDomain) const
@@ -125,7 +126,7 @@ bool WebSharedWorkerServer::needsContextConnectionForRegistrableDomain(const Web
     return false;
 }
 
-void WebSharedWorkerServer::createContextConnection(const WebCore::RegistrableDomain& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier)
+void WebSharedWorkerServer::createContextConnection(const WebCore::RegistrableDomain& registrableDomain, const WebCore::RegistrableDomain& firstPartyForCookies, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier)
 {
     ASSERT(!m_contextConnections.contains(registrableDomain));
     if (m_pendingContextConnectionDomains.contains(registrableDomain))
@@ -134,11 +135,14 @@ void WebSharedWorkerServer::createContextConnection(const WebCore::RegistrableDo
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::createContextConnection will create a connection");
 
     m_pendingContextConnectionDomains.add(registrableDomain);
-    m_session.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::SharedWorker, registrableDomain, requestingProcessIdentifier, std::nullopt, m_session.sessionID() }, [this, weakThis = WeakPtr { *this }, registrableDomain, requestingProcessIdentifier] {
+    m_session.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::SharedWorker, registrableDomain, requestingProcessIdentifier, std::nullopt, m_session.sessionID() }, [this, weakThis = WeakPtr { *this }, registrableDomain, firstPartyForCookies] (auto remoteProcessIdentifier) {
         if (!weakThis)
             return;
 
         RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::createContextConnection should now have created a connection");
+
+        // FIXME: Add a check that the process this firstPartyForCookies came from was allowed to use it as a firstPartyForCookies.
+        m_session.networkProcess().addAllowedFirstPartyForCookies(remoteProcessIdentifier, WebCore::RegistrableDomain(firstPartyForCookies), [] { });
 
         ASSERT(m_pendingContextConnectionDomains.contains(registrableDomain));
         m_pendingContextConnectionDomains.remove(registrableDomain);
@@ -146,7 +150,7 @@ void WebSharedWorkerServer::createContextConnection(const WebCore::RegistrableDo
             return;
 
         if (needsContextConnectionForRegistrableDomain(registrableDomain))
-            createContextConnection(registrableDomain, requestingProcessIdentifier);
+            createContextConnection(registrableDomain, firstPartyForCookies, { });
     }, 0);
 }
 
@@ -173,7 +177,7 @@ void WebSharedWorkerServer::removeContextConnection(WebSharedWorkerServerToConte
 
     if (auto& sharedWorkerObjects = contextConnection.sharedWorkerObjects(); !sharedWorkerObjects.isEmpty()) {
         auto requestingProcessIdentifier = sharedWorkerObjects.begin()->key;
-        createContextConnection(registrableDomain, requestingProcessIdentifier);
+        createContextConnection(registrableDomain, registrableDomain, requestingProcessIdentifier);
     }
 }
 

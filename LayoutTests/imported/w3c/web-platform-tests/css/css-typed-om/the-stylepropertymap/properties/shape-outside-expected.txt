@@ -1,6 +1,22 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'shape-outside' to CSS-wide keywords
+FAIL Can set 'shape-outside' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'shape-outside' to the 'none' keyword
+PASS Can set 'shape-outside' to the 'margin-box' keyword
+PASS Can set 'shape-outside' to the 'border-box' keyword
+PASS Can set 'shape-outside' to the 'padding-box' keyword
+PASS Can set 'shape-outside' to the 'content-box' keyword
+PASS Can set 'shape-outside' to an image
+PASS Setting 'shape-outside' to a length throws TypeError
+PASS Setting 'shape-outside' to a percent throws TypeError
+PASS Setting 'shape-outside' to a time throws TypeError
+PASS Setting 'shape-outside' to an angle throws TypeError
+PASS Setting 'shape-outside' to a flexible length throws TypeError
+PASS Setting 'shape-outside' to a number throws TypeError
+PASS Setting 'shape-outside' to a URL throws TypeError
+PASS Setting 'shape-outside' to a transform throws TypeError
+PASS 'shape-outside' does not supported 'inset(22% 12% 15px 35px)'
+PASS 'shape-outside' does not supported 'circle(6rem at 12rem 6rem)'
+PASS 'shape-outside' does not supported 'ellipse(115px 55px at 50% 40%)'
+PASS 'shape-outside' does not supported 'polygon(50% 20%, 90% 80%, 10% 80%)'
 

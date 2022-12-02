@@ -48,6 +48,8 @@ class LLIntGenerator : public BytecodeGeneratorBase<GeneratorTraits> {
 public:
     using ExpressionType = VirtualRegister;
 
+    static constexpr bool tierSupportsSIMD = false;
+
     struct ControlLoop  {
         Ref<Label> m_body;
     };
@@ -254,6 +256,7 @@ public:
     }
 
     void didPopValueFromStack() { --m_stackSize; }
+    void notifyFunctionUsesSIMD() { ASSERT(Options::useWebAssemblySIMD()); m_usesSIMD = true; }
 
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -353,6 +356,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
+    PartialResult WARN_UNUSED_RETURN addCrash();
 
     void didFinishParsingLocals();
 
@@ -543,6 +547,7 @@ private:
     Checked<unsigned> m_maxStackSize { 0 };
     Checked<unsigned> m_tryDepth { 0 };
     bool m_usesExceptions { false };
+    bool m_usesSIMD { false };
 };
 
 Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
@@ -660,6 +665,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex < fprCount)
                 ++fprIndex;
             else if (stackIndex++ >= stackCount)
@@ -672,6 +678,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
+        case TypeKind::Sub:
             RELEASE_ASSERT_NOT_REACHED();
         }
     };
@@ -722,6 +729,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex > fprLimit)
                 arguments[i] = virtualRegisterForLocal(--fprIndex);
             else
@@ -734,6 +742,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
+        case TypeKind::Sub:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -756,6 +765,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex > fprLimit)
                 temporaryResults[i] = virtualRegisterForLocal(--fprIndex);
             else
@@ -768,6 +778,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
+        case TypeKind::Sub:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -818,6 +829,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             if (fprIndex < maxFPRIndex)
                 m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + fprIndex++));
             else
@@ -830,6 +842,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
+        case TypeKind::Sub:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -876,6 +889,7 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
             break;
         case TypeKind::F32:
         case TypeKind::F64:
+        case TypeKind::V128:
             addArgument(i, fprIndex, maxFPRIndex);
             break;
         case TypeKind::Void:
@@ -885,6 +899,7 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
+        case TypeKind::Sub:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -1163,6 +1178,7 @@ auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDe
         case Wasm::TypeKind::I64:
         case Wasm::TypeKind::Externref:
         case Wasm::TypeKind::Funcref:
+        case Wasm::TypeKind::V128:
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1368,6 +1384,9 @@ auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionS
 auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressionStack) -> PartialResult
 {
     RELEASE_ASSERT(expressionStack.size() == signature->as<FunctionSignature>()->returnCount());
+    if (m_usesSIMD)
+        m_info.addSIMDFunction(m_functionIndex);
+    m_info.doneSeeingFunction(m_functionIndex);
 
     if (!signature->as<FunctionSignature>()->returnCount()) {
         WasmRetVoid::emit(this);
@@ -1508,6 +1527,13 @@ auto LLIntGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex
 auto LLIntGenerator::addUnreachable() -> PartialResult
 {
     WasmUnreachable::emit(this);
+
+    return { };
+}
+
+auto LLIntGenerator::addCrash() -> PartialResult
+{
+    WasmCrash::emit(this);
 
     return { };
 }

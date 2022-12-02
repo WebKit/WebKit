@@ -18,7 +18,6 @@ window.addEventListener('load', event => {
     if (!window.internals)
         return;
 
-    window.internals.settings.setHDRMediaCapabilitiesEnabled(true);
     window.internals.settings.forcedSupportsHighDynamicRangeValue = "off";
     var element = document.getElementById("a");
     document.getElementById("before").textContent = window.getComputedStyle(element).color;

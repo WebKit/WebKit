@@ -31,13 +31,13 @@
 #include "Identifier.h"
 #include "JSString.h"
 #include "MacroAssemblerCodeRef.h"
+#include "PageCount.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmMemoryInformation.h"
 #include "WasmName.h"
 #include "WasmNameSection.h"
 #include "WasmOSREntryData.h"
 #include "WasmOps.h"
-#include "WasmPageCount.h"
 #include "WasmTypeDefinition.h"
 #include <cstdint>
 #include <limits>
@@ -74,6 +74,8 @@ inline bool isValueType(Type type)
     case TypeKind::Ref:
     case TypeKind::RefNull:
         return Options::useWebAssemblyTypedFunctionReferences();
+    case TypeKind::V128:
+        return Options::useWebAssemblySIMD();
     default:
         break;
     }
@@ -176,6 +178,27 @@ inline bool isTypeIndexHeapType(int32_t heapType)
     return heapType >= 0;
 }
 
+inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
+{
+    if (sub == parent)
+        return true;
+
+    const TypeDefinition& sig = TypeInformation::get(sub).unroll();
+    if (sig.is<Subtype>()) {
+        const Subtype& subtype = *sig.as<Subtype>();
+        const TypeDefinition& parentSig = TypeInformation::get(parent).unroll();
+        if (parentSig.is<Subtype>()) {
+            if (subtype.displaySize() < parentSig.as<Subtype>()->displaySize())
+                return false;
+            return parent == subtype.displayType(subtype.displaySize() - parentSig.as<Subtype>()->displaySize() - 1);
+        }
+        // If not a subtype itself, the parent must be at the top of the display.
+        return parent == subtype.displayType(subtype.displaySize() - 1);
+    }
+
+    return false;
+}
+
 inline bool isSubtype(Type sub, Type parent)
 {
     if (sub.isNullable() && !parent.isNullable())
@@ -187,6 +210,9 @@ inline bool isSubtype(Type sub, Type parent)
 
         if (TypeInformation::get(sub.index).expand().is<FunctionSignature>() && isFuncref(parent))
             return true;
+
+        if (isRefWithTypeIndex(parent))
+            return isSubtypeIndex(sub.index, parent.index);
     }
 
     if (sub.isRef() && parent.isRefNull() && sub.index == parent.index)
@@ -281,7 +307,8 @@ struct GlobalInformation {
         IsImport,
         FromGlobalImport,
         FromRefFunc,
-        FromExpression
+        FromExpression,
+        FromVector,
     };
 
     enum class BindingMode : uint8_t {
@@ -293,13 +320,18 @@ struct GlobalInformation {
     Type type;
     InitializationType initializationType { IsImport };
     BindingMode bindingMode { BindingMode::EmbeddedInInstance };
-    uint64_t initialBitsOrImportNumber { 0 };
+    union {
+        uint64_t initialBitsOrImportNumber;
+        v128_t initialVector { };
+    } initialBits;
 };
 
 struct FunctionData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     size_t start;
     size_t end;
+    bool isSIMDFunction = false;
+    bool finishedValidating = false;
     Vector<uint8_t> data;
 };
 

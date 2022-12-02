@@ -42,193 +42,110 @@ GameControllerGamepad::GameControllerGamepad(GCController *controller, unsigned 
     ASSERT(index < 4);
     controller.playerIndex = (GCControllerPlayerIndex)(GCControllerPlayerIndex1 + index);
 
-    m_extendedGamepad = controller.extendedGamepad;
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (!m_extendedGamepad)
-        m_gamepad = controller.gamepad;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-    ASSERT(m_extendedGamepad || m_gamepad);
-
-    if (m_extendedGamepad)
-        setupAsExtendedGamepad();
-    else
-        setupAsGamepad();
-}
-
-static GCControllerButtonInput *homeButtonFromExtendedGamepad(GCExtendedGamepad *gamepad)
-{
-#if HAVE(GCEXTENDEDGAMEPAD_HOME_BUTTON)
-    if (gamepad.buttonHome)
-        return gamepad.buttonHome;
-#endif
-
-    id potentialButton = [gamepad valueForKey:@"_buttonHome"];
-    if (potentialButton && [potentialButton isKindOfClass:getGCControllerButtonInputClass()])
-        return potentialButton;
-
-    return nil;
+    setupElements();
 }
 
 static void disableDefaultSystemAction(GCControllerButtonInput *button)
 {
-#if PLATFORM(IOS_FAMILY)
     if ([button respondsToSelector:@selector(preferredSystemGestureState)])
         button.preferredSystemGestureState = GCSystemGestureStateDisabled;
-#else
-    UNUSED_PARAM(button);
-#endif
 }
 
-void GameControllerGamepad::setupAsExtendedGamepad()
+void GameControllerGamepad::setupElements()
 {
-    ASSERT(m_extendedGamepad);
+    auto *profile = m_gcController.get().physicalInputProfile;
 
-    m_id = makeString(String(m_gcController.get().vendorName), " Extended Gamepad"_s);
-    m_mapping = standardGamepadMappingString();
+    // The user can expose an already-connected game controller to a web page by expressing explicit intent.
+    // Examples include pressing a button, or wiggling the joystick with intent.
+    if ([profile respondsToSelector:@selector(setThumbstickUserIntentHandler:)]) {
+        [profile setThumbstickUserIntentHandler:^(__kindof GCPhysicalInputProfile*, GCControllerElement*) {
+            m_lastUpdateTime = MonotonicTime::now();
+            GameControllerGamepadProvider::singleton().gamepadHadInput(*this, true);
+        }];
+    }
 
-    auto *homeButton = homeButtonFromExtendedGamepad(m_extendedGamepad.get());
+    auto *homeButton = profile.buttons[GCInputButtonHome];
     m_buttonValues.resize(homeButton ? numberOfStandardGamepadButtonsWithHomeButton : numberOfStandardGamepadButtonsWithoutHomeButton);
 
-    m_extendedGamepad.get().valueChangedHandler = ^(GCExtendedGamepad *, GCControllerElement *) {
-        m_lastUpdateTime = MonotonicTime::now();
-        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
-        m_hadButtonPresses = false;
-    };
+    m_id = makeString(String(m_gcController.get().vendorName), m_gcController.get().extendedGamepad ? " Extended Gamepad"_s : " Gamepad"_s);
+    if (m_gcController.get().extendedGamepad)
+        m_mapping = standardGamepadMappingString();
 
     auto bindButton = ^(GCControllerButtonInput *button, GamepadButtonRole index) {
         m_buttonValues[(size_t)index].setValue(button.value);
+        if (!button)
+            return;
+
         button.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
+            // GameController framework will materialize missing values from a HID report as NaN.
+            // This shouldn't happen with physical hardware, but does happen with virtual devices
+            // with imperfect reports (e.g. virtual HID devices in API tests)
+            // Ignoring them is preferable to surfacing NaN to javascript.
+            if (std::isnan(value))
+                return;
             m_buttonValues[(size_t)index].setValue(value);
-            if (pressed)
-                m_hadButtonPresses = true;
+            m_lastUpdateTime = MonotonicTime::now();
+            GameControllerGamepadProvider::singleton().gamepadHadInput(*this, pressed);
         };
     };
 
     // Button Pad
-    bindButton(m_extendedGamepad.get().buttonA, GamepadButtonRole::RightClusterBottom);
-    bindButton(m_extendedGamepad.get().buttonB, GamepadButtonRole::RightClusterRight);
-    bindButton(m_extendedGamepad.get().buttonX, GamepadButtonRole::RightClusterLeft);
-    bindButton(m_extendedGamepad.get().buttonY, GamepadButtonRole::RightClusterTop);
+    bindButton(profile.buttons[GCInputButtonA], GamepadButtonRole::RightClusterBottom);
+    bindButton(profile.buttons[GCInputButtonB], GamepadButtonRole::RightClusterRight);
+    bindButton(profile.buttons[GCInputButtonX], GamepadButtonRole::RightClusterLeft);
+    bindButton(profile.buttons[GCInputButtonY], GamepadButtonRole::RightClusterTop);
 
     // Shoulders, Triggers
-    bindButton(m_extendedGamepad.get().leftShoulder, GamepadButtonRole::LeftShoulderFront);
-    bindButton(m_extendedGamepad.get().rightShoulder, GamepadButtonRole::RightShoulderFront);
-    bindButton(m_extendedGamepad.get().leftTrigger, GamepadButtonRole::LeftShoulderBack);
-    bindButton(m_extendedGamepad.get().rightTrigger, GamepadButtonRole::RightShoulderBack);
+    bindButton(profile.buttons[GCInputLeftShoulder], GamepadButtonRole::LeftShoulderFront);
+    bindButton(profile.buttons[GCInputRightShoulder], GamepadButtonRole::RightShoulderFront);
+    bindButton(profile.buttons[GCInputLeftTrigger], GamepadButtonRole::LeftShoulderBack);
+    bindButton(profile.buttons[GCInputRightTrigger], GamepadButtonRole::RightShoulderBack);
 
     // D Pad
-    bindButton(m_extendedGamepad.get().dpad.up, GamepadButtonRole::LeftClusterTop);
-    bindButton(m_extendedGamepad.get().dpad.down, GamepadButtonRole::LeftClusterBottom);
-    bindButton(m_extendedGamepad.get().dpad.left, GamepadButtonRole::LeftClusterLeft);
-    bindButton(m_extendedGamepad.get().dpad.right, GamepadButtonRole::LeftClusterRight);
-
+    bindButton(profile.dpads[GCInputDirectionPad].up, GamepadButtonRole::LeftClusterTop);
+    bindButton(profile.dpads[GCInputDirectionPad].down, GamepadButtonRole::LeftClusterBottom);
+    bindButton(profile.dpads[GCInputDirectionPad].left, GamepadButtonRole::LeftClusterLeft);
+    bindButton(profile.dpads[GCInputDirectionPad].right, GamepadButtonRole::LeftClusterRight);
+    
+    // Home, Select, Start
     if (homeButton) {
         bindButton(homeButton, GamepadButtonRole::CenterClusterCenter);
         disableDefaultSystemAction(homeButton);
     }
-
-    // Select, Start
-    bindButton(m_extendedGamepad.get().buttonOptions, GamepadButtonRole::CenterClusterLeft);
-    disableDefaultSystemAction(m_extendedGamepad.get().buttonOptions);
-    bindButton(m_extendedGamepad.get().buttonMenu, GamepadButtonRole::CenterClusterRight);
-    disableDefaultSystemAction(m_extendedGamepad.get().buttonMenu);
+    bindButton(profile.buttons[GCInputButtonOptions], GamepadButtonRole::CenterClusterLeft);
+    disableDefaultSystemAction(profile.buttons[GCInputButtonOptions]);
+    bindButton(profile.buttons[GCInputButtonMenu], GamepadButtonRole::CenterClusterRight);
+    disableDefaultSystemAction(profile.buttons[GCInputButtonMenu]);
 
     // L3, R3
-#if HAVE(GCEXTENDEDGAMEPAD_BUTTONS_THUMBSTICK)
-    // Thumbstick buttons are only in macOS 10.14.1 / iOS 12.1
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    if ([m_extendedGamepad respondsToSelector:@selector(leftThumbstickButton)]) {
-        bindButton(m_extendedGamepad.get().leftThumbstickButton, GamepadButtonRole::LeftStick);
-        bindButton(m_extendedGamepad.get().rightThumbstickButton, GamepadButtonRole::RightStick);
-    }
-#pragma clang diagnostic pop
-#endif
+    bindButton(profile.buttons[GCInputLeftThumbstickButton], GamepadButtonRole::LeftStick);
+    bindButton(profile.buttons[GCInputRightThumbstickButton], GamepadButtonRole::RightStick);
 
     m_axisValues.resize(4);
-    m_axisValues[0].setValue(m_extendedGamepad.get().leftThumbstick.xAxis.value);
-    m_axisValues[1].setValue(-m_extendedGamepad.get().leftThumbstick.yAxis.value);
-    m_axisValues[2].setValue(m_extendedGamepad.get().rightThumbstick.xAxis.value);
-    m_axisValues[3].setValue(-m_extendedGamepad.get().rightThumbstick.yAxis.value);
+    m_axisValues[0].setValue(profile.dpads[GCInputLeftThumbstick].xAxis.value);
+    m_axisValues[1].setValue(-profile.dpads[GCInputLeftThumbstick].yAxis.value);
+    m_axisValues[2].setValue(profile.dpads[GCInputRightThumbstick].xAxis.value);
+    m_axisValues[3].setValue(-profile.dpads[GCInputRightThumbstick].yAxis.value);
 
-    m_extendedGamepad.get().leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
+    profile.dpads[GCInputLeftThumbstick].xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
         m_axisValues[0].setValue(value);
-    };
-    m_extendedGamepad.get().leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[1].setValue(-value);
-    };
-    m_extendedGamepad.get().rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[2].setValue(value);
-    };
-    m_extendedGamepad.get().rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[3].setValue(-value);
-    };
-}
-
-void GameControllerGamepad::setupAsGamepad()
-{
-    ASSERT(m_gamepad);
-
-    m_id = makeString(String(m_gcController.get().vendorName), " Gamepad"_s);
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN // GCGamepad
-    m_gamepad.get().valueChangedHandler = ^(GCGamepad *, GCControllerElement *) {
         m_lastUpdateTime = MonotonicTime::now();
-        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
-        m_hadButtonPresses = false;
+        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, false);
     };
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-    m_buttonValues.resize(6);
-    m_buttonValues[0].setValue(m_extendedGamepad.get().buttonA.value);
-    m_buttonValues[1].setValue(m_extendedGamepad.get().buttonB.value);
-    m_buttonValues[2].setValue(m_extendedGamepad.get().buttonX.value);
-    m_buttonValues[3].setValue(m_extendedGamepad.get().buttonY.value);
-    m_buttonValues[4].setValue(m_extendedGamepad.get().leftShoulder.value);
-    m_buttonValues[5].setValue(m_extendedGamepad.get().rightShoulder.value);
-
-    m_axisValues.resize(2);
-    m_axisValues[0].setValue(m_extendedGamepad.get().dpad.xAxis.value);
-    m_axisValues[1].setValue(m_extendedGamepad.get().dpad.yAxis.value);
-
-    m_extendedGamepad.get().buttonA.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[0].setValue(value);
-        if (pressed)
-            m_hadButtonPresses = true;
+    profile.dpads[GCInputLeftThumbstick].yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
+        m_axisValues[1].setValue(-value);
+        m_lastUpdateTime = MonotonicTime::now();
+        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, false);
     };
-    m_extendedGamepad.get().buttonB.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[1].setValue(value);
-        if (pressed)
-            m_hadButtonPresses = true;
+    profile.dpads[GCInputRightThumbstick].xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
+        m_axisValues[2].setValue(value);
+        m_lastUpdateTime = MonotonicTime::now();
+        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, false);
     };
-    m_extendedGamepad.get().buttonX.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[2].setValue(value);
-        if (pressed)
-            m_hadButtonPresses = true;
-    };
-    m_extendedGamepad.get().buttonY.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[3].setValue(value);
-        if (pressed)
-            m_hadButtonPresses = true;
-    };
-    m_extendedGamepad.get().leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[4].setValue(value);
-        if (pressed)
-            m_hadButtonPresses = true;
-    };
-    m_extendedGamepad.get().rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[5].setValue(value);
-        if (pressed)
-            m_hadButtonPresses = true;
-    };
-
-    m_extendedGamepad.get().leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[0].setValue(value);
-    };
-    m_extendedGamepad.get().leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[1].setValue(value);
+    profile.dpads[GCInputRightThumbstick].yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
+        m_axisValues[3].setValue(-value);
+        m_lastUpdateTime = MonotonicTime::now();
+        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, false);
     };
 }
 

@@ -1,5 +1,3 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
-EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -25,5 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,46) size 784x28 [border: (2px solid #FFAAAA)]
         RenderBlock {DIV} at (2,2) size 780x24 [border: (2px solid #AAAAFF)]
           RenderText {#text} at (2,2) size 547x19
-            text run at (2,2) width 547: "there should be a single trailing space between the '.' and the last character in this sentence ."
+            text run at (2,2) width 539: "there should be a single trailing space between the '.' and the last character in this sentence"
+            text run at (541,2) width 4: " "
+            text run at (545,2) width 4: "."
 caret: position 96 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body

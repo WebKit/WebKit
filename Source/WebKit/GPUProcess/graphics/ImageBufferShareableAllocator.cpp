@@ -28,6 +28,7 @@
 
 #include "ImageBufferShareableBitmapBackend.h"
 #include "ShareablePixelBuffer.h"
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -57,11 +58,11 @@ RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const Float
     if (!bitmap)
         return nullptr;
 
-    ShareableBitmapHandle handle;
-    if (!bitmap->createHandle(handle))
+    auto handle = bitmap->createHandle();
+    if (!handle)
         return nullptr;
 
-    transferMemoryOwnership(WTFMove(handle.handle()));
+    transferMemoryOwnership(WTFMove(handle->handle()));
     return imageBuffer;
 }
 
@@ -71,11 +72,11 @@ RefPtr<PixelBuffer> ImageBufferShareableAllocator::createPixelBuffer(const Pixel
     if (!pixelBuffer)
         return nullptr;
 
-    SharedMemory::Handle handle;
-    if (!pixelBuffer->data().createHandle(handle, SharedMemory::Protection::ReadOnly))
+    auto handle = pixelBuffer->data().createHandle(SharedMemory::Protection::ReadOnly);
+    if (!handle)
         return nullptr;
 
-    transferMemoryOwnership(WTFMove(handle));
+    transferMemoryOwnership(WTFMove(*handle));
     return pixelBuffer;
 }
 

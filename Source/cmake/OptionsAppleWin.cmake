@@ -3,7 +3,11 @@
 # is no longer used, but we keep building with static runtime for backward
 # compatibility. But if someone decides that it's OK to require existing
 # projects to build with the runtime DLLs, that's now technically possible.
-set(MSVC_STATIC_RUNTIME ON)
+if (NOT DEBUG_SUFFIX)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+else ()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif ()
 
 if (DEFINED ENV{AppleApplicationSupportSDK})
     file(TO_CMAKE_PATH "$ENV{AppleApplicationSupportSDK}/AppleInternal" WEBKIT_LIBRARIES_DIR)

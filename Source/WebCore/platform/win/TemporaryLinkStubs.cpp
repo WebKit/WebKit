@@ -26,16 +26,11 @@
 #include "config.h"
 
 #include "NotImplemented.h"
-#include "SSLKeyGenerator.h"
 #if !USE(CFURLCONNECTION)
 #include "CookieStorage.h"
 #endif
 
 namespace WebCore {
-
-// <keygen>
-String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&) { notImplemented(); return String(); }
-void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
 
 #if !USE(CFURLCONNECTION)
 void startObservingCookieChanges(CookieChangeCallbackPtr) { notImplemented(); }

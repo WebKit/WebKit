@@ -38,6 +38,7 @@
 #include "CaptureDevice.h"
 #include "Image.h"
 #include "MediaConstraints.h"
+#include "MediaDeviceHashSalts.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
@@ -50,6 +51,12 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
+
+#if USE(GSTREAMER)
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GstEvent GstEvent;
+#endif
 
 namespace WTF {
 class MediaTime;
@@ -91,6 +98,10 @@ public:
         virtual bool preventSourceFromStopping() { return false; }
 
         virtual void hasStartedProducingData() { }
+
+#if USE(GSTREAMER)
+        virtual void handleDownstreamEvent(GRefPtr<GstEvent>&&) { }
+#endif
     };
     class AudioSampleObserver {
     public:
@@ -105,6 +116,10 @@ public:
 
         // May be called on a background thread.
         virtual void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) = 0;
+
+#if USE(GSTREAMER_WEBRTC)
+        virtual std::optional<uint64_t> queryDecodedVideoFramesCount() { return std::nullopt; }
+#endif
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -112,9 +127,9 @@ public:
     virtual Ref<RealtimeMediaSource> clone() { return *this; }
 
     const AtomString& hashedId() const;
-    String deviceIDHashSalt() const;
+    const MediaDeviceHashSalts& deviceIDHashSalts() const;
 
-    const String& persistentID() const { return m_persistentID; }
+    const String& persistentID() const { return m_device.persistentId(); }
 
     enum class Type : bool { Audio, Video };
     Type type() const { return m_type; }
@@ -224,8 +239,11 @@ public:
 
     PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
 
+    const CaptureDevice& captureDevice() const { return m_device; }
+    bool isEphemeral() const { return m_device.isEphemeral(); }
+
 protected:
-    RealtimeMediaSource(Type, AtomString&& name, String&& deviceID = { }, String&& hashSalt = { }, PageIdentifier = { });
+    RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });
 
     void scheduleDeferredTask(Function<void()>&&);
 
@@ -253,6 +271,7 @@ protected:
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
     void forEachObserver(const Function<void(Observer&)>&);
+    void forEachVideoFrameObserver(const Function<void(VideoFrameObserver&)>&);
 
     void end(Observer* = nullptr);
 
@@ -282,9 +301,9 @@ private:
 #endif
 
     PageIdentifier m_pageIdentifier;
-    String m_idHashSalt;
+    MediaDeviceHashSalts m_idHashSalts;
     AtomString m_hashedID;
-    String m_persistentID;
+    AtomString m_ephemeralHashedID;
     Type m_type;
     AtomString m_name;
     WeakHashSet<Observer> m_observers;
@@ -294,6 +313,8 @@ private:
 
     mutable Lock m_videoFrameObserversLock;
     HashSet<VideoFrameObserver*> m_videoFrameObservers WTF_GUARDED_BY_LOCK(m_videoFrameObserversLock);
+
+    CaptureDevice m_device;
 
     // Set on the main thread from constraints.
     IntSize m_size;

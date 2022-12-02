@@ -1,5 +1,7 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS 'grid-gap' does not supported '20px'
+PASS 'grid-gap' does not supported '16%'
+PASS 'grid-gap' does not supported '20px 10px'
+PASS 'grid-gap' does not supported '15% 100%'
+PASS 'grid-gap' does not supported '21px 82%'
 

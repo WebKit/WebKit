@@ -1,6 +1,16 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'animation-direction' to CSS-wide keywords
+FAIL Can set 'animation-direction' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'animation-direction' to the 'normal' keyword
+PASS Can set 'animation-direction' to the 'reverse' keyword
+PASS Can set 'animation-direction' to the 'alternate-reverse' keyword
+PASS Can set 'animation-direction' to the 'alternate' keyword
+PASS Setting 'animation-direction' to a length throws TypeError
+PASS Setting 'animation-direction' to a percent throws TypeError
+PASS Setting 'animation-direction' to a time throws TypeError
+PASS Setting 'animation-direction' to an angle throws TypeError
+PASS Setting 'animation-direction' to a flexible length throws TypeError
+PASS Setting 'animation-direction' to a number throws TypeError
+PASS Setting 'animation-direction' to a URL throws TypeError
+PASS Setting 'animation-direction' to a transform throws TypeError
 

@@ -143,8 +143,6 @@ public:
     // FIXME: These ignore the fact that some timing functions can prevent acceleration.
     bool isAboutToRunAccelerated() const { return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
 
-    bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
-
     // The CoreAnimation animation code can only use direct function interpolation when all keyframes share the same
     // prefix of shared transform function primitives, whereas software animations simply calls blend(...) which can do
     // direct interpolation based on the function list of any two particular keyframes. The prefix serves as a way to
@@ -152,17 +150,13 @@ public:
     // animation code.
     std::optional<unsigned> transformFunctionListPrefix() const override { return (!preventsAcceleration()) ? std::optional<unsigned>(m_transformFunctionListsMatchPrefix) : std::nullopt; }
 
-#if ENABLE(FILTERS_LEVEL_2)
-    bool backdropFilterFunctionListsMatch() const override { return m_backdropFilterFunctionListsMatch; }
-#endif
-    bool colorFilterFunctionListsMatch() const override { return m_colorFilterFunctionListsMatch; }
-
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<CSSPropertyID>& animatedProperties();
     const HashSet<AtomString>& animatedCustomProperties();
     const HashSet<CSSPropertyID>& inheritedProperties() const { return m_inheritedProperties; }
     bool animatesProperty(CSSPropertyID) const;
+    bool animatesDirectionAwareProperty() const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
@@ -187,6 +181,8 @@ public:
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
 
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
+
+    bool containsCSSVariableReferences() const { return m_containsCSSVariableReferences; }
 
 private:
     KeyframeEffect(Element*, PseudoId);
@@ -230,12 +226,6 @@ private:
     void setBlendingKeyframes(KeyframeList&);
     bool isTargetingTransformRelatedProperty() const;
     void checkForMatchingTransformFunctionLists();
-    void checkForMatchingFilterFunctionLists();
-    void checkForMatchingColorFilterFunctionLists();
-    bool checkForMatchingFilterFunctionLists(CSSPropertyID, const std::function<const FilterOperations& (const RenderStyle&)>&) const;
-#if ENABLE(FILTERS_LEVEL_2)
-    void checkForMatchingBackdropFilterFunctionLists();
-#endif
     void computeHasImplicitKeyframeForAcceleratedProperty();
     void computeHasKeyframeComposingAcceleratedProperty();
     void abilityToBeAcceleratedDidChange();
@@ -272,15 +262,11 @@ private:
     bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
     size_t m_transformFunctionListsMatchPrefix { 0 };
-    bool m_filterFunctionListsMatch { false };
-#if ENABLE(FILTERS_LEVEL_2)
-    bool m_backdropFilterFunctionListsMatch { false };
-#endif
-    bool m_colorFilterFunctionListsMatch { false };
     bool m_inTargetEffectStack { false };
     bool m_someKeyframesUseStepsTimingFunction { false };
     bool m_hasImplicitKeyframeForAcceleratedProperty { false };
     bool m_hasKeyframeComposingAcceleratedProperty { false };
+    bool m_containsCSSVariableReferences { false };
 };
 
 } // namespace WebCore

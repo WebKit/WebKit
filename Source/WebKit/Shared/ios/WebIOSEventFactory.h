@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ public:
     static WebKit::WebWheelEvent createWebWheelEvent(UIScrollEvent *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
 #endif
 
+    static OptionSet<WebKit::WebEventModifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags);
     static UIKeyModifierFlags toUIKeyModifierFlags(OptionSet<WebKit::WebEventModifier>);
 };
 

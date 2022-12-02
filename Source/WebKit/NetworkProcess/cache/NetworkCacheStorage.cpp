@@ -33,10 +33,10 @@
 #include "NetworkCacheIOChannel.h"
 #include <mutex>
 #include <wtf/Condition.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Lock.h>
 #include <wtf/PageBlock.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/CString.h>
@@ -1183,7 +1183,7 @@ void Storage::shrink()
             unsigned bodyShareCount = m_blobStorage.shareCount(blobPath);
             auto probability = deletionProbability(times, bodyShareCount);
 
-            bool shouldDelete = randomNumber() < probability;
+            bool shouldDelete = cryptographicallyRandomUnitInterval() < probability;
 
             LOG(NetworkCacheStorage, "Deletion probability=%f bodyLinkCount=%d shouldDelete=%d", probability, bodyShareCount, shouldDelete);
 

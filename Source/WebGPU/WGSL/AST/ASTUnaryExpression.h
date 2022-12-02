@@ -43,7 +43,7 @@ public:
     {
     }
 
-    Kind kind() const final { return Kind::UnaryExpression; }
+    Kind kind() const override;
     UnaryOperation operation() const { return m_operation; }
     Expression& expression() { return m_expression.get(); }
 
@@ -54,4 +54,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(UnaryExpression, isUnaryExpression())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(UnaryExpression)

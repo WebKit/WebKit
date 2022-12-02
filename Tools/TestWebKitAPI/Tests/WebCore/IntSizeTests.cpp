@@ -189,9 +189,8 @@ TEST(IntSize, TransposedSize)
 
 TEST(IntSize, Casting)
 {
-    WebCore::IntSize test(1024, 768);
-
 #if USE(CG)
+    WebCore::IntSize test(1024, 768);
     CGSize cgSize = test;
 
     EXPECT_FLOAT_EQ(1024.0f, cgSize.width);

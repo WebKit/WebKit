@@ -29,7 +29,6 @@
 #include "LayoutElementBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -44,12 +43,12 @@ class Rect;
 // FloatingState holds the floating boxes for BFC using the BFC's inline direction.
 // FloatingState may be inherited by nested IFCs with mismataching inline direction. In such cases floating boxes
 // are added to the FloatingState as if they had matching inline direction.
-class FloatingState : public RefCounted<FloatingState> {
+class FloatingState {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
-    static Ref<FloatingState> create(LayoutState& layoutState, const ElementBox& formattingContextRoot) { return adoptRef(*new FloatingState(layoutState, formattingContextRoot)); }
+    FloatingState(LayoutState&, const ElementBox& blockFormattingContextRoot);
 
-    const ElementBox& root() const { return m_formattingContextRoot; }
+    const ElementBox& root() const { return m_blockFormattingContextRoot; }
 
     class FloatItem {
     public:
@@ -64,7 +63,7 @@ public:
 
         Rect rectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
         BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
-        PositionInContextRoot bottom() const { return { BoxGeometry::borderBoxRect(m_absoluteBoxGeometry).bottom() }; }
+        PositionInContextRoot bottom() const { return { rectWithMargin().bottom() }; }
 
 #if ASSERT_ENABLED
         const Box* floatBox() const { return m_layoutBox.get(); }
@@ -92,11 +91,10 @@ public:
 
 private:
     friend class FloatingContext;
-    FloatingState(LayoutState&, const ElementBox& formattingContextRoot);
     LayoutState& layoutState() const { return m_layoutState; }
 
     LayoutState& m_layoutState;
-    CheckedRef<const ElementBox> m_formattingContextRoot;
+    CheckedRef<const ElementBox> m_blockFormattingContextRoot;
     FloatList m_floats;
     enum class PositionType {
         Left = 1 << 0,

@@ -44,6 +44,7 @@
 
 #if PAS_OS(DARWIN)
 #include <mach/mach_init.h>
+#include <mach/vm_param.h>
 #endif
 
 static bool count_static_heaps_callback(pas_heap* heap, void* arg)
@@ -387,6 +388,113 @@ pas_root* pas_root_ensure_for_libmalloc_enumeration(void)
     pas_root_for_libmalloc_enumeration = root;
 
     return root;
+}
+
+#define PAS_SYSTEM_COMPACT_POINTER_SIZE 4
+
+#if PAS_CPU(ADDRESS64)
+#if PAS_ARM64 && PAS_OS(DARWIN)
+#if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
+#define PAS_HAVE_36BIT_ADDRESS 1
+#endif
+#endif
+#endif // PAS_CPU(ADDRESS64)
+
+static inline vm_address_t decode_system_compact_pointer(pas_root* root, uint32_t value)
+{
+    PAS_UNUSED_PARAM(root);
+#if PAS_HAVE(36BIT_ADDRESS)
+    /* Our address region is 36-bit, thus we encode a 16-byte aligned pointer into 32-bit value by shifting it by 4. */
+    return (vm_address_t)(((uintptr_t)value) << 4);
+#else
+    /* The other platforms are not supporting CompactPtr. */
+    PAS_UNUSED_PARAM(value);
+    return 0;
+#endif
+}
+
+static inline bool is_compact_pointer_enabled(void)
+{
+#if PAS_HAVE(36BIT_ADDRESS)
+    return true;
+#else
+    /* macOS (48bit address space) or watchOS (32bit address space) */
+    return false;
+#endif
+}
+
+kern_return_t pas_root_visit_conservative_candidate_pointers_in_address_range(task_t task, void* context, vm_address_t zone_address, vm_address_t address, size_t size, memory_reader_t reader, pas_pointer_visitor_t visitor)
+{
+    kern_return_t result;
+    void* pointer;
+    uintptr_t cursor;
+    uintptr_t mapped_memory;
+    pas_root* root;
+    size_t number_of_candidates;
+    pas_conservative_candidate_pointer_and_location candidates[PAS_MAX_CANDIDATE_POINTERS];
+
+    if (!is_compact_pointer_enabled())
+        return KERN_SUCCESS;
+
+    result = reader(task, (vm_address_t)((malloc_zone_t*)zone_address + 1), sizeof(pas_root), &pointer);
+    if (result != KERN_SUCCESS)
+        return result;
+    root = (pas_root*)pointer;
+
+    result = reader(task, address, size, &pointer);
+    if (result != KERN_SUCCESS)
+        return result;
+
+    /* pointer can be unaligned. */
+    mapped_memory = (uintptr_t)pointer;
+    cursor = pas_round_up(mapped_memory, PAS_SYSTEM_COMPACT_POINTER_SIZE);
+
+    number_of_candidates = 0;
+    for (; (cursor + PAS_SYSTEM_COMPACT_POINTER_SIZE) <= (mapped_memory + size); cursor += PAS_SYSTEM_COMPACT_POINTER_SIZE) {
+        vm_address_t address_of_pointer;
+        vm_address_t candidate_pointer;
+
+        address_of_pointer = address + (cursor - mapped_memory);
+        candidate_pointer = decode_system_compact_pointer(root, *((const uint32_t*)cursor));
+
+        if (!candidate_pointer)
+            continue;
+
+#if PAS_CPU(ADDRESS64)
+
+#if PAS_ARM
+        if (candidate_pointer > MACH_VM_MAX_ADDRESS_RAW)
+            continue;
+#else
+        if (candidate_pointer > (1ULL << 48))
+            continue;
+#endif
+
+        /* First 4GB on 64bit process is unmapped. */
+        if (candidate_pointer < (4ULL << 30))
+            continue;
+#endif
+
+        /* FIXME: We can add more filtering via pas_root information later. */
+
+        candidates[number_of_candidates].address_of_pointer = address_of_pointer;
+        candidates[number_of_candidates].candidate_pointer = candidate_pointer;
+        number_of_candidates += 1;
+        if (number_of_candidates == PAS_MAX_CANDIDATE_POINTERS) {
+            result = visitor(context, candidates, number_of_candidates);
+            if (result != KERN_SUCCESS)
+                return result;
+            number_of_candidates = 0;
+        }
+    }
+
+    if (number_of_candidates) {
+        result = visitor(context, candidates, number_of_candidates);
+        if (result != KERN_SUCCESS)
+            return result;
+    }
+
+    return KERN_SUCCESS;
 }
 
 #endif

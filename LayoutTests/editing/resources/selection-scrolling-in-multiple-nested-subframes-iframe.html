@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html, div[contenteditable] {
+    width: 100%;
+    background-color: lavender;
+    margin: 0;
+}
+
+iframe {
+    width: 100px;
+    height: 100px;
+}
+
+.fixed {
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    background: red;
+    bottom: 0;
+    right: 0;
+}
+</style>
+</head>
+<body>
+<div>
+    <iframe srcdoc="<body contenteditable style='height: 100%; background: lightgreen;'>1. Change selection using arrow keys.</body>"></iframe>
+    <iframe srcdoc="<body contenteditable style='height: 100%; background: lightgreen;'>2. Change selection using arrow keys.</body>"></iframe>
+    <p>3. Scroll this iframe to the very bottom.</p>
+</div>
+<div class="fixed"></div>
+<p style="position: absolute; top: 400px;">4. Click the button labeled 'Click me'.</p>
+<script>
+function handleClick() {
+    [...document.querySelectorAll("iframe")].map(frame => frame.contentDocument.body.innerHTML = "")
+}
+
+function scrollDown() {
+    scrollTo(0, 400);
+}
+</script>
+</body>
+</html>

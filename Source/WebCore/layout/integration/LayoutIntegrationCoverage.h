@@ -39,7 +39,7 @@ namespace LayoutIntegration {
 enum class AvoidanceReason : uint64_t {
     FlowIsInsideANonMultiColumnThread            = 1LLU  << 0,
     FlowHasInitialLetter                         = 1LLU  << 1,
-    // Unused                                    = 1LLU  << 2,
+    FlowIsVTTCue                                 = 1LLU  << 2,
     ContentIsRuby                                = 1LLU  << 3,
     FlowIsPaginated                              = 1LLU  << 4,
     // Unused                                    = 1LLU  << 5,
@@ -53,7 +53,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 13,
     // Unused                                    = 1LLU  << 14,
     // Unused                                    = 1LLU  << 15,
-    FlowHasLineBoxContainProperty                = 1LLU  << 16,
+    // Unused                                    = 1LLU  << 16,
     FlowHasUnsupportedWritingMode                = 1LLU  << 17,
     // Unused                                    = 1LLU  << 18,
     // Unused                                    = 1LLU  << 19,
@@ -63,7 +63,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 23,
     // Unused                                    = 1LLU  << 24,
     // Unused                                    = 1LLU  << 25,
-    FlowHasTextCombine                           = 1LLU  << 26,
+    // Unused                                    = 1LLU  << 26,
     // Unused                                    = 1LLU  << 27,
     // Unused                                    = 1LLU  << 28,
     // Unused                                    = 1LLU  << 29,
@@ -72,7 +72,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 32,
     // Unused                                    = 1LLU  << 33,
     // Unused                                    = 1LLU  << 34,
-    FlowTextIsCombineText                        = 1LLU  << 35,
+    // Unused                                    = 1LLU  << 35,
     // Unused                                    = 1LLU  << 36,
     // Unused                                    = 1LLU  << 37,
     // Unused                                    = 1LLU  << 38,
@@ -98,7 +98,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 58,
     // Unused                                    = 1LLU  << 59,
     // Unused                                    = 1LLU  << 60,
-    FlowIsUnsupportedListItem                    = 1LLU  << 61,
+    ChildIsUnsupportedListItem                   = 1LLU  << 61,
     EndOfReasons                                 = 1LLU  << 62
 };
 

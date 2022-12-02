@@ -31,7 +31,6 @@
 namespace WebCore {
 
 GamepadButton::GamepadButton()
-    : m_value(0)
 {
 }
 

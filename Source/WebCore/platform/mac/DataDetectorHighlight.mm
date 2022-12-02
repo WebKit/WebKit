@@ -33,18 +33,16 @@
 #import "FloatRect.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayer.h"
-#import "GraphicsLayerCA.h"
 #import "GraphicsLayerFactory.h"
+#import "ImageBuffer.h"
 #import "Page.h"
-#import "PlatformCAAnimationCocoa.h"
-#import "PlatformCALayer.h"
-#import <QuartzCore/QuartzCore.h>
 #import <wtf/Seconds.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebCore {
 
 constexpr Seconds highlightFadeAnimationDuration = 300_ms;
+constexpr double highlightFadeAnimationFrameRate = 30;
 
 Ref<DataDetectorHighlight> DataDetectorHighlight::createForSelection(Page& page, DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
 {
@@ -67,6 +65,7 @@ DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightCl
     , m_range(WTFMove(range))
     , m_graphicsLayer(GraphicsLayer::create(page.chrome().client().graphicsLayerFactory(), *this))
     , m_type(type)
+    , m_fadeAnimationTimer(*this, &DataDetectorHighlight::fadeAnimationTimerFired)
 {
     ASSERT(ddHighlight);
 
@@ -74,9 +73,7 @@ DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightCl
 
     setHighlight(ddHighlight.get());
 
-    // Set directly on the PlatformCALayer so that when we leave the 'from' value implicit
-    // in our animations, we get the right initial value regardless of flush timing.
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->setOpacity(0);
+    layer().setOpacity(0);
 }
 
 void DataDetectorHighlight::setHighlight(DDHighlightRef highlight)
@@ -101,6 +98,7 @@ void DataDetectorHighlight::setHighlight(DDHighlightRef highlight)
 
 void DataDetectorHighlight::invalidate()
 {
+    m_fadeAnimationTimer.stop();
     layer().removeFromParent();
     m_client = nullptr;
     m_page = nullptr;
@@ -119,21 +117,22 @@ void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext&
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
-    // FIXME: This needs to be moved into GraphicsContext as a DisplayList-compatible drawing command.
-    if (!graphicsContext.hasPlatformContext()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(highlight());
+    highlightBoundingRect.origin = CGPointZero;
 
-    CGContextRef cgContext = graphicsContext.platformContext();
+    auto imageBuffer = graphicsContext.createImageBuffer(FloatSize(highlightBoundingRect.size), deviceScaleFactor(), DestinationColorSpace::SRGB(), graphicsContext.renderingMode(), RenderingMethod::Local);
+    if (!imageBuffer)
+        return;
+
+    CGContextRef cgContext = imageBuffer->context().platformContext();
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CGLayerRef highlightLayer = PAL::softLink_DataDetectors_DDHighlightGetLayerWithContext(highlight(), cgContext);
     ALLOW_DEPRECATED_DECLARATIONS_END
-    CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(highlight());
-    highlightBoundingRect.origin = CGPointZero;
 
     CGContextDrawLayerInRect(cgContext, highlightBoundingRect, highlightLayer);
+
+    graphicsContext.drawConsumingImageBuffer(WTFMove(imageBuffer), highlightBoundingRect);
 }
 
 float DataDetectorHighlight::deviceScaleFactor() const
@@ -144,34 +143,47 @@ float DataDetectorHighlight::deviceScaleFactor() const
     return m_page->deviceScaleFactor();
 }
 
+void DataDetectorHighlight::fadeAnimationTimerFired()
+{
+    float animationProgress = (WallTime::now() - m_fadeAnimationStartTime) / highlightFadeAnimationDuration;
+    animationProgress = std::min<float>(animationProgress, 1.0);
+
+    float opacity = (m_fadeAnimationState == FadeAnimationState::FadingIn) ? animationProgress : 1 - animationProgress;
+    layer().setOpacity(opacity);
+
+    if (animationProgress == 1.0) {
+        m_fadeAnimationTimer.stop();
+
+        bool wasFadingOut = m_fadeAnimationState == FadeAnimationState::FadingOut;
+        m_fadeAnimationState = FadeAnimationState::NotAnimating;
+
+        if (wasFadingOut)
+            didFinishFadeOutAnimation();
+    }
+}
+
 void DataDetectorHighlight::fadeIn()
 {
-    RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    [animation setDuration:highlightFadeAnimationDuration.seconds()];
-    [animation setFillMode:kCAFillModeForwards];
-    [animation setRemovedOnCompletion:false];
-    [animation setToValue:@1];
+    if (m_fadeAnimationState == FadeAnimationState::FadingIn && m_fadeAnimationTimer.isActive())
+        return;
 
-    auto platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn"_s, platformAnimation.get());
+    m_fadeAnimationState = FadeAnimationState::FadingIn;
+    startFadeAnimation();
 }
 
 void DataDetectorHighlight::fadeOut()
 {
-    RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    [animation setDuration:highlightFadeAnimationDuration.seconds()];
-    [animation setFillMode:kCAFillModeForwards];
-    [animation setRemovedOnCompletion:false];
-    [animation setToValue:@0];
+    if (m_fadeAnimationState == FadeAnimationState::FadingOut && m_fadeAnimationTimer.isActive())
+        return;
 
-    [CATransaction begin];
-    [CATransaction setCompletionBlock:[protectedSelf = Ref { *this }]() mutable {
-        protectedSelf->didFinishFadeOutAnimation();
-    }];
+    m_fadeAnimationState = FadeAnimationState::FadingOut;
+    startFadeAnimation();
+}
 
-    auto platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut"_s, platformAnimation.get());
-    [CATransaction commit];
+void DataDetectorHighlight::startFadeAnimation()
+{
+    m_fadeAnimationStartTime = WallTime::now();
+    m_fadeAnimationTimer.startRepeating(1_s / highlightFadeAnimationFrameRate);
 }
 
 void DataDetectorHighlight::didFinishFadeOutAnimation()

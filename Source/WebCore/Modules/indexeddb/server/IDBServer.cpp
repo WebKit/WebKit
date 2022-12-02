@@ -455,15 +455,16 @@ void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
         m_uniqueIDBDatabaseMap.remove(database->identifier());
 }
 
-void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::abortOpenAndUpgradeNeeded");
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(transactionIdentifier);
-    if (transaction)
-        transaction->abortWithoutCallback();
+    if (transactionIdentifier) {
+        if (auto transaction = m_transactions.get(*transactionIdentifier))
+            transaction->abortWithoutCallback();
+    }
 
     auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)

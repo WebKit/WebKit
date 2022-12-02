@@ -116,7 +116,7 @@ void Module::copyInitialCalleeGroupToAllMemoryModes(MemoryMode initialMode)
     Locker locker { m_lock };
     ASSERT(m_calleeGroups[static_cast<uint8_t>(initialMode)]);
     const CalleeGroup& initialBlock = *m_calleeGroups[static_cast<uint8_t>(initialMode)];
-    for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; i++) {
+    for (unsigned i = 0; i < numberOfMemoryModes; i++) {
         if (i == static_cast<uint8_t>(initialMode))
             continue;
         // We should only try to copy the group here if it hasn't already been created.

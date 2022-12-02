@@ -37,6 +37,10 @@
 #import <AssetViewer/ASVInlinePreview.h>
 #endif
 
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#import <AssetViewer/ASVLaunchPreview.h>
+#endif
+
 #else
 
 #import <UIKit/UIKit.h>
@@ -122,6 +126,11 @@ typedef void (^ASVSetIsPlayingReplyBlock) (BOOL isPlaying, NSError * _Nullable e
 @property (nonatomic, retain, nullable) NSURL *canonicalWebPageURL;
 @property (nonatomic, retain, nullable) NSString *urlFragment;
 
+@end
+
+@interface ASVLaunchPreview : NSObject
++ (void)beginPreviewApplicationWithURLs:(nonnull NSArray *)urls is3DContent:(BOOL)is3DContent completion:(nonnull void (^)(NSError * _Nullable))handler;
++ (void)launchPreviewApplicationWithURLs:(nonnull NSArray *)urls completion:(nonnull void (^)(NSError * _Nullable))handler;
 @end
 
 NS_ASSUME_NONNULL_END

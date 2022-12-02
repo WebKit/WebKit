@@ -71,8 +71,6 @@ private:
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
     void workerGlobalScopeDestroyed() final { };
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { };
-    void confirmMessageFromWorkerObject(bool) final { };
-    void reportPendingActivity(bool) final { };
 };
 
 // FIXME: Use a valid WorkerReportingProxy
@@ -143,9 +141,9 @@ void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Clie
 static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessagePorts&& message, ExtendableMessageEventSource&& source, const URL& sourceURL)
 {
     auto ports = MessagePort::entanglePorts(scope, WTFMove(message.transferredPorts));
+    // FIXME: Add support for messageerror event when message deserialization fails.
     auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message.message), SecurityOriginData::fromURL(sourceURL).toString(), { }, source);
     scope.dispatchEvent(messageEvent);
-    scope.thread().workerObjectProxy().confirmMessageFromWorkerObject(scope.hasPendingActivity());
     scope.updateExtendedEventsSet(messageEvent.ptr());
 }
 

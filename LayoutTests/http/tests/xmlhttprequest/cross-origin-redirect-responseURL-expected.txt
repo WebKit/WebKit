@@ -1,7 +1,5 @@
 CONSOLE MESSAGE: Not allowed to use restricted network port 7: http://localhost:7/
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:7/ due to access control checks.
 CONSOLE MESSAGE: Not allowed to use restricted network port 22: http://localhost:22/
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:22/ due to access control checks.
 Test XMLHttpRequest responseURL.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

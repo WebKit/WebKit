@@ -32,6 +32,7 @@ from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
 from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
+from results_db import ResultsDatabase
 
 import json
 import os
@@ -158,10 +159,13 @@ class GitHubMixin(object):
     addURLs = False
     pr_open_states = ['open']
     pr_closed_states = ['closed']
+    SKIP_EWS_LABEL = 'skip-ews'
     BLOCKED_LABEL = 'merging-blocked'
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
     REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
+    PER_PAGE_LIMIT = 100
+    NUM_PAGE_LIMIT = 10
 
     def fetch_data_from_url_with_authentication_github(self, url):
         response = None
@@ -174,7 +178,7 @@ class GitHubMixin(object):
             )
             if response.status_code // 100 != 2:
                 self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-                return None
+                return False if response.status_code // 100 == 4 else None
         except Exception as e:
             # Catching all exceptions here to safeguard access token.
             self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
@@ -189,7 +193,7 @@ class GitHubMixin(object):
         pr_url = '{}/pulls/{}'.format(api_url, pr_number)
         content = self.fetch_data_from_url_with_authentication_github(pr_url)
         if not content:
-            return None
+            return content
 
         for attempt in range(retry + 1):
             try:
@@ -198,7 +202,7 @@ class GitHubMixin(object):
                     return pr_json
             except Exception as e:
                 self._addToLog('stdio', 'Failed to get pull request data from {}, error: {}'.format(pr_url, e))
-            
+
             self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
             if attempt > retry:
                 return None
@@ -213,19 +217,40 @@ class GitHubMixin(object):
         if not api_url:
             return []
 
-        reviews_url = f'{api_url}/pulls/{pr_number}/reviews'
-        content = self.fetch_data_from_url_with_authentication_github(reviews_url)
-        if not content:
-            return []
+        reviews = []
+        reviews_url = f'{api_url}/pulls/{pr_number}/reviews?per_page={self.PER_PAGE_LIMIT}'
+        for page in range(1, self.NUM_PAGE_LIMIT + 1):
+            content = self.fetch_data_from_url_with_authentication_github(
+                f'{api_url}/pulls/{pr_number}/reviews?per_page={self.PER_PAGE_LIMIT}&page={page}'
+            )
+            if not content:
+                break
+            response_content = content.json() or []
+            if not isinstance(response_content, list):
+                self._addToLog('stdio', f"Malformed response when listing reviews with '{url}'\n")
+                break
+            reviews += response_content
+            if len(response_content) < self.PER_PAGE_LIMIT:
+                break
+            page += 1
 
-        result = []
-        for review in (content.json() or []):
+        last_approved = dict()
+        last_rejected = dict()
+        for review in reviews:
             reviewer = review.get('user', {}).get('login')
-            if reviewer and review.get('state') == 'APPROVED':
-                result.append(reviewer)
-        return result
+            if not reviewer:
+                continue
+            review_id = review.get('id', 0)
+            if review.get('state') == 'APPROVED':
+                last_approved[reviewer] = max(review_id, last_approved.get(reviewer, 0))
+            elif review.get('state') == 'CHANGES_REQUESTED':
+                last_rejected[reviewer] = max(review_id, last_rejected.get(reviewer, 0))
+        return sorted([reviewer for reviewer, _id in last_approved.items() if _id > last_rejected.get(reviewer, 0)])
 
     def _is_pr_closed(self, pr_json):
+        # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
+        if pr_json is False:
+            return 1
         if not pr_json or not pr_json.get('state'):
             self._addToLog('stdio', 'Cannot determine pull request status.\n')
             return -1
@@ -234,6 +259,9 @@ class GitHubMixin(object):
         return 0
 
     def _is_hash_outdated(self, pr_json):
+        # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
+        if pr_json is False:
+            return 1
         pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
         if not pr_sha:
             self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')
@@ -243,6 +271,12 @@ class GitHubMixin(object):
     def _is_pr_blocked(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
             if label.get('name', '') == self.BLOCKED_LABEL:
+                return 1
+        return 0
+
+    def _does_pr_has_skip_label(self, pr_json):
+        for label in (pr_json or {}).get('labels', {}):
+            if label.get('name', '') == self.SKIP_EWS_LABEL:
                 return 1
         return 0
 
@@ -1000,10 +1034,8 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
             ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
             ['git', 'fetch', remote, '--prune'],
-            ['git', 'branch', '-f', pr_branch, 'remotes/{}/{}'.format(remote, pr_branch)],
-            ['git', 'checkout', pr_branch],
-            ['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
-            ['git', 'rebase', rebase_target_hash, pr_branch],
+            ['git', 'checkout', '-b', pr_branch],
+            ['git', 'cherry-pick', 'HEAD..remotes/{}/{}'.format(remote, pr_branch)],
         ]
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
@@ -1106,6 +1138,7 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/Scripts/libraries', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/commit-log-editor', re.IGNORECASE),
         re.compile(rb'Source/WebKit/Scripts', re.IGNORECASE),
+        re.compile(rb'metadata/contributors.json', re.IGNORECASE),
     ]
 
     group_to_paths_mapping = {
@@ -1509,6 +1542,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         verifycqplus=False,
         verifyMergeQueue=False,
         verifyNoDraftForMergeQueue=False,
+        enableSkipEWSLabel=True,
     ):
         self.verifyObsolete = verifyObsolete
         self.verifyBugClosed = verifyBugClosed
@@ -1516,6 +1550,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         self.verifycqplus = verifycqplus
         self.verifyMergeQueue = verifyMergeQueue
         self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
+        self.enableSkipEWSLabel = enableSkipEWSLabel
         self.addURLs = addURLs
         buildstep.BuildStep.__init__(self)
 
@@ -1575,6 +1610,8 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self._addToLog('stdio', 'Change is not a draft.\n')
         if self.verifyMergeQueue and pr_number:
             self._addToLog('stdio', 'Change is in merge queue.\n')
+        if self.enableSkipEWSLabel and pr_number:
+            self._addToLog('stdio', f'PR does not have {self.SKIP_EWS_LABEL} label.\n')
         self.finished(SUCCESS)
         return None
 
@@ -1633,10 +1670,15 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
             return False
 
+        skip_ews = self._does_pr_has_skip_label(pr_json) if self.enableSkipEWSLabel else 0
+        if skip_ews == 1:
+            self.skip_build(f'Skipping as PR {pr_number} has {self.SKIP_EWS_LABEL} label')
+            return False
+
         if self.verifyMergeQueue:
             if not pr_json:
                 self.send_email_for_github_failure()
-                self.skip_build("Infrastructure issue: unable to check PR status")
+                self.skip_build('Infrastructure issue: unable to check PR status, please contact an admin')
                 return False
             merge_queue = self._is_pr_in_merge_queue(pr_json)
             if merge_queue == 0:
@@ -1690,6 +1732,10 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
+    VALIDATORS_FOR = {
+        # FIXME: This should be a bot, for now validation is manual
+        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'JonWBedard', 'ryanhaddad'],
+    }
 
     def __init__(self, *args, **kwargs):
         super(ValidateCommitterAndReviewer, self).__init__(*args, **kwargs)
@@ -1700,7 +1746,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             return {'step': self.descriptionDone}
         return buildstep.BuildStep.getResultSummary(self)
 
-    def fail_build(self, email_or_username, status):
+    def fail_build_due_to_invalid_status(self, email_or_username, status):
         patch_id = self.getProperty('patch_id', '')
         pr_number = self.getProperty('github.number', '')
 
@@ -1711,6 +1757,28 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         elif pr_number:
             comment += f'\n\nIf you do have {status} permmissions, please ensure that your GitHub username is added to contributors.json.'
             comment += f'\n\nRejecting {self.getProperty("github.head.sha", f"#{pr_number}")} from merge queue.'
+        return self.fail_build(reason, comment)
+
+    def fail_build_due_to_no_validators(self, validators):
+        patch_id = self.getProperty('patch_id', '')
+        pr_number = self.getProperty('github.number', '')
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+
+        user_prefix = "@" if pr_number else ""
+        if len(validators) == 1:
+            validator_list = f'{user_prefix}{validators[0]}'
+        else:
+            validator_list = f'{", ".join(f"{user_prefix}{v}" for v in validators[:-1])} or {user_prefix}{validators[-1]}'
+        reason = f"Landing changes on '{remote}' remote requires validation from {validator_list}"
+        comment = reason
+        if patch_id:
+            comment += f'\n\nRejecting attachment {patch_id} from commit queue.'
+        elif pr_number:
+            comment += f'\n\nRejecting {self.getProperty("github.head.sha", f"#{pr_number}")} from merge queue.'
+
+        return self.fail_build(reason, comment)
+
+    def fail_build(self, reason, comment):
         self.setProperty('comment_text', comment)
 
         self._addToLog('stdio', reason)
@@ -1753,17 +1821,25 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             committer = self.getProperty('patch_committer', '').lower()
 
         if not self.is_committer(committer):
-            self.fail_build(committer, 'committer')
+            self.fail_build_due_to_invalid_status(committer, 'committer')
             return None
         self._addToLog('stdio', f'{committer} is a valid commiter.\n')
 
         if pr_number:
             reviewers = self.get_reviewers(pr_number, self.getProperty('repository', ''))
-            if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
-                reviewers = list(filter(self.is_reviewer, reviewers))
         else:
             reviewer = self.getProperty('reviewer', '').lower()
             reviewers = [reviewer] if reviewer else []
+
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        validators = self.VALIDATORS_FOR.get(remote, [])
+        lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
+        if validators and not any([validator.lower() in lower_case_reviewers for validator in validators]):
+            self.fail_build_due_to_no_validators(validators)
+            return None
+
+        if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
+            reviewers = list(filter(self.is_reviewer, reviewers))
         reviewers = set(reviewers)
 
         if not reviewers:
@@ -1775,7 +1851,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         for reviewer in reviewers:
             if not self.is_reviewer(reviewer):
-                self.fail_build(reviewer, 'reviewer')
+                self.fail_build_due_to_invalid_status(reviewer, 'reviewer')
                 return None
             self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
         self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])
@@ -2434,9 +2510,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
-        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to work
-        # around log output delays on slower machines.
-        kwargs.setdefault('timeout', 60 * 30)
         super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
@@ -2480,6 +2553,17 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
+
+    def buildCommandKwargs(self, warnings):
+        kwargs = super(CompileWebKit, self).buildCommandKwargs(warnings)
+        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to
+        # work around log output delays on slower machines.
+        # https://bugs.webkit.org/show_bug.cgi?id=247506: Only applies to Xcode 12.x.
+        if self.getProperty('fullPlatform') == 'mac-bigsur':
+            kwargs['timeout'] = 60 * 60
+        else:
+            kwargs['timeout'] = 60 * 30
+        return kwargs
 
     def errorReceived(self, error):
         self._addToLog('errors', error + '\n')
@@ -3069,6 +3153,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     jsonFileName = 'layout-test-results/full_results.json'
     logfiles = {'json': jsonFileName}
     test_failures_log_name = 'test-failures'
+    results_db_log_name = 'results-db'
     ENABLE_GUARD_MALLOC = False
     EXIT_AFTER_FAILURES = '30'
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
@@ -3081,6 +3166,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     def __init__(self, **kwargs):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
         self.incorrectLayoutLines = []
+        self.failing_tests_filtered = []
+        self.preexisting_failures_in_results_db = []
 
     def doStepIf(self, step):
         return not ((self.getProperty('buildername', '').lower() in ['commit-queue', 'merge-queue']) and
@@ -3169,7 +3256,35 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             self.setProperty('first_run_flakies', sorted(first_results.flaky_tests))
             if first_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(first_results.failing_tests))
+                self.filter_failures_using_results_db(first_results.failing_tests)
+                self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
+                self.setProperty('results-db_first_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
+
         self._parseRunWebKitTestsOutput(logText)
+
+    def filter_failures_using_results_db(self, failing_tests):
+        self.failing_tests_filtered = failing_tests.copy()
+        identifier = self.getProperty('identifier', None)
+        platform = self.getProperty('platform', None)
+        configuration = {}
+        if platform:
+            configuration['platform'] = platform
+        style = self.getProperty('configuration', None)
+        if style and style in ['debug', 'release']:
+            configuration['style'] = style
+
+        if self.getProperty('use-dump-render-tree', False):
+            configuration['flavor'] = 'wk1'
+        else:
+            configuration['flavor'] = 'wk2'
+
+        self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
+        for test in failing_tests:
+            data = ResultsDatabase().is_test_pre_existing_failure(test, commit=identifier, configuration=configuration)
+            self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
+            if data['is_existing_failure']:
+                self.preexisting_failures_in_results_db.append(test)
+                self.failing_tests_filtered.remove(test)
 
     def evaluateResult(self, cmd):
         result = SUCCESS
@@ -3195,6 +3310,13 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
+        if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+            # This means all the tests which failed in this run were also failing or flaky in results database
+            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+            self.descriptionDone = message
+            self.finished(WARNINGS)
+            self.build.buildFinished([message], SUCCESS)
+
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
@@ -3214,9 +3336,13 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     def getResultSummary(self):
         status = self.name
 
-        if self.results != SUCCESS and self.incorrectLayoutLines:
-            status = ' '.join(self.incorrectLayoutLines)
-            return {'step': status}
+        if self.results != SUCCESS:
+            if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+                status = f"Ignored {len(self.preexisting_failures_in_results_db)} pre-existing failure based on results-db"
+                return {'step': status}
+            if self.incorrectLayoutLines:
+                status = ' '.join(self.incorrectLayoutLines)
+                return {'step': status}
         if self.results == SKIPPED:
             if self.getProperty('fast_commit_queue'):
                 return {'step': 'Skipped layout-tests in fast-cq mode'}
@@ -3274,15 +3400,24 @@ class ReRunWebKitTests(RunWebKitTests):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
-        first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit')
+        first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit', False)
         first_results_failing_tests = set(self.getProperty('first_run_failures', []))
-        second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit')
+        second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit', False)
         second_results_failing_tests = set(self.getProperty('second_run_failures', []))
         # FIXME: here it can be a good idea to also use the info from second_run_flakies and first_run_flakies
         tests_that_consistently_failed = first_results_failing_tests.intersection(second_results_failing_tests)
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
+        num_flaky_failures = len(flaky_failures)
         flaky_failures = sorted(list(flaky_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
+
+        if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+            # This means all the tests which failed in this run were also failing or flaky in results database
+            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.finished(WARNINGS)
+            self.build.buildFinished([message], SUCCESS)
 
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
@@ -3295,6 +3430,19 @@ class ReRunWebKitTests(RunWebKitTests):
                     self.send_email_for_flaky_failure(flaky_failure)
             self.setProperty('build_summary', message)
         else:
+            if (second_results_failing_tests and len(tests_that_consistently_failed) == 0 and num_flaky_failures <= 10
+                    and not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit):
+                # This means that test failures in first and second run were different and limited.
+                pluralSuffix = 's' if len(flaky_failures) > 1 else ''
+                message = 'Found flaky test{} in re-run: {}'.format(pluralSuffix, flaky_failures_string)
+                for flaky_failure in flaky_failures:
+                    self.send_email_for_flaky_failure(flaky_failure)
+                self.descriptionDone = message
+                self.build.results = SUCCESS
+                self.finished(WARNINGS)
+                self.build.buildFinished([message], SUCCESS)
+                return rc
+
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
@@ -3320,6 +3468,9 @@ class ReRunWebKitTests(RunWebKitTests):
             self.setProperty('second_run_flakies', sorted(second_results.flaky_tests))
             if second_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
+                self.filter_failures_using_results_db(second_results.failing_tests)
+                self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
+                self.setProperty('results-db-second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
         self._parseRunWebKitTestsOutput(logText)
 
     def send_email_for_flaky_failure(self, test_name):
@@ -3389,11 +3540,11 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
     descriptionDone = ['analyze-layout-tests-results']
     NUM_FAILURES_TO_DISPLAY = 10
 
-    def report_failure(self, new_failures, exceed_failure_limit=False):
+    def report_failure(self, new_failures=None, exceed_failure_limit=False, failure_message=''):
         self.finished(FAILURE)
         self.build.results = FAILURE
         if not new_failures:
-            message = 'Found unexpected failure with change'
+            message = 'Found unexpected failure with change' if not failure_message else failure_message
         else:
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             if exceed_failure_limit:
@@ -3572,6 +3723,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         clean_tree_results_did_exceed_test_failure_limit = self.getProperty('clean_tree_results_exceed_failure_limit')
         clean_tree_results_failing_tests = set(self.getProperty('clean_tree_run_failures', []))
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
+        num_flaky_failures = len(flaky_failures)
+        flaky_failures_string = ', '.join(sorted(flaky_failures))
 
         if (not first_results_failing_tests) and (not second_results_failing_tests):
             # If we've made it here, then layout-tests and re-run-layout-tests failed, which means
@@ -3621,6 +3774,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 failures_introduced_by_patch = tests_that_consistently_failed - clean_tree_results_failing_tests
                 if failures_introduced_by_patch:
                     return self.report_failure(failures_introduced_by_patch)
+            elif num_flaky_failures > 10:
+                return self.report_failure(failure_message=f'Too many flaky failures: {flaky_failures_string}')
 
             # At this point we know that at least one test flaked, but no consistent failures
             # were introduced. This is a bit of a grey-zone. It's possible that the patch introduced some flakiness.
@@ -4493,6 +4648,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
         for command in [
             self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),
             self.shell_command('git am --abort || {}'.format(self.shell_exit_0())),
+            self.shell_command('git cherry-pick --abort || {}'.format(self.shell_exit_0())),
             ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
             ['git', 'checkout', '{}/{}'.format(self.git_remote, self.default_branch), '-f'],  # Checkout branch from specific remote
             ['git', 'branch', '-D', '{}'.format(self.default_branch)],  # Delete any local cache of the specified branch
@@ -4599,7 +4755,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         ShowIdentifier(),
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False),
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
                         Canonicalize(),
                         PushPullRequestBranch(),
                         UpdatePullRequest(),
@@ -4813,6 +4969,81 @@ class ValidateRemote(shell.ShellCommand):
         if not remote:
             return False
         return remote != DEFAULT_REMOTE
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
+# There are cases where we have a branch alias tracking a more traditional static branch.
+# We want contributors to be able to land changes on the branch alias instead of the possibly
+# changing branch.
+class MapBranchAlias(shell.ShellCommand):
+    name = 'map-branch-alias'
+    haltOnFailure = False
+    flunkOnFailure = True
+    DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
+    PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
+
+    def __init__(self, **kwargs):
+        self.summary = ''
+        super(MapBranchAlias, self).__init__(logEnviron=False, timeout=60, **kwargs)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+
+        self.command = ['git', 'branch', '-a', '--contains', f'remotes/{remote}/{base_ref}']
+
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        return super(MapBranchAlias, self).start()
+
+    def getResultSummary(self):
+        if self.results in (FAILURE, SUCCESS):
+            return {'step': self.summary}
+        return super(MapBranchAlias, self).getResultSummary()
+
+    def evaluateCommand(self, cmd):
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        rc = super(MapBranchAlias, self).evaluateCommand(cmd)
+
+        if rc == FAILURE:
+            self.summary = f"Failed to query checkout for aliases of '{branch}'"
+            return FAILURE
+        elif rc != SUCCESS:
+            return rc
+
+        aliases = set()
+        log_text = self.log_observer.getStdout()
+        for line in log_text.splitlines():
+            line = line.lstrip().rstrip()
+            if not line.startswith(f'remotes/{remote}'):
+                continue
+            candidate = line.split('/', 2)[-1]
+            if self.DEV_BRANCHES.match(candidate):
+                continue
+            aliases.add(candidate)
+
+        if DEFAULT_BRANCH in aliases:
+            branch = DEFAULT_BRANCH
+        if branch != DEFAULT_BRANCH and self.DEV_BRANCHES.match(branch) and aliases:
+            branch = next(iter(aliases))
+        if branch != DEFAULT_BRANCH and not self.PROD_BRANCHES.match(branch):
+            for alias in aliases:
+                if self.PROD_BRANCHES.match(alias):
+                    branch = alias
+                    break
+
+        self.summary = f"'{branch}' is the prevailing alias"
+        self.setProperty('github.base.ref', branch)
+        return rc
+
+    def doStepIf(self, step):
+        if not self.getProperty('github.number'):
+            return False
+        return self.getProperty('github.base.ref', DEFAULT_BRANCH) != DEFAULT_BRANCH
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)

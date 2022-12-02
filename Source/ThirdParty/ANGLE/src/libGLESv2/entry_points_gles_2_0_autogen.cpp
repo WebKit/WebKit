@@ -11,10 +11,10 @@
 #include "libGLESv2/entry_points_gles_2_0_autogen.h"
 
 #include "common/entry_points_enum_autogen.h"
+#include "common/gl_enum_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/capture/capture_gles_2_0_autogen.h"
-#include "libANGLE/capture/gl_enum_utils.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationES2.h"
 #include "libGLESv2/global_state.h"
@@ -57,9 +57,11 @@ void GL_APIENTRY GL_AttachShader(GLuint program, GLuint shader)
         ShaderProgramID programPacked = PackParam<ShaderProgramID>(program);
         ShaderProgramID shaderPacked  = PackParam<ShaderProgramID>(shader);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateAttachShader(context, angle::EntryPoint::GLAttachShader,
-                                                 programPacked, shaderPacked));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLAttachShader) &&
+              ValidateAttachShader(context, angle::EntryPoint::GLAttachShader, programPacked,
+                                   shaderPacked)));
         if (isCallValid)
         {
             context->attachShader(programPacked, shaderPacked);
@@ -85,8 +87,9 @@ void GL_APIENTRY GL_BindAttribLocation(GLuint program, GLuint index, const GLcha
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateBindAttribLocation(context, angle::EntryPoint::GLBindAttribLocation,
-                                        programPacked, index, name));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLBindAttribLocation) &&
+              ValidateBindAttribLocation(context, angle::EntryPoint::GLBindAttribLocation,
+                                         programPacked, index, name)));
         if (isCallValid)
         {
             context->bindAttribLocation(programPacked, index, name);
@@ -135,9 +138,11 @@ void GL_APIENTRY GL_BindFramebuffer(GLenum target, GLuint framebuffer)
     {
         FramebufferID framebufferPacked = PackParam<FramebufferID>(framebuffer);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateBindFramebuffer(context, angle::EntryPoint::GLBindFramebuffer,
-                                                    target, framebufferPacked));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLBindFramebuffer) &&
+              ValidateBindFramebuffer(context, angle::EntryPoint::GLBindFramebuffer, target,
+                                      framebufferPacked)));
         if (isCallValid)
         {
             context->bindFramebuffer(target, framebufferPacked);
@@ -160,9 +165,11 @@ void GL_APIENTRY GL_BindRenderbuffer(GLenum target, GLuint renderbuffer)
     {
         RenderbufferID renderbufferPacked = PackParam<RenderbufferID>(renderbuffer);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateBindRenderbuffer(context, angle::EntryPoint::GLBindRenderbuffer,
-                                                     target, renderbufferPacked));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLBindRenderbuffer) &&
+              ValidateBindRenderbuffer(context, angle::EntryPoint::GLBindRenderbuffer, target,
+                                       renderbufferPacked)));
         if (isCallValid)
         {
             context->bindRenderbuffer(target, renderbufferPacked);
@@ -212,7 +219,9 @@ void GL_APIENTRY GL_BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateBlendColor(context, angle::EntryPoint::GLBlendColor, red, green, blue, alpha));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLBlendColor) &&
+              ValidateBlendColor(context, angle::EntryPoint::GLBlendColor, red, green, blue,
+                                 alpha)));
         if (isCallValid)
         {
             context->blendColor(red, green, blue, alpha);
@@ -236,7 +245,8 @@ void GL_APIENTRY GL_BlendEquation(GLenum mode)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateBlendEquation(context, angle::EntryPoint::GLBlendEquation, mode));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLBlendEquation) &&
+              ValidateBlendEquation(context, angle::EntryPoint::GLBlendEquation, mode)));
         if (isCallValid)
         {
             context->blendEquation(mode);
@@ -261,8 +271,10 @@ void GL_APIENTRY GL_BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateBlendEquationSeparate(context, angle::EntryPoint::GLBlendEquationSeparate,
-                                           modeRGB, modeAlpha));
+             (ValidatePixelLocalStorageInactive(context,
+                                                angle::EntryPoint::GLBlendEquationSeparate) &&
+              ValidateBlendEquationSeparate(context, angle::EntryPoint::GLBlendEquationSeparate,
+                                            modeRGB, modeAlpha)));
         if (isCallValid)
         {
             context->blendEquationSeparate(modeRGB, modeAlpha);
@@ -287,7 +299,8 @@ void GL_APIENTRY GL_BlendFunc(GLenum sfactor, GLenum dfactor)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateBlendFunc(context, angle::EntryPoint::GLBlendFunc, sfactor, dfactor));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLBlendFunc) &&
+              ValidateBlendFunc(context, angle::EntryPoint::GLBlendFunc, sfactor, dfactor)));
         if (isCallValid)
         {
             context->blendFunc(sfactor, dfactor);
@@ -318,8 +331,9 @@ void GL_APIENTRY GL_BlendFuncSeparate(GLenum sfactorRGB,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateBlendFuncSeparate(context, angle::EntryPoint::GLBlendFuncSeparate, sfactorRGB,
-                                       dfactorRGB, sfactorAlpha, dfactorAlpha));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLBlendFuncSeparate) &&
+              ValidateBlendFuncSeparate(context, angle::EntryPoint::GLBlendFuncSeparate, sfactorRGB,
+                                        dfactorRGB, sfactorAlpha, dfactorAlpha)));
         if (isCallValid)
         {
             context->blendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
@@ -432,7 +446,9 @@ void GL_APIENTRY GL_Clear(GLbitfield mask)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
-            (context->skipValidation() || ValidateClear(context, angle::EntryPoint::GLClear, mask));
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLClear) &&
+              ValidateClear(context, angle::EntryPoint::GLClear, mask)));
         if (isCallValid)
         {
             context->clear(mask);
@@ -456,7 +472,9 @@ void GL_APIENTRY GL_ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateClearColor(context, angle::EntryPoint::GLClearColor, red, green, blue, alpha));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLClearColor) &&
+              ValidateClearColor(context, angle::EntryPoint::GLClearColor, red, green, blue,
+                                 alpha)));
         if (isCallValid)
         {
             context->clearColor(red, green, blue, alpha);
@@ -477,8 +495,10 @@ void GL_APIENTRY GL_ClearDepthf(GLfloat d)
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateClearDepthf(context, angle::EntryPoint::GLClearDepthf, d));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLClearDepthf) &&
+              ValidateClearDepthf(context, angle::EntryPoint::GLClearDepthf, d)));
         if (isCallValid)
         {
             context->clearDepthf(d);
@@ -499,8 +519,10 @@ void GL_APIENTRY GL_ClearStencil(GLint s)
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateClearStencil(context, angle::EntryPoint::GLClearStencil, s));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLClearStencil) &&
+              ValidateClearStencil(context, angle::EntryPoint::GLClearStencil, s)));
         if (isCallValid)
         {
             context->clearStencil(s);
@@ -525,7 +547,8 @@ void GL_APIENTRY GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GL
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateColorMask(context, angle::EntryPoint::GLColorMask, red, green, blue, alpha));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLColorMask) &&
+              ValidateColorMask(context, angle::EntryPoint::GLColorMask, red, green, blue, alpha)));
         if (isCallValid)
         {
             context->colorMask(red, green, blue, alpha);
@@ -549,7 +572,8 @@ void GL_APIENTRY GL_CompileShader(GLuint shader)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateCompileShader(context, angle::EntryPoint::GLCompileShader, shaderPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLCompileShader) &&
+              ValidateCompileShader(context, angle::EntryPoint::GLCompileShader, shaderPacked)));
         if (isCallValid)
         {
             context->compileShader(shaderPacked);
@@ -584,9 +608,11 @@ void GL_APIENTRY GL_CompressedTexImage2D(GLenum target,
         TextureTarget targetPacked = PackParam<TextureTarget>(target);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = (context->skipValidation() ||
-                            ValidateCompressedTexImage2D(
-                                context, angle::EntryPoint::GLCompressedTexImage2D, targetPacked,
-                                level, internalformat, width, height, border, imageSize, data));
+                            (ValidatePixelLocalStorageInactive(
+                                 context, angle::EntryPoint::GLCompressedTexImage2D) &&
+                             ValidateCompressedTexImage2D(
+                                 context, angle::EntryPoint::GLCompressedTexImage2D, targetPacked,
+                                 level, internalformat, width, height, border, imageSize, data)));
         if (isCallValid)
         {
             context->compressedTexImage2D(targetPacked, level, internalformat, width, height,
@@ -623,10 +649,13 @@ void GL_APIENTRY GL_CompressedTexSubImage2D(GLenum target,
     {
         TextureTarget targetPacked = PackParam<TextureTarget>(target);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateCompressedTexSubImage2D(
-                                context, angle::EntryPoint::GLCompressedTexSubImage2D, targetPacked,
-                                level, xoffset, yoffset, width, height, format, imageSize, data));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context,
+                                                angle::EntryPoint::GLCompressedTexSubImage2D) &&
+              ValidateCompressedTexSubImage2D(context, angle::EntryPoint::GLCompressedTexSubImage2D,
+                                              targetPacked, level, xoffset, yoffset, width, height,
+                                              format, imageSize, data)));
         if (isCallValid)
         {
             context->compressedTexSubImage2D(targetPacked, level, xoffset, yoffset, width, height,
@@ -663,8 +692,9 @@ void GL_APIENTRY GL_CopyTexImage2D(GLenum target,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateCopyTexImage2D(context, angle::EntryPoint::GLCopyTexImage2D, targetPacked,
-                                    level, internalformat, x, y, width, height, border));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLCopyTexImage2D) &&
+              ValidateCopyTexImage2D(context, angle::EntryPoint::GLCopyTexImage2D, targetPacked,
+                                     level, internalformat, x, y, width, height, border)));
         if (isCallValid)
         {
             context->copyTexImage2D(targetPacked, level, internalformat, x, y, width, height,
@@ -701,8 +731,10 @@ void GL_APIENTRY GL_CopyTexSubImage2D(GLenum target,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateCopyTexSubImage2D(context, angle::EntryPoint::GLCopyTexSubImage2D,
-                                       targetPacked, level, xoffset, yoffset, x, y, width, height));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLCopyTexSubImage2D) &&
+              ValidateCopyTexSubImage2D(context, angle::EntryPoint::GLCopyTexSubImage2D,
+                                        targetPacked, level, xoffset, yoffset, x, y, width,
+                                        height)));
         if (isCallValid)
         {
             context->copyTexSubImage2D(targetPacked, level, xoffset, yoffset, x, y, width, height);
@@ -725,8 +757,10 @@ GLuint GL_APIENTRY GL_CreateProgram()
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateCreateProgram(context, angle::EntryPoint::GLCreateProgram));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLCreateProgram) &&
+              ValidateCreateProgram(context, angle::EntryPoint::GLCreateProgram)));
         if (isCallValid)
         {
             returnValue = context->createProgram();
@@ -758,7 +792,8 @@ GLuint GL_APIENTRY GL_CreateShader(GLenum type)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateCreateShader(context, angle::EntryPoint::GLCreateShader, typePacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLCreateShader) &&
+              ValidateCreateShader(context, angle::EntryPoint::GLCreateShader, typePacked)));
         if (isCallValid)
         {
             returnValue = context->createShader(typePacked);
@@ -781,7 +816,7 @@ void GL_APIENTRY GL_CullFace(GLenum mode)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLCullFace, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLESEnum::CullFaceMode, mode));
+          GLenumToString(GLESEnum::TriangleFace, mode));
 
     if (context)
     {
@@ -813,7 +848,9 @@ void GL_APIENTRY GL_DeleteBuffers(GLsizei n, const GLuint *buffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateDeleteBuffers(context, angle::EntryPoint::GLDeleteBuffers, n, buffersPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteBuffers) &&
+              ValidateDeleteBuffers(context, angle::EntryPoint::GLDeleteBuffers, n,
+                                    buffersPacked)));
         if (isCallValid)
         {
             context->deleteBuffers(n, buffersPacked);
@@ -838,8 +875,9 @@ void GL_APIENTRY GL_DeleteFramebuffers(GLsizei n, const GLuint *framebuffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateDeleteFramebuffers(context, angle::EntryPoint::GLDeleteFramebuffers, n,
-                                        framebuffersPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteFramebuffers) &&
+              ValidateDeleteFramebuffers(context, angle::EntryPoint::GLDeleteFramebuffers, n,
+                                         framebuffersPacked)));
         if (isCallValid)
         {
             context->deleteFramebuffers(n, framebuffersPacked);
@@ -863,7 +901,8 @@ void GL_APIENTRY GL_DeleteProgram(GLuint program)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateDeleteProgram(context, angle::EntryPoint::GLDeleteProgram, programPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteProgram) &&
+              ValidateDeleteProgram(context, angle::EntryPoint::GLDeleteProgram, programPacked)));
         if (isCallValid)
         {
             context->deleteProgram(programPacked);
@@ -889,8 +928,10 @@ void GL_APIENTRY GL_DeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateDeleteRenderbuffers(context, angle::EntryPoint::GLDeleteRenderbuffers, n,
-                                         renderbuffersPacked));
+             (ValidatePixelLocalStorageInactive(context,
+                                                angle::EntryPoint::GLDeleteRenderbuffers) &&
+              ValidateDeleteRenderbuffers(context, angle::EntryPoint::GLDeleteRenderbuffers, n,
+                                          renderbuffersPacked)));
         if (isCallValid)
         {
             context->deleteRenderbuffers(n, renderbuffersPacked);
@@ -914,7 +955,8 @@ void GL_APIENTRY GL_DeleteShader(GLuint shader)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateDeleteShader(context, angle::EntryPoint::GLDeleteShader, shaderPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteShader) &&
+              ValidateDeleteShader(context, angle::EntryPoint::GLDeleteShader, shaderPacked)));
         if (isCallValid)
         {
             context->deleteShader(shaderPacked);
@@ -937,9 +979,11 @@ void GL_APIENTRY GL_DeleteTextures(GLsizei n, const GLuint *textures)
     {
         const TextureID *texturesPacked = PackParam<const TextureID *>(textures);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDeleteTextures(context, angle::EntryPoint::GLDeleteTextures, n,
-                                                   texturesPacked));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteTextures) &&
+              ValidateDeleteTextures(context, angle::EntryPoint::GLDeleteTextures, n,
+                                     texturesPacked)));
         if (isCallValid)
         {
             context->deleteTextures(n, texturesPacked);
@@ -1030,9 +1074,11 @@ void GL_APIENTRY GL_DetachShader(GLuint program, GLuint shader)
         ShaderProgramID programPacked = PackParam<ShaderProgramID>(program);
         ShaderProgramID shaderPacked  = PackParam<ShaderProgramID>(shader);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateDetachShader(context, angle::EntryPoint::GLDetachShader,
-                                                 programPacked, shaderPacked));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDetachShader) &&
+              ValidateDetachShader(context, angle::EntryPoint::GLDetachShader, programPacked,
+                                   shaderPacked)));
         if (isCallValid)
         {
             context->detachShader(programPacked, shaderPacked);
@@ -1200,7 +1246,9 @@ void GL_APIENTRY GL_Finish()
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
-            (context->skipValidation() || ValidateFinish(context, angle::EntryPoint::GLFinish));
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLFinish) &&
+              ValidateFinish(context, angle::EntryPoint::GLFinish)));
         if (isCallValid)
         {
             context->finish();
@@ -1222,7 +1270,9 @@ void GL_APIENTRY GL_Flush()
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
-            (context->skipValidation() || ValidateFlush(context, angle::EntryPoint::GLFlush));
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLFlush) &&
+              ValidateFlush(context, angle::EntryPoint::GLFlush)));
         if (isCallValid)
         {
             context->flush();
@@ -1252,9 +1302,11 @@ void GL_APIENTRY GL_FramebufferRenderbuffer(GLenum target,
         RenderbufferID renderbufferPacked = PackParam<RenderbufferID>(renderbuffer);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = (context->skipValidation() ||
-                            ValidateFramebufferRenderbuffer(
-                                context, angle::EntryPoint::GLFramebufferRenderbuffer, target,
-                                attachment, renderbuffertarget, renderbufferPacked));
+                            (ValidatePixelLocalStorageInactive(
+                                 context, angle::EntryPoint::GLFramebufferRenderbuffer) &&
+                             ValidateFramebufferRenderbuffer(
+                                 context, angle::EntryPoint::GLFramebufferRenderbuffer, target,
+                                 attachment, renderbuffertarget, renderbufferPacked)));
         if (isCallValid)
         {
             context->framebufferRenderbuffer(target, attachment, renderbuffertarget,
@@ -1288,9 +1340,11 @@ void GL_APIENTRY GL_FramebufferTexture2D(GLenum target,
         TextureID texturePacked       = PackParam<TextureID>(texture);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = (context->skipValidation() ||
-                            ValidateFramebufferTexture2D(
-                                context, angle::EntryPoint::GLFramebufferTexture2D, target,
-                                attachment, textargetPacked, texturePacked, level));
+                            (ValidatePixelLocalStorageInactive(
+                                 context, angle::EntryPoint::GLFramebufferTexture2D) &&
+                             ValidateFramebufferTexture2D(
+                                 context, angle::EntryPoint::GLFramebufferTexture2D, target,
+                                 attachment, textargetPacked, texturePacked, level)));
         if (isCallValid)
         {
             context->framebufferTexture2D(target, attachment, textargetPacked, texturePacked,
@@ -1340,7 +1394,8 @@ void GL_APIENTRY GL_GenBuffers(GLsizei n, GLuint *buffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateGenBuffers(context, angle::EntryPoint::GLGenBuffers, n, buffersPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenBuffers) &&
+              ValidateGenBuffers(context, angle::EntryPoint::GLGenBuffers, n, buffersPacked)));
         if (isCallValid)
         {
             context->genBuffers(n, buffersPacked);
@@ -1363,9 +1418,11 @@ void GL_APIENTRY GL_GenFramebuffers(GLsizei n, GLuint *framebuffers)
     {
         FramebufferID *framebuffersPacked = PackParam<FramebufferID *>(framebuffers);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGenFramebuffers(context, angle::EntryPoint::GLGenFramebuffers,
-                                                    n, framebuffersPacked));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenFramebuffers) &&
+              ValidateGenFramebuffers(context, angle::EntryPoint::GLGenFramebuffers, n,
+                                      framebuffersPacked)));
         if (isCallValid)
         {
             context->genFramebuffers(n, framebuffersPacked);
@@ -1388,9 +1445,11 @@ void GL_APIENTRY GL_GenRenderbuffers(GLsizei n, GLuint *renderbuffers)
     {
         RenderbufferID *renderbuffersPacked = PackParam<RenderbufferID *>(renderbuffers);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateGenRenderbuffers(context, angle::EntryPoint::GLGenRenderbuffers,
-                                                     n, renderbuffersPacked));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenRenderbuffers) &&
+              ValidateGenRenderbuffers(context, angle::EntryPoint::GLGenRenderbuffers, n,
+                                       renderbuffersPacked)));
         if (isCallValid)
         {
             context->genRenderbuffers(n, renderbuffersPacked);
@@ -1415,7 +1474,8 @@ void GL_APIENTRY GL_GenTextures(GLsizei n, GLuint *textures)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateGenTextures(context, angle::EntryPoint::GLGenTextures, n, texturesPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenTextures) &&
+              ValidateGenTextures(context, angle::EntryPoint::GLGenTextures, n, texturesPacked)));
         if (isCallValid)
         {
             context->genTextures(n, texturesPacked);
@@ -1440,7 +1500,8 @@ void GL_APIENTRY GL_GenerateMipmap(GLenum target)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateGenerateMipmap(context, angle::EntryPoint::GLGenerateMipmap, targetPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenerateMipmap) &&
+              ValidateGenerateMipmap(context, angle::EntryPoint::GLGenerateMipmap, targetPacked)));
         if (isCallValid)
         {
             context->generateMipmap(targetPacked);
@@ -2212,8 +2273,10 @@ void GL_APIENTRY GL_Hint(GLenum target, GLenum mode)
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateHint(context, angle::EntryPoint::GLHint, target, mode));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLHint) &&
+              ValidateHint(context, angle::EntryPoint::GLHint, target, mode)));
         if (isCallValid)
         {
             context->hint(target, mode);
@@ -2448,8 +2511,10 @@ void GL_APIENTRY GL_LineWidth(GLfloat width)
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateLineWidth(context, angle::EntryPoint::GLLineWidth, width));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLLineWidth) &&
+              ValidateLineWidth(context, angle::EntryPoint::GLLineWidth, width)));
         if (isCallValid)
         {
             context->lineWidth(width);
@@ -2473,7 +2538,8 @@ void GL_APIENTRY GL_LinkProgram(GLuint program)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateLinkProgram(context, angle::EntryPoint::GLLinkProgram, programPacked));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLLinkProgram) &&
+              ValidateLinkProgram(context, angle::EntryPoint::GLLinkProgram, programPacked)));
         if (isCallValid)
         {
             context->linkProgram(programPacked);
@@ -2497,7 +2563,8 @@ void GL_APIENTRY GL_PixelStorei(GLenum pname, GLint param)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidatePixelStorei(context, angle::EntryPoint::GLPixelStorei, pname, param));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPixelStorei) &&
+              ValidatePixelStorei(context, angle::EntryPoint::GLPixelStorei, pname, param)));
         if (isCallValid)
         {
             context->pixelStorei(pname, param);
@@ -2521,7 +2588,8 @@ void GL_APIENTRY GL_PolygonOffset(GLfloat factor, GLfloat units)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidatePolygonOffset(context, angle::EntryPoint::GLPolygonOffset, factor, units));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPolygonOffset) &&
+              ValidatePolygonOffset(context, angle::EntryPoint::GLPolygonOffset, factor, units)));
         if (isCallValid)
         {
             context->polygonOffset(factor, units);
@@ -2552,9 +2620,11 @@ void GL_APIENTRY GL_ReadPixels(GLint x,
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateReadPixels(context, angle::EntryPoint::GLReadPixels, x, y,
-                                               width, height, format, type, pixels));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLReadPixels) &&
+              ValidateReadPixels(context, angle::EntryPoint::GLReadPixels, x, y, width, height,
+                                 format, type, pixels)));
         if (isCallValid)
         {
             context->readPixels(x, y, width, height, format, type, pixels);
@@ -2578,7 +2648,9 @@ void GL_APIENTRY GL_ReleaseShaderCompiler()
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateReleaseShaderCompiler(context, angle::EntryPoint::GLReleaseShaderCompiler));
+             (ValidatePixelLocalStorageInactive(context,
+                                                angle::EntryPoint::GLReleaseShaderCompiler) &&
+              ValidateReleaseShaderCompiler(context, angle::EntryPoint::GLReleaseShaderCompiler)));
         if (isCallValid)
         {
             context->releaseShaderCompiler();
@@ -2607,8 +2679,10 @@ void GL_APIENTRY GL_RenderbufferStorage(GLenum target,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateRenderbufferStorage(context, angle::EntryPoint::GLRenderbufferStorage, target,
-                                         internalformat, width, height));
+             (ValidatePixelLocalStorageInactive(context,
+                                                angle::EntryPoint::GLRenderbufferStorage) &&
+              ValidateRenderbufferStorage(context, angle::EntryPoint::GLRenderbufferStorage, target,
+                                          internalformat, width, height)));
         if (isCallValid)
         {
             context->renderbufferStorage(target, internalformat, width, height);
@@ -2633,7 +2707,8 @@ void GL_APIENTRY GL_SampleCoverage(GLfloat value, GLboolean invert)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateSampleCoverage(context, angle::EntryPoint::GLSampleCoverage, value, invert));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLSampleCoverage) &&
+              ValidateSampleCoverage(context, angle::EntryPoint::GLSampleCoverage, value, invert)));
         if (isCallValid)
         {
             context->sampleCoverage(value, invert);
@@ -2687,9 +2762,11 @@ void GL_APIENTRY GL_ShaderBinary(GLsizei count,
     {
         const ShaderProgramID *shadersPacked = PackParam<const ShaderProgramID *>(shaders);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateShaderBinary(context, angle::EntryPoint::GLShaderBinary, count,
-                                                 shadersPacked, binaryFormat, binary, length));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLShaderBinary) &&
+              ValidateShaderBinary(context, angle::EntryPoint::GLShaderBinary, count, shadersPacked,
+                                   binaryFormat, binary, length)));
         if (isCallValid)
         {
             context->shaderBinary(count, shadersPacked, binaryFormat, binary, length);
@@ -2718,9 +2795,11 @@ void GL_APIENTRY GL_ShaderSource(GLuint shader,
     {
         ShaderProgramID shaderPacked = PackParam<ShaderProgramID>(shader);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateShaderSource(context, angle::EntryPoint::GLShaderSource,
-                                                 shaderPacked, count, string, length));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLShaderSource) &&
+              ValidateShaderSource(context, angle::EntryPoint::GLShaderSource, shaderPacked, count,
+                                   string, length)));
         if (isCallValid)
         {
             context->shaderSource(shaderPacked, count, string, length);
@@ -2761,7 +2840,7 @@ void GL_APIENTRY GL_StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLu
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLStencilFuncSeparate, "context = %d, face = %s, func = %s, ref = %d, mask = %u",
-          CID(context), GLenumToString(GLESEnum::StencilFaceDirection, face),
+          CID(context), GLenumToString(GLESEnum::TriangleFace, face),
           GLenumToString(GLESEnum::StencilFunction, func), ref, mask);
 
     if (context)
@@ -2809,7 +2888,7 @@ void GL_APIENTRY GL_StencilMaskSeparate(GLenum face, GLuint mask)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLStencilMaskSeparate, "context = %d, face = %s, mask = %u", CID(context),
-          GLenumToString(GLESEnum::StencilFaceDirection, face), mask);
+          GLenumToString(GLESEnum::TriangleFace, face), mask);
 
     if (context)
     {
@@ -2859,9 +2938,8 @@ void GL_APIENTRY GL_StencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, 
     Context *context = GetValidGlobalContext();
     EVENT(context, GLStencilOpSeparate,
           "context = %d, face = %s, sfail = %s, dpfail = %s, dppass = %s", CID(context),
-          GLenumToString(GLESEnum::StencilFaceDirection, face),
-          GLenumToString(GLESEnum::StencilOp, sfail), GLenumToString(GLESEnum::StencilOp, dpfail),
-          GLenumToString(GLESEnum::StencilOp, dppass));
+          GLenumToString(GLESEnum::TriangleFace, face), GLenumToString(GLESEnum::StencilOp, sfail),
+          GLenumToString(GLESEnum::StencilOp, dpfail), GLenumToString(GLESEnum::StencilOp, dppass));
 
     if (context)
     {
@@ -2906,8 +2984,9 @@ void GL_APIENTRY GL_TexImage2D(GLenum target,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateTexImage2D(context, angle::EntryPoint::GLTexImage2D, targetPacked, level,
-                                internalformat, width, height, border, format, type, pixels));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLTexImage2D) &&
+              ValidateTexImage2D(context, angle::EntryPoint::GLTexImage2D, targetPacked, level,
+                                 internalformat, width, height, border, format, type, pixels)));
         if (isCallValid)
         {
             context->texImage2D(targetPacked, level, internalformat, width, height, border, format,
@@ -3052,8 +3131,9 @@ void GL_APIENTRY GL_TexSubImage2D(GLenum target,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateTexSubImage2D(context, angle::EntryPoint::GLTexSubImage2D, targetPacked, level,
-                                   xoffset, yoffset, width, height, format, type, pixels));
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLTexSubImage2D) &&
+              ValidateTexSubImage2D(context, angle::EntryPoint::GLTexSubImage2D, targetPacked,
+                                    level, xoffset, yoffset, width, height, format, type, pixels)));
         if (isCallValid)
         {
             context->texSubImage2D(targetPacked, level, xoffset, yoffset, width, height, format,

@@ -283,12 +283,12 @@ bool ElementRuleCollector::matchesAnyAuthorRules()
 void ElementRuleCollector::matchShadowPseudoElementRules(CascadeLevel level)
 {
     ASSERT(element().isInShadowTree());
-    auto& shadowRoot = *element().containingShadowRoot();
-    if (shadowRoot.mode() != ShadowRootMode::UserAgent)
+    auto* shadowRoot = element().containingShadowRoot();
+    if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent)
         return;
 
     // Look up shadow pseudo elements also from the host scope style as they are web-exposed.
-    auto* hostRules = Scope::forNode(*shadowRoot.host()).resolver().ruleSets().styleForCascadeLevel(level);
+    auto* hostRules = Scope::forNode(*shadowRoot->host()).resolver().ruleSets().styleForCascadeLevel(level);
     if (!hostRules)
         return;
 
@@ -337,6 +337,8 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(CascadeLevel level)
 void ElementRuleCollector::matchPartPseudoElementRules(CascadeLevel level)
 {
     ASSERT(element().isInShadowTree());
+    if (!element().containingShadowRoot())
+        return;
 
     bool isUAShadowPseudoElement = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !element().shadowPseudoId().isNull();
 

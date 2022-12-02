@@ -2,7 +2,8 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document toDOMRange:range from 17 of #text > DIV > DIV > BODY > HTML > #document to 17 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 17 of #text > DIV > DIV > BODY > HTML > #document to 17 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -17,9 +18,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,56) size 784x40
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (0,0) size 102x19
-            text run at (0,0) width 30: "First"
-            text run at (29,0) width 5: " "
-            text run at (33,0) width 69: "paragraph."
+            text run at (0,0) width 102: "First paragraph."
         RenderBlock {DIV} at (0,20) size 784x20
           RenderText {#text} at (0,0) size 120x19
             text run at (0,0) width 120: "Second paragraph."

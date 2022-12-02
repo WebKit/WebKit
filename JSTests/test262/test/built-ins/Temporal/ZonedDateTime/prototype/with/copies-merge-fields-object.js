@@ -40,16 +40,16 @@ const expected = [
   "get nanosecond",
   "get nanosecond.valueOf",
   "call nanosecond.valueOf",
-  "get second",
-  "get second.valueOf",
-  "call second.valueOf",
-  "get year",
-  "get year.valueOf",
-  "call year.valueOf",
   "get offset",
   "get offset.toString",
   "call offset.toString",
+  "get second",
+  "get second.valueOf",
+  "call second.valueOf",
   "get timeZone",
+  "get year",
+  "get year.valueOf",
+  "call year.valueOf",
 ];
 
 const calendar = TemporalHelpers.calendarMergeFieldsGetters();

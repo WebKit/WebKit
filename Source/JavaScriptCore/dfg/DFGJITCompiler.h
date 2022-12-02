@@ -463,8 +463,6 @@ private:
     Vector<DFG::OSREntryData> m_osrEntry;
     Vector<DFG::OSRExit> m_osrExit;
     Vector<DFG::SpeculationRecovery> m_speculationRecovery;
-    Vector<LinkerIR::Value> m_constantPool;
-    HashMap<LinkerIR::Value, LinkerIR::Constant, LinkerIR::ValueHash, LinkerIR::ValueTraits> m_constantPoolMap;
     SegmentedVector<DFG::UnlinkedStructureStubInfo> m_unlinkedStubInfos;
     SegmentedVector<DFG::UnlinkedCallLinkInfo> m_unlinkedCallLinkInfos;
     

@@ -1,0 +1,67 @@
+http://127.0.0.1:8000/security/resources/subresource1/protected-image.py - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
+CONSOLE MESSAGE: Blocked http://localhost:8000/security/resources/subresource1/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource1/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource1/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked http://localhost:8000/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+http://127.0.0.1:8000/security/resources/subresource2/protected-image.py - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked http://localhost:8000/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.py from asking for credentials because it is a cross-origin request.
+Tests whether credentials are requested for protected subresources. Credentials should be requested if and only if the origin of the subresource matches the origin of the top-most frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Images loaded from top-level frame:
+PASS did load image with origin http://127.0.0.1:8000.
+
+PASS did not load image with origin http://localhost:8000.
+
+PASS did not load image with origin https://localhost:8443.
+
+Images loaded from cross-origin iframe:
+PASS did not load image with origin http://localhost:8000.
+
+PASS did load image with origin http://127.0.0.1:8000.
+
+PASS did not load image with origin https://127.0.0.1:8443.
+
+PASS did not load image with origin https://localhost:8443.
+
+Images loaded from sandboxed same-origin iframe:
+PASS did load image with origin http://127.0.0.1:8000.
+
+PASS did load image with origin http://127.0.0.1:8000.
+
+PASS did not load image with origin https://127.0.0.1:8443.
+
+PASS did not load image with origin https://localhost:8443.
+
+Images loaded from sandboxed cross-origin iframe:
+PASS did not load image with origin http://localhost:8000.
+
+PASS did load image with origin http://127.0.0.1:8000.
+
+PASS did not load image with origin https://127.0.0.1:8443.
+
+PASS did not load image with origin https://localhost:8443.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -114,12 +114,13 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << pageHasResourceLoadClient;
     encoder << parentFrameID;
     encoder << crossOriginAccessControlCheckEnabled;
-    encoder << networkConnectionIntegrityEnabled;
+    encoder << networkConnectionIntegrityPolicy;
     encoder << allowPrivacyProxy;
 
     encoder << documentURL;
 
     encoder << isCrossOriginOpenerPolicyEnabled;
+    encoder << isClearSiteDataHeaderEnabled;
     encoder << isDisplayingInitialEmptyDocument;
     encoder << effectiveSandboxFlags;
     encoder << openerURL;
@@ -313,11 +314,11 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
         return std::nullopt;
     result.crossOriginAccessControlCheckEnabled = *crossOriginAccessControlCheckEnabled;
 
-    std::optional<bool> networkConnectionIntegrityEnabled;
-    decoder >> networkConnectionIntegrityEnabled;
-    if (!networkConnectionIntegrityEnabled)
+    std::optional<OptionSet<NetworkConnectionIntegrity>> networkConnectionIntegrityPolicy;
+    decoder >> networkConnectionIntegrityPolicy;
+    if (!networkConnectionIntegrityPolicy)
         return std::nullopt;
-    result.networkConnectionIntegrityEnabled = *networkConnectionIntegrityEnabled;
+    result.networkConnectionIntegrityPolicy = *networkConnectionIntegrityPolicy;
 
     std::optional<bool> allowPrivacyProxy;
     decoder >> allowPrivacyProxy;
@@ -336,6 +337,12 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
     if (!isCrossOriginOpenerPolicyEnabled)
         return std::nullopt;
     result.isCrossOriginOpenerPolicyEnabled = *isCrossOriginOpenerPolicyEnabled;
+
+    std::optional<bool> isClearSiteDataHeaderEnabled;
+    decoder >> isClearSiteDataHeaderEnabled;
+    if (!isClearSiteDataHeaderEnabled)
+        return std::nullopt;
+    result.isClearSiteDataHeaderEnabled = *isClearSiteDataHeaderEnabled;
 
     std::optional<bool> isDisplayingInitialEmptyDocument;
     decoder >> isDisplayingInitialEmptyDocument;

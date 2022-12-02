@@ -39,6 +39,8 @@ public:
     static ExceptionOr<Ref<CSSMathProduct>> create(Vector<Ref<CSSNumericValue>>);
     const CSSNumericArray& values() const { return m_values.get(); }
 
+    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Product; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathProduct; }

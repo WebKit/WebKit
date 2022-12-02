@@ -40,7 +40,7 @@ std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacki
     if (!view)
         return std::nullopt;
 
-    WebGPUIdentifier resolveTarget;
+    std::optional<WebGPUIdentifier> resolveTarget;
     if (renderPassColorAttachment.resolveTarget) {
         resolveTarget = convertToBacking(*renderPassColorAttachment.resolveTarget);
         if (!resolveTarget)
@@ -65,7 +65,7 @@ std::optional<PAL::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext:
 
     PAL::WebGPU::TextureView* resolveTarget = nullptr;
     if (renderPassColorAttachment.resolveTarget) {
-        resolveTarget = convertTextureViewFromBacking(renderPassColorAttachment.resolveTarget);
+        resolveTarget = convertTextureViewFromBacking(renderPassColorAttachment.resolveTarget.value());
         if (!resolveTarget)
             return std::nullopt;
     }

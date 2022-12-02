@@ -1,3 +1,7 @@
 
+
+Harness Error (FAIL), message = Test named 'Test subframes receive orientation change events' specified 1 'cleanup' function, and 1 failed.
+
 FAIL Test subframes receive orientation change events promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+NOTRUN Check directly that events are fired in right order (from top to bottom)
 

@@ -250,6 +250,10 @@ fast/history/page-cache-media-source-opened.html [ Skip ]
 fast/history/page-cache-removed-source-buffer.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/basic/mediasource.window.html [ Skip ]
 
+# fetch ORB image tests which fail
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-mislabeled-as-html.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-unlabeled.sub.html [ ImageOnlyFailure ]
+
 # Quota API is not supported on iOS
 storage/domstorage/quota.html
 storage/storageinfo-missing-arguments.html
@@ -367,6 +371,7 @@ webkit.org/b/165799 svg/animations/animations-paused-page-non-visible.html [ Ski
 webkit.org/b/165799 svg/animations/animations-paused-in-background-page-iframe.html [ Skip ]
 webkit.org/b/165799 svg/animations/animations-paused-in-background-page.html [ Skip ]
 webkit.org/b/165799 webaudio/silent-audio-interrupted-in-background.html [ Skip ]
+webkit.org/b/165799 imported/w3c/web-platform-tests/screen-orientation/hidden_document.html
 
 # AutoFill button is not supported
 fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
@@ -430,6 +435,7 @@ editing/selection/undo-crash.html [ Skip ]
 editing/selection/user-select-all-image-with-single-click.html [ Skip ]
 editing/selection/user-select-all-selection.html [ Skip ]
 editing/selection/user-select-all-with-shift.html [ Skip ]
+editing/selection/user-select-all-with-shift-live-range.html [ Skip ]
 editing/selection/user-select-all-with-single-click.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-13.html [ Skip ]
 editing/selection/selecting-content-by-overshooting-the-flex-container.html [ Skip ]
@@ -2607,6 +2613,11 @@ fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
 # rendering to floating point FBOs not supported on iOS
 fast/canvas/webgl/readPixels-float.html [ Skip ]
 
+# No colorspaces in iOS WebGL yet.
+webkit.org/b/247166 fast/canvas/webgl/colorspaces-test.html [ Failure ]
+webkit.org/b/247166 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
+webkit.org/b/247166 fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnlyFailure ]
+
 # Skipped on iOS since UIHelper.activateAt() doesn't produce a user gesture that ITP captures on iOS
 webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
@@ -3196,8 +3207,6 @@ webkit.org/b/212218 webrtc/datachannel/gather-candidates-networkprocess-crash.ht
 webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-008.html [ ImageOnlyFailure ]
 webkit.org/b/212227 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-002.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html [ ImageOnlyFailure ]
-
 fast/text/text-styles/-apple-system [ Pass ]
 
 webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Timeout Failure ]
@@ -3444,8 +3453,6 @@ webkit.org/b/238211 fast/text/text-shadow-ink-overflow-missing.html [ Pass Image
 
 webkit.org/b/237812 editing/spelling/spellcheck-api-crash.html [ Pass Crash ]
 
-webkit.org/b/238469 imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html [ Skip ]
-
 webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure ]
 
 # rdar://82190832 ([ iOS15 ] editing/caret/ios/caret-in-overflow-area.html is failing)
@@ -3609,8 +3616,6 @@ webkit.org/b/239568 imported/w3c/web-platform-tests/content-security-policy/inhe
 
 webkit.org/b/240148 fast/images/exif-orientation-background-image-repeat.html [ Pass Failure ImageOnlyFailure ]
 
-webkit.org/b/240167 [ Release ] fast/css-custom-paint/animate-repaint.html [ Pass Failure ]
-
 webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Slow ]
 
 # webkit.org/b/243556 [ iOS ] 2* imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip* tests are constant Image failures
@@ -3677,6 +3682,10 @@ webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ P
 # Requires platform support (see rdar://94324932).
 http/tests/media/media-source/mediasource-rvfc.html [ Pass Failure ]
 
+# Crashing in a system framework rdar://102159271
+fast/forms/ios/file-upload-panel-capture.html [ Skip ]
+fast/forms/ios/file-upload-panel.html [ Skip ]
+
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
 webkit.org/b/242840 fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]
@@ -3707,10 +3716,10 @@ webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
 
-webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/target-text-008.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/243961 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-z-order-008.html [ Pass ImageOnlyFailure ]
+webkit.org/b/248100 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg [ DumpJSConsoleLogInStdErr ]
+
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 
 # These tests have similar image failures, rounded edges issues. See webkit.org/b/244046
@@ -3733,6 +3742,23 @@ imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disal
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html [ ImageOnlyFailure ]
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html [ ImageOnlyFailure ]
 
+# Color inputs on iOS are a circle, so they render the same regardless of the writing mode, so the failures here are expected.
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-vertical.optional.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-vertical.optional.html [ ImageOnlyFailure ]
+
+# <select> are always menulists on iOS, regardless of multiple/size attributes, these tests assume the listbox appearance that desktop platforms have.
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-scrolling.optional.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrolling-and-sizing.optional.html [ Failure ]
+
+# To investigate: might need to relax the tests, or adapt native thumb appearance.
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-ltr-painting.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-rtl-painting.html [ ImageOnlyFailure ]
+
+webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/htb-ltr-ltr.html [ ImageOnlyFailure ]
+webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vlr-ltr-ltr.html [ ImageOnlyFailure ]
+
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure Slow ]
 webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure Slow ]
 
@@ -3744,13 +3770,26 @@ webkit.org/b/244358 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/244501 [ Debug ] webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Pass Timeout ]
 
-webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/blob-url-workers.window.html [ Pass Failure ]
-
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
+
+webkit.org/b/248062 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
+
+webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOnlyFailure ]
 
 # These tests have similar harness errors and timeouts. See webkit.org/b/244900
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
+
+# AVIF tests
+webkit.org/b/247831 fast/images/avif-image-decoding.html [ Failure ]
+webkit.org/b/247831 fast/images/avif-as-image.html [ ImageOnlyFailure ]
+webkit.org/b/247831 fast/images/animated-avif.html [ Timeout ]
+
+# Screen Orientation API doesn't support nested frames yet
+imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]

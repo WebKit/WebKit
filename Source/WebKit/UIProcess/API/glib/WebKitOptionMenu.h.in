@@ -23,6 +23,9 @@
 #define WebKitOptionMenu_h
 
 #include <glib-object.h>
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitOptionMenuItem.h>
 
@@ -76,6 +79,11 @@ webkit_option_menu_activate_item  (WebKitOptionMenu *menu,
 
 WEBKIT_API void
 webkit_option_menu_close          (WebKitOptionMenu *menu);
+
+#if PLATFORM(GTK)
+WEBKIT_API GdkEvent *
+webkit_option_menu_get_event      (WebKitOptionMenu* menu);
+#endif
 
 G_END_DECLS
 

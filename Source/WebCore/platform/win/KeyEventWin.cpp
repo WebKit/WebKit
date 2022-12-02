@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <windows.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 
 #ifndef MAPVK_VSC_TO_VK_EX
 #define MAPVK_VSC_TO_VK_EX 3
@@ -247,17 +248,21 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type, bool)
     ASSERT_NOT_REACHED();
 }
 
-bool PlatformKeyboardEvent::currentCapsLockState()
+OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
-     return GetKeyState(VK_CAPITAL) & 1;
-}
+    OptionSet<PlatformEvent::Modifier> modifiers;
 
-void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
-{
-    shiftKey = GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT;
-    ctrlKey = GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT;
-    altKey = GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT;
-    metaKey = false;
+    if (GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
+        modifiers.add(PlatformEvent::Modifier::ShiftKey);
+    if (GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
+        modifiers.add(PlatformEvent::Modifier::ControlKey);
+    if (GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
+        modifiers.add(PlatformEvent::Modifier::AltKey);
+    // No meta key.
+    if (GetKeyState(VK_CAPITAL) & 1)
+        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
+
+    return modifiers;
 }
 
 }

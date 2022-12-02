@@ -1,0 +1,17 @@
+
+PASS local to local: no preflight required.
+PASS local to private: no preflight required.
+PASS local to public: no preflight required.
+PASS private to local: failure.
+PASS private to private: no preflight required.
+PASS private to public: no preflight required.
+PASS public to local: failure.
+PASS public to private: failure.
+PASS public to public: no preflight required.
+FAIL treat-as-public-address to local: failure. assert_equals: response loaded expected false but got true
+PASS treat-as-public-address to private: failure.
+PASS treat-as-public-address to public: no preflight required.
+PASS private https to local: failure.
+PASS public https to local: failure.
+PASS public https to private: failure.
+

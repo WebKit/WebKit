@@ -29,27 +29,27 @@
 
 namespace WebCore {
 
-class CSSOKLCH : public CSSColorValue {
+class CSSOKLCH final : public CSSColorValue {
     WTF_MAKE_ISO_ALLOCATED(CSSOKLCH);
 public:
-    template<typename... Args> static Ref<CSSOKLCH> create(Args&&... args) { return adoptRef(*new CSSOKLCH(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSOKLCH>> create(CSSColorPercent&& lightness, CSSColorPercent&& chroma, CSSColorAngle&& hue, CSSColorPercent&& alpha);
 
-    const CSSColorPercent& l() const { return m_lightness; }
-    void setL(CSSColorPercent lightness) { m_lightness = WTFMove(lightness); }
-    const CSSColorPercent& c() const { return m_chroma; }
-    void setC(CSSColorPercent chroma) { m_chroma = WTFMove(chroma); }
-    const CSSColorAngle& h() const { return m_hue; }
-    void setH(CSSColorAngle hue) { m_hue = WTFMove(hue); }
-    const CSSColorPercent& alpha() const { return m_alpha; }
-    void setAlpha(CSSColorPercent alpha) { m_alpha = WTFMove(alpha); }
+    CSSColorPercent l() const;
+    ExceptionOr<void> setL(CSSColorPercent&&);
+    CSSColorPercent c() const;
+    ExceptionOr<void> setC(CSSColorPercent&&);
+    CSSColorAngle h() const;
+    ExceptionOr<void> setH(CSSColorAngle&&);
+    CSSColorPercent alpha() const;
+    ExceptionOr<void> setAlpha(CSSColorPercent&&);
 
 private:
-    CSSOKLCH(CSSColorPercent l, CSSColorPercent c, CSSColorAngle h, CSSColorPercent alpha);
+    CSSOKLCH(RectifiedCSSColorPercent&& lightness, RectifiedCSSColorPercent&& chroma, RectifiedCSSColorAngle&& hue, RectifiedCSSColorPercent&& alpha);
 
-    CSSColorPercent m_lightness;
-    CSSColorPercent m_chroma;
-    CSSColorAngle m_hue;
-    CSSColorPercent m_alpha;
+    RectifiedCSSColorPercent m_lightness;
+    RectifiedCSSColorPercent m_chroma;
+    RectifiedCSSColorAngle m_hue;
+    RectifiedCSSColorPercent m_alpha;
 };
     
 } // namespace WebCore

@@ -118,9 +118,15 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
     if (style().visibility() != Visibility::Visible)
         return;
     
-    if (paintInfo.context().paintingDisabled())
-        return;
+    if (!paintInfo.context().paintingDisabled())
+        paintControl(paintInfo, paintOffset);
 
+    // Paint the children.
+    RenderBlockFlow::paintObject(paintInfo, paintOffset);
+}
+
+void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
     // Push a clip.
     GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
     if (paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::ChildBlockBackgrounds) {
@@ -191,15 +197,17 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
 #endif
         }
     }
-
-    // Paint the children.
-    RenderBlockFlow::paintObject(paintInfo, paintOffset);
 }
 
 void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (shouldApplySizeContainment())
+    if (shouldApplySizeContainment()) {
+        if (auto width = explicitIntrinsicInnerLogicalWidth()) {
+            minLogicalWidth = width.value();
+            maxLogicalWidth = width.value();
+        }
         return;
+    }
     // Figure out how big the filename space needs to be for a given number of characters
     // (using "0" as the nominal character).
     const UChar character = '0';

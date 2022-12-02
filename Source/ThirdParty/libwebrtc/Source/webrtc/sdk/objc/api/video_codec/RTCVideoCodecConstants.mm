@@ -15,3 +15,4 @@
 
 NSString *const kRTCVideoCodecVp8Name = @"VP8";
 NSString *const kRTCVideoCodecVp9Name = @"VP9";
+NSString* const kRTCVideoCodecAv1Name = @"AV1";

@@ -190,7 +190,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
         int statusCode = msg ? CFHTTPMessageGetResponseStatusCode(msg) : 0;
 
         if (statusCode != 304) {
-            bool isMainResourceLoad = m_handle->firstRequest().requester() == ResourceRequest::Requester::Main;
+            bool isMainResourceLoad = m_handle->firstRequest().requester() == ResourceRequestRequester::Main;
         }
 
         if (_CFURLRequestCopyProtocolPropertyForKey(m_handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))

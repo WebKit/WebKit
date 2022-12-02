@@ -1,0 +1,40 @@
+
+PASS sec-fetch-site - Same origin - GET
+PASS sec-fetch-site - Same origin - POST
+PASS sec-fetch-site - Cross-site - GET
+PASS sec-fetch-site - Cross-site - POST
+PASS sec-fetch-site - Same site - GET
+PASS sec-fetch-site - Same site - POST
+PASS sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - GET
+PASS sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - POST
+PASS sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - GET
+PASS sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - POST
+PASS sec-fetch-site - Cross-Site -> Same Origin - GET
+PASS sec-fetch-site - Cross-Site -> Same Origin - POST
+PASS sec-fetch-site - Cross-Site -> Same-Site - GET
+PASS sec-fetch-site - Cross-Site -> Same-Site - POST
+PASS sec-fetch-site - Cross-Site -> Cross-Site - GET
+PASS sec-fetch-site - Cross-Site -> Cross-Site - POST
+PASS sec-fetch-site - Same-Origin -> Same Origin - GET
+PASS sec-fetch-site - Same-Origin -> Same Origin - POST
+PASS sec-fetch-site - Same-Origin -> Same-Site - GET
+PASS sec-fetch-site - Same-Origin -> Same-Site - POST
+PASS sec-fetch-site - Same-Origin -> Cross-Site - GET
+PASS sec-fetch-site - Same-Origin -> Cross-Site - POST
+PASS sec-fetch-site - Same-Site -> Same Origin - GET
+PASS sec-fetch-site - Same-Site -> Same Origin - POST
+PASS sec-fetch-site - Same-Site -> Same-Site - GET
+PASS sec-fetch-site - Same-Site -> Same-Site - POST
+PASS sec-fetch-site - Same-Site -> Cross-Site - GET
+PASS sec-fetch-site - Same-Site -> Cross-Site - POST
+FAIL sec-fetch-site - HTTPS downgrade-upgrade - GET assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - HTTPS downgrade-upgrade - POST assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+PASS sec-fetch-mode - GET
+PASS sec-fetch-mode - POST
+PASS sec-fetch-dest - GET
+PASS sec-fetch-dest - POST
+PASS sec-fetch-user - GET
+FAIL sec-fetch-user - GET with user activation assert_own_property: expected property "sec-fetch-user" missing
+PASS sec-fetch-user - POST
+FAIL sec-fetch-user - POST with user activation assert_own_property: expected property "sec-fetch-user" missing
+

@@ -549,17 +549,19 @@ endif ()
 GENERATE_API_HEADERS(WebKitGTK_HEADER_TEMPLATES
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit
     WebKitGTK_INSTALLED_HEADERS
-    "-DPLATFORM(GTK)=1"
-    "-DPLATFORM(WPE)=0"
-    "-DUSE(GTK4)=$<BOOL:${USE_GTK4}>"
+    "-DWTF_PLATFORM_GTK=1"
+    "-DWTF_PLATFORM_WPE=0"
+    "-DUSE_GTK4=$<BOOL:${USE_GTK4}>"
+    "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
 GENERATE_API_HEADERS(WebKitWebExtension_HEADER_TEMPLATES
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit
     WebKitWebExtension_INSTALLED_HEADERS
-    "-DPLATFORM(GTK)=1"
-    "-DPLATFORM(WPE)=0"
-    "-DUSE(GTK4)=$<BOOL:${USE_GTK4}>"
+    "-DWTF_PLATFORM_GTK=1"
+    "-DWTF_PLATFORM_WPE=0"
+    "-DUSE_GTK4=$<BOOL:${USE_GTK4}>"
+    "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
 if (USE_GTK4)
@@ -743,6 +745,21 @@ list(APPEND WebKit_DEPENDENCIES
      WebKit-forwarding-headers
 )
 
+set(WEBKITGTK_SOURCES_FOR_INTROSPECTION
+    UIProcess/API/gtk/WebKitColorChooserRequest.cpp
+    UIProcess/API/gtk/WebKitInputMethodContextGtk.cpp
+    UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
+    UIProcess/API/gtk/WebKitPrintOperation.cpp
+    UIProcess/API/gtk/WebKitWebInspector.cpp
+    UIProcess/API/gtk/WebKitWebViewGtk.cpp
+)
+
+if (USE_GTK4)
+    list(APPEND WEBKITGTK_SOURCES_FOR_INTROSPECTION UIProcess/API/gtk/WebKitWebViewGtk4.cpp)
+else ()
+    list(APPEND WEBKITGTK_SOURCES_FOR_INTROSPECTION UIProcess/API/gtk/WebKitWebViewGtk3.cpp)
+endif ()
+
 GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX} ${WEBKITGTK_API_VERSION} webkit${WEBKITGTK_API_INFIX}/webkit${WEBKITGTK_API_INFIX}.h
     TARGET WebKit
     PACKAGE webkit${WEBKITGTK_API_INFIX}gtk
@@ -754,9 +771,9 @@ GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX} ${WEBKITGTK_API_VERSION} webkit${WEBK
         Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
     SOURCES
         ${WebKitGTK_INSTALLED_HEADERS}
+        ${WEBKITGTK_SOURCES_FOR_INTROSPECTION}
         Shared/API/glib
         UIProcess/API/glib
-        UIProcess/API/gtk
     NO_IMPLICIT_SOURCES
 )
 GI_DOCGEN(WebKit${WEBKITGTK_API_INFIX} gtk/webkitgtk.toml.in

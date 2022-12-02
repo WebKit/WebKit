@@ -100,6 +100,27 @@ bool IsSystemEGLConfigSupported(const PlatformParameters &param, OSWindow *osWin
 #endif
 }
 
+bool IsZinkEGLConfigSupported(const PlatformParameters &param, OSWindow *osWindow)
+{
+    std::unique_ptr<angle::Library> eglLibrary;
+
+#if defined(ANGLE_USE_UTIL_LOADER)
+    eglLibrary.reset(
+        angle::OpenSharedLibrary(ANGLE_MESA_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
+#endif
+
+    EGLWindow *eglWindow =
+        EGLWindow::New(param.clientType, param.majorVersion, param.minorVersion, param.profileMask);
+    ConfigParameters configParams;
+    bool result =
+        eglWindow->initializeGL(osWindow, eglLibrary.get(), angle::GLESDriverType::ZinkEGL,
+                                param.eglParameters, configParams);
+    eglWindow->destroyGL();
+    EGLWindow::Delete(&eglWindow);
+
+    return result;
+}
+
 bool IsAndroidDevice(const std::string &deviceName)
 {
     if (!IsAndroid())
@@ -412,6 +433,15 @@ bool Is64Bit()
 #endif  // defined(ANGLE_IS_64_BIT_CPU)
 }
 
+bool HasMesa()
+{
+#if defined(ANGLE_HAS_MESA)
+    return true;
+#else
+    return false;
+#endif  // defined(ANGLE_HAS_MESA)
+}
+
 bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters &param)
 {
     VendorID vendorID =
@@ -567,6 +597,8 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
                 return param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
             case GLESDriverType::SystemWGL:
                 return false;
+            case GLESDriverType::ZinkEGL:
+                return HasMesa();
             default:
                 break;
         }
@@ -648,6 +680,9 @@ bool IsConfigSupported(const PlatformParameters &param)
                 break;
             case GLESDriverType::SystemWGL:
                 result = IsSystemWGLConfigSupported(param, osWindow);
+                break;
+            case GLESDriverType::ZinkEGL:
+                result = IsZinkEGLConfigSupported(param, osWindow);
                 break;
         }
 
@@ -797,5 +832,38 @@ void SetSelectedConfig(const char *selectedConfig)
 {
     gSelectedConfig.fill(0);
     strncpy(gSelectedConfig.data(), selectedConfig, kMaxConfigNameLen - 1);
+}
+
+GLESDriverType GetDriverTypeFromString(const char *driverName, GLESDriverType defaultDriverType)
+{
+    if (!driverName)
+    {
+        return defaultDriverType;
+    }
+
+    if (strcmp(driverName, "angle") == 0)
+    {
+        return GLESDriverType::AngleEGL;
+    }
+
+    if (strcmp(driverName, "zink") == 0)
+    {
+        return GLESDriverType::ZinkEGL;
+    }
+
+    if (strcmp(driverName, "native") == 0 || strcmp(driverName, "system") == 0)
+    {
+        if (IsWindows())
+        {
+            return GLESDriverType::SystemWGL;
+        }
+        else
+        {
+            return GLESDriverType::SystemEGL;
+        }
+    }
+
+    printf("Unknown driver type: %s\n", driverName);
+    exit(EXIT_FAILURE);
 }
 }  // namespace angle

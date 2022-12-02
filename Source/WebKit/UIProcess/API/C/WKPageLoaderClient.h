@@ -35,6 +35,7 @@
 extern "C" {
 #endif
 
+// Deprecated, but kept around for client compatibility.
 enum {
     kWKWebGLLoadPolicyBlocked = 0,
     kWKWebGLLoadPolicyLoadNormally,

@@ -26,7 +26,7 @@ messages -> DrawingArea NotRefCounted {
     TargetRefreshRateDidChange(unsigned rate)
 #endif
 
-    DidUpdate()
+    DisplayDidRefresh()
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.

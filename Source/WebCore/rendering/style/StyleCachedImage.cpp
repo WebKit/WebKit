@@ -31,15 +31,22 @@
 
 namespace WebCore {
 
-Ref<StyleCachedImage> StyleCachedImage::create(CSSImageValue& cssValue, float scaleFactor)
+Ref<StyleCachedImage> StyleCachedImage::create(Ref<CSSImageValue> cssValue, float scaleFactor)
 {
-    return adoptRef(*new StyleCachedImage(cssValue, scaleFactor));
+    return adoptRef(*new StyleCachedImage(WTFMove(cssValue), scaleFactor));
 }
 
-StyleCachedImage::StyleCachedImage(CSSImageValue& cssValue, float scaleFactor)
-    : StyleImage(Type::CachedImage)
-    , m_cssValue(cssValue)
-    , m_scaleFactor(scaleFactor)
+Ref<StyleCachedImage> StyleCachedImage::copyOverridingScaleFactor(StyleCachedImage& other, float scaleFactor)
+{
+    if (other.m_scaleFactor == scaleFactor)
+        return other;
+    return StyleCachedImage::create(other.m_cssValue, scaleFactor);
+}
+
+StyleCachedImage::StyleCachedImage(Ref<CSSImageValue>&& cssValue, float scaleFactor)
+    : StyleImage { Type::CachedImage }
+    , m_cssValue { WTFMove(cssValue) }
+    , m_scaleFactor { scaleFactor }
 {
     m_cachedImage = m_cssValue->cachedImage();
     if (m_cachedImage)
@@ -50,16 +57,18 @@ StyleCachedImage::~StyleCachedImage() = default;
 
 bool StyleCachedImage::operator==(const StyleImage& other) const
 {
-    if (!is<StyleCachedImage>(other))
-        return false;
-    auto& otherCached = downcast<StyleCachedImage>(other);
-    if (&otherCached == this)
+    return is<StyleCachedImage>(other) && equals(downcast<StyleCachedImage>(other));
+}
+
+bool StyleCachedImage::equals(const StyleCachedImage& other) const
+{
+    if (&other == this)
         return true;
-    if (m_scaleFactor != otherCached.m_scaleFactor)
+    if (m_scaleFactor != other.m_scaleFactor)
         return false;
-    if (m_cssValue.ptr() == otherCached.m_cssValue.ptr() || m_cssValue->equals(otherCached.m_cssValue.get()))
+    if (m_cssValue.ptr() == other.m_cssValue.ptr() || m_cssValue->equals(other.m_cssValue.get()))
         return true;
-    if (m_cachedImage && m_cachedImage == otherCached.m_cachedImage)
+    if (m_cachedImage && m_cachedImage == other.m_cachedImage)
         return true;
     return false;
 }
@@ -86,7 +95,7 @@ CachedImage* StyleCachedImage::cachedImage() const
     return m_cachedImage.get();
 }
 
-Ref<CSSValue> StyleCachedImage::cssValue() const
+Ref<CSSValue> StyleCachedImage::computedStyleValue(const RenderStyle&) const
 {
     return m_cssValue.copyRef();
 }

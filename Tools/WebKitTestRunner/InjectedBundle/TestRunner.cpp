@@ -213,10 +213,12 @@ void TestRunner::setWhatToDump(WhatToDump whatToDump)
 
 void TestRunner::setCustomPolicyDelegate(bool enabled, bool permissive)
 {
-    m_policyDelegateEnabled = enabled;
-    m_policyDelegatePermissive = permissive;
-
     InjectedBundle::singleton().setCustomPolicyDelegate(enabled, permissive);
+}
+
+void TestRunner::skipPolicyDelegateNotifyDone()
+{
+    postMessage("SkipPolicyDelegateNotifyDone");
 }
 
 void TestRunner::waitForPolicyDelegate()
@@ -646,10 +648,12 @@ enum {
     TextFieldDidEndEditingCallbackID,
     CustomMenuActionCallbackID,
     DidSetAppBoundDomainsCallbackID,
+    DidSetManagedDomainsCallbackID,
     EnterFullscreenForElementCallbackID,
     ExitFullscreenForElementCallbackID,
     AppBoundRequestContextDataForDomainCallbackID,
     TakeViewPortSnapshotCallbackID,
+    RemoveAllCookiesCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -789,9 +793,15 @@ void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
     postSynchronousMessage("SetOnlyAcceptFirstPartyCookies", accept);
 }
 
-void TestRunner::removeAllCookies()
+void TestRunner::removeAllCookies(JSValueRef callback)
 {
-    postSynchronousMessage("RemoveAllCookies");
+    cacheTestRunnerCallback(RemoveAllCookiesCallbackID, callback);
+    postMessage("RemoveAllCookies");
+}
+
+void TestRunner::callRemoveAllCookiesCallback()
+{
+    callTestRunnerCallback(RemoveAllCookiesCallbackID);
 }
 
 void TestRunner::setEnterFullscreenForElementCallback(JSValueRef callback)
@@ -1350,6 +1360,11 @@ void TestRunner::dumpResourceLoadStatistics()
     postSynchronousPageMessage("dumpResourceLoadStatistics");
 }
 
+void TestRunner::dumpPolicyDelegateCallbacks()
+{
+    postMessage("DumpPolicyDelegateCallbacks");
+}
+
 bool TestRunner::isStatisticsPrevalentResource(JSStringRef hostName)
 {
     return postSynchronousPageMessageReturningBoolean("IsStatisticsPrevalentResource", hostName);
@@ -1823,6 +1838,14 @@ void TestRunner::removeMockMediaDevice(JSStringRef persistentId)
     postSynchronousMessage("RemoveMockMediaDevice", toWK(persistentId));
 }
 
+void TestRunner::setMockMediaDeviceIsEphemeral(JSStringRef persistentId, bool isEphemeral)
+{
+    postSynchronousMessage("SetMockMediaDeviceIsEphemeral", createWKDictionary({
+        { "PersistentID", toWK(persistentId) },
+        { "IsEphemeral", adoptWK(WKBooleanCreate(isEphemeral)) },
+    }));
+}
+
 void TestRunner::resetMockMediaDevices()
 {
     postSynchronousMessage("ResetMockMediaDevices");
@@ -2197,9 +2220,42 @@ void TestRunner::setAppBoundDomains(JSValueRef originArray, JSValueRef completio
     WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), originURLs.get());
 }
 
+void TestRunner::setManagedDomains(JSValueRef originArray, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(DidSetManagedDomainsCallbackID, completionHandler);
+
+    auto context = mainFrameJSContext();
+    if (!JSValueIsArray(context, originArray))
+        return;
+
+    auto origins = JSValueToObject(context, originArray, nullptr);
+    auto originURLs = adoptWK(WKMutableArrayCreate());
+    auto originsLength = arrayLength(context, origins);
+    for (unsigned i = 0; i < originsLength; ++i) {
+        JSValueRef originValue = JSObjectGetPropertyAtIndex(context, origins, i, nullptr);
+        if (!JSValueIsString(context, originValue))
+            continue;
+
+        auto origin = createJSString(context, originValue);
+        size_t originBufferSize = JSStringGetMaximumUTF8CStringSize(origin.get()) + 1;
+        auto originBuffer = makeUniqueArray<char>(originBufferSize);
+        JSStringGetUTF8CString(origin.get(), originBuffer.get(), originBufferSize);
+
+        WKArrayAppendItem(originURLs.get(), adoptWK(WKURLCreateWithUTF8CString(originBuffer.get())).get());
+    }
+
+    auto messageName = toWK("SetManagedDomains");
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), originURLs.get());
+}
+
 void TestRunner::didSetAppBoundDomainsCallback()
 {
     callTestRunnerCallback(DidSetAppBoundDomainsCallbackID);
+}
+
+void TestRunner::didSetManagedDomainsCallback()
+{
+    callTestRunnerCallback(DidSetManagedDomainsCallbackID);
 }
 
 bool TestRunner::didLoadAppInitiatedRequest()

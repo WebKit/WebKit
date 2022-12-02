@@ -31,7 +31,8 @@
 
 #include "config.h"
 
-#include "WTFStringUtilities.h"
+#include "Test.h"
+#include "WTFTestUtilities.h"
 #include <sstream>
 #include <wtf/unicode/CharacterNames.h>
 

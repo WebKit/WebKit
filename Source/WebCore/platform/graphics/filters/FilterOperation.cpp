@@ -92,29 +92,53 @@ void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader
     m_cachedSVGDocumentReference->load(cachedResourceLoader, options);
 }
 
+double FilterOperation::blendAmounts(double from, double to, const BlendingContext& context) const
+{
+    auto blendedAmount = [&]() {
+        if (context.compositeOperation == CompositeOperation::Accumulate) {
+            // The "initial value for interpolation" is 1 for brightness, contrast, opacity and saturate.
+            // Accumulation works differently for such operations per https://drafts.fxtf.org/filter-effects/#accumulation.
+            switch (m_type) {
+            case BRIGHTNESS:
+            case CONTRAST:
+            case OPACITY:
+            case SATURATE:
+                return from + to - 1;
+            default:
+                break;
+            }
+        }
+        return WebCore::blend(from, to, context);
+    }();
+
+    // Make sure blended values remain within bounds as specified by
+    // https://drafts.fxtf.org/filter-effects/#supported-filter-functions
+    switch (m_type) {
+    case GRAYSCALE:
+    case INVERT:
+    case OPACITY:
+    case SEPIA:
+        return std::clamp(blendedAmount, 0.0, 1.0);
+    case BRIGHTNESS:
+    case CONTRAST:
+    case SATURATE:
+        return std::max(blendedAmount, 0.0);
+    default:
+        return blendedAmount;
+    }
+}
+
 RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
-    
+
     if (blendToPassthrough)
-        return BasicColorMatrixFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), context), m_type);
-        
+        return BasicColorMatrixFilterOperation::create(blendAmounts(m_amount, passthroughAmount(), context), m_type);
+
     const BasicColorMatrixFilterOperation* fromOperation = downcast<BasicColorMatrixFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
-    double blendedAmount = WebCore::blend(fromAmount, m_amount, context);
-
-    switch (m_type) {
-    case GRAYSCALE:
-    case SEPIA:
-        blendedAmount = std::clamp(blendedAmount, 0.0, 1.0);
-        break;
-    case SATURATE:
-        blendedAmount = std::max(blendedAmount, 0.0);
-        break;
-    default:
-        break;
-    }
+    auto blendedAmount = blendAmounts(fromAmount, m_amount, context);
     return BasicColorMatrixFilterOperation::create(blendedAmount, m_type);
 }
 
@@ -179,24 +203,11 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
         return this;
     
     if (blendToPassthrough)
-        return BasicComponentTransferFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), context), m_type);
+        return BasicComponentTransferFilterOperation::create(blendAmounts(m_amount, passthroughAmount(), context), m_type);
         
     const BasicComponentTransferFilterOperation* fromOperation = downcast<BasicComponentTransferFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
-    double blendedAmount = WebCore::blend(fromAmount, m_amount, context);
-    
-    switch (m_type) {
-    case INVERT:
-    case OPACITY:
-        blendedAmount = std::clamp(blendedAmount, 0.0, 1.0);
-        break;
-    case BRIGHTNESS:
-    case CONTRAST:
-        blendedAmount = std::max(blendedAmount, 0.0);
-        break;
-    default:
-        break;
-    }
+    auto blendedAmount = blendAmounts(fromAmount, m_amount, context);
     return BasicComponentTransferFilterOperation::create(blendedAmount, m_type);
 }
 

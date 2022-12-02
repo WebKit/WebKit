@@ -272,7 +272,7 @@ void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 
 void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    StdUnorderedSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
+    OptionSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
     if (!shouldPaintSVGRenderer(paintInfo, relevantPaintPhases) || isEmpty())
         return;
 
@@ -525,6 +525,11 @@ void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& ne
     }
 
     RenderSVGModelObject::styleWillChange(diff, newStyle);
+}
+
+bool RenderSVGShape::needsHasSVGTransformFlags() const
+{
+    return graphicsElement().hasTransformRelatedAttributes();
 }
 
 void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const

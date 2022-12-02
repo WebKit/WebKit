@@ -1,0 +1,19 @@
+Checks that window.postMessage clones growable SharedArrayBuffers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS memory[0] is 42
+PASS otherMemory[0] is 0
+PASS memory[0] is 42
+PASS otherMemory[0] is 43
+PASS memory.length is 1
+PASS otherMemory.length is 1
+PASS memory.length is 256
+PASS otherMemory.length is 1
+PASS memory.length is 256
+PASS otherMemory.length is 256
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

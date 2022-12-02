@@ -1,0 +1,16 @@
+<style>
+    iframe {
+        width: 400px;
+        height: 400px;
+    }
+</style>
+<body>
+    <script>
+        const iframe = document.createElement("iframe");
+        iframe.srcdoc = `<!DOCTYPE html>
+            <body style="margin: 0; overflow: hidden;">
+                <img src="resources/green-400x400.avif">
+            </body>`;
+        document.body.appendChild(iframe);
+    </script>
+</body>

@@ -1,4 +1,6 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
+
 function assert(a, e) {
     if (a !== e)
         throw new Error("Expected: " + e + " but got: " + a);

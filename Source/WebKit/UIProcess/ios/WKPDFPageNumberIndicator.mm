@@ -200,6 +200,7 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
     UIEdgeInsets capInsets = UIEdgeInsetsMake(indicatorCornerRadius, indicatorCornerRadius, indicatorCornerRadius, indicatorCornerRadius);
     cornerImage = [cornerImage resizableImageWithCapInsets:capInsets];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<UIImageView> cornerMaskView = adoptNS([[UIImageView alloc] initWithImage:cornerImage]);
     [cornerMaskView setAlpha:0];
     [cornerMaskView _setBackdropMaskViewFlags:_UIBackdropMaskViewAll];
@@ -207,6 +208,7 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
     [cornerMaskView setFrame:contentView.bounds];
 
     [contentView addSubview:cornerMaskView.get()];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end

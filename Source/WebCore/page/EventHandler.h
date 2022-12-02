@@ -33,6 +33,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderObject.h"
 #include "ScrollTypes.h"
+#include "SimpleRange.h"
 #include "TextEventInputType.h"
 #include "TextGranularity.h"
 #include "Timer.h"
@@ -388,13 +389,14 @@ private:
     bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
+    bool keyboardScroll(std::optional<ScrollDirection>, std::optional<ScrollGranularity>, Node*);
     bool beginKeyboardScrollGesture(KeyboardScrollingAnimator*, ScrollDirection, ScrollGranularity);
     void stopKeyboardScrolling();
     bool startKeyboardScrollAnimationOnDocument(ScrollDirection, ScrollGranularity);
     bool startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection, ScrollGranularity, RenderBox*);
     bool startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection, ScrollGranularity, RenderBox*);
     bool startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection, ScrollGranularity, Node*);
-    bool focusedScrollableAreaUsesScrollSnap();
+    bool focusedScrollableAreaShouldUseSmoothKeyboardScrolling();
 
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);
@@ -494,6 +496,10 @@ private:
 
     bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, const WeakPtr<ScrollableArea>&);
 
+    bool defaultKeyboardScrollEventHandler(KeyboardEvent&, ScrollLogicalDirection, ScrollGranularity);
+
+    void defaultPageUpDownEventHandler(KeyboardEvent&);
+    void defaultHomeEndEventHandler(KeyboardEvent&);
     void defaultSpaceEventHandler(KeyboardEvent&);
     void defaultBackspaceEventHandler(KeyboardEvent&);
     void defaultTabEventHandler(KeyboardEvent&);
@@ -606,6 +612,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT)
     LayoutPoint m_dragStartPosition;
+    std::optional<SimpleRange> m_dragStartSelection;
     RefPtr<Element> m_dragTarget;
     bool m_mouseDownMayStartDrag { false };
     bool m_dragMayStartSelectionInstead { false };

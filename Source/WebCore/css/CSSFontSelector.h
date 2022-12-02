@@ -41,13 +41,13 @@
 
 namespace WebCore {
 
-class CSSFontFaceRule;
 class CSSPrimitiveValue;
 class CSSSegmentedFontFace;
 class CSSValueList;
 class CachedFont;
 class ScriptExecutionContext;
 class StyleRuleFontFace;
+class StyleRuleFontFeatureValues;
 class StyleRuleFontPaletteValues;
 
 class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
@@ -68,7 +68,8 @@ public:
     void buildCompleted();
 
     void addFontFaceRule(StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);
-    void addFontPaletteValuesRule(StyleRuleFontPaletteValues&);
+    void addFontPaletteValuesRule(const StyleRuleFontPaletteValues&);
+    void addFontFeatureValuesRule(const StyleRuleFontFeatureValues&);
 
     void fontCacheInvalidated() final;
 
@@ -103,6 +104,7 @@ private:
     std::optional<AtomString> resolveGenericFamily(const FontDescription&, const AtomString& family);
 
     const FontPaletteValues& lookupFontPaletteValues(const AtomString& familyName, const FontDescription&);
+    RefPtr<FontFeatureValues> lookupFontFeatureValues(const AtomString& familyName);
 
     // CSSFontFace::Client
     void fontLoaded(CSSFontFace&) final;
@@ -136,6 +138,7 @@ private:
         }
     };
     HashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
+    HashMap<String, Ref<FontFeatureValues>> m_featureValues;
 
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;

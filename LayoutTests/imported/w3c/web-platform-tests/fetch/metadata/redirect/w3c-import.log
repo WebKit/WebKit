@@ -14,14 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/cross-site-redirect.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-cross-site.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-https-downgrade-upgrade-prefetch.optional.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-https-downgrade-upgrade.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-same-site.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade-prefetch.optional.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-https-downgrade-prefetch.optional.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-https-downgrade.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/same-origin-redirect.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/redirect/same-site-redirect.https.sub.html

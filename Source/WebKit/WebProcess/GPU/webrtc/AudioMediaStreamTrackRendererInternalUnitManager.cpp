@@ -32,8 +32,7 @@
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessages.h"
-#include "SharedMemory.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include "WebProcess.h"
 #include <WebCore/AudioMediaStreamTrackRendererInternalUnit.h>
 #include <WebCore/AudioMediaStreamTrackRendererUnit.h>
@@ -49,7 +48,7 @@ namespace WebKit {
 class AudioMediaStreamTrackRendererInternalUnitManager::Proxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public CanMakeWeakPtr<Proxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Proxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&, WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback&&);
+    explicit Proxy(Client&);
     ~Proxy();
 
     AudioMediaStreamTrackRendererInternalUnitIdentifier identifier() const { return m_identifier; }
@@ -61,7 +60,7 @@ private:
     // AudioMediaStreamTrackRendererUnit::InternalUnit API.
     void start() final;
     void stop() final;
-    void retrieveFormatDescription(CompletionHandler<void(const WebCore::CAAudioStreamDescription*)>&&) final;
+    void retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&&) final;
     void setAudioOutputDevice(const String&) final;
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
@@ -71,18 +70,17 @@ private:
     void startThread();
     void createRemoteUnit();
 
-    WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback m_renderCallback;
-    WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback m_resetCallback;
+    Client& m_client;
     AudioMediaStreamTrackRendererInternalUnitIdentifier m_identifier;
 
-    Deque<CompletionHandler<void(const WebCore::CAAudioStreamDescription*)>> m_descriptionCallbacks;
+    Deque<CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>> m_descriptionCallbacks;
 
     String m_deviceId;
     bool m_isPlaying { false };
 
     std::optional<WebCore::CAAudioStreamDescription> m_description;
     std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
-    std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
     int64_t m_writeOffset { 0 };
     size_t m_frameChunkSize { 0 };
     size_t m_numberOfFrames { 0 };
@@ -103,9 +101,9 @@ void AudioMediaStreamTrackRendererInternalUnitManager::remove(Proxy& proxy)
     m_proxies.remove(proxy.identifier());
 }
 
-UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> AudioMediaStreamTrackRendererInternalUnitManager::createRemoteInternalUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback&& renderCallback, WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback&& resetCallback)
+UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
 {
-    return makeUniqueRef<AudioMediaStreamTrackRendererInternalUnitManager::Proxy>(WTFMove(renderCallback), WTFMove(resetCallback));
+    return makeUniqueRef<AudioMediaStreamTrackRendererInternalUnitManager::Proxy>(client);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::reset(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
@@ -121,9 +119,8 @@ void AudioMediaStreamTrackRendererInternalUnitManager::restartAllUnits()
         proxy->reset(Proxy::IsClosed::Yes);
 }
 
-AudioMediaStreamTrackRendererInternalUnitManager::Proxy::Proxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback&& renderCallback, WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback&& resetCallback)
-    : m_renderCallback(WTFMove(renderCallback))
-    , m_resetCallback(WTFMove(resetCallback))
+AudioMediaStreamTrackRendererInternalUnitManager::Proxy::Proxy(Client& client)
+    : m_client(client)
     , m_identifier(AudioMediaStreamTrackRendererInternalUnitIdentifier::generate())
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().add(*this);
@@ -136,14 +133,14 @@ AudioMediaStreamTrackRendererInternalUnitManager::Proxy::~Proxy()
     WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { m_identifier }, 0);
 
     while (!m_descriptionCallbacks.isEmpty())
-        m_descriptionCallbacks.takeFirst()(nullptr);
+        m_descriptionCallbacks.takeFirst()(std::nullopt);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::createRemoteUnit()
 {
     WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { m_identifier }, [weakThis = WeakPtr { *this }](auto&& description, auto frameChunkSize) {
-        if (weakThis && frameChunkSize)
-            weakThis->initialize(description, frameChunkSize);
+        if (weakThis && description && frameChunkSize)
+            weakThis->initialize(*description, frameChunkSize);
     }, 0);
 }
 
@@ -157,7 +154,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::initialize(const W
     m_frameChunkSize = frameChunkSize;
 
     while (!m_descriptionCallbacks.isEmpty())
-        m_descriptionCallbacks.takeFirst()(&description);
+        m_descriptionCallbacks.takeFirst()(description);
 
     if (m_isPlaying)
         start();
@@ -184,25 +181,14 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
     m_isPlaying = true;
 
     m_numberOfFrames = m_description->sampleRate() * 2;
-    m_ringBuffer.reset();
-    m_ringBuffer = makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    m_ringBuffer->allocate(m_description->streamDescription(), m_numberOfFrames);
+    auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(*m_description, m_numberOfFrames);
+    m_ringBuffer = WTFMove(ringBuffer);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), *m_semaphore }, 0);
 
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
 
     startThread();
-}
-
-void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged(SharedMemory* memory, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
-{
-    if (!frameCount)
-        return;
-
-    SharedMemory::Handle handle;
-    if (memory)
-        memory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StartUnit { m_identifier, WTFMove(handle), format, frameCount, *m_semaphore }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::stop()
@@ -217,13 +203,13 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::setAudioOutputDevi
     WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetAudioOutputDevice { m_identifier, deviceId }, 0);
 }
 
-void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::retrieveFormatDescription(CompletionHandler<void(const WebCore::CAAudioStreamDescription*)>&& callback)
+void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&& callback)
 {
     if (!m_description || !m_descriptionCallbacks.isEmpty()) {
         m_descriptionCallbacks.append(WTFMove(callback));
         return;
     }
-    callback(&m_description.value());
+    callback(m_description);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::stopThread()
@@ -253,7 +239,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::startThread()
             auto& bufferList = *m_buffer->list();
 
             AudioUnitRenderActionFlags flags = 0;
-            m_renderCallback(m_frameChunkSize, bufferList, m_writeOffset, mach_absolute_time(), flags);
+            m_client.render(m_frameChunkSize, bufferList, m_writeOffset, mach_absolute_time(), flags);
 
             if (flags == kAudioUnitRenderAction_OutputIsSilence)
                 WebCore::AudioSampleBufferList::zeroABL(bufferList, static_cast<size_t>(m_frameChunkSize * m_description->bytesPerFrame()));
@@ -269,7 +255,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::reset(IsClosed isC
 {
     stopThread();
     m_didClose = isClosed == IsClosed::Yes;
-    m_resetCallback();
+    m_client.reset();
     if (m_isPlaying)
         start();
 }

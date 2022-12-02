@@ -164,7 +164,8 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Skip ] 
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ] 
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
-http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
+http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
+http/tests/navigation/ping-attribute/secure-anchor-cross-origin.html [ Skip ]
 http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ] 
 http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ] 
@@ -175,8 +176,12 @@ http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html [ Skip ]
 # Tests that rely on custom domain names.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/nav-cancelation-2.sub.html [ Skip ]
 
+http/wpt/webcodecs [ Skip ]
+imported/w3c/web-platform-tests/webcodecs [ Skip ]
+
 # Shared workers are only implemented for WebKit2.
 http/tests/navigation/page-cache-shared-worker.html [ Skip ]
+http/tests/workers/shared [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-classic.http.html [ Skip ]
@@ -593,6 +598,9 @@ fast/gradients/conic-two-hints.html [ Skip ]
 fast/canvas/canvas-conic-gradient-angle.html [ Skip ]
 fast/canvas/canvas-conic-gradient-center.html [ Skip ]
 
+# Diagonal gradients
+fast/backgrounds/background-blend-mode-difference.html [ Skip ]
+
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
@@ -764,7 +772,7 @@ http/tests/scroll-to-text-fragment/ [ Skip ]
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ Skip ]
 
-# Requires APNG and WebP support.
+# Requires APNG, AVIF and WebP support.
 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
 fast/images/webp-image-decoding.html [ Skip ]
 fast/images/webp-color-profile-lossless.html [ Skip ]
@@ -774,6 +782,12 @@ http/tests/images/webp-partial-load.html [ Skip ]
 http/tests/images/webp-progressive-load.html [ Skip ]
 fast/images/animated-webp-expected.html [ Skip ]
 fast/images/animated-png-loop-count.html [ Skip ]
+fast/images/avif-image-decoding.html [ Skip ]
+fast/images/avif-as-image.html [ Skip ]
+fast/images/avif-heif-container-as-image.html [ Skip ]
+fast/images/animated-avif.html [ Skip ]
+http/tests/images/avif-partial-load-crash.html [ Skip ]
+fast/images/avif-image-document.html [ Skip ]
 
 # TODO The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
 # method. But that method is not implemented in win port since win port can't
@@ -1671,6 +1685,7 @@ accessibility/aria-table-with-presentational-elements.html [ Skip ]
 webkit.org/b/149177 accessibility/ax-value-with-search.html [ Skip ]
 
 accessibility/aria-roles-unignored.html [ Skip ]
+accessibility/aria-keyshortcuts.html [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
@@ -2245,9 +2260,22 @@ svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 # GCController.collect() issues.
 svg/animations/svglength-element-removed-crash.svg [ Failure ]
 
-# Compositing/z-index needs LBSE enabled builds, which is off by default for this port.
+# The following tests need LBSE enabled builds, which is off by default for this port.
 svg/compositing [ Skip ]
 svg/z-index [ Skip ]
+svg/foreignObject/respect-block-margin.html [ Skip ]
+
+# SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
+svg/custom/circle-move-invalidation-small-viewBox.svg [ ImageOnlyFailure ]
+svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
+svg/transforms/transformed-child-in-container-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-child-in-container.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-container-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-container.svg [ ImageOnlyFailure ]
+svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
 ################################################################################
 ###################          End SVG Issues              #######################
@@ -3826,7 +3854,6 @@ fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Failur
 fast/multicol/client-rects-spanners-complex.html [ Failure ]
 fast/multicol/client-rects-spanners.html [ Failure ]
 fast/multicol/client-rects.html [ Failure ]
-fast/multicol/newmulticol/client-rects.html [ Failure ]
 fast/multicol/table-vertical-align.html [ Failure ]
 fast/parser/xml-error-unload-iframe.html [ Failure ]
 fast/replaced/table-percent-height.html [ Failure ]
@@ -4383,6 +4410,7 @@ imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-
 css-custom-properties-api [ Skip ]
 fast/css-custom-paint [ Skip ]
 css-typedom [ Skip ]
+fast/css/css-typed-om [ Skip ]
 
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 
@@ -5176,8 +5204,6 @@ webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
 
 webkit.org/b/246536 accessibility/table-row-role-changes.html [ Skip ]
 
-webkit.org/b/246537 fast/block/positioning/border-change-relayout-test.html [ Skip ]
-
 webkit.org/b/246544 fast/events/mouse-cursor-multiframecur.html [ Failure ]
 
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
@@ -5194,3 +5220,6 @@ css3/filters/effect-opacity.html [ ImageOnlyFailure ]
 css3/filters/effect-saturate.html [ ImageOnlyFailure ]
 css3/filters/effect-sepia.html [ ImageOnlyFailure ]
 fast/css/aspect-ratio-min-height-replaced.html [ ImageOnlyFailure ]
+
+# navigator.userActivation is not implemented on Windows.
+fast/frames/consume_transient_activation.html [ Skip ]

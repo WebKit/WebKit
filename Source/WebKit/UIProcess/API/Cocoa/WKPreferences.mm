@@ -418,16 +418,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setTextAutosizingEnabled(enabled);
 }
 
-- (BOOL)_subpixelAntialiasedLayerTextEnabled
-{
-    return _preferences->subpixelAntialiasedLayerTextEnabled();
-}
-
-- (void)_setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
-{
-    _preferences->setSubpixelAntialiasedLayerTextEnabled(enabled);
-}
-
 - (BOOL)_developerExtrasEnabled
 {
     return _preferences->developerExtrasEnabled();
@@ -992,14 +982,14 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->domTimersThrottlingEnabled();
 }
 
-- (void)_setWebArchiveTestingModeEnabled:(BOOL)enabled
+- (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
 {
-    _preferences->setWebArchiveTestingModeEnabled(enabled);
+    _preferences->setWebArchiveDebugModeEnabled(enabled);
 }
 
-- (BOOL)_webArchiveTestingModeEnabled
+- (BOOL)_webArchiveDebugModeEnabled
 {
-    return _preferences->webArchiveTestingModeEnabled();
+    return _preferences->webArchiveDebugModeEnabled();
 }
 
 - (void)_setLocalFileContentSniffingEnabled:(BOOL)enabled
@@ -1659,6 +1649,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return YES;
 }
 
+- (BOOL)_subpixelAntialiasedLayerTextEnabled
+{
+    return NO;
+}
+
+- (void)_setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
+{
+}
+
 #if !TARGET_OS_IPHONE
 
 - (void)_setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
@@ -1666,15 +1665,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 - (BOOL)_subpixelCSSOMElementMetricsEnabled
-{
-    return NO;
-}
-
-- (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
-{
-}
-
-- (BOOL)_webArchiveDebugModeEnabled
 {
     return NO;
 }

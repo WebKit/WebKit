@@ -155,11 +155,11 @@ private:
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
-    void removeMockMediaDevice(const String& persistentId);
+    void removeMockMediaDevice(const String&);
+    void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockMicrophoneConfigurationChange();
-    bool setCaptureAttributionString(const String&);
 #endif
 #if HAVE(SC_CONTENT_SHARING_SESSION)
     void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);

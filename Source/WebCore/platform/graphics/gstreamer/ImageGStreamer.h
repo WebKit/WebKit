@@ -37,15 +37,13 @@ class IntSize;
 
 class ImageGStreamer : public RefCounted<ImageGStreamer> {
 public:
-    static RefPtr<ImageGStreamer> createImage(GstSample* sample)
+    static RefPtr<ImageGStreamer> createImage(GRefPtr<GstSample>&& sample)
     {
-        auto image = adoptRef(new ImageGStreamer(sample));
-        if (!image->m_image)
-            return nullptr;
-
-        return image;
+        return adoptRef(new ImageGStreamer(WTFMove(sample)));
     }
     ~ImageGStreamer();
+
+    operator bool() const { return !!m_image; }
 
     BitmapImage& image()
     {
@@ -65,7 +63,8 @@ public:
     bool hasAlpha() const { return m_hasAlpha; }
 
 private:
-    ImageGStreamer(GstSample*);
+    ImageGStreamer(GRefPtr<GstSample>&&);
+    GRefPtr<GstSample> m_sample;
     RefPtr<BitmapImage> m_image;
     FloatRect m_cropRect;
 #if USE(CAIRO)

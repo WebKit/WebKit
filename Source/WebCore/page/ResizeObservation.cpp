@@ -52,24 +52,26 @@ void ResizeObservation::updateObservationSize(const BoxSizes& boxSizes)
     m_lastObservationSizes = boxSizes;
 }
 
-auto ResizeObservation::computeObservedSizes() const -> BoxSizes
+auto ResizeObservation::computeObservedSizes() const -> std::optional<BoxSizes>
 {
     if (m_target->isSVGElement()) {
         if (auto svgRect = downcast<SVGElement>(*m_target).getBoundingBox()) {
             auto size = LayoutSize(svgRect->width(), svgRect->height());
-            return { size, size, size };
+            return { { size, size, size } };
         }
     }
     auto* box = m_target->renderBox();
     if (box) {
-        return {
+        if (box->isSkippedContent())
+            return std::nullopt;
+        return { {
             adjustLayoutSizeForAbsoluteZoom(box->contentSize(), *box),
             adjustLayoutSizeForAbsoluteZoom(box->contentLogicalSize(), *box),
             adjustLayoutSizeForAbsoluteZoom(box->borderBoxLogicalSize(), *box)
-        };
+        } };
     }
 
-    return { };
+    return BoxSizes { };
 }
 
 LayoutPoint ResizeObservation::computeTargetLocation() const
@@ -105,16 +107,18 @@ FloatSize ResizeObservation::snappedContentBoxSize() const
 std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged() const
 {
     auto currentSizes = computeObservedSizes();
+    if (!currentSizes)
+        return std::nullopt;
 
-    LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObservation " << this << " elementSizeChanged - new content box " << currentSizes.contentBoxSize);
+    LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObservation " << this << " elementSizeChanged - new content box " << currentSizes->contentBoxSize);
 
     switch (m_observedBox) {
     case ResizeObserverBoxOptions::BorderBox:
-        if (m_lastObservationSizes.borderBoxLogicalSize != currentSizes.borderBoxLogicalSize)
+        if (m_lastObservationSizes.borderBoxLogicalSize != currentSizes->borderBoxLogicalSize)
             return currentSizes;
         break;
     case ResizeObserverBoxOptions::ContentBox:
-        if (m_lastObservationSizes.contentBoxLogicalSize != currentSizes.contentBoxLogicalSize)
+        if (m_lastObservationSizes.contentBoxLogicalSize != currentSizes->contentBoxLogicalSize)
             return currentSizes;
         break;
     }

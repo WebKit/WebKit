@@ -56,7 +56,7 @@ public:
 
     void invalidate() override;
 
-    WEBCORE_EXPORT void displayDidRefresh(PlatformDisplayID);
+    void displayDidRefresh(PlatformDisplayID) override;
 
     void didScheduleRenderingUpdate();
     void willStartRenderingUpdate();
@@ -110,8 +110,6 @@ private:
     void hasNodeWithAnimatedScrollChanged(bool) final;
     
     bool isScrollingSynchronizedWithMainThread() final WTF_REQUIRES_LOCK(m_treeLock);
-
-    void serviceScrollAnimations(MonotonicTime) WTF_REQUIRES_LOCK(m_treeLock);
 
     Seconds frameDuration();
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();

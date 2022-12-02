@@ -170,6 +170,23 @@ using PackedEnumBitSet = BitSetT<EnumSize<E>(), DataT, E>;
 
 }  // namespace angle
 
+#define ANGLE_DEFINE_ID_TYPE(Type)          \
+    class Type;                             \
+    struct Type##ID                         \
+    {                                       \
+        GLuint value;                       \
+    };                                      \
+    template <>                             \
+    struct ResourceTypeToID<Type>           \
+    {                                       \
+        using IDType = Type##ID;            \
+    };                                      \
+    template <>                             \
+    struct IsResourceIDType<Type##ID>       \
+    {                                       \
+        static constexpr bool value = true; \
+    };
+
 namespace gl
 {
 
@@ -676,45 +693,25 @@ struct ResourceTypeToID;
 template <typename T>
 struct IsResourceIDType;
 
-// Clang Format doesn't like the following X macro.
-// clang-format off
-#define ANGLE_ID_TYPES_OP(X) \
-    X(Buffer)                \
-    X(FenceNV)               \
-    X(Framebuffer)           \
-    X(MemoryObject)          \
-    X(Path)                  \
-    X(ProgramPipeline)       \
-    X(Query)                 \
-    X(Renderbuffer)          \
-    X(Sampler)               \
-    X(Semaphore)             \
-    X(Texture)               \
-    X(TransformFeedback)     \
+#define ANGLE_GL_ID_TYPES_OP(X) \
+    X(Buffer)                   \
+    X(Context)                  \
+    X(FenceNV)                  \
+    X(Framebuffer)              \
+    X(MemoryObject)             \
+    X(Path)                     \
+    X(ProgramPipeline)          \
+    X(Query)                    \
+    X(Renderbuffer)             \
+    X(Sampler)                  \
+    X(Semaphore)                \
+    X(Texture)                  \
+    X(TransformFeedback)        \
     X(VertexArray)
-// clang-format on
 
-#define ANGLE_DEFINE_ID_TYPE(Type)          \
-    class Type;                             \
-    struct Type##ID                         \
-    {                                       \
-        GLuint value;                       \
-    };                                      \
-    template <>                             \
-    struct ResourceTypeToID<Type>           \
-    {                                       \
-        using IDType = Type##ID;            \
-    };                                      \
-    template <>                             \
-    struct IsResourceIDType<Type##ID>       \
-    {                                       \
-        static constexpr bool value = true; \
-    };
+ANGLE_GL_ID_TYPES_OP(ANGLE_DEFINE_ID_TYPE)
 
-ANGLE_ID_TYPES_OP(ANGLE_DEFINE_ID_TYPE)
-
-#undef ANGLE_DEFINE_ID_TYPE
-#undef ANGLE_ID_TYPES_OP
+#undef ANGLE_GL_ID_TYPES_OP
 
 // Shaders and programs are a bit special as they share IDs.
 struct ShaderProgramID
@@ -798,37 +795,6 @@ inline GLuint GetIDValue(ResourceIDType id)
     return id.value;
 }
 
-// First case: handling packed enums.
-template <typename EnumT, typename FromT>
-typename std::enable_if<std::is_enum<EnumT>::value, EnumT>::type PackParam(FromT from)
-{
-    return FromGLenum<EnumT>(from);
-}
-
-// Second case: handling non-pointer resource ids.
-template <typename EnumT, typename FromT>
-typename std::enable_if<!std::is_pointer<FromT>::value && !std::is_enum<EnumT>::value, EnumT>::type
-PackParam(FromT from)
-{
-    return {from};
-}
-
-// Third case: handling pointer resource ids.
-template <typename EnumT, typename FromT>
-typename std::enable_if<std::is_pointer<FromT>::value && !std::is_enum<EnumT>::value, EnumT>::type
-PackParam(FromT from)
-{
-    static_assert(sizeof(typename std::remove_pointer<EnumT>::type) ==
-                      sizeof(typename std::remove_pointer<FromT>::type),
-                  "Types have different sizes");
-    static_assert(
-        std::is_same<
-            decltype(std::remove_pointer<EnumT>::type::value),
-            typename std::remove_const<typename std::remove_pointer<FromT>::type>::type>::value,
-        "Data types are different");
-    return reinterpret_cast<EnumT>(from);
-}
-
 struct UniformLocation
 {
     int value;
@@ -847,7 +813,52 @@ bool IsEmulatedCompressedFormat(GLenum format);
 namespace egl
 {
 MessageType ErrorCodeToMessageType(EGLint errorCode);
+
+struct Config;
+class Device;
+class Display;
+class Image;
+class Surface;
+class Stream;
+class Sync;
+
+#define ANGLE_EGL_ID_TYPES_OP(X) \
+    X(Image)                     \
+    X(Surface)
+
+template <typename T>
+struct ResourceTypeToID;
+
+template <typename T>
+struct IsResourceIDType;
+
+ANGLE_EGL_ID_TYPES_OP(ANGLE_DEFINE_ID_TYPE)
+
+#undef ANGLE_EGL_ID_TYPES_OP
+
+template <>
+struct IsResourceIDType<gl::ContextID>
+{
+    static constexpr bool value = true;
+};
+
+template <typename T>
+struct IsResourceIDType
+{
+    static constexpr bool value = false;
+};
+
+// Util funcs for resourceIDs
+template <typename T>
+typename std::enable_if<IsResourceIDType<T>::value && !std::is_same<T, gl::ContextID>::value,
+                        bool>::type
+operator==(const T &lhs, const T &rhs)
+{
+    return lhs.value == rhs.value;
+}
 }  // namespace egl
+
+#undef ANGLE_DEFINE_ID_TYPE
 
 namespace egl_gl
 {
@@ -855,5 +866,48 @@ gl::TextureTarget EGLCubeMapTargetToCubeMapTarget(EGLenum eglTarget);
 gl::TextureTarget EGLImageTargetToTextureTarget(EGLenum eglTarget);
 gl::TextureType EGLTextureTargetToTextureType(EGLenum eglTarget);
 }  // namespace egl_gl
+
+namespace gl
+{
+// First case: handling packed enums.
+template <typename EnumT, typename FromT>
+typename std::enable_if<std::is_enum<EnumT>::value, EnumT>::type PackParam(FromT from)
+{
+    return FromGLenum<EnumT>(from);
+}
+
+// Second case: handling non-pointer resource ids.
+template <typename EnumT, typename FromT>
+typename std::enable_if<!std::is_pointer<FromT>::value && !std::is_enum<EnumT>::value, EnumT>::type
+PackParam(FromT from)
+{
+    return {from};
+}
+
+// Third case: handling non-EGLImage pointer resource ids.
+template <typename EnumT, typename FromT>
+typename std::enable_if<std::is_same<EnumT, egl::ImageID>::value, EnumT>::type PackParam(FromT from)
+{
+    return {static_cast<GLuint>(reinterpret_cast<uintptr_t>(from))};
+}
+
+// Fourth case: handling EGLImage resource ids.
+template <typename EnumT, typename FromT>
+typename std::enable_if<std::is_pointer<FromT>::value && !std::is_enum<EnumT>::value &&
+                            !std::is_same<EnumT, egl::ImageID>::value,
+                        EnumT>::type
+PackParam(FromT from)
+{
+    static_assert(sizeof(typename std::remove_pointer<EnumT>::type) ==
+                      sizeof(typename std::remove_pointer<FromT>::type),
+                  "Types have different sizes");
+    static_assert(
+        std::is_same<
+            decltype(std::remove_pointer<EnumT>::type::value),
+            typename std::remove_const<typename std::remove_pointer<FromT>::type>::type>::value,
+        "Data types are different");
+    return reinterpret_cast<EnumT>(from);
+}
+}  // namespace gl
 
 #endif  // COMMON_PACKEDGLENUMS_H_

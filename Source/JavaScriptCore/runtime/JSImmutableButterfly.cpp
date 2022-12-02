@@ -29,6 +29,7 @@
 #include "ButterflyInlines.h"
 #include "ClonedArguments.h"
 #include "DirectArguments.h"
+#include "JSObjectInlines.h"
 #include "ScopedArguments.h"
 #include <wtf/IterationStatus.h>
 

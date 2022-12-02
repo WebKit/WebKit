@@ -6,6 +6,8 @@
 # found in the LICENSE file.
 
 
+
+
 set(libangle_common_sources
     "src/common/CircularBuffer.h"
     "src/common/Color.h"
@@ -26,6 +28,8 @@ set(libangle_common_sources
     "src/common/PoolAlloc.h"
     "src/common/Spinlock.h"
     "src/common/SynchronizedValue.h"
+    "src/common/WorkerThread.cpp"
+    "src/common/WorkerThread.h"
     "src/common/aligned_memory.cpp"
     "src/common/aligned_memory.h"
     "src/common/android_util.cpp"
@@ -33,6 +37,7 @@ set(libangle_common_sources
     "src/common/angleutils.cpp"
     "src/common/angleutils.h"
     "src/common/apple_platform_utils.h"
+    "src/common/backtrace_utils.h"
     "src/common/bitset_utils.h"
     "src/common/debug.cpp"
     "src/common/debug.h"
@@ -94,6 +99,13 @@ set(xxhash_sources
 )
 
 
+if(is_android AND angle_enable_unwind_backtrace_support)
+    list(APPEND libangle_common_sources "src/common/backtrace_utils_android.cpp" )
+else()
+    list(APPEND libangle_common_sources "src/common/backtrace_utils_noop.cpp" )
+endif()
+
+
 if(is_linux OR is_chromeos OR is_android OR is_fuchsia)
     list(APPEND libangle_common_sources
         "src/common/system_utils_linux.cpp"
@@ -132,6 +144,7 @@ endif()
 
 
 set(libangle_image_util_headers
+    "src/image_util/AstcDecompressor.h"
     "src/image_util/copyimage.h"
     "src/image_util/copyimage.inc"
     "src/image_util/generatemip.h"
@@ -148,7 +161,13 @@ set(libangle_image_util_sources
     "src/image_util/loadimage.cpp"
     "src/image_util/loadimage_astc.cpp"
     "src/image_util/loadimage_etc.cpp"
+    "src/image_util/loadimage_paletted.cpp"
 )
+if(angle_has_astc_encoder)
+    list(APPEND libangle_image_util_sources "src/image_util/AstcDecompressor.cpp" )
+else()
+    list(APPEND libangle_image_util_sources "src/image_util/AstcDecompressorNoOp.cpp" )
+endif()
 
 
 set(libangle_gpu_info_util_sources
@@ -225,7 +244,6 @@ set(libangle_includes
     "include/platform/FeaturesMtl_autogen.h"
     "include/platform/FeaturesVk_autogen.h"
     "include/platform/FrontendFeatures_autogen.h"
-    "include/platform/Platform.h"
     "include/platform/PlatformMethods.h"
     "include/vulkan/vulkan_fuchsia_ext.h"
 )
@@ -306,9 +324,9 @@ set(libangle_headers
     "src/libANGLE/VertexArray.h"
     "src/libANGLE/VertexAttribute.h"
     "src/libANGLE/VertexAttribute.inc"
-    "src/libANGLE/WorkerThread.h"
     "src/libANGLE/angletypes.h"
     "src/libANGLE/angletypes.inc"
+    "src/libANGLE/entry_points_utils.cpp"
     "src/libANGLE/entry_points_utils.h"
     "src/libANGLE/features.h"
     "src/libANGLE/formatutils.h"
@@ -433,7 +451,6 @@ set(libangle_sources
     "src/libANGLE/VaryingPacking.cpp"
     "src/libANGLE/VertexArray.cpp"
     "src/libANGLE/VertexAttribute.cpp"
-    "src/libANGLE/WorkerThread.cpp"
     "src/libANGLE/angletypes.cpp"
     "src/libANGLE/es3_copy_conversion_table_autogen.cpp"
     "src/libANGLE/format_map_autogen.cpp"
@@ -570,8 +587,12 @@ set(libangle_mac_sources
 
 # The frame capture headers are always visible to libANGLE.
 list(APPEND libangle_sources
+    "src/common/frame_capture_utils.h"
+    "src/common/frame_capture_utils_autogen.h"
+    "src/common/gl_enum_utils.h"
+    "src/common/gl_enum_utils_autogen.h"
     "src/libANGLE/capture/FrameCapture.h"
-    "src/libANGLE/capture/capture_egl.h"
+    "src/libANGLE/capture/capture_egl_autogen.h"
     "src/libANGLE/capture/capture_gl_1_autogen.h"
     "src/libANGLE/capture/capture_gl_2_autogen.h"
     "src/libANGLE/capture/capture_gl_3_autogen.h"
@@ -582,16 +603,13 @@ list(APPEND libangle_sources
     "src/libANGLE/capture/capture_gles_3_1_autogen.h"
     "src/libANGLE/capture/capture_gles_3_2_autogen.h"
     "src/libANGLE/capture/capture_gles_ext_autogen.h"
-    "src/libANGLE/capture/frame_capture_utils.h"
-    "src/libANGLE/capture/frame_capture_utils_autogen.h"
-    "src/libANGLE/capture/gl_enum_utils.h"
-    "src/libANGLE/capture/gl_enum_utils_autogen.h"
+    "src/libANGLE/capture/serialize.h"
 )
 
 
 set(libangle_capture_sources
     "src/libANGLE/capture/FrameCapture.cpp"
-    "src/libANGLE/capture/capture_egl.cpp"
+    "src/libANGLE/capture/capture_egl_autogen.cpp"
     "src/libANGLE/capture/capture_gl_1_autogen.cpp"
     "src/libANGLE/capture/capture_gl_1_params.cpp"
     "src/libANGLE/capture/capture_gl_2_autogen.cpp"
@@ -612,10 +630,6 @@ set(libangle_capture_sources
     "src/libANGLE/capture/capture_gles_3_2_params.cpp"
     "src/libANGLE/capture/capture_gles_ext_autogen.cpp"
     "src/libANGLE/capture/capture_gles_ext_params.cpp"
-    "src/libANGLE/capture/frame_capture_replay_autogen.cpp"
-    "src/libANGLE/capture/frame_capture_utils_autogen.cpp"
-    "src/libANGLE/capture/gl_enum_utils.cpp"
-    "src/libANGLE/capture/gl_enum_utils_autogen.cpp"
     "src/libGLESv2/global_state.h"
     "src/third_party/ceval/ceval.h"
 )

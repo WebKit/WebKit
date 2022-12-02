@@ -65,9 +65,7 @@ RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& st
 void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
-
-    if (!isAnonymous() && is<SVGGraphicsElement>(element()))
-        updateHasSVGTransformFlags(downcast<SVGGraphicsElement>(element()));
+    updateHasSVGTransformFlags();
 }
 
 LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, RenderFragmentContainer*, OverlayScrollbarSizeRelevancy, PaintPhase) const
@@ -102,17 +100,7 @@ const RenderObject* RenderSVGModelObject::pushMappingToContainer(const RenderLay
 
     ASSERT_UNUSED(ancestorSkipped, !ancestorSkipped);
 
-    bool offsetDependsOnPoint = false;
-    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(), &offsetDependsOnPoint);
-
-    bool preserve3D = container->style().preserves3D() || style().preserves3D();
-    if (shouldUseTransformFromContainer(container) && (geometryMap.mapCoordinatesFlags() & UseTransforms)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        geometryMap.push(this, t, preserve3D, offsetDependsOnPoint, false /* isFixedPos */, hasTransform());
-    } else
-        geometryMap.push(this, containerOffset, preserve3D, offsetDependsOnPoint, false /* isFixedPos */, hasTransform());
-
+    pushOntoGeometryMap(geometryMap, ancestorToStopAt, container, ancestorSkipped);
     return container;
 }
 
@@ -137,12 +125,12 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelO
 
 void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(snappedIntRect(LayoutRect(accumulatedOffset + m_layoutRect.location(), m_layoutRect.size())));
+    rects.append(snappedIntRect(accumulatedOffset, m_layoutRect.size()));
 }
 
 void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    quads.append(localToAbsoluteQuad(objectBoundingBox(), UseTransforms, wasFixed));
+    quads.append(localToAbsoluteQuad(FloatRect { { }, m_layoutRect.size() }, UseTransforms, wasFixed));
 }
 
 void RenderSVGModelObject::willBeDestroyed()
@@ -180,13 +168,7 @@ void RenderSVGModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>
 
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint());
 
-    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
-    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-    } else
-        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    pushOntoTransformState(transformState, mode, nullptr, container, containerOffset, false);
 }
 
 void RenderSVGModelObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const

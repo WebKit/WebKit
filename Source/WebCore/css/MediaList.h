@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "MediaQuery.h"
 #include "MediaQueryParserContext.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -32,85 +33,47 @@ class TextStream;
 
 namespace WebCore {
 
-class CSSParser;
 class CSSRule;
 class CSSStyleSheet;
-class Document;
-class LegacyMediaQuery;
-
-class MediaQuerySet final : public RefCounted<MediaQuerySet> {
-public:
-    static Ref<MediaQuerySet> create()
-    {
-        return adoptRef(*new MediaQuerySet);
-    }
-    static WEBCORE_EXPORT Ref<MediaQuerySet> create(const String& mediaString, MediaQueryParserContext = MediaQueryParserContext());
-
-    WEBCORE_EXPORT ~MediaQuerySet();
-
-    bool set(const String&);
-    bool add(const String&);
-    bool remove(const String&);
-
-    void addMediaQuery(LegacyMediaQuery&&);
-
-    const Vector<LegacyMediaQuery>& queryVector() const { return m_queries; }
-
-    WEBCORE_EXPORT String mediaText() const;
-
-    Ref<MediaQuerySet> copy() const { return adoptRef(*new MediaQuerySet(*this)); }
-
-    void shrinkToFit();
-
-private:
-    MediaQuerySet();
-    WEBCORE_EXPORT MediaQuerySet(const String& mediaQuery);
-    MediaQuerySet(const MediaQuerySet&);
-
-    Vector<LegacyMediaQuery> m_queries;
-};
 
 class MediaList final : public RefCounted<MediaList> {
 public:
-    static Ref<MediaList> create(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
+    static Ref<MediaList> create(CSSStyleSheet* parentSheet)
     {
-        return adoptRef(*new MediaList(mediaQueries, parentSheet));
+        return adoptRef(*new MediaList(parentSheet));
     }
-    static Ref<MediaList> create(MediaQuerySet* mediaQueries, CSSRule* parentRule)
+    static Ref<MediaList> create(CSSRule* parentRule)
     {
-        return adoptRef(*new MediaList(mediaQueries, parentRule));
+        return adoptRef(*new MediaList(parentRule));
     }
 
     WEBCORE_EXPORT ~MediaList();
 
-    unsigned length() const { return m_mediaQueries->queryVector().size(); }
+    WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT String item(unsigned index) const;
     WEBCORE_EXPORT ExceptionOr<void> deleteMedium(const String& oldMedium);
     WEBCORE_EXPORT void appendMedium(const String& newMedium);
 
-    String mediaText() const { return m_mediaQueries->mediaText(); }
+    WEBCORE_EXPORT String mediaText() const;
     WEBCORE_EXPORT void setMediaText(const String&);
 
     CSSRule* parentRule() const { return m_parentRule; }
     CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
-    void clearParentStyleSheet() { ASSERT(m_parentStyleSheet); m_parentStyleSheet = nullptr; }
-    void clearParentRule() { ASSERT(m_parentRule); m_parentRule = nullptr; }
-    const MediaQuerySet* queries() const { return m_mediaQueries.get(); }
-    MediaQuerySet* queries() { return m_mediaQueries.get(); }
+    void detachFromParent();
 
-    void reattach(MediaQuerySet*);
+    const MQ::MediaQueryList& mediaQueries() const;
 
 private:
-    MediaList();
-    MediaList(MediaQuerySet*, CSSStyleSheet* parentSheet);
-    MediaList(MediaQuerySet*, CSSRule* parentRule);
+    MediaList(CSSStyleSheet* parentSheet);
+    MediaList(CSSRule* parentRule);
 
-    RefPtr<MediaQuerySet> m_mediaQueries;
+    void setMediaQueries(MQ::MediaQueryList&&);
+
     CSSStyleSheet* m_parentStyleSheet { nullptr };
     CSSRule* m_parentRule { nullptr };
+    std::optional<MQ::MediaQueryList> m_detachedMediaQueries;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const MediaQuerySet&);
 WTF::TextStream& operator<<(WTF::TextStream&, const MediaList&);
 
 } // namespace

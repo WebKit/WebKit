@@ -34,60 +34,77 @@ namespace WebCore {
 class Page;
 class WeakPtrImplWithEventTargetData;
 
-template<typename T, typename Counter> class EventSender {
+template<typename T, typename WeakPtrImpl> class EventSender {
     WTF_MAKE_NONCOPYABLE(EventSender); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit EventSender(const AtomString& eventType);
+    EventSender();
 
-    const AtomString& eventType() const { return m_eventType; }
-    void dispatchEventSoon(T&);
+    void dispatchEventSoon(T&, const AtomString& eventType);
     void cancelEvent(T&);
+    void cancelEvent(T&, const AtomString& eventType);
     void dispatchPendingEvents(Page*);
 
 #if ASSERT_ENABLED
     bool hasPendingEvents(T& sender) const
     {
-        return m_dispatchSoonList.find(&sender) != notFound || m_dispatchingList.find(&sender) != notFound;
+        return m_dispatchSoonList.containsIf([&](auto& task) { return task.sender == &sender; })
+            || m_dispatchingList.containsIf([&](auto& task) { return task.sender == &sender; });
     }
 #endif
 
 private:
     void timerFired() { dispatchPendingEvents(nullptr); }
 
-    AtomString m_eventType;
     Timer m_timer;
-    Vector<WeakPtr<T, Counter>> m_dispatchSoonList;
-    Vector<WeakPtr<T, Counter>> m_dispatchingList;
+    struct DispatchTask {
+        WeakPtr<T, WeakPtrImpl> sender;
+        AtomString eventType;
+    };
+    Vector<DispatchTask> m_dispatchSoonList;
+    Vector<DispatchTask> m_dispatchingList;
 };
 
-template<typename T, typename Counter> EventSender<T, Counter>::EventSender(const AtomString& eventType)
-    : m_eventType(eventType)
-    , m_timer(*this, &EventSender::timerFired)
+template<typename T, typename WeakPtrImpl> EventSender<T, WeakPtrImpl>::EventSender()
+    : m_timer(*this, &EventSender::timerFired)
 {
 }
 
-template<typename T, typename Counter> void EventSender<T, Counter>::dispatchEventSoon(T& sender)
+template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::dispatchEventSoon(T& sender, const AtomString& eventType)
 {
-    m_dispatchSoonList.append(sender);
+    m_dispatchSoonList.append(DispatchTask { sender, eventType });
     if (!m_timer.isActive())
         m_timer.startOneShot(0_s);
 }
 
-template<typename T, typename Counter> void EventSender<T, Counter>::cancelEvent(T& sender)
+template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::cancelEvent(T& senderToCancel)
 {
     // Remove instances of this sender from both lists.
     // Use loops because we allow multiple instances to get into the lists.
-    for (auto& event : m_dispatchSoonList) {
-        if (event == &sender)
-            event = nullptr;
+    for (auto& [sender, eventType] : m_dispatchSoonList) {
+        if (sender == &senderToCancel)
+            sender = nullptr;
     }
-    for (auto& event : m_dispatchingList) {
-        if (event == &sender)
-            event = nullptr;
+    for (auto& [sender, eventType] : m_dispatchingList) {
+        if (sender == &senderToCancel)
+            sender = nullptr;
     }
 }
 
-template<typename T, typename Counter> void EventSender<T, Counter>::dispatchPendingEvents(Page* page)
+template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::cancelEvent(T& senderToCancel, const AtomString& eventTypeToCancel)
+{
+    // Remove instances of this sender from both lists.
+    // Use loops because we allow multiple instances to get into the lists.
+    for (auto& [sender, eventType] : m_dispatchSoonList) {
+        if (sender == &senderToCancel && eventType == eventTypeToCancel)
+            sender = nullptr;
+    }
+    for (auto& [sender, eventType] : m_dispatchingList) {
+        if (sender == &senderToCancel && eventType == eventTypeToCancel)
+            sender = nullptr;
+    }
+}
+
+template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::dispatchPendingEvents(Page* page)
 {
     // Need to avoid re-entering this function; if new dispatches are
     // scheduled before the parent finishes processing the list, they
@@ -100,14 +117,14 @@ template<typename T, typename Counter> void EventSender<T, Counter>::dispatchPen
     m_dispatchSoonList.checkConsistency();
 
     m_dispatchingList = std::exchange(m_dispatchSoonList, { });
-    for (auto& event : m_dispatchingList) {
-        if (auto sender = event.get()) {
-            event = nullptr;
-            if (!page || sender->document().page() == page)
-                sender->dispatchPendingEvent(this);
-            else
-                dispatchEventSoon(*sender);
-        }
+    for (auto& [weakSender, eventType] : m_dispatchingList) {
+        if (!weakSender)
+            continue;
+        auto sender = std::exchange(weakSender, nullptr);
+        if (!page || sender->document().page() == page)
+            sender->dispatchPendingEvent(this, eventType);
+        else
+            dispatchEventSoon(*sender, eventType);
     }
     m_dispatchingList.clear();
 }

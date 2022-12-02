@@ -21,6 +21,7 @@ def write_header(data_source_name,
                  preamble,
                  path,
                  lib,
+                 load_fn_name,
                  ns="",
                  prefix=None,
                  export="",
@@ -53,7 +54,7 @@ def write_header(data_source_name,
             preamble=preamble,
             export=export,
             lib=lib.upper(),
-            load_fn_name="Load%s%s" % (prefix if prefix else "", api.upper()),
+            load_fn_name=load_fn_name,
             file_prefix=file_prefix)
 
         out.write(loader_header)
@@ -64,6 +65,7 @@ def write_source(data_source_name,
                  all_cmds,
                  api,
                  path,
+                 load_fn_name,
                  ns="",
                  prefix=None,
                  export="",
@@ -95,7 +97,7 @@ def write_source(data_source_name,
             set_pointers="\n".join(setters),
             api_upper=api.upper(),
             api_lower=api,
-            load_fn_name="Load%s%s" % (prefix if prefix else "", api.upper()),
+            load_fn_name=load_fn_name,
             file_prefix=file_prefix)
 
         out.write(loader_source)
@@ -127,12 +129,13 @@ def gen_libegl_loader():
         libegl_preamble,
         path,
         "LIBEGL",
+        "LoadLibEGL_EGL",
         prefix="EGL_",
         export="ANGLE_NO_EXPORT ")
-    write_source(data_source_name, all_cmds, "egl", path, prefix="EGL_")
+    write_source(data_source_name, all_cmds, "egl", path, "LoadLibEGL_EGL", prefix="EGL_")
 
 
-def gen_gles_loader(gles_preamble, path, header_lib, export, internal_prefix, file_prefix):
+def gen_gles_loader(gles_preamble, path, header_lib, export, internal_prefix, file_prefix, tag):
 
     data_source_name = "gl.xml and gl_angle_ext.xml"
     xml = registry_xml.RegistryXML("gl.xml", "gl_angle_ext.xml")
@@ -165,6 +168,7 @@ def gen_gles_loader(gles_preamble, path, header_lib, export, internal_prefix, fi
         gles_preamble,
         path,
         header_lib,
+        "Load%sGLES" % tag,
         export=export,
         internal_prefix=internal_prefix,
         file_prefix=file_prefix)
@@ -173,12 +177,13 @@ def gen_gles_loader(gles_preamble, path, header_lib, export, internal_prefix, fi
         all_cmds,
         "gles",
         path,
+        "Load%sGLES" % tag,
         export=export,
         internal_prefix=internal_prefix,
         file_prefix=file_prefix)
 
 
-def gen_egl_loader(egl_preamble, path, header_lib, export, internal_prefix, file_prefix):
+def gen_egl_loader(egl_preamble, path, header_lib, export, internal_prefix, file_prefix, tag):
 
     data_source_name = "egl.xml and egl_angle_ext.xml"
     xml = registry_xml.RegistryXML("egl.xml", "egl_angle_ext.xml")
@@ -202,6 +207,7 @@ def gen_egl_loader(egl_preamble, path, header_lib, export, internal_prefix, file
         egl_preamble,
         path,
         header_lib,
+        "Load%sEGL" % tag,
         export=export,
         internal_prefix=internal_prefix,
         file_prefix=file_prefix)
@@ -210,6 +216,7 @@ def gen_egl_loader(egl_preamble, path, header_lib, export, internal_prefix, file
         all_cmds,
         "egl",
         path,
+        "Load%sEGL" % tag,
         export=export,
         internal_prefix=internal_prefix,
         file_prefix=file_prefix)
@@ -219,16 +226,16 @@ def gen_util_gles_and_egl_loaders():
     path = os.path.join("..", "util")
     export = "ANGLE_UTIL_EXPORT "
     lib = "UTIL"
-    gen_gles_loader(util_gles_preamble, path, lib, export, DEFAULT_INTERNAL_PREFIX, "")
-    gen_egl_loader(util_egl_preamble, path, lib, export, DEFAULT_INTERNAL_PREFIX, "")
+    gen_gles_loader(util_gles_preamble, path, lib, export, DEFAULT_INTERNAL_PREFIX, "", "Util")
+    gen_egl_loader(util_egl_preamble, path, lib, export, DEFAULT_INTERNAL_PREFIX, "", "Util")
 
 
 def gen_trace_gles_and_egl_loaders():
     path = os.path.join("..", "util", "capture")
     export = "ANGLE_TRACE_LOADER_EXPORT "
     lib = "ANGLE_TRACES_UTIL"
-    gen_gles_loader(trace_gles_preamble, path, lib, export, "t_", "trace_")
-    gen_egl_loader(trace_egl_preamble, path, lib, export, "t_", "trace_")
+    gen_gles_loader(trace_gles_preamble, path, lib, export, "t_", "trace_", "Trace")
+    gen_egl_loader(trace_egl_preamble, path, lib, export, "t_", "trace_", "Trace")
 
 
 def gen_util_wgl_loader():
@@ -254,8 +261,9 @@ def gen_util_wgl_loader():
     all_cmds = xml.all_cmd_names.get_all_commands()
 
     path = os.path.join("..", "util", "windows")
-    write_header(source, all_cmds, "wgl", util_wgl_preamble, path, "UTIL_WINDOWS", "_")
-    write_source(source, all_cmds, "wgl", path, "_")
+    write_header(
+        source, all_cmds, "wgl", util_wgl_preamble, path, "UTIL_WINDOWS", "LoadWGL", ns="_")
+    write_source(source, all_cmds, "wgl", path, "LoadWGL", ns="_")
 
 
 def main():
@@ -352,14 +360,19 @@ template_loader_h = """// GENERATED FILE - DO NOT EDIT.
 
 {preamble}
 {defines}
+
+#if defined(__cplusplus)
+extern "C" {{
+#endif  // defined(__cplusplus)
 {function_pointers}
 
-namespace {file_prefix}angle
-{{
-using GenericProc = void (*)();
-using LoadProc = GenericProc (KHRONOS_APIENTRY *)(const char *);
+typedef void (*GenericProc)(void);
+typedef GenericProc (KHRONOS_APIENTRY *LoadProc)(const char *);
 {export}void {load_fn_name}(LoadProc loadProc);
-}}  // namespace angle
+
+#if defined(__cplusplus)
+}}  // extern "C"
+#endif  // defined(__cplusplus)
 
 #endif  // {lib}_{api_upper}_LOADER_AUTOGEN_H_
 """
@@ -376,15 +389,14 @@ template_loader_cpp = """// GENERATED FILE - DO NOT EDIT.
 
 #include "{file_prefix}{api_lower}_loader_autogen.h"
 
+extern "C" {{
 {function_pointers}
 
-namespace {file_prefix}angle
-{{
 void {load_fn_name}(LoadProc loadProc)
 {{
 {set_pointers}
 }}
-}}  // namespace angle
+}}  // extern "C"
 """
 
 if __name__ == '__main__':

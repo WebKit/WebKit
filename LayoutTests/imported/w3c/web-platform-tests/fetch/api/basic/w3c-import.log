@@ -37,11 +37,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.h2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-null-body.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/text-utf8.any.js

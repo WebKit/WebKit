@@ -22,21 +22,18 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 191x56 [bgcolor=#FFFF00]
         RenderText {#text} at (-7,0) size 198x55
-          text run at (-7,0) width 7 RTL: " "
-          text run at (0,0) width 191 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+          text run at (-7,0) width 198 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "
           text run at (150,28) width 41 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
       RenderBlock (anonymous) at (0,152) size 784x80
         RenderBR {BR} at (0,0) size 0x17
         RenderBR {BR} at (199,66) size 0x17
       RenderBlock {DIV} at (0,232) size 191x56 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 191x55
-          text run at (0,0) width 0 RTL: " "
-          text run at (0,0) width 191 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+        RenderText {#text} at (-7,0) size 198x55
+          text run at (-7,0) width 198 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "
           text run at (150,28) width 41 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
 layer at (8,178) size 199x62 clip at (9,179) size 197x60
   RenderTextControl {TEXTAREA} at (0,18) size 199x62 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 193x56
       RenderText {#text} at (-5,0) size 198x55
-        text run at (-5,0) width 7 RTL: " "
-        text run at (2,0) width 191 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+        text run at (-5,0) width 198 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "
         text run at (152,28) width 41 RTL: "\x{5DE}\x{5D9}\x{5E5}!"

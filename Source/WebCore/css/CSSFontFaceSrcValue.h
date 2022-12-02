@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,10 @@
 
 #pragma once
 
+#include "CSSParserContext.h"
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"
 #include "ResourceLoaderOptions.h"
-#include <wtf/Function.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,60 +38,48 @@ class SVGFontFaceElement;
 class ScriptExecutionContext;
 class WeakPtrImplWithEventTargetData;
 
-class CSSFontFaceSrcValue final : public CSSValue {
+class CSSFontFaceSrcLocalValue final : public CSSValue {
 public:
-    static Ref<CSSFontFaceSrcValue> create(const String& resource, LoadedFromOpaqueSource loadedFromOpaqueSource)
-    {
-        return adoptRef(*new CSSFontFaceSrcValue(resource, false, loadedFromOpaqueSource));
-    }
-    static Ref<CSSFontFaceSrcValue> createLocal(const String& resource)
-    {
-        return adoptRef(*new CSSFontFaceSrcValue(resource, true, LoadedFromOpaqueSource::No));
-    }
+    static Ref<CSSFontFaceSrcLocalValue> create(AtomString fontFaceName);
+    ~CSSFontFaceSrcLocalValue();
 
-    ~CSSFontFaceSrcValue();
-
-    const String& resource() const { return m_resource; }
-    const String& format() const { return m_format; }
-    bool isLocal() const { return m_isLocal; }
-
-    void setFormat(const String& format) { m_format = format; }
-
-    bool isSupportedFormat() const;
-
-    bool isSVGFontFaceSrc() const;
-    bool isSVGFontTarget() const;
+    bool isEmpty() const { return m_fontFaceName.isEmpty(); }
+    const AtomString& fontFaceName() const { return m_fontFaceName; }
 
     SVGFontFaceElement* svgFontFaceElement() const;
-    void setSVGFontFaceElement(SVGFontFaceElement*);
+    void setSVGFontFaceElement(SVGFontFaceElement&);
 
     String customCSSText() const;
-
-    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext*, bool isSVG, bool isInitiatingElementInUserAgentShadowTree);
-
-    bool equals(const CSSFontFaceSrcValue&) const;
+    bool equals(const CSSFontFaceSrcLocalValue&) const;
 
 private:
-    CSSFontFaceSrcValue(const String& resource, bool local, LoadedFromOpaqueSource loadedFromOpaqueSource)
-        : CSSValue(FontFaceSrcClass)
-        , m_resource(resource)
-        , m_isLocal(local)
-        , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
-        , m_svgFontFaceElement(0)
-    {
-    }
+    explicit CSSFontFaceSrcLocalValue(AtomString&&);
 
-    String m_resource;
+    AtomString m_fontFaceName;
+    WeakPtr<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_element;
+};
+
+class CSSFontFaceSrcResourceValue final : public CSSValue {
+public:
+    static Ref<CSSFontFaceSrcResourceValue> create(ResolvedURL, String format, LoadedFromOpaqueSource = LoadedFromOpaqueSource::No);
+
+    bool isEmpty() const { return m_location.specifiedURLString.isEmpty(); }
+    std::unique_ptr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
+
+    String customCSSText() const;
+    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    bool equals(const CSSFontFaceSrcResourceValue&) const;
+
+private:
+    explicit CSSFontFaceSrcResourceValue(ResolvedURL&&, String&& format, LoadedFromOpaqueSource);
+
+    ResolvedURL m_location;
     String m_format;
-    bool m_isLocal;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
-
     CachedResourceHandle<CachedFont> m_cachedFont;
-    WeakPtr<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElement;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontFaceSrcValue, isFontFaceSrcValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontFaceSrcLocalValue, isFontFaceSrcLocalValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontFaceSrcResourceValue, isFontFaceSrcResourceValue())

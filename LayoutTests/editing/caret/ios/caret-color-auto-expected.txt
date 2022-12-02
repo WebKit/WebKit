@@ -1,0 +1,10 @@
+This test verifies that an 'auto' caret color uses the system default caret color on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caretColor is "rgb(66, 107, 242)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

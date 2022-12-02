@@ -93,22 +93,20 @@ void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifi
 
 void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
 {
-    SharedMemory::Handle handle;
-
-    auto invokeCallbackAtScopeExit = makeScopeExit([&] {
-        completionHandler(WTFMove(handle));
-    });
-
     auto* resource = m_remoteMediaResources.get(identifier);
     if (!resource)
-        return;
+        return completionHandler(std::nullopt);
 
     auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
-        return;
-    sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        return completionHandler(std::nullopt);
+
+    auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    if (!handle)
+        return completionHandler(std::nullopt);
 
     resource->dataReceived(sharedMemory->createSharedBuffer(buffer.size()));
+    completionHandler(WTFMove(handle));
 }
 
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)

@@ -2970,7 +2970,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
     // FIXME: Is this relevent to WebKitLegacy? If not, we should remove it.
-    WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
+    WebCore::DeprecatedGlobalSettings::setTrackingPreventionEnabled([preferences resourceLoadStatisticsEnabled]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
@@ -3272,13 +3272,6 @@ IGNORE_WARNINGS_END
 
     if ([scheme _webkit_isCaseInsensitiveEqualToString:@"blob"])
         return YES;
-
-    NSString* webArchivePrefix = @"webarchive+";
-    if ([scheme _webkit_hasCaseInsensitivePrefix:webArchivePrefix]) {
-        auto url = [request URL];
-        NSString* modifiedURL = [[url absoluteString] substringFromIndex:[webArchivePrefix length]];
-        return [self _canHandleRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:modifiedURL]] forMainFrame:forMainFrame];
-    }
 
     return NO;
 }

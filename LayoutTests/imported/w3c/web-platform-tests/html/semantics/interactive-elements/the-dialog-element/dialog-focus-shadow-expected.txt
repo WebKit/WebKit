@@ -22,8 +22,8 @@ PASS show: Autofocus after, yes delegatesFocus
 PASS showModal: Autofocus after, yes delegatesFocus
 PASS show: Autofocus on shadow host, yes delegatesFocus, no siblings
 PASS showModal: Autofocus on shadow host, yes delegatesFocus, no siblings
-FAIL show: Autofocus on shadow host, yes delegatesFocus, sibling before assert_equals: expected Element node <div autofocus=""></div> but got Element node <button tabindex="-1">Focusable</button>
-FAIL showModal: Autofocus on shadow host, yes delegatesFocus, sibling before assert_equals: expected Element node <div autofocus=""></div> but got Element node <button tabindex="-1">Focusable</button>
+PASS show: Autofocus on shadow host, yes delegatesFocus, sibling before
+PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling before
 PASS show: Autofocus on shadow host, yes delegatesFocus, sibling after
 PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling after
 PASS show: Autofocus on shadow host, no delegatesFocus, no siblings
@@ -36,12 +36,18 @@ PASS show: Autofocus inside shadow tree, yes delegatesFocus, no siblings
 PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, no siblings
 PASS show: Autofocus inside shadow tree, yes delegatesFocus, sibling before
 PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, sibling before
-FAIL show: Autofocus inside shadow tree, yes delegatesFocus, sibling after assert_equals: expected Element node <button tabindex="-1" class="focus-me">Focusable</button> but got Element node <div></div>
-FAIL showModal: Autofocus inside shadow tree, yes delegatesFocus, sibling after assert_equals: expected Element node <button tabindex="-1" class="focus-me">Focusable</button> but got Element node <div></div>
+PASS show: Autofocus inside shadow tree, yes delegatesFocus, sibling after
+PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, sibling after
 PASS show: Autofocus inside shadow tree, no delegatesFocus, no siblings
 PASS showModal: Autofocus inside shadow tree, no delegatesFocus, no siblings
 PASS show: Autofocus inside shadow tree, no delegatesFocus, sibling before
 PASS showModal: Autofocus inside shadow tree, no delegatesFocus, sibling before
 PASS show: Autofocus inside shadow tree, no delegatesFocus, sibling after
 PASS showModal: Autofocus inside shadow tree, no delegatesFocus, sibling after
+PASS show: Two shadow trees, both delegatesFocus, first tree doesn't have autofocus element, second does
+PASS showModal: Two shadow trees, both delegatesFocus, first tree doesn't have autofocus element, second does
+PASS show: No autofocus, no delegatesFocus, slotted target
+PASS showModal: No autofocus, no delegatesFocus, slotted target
+PASS show: Shadowroot on child, no autofocus, no delegatesFocus
+PASS showModal: Shadowroot on child, no autofocus, no delegatesFocus
 

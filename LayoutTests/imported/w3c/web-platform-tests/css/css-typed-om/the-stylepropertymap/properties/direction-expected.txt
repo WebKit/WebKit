@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'direction' to CSS-wide keywords
+FAIL Can set 'direction' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'direction' to the 'ltr' keyword
+PASS Can set 'direction' to the 'rtl' keyword
+PASS Setting 'direction' to a length throws TypeError
+PASS Setting 'direction' to a percent throws TypeError
+PASS Setting 'direction' to a time throws TypeError
+PASS Setting 'direction' to an angle throws TypeError
+PASS Setting 'direction' to a flexible length throws TypeError
+PASS Setting 'direction' to a number throws TypeError
+PASS Setting 'direction' to a URL throws TypeError
+PASS Setting 'direction' to a transform throws TypeError
 

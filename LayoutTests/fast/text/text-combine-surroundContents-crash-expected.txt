@@ -4,7 +4,7 @@ layer at (0,0) size 800x56
   RenderBlock {HTML} at (0,0) size 800x56
     RenderBody {BODY} at (8,8) size 784x40
       RenderBlock {DIV} at (0,0) size 20x20
-        RenderInline {SPAN} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 20x0
         RenderCombineText {#text} at (0,0) size 20x20
           text run at (0,0) width 20: "\x{FFFC}"
       RenderBlock (anonymous) at (0,20) size 784x0

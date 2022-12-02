@@ -389,7 +389,7 @@ void WebPaymentCoordinatorProxy::platformCompleteCouponCodeChange(std::optional<
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguration& configuration, Messages::WebPaymentCoordinatorProxy::GetSetupFeatures::AsyncReply&& reply)
+void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguration& configuration, CompletionHandler<void(PaymentSetupFeatures&&)>&& reply)
 {
 #if PLATFORM(MAC)
     if (!PAL::getPKPaymentSetupControllerClass()) {
@@ -409,7 +409,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
-void WebPaymentCoordinatorProxy::beginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, Messages::WebPaymentCoordinatorProxy::BeginApplePaySetup::AsyncReply&& reply)
+void WebPaymentCoordinatorProxy::beginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
 {
     platformBeginApplePaySetup(configuration, features, WTFMove(reply));
 }
@@ -421,7 +421,7 @@ void WebPaymentCoordinatorProxy::endApplePaySetup()
 
 #if PLATFORM(MAC)
 
-void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, Messages::WebPaymentCoordinatorProxy::BeginApplePaySetup::AsyncReply&& reply)
+void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
 {
     if (!PAL::getPKPaymentSetupRequestClass()) {
         reply(false);
@@ -451,7 +451,7 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
 
 #else // PLATFORM(MAC)
 
-void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, Messages::WebPaymentCoordinatorProxy::BeginApplePaySetup::AsyncReply&& reply)
+void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
 {
     UIViewController *presentingViewController = m_client.paymentCoordinatorPresentingViewController(*this);
     if (!presentingViewController) {

@@ -85,6 +85,16 @@ Markup.dump = function(opt_node, opt_description)
     Markup._container.appendChild(wrapper);
 }
 
+Markup.addRange = function(range, description)
+{
+    if (!Markup._rangeCount) {
+        Markup._ranges = {};
+        Markup._rangeCount = 0;
+    }
+    Markup._ranges[description || `range #${Markup._rangeCount}`] = range;
+    ++Markup._rangeCount;
+}
+
 Markup.noAutoDump = function()
 {
     window.removeEventListener('load', Markup.notifyDone, false);
@@ -139,10 +149,10 @@ Markup.get = function(node)
     var len = node.childNodes.length;
     var i = 0;
     for (; i < len; i++) {
-        markup += Markup._getSelectionMarkerWithIdentation(node, i, 0);
+        markup += Markup._getSelectionAndRangeMarkersWithIdentation(node, i, 0);
         markup += Markup._get(node.childNodes[i], 0, shadowRootList);
     }
-    markup += Markup._getSelectionMarkerWithIdentation(node, len, 0);
+    markup += Markup._getSelectionAndRangeMarkersWithIdentation(node, len, 0);
 
     return markup.substring(1);
 }
@@ -240,12 +250,12 @@ Markup._get = function(node, depth, shadowRootList)
         str += Markup._get(node.content, depth + 1, shadowRootList);
 
     for (var i = 0, len = node.childNodes.length; i < len; i++) {
-        str += Markup._getSelectionMarkerWithIdentation(node, i, depth + 1);
+        str += Markup._getSelectionAndRangeMarkersWithIdentation(node, i, depth + 1);
         str += Markup._get(node.childNodes[i], depth + 1, shadowRootList);
     }
     
     str += Markup._getShadowHostIfPossible(node, depth, shadowRootList);
-    str += Markup._getSelectionMarkerWithIdentation(node, i, depth + 1);
+    str += Markup._getSelectionAndRangeMarkersWithIdentation(node, i, depth + 1);
 
     return str;
 }
@@ -312,37 +322,61 @@ Markup._getMarkupForTextNode = function(node)
     var sel = Markup._getSelectionFromNode(node);
     // Firefox doesn't have a sel in a display:none iframe.
     // https://bugs.webkit.org/show_bug.cgi?id=43655
+
+    var rangeDescriptions = Object.getOwnPropertyNames(Markup._ranges || { });
+    var matchingRanges = [];
+    var identifier = 0;
+    for (var description of rangeDescriptions) {
+        var range = Markup._ranges[description];
+        if (range.startContainer == node)
+            matchingRanges.push({offset: range.startOffset, identifier, label: range.collapsed ? `[${description} collapsed]` : `[${description} start]`});
+        ++identifier;
+    }
     if (sel) {
         if (node == sel.anchorNode && node == sel.focusNode) {
-            if (sel.isCollapsed) {
-                startOffset = sel.anchorOffset;
-                startText = Markup._SELECTION_CARET;
-            } else {
-                if (sel.focusOffset > sel.anchorOffset) {
-                    startOffset = sel.anchorOffset;
-                    endOffset = sel.focusOffset;
-                    startText = Markup._SELECTION_ANCHOR;
-                    endText = Markup._SELECTION_FOCUS;
-                } else {
-                    startOffset = sel.focusOffset;
-                    endOffset = sel.anchorOffset;
-                    startText = Markup._SELECTION_FOCUS;
-                    endText = Markup._SELECTION_ANCHOR;
-                }
+            if (sel.isCollapsed)
+                matchingRanges.push({offset: sel.anchorOffset, identifier, label: Markup._SELECTION_CARET});
+            else {
+                matchingRanges.push({offset: sel.anchorOffset, identifier, label: Markup._SELECTION_ANCHOR});
+                matchingRanges.push({offset: sel.focusOffset, identifier, label: Markup._SELECTION_FOCUS});
             }
-        } else if (node == sel.focusNode) {
-            startOffset = sel.focusOffset;
-            startText = Markup._SELECTION_FOCUS;
-        } else if (node == sel.anchorNode) {
-            startOffset = sel.anchorOffset;
-            startText = Markup._SELECTION_ANCHOR;
-        }
+        } else if (node == sel.anchorNode)
+            matchingRanges.push({offset: sel.anchorOffset, identifier, label: Markup._SELECTION_ANCHOR});
+        else if (node == sel.focusNode)
+            matchingRanges.push({offset: sel.focusOffset, identifier, label: Markup._SELECTION_FOCUS});
+        ++identifier;
     }
-    
-    if (startText && endText)
-        innerMarkup = innerMarkup.substring(0, startOffset) + startText + innerMarkup.substring(startOffset, endOffset) + endText + innerMarkup.substring(endOffset);                       
-    else if (startText)
-        innerMarkup = innerMarkup.substring(0, startOffset) + startText + innerMarkup.substring(startOffset);
+    for (var description of rangeDescriptions.reverse()) {
+        var range = Markup._ranges[description];
+        if (range.endContainer == node && !range.collapsed)
+            matchingRanges.push({offset: range.endOffset, identifier, label: `[${description} end]`});
+        ++identifier;
+    }
+
+    if (matchingRanges.length) {
+        matchingRanges.sort(function(a, b) {
+            var diff = a.offset - b.offset;
+            if (diff)
+                return diff;
+            return a.identifier - b.identifier;
+        });
+        var tokens = [];
+        var lastEnd = 0;
+        for (var i = 0; i < matchingRanges.length; ++i) {
+            var item = matchingRanges[i];
+            if (item.offset == lastEnd)
+                tokens.push(item.label);
+            var nextOffset = (matchingRanges[i + 1] || {offset: innerMarkup.length}).offset;
+            if (lastEnd != item.offset)
+                tokens.push(innerMarkup.substring(lastEnd, item.offset));
+            if (item.offset != lastEnd)
+                tokens.push(item.label);
+            lastEnd = item.offset;
+        }
+        if (lastEnd < innerMarkup.length)
+            tokens.push(innerMarkup.substring(lastEnd));
+        innerMarkup = tokens.join('');
+    }
 
     if (!Markup._useHTML5libOutputFormat)
         innerMarkup = innerMarkup.replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
@@ -350,12 +384,17 @@ Markup._getMarkupForTextNode = function(node)
     return innerMarkup;
 }
 
-Markup._getSelectionMarkerWithIdentation = function(node, index, depth)
+Markup._getSelectionAndRangeMarkersWithIdentation = function(node, index, depth)
 {
+    var result = '';
+    for (var marker of Markup._getRangeStartMarkers(node, index))
+        result += Markup._indent(depth) + marker;
     var selection = Markup._getSelectionMarker(node, index);
-    if (!selection)
-        return selection;
-    return Markup._indent(depth) + selection;
+    if (selection)
+        result += Markup._indent(depth) + selection;
+    for (var marker of Markup._getRangeEndMarkers(node, index))
+        result += Markup._indent(depth) + marker;
+    return result;
 }
 
 Markup._getSelectionMarker = function(node, index)
@@ -363,7 +402,7 @@ Markup._getSelectionMarker = function(node, index)
     if (node.nodeType != 1)
         return '';
 
-    var sel = Markup._getSelectionFromNode(node);;
+    var sel = Markup._getSelectionFromNode(node);
 
     // Firefox doesn't have a sel in a display:none iframe.
     // https://bugs.webkit.org/show_bug.cgi?id=43655
@@ -379,6 +418,42 @@ Markup._getSelectionMarker = function(node, index)
         return Markup._SELECTION_FOCUS;
 
     return '';
+}
+
+Markup._getRangeStartMarkers = function(node, index)
+{
+    if (node.nodeType != 1 || !Markup._rangeCount)
+        return [];
+
+    var rangeDescriptions = Object.getOwnPropertyNames(Markup._ranges);
+    var markers = [];
+    for (var description of rangeDescriptions) {
+        var range = Markup._ranges[description];
+        if (index == range.startOffset && node == range.startContainer) {
+            if (range.collapsed)
+                markers.push(`[${description} collapsed]`);
+            else
+                markers.push(`[${description} start]`);
+        }
+    }
+
+    return markers;
+}
+
+Markup._getRangeEndMarkers = function(node, index)
+{
+    if (node.nodeType != 1 || !Markup._rangeCount)
+        return [];
+
+    var rangeDescriptions = Object.getOwnPropertyNames(Markup._ranges).reverse();
+    var markers = [];
+    for (var description of rangeDescriptions) {
+        var range = Markup._ranges[description];
+        if (index == range.endOffset && node == range.endContainer)
+            markers.push(`[${description} end]`);
+    }
+
+    return markers;
 }
 
 window.addEventListener('load', Markup.notifyDone, false);

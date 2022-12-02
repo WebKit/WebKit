@@ -593,7 +593,7 @@ void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents& i
         pageAgent->applyUserAgentOverride(userAgent);
 }
 
-void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instrumentingAgents, String& media)
+void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instrumentingAgents, AtomString& media)
 {
     if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->applyEmulatedMedia(media);

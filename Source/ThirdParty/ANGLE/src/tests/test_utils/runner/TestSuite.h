@@ -163,7 +163,7 @@ class TestSuite
     const std::string &getTestExecutableName() const { return mTestExecutableName; }
 
   private:
-    bool parseSingleArg(const char *argument);
+    bool parseSingleArg(int *argc, char **argv, int argIndex);
     bool launchChildTestProcess(uint32_t batchId, const std::vector<TestIdentifier> &testsInBatch);
     bool finishProcess(ProcessInfo *processInfo);
     int printFailuresAndReturnCount() const;

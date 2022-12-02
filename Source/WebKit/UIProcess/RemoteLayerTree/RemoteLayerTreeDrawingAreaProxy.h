@@ -48,7 +48,7 @@ public:
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return *m_remoteLayerTreeHost; }
     std::unique_ptr<RemoteLayerTreeHost> detachRemoteLayerTreeHost();
     
-    virtual std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const;
+    virtual std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const = 0;
 
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key);
@@ -56,7 +56,8 @@ public:
     TransactionID nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID.next(); }
     TransactionID lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
 
-    void didRefreshDisplay();
+    virtual void didRefreshDisplay();
+    virtual void setDisplayLinkWantsFullSpeedUpdates(bool) { }
     
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
@@ -69,6 +70,8 @@ public:
 protected:
     void updateDebugIndicatorPosition();
 
+    bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
+
 private:
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
@@ -79,8 +82,8 @@ private:
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
     void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) final;
     
-    virtual void scheduleDisplayLink() { }
-    virtual void pauseDisplayLink() { }
+    virtual void scheduleDisplayRefreshCallbacks() { }
+    virtual void pauseDisplayRefreshCallbacks() { }
 
     float indicatorScale(WebCore::IntSize contentsSize) const;
     void updateDebugIndicator() final;

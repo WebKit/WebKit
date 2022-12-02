@@ -41,7 +41,6 @@ messages -> NetworkProcessConnection LegacyReceiver {
     ConnectToRTCDataChannelRemoteSource(struct WebCore::RTCDataChannelIdentifier source, struct WebCore::RTCDataChannelIdentifier handler) -> (std::optional<bool> result)
 #endif
 
-    CheckProcessLocalPortForActivity(struct WebCore::MessagePortIdentifier port) -> (WebCore::MessagePortChannelProvider::HasActivity hasActivity)
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 
     BroadcastConsoleMessage(enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message)

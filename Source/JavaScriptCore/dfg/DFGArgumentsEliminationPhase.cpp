@@ -249,7 +249,7 @@ private:
 
                 // If we're out-of-bounds then we proceed only if the prototype chain
                 // for the allocation is sane (i.e. doesn't have indexed properties).
-                if (m_graph.isWatchingObjectPrototypeIsSaneChainWatchpoint(edge.node()))
+                if (m_graph.isWatchingObjectPrototypeChainIsSaneWatchpoint(edge.node()))
                     break;
                 escape(edge, source);
                 break;
@@ -268,10 +268,10 @@ private:
                 // If we're out-of-bounds then we proceed only if the prototype chain
                 // for the allocation is sane (i.e. doesn't have indexed properties).
                 if (edge->op() == CreateRest) {
-                    if (m_graph.isWatchingArrayPrototypeIsSaneChainWatchpoint(edge.node()))
+                    if (m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(edge.node()))
                         break;
                 } else {
-                    if (m_graph.isWatchingObjectPrototypeIsSaneChainWatchpoint(edge.node()))
+                    if (m_graph.isWatchingObjectPrototypeChainIsSaneWatchpoint(edge.node()))
                         break;
                 }
                 escape(edge, source);

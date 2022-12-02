@@ -5,313 +5,313 @@ PASS menu should be a supported system font.
 PASS message-box should be a supported system font.
 PASS small-caption should be a supported system font.
 PASS status-bar should be a supported system font.
-FAIL Property font value 'xx-small serif' assert_equals: expected "9px serif" but got "normal normal normal normal 9px/normal serif"
-FAIL Property font value 'normal medium/normal sans-serif' assert_equals: expected "16px sans-serif" but got "normal normal normal normal 16px/normal sans-serif"
-FAIL Property font value 'normal normal xx-large/1.2 cursive' assert_equals: expected "32px / 38.400002px cursive" but got "normal normal normal normal 32px/38.400002px cursive"
-FAIL Property font value 'normal normal normal larger/calc(120% + 1.2em) fantasy' assert_equals: expected "48px / normal fantasy" but got "normal normal normal normal 48px/normal fantasy"
-FAIL Property font value 'normal normal normal normal smaller monospace' assert_equals: expected "33.333332px monospace" but got "normal normal normal normal 33.333332px/normal monospace"
-FAIL Property font value 'normal normal normal italic 10px/normal Menu' assert_true: 'normal normal normal italic 10px/normal Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal normal small-caps 20%/1.2 "Non-Generic Example Family Name"' assert_true: 'normal normal normal small-caps 20%/1.2 "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal normal bold calc(30% - 40px)/calc(120% + 1.2em) serif' assert_true: 'normal normal normal bold calc(30% - 40px)/calc(120% + 1.2em) serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal normal ultra-condensed xx-small sans-serif' assert_equals: expected "ultra-condensed 9px sans-serif" but got "normal normal normal ultra-condensed 9px/normal sans-serif"
-FAIL Property font value 'normal normal italic medium/normal cursive' assert_true: 'normal normal italic medium/normal cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal italic normal xx-large/1.2 fantasy' assert_true: 'normal normal italic normal xx-large/1.2 fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal italic small-caps larger/calc(120% + 1.2em) monospace' assert_true: 'normal normal italic small-caps larger/calc(120% + 1.2em) monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal italic bolder smaller Menu' assert_true: 'normal normal italic bolder smaller Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal italic extra-condensed 10px/normal "Non-Generic Example Family Name"' assert_true: 'normal normal italic extra-condensed 10px/normal "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal small-caps 20%/1.2 serif' assert_true: 'normal normal small-caps 20%/1.2 serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal small-caps normal calc(30% - 40px)/calc(120% + 1.2em) sans-serif' assert_true: 'normal normal small-caps normal calc(30% - 40px)/calc(120% + 1.2em) sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal small-caps italic xx-small cursive' assert_true: 'normal normal small-caps italic xx-small cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal small-caps lighter medium/normal fantasy' assert_true: 'normal normal small-caps lighter medium/normal fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal small-caps condensed xx-large/1.2 monospace' assert_true: 'normal normal small-caps condensed xx-large/1.2 monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal 100 larger/calc(120% + 1.2em) Menu' assert_equals: expected "100 48px / normal Menu" but got "normal normal 100 normal 48px/normal Menu"
-FAIL Property font value 'normal normal 900 normal smaller "Non-Generic Example Family Name"' assert_equals: expected "900 33.333332px \"Non-Generic Example Family Name\"" but got "normal normal 900 normal 33.333332px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'normal normal bold italic 10px/normal serif' assert_true: 'normal normal bold italic 10px/normal serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal bolder small-caps 20%/1.2 sans-serif' assert_true: 'normal normal bolder small-caps 20%/1.2 sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal lighter semi-condensed calc(30% - 40px)/calc(120% + 1.2em) cursive' assert_equals: expected "700 semi-condensed 0px / normal cursive" but got "normal normal bold semi-condensed 0px/normal cursive"
-FAIL Property font value 'normal normal semi-expanded xx-small fantasy' assert_equals: expected "semi-expanded 9px fantasy" but got "normal normal normal semi-expanded 9px/normal fantasy"
-FAIL Property font value 'normal normal expanded normal medium/normal monospace' assert_equals: expected "expanded 13px monospace" but got "normal normal normal expanded 13px/normal monospace"
-FAIL Property font value 'normal normal extra-expanded italic xx-large/1.2 Menu' assert_true: 'normal normal extra-expanded italic xx-large/1.2 Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal ultra-expanded small-caps larger/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_true: 'normal normal ultra-expanded small-caps larger/calc(120% + 1.2em) "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal normal ultra-condensed 100 smaller serif' assert_equals: expected "100 ultra-condensed 33.333332px serif" but got "normal normal 100 ultra-condensed 33.333332px/normal serif"
-FAIL Property font value 'normal italic 10px/normal sans-serif' assert_true: 'normal italic 10px/normal sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic normal 20%/1.2 cursive' assert_true: 'normal italic normal 20%/1.2 cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic normal normal calc(30% - 40px)/calc(120% + 1.2em) fantasy' assert_true: 'normal italic normal normal calc(30% - 40px)/calc(120% + 1.2em) fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic normal small-caps xx-small monospace' assert_true: 'normal italic normal small-caps xx-small monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic normal 900 medium/normal Menu' assert_true: 'normal italic normal 900 medium/normal Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic normal extra-condensed xx-large/1.2 "Non-Generic Example Family Name"' assert_true: 'normal italic normal extra-condensed xx-large/1.2 "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic small-caps larger/calc(120% + 1.2em) serif' assert_true: 'normal italic small-caps larger/calc(120% + 1.2em) serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic small-caps normal smaller sans-serif' assert_true: 'normal italic small-caps normal smaller sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic small-caps bold 10px/normal cursive' assert_true: 'normal italic small-caps bold 10px/normal cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic small-caps condensed 20%/1.2 fantasy' assert_true: 'normal italic small-caps condensed 20%/1.2 fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic bolder calc(30% - 40px)/calc(120% + 1.2em) monospace' assert_true: 'normal italic bolder calc(30% - 40px)/calc(120% + 1.2em) monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic lighter normal xx-small Menu' assert_true: 'normal italic lighter normal xx-small Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic 100 small-caps medium/normal "Non-Generic Example Family Name"' assert_true: 'normal italic 100 small-caps medium/normal "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic 900 semi-condensed xx-large/1.2 serif' assert_true: 'normal italic 900 semi-condensed xx-large/1.2 serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic semi-expanded larger/calc(120% + 1.2em) sans-serif' assert_true: 'normal italic semi-expanded larger/calc(120% + 1.2em) sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic expanded normal smaller cursive' assert_true: 'normal italic expanded normal smaller cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic extra-expanded small-caps 10px/normal fantasy' assert_true: 'normal italic extra-expanded small-caps 10px/normal fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal italic ultra-expanded bold 20%/1.2 monospace' assert_true: 'normal italic ultra-expanded bold 20%/1.2 monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps calc(30% - 40px)/calc(120% + 1.2em) Menu' assert_equals: expected "small-caps 0px / normal Menu" but got "normal small-caps normal normal 0px/normal Menu"
-FAIL Property font value 'normal small-caps normal xx-small "Non-Generic Example Family Name"' assert_equals: expected "small-caps 9px \"Non-Generic Example Family Name\"" but got "normal small-caps normal normal 9px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'normal small-caps normal normal medium/normal serif' assert_equals: expected "small-caps 16px serif" but got "normal small-caps normal normal 16px/normal serif"
-FAIL Property font value 'normal small-caps normal italic xx-large/1.2 sans-serif' assert_true: 'normal small-caps normal italic xx-large/1.2 sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps normal bolder larger/calc(120% + 1.2em) cursive' assert_true: 'normal small-caps normal bolder larger/calc(120% + 1.2em) cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps normal ultra-condensed smaller fantasy' assert_equals: expected "small-caps ultra-condensed 33.333332px fantasy" but got "normal small-caps normal ultra-condensed 33.333332px/normal fantasy"
-FAIL Property font value 'normal small-caps italic 10px/normal monospace' assert_true: 'normal small-caps italic 10px/normal monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps italic normal 20%/1.2 Menu' assert_true: 'normal small-caps italic normal 20%/1.2 Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps italic lighter calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_true: 'normal small-caps italic lighter calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps italic extra-condensed xx-small serif' assert_true: 'normal small-caps italic extra-condensed xx-small serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps 100 medium/normal sans-serif' assert_equals: expected "small-caps 100 16px sans-serif" but got "normal small-caps 100 normal 16px/normal sans-serif"
-FAIL Property font value 'normal small-caps 900 normal xx-large/1.2 cursive' assert_equals: expected "small-caps 900 32px / 38.400002px cursive" but got "normal small-caps 900 normal 32px/38.400002px cursive"
-FAIL Property font value 'normal small-caps bold italic larger/calc(120% + 1.2em) fantasy' assert_true: 'normal small-caps bold italic larger/calc(120% + 1.2em) fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps bolder condensed smaller monospace' assert_equals: expected "small-caps 900 condensed 33.333332px monospace" but got "normal small-caps 900 condensed 33.333332px/normal monospace"
-FAIL Property font value 'normal small-caps semi-condensed 10px/normal Menu' assert_equals: expected "small-caps semi-condensed 10px Menu" but got "normal small-caps normal semi-condensed 10px/normal Menu"
-FAIL Property font value 'normal small-caps semi-expanded normal 20%/1.2 "Non-Generic Example Family Name"' assert_equals: expected "small-caps semi-expanded 8px / 9.6px \"Non-Generic Example Family Name\"" but got "normal small-caps normal semi-expanded 8px/9.6px \"Non-Generic Example Family Name\""
-FAIL Property font value 'normal small-caps expanded italic calc(30% - 40px)/calc(120% + 1.2em) serif' assert_true: 'normal small-caps expanded italic calc(30% - 40px)/calc(120% + 1.2em) serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal small-caps extra-expanded lighter xx-small sans-serif' assert_equals: expected "small-caps 700 extra-expanded 9px sans-serif" but got "normal small-caps bold extra-expanded 9px/normal sans-serif"
-FAIL Property font value 'normal 100 medium/normal cursive' assert_equals: expected "100 16px cursive" but got "normal normal 100 normal 16px/normal cursive"
-FAIL Property font value 'normal 900 normal xx-large/1.2 fantasy' assert_equals: expected "900 32px / 38.400002px fantasy" but got "normal normal 900 normal 32px/38.400002px fantasy"
-FAIL Property font value 'normal bold normal normal larger/calc(120% + 1.2em) monospace' assert_equals: expected "700 48px / normal monospace" but got "normal normal bold normal 48px/normal monospace"
-FAIL Property font value 'normal bolder normal italic smaller Menu' assert_true: 'normal bolder normal italic smaller Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal lighter normal small-caps 10px/normal "Non-Generic Example Family Name"' assert_true: 'normal lighter normal small-caps 10px/normal "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal 100 normal ultra-expanded 20%/1.2 serif' assert_equals: expected "100 ultra-expanded 8px / 9.6px serif" but got "normal normal 100 ultra-expanded 8px/9.6px serif"
-FAIL Property font value 'normal 900 italic calc(30% - 40px)/calc(120% + 1.2em) sans-serif' assert_true: 'normal 900 italic calc(30% - 40px)/calc(120% + 1.2em) sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal bold italic normal xx-small cursive' assert_true: 'normal bold italic normal xx-small cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal bolder italic small-caps medium/normal fantasy' assert_true: 'normal bolder italic small-caps medium/normal fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal lighter italic ultra-condensed xx-large/1.2 monospace' assert_true: 'normal lighter italic ultra-condensed xx-large/1.2 monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal 100 small-caps larger/calc(120% + 1.2em) Menu' assert_equals: expected "small-caps 100 48px / normal Menu" but got "normal small-caps 100 normal 48px/normal Menu"
-FAIL Property font value 'normal 900 small-caps normal smaller "Non-Generic Example Family Name"' assert_equals: expected "small-caps 900 33.333332px \"Non-Generic Example Family Name\"" but got "normal small-caps 900 normal 33.333332px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'normal bold small-caps italic 10px/normal serif' assert_true: 'normal bold small-caps italic 10px/normal serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal bolder small-caps extra-condensed 20%/1.2 sans-serif' assert_equals: expected "small-caps 900 extra-condensed 8px / 9.6px sans-serif" but got "normal small-caps 900 extra-condensed 8px/9.6px sans-serif"
-FAIL Property font value 'normal lighter condensed calc(30% - 40px)/calc(120% + 1.2em) cursive' assert_equals: expected "700 condensed 0px / normal cursive" but got "normal normal bold condensed 0px/normal cursive"
-FAIL Property font value 'normal 100 semi-condensed normal xx-small fantasy' assert_equals: expected "100 semi-condensed 9px fantasy" but got "normal normal 100 semi-condensed 9px/normal fantasy"
-FAIL Property font value 'normal 900 semi-expanded italic medium/normal monospace' assert_true: 'normal 900 semi-expanded italic medium/normal monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal bold expanded small-caps xx-large/1.2 Menu' assert_equals: expected "small-caps 700 expanded 32px / 38.400002px Menu" but got "normal small-caps bold expanded 32px/38.400002px Menu"
-FAIL Property font value 'normal extra-expanded larger/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_equals: expected "extra-expanded 48px / normal \"Non-Generic Example Family Name\"" but got "normal normal normal extra-expanded 48px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'normal ultra-expanded normal smaller serif' assert_equals: expected "ultra-expanded 33.333332px serif" but got "normal normal normal ultra-expanded 33.333332px/normal serif"
-FAIL Property font value 'normal ultra-condensed normal normal 10px/normal sans-serif' assert_equals: expected "ultra-condensed 10px sans-serif" but got "normal normal normal ultra-condensed 10px/normal sans-serif"
-FAIL Property font value 'normal extra-condensed normal italic 20%/1.2 cursive' assert_true: 'normal extra-condensed normal italic 20%/1.2 cursive' is a supported value for font. expected true got false
-FAIL Property font value 'normal condensed normal small-caps calc(30% - 40px)/calc(120% + 1.2em) fantasy' assert_true: 'normal condensed normal small-caps calc(30% - 40px)/calc(120% + 1.2em) fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'normal semi-condensed normal bolder xx-small monospace' assert_equals: expected "900 semi-condensed 9px monospace" but got "normal normal 900 semi-condensed 9px/normal monospace"
-FAIL Property font value 'normal semi-expanded italic medium/normal Menu' assert_true: 'normal semi-expanded italic medium/normal Menu' is a supported value for font. expected true got false
-FAIL Property font value 'normal expanded italic normal xx-large/1.2 "Non-Generic Example Family Name"' assert_true: 'normal expanded italic normal xx-large/1.2 "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'normal extra-expanded italic small-caps larger/calc(120% + 1.2em) serif' assert_true: 'normal extra-expanded italic small-caps larger/calc(120% + 1.2em) serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal ultra-expanded italic lighter smaller sans-serif' assert_true: 'normal ultra-expanded italic lighter smaller sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal ultra-condensed small-caps 10px/normal cursive' assert_equals: expected "small-caps ultra-condensed 10px cursive" but got "normal small-caps normal ultra-condensed 10px/normal cursive"
-FAIL Property font value 'normal extra-condensed small-caps normal 20%/1.2 fantasy' assert_equals: expected "small-caps extra-condensed 8px / 9.6px fantasy" but got "normal small-caps normal extra-condensed 8px/9.6px fantasy"
-FAIL Property font value 'normal condensed small-caps italic calc(30% - 40px)/calc(120% + 1.2em) monospace' assert_true: 'normal condensed small-caps italic calc(30% - 40px)/calc(120% + 1.2em) monospace' is a supported value for font. expected true got false
-FAIL Property font value 'normal semi-condensed small-caps 100 xx-small Menu' assert_equals: expected "small-caps 100 semi-condensed 9px Menu" but got "normal small-caps 100 semi-condensed 9px/normal Menu"
-FAIL Property font value 'normal semi-expanded 900 medium/normal "Non-Generic Example Family Name"' assert_equals: expected "900 semi-expanded 16px \"Non-Generic Example Family Name\"" but got "normal normal 900 semi-expanded 16px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'normal expanded bold normal xx-large/1.2 serif' assert_equals: expected "700 expanded 32px / 38.400002px serif" but got "normal normal bold expanded 32px/38.400002px serif"
-FAIL Property font value 'normal extra-expanded bolder italic larger/calc(120% + 1.2em) sans-serif' assert_true: 'normal extra-expanded bolder italic larger/calc(120% + 1.2em) sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'normal ultra-expanded lighter small-caps smaller cursive' assert_equals: expected "small-caps 700 ultra-expanded 33.333332px cursive" but got "normal small-caps bold ultra-expanded 33.333332px/normal cursive"
-FAIL Property font value 'italic 10px/normal fantasy' assert_equals: expected "italic 10px fantasy" but got "italic normal normal normal 10px/normal fantasy"
-FAIL Property font value 'italic normal 20%/1.2 monospace' assert_equals: expected "italic 8px / 9.6px monospace" but got "italic normal normal normal 8px/9.6px monospace"
-FAIL Property font value 'italic normal normal calc(30% - 40px)/calc(120% + 1.2em) Menu' assert_equals: expected "italic 0px / normal Menu" but got "italic normal normal normal 0px/normal Menu"
-FAIL Property font value 'italic normal normal normal xx-small "Non-Generic Example Family Name"' assert_equals: expected "italic 9px \"Non-Generic Example Family Name\"" but got "italic normal normal normal 9px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'italic normal normal small-caps medium/normal serif' assert_true: 'italic normal normal small-caps medium/normal serif' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal normal 100 xx-large/1.2 sans-serif' assert_true: 'italic normal normal 100 xx-large/1.2 sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal normal ultra-condensed larger/calc(120% + 1.2em) cursive' assert_equals: expected "italic ultra-condensed 48px / normal cursive" but got "italic normal normal ultra-condensed 48px/normal cursive"
-FAIL Property font value 'italic normal small-caps smaller fantasy' assert_true: 'italic normal small-caps smaller fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal small-caps normal 10px/normal monospace' assert_true: 'italic normal small-caps normal 10px/normal monospace' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal small-caps 900 20%/1.2 Menu' assert_true: 'italic normal small-caps 900 20%/1.2 Menu' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal small-caps extra-condensed calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_true: 'italic normal small-caps extra-condensed calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal bold xx-small serif' assert_equals: expected "italic 700 9px serif" but got "italic normal bold normal 9px/normal serif"
-FAIL Property font value 'italic normal bolder normal medium/normal sans-serif' assert_equals: expected "italic 900 16px sans-serif" but got "italic normal 900 normal 16px/normal sans-serif"
-FAIL Property font value 'italic normal lighter small-caps xx-large/1.2 cursive' assert_true: 'italic normal lighter small-caps xx-large/1.2 cursive' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal 100 condensed larger/calc(120% + 1.2em) fantasy' assert_equals: expected "italic 100 condensed 48px / normal fantasy" but got "italic normal 100 condensed 48px/normal fantasy"
-FAIL Property font value 'italic normal semi-condensed smaller monospace' assert_equals: expected "italic semi-condensed 33.333332px monospace" but got "italic normal normal semi-condensed 33.333332px/normal monospace"
-FAIL Property font value 'italic normal semi-expanded normal 10px/normal Menu' assert_equals: expected "italic semi-expanded 10px Menu" but got "italic normal normal semi-expanded 10px/normal Menu"
-FAIL Property font value 'italic normal expanded small-caps 20%/1.2 "Non-Generic Example Family Name"' assert_true: 'italic normal expanded small-caps 20%/1.2 "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'italic normal extra-expanded 900 calc(30% - 40px)/calc(120% + 1.2em) serif' assert_equals: expected "italic 900 extra-expanded 0px / normal serif" but got "italic normal 900 extra-expanded 0px/normal serif"
-FAIL Property font value 'italic small-caps xx-small sans-serif' assert_equals: expected "italic small-caps 9px sans-serif" but got "italic small-caps normal normal 9px/normal sans-serif"
-FAIL Property font value 'italic small-caps normal medium/normal cursive' assert_equals: expected "italic small-caps 16px cursive" but got "italic small-caps normal normal 16px/normal cursive"
-FAIL Property font value 'italic small-caps normal normal xx-large/1.2 fantasy' assert_equals: expected "italic small-caps 32px / 38.400002px fantasy" but got "italic small-caps normal normal 32px/38.400002px fantasy"
-FAIL Property font value 'italic small-caps normal bold larger/calc(120% + 1.2em) monospace' assert_true: 'italic small-caps normal bold larger/calc(120% + 1.2em) monospace' is a supported value for font. expected true got false
-FAIL Property font value 'italic small-caps normal ultra-expanded smaller Menu' assert_equals: expected "italic small-caps ultra-expanded 33.333332px Menu" but got "italic small-caps normal ultra-expanded 33.333332px/normal Menu"
-FAIL Property font value 'italic small-caps bolder 10px/normal "Non-Generic Example Family Name"' assert_equals: expected "italic small-caps 900 10px \"Non-Generic Example Family Name\"" but got "italic small-caps 900 normal 10px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'italic small-caps lighter normal 20%/1.2 serif' assert_equals: expected "italic small-caps 700 8px / 9.6px serif" but got "italic small-caps bold normal 8px/9.6px serif"
-FAIL Property font value 'italic small-caps 100 ultra-condensed calc(30% - 40px)/calc(120% + 1.2em) sans-serif' assert_equals: expected "italic small-caps 100 ultra-condensed 0px / normal sans-serif" but got "italic small-caps 100 ultra-condensed 0px/normal sans-serif"
-FAIL Property font value 'italic small-caps extra-condensed xx-small cursive' assert_equals: expected "italic small-caps extra-condensed 9px cursive" but got "italic small-caps normal extra-condensed 9px/normal cursive"
-FAIL Property font value 'italic small-caps condensed normal medium/normal fantasy' assert_equals: expected "italic small-caps condensed 16px fantasy" but got "italic small-caps normal condensed 16px/normal fantasy"
-FAIL Property font value 'italic small-caps semi-condensed 900 xx-large/1.2 monospace' assert_equals: expected "italic small-caps 900 semi-condensed 26px / 31.200001px monospace" but got "italic small-caps 900 semi-condensed 26px/31.200001px monospace"
-FAIL Property font value 'italic bold larger/calc(120% + 1.2em) Menu' assert_equals: expected "italic 700 48px / normal Menu" but got "italic normal bold normal 48px/normal Menu"
-FAIL Property font value 'italic bolder normal smaller "Non-Generic Example Family Name"' assert_equals: expected "italic 900 33.333332px \"Non-Generic Example Family Name\"" but got "italic normal 900 normal 33.333332px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'italic lighter normal normal 10px/normal serif' assert_equals: expected "italic 700 10px serif" but got "italic normal bold normal 10px/normal serif"
-FAIL Property font value 'italic 100 normal small-caps 20%/1.2 sans-serif' assert_true: 'italic 100 normal small-caps 20%/1.2 sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'italic 900 normal semi-expanded calc(30% - 40px)/calc(120% + 1.2em) cursive' assert_equals: expected "italic 900 semi-expanded 0px / normal cursive" but got "italic normal 900 semi-expanded 0px/normal cursive"
-FAIL Property font value 'italic bold small-caps xx-small fantasy' assert_equals: expected "italic small-caps 700 9px fantasy" but got "italic small-caps bold normal 9px/normal fantasy"
-FAIL Property font value 'italic bolder small-caps normal medium/normal monospace' assert_equals: expected "italic small-caps 900 13px monospace" but got "italic small-caps 900 normal 13px/normal monospace"
-FAIL Property font value 'italic lighter small-caps expanded xx-large/1.2 Menu' assert_equals: expected "italic small-caps 700 expanded 32px / 38.400002px Menu" but got "italic small-caps bold expanded 32px/38.400002px Menu"
-FAIL Property font value 'italic 100 extra-expanded larger/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_equals: expected "italic 100 extra-expanded 48px / normal \"Non-Generic Example Family Name\"" but got "italic normal 100 extra-expanded 48px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'italic 900 ultra-expanded normal smaller serif' assert_equals: expected "italic 900 ultra-expanded 33.333332px serif" but got "italic normal 900 ultra-expanded 33.333332px/normal serif"
-FAIL Property font value 'italic bold ultra-condensed small-caps 10px/normal sans-serif' assert_equals: expected "italic small-caps 700 ultra-condensed 10px sans-serif" but got "italic small-caps bold ultra-condensed 10px/normal sans-serif"
-FAIL Property font value 'italic extra-condensed 20%/1.2 cursive' assert_equals: expected "italic extra-condensed 8px / 9.6px cursive" but got "italic normal normal extra-condensed 8px/9.6px cursive"
-FAIL Property font value 'italic condensed normal calc(30% - 40px)/calc(120% + 1.2em) fantasy' assert_equals: expected "italic condensed 0px / normal fantasy" but got "italic normal normal condensed 0px/normal fantasy"
-FAIL Property font value 'italic semi-condensed normal normal xx-small monospace' assert_equals: expected "italic semi-condensed 9px monospace" but got "italic normal normal semi-condensed 9px/normal monospace"
-FAIL Property font value 'italic semi-expanded normal small-caps medium/normal Menu' assert_true: 'italic semi-expanded normal small-caps medium/normal Menu' is a supported value for font. expected true got false
-FAIL Property font value 'italic expanded normal bolder xx-large/1.2 "Non-Generic Example Family Name"' assert_equals: expected "italic 900 expanded 32px / 38.400002px \"Non-Generic Example Family Name\"" but got "italic normal 900 expanded 32px/38.400002px \"Non-Generic Example Family Name\""
-FAIL Property font value 'italic extra-expanded small-caps larger/calc(120% + 1.2em) serif' assert_equals: expected "italic small-caps extra-expanded 48px / normal serif" but got "italic small-caps normal extra-expanded 48px/normal serif"
-FAIL Property font value 'italic ultra-expanded small-caps normal smaller sans-serif' assert_equals: expected "italic small-caps ultra-expanded 33.333332px sans-serif" but got "italic small-caps normal ultra-expanded 33.333332px/normal sans-serif"
-FAIL Property font value 'italic ultra-condensed small-caps lighter 10px/normal cursive' assert_equals: expected "italic small-caps 700 ultra-condensed 10px cursive" but got "italic small-caps bold ultra-condensed 10px/normal cursive"
-FAIL Property font value 'italic extra-condensed 100 20%/1.2 fantasy' assert_equals: expected "italic 100 extra-condensed 8px / 9.6px fantasy" but got "italic normal 100 extra-condensed 8px/9.6px fantasy"
-FAIL Property font value 'italic condensed 900 normal calc(30% - 40px)/calc(120% + 1.2em) monospace' assert_equals: expected "italic 900 condensed 0px / normal monospace" but got "italic normal 900 condensed 0px/normal monospace"
-FAIL Property font value 'italic semi-condensed bold small-caps xx-small Menu' assert_equals: expected "italic small-caps 700 semi-condensed 9px Menu" but got "italic small-caps bold semi-condensed 9px/normal Menu"
-FAIL Property font value 'small-caps medium/normal "Non-Generic Example Family Name"' assert_equals: expected "small-caps 16px \"Non-Generic Example Family Name\"" but got "normal small-caps normal normal 16px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'small-caps normal xx-large/1.2 serif' assert_equals: expected "small-caps 32px / 38.400002px serif" but got "normal small-caps normal normal 32px/38.400002px serif"
-FAIL Property font value 'small-caps normal normal larger/calc(120% + 1.2em) sans-serif' assert_equals: expected "small-caps 48px / normal sans-serif" but got "normal small-caps normal normal 48px/normal sans-serif"
-FAIL Property font value 'small-caps normal normal normal smaller cursive' assert_equals: expected "small-caps 33.333332px cursive" but got "normal small-caps normal normal 33.333332px/normal cursive"
-FAIL Property font value 'small-caps normal normal italic 10px/normal fantasy' assert_true: 'small-caps normal normal italic 10px/normal fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal normal bolder 20%/1.2 monospace' assert_true: 'small-caps normal normal bolder 20%/1.2 monospace' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal normal semi-expanded calc(30% - 40px)/calc(120% + 1.2em) Menu' assert_equals: expected "small-caps semi-expanded 0px / normal Menu" but got "normal small-caps normal semi-expanded 0px/normal Menu"
-FAIL Property font value 'small-caps normal italic xx-small "Non-Generic Example Family Name"' assert_true: 'small-caps normal italic xx-small "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal italic normal medium/normal serif' assert_true: 'small-caps normal italic normal medium/normal serif' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal italic lighter xx-large/1.2 sans-serif' assert_true: 'small-caps normal italic lighter xx-large/1.2 sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal italic expanded larger/calc(120% + 1.2em) cursive' assert_true: 'small-caps normal italic expanded larger/calc(120% + 1.2em) cursive' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal 100 smaller fantasy' assert_equals: expected "small-caps 100 33.333332px fantasy" but got "normal small-caps 100 normal 33.333332px/normal fantasy"
-FAIL Property font value 'small-caps normal 900 normal 10px/normal monospace' assert_equals: expected "small-caps 900 10px monospace" but got "normal small-caps 900 normal 10px/normal monospace"
-FAIL Property font value 'small-caps normal bold italic 20%/1.2 Menu' assert_true: 'small-caps normal bold italic 20%/1.2 Menu' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal bolder extra-expanded calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_equals: expected "small-caps 900 extra-expanded 0px / normal \"Non-Generic Example Family Name\"" but got "normal small-caps 900 extra-expanded 0px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'small-caps normal ultra-expanded xx-small serif' assert_equals: expected "small-caps ultra-expanded 9px serif" but got "normal small-caps normal ultra-expanded 9px/normal serif"
-FAIL Property font value 'small-caps normal ultra-condensed normal medium/normal sans-serif' assert_equals: expected "small-caps ultra-condensed 16px sans-serif" but got "normal small-caps normal ultra-condensed 16px/normal sans-serif"
-FAIL Property font value 'small-caps normal extra-condensed italic xx-large/1.2 cursive' assert_true: 'small-caps normal extra-condensed italic xx-large/1.2 cursive' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps normal condensed lighter larger/calc(120% + 1.2em) fantasy' assert_equals: expected "small-caps 700 condensed 48px / normal fantasy" but got "normal small-caps bold condensed 48px/normal fantasy"
-FAIL Property font value 'small-caps italic smaller monospace' assert_equals: expected "italic small-caps 33.333332px monospace" but got "italic small-caps normal normal 33.333332px/normal monospace"
-FAIL Property font value 'small-caps italic normal 10px/normal Menu' assert_equals: expected "italic small-caps 10px Menu" but got "italic small-caps normal normal 10px/normal Menu"
-FAIL Property font value 'small-caps italic normal normal 20%/1.2 "Non-Generic Example Family Name"' assert_equals: expected "italic small-caps 8px / 9.6px \"Non-Generic Example Family Name\"" but got "italic small-caps normal normal 8px/9.6px \"Non-Generic Example Family Name\""
-FAIL Property font value 'small-caps italic normal 100 calc(30% - 40px)/calc(120% + 1.2em) serif' assert_true: 'small-caps italic normal 100 calc(30% - 40px)/calc(120% + 1.2em) serif' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps italic normal semi-condensed xx-small sans-serif' assert_equals: expected "italic small-caps semi-condensed 9px sans-serif" but got "italic small-caps normal semi-condensed 9px/normal sans-serif"
-FAIL Property font value 'small-caps italic 900 medium/normal cursive' assert_equals: expected "italic small-caps 900 16px cursive" but got "italic small-caps 900 normal 16px/normal cursive"
-FAIL Property font value 'small-caps italic bold normal xx-large/1.2 fantasy' assert_equals: expected "italic small-caps 700 32px / 38.400002px fantasy" but got "italic small-caps bold normal 32px/38.400002px fantasy"
-FAIL Property font value 'small-caps italic bolder semi-expanded larger/calc(120% + 1.2em) monospace' assert_equals: expected "italic small-caps 900 semi-expanded 48px / normal monospace" but got "italic small-caps 900 semi-expanded 48px/normal monospace"
-FAIL Property font value 'small-caps italic expanded smaller Menu' assert_equals: expected "italic small-caps expanded 33.333332px Menu" but got "italic small-caps normal expanded 33.333332px/normal Menu"
-FAIL Property font value 'small-caps italic extra-expanded normal 10px/normal "Non-Generic Example Family Name"' assert_equals: expected "italic small-caps extra-expanded 10px \"Non-Generic Example Family Name\"" but got "italic small-caps normal extra-expanded 10px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'small-caps italic ultra-expanded lighter 20%/1.2 serif' assert_equals: expected "italic small-caps 700 ultra-expanded 8px / 9.6px serif" but got "italic small-caps bold ultra-expanded 8px/9.6px serif"
-FAIL Property font value 'small-caps 100 calc(30% - 40px)/calc(120% + 1.2em) sans-serif' assert_equals: expected "small-caps 100 0px / normal sans-serif" but got "normal small-caps 100 normal 0px/normal sans-serif"
-FAIL Property font value 'small-caps 900 normal xx-small cursive' assert_equals: expected "small-caps 900 9px cursive" but got "normal small-caps 900 normal 9px/normal cursive"
-FAIL Property font value 'small-caps bold normal normal medium/normal fantasy' assert_equals: expected "small-caps 700 16px fantasy" but got "normal small-caps bold normal 16px/normal fantasy"
-FAIL Property font value 'small-caps bolder normal italic xx-large/1.2 monospace' assert_true: 'small-caps bolder normal italic xx-large/1.2 monospace' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps lighter normal ultra-condensed larger/calc(120% + 1.2em) Menu' assert_equals: expected "small-caps 700 ultra-condensed 48px / normal Menu" but got "normal small-caps bold ultra-condensed 48px/normal Menu"
-FAIL Property font value 'small-caps 100 italic smaller "Non-Generic Example Family Name"' assert_equals: expected "italic small-caps 100 33.333332px \"Non-Generic Example Family Name\"" but got "italic small-caps 100 normal 33.333332px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'small-caps 900 italic normal 10px/normal serif' assert_equals: expected "italic small-caps 900 10px serif" but got "italic small-caps 900 normal 10px/normal serif"
-FAIL Property font value 'small-caps bold italic extra-condensed 20%/1.2 sans-serif' assert_equals: expected "italic small-caps 700 extra-condensed 8px / 9.6px sans-serif" but got "italic small-caps bold extra-condensed 8px/9.6px sans-serif"
-FAIL Property font value 'small-caps bolder condensed calc(30% - 40px)/calc(120% + 1.2em) cursive' assert_equals: expected "small-caps 900 condensed 0px / normal cursive" but got "normal small-caps 900 condensed 0px/normal cursive"
-FAIL Property font value 'small-caps lighter semi-condensed normal xx-small fantasy' assert_equals: expected "small-caps 700 semi-condensed 9px fantasy" but got "normal small-caps bold semi-condensed 9px/normal fantasy"
-FAIL Property font value 'small-caps 100 semi-expanded italic medium/normal monospace' assert_equals: expected "italic small-caps 100 semi-expanded 13px monospace" but got "italic small-caps 100 semi-expanded 13px/normal monospace"
-FAIL Property font value 'small-caps expanded xx-large/1.2 Menu' assert_equals: expected "small-caps expanded 32px / 38.400002px Menu" but got "normal small-caps normal expanded 32px/38.400002px Menu"
-FAIL Property font value 'small-caps extra-expanded normal larger/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_equals: expected "small-caps extra-expanded 48px / normal \"Non-Generic Example Family Name\"" but got "normal small-caps normal extra-expanded 48px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'small-caps ultra-expanded normal normal smaller serif' assert_equals: expected "small-caps ultra-expanded 33.333332px serif" but got "normal small-caps normal ultra-expanded 33.333332px/normal serif"
-FAIL Property font value 'small-caps ultra-condensed normal italic 10px/normal sans-serif' assert_true: 'small-caps ultra-condensed normal italic 10px/normal sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'small-caps extra-condensed normal 900 20%/1.2 cursive' assert_equals: expected "small-caps 900 extra-condensed 8px / 9.6px cursive" but got "normal small-caps 900 extra-condensed 8px/9.6px cursive"
-FAIL Property font value 'small-caps condensed italic calc(30% - 40px)/calc(120% + 1.2em) fantasy' assert_equals: expected "italic small-caps condensed 0px / normal fantasy" but got "italic small-caps normal condensed 0px/normal fantasy"
-FAIL Property font value 'small-caps semi-condensed italic normal xx-small monospace' assert_equals: expected "italic small-caps semi-condensed 9px monospace" but got "italic small-caps normal semi-condensed 9px/normal monospace"
-FAIL Property font value 'small-caps semi-expanded italic bold medium/normal Menu' assert_equals: expected "italic small-caps 700 semi-expanded 16px Menu" but got "italic small-caps bold semi-expanded 16px/normal Menu"
-FAIL Property font value 'small-caps expanded bolder xx-large/1.2 "Non-Generic Example Family Name"' assert_equals: expected "small-caps 900 expanded 32px / 38.400002px \"Non-Generic Example Family Name\"" but got "normal small-caps 900 expanded 32px/38.400002px \"Non-Generic Example Family Name\""
-FAIL Property font value 'small-caps extra-expanded lighter normal larger/calc(120% + 1.2em) serif' assert_equals: expected "small-caps 700 extra-expanded 48px / normal serif" but got "normal small-caps bold extra-expanded 48px/normal serif"
-FAIL Property font value 'small-caps ultra-expanded 100 italic smaller sans-serif' assert_equals: expected "italic small-caps 100 ultra-expanded 33.333332px sans-serif" but got "italic small-caps 100 ultra-expanded 33.333332px/normal sans-serif"
-FAIL Property font value '900 10px/normal cursive' assert_equals: expected "900 10px cursive" but got "normal normal 900 normal 10px/normal cursive"
-FAIL Property font value 'bold normal 20%/1.2 fantasy' assert_equals: expected "700 8px / 9.6px fantasy" but got "normal normal bold normal 8px/9.6px fantasy"
-FAIL Property font value 'bolder normal normal calc(30% - 40px)/calc(120% + 1.2em) monospace' assert_equals: expected "900 0px / normal monospace" but got "normal normal 900 normal 0px/normal monospace"
-FAIL Property font value 'lighter normal normal normal xx-small Menu' assert_equals: expected "700 9px Menu" but got "normal normal bold normal 9px/normal Menu"
-FAIL Property font value '100 normal normal italic medium/normal "Non-Generic Example Family Name"' assert_true: '100 normal normal italic medium/normal "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value '900 normal normal small-caps xx-large/1.2 serif' assert_true: '900 normal normal small-caps xx-large/1.2 serif' is a supported value for font. expected true got false
-FAIL Property font value 'bold normal normal ultra-condensed larger/calc(120% + 1.2em) sans-serif' assert_equals: expected "700 ultra-condensed 48px / normal sans-serif" but got "normal normal bold ultra-condensed 48px/normal sans-serif"
-FAIL Property font value 'bolder normal italic smaller cursive' assert_true: 'bolder normal italic smaller cursive' is a supported value for font. expected true got false
-FAIL Property font value 'lighter normal italic normal 10px/normal fantasy' assert_true: 'lighter normal italic normal 10px/normal fantasy' is a supported value for font. expected true got false
-FAIL Property font value '100 normal italic small-caps 20%/1.2 monospace' assert_true: '100 normal italic small-caps 20%/1.2 monospace' is a supported value for font. expected true got false
-FAIL Property font value '900 normal italic extra-condensed calc(30% - 40px)/calc(120% + 1.2em) Menu' assert_true: '900 normal italic extra-condensed calc(30% - 40px)/calc(120% + 1.2em) Menu' is a supported value for font. expected true got false
-FAIL Property font value 'bold normal small-caps xx-small "Non-Generic Example Family Name"' assert_equals: expected "small-caps 700 9px \"Non-Generic Example Family Name\"" but got "normal small-caps bold normal 9px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'bolder normal small-caps normal medium/normal serif' assert_equals: expected "small-caps 900 16px serif" but got "normal small-caps 900 normal 16px/normal serif"
-FAIL Property font value 'lighter normal small-caps italic xx-large/1.2 sans-serif' assert_true: 'lighter normal small-caps italic xx-large/1.2 sans-serif' is a supported value for font. expected true got false
-FAIL Property font value '100 normal small-caps condensed larger/calc(120% + 1.2em) cursive' assert_equals: expected "small-caps 100 condensed 48px / normal cursive" but got "normal small-caps 100 condensed 48px/normal cursive"
-FAIL Property font value '900 normal semi-condensed smaller fantasy' assert_equals: expected "900 semi-condensed 33.333332px fantasy" but got "normal normal 900 semi-condensed 33.333332px/normal fantasy"
-FAIL Property font value 'bold normal semi-expanded normal 10px/normal monospace' assert_equals: expected "700 semi-expanded 10px monospace" but got "normal normal bold semi-expanded 10px/normal monospace"
-FAIL Property font value 'bolder normal expanded italic 20%/1.2 Menu' assert_true: 'bolder normal expanded italic 20%/1.2 Menu' is a supported value for font. expected true got false
-FAIL Property font value 'lighter normal extra-expanded small-caps calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_equals: expected "small-caps 700 extra-expanded 0px / normal \"Non-Generic Example Family Name\"" but got "normal small-caps bold extra-expanded 0px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value '100 italic xx-small serif' assert_equals: expected "italic 100 9px serif" but got "italic normal 100 normal 9px/normal serif"
-FAIL Property font value '900 italic normal medium/normal sans-serif' assert_equals: expected "italic 900 16px sans-serif" but got "italic normal 900 normal 16px/normal sans-serif"
-FAIL Property font value 'bold italic normal normal xx-large/1.2 cursive' assert_equals: expected "italic 700 32px / 38.400002px cursive" but got "italic normal bold normal 32px/38.400002px cursive"
-FAIL Property font value 'bolder italic normal small-caps larger/calc(120% + 1.2em) fantasy' assert_true: 'bolder italic normal small-caps larger/calc(120% + 1.2em) fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'lighter italic normal ultra-expanded smaller monospace' assert_equals: expected "italic 700 ultra-expanded 33.333332px monospace" but got "italic normal bold ultra-expanded 33.333332px/normal monospace"
-FAIL Property font value '100 italic small-caps 10px/normal Menu' assert_equals: expected "italic small-caps 100 10px Menu" but got "italic small-caps 100 normal 10px/normal Menu"
-FAIL Property font value '900 italic small-caps normal 20%/1.2 "Non-Generic Example Family Name"' assert_equals: expected "italic small-caps 900 8px / 9.6px \"Non-Generic Example Family Name\"" but got "italic small-caps 900 normal 8px/9.6px \"Non-Generic Example Family Name\""
-FAIL Property font value 'bold italic small-caps ultra-condensed calc(30% - 40px)/calc(120% + 1.2em) serif' assert_equals: expected "italic small-caps 700 ultra-condensed 0px / normal serif" but got "italic small-caps bold ultra-condensed 0px/normal serif"
-FAIL Property font value 'bolder italic extra-condensed xx-small sans-serif' assert_equals: expected "italic 900 extra-condensed 9px sans-serif" but got "italic normal 900 extra-condensed 9px/normal sans-serif"
-FAIL Property font value 'lighter italic condensed normal medium/normal cursive' assert_equals: expected "italic 700 condensed 16px cursive" but got "italic normal bold condensed 16px/normal cursive"
-FAIL Property font value '100 italic semi-condensed small-caps xx-large/1.2 fantasy' assert_equals: expected "italic small-caps 100 semi-condensed 32px / 38.400002px fantasy" but got "italic small-caps 100 semi-condensed 32px/38.400002px fantasy"
-FAIL Property font value '900 small-caps larger/calc(120% + 1.2em) monospace' assert_equals: expected "small-caps 900 48px / normal monospace" but got "normal small-caps 900 normal 48px/normal monospace"
-FAIL Property font value 'bold small-caps normal smaller Menu' assert_equals: expected "small-caps 700 33.333332px Menu" but got "normal small-caps bold normal 33.333332px/normal Menu"
-FAIL Property font value 'bolder small-caps normal normal 10px/normal "Non-Generic Example Family Name"' assert_equals: expected "small-caps 900 10px \"Non-Generic Example Family Name\"" but got "normal small-caps 900 normal 10px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'lighter small-caps normal italic 20%/1.2 serif' assert_true: 'lighter small-caps normal italic 20%/1.2 serif' is a supported value for font. expected true got false
-FAIL Property font value '100 small-caps normal semi-expanded calc(30% - 40px)/calc(120% + 1.2em) sans-serif' assert_equals: expected "small-caps 100 semi-expanded 0px / normal sans-serif" but got "normal small-caps 100 semi-expanded 0px/normal sans-serif"
-FAIL Property font value '900 small-caps italic xx-small cursive' assert_equals: expected "italic small-caps 900 9px cursive" but got "italic small-caps 900 normal 9px/normal cursive"
-FAIL Property font value 'bold small-caps italic normal medium/normal fantasy' assert_equals: expected "italic small-caps 700 16px fantasy" but got "italic small-caps bold normal 16px/normal fantasy"
-FAIL Property font value 'bolder small-caps italic expanded xx-large/1.2 monospace' assert_equals: expected "italic small-caps 900 expanded 26px / 31.200001px monospace" but got "italic small-caps 900 expanded 26px/31.200001px monospace"
-FAIL Property font value 'lighter small-caps extra-expanded larger/calc(120% + 1.2em) Menu' assert_equals: expected "small-caps 700 extra-expanded 48px / normal Menu" but got "normal small-caps bold extra-expanded 48px/normal Menu"
-FAIL Property font value '100 small-caps ultra-expanded normal smaller "Non-Generic Example Family Name"' assert_equals: expected "small-caps 100 ultra-expanded 33.333332px \"Non-Generic Example Family Name\"" but got "normal small-caps 100 ultra-expanded 33.333332px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value '900 small-caps ultra-condensed italic 10px/normal serif' assert_equals: expected "italic small-caps 900 ultra-condensed 10px serif" but got "italic small-caps 900 ultra-condensed 10px/normal serif"
-FAIL Property font value 'bold extra-condensed 20%/1.2 sans-serif' assert_equals: expected "700 extra-condensed 8px / 9.6px sans-serif" but got "normal normal bold extra-condensed 8px/9.6px sans-serif"
-FAIL Property font value 'bolder condensed normal calc(30% - 40px)/calc(120% + 1.2em) cursive' assert_equals: expected "900 condensed 0px / normal cursive" but got "normal normal 900 condensed 0px/normal cursive"
-FAIL Property font value 'lighter semi-condensed normal normal xx-small fantasy' assert_equals: expected "700 semi-condensed 9px fantasy" but got "normal normal bold semi-condensed 9px/normal fantasy"
-FAIL Property font value '100 semi-expanded normal italic medium/normal monospace' assert_true: '100 semi-expanded normal italic medium/normal monospace' is a supported value for font. expected true got false
-FAIL Property font value '900 expanded normal small-caps xx-large/1.2 Menu' assert_equals: expected "small-caps 900 expanded 32px / 38.400002px Menu" but got "normal small-caps 900 expanded 32px/38.400002px Menu"
-FAIL Property font value 'bold extra-expanded italic larger/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_equals: expected "italic 700 extra-expanded 48px / normal \"Non-Generic Example Family Name\"" but got "italic normal bold extra-expanded 48px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'bolder ultra-expanded italic normal smaller serif' assert_equals: expected "italic 900 ultra-expanded 33.333332px serif" but got "italic normal 900 ultra-expanded 33.333332px/normal serif"
-FAIL Property font value 'lighter ultra-condensed italic small-caps 10px/normal sans-serif' assert_equals: expected "italic small-caps 700 ultra-condensed 10px sans-serif" but got "italic small-caps bold ultra-condensed 10px/normal sans-serif"
-FAIL Property font value '100 extra-condensed small-caps 20%/1.2 cursive' assert_equals: expected "small-caps 100 extra-condensed 8px / 9.6px cursive" but got "normal small-caps 100 extra-condensed 8px/9.6px cursive"
-FAIL Property font value '900 condensed small-caps normal calc(30% - 40px)/calc(120% + 1.2em) fantasy' assert_equals: expected "small-caps 900 condensed 0px / normal fantasy" but got "normal small-caps 900 condensed 0px/normal fantasy"
-FAIL Property font value 'bold semi-condensed small-caps italic xx-small monospace' assert_equals: expected "italic small-caps 700 semi-condensed 9px monospace" but got "italic small-caps bold semi-condensed 9px/normal monospace"
-FAIL Property font value 'semi-expanded medium/normal Menu' assert_equals: expected "semi-expanded 16px Menu" but got "normal normal normal semi-expanded 16px/normal Menu"
-FAIL Property font value 'expanded normal xx-large/1.2 "Non-Generic Example Family Name"' assert_equals: expected "expanded 32px / 38.400002px \"Non-Generic Example Family Name\"" but got "normal normal normal expanded 32px/38.400002px \"Non-Generic Example Family Name\""
-FAIL Property font value 'extra-expanded normal normal larger/calc(120% + 1.2em) serif' assert_equals: expected "extra-expanded 48px / normal serif" but got "normal normal normal extra-expanded 48px/normal serif"
-FAIL Property font value 'ultra-expanded normal normal normal smaller sans-serif' assert_equals: expected "ultra-expanded 33.333332px sans-serif" but got "normal normal normal ultra-expanded 33.333332px/normal sans-serif"
-FAIL Property font value 'ultra-condensed normal normal italic 10px/normal cursive' assert_true: 'ultra-condensed normal normal italic 10px/normal cursive' is a supported value for font. expected true got false
-FAIL Property font value 'extra-condensed normal normal small-caps 20%/1.2 fantasy' assert_true: 'extra-condensed normal normal small-caps 20%/1.2 fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'condensed normal normal bolder calc(30% - 40px)/calc(120% + 1.2em) monospace' assert_equals: expected "900 condensed 0px / normal monospace" but got "normal normal 900 condensed 0px/normal monospace"
-FAIL Property font value 'semi-condensed normal italic xx-small Menu' assert_true: 'semi-condensed normal italic xx-small Menu' is a supported value for font. expected true got false
-FAIL Property font value 'semi-expanded normal italic normal medium/normal "Non-Generic Example Family Name"' assert_true: 'semi-expanded normal italic normal medium/normal "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'expanded normal italic small-caps xx-large/1.2 serif' assert_true: 'expanded normal italic small-caps xx-large/1.2 serif' is a supported value for font. expected true got false
-FAIL Property font value 'extra-expanded normal italic lighter larger/calc(120% + 1.2em) sans-serif' assert_true: 'extra-expanded normal italic lighter larger/calc(120% + 1.2em) sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'ultra-expanded normal small-caps smaller cursive' assert_equals: expected "small-caps ultra-expanded 33.333332px cursive" but got "normal small-caps normal ultra-expanded 33.333332px/normal cursive"
-FAIL Property font value 'ultra-condensed normal small-caps normal 10px/normal fantasy' assert_equals: expected "small-caps ultra-condensed 10px fantasy" but got "normal small-caps normal ultra-condensed 10px/normal fantasy"
-FAIL Property font value 'extra-condensed normal small-caps italic 20%/1.2 monospace' assert_true: 'extra-condensed normal small-caps italic 20%/1.2 monospace' is a supported value for font. expected true got false
-FAIL Property font value 'condensed normal small-caps 100 calc(30% - 40px)/calc(120% + 1.2em) Menu' assert_equals: expected "small-caps 100 condensed 0px / normal Menu" but got "normal small-caps 100 condensed 0px/normal Menu"
-FAIL Property font value 'semi-condensed normal 900 xx-small "Non-Generic Example Family Name"' assert_equals: expected "900 semi-condensed 9px \"Non-Generic Example Family Name\"" but got "normal normal 900 semi-condensed 9px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'semi-expanded normal bold normal medium/normal serif' assert_equals: expected "700 semi-expanded 16px serif" but got "normal normal bold semi-expanded 16px/normal serif"
-FAIL Property font value 'expanded normal bolder italic xx-large/1.2 sans-serif' assert_true: 'expanded normal bolder italic xx-large/1.2 sans-serif' is a supported value for font. expected true got false
-FAIL Property font value 'extra-expanded normal lighter small-caps larger/calc(120% + 1.2em) cursive' assert_equals: expected "small-caps 700 extra-expanded 48px / normal cursive" but got "normal small-caps bold extra-expanded 48px/normal cursive"
-FAIL Property font value 'ultra-expanded italic smaller fantasy' assert_equals: expected "italic ultra-expanded 33.333332px fantasy" but got "italic normal normal ultra-expanded 33.333332px/normal fantasy"
-FAIL Property font value 'ultra-condensed italic normal 10px/normal monospace' assert_equals: expected "italic ultra-condensed 10px monospace" but got "italic normal normal ultra-condensed 10px/normal monospace"
-FAIL Property font value 'extra-condensed italic normal normal 20%/1.2 Menu' assert_equals: expected "italic extra-condensed 8px / 9.6px Menu" but got "italic normal normal extra-condensed 8px/9.6px Menu"
-FAIL Property font value 'condensed italic normal small-caps calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_true: 'condensed italic normal small-caps calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"' is a supported value for font. expected true got false
-FAIL Property font value 'semi-condensed italic normal 100 xx-small serif' assert_equals: expected "italic 100 semi-condensed 9px serif" but got "italic normal 100 semi-condensed 9px/normal serif"
-FAIL Property font value 'semi-expanded italic small-caps medium/normal sans-serif' assert_equals: expected "italic small-caps semi-expanded 16px sans-serif" but got "italic small-caps normal semi-expanded 16px/normal sans-serif"
-FAIL Property font value 'expanded italic small-caps normal xx-large/1.2 cursive' assert_equals: expected "italic small-caps expanded 32px / 38.400002px cursive" but got "italic small-caps normal expanded 32px/38.400002px cursive"
-FAIL Property font value 'extra-expanded italic small-caps 900 larger/calc(120% + 1.2em) fantasy' assert_equals: expected "italic small-caps 900 extra-expanded 48px / normal fantasy" but got "italic small-caps 900 extra-expanded 48px/normal fantasy"
-FAIL Property font value 'ultra-expanded italic bold smaller monospace' assert_equals: expected "italic 700 ultra-expanded 33.333332px monospace" but got "italic normal bold ultra-expanded 33.333332px/normal monospace"
-FAIL Property font value 'ultra-condensed italic bolder normal 10px/normal Menu' assert_equals: expected "italic 900 ultra-condensed 10px Menu" but got "italic normal 900 ultra-condensed 10px/normal Menu"
-FAIL Property font value 'extra-condensed italic lighter small-caps 20%/1.2 "Non-Generic Example Family Name"' assert_equals: expected "italic small-caps 700 extra-condensed 8px / 9.6px \"Non-Generic Example Family Name\"" but got "italic small-caps bold extra-condensed 8px/9.6px \"Non-Generic Example Family Name\""
-FAIL Property font value 'condensed small-caps calc(30% - 40px)/calc(120% + 1.2em) serif' assert_equals: expected "small-caps condensed 0px / normal serif" but got "normal small-caps normal condensed 0px/normal serif"
-FAIL Property font value 'semi-condensed small-caps normal xx-small sans-serif' assert_equals: expected "small-caps semi-condensed 9px sans-serif" but got "normal small-caps normal semi-condensed 9px/normal sans-serif"
-FAIL Property font value 'semi-expanded small-caps normal normal medium/normal cursive' assert_equals: expected "small-caps semi-expanded 16px cursive" but got "normal small-caps normal semi-expanded 16px/normal cursive"
-FAIL Property font value 'expanded small-caps normal italic xx-large/1.2 fantasy' assert_true: 'expanded small-caps normal italic xx-large/1.2 fantasy' is a supported value for font. expected true got false
-FAIL Property font value 'extra-expanded small-caps normal 100 larger/calc(120% + 1.2em) monospace' assert_equals: expected "small-caps 100 extra-expanded 48px / normal monospace" but got "normal small-caps 100 extra-expanded 48px/normal monospace"
-FAIL Property font value 'ultra-expanded small-caps italic smaller Menu' assert_equals: expected "italic small-caps ultra-expanded 33.333332px Menu" but got "italic small-caps normal ultra-expanded 33.333332px/normal Menu"
-FAIL Property font value 'ultra-condensed small-caps italic normal 10px/normal "Non-Generic Example Family Name"' assert_equals: expected "italic small-caps ultra-condensed 10px \"Non-Generic Example Family Name\"" but got "italic small-caps normal ultra-condensed 10px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'extra-condensed small-caps italic 900 20%/1.2 serif' assert_equals: expected "italic small-caps 900 extra-condensed 8px / 9.6px serif" but got "italic small-caps 900 extra-condensed 8px/9.6px serif"
-FAIL Property font value 'condensed small-caps bold calc(30% - 40px)/calc(120% + 1.2em) sans-serif' assert_equals: expected "small-caps 700 condensed 0px / normal sans-serif" but got "normal small-caps bold condensed 0px/normal sans-serif"
-FAIL Property font value 'semi-condensed small-caps bolder normal xx-small cursive' assert_equals: expected "small-caps 900 semi-condensed 9px cursive" but got "normal small-caps 900 semi-condensed 9px/normal cursive"
-FAIL Property font value 'semi-expanded small-caps lighter italic medium/normal fantasy' assert_equals: expected "italic small-caps 700 semi-expanded 16px fantasy" but got "italic small-caps bold semi-expanded 16px/normal fantasy"
-FAIL Property font value 'expanded 100 xx-large/1.2 monospace' assert_equals: expected "100 expanded 26px / 31.200001px monospace" but got "normal normal 100 expanded 26px/31.200001px monospace"
-FAIL Property font value 'extra-expanded 900 normal larger/calc(120% + 1.2em) Menu' assert_equals: expected "900 extra-expanded 48px / normal Menu" but got "normal normal 900 extra-expanded 48px/normal Menu"
-FAIL Property font value 'ultra-expanded bold normal normal smaller "Non-Generic Example Family Name"' assert_equals: expected "700 ultra-expanded 33.333332px \"Non-Generic Example Family Name\"" but got "normal normal bold ultra-expanded 33.333332px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'ultra-condensed bolder normal italic 10px/normal serif' assert_true: 'ultra-condensed bolder normal italic 10px/normal serif' is a supported value for font. expected true got false
-FAIL Property font value 'extra-condensed lighter normal small-caps 20%/1.2 sans-serif' assert_equals: expected "small-caps 700 extra-condensed 8px / 9.6px sans-serif" but got "normal small-caps bold extra-condensed 8px/9.6px sans-serif"
-FAIL Property font value 'condensed 100 italic calc(30% - 40px)/calc(120% + 1.2em) cursive' assert_equals: expected "italic 100 condensed 0px / normal cursive" but got "italic normal 100 condensed 0px/normal cursive"
-FAIL Property font value 'semi-condensed 900 italic normal xx-small fantasy' assert_equals: expected "italic 900 semi-condensed 9px fantasy" but got "italic normal 900 semi-condensed 9px/normal fantasy"
-FAIL Property font value 'semi-expanded bold italic small-caps medium/normal monospace' assert_equals: expected "italic small-caps 700 semi-expanded 13px monospace" but got "italic small-caps bold semi-expanded 13px/normal monospace"
-FAIL Property font value 'expanded bolder small-caps xx-large/1.2 Menu' assert_equals: expected "small-caps 900 expanded 32px / 38.400002px Menu" but got "normal small-caps 900 expanded 32px/38.400002px Menu"
-FAIL Property font value 'extra-expanded lighter small-caps normal larger/calc(120% + 1.2em) "Non-Generic Example Family Name"' assert_equals: expected "small-caps 700 extra-expanded 48px / normal \"Non-Generic Example Family Name\"" but got "normal small-caps bold extra-expanded 48px/normal \"Non-Generic Example Family Name\""
-FAIL Property font value 'ultra-expanded 100 small-caps italic smaller serif' assert_equals: expected "italic small-caps 100 ultra-expanded 33.333332px serif" but got "italic small-caps 100 ultra-expanded 33.333332px/normal serif"
+PASS Property font value 'xx-small serif'
+PASS Property font value 'normal medium/normal sans-serif'
+PASS Property font value 'normal normal xx-large/1.2 cursive'
+PASS Property font value 'normal normal normal larger/calc(120% + 1.2em) fantasy'
+PASS Property font value 'normal normal normal normal smaller monospace'
+PASS Property font value 'normal normal normal italic 10px/normal Menu'
+PASS Property font value 'normal normal normal small-caps 20%/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'normal normal normal bold calc(30% - 40px)/calc(120% + 1.2em) serif'
+PASS Property font value 'normal normal normal ultra-condensed xx-small sans-serif'
+PASS Property font value 'normal normal italic medium/normal cursive'
+PASS Property font value 'normal normal italic normal xx-large/1.2 fantasy'
+PASS Property font value 'normal normal italic small-caps larger/calc(120% + 1.2em) monospace'
+PASS Property font value 'normal normal italic bolder smaller Menu'
+PASS Property font value 'normal normal italic extra-condensed 10px/normal "Non-Generic Example Family Name"'
+PASS Property font value 'normal normal small-caps 20%/1.2 serif'
+PASS Property font value 'normal normal small-caps normal calc(30% - 40px)/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'normal normal small-caps italic xx-small cursive'
+PASS Property font value 'normal normal small-caps lighter medium/normal fantasy'
+PASS Property font value 'normal normal small-caps condensed xx-large/1.2 monospace'
+PASS Property font value 'normal normal 100 larger/calc(120% + 1.2em) Menu'
+PASS Property font value 'normal normal 900 normal smaller "Non-Generic Example Family Name"'
+PASS Property font value 'normal normal bold italic 10px/normal serif'
+PASS Property font value 'normal normal bolder small-caps 20%/1.2 sans-serif'
+PASS Property font value 'normal normal lighter semi-condensed calc(30% - 40px)/calc(120% + 1.2em) cursive'
+PASS Property font value 'normal normal semi-expanded xx-small fantasy'
+PASS Property font value 'normal normal expanded normal medium/normal monospace'
+PASS Property font value 'normal normal extra-expanded italic xx-large/1.2 Menu'
+PASS Property font value 'normal normal ultra-expanded small-caps larger/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'normal normal ultra-condensed 100 smaller serif'
+PASS Property font value 'normal italic 10px/normal sans-serif'
+PASS Property font value 'normal italic normal 20%/1.2 cursive'
+PASS Property font value 'normal italic normal normal calc(30% - 40px)/calc(120% + 1.2em) fantasy'
+PASS Property font value 'normal italic normal small-caps xx-small monospace'
+PASS Property font value 'normal italic normal 900 medium/normal Menu'
+PASS Property font value 'normal italic normal extra-condensed xx-large/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'normal italic small-caps larger/calc(120% + 1.2em) serif'
+PASS Property font value 'normal italic small-caps normal smaller sans-serif'
+PASS Property font value 'normal italic small-caps bold 10px/normal cursive'
+PASS Property font value 'normal italic small-caps condensed 20%/1.2 fantasy'
+PASS Property font value 'normal italic bolder calc(30% - 40px)/calc(120% + 1.2em) monospace'
+PASS Property font value 'normal italic lighter normal xx-small Menu'
+PASS Property font value 'normal italic 100 small-caps medium/normal "Non-Generic Example Family Name"'
+PASS Property font value 'normal italic 900 semi-condensed xx-large/1.2 serif'
+PASS Property font value 'normal italic semi-expanded larger/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'normal italic expanded normal smaller cursive'
+PASS Property font value 'normal italic extra-expanded small-caps 10px/normal fantasy'
+PASS Property font value 'normal italic ultra-expanded bold 20%/1.2 monospace'
+PASS Property font value 'normal small-caps calc(30% - 40px)/calc(120% + 1.2em) Menu'
+PASS Property font value 'normal small-caps normal xx-small "Non-Generic Example Family Name"'
+PASS Property font value 'normal small-caps normal normal medium/normal serif'
+PASS Property font value 'normal small-caps normal italic xx-large/1.2 sans-serif'
+PASS Property font value 'normal small-caps normal bolder larger/calc(120% + 1.2em) cursive'
+PASS Property font value 'normal small-caps normal ultra-condensed smaller fantasy'
+PASS Property font value 'normal small-caps italic 10px/normal monospace'
+PASS Property font value 'normal small-caps italic normal 20%/1.2 Menu'
+PASS Property font value 'normal small-caps italic lighter calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'normal small-caps italic extra-condensed xx-small serif'
+PASS Property font value 'normal small-caps 100 medium/normal sans-serif'
+PASS Property font value 'normal small-caps 900 normal xx-large/1.2 cursive'
+PASS Property font value 'normal small-caps bold italic larger/calc(120% + 1.2em) fantasy'
+PASS Property font value 'normal small-caps bolder condensed smaller monospace'
+PASS Property font value 'normal small-caps semi-condensed 10px/normal Menu'
+PASS Property font value 'normal small-caps semi-expanded normal 20%/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'normal small-caps expanded italic calc(30% - 40px)/calc(120% + 1.2em) serif'
+PASS Property font value 'normal small-caps extra-expanded lighter xx-small sans-serif'
+PASS Property font value 'normal 100 medium/normal cursive'
+PASS Property font value 'normal 900 normal xx-large/1.2 fantasy'
+PASS Property font value 'normal bold normal normal larger/calc(120% + 1.2em) monospace'
+PASS Property font value 'normal bolder normal italic smaller Menu'
+PASS Property font value 'normal lighter normal small-caps 10px/normal "Non-Generic Example Family Name"'
+PASS Property font value 'normal 100 normal ultra-expanded 20%/1.2 serif'
+PASS Property font value 'normal 900 italic calc(30% - 40px)/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'normal bold italic normal xx-small cursive'
+PASS Property font value 'normal bolder italic small-caps medium/normal fantasy'
+PASS Property font value 'normal lighter italic ultra-condensed xx-large/1.2 monospace'
+PASS Property font value 'normal 100 small-caps larger/calc(120% + 1.2em) Menu'
+PASS Property font value 'normal 900 small-caps normal smaller "Non-Generic Example Family Name"'
+PASS Property font value 'normal bold small-caps italic 10px/normal serif'
+PASS Property font value 'normal bolder small-caps extra-condensed 20%/1.2 sans-serif'
+PASS Property font value 'normal lighter condensed calc(30% - 40px)/calc(120% + 1.2em) cursive'
+PASS Property font value 'normal 100 semi-condensed normal xx-small fantasy'
+PASS Property font value 'normal 900 semi-expanded italic medium/normal monospace'
+PASS Property font value 'normal bold expanded small-caps xx-large/1.2 Menu'
+PASS Property font value 'normal extra-expanded larger/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'normal ultra-expanded normal smaller serif'
+PASS Property font value 'normal ultra-condensed normal normal 10px/normal sans-serif'
+PASS Property font value 'normal extra-condensed normal italic 20%/1.2 cursive'
+PASS Property font value 'normal condensed normal small-caps calc(30% - 40px)/calc(120% + 1.2em) fantasy'
+PASS Property font value 'normal semi-condensed normal bolder xx-small monospace'
+PASS Property font value 'normal semi-expanded italic medium/normal Menu'
+PASS Property font value 'normal expanded italic normal xx-large/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'normal extra-expanded italic small-caps larger/calc(120% + 1.2em) serif'
+PASS Property font value 'normal ultra-expanded italic lighter smaller sans-serif'
+PASS Property font value 'normal ultra-condensed small-caps 10px/normal cursive'
+PASS Property font value 'normal extra-condensed small-caps normal 20%/1.2 fantasy'
+PASS Property font value 'normal condensed small-caps italic calc(30% - 40px)/calc(120% + 1.2em) monospace'
+PASS Property font value 'normal semi-condensed small-caps 100 xx-small Menu'
+PASS Property font value 'normal semi-expanded 900 medium/normal "Non-Generic Example Family Name"'
+PASS Property font value 'normal expanded bold normal xx-large/1.2 serif'
+PASS Property font value 'normal extra-expanded bolder italic larger/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'normal ultra-expanded lighter small-caps smaller cursive'
+PASS Property font value 'italic 10px/normal fantasy'
+PASS Property font value 'italic normal 20%/1.2 monospace'
+PASS Property font value 'italic normal normal calc(30% - 40px)/calc(120% + 1.2em) Menu'
+PASS Property font value 'italic normal normal normal xx-small "Non-Generic Example Family Name"'
+PASS Property font value 'italic normal normal small-caps medium/normal serif'
+PASS Property font value 'italic normal normal 100 xx-large/1.2 sans-serif'
+PASS Property font value 'italic normal normal ultra-condensed larger/calc(120% + 1.2em) cursive'
+PASS Property font value 'italic normal small-caps smaller fantasy'
+PASS Property font value 'italic normal small-caps normal 10px/normal monospace'
+PASS Property font value 'italic normal small-caps 900 20%/1.2 Menu'
+PASS Property font value 'italic normal small-caps extra-condensed calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'italic normal bold xx-small serif'
+PASS Property font value 'italic normal bolder normal medium/normal sans-serif'
+PASS Property font value 'italic normal lighter small-caps xx-large/1.2 cursive'
+PASS Property font value 'italic normal 100 condensed larger/calc(120% + 1.2em) fantasy'
+PASS Property font value 'italic normal semi-condensed smaller monospace'
+PASS Property font value 'italic normal semi-expanded normal 10px/normal Menu'
+PASS Property font value 'italic normal expanded small-caps 20%/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'italic normal extra-expanded 900 calc(30% - 40px)/calc(120% + 1.2em) serif'
+PASS Property font value 'italic small-caps xx-small sans-serif'
+PASS Property font value 'italic small-caps normal medium/normal cursive'
+PASS Property font value 'italic small-caps normal normal xx-large/1.2 fantasy'
+PASS Property font value 'italic small-caps normal bold larger/calc(120% + 1.2em) monospace'
+PASS Property font value 'italic small-caps normal ultra-expanded smaller Menu'
+PASS Property font value 'italic small-caps bolder 10px/normal "Non-Generic Example Family Name"'
+PASS Property font value 'italic small-caps lighter normal 20%/1.2 serif'
+PASS Property font value 'italic small-caps 100 ultra-condensed calc(30% - 40px)/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'italic small-caps extra-condensed xx-small cursive'
+PASS Property font value 'italic small-caps condensed normal medium/normal fantasy'
+PASS Property font value 'italic small-caps semi-condensed 900 xx-large/1.2 monospace'
+PASS Property font value 'italic bold larger/calc(120% + 1.2em) Menu'
+PASS Property font value 'italic bolder normal smaller "Non-Generic Example Family Name"'
+PASS Property font value 'italic lighter normal normal 10px/normal serif'
+PASS Property font value 'italic 100 normal small-caps 20%/1.2 sans-serif'
+PASS Property font value 'italic 900 normal semi-expanded calc(30% - 40px)/calc(120% + 1.2em) cursive'
+PASS Property font value 'italic bold small-caps xx-small fantasy'
+PASS Property font value 'italic bolder small-caps normal medium/normal monospace'
+PASS Property font value 'italic lighter small-caps expanded xx-large/1.2 Menu'
+PASS Property font value 'italic 100 extra-expanded larger/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'italic 900 ultra-expanded normal smaller serif'
+PASS Property font value 'italic bold ultra-condensed small-caps 10px/normal sans-serif'
+PASS Property font value 'italic extra-condensed 20%/1.2 cursive'
+PASS Property font value 'italic condensed normal calc(30% - 40px)/calc(120% + 1.2em) fantasy'
+PASS Property font value 'italic semi-condensed normal normal xx-small monospace'
+PASS Property font value 'italic semi-expanded normal small-caps medium/normal Menu'
+PASS Property font value 'italic expanded normal bolder xx-large/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'italic extra-expanded small-caps larger/calc(120% + 1.2em) serif'
+PASS Property font value 'italic ultra-expanded small-caps normal smaller sans-serif'
+PASS Property font value 'italic ultra-condensed small-caps lighter 10px/normal cursive'
+PASS Property font value 'italic extra-condensed 100 20%/1.2 fantasy'
+PASS Property font value 'italic condensed 900 normal calc(30% - 40px)/calc(120% + 1.2em) monospace'
+PASS Property font value 'italic semi-condensed bold small-caps xx-small Menu'
+PASS Property font value 'small-caps medium/normal "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps normal xx-large/1.2 serif'
+PASS Property font value 'small-caps normal normal larger/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'small-caps normal normal normal smaller cursive'
+PASS Property font value 'small-caps normal normal italic 10px/normal fantasy'
+PASS Property font value 'small-caps normal normal bolder 20%/1.2 monospace'
+PASS Property font value 'small-caps normal normal semi-expanded calc(30% - 40px)/calc(120% + 1.2em) Menu'
+PASS Property font value 'small-caps normal italic xx-small "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps normal italic normal medium/normal serif'
+PASS Property font value 'small-caps normal italic lighter xx-large/1.2 sans-serif'
+PASS Property font value 'small-caps normal italic expanded larger/calc(120% + 1.2em) cursive'
+PASS Property font value 'small-caps normal 100 smaller fantasy'
+PASS Property font value 'small-caps normal 900 normal 10px/normal monospace'
+PASS Property font value 'small-caps normal bold italic 20%/1.2 Menu'
+PASS Property font value 'small-caps normal bolder extra-expanded calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps normal ultra-expanded xx-small serif'
+PASS Property font value 'small-caps normal ultra-condensed normal medium/normal sans-serif'
+PASS Property font value 'small-caps normal extra-condensed italic xx-large/1.2 cursive'
+PASS Property font value 'small-caps normal condensed lighter larger/calc(120% + 1.2em) fantasy'
+PASS Property font value 'small-caps italic smaller monospace'
+PASS Property font value 'small-caps italic normal 10px/normal Menu'
+PASS Property font value 'small-caps italic normal normal 20%/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps italic normal 100 calc(30% - 40px)/calc(120% + 1.2em) serif'
+PASS Property font value 'small-caps italic normal semi-condensed xx-small sans-serif'
+PASS Property font value 'small-caps italic 900 medium/normal cursive'
+PASS Property font value 'small-caps italic bold normal xx-large/1.2 fantasy'
+PASS Property font value 'small-caps italic bolder semi-expanded larger/calc(120% + 1.2em) monospace'
+PASS Property font value 'small-caps italic expanded smaller Menu'
+PASS Property font value 'small-caps italic extra-expanded normal 10px/normal "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps italic ultra-expanded lighter 20%/1.2 serif'
+PASS Property font value 'small-caps 100 calc(30% - 40px)/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'small-caps 900 normal xx-small cursive'
+PASS Property font value 'small-caps bold normal normal medium/normal fantasy'
+PASS Property font value 'small-caps bolder normal italic xx-large/1.2 monospace'
+PASS Property font value 'small-caps lighter normal ultra-condensed larger/calc(120% + 1.2em) Menu'
+PASS Property font value 'small-caps 100 italic smaller "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps 900 italic normal 10px/normal serif'
+PASS Property font value 'small-caps bold italic extra-condensed 20%/1.2 sans-serif'
+PASS Property font value 'small-caps bolder condensed calc(30% - 40px)/calc(120% + 1.2em) cursive'
+PASS Property font value 'small-caps lighter semi-condensed normal xx-small fantasy'
+PASS Property font value 'small-caps 100 semi-expanded italic medium/normal monospace'
+PASS Property font value 'small-caps expanded xx-large/1.2 Menu'
+PASS Property font value 'small-caps extra-expanded normal larger/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps ultra-expanded normal normal smaller serif'
+PASS Property font value 'small-caps ultra-condensed normal italic 10px/normal sans-serif'
+PASS Property font value 'small-caps extra-condensed normal 900 20%/1.2 cursive'
+PASS Property font value 'small-caps condensed italic calc(30% - 40px)/calc(120% + 1.2em) fantasy'
+PASS Property font value 'small-caps semi-condensed italic normal xx-small monospace'
+PASS Property font value 'small-caps semi-expanded italic bold medium/normal Menu'
+PASS Property font value 'small-caps expanded bolder xx-large/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'small-caps extra-expanded lighter normal larger/calc(120% + 1.2em) serif'
+PASS Property font value 'small-caps ultra-expanded 100 italic smaller sans-serif'
+PASS Property font value '900 10px/normal cursive'
+PASS Property font value 'bold normal 20%/1.2 fantasy'
+PASS Property font value 'bolder normal normal calc(30% - 40px)/calc(120% + 1.2em) monospace'
+PASS Property font value 'lighter normal normal normal xx-small Menu'
+PASS Property font value '100 normal normal italic medium/normal "Non-Generic Example Family Name"'
+PASS Property font value '900 normal normal small-caps xx-large/1.2 serif'
+PASS Property font value 'bold normal normal ultra-condensed larger/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'bolder normal italic smaller cursive'
+PASS Property font value 'lighter normal italic normal 10px/normal fantasy'
+PASS Property font value '100 normal italic small-caps 20%/1.2 monospace'
+PASS Property font value '900 normal italic extra-condensed calc(30% - 40px)/calc(120% + 1.2em) Menu'
+PASS Property font value 'bold normal small-caps xx-small "Non-Generic Example Family Name"'
+PASS Property font value 'bolder normal small-caps normal medium/normal serif'
+PASS Property font value 'lighter normal small-caps italic xx-large/1.2 sans-serif'
+PASS Property font value '100 normal small-caps condensed larger/calc(120% + 1.2em) cursive'
+PASS Property font value '900 normal semi-condensed smaller fantasy'
+PASS Property font value 'bold normal semi-expanded normal 10px/normal monospace'
+PASS Property font value 'bolder normal expanded italic 20%/1.2 Menu'
+PASS Property font value 'lighter normal extra-expanded small-caps calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value '100 italic xx-small serif'
+PASS Property font value '900 italic normal medium/normal sans-serif'
+PASS Property font value 'bold italic normal normal xx-large/1.2 cursive'
+PASS Property font value 'bolder italic normal small-caps larger/calc(120% + 1.2em) fantasy'
+PASS Property font value 'lighter italic normal ultra-expanded smaller monospace'
+PASS Property font value '100 italic small-caps 10px/normal Menu'
+PASS Property font value '900 italic small-caps normal 20%/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'bold italic small-caps ultra-condensed calc(30% - 40px)/calc(120% + 1.2em) serif'
+PASS Property font value 'bolder italic extra-condensed xx-small sans-serif'
+PASS Property font value 'lighter italic condensed normal medium/normal cursive'
+PASS Property font value '100 italic semi-condensed small-caps xx-large/1.2 fantasy'
+PASS Property font value '900 small-caps larger/calc(120% + 1.2em) monospace'
+PASS Property font value 'bold small-caps normal smaller Menu'
+PASS Property font value 'bolder small-caps normal normal 10px/normal "Non-Generic Example Family Name"'
+PASS Property font value 'lighter small-caps normal italic 20%/1.2 serif'
+PASS Property font value '100 small-caps normal semi-expanded calc(30% - 40px)/calc(120% + 1.2em) sans-serif'
+PASS Property font value '900 small-caps italic xx-small cursive'
+PASS Property font value 'bold small-caps italic normal medium/normal fantasy'
+PASS Property font value 'bolder small-caps italic expanded xx-large/1.2 monospace'
+PASS Property font value 'lighter small-caps extra-expanded larger/calc(120% + 1.2em) Menu'
+PASS Property font value '100 small-caps ultra-expanded normal smaller "Non-Generic Example Family Name"'
+PASS Property font value '900 small-caps ultra-condensed italic 10px/normal serif'
+PASS Property font value 'bold extra-condensed 20%/1.2 sans-serif'
+PASS Property font value 'bolder condensed normal calc(30% - 40px)/calc(120% + 1.2em) cursive'
+PASS Property font value 'lighter semi-condensed normal normal xx-small fantasy'
+PASS Property font value '100 semi-expanded normal italic medium/normal monospace'
+PASS Property font value '900 expanded normal small-caps xx-large/1.2 Menu'
+PASS Property font value 'bold extra-expanded italic larger/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'bolder ultra-expanded italic normal smaller serif'
+PASS Property font value 'lighter ultra-condensed italic small-caps 10px/normal sans-serif'
+PASS Property font value '100 extra-condensed small-caps 20%/1.2 cursive'
+PASS Property font value '900 condensed small-caps normal calc(30% - 40px)/calc(120% + 1.2em) fantasy'
+PASS Property font value 'bold semi-condensed small-caps italic xx-small monospace'
+PASS Property font value 'semi-expanded medium/normal Menu'
+PASS Property font value 'expanded normal xx-large/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'extra-expanded normal normal larger/calc(120% + 1.2em) serif'
+PASS Property font value 'ultra-expanded normal normal normal smaller sans-serif'
+PASS Property font value 'ultra-condensed normal normal italic 10px/normal cursive'
+PASS Property font value 'extra-condensed normal normal small-caps 20%/1.2 fantasy'
+PASS Property font value 'condensed normal normal bolder calc(30% - 40px)/calc(120% + 1.2em) monospace'
+PASS Property font value 'semi-condensed normal italic xx-small Menu'
+PASS Property font value 'semi-expanded normal italic normal medium/normal "Non-Generic Example Family Name"'
+PASS Property font value 'expanded normal italic small-caps xx-large/1.2 serif'
+PASS Property font value 'extra-expanded normal italic lighter larger/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'ultra-expanded normal small-caps smaller cursive'
+PASS Property font value 'ultra-condensed normal small-caps normal 10px/normal fantasy'
+PASS Property font value 'extra-condensed normal small-caps italic 20%/1.2 monospace'
+PASS Property font value 'condensed normal small-caps 100 calc(30% - 40px)/calc(120% + 1.2em) Menu'
+PASS Property font value 'semi-condensed normal 900 xx-small "Non-Generic Example Family Name"'
+PASS Property font value 'semi-expanded normal bold normal medium/normal serif'
+PASS Property font value 'expanded normal bolder italic xx-large/1.2 sans-serif'
+PASS Property font value 'extra-expanded normal lighter small-caps larger/calc(120% + 1.2em) cursive'
+PASS Property font value 'ultra-expanded italic smaller fantasy'
+PASS Property font value 'ultra-condensed italic normal 10px/normal monospace'
+PASS Property font value 'extra-condensed italic normal normal 20%/1.2 Menu'
+PASS Property font value 'condensed italic normal small-caps calc(30% - 40px)/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'semi-condensed italic normal 100 xx-small serif'
+PASS Property font value 'semi-expanded italic small-caps medium/normal sans-serif'
+PASS Property font value 'expanded italic small-caps normal xx-large/1.2 cursive'
+PASS Property font value 'extra-expanded italic small-caps 900 larger/calc(120% + 1.2em) fantasy'
+PASS Property font value 'ultra-expanded italic bold smaller monospace'
+PASS Property font value 'ultra-condensed italic bolder normal 10px/normal Menu'
+PASS Property font value 'extra-condensed italic lighter small-caps 20%/1.2 "Non-Generic Example Family Name"'
+PASS Property font value 'condensed small-caps calc(30% - 40px)/calc(120% + 1.2em) serif'
+PASS Property font value 'semi-condensed small-caps normal xx-small sans-serif'
+PASS Property font value 'semi-expanded small-caps normal normal medium/normal cursive'
+PASS Property font value 'expanded small-caps normal italic xx-large/1.2 fantasy'
+PASS Property font value 'extra-expanded small-caps normal 100 larger/calc(120% + 1.2em) monospace'
+PASS Property font value 'ultra-expanded small-caps italic smaller Menu'
+PASS Property font value 'ultra-condensed small-caps italic normal 10px/normal "Non-Generic Example Family Name"'
+PASS Property font value 'extra-condensed small-caps italic 900 20%/1.2 serif'
+PASS Property font value 'condensed small-caps bold calc(30% - 40px)/calc(120% + 1.2em) sans-serif'
+PASS Property font value 'semi-condensed small-caps bolder normal xx-small cursive'
+PASS Property font value 'semi-expanded small-caps lighter italic medium/normal fantasy'
+PASS Property font value 'expanded 100 xx-large/1.2 monospace'
+PASS Property font value 'extra-expanded 900 normal larger/calc(120% + 1.2em) Menu'
+PASS Property font value 'ultra-expanded bold normal normal smaller "Non-Generic Example Family Name"'
+PASS Property font value 'ultra-condensed bolder normal italic 10px/normal serif'
+PASS Property font value 'extra-condensed lighter normal small-caps 20%/1.2 sans-serif'
+PASS Property font value 'condensed 100 italic calc(30% - 40px)/calc(120% + 1.2em) cursive'
+PASS Property font value 'semi-condensed 900 italic normal xx-small fantasy'
+PASS Property font value 'semi-expanded bold italic small-caps medium/normal monospace'
+PASS Property font value 'expanded bolder small-caps xx-large/1.2 Menu'
+PASS Property font value 'extra-expanded lighter small-caps normal larger/calc(120% + 1.2em) "Non-Generic Example Family Name"'
+PASS Property font value 'ultra-expanded 100 small-caps italic smaller serif'
 

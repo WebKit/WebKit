@@ -1854,9 +1854,6 @@ PASS XPathNSResolver interface: existence and properties of interface prototype 
 PASS XPathNSResolver interface: existence and properties of interface prototype object's "constructor" property
 PASS XPathNSResolver interface: existence and properties of interface prototype object's @@unscopables property
 PASS XPathNSResolver interface: operation lookupNamespaceURI(DOMString?)
-PASS Stringification of document.createNSResolver(document.body)
-PASS XPathNSResolver interface: document.createNSResolver(document.body) must inherit property "lookupNamespaceURI(DOMString?)" with the proper type
-PASS XPathNSResolver interface: calling lookupNamespaceURI(DOMString?) on document.createNSResolver(document.body) with too few arguments must throw TypeError
 PASS XPathEvaluator interface: existence and properties of interface object
 PASS XPathEvaluator interface object length
 PASS XPathEvaluator interface object name

@@ -40,16 +40,16 @@
 
 namespace WebKit {
 
-RefPtr<IPCStreamTester> IPCStreamTester::create(IPC::Connection& connection, IPCStreamTesterIdentifier identifier, IPC::StreamConnectionBuffer&& stream)
+RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
-    auto tester = adoptRef(*new IPCStreamTester(connection, identifier, WTFMove(stream)));
+    auto tester = adoptRef(*new IPCStreamTester(identifier, WTFMove(connectionHandle)));
     tester->initialize();
     return tester;
 }
 
-IPCStreamTester::IPCStreamTester(IPC::Connection& connection, IPCStreamTesterIdentifier identifier, IPC::StreamConnectionBuffer&& stream)
+IPCStreamTester::IPCStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("IPCStreamTester work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(connection, WTFMove(stream), workQueue()))
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue()))
     , m_identifier(identifier)
 {
 }
@@ -78,15 +78,13 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
         auto sharedMemory = WebKit::SharedMemory::allocate(byteCount);
         if (!sharedMemory)
             return { };
-        SharedMemory::Handle handle;
-        if (!sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly))
-            return { };
-        if (handle.isNull())
+        auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+        if (!handle)
             return { };
         uint8_t* data = static_cast<uint8_t*>(sharedMemory->data());
         for (size_t i = 0; i < sharedMemory->size(); ++i)
             data[i] = i;
-        return handle;
+        return *handle;
     }();
     completionHandler(WTFMove(result));
 }

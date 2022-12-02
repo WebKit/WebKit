@@ -290,10 +290,12 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         cogDirectory = os.path.join('Tools', 'cog-prefix', 'src', 'cog-build')
         absoluteCogDirectory = os.path.join(_configurationBuildDirectory, cogDirectory)
         if platform == 'wpe' and os.path.isdir(absoluteCogDirectory):
-            contents.extend([os.path.join(cogDirectory, filename_or_directory) for filename_or_directory in ['cog', 'cogctl', 'modules']])
-            for filename in os.listdir(absoluteCogDirectory):
-                if filename.startswith('libcogcore'):
-                    contents.append(os.path.join(cogDirectory, filename))
+            for cog_root, cog_dirs, cog_files in os.walk(absoluteCogDirectory):
+                for cog_file in cog_files:
+                    if cog_file in ['cog', 'cogctl'] or '.so' in cog_file:
+                        realAbsolutePath = os.path.join(cog_root, cog_file)
+                        realRelativePath = realAbsolutePath[len(_configurationBuildDirectory)+1:]
+                        contents.append(realRelativePath)
 
         if platform == 'gtk':
             contents.extend([os.path.join('install', directory) for directory in ['include', os.path.join('lib', 'pkgconfig')]])

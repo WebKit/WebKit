@@ -45,7 +45,7 @@ struct _WebKitDOMDocumentClass {
     WebKitDOMNodeClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_document_get_type(void);
 
 /**

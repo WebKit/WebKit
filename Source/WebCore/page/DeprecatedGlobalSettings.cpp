@@ -64,7 +64,7 @@ DeprecatedGlobalSettings::DeprecatedGlobalSettings()
     m_mockScrollbarsEnabled = false;
     m_usesOverlayScrollbars = false;
     m_lowPowerVideoAudioBufferSizeEnabled = false;
-    m_resourceLoadStatisticsEnabledEnabled = false;
+    m_trackingPreventionEnabled = false;
     m_allowsAnySSLCertificate = false;
 }
 
@@ -181,9 +181,9 @@ void DeprecatedGlobalSettings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
     shared().m_lowPowerVideoAudioBufferSizeEnabled = flag;
 }
 
-void DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(bool flag)
+void DeprecatedGlobalSettings::setTrackingPreventionEnabled(bool flag)
 {
-    shared().m_resourceLoadStatisticsEnabledEnabled = flag;
+    shared().m_trackingPreventionEnabled = flag;
 }
 
 #if PLATFORM(IOS_FAMILY)

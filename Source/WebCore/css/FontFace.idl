@@ -53,7 +53,7 @@ dictionary FontFaceDescriptors {
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString stretch;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString unicodeRange;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString featureSettings;
-    [CallWith=CurrentScriptExecutionContext] attribute DOMString display;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString display;
 
     readonly attribute FontFaceLoadStatus status;
 

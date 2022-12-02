@@ -31,7 +31,6 @@
 #include <wtf/Gigacage.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
-#include <wtf/RandomNumberSeed.h>
 #include <wtf/ThreadGroup.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WTFConfig.h>
@@ -486,7 +485,6 @@ void initialize()
         setPermissionsOfConfigPage();
         Gigacage::ensureGigacage();
         Config::AssertNotFrozenScope assertScope;
-        initializeRandomNumberGenerator();
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)
         Thread::initializeTLSKey();
 #endif

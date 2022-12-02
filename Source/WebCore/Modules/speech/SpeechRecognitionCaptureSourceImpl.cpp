@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "SpeechRecognitionUpdate.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 
 #if PLATFORM(COCOA)
 #include "CAAudioStreamDescription.h"
@@ -40,7 +41,7 @@ namespace WebCore {
 #if !RELEASE_LOG_DISABLED
 static const void* nextLogIdentifier()
 {
-    static uint64_t logIdentifier = cryptographicallyRandomNumber();
+    static uint64_t logIdentifier = cryptographicallyRandomNumber<uint32_t>();
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 

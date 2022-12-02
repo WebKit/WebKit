@@ -64,9 +64,6 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
     // Currently we only choose the first track as the recorded track.
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
-    if (selectedTracks.audioTrack)
-        m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&MediaRecorderPrivate::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-
     m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = WeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
         if (!weakThis) {
             callback(Exception { InvalidStateError }, 0, 0);
@@ -124,8 +121,11 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
 
         // Allocate a ring buffer large enough to contain 2 seconds of audio.
-        m_numberOfFrames = m_description.sampleRate() * 2;
-        m_ringBuffer->allocate(m_description.streamDescription(), m_numberOfFrames);
+        m_numberOfFrames = m_description->sampleRate() * 2;
+        auto& format = m_description->streamDescription();
+        auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
+        m_ringBuffer = WTFMove(ringBuffer);
+        m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format }, m_identifier);
         m_silenceAudioBuffer = nullptr;
     }
 
@@ -133,7 +133,7 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
 
     if (shouldMuteAudio()) {
         if (!m_silenceAudioBuffer)
-            m_silenceAudioBuffer = makeUnique<WebAudioBufferList>(m_description, numberOfFrames);
+            m_silenceAudioBuffer = makeUnique<WebAudioBufferList>(*m_description, numberOfFrames);
         else
             m_silenceAudioBuffer->setSampleCount(numberOfFrames);
         m_silenceAudioBuffer->zeroFlatBuffer();
@@ -141,18 +141,6 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
     } else
         m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
     m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesAvailable { time, numberOfFrames }, m_identifier);
-}
-
-void MediaRecorderPrivate::storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
-{
-    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
-    // explicitly allow the following allocation(s).
-    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-
-    SharedMemory::Handle handle;
-    if (storage)
-        storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format, frameCount }, m_identifier);
 }
 
 void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& mimeType, double)>&& completionHandler)

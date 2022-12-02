@@ -35,6 +35,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKNavigationResponseGetTypeID();
     
 WK_EXPORT bool WKNavigationResponseCanShowMIMEType(WKNavigationResponseRef);
+WK_EXPORT WKURLResponseRef WKNavigationResponseCopyResponse(WKNavigationResponseRef);
 
 #ifdef __cplusplus
 }

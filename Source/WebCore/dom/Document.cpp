@@ -90,6 +90,7 @@
 #include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCReachableRef.h"
+#include "GPUCanvasContext.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
@@ -280,6 +281,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/VM.h>
 #include <ctime>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -459,7 +461,7 @@ uint64_t Document::s_globalTreeVersion = 0;
 
 static const void* sharedLoggerOwner()
 {
-    static uint64_t owner = cryptographicallyRandomNumber();
+    static uint64_t owner = cryptographicallyRandomNumber<uint32_t>();
     return reinterpret_cast<const void*>(owner);
 }
 
@@ -842,6 +844,13 @@ void Document::commonTeardown()
     m_timeline = nullptr;
     m_associatedFormControls.clear();
     m_didAssociateFormControlsTimer.stop();
+
+#if ENABLE(WEB_RTC)
+    if (m_rtcNetworkManager) {
+        m_rtcNetworkManager->close();
+        m_rtcNetworkManager = nullptr;
+    }
+#endif
 }
 
 Element* Document::elementForAccessKey(const String& key)
@@ -2095,16 +2104,14 @@ void Document::resolveStyle(ResolveStyleType type)
             m_hasNodesWithNonFinalStyle = false;
             m_hasNodesWithMissingStyle = false;
 
-            auto documentStyle = Style::resolveForDocument(*this);
+            auto newStyle = Style::resolveForDocument(*this);
 
-            // Inserting the pictograph font at the end of the font fallback list is done by the
-            // font selector, so set a font selector if needed.
-            if (settings().fontFallbackPrefersPictographs())
-                documentStyle.fontCascade().update(&fontSelector());
-
-            auto documentChange = Style::determineChange(documentStyle, m_renderView->style());
-            if (documentChange != Style::Change::None)
-                renderView()->setStyle(WTFMove(documentStyle));
+            auto documentChange = m_initialContainingBlockStyle ? Style::determineChange(newStyle, *m_initialContainingBlockStyle) : Style::Change::Renderer;
+            if (documentChange != Style::Change::None) {
+                m_initialContainingBlockStyle = RenderStyle::clonePtr(newStyle);
+                // The used style may end up differing from the computed style due to propagation of properties from elements.
+                renderView()->setStyle(WTFMove(newStyle));
+            }
 
             if (RefPtr documentElement = this->documentElement())
                 documentElement->invalidateStyleForSubtree();
@@ -2627,6 +2634,7 @@ void Document::destroyRenderTree()
         view()->willDestroyRenderTree();
 
     m_pendingRenderTreeUpdate = { };
+    m_initialContainingBlockStyle = { };
 
     if (m_documentElement)
         RenderTreeUpdater::tearDownRenderers(*m_documentElement);
@@ -3045,7 +3053,8 @@ ExceptionOr<void> Document::open(Document* entryDocument)
         bool isNavigating = m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy() || m_frame->loader().state() == FrameState::Provisional || m_frame->navigationScheduler().hasQueuedNavigation();
         if (m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy())
             m_frame->loader().policyChecker().stopCheck();
-        if (isNavigating)
+        // Null-checking m_frame again as `policyChecker().stopCheck()` may have cleared it.
+        if (isNavigating && m_frame)
             m_frame->loader().stopAllLoaders();
     }
 
@@ -3132,7 +3141,7 @@ void Document::implicitOpen()
     setReadyState(Loading);
 }
 
-std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
+std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     auto* cachedFont = m_fontLoader->cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
     return cachedFont ? makeUnique<CachedFontLoadRequest>(*cachedFont) : nullptr;
@@ -3274,9 +3283,7 @@ void Document::implicitClose()
         // For now, only do this when there is a Frame, otherwise this could cause JS reentrancy
         // below SVG font parsing, for example. <https://webkit.org/b/136269>
         if (auto* currentPage = page()) {
-            ImageLoader::dispatchPendingBeforeLoadEvents(currentPage);
             ImageLoader::dispatchPendingLoadEvents(currentPage);
-            ImageLoader::dispatchPendingErrorEvents(currentPage);
             HTMLLinkElement::dispatchPendingLoadEvents(currentPage);
             HTMLStyleElement::dispatchPendingLoadEvents(currentPage);
         }
@@ -4773,7 +4780,17 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
             return false;
     }
 
-    if (newFocusedElement && newFocusedElement->isFocusable()) {
+    auto isNewElementFocusable = [&] {
+        if (!newFocusedElement)
+            return false;
+        // Resolving isFocusable() may require matching :focus-within as if the focus was already on the new element.
+        newFocusedElement->setHasTentativeFocus(true);
+        bool isFocusable = newFocusedElement->isFocusable();
+        newFocusedElement->setHasTentativeFocus(false);
+        return isFocusable;
+    }();
+
+    if (isNewElementFocusable) {
         if (&newFocusedElement->document() != this) {
             // Bluring oldFocusedElement may have moved newFocusedElement across documents.
             return false;
@@ -5429,7 +5446,7 @@ String Document::referrer()
 #if ENABLE(TRACKING_PREVENTION)
     if (!m_referrerOverride.isEmpty())
         return m_referrerOverride;
-    if (DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && frame()) {
+    if (DeprecatedGlobalSettings::trackingPreventionEnabled() && frame()) {
         auto referrerStr = frame()->loader().referrer();
         if (!referrerStr.isEmpty()) {
             URL referrerURL { referrerStr };
@@ -5448,8 +5465,8 @@ String Document::referrer()
 
 String Document::referrerForBindings()
 {
-    if (auto* page = this->page(); page
-        && page->usesEphemeralSession()
+    if (auto* loader = topDocument().loader(); loader
+        && loader->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled)
         && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
         return String();
     return referrer();
@@ -6653,6 +6670,11 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
     if (is<ImageBitmapRenderingContext>(*context))
         return RenderingContext { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*context) } };
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    if (is<GPUCanvasContext>(*context))
+        return RenderingContext { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*context) } };
+#endif
+
     return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
 }
 
@@ -6880,6 +6902,12 @@ void Document::serviceRequestAnimationFrameCallbacks()
 {
     if (m_scriptedAnimationController && domWindow())
         m_scriptedAnimationController->serviceRequestAnimationFrameCallbacks(domWindow()->frozenNowTimestamp());
+}
+
+void Document::serviceCaretAnimation()
+{
+    if (auto* window = domWindow())
+        selection().caretAnimator().serviceCaretAnimation(window->frozenNowTimestamp());
 }
 
 void Document::serviceRequestVideoFrameCallbacks()
@@ -8194,7 +8222,7 @@ static std::optional<IntersectionObservationState> computeIntersectionState(Fram
     FloatRect rootLocalIntersectionRect = localRootBounds;
 
     IntersectionObservationState intersectionState;
-    intersectionState.isIntersecting = rootLocalTargetRect && rootLocalIntersectionRect.edgeInclusiveIntersect(*rootLocalTargetRect);
+    intersectionState.isIntersecting = rootLocalTargetRect && rootLocalIntersectionRect.edgeInclusiveIntersect(*rootLocalTargetRect) && !targetRenderer->isSkippedContent();
     intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
     intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(localRootBounds).boundingBox();
 
@@ -8932,14 +8960,6 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
 }
 #endif
 
-String Document::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url)
-{
-    Page* page = this->page();
-    if (!page)
-        return emptyString();
-    return page->chrome().client().signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
-}
-
 bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
 {
     return m_CSSRegisteredPropertySet.add(prop.name, makeUnique<CSSRegisteredCustomProperty>(WTFMove(prop))).isNewEntry;
@@ -8948,26 +8968,17 @@ bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
 const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
 {
     if (!m_exposedComputedCSSPropertyIDs.has_value()) {
-        std::array<CSSPropertyID, numComputedPropertyIDs> exposed;
-        auto last = std::copy_if(std::begin(computedPropertyIDs), std::end(computedPropertyIDs),
-            exposed.begin(), [&](CSSPropertyID x) {
-                return isCSSPropertyExposed(x, m_settings.ptr());
-            });
-
-        FixedVector<CSSPropertyID> active(std::distance(exposed.begin(), last));
-        std::copy(exposed.begin(), last, active.begin());
-        m_exposedComputedCSSPropertyIDs = WTFMove(active);
+        std::remove_const_t<decltype(computedPropertyIDs)> exposed;
+        auto end = std::copy_if(computedPropertyIDs.begin(), computedPropertyIDs.end(), exposed.begin(), [&](auto property) {
+            return isExposed(property, m_settings.ptr());
+        });
+        m_exposedComputedCSSPropertyIDs.emplace(exposed.begin(), end);
     }
-
     return m_exposedComputedCSSPropertyIDs.value();
 }
 
 void Document::detachFromFrame()
 {
-    // Assertion to help pinpint rdar://problem/49877867. If this hits, the crash trace should tell us
-    // which piece of code is detaching the document from its frame while constructing the CachedFrames.
-    RELEASE_ASSERT(m_mayBeDetachedFromFrame);
-
     observeFrame(nullptr);
 }
 
@@ -9117,7 +9128,7 @@ void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemP
     if (!is<HTMLAnchorElement>(element))
         return;
 
-    if (!element->isConnected() || &element->document() != this)
+    if (&element->document() != this)
         return;
 
     auto event = MessageEvent::create(message, securityOrigin().toString());
@@ -9327,6 +9338,11 @@ void Document::sendReportToEndpoints(const URL& baseURL, const Vector<String>& e
         if (auto url = endpointURIForToken(token); !url.isEmpty())
             PingLoader::sendViolationReport(*frame(), URL { baseURL, url }, report.copyRef(), reportType);
     }
+}
+
+bool Document::lazyImageLoadingEnabled() const
+{
+    return m_settings->lazyImageLoadingEnabled() && !m_quirks->shouldDisableLazyImageLoadingQuirk();
 }
 
 } // namespace WebCore

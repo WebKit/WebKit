@@ -164,7 +164,7 @@ void DrawingAreaProxyCoordinatedGraphics::update(uint64_t backingStoreStateID, c
 #if !PLATFORM(WPE)
     incorporateUpdate(updateInfo);
 #endif
-    send(Messages::DrawingArea::DidUpdate());
+    send(Messages::DrawingArea::DisplayDidRefresh());
 }
 
 void DrawingAreaProxyCoordinatedGraphics::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)

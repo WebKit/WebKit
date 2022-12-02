@@ -1,0 +1,130 @@
+layer at (0,0) size 1130x842
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 1130x842 scrollWidth 942 scrollHeight 702
+  RenderSVGRoot {svg} at (0,0) size 1130.39x842.39
+layer at (0,0) size 1131x843 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGViewportContainer at (0,0) size 1130.39x842.39
+layer at (0,-28.02) size 126x212 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,-28.02) size 125.55x210.27
+layer at (0,-28.02) size 126x211 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,0) size 125.55x210.27
+layer at (10,21.98) size 37x10
+  RenderSVGText {text} at (10,50) size 38x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 38x11
+      chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 10 width 37.40: "SVG to fit"
+layer at (0.50,0.50) size 30x40
+  RenderSVGTransformableContainer {g} at (0.50,28.52) size 29x39
+layer at (0.50,0.50) size 29x39
+  RenderSVGRect {rect} at (0,0) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+layer at (5,5) size 21x21
+  RenderSVGTransformableContainer {g} at (4.50,4.50) size 20x20
+layer at (5,5) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+layer at (10.50,10.50) size 4x4
+  RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+layer at (15.50,10.50) size 4x4
+  RenderSVGEllipse {circle} at (10.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+layer at (10,19) size 10x4
+  RenderSVGPath {path} at (5,14) size 10x4 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
+layer at (10,101.98) size 41x10
+  RenderSVGText {text} at (10,130) size 41x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x11
+      chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 40.63: "Viewport 1"
+layer at (0.50,0.50) size 50x30
+  RenderSVGTransformableContainer {g} at (0.50,28.52) size 49x29
+layer at (0.50,0.50) size 49x29
+  RenderSVGRect {rect} at (0,0) size 49x29 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (10,171.98) size 41x10
+  RenderSVGText {text} at (10,200) size 41x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x11
+      chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 40.63: "Viewport 2"
+layer at (0.50,0.50) size 30x60
+  RenderSVGTransformableContainer {g} at (0.50,28.52) size 29x59
+layer at (0.50,0.50) size 29x59
+  RenderSVGRect {rect} at (0,0) size 29x59 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-28.02) size 112x68 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,0) size 111.59x67.52
+layer at (0,-13.02) size 50x53 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 49.50x52.52
+layer at (0.50,0.50) size 50x30
+  RenderSVGRect {rect} at (0.50,13.52) size 49x29 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,0) size 50x31 backgroundClip at (0,13.02) size 30x26.98
+  RenderSVGViewportContainer {svg} at (0,13.02) size 50x30
+layer at (0,-13.02) size 50x53 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 49.50x52.52
+layer at (0.50,0.50) size 50x30
+  RenderSVGRect {rect} at (0.50,13.52) size 49x29 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,0) size 50x31 backgroundClip at (0,13.02) size 32.50x26.98 clip at (0,0) size 48.34x40
+  RenderSVGViewportContainer {svg} at (0,13.02) size 50x30
+layer at (0,-13.02) size 50x53 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 49.50x52.52
+layer at (0.50,0.50) size 50x30
+  RenderSVGRect {rect} at (0.50,13.52) size 49x29 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,0) size 50x31 backgroundClip at (0,13.02) size 30.02x26.98 clip at (0,0) size 30.02x40
+  RenderSVGViewportContainer {svg} at (0,13.02) size 50x30
+layer at (0,-28.02) size 124x88 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,0) size 123.55x87.52
+layer at (0,-13.02) size 30x73 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 29.50x72.52
+layer at (0.50,0.50) size 30x60
+  RenderSVGRect {rect} at (0.50,13.52) size 29x59 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,0) size 30x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x60
+  RenderSVGViewportContainer {svg} at (0,13.02) size 30x60
+layer at (0,-13.02) size 30x73 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 29.50x72.52
+layer at (0.50,0.50) size 30x60
+  RenderSVGRect {rect} at (0.50,13.52) size 29x59 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,0) size 30x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
+  RenderSVGViewportContainer {svg} at (0,13.02) size 30x60
+layer at (0,-13.02) size 30x73 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 29.50x72.52
+layer at (0.50,0.50) size 30x60
+  RenderSVGRect {rect} at (0.50,13.52) size 29x59 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,0) size 30x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x40
+  RenderSVGViewportContainer {svg} at (0,13.02) size 30x60
+layer at (0,-28.02) size 126x88 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,0) size 125.55x87.52
+layer at (0,-13.02) size 30x73 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 29.50x72.52
+layer at (0.50,0.50) size 30x60
+  RenderSVGRect {rect} at (0.50,13.52) size 29x59 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,0) size 30x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 20x40
+  RenderSVGViewportContainer {svg} at (0,13.02) size 30x60
+layer at (0,-13.02) size 30x73 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 29.50x72.52
+layer at (0.50,0.50) size 30x60
+  RenderSVGRect {rect} at (0.50,13.52) size 29x59 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,0) size 30x61 backgroundClip at (0,0) size 30x60 clip at (5,0) size 20x40
+  RenderSVGViewportContainer {svg} at (0,13.02) size 30x60
+layer at (0,-13.02) size 30x73 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 29.50x72.52
+layer at (0.50,0.50) size 30x60
+  RenderSVGRect {rect} at (0.50,13.52) size 29x59 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,0) size 30x61 backgroundClip at (0,0) size 30x60 clip at (10,0) size 20x40
+  RenderSVGViewportContainer {svg} at (0,13.02) size 30x60
+layer at (0,-28.02) size 114x68 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,0) size 113.59x67.52
+layer at (0,-13.02) size 50x53 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 49.50x52.52
+layer at (0.50,0.50) size 50x30
+  RenderSVGRect {rect} at (0.50,13.52) size 49x29 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,0) size 50x31 backgroundClip at (0,13.02) size 30x18 clip at (0,0) size 30x18
+  RenderSVGViewportContainer {svg} at (0,13.02) size 50x30
+layer at (0,-13.02) size 50x53 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 49.50x52.52
+layer at (0.50,0.50) size 50x30
+  RenderSVGRect {rect} at (0.50,13.52) size 49x29 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,0) size 50x31 backgroundClip at (0,24.02) size 30x15.98 clip at (0,11) size 30x18
+  RenderSVGViewportContainer {svg} at (0,13.02) size 50x30
+layer at (0,-13.02) size 50x53 backgroundClip at (0,0) size 1130.39x842.39 clip at (0,0) size 1130.39x842.39
+  RenderSVGTransformableContainer {g} at (0,15) size 49.50x52.52
+layer at (0.50,0.50) size 50x30
+  RenderSVGRect {rect} at (0.50,13.52) size 49x29 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,0) size 50x31 backgroundClip at (0,35.02) size 30x4.98 clip at (0,22) size 30x18
+  RenderSVGViewportContainer {svg} at (0,13.02) size 50x30
+layer at (10,303.88) size 264x46
+  RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 265x47
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

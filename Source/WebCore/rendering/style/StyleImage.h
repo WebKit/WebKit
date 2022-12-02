@@ -37,6 +37,7 @@ class CachedResourceLoader;
 class CSSValue;
 class RenderElement;
 class RenderObject;
+class RenderStyle;
 struct ResourceLoaderOptions;
 
 typedef const void* WrappedImagePtr;
@@ -47,8 +48,8 @@ public:
 
     virtual bool operator==(const StyleImage& other) const = 0;
 
-    // CSS representation.
-    virtual Ref<CSSValue> cssValue() const = 0;
+    // Computed Style representation.
+    virtual Ref<CSSValue> computedStyleValue(const RenderStyle&) const = 0;
 
     // Opaque representation.
     virtual WrappedImagePtr data() const = 0;
@@ -73,6 +74,7 @@ public:
     virtual bool imageHasRelativeWidth() const = 0;
     virtual bool imageHasRelativeHeight() const = 0;
     virtual float imageScaleFactor() const { return 1; }
+    virtual bool imageHasNaturalDimensions() const { return true; }
 
     // Image.
     virtual RefPtr<Image> image(const RenderElement*, const FloatSize&) const = 0;

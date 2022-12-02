@@ -32,6 +32,7 @@
 #include "IPCConnectionTester.h"
 #include "IPCStreamTester.h"
 #include "IPCTesterMessages.h"
+#include "IPCTesterReceiverMessages.h"
 #include "IPCUtilities.h"
 
 #include <atomic>
@@ -133,10 +134,10 @@ void IPCTester::stopMessageTesting(CompletionHandler<void()> completionHandler)
     completionHandler();
 }
 
-void IPCTester::createStreamTester(IPC::Connection& connection, IPCStreamTesterIdentifier identifier, IPC::StreamConnectionBuffer&& stream)
+void IPCTester::createStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& serverConnection)
 {
     auto addResult = m_streamTesters.ensure(identifier, [&] {
-        return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(connection, identifier, WTFMove(stream)) };
+        return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(identifier, WTFMove(serverConnection)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry || IPC::isTestingIPC());
 }
@@ -167,6 +168,13 @@ void IPCTester::sendSemaphoreBackAndSignalProtocol(IPC::Connection& connection, 
         ASSERT_IS_TESTING_IPC();
         return;
     }
+}
+
+void IPCTester::sendAsyncMessageToReceiver(IPC::Connection& connection, uint32_t arg0)
+{
+    connection.sendWithAsyncReply(Messages::IPCTesterReceiver::AsyncMessage(arg0 + 1), [arg0](uint32_t newArg0) {
+        ASSERT_UNUSED(arg0, newArg0 == arg0 + 2);
+    }, 0);
 }
 
 void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& testedConnectionIdentifier)

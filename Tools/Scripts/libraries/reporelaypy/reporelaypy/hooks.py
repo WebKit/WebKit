@@ -84,8 +84,10 @@ class HookProcessor(object):
             try:
                 if branch.startswith(self.BRANCH_PREFIX):
                     branch = branch[len(self.BRANCH_PREFIX):]
-                    self.checkout.update_for(branch, track=True, remote=remote)
-                    self.checkout.forward_update(branch=branch, remote=remote, track=True)
+                    if self.checkout.update_for(branch, track=True, remote=remote):
+                        self.checkout.forward_update(branch=branch, remote=remote, track=True)
+                    else:
+                        sys.stderr.write("Failed to update '{}' from '{}'\n".format(branch, remote or self.checkout.repository.default_remote))
 
                 if branch.startswith(self.TAG_PREFIX):
                     tag = branch[len(self.TAG_PREFIX):]

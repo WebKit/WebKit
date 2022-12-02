@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/mixedContent/resources/subresource/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/mixedContent/resources/subresource/protected-image.py from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/mixedContent/resources/subresource/protected-image.py from asking for credentials because it is a cross-origin request.
+This test loads a secure image that redirects to a secure image that redirects to a secure image guarded by basic authentication. The secure image should not load because it is cross-origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did not load image.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

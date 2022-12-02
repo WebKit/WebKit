@@ -33,7 +33,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
-#import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/text/WTFString.h>
@@ -60,7 +60,7 @@ class SwapChain;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
-class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
+class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, HardwareCapabilities&&, Adapter&);
@@ -84,8 +84,9 @@ public:
     void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback);
     Ref<Sampler> createSampler(const WGPUSamplerDescriptor&);
     Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
-    Ref<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor&);
-    Ref<Texture> createTexture(const WGPUTextureDescriptor&, IOSurfaceRef = nullptr);
+    Ref<Surface> createSurface(const WGPUSurfaceDescriptor&);
+    Ref<SwapChain> createSwapChain(WGPUSurface, const WGPUSwapChainDescriptor&);
+    Ref<Texture> createTexture(const WGPUTextureDescriptor&);
     void destroy();
     size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits&);
@@ -120,6 +121,8 @@ private:
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     bool validateCreateTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
     bool validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats, IOSurfaceRef backing);
+
+    bool validateRenderPipeline(const WGPURenderPipelineDescriptor&);
 
     void makeInvalid() { m_device = nil; }
 

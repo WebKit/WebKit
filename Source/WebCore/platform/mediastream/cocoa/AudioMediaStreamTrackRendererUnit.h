@@ -40,22 +40,19 @@ namespace WebCore {
 class AudioSampleDataSource;
 class AudioSampleBufferList;
 class CAAudioStreamDescription;
-class AudioMediaStreamTrackRendererInternalUnit;
 
-class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit, public CanMakeWeakPtr<AudioMediaStreamTrackRendererUnit, WeakPtrFactoryInitialization::Eager> {
+class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit, public CanMakeWeakPtr<AudioMediaStreamTrackRendererUnit, WeakPtrFactoryInitialization::Eager>, AudioMediaStreamTrackRendererInternalUnit::Client {
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
 
     AudioMediaStreamTrackRendererUnit();
     ~AudioMediaStreamTrackRendererUnit();
 
-    using CreateInternalUnitFunction = Function<UniqueRef<AudioMediaStreamTrackRendererInternalUnit>(AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&, AudioMediaStreamTrackRendererInternalUnit::ResetCallback&&)>;
-    WEBCORE_EXPORT static void setCreateInternalUnitFunction(CreateInternalUnitFunction&&);
+    // AudioMediaStreamTrackRendererInternalUnit
+    OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) final;
+    void reset() final;
 
-    WEBCORE_EXPORT void render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&);
-    void reset();
-
-    void retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&&);
+    void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
 
     // BaseAudioMediaStreamTrackRendererUnit
     void setAudioOutputDevice(const String&) final;

@@ -1,8 +1,5 @@
 /*
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,106 +20,83 @@
 
 #pragma once
 
-#include "FormNamedItem.h"
-#include "Node.h"
-#include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
+#include "ElementInlines.h"
+#include "HTMLFormElement.h"
 
 namespace WebCore {
 
-class ContainerNode;
-class DOMFormData;
-class Document;
-class FormAttributeTargetObserver;
-class HTMLElement;
-class HTMLFormElement;
-class ValidityState;
-
-class FormAssociatedElement : public FormNamedItem {
-    WTF_MAKE_NONCOPYABLE(FormAssociatedElement);
-    WTF_MAKE_FAST_ALLOCATED;
+// https://html.spec.whatwg.org/multipage/forms.html#form-associated-element
+class FormAssociatedElement {
 public:
-    virtual ~FormAssociatedElement();
-
     void ref() { refFormAssociatedElement(); }
     void deref() { derefFormAssociatedElement(); }
 
-    static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
-    WEBCORE_EXPORT HTMLFormElement* form() const;
-    ValidityState* validity();
+    virtual ~FormAssociatedElement() { RELEASE_ASSERT(!m_form); }
+    virtual HTMLElement& asHTMLElement() = 0;
+    virtual const HTMLElement& asHTMLElement() const = 0;
+    virtual bool isFormListedElement() const = 0;
 
-    virtual bool isFormControlElement() const = 0;
-    virtual bool isFormControlElementWithState() const;
-    virtual bool isEnumeratable() const = 0;
+    virtual void formWillBeDestroyed() { m_form = nullptr; }
 
-    // Returns the 'name' attribute value. If this element has no name
-    // attribute, it returns an empty string instead of null string.
-    // Note that the 'name' IDL attribute doesn't use this function.
-    virtual const AtomString& name() const;
+    HTMLFormElement* form() const { return m_form.get(); }
 
-    // Override in derived classes to get the encoded name=value pair for submitting.
-    // Return true for a successful control (see HTML4-17.13.2).
-    virtual bool appendFormData(DOMFormData&) { return false; }
-
-    void formWillBeDestroyed();
-
-    void resetFormOwner();
-
-    void formOwnerRemovedFromTree(const Node&);
-
-    // ValidityState attribute implementations
-    bool badInput() const { return hasBadInput(); }
-    bool customError() const;
-
-    // Implementations of patternMismatch, rangeOverflow, rangerUnderflow, stepMismatch, tooShort, tooLong and valueMissing must call willValidate.
-    virtual bool hasBadInput() const;
-    virtual bool patternMismatch() const;
-    virtual bool rangeOverflow() const;
-    virtual bool rangeUnderflow() const;
-    virtual bool stepMismatch() const;
-    virtual bool tooShort() const;
-    virtual bool tooLong() const;
-    virtual bool typeMismatch() const;
-    virtual bool valueMissing() const;
-    virtual String validationMessage() const;
-    virtual bool computeValidity() const;
-    virtual void setCustomValidity(const String&);
-
-    void formAttributeTargetChanged();
+    virtual void setForm(HTMLFormElement*);
+    virtual void elementInsertedIntoAncestor(Element&, Node::InsertionType);
+    virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
 
 protected:
-    FormAssociatedElement(HTMLFormElement*);
+    explicit FormAssociatedElement(HTMLFormElement*);
 
-    void insertedIntoAncestor(Node::InsertionType, ContainerNode&);
-    void removedFromAncestor(Node::RemovalType, ContainerNode&);
-    void didMoveToNewDocument(Document& oldDocument);
-
-    void clearForm() { setForm(nullptr); }
-    void setForm(HTMLFormElement*);
-    void formAttributeChanged();
-
-    // If you add an override of willChangeForm() or didChangeForm() to a class
-    // derived from this one, you will need to add a call to setForm(0) to the
-    // destructor of that class.
-    virtual void willChangeForm();
-    virtual void didChangeForm();
-
-    String customValidationMessage() const;
+    virtual void resetFormOwner() = 0;
+    virtual void setFormInternal(HTMLFormElement*);
 
 private:
-    // "willValidate" means "is a candidate for constraint validation".
-    virtual bool willValidate() const = 0;
     virtual void refFormAssociatedElement() = 0;
     virtual void derefFormAssociatedElement() = 0;
 
-    void resetFormAttributeTargetObserver();
-
-    bool isFormAssociatedElement() const final { return true; }
-
-    std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
-    String m_customValidationMessage;
 };
 
-} // namespace
+inline FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
+    : m_formSetByParser(form)
+{
+}
+
+inline void FormAssociatedElement::setForm(HTMLFormElement* newForm)
+{
+    if (m_form != newForm)
+        setFormInternal(newForm);
+}
+
+inline void FormAssociatedElement::setFormInternal(HTMLFormElement* newForm)
+{
+    ASSERT(m_form != newForm);
+    m_form = newForm;
+}
+
+inline void FormAssociatedElement::elementInsertedIntoAncestor(Element& element, Node::InsertionType)
+{
+    ASSERT(&asHTMLElement() == &element);
+    if (m_formSetByParser) {
+        // The form could have been removed by a script during parsing.
+        if (m_formSetByParser->isConnected())
+            setForm(m_formSetByParser.get());
+        m_formSetByParser = nullptr;
+    }
+
+    if (m_form && element.rootElement() != m_form->rootElement())
+        setForm(nullptr);
+}
+
+inline void FormAssociatedElement::elementRemovedFromAncestor(Element& element, Node::RemovalType)
+{
+    ASSERT(&asHTMLElement() == &element);
+    // Do not rely on rootNode() because m_form's IsInTreeScope can be outdated.
+    if (m_form && &element.traverseToRootNode() != &m_form->traverseToRootNode()) {
+        setForm(nullptr);
+        resetFormOwner();
+    }
+}
+
+} // namespace WebCore

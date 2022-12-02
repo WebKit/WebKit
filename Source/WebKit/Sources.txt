@@ -54,6 +54,8 @@ GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp
 GPUProcess/graphics/WebGPU/RemoteSampler.cpp
 GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
+GPUProcess/graphics/WebGPU/RemoteSurface.cpp
+GPUProcess/graphics/WebGPU/RemoteSwapChain.cpp
 GPUProcess/graphics/WebGPU/RemoteTexture.cpp
 GPUProcess/graphics/WebGPU/RemoteTextureView.cpp
 GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp
@@ -201,6 +203,7 @@ Shared/InspectorExtensionTypes.cpp
 Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
+Shared/IPCTesterReceiver.cpp
 Shared/LayerTreeContext.cpp
 Shared/LoadParameters.cpp
 Shared/NavigationActionData.cpp
@@ -297,7 +300,6 @@ Shared/API/c/WKUserContentURLPattern.cpp
 Shared/Authentication/AuthenticationManager.cpp
 
 Shared/Databases/IndexedDB/IDBUtilities.cpp
-Shared/Databases/IndexedDB/WebIDBResult.cpp
 
 Shared/Gamepad/GamepadData.cpp
 
@@ -358,6 +360,8 @@ Shared/WebGPU/WebGPUStencilFaceState.cpp
 Shared/WebGPU/WebGPUStorageTextureBindingLayout.cpp
 Shared/WebGPU/WebGPUSupportedFeatures.cpp
 Shared/WebGPU/WebGPUSupportedLimits.cpp
+Shared/WebGPU/WebGPUSurfaceDescriptor.cpp
+Shared/WebGPU/WebGPUSwapChainDescriptor.cpp
 Shared/WebGPU/WebGPUTextureBindingLayout.cpp
 Shared/WebGPU/WebGPUTextureDescriptor.cpp
 Shared/WebGPU/WebGPUTextureViewDescriptor.cpp
@@ -539,6 +543,7 @@ UIProcess/Downloads/DownloadProxyMap.cpp
 
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
+UIProcess/Extensions/WebExtensionControllerConfiguration.cpp
 
 UIProcess/Gamepad/UIGamepad.cpp
 UIProcess/Gamepad/UIGamepadProvider.cpp
@@ -629,13 +634,11 @@ WebProcess/InjectedBundle/InjectedBundle.cpp
 WebProcess/InjectedBundle/InjectedBundleClient.cpp
 WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
-WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp
 WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp
-WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp
 WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp
@@ -696,6 +699,8 @@ WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteSurfaceProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteSwapChainProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.cpp
 WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp
@@ -846,6 +851,7 @@ IPCConnectionTesterMessageReceiver.cpp
 IPCStreamTesterMessageReceiver.cpp
 IPCStreamTesterProxyMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
+IPCTesterReceiverMessageReceiver.cpp
 NetworkBroadcastChannelRegistryMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp
 RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
@@ -878,6 +884,8 @@ RemoteRenderPassEncoderMessageReceiver.cpp
 RemoteRenderPipelineMessageReceiver.cpp
 RemoteSamplerMessageReceiver.cpp
 RemoteShaderModuleMessageReceiver.cpp
+RemoteSurfaceMessageReceiver.cpp
+RemoteSwapChainMessageReceiver.cpp
 RemoteTextureMessageReceiver.cpp
 RemoteTextureViewMessageReceiver.cpp
 RemoteWebLockRegistryMessageReceiver.cpp

@@ -296,6 +296,9 @@ class MacPort(DarwinPort):
         # FIXME: Find where this is coming from and file a bug to have it removed (then remove this line).
         logging_patterns.append((re.compile('VP9 Info:.*\n'), ''))
 
+        # FIXME: Find where this is coming from and file a bug to have it removed (then remove this line).
+        logging_patterns.append((re.compile('set AppID to 1\n'), ''))
+
         return logging_patterns
 
     def logging_detectors_to_strip_text_start(self, test_name):

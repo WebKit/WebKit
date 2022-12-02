@@ -18,4 +18,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/abort/destroyed-context.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/abort/general.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/abort/keepalive.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/abort/request.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html

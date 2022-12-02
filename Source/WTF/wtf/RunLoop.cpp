@@ -27,6 +27,7 @@
 #include <wtf/RunLoop.h>
 
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -169,15 +170,17 @@ void RunLoop::dispatch(Function<void()>&& function)
         wakeUp();
 }
 
-void RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
+Ref<RunLoop::DispatchTimer> RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
 {
     RELEASE_ASSERT(function);
-    auto timer = new DispatchTimer(*this);
-    timer->setFunction([timer, function = WTFMove(function)] {
+    Ref<DispatchTimer> timer = adoptRef(*new DispatchTimer(*this));
+    timer->setFunction([timer = timer.copyRef(), function = WTFMove(function)]() mutable {
+        Ref<DispatchTimer> protectedTimer { WTFMove(timer) };
         function();
-        delete timer;
+        protectedTimer->stop();
     });
     timer->startOneShot(delay);
+    return timer;
 }
 
 void RunLoop::suspendFunctionDispatchForCurrentCycle()

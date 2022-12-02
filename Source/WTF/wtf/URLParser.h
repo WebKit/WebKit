@@ -56,8 +56,9 @@ public:
     WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
     WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);
     
-    using URLEncodedForm = Vector<WTF::KeyValuePair<String, String>>;
+    using URLEncodedForm = Vector<KeyValuePair<String, String>>;
     WTF_EXPORT_PRIVATE static URLEncodedForm parseURLEncodedForm(StringView);
+    WTF_EXPORT_PRIVATE static std::optional<KeyValuePair<String, String>> parseQueryNameAndValue(StringView);
     WTF_EXPORT_PRIVATE static String serialize(const URLEncodedForm&);
 
     WTF_EXPORT_PRIVATE static bool isSpecialScheme(StringView);

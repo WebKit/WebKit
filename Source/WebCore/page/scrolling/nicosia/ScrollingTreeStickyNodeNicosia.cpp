@@ -32,7 +32,6 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "Logging.h"
-#include "NicosiaPlatformLayer.h"
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeFixedNode.h"
@@ -72,7 +71,7 @@ void ScrollingTreeStickyNodeNicosia::applyLayerPositions()
     layerPosition -= m_constraints.alignmentOffset();
 
     ASSERT(m_layer);
-    m_layer->updateState(
+    m_layer->accessPending(
         [&layerPosition](Nicosia::CompositionLayer::LayerState& state)
         {
             state.position = layerPosition;

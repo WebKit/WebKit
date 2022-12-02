@@ -26,18 +26,93 @@
 #include "config.h"
 #include "CSSOKLab.h"
 
+#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSOKLab);
 
-CSSOKLab::CSSOKLab(CSSColorPercent lightness, CSSColorNumber a, CSSColorNumber b, CSSColorPercent alpha)
+ExceptionOr<Ref<CSSOKLab>> CSSOKLab::create(CSSColorPercent&& lightness, CSSColorNumber&& a, CSSColorNumber&& b, CSSColorPercent&& alpha)
+{
+    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    auto rectifiedA = rectifyCSSColorNumber(WTFMove(a));
+    if (rectifiedA.hasException())
+        return rectifiedA.releaseException();
+    auto rectifiedB = rectifyCSSColorNumber(WTFMove(b));
+    if (rectifiedB.hasException())
+        return rectifiedB.releaseException();
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+
+    return adoptRef(*new CSSOKLab(rectifiedLightness.releaseReturnValue(), rectifiedA.releaseReturnValue(), rectifiedB.releaseReturnValue(), rectifiedAlpha.releaseReturnValue()));
+}
+
+CSSOKLab::CSSOKLab(RectifiedCSSColorPercent&& lightness, RectifiedCSSColorNumber&& a, RectifiedCSSColorNumber&& b, RectifiedCSSColorPercent&& alpha)
     : m_lightness(WTFMove(lightness))
     , m_a(WTFMove(a))
     , m_b(WTFMove(b))
     , m_alpha(WTFMove(alpha))
 {
+}
+
+CSSColorPercent CSSOKLab::l() const
+{
+    return toCSSColorPercent(m_lightness);
+}
+
+ExceptionOr<void> CSSOKLab::setL(CSSColorPercent&& lightness)
+{
+    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    m_lightness = rectifiedLightness.releaseReturnValue();
+    return { };
+}
+
+CSSColorNumber CSSOKLab::a() const
+{
+    return toCSSColorNumber(m_a);
+}
+
+ExceptionOr<void> CSSOKLab::setA(CSSColorNumber&& a)
+{
+    auto rectifiedA = rectifyCSSColorNumber(WTFMove(a));
+    if (rectifiedA.hasException())
+        return rectifiedA.releaseException();
+    m_a = rectifiedA.releaseReturnValue();
+    return { };
+}
+
+CSSColorNumber CSSOKLab::b() const
+{
+    return toCSSColorNumber(m_b);
+}
+
+ExceptionOr<void> CSSOKLab::setB(CSSColorNumber&& b)
+{
+    auto rectifiedB = rectifyCSSColorNumber(WTFMove(b));
+    if (rectifiedB.hasException())
+        return rectifiedB.releaseException();
+    m_b = rectifiedB.releaseReturnValue();
+    return { };
+}
+
+CSSColorPercent CSSOKLab::alpha() const
+{
+    return toCSSColorPercent(m_alpha);
+}
+
+ExceptionOr<void> CSSOKLab::setAlpha(CSSColorPercent&& alpha)
+{
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+    m_alpha = rectifiedAlpha.releaseReturnValue();
+    return { };
 }
 
 } // namespace WebCore

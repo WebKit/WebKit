@@ -67,6 +67,8 @@ angle_end2end_tests_sources = [
   "gl_tests/DrawBaseVertexVariantsTest.cpp",
   "gl_tests/DrawBuffersTest.cpp",
   "gl_tests/DrawElementsTest.cpp",
+  "gl_tests/DrawRangeElementsTest.cpp",
+  "gl_tests/EGLImageMECFriendlyTest.cpp",
   "gl_tests/ETCTextureTest.cpp",
   "gl_tests/ExternalBufferTest.cpp",
   "gl_tests/ExternalWrapTest.cpp",
@@ -161,6 +163,7 @@ angle_end2end_tests_sources = [
   "gl_tests/WebGLFramebufferTest.cpp",
   "gl_tests/WebGLReadOutsideFramebufferTest.cpp",
   "gl_tests/gles1/AlphaFuncTest.cpp",
+  "gl_tests/gles1/BGRATextureTest.cpp",
   "gl_tests/gles1/BasicDrawTest.cpp",
   "gl_tests/gles1/BootAnimationTest.cpp",
   "gl_tests/gles1/ClientActiveTextureTest.cpp",
@@ -179,6 +182,7 @@ angle_end2end_tests_sources = [
   "gl_tests/gles1/MatrixModeTest.cpp",
   "gl_tests/gles1/MatrixMultTest.cpp",
   "gl_tests/gles1/MatrixStackTest.cpp",
+  "gl_tests/gles1/PalettedTextureTest.cpp",
   "gl_tests/gles1/PointParameterTest.cpp",
   "gl_tests/gles1/PointSpriteTest.cpp",
   "gl_tests/gles1/ShadeModelTest.cpp",
@@ -195,6 +199,8 @@ angle_end2end_tests_sources = [
   "test_utils/system_info_util.cpp",
   "test_utils/system_info_util.h",
 ]
+angle_end2end_tests_ios_sources =
+    [ "egl_tests/EGLIOSurfaceClientBufferTest.cpp" ]
 angle_end2end_tests_mac_sources = [
   "egl_tests/EGLDeviceCGLTest.cpp",
   "egl_tests/EGLIOSurfaceClientBufferTest.cpp",

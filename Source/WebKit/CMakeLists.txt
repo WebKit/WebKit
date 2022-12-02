@@ -160,6 +160,8 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/WebGPU/RemoteRenderPipeline
     GPUProcess/graphics/WebGPU/RemoteSampler
     GPUProcess/graphics/WebGPU/RemoteShaderModule
+    GPUProcess/graphics/WebGPU/RemoteSurface
+    GPUProcess/graphics/WebGPU/RemoteSwapChain
     GPUProcess/graphics/WebGPU/RemoteTexture
     GPUProcess/graphics/WebGPU/RemoteTextureView
 
@@ -220,6 +222,7 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/IPCStreamTester
     Shared/IPCStreamTesterProxy
     Shared/IPCTester
+    Shared/IPCTesterReceiver
     Shared/WebConnection
 
     Shared/Authentication/AuthenticationManager
@@ -233,6 +236,7 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager
     UIProcess/SpeechRecognitionServer
     UIProcess/VisitedLinkStore
+    UIProcess/WebFrameProxy
     UIProcess/WebFullScreenManagerProxy
     UIProcess/WebGeolocationManagerProxy
     UIProcess/WebLockRegistryProxy
@@ -329,6 +333,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebPage/DrawingArea
     WebProcess/WebPage/EventDispatcher
     WebProcess/WebPage/VisitedLinkTableController
+    WebProcess/WebPage/WebFrame
     WebProcess/WebPage/WebPage
 
     WebProcess/WebStorage/StorageAreaMap
@@ -417,6 +422,8 @@ macro(ADD_WEBKIT_PREFIX_HEADER _target)
             set(OLD_COMPILE_FLAGS "")
         endif ()
         set_target_properties(${_target} PROPERTIES COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -include ${WEBKIT_DIR}/WebKit2Prefix.h")
+    else ()
+        target_precompile_headers(${_target} PRIVATE WebKit2Prefix.h)
     endif ()
 endmacro()
 
@@ -483,7 +490,6 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
         list(APPEND _outputs
             ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp
             ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h
-            ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
         )
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp)
     endforeach ()
@@ -514,6 +520,14 @@ endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 
 set(WebKit_SERIALIZATION_IN_FILES
+    GPUProcess/GPUProcessSessionParameters.serialization.in
+
+    GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
+
+    GPUProcess/media/InitializationSegmentInfo.serialization.in
+    GPUProcess/media/MediaDescriptionInfo.serialization.in
+    GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
+
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
 
     Shared/EditorState.serialization.in
@@ -521,19 +535,23 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameInfoData.serialization.in
     Shared/FrameTreeNodeData.serialization.in
     Shared/LayerTreeContext.serialization.in
+    Shared/Model.serialization.in
     Shared/Pasteboard.serialization.in
+    Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in
     Shared/TextFlags.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
+    Shared/WebHitTestResultData.serialization.in
+    Shared/WebPopupItem.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
     Shared/WebPushMessage.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
 
     Shared/API/APIGeometry.serialization.in
 
-    Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
+    Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 
     Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
     Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
@@ -558,6 +576,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUExtent3D.serialization.in
     Shared/WebGPU/WebGPUExternalTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUExternalTextureDescriptor.serialization.in
+    Shared/WebGPU/WebGPUFeatureName.serialization.in
     Shared/WebGPU/WebGPUFragmentState.serialization.in
     Shared/WebGPU/WebGPUImageCopyBuffer.serialization.in
     Shared/WebGPU/WebGPUImageCopyExternalImage.serialization.in
@@ -591,6 +610,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
     Shared/WebGPU/WebGPUSupportedLimits.serialization.in
+    Shared/WebGPU/WebGPUSurfaceDescriptor.serialization.in
+    Shared/WebGPU/WebGPUSwapChainDescriptor.serialization.in
     Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUTextureDescriptor.serialization.in
     Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in
@@ -600,6 +621,10 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUVertexState.serialization.in
 
     Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
+
+    Shared/XR/XRSystem.serialization.in
+
+    WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 )
 
 list(APPEND WebKit_DERIVED_SOURCES

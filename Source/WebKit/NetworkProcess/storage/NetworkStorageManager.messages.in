@@ -45,7 +45,7 @@
     CancelConnectToStorageArea(WebCore::StorageType type, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
     DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier) WantsConnection
     CloneSessionStorageNamespace(WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID) WantsConnection
-    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool quotaException) WantsConnection
+    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool hasError, HashMap<String, String> allItems) WantsConnection
     RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> () WantsConnection
     Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> () WantsConnection
 
@@ -55,7 +55,7 @@
     EstablishTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBTransactionInfo info)
     DatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
     DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier)
-    AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
+    AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, std::optional<WebCore::IDBResourceIdentifier> transactionIdentifier)
     DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer)
     DidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
     AbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier)

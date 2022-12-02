@@ -30,7 +30,7 @@
 #include "TemporaryOpenGLSetting.h"
 
 #if USE(LIBEPOXY)
-#include "EpoxyShims.h"
+#include <epoxy/gl.h>
 
 #elif PLATFORM(COCOA)
 

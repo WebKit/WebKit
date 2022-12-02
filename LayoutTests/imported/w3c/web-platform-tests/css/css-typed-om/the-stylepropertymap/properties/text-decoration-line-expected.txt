@@ -1,6 +1,19 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'text-decoration-line' to CSS-wide keywords
+FAIL Can set 'text-decoration-line' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'text-decoration-line' to the 'none' keyword
+PASS Can set 'text-decoration-line' to the 'underline' keyword
+PASS Can set 'text-decoration-line' to the 'overline' keyword
+PASS Can set 'text-decoration-line' to the 'line-through' keyword
+FAIL Can set 'text-decoration-line' to the 'blink' keyword assert_equals: expected "blink" but got "none"
+FAIL Can set 'text-decoration-line' to the 'spelling-error' keyword Invalid values
+FAIL Can set 'text-decoration-line' to the 'grammar-error' keyword Invalid values
+PASS Setting 'text-decoration-line' to a length throws TypeError
+PASS Setting 'text-decoration-line' to a percent throws TypeError
+PASS Setting 'text-decoration-line' to a time throws TypeError
+PASS Setting 'text-decoration-line' to an angle throws TypeError
+PASS Setting 'text-decoration-line' to a flexible length throws TypeError
+PASS Setting 'text-decoration-line' to a number throws TypeError
+PASS Setting 'text-decoration-line' to a URL throws TypeError
+PASS Setting 'text-decoration-line' to a transform throws TypeError
 

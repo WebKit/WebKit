@@ -119,6 +119,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , containIntrinsicWidthType(static_cast<unsigned>(RenderStyle::initialContainIntrinsicWidthType()))
     , containIntrinsicHeightType(static_cast<unsigned>(RenderStyle::initialContainIntrinsicHeightType()))
     , containerType(static_cast<unsigned>(RenderStyle::initialContainerType()))
+    , leadingTrim(static_cast<unsigned>(RenderStyle::initialLeadingTrim()))
     , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
@@ -230,6 +231,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , containIntrinsicWidthType(o.containIntrinsicWidthType)
     , containIntrinsicHeightType(o.containIntrinsicHeightType)
     , containerType(o.containerType)
+    , leadingTrim(o.leadingTrim)
     , overflowAnchor(o.overflowAnchor)
     , containerNames(o.containerNames)
     , columnGap(o.columnGap)
@@ -356,7 +358,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && offsetPosition == o.offsetPosition
         && offsetAnchor == o.offsetAnchor
         && offsetRotate == o.offsetRotate
-        && overflowAnchor == o.overflowAnchor;
+        && overflowAnchor == o.overflowAnchor
+        && leadingTrim == o.leadingTrim;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& other) const

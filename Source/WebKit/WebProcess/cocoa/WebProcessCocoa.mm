@@ -113,6 +113,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/spi/cocoa/OSLogSPI.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -169,6 +170,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/VideoToolboxAdditions.h>
+#endif
+
+#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
+#include <WebKitAdditions/InternalBuildAdditions.h>
+#else
+static bool isInternalBuild()
+{
+    return false;
+}
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -242,20 +252,27 @@ static void softlinkDataDetectorsFrameworks()
 #endif // ENABLE(DATA_DETECTION)
 }
 
-static void initializeXPCConnectionToLogd()
+static void initializeLogd()
 {
+    if (isInternalBuild())
+        os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG | OS_TRACE_MODE_STREAM_LIVE);
+    else
+        os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG);
+
     // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
     // This is needed to block launchd after the WebContent process has launched, since access to launchd is
     // required when opening new XPC connections.
     char stringWithSpaces[1024];
     memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
     stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
-    RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess %s", stringWithSpaces);
+    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
 }
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    initializeXPCConnectionToLogd();
+    WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
+
+    initializeLogd();
     
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 
@@ -336,7 +353,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // We don't need to talk to the Dock.
     [NSApplication _preventDockConnections];
 
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions" : @YES, @"ApplePersistence" : @NO }];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"NSApplicationCrashOnExceptions": @YES,
+        @"ApplePersistence": @(-1) // Number -1 means NO + no logging to log and console. See <rdar://7749927>.
+    }];
 
     // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
     // no window in WK2, NSApplication needs to use the focused page's focused element.
@@ -453,11 +473,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
-    
-    if (!parameters.maximumIOSurfaceSize.isEmpty())
-        WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
 
+#if HAVE(IOSURFACE)
+    WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
     WebCore::IOSurface::setBytesPerRowAlignment(parameters.bytesPerRowIOSurfaceAlignment);
+#endif
 
     accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
 #if PLATFORM(IOS_FAMILY)
@@ -1067,8 +1087,11 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
     if (_AXSInvertColorsEnabledApp(appID) != invertColorsEnabled)
         _AXSInvertColorsSetEnabledApp(invertColorsEnabled, appID);
 #endif
+    m_imageAnimationEnabled = preferences.imageAnimationEnabled;
     setOverrideEnhanceTextLegibility(preferences.enhanceTextLegibilityOverall);
     FontCache::invalidateAllFontCaches();
+    for (auto& page : m_pageMap.values())
+        page->updateImageAnimationEnabled();
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -1219,7 +1242,7 @@ void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxE
 #endif
 }
 
-void WebProcess::setScreenProperties(const ScreenProperties& properties)
+void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
     WebCore::setScreenProperties(properties);
     for (auto& page : m_pageMap.values())

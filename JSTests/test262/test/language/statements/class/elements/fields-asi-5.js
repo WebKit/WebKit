@@ -24,5 +24,5 @@ var c = new C();
 
 assert.sameValue(c.a, true, 'a = x in z');
 assert.sameValue(c.b, false, 'b = y in z');
-assert.sameValue(Object.hasOwnProperty.call(c, "in"), false, "'in'");
-assert.sameValue(Object.hasOwnProperty.call(c, "z"), false, "'z'");
+assert(!Object.prototype.hasOwnProperty.call(c, "in"), "'in' is not parsed as a field declaration");
+assert(!Object.prototype.hasOwnProperty.call(c, "z"), "'z' is not parsed as a field declaration");

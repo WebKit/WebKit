@@ -110,7 +110,6 @@ class JSModuleRecord;
 class JSPromise;
 class JSPromiseConstructor;
 class JSPromisePrototype;
-class JSSharedArrayBuffer;
 class JSSharedArrayBufferPrototype;
 class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
@@ -504,7 +503,9 @@ public:
     LazyProperty<JSGlobalObject, JSTypedArrayViewPrototype> m_typedArrayProto;
     LazyProperty<JSGlobalObject, JSTypedArrayViewConstructor> m_typedArraySuperConstructor;
     
-#define DECLARE_TYPED_ARRAY_TYPE_STRUCTURE(name) LazyClassStructure m_typedArray ## name;
+#define DECLARE_TYPED_ARRAY_TYPE_STRUCTURE(name) \
+    LazyClassStructure m_typedArray ## name; \
+    LazyProperty<JSGlobalObject, Structure> m_resizableOrGrowableSharedTypedArray ## name ## Structure;
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_STRUCTURE)
 #undef DECLARE_TYPED_ARRAY_TYPE_STRUCTURE
 
@@ -526,11 +527,11 @@ public:
     std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
 #endif
 
-    RefPtr<WatchpointSet> m_masqueradesAsUndefinedWatchpoint;
-    RefPtr<WatchpointSet> m_havingABadTimeWatchpoint;
-    RefPtr<WatchpointSet> m_varInjectionWatchpoint;
-    RefPtr<WatchpointSet> m_varReadOnlyWatchpoint;
-    RefPtr<WatchpointSet> m_regExpRecompiledWatchpoint;
+    Ref<WatchpointSet> m_masqueradesAsUndefinedWatchpointSet;
+    Ref<WatchpointSet> m_havingABadTimeWatchpointSet;
+    Ref<WatchpointSet> m_varInjectionWatchpointSet;
+    Ref<WatchpointSet> m_varReadOnlyWatchpointSet;
+    Ref<WatchpointSet> m_regExpRecompiledWatchpointSet;
 
     std::unique_ptr<JSGlobalObjectRareData> m_rareData;
 
@@ -553,7 +554,7 @@ public:
     InlineWatchpointSet m_objectPrototypeChainIsSaneWatchpointSet { IsWatched };
     InlineWatchpointSet m_stringPrototypeChainIsSaneWatchpointSet { IsWatched };
     InlineWatchpointSet m_numberToStringWatchpointSet { IsWatched };
-    InlineWatchpointSet m_structureCacheClearedWatchpoint { IsWatched };
+    InlineWatchpointSet m_structureCacheClearedWatchpointSet { IsWatched };
     InlineWatchpointSet m_arrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_sharedArrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_typedArrayConstructorSpeciesWatchpointSet { IsWatched };
@@ -663,7 +664,7 @@ public:
         RELEASE_ASSERT(Options::useJIT());
         return m_numberToStringWatchpointSet;
     }
-    InlineWatchpointSet& structureCacheClearedWatchpoint() { return m_structureCacheClearedWatchpoint; }
+    InlineWatchpointSet& structureCacheClearedWatchpointSet() { return m_structureCacheClearedWatchpointSet; }
     InlineWatchpointSet& arrayBufferSpeciesWatchpointSet(ArrayBufferSharingMode sharingMode)
     {
         switch (sharingMode) {
@@ -848,6 +849,7 @@ public:
     JSFunction* evalFunction() const { return m_evalFunction.get(this); }
     JSFunction* throwTypeErrorFunction() const;
     JSFunction* objectProtoToStringFunction() const { return m_objectProtoToStringFunction.get(this); }
+    JSFunction* objectProtoToStringFunctionConcurrently() const { return m_objectProtoToStringFunction.getConcurrently(); }
     JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
     JSFunction* arrayProtoValuesFunctionConcurrently() const { return m_arrayProtoValuesFunction.getConcurrently(); }
@@ -1066,8 +1068,8 @@ public:
     static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSGlobalObject, m_vm); }
     static ptrdiff_t offsetOfGlobalLexicalEnvironment() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalEnvironment); }
     static ptrdiff_t offsetOfGlobalLexicalBindingEpoch() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
-    static ptrdiff_t offsetOfVarInjectionWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint); }
-    static ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpoint); }
+    static ptrdiff_t offsetOfVarInjectionWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpointSet); }
+    static ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpointSet); }
     static ptrdiff_t offsetOfFunctionProtoHasInstanceSymbolFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_functionProtoHasInstanceSymbolFunction); }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1167,23 +1169,45 @@ public:
     {
         return const_cast<const LazyClassStructure&>(const_cast<JSGlobalObject*>(this)->lazyTypedArrayStructure(type));
     }
-    
-    Structure* typedArrayStructure(TypedArrayType type) const
+    LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType type)
     {
+        switch (type) {
+        case NotTypedArray:
+            RELEASE_ASSERT_NOT_REACHED();
+            return m_resizableOrGrowableSharedTypedArrayInt8Structure;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_resizableOrGrowableSharedTypedArray ## name ## Structure;
+            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_resizableOrGrowableSharedTypedArrayInt8Structure;
+    }
+    const LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType type) const
+    {
+        return const_cast<const LazyProperty<JSGlobalObject, Structure>&>(const_cast<JSGlobalObject*>(this)->lazyResizableOrGrowableSharedTypedArrayStructure(type));
+    }
+
+    Structure* typedArrayStructure(TypedArrayType type, bool isResizableOrGrowableShared) const
+    {
+        if (isResizableOrGrowableShared)
+            return lazyResizableOrGrowableSharedTypedArrayStructure(type).get(this);
         return lazyTypedArrayStructure(type).get(this);
     }
-    Structure* typedArrayStructureConcurrently(TypedArrayType type) const
+    Structure* typedArrayStructureConcurrently(TypedArrayType type, bool isResizableOrGrowableShared) const
     {
+        if (isResizableOrGrowableShared)
+            return lazyResizableOrGrowableSharedTypedArrayStructure(type).getConcurrently();
         return lazyTypedArrayStructure(type).getConcurrently();
     }
-    bool isOriginalTypedArrayStructure(Structure* structure)
+    bool isOriginalTypedArrayStructure(Structure* structure, bool isResizableOrGrowableShared)
     {
         TypedArrayType type = typedArrayType(structure->typeInfo().type());
         if (type == NotTypedArray)
             return false;
-        return typedArrayStructureConcurrently(type) == structure;
+        return typedArrayStructureConcurrently(type, isResizableOrGrowableShared) == structure;
     }
-    template<TypedArrayType type> Structure* typedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type); }
+    template<TypedArrayType type> Structure* typedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ false); }
+    template<TypedArrayType type> Structure* resizableOrGrowableSharedTypedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ true); }
 
     JSObject* typedArrayConstructor(TypedArrayType type) const
     {
@@ -1202,15 +1226,15 @@ public:
         return result;
     }
 
-    WatchpointSet* masqueradesAsUndefinedWatchpoint() { return m_masqueradesAsUndefinedWatchpoint.get(); }
-    WatchpointSet* havingABadTimeWatchpoint() { return m_havingABadTimeWatchpoint.get(); }
-    WatchpointSet* varInjectionWatchpoint() { return m_varInjectionWatchpoint.get(); }
-    WatchpointSet* varReadOnlyWatchpoint() { return m_varReadOnlyWatchpoint.get(); }
-    WatchpointSet* regExpRecompiledWatchpoint() { return m_regExpRecompiledWatchpoint.get(); }
+    WatchpointSet& masqueradesAsUndefinedWatchpointSet() { return m_masqueradesAsUndefinedWatchpointSet.get(); }
+    WatchpointSet& havingABadTimeWatchpointSet() { return m_havingABadTimeWatchpointSet.get(); }
+    WatchpointSet& varInjectionWatchpointSet() { return m_varInjectionWatchpointSet.get(); }
+    WatchpointSet& varReadOnlyWatchpointSet() { return m_varReadOnlyWatchpointSet.get(); }
+    WatchpointSet& regExpRecompiledWatchpointSet() { return m_regExpRecompiledWatchpointSet.get(); }
         
     bool isHavingABadTime() const
     {
-        return m_havingABadTimeWatchpoint->hasBeenInvalidated();
+        return m_havingABadTimeWatchpointSet->hasBeenInvalidated();
     }
         
     void haveABadTime(VM&);
@@ -1225,7 +1249,7 @@ public:
 
     bool isRegExpRecompiled() const
     {
-        return m_regExpRecompiledWatchpoint->hasBeenInvalidated();
+        return m_regExpRecompiledWatchpointSet->hasBeenInvalidated();
     }
 
     void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }

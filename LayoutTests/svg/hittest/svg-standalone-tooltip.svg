@@ -67,7 +67,7 @@
   <use id="use_without_title" xlink:href="#shape" x="0" y="240"/>
 
   <!-- For logging the test results -->
-  <foreignObject>
+  <foreignObject width="100%" height="100">
     <pre id="log" xmlns="http://www.w3.org/1999/xhtml"></pre>
   </foreignObject>
   

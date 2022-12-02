@@ -30,8 +30,9 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteVideoFrameObjectHeap.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
@@ -54,36 +55,36 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_identifier(identifier)
     , m_writer(WTFMove(writer))
+    , m_recordAudio(recordAudio)
     , m_sharedVideoFrameReader(Ref { gpuConnectionToWebProcess.videoFrameObjectHeap() }, { gpuConnectionToWebProcess.webProcessIdentity() })
 {
-    if (recordAudio)
-        m_ringBuffer = makeUnique<CARingBuffer>();
 }
 
 RemoteMediaRecorder::~RemoteMediaRecorder()
 {
 }
 
-void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
-    MESSAGE_CHECK(m_ringBuffer);
-
+    MESSAGE_CHECK(m_recordAudio);
+    m_audioBufferList = nullptr;
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
+    if (!m_ringBuffer)
+        return;
     m_description = description;
-
-    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
-    m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
+    m_audioBufferList = makeUnique<WebAudioBufferList>(*m_description);
 }
 
 void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
     MESSAGE_CHECK(m_ringBuffer);
     MESSAGE_CHECK(m_audioBufferList);
-    MESSAGE_CHECK(WebAudioBufferList::isSupportedDescription(m_description, numberOfFrames));
+    MESSAGE_CHECK(m_description && WebAudioBufferList::isSupportedDescription(*m_description, numberOfFrames));
 
     m_audioBufferList->setSampleCount(numberOfFrames);
     m_ringBuffer->fetch(m_audioBufferList->list(), numberOfFrames, time.timeValue());
 
-    m_writer->appendAudioSampleBuffer(*m_audioBufferList, m_description, time, numberOfFrames);
+    m_writer->appendAudioSampleBuffer(*m_audioBufferList, *m_description, time, numberOfFrames);
 }
 
 void RemoteMediaRecorder::videoFrameAvailable(SharedVideoFrame&& sharedVideoFrame)

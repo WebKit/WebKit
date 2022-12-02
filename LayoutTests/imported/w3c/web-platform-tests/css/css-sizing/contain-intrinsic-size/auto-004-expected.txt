@@ -1,4 +1,4 @@
-0
+1
 
-FAIL contain-intrinsic-size: auto assert_equals: expected 1 but got 0
+PASS contain-intrinsic-size: auto
 

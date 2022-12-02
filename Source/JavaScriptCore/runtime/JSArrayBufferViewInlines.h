@@ -28,6 +28,7 @@
 #include "ArrayBufferView.h"
 #include "JSArrayBufferView.h"
 #include "JSDataView.h"
+#include "TypedArrayType.h"
 
 namespace JSC {
 
@@ -35,8 +36,16 @@ inline bool JSArrayBufferView::isShared()
 {
     switch (m_mode) {
     case WastefulTypedArray:
+    case ResizableNonSharedWastefulTypedArray:
+    case ResizableNonSharedAutoLengthWastefulTypedArray:
+    case GrowableSharedWastefulTypedArray:
+    case GrowableSharedAutoLengthWastefulTypedArray:
         return existingBufferInButterfly()->isShared();
     case DataViewMode:
+    case ResizableNonSharedDataViewMode:
+    case ResizableNonSharedAutoLengthDataViewMode:
+    case GrowableSharedDataViewMode:
+    case GrowableSharedAutoLengthDataViewMode:
         return jsCast<JSDataView*>(this)->possiblySharedBuffer()->isShared();
     default:
         return false;
@@ -51,8 +60,16 @@ inline ArrayBuffer* JSArrayBufferView::possiblySharedBufferImpl()
 
     switch (m_mode) {
     case WastefulTypedArray:
+    case ResizableNonSharedWastefulTypedArray:
+    case ResizableNonSharedAutoLengthWastefulTypedArray:
+    case GrowableSharedWastefulTypedArray:
+    case GrowableSharedAutoLengthWastefulTypedArray:
         return existingBufferInButterfly();
     case DataViewMode:
+    case ResizableNonSharedDataViewMode:
+    case ResizableNonSharedAutoLengthDataViewMode:
+    case GrowableSharedDataViewMode:
+    case GrowableSharedAutoLengthDataViewMode:
         return jsCast<JSDataView*>(this)->possiblySharedBuffer();
     case FastTypedArray:
     case OversizeTypedArray:
@@ -67,12 +84,6 @@ inline ArrayBuffer* JSArrayBufferView::possiblySharedBuffer()
     return possiblySharedBufferImpl<Mutator>();
 }
 
-inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
-{
-    ASSERT(m_mode == WastefulTypedArray);
-    return butterfly()->indexingHeader()->arrayBuffer();
-}
-
 inline RefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
 {
     RefPtr<ArrayBufferView> result = possiblySharedImpl();
@@ -80,55 +91,10 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
     return result;
 }
 
-template<JSArrayBufferView::Requester requester, typename ResultType>
-inline ResultType JSArrayBufferView::byteOffsetImpl()
-{
-    if (!hasArrayBuffer())
-        return 0;
-
-    if (requester == ConcurrentThread)
-        WTF::loadLoadFence();
-
-    ArrayBuffer* buffer = possiblySharedBufferImpl<requester>();
-    ASSERT(buffer);
-    ptrdiff_t delta = 0;
-    if constexpr (requester == Mutator) {
-        ASSERT(!isCompilationThread());
-        ASSERT(!vector() == !buffer->data());
-        delta = bitwise_cast<uint8_t*>(vector()) - static_cast<uint8_t*>(buffer->data());
-    } else {
-        uint8_t* vector = bitwise_cast<uint8_t*>(vectorWithoutPACValidation());
-        uint8_t* data = static_cast<uint8_t*>(buffer->dataWithoutPACValidation());
-        if (!vector || !data)
-            return 0;
-        delta = vector - data;
-    }
-
-    size_t result = static_cast<size_t>(delta);
-    if constexpr (requester == Mutator)
-        ASSERT(static_cast<ptrdiff_t>(result) == delta);
-    else {
-        if (static_cast<ptrdiff_t>(result) != delta)
-            return { };
-    }
-
-    return result;
-}
-
-inline size_t JSArrayBufferView::byteOffset()
-{
-    return byteOffsetImpl<Mutator, size_t>();
-}
-
-inline std::optional<size_t> JSArrayBufferView::byteOffsetConcurrently()
-{
-    return byteOffsetImpl<ConcurrentThread, std::optional<size_t>>();
-}
-
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM&, JSValue value)
 {
     if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value)) {
-        if (!view->isShared())
+        if (!view->isShared() && !view->isResizableOrGrowableShared())
             return view->unsharedImpl();
     }
     return nullptr;
@@ -136,10 +102,118 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM&, JSValue value)
 
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrappedAllowShared(VM&, JSValue value)
 {
-    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value))
-        return view->possiblySharedImpl();
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value)) {
+        if (!view->isResizableOrGrowableShared())
+            return view->possiblySharedImpl();
+    }
     return nullptr;
 }
 
+template<typename Getter>
+bool isArrayBufferViewOutOfBounds(JSArrayBufferView* view, Getter& getter)
+{
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-isintegerindexedobjectoutofbounds
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-isarraybufferviewoutofbounds
+    //
+    // This function should work with DataView too.
+
+    if (UNLIKELY(view->isDetached()))
+        return true;
+
+    if (LIKELY(!view->isResizableOrGrowableShared()))
+        return false;
+
+    ASSERT(hasArrayBuffer(view->mode()) && isResizableOrGrowableShared(view->mode()));
+    RefPtr<ArrayBuffer> buffer = view->possiblySharedBuffer();
+    if (!buffer)
+        return true;
+
+    size_t bufferByteLength = getter(*buffer);
+    size_t byteOffsetStart = view->byteOffsetRaw();
+    size_t byteOffsetEnd = 0;
+    if (view->isAutoLength())
+        byteOffsetEnd = bufferByteLength;
+    else
+        byteOffsetEnd = byteOffsetStart + view->byteLengthRaw();
+
+    return byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength;
+}
+
+template<typename Getter>
+bool isIntegerIndexedObjectOutOfBounds(JSArrayBufferView* typedArray, Getter& getter)
+{
+    return isArrayBufferViewOutOfBounds(typedArray, getter);
+}
+
+template<typename Getter>
+std::optional<size_t> integerIndexedObjectLength(JSArrayBufferView* typedArray, Getter& getter)
+{
+    // https://tc39.es/proposal-resizablearraybuffer/#sec-integerindexedobjectlength
+
+    if (UNLIKELY(isIntegerIndexedObjectOutOfBounds(typedArray, getter)))
+        return std::nullopt;
+
+    if (LIKELY(!typedArray->isAutoLength()))
+        return typedArray->lengthRaw();
+
+    ASSERT(hasArrayBuffer(typedArray->mode()) && isResizableOrGrowableShared(typedArray->mode()));
+    RefPtr<ArrayBuffer> buffer = typedArray->possiblySharedBuffer();
+    if (!buffer)
+        return std::nullopt;
+
+    size_t bufferByteLength = getter(*buffer);
+    size_t byteOffset = typedArray->byteOffsetRaw();
+    return (bufferByteLength - byteOffset) >> logElementSize(typedArray->type());
+}
+
+template<typename Getter>
+size_t integerIndexedObjectByteLength(JSArrayBufferView* typedArray, Getter& getter)
+{
+    std::optional<size_t> length = integerIndexedObjectLength(typedArray, getter);
+    if (!length || !length.value())
+        return 0;
+
+    if (LIKELY(!typedArray->isAutoLength()))
+        return typedArray->byteLengthRaw();
+
+    return length.value() << logElementSize(typedArray->type());
+}
+
+inline JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSArrayBufferView* typedArray)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(!isTypedView(typedArray->type()))) {
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        return nullptr;
+    }
+
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+    if (UNLIKELY(isIntegerIndexedObjectOutOfBounds(typedArray, getter))) {
+        throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        return nullptr;
+    }
+    return typedArray;
+}
+
+inline JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSValue typedArrayValue)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(!typedArrayValue.isCell())) {
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        return nullptr;
+    }
+
+    JSCell* typedArrayCell = typedArrayValue.asCell();
+    if (UNLIKELY(!isTypedView(typedArrayCell->type()))) {
+        throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
+        return nullptr;
+    }
+
+    RELEASE_AND_RETURN(scope, validateTypedArray(globalObject, jsCast<JSArrayBufferView*>(typedArrayCell)));
+}
 
 } // namespace JSC

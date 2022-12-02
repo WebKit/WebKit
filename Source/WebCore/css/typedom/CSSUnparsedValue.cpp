@@ -33,6 +33,8 @@
 #include "CSSOMVariableReferenceValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "CSSTokenizer.h"
+#include "CSSVariableReferenceValue.h"
 #include "ExceptionOr.h"
 #include <variant>
 #include <wtf/IsoMallocInlines.h>
@@ -144,6 +146,12 @@ ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnpar
     else
         m_segments[index] = WTFMove(val);
     return CSSUnparsedSegment { m_segments[index] };
+}
+
+RefPtr<CSSValue> CSSUnparsedValue::toCSSValue() const
+{
+    CSSTokenizer tokenizer(toString());
+    return CSSVariableReferenceValue::create(tokenizer.tokenRange(), strictCSSParserContext());
 }
 
 } // namespace WebCore

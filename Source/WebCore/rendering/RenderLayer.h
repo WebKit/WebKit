@@ -545,24 +545,17 @@ public:
         {
             if (hasPaintedContent == RequestState::Unknown)
                 hasPaintedContent = RequestState::Undetermined;
-
-            if (hasSubpixelAntialiasedText == RequestState::Unknown)
-                hasSubpixelAntialiasedText = RequestState::Undetermined;
         }
 
         void setHasPaintedContent() { hasPaintedContent = RequestState::True; }
-        void setHasSubpixelAntialiasedText() { hasSubpixelAntialiasedText = RequestState::True; }
 
         bool needToDeterminePaintedContentState() const { return hasPaintedContent == RequestState::Unknown; }
-        bool needToDetermineSubpixelAntialiasedTextState() const { return hasSubpixelAntialiasedText == RequestState::Unknown; }
 
         bool probablyHasPaintedContent() const { return hasPaintedContent == RequestState::True || hasPaintedContent == RequestState::Undetermined; }
-        bool probablyHasSubpixelAntialiasedText() const { return hasSubpixelAntialiasedText == RequestState::True || hasSubpixelAntialiasedText == RequestState::Undetermined; }
         
-        bool isSatisfied() const { return hasPaintedContent != RequestState::Unknown && hasSubpixelAntialiasedText != RequestState::Unknown; }
+        bool isSatisfied() const { return hasPaintedContent != RequestState::Unknown; }
 
         RequestState hasPaintedContent { RequestState::Unknown };
-        RequestState hasSubpixelAntialiasedText { RequestState::DontCare };
     };
 
     // Returns true if this layer has visible content (ignoring any child layers).
@@ -759,8 +752,10 @@ public:
     FloatPoint perspectiveOrigin() const;
     FloatPoint3D transformOriginPixelSnappedIfNeeded() const;
     bool preserves3D() const { return renderer().style().preserves3D(); }
+    bool hasPerspective() const { return renderer().style().hasPerspective(); }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
+    bool participatesInPreserve3D() const;
 
     bool hasFixedContainingBlockAncestor() const { return m_hasFixedContainingBlockAncestor; }
 
@@ -1114,13 +1109,17 @@ private:
     RenderLayer* transparentPaintingAncestor();
     void beginTransparencyLayers(GraphicsContext&, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
 
-    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
+    struct HitLayer {
+        RenderLayer* layer;
+        double zOffset = 0;
+    };
+    HitLayer hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, bool appliedTransform,
         const HitTestingTransformState* = nullptr, double* zOffset = nullptr);
-    RenderLayer* hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
+    HitLayer hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = nullptr, double* zOffset = nullptr,
         const LayoutSize& translationOffset = LayoutSize());
-    RenderLayer* hitTestList(LayerList, RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&,
+    HitLayer hitTestList(LayerList, RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState*, double* zOffsetForDescendants, double* zOffset,
         const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
@@ -1132,7 +1131,7 @@ private:
     
     bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const HitTestLocation&, HitTestFilter) const;
     bool hitTestContentsForFragments(const LayerFragments&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, HitTestFilter, bool& insideClipRect) const;
-    RenderLayer* hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
+    HitLayer hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = nullptr, double* zOffset = nullptr);
 
     bool listBackgroundIsKnownToBeOpaqueInRect(const LayerList&, const LayoutRect&) const;
@@ -1160,7 +1159,7 @@ private:
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 
-    void updateFiltersAfterStyleChange();
+    void updateFiltersAfterStyleChange(StyleDifference, const RenderStyle* oldStyle);
     void updateFilterPaintingStrategy();
 
 #if ENABLE(CSS_COMPOSITING)

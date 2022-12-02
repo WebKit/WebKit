@@ -443,6 +443,8 @@ class RendererD3D : public BufferFactoryD3D
 
     virtual bool canSelectViewInVertexShader() const = 0;
 
+    egl::Display *getDisplay() const { return mDisplay; }
+
   protected:
     virtual bool getLUID(LUID *adapterLuid) const                    = 0;
     virtual void generateCaps(gl::Caps *outCaps,

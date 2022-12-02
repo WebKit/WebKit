@@ -45,16 +45,13 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
       RenderBlock (anonymous) at (0,0) size 784x112
         RenderText {#text} at (0,0) size 732x55
-          text run at (0,0) width 726: "Test inserting paragraphs and managing typing style correctly: Only \"line 1\""
-          text run at (726,0) width 6: " "
-          text run at (0,28) width 611: "should be bold. Other lines should be non-bold. Fix for this bug:"
-          text run at (611,28) width 6: " "
+          text run at (0,0) width 732: "Test inserting paragraphs and managing typing style correctly: Only \"line 1\" "
+          text run at (0,28) width 617: "should be bold. Other lines should be non-bold. Fix for this bug: "
         RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
           RenderText {#text} at (0,56) size 257x27
             text run at (0,56) width 257: "<rdar://problem/3944492>"
         RenderText {#text} at (257,56) size 715x55
-          text run at (257,56) width 452: " after pressing return twice, text is bold when it"
-          text run at (709,56) width 6: " "
+          text run at (257,56) width 458: " after pressing return twice, text is bold when it "
           text run at (0,84) width 115: "shouldn't be"
       RenderBlock {DIV} at (0,112) size 784x12
       RenderBlock {P} at (0,148) size 784x55 [border: (2px solid #0000FF)]

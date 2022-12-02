@@ -37,6 +37,8 @@ public:
     const CSSNumericValue& value() const { return m_value.get(); }
     const CSSNumericValue& upper() const { return m_upper.get(); }
 
+    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Clamp; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathClamp; }

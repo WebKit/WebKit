@@ -30,6 +30,9 @@
 #include "config.h"
 #include "CSSKeywordValue.h"
 
+#include "CSSMarkup.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSPropertyParser.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -68,7 +71,15 @@ ExceptionOr<void> CSSKeywordValue::setValue(const String& value)
 void CSSKeywordValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#keywordvalue-serialization
-    builder.append(m_value);
+    serializeIdentifier(m_value, builder);
+}
+
+RefPtr<CSSValue> CSSKeywordValue::toCSSValue() const
+{
+    auto keyword = cssValueKeywordID(m_value);
+    if (keyword == CSSValueInvalid)
+        return nullptr;
+    return CSSPrimitiveValue::createIdentifier(keyword);
 }
 
 } // namespace WebCore

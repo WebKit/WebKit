@@ -15,7 +15,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,34) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 39x17
-            text run at (0,0) width 39: "Hello "
+            text run at (0,0) width 35: "Hello"
+            text run at (35,0) width 4: " "
           RenderInline {SPAN} at (0,0) size 44x17
             RenderText {#text} at (39,0) size 44x17
               text run at (39,0) width 44: "World!"

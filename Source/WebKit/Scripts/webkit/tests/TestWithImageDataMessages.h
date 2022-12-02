@@ -27,7 +27,6 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
-#include "TestWithImageDataMessagesReplies.h"
 #include <WebCore/ImageData.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -70,10 +69,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageData; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&&);
-    static void cancelReply(CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
-    using AsyncReply = ReceiveImageDataAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
     const Arguments& arguments() const

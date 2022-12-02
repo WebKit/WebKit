@@ -528,15 +528,6 @@ void PlatformCALayerWin::setWantsDeepColorBackingStore(bool)
 {
 }
 
-bool PlatformCALayerWin::supportsSubpixelAntialiasedText() const
-{
-    return false;
-}
-
-void PlatformCALayerWin::setSupportsSubpixelAntialiasedText(bool)
-{
-}
-
 bool PlatformCALayerWin::hasContents() const
 {
     return !!CACFLayerGetContents(m_layer.get());
@@ -630,9 +621,9 @@ void PlatformCALayerWin::setTimeOffset(CFTimeInterval value)
     setNeedsCommit();
 }
 
-void PlatformCALayerWin::setEdgeAntialiasingMask(unsigned mask)
+void PlatformCALayerWin::setAntialiasesEdges(bool antialiasesEdges)
 {
-    CACFLayerSetEdgeAntialiasingMask(m_layer.get(), mask);
+    CACFLayerSetEdgeAntialiasingMask(m_layer.get(), antialiasesEdges ? (kCACFLayerLeftEdge | kCACFLayerRightEdge | kCACFLayerBottomEdge | kCACFLayerTopEdge) : 0);
     setNeedsCommit();
 }
 

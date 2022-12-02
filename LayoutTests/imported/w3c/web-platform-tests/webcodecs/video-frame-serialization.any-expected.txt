@@ -2,7 +2,7 @@
 PASS Test we can clone a VideoFrame.
 PASS Verify closing a frame doesn't affect its clones.
 PASS Verify cloning a closed frame throws.
-FAIL Verify closing frames does not propagate accross contexts. The object can not be cloned.
-FAIL Verify transferring frames closes them. The object can not be cloned.
+PASS Verify closing frames does not propagate accross contexts.
+PASS Verify transferring frames closes them.
 PASS Verify posting closed frames throws.
 

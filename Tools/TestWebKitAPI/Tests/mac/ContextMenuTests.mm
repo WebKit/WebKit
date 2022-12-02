@@ -24,12 +24,12 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if PLATFORM(MAC)
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"

@@ -10,16 +10,15 @@
 
 #include "libANGLE/capture/capture_gles_3_0_autogen.h"
 
+#include "common/gl_enum_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/capture/FrameCapture.h"
-#include "libANGLE/capture/gl_enum_utils.h"
 #include "libANGLE/validationES3.h"
 
 using namespace angle;
 
 namespace gl
 {
-
 CallCapture CaptureBeginQuery(const State &glState,
                               bool isCallValid,
                               QueryType targetPacked,

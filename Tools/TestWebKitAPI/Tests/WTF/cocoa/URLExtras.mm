@@ -26,7 +26,7 @@
 #import "config.h"
 
 #import "Test.h"
-#import "WTFStringUtilities.h"
+#import "WTFTestUtilities.h"
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -118,8 +118,11 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--2-zic"_s, // U+0032 U+05E1
         "xn--uoa"_s, // U+027E
         "xn--fja"_s, // U+01C0
+        "xn--jna"_s, // U+0250
         "xn--koa"_s, // U+0274
+        "xn--spa"_s, // U+029F
         "xn--tma"_s, // U+0237
+        "xn--8pa"_s, // U+02AF
         "xn--o-pdc"_s, // U+0585 'o'
         "xn--o-qdc"_s, // 'o' U+0585
         "xn--g-hdc"_s, // U+0581 'g'
@@ -156,6 +159,10 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--a-y7i"_s, // 'a' U+15F1
         "xn--a-37i"_s, // U+15F4 'a'
         "xn--a-47i"_s, // 'a' U+15F4
+        "xn--n-twf"_s, // U+0E01 'n'
+        "xn--n-uwf"_s, // 'n' U+0E01
+        "xn--3hb112n"_s, // U+065B
+        "xn--a-ypc062v"_s, // 'a' U+065B
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -199,6 +206,12 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
     EXPECT_STREQ("https://\u15F4\u1401abc/", userVisibleString(literalURL("https://\u15F4\u1401abc/")));
     EXPECT_STREQ("https://\u166D\u1401abc/", userVisibleString(literalURL("https://\u166D\u1401abc/")));
     EXPECT_STREQ("https://\u166E\u1401abc/", userVisibleString(literalURL("https://\u166E\u1401abc/")));
+
+    // Thai
+    EXPECT_STREQ("https://\u0E01\u0E02abc/", userVisibleString(literalURL("https://\u0E01\u0E02abc/")));
+
+    // Arabic
+    EXPECT_STREQ("https://\u0620\u065Babc/", userVisibleString(literalURL("https://\u0620\u065Babc/")));
 }
 
 TEST(WTF_URLExtras, URLExtras_DivisionSign)

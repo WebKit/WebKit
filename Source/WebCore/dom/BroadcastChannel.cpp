@@ -191,7 +191,7 @@ ExceptionOr<void> BroadcastChannel::postMessage(JSC::JSGlobalObject& globalObjec
         return Exception { InvalidStateError, "This BroadcastChannel is closed"_s };
 
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(globalObject, message, { }, ports);
+    auto messageData = SerializedScriptValue::create(globalObject, message, { }, ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
     ASSERT(ports.isEmpty());
@@ -240,8 +240,15 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
         return;
 
     queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, message = WTFMove(message)]() mutable {
-        if (!m_isClosed && scriptExecutionContext())
-            dispatchEvent(MessageEvent::create(WTFMove(message), scriptExecutionContext()->securityOrigin()->toString()));
+        if (m_isClosed || !scriptExecutionContext())
+            return;
+
+        auto* globalObject = scriptExecutionContext()->globalObject();
+        if (!globalObject)
+            return;
+
+        auto event = MessageEvent::create(*globalObject, WTFMove(message), scriptExecutionContext()->securityOrigin()->toString());
+        dispatchEvent(event.event);
     });
 }
 

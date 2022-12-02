@@ -34,31 +34,6 @@
 #include "JSIPCBinding.h"
 #endif
 
-namespace Messages {
-
-namespace TestWithSemaphore {
-
-void ReceiveSemaphore::callReply(IPC::Decoder& decoder, CompletionHandler<void(IPC::Semaphore&&)>&& completionHandler)
-{
-    std::optional<IPC::Semaphore> r0;
-    decoder >> r0;
-    if (!r0) {
-        ASSERT_NOT_REACHED();
-        cancelReply(WTFMove(completionHandler));
-        return;
-    }
-    completionHandler(WTFMove(*r0));
-}
-
-void ReceiveSemaphore::cancelReply(CompletionHandler<void(IPC::Semaphore&&)>&& completionHandler)
-{
-    completionHandler(IPC::AsyncReplyError<IPC::Semaphore>::create());
-}
-
-} // namespace TestWithSemaphore
-
-} // namespace Messages
-
 namespace WebKit {
 
 void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

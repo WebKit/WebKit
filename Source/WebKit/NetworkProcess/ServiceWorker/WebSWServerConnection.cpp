@@ -192,7 +192,7 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
 std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
 {
     if (loader.parameters().serviceWorkersMode == ServiceWorkersMode::None) {
-        if (loader.parameters().request.requester() == ResourceRequest::Requester::Fetch && isNavigationRequest(loader.parameters().options.destination)) {
+        if (loader.parameters().request.requester() == ResourceRequestRequester::Fetch && isNavigationRequest(loader.parameters().options.destination)) {
             if (auto task = ServiceWorkerFetchTask::fromNavigationPreloader(*this, loader, request, session()))
                 return task;
         }
@@ -276,6 +276,9 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
 
         auto identifier = task->serviceWorkerIdentifier();
         server().runServiceWorkerIfNecessary(identifier, [weakThis = WTFMove(weakThis), this, task = WTFMove(task)](auto* contextConnection) mutable {
+#if RELEASE_LOG_DISABLED
+            UNUSED_PARAM(this);
+#endif
             if (!task)
                 return;
             

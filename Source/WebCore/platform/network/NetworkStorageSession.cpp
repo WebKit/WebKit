@@ -69,30 +69,30 @@ Vector<Cookie> NetworkStorageSession::domCookiesForHost(const String&)
 #if ENABLE(TRACKING_PREVENTION)
 
 #if !USE(SOUP)
-void NetworkStorageSession::setResourceLoadStatisticsEnabled(bool enabled)
+void NetworkStorageSession::setTrackingPreventionEnabled(bool enabled)
 {
-    m_isResourceLoadStatisticsEnabled = enabled;
+    m_isTrackingPreventionEnabled = enabled;
 }
 
-bool NetworkStorageSession::resourceLoadStatisticsEnabled() const
+bool NetworkStorageSession::trackingPreventionEnabled() const
 {
-    return m_isResourceLoadStatisticsEnabled;
+    return m_isTrackingPreventionEnabled;
 }
 #endif
 
-void NetworkStorageSession::setResourceLoadStatisticsDebugLoggingEnabled(bool enabled)
+void NetworkStorageSession::setTrackingPreventionDebugLoggingEnabled(bool enabled)
 {
-    m_isResourceLoadStatisticsDebugLoggingEnabled = enabled;
+    m_isTrackingPreventionDebugLoggingEnabled = enabled;
 }
 
-bool NetworkStorageSession::resourceLoadStatisticsDebugLoggingEnabled() const
+bool NetworkStorageSession::trackingPreventionDebugLoggingEnabled() const
 {
-    return m_isResourceLoadStatisticsDebugLoggingEnabled;
+    return m_isTrackingPreventionDebugLoggingEnabled;
 }
 
 bool NetworkStorageSession::shouldBlockThirdPartyCookies(const RegistrableDomain& registrableDomain) const
 {
-    if (!m_isResourceLoadStatisticsEnabled || registrableDomain.isEmpty())
+    if (!m_isTrackingPreventionEnabled || registrableDomain.isEmpty())
         return false;
 
     ASSERT(!(m_registrableDomainsToBlockAndDeleteCookiesFor.contains(registrableDomain) && m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain)));
@@ -103,7 +103,7 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookies(const RegistrableDomain
 
 bool NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(const RegistrableDomain& registrableDomain) const
 {
-    if (!m_isResourceLoadStatisticsEnabled || registrableDomain.isEmpty())
+    if (!m_isTrackingPreventionEnabled || registrableDomain.isEmpty())
         return false;
 
     ASSERT(!(m_registrableDomainsToBlockAndDeleteCookiesFor.contains(registrableDomain) && m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain)));
@@ -137,7 +137,7 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     if (shouldRelaxThirdPartyCookieBlocking == ShouldRelaxThirdPartyCookieBlocking::Yes)
         return false;
 
-    if (!m_isResourceLoadStatisticsEnabled)
+    if (!m_isTrackingPreventionEnabled)
         return false;
 
     RegistrableDomain firstPartyDomain { firstPartyForCookies };
@@ -159,6 +159,9 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
         return true;
     case ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains:
         return !shouldExemptDomainPairFromThirdPartyCookieBlocking(firstPartyDomain, resourceDomain);
+    case ThirdPartyCookieBlockingMode::AllExceptManagedDomains: {
+        return !m_managedDomains.contains(firstPartyDomain);
+    }
     case ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction:
         if (!hasHadUserInteractionAsFirstParty(firstPartyDomain))
             return true;
@@ -166,6 +169,7 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     case ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy:
         return shouldBlockThirdPartyCookies(resourceDomain);
     }
+
     ASSERT_NOT_REACHED();
     return false;
 }
@@ -367,6 +371,18 @@ void NetworkStorageSession::setAppBoundDomains(HashSet<RegistrableDomain>&& doma
 void NetworkStorageSession::resetAppBoundDomains()
 {
     m_appBoundDomains.clear();
+}
+#endif
+
+#if ENABLE(MANAGED_DOMAINS)
+void NetworkStorageSession::setManagedDomains(HashSet<RegistrableDomain>&& domains)
+{
+    m_managedDomains = WTFMove(domains);
+}
+
+void NetworkStorageSession::resetManagedDomains()
+{
+    m_managedDomains.clear();
 }
 #endif
 

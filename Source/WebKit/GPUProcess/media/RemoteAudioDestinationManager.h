@@ -30,12 +30,13 @@
 #include "Connection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
-#include "SharedMemory.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 
 #if PLATFORM(COCOA)
+#include "SharedCARingBuffer.h"
+
 namespace WebCore {
 class CAAudioStreamDescription;
 }
@@ -68,7 +69,7 @@ private:
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
 #if PLATFORM(COCOA)
-    void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, ConsumerSharedCARingBuffer::Handle&&);
 #endif
 
     HashMap<RemoteAudioDestinationIdentifier, UniqueRef<RemoteAudioDestination>> m_audioDestinations;

@@ -28,7 +28,9 @@
 
 #if ENABLE(WEB_CODECS)
 
+#if USE(LIBWEBRTC)
 #include "LibWebRTCVPXVideoDecoder.h"
+#endif
 
 namespace WebCore {
 

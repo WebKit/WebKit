@@ -3,5 +3,5 @@ Clicking in iframe has activation state in child via MessageEvent
 Click inside the red area.
 
 
-FAIL Message propagates values on post undefined is not an object (evaluating 'navigator.userActivation.isActive')
+FAIL Message propagates values on post assert_true: expected true got false
 

@@ -246,6 +246,7 @@ platform/audio/cocoa/AudioOutputUnitAdaptor.cpp
 platform/audio/cocoa/AudioSampleBufferList.cpp
 platform/audio/cocoa/AudioSampleDataConverter.mm
 platform/audio/cocoa/AudioSampleDataSource.mm
+platform/audio/cocoa/AudioUtilitiesCocoa.cpp
 platform/audio/cocoa/CAAudioStreamDescription.cpp
 platform/audio/cocoa/CARingBuffer.cpp
 platform/audio/cocoa/MediaSessionManagerCocoa.mm
@@ -373,6 +374,7 @@ platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cg/GraphicsContextGLCG.cpp
 platform/graphics/cg/IOSurfacePool.cpp
+platform/graphics/cg/ImageBackingStoreCG.cpp
 platform/graphics/cg/ImageBufferCGBackend.cpp
 platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
 platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
@@ -458,6 +460,10 @@ platform/graphics/mac/SwitchingGPUClient.cpp
 platform/graphics/mac/WebKitNSImageExtras.mm
 platform/graphics/mac/WebLayer.mm
 platform/graphics/opentype/OpenTypeCG.cpp
+platform/image-decoders/avif/AVIFImageDecoder.cpp
+platform/image-decoders/avif/AVIFImageReader.cpp
+platform/image-decoders/ScalableImageDecoder.cpp
+platform/image-decoders/ScalableImageDecoderFrame.cpp
 platform/ios/ColorIOS.mm
 platform/ios/Device.cpp
 platform/ios/DeviceMotionClientIOS.mm
@@ -528,7 +534,6 @@ platform/mac/PluginBlocklist.mm
 platform/mac/PowerObserverMac.cpp
 platform/mac/PublicSuffixMac.mm
 platform/mac/RevealUtilities.mm
-platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollAnimationRubberBand.mm
 platform/mac/ScrollViewMac.mm

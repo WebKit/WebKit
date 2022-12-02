@@ -52,7 +52,7 @@ public:
 #endif
     {
     }
-    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
+    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp);
     enum class IsPaginated { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
@@ -87,6 +87,13 @@ public:
 #if ASSERT_ENABLED
     bool layoutDeltaMatches(LayoutSize) const;
 #endif
+
+    bool hasLineClamp() const { return m_maximumLineCountForLineClamp.has_value(); }
+    void resetLineClamp();
+    void setMaximumLineCountForLineClamp(size_t maximumLineCount) { m_maximumLineCountForLineClamp = maximumLineCount; }
+    std::optional<size_t> maximumLineCountForLineClamp() { return m_maximumLineCountForLineClamp; }
+    void setVisibleLineCountForLineClamp(size_t visibleLineCount) { m_visibleLineCountForLineClamp = visibleLineCount; }
+    std::optional<size_t> visibleLineCountForLineClamp() const { return m_visibleLineCountForLineClamp; }
 
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
@@ -128,6 +135,8 @@ private:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
+    std::optional<size_t> m_maximumLineCountForLineClamp;
+    std::optional<size_t> m_visibleLineCountForLineClamp;
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif
@@ -175,5 +184,11 @@ private:
     FrameViewLayoutContext& m_context;
     bool m_pushed { false };
 };
+
+inline void RenderLayoutState::resetLineClamp()
+{
+    m_maximumLineCountForLineClamp = { };
+    m_visibleLineCountForLineClamp = { };
+}
 
 } // namespace WebCore

@@ -27,10 +27,9 @@
 
 #if WK_HAVE_C_SPI
 
-#include "Test.h"
-
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
+#include "Test.h"
 
 namespace TestWebKitAPI {
 

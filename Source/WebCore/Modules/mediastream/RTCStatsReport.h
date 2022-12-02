@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "LibWebRTCStatsCollector.h"
 #include "RTCIceCandidateType.h"
 
 namespace WebCore {

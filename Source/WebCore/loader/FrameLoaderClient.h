@@ -103,6 +103,7 @@ class Widget;
 enum class LockBackForwardList : bool;
 enum class PolicyDecisionMode;
 enum class UsedLegacyTLS : bool;
+enum class WasPrivateRelayed : bool;
 
 struct StringWithDirection;
 
@@ -171,7 +172,7 @@ public:
     virtual void dispatchDidReceiveIcon() { }
     virtual void dispatchDidStartProvisionalLoad() = 0;
     virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
-    virtual void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>) = 0;
+    virtual void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>, std::optional<WasPrivateRelayed>) = 0;
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading) = 0;
     virtual void dispatchDidFailLoad(const ResourceError&) = 0;
     virtual void dispatchDidFinishDocumentLoad() = 0;
@@ -232,7 +233,6 @@ public:
     // script) from an insecure source.  Note that the insecure content can
     // spread to other frames in the same origin.
     virtual void didRunInsecureContent(SecurityOrigin&, const URL&) = 0;
-    virtual void didDetectXSS(const URL&, bool didBlockEntirePage) = 0;
 
     virtual ResourceError cancelledError(const ResourceRequest&) const = 0;
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
@@ -287,7 +287,7 @@ public:
     virtual void redirectDataToPlugin(Widget&) = 0;
 
     virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
-    virtual String overrideMediaType() const = 0;
+    virtual AtomString overrideMediaType() const = 0;
 
     virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) = 0;
 
@@ -333,12 +333,6 @@ public:
 
 #if ENABLE(WEB_RTC)
     virtual void dispatchWillStartUsingPeerConnectionHandler(RTCPeerConnectionHandler*) { }
-#endif
-
-#if ENABLE(WEBGL)
-    virtual bool allowWebGL(bool enabledPerSettings) { return enabledPerSettings; }
-    virtual WebGLLoadPolicy webGLPolicyForURL(const URL&) const { return WebGLLoadPolicy::WebGLAllowCreation; }
-    virtual WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const { return WebGLLoadPolicy::WebGLAllowCreation; }
 #endif
 
     virtual void completePageTransitionIfNeeded() { }

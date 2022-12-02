@@ -46,17 +46,21 @@ class CanvasRenderingContext;
 class CanvasRenderingContext2D;
 class GraphicsContext;
 class Image;
+class ImageBitmapRenderingContext;
 class ImageBuffer;
 class ImageData;
 class MediaStream;
 class OffscreenCanvas;
 class VideoFrame;
 class WebGLRenderingContextBase;
-class GPUCanvasContext;
 class WebCoreOpaqueRoot;
 struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
+
+#if HAVE(WEBGPU_IMPLEMENTATION)
+class GPUCanvasContext;
+#endif
 
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
@@ -91,6 +95,12 @@ public:
     ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
     ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
 
+    static bool isWebGPUType(const String&);
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    GPUCanvasContext* createContextWebGPU(const String&);
+    GPUCanvasContext* getContextWebGPU(const String&);
+#endif // HAVE(WEBGPU_IMPLEMENTATION)
+
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);
     ExceptionOr<void> toBlob(Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
@@ -103,8 +113,10 @@ public:
 
     void paint(GraphicsContext&, const LayoutRect&);
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> toVideoFrame();
+#endif
+#if ENABLE(MEDIA_STREAM)
     ExceptionOr<Ref<MediaStream>> captureStream(std::optional<double>&& frameRequestRate);
 #endif
 

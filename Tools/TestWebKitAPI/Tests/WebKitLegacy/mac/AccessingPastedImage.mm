@@ -26,8 +26,7 @@
 #import "config.h"
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
-#import "WTFStringUtilities.h"
-
+#import "Test.h"
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>
 

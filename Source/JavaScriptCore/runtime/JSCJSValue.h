@@ -305,7 +305,7 @@ public:
     int32_t toInt32(JSGlobalObject*) const;
     uint32_t toUInt32(JSGlobalObject*) const;
     uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
-    size_t toTypedArrayIndex(JSGlobalObject*, const char* errorName) const;
+    size_t toTypedArrayIndex(JSGlobalObject*, ASCIILiteral) const;
     uint64_t toLength(JSGlobalObject*) const;
 
     JS_EXPORT_PRIVATE JSValue toBigInt(JSGlobalObject*) const;
@@ -530,7 +530,7 @@ private:
     JS_EXPORT_PRIVATE JSString* toStringSlowCase(JSGlobalObject*, bool returnEmptyStringOnError) const;
     JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE JSValue toThisSlowCase(JSGlobalObject*, ECMAMode) const;
+    JS_EXPORT_PRIVATE JSValue toThisSloppySlowCase(JSGlobalObject*) const;
 
     EncodedValueDescriptor u;
 };

@@ -270,7 +270,6 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 @implementation WKWindowVisibilityObserver {
     NSView *_view;
     WebKit::WebViewImpl *_impl;
-    __weak NSWindow *_observedWindow;
 
     BOOL _didRegisterForLookupPopoverCloseNotifications;
     BOOL _shouldObserveFontPanel;
@@ -333,15 +332,14 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [self startObservingFontPanel];
 
-    [self _observeWindow:window];
+    [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
+    [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
 }
 
 - (void)stopObserving:(NSWindow *)window
 {
     if (!window)
         return;
-
-    ASSERT_IMPLIES(_observedWindow, _observedWindow == window);
 
     NSNotificationCenter *defaultNotificationCenter = [NSNotificationCenter defaultCenter];
 
@@ -364,25 +362,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
 
-    [self _observeWindow:nil];
-}
-
-- (void)_observeWindow:(NSWindow *)window
-{
-    if (_observedWindow == window)
-        return;
-
-    if (_observedWindow) {
-        [_observedWindow removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
-        [_observedWindow removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
-    }
-
-    _observedWindow = window;
-
-    if (window) {
-        [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
-        [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
-    }
+    [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
+    [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
 }
 
 - (void)startObservingFontPanel
@@ -2128,7 +2109,7 @@ bool WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint poin
 void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 {
     // If we're in the middle of preparing to move to a window, we should only be moved to that window.
-    ASSERT(!m_targetWindowForMovePreparation || (m_targetWindowForMovePreparation == window));
+    ASSERT_IMPLIES(m_targetWindowForMovePreparation, m_targetWindowForMovePreparation == window);
 
     NSWindow *currentWindow = [m_view window];
     if (window == currentWindow)
@@ -2136,9 +2117,11 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 
     clearAllEditCommands();
 
-    NSWindow *stopObservingWindow = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
-    [m_windowVisibilityObserver stopObserving:stopObservingWindow];
-    [m_windowVisibilityObserver startObserving:window];
+    if (!m_isPreparingToUnparentView) {
+        NSWindow *stopObservingWindow = m_targetWindowForMovePreparation.get() ?: [m_view window];
+        [m_windowVisibilityObserver stopObserving:stopObservingWindow];
+        [m_windowVisibilityObserver startObserving:window];
+    }
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
     if (m_isRegisteredScrollViewSeparatorTrackingAdapter) {
@@ -2152,6 +2135,7 @@ void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
 {
     viewWillMoveToWindowImpl(window);
     m_targetWindowForMovePreparation = nil;
+    m_isPreparingToUnparentView = false;
 }
 
 void WebViewImpl::viewDidMoveToWindow()
@@ -2408,6 +2392,7 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
 {
     m_shouldDeferViewInWindowChanges = true;
     viewWillMoveToWindowImpl(targetWindow);
+    m_isPreparingToUnparentView = !targetWindow;
     m_targetWindowForMovePreparation = targetWindow;
     viewDidMoveToWindow();
 
@@ -2701,7 +2686,7 @@ void WebViewImpl::selectionDidChange()
         m_softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if HAVE(TOUCH_BAR)
     updateTouchBar();
-    if (!m_page->editorState().isMissingPostLayoutData())
+    if (m_page->editorState().hasPostLayoutData())
         requestCandidatesForSelectionIfNeeded();
 #endif
 
@@ -3156,7 +3141,7 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
     if (!editorState.isContentEditable)
         return;
 
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutData())
         return;
 
     auto& postLayoutData = *editorState.postLayoutData;
@@ -3188,7 +3173,7 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
 
     // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
     // and that we just bail if it is missing.
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutData())
         return;
 
     auto& postLayoutData = *editorState.postLayoutData;
@@ -3237,7 +3222,7 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
 
     // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
     // and that we just bail if it is missing.
-    if (editorState.isMissingPostLayoutData())
+    if (!editorState.hasPostLayoutData())
         return;
 
     auto& postLayoutData = *editorState.postLayoutData;
@@ -5639,7 +5624,7 @@ void WebViewImpl::updateTextTouchBar()
     // the text when changing selection throughout the document.
     if (isRichlyEditableForTouchBar()) {
         const EditorState& editorState = m_page->editorState();
-        if (!editorState.isMissingPostLayoutData()) {
+        if (editorState.hasPostLayoutData()) {
             [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeBold)];
             [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeItalics)];
             [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeUnderline)];

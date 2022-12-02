@@ -32,6 +32,7 @@
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JITExceptions.h"
+#include "JSArrayBufferViewInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
 #include "JSWebAssemblyArray.h"
@@ -630,7 +631,6 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
         result->initializeIndex(initializationScope, i, value);
     }
 
-    ASSERT(result->indexingType() == indexingType);
     return result;
 }
 
@@ -662,11 +662,11 @@ JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (void* callFrame, Instanc
     auto grown = instance->memory()->grow(instance->vm(), PageCount(delta));
     if (!grown) {
         switch (grown.error()) {
-        case Memory::GrowFailReason::InvalidDelta:
-        case Memory::GrowFailReason::InvalidGrowSize:
-        case Memory::GrowFailReason::WouldExceedMaximum:
-        case Memory::GrowFailReason::OutOfMemory:
-        case Memory::GrowFailReason::GrowSharedUnavailable:
+        case GrowFailReason::InvalidDelta:
+        case GrowFailReason::InvalidGrowSize:
+        case GrowFailReason::WouldExceedMaximum:
+        case GrowFailReason::OutOfMemory:
+        case GrowFailReason::GrowSharedUnavailable:
             return -1;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -988,8 +988,14 @@ JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, CallFra
     for (unsigned i = 0; i < tag.parameterCount(); ++i)
         values[i] = arguments[i];
 
-    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
-    throwException(globalObject, throwScope, exception);
+    ASSERT(tag.type().returnsVoid());
+    if (tag.type().numVectors()) {
+        // Note: the spec is still in flux on what to do here, so we conservatively just disallow throwing any vectors.
+        throwException(globalObject, throwScope, createTypeError(globalObject, errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use)));
+    } else {
+        JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
+        throwException(globalObject, throwScope, exception);
+    }
 
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
@@ -1049,6 +1055,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
         JSObject* error;
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(globalObject);
+        else if (isTypeErrorExceptionType(type))
+            error = createTypeError(globalObject, Wasm::errorMessageForExceptionType(type));
         else
             error = createJSWebAssemblyRuntimeError(globalObject, vm, type);
         throwException(globalObject, throwScope, error);

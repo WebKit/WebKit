@@ -83,6 +83,21 @@ void WebRTCProvider::setVP9Support(bool supportsVP9Profile0, bool supportsVP9Pro
 #endif
 }
 
+void WebRTCProvider::setAV1Support(bool supportsAV1)
+{
+    m_supportsAV1 = supportsAV1;
+
+#if ENABLE(WEB_RTC)
+    m_videoDecodingCapabilities = { };
+    m_videoEncodingCapabilities = { };
+#endif
+}
+
+bool WebRTCProvider::isSupportingAV1() const
+{
+    return m_supportsAV1;
+}
+
 bool WebRTCProvider::isSupportingH265() const
 {
     return m_supportsH265;

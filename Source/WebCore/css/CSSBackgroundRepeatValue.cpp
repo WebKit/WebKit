@@ -43,14 +43,11 @@ String CSSBackgroundRepeatValue::customCSSText() const
     // background-repeat/mask-repeat behave a little like a shorthand, but `repeat no-repeat` is transformed to `repeat-x`.
     if (!compareCSSValue(m_xValue, m_yValue)) {
         if (m_xValue->valueID() == CSSValueRepeat && m_yValue->valueID() == CSSValueNoRepeat)
-            return getValueName(CSSValueRepeatX);
-    
+            return nameString(CSSValueRepeatX);
         if (m_xValue->valueID() == CSSValueNoRepeat && m_yValue->valueID() == CSSValueRepeat)
-            return getValueName(CSSValueRepeatY);
-
+            return nameString(CSSValueRepeatY);
         return makeString(m_xValue->cssText(), ' ', m_yValue->cssText());
     }
-
     return m_xValue->cssText();
 }
 

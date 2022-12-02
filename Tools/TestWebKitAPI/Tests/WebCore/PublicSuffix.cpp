@@ -27,7 +27,8 @@
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 
-#include "WTFStringUtilities.h"
+#include "Test.h"
+#include "WTFTestUtilities.h"
 #include <WebCore/PublicSuffix.h>
 #include <wtf/MainThread.h>
 

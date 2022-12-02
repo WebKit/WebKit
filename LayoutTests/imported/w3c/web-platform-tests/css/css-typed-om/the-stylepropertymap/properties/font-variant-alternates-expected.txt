@@ -1,6 +1,21 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'font-variant-alternates' to CSS-wide keywords
+FAIL Can set 'font-variant-alternates' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'font-variant-alternates' to the 'normal' keyword
+FAIL Can set 'font-variant-alternates' to the 'historical-forms' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Setting 'font-variant-alternates' to a length throws TypeError
+PASS Setting 'font-variant-alternates' to a percent throws TypeError
+PASS Setting 'font-variant-alternates' to a time throws TypeError
+PASS Setting 'font-variant-alternates' to an angle throws TypeError
+PASS Setting 'font-variant-alternates' to a flexible length throws TypeError
+PASS Setting 'font-variant-alternates' to a number throws TypeError
+PASS Setting 'font-variant-alternates' to a URL throws TypeError
+PASS Setting 'font-variant-alternates' to a transform throws TypeError
+PASS 'font-variant-alternates' does not supported 'stylistic(foo)'
+PASS 'font-variant-alternates' does not supported 'styleset(foo)'
+PASS 'font-variant-alternates' does not supported 'character-variant(foo)'
+PASS 'font-variant-alternates' does not supported 'swash(foo)'
+PASS 'font-variant-alternates' does not supported 'ornaments(foo)'
+PASS 'font-variant-alternates' does not supported 'annotation(foo)'
+PASS 'font-variant-alternates' does not supported 'swash(foo) annotation(foo2)'
 

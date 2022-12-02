@@ -275,15 +275,15 @@ void initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame& frame, const WebCo
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-pick-color-space
-Ref<VideoColorSpace> videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>& overrideColorSpace, VideoPixelFormat format)
+VideoColorSpaceInit videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>& overrideColorSpace, VideoPixelFormat format)
 {
     if (overrideColorSpace)
-        return VideoColorSpace::create(*overrideColorSpace);
+        return *overrideColorSpace;
 
     if (isRGBVideoPixelFormat(format))
-        return VideoColorSpace::create({ PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true });
+        return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true };
 
-    return VideoColorSpace::create({ PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false });
+    return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
 }
 
 // https://w3c.github.io/webcodecs/#validate-videoframeinit

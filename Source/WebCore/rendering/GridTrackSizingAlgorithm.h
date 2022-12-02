@@ -61,7 +61,8 @@ class GridTrack {
 public:
     GridTrack() = default;
 
-    const LayoutUnit& baseSize() const;
+    LayoutUnit baseSize() const;
+    LayoutUnit unclampedBaseSize() const;
     void setBaseSize(LayoutUnit);
 
     const LayoutUnit& growthLimit() const;
@@ -69,7 +70,7 @@ public:
     void setGrowthLimit(LayoutUnit);
 
     bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_infinitelyGrowable; }
-    const LayoutUnit& growthLimitIfNotInfinite() const;
+    LayoutUnit growthLimitIfNotInfinite() const;
 
     const LayoutUnit& plannedSize() const { return m_plannedSize; }
     void setPlannedSize(LayoutUnit plannedSize) { m_plannedSize = plannedSize; }
@@ -88,7 +89,7 @@ public:
     void setCachedTrackSize(const GridTrackSize&);
 
 private:
-    bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= m_baseSize; }
+    bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= std::max(m_baseSize, 0_lu); }
 
     void ensureGrowthLimitIsBiggerThanBaseSize();
 
@@ -241,7 +242,6 @@ private:
 
     enum SizingState {
         ColumnSizingFirstIteration,
-        ColumnSizingExtraIterationForSizeContainment,
         RowSizingFirstIteration,
         RowSizingExtraIterationForSizeContainment,
         ColumnSizingSecondIteration,

@@ -122,11 +122,6 @@ public:
         : m_backing(inBacking)
     {
     }
-    
-    void setWantsSubpixelAntialiasedTextState(bool wantsSubpixelAntialiasedTextState)
-    {
-        m_subpixelAntialiasedText = wantsSubpixelAntialiasedTextState ? RequestState::Unknown : RequestState::DontCare;
-    }
 
     RequestState paintsBoxDecorationsDetermination();
     bool paintsBoxDecorations()
@@ -139,13 +134,6 @@ public:
     bool paintsContent()
     {
         RequestState state = paintsContentDetermination();
-        return state == RequestState::True || state == RequestState::Undetermined;
-    }
-
-    RequestState paintsSubpixelAntialiasedTextDetermination();
-    bool paintsSubpixelAntialiasedText()
-    {
-        RequestState state = paintsSubpixelAntialiasedTextDetermination();
         return state == RequestState::True || state == RequestState::Undetermined;
     }
 
@@ -168,7 +156,6 @@ public:
     RenderLayerBacking& m_backing;
     RequestState m_boxDecorations { RequestState::Unknown };
     RequestState m_content { RequestState::Unknown };
-    RequestState m_subpixelAntialiasedText { RequestState::DontCare };
 
     ContentsTypeDetermination m_contentsType { ContentsTypeDetermination::Unknown };
 };
@@ -184,29 +171,13 @@ RequestState PaintedContentsInfo::paintsBoxDecorationsDetermination()
 
 RequestState PaintedContentsInfo::paintsContentDetermination()
 {
-    if (m_content != RequestState::Unknown && m_subpixelAntialiasedText != RequestState::Unknown)
+    if (m_content != RequestState::Unknown)
         return m_content;
 
     RenderLayer::PaintedContentRequest contentRequest;
-    if (m_subpixelAntialiasedText == RequestState::Unknown)
-        contentRequest.hasSubpixelAntialiasedText = RequestState::Unknown;
-
     m_content = m_backing.paintsContent(contentRequest) ? RequestState::True : RequestState::False;
 
-    if (m_subpixelAntialiasedText == RequestState::Unknown)
-        m_subpixelAntialiasedText = contentRequest.hasSubpixelAntialiasedText;
-
     return m_content;
-}
-
-RequestState PaintedContentsInfo::paintsSubpixelAntialiasedTextDetermination()
-{
-    if (m_subpixelAntialiasedText != RequestState::Unknown)
-        return m_subpixelAntialiasedText;
-
-    paintsContentDetermination();
-
-    return m_subpixelAntialiasedText;
 }
 
 PaintedContentsInfo::ContentsTypeDetermination PaintedContentsInfo::contentsTypeDetermination()
@@ -569,6 +540,21 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateContentsScalingFilters(style);
 }
 
+bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
+{
+    if (!renderer().isCanvas())
+        return false;
+
+    if (canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
+        return false;
+
+#if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
+    return true;
+#else
+    return renderer().settings().webGPU();
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 void RenderLayerBacking::layerWillBeDestroyed()
 {
@@ -608,6 +594,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
     if (m_overflowControlsHostLayerAncestorClippingStack)
         removeClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
 
+    GraphicsLayer::unparentAndClear(m_transformFlatteningLayer);
     GraphicsLayer::unparentAndClear(m_viewportAnchorLayer);
     GraphicsLayer::unparentAndClear(m_contentsContainmentLayer);
     GraphicsLayer::unparentAndClear(m_foregroundLayer);
@@ -1011,6 +998,9 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     bool layerConfigChanged = false;
     auto& compositor = this->compositor();
 
+    if (updateTransformFlatteningLayer(compositingAncestor))
+        layerConfigChanged = true;
+
     if (updateViewportConstrainedAnchorLayer(compositor.isViewportConstrainedFixedOrStickyLayer(m_owningLayer)))
         layerConfigChanged = true;
 
@@ -1110,15 +1100,13 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         updateContentsRects();
     }
 #endif
-#if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
-    else if (renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
-        const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
+    else if (shouldSetContentsDisplayDelegate()) {
+        auto* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (auto* context = canvas->renderingContext())
             m_graphicsLayer->setContentsDisplayDelegate(context->layerContentsDisplayDelegate(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 
         layerConfigChanged = true;
     }
-#endif
 #if ENABLE(MODEL_ELEMENT)
     else if (is<RenderModel>(renderer())) {
         auto element = downcast<HTMLModelElement>(renderer().element());
@@ -1162,7 +1150,7 @@ static bool subpixelOffsetFromRendererChanged(const LayoutSize& oldSubpixelOffse
     FloatSize current = snapSizeToDevicePixel(newSubpixelOffsetFromRenderer, LayoutPoint(), deviceScaleFactor);
     return previous != current;
 }
-    
+
 static FloatSize subpixelForLayerPainting(const LayoutPoint& point, float pixelSnappingFactor)
 {
     LayoutUnit x = point.x();
@@ -1185,12 +1173,12 @@ static OffsetFromRenderer computeOffsetFromRenderer(const LayoutSize& offset, fl
     offsetFromRenderer.m_devicePixelOffset = offset - offsetFromRenderer.m_subpixelOffset;
     return offsetFromRenderer;
 }
-    
+
 struct SnappedRectInfo {
     LayoutRect m_snappedRect;
     LayoutSize m_snapDelta;
 };
-    
+
 static SnappedRectInfo snappedGraphicsLayer(const LayoutSize& offset, const LayoutSize& size, const RenderLayerModelObject& renderer)
 {
     SnappedRectInfo snappedGraphicsLayer;
@@ -1594,7 +1582,6 @@ void RenderLayerBacking::updateAfterDescendants()
 {
     // FIXME: this potentially duplicates work we did in updateConfiguration().
     PaintedContentsInfo contentsInfo(*this);
-    contentsInfo.setWantsSubpixelAntialiasedTextState(GraphicsLayer::supportsSubpixelAntialiasedLayerText() && FontCascade::isSubpixelAntialiasingAvailable());
 
     if (!m_owningLayer.isRenderViewLayer()) {
         bool didUpdateContentsRect = false;
@@ -1611,7 +1598,8 @@ void RenderLayerBacking::updateAfterDescendants()
         m_graphicsLayer->setContentsOpaque(!m_hasSubpixelRounding && m_owningLayer.backgroundIsKnownToBeOpaqueInRect(compositedBounds()));
     }
 
-    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants());
+    bool isSkippedContent = renderer().isSkippedContent();
+    m_graphicsLayer->setContentsVisible(!isSkippedContent && (m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants()));
     if (m_scrollContainerLayer) {
         m_scrollContainerLayer->setContentsVisible(renderer().style().visibility() == Visibility::Visible);
 
@@ -1679,8 +1667,11 @@ void RenderLayerBacking::updateInternalHierarchy()
         lastClippingLayer = m_ancestorClippingStack->lastLayer();
     }
 
-    constexpr size_t maxOrderedLayers = 5;
+    constexpr size_t maxOrderedLayers = 6;
     Vector<GraphicsLayer*, maxOrderedLayers> orderedLayers;
+
+    if (m_transformFlatteningLayer)
+        orderedLayers.append(m_transformFlatteningLayer.get());
 
     if (lastClippingLayer)
         orderedLayers.append(lastClippingLayer);
@@ -1710,7 +1701,7 @@ void RenderLayerBacking::updateInternalHierarchy()
     for (auto* layer : orderedLayers) {
         if (previousLayer)
             previousLayer->addChild(*layer);
-    
+
         previousLayer = layer;
     }
 
@@ -1753,8 +1744,6 @@ void RenderLayerBacking::resetContentsRect()
 void RenderLayerBacking::updateDrawsContent()
 {
     PaintedContentsInfo contentsInfo(*this);
-    contentsInfo.setWantsSubpixelAntialiasedTextState(GraphicsLayer::supportsSubpixelAntialiasedLayerText());
-
     updateDrawsContent(contentsInfo);
 }
 
@@ -1775,18 +1764,10 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 
     bool hasPaintedContent = containsPaintedContent(contentsInfo);
 
-    m_paintsSubpixelAntialiasedText = renderer().settings().subpixelAntialiasedLayerTextEnabled() && contentsInfo.paintsSubpixelAntialiasedText();
-
     // FIXME: we could refine this to only allocate backing for one of these layers if possible.
     m_graphicsLayer->setDrawsContent(hasPaintedContent);
-    if (m_foregroundLayer) {
+    if (m_foregroundLayer)
         m_foregroundLayer->setDrawsContent(hasPaintedContent);
-        m_foregroundLayer->setSupportsSubpixelAntialiasedText(m_paintsSubpixelAntialiasedText);
-        // The text content is painted into the foreground layer.
-        // FIXME: this ignores SVG background images which may contain text.
-        m_graphicsLayer->setSupportsSubpixelAntialiasedText(false);
-    } else
-        m_graphicsLayer->setSupportsSubpixelAntialiasedText(m_paintsSubpixelAntialiasedText);
 
     if (m_backgroundLayer)
         m_backgroundLayer->setDrawsContent(m_backgroundLayerPaintsFixedRootBackground ? hasPaintedContent : contentsInfo.paintsBoxDecorations());
@@ -2265,6 +2246,44 @@ void RenderLayerBacking::positionOverflowControlsLayers()
         layer->setSize(cornerRect.size());
         layer->setDrawsContent(!cornerRect.isEmpty());
     }
+}
+
+static bool ancestorLayerIsDOMParent(RenderLayer& layer, const RenderLayer* compositingAncestor)
+{
+    if (!compositingAncestor)
+        return false;
+    if (!layer.renderer().element() || !layer.renderer().element()->parentElement())
+        return false;
+    return compositingAncestor->renderer().element() == layer.renderer().element()->parentElement();
+}
+
+static bool ancestorLayerWillCombineTransform(const RenderLayer* compositingAncestor)
+{
+    if (!compositingAncestor)
+        return false;
+    return compositingAncestor->preserves3D() || compositingAncestor->hasPerspective();
+}
+
+bool RenderLayerBacking::updateTransformFlatteningLayer(const RenderLayer* compositingAncestor)
+{
+    bool needsFlatteningLayer = false;
+    // If our parent layer has preserve-3d or perspective, and it's not our DOM parent, then we need a flattening layer to block that from being applied in 3d.
+    if (useCSS3DTransformInteroperability() && ancestorLayerWillCombineTransform(compositingAncestor) && !ancestorLayerIsDOMParent(m_owningLayer, compositingAncestor))
+        needsFlatteningLayer = true;
+
+    bool layerChanged = false;
+    if (needsFlatteningLayer) {
+        if (!m_transformFlatteningLayer) {
+            m_transformFlatteningLayer = createGraphicsLayer(makeString(m_owningLayer.name(), " (3d flattening)"));
+            layerChanged = true;
+        }
+    } else if (m_transformFlatteningLayer) {
+        willDestroyLayer(m_transformFlatteningLayer.get());
+        GraphicsLayer::unparentAndClear(m_transformFlatteningLayer);
+        layerChanged = true;
+    }
+
+    return layerChanged;
 }
 
 bool RenderLayerBacking::updateViewportConstrainedAnchorLayer(bool needsAnchorLayer)
@@ -2778,9 +2797,6 @@ bool RenderLayerBacking::paintsContent(RenderLayer::PaintedContentRequest& reque
     if (request.hasPaintedContent == RequestState::Unknown)
         request.hasPaintedContent = RequestState::False;
 
-    if (request.hasSubpixelAntialiasedText == RequestState::Unknown)
-        request.hasSubpixelAntialiasedText = RequestState::False;
-
     return paintsContent;
 }
 
@@ -3012,6 +3028,9 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
         return false;
     }
 
+    if (renderer().style().imageRendering() == ImageRendering::CrispEdges || renderer().style().imageRendering() == ImageRendering::Pixelated)
+        return false;
+
     auto& canvasRenderer = downcast<RenderHTMLCanvas>(renderer());
     if (snappedIntRect(contents).size() == canvasRenderer.canvasElement().size())
         return true;
@@ -3154,6 +3173,9 @@ GraphicsLayer* RenderLayerBacking::parentForSublayers() const
 
 GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
 {
+    if (m_transformFlatteningLayer)
+        return m_transformFlatteningLayer.get();
+
     if (m_ancestorClippingStack)
         return m_ancestorClippingStack->firstLayer();
 
@@ -3767,6 +3789,11 @@ bool RenderLayerBacking::shouldTemporarilyRetainTileCohorts(const GraphicsLayer*
 bool RenderLayerBacking::useGiantTiles() const
 {
     return renderer().settings().useGiantTiles();
+}
+
+bool RenderLayerBacking::useCSS3DTransformInteroperability() const
+{
+    return renderer().settings().css3DTransformInteroperabilityEnabled();
 }
 
 void RenderLayerBacking::logFilledVisibleFreshTile(unsigned blankPixelCount)

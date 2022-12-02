@@ -38,6 +38,8 @@ class TextStream;
 
 namespace WebCore {
 
+class FontFeatureValues;
+
 enum class TextRenderingMode : uint8_t {
     AutoTextRendering,
     OptimizeSpeed,
@@ -51,6 +53,8 @@ enum class FontSmoothingMode : uint8_t {
     Antialiased,
     SubpixelAntialiased
 };
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, FontSmoothingMode);
 
 enum class FontOrientation : uint8_t {
     Horizontal,
@@ -192,8 +196,8 @@ struct FontVariantAlternatesValues {
     }
 
     std::optional<String> stylistic;
-    std::optional<String> styleset;
-    std::optional<String> characterVariant;
+    Vector<String> styleset;
+    Vector<String> characterVariant;
     std::optional<String> swash;
     std::optional<String> ornaments;
     std::optional<String> annotation;
@@ -483,6 +487,6 @@ enum class AllowUserInstalledFonts : uint8_t {
 };
 
 using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
-FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&);
+FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&, RefPtr<FontFeatureValues>);
 
 }

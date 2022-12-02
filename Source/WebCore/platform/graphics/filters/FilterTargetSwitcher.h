@@ -31,33 +31,31 @@
 namespace WebCore {
 
 class Filter;
+class FilterResults;
 class GraphicsContext;
-class ImageBuffer;
 
 class FilterTargetSwitcher {
+    WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    class Client {
-    public:
-        virtual ~Client() = default;
-        virtual RefPtr<Filter> createFilter(const std::function<FloatRect()>& boundsProvider) const = 0;
-        virtual IntOutsets calculateFilterOutsets(const FloatRect& bounds) const = 0;
-        virtual GraphicsContext* drawingContext() const = 0;
-        virtual void setTargetSwitcher(FilterTargetSwitcher*) = 0;
-    protected:
-        Client() = default;
-    };
+    static std::unique_ptr<FilterTargetSwitcher> create(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect, const DestinationColorSpace&, FilterResults* = nullptr);
 
-    FilterTargetSwitcher(Client&, const DestinationColorSpace&, const std::function<FloatRect()>& boundsProvider);
-    FilterTargetSwitcher(Client&, const DestinationColorSpace&, const FloatRect& bounds);
-    ~FilterTargetSwitcher();
-    GraphicsContext* drawingContext() const;
-    FloatBoxExtent outsets() const;
+    virtual ~FilterTargetSwitcher() = default;
 
-private:
-    Client& m_client;
+    virtual GraphicsContext* drawingContext(GraphicsContext& destinationContext) const { return &destinationContext; }
+
+    virtual bool needsRedrawSourceImage() const { return false; }
+
+    virtual void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&) { beginDrawSourceImage(destinationContext); }
+    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext) { endDrawSourceImage(destinationContext); }
+
+    virtual void beginDrawSourceImage(GraphicsContext&) { }
+    virtual void endDrawSourceImage(GraphicsContext&) { }
+
+protected:
+    FilterTargetSwitcher(Filter&);
+
     RefPtr<Filter> m_filter;
-    RefPtr<ImageBuffer> m_imageBuffer;
-    FloatRect m_bounds;
 };
 
 } // namespace WebCore

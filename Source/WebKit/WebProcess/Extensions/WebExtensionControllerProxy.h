@@ -28,29 +28,66 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "MessageReceiver.h"
-#include "WebExtensionControllerIdentifier.h"
+#include "WebExtensionContextProxy.h"
+#include "WebExtensionControllerParameters.h"
 #include <wtf/Forward.h>
+#include <wtf/URLHash.h>
+
+namespace WebCore {
+class DOMWrapperWorld;
+}
 
 namespace WebKit {
 
-class WebExtensionControllerProxy final : public RefCounted<WebExtensionControllerProxy>, private IPC::MessageReceiver {
+class WebFrame;
+class WebPage;
+
+class WebExtensionControllerProxy final : public RefCounted<WebExtensionControllerProxy>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebExtensionControllerProxy);
 
 public:
-    static Ref<WebExtensionControllerProxy> getOrCreate(WebExtensionControllerIdentifier);
+    static RefPtr<WebExtensionControllerProxy> get(WebExtensionControllerIdentifier);
+    static Ref<WebExtensionControllerProxy> getOrCreate(WebExtensionControllerParameters);
 
     ~WebExtensionControllerProxy();
 
+    using WebExtensionContextProxySet = HashSet<Ref<WebExtensionContextProxy>>;
+    using WebExtensionContextProxyBaseURLMap = HashMap<URL, Ref<WebExtensionContextProxy>>;
+
     WebExtensionControllerIdentifier identifier() { return m_identifier; }
 
+    bool operator==(const WebExtensionControllerProxy& other) const { return (this == &other); }
+    bool operator!=(const WebExtensionControllerProxy& other) const { return !(this == &other); }
+
+#if PLATFORM(COCOA)
+    void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
+    void serviceWorkerGlobalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
+#endif
+
 private:
-    explicit WebExtensionControllerProxy(WebExtensionControllerIdentifier);
+    explicit WebExtensionControllerProxy(WebExtensionControllerParameters);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+#if PLATFORM(COCOA)
+    void load(const WebExtensionContextParameters&);
+    void unload(WebExtensionContextIdentifier);
+
+    RefPtr<WebExtensionContextProxy> extensionContext(const URL&) const;
+    RefPtr<WebExtensionContextProxy> extensionContext(const String& uniqueIdentifier) const;
+    RefPtr<WebExtensionContextProxy> extensionContext(WebFrame&, WebCore::DOMWrapperWorld&) const;
+
+    const WebExtensionContextProxySet& extensionContexts() const { return m_extensionContexts; }
+#endif
+
     WebExtensionControllerIdentifier m_identifier;
+
+#if PLATFORM(COCOA)
+    WebExtensionContextProxySet m_extensionContexts;
+    WebExtensionContextProxyBaseURLMap m_extensionContextBaseURLMap;
+#endif
 };
 
 } // namespace WebKit

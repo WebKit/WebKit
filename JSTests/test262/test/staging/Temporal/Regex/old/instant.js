@@ -28,14 +28,6 @@ function generateTest(dateTimeString, zoneString, components) {
   test(`${ dateTimeString }:30.123456789${ zoneString }`, components);
 }
 // valid strings
-test("2020-01-01Z", [
-  2020,
-  1,
-  1,
-  0,
-  0,
-  0
-]);
 [
   "+01:00",
   "+01",

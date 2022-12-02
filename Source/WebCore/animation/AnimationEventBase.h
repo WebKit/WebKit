@@ -35,26 +35,22 @@ class WebAnimation;
 class AnimationEventBase : public Event {
     WTF_MAKE_ISO_ALLOCATED(AnimationEventBase);
 public:
-    static Ref<AnimationEventBase> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> timelineTime)
-    {
-        return adoptRef(*new AnimationEventBase(type, animation, timelineTime));
-    }
-
     virtual ~AnimationEventBase();
 
     virtual bool isAnimationPlaybackEvent() const { return false; }
-    virtual bool isAnimationEvent() const { return false; }
-    virtual bool isTransitionEvent() const { return false; }
+    virtual bool isCSSAnimationEvent() const { return false; }
+    virtual bool isCSSTransitionEvent() const { return false; }
 
-    std::optional<Seconds> timelineTime() const { return m_timelineTime; }
     WebAnimation* animation() const { return m_animation.get(); }
+    std::optional<Seconds> scheduledTime() const { return m_scheduledTime; }
 
 protected:
-    AnimationEventBase(const AtomString&, WebAnimation*, std::optional<Seconds>);
+    AnimationEventBase(const AtomString&, WebAnimation*, std::optional<Seconds> scheduledTime);
     AnimationEventBase(const AtomString&, const EventInit&, IsTrusted);
 
+private:
     RefPtr<WebAnimation> m_animation;
-    Markable<Seconds, Seconds::MarkableTraits> m_timelineTime;
+    Markable<Seconds, Seconds::MarkableTraits> m_scheduledTime;
 };
 
 }

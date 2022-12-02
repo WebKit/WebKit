@@ -310,21 +310,21 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         }
 
         graphicsContext.setFillColor(foregroundColor);
-
         graphicsContext.fillPath(path);
-        path.clear();
     } else {
         path.addRoundedRect(fieldRect, corner);
-        fieldRect.inflate(-toggleBorderSize);
-        corner.expand(-buttonBorderSize, -buttonBorderSize);
-        path.addRoundedRect(fieldRect, corner);
-        graphicsContext.setFillRule(WindRule::EvenOdd);
         if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
             graphicsContext.setFillColor(toggleBorderHoverColor);
         else
             graphicsContext.setFillColor(toggleBorderColor);
         graphicsContext.fillPath(path);
         path.clear();
+
+        fieldRect.inflate(-toggleBorderSize);
+        corner.expand(-buttonBorderSize, -buttonBorderSize);
+        path.addRoundedRect(fieldRect, corner);
+        graphicsContext.setFillColor(foregroundColor);
+        graphicsContext.fillPath(path);
     }
 
     if (states.states().contains(ControlStates::States::Focused))
@@ -383,15 +383,17 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
         graphicsContext.fillPath(path);
     } else {
         path.addEllipse(fieldRect);
-        fieldRect.inflate(-toggleBorderSize);
-        path.addEllipse(fieldRect);
-        graphicsContext.setFillRule(WindRule::EvenOdd);
         if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
             graphicsContext.setFillColor(toggleBorderHoverColor);
         else
             graphicsContext.setFillColor(toggleBorderColor);
         graphicsContext.fillPath(path);
         path.clear();
+
+        fieldRect.inflate(-toggleBorderSize);
+        path.addEllipse(fieldRect);
+        graphicsContext.setFillColor(foregroundColor);
+        graphicsContext.fillPath(path);
     }
 
     if (states.states().contains(ControlStates::States::Focused))

@@ -28,6 +28,7 @@
 
 #include "NetworkProcessMessages.h"
 #include "WebCookieManagerMessages.h"
+#include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
@@ -35,6 +36,7 @@
 #include <WebCore/CookieStorage.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <wtf/CallbackAggregator.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "DefaultWebBrowserChecks.h"
@@ -116,10 +118,19 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, CompletionHand
 
 void HTTPCookieStore::deleteAllCookies(CompletionHandler<void()>&& completionHandler)
 {
-    if (auto* networkProcess = networkProcessIfExists())
-        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::DeleteAllCookies(m_sessionID), WTFMove(completionHandler));
-    else
-        completionHandler();
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    if (m_owningDataStore) {
+        for (auto& processPool : m_owningDataStore->processPools()) {
+            processPool->forEachProcessForSession(m_sessionID, [&](auto& process) {
+                if (!process.canSendMessage())
+                    return;
+                process.sendWithAsyncReply(Messages::WebProcess::DeleteAllCookies(), [callbackAggregator] { });
+            });
+        }
+    }
+    if (auto* networkProcess = networkProcessLaunchingIfNecessary())
+        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::DeleteAllCookies(m_sessionID), [callbackAggregator] { });
 }
 
 void HTTPCookieStore::deleteCookiesForHostnames(const Vector<WTF::String>& hostnames, CompletionHandler<void()>&& completionHandler)

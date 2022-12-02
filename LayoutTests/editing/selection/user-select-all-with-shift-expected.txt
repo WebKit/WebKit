@@ -58,12 +58,12 @@ After clicking on the first element (windows):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "<#selection-focus>First element"
+|   "<#selection-anchor>First element<#selection-focus>"
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
 |   id="second"
-|   "Second element<#selection-anchor>"
+|   "Second element"
 | "\n"
 
 After shift clicking on the second element (windows):
@@ -71,12 +71,12 @@ After shift clicking on the second element (windows):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "First element"
+|   "<#selection-anchor>First element"
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
 |   id="second"
-|   "<#selection-focus>Second element<#selection-anchor>"
+|   "Second element<#selection-focus>"
 | "\n"
 
 After clicking on the second element (windows):
@@ -102,7 +102,7 @@ After shift clicking on the first element (windows):
 | <div>
 |   class="select-all"
 |   id="second"
-|   "Second<#selection-anchor> element"
+|   "Second element<#selection-anchor>"
 | "\n"
 
 After clicking on the first element (unix):
@@ -110,12 +110,12 @@ After clicking on the first element (unix):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "<#selection-focus>First element"
+|   "<#selection-anchor>First element<#selection-focus>"
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
 |   id="second"
-|   "Second<#selection-anchor> element"
+|   "Second element"
 | "\n"
 
 After shift clicking on the second element (unix):
@@ -123,12 +123,12 @@ After shift clicking on the second element (unix):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "First element"
+|   "<#selection-anchor>First element"
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
 |   id="second"
-|   "<#selection-anchor>Second element<#selection-focus>"
+|   "Second element<#selection-focus>"
 | "\n"
 
 After clicking on the second element (unix):
@@ -154,5 +154,5 @@ After shift clicking on the first element (unix):
 | <div>
 |   class="select-all"
 |   id="second"
-|   "Second<#selection-anchor> element"
+|   "Second element<#selection-anchor>"
 | "\n"

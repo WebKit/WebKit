@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (50,-50) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (50,-50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [cx=100.00] [cy=0.00] [r=50.00]
+layer at (-200,-200) size 400x200 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-200,-200) size 400x200
+layer at (-50,50) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (-50,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=100.00] [r=50.00]
+layer at (0,-200) size 200x400 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-200) size 200x400
+layer at (0,-200) size 200x400 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 200x400 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=-200.00] [width=200.00] [height=400.00]

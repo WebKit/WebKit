@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function assert(b, m) {
     if (!b)
         throw new Error(m);

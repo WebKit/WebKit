@@ -172,13 +172,6 @@ ForceCompositingMode:
     WebCore:
       default: false
 
-ForcePendingWebGLPolicy:
-  type: bool
-  webcoreGetter: isForcePendingWebGLPolicy
-  defaultValue:
-    WebCore:
-      default: false
-
 ForcedPrefersContrastAccessibilityValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue

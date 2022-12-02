@@ -2092,6 +2092,7 @@ namespace JSC {
 
 static NO_RETURN_DUE_TO_CRASH JSC_DECLARE_HOST_FUNCTION(functionCrash);
 static JSC_DECLARE_HOST_FUNCTION(functionBreakpoint);
+static JSC_DECLARE_HOST_FUNCTION(functionExit);
 static JSC_DECLARE_HOST_FUNCTION(functionDFGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionFTLTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionCpuMfence);
@@ -2207,6 +2208,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDumpJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
 #endif
 
+static JSC_DECLARE_HOST_FUNCTION(functionAllowDoubleShape);
 static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 #if PLATFORM(COCOA)
 static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);;
@@ -2271,6 +2273,14 @@ JSC_DEFINE_HOST_FUNCTION(functionBreakpoint, (JSGlobalObject* globalObject, Call
         WTFBreakpointTrap();
 
     return encodedJSUndefined();
+}
+
+// Executes exit(EXIT_SUCCESS).
+// Usage: $vm.exit()
+JSC_DEFINE_HOST_FUNCTION(functionExit, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    exit(EXIT_SUCCESS);
 }
 
 // Returns true if the current frame is a DFG frame.
@@ -3912,6 +3922,14 @@ JSC_DEFINE_HOST_FUNCTION(functionResetJITSizeStatistics, (JSGlobalObject* global
 }
 #endif
 
+// Checks if DoubleShape is allowed.
+// Usage: var allowed = $vm.allowDoubleShape()
+JSC_DEFINE_HOST_FUNCTION(functionAllowDoubleShape, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(Options::allowDoubleShape()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionEnsureArrayStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -3962,6 +3980,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "abort"_s, functionCrash, 0);
     addFunction(vm, "crash"_s, functionCrash, 0);
     addFunction(vm, "breakpoint"_s, functionBreakpoint, 0);
+    addFunction(vm, "exit"_s, functionExit, 0);
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "dfgTrue"_s), 0, functionDFGTrue, ImplementationVisibility::Public, DFGTrueIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "ftlTrue"_s), 0, functionFTLTrue, ImplementationVisibility::Public, FTLTrueIntrinsic, jsDollarVMPropertyAttributes);
@@ -4114,6 +4133,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "resetJITSizeStatistics"_s, functionResetJITSizeStatistics, 0);
 #endif
 
+    addFunction(vm, "allowDoubleShape"_s, functionAllowDoubleShape, 0);
     addFunction(vm, "ensureArrayStorage"_s, functionEnsureArrayStorage, 1);
 
 #if PLATFORM(COCOA)

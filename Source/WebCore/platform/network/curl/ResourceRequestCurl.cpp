@@ -52,6 +52,16 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
         setInspectorInitiatorNodeIdentifier(*oldInspectorInitiatorNodeIdentifier);
 }
 
+ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestBase::RequestData&& requestData)
+{
+    return ResourceRequest(WTFMove(requestData));
+}
+
+ResourceRequestBase::RequestData ResourceRequest::getRequestDataToSerialize() const
+{
+    return m_requestData;
+}
+
 }
 
 #endif

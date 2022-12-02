@@ -4,10 +4,11 @@
 /*---
 esid: sec-temporal-timezone-objects
 description: getInstantFor disambiguation
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-var dtm = new Temporal.PlainDateTime(2019, 2, 16, 23, 45);
+var dtm = new Temporal.PlainDateTime(2000, 10, 29, 1, 45);
 
 // with constant offset
 var zone = Temporal.TimeZone.from("+03:30");
@@ -22,20 +23,19 @@ for (var disambiguation of [
 }
 
 // with daylight saving change - Fall
-var zone = Temporal.TimeZone.from("America/Sao_Paulo");
-assert.sameValue(`${ zone.getInstantFor(dtm) }`, "2019-02-17T01:45:00Z");
-assert.sameValue(`${ zone.getInstantFor(dtm, { disambiguation: "earlier" }) }`, "2019-02-17T01:45:00Z");
-assert.sameValue(`${ zone.getInstantFor(dtm, { disambiguation: "later" }) }`, "2019-02-17T02:45:00Z");
-assert.sameValue(`${ zone.getInstantFor(dtm, { disambiguation: "compatible" }) }`, "2019-02-17T01:45:00Z");
+var zone = TemporalHelpers.springForwardFallBackTimeZone();
+assert.sameValue(`${ zone.getInstantFor(dtm) }`, "2000-10-29T08:45:00Z");
+assert.sameValue(`${ zone.getInstantFor(dtm, { disambiguation: "earlier" }) }`, "2000-10-29T08:45:00Z");
+assert.sameValue(`${ zone.getInstantFor(dtm, { disambiguation: "later" }) }`, "2000-10-29T09:45:00Z");
+assert.sameValue(`${ zone.getInstantFor(dtm, { disambiguation: "compatible" }) }`, "2000-10-29T08:45:00Z");
 assert.throws(RangeError, () => zone.getInstantFor(dtm, { disambiguation: "reject" }));
 
 // with daylight saving change - Spring
-var dtmLA = new Temporal.PlainDateTime(2020, 3, 8, 2, 30);
-var zone = Temporal.TimeZone.from("America/Los_Angeles");
-assert.sameValue(`${ zone.getInstantFor(dtmLA) }`, "2020-03-08T10:30:00Z");
-assert.sameValue(`${ zone.getInstantFor(dtmLA, { disambiguation: "earlier" }) }`, "2020-03-08T09:30:00Z");
-assert.sameValue(`${ zone.getInstantFor(dtmLA, { disambiguation: "later" }) }`, "2020-03-08T10:30:00Z");
-assert.sameValue(`${ zone.getInstantFor(dtmLA, { disambiguation: "compatible" }) }`, "2020-03-08T10:30:00Z");
+var dtmLA = new Temporal.PlainDateTime(2000, 4, 2, 2, 30);
+assert.sameValue(`${ zone.getInstantFor(dtmLA) }`, "2000-04-02T10:30:00Z");
+assert.sameValue(`${ zone.getInstantFor(dtmLA, { disambiguation: "earlier" }) }`, "2000-04-02T09:30:00Z");
+assert.sameValue(`${ zone.getInstantFor(dtmLA, { disambiguation: "later" }) }`, "2000-04-02T10:30:00Z");
+assert.sameValue(`${ zone.getInstantFor(dtmLA, { disambiguation: "compatible" }) }`, "2000-04-02T10:30:00Z");
 assert.throws(RangeError, () => zone.getInstantFor(dtmLA, { disambiguation: "reject" }));
 
 // throws on bad disambiguation

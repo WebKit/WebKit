@@ -23,13 +23,13 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> GPUConnectionToWebProcess WantsDispatchMessage {
-    void CreateRenderingBackend(struct WebKit::RemoteRenderingBackendCreationParameters creationParameters, IPC::Connection::Handle connectionHandle, IPC::StreamConnectionBuffer streamBuffer)
+    void CreateRenderingBackend(struct WebKit::RemoteRenderingBackendCreationParameters creationParameters, IPC::StreamServerConnection::Handle connectionHandle)
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
 #if ENABLE(WEBGL)
-    void CreateGraphicsContextGL(struct WebCore::GraphicsContextGLAttributes attributes, WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer stream)
+    void CreateGraphicsContextGL(struct WebCore::GraphicsContextGLAttributes attributes, WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle serverConnection)
     void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier)
 #endif
-    void CreateRemoteGPU(WebKit::WebGPUIdentifier identifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer stream)
+    void CreateRemoteGPU(WebKit::WebGPUIdentifier identifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle serverConnection)
     void ClearNowPlayingInfo()
     void SetNowPlayingInfo(struct WebCore::NowPlayingInfo nowPlayingInfo)
 #if USE(AUDIO_SESSION)

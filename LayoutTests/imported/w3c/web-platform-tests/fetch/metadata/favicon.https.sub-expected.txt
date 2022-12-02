@@ -1,5 +1,0 @@
-
-FAIL Same-Origin favicon assert_not_equals: got disallowed value "No header has been recorded"
-FAIL Same-Site favicon assert_not_equals: got disallowed value "No header has been recorded"
-FAIL Cross-Site favicon assert_not_equals: got disallowed value "No header has been recorded"
-

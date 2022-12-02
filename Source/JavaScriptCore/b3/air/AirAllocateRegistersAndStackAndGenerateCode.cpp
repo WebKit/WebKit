@@ -177,9 +177,12 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
     JIT_COMMENT(*m_jit, "Flush(", tmp, ", ", reg, ", offset=", offset, ")");
     if (tmp.isGP())
         m_jit->store64(reg.gpr(), callFrameAddr(*m_jit, offset));
-    else {
+    else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !Options::useWebAssemblySIMD()) {
         ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
         m_jit->storeDouble(reg.fpr(), callFrameAddr(*m_jit, offset));
+    } else {
+        ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
+        m_jit->storeVector(reg.fpr(), callFrameAddr(*m_jit, offset));
     }
 }
 
@@ -210,9 +213,12 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
         intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
         if (tmp.bank() == GP)
             m_jit->load64(callFrameAddr(*m_jit, offset), reg.gpr());
-        else {
+        else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !Options::useWebAssemblySIMD()) {
             ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
             m_jit->loadDouble(callFrameAddr(*m_jit, offset), reg.fpr());
+        } else {
+            ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
+            m_jit->loadVector(callFrameAddr(*m_jit, offset), reg.fpr());
         }
     }
 }
@@ -265,7 +271,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
         m_namedUsedRegs.add(reg, conservativeWidth(reg));
     };
 
-    bool mightInterfere = m_earlyClobber.buildWithLowerBits().numberOfSetRegisters() || (m_lateClobber).numberOfSetRegisters();
+    bool mightInterfere = m_earlyClobber.numberOfSetRegisters() || m_lateClobber.numberOfSetRegisters();
 
     auto interferesWithClobber = [&] (Reg reg) {
         if (!mightInterfere)
@@ -368,7 +374,9 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
                     return;
                 }
 
-                unsigned slotSize = conservativeRegisterBytesWithoutVectors(tmp.bank());
+                unsigned slotSize = conservativeRegisterBytes(tmp.bank());
+                if (!Options::useWebAssemblySIMD())
+                    slotSize = conservativeRegisterBytesWithoutVectors(tmp.bank());
 
                 if (freeSlots.size() && freeSlots.last()->byteSize() >= slotSize)
                     data.spillSlot = freeSlots.takeLast();
@@ -420,7 +428,9 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         for (Reg reg : m_registers[bank]) {
             m_allowedRegisters.add(reg, IgnoreVectors);
             TmpData& data = m_map[Tmp(reg)];
-            unsigned slotSize = conservativeRegisterBytesWithoutVectors(bank);
+            unsigned slotSize = conservativeRegisterBytes(bank);
+            if (!Options::useWebAssemblySIMD())
+                slotSize = conservativeRegisterBytesWithoutVectors(bank);
             data.spillSlot = m_code.addStackSlot(slotSize, StackSlotKind::Spill);
             dataLogLnIf(GenerateAndAllocateRegistersInternal::verbose, "allowedRegisters: reg: ", reg, " -> slot ", data.spillSlot);
             data.reg = Reg();
@@ -654,7 +664,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             checkConsistency();
 
             inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width width) {
-                ASSERT(width <= Width64);
+                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
                 if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                     return;
 
@@ -667,7 +677,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             });
 
             inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                ASSERT_UNUSED(width, width <= Width64);
+                ASSERT_UNUSED(width, width <= Width64 || Options::useWebAssemblySIMD());
                 if (!arg.isTmp())
                     return;
 
@@ -684,7 +694,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 auto& entry = m_map[tmp];
                 if (!entry.reg) {
                     // We're a cold use, and our current location is already on the stack. Just use that.
-                    ASSERT(entry.spillSlot->byteSize() <= bytesForWidth(Width64));
+                    ASSERT(entry.spillSlot->byteSize() <= bytesForWidth(Width64) || Options::useWebAssemblySIMD());
                     arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                 }
             });
@@ -796,7 +806,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 RegisterSetBuilder registerSetBuilder;
                 for (size_t i = 0; i < currentAllocation.size(); ++i) {
                     if (currentAllocation[i])
-                        registerSetBuilder.add(Reg::fromIndex(i), conservativeWidth(Reg::fromIndex(i)));
+                        registerSetBuilder.add(Reg::fromIndex(i), Options::useWebAssemblySIMD() ? conservativeWidth(Reg::fromIndex(i)) : conservativeWidthWithoutVectors(Reg::fromIndex(i)));
                 }
                 inst.reportUsedRegisters(registerSetBuilder);
             }

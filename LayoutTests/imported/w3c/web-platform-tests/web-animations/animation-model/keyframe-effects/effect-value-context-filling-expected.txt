@@ -1,16 +1,16 @@
 
 PASS Filling effect values reflect changes to font-size on element
-FAIL Filling effect values reflect changes to font-size on parent element assert_equals: Effect value after updating font-size on parent element expected "400px" but got "200px"
-FAIL Filling effect values reflect changes to variables on element assert_equals: Effect value after updating variable expected "200px" but got "100px"
-FAIL Filling effect values reflect changes to variables on parent element assert_equals: Effect value after updating variable expected "400px" but got "200px"
+PASS Filling effect values reflect changes to font-size on parent element
+PASS Filling effect values reflect changes to variables on element
+PASS Filling effect values reflect changes to variables on parent element
 PASS Filling effect values reflect changes to the the animation's keyframes
 PASS Filling effect values reflect changes to the the animation's composite mode
 PASS Filling effect values reflect changes to the the animation's iteration composite mode
 PASS Filling effect values reflect changes to the base value when using additive animation
 PASS Filling effect values reflect changes to the base value when using additive animation on a single keyframe
 PASS Filling effect values reflect changes to the base value when using the fill value is an implicit keyframe
-FAIL Filling effect values reflect changes to the base value via a parent element assert_equals: Effect value after updating font-size on parent expected "400px" but got "300px"
+PASS Filling effect values reflect changes to the base value via a parent element
 PASS Filling effect values reflect changes to underlying animations
-FAIL Filling effect values reflect changes to underlying animations via a a parent element assert_equals: Effect value after updating parent font-size expected "400px" but got "300px"
+PASS Filling effect values reflect changes to underlying animations via a a parent element
 PASS Filling effect values reflect changes to underlying animations made by directly changing the keyframes
 

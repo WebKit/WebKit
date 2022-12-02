@@ -51,9 +51,9 @@ void AudioMediaStreamTrackRendererCocoa::start(CompletionHandler<void()>&& callb
 {
     clear();
 
-    AudioMediaStreamTrackRendererUnit::singleton().retrieveFormatDescription([weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto* formatDescription) mutable {
+    AudioMediaStreamTrackRendererUnit::singleton().retrieveFormatDescription([weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto formatDescription) mutable {
         if (weakThis && formatDescription) {
-            weakThis->m_outputDescription = makeUnique<CAAudioStreamDescription>(*formatDescription);
+            weakThis->m_outputDescription = *formatDescription;
             weakThis->m_shouldRecreateDataSource = true;
         }
         callback();
@@ -80,7 +80,7 @@ void AudioMediaStreamTrackRendererCocoa::clear()
     stop();
 
     setRegisteredDataSource(nullptr);
-    m_outputDescription = { };
+    m_outputDescription = std::nullopt;
 }
 
 void AudioMediaStreamTrackRendererCocoa::setVolume(float volume)

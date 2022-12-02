@@ -187,7 +187,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
 
     // If the target item wasn't even in the list, there's nothing else to do.
     if (targetIndex == notFound) {
-        LOG(BackForward, "(Back/Forward) WebBackForwardList %p could not go to item %s (%s) because it was not found", this, item.itemID().logString(), item.url().utf8().data());
+        LOG(BackForward, "(Back/Forward) WebBackForwardList %p could not go to item %s (%s) because it was not found", this, item.itemID().toString().utf8().data(), item.url().utf8().data());
         return;
     }
 
@@ -223,7 +223,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
 
     m_currentIndex = targetIndex;
 
-    LOG(BackForward, "(Back/Forward) WebBackForwardList %p going to item %s, is now at index %zu", this, item.itemID().logString(), targetIndex);
+    LOG(BackForward, "(Back/Forward) WebBackForwardList %p going to item %s, is now at index %zu", this, item.itemID().toString().utf8().data(), targetIndex);
     m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
@@ -436,7 +436,7 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
 
     // FIXME: Enable restoring resourceDirectoryURL.
     m_entries = WTF::map(WTFMove(backForwardListState.items), [this](auto&& state) {
-        state.identifier = { Process::identifier(), ObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>::generate() };
+        state.identifier = BackForwardItemIdentifier::generate();
         return WebBackForwardListItem::create(WTFMove(state), m_page->identifier());
     });
     m_currentIndex = backForwardListState.currentIndex ? std::optional<size_t>(*backForwardListState.currentIndex) : std::nullopt;

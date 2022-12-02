@@ -86,7 +86,7 @@ void PreconnectTask::didReceiveResponse(ResourceResponse&& response, PrivateRela
     completionHandler(PolicyAction::Ignore);
 }
 
-void PreconnectTask::didReceiveBuffer(const FragmentedSharedBuffer&, int reportedEncodedDataLength)
+void PreconnectTask::didReceiveBuffer(const FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength)
 {
     ASSERT_NOT_REACHED();
 }
@@ -103,7 +103,7 @@ void PreconnectTask::didFailLoading(const ResourceError& error)
     didFinish(error, NetworkLoadMetrics::emptyMetrics());
 }
 
-void PreconnectTask::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void PreconnectTask::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
     ASSERT_NOT_REACHED();
 }

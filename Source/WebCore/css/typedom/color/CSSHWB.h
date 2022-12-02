@@ -29,27 +29,27 @@
 
 namespace WebCore {
 
-class CSSHWB : public CSSColorValue {
+class CSSHWB final : public CSSColorValue {
     WTF_MAKE_ISO_ALLOCATED(CSSHWB);
 public:
-    template<typename... Args> static Ref<CSSHWB> create(Args&&... args) { return adoptRef(*new CSSHWB(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSHWB>> create(Ref<CSSNumericValue>&& hue, CSSNumberish&& whiteness, CSSNumberish&& blackness, CSSNumberish&& alpha);
 
-    const Ref<CSSNumericValue>& h() const { return m_hue; }
-    void setH(Ref<CSSNumericValue> hue) { m_hue = WTFMove(hue); }
-    const CSSNumberish& w() const { return m_whiteness; }
-    void setW(CSSNumberish whiteness) { m_whiteness = WTFMove(whiteness); }
-    const CSSNumberish& b() const { return m_blackness; }
-    void setB(CSSNumberish blackness) { m_blackness = WTFMove(blackness); }
-    const CSSNumberish& alpha() const { return m_alpha; }
-    void setAlpha(CSSNumberish alpha) { m_alpha = WTFMove(alpha); }
+    CSSNumericValue& h() const;
+    ExceptionOr<void> setH(Ref<CSSNumericValue>&&);
+    CSSNumberish w() const;
+    ExceptionOr<void> setW(CSSNumberish&&);
+    CSSNumberish b() const;
+    ExceptionOr<void> setB(CSSNumberish&&);
+    CSSNumberish alpha() const;
+    ExceptionOr<void> setAlpha(CSSNumberish&&);
 
 private:
-    CSSHWB(Ref<CSSNumericValue>, CSSNumberish, CSSNumberish, CSSNumberish);
+    CSSHWB(Ref<CSSNumericValue>&& hue, Ref<CSSNumericValue>&& whiteness, Ref<CSSNumericValue>&& m_blackness, Ref<CSSNumericValue>&& alpha);
 
     Ref<CSSNumericValue> m_hue;
-    CSSNumberish m_whiteness;
-    CSSNumberish m_blackness;
-    CSSNumberish m_alpha;
+    Ref<CSSNumericValue> m_whiteness;
+    Ref<CSSNumericValue> m_blackness;
+    Ref<CSSNumericValue> m_alpha;
 };
     
 } // namespace WebCore

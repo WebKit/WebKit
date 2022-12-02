@@ -30,6 +30,7 @@
 #include "BuiltinNames.h"
 #include "BytecodeCacheError.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "JSCBytecodeCacheVersion.h"
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSTemplateObjectDescriptor.h"
@@ -66,11 +67,6 @@ struct SourceTypeImpl<T, std::enable_if_t<!std::is_fundamental<T>::value && !std
 
 template<typename T>
 using SourceType = typename SourceTypeImpl<T>::type;
-
-static constexpr unsigned jscBytecodeCacheVersion()
-{
-    return StringHasher::computeHash(__TIMESTAMP__);
-}
 
 class Encoder {
     WTF_MAKE_NONCOPYABLE(Encoder);
@@ -358,39 +354,30 @@ RefPtr<SourceProvider> Decoder::provider() const
 }
 
 template<typename T>
-static std::enable_if_t<std::is_same<T, SourceType<T>>::value> encode(Encoder&, T& dst, const SourceType<T>& src)
+static void encode(Encoder& encoder, T& dst, const SourceType<T>& src)
 {
-    dst = src;
-}
-
-template<typename T>
-static std::enable_if_t<!std::is_same<T, SourceType<T>>::value> encode(Encoder& encoder, T& dst, const SourceType<T>& src)
-{
-    dst.encode(encoder, src);
+    if constexpr (std::is_same_v<T, SourceType<T>>)
+        dst = src;
+    else
+        dst.encode(encoder, src);
 }
 
 template<typename T, typename... Args>
-static std::enable_if_t<std::is_same<T, SourceType<T>>::value> decode(Decoder&, const T& src, SourceType<T>& dst, Args...)
+static void decode(Decoder& decoder, const T& src, SourceType<T>& dst, Args... args)
 {
-    dst = src;
-}
-
-template<typename T, typename... Args>
-static std::enable_if_t<!std::is_same<T, SourceType<T>>::value> decode(Decoder& decoder, const T& src, SourceType<T>& dst, Args... args)
-{
-    src.decode(decoder, dst, args...);
+    if constexpr (std::is_same_v<T, SourceType<T>>)
+        dst = src;
+    else
+        src.decode(decoder, dst, args...);
 }
 
 template<typename T>
-static std::enable_if_t<std::is_same<T, SourceType<T>>::value, T> decode(Decoder&, T src)
+static T decode(Decoder& decoder, T src)
 {
-    return src;
-}
-
-template<typename T>
-static std::enable_if_t<!std::is_same<T, SourceType<T>>::value, SourceType<T>>&& decode(Decoder& decoder, const T& src)
-{
-    return src.decode(decoder);
+    if constexpr (std::is_same_v<T, SourceType<T>>)
+        return src;
+    else
+        return src.decode(decoder);
 }
 
 template<typename Source>
@@ -2408,7 +2395,7 @@ protected:
 
     bool isUpToDate(Decoder& decoder) const
     {
-        if (m_cacheVersion != jscBytecodeCacheVersion())
+        if (m_cacheVersion != JSCBytecodeCacheVersion)
             return false;
         if (m_bootSessionUUID.decode(decoder) != bootSessionUUIDString())
             return false;
@@ -2416,7 +2403,7 @@ protected:
     }
 
 private:
-    uint32_t m_cacheVersion { jscBytecodeCacheVersion() };
+    uint32_t m_cacheVersion { JSCBytecodeCacheVersion };
     CachedString m_bootSessionUUID;
     CachedCodeBlockTag m_tag;
 };

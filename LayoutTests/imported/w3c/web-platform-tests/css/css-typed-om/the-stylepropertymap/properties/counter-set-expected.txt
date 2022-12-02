@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'counter-set' to CSS-wide keywords Invalid property counter-set
+FAIL Can set 'counter-set' to var() references Invalid property counter-set
+FAIL Can set 'counter-set' to the 'none' keyword Invalid property counter-set
+PASS Setting 'counter-set' to a length throws TypeError
+PASS Setting 'counter-set' to a percent throws TypeError
+PASS Setting 'counter-set' to a time throws TypeError
+PASS Setting 'counter-set' to an angle throws TypeError
+PASS Setting 'counter-set' to a flexible length throws TypeError
+PASS Setting 'counter-set' to a number throws TypeError
+PASS Setting 'counter-set' to a URL throws TypeError
+PASS Setting 'counter-set' to a transform throws TypeError
+FAIL 'counter-set' does not supported 'chapter' Invalid property counter-set
+FAIL 'counter-set' does not supported 'chapter 3' Invalid property counter-set
 

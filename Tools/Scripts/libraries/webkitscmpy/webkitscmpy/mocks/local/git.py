@@ -83,7 +83,10 @@ class Git(mocks.Subprocess):
                     commit.revision = None
 
         self.head = self.commits[self.default_branch][-1]
-        self.remotes = {'origin/{}'.format(branch): commits[:] for branch, commits in self.commits.items()}
+        self.remotes = {
+            'origin/{}'.format(branch): commits[:] for branch, commits in self.commits.items()
+            if not local.Git.DEV_BRANCHES.match(branch)
+        }
         for name in (remotes or {}).keys():
             for branch, commits in self.commits.items():
                 self.remotes['{}/{}'.format(name, branch)] = commits[:]

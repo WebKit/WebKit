@@ -32,6 +32,7 @@
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
 #include "ImageBuffer.h"
+#include "PredefinedColorSpace.h"
 #include "SuspendableTimer.h"
 #include "Timer.h"
 #include "WebGLAny.h"
@@ -81,7 +82,6 @@ class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
 class EXTFloatBlend;
 class EXTFragDepth;
-class EXTProvokingVertex;
 class EXTShaderTextureLOD;
 class EXTTextureCompressionBPTC;
 class EXTTextureCompressionRGTC;
@@ -108,7 +108,6 @@ class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
 class WebGLColorBufferFloat;
 class WebGLCompressedTextureASTC;
-class WebGLCompressedTextureATC;
 class WebGLCompressedTextureETC;
 class WebGLCompressedTextureETC1;
 class WebGLCompressedTexturePVRTC;
@@ -126,6 +125,7 @@ class WebGLLoseContext;
 class WebGLMultiDraw;
 class WebGLMultiDrawInstancedBaseVertexBaseInstance;
 class WebGLObject;
+class WebGLProvokingVertex;
 class WebGLShader;
 class WebGLShaderPrecisionFormat;
 class WebGLSharedObject;
@@ -182,6 +182,9 @@ public:
 
     int drawingBufferWidth() const;
     int drawingBufferHeight() const;
+
+    PredefinedColorSpace drawingBufferColorSpace() const { return m_drawingBufferColorSpace; }
+    void setDrawingBufferColorSpace(PredefinedColorSpace);
 
     void activeTexture(GCGLenum texture);
     void attachShader(WebGLProgram&, WebGLShader&);
@@ -485,7 +488,6 @@ protected:
     friend class OESDrawBuffersIndexed;
     friend class OESVertexArrayObject;
     friend class WebGLCompressedTextureASTC;
-    friend class WebGLCompressedTextureATC;
     friend class WebGLCompressedTextureETC;
     friend class WebGLCompressedTextureETC1;
     friend class WebGLCompressedTexturePVRTC;
@@ -694,6 +696,8 @@ protected:
     std::optional<ContextLostState>  m_contextLostState;
     WebGLContextAttributes m_attributes;
 
+    PredefinedColorSpace m_drawingBufferColorSpace { PredefinedColorSpace::SRGB };
+
     bool m_layerCleared;
     GCGLfloat m_clearColor[4];
     bool m_scissorEnabled;
@@ -719,13 +723,6 @@ protected:
 
     bool m_preventBufferClearForInspector { false };
 
-    // A WebGLRenderingContext can be created in a state where it appears as
-    // a valid and active context, but will not execute any important operations
-    // until its load policy is completely resolved.
-    bool m_isPendingPolicyResolution { false };
-    bool m_hasRequestedPolicyResolution { false };
-    bool isContextLostOrPending();
-
     bool m_compositingResultsNeedUpdating { false };
     bool m_isDisplayingWithPaint { false };
 
@@ -737,7 +734,6 @@ protected:
     RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
     RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<EXTFragDepth> m_extFragDepth;
-    RefPtr<EXTProvokingVertex> m_extProvokingVertex;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
     RefPtr<EXTTextureCompressionBPTC> m_extTextureCompressionBPTC;
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;
@@ -756,7 +752,6 @@ protected:
     RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
     RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
     RefPtr<WebGLCompressedTextureASTC> m_webglCompressedTextureASTC;
-    RefPtr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
     RefPtr<WebGLCompressedTextureETC> m_webglCompressedTextureETC;
     RefPtr<WebGLCompressedTextureETC1> m_webglCompressedTextureETC1;
     RefPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
@@ -770,6 +765,7 @@ protected:
     RefPtr<WebGLLoseContext> m_webglLoseContext;
     RefPtr<WebGLMultiDraw> m_webglMultiDraw;
     RefPtr<WebGLMultiDrawInstancedBaseVertexBaseInstance> m_webglMultiDrawInstancedBaseVertexBaseInstance;
+    RefPtr<WebGLProvokingVertex> m_webglProvokingVertex;
 
     bool m_areWebGL2TexImageSourceFormatsAndTypesAdded { false };
     bool m_areOESTextureFloatFormatsAndTypesAdded { false };
@@ -1020,7 +1016,7 @@ protected:
     bool validateStencilFunc(const char* functionName, GCGLenum);
 
     // Helper function for texParameterf and texParameteri.
-    void texParameter(GCGLenum target, GCGLenum pname, GCGLfloat parami, GCGLint paramf, bool isFloat);
+    void texParameter(GCGLenum target, GCGLenum pname, GCGLfloat paramf, GCGLint parami, bool isFloat);
 
     // Helper function to print errors and warnings to console.
     void printToConsole(MessageLevel, const String&);

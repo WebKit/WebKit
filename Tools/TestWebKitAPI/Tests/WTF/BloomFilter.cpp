@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include <wtf/BloomFilter.h>
-#include <wtf/RandomNumber.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/SHA1.h>
 
 namespace TestWebKitAPI {
@@ -35,7 +35,7 @@ static Vector<unsigned> generateRandomHashes(size_t hashCount)
 {
     Vector<unsigned> hashes;
     for (unsigned i = 0; i < hashCount; ++i)
-        hashes.append(static_cast<unsigned>(randomNumber() * std::numeric_limits<unsigned>::max()));
+        hashes.append(cryptographicallyRandomNumber<uint32_t>());
     return hashes;
 }
 
@@ -44,7 +44,7 @@ static Vector<SHA1::Digest> generateRandomDigests(size_t hashCount)
     Vector<SHA1::Digest> hashes;
     SHA1 sha1;
     for (unsigned i = 0; i < hashCount; ++i) {
-        double random = randomNumber();
+        double random = cryptographicallyRandomUnitInterval();
         sha1.addBytes(reinterpret_cast<uint8_t*>(&random), sizeof(double));
         SHA1::Digest digest;
         sha1.computeHash(digest);

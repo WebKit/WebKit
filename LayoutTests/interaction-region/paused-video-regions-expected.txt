@@ -41,7 +41,6 @@
                     (region
                         (rect (0,0) width=60 height=60)
 )
-                    (hasLightBackground 1)
                     (borderRadius 30.00)])
                   )
                   (children 3

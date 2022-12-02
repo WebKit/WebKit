@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS getComputedStyle(document.getElementById("calc-percent"), null).lineHeight is getComputedStyle(document.getElementById("control"), null).lineHeight
-FAIL getComputedStyle(document.getElementById("calc-percent-pixels"), null).lineHeight should be 32px. Was normal.
+PASS getComputedStyle(document.getElementById("calc-percent-pixels"), null).lineHeight is getComputedStyle(document.getElementById("control"), null).lineHeight
 PASS successfullyParsed is true
 
 TEST COMPLETE

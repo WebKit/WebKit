@@ -156,6 +156,24 @@ TEST(WebKit, RegisterAsCanDisplayOnlyIfCanRequest_CrossOriginLoad)
     }
 }
 
+TEST(WebKit, LoadAlternateHTMLStringAllowsFirstPartyForCookies)
+{
+    @autoreleasepool {
+        [NSURLProtocol registerClass:[EchoURLProtocol class]];
+        [WKBrowsingContextController registerSchemeForCustomProtocol:echoScheme];
+
+        auto webView = adoptNS([WKWebView new]);
+
+        NSString *htmlString = @"<link rel=stylesheet type='text/css' href='echo://base/page-load-errors.css'>";
+        [webView _loadAlternateHTMLString:htmlString baseURL:[NSURL URLWithString:@"echo://base/"] forUnreachableURL:[NSURL URLWithString:@"echo://unreachable/"]];
+        [webView _test_waitForDidFinishNavigation];
+        EXPECT_WK_STREQ(@"echo://base/page-load-errors.css", [lastEchoedURL absoluteString]);
+
+        [WKBrowsingContextController unregisterSchemeForCustomProtocol:echoScheme];
+        [NSURLProtocol unregisterClass:[EchoURLProtocol class]];
+    }
+}
+
 #if WK_HAVE_C_SPI
 
 TEST(WebKit, WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest_SameOriginLoad)

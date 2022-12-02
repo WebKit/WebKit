@@ -57,7 +57,15 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(*this);
 }
 
-void RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread(GraphicsContextFlushIdentifier targetFlushIdentifier)
+
+void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
+{
+    if (m_remoteRenderingBackendProxy)
+        assertIsCurrent(m_remoteRenderingBackendProxy->dispatcher());
+}
+
+
+void RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier targetFlushIdentifier)
 {
     ASSERT(!isMainRunLoop());
     Locker locker { m_receivedFlushIdentifierLock };
@@ -75,13 +83,13 @@ bool RemoteImageBufferProxy::hasPendingFlush() const
 {
     // It is safe to access m_receivedFlushIdentifier from the main thread without locking since it
     // only gets modified on the main thread.
-    ASSERT(isMainRunLoop());
+    assertDispatcherIsCurrent();
     return m_sentFlushIdentifier != m_receivedFlushIdentifier;
 }
 
-void RemoteImageBufferProxy::didFlush(GraphicsContextFlushIdentifier flushIdentifier)
+void RemoteImageBufferProxy::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier)
 {
-    ASSERT(isMainRunLoop());
+    assertDispatcherIsCurrent();
     Locker locker { m_receivedFlushIdentifierLock };
     m_receivedFlushIdentifier = flushIdentifier;
     m_receivedFlushIdentifierChangedCondition.notifyAll();
@@ -194,6 +202,23 @@ RefPtr<NativeImage> RemoteImageBufferProxy::sinkIntoNativeImage()
     return copyNativeImage();
 }
 
+RefPtr<ImageBuffer> RemoteImageBufferProxy::sinkIntoBufferForDifferentThread()
+{
+    ASSERT(hasOneRef());
+    // We can't use these on a different thread, so make a local clone instead.
+    return cloneForDifferentThread();
+}
+
+RefPtr<ImageBuffer> RemoteImageBufferProxy::cloneForDifferentThread()
+{
+    auto copyBuffer = ImageBuffer::create(logicalSize(), renderingPurpose(), resolutionScale(), colorSpace(), pixelFormat());
+    if (!copyBuffer)
+        return nullptr;
+
+    copyBuffer->context().drawImageBuffer(*this, FloatPoint { }, CompositeOperator::Copy);
+    return copyBuffer;
+}
+
 RefPtr<Image> RemoteImageBufferProxy::filteredImage(Filter& filter)
 {
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
@@ -229,11 +254,6 @@ void RemoteImageBufferProxy::clearBackend()
 GraphicsContext& RemoteImageBufferProxy::context() const
 {
     return const_cast<RemoteImageBufferProxy*>(this)->m_remoteDisplayList;
-}
-
-GraphicsContext* RemoteImageBufferProxy::drawingContext()
-{
-    return &m_remoteDisplayList;
 }
 
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
@@ -286,7 +306,7 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
     if (!m_needsFlush)
         return hasPendingFlush();
 
-    m_sentFlushIdentifier = GraphicsContextFlushIdentifier::generate();
+    m_sentFlushIdentifier = DisplayListRecorderFlushIdentifier::generate();
     LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync - flush " << m_sentFlushIdentifier);
     m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
     m_needsFlush = false;

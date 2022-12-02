@@ -1,3 +1,3 @@
 
-FAIL Structured cloning of WebAssembly.Module: BroadcastChannel within the same agent cluster promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Structured cloning of WebAssembly.Module: BroadcastChannel within the same agent cluster
 

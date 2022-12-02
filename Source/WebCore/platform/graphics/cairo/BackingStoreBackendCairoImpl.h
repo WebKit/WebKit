@@ -27,7 +27,7 @@ namespace WebCore {
 class BackingStoreBackendCairoImpl final : public BackingStoreBackendCairo {
 public:
     WEBCORE_EXPORT BackingStoreBackendCairoImpl(const IntSize&, float deviceScaleFactor);
-    virtual ~BackingStoreBackendCairoImpl();
+    WEBCORE_EXPORT virtual ~BackingStoreBackendCairoImpl();
 
 private:
     void scroll(const IntRect&, const IntSize&) override;

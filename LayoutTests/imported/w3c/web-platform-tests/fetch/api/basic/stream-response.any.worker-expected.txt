@@ -1,3 +1,4 @@
 
-PASS Stream response's body
+PASS Stream response's body when content-type is present
+PASS Stream response's body when content-type is not present
 

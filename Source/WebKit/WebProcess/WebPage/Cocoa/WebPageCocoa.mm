@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPage.h"
 
+#import "EditorState.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
@@ -35,7 +36,7 @@
 #import "WebPasteboardOverrides.h"
 #import "WebPaymentCoordinator.h"
 #import "WebRemoteObjectRegistry.h"
-#import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/Editing.h>
@@ -60,10 +61,13 @@
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
+
+#define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
 #if PLATFORM(COCOA)
 
@@ -436,7 +440,7 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 
 void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& result) const
 {
-    if (result.isMissingPostLayoutData())
+    if (!result.hasPostLayoutAndVisualData())
         return;
 
     const auto& selection = frame.selection().selection();
@@ -457,7 +461,7 @@ void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& resu
 
         if (auto* styleProperties = editingStyle->style()) {
             bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
-            switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign)) {
+            switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign).value_or(CSSValueInvalid)) {
             case CSSValueRight:
             case CSSValueWebkitRight:
                 postLayoutData.textAlignment = RightAlignment;

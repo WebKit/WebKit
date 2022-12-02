@@ -1,0 +1,10 @@
+
+PASS Fetching a resource with bad gzip content should still resolve
+FAIL Consuming the body of a resource with bad gzip content with arrayBuffer() should reject assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Consuming the body of a resource with bad gzip content with blob() should reject assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Consuming the body of a resource with bad gzip content with formData() should reject
+FAIL Consuming the body of a resource with bad gzip content with json() should reject promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Consuming the body of a resource with bad gzip content with text() should reject assert_unreached: Should have rejected: undefined Reached unreachable code
+

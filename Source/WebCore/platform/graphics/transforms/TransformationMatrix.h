@@ -265,11 +265,11 @@ public:
     TransformationMatrix& rotate3d(double x, double y, double z, double angle);
     
     WEBCORE_EXPORT TransformationMatrix& translate(double tx, double ty);
-    TransformationMatrix& translate3d(double tx, double ty, double tz);
+    WEBCORE_EXPORT TransformationMatrix& translate3d(double tx, double ty, double tz);
 
     // translation added with a post-multiply
     TransformationMatrix& translateRight(double tx, double ty);
-    TransformationMatrix& translateRight3d(double tx, double ty, double tz);
+    WEBCORE_EXPORT TransformationMatrix& translateRight3d(double tx, double ty, double tz);
     
     WEBCORE_EXPORT TransformationMatrix& flipX();
     WEBCORE_EXPORT TransformationMatrix& flipY();
@@ -396,7 +396,7 @@ public:
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
-    operator XFORM() const;
+    WEBCORE_EXPORT operator XFORM() const;
 #endif
 
     bool isIdentityOrTranslation() const

@@ -1,4 +1,4 @@
-(repaint rects (rect 25 25 750 20) (rect 25 45 750 20) (rect 25 25 1 19) (rect 25 45 1 19) ) (repaint rects (rect 25 65 750 20) (rect 25 45 1 19) (rect 25 65 1 19) ) (repaint rects (rect 25 85 750 20) (rect 25 65 1 19) (rect 25 85 1 19) )
+(repaint rects (rect 25 25 750 20) (rect 25 25 750 20) (rect 25 45 750 20) (rect 25 45 750 20) (rect 25 25 1 19) (rect 25 45 1 19) ) (repaint rects (rect 25 65 750 20) (rect 25 65 750 20) (rect 25 45 1 19) (rect 25 65 1 19) ) (repaint rects (rect 25 85 750 20) (rect 25 85 750 20) (rect 25 65 1 19) (rect 25 85 1 19) )
 
 
 

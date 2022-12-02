@@ -27,8 +27,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
-#include "Decoder.h"
-#include "Encoder.h"
 #include "RemoteMediaDescription.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <wtf/MediaTime.h>
@@ -42,77 +40,11 @@ struct InitializationSegmentInfo {
     struct TrackInformation {
         MediaDescriptionInfo description;
         TrackPrivateRemoteIdentifier identifier;
-
-        template<class Encoder>
-        void encode(Encoder& encoder) const
-        {
-            encoder << description;
-            encoder << identifier;
-        }
-
-        template <class Decoder>
-        static std::optional<TrackInformation> decode(Decoder& decoder)
-        {
-            std::optional<MediaDescriptionInfo> mediaDescription;
-            decoder >> mediaDescription;
-            if (!mediaDescription)
-                return std::nullopt;
-
-            std::optional<TrackPrivateRemoteIdentifier> identifier;
-            decoder >> identifier;
-            if (!identifier)
-                return std::nullopt;
-
-            return {{
-                WTFMove(*mediaDescription),
-                WTFMove(*identifier)
-            }};
-        }
     };
 
     Vector<TrackInformation> audioTracks;
     Vector<TrackInformation> videoTracks;
     Vector<TrackInformation> textTracks;
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << duration;
-        encoder << audioTracks;
-        encoder << videoTracks;
-        encoder << textTracks;
-    }
-
-    template <class Decoder>
-    static std::optional<InitializationSegmentInfo> decode(Decoder& decoder)
-    {
-        std::optional<MediaTime> duration;
-        decoder >> duration;
-        if (!duration)
-            return std::nullopt;
-
-        std::optional<Vector<TrackInformation>> audioTracks;
-        decoder >> audioTracks;
-        if (!audioTracks)
-            return std::nullopt;
-
-        std::optional<Vector<TrackInformation>> videoTracks;
-        decoder >> videoTracks;
-        if (!videoTracks)
-            return std::nullopt;
-
-        std::optional<Vector<TrackInformation>> textTracks;
-        decoder >> textTracks;
-        if (!textTracks)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*duration),
-            WTFMove(*audioTracks),
-            WTFMove(*videoTracks),
-            WTFMove(*textTracks)
-        }};
-    }
 };
 
 } // namespace WebKit

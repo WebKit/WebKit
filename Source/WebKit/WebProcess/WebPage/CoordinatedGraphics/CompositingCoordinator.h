@@ -30,13 +30,13 @@
 
 #include "WebPage.h"
 #include <WebCore/CoordinatedGraphicsLayer.h>
-#include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NicosiaBuffer.h>
 #include <WebCore/NicosiaPlatformLayer.h>
+#include <WebCore/NicosiaScene.h>
 #include <WebCore/NicosiaSceneIntegration.h>
 
 namespace Nicosia {
@@ -63,7 +63,7 @@ public:
     public:
         virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) = 0;
         virtual void notifyFlushRequired() = 0;
-        virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) = 0;
+        virtual void commitSceneState(const RefPtr<Nicosia::Scene>&) = 0;
         virtual void updateScene() = 0;
     };
 
@@ -86,8 +86,6 @@ public:
     void forceFrameSync() { m_shouldSyncFrame = true; }
 
     bool flushPendingLayerChanges(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
-    WebCore::CoordinatedGraphicsState& state() { return m_state; }
-
     void syncDisplayState();
 
     double nextAnimationServiceTime() const;
@@ -131,7 +129,6 @@ private:
         RefPtr<Nicosia::SceneIntegration> sceneIntegration;
         Nicosia::Scene::State state;
     } m_nicosia;
-    WebCore::CoordinatedGraphicsState m_state;
 
     HashMap<Nicosia::PlatformLayer::LayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
 

@@ -31,7 +31,7 @@ messages -> RemoteAudioDestinationManager NotRefCounted {
     StartAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying)
     StopAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying)
 #if PLATFORM(COCOA)
-    AudioSamplesStorageChanged(WebKit::RemoteAudioDestinationIdentifier identifier, WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
+    AudioSamplesStorageChanged(WebKit::RemoteAudioDestinationIdentifier identifier, WebKit::ConsumerSharedCARingBuffer::Handle storageHandle)
 #endif
 }
 

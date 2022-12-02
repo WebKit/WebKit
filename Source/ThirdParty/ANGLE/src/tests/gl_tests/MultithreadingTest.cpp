@@ -5,7 +5,6 @@
 //
 // MulithreadingTest.cpp : Tests of multithreaded rendering
 
-#include "platform/FeaturesVk_autogen.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
 #include "test_utils/gl_raii.h"

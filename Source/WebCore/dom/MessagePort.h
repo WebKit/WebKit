@@ -64,7 +64,7 @@ public:
     static ExceptionOr<Vector<TransferredMessagePort>> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
     static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, Vector<TransferredMessagePort>&&);
 
-    WEBCORE_EXPORT static bool isExistingMessagePortLocallyReachable(const MessagePortIdentifier&);
+    WEBCORE_EXPORT static bool isMessagePortAliveForTesting(const MessagePortIdentifier&);
     WEBCORE_EXPORT static void notifyMessageAvailable(const MessagePortIdentifier&);
 
     WEBCORE_EXPORT void messageAvailable();
@@ -83,8 +83,6 @@ public:
 
     WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
-
-    WEBCORE_EXPORT bool isLocallyReachable() const;
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }
@@ -109,22 +107,12 @@ private:
     void stop() final { close(); }
     bool virtualHasPendingActivity() const final;
 
-    void registerLocalActivity();
-
     // A port starts out its life entangled, and remains entangled until it is detached or is cloned.
     bool isEntangled() const { return !m_isDetached && m_entangled; }
-
-    void updateActivity(MessagePortChannelProvider::HasActivity);
 
     bool m_started { false };
     bool m_isDetached { false };
     bool m_entangled { true };
-
-    // Flags to manage querying the remote port for GC purposes
-    mutable bool m_mightBeEligibleForGC { false };
-    mutable bool m_hasHadLocalActivitySinceLastCheck { false };
-    mutable bool m_isRemoteEligibleForGC { false };
-    mutable bool m_isAskingRemoteAboutGC { false };
     bool m_hasMessageEventListener { false };
 
     MessagePortIdentifier m_identifier;

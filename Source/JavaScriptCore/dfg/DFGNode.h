@@ -141,6 +141,7 @@ struct DataViewData {
         struct {
             uint8_t byteSize;
             bool isSigned;
+            bool isResizable;
             bool isFloatingPoint; // Used for the DataViewSet node.
             TriState isLittleEndian;
         };
@@ -2321,6 +2322,8 @@ public:
         case GetIndexedPropertyStorage:
         case GetArrayLength:
         case GetTypedArrayLengthAsInt52:
+        case GetTypedArrayByteOffset:
+        case GetTypedArrayByteOffsetAsInt52:
         case GetVectorLength:
         case InByVal:
         case PutByValDirect:
@@ -3330,6 +3333,12 @@ public:
     {
         ASSERT(hasEnumeratorMetadata());
         return OptionSet<JSPropertyNameEnumerator::Flag>::fromRaw(m_opInfo2.as<unsigned>());
+    }
+
+    void resetOpInfo()
+    {
+        m_opInfo = OpInfoWrapper();
+        m_opInfo2 = OpInfoWrapper();
     }
 
     void dumpChildren(PrintStream& out)

@@ -34,6 +34,7 @@ namespace WGSL::AST {
 
 class ArrayAccess final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     ArrayAccess(SourceSpan span, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
         : Expression(span)
@@ -42,7 +43,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::ArrayAccess; }
+    Kind kind() const override;
     Expression& base() { return m_base.get(); }
     Expression& index() { return m_index.get(); }
 
@@ -53,4 +54,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(ArrayAccess, isArrayAccess())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ArrayAccess)

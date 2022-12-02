@@ -1,0 +1,21 @@
+This tests bolding a character immediately after a character that is already in bold.
+
+Before bolding:
+| "\n"
+| <div>
+|   class="editing"
+|   id="test"
+|   <b>
+|     "a"
+|   "<#selection-anchor>b<#selection-focus>"
+| "\n"
+
+After bolding:
+| "\n"
+| <div>
+|   class="editing"
+|   id="test"
+|   <b>
+|     "a"
+|     "<#selection-anchor>b<#selection-focus>"
+| "\n"

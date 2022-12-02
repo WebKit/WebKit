@@ -32,11 +32,14 @@
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
+
+struct MediaQueryParserContext;
+
 namespace MQ {
 
 class GenericMediaQueryParserBase {
 public:
-    GenericMediaQueryParserBase(const CSSParserContext& context)
+    GenericMediaQueryParserBase(const MediaQueryParserContext& context)
         : m_context(context)
     { }
 
@@ -48,13 +51,13 @@ protected:
 
     bool validateFeatureAgainstSchema(Feature&, const FeatureSchema&);
 
-    const CSSParserContext& m_context;
+    const MediaQueryParserContext& m_context;
 };
 
 template<typename ConcreteParser>
 class GenericMediaQueryParser : public GenericMediaQueryParserBase {
 public:
-    GenericMediaQueryParser(const CSSParserContext& context)
+    GenericMediaQueryParser(const MediaQueryParserContext& context)
         : GenericMediaQueryParserBase(context)
     { }
 
@@ -141,7 +144,8 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
         if (auto condition = consumeCondition(conditionRange))
             return { condition };
 
-        if (auto feature = concreteParser().consumeFeature(blockRange))
+        auto featureRange = blockRange;
+        if (auto feature = concreteParser().consumeFeature(featureRange))
             return { *feature };
 
         return GeneralEnclosed { { }, blockRange.serialize() };
@@ -157,7 +161,7 @@ std::optional<Feature> GenericMediaQueryParser<ConcreteParser>::consumeFeature(C
     if (!feature)
         return { };
 
-    if (!validateFeature(*feature) && ConcreteParser::rejectInvalidFeatures())
+    if (!validateFeature(*feature))
         return { };
 
     return feature;
@@ -166,7 +170,7 @@ std::optional<Feature> GenericMediaQueryParser<ConcreteParser>::consumeFeature(C
 template<typename ConcreteParser>
 bool GenericMediaQueryParser<ConcreteParser>::validateFeature(Feature& feature)
 {
-    auto* schema = schemaForFeatureName(feature.name);
+    auto* schema = concreteParser().schemaForFeatureName(feature.name);
     if (!schema)
         return false;
     return validateFeatureAgainstSchema(feature, *schema);

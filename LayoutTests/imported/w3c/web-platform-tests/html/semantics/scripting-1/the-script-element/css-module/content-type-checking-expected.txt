@@ -1,12 +1,14 @@
-CONSOLE MESSAGE: TypeError: 'text/css' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'application/css' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'text/html css' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'text/css' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'text/css' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
+CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
+CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
+CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
+CONSOLE MESSAGE: TypeError: Import assertion type "css" is not valid
 
-FAIL text/css assert_unreached: Reached unreachable code
-PASS application/css
-PASS text/html+css
-FAIL text/css;boundary=something assert_unreached: Reached unreachable code
-FAIL text/css;foo=bar assert_unreached: Reached unreachable code
+Harness Error (FAIL), message = TypeError: Import assertion type "css" is not valid
+
+NOTRUN text/css
+NOTRUN application/css
+NOTRUN text/html+css
+NOTRUN text/css;boundary=something
+NOTRUN text/css;foo=bar
 

@@ -3,16 +3,12 @@
         display:inline-block;
         block-size: 50px;
         inline-size: 100px;
-        margin-block-start: 10px;
-        margin-block-end: 10px;
-         padding: 5px;
+        margin-block: 10px;
+        padding: 5px;
         border: solid black;
         font-family: ahem;
         font-size: 25px;
         color: lightblue;
-        -webkit-columns: 2;
-        -webkit-column-gap: 5px;
-        -webkit-column-fill: auto;
         columns: 2;
         column-gap: 5px;
         column-fill: auto;
@@ -21,22 +17,23 @@
     div.marker {
         position: absolute;
         border: solid rgba(0, 0, 255, 0.5);
-        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
     }
 
     input[type="range"] {
-        -webkit-appearance: none;
+        appearance: none;
+        writing-mode: horizontal-tb;
         width: 25px;
         height: 25px;
         background-color: lightblue;
     }
 
     input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
+        appearance: none;
     }
 
-    .vertical { -webkit-writing-mode: vertical-lr; }
-    .vertical.flipped { -webkit-writing-mode: vertical-rl; }
+    .vertical { writing-mode: vertical-lr; }
+    .vertical.flipped { writing-mode: vertical-rl; }
 </style>
 <p>
     The blue borders should coincide with light blue squares, like this:
@@ -182,7 +179,7 @@
     var div = document.getElementById("t7");
     range.selectNode(div);
     placeMarkersForRange(div);
-    
+
     var textNode = document.getElementById("t8").firstChild.nextSibling.nextSibling;
     range.setStart(textNode, 0);
     range.setEnd(textNode, 5);
@@ -213,7 +210,7 @@
     var div = document.getElementById("t14");
     range.selectNode(div);
     placeMarkersForRange(div);
-    
+
     var textNode = document.getElementById("t15").firstChild.nextSibling.nextSibling;
     range.setStart(textNode, 0);
     range.setEnd(textNode, 5);
@@ -244,5 +241,4 @@
     var div = document.getElementById("t21");
     range.selectNode(div);
     placeMarkersForRange(div);
-
 </script>

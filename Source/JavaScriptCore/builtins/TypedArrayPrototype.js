@@ -167,7 +167,7 @@ function some(callback /* [, thisArg] */)
 }
 
 @linkTimeConstant
-function typedArrayMerge(array, dst, src, srcIndex, srcEnd, width, comparator)
+function typedArrayMerge(dst, src, srcIndex, srcEnd, width, comparator)
 {
     "use strict";
 
@@ -197,10 +197,15 @@ function typedArrayMergeSort(array, valueCount, comparator)
     var buffer = new constructor(valueCount);
     var dst = buffer;
     var src = array;
+    if (@isResizableOrGrowableSharedTypedArrayView(array)) {
+        src = new constructor(valueCount);
+        for (var i = 0; i < valueCount; ++i)
+            src[i] = array[i];
+    }
 
     for (var width = 1; width < valueCount; width *= 2) {
         for (var srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
-            @typedArrayMerge(array, dst, src, srcIndex, valueCount, width, comparator);
+            @typedArrayMerge(dst, src, srcIndex, valueCount, width, comparator);
 
         var tmp = src;
         src = dst;
@@ -208,6 +213,7 @@ function typedArrayMergeSort(array, valueCount, comparator)
     }
 
     if (src != array) {
+        valueCount = @min(@typedArrayLength(array), valueCount);
         for (var i = 0; i < valueCount; ++i)
             array[i] = src[i];
     }
@@ -355,9 +361,14 @@ function toLocaleString(/* locale, options */)
     if (length == 0)
         return "";
 
-    var string = @toString(this[0].toLocaleString(@argument(0), @argument(1)));
-    for (var i = 1; i < length; i++)
-        string += "," + @toString(this[i].toLocaleString(@argument(0), @argument(1)));
+    var string = "";
+    for (var i = 0; i < length; ++i) {
+        if (i > 0)
+            string += ",";
+        var element = this[i];
+        if (!@isUndefinedOrNull(element))
+            string += @toString(element.toLocaleString(@argument(0), @argument(1)));
+    }
 
     return string;
 }

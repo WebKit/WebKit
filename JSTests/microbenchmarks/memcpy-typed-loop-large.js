@@ -1,4 +1,6 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
+
 function doTest(arr1, arr2) {
     if (arr1.length != arr2.length)
         return []

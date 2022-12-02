@@ -74,7 +74,11 @@ public:
     static bool isValidImageCopySource(WGPUTextureFormat, WGPUTextureAspect);
     static bool isValidImageCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
     static bool validateLinearTextureData(const WGPUTextureDataLayout&, uint64_t, WGPUTextureFormat, WGPUExtent3D);
+    static MTLPixelFormat pixelFormat(WGPUTextureFormat);
+    static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WGPUTextureFormat);
+    static std::optional<MTLPixelFormat> stencilOnlyAspectMetalFormat(WGPUTextureFormat);
     static WGPUTextureFormat removeSRGBSuffix(WGPUTextureFormat);
+    static std::optional<WGPUTextureFormat> resolveTextureFormat(WGPUTextureFormat, WGPUTextureAspect);
 
     WGPUExtent3D logicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);

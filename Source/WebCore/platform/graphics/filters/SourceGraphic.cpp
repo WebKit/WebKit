@@ -41,13 +41,16 @@ SourceGraphic::SourceGraphic()
 {
 }
 
-bool SourceGraphic::supportsAcceleratedRendering() const
+OptionSet<FilterRenderingMode> SourceGraphic::supportedFilterRenderingModes() const
 {
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
-    return true;
-#else
-    return false;
+    modes.add(FilterRenderingMode::Accelerated);
 #endif
+#if USE(GRAPHICS_CONTEXT_FILTERS)
+    modes.add(FilterRenderingMode::GraphicsContext);
+#endif
+    return modes;
 }
 
 std::unique_ptr<FilterEffectApplier> SourceGraphic::createAcceleratedApplier() const

@@ -604,6 +604,18 @@ void ShaderConstants11::onClipControlChange(bool lowerLeft, bool zeroToOne)
     mShaderConstantsDirty.set(gl::ShaderType::Vertex);
 }
 
+bool ShaderConstants11::onClipDistancesEnabledChange(const uint32_t value)
+{
+    ASSERT(value == (value & 0xFF));
+    const bool clipDistancesEnabledDirty = (mVertex.clipDistancesEnabled != value);
+    if (clipDistancesEnabledDirty)
+    {
+        mVertex.clipDistancesEnabled = value;
+        mShaderConstantsDirty.set(gl::ShaderType::Vertex);
+    }
+    return clipDistancesEnabledDirty;
+}
+
 angle::Result ShaderConstants11::updateBuffer(const gl::Context *context,
                                               Renderer11 *renderer,
                                               gl::ShaderType shaderType,
@@ -1229,6 +1241,13 @@ void StateManager11::syncState(const gl::Context *context,
                     {
                         case gl::State::EXTENDED_DIRTY_BIT_CLIP_CONTROL:
                             checkPresentPath(context);
+                            break;
+                        case gl::State::EXTENDED_DIRTY_BIT_CLIP_DISTANCES:
+                            if (mShaderConstants.onClipDistancesEnabledChange(
+                                    state.getEnabledClipDistances().bits()))
+                            {
+                                mInternalDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
+                            }
                             break;
                     }
                 }

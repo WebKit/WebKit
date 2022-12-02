@@ -47,6 +47,17 @@ public:
         size_t start { 0 };
         size_t end { 0 };
     };
+    struct LineInput {
+        InlineItemRange needsLayoutRange;
+        InlineRect initialLogicalRect;
+
+        enum class LineEndingEllipsisPolicy : uint8_t {
+            No,
+            WhenContentOverflows,
+            Always
+        };
+        LineEndingEllipsisPolicy ellipsisPolicy { LineEndingEllipsisPolicy::No };
+    };
     struct PartialContent {
         PartialContent(size_t, std::optional<InlineLayoutUnit>);
 
@@ -79,10 +90,10 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
         TextDirection inlineBaseDirection { TextDirection::LTR };
-        bool contentNeedsTrailingEllipsis { false };
+        bool lineNeedsTrailingEllipsis { false };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>&);
+    LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -117,7 +128,7 @@ private:
     enum LineBoxConstraintApplies : uint8_t { Yes, No };
     bool tryPlacingFloatBox(const InlineItem&, LineBoxConstraintApplies);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
-    std::tuple<InlineRect, bool> lineRectForCandidateInlineContent(const LineCandidate&) const;
+    std::tuple<InlineRect, bool> lineBoxForCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
@@ -128,7 +139,7 @@ private:
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     CommittedContent placeInlineContent(const InlineItemRange&);
-    InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
+    InlineItemRange close(const InlineItemRange& needsLayoutRange, LineInput::LineEndingEllipsisPolicy, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;

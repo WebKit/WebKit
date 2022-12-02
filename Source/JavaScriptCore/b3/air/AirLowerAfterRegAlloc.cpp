@@ -135,7 +135,7 @@ void lowerAfterRegAlloc(Code& code)
             if (!found) {
                 StackSlot*& slot = slots[bank][i];
                 if (!slot)
-                    slot = code.addStackSlot(conservativeRegisterBytes(bank), StackSlotKind::Spill);
+                    slot = code.addStackSlot(Options::useWebAssemblySIMD() ? conservativeRegisterBytes(bank) : conservativeRegisterBytesWithoutVectors(bank), StackSlotKind::Spill);
                 result[i] = Arg::stack(slots[bank][i]);
             }
         }
@@ -246,6 +246,7 @@ void lowerAfterRegAlloc(Code& code)
                         Tmp tmp(reg);
                         Arg arg(tmp);
                         StackSlot* stackSlot = stackSlots[stackSlotIndex++];
+                        ASSERT(stackSlot->byteSize() >= bytesForWidth(width));
                         pairs.append(ShufflePair(Arg::stack(stackSlot), arg, width));
                     });
                 if (result) {

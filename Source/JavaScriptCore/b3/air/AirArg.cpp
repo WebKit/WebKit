@@ -72,6 +72,8 @@ bool Arg::usesTmp(Air::Tmp tmp) const
 
 bool Arg::canRepresent(Type type) const
 {
+    if (UNLIKELY(type == V128))
+        return isFPTmp();
     return isBank(bankForType(type));
 }
 
@@ -96,6 +98,7 @@ unsigned Arg::jsHash() const
     switch (m_kind) {
     case Invalid:
     case Special:
+    case SIMDInfo:
         break;
     case Tmp:
         result += m_base.internalValue();
@@ -219,6 +222,9 @@ void Arg::dump(PrintStream& out) const
     case WidthArg:
         out.print(width());
         return;
+    case SIMDInfo:
+        out.print("{ ", simdInfo().lane, ", ", simdInfo().signMode, " }");
+        return;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -295,6 +301,9 @@ void printInternal(PrintStream& out, Arg::Kind kind)
         return;
     case Arg::WidthArg:
         out.print("WidthArg");
+        return;
+    case Arg::SIMDInfo:
+        out.print("SIMDInfo");
         return;
     }
 

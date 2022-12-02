@@ -19,42 +19,42 @@ PASS Web Animations: property <filter> from [none] to [blur(10px)] at (0) should
 PASS Web Animations: property <filter> from [none] to [blur(10px)] at (0.5) should be [blur(5px)]
 PASS Web Animations: property <filter> from [none] to [blur(10px)] at (1) should be [blur(10px)]
 PASS Web Animations: property <filter> from [none] to [blur(10px)] at (1.5) should be [blur(15px)]
-FAIL CSS Transitions: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS CSS Transitions: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)]
 PASS CSS Transitions: property <filter> from [brightness(0)] to [none] at (0) should be [brightness(0)]
 PASS CSS Transitions: property <filter> from [brightness(0)] to [none] at (0.5) should be [brightness(0.5)]
 PASS CSS Transitions: property <filter> from [brightness(0)] to [none] at (1) should be [brightness(1)]
 PASS CSS Transitions: property <filter> from [brightness(0)] to [none] at (1.5) should be [brightness(1.5)]
-FAIL CSS Transitions with transition: all: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)]
 PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [none] at (0) should be [brightness(0)]
 PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [none] at (0.5) should be [brightness(0.5)]
 PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [none] at (1) should be [brightness(1)]
 PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [none] at (1.5) should be [brightness(1.5)]
-FAIL CSS Animations: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS CSS Animations: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)]
 PASS CSS Animations: property <filter> from [brightness(0)] to [none] at (0) should be [brightness(0)]
 PASS CSS Animations: property <filter> from [brightness(0)] to [none] at (0.5) should be [brightness(0.5)]
 PASS CSS Animations: property <filter> from [brightness(0)] to [none] at (1) should be [brightness(1)]
 PASS CSS Animations: property <filter> from [brightness(0)] to [none] at (1.5) should be [brightness(1.5)]
-FAIL Web Animations: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS Web Animations: property <filter> from [brightness(0)] to [none] at (-1) should be [brightness(0)]
 PASS Web Animations: property <filter> from [brightness(0)] to [none] at (0) should be [brightness(0)]
 PASS Web Animations: property <filter> from [brightness(0)] to [none] at (0.5) should be [brightness(0.5)]
 PASS Web Animations: property <filter> from [brightness(0)] to [none] at (1) should be [brightness(1)]
 PASS Web Animations: property <filter> from [brightness(0)] to [none] at (1.5) should be [brightness(1.5)]
-FAIL CSS Transitions: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS CSS Transitions: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)]
 PASS CSS Transitions: property <filter> from [contrast(0)] to [none] at (0) should be [contrast(0)]
 PASS CSS Transitions: property <filter> from [contrast(0)] to [none] at (0.5) should be [contrast(0.5)]
 PASS CSS Transitions: property <filter> from [contrast(0)] to [none] at (1) should be [contrast(1)]
 PASS CSS Transitions: property <filter> from [contrast(0)] to [none] at (1.5) should be [contrast(1.5)]
-FAIL CSS Transitions with transition: all: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)]
 PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [none] at (0) should be [contrast(0)]
 PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [none] at (0.5) should be [contrast(0.5)]
 PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [none] at (1) should be [contrast(1)]
 PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [none] at (1.5) should be [contrast(1.5)]
-FAIL CSS Animations: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS CSS Animations: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)]
 PASS CSS Animations: property <filter> from [contrast(0)] to [none] at (0) should be [contrast(0)]
 PASS CSS Animations: property <filter> from [contrast(0)] to [none] at (0.5) should be [contrast(0.5)]
 PASS CSS Animations: property <filter> from [contrast(0)] to [none] at (1) should be [contrast(1)]
 PASS CSS Animations: property <filter> from [contrast(0)] to [none] at (1.5) should be [contrast(1.5)]
-FAIL Web Animations: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS Web Animations: property <filter> from [contrast(0)] to [none] at (-1) should be [contrast(0)]
 PASS Web Animations: property <filter> from [contrast(0)] to [none] at (0) should be [contrast(0)]
 PASS Web Animations: property <filter> from [contrast(0)] to [none] at (0.5) should be [contrast(0.5)]
 PASS Web Animations: property <filter> from [contrast(0)] to [none] at (1) should be [contrast(1)]
@@ -139,42 +139,42 @@ PASS Web Animations: property <filter> from [none] to [invert(1)] at (0) should 
 PASS Web Animations: property <filter> from [none] to [invert(1)] at (0.5) should be [invert(0.5)]
 PASS Web Animations: property <filter> from [none] to [invert(1)] at (1) should be [invert(1)]
 PASS Web Animations: property <filter> from [none] to [invert(1)] at (1.5) should be [invert(1)]
-FAIL CSS Transitions: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS CSS Transitions: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)]
 PASS CSS Transitions: property <filter> from [opacity(0)] to [none] at (0) should be [opacity(0)]
 PASS CSS Transitions: property <filter> from [opacity(0)] to [none] at (0.5) should be [opacity(0.5)]
 PASS CSS Transitions: property <filter> from [opacity(0)] to [none] at (1) should be [opacity(1)]
-FAIL CSS Transitions: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
-FAIL CSS Transitions with transition: all: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS CSS Transitions: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)]
+PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)]
 PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [none] at (0) should be [opacity(0)]
 PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [none] at (0.5) should be [opacity(0.5)]
 PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [none] at (1) should be [opacity(1)]
-FAIL CSS Transitions with transition: all: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
-FAIL CSS Animations: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)]
+PASS CSS Animations: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)]
 PASS CSS Animations: property <filter> from [opacity(0)] to [none] at (0) should be [opacity(0)]
 PASS CSS Animations: property <filter> from [opacity(0)] to [none] at (0.5) should be [opacity(0.5)]
 PASS CSS Animations: property <filter> from [opacity(0)] to [none] at (1) should be [opacity(1)]
-FAIL CSS Animations: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
-FAIL Web Animations: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS CSS Animations: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)]
+PASS Web Animations: property <filter> from [opacity(0)] to [none] at (-1) should be [opacity(0)]
 PASS Web Animations: property <filter> from [opacity(0)] to [none] at (0) should be [opacity(0)]
 PASS Web Animations: property <filter> from [opacity(0)] to [none] at (0.5) should be [opacity(0.5)]
 PASS Web Animations: property <filter> from [opacity(0)] to [none] at (1) should be [opacity(1)]
-FAIL Web Animations: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
-FAIL CSS Transitions: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS Web Animations: property <filter> from [opacity(0)] to [none] at (1.5) should be [opacity(1)]
+PASS CSS Transitions: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)]
 PASS CSS Transitions: property <filter> from [saturate(0)] to [none] at (0) should be [saturate(0)]
 PASS CSS Transitions: property <filter> from [saturate(0)] to [none] at (0.5) should be [saturate(0.5)]
 PASS CSS Transitions: property <filter> from [saturate(0)] to [none] at (1) should be [saturate(1)]
 PASS CSS Transitions: property <filter> from [saturate(0)] to [none] at (1.5) should be [saturate(1.5)]
-FAIL CSS Transitions with transition: all: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)]
 PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [none] at (0) should be [saturate(0)]
 PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [none] at (0.5) should be [saturate(0.5)]
 PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [none] at (1) should be [saturate(1)]
 PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [none] at (1.5) should be [saturate(1.5)]
-FAIL CSS Animations: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS CSS Animations: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)]
 PASS CSS Animations: property <filter> from [saturate(0)] to [none] at (0) should be [saturate(0)]
 PASS CSS Animations: property <filter> from [saturate(0)] to [none] at (0.5) should be [saturate(0.5)]
 PASS CSS Animations: property <filter> from [saturate(0)] to [none] at (1) should be [saturate(1)]
 PASS CSS Animations: property <filter> from [saturate(0)] to [none] at (1.5) should be [saturate(1.5)]
-FAIL Web Animations: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS Web Animations: property <filter> from [saturate(0)] to [none] at (-1) should be [saturate(0)]
 PASS Web Animations: property <filter> from [saturate(0)] to [none] at (0) should be [saturate(0)]
 PASS Web Animations: property <filter> from [saturate(0)] to [none] at (0.5) should be [saturate(0.5)]
 PASS Web Animations: property <filter> from [saturate(0)] to [none] at (1) should be [saturate(1)]
@@ -199,34 +199,34 @@ PASS Web Animations: property <filter> from [none] to [sepia(1)] at (0) should b
 PASS Web Animations: property <filter> from [none] to [sepia(1)] at (0.5) should be [sepia(0.5)]
 PASS Web Animations: property <filter> from [none] to [sepia(1)] at (1) should be [sepia(1)]
 PASS Web Animations: property <filter> from [none] to [sepia(1)] at (1.5) should be [sepia(1)]
-FAIL CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (-0.3) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0.3) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (-0.3) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0.3) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "( ) "
+PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (-0.3) should be [none]
+PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0) should be [none]
+PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0.3) should be [none]
+PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none]
+PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none]
+PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none]
+PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none]
+PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (-0.3) should be [none]
+PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0) should be [none]
+PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0.3) should be [none]
+PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none]
+PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none]
+PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none]
+PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (-0.3) should be [url("#svgfilter")]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (0) should be [url("#svgfilter")]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (0.3) should be [url("#svgfilter")]
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "( ) "
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none]
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none]
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none]
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [none] at (-0.3) should be [url("#svgfilter")]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [none] at (0) should be [url("#svgfilter")]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [none] at (0.3) should be [url("#svgfilter")]
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "url ( \" # svgfilter \" ) "
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none] assert_equals: expected "none " but got "( ) "
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "( ) "
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [none] at (0.5) should be [none]
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [none] at (0.6) should be [none]
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [none] at (1) should be [none]
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [none] at (1.5) should be [none]
 PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [blur(5px)]
 PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [blur(5px)]
 PASS CSS Transitions: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [blur(5px)]
@@ -241,16 +241,16 @@ PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilt
 PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.6) should be [blur(5px)]
 PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1) should be [blur(5px)]
 PASS CSS Transitions with transition: all: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1.5) should be [blur(5px)]
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")]
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")]
+PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.5) should be [blur(5px)]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.6) should be [blur(5px)]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1) should be [blur(5px)]
 PASS CSS Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1.5) should be [blur(5px)]
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
-FAIL Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")] assert_equals: expected "url ( \" # svgfilter \" ) " but got "blur ( 5px ) "
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (-0.3) should be [url("#svgfilter")]
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0) should be [url("#svgfilter")]
+PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.3) should be [url("#svgfilter")]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.5) should be [blur(5px)]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (0.6) should be [blur(5px)]
 PASS Web Animations: property <filter> from [url("#svgfilter")] to [blur(5px)] at (1) should be [blur(5px)]

@@ -34,6 +34,7 @@ namespace WGSL::AST {
 
 class VariableStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     VariableStatement(SourceSpan span, VariableDecl&& decl)
         : Statement(span)
@@ -41,7 +42,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Variable; }
+    Kind kind() const override;
     Decl& declaration() { return m_decl.get(); }
 
 private:
@@ -50,4 +51,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(VariableStatement, isVariable())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(VariableStatement)

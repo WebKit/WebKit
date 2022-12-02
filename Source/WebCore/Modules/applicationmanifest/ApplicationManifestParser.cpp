@@ -80,6 +80,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     parsedManifest.scope = parseScope(*manifest, documentURL, parsedManifest.startURL);
     parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
     parsedManifest.icons = parseIcons(*manifest);
+    parsedManifest.id = parseId(*manifest, parsedManifest.startURL);
 
     if (m_document)
         m_document->processApplicationManifest(parsedManifest);
@@ -277,6 +278,36 @@ static bool isInScope(const URL& scopeURL, const URL& targetURL)
 
     // 6. Otherwise, return false.
     return false;
+}
+
+URL ApplicationManifestParser::parseId(const JSON::Object& manifest, const URL& startURL)
+{
+    auto idValue = manifest.getValue("id"_s);
+    if (!idValue)
+        return startURL;
+
+    auto idStringValue = idValue->asString();
+    if (!idStringValue) {
+        logManifestPropertyNotAString("id"_s);
+        return startURL;
+    }
+
+    if (idStringValue.isEmpty())
+        return startURL;
+
+    auto baseOrigin = SecurityOrigin::create(startURL);
+
+    URL idURL(baseOrigin->toURL(), idStringValue);
+
+    if (!idURL.isValid()) {
+        logManifestPropertyInvalidURL("id"_s);
+        return startURL;
+    }
+
+    if (!protocolHostAndPortAreEqual(idURL, startURL))
+        return startURL;
+
+    return idURL;
 }
 
 URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const URL& documentURL, const URL& startURL)

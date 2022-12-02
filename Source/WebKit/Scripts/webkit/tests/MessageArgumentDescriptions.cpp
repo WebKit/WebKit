@@ -65,16 +65,19 @@
 #include "UserContentControllerIdentifier.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
+#include "WebExtensionContextIdentifier.h"
+#include "WebExtensionControllerIdentifier.h"
 #include "WebGPUIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/DOMCacheIdentifier.h>
+#include <WebCore/DictationContext.h>
 #include <WebCore/DisplayList.h>
+#include <WebCore/ElementIdentifier.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
-#include <WebCore/GraphicsContextFlushIdentifier.h>
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <WebCore/MediaKeySystemRequestIdentifier.h>
@@ -371,11 +374,12 @@ Vector<ASCIILiteral> serializedIdentifiers()
 {
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DOMCacheIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::DictationContext));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DisplayList::ItemBufferIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::ElementIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FetchIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemHandleIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemSyncAccessHandleIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebCore::GraphicsContextFlushIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ImageDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LibWebRTCSocketIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaKeySystemRequestIdentifier));
@@ -437,17 +441,20 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserContentControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoEncoderIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionContextIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebGPUIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
         "WebCore::BroadcastChannelIdentifier"_s,
         "WebCore::DOMCacheIdentifier"_s,
+        "WebCore::DictationContext"_s,
         "WebCore::DisplayList::ItemBufferIdentifier"_s,
+        "WebCore::ElementIdentifier"_s,
         "WebCore::FetchIdentifier"_s,
         "WebCore::FileSystemHandleIdentifier"_s,
         "WebCore::FileSystemSyncAccessHandleIdentifier"_s,
-        "WebCore::GraphicsContextFlushIdentifier"_s,
         "WebCore::ImageDecoderIdentifier"_s,
         "WebCore::LibWebRTCSocketIdentifier"_s,
         "WebCore::MediaKeySystemRequestIdentifier"_s,
@@ -509,6 +516,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::UserContentControllerIdentifier"_s,
         "WebKit::VideoDecoderIdentifier"_s,
         "WebKit::VideoEncoderIdentifier"_s,
+        "WebKit::WebExtensionContextIdentifier"_s,
+        "WebKit::WebExtensionControllerIdentifier"_s,
         "WebKit::WebGPUIdentifier"_s,
         "WebKit::WebPageProxyIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,

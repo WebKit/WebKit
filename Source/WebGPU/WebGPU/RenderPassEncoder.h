@@ -98,6 +98,7 @@ private:
     uint64_t m_debugGroupStackSize { 0 };
 
     const Ref<Device> m_device;
+    MTLPrimitiveType m_primitiveType;
 };
 
 } // namespace WebGPU

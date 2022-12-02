@@ -1,0 +1,68 @@
+
+FAIL style(--inner: true) assert_equals: expected "true" but got ""
+FAIL style(--inner:true) assert_equals: expected "true" but got ""
+FAIL style(--inner:true ) assert_equals: expected "true" but got ""
+FAIL style(--inner: true ) assert_equals: expected "true" but got ""
+FAIL style(--inner-no-space: true) assert_equals: expected "true" but got ""
+FAIL style(--inner-no-space:true) assert_equals: expected "true" but got ""
+FAIL style(--inner-no-space:true ) assert_equals: expected "true" but got ""
+FAIL style(--inner-no-space: true ) assert_equals: expected "true" but got ""
+FAIL style(--inner-space-after: true) assert_equals: expected "true" but got ""
+FAIL style(--inner-space-after:true) assert_equals: expected "true" but got ""
+FAIL style(--inner-space-after:true ) assert_equals: expected "true" but got ""
+FAIL style(--inner-space-after: true ) assert_equals: expected "true" but got ""
+PASS style(--outer: true)
+PASS style(--outer:true)
+PASS style(--outer:true )
+PASS style(--outer: true )
+PASS style(--outer-no-space: true)
+PASS style(--outer-no-space:true)
+PASS style(--outer-no-space:true )
+PASS style(--outer-no-space: true )
+PASS style(--outer-space-after: true)
+PASS style(--outer-space-after:true)
+PASS style(--outer-space-after:true )
+PASS style(--outer-space-after: true )
+PASS outer style(--inner: true)
+PASS outer style(--inner:true)
+PASS outer style(--inner:true )
+PASS outer style(--inner: true )
+PASS outer style(--inner-no-space: true)
+PASS outer style(--inner-no-space:true)
+PASS outer style(--inner-no-space:true )
+PASS outer style(--inner-no-space: true )
+PASS outer style(--inner-space-after: true)
+PASS outer style(--inner-space-after:true)
+PASS outer style(--inner-space-after:true )
+PASS outer style(--inner-space-after: true )
+FAIL outer style(--outer: true) assert_equals: expected "true" but got ""
+FAIL outer style(--outer:true) assert_equals: expected "true" but got ""
+FAIL outer style(--outer:true ) assert_equals: expected "true" but got ""
+FAIL outer style(--outer: true ) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-no-space: true) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-no-space:true) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-no-space:true ) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-no-space: true ) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-space-after: true) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-space-after:true) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-space-after:true ) assert_equals: expected "true" but got ""
+FAIL outer style(--outer-space-after: true ) assert_equals: expected "true" but got ""
+FAIL Query custom property with !important declaration assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Query custom property using var() assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Query custom property including unknown var() reference assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Query custom property including unknown var() reference with non-matching fallback assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Query custom property including unknown var() reference with matching fallback assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Query custom property matching guaranteed-invalid values assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Style query with revert keyword is false
+PASS Style query with revert-layer keyword is false
+FAIL Style query 'initial' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Style query 'initial' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Style query 'inherit' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Style query 'inherit' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Style query 'unset' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Style query 'unset' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match registered <length> custom property with px. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match registered <length> custom property with em in query. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match registered <length> custom property with em in computed value. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match registered <length> custom property with cqi unit. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

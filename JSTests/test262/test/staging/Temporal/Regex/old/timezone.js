@@ -17,16 +17,16 @@ function generateTest(dateTimeString, zoneString, expectedName) {
   test(`${ dateTimeString }:30.123456789${ zoneString }`, expectedName);
 }
 [
-  "+01:00",
-  "+01",
-  "+0100",
-  "+01:00:00",
-  "+010000",
-  "+01:00:00.000000000",
-  "+010000.0"
+  "+00:00",
+  "+00",
+  "+0000",
+  "+00:00:00",
+  "+000000",
+  "+00:00:00.000000000",
+  "+000000.0"
 ].forEach(zoneString => {
-  generateTest("1976-11-18T15:23", `${ zoneString }[Europe/Vienna]`, "Europe/Vienna");
-  generateTest("1976-11-18T15:23", `+01:00[${ zoneString }]`, "+01:00");
+  generateTest("1976-11-18T15:23", `${ zoneString }[UTC]`, "UTC");
+  generateTest("1976-11-18T15:23", `+00:00[${ zoneString }]`, "+00:00");
 });
 [
   "-04:00",
@@ -53,7 +53,7 @@ function generateTest(dateTimeString, zoneString, expectedName) {
 generateTest("1976-11-18T15:23", "z", "UTC");
 test("1976-11-18T15:23:30,1234Z", "UTC");
 test("1976-11-18T15:23-04:00:00,000000000", "-04:00");
-test("1976-11-18T15:23+010000,0[Europe/Vienna]", "Europe/Vienna");
+test("1976-11-18T15:23+000000,0[UTC]", "UTC");
 [
   "\u221204:00",
   "\u221204",
@@ -68,11 +68,11 @@ test("1976-11-18T15:23+010000,0[Europe/Vienna]", "Europe/Vienna");
   "1976-11-18T15"
 ].forEach(dateTimeString => {
   [
-    "+01:00",
-    "+01",
-    "+0100",
+    "+00:00",
+    "+00",
+    "+0000",
     ""
-  ].forEach(zoneString => test(`${ dateTimeString }${ zoneString }[Europe/Vienna]`, "Europe/Vienna"));
+  ].forEach(zoneString => test(`${ dateTimeString }${ zoneString }[UTC]`, "UTC"));
   [
     "-04:00",
     "-04",
@@ -97,5 +97,5 @@ test("-03:00:00", "-03:00");
 test("-03:00:00.000000000", "-03:00");
 test("1976-11-18T15:23:30.123456789Z[u-ca=iso8601]", "UTC");
 test("1976-11-18T15:23:30.123456789-04:00[u-ca=iso8601]", "-04:00");
-test("1976-11-18T15:23:30.123456789[Europe/Vienna][u-ca=iso8601]", "Europe/Vienna");
-test("1976-11-18T15:23:30.123456789+01:00[Europe/Vienna][u-ca=iso8601]", "Europe/Vienna");
+test("1976-11-18T15:23:30.123456789[UTC][u-ca=iso8601]", "UTC");
+test("1976-11-18T15:23:30.123456789+00:00[UTC][u-ca=iso8601]", "UTC");

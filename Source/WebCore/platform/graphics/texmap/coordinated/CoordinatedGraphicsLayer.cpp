@@ -248,6 +248,17 @@ void CoordinatedGraphicsLayer::removeFromParent()
     GraphicsLayer::removeFromParent();
 }
 
+void CoordinatedGraphicsLayer::setEventRegion(EventRegion&& eventRegion)
+{
+    if (eventRegion == m_eventRegion)
+        return;
+
+    GraphicsLayer::setEventRegion(WTFMove(eventRegion));
+    m_nicosia.delta.eventRegionChanged = true;
+
+    notifyFlushRequired();
+}
+
 #if ENABLE(SCROLLING_THREAD)
 void CoordinatedGraphicsLayer::setScrollingNodeID(ScrollingNodeID nodeID)
 {
@@ -932,7 +943,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     }
 
     {
-        m_nicosia.layer->updateState(
+        m_nicosia.layer->accessPending(
             [this](Nicosia::CompositionLayer::LayerState& state)
             {
                 // OR the local delta value into the layer's pending state delta. After that,
@@ -1047,6 +1058,8 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                 if (localDelta.scrollingNodeChanged)
                     state.scrollingNodeID = scrollingNodeID();
 #endif
+                if (localDelta.eventRegionChanged)
+                    state.eventRegion = eventRegion();
             });
         m_nicosia.performLayerSync = !!m_nicosia.delta.value;
         m_nicosia.delta = { };

@@ -67,7 +67,6 @@ private:
     ScreenOrientationType platformCurrentOrientation();
     void platformStartListeningForChanges();
     void platformStopListeningForChanges();
-    void platformDestroy();
 
     WeakHashSet<Observer> m_observers;
     std::optional<ScreenOrientationType> m_currentOrientation;

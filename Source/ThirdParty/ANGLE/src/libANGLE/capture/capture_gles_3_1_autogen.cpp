@@ -10,16 +10,15 @@
 
 #include "libANGLE/capture/capture_gles_3_1_autogen.h"
 
+#include "common/gl_enum_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/capture/FrameCapture.h"
-#include "libANGLE/capture/gl_enum_utils.h"
 #include "libANGLE/validationES31.h"
 
 using namespace angle;
 
 namespace gl
 {
-
 CallCapture CaptureActiveShaderProgram(const State &glState,
                                        bool isCallValid,
                                        ProgramPipelineID pipelinePacked,

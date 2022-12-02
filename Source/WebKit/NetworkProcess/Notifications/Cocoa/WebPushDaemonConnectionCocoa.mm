@@ -79,7 +79,7 @@ void handleWebPushDaemonMessage(WebKit::WebPushD::Connection* connection, Span<c
     if (UNLIKELY(!arguments))
         return;
 
-    IPC::callMemberFunction(WTFMove(*arguments), connection, Info::MemberFunction);
+    IPC::callMemberFunction(connection, Info::MemberFunction, WTFMove(*arguments));
 }
 
 void Connection::connectionReceivedEvent(xpc_object_t request)

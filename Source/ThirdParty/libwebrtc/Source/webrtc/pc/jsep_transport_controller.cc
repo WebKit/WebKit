@@ -63,6 +63,9 @@ JsepTransportController::JsepTransportController(
   RTC_DCHECK(config_.ice_transport_factory);
   RTC_DCHECK(config_.on_dtls_handshake_error_);
   RTC_DCHECK(config_.field_trials);
+  if (port_allocator_) {
+    port_allocator_->SetIceTiebreaker(ice_tiebreaker_);
+  }
 }
 
 JsepTransportController::~JsepTransportController() {

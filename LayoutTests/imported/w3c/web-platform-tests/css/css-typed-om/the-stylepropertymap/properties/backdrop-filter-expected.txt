@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'backdrop-filter' to CSS-wide keywords Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to var() references Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to the 'none' keyword Invalid property backdrop-filter
+PASS Setting 'backdrop-filter' to a length throws TypeError
+PASS Setting 'backdrop-filter' to a percent throws TypeError
+PASS Setting 'backdrop-filter' to a time throws TypeError
+PASS Setting 'backdrop-filter' to an angle throws TypeError
+PASS Setting 'backdrop-filter' to a flexible length throws TypeError
+PASS Setting 'backdrop-filter' to a number throws TypeError
+PASS Setting 'backdrop-filter' to a URL throws TypeError
+PASS Setting 'backdrop-filter' to a transform throws TypeError
+PASS 'filter' does not supported 'blur(2px)'
+FAIL 'filter' does not supported 'url(filters.svg) blur(4px) saturate(150%)' assert_equals: Unsupported value can be set on different element expected "url(\"filters.svg\") blur(4px) saturate(150%)" but got "url(\"filters.svg\")"
 

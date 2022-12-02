@@ -136,6 +136,7 @@ public:
                     bool repaintCounterChanged : 1;
                     bool debugBorderChanged : 1;
                     bool scrollingNodeChanged : 1;
+                    bool eventRegionChanged : 1;
                 };
                 uint32_t value { 0 };
             };
@@ -204,14 +205,8 @@ public:
         } debugBorder;
 
         WebCore::ScrollingNodeID scrollingNodeID { 0 };
+        WebCore::EventRegion eventRegion;
     };
-
-    template<typename T>
-    void updateState(const T& functor)
-    {
-        Locker locker { PlatformLayer::m_state.lock };
-        functor(m_state.pending);
-    }
 
     template<typename T>
     void flushState(const T& functor)
@@ -276,6 +271,9 @@ public:
 
         if (pending.delta.scrollingNodeChanged)
             staging.scrollingNodeID = pending.scrollingNodeID;
+
+        if (pending.delta.eventRegionChanged)
+            staging.eventRegion = pending.eventRegion;
 
         if (pending.delta.backingStoreChanged)
             staging.backingStore = pending.backingStore;

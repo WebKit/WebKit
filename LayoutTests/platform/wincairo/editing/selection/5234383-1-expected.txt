@@ -9,9 +9,7 @@ layer at (0,0) size 800x600
           text run at (308,0) width 315: "The caret should be at the start of the third sentence."
       RenderBlock {DIV} at (0,36) size 784x60
         RenderText {#text} at (0,0) size 779x59
-          text run at (0,0) width 768: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique senectus et netus et"
-          text run at (768,0) width 4: " "
-          text run at (0,20) width 775: "malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit. Vestibulum arcu lacus,"
-          text run at (775,20) width 4: " "
+          text run at (0,0) width 772: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique senectus et netus et "
+          text run at (0,20) width 779: "malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit. Vestibulum arcu lacus, "
           text run at (0,40) width 485: "blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
 caret: position 72 of child 0 {#text} of child 2 {DIV} of body

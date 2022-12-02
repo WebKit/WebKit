@@ -9,6 +9,7 @@ layer at (108,8) size 35x17
   RenderInline (relative positioned) {SPAN} at (0,0) size 35x17
     RenderText {#text} at (0,0) size 35x17
       text run at (0,0) width 35: "Hello"
+    RenderText {#text} at (0,0) size 0x0
 layer at (158,58) size 35x18
   RenderBlock (positioned) {DIV} at (50,50) size 35x18 [color=#FFFFFF] [bgcolor=#008000]
     RenderText {#text} at (0,0) size 35x17

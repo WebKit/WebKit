@@ -1,4 +1,4 @@
 
-FAIL Last remembered size supports multiple fragments assert_equals: Using last remembered size - fragment #1 width expected 50 but got 0
-FAIL Last remembered size is updated when 2nd fragment changes size assert_equals: Using updated last remembered size - fragment #1 width expected 50 but got 0
+FAIL Last remembered size supports multiple fragments assert_equals: Using last remembered size - fragment #1 width expected 50 but got 1
+FAIL Last remembered size is updated when 2nd fragment changes size assert_equals: Using updated last remembered size - fragment #1 width expected 50 but got 1
 

@@ -28,7 +28,6 @@
 #include "APIUserInitiatedAction.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
-#include "DisplayLinkObserverID.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessProxy.h"
 #include "ProcessLauncher.h"
@@ -42,7 +41,6 @@
 #include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
 #include "WebPageProxyIdentifier.h"
-#include "WebProcessProxyMessagesReplies.h"
 #include <WebCore/CrossOriginMode.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaProducer.h>
@@ -51,7 +49,6 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedStringHash.h>
 #include <WebCore/SleepDisabler.h>
-#include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -64,6 +61,11 @@
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include <WebCore/CaptionUserPreferences.h>
+#endif
+
+#if HAVE(CVDISPLAYLINK)
+#include "DisplayLinkObserverID.h"
+#include "DisplayLinkProcessProxyClient.h"
 #endif
 
 namespace API {
@@ -215,6 +217,10 @@ public:
 
     bool isDummyProcessProxy() const;
 
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+    bool isCrashyProcess() const { return m_isWebContentCrashyProcess; }
+#endif
+
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
     void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
@@ -228,6 +234,9 @@ public:
     bool isResponsive() const;
 
     VisibleWebPageToken visiblePageToken() const;
+
+    void addPreviouslyApprovedFileURL(const URL&);
+    bool wasPreviouslyApprovedFileURL(const URL&) const;
 
     void updateTextCheckerState();
 
@@ -317,6 +326,8 @@ public:
 #endif
 
 #if HAVE(CVDISPLAYLINK)
+    DisplayLink::Client& displayLinkClient() { return m_displayLinkClient; }
+
     void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
     void stopDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
     void setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
@@ -482,7 +493,6 @@ protected:
     void validateFreezerStatus();
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
-    bool isCrashyProcess() { return m_isWebContentCrashyProcess; }
     void setIsCrashyProcess() { m_isWebContentCrashyProcess = true; }
 #endif
 
@@ -503,7 +513,7 @@ private:
     bool hasProvisionalPageWithID(WebPageProxyIdentifier) const;
     bool isAllowedToUpdateBackForwardItem(WebBackForwardListItem&) const;
     
-    void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
+    void getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
@@ -604,6 +614,7 @@ private:
 
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;
+    HashSet<String> m_previouslyApprovedFilePaths;
 
     WebPageProxyMap m_pageMap;
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
@@ -617,6 +628,10 @@ private:
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
+
+#if HAVE(CVDISPLAYLINK)
+    DisplayLinkProcessProxyClient m_displayLinkClient;
+#endif
 
 #if ENABLE(ROUTING_ARBITRATION)
     UniqueRef<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;

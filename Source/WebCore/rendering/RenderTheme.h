@@ -92,9 +92,6 @@ public:
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
 #endif // ENABLE(VIDEO)
-#if ENABLE(FULLSCREEN_API)
-    virtual String extraFullScreenStyleSheet() { return String(); }
-#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual String attachmentStyleSheet() const;
 #endif
@@ -156,8 +153,8 @@ public:
     Color inactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
     // List box selection colors
-    Color activeListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
-    Color activeListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
+    WEBCORE_EXPORT Color activeListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    WEBCORE_EXPORT Color activeListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
     Color inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
     Color inactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
@@ -251,7 +248,7 @@ public:
 #endif
 
 protected:
-    virtual bool canPaint(const PaintInfo&, const Settings&) const { return true; }
+    virtual bool canPaint(const PaintInfo&, const Settings&, ControlPart) const { return true; }
 
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
@@ -416,7 +413,7 @@ protected:
     virtual ColorCache& colorCache(OptionSet<StyleColorOptions>) const;
 
 private:
-    ControlPart autoAppearanceForElement(const Element*) const;
+    ControlPart autoAppearanceForElement(RenderStyle&, const Element*) const;
     ControlPart adjustAppearanceForElement(RenderStyle&, const Element*, ControlPart) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;

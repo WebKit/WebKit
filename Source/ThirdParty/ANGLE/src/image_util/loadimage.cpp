@@ -14,8 +14,12 @@
 
 namespace angle
 {
+ImageLoadContext::ImageLoadContext()                              = default;
+ImageLoadContext::~ImageLoadContext()                             = default;
+ImageLoadContext::ImageLoadContext(const ImageLoadContext &other) = default;
 
-void LoadA8ToRGBA8(size_t width,
+void LoadA8ToRGBA8(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -89,7 +93,8 @@ void LoadA8ToRGBA8(size_t width,
     }
 }
 
-void LoadA8ToBGRA8(size_t width,
+void LoadA8ToBGRA8(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -100,11 +105,12 @@ void LoadA8ToBGRA8(size_t width,
                    size_t outputDepthPitch)
 {
     // Same as loading to RGBA
-    LoadA8ToRGBA8(width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+    LoadA8ToRGBA8(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
                   outputRowPitch, outputDepthPitch);
 }
 
-void LoadA32FToRGBA32F(size_t width,
+void LoadA32FToRGBA32F(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -133,7 +139,8 @@ void LoadA32FToRGBA32F(size_t width,
     }
 }
 
-void LoadA16FToRGBA16F(size_t width,
+void LoadA16FToRGBA16F(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -162,7 +169,8 @@ void LoadA16FToRGBA16F(size_t width,
     }
 }
 
-void LoadL8ToRGBA8(size_t width,
+void LoadL8ToRGBA8(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -192,7 +200,8 @@ void LoadL8ToRGBA8(size_t width,
     }
 }
 
-void LoadL8ToBGRA8(size_t width,
+void LoadL8ToBGRA8(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -203,11 +212,12 @@ void LoadL8ToBGRA8(size_t width,
                    size_t outputDepthPitch)
 {
     // Same as loading to RGBA
-    LoadL8ToRGBA8(width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+    LoadL8ToRGBA8(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
                   outputRowPitch, outputDepthPitch);
 }
 
-void LoadL32FToRGBA32F(size_t width,
+void LoadL32FToRGBA32F(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -236,7 +246,8 @@ void LoadL32FToRGBA32F(size_t width,
     }
 }
 
-void LoadL16FToRGBA16F(size_t width,
+void LoadL16FToRGBA16F(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -265,7 +276,8 @@ void LoadL16FToRGBA16F(size_t width,
     }
 }
 
-void LoadLA8ToRGBA8(size_t width,
+void LoadLA8ToRGBA8(const ImageLoadContext &context,
+                    size_t width,
                     size_t height,
                     size_t depth,
                     const uint8_t *input,
@@ -294,7 +306,8 @@ void LoadLA8ToRGBA8(size_t width,
     }
 }
 
-void LoadLA8ToBGRA8(size_t width,
+void LoadLA8ToBGRA8(const ImageLoadContext &context,
+                    size_t width,
                     size_t height,
                     size_t depth,
                     const uint8_t *input,
@@ -305,11 +318,12 @@ void LoadLA8ToBGRA8(size_t width,
                     size_t outputDepthPitch)
 {
     // Same as loading to RGBA
-    LoadLA8ToRGBA8(width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+    LoadLA8ToRGBA8(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
                    outputRowPitch, outputDepthPitch);
 }
 
-void LoadLA32FToRGBA32F(size_t width,
+void LoadLA32FToRGBA32F(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -338,7 +352,8 @@ void LoadLA32FToRGBA32F(size_t width,
     }
 }
 
-void LoadLA16FToRGBA16F(size_t width,
+void LoadLA16FToRGBA16F(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -367,7 +382,8 @@ void LoadLA16FToRGBA16F(size_t width,
     }
 }
 
-void LoadRGB8ToBGR565(size_t width,
+void LoadRGB8ToBGR565(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -399,7 +415,8 @@ void LoadRGB8ToBGR565(size_t width,
     }
 }
 
-void LoadRGB565ToBGR565(size_t width,
+void LoadRGB565ToBGR565(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -431,7 +448,8 @@ void LoadRGB565ToBGR565(size_t width,
     }
 }
 
-void LoadRGB8ToBGRX8(size_t width,
+void LoadRGB8ToBGRX8(const ImageLoadContext &context,
+                     size_t width,
                      size_t height,
                      size_t depth,
                      const uint8_t *input,
@@ -460,7 +478,8 @@ void LoadRGB8ToBGRX8(size_t width,
     }
 }
 
-void LoadRG8ToBGRX8(size_t width,
+void LoadRG8ToBGRX8(const ImageLoadContext &context,
+                    size_t width,
                     size_t height,
                     size_t depth,
                     const uint8_t *input,
@@ -489,7 +508,8 @@ void LoadRG8ToBGRX8(size_t width,
     }
 }
 
-void LoadR8ToBGRX8(size_t width,
+void LoadR8ToBGRX8(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -518,7 +538,8 @@ void LoadR8ToBGRX8(size_t width,
     }
 }
 
-void LoadR5G6B5ToBGRA8(size_t width,
+void LoadR5G6B5ToBGRA8(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -551,7 +572,8 @@ void LoadR5G6B5ToBGRA8(size_t width,
     }
 }
 
-void LoadR5G6B5ToRGBA8(size_t width,
+void LoadR5G6B5ToRGBA8(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -584,7 +606,8 @@ void LoadR5G6B5ToRGBA8(size_t width,
     }
 }
 
-void LoadRGBA8ToBGRA8(size_t width,
+void LoadRGBA8ToBGRA8(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -663,7 +686,8 @@ void LoadRGBA8ToBGRA8(size_t width,
     }
 }
 
-void LoadRGBA8ToBGRA4(size_t width,
+void LoadRGBA8ToBGRA4(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -694,7 +718,8 @@ void LoadRGBA8ToBGRA4(size_t width,
     }
 }
 
-void LoadRGBA8ToRGBA4(size_t width,
+void LoadRGBA8ToRGBA4(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -725,7 +750,8 @@ void LoadRGBA8ToRGBA4(size_t width,
     }
 }
 
-void LoadRGBA4ToARGB4(size_t width,
+void LoadRGBA4ToARGB4(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -751,7 +777,8 @@ void LoadRGBA4ToARGB4(size_t width,
     }
 }
 
-void LoadRGBA4ToBGRA8(size_t width,
+void LoadRGBA4ToBGRA8(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -785,7 +812,8 @@ void LoadRGBA4ToBGRA8(size_t width,
     }
 }
 
-void LoadRGBA4ToRGBA8(size_t width,
+void LoadRGBA4ToRGBA8(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -819,7 +847,8 @@ void LoadRGBA4ToRGBA8(size_t width,
     }
 }
 
-void LoadBGRA4ToBGRA8(size_t width,
+void LoadBGRA4ToBGRA8(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -853,7 +882,8 @@ void LoadBGRA4ToBGRA8(size_t width,
     }
 }
 
-void LoadRGBA8ToBGR5A1(size_t width,
+void LoadRGBA8ToBGR5A1(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -884,7 +914,8 @@ void LoadRGBA8ToBGR5A1(size_t width,
     }
 }
 
-void LoadRGBA8ToRGB5A1(size_t width,
+void LoadRGBA8ToRGB5A1(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -915,7 +946,8 @@ void LoadRGBA8ToRGB5A1(size_t width,
     }
 }
 
-void LoadRGB10A2ToBGR5A1(size_t width,
+void LoadRGB10A2ToBGR5A1(const ImageLoadContext &context,
+                         size_t width,
                          size_t height,
                          size_t depth,
                          const uint8_t *input,
@@ -948,7 +980,8 @@ void LoadRGB10A2ToBGR5A1(size_t width,
     }
 }
 
-void LoadRGB10A2ToRGB5A1(size_t width,
+void LoadRGB10A2ToRGB5A1(const ImageLoadContext &context,
+                         size_t width,
                          size_t height,
                          size_t depth,
                          const uint8_t *input,
@@ -981,7 +1014,8 @@ void LoadRGB10A2ToRGB5A1(size_t width,
     }
 }
 
-void LoadRGB5A1ToA1RGB5(size_t width,
+void LoadRGB5A1ToA1RGB5(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -1007,7 +1041,8 @@ void LoadRGB5A1ToA1RGB5(size_t width,
     }
 }
 
-void LoadRGB5A1ToBGR5A1(size_t width,
+void LoadRGB5A1ToBGR5A1(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -1038,7 +1073,8 @@ void LoadRGB5A1ToBGR5A1(size_t width,
     }
 }
 
-void LoadRGB5A1ToBGRA8(size_t width,
+void LoadRGB5A1ToBGRA8(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -1071,7 +1107,8 @@ void LoadRGB5A1ToBGRA8(size_t width,
     }
 }
 
-void LoadRGB5A1ToRGBA8(size_t width,
+void LoadRGB5A1ToRGBA8(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -1104,7 +1141,8 @@ void LoadRGB5A1ToRGBA8(size_t width,
     }
 }
 
-void LoadBGR5A1ToBGRA8(size_t width,
+void LoadBGR5A1ToBGRA8(const ImageLoadContext &context,
+                       size_t width,
                        size_t height,
                        size_t depth,
                        const uint8_t *input,
@@ -1137,7 +1175,8 @@ void LoadBGR5A1ToBGRA8(size_t width,
     }
 }
 
-void LoadRGB10A2ToRGBA8(size_t width,
+void LoadRGB10A2ToRGBA8(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -1167,7 +1206,8 @@ void LoadRGB10A2ToRGBA8(size_t width,
     }
 }
 
-void LoadRGB10A2ToRGB10X2(size_t width,
+void LoadRGB10A2ToRGB10X2(const ImageLoadContext &context,
+                          size_t width,
                           size_t height,
                           size_t depth,
                           const uint8_t *input,
@@ -1193,7 +1233,8 @@ void LoadRGB10A2ToRGB10X2(size_t width,
     }
 }
 
-void LoadRGB16FToRGB9E5(size_t width,
+void LoadRGB16FToRGB9E5(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -1221,7 +1262,8 @@ void LoadRGB16FToRGB9E5(size_t width,
     }
 }
 
-void LoadRGB32FToRGB9E5(size_t width,
+void LoadRGB32FToRGB9E5(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -1248,7 +1290,8 @@ void LoadRGB32FToRGB9E5(size_t width,
     }
 }
 
-void LoadRGB16FToRG11B10F(size_t width,
+void LoadRGB16FToRG11B10F(const ImageLoadContext &context,
+                          size_t width,
                           size_t height,
                           size_t depth,
                           const uint8_t *input,
@@ -1276,7 +1319,8 @@ void LoadRGB16FToRG11B10F(size_t width,
     }
 }
 
-void LoadRGB32FToRG11B10F(size_t width,
+void LoadRGB32FToRG11B10F(const ImageLoadContext &context,
+                          size_t width,
                           size_t height,
                           size_t depth,
                           const uint8_t *input,
@@ -1304,7 +1348,8 @@ void LoadRGB32FToRG11B10F(size_t width,
     }
 }
 
-void LoadG8R24ToR24G8(size_t width,
+void LoadG8R24ToR24G8(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -1332,7 +1377,8 @@ void LoadG8R24ToR24G8(size_t width,
     }
 }
 
-void LoadD24S8ToD32FS8X24(size_t width,
+void LoadD24S8ToD32FS8X24(const ImageLoadContext &context,
+                          size_t width,
                           size_t height,
                           size_t depth,
                           const uint8_t *input,
@@ -1362,7 +1408,8 @@ void LoadD24S8ToD32FS8X24(size_t width,
     }
 }
 
-void LoadD24S8ToD32F(size_t width,
+void LoadD24S8ToD32F(const ImageLoadContext &context,
+                     size_t width,
                      size_t height,
                      size_t depth,
                      const uint8_t *input,
@@ -1389,7 +1436,8 @@ void LoadD24S8ToD32F(size_t width,
     }
 }
 
-void LoadD32ToD32FX32(size_t width,
+void LoadD32ToD32FX32(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -1415,7 +1463,8 @@ void LoadD32ToD32FX32(size_t width,
     }
 }
 
-void LoadD32ToD32F(size_t width,
+void LoadD32ToD32F(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -1442,7 +1491,8 @@ void LoadD32ToD32F(size_t width,
     }
 }
 
-void LoadD32FToD32F(size_t width,
+void LoadD32FToD32F(const ImageLoadContext &context,
+                    size_t width,
                     size_t height,
                     size_t depth,
                     const uint8_t *input,
@@ -1468,7 +1518,8 @@ void LoadD32FToD32F(size_t width,
     }
 }
 
-void LoadD32FS8X24ToD24S8(size_t width,
+void LoadD32FS8X24ToD24S8(const ImageLoadContext &context,
+                          size_t width,
                           size_t height,
                           size_t depth,
                           const uint8_t *input,
@@ -1498,7 +1549,8 @@ void LoadD32FS8X24ToD24S8(size_t width,
     }
 }
 
-void LoadX24S8ToS8(size_t width,
+void LoadX24S8ToS8(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -1524,7 +1576,8 @@ void LoadX24S8ToS8(size_t width,
     }
 }
 
-void LoadX32S8ToS8(size_t width,
+void LoadX32S8ToS8(const ImageLoadContext &context,
+                   size_t width,
                    size_t height,
                    size_t depth,
                    const uint8_t *input,
@@ -1550,7 +1603,8 @@ void LoadX32S8ToS8(size_t width,
     }
 }
 
-void LoadD32FS8X24ToD32F(size_t width,
+void LoadD32FS8X24ToD32F(const ImageLoadContext &context,
+                         size_t width,
                          size_t height,
                          size_t depth,
                          const uint8_t *input,
@@ -1576,7 +1630,8 @@ void LoadD32FS8X24ToD32F(size_t width,
     }
 }
 
-void LoadD32FS8X24ToD32FS8X24(size_t width,
+void LoadD32FS8X24ToD32FS8X24(const ImageLoadContext &context,
+                              size_t width,
                               size_t height,
                               size_t depth,
                               const uint8_t *input,
@@ -1608,7 +1663,8 @@ void LoadD32FS8X24ToD32FS8X24(size_t width,
     }
 }
 
-void LoadRGB32FToRGBA16F(size_t width,
+void LoadRGB32FToRGBA16F(const ImageLoadContext &context,
+                         size_t width,
                          size_t height,
                          size_t depth,
                          const uint8_t *input,
@@ -1637,7 +1693,8 @@ void LoadRGB32FToRGBA16F(size_t width,
     }
 }
 
-void LoadRGB32FToRGB16F(size_t width,
+void LoadRGB32FToRGB16F(const ImageLoadContext &context,
+                        size_t width,
                         size_t height,
                         size_t depth,
                         const uint8_t *input,
@@ -1665,7 +1722,8 @@ void LoadRGB32FToRGB16F(size_t width,
     }
 }
 
-void LoadR32ToR16(size_t width,
+void LoadR32ToR16(const ImageLoadContext &context,
+                  size_t width,
                   size_t height,
                   size_t depth,
                   const uint8_t *input,
@@ -1691,7 +1749,8 @@ void LoadR32ToR16(size_t width,
     }
 }
 
-void LoadR32ToR24G8(size_t width,
+void LoadR32ToR24G8(const ImageLoadContext &context,
+                    size_t width,
                     size_t height,
                     size_t depth,
                     const uint8_t *input,
@@ -1721,7 +1780,8 @@ void LoadR32ToR24G8(size_t width,
 // This conversion was added to support using a 32F depth buffer
 // as emulation for 16unorm depth buffer in Metal.
 // See angleproject:6597
-void LoadUNorm16To32F(size_t width,
+void LoadUNorm16To32F(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -1753,7 +1813,8 @@ void LoadUNorm16To32F(size_t width,
 // so this conversion is neccasary.
 //
 // See angleproject:6597
-void LoadUNorm32To32F(size_t width,
+void LoadUNorm32To32F(const ImageLoadContext &context,
+                      size_t width,
                       size_t height,
                       size_t depth,
                       const uint8_t *input,
@@ -1779,7 +1840,8 @@ void LoadUNorm32To32F(size_t width,
     }
 }
 
-void LoadYuvToNative(size_t width,
+void LoadYuvToNative(const ImageLoadContext &context,
+                     size_t width,
                      size_t height,
                      size_t depth,
                      const uint8_t *input,

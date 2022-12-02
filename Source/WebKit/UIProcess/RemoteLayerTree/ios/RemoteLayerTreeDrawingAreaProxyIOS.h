@@ -29,7 +29,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-OBJC_CLASS WKOneShotDisplayLinkHandler;
+OBJC_CLASS WKDisplayLinkHandler;
 
 namespace WebKit {
 
@@ -41,13 +41,15 @@ public:
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
 
+    std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
+
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
-    void scheduleDisplayLink() override;
-    void pauseDisplayLink() override;
+    void scheduleDisplayRefreshCallbacks() override;
+    void pauseDisplayRefreshCallbacks() override;
 
-    WKOneShotDisplayLinkHandler *displayLinkHandler();
+    WKDisplayLinkHandler *displayLinkHandler();
 
-    RetainPtr<WKOneShotDisplayLinkHandler> m_displayLinkHandler;
+    RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
 };
 
 } // namespace WebKit

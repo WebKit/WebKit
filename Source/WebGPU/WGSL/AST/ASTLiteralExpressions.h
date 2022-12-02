@@ -31,6 +31,7 @@ namespace WGSL::AST {
 
 class BoolLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     BoolLiteral(SourceSpan span, bool value)
         : Expression(span)
@@ -38,7 +39,7 @@ public:
     {
     }
 
-    Kind kind() const final { return Kind::BoolLiteral; }
+    Kind kind() const override;
     bool value() const { return m_value; }
 
 private:
@@ -47,6 +48,7 @@ private:
 
 class Int32Literal final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     Int32Literal(SourceSpan span, int32_t value)
         : Expression(span)
@@ -54,7 +56,7 @@ public:
     {
     }
 
-    Kind kind() const final { return Kind::Int32Literal; }
+    Kind kind() const override;
     int32_t value() const { return m_value; }
 
 private:
@@ -63,6 +65,7 @@ private:
 
 class Uint32Literal final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     Uint32Literal(SourceSpan span, uint32_t value)
         : Expression(span)
@@ -70,7 +73,7 @@ public:
     {
     }
 
-    Kind kind() const final { return Kind::Uint32Literal; }
+    Kind kind() const override;
     uint32_t value() const { return m_value; }
 
 private:
@@ -79,6 +82,7 @@ private:
 
 class Float32Literal final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     Float32Literal(SourceSpan span, float value)
         : Expression(span)
@@ -86,7 +90,7 @@ public:
     {
     }
 
-    Kind kind() const final { return Kind::Float32Literal; }
+    Kind kind() const override;
     float value() const { return m_value; }
 
 private:
@@ -97,6 +101,7 @@ private:
 // https://gpuweb.github.io/gpuweb/wgsl/#abstractint
 class AbstractIntLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     AbstractIntLiteral(SourceSpan span, int64_t value)
         : Expression(span)
@@ -104,7 +109,7 @@ public:
     {
     }
 
-    Kind kind() const final { return Kind::AbstractIntLiteral; }
+    Kind kind() const override;
     int64_t value() const { return m_value; }
 
 private:
@@ -116,6 +121,7 @@ private:
 // https://gpuweb.github.io/gpuweb/wgsl/#abstractfloat
 class AbstractFloatLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     AbstractFloatLiteral(SourceSpan span, double value)
         : Expression(span)
@@ -123,7 +129,7 @@ public:
     {
     }
 
-    Kind kind() const final { return Kind::AbstractFloatLiteral; }
+    Kind kind() const override;
     double value() const { return m_value; }
 
 private:
@@ -132,9 +138,9 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(BoolLiteral, isBoolLiteral())
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(Int32Literal, isInt32Literal())
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(Float32Literal, isFloat32Literal())
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(Uint32Literal, isUInt32Literal())
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(AbstractIntLiteral, isAbstractIntLiteral())
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(AbstractFloatLiteral, isAbstractFloatLiteral())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(BoolLiteral)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Int32Literal)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Float32Literal)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Uint32Literal)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(AbstractIntLiteral)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(AbstractFloatLiteral)

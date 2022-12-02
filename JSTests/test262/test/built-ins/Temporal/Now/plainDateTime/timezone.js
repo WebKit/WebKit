@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.now.plaindatetime
 description: The value returned by TimeZone.getOffsetNanosecondsFor affects the result
-includes: [compareArray.js]
+includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
@@ -15,20 +15,10 @@ const expected = [
   "call timeZone.getOffsetNanosecondsFor",
 ];
 
-const timeZone = new Proxy({
+const timeZone = TemporalHelpers.timeZoneObserver(actual, "timeZone", {
   getOffsetNanosecondsFor(instant) {
-    actual.push("call timeZone.getOffsetNanosecondsFor");
     assert.sameValue(instant instanceof Temporal.Instant, true, "Instant");
     return -Number(instant.epochNanoseconds % 86400_000_000_000n);
-  },
-}, {
-  has(target, property) {
-    actual.push(`has timeZone.${property}`);
-    return property in target;
-  },
-  get(target, property) {
-    actual.push(`get timeZone.${property}`);
-    return target[property];
   },
 });
 

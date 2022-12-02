@@ -103,6 +103,20 @@ void HTMLFormattingElementList::remove(Element& element)
         m_entries.remove(index);
 }
 
+void HTMLFormattingElementList::removeUpdatingBookmark(Element& element, Bookmark& bookmark)
+{
+    size_t index = m_entries.reverseFind(&element);
+    if (index != notFound) {
+        size_t bookmarkIndex = &bookmark.mark() - &first();
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(bookmarkIndex <= size());
+        m_entries.remove(index);
+        // Removing an element from the list can change the position of the bookmarked
+        // item. Update the address pointed by the bookmark, when needed.
+        if (bookmarkIndex > index)
+            bookmark.m_mark--;
+    }
+}
+
 void HTMLFormattingElementList::appendMarker()
 {
     m_entries.append(Entry::MarkerEntry);

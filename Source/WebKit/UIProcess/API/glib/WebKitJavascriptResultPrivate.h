@@ -21,40 +21,5 @@
 
 #include <WebCore/SerializedScriptValue.h>
 #include "WebKitJavascriptResult.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
-#include <wtf/glib/GRefPtr.h>
-
-class SharedJavascriptContext {
-public:
-    static SharedJavascriptContext& singleton()
-    {
-        static NeverDestroyed<SharedJavascriptContext> context;
-        return context;
-    }
-
-    SharedJavascriptContext()
-        : m_timer(RunLoop::main(), this, &SharedJavascriptContext::releaseContext)
-    {
-    }
-
-    JSCContext* getOrCreateContext()
-    {
-        if (!m_context) {
-            m_context = adoptGRef(jsc_context_new());
-            m_timer.startOneShot(1_s);
-        }
-        return m_context.get();
-    }
-
-private:
-    void releaseContext()
-    {
-        m_context = nullptr;
-    }
-
-    GRefPtr<JSCContext> m_context;
-    RunLoop::Timer<SharedJavascriptContext> m_timer;
-};
 
 WebKitJavascriptResult* webkitJavascriptResultCreate(WebCore::SerializedScriptValue&);

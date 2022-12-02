@@ -85,7 +85,7 @@ public:
     const std::optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
     const std::optional<FileSystem::PlatformFileID> fileID() const { return m_fileID; }
 
-    static String contentTypeForFile(const String& path);
+    WEBCORE_EXPORT static String contentTypeForFile(const String& path);
 
 #if ENABLE(FILE_REPLACEMENT)
     static bool shouldReplaceFile(const String& path);

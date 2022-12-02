@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS 'grid' does not supported 'auto-flow / 1fr 1fr 1fr'
+PASS 'grid' does not supported 'auto-flow dense / 40px 40px 1fr'
+PASS 'grid' does not supported 'repeat(3, 80px) / auto-flow'
 

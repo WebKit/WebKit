@@ -44,8 +44,7 @@ public:
     static Ref<CSSTransition> create(const Styleable&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
     ~CSSTransition() = default;
 
-    bool isCSSTransition() const override { return true; }
-    String transitionProperty() const { return getPropertyNameString(m_property); }
+    const AtomString& transitionProperty() const { return nameString(m_property); }
     CSSPropertyID property() const { return m_property; }
     MonotonicTime generationTime() const { return m_generationTime; }
     std::optional<Seconds> timelineTimeAtCreation() const { return m_timelineTimeAtCreation; }
@@ -57,9 +56,10 @@ public:
 private:
     CSSTransition(const Styleable&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
-    Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime) final;
+    Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
     void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
     void animationDidFinish() final;
+    bool isCSSTransition() const final { return true; }
 
     CSSPropertyID m_property;
     MonotonicTime m_generationTime;

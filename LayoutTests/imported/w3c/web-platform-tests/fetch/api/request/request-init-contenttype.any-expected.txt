@@ -1,0 +1,20 @@
+
+PASS Default Content-Type for Request with empty body
+PASS Default Content-Type for Request with Blob body (no type set)
+PASS Default Content-Type for Request with Blob body (empty type)
+PASS Default Content-Type for Request with Blob body (set type)
+PASS Default Content-Type for Request with buffer source body
+PASS Default Content-Type for Request with FormData body
+PASS Default Content-Type for Request with URLSearchParams body
+PASS Default Content-Type for Request with string body
+PASS Default Content-Type for Request with ReadableStream body
+PASS Can override Content-Type for Request with empty body
+PASS Can override Content-Type for Request with Blob body (no type set)
+PASS Can override Content-Type for Request with Blob body (empty type)
+PASS Can override Content-Type for Request with Blob body (set type)
+PASS Can override Content-Type for Request with buffer source body
+PASS Can override Content-Type for Request with FormData body
+PASS Can override Content-Type for Request with URLSearchParams body
+PASS Can override Content-Type for Request with string body
+PASS Can override Content-Type for Request with ReadableStream body
+

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
+layer at (0,0) size 800x542
+  RenderBlock {HTML} at (0,0) size 800x542
+    RenderBody {BODY} at (8,8) size 784x526
       RenderText {#text} at (0,0) size 488x18
         text run at (0,0) width 488: "If running this test manually put focus inside the iframe and hit 'page down'."
       RenderText {#text} at (0,0) size 0x0

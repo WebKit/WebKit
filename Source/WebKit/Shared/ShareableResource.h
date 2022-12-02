@@ -70,8 +70,7 @@ public:
     // Create a shareable resource from a handle.
     static RefPtr<ShareableResource> map(const Handle&);
 
-    // Create a handle.
-    bool createHandle(Handle&);
+    std::optional<Handle> createHandle();
 
     ~ShareableResource();
 

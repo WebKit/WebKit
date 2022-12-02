@@ -55,8 +55,11 @@ void TypeDefinition::dump(PrintStream& out) const
     if (is<RecursionGroup>())
         return as<RecursionGroup>()->dump(out);
 
-    ASSERT(is<Projection>());
-    return as<Projection>()->dump(out);
+    if (is<Projection>())
+        return as<Projection>()->dump(out);
+
+    ASSERT(is<Subtype>());
+    return as<Subtype>()->dump(out);
 }
 
 String FunctionSignature::toString() const
@@ -162,6 +165,50 @@ void Projection::dump(PrintStream& out) const
     out.print(")");
 }
 
+String Subtype::toString() const
+{
+    return WTF::toString(*this);
+}
+
+void Subtype::dump(PrintStream& out) const
+{
+    out.print("(");
+    CommaPrinter comma;
+    TypeInformation::get(superType()).dump(out);
+    out.print(comma);
+    TypeInformation::get(underlyingType()).dump(out);
+    out.print(")");
+}
+
+void TypeDefinition::cleanup()
+{
+    // Only compound type definitions need to be cleaned up, not, e.g., function types.
+    if (is<Subtype>())
+        return as<Subtype>()->cleanup();
+    if (is<Projection>())
+        return as<Projection>()->cleanup();
+    if (is<RecursionGroup>())
+        return as<RecursionGroup>()->cleanup();
+}
+
+void Subtype::cleanup()
+{
+    TypeInformation::get(superType()).deref();
+    TypeInformation::get(underlyingType()).deref();
+}
+
+void Projection::cleanup()
+{
+    if (recursionGroup() != TypeDefinition::invalidIndex)
+        TypeInformation::get(recursionGroup()).deref();
+}
+
+void RecursionGroup::cleanup()
+{
+    for (RecursionGroupCount i = 0; i < typeCount(); i++)
+        TypeInformation::get(type(i)).deref();
+}
+
 static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes, size_t argumentCount, const Type* argumentTypes)
 {
     unsigned accumulator = 0xa1bcedd8u;
@@ -212,6 +259,14 @@ static unsigned computeProjectionHash(TypeIndex recursionGroup, ProjectionIndex 
     return accumulator;
 }
 
+static unsigned computeSubtypeHash(TypeIndex superType, TypeIndex underlyingType)
+{
+    unsigned accumulator = 0x3efa01b9;
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(superType));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(underlyingType));
+    return accumulator;
+}
+
 unsigned TypeDefinition::hash() const
 {
     if (is<FunctionSignature>()) {
@@ -234,9 +289,14 @@ unsigned TypeDefinition::hash() const
         return computeRecursionGroupHash(recursionGroup->typeCount(), recursionGroup->storage(0));
     }
 
-    ASSERT(is<Projection>());
-    const Projection* projection = as<Projection>();
-    return computeProjectionHash(projection->recursionGroup(), projection->index());
+    if (is<Projection>()) {
+        const Projection* projection = as<Projection>();
+        return computeProjectionHash(projection->recursionGroup(), projection->index());
+    }
+
+    ASSERT(is<Subtype>());
+    const Subtype* subtype = as<Subtype>();
+    return computeSubtypeHash(subtype->superType(), subtype->underlyingType());
 }
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateFunctionSignature(FunctionArgCount returnCount, FunctionArgCount argumentCount)
@@ -294,6 +354,17 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateProjection()
     return adoptRef(signature);
 }
 
+RefPtr<TypeDefinition> TypeDefinition::tryCreateSubtype(DisplayCount displaySize)
+{
+    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    auto result = tryFastMalloc(allocatedSubtypeSize(displaySize));
+    void* memory = nullptr;
+    if (!result.getValue(memory))
+        return nullptr;
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::Subtype, displaySize);
+    return adoptRef(signature);
+}
+
 // Recursive types are stored "tied" in the sense that the spec refers to here:
 //
 //   https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#equivalence
@@ -348,6 +419,49 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
         return *def;
     }
 
+    if (is<ArrayType>()) {
+        const ArrayType* arrayType = as<ArrayType>();
+        FieldType field = arrayType->elementType();
+        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForArray(FieldType { substitute(field.type, projectee), field.mutability });
+        return *def;
+    }
+
+    if (is<Subtype>()) {
+        const Subtype* subtype = as<Subtype>();
+        const TypeDefinition& newUnderlyingType = TypeInformation::get(subtype->underlyingType()).replacePlaceholders(projectee);
+        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForSubtype(subtype->superType(), newUnderlyingType.index());
+        return *def;
+    }
+
+    return *this;
+}
+
+// This function corresponds to the unroll metafunction from the spec:
+//
+//  https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#auxiliary-definitions
+//
+// It unrolls a potentially recursive type to a Subtype or structural type.
+const TypeDefinition& TypeDefinition::unroll() const
+{
+    if (is<Projection>()) {
+        const Projection& projection = *as<Projection>();
+        const TypeDefinition& projectee = TypeInformation::get(projection.recursionGroup());
+
+        const RecursionGroup& recursionGroup = *projectee.as<RecursionGroup>();
+        const TypeDefinition& underlyingType = TypeInformation::get(recursionGroup.type(projection.index()));
+
+        if (underlyingType.hasRecursiveReference()) {
+            if (std::optional<TypeIndex> cachedUnrolling = TypeInformation::tryGetCachedUnrolling(index()))
+                return TypeInformation::get(*cachedUnrolling);
+
+            const TypeDefinition& unrolled = underlyingType.replacePlaceholders(projectee.index());
+            TypeInformation::addCachedUnrolling(index(), unrolled.index());
+            return unrolled;
+        }
+
+        return underlyingType;
+    }
+
     return *this;
 }
 
@@ -358,19 +472,27 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
 // It expands a potentially recursive context type and returns the concrete structural
 // type definition that it corresponds to. It should be called whenever the concrete
 // type is needed during validation or other phases.
-//
-// Caching the result of this lookup may be useful if this becomes a bottleneck.
 const TypeDefinition& TypeDefinition::expand() const
 {
-    if (is<Projection>()) {
-        const Projection& projection = *as<Projection>();
-        const TypeDefinition& projectee = TypeInformation::get(projection.recursionGroup());
-        const RecursionGroup& recursionGroup = *projectee.as<RecursionGroup>();
-        const TypeDefinition& underlyingType = TypeInformation::get(recursionGroup.type(projection.index()));
-        return underlyingType.replacePlaceholders(projectee.index());
-    }
+    const TypeDefinition& unrolled = unroll();
+    if (unrolled.is<Subtype>())
+        return TypeInformation::get(unrolled.as<Subtype>()->underlyingType());
 
-    return *this;
+    return unrolled;
+}
+
+// Determine if, for a structural type or subtype, the type contains any references to recursion group members.
+bool TypeDefinition::hasRecursiveReference() const
+{
+    if (is<FunctionSignature>())
+        return as<FunctionSignature>()->hasRecursiveReference();
+    if (is<StructType>())
+        return as<StructType>()->hasRecursiveReference();
+    if (is<ArrayType>())
+        return as<ArrayType>()->hasRecursiveReference();
+
+    ASSERT(is<Subtype>());
+    return TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
 }
 
 TypeInformation::TypeInformation()
@@ -552,8 +674,10 @@ struct RecursionGroupParameterTypes {
         RELEASE_ASSERT(signature);
 
         RecursionGroup* recursionGroup = signature->as<RecursionGroup>();
-        for (unsigned i = 0; i < params.types.size(); ++i)
+        for (unsigned i = 0; i < params.types.size(); ++i) {
+            TypeInformation::get(params.types[i]).ref();
             recursionGroup->getType(i) = params.types[i];
+        }
 
         entry.key = WTFMove(signature);
     }
@@ -586,8 +710,66 @@ struct ProjectionParameterTypes {
         RELEASE_ASSERT(signature);
 
         Projection* projection = signature->as<Projection>();
+        // An invalid index may show up here for placeholder references, in which
+        // case we should avoid trying to resolve the type index.
+        if (params.recursionGroup != TypeDefinition::invalidIndex)
+            TypeInformation::get(params.recursionGroup).ref();
         projection->getRecursionGroup() = params.recursionGroup;
         projection->getIndex() = params.index;
+
+        entry.key = WTFMove(signature);
+    }
+};
+
+struct SubtypeParameterTypes {
+    TypeIndex superType;
+    TypeIndex underlyingType;
+
+    static unsigned hash(const SubtypeParameterTypes& params)
+    {
+        return computeSubtypeHash(params.superType, params.underlyingType);
+    }
+
+    static bool equal(const TypeHash& sig, const SubtypeParameterTypes& params)
+    {
+        if (!sig.key->is<Subtype>())
+            return false;
+
+        const Subtype* subtype = sig.key->as<Subtype>();
+        if (subtype->superType() != params.superType)
+            return false;
+
+        if (subtype->underlyingType() != params.underlyingType)
+            return false;
+
+        return true;
+    }
+
+    static void translate(TypeHash& entry, const SubtypeParameterTypes& params, unsigned)
+    {
+        uint32_t displaySize;
+        const TypeDefinition& parent = TypeInformation::get(params.superType);
+        parent.ref();
+        if (parent.is<Subtype>())
+            displaySize = parent.as<Subtype>()->displaySize() + 1;
+        else
+            displaySize = 1;
+
+        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateSubtype(displaySize);
+        RELEASE_ASSERT(signature);
+
+        Subtype* subtype = signature->as<Subtype>();
+        subtype->getSuperType() = params.superType;
+        subtype->getUnderlyingType() = params.underlyingType;
+
+        TypeInformation::get(params.underlyingType).ref();
+
+        const TypeDefinition* currentParent = &parent;
+        for (uint32_t i = 0; i < displaySize; i++) {
+            subtype->getDisplayType(i) = currentParent->index();
+            if (currentParent->is<Subtype>())
+                currentParent = &TypeInformation::get(currentParent->as<Subtype>()->superType());
+        }
 
         entry.key = WTFMove(signature);
     }
@@ -642,14 +824,50 @@ RefPtr<TypeDefinition> TypeInformation::typeDefinitionForProjection(TypeIndex re
     return addResult.iterator->key;
 }
 
+RefPtr<TypeDefinition> TypeInformation::typeDefinitionForSubtype(TypeIndex superType, TypeIndex underlyingType)
+{
+    TypeInformation& info = singleton();
+    Locker locker { info.m_lock };
+
+    auto addResult = info.m_typeSet.template add<SubtypeParameterTypes>(SubtypeParameterTypes { superType, underlyingType });
+    return addResult.iterator->key;
+}
+
+void TypeInformation::addCachedUnrolling(TypeIndex type, TypeIndex unrolled)
+{
+    TypeInformation& info = singleton();
+    Locker locker { info.m_lock };
+
+    info.m_unrollingCache.add(type, unrolled);
+}
+
+std::optional<TypeIndex> TypeInformation::tryGetCachedUnrolling(TypeIndex type)
+{
+    TypeInformation& info = singleton();
+    Locker locker { info.m_lock };
+
+    const auto iterator = info.m_unrollingCache.find(type);
+    if (iterator == info.m_unrollingCache.end())
+        return std::nullopt;
+    return std::optional<TypeIndex>(iterator->value);
+}
+
 void TypeInformation::tryCleanup()
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
 
+    info.m_unrollingCache.removeIf([&] (auto& keyValuePair) {
+        const TypeDefinition& type = TypeInformation::get(keyValuePair.key);
+        return type.refCount() == 1;
+    });
+
     info.m_typeSet.removeIf([&] (auto& hash) {
         const auto& signature = hash.key;
-        return signature->refCount() == 1;
+        const bool shouldRemove = signature->refCount() == 1;
+        if (shouldRemove)
+            signature->cleanup();
+        return shouldRemove;
     });
 }
 

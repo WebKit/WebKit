@@ -64,7 +64,7 @@ private:
     ImageDecoderGStreamerSample(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
         : MediaSampleGStreamer(WTFMove(sample), presentationSize, { })
     {
-        m_image = ImageGStreamer::createImage(platformSample().sample.gstSample);
+        m_image = ImageGStreamer::createImage(GRefPtr<GstSample>(platformSample().sample.gstSample));
     }
 
     RefPtr<ImageGStreamer> m_image;

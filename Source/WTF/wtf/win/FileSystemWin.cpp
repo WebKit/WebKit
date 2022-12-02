@@ -37,6 +37,7 @@
 #include <windows.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/win/WCharStringExtras.h>

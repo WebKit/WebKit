@@ -31,7 +31,7 @@
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-#if defined(BUILDING_GTK__)
+#if defined(BUILDING_GTK__) || defined(BUILDING_JSCONLY__)
 #undef JSC_API_AVAILABLE
 #define JSC_API_AVAILABLE(...)
 

@@ -1,4 +1,5 @@
 //@ skip unless $jitTests
+//@ $skipModes << :lockdown
 
 function assert(a, e) {
     if (a !== e)

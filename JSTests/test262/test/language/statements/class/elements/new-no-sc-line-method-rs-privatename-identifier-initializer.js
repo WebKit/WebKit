@@ -82,7 +82,10 @@ var c = new C();
 
 assert.sameValue(c.m(), 42);
 assert.sameValue(c.m, C.prototype.m);
-assert.sameValue(Object.hasOwnProperty.call(c, "m"), false);
+assert(
+  !Object.prototype.hasOwnProperty.call(c, "m"),
+  "m doesn't appear as an own property on the C instance"
+);
 
 verifyProperty(C.prototype, "m", {
   enumerable: false,

@@ -8,6 +8,9 @@ bar = 42
 20
 slice
 byteLength
+resize
+resizable
+maxByteLength
 constructor
 aaa
 foo
@@ -19,6 +22,9 @@ foo = 20
 bar = 42
 slice
 byteLength
+resize
+resizable
+maxByteLength
 constructor
 aaa
 foo

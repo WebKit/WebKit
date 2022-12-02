@@ -3,4 +3,6 @@ PASS em relative inline-size
 PASS rem relative inline-size
 PASS ex relative inline-size
 PASS ch relative inline-size
+PASS ic relative inline-size
+PASS lh relative inline-size
 

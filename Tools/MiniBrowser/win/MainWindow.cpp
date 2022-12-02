@@ -393,6 +393,12 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case IDM_SHOW_LAYER_TREE:
             thisWindow->browserWindow()->showLayerTree();
             break;
+        case IDM_CLEAR_COOKIES:
+            thisWindow->browserWindow()->clearCookies();
+            break;
+        case IDM_CLEAR_WEBSITE_DATA:
+            thisWindow->browserWindow()->clearWebsiteData();
+            break;
         default:
             if (!thisWindow->toggleMenuItem(wmId))
                 return DefWindowProc(hWnd, message, wParam, lParam);

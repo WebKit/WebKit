@@ -1,0 +1,15 @@
+Check that website data does not get removed after a period of no user interaction if the website is managed.
+
+Before deletion: Client-side cookie exists.
+Before deletion: HttpOnly cookie exists.
+Before deletion: Regular server-side cookie exists.
+Before deletion: LocalStorage entry does exist.
+Before deletion: IDB entry does exist.
+
+After deletion: HttpOnly cookie exists.
+After deletion: Client-side cookie exists.
+After deletion: Regular server-side cookie exists.
+After deletion: LocalStorage entry does exist.
+After deletion: IDB entry does exist.
+
+

@@ -32,6 +32,7 @@
 namespace JSC {
 
 const ClassInfo JSDataView::s_info = { "DataView"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDataView) };
+const ClassInfo JSResizableOrGrowableSharedDataView::s_info = { "DataView"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSResizableOrGrowableSharedDataView) };
 
 JSDataView::JSDataView(VM& vm, ConstructionContext& context, ArrayBuffer* buffer)
     : Base(vm, context)
@@ -41,20 +42,24 @@ JSDataView::JSDataView(VM& vm, ConstructionContext& context, ArrayBuffer* buffer
 
 JSDataView* JSDataView::create(
     JSGlobalObject* globalObject, Structure* structure, RefPtr<ArrayBuffer>&& buffer,
-    size_t byteOffset, size_t byteLength)
+    size_t byteOffset, std::optional<size_t> byteLength)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(buffer);
     if (buffer->isDetached()) {
-        throwTypeError(globalObject, scope, "Buffer is already detached"_s);
+        throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
         return nullptr;
     }
-    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, byteLength, sizeof(uint8_t))) {
+
+    ASSERT(byteLength || buffer->isResizableOrGrowableShared());
+
+    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, byteLength.value_or(0), sizeof(uint8_t))) {
         throwRangeError(globalObject, scope, "Length out of range of buffer"_s);
         return nullptr;
     }
+
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, sizeof(uint8_t))) {
         throwRangeError(globalObject, scope, "Byte offset is not aligned"_s);
         return nullptr;
@@ -81,7 +86,13 @@ JSDataView* JSDataView::create(JSGlobalObject*, Structure*, size_t)
     return nullptr;
 }
 
-bool JSDataView::set(JSGlobalObject*, size_t, JSObject*, size_t, size_t)
+bool JSDataView::setFromTypedArray(JSGlobalObject*, size_t, JSArrayBufferView*, size_t, size_t, CopyType)
+{
+    UNREACHABLE_FOR_PLATFORM();
+    return false;
+}
+
+bool JSDataView::setFromArrayLike(JSGlobalObject*, size_t, JSObject*, size_t, size_t)
 {
     UNREACHABLE_FOR_PLATFORM();
     return false;
@@ -95,20 +106,22 @@ bool JSDataView::setIndex(JSGlobalObject*, size_t, JSValue)
 
 RefPtr<DataView> JSDataView::possiblySharedTypedImpl()
 {
-    return DataView::create(possiblySharedBuffer(), byteOffset(), length());
+    return DataView::create(possiblySharedBuffer(), byteOffsetRaw(), isAutoLength() ? std::nullopt : std::optional { lengthRaw() });
 }
 
 RefPtr<DataView> JSDataView::unsharedTypedImpl()
 {
-    return DataView::create(unsharedBuffer(), byteOffset(), length());
+    return DataView::create(unsharedBuffer(), byteOffsetRaw(), isAutoLength() ? std::nullopt : std::optional { lengthRaw() });
 }
 
-Structure* JSDataView::createStructure(
-    VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+Structure* JSDataView::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(
-        vm, globalObject, prototype, TypeInfo(DataViewType, StructureFlags), info(),
-        NonArray);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(DataViewType, StructureFlags), info(), NonArray);
+}
+
+Structure* JSResizableOrGrowableSharedDataView::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(DataViewType, StructureFlags), info(), NonArray);
 }
 
 } // namespace JSC

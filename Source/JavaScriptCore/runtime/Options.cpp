@@ -534,6 +534,9 @@ void Options::recomputeDependentOptions()
     Options::forceUnlinkedDFG() = false;
 #endif
 
+    if (!Options::allowDoubleShape())
+        Options::useJIT() = false; // We don't support JIT with !allowDoubleShape. So disable it.
+
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
     // will / should not be able to enable any JIT related services.
@@ -676,6 +679,18 @@ void Options::recomputeDependentOptions()
 
     if (Options::verboseVerifyGC())
         Options::verifyGC() = true;
+    
+    // FIXME: This should be removed when we add LLint/OMG support for WASM SIMD
+    if (Options::useWebAssemblySIMD()) {
+        Options::useBBQJIT() = true;
+        Options::useOMGJIT() = false;
+        Options::webAssemblyBBQAirModeThreshold() = 0;
+        Options::webAssemblyBBQAirOptimizationLevel() = 0;
+        Options::defaultB3OptLevel() = 0;
+        Options::wasmBBQUsesAir() = true;
+        Options::useWasmLLInt() = true;
+        Options::wasmLLIntTiersUpToBBQ() = true;
+    }
 
 #if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     if (Options::useWasmFaultSignalHandler()) {

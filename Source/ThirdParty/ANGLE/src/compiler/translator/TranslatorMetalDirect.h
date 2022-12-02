@@ -162,6 +162,10 @@ class TranslatorMetalDirect : public TCompiler
                    const ShCompileOptions &compileOptions,
                    PerformanceDiagnostics *perfDiagnostics) override;
 
+    // The sample mask can't be in our fragment output struct if we read the framebuffer. Luckily,
+    // pixel local storage bans gl_SampleMask, so we can just not use it when PLS is active.
+    bool usesSampleMask() const { return !hasPixelLocalStorageUniforms(); }
+
     // Need to collect variables so that RemoveInactiveInterfaceVariables works.
     bool shouldCollectVariables(const ShCompileOptions &compileOptions) override { return true; }
 

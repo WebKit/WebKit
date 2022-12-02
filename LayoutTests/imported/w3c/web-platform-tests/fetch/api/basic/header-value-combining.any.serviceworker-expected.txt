@@ -1,0 +1,8 @@
+
+PASS response.headers.get('content-length') expects 0
+PASS response.headers.get('content-length') expects 0, 0
+PASS response.headers.get('double-trouble') expects ,
+PASS response.headers.get('foo-test') expects 1, 2, 3
+PASS response.headers.get('heya') expects , , 1, , , 2
+PASS response.headers.get('www-authenticate') expects 1, 2, 3, 4
+

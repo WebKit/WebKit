@@ -1427,6 +1427,16 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
+@interface UIWindowScene ()
+@property (nonatomic, readonly, getter=_isInLiveResize) BOOL _inLiveResize;
+@end
+
+extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
+
+#endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

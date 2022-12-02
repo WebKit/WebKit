@@ -14,6 +14,7 @@
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/validationES2_autogen.h"
+#include "libANGLE/validationES3.h"
 #include "libANGLE/validationES31.h"
 #include "libANGLE/validationES31_autogen.h"
 #include "libANGLE/validationES3_autogen.h"
@@ -37,6 +38,11 @@ bool ValidateBlendEquationSeparatei(const Context *context,
                                     GLenum modeRGB,
                                     GLenum modeAlpha)
 {
+    if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, buf, "buf"))
+    {
+        return false;
+    }
+
     if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -57,6 +63,11 @@ bool ValidateBlendEquationi(const Context *context,
                             GLuint buf,
                             GLenum mode)
 {
+    if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, buf, "buf"))
+    {
+        return false;
+    }
+
     if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -80,6 +91,11 @@ bool ValidateBlendFuncSeparatei(const Context *context,
                                 GLenum srcAlpha,
                                 GLenum dstAlpha)
 {
+    if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, buf, "buf"))
+    {
+        return false;
+    }
+
     if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -101,6 +117,11 @@ bool ValidateBlendFunci(const Context *context,
                         GLenum src,
                         GLenum dst)
 {
+    if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, buf, "buf"))
+    {
+        return false;
+    }
+
     if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -118,13 +139,18 @@ bool ValidateBlendFunci(const Context *context,
 
 bool ValidateColorMaski(const Context *context,
                         angle::EntryPoint entryPoint,
-                        GLuint index,
+                        GLuint buf,
                         GLboolean r,
                         GLboolean g,
                         GLboolean b,
                         GLboolean a)
 {
-    if (index >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
+    if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, buf, "buf"))
+    {
+        return false;
+    }
+
+    if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
         return false;
@@ -199,6 +225,11 @@ bool ValidateDisablei(const Context *context,
                       GLenum target,
                       GLuint index)
 {
+    if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, index, "index"))
+    {
+        return false;
+    }
+
     switch (target)
     {
         case GL_BLEND:
@@ -255,7 +286,7 @@ bool ValidateDrawRangeElementsBaseVertex(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 0))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1))
     {
         return false;
     }
@@ -274,6 +305,11 @@ bool ValidateEnablei(const Context *context,
                      GLenum target,
                      GLuint index)
 {
+    if (!ValidateDrawBufferIndexIfActivePLS(context, entryPoint, index, "index"))
+    {
+        return false;
+    }
+
     switch (target)
     {
         case GL_BLEND:

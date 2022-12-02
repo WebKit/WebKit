@@ -86,7 +86,8 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestVoidCallbackFunc
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
-        reportException(&lexicalGlobalObject, returnedException);
+        UNUSED_PARAM(lexicalGlobalObject);
+        reportException(m_data->callback()->globalObject(), returnedException);
         return CallbackResultType::ExceptionThrown;
      }
 

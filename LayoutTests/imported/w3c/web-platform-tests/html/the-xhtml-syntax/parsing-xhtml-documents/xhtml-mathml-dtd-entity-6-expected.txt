@@ -27,7 +27,7 @@ PASS XHTML1.1+MathML parsing &Amacr;
 PASS XHTML1.1+MathML parsing &amacr;
 PASS XHTML1.1+MathML parsing &amalg;
 PASS XHTML1.1+MathML parsing &amp;
-FAIL XHTML1.1+MathML parsing &AMP; assert_true: expected true got false
+PASS XHTML1.1+MathML parsing &AMP;
 PASS XHTML1.1+MathML parsing &andand;
 PASS XHTML1.1+MathML parsing &And;
 PASS XHTML1.1+MathML parsing &and;
@@ -1007,7 +1007,7 @@ PASS XHTML1.1+MathML parsing &lstrok;
 PASS XHTML1.1+MathML parsing &ltcc;
 PASS XHTML1.1+MathML parsing &ltcir;
 PASS XHTML1.1+MathML parsing &lt;
-FAIL XHTML1.1+MathML parsing &LT; assert_true: expected true got false
+PASS XHTML1.1+MathML parsing &LT;
 PASS XHTML1.1+MathML parsing &Lt;
 PASS XHTML1.1+MathML parsing &ltdot;
 PASS XHTML1.1+MathML parsing &lthree;
@@ -1294,7 +1294,7 @@ PASS XHTML1.1+MathML parsing &nvHarr;
 PASS XHTML1.1+MathML parsing &nvinfin;
 PASS XHTML1.1+MathML parsing &nvlArr;
 PASS XHTML1.1+MathML parsing &nvle;
-FAIL XHTML1.1+MathML parsing &nvlt; assert_equals: XHTML1.1+MathML parsing the entity reference caused a parse error; expected 3 but got 1
+PASS XHTML1.1+MathML parsing &nvlt;
 PASS XHTML1.1+MathML parsing &nvltrie;
 PASS XHTML1.1+MathML parsing &nvrArr;
 PASS XHTML1.1+MathML parsing &nvrtrie;

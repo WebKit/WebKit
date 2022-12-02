@@ -251,7 +251,6 @@ class TestBranch(testing.PathTestCase):
             self.assertEqual(issue.description, 'Issue created via command line prompts.')
             self.assertEqual(issue.project, 'WebKit')
             self.assertEqual(issue.component, 'SVG')
-            self.assertEqual(issue.version, 'Safari 15')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -266,12 +265,6 @@ What component in 'WebKit' should the bug be associated with?:
     2) Scrolling
     3) Tables
     4) Text
-: 
-What version of 'WebKit' should the bug be associated with?:
-    1) Other
-    2) Safari 15
-    3) Safari Technology Preview
-    4) WebKit Local Build
 : 
 Created 'https://bugs.example.com/show_bug.cgi?id=4 [Area] New Issue'
 Created the local development branch 'eng/Area-New-Issue'

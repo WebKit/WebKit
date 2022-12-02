@@ -142,7 +142,7 @@ void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
     if (m_state != State::Filtering || decisionPoint != settings().decisionPoint())
         return;
 
-    LOG(ContentFiltering, "MockContentFilter stopped buffering with state %u at decision point %u.\n", m_state, decisionPoint);
+    LOG(ContentFiltering, "MockContentFilter stopped buffering with state %u at decision point %hhu.\n", m_state, decisionPoint);
 
     m_state = settings().decision() == Decision::Allow ? State::Allowed : State::Blocked;
     if (m_state != State::Blocked)

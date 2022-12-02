@@ -1,0 +1,6 @@
+
+
+FAIL Feature-Policy header geolocation : 'none' disallows the top-level document. promise_test: Unhandled rejection with value: object "[object GeolocationPosition]"
+FAIL Feature-Policy header geolocation : 'none' disallows same-origin iframes. assert_false: geolocation expected false got true
+FAIL Feature-Policy header geolocation 'none' disallows cross-origin iframes. assert_false: geolocation expected false got true
+

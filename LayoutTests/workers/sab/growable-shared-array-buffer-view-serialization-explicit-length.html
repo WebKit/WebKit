@@ -1,0 +1,65 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useResizableArrayBuffer=true,--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<title>Growable SharedArrayBuffers typed array should be serializable explicit length</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Growable SharedArrayBuffers typed array should be serializable explicit length");
+window.jsTestIsAsync = true;
+
+var arrayBuffer = new SharedArrayBuffer(36, { maxByteLength: 128 });
+var int32AutoArray = new Int32Array(arrayBuffer, 4, 4);
+
+shouldBeTrue(`arrayBuffer.growable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`int32AutoArray.length`, `4`);
+shouldBe(`int32AutoArray.byteOffset`, `4`);
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(URL.createObjectURL(blob));
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+(async () => {
+    const worker = await createWorker(`
+        self.onmessage = (event) => {
+            let data = event.data;
+            self.postMessage(data);
+        }
+    `);
+
+    const promise = new Promise(resolve => worker.onmessage = event => resolve(event.data));
+    worker.postMessage(int32AutoArray);
+
+    globalThis.result = await promise;
+    shouldBeTrue(`result.buffer.growable`);
+    shouldBe(`result.buffer.byteLength`, `36`);
+    shouldBe(`result.buffer.maxByteLength`, `128`);
+    shouldBe(`result.length`, `4`);
+    shouldBe(`result.byteOffset`, `4`);
+    result[0] = 42;
+    shouldBe(`int32AutoArray[0]`, `42`);
+    arrayBuffer.grow(128);
+    shouldBe(`result.buffer.byteLength`, `128`);
+    shouldBe(`result.buffer.maxByteLength`, `128`);
+    shouldBe(`int32AutoArray.length`, `4`);
+    shouldBe(`int32AutoArray.byteOffset`, `4`);
+    shouldBe(`result.length`, `4`);
+    shouldBe(`result.byteOffset`, `4`);
+    finishJSTest();
+})();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

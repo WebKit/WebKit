@@ -52,7 +52,7 @@ struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
     FontCustomPlatformData(const String& name, FontPlatformData::CreationData&&);
-    ~FontCustomPlatformData();
+    WEBCORE_EXPORT ~FontCustomPlatformData();
 
     FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
@@ -65,7 +65,7 @@ public:
     FontPlatformData::CreationData creationData;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
+WEBCORE_EXPORT std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
 
 }
 

@@ -79,15 +79,21 @@ void ParserArena::allocateFreeablePool()
     ASSERT(freeablePool() == pool);
 }
 
-const Identifier& IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Identifier& identifier, uint8_t radix)
+const Identifier* IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Identifier& identifier, uint8_t radix)
 {
     if (radix == 10)
-        return identifier;
+        return &identifier;
 
     DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSValue bigInt = JSBigInt::parseInt(nullptr, vm, identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, JSBigInt::ParseIntSign::Unsigned);
     scope.assertNoException();
+
+    if (bigInt.isEmpty()) {
+        // Handle out-of-memory or other failures by returning null, since
+        // we don't have a global object to throw exceptions to in this scope.
+        return nullptr;
+    }
 
     // FIXME: We are allocating a JSBigInt just to be able to use
     // JSBigInt::tryGetString when radix is not 10.
@@ -106,7 +112,7 @@ const Identifier& IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Ide
         heapBigInt = bigInt.asHeapBigInt();
 
     m_identifiers.append(Identifier::fromString(vm, JSBigInt::tryGetString(vm, heapBigInt, 10)));
-    return m_identifiers.last();
+    return &m_identifiers.last();
 }
 
 const Identifier& IdentifierArena::makePrivateIdentifier(VM& vm, ASCIILiteral prefix, unsigned identifier)

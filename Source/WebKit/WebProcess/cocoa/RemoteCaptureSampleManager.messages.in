@@ -24,7 +24,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 messages -> RemoteCaptureSampleManager NotRefCounted {
-    AudioStorageChanged(WebCore::RealtimeMediaSourceIdentifier id, WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames, IPC::Semaphore captureSemaphore, MediaTime mediaTime, size_t frameChunkSize);
+    AudioStorageChanged(WebCore::RealtimeMediaSourceIdentifier id, WebKit::ConsumerSharedCARingBuffer::Handle storageHandle, WebCore::CAAudioStreamDescription description, IPC::Semaphore captureSemaphore, MediaTime mediaTime, size_t frameChunkSize);
     VideoFrameAvailable(WebCore::RealtimeMediaSourceIdentifier id, WebKit::RemoteVideoFrameProxy::Properties sample, struct WebCore::VideoFrameTimeMetadata metadata)
     VideoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier id, RetainPtr<CVPixelBufferRef> pixelBuffer, WebCore::VideoFrame::Rotation rotation, bool mirrored, MediaTime presentationTime, struct WebCore::VideoFrameTimeMetadata metadata)
 

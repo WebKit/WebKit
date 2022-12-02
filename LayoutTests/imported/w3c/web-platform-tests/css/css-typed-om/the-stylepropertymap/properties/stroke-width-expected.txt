@@ -1,6 +1,12 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'stroke-width' to CSS-wide keywords
+FAIL Can set 'stroke-width' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'stroke-width' to a length assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+FAIL Can set 'stroke-width' to a percent assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+PASS Setting 'stroke-width' to a time throws TypeError
+PASS Setting 'stroke-width' to an angle throws TypeError
+PASS Setting 'stroke-width' to a flexible length throws TypeError
+FAIL Setting 'stroke-width' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'stroke-width' to a URL throws TypeError
+PASS Setting 'stroke-width' to a transform throws TypeError
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2006, 2007, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -144,7 +144,8 @@ public:
     void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
     void setNeedsSimplifiedNormalFlowLayout(const RenderStyle* oldStyle);
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) = 0;
+    // paintOffset is the offset from the origin of the GraphicsContext at which to paint the current object.
+    virtual void paint(PaintInfo&, const LayoutPoint& paintOffset) = 0;
 
     // inline-block elements paint all phases atomically. This function ensures that. Certain other elements
     // (grid items, flex items) require this behavior as well, and this function exists as a helper for them.
@@ -180,6 +181,9 @@ public:
     bool visibleToHitTesting(std::optional<HitTestRequest> hitTestRequest = std::nullopt) const
     {
         if (style().visibility() != Visibility::Visible)
+            return false;
+
+        if (isSkippedContent())
             return false;
 
         if ((!hitTestRequest || !hitTestRequest->ignoreCSSPointerEventsProperty()) && style().effectivePointerEvents() == PointerEvents::None)
@@ -305,6 +309,8 @@ public:
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return { }; }
     void paintFocusRing(const PaintInfo&, const RenderStyle&, const Vector<LayoutRect>& focusRingRects) const;
 
+    virtual bool establishesIndependentFormattingContext() const;
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -358,7 +364,6 @@ protected:
     bool isVisibleInViewport() const;
 
     bool createsNewFormattingContext() const;
-    virtual bool establishesIndependentFormattingContext() const;
 
     bool shouldApplyLayoutOrPaintContainment(bool) const;
     bool shouldApplySizeOrStyleContainment(bool) const;
@@ -381,7 +386,7 @@ private:
 
     bool shouldRepaintForStyleDifference(StyleDifference) const;
 
-    void updateFillImages(const FillLayer*, const FillLayer&);
+    void updateFillImages(const FillLayer*, const FillLayer*);
     void updateImage(StyleImage*, StyleImage*);
     void updateShapeImage(const ShapeValue*, const ShapeValue*);
 
@@ -520,37 +525,37 @@ inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccord
 
 inline bool RenderElement::shouldApplyLayoutContainment() const
 {
-    return shouldApplyLayoutOrPaintContainment(style().containsLayout());
+    return shouldApplyLayoutOrPaintContainment(style().containsLayout() || style().contentVisibility() != ContentVisibility::Visible);
 }
 
 inline bool RenderElement::shouldApplyPaintContainment() const
 {
-    return shouldApplyLayoutOrPaintContainment(style().containsPaint());
+    return shouldApplyLayoutOrPaintContainment(style().containsPaint() || style().contentVisibility() != ContentVisibility::Visible);
 }
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
 {
-    return shouldApplyLayoutOrPaintContainment(style().containsLayoutOrPaint());
+    return shouldApplyLayoutOrPaintContainment(style().containsLayoutOrPaint() || style().contentVisibility() != ContentVisibility::Visible);
 }
 
 inline bool RenderElement::shouldApplySizeContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsSize());
+    return shouldApplySizeOrStyleContainment(style().containsSize() || style().contentVisibility() == ContentVisibility::Hidden);
 }
 
 inline bool RenderElement::shouldApplyInlineSizeContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsInlineSize());
+    return shouldApplySizeOrStyleContainment(style().containsInlineSize() || style().contentVisibility() == ContentVisibility::Hidden);
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
+    return shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize() || style().contentVisibility() == ContentVisibility::Hidden);
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsStyle());
+    return shouldApplySizeOrStyleContainment(style().containsStyle() || style().contentVisibility() != ContentVisibility::Visible);
 }
 
 inline bool RenderElement::shouldApplyAnyContainment() const

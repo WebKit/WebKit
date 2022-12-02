@@ -187,13 +187,31 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_parameters.size)));
 }
 
-PixelFormat RemoteLayerBackingStore::pixelFormat() const
+bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
 {
 #if HAVE(IOSURFACE_RGB10)
     if (m_parameters.type == Type::IOSurface && m_parameters.deepColor)
-        return m_parameters.isOpaque ? PixelFormat::RGB10 : PixelFormat::RGB10A8;
+        return true;
 #endif
+    return false;
+}
 
+DestinationColorSpace RemoteLayerBackingStore::colorSpace() const
+{
+#if PLATFORM(MAC)
+    if (auto* context = m_layer->context())
+        return context->displayColorSpace().value_or(DestinationColorSpace::SRGB());
+#else
+    if (usesDeepColorBackingStore())
+        return DestinationColorSpace { extendedSRGBColorSpaceRef() };
+#endif
+    return DestinationColorSpace::SRGB();
+}
+
+PixelFormat RemoteLayerBackingStore::pixelFormat() const
+{
+    if (usesDeepColorBackingStore())
+        return m_parameters.isOpaque ? PixelFormat::RGB10 : PixelFormat::RGB10A8;
     return PixelFormat::BGRA8;
 }
 
@@ -360,6 +378,7 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
     if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
         ImageBuffer::CreationContext creationContext;
         creationContext.useCGDisplayListImageCache = m_parameters.useCGDisplayListImageCache;
+        // FIXME: This should use colorSpace(), not hardcode sRGB.
         m_displayListBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_parameters.size, m_parameters.scale, DestinationColorSpace::SRGB(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
     }
 #endif
@@ -552,7 +571,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
                 ASSERT(m_parameters.type == Type::IOSurface);
                 switch (contentsType) {
                 case RemoteLayerBackingStore::LayerContentsType::IOSurface: {
-                    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight), DestinationColorSpace::SRGB());
+                    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
                     contents = surface ? surface->asLayerContents() : nil;
                     break;
                 }

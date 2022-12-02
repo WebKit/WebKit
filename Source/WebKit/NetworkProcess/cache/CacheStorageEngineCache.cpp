@@ -316,7 +316,7 @@ void Cache::retrieveRecords(const RetrieveRecordsOptions& options, RecordsCallba
     if (!records)
         return;
 
-    CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary, { } };
+    CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary };
     for (auto& record : *records) {
         if (DOMCacheEngine::queryCacheMatch(options.request, record.url, record.hasVaryStar, record.varyHeaders, queryOptions))
             retrieveRecord(record, taskCounter.copyRef());
@@ -555,7 +555,7 @@ Storage::Record Cache::encode(const RecordInformation& recordInformation, const 
     encoder << recordInformation.insertionTime;
     encoder << recordInformation.size;
     encoder << record.requestHeadersGuard;
-    record.request.encodeWithoutPlatformData(encoder);
+    encoder << record.request;
     record.options.encodePersistent(encoder);
     encoder << record.referrer;
 
@@ -584,8 +584,9 @@ static std::optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::
     if (!requestHeadersGuard)
         return std::nullopt;
     
-    ResourceRequest request;
-    if (!request.decodeWithoutPlatformData(decoder))
+    std::optional<ResourceRequest> request;
+    decoder >> request;
+    if (!request)
         return std::nullopt;
     
     FetchOptions options;
@@ -618,7 +619,7 @@ static std::optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::
         0,
         0,
         WTFMove(*requestHeadersGuard),
-        WTFMove(request),
+        WTFMove(*request),
         WTFMove(options),
         WTFMove(*referrer),
         WTFMove(*responseHeadersGuard),

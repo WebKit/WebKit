@@ -52,7 +52,7 @@
 - (id)objectAtIndex:(NSUInteger)i
 {
     API::Object* object = _array->at(i);
-    return object ? object->wrapper() : [NSNull null];
+    return object ? (id)object->wrapper() : [NSNull null];
 }
 
 #pragma mark NSCopying protocol implementation

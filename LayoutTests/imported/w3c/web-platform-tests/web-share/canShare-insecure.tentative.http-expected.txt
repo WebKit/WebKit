@@ -1,3 +1,0 @@
-
-FAIL navigator.canShare must be undefined in non-secure context assert_false: navigator has attribute 'canShare'. expected false got true
-

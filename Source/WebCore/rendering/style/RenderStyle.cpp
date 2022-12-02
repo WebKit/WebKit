@@ -49,6 +49,7 @@
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
+#include "StyleTextEdge.h"
 #include "StyleTreeResolver.h"
 #include "WillChangeData.h"
 #include <wtf/MathExtras.h>
@@ -812,6 +813,9 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
         return true;
 
     if (first.scrollSnapType != second.scrollSnapType)
+        return true;
+
+    if (first.containIntrinsicWidth != second.containIntrinsicWidth || first.containIntrinsicHeight != second.containIntrinsicHeight)
         return true;
 
     return false;
@@ -1777,6 +1781,8 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, 
         adjustedRadii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
         roundedRect.includeLogicalEdges(adjustedRadii, isHorizontalWritingMode, includeLogicalLeftEdge, includeLogicalRightEdge);
     }
+    if (!roundedRect.isRenderable())
+        roundedRect.adjustRadii();
     return roundedRect;
 }
 
@@ -2030,7 +2036,7 @@ void RenderStyle::setWordSpacing(Length&& value)
         fontWordSpacing = value.value();
         break;
     case LengthType::Calculated:
-        fontWordSpacing = value.nonNanCalculatedValue(maxValueForCssLength);
+        fontWordSpacing = value.nonNanCalculatedValue(static_cast<float>(maxValueForCssLength));
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -2043,11 +2049,11 @@ void RenderStyle::setWordSpacing(Length&& value)
 
 void RenderStyle::setLetterSpacing(float letterSpacing)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setShouldDisableLigaturesForSpacing(letterSpacing);
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 
     setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
 }
@@ -2068,63 +2074,73 @@ void RenderStyle::setFontSize(float size)
     else
         size = std::min(maximumAllowedFontSize, size);
 
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setSpecifiedSize(size);
     description.setComputedSize(size);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
+}
+
+void RenderStyle::setFontSizeAdjust(std::optional<float> sizeAdjust)
+{
+    auto selector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setFontSizeAdjust(sizeAdjust);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontVariationSettings(FontVariationSettings settings)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setVariationSettings(WTFMove(settings));
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontWeight(FontSelectionValue value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setWeight(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontStretch(FontSelectionValue value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setStretch(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontItalic(std::optional<FontSelectionValue> value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setItalic(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setFontPalette(FontPalette value)
 {
-    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setFontPalette(value);
 
     setFontDescription(WTFMove(description));
-    fontCascade().update(currentFontSelector);
+    fontCascade().update(selector);
 }
 
 LayoutBoxExtent RenderStyle::shadowExtent(const ShadowData* shadow)
@@ -2788,6 +2804,21 @@ bool RenderStyle::hasSnapPosition() const
 {
     const ScrollSnapAlign& alignment = this->scrollSnapAlign();
     return alignment.blockAlign != ScrollSnapAxisAlignType::None || alignment.inlineAlign != ScrollSnapAxisAlignType::None;
+}
+
+TextEdge RenderStyle::textEdge() const
+{
+    return m_rareInheritedData->textEdge;
+}
+
+void RenderStyle::setTextEdge(TextEdge textEdgeValue)
+{
+    SET_VAR(m_rareInheritedData, textEdge, textEdgeValue);
+}
+
+TextEdge RenderStyle::initialTextEdge()
+{
+    return { TextEdgeType::Leading, TextEdgeType::Leading };
 }
 
 bool RenderStyle::hasReferenceFilterOnly() const

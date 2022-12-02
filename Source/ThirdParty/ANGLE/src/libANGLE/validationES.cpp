@@ -1088,56 +1088,78 @@ bool ValidCompressedImageSize(const Context *context,
                               GLsizei height,
                               GLsizei depth)
 {
-    const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalFormat);
-    if (!formatInfo.compressed)
-    {
-        return false;
-    }
-
     if (width < 0 || height < 0)
     {
         return false;
     }
 
-    // Only PVRTC1 requires dimensions to be powers of two
-    if (IsPVRTC1Format(internalFormat))
+    const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalFormat);
+
+    if (!formatInfo.compressed && !formatInfo.paletted)
     {
-        if (!isPow2(width) || !isPow2(height))
+        return false;
+    }
+
+    // A texture format can not be both block-compressed and paletted
+    ASSERT(!(formatInfo.compressed && formatInfo.paletted));
+
+    if (formatInfo.compressed)
+    {
+        // Only PVRTC1 requires dimensions to be powers of two
+        if (IsPVRTC1Format(internalFormat))
+        {
+            if (!isPow2(width) || !isPow2(height))
+            {
+                return false;
+            }
+
+            if (context->getLimitations().squarePvrtc1)
+            {
+                if (width != height)
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (CompressedTextureFormatRequiresExactSize(internalFormat))
+        {
+            // In WebGL compatibility mode and D3D, enforce that the base level implied
+            // by the compressed texture's mip level would conform to the block
+            // size.
+            if (context->isWebGL() ||
+                context->getLimitations().compressedBaseMipLevelMultipleOfFour)
+            {
+                // This check is performed only for BC formats.
+                ASSERT(formatInfo.compressedBlockDepth == 1);
+                if (!ValidCompressedBaseLevel(width, formatInfo.compressedBlockWidth, level) ||
+                    !ValidCompressedBaseLevel(height, formatInfo.compressedBlockHeight, level))
+                {
+                    return false;
+                }
+            }
+            // non-WebGL and non-D3D check is not necessary for the following formats
+            // From EXT_texture_compression_s3tc specification:
+            // If the width or height is not a multiple of four, there will be 4x4 blocks at the
+            // edge of the image that contain "extra" texels that are not part of the image. From
+            // EXT_texture_compression_bptc & EXT_texture_compression_rgtc specification: If an
+            // RGTC/BPTC image has a width or height that is not a multiple of four, the data
+            // corresponding to texels outside the image are irrelevant and undefined.
+        }
+    }
+
+    if (formatInfo.paletted)
+    {
+        // TODO(http://anglebug.com/7688): multi-level paletted images
+        if (level != 0)
         {
             return false;
         }
 
-        if (context->getLimitations().squarePvrtc1)
+        if (!isPow2(width) || !isPow2(height))
         {
-            if (width != height)
-            {
-                return false;
-            }
+            return false;
         }
-    }
-
-    if (CompressedTextureFormatRequiresExactSize(internalFormat))
-    {
-        // In WebGL compatibility mode and D3D, enforce that the base level implied
-        // by the compressed texture's mip level would conform to the block
-        // size.
-        if (context->isWebGL() || context->getLimitations().compressedBaseMipLevelMultipleOfFour)
-        {
-            // This check is performed only for BC formats.
-            ASSERT(formatInfo.compressedBlockDepth == 1);
-            if (!ValidCompressedBaseLevel(width, formatInfo.compressedBlockWidth, level) ||
-                !ValidCompressedBaseLevel(height, formatInfo.compressedBlockHeight, level))
-            {
-                return false;
-            }
-        }
-        // non-WebGL and non-D3D check is not necessary for the following formats
-        // From EXT_texture_compression_s3tc specification:
-        // If the width or height is not a multiple of four, there will be 4x4 blocks at the edge of
-        // the image that contain "extra" texels that are not part of the image. From
-        // EXT_texture_compression_bptc & EXT_texture_compression_rgtc specification: If an
-        // RGTC/BPTC image has a width or height that is not a multiple of four, the data
-        // corresponding to texels outside the image are irrelevant and undefined.
     }
 
     return true;
@@ -4921,17 +4943,16 @@ bool ValidatePushGroupMarkerEXT(const Context *context,
 bool ValidateEGLImageObject(const Context *context,
                             angle::EntryPoint entryPoint,
                             TextureType type,
-                            GLeglImageOES image)
+                            egl::ImageID imageID)
 {
-    egl::Image *imageObject = static_cast<egl::Image *>(image);
-
     ASSERT(context->getDisplay());
-    if (!context->getDisplay()->isValidImage(imageObject))
+    if (!context->getDisplay()->isValidImage(imageID))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidEGLImage);
         return false;
     }
 
+    egl::Image *imageObject = context->getDisplay()->getImage(imageID);
     if (imageObject->getSamples() > 0)
     {
         context->validationError(entryPoint, GL_INVALID_OPERATION,
@@ -4995,7 +5016,7 @@ bool ValidateEGLImageObject(const Context *context,
 bool ValidateEGLImageTargetTexture2DOES(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         TextureType type,
-                                        GLeglImageOES image)
+                                        egl::ImageID image)
 {
     if (!context->getExtensions().EGLImageOES && !context->getExtensions().EGLImageExternalOES)
     {
@@ -5040,7 +5061,7 @@ bool ValidateEGLImageTargetTexture2DOES(const Context *context,
 bool ValidateEGLImageTargetRenderbufferStorageOES(const Context *context,
                                                   angle::EntryPoint entryPoint,
                                                   GLenum target,
-                                                  GLeglImageOES image)
+                                                  egl::ImageID image)
 {
     if (!context->getExtensions().EGLImageOES)
     {
@@ -5058,15 +5079,14 @@ bool ValidateEGLImageTargetRenderbufferStorageOES(const Context *context,
             return false;
     }
 
-    egl::Image *imageObject = static_cast<egl::Image *>(image);
-
     ASSERT(context->getDisplay());
-    if (!context->getDisplay()->isValidImage(imageObject))
+    if (!context->getDisplay()->isValidImage(image))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidEGLImage);
         return false;
     }
 
+    egl::Image *imageObject = context->getDisplay()->getImage(image);
     if (!imageObject->isRenderable(context))
     {
         context->validationError(entryPoint, GL_INVALID_OPERATION,

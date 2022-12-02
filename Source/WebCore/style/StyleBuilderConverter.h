@@ -30,13 +30,12 @@
 #include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
-#include "CSSFontStyleValue.h"
+#include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
-#include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSOffsetRotateValue.h"
@@ -63,6 +62,7 @@
 #include "StyleBuilderState.h"
 #include "StyleGridData.h"
 #include "StyleScrollSnapPoints.h"
+#include "StyleTextEdge.h"
 #include "TabSize.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
@@ -116,6 +116,7 @@ public:
     static TextUnderlineOffset convertTextUnderlineOffset(BuilderState&, const CSSValue&);
     static TextDecorationThickness convertTextDecorationThickness(BuilderState&, const CSSValue&);
     static RefPtr<StyleReflection> convertReflection(BuilderState&, const CSSValue&);
+    static TextEdge convertTextEdge(BuilderState&, const CSSValue&);
     static IntSize convertInitialLetter(BuilderState&, const CSSValue&);
     static float convertTextStrokeWidth(BuilderState&, const CSSValue&);
     static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
@@ -145,11 +146,11 @@ public:
     static bool convertSmoothScrolling(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
     static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
+    static FontSelectionValue convertFontStyleAngle(const CSSValue&);
     static std::optional<FontSelectionValue> convertFontStyleFromValue(const CSSValue&);
     static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStretch(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
-    static FontVariantCaps convertFontVariantCaps(BuilderState&, const CSSValue&);
     static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
     static SVGLengthValue convertSVGLengthValue(BuilderState&, const CSSValue&);
     static Vector<SVGLengthValue> convertSVGLengthVector(BuilderState&, const CSSValue&);
@@ -792,13 +793,11 @@ inline RefPtr<QuotesData> BuilderConverter::convertQuotes(BuilderState&, const C
 
 inline TextUnderlinePosition BuilderConverter::convertTextUnderlinePosition(BuilderState&, const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     return downcast<CSSPrimitiveValue>(value);
 }
 
 inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderState& builderState, const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
     case CSSValueAuto:
@@ -812,7 +811,6 @@ inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderS
 
 inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(BuilderState& builderState, const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
     case CSSValueAuto:
@@ -844,6 +842,59 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     reflection->setMask(mask);
 
     return reflection;
+}
+
+inline TextEdge BuilderConverter::convertTextEdge(BuilderState&, const CSSValue& value)
+{
+    auto& values = downcast<CSSValueList>(value);
+    auto& firstValue = downcast<CSSPrimitiveValue>(*values.item(0));
+
+    auto overValue = [&] {
+        switch (firstValue.valueID()) {
+        case CSSValueLeading:
+            return TextEdgeType::Leading;
+        case CSSValueText:
+            return TextEdgeType::Text;
+        case CSSValueCap:
+            return TextEdgeType::CapHeight;
+        case CSSValueEx:
+            return TextEdgeType::ExHeight;
+        case CSSValueIdeographic:
+            return TextEdgeType::CJKIdeographic;
+        case CSSValueIdeographicInk:
+            return TextEdgeType::CJKIdeographicInk;
+        default:
+            ASSERT_NOT_REACHED();
+            return TextEdgeType::Leading;
+        }
+    };
+
+    auto underValue = [&] {
+        if (firstValue.valueID() == CSSValueLeading)
+            return TextEdgeType::Leading;
+        if (values.length() == 1) {
+            // https://www.w3.org/TR/css-inline-3/#text-edges
+            // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
+            // FIXME: Figure out what "if possible" means here.
+            return TextEdgeType::Text;
+        }
+
+        auto& secondValue = downcast<CSSPrimitiveValue>(*values.item(1));
+        switch (secondValue.valueID()) {
+        case CSSValueText:
+            return TextEdgeType::Text;
+        case CSSValueAlphabetic:
+            return TextEdgeType::Alphabetic;
+        case CSSValueIdeographic:
+            return TextEdgeType::CJKIdeographic;
+        case CSSValueIdeographicInk:
+            return TextEdgeType::CJKIdeographicInk;
+        default:
+            ASSERT_NOT_REACHED();
+            return TextEdgeType::Leading;
+        }
+    };
+    return { overValue(), underValue() };
 }
 
 inline IntSize BuilderConverter::convertInitialLetter(BuilderState&, const CSSValue& value)
@@ -901,11 +952,6 @@ inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(Builder
     return downcast<CSSLineBoxContainValue>(value).value();
 }
 
-static inline bool isImageShape(const CSSValue& value)
-{
-    return is<CSSImageValue>(value) || is<CSSImageSetValue>(value) || is<CSSImageGeneratorValue>(value);
-}
-
 inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
@@ -913,7 +959,7 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
         return nullptr;
     }
 
-    if (isImageShape(value))
+    if (value.isImage())
         return ShapeValue::create(builderState.createStyleImage(value).releaseNonNull());
 
     RefPtr<BasicShape> shape;
@@ -974,7 +1020,6 @@ inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState&, c
 
 inline ScrollSnapStop BuilderConverter::convertScrollSnapStop(BuilderState&, const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     return downcast<CSSPrimitiveValue>(value);
 }
 
@@ -998,7 +1043,6 @@ inline GridTrackSize BuilderConverter::createGridTrackSize(const CSSValue& value
     if (is<CSSPrimitiveValue>(value))
         return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(value), builderState));
 
-    ASSERT(is<CSSFunctionValue>(value));
     const auto& function = downcast<CSSFunctionValue>(value);
 
     if (function.length() == 1)
@@ -1012,9 +1056,15 @@ inline GridTrackSize BuilderConverter::createGridTrackSize(const CSSValue& value
 
 inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTrackList& trackList, BuilderState& builderState)
 {
-    // Handle 'none'.
-    if (is<CSSPrimitiveValue>(value))
-        return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone;
+    // Handle 'none' or 'masonry'.
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueMasonry) {
+
+            trackList.append(GridTrackEntryMasonry());
+            return true;
+        }
+        return primitiveValue->valueID() == CSSValueNone;
+    }
 
     if (!is<CSSValueList>(value))
         return false;
@@ -1298,7 +1348,7 @@ inline std::optional<FilterOperations> BuilderConverter::convertFilterOperations
 inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID()));
         return { };
     }
 
@@ -1312,7 +1362,6 @@ inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderS
 
 inline FontSelectionValue BuilderConverter::convertFontWeightFromValue(const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.isNumber())
@@ -1335,7 +1384,6 @@ inline FontSelectionValue BuilderConverter::convertFontWeightFromValue(const CSS
 
 inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.isPercentage())
@@ -1344,30 +1392,30 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
     ASSERT(primitiveValue.isValueID());
     if (auto value = fontStretchValue(primitiveValue.valueID()))
         return value.value();
-    ASSERT_NOT_REACHED();
+    ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
     return normalStretchValue();
+}
+
+inline FontSelectionValue BuilderConverter::convertFontStyleAngle(const CSSValue& value)
+{
+    return FontSelectionValue { std::clamp(downcast<CSSPrimitiveValue>(value).value<float>(CSSUnitType::CSS_DEG), -90.0f, 90.0f) };
 }
 
 // The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
 inline std::optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(const CSSValue& value)
 {
-    ASSERT(is<CSSFontStyleValue>(value));
-    const auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
+    if (auto* fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value))
+        return convertFontStyleAngle(fontStyleValue->obliqueAngle());
 
-    auto valueID = fontStyleValue.fontStyleValue->valueID();
+    auto valueID = downcast<CSSPrimitiveValue>(value).valueID();
     if (valueID == CSSValueNormal)
         return std::nullopt;
-    if (valueID == CSSValueItalic)
-        return italicValue();
-    ASSERT(valueID == CSSValueOblique);
-    if (auto* obliqueValue = fontStyleValue.obliqueValue.get())
-        return FontSelectionValue(obliqueValue->value<float>(CSSUnitType::CSS_DEG));
+    ASSERT(valueID == CSSValueItalic || valueID == CSSValueOblique);
     return italicValue();
 }
 
 inline FontSelectionValue BuilderConverter::convertFontWeight(BuilderState& builderState, const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isValueID()) {
         auto valueID = primitiveValue.valueID();
@@ -1381,16 +1429,6 @@ inline FontSelectionValue BuilderConverter::convertFontWeight(BuilderState& buil
     return convertFontWeightFromValue(value);
 }
 
-inline FontVariantCaps BuilderConverter::convertFontVariantCaps(BuilderState&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    auto valueID = primitiveValue.valueID();
-    if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
-        return FontVariantCaps::Normal;
-
-    return static_cast<FontVariantCaps>(primitiveValue);
-}
-
 inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, const CSSValue& value)
 {
     return convertFontStretchFromValue(value);
@@ -1399,7 +1437,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, co
 inline FontVariationSettings BuilderConverter::convertFontVariationSettings(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID()));
         return { };
     }
 
@@ -1589,9 +1627,15 @@ inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& b
     if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
         return RenderStyle::initialLineHeight();
 
-    if (primitiveValue.isLength()) {
+    if (primitiveValue.isLength() || primitiveValue.isCalculatedPercentageWithLength()) {
         auto conversionData = builderState.cssToLengthConversionData().copyForLineHeight(zoomWithTextZoomFactor(builderState));
-        Length length = primitiveValue.computeLength<Length>(conversionData);
+        Length length;
+        if (primitiveValue.isLength())
+            length = primitiveValue.computeLength<Length>(conversionData);
+        else {
+            auto value = primitiveValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(builderState.style().computedFontSize());
+            length = { clampTo<float>(value, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed };
+        }
         if (multiplier != 1.f)
             length = Length(length.value() * multiplier, LengthType::Fixed);
         return length;
@@ -1617,11 +1661,8 @@ inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& b
 
 inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSSValue& value)
 {
-    ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
-    case CSSValueNormal:
-        return { FontPalette::Type::Normal, nullAtom() };
     case CSSValueLight:
         return { FontPalette::Type::Light, nullAtom() };
     case CSSValueDark:
@@ -1630,7 +1671,7 @@ inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSS
         ASSERT(primitiveValue.isCustomIdent());
         return { FontPalette::Type::Custom, AtomString { primitiveValue.stringValue() } };
     default:
-        ASSERT_NOT_REACHED();
+        ASSERT(primitiveValue.valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
         return { FontPalette::Type::Normal, nullAtom() };
     }
 }

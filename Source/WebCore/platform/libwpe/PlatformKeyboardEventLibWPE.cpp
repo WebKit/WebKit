@@ -777,9 +777,11 @@ String PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(unsigned keyCode)
     case WPE_KEY_Clear:
         return "Clear"_s;
     case WPE_KEY_Down:
+    case WPE_KEY_KP_Down:
         return "Down"_s;
         // "End"
     case WPE_KEY_End:
+    case WPE_KEY_KP_End:
         return "End"_s;
         // "Enter"
     case WPE_KEY_ISO_Enter:
@@ -839,14 +841,18 @@ String PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(unsigned keyCode)
     case WPE_KEY_Help:
         return "Help"_s;
     case WPE_KEY_Home:
+    case WPE_KEY_KP_Home:
         return "Home"_s;
     case WPE_KEY_Insert:
         return "Insert"_s;
     case WPE_KEY_Left:
+    case WPE_KEY_KP_Left:
         return "Left"_s;
     case WPE_KEY_Page_Down:
+    case WPE_KEY_KP_Page_Down:
         return "PageDown"_s;
     case WPE_KEY_Page_Up:
+    case WPE_KEY_KP_Page_Up:
         return "PageUp"_s;
     case WPE_KEY_Pause:
         return "Pause"_s;
@@ -854,10 +860,12 @@ String PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(unsigned keyCode)
     case WPE_KEY_Print:
         return "PrintScreen"_s;
     case WPE_KEY_Right:
+    case WPE_KEY_KP_Right:
         return "Right"_s;
     case WPE_KEY_Select:
         return "Select"_s;
     case WPE_KEY_Up:
+    case WPE_KEY_KP_Up:
         return "Up"_s;
         // Standard says that DEL becomes U+007F.
     case WPE_KEY_Delete:
@@ -1332,13 +1340,9 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCo
     }
 }
 
-bool PlatformKeyboardEvent::currentCapsLockState()
+OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
-    return false;
-}
-
-void PlatformKeyboardEvent::getCurrentModifierState(bool&, bool&, bool&, bool&)
-{
+    return { }; // FIXME: Implement.
 }
 
 } // namespace WebCore

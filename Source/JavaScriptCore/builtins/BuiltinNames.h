@@ -129,6 +129,7 @@ namespace JSC {
     macro(derivedConstructor) \
     macro(isTypedArrayView) \
     macro(isSharedTypedArrayView) \
+    macro(isResizableOrGrowableSharedTypedArrayView) \
     macro(isDetached) \
     macro(typedArrayDefaultComparator) \
     macro(typedArrayFromFast) \

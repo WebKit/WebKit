@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "KeyboardScroll.h"
 #include "RectEdges.h"
 #include "ScrollAlignment.h"
 #include "ScrollSnapOffsetsInfo.h"
@@ -68,12 +69,15 @@ public:
     virtual bool isRenderLayer() const { return false; }
     virtual bool isListBox() const { return false; }
 
+    WEBCORE_EXPORT void beginKeyboardScroll(const KeyboardScroll& scrollData);
+    WEBCORE_EXPORT void endKeyboardScroll(bool);
+
     WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1);
     WEBCORE_EXPORT void scrollToPositionWithAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     WEBCORE_EXPORT void scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
-    void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
+    WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
 
     // Should be called when the scroll position changes externally, for example if the scroll layer position
     // is updated on the scrolling thread and we need to notify the main thread.
@@ -85,6 +89,9 @@ public:
     virtual bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) { return false; }
     virtual bool requestAnimatedScrollToPosition(const ScrollPosition&, ScrollClamping = ScrollClamping::Clamped) { return false; }
     virtual void stopAsyncAnimatedScroll() { }
+
+    virtual bool requestStartKeyboardScrollAnimation(const KeyboardScroll&) { return false; }
+    virtual bool requestStopKeyboardScrollAnimation(bool) { return false; }
 
     WEBCORE_EXPORT virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>);
 
@@ -241,8 +248,8 @@ public:
     bool scrollOriginChanged() const { return m_scrollOriginChanged; }
 
     virtual ScrollPosition scrollPosition() const = 0;
-    virtual ScrollPosition minimumScrollPosition() const;
-    virtual ScrollPosition maximumScrollPosition() const;
+    WEBCORE_EXPORT virtual ScrollPosition minimumScrollPosition() const;
+    WEBCORE_EXPORT virtual ScrollPosition maximumScrollPosition() const;
 
     ScrollPosition constrainedScrollPosition(const ScrollPosition& position) const
     {

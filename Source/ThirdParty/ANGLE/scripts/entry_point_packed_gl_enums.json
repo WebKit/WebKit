@@ -387,8 +387,18 @@
     "glDrawTransformFeedbackStreamInstanced": {
         "id": "TransformFeedbackID"
     },
+    "glEGLImageTargetRenderbufferStorage": {
+        "image": "egl::ImageID"
+    },
     "glEGLImageTargetTexture2D": {
-        "target": "TextureType"
+        "target": "TextureType",
+        "image": "egl::ImageID"
+    },
+    "glEGLImageTargetTexStorage": {
+        "image": "egl::ImageID"
+    },
+    "glEGLImageTargetTextureStorage": {
+        "image": "egl::ImageID"
     },
     "glEnableClientState": {
         "array": "ClientVertexArrayType"

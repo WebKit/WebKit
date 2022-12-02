@@ -78,7 +78,6 @@ webkit.org/b/140798 accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-group-members.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-title-label.html [ Failure ]
 webkit.org/b/140798 accessibility/secure-textfield-title-ui.html [ Failure ]
-webkit.org/b/140798 accessibility/select-element-at-index.html [ Failure ]
 webkit.org/b/140798 accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/140798 accessibility/svg-group-element-with-title.html [ Failure ]
 webkit.org/b/140798 accessibility/tabindex-elements-are-accessible.html [ Failure ]
@@ -104,7 +103,6 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-false-works-in-subtrees.
 webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-slider-value.html [ Skip ] # Timeout
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
-webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
 webkit.org/b/140832 accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
@@ -294,7 +292,6 @@ http/tests/resourceLoadStatistics [ Skip ]
 
 webkit.org/b/220579 fast/events/currentTarget-gc-crash.html [ Skip ]
 
-fast/css/sticky/sticky-in-rtl-overflow.html [ ImageOnlyFailure ]
 http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
 
 [ Release ] http/tests/misc/redirect-to-external-url.html [ Failure ]
@@ -361,11 +358,6 @@ http/tests/workers/service/self_registration_update.html [ Timeout ]
 http/tests/workers/service/service-worker-registration-gc-event.html [ Timeout ]
 js/weakref-finalizationregistry.html [ Timeout ]
 
-animations/additive-transform-animations.html [ ImageOnlyFailure ]
-animations/needs-layout.html [ ImageOnlyFailure ]
-animations/z-index-in-keyframe.html [ ImageOnlyFailure ]
-css3/masking/clip-path-filter.html [ ImageOnlyFailure ]
-
 editing/execCommand/enabling-and-selection-2.html [ Failure ]
 editing/selection/5354455-1.html [ Failure ]
 editing/selection/context-menu-on-text.html [ Failure ]
@@ -389,9 +381,6 @@ fast/events/event-handler-detached-document.html [ Failure ]
 fast/events/mouse-cursor-image-set.html [ Failure ]
 fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
-fast/gradients/conic-gradient-extended-stops.html [ ImageOnlyFailure ]
-fast/gradients/conic-gradient.html [ ImageOnlyFailure ]
-fast/gradients/conic-repeating-last-stop.html [ ImageOnlyFailure ]
 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
@@ -503,8 +492,6 @@ fast/text/whitespace/pre-wrap-spaces-after-newline.html [ Failure ]
 
 webkit.org/b/240820 editing/pasteboard/files-during-page-drags.html [ Skip ] # Crash Pass
 
-animations/3d/full-rotation-animation.html [ ImageOnlyFailure ]
-
 http/tests/websocket/tests/hybi/inspector [ Skip ] # Timeout
 
 webkit.org/b/151506 fast/events/beforeunload-showModalDialog.html [ Skip ]
@@ -525,10 +512,43 @@ js/dom/global-function-resolve.html [ Skip ]
 # DRT doesn't support testRunner.loadedSubresourceDomains
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
-# Skip Compression Stream Tests on WK1
-imported/w3c/web-platform-tests/compression [ Skip ]
-
 fast/dom/HTMLLinkElement/link-preload-load-once.html [ Failure ]
 
 webgl/webgl-draft-extensions-flag-default.html [ Failure ]
 webgl/webgl-draft-extensions-flag-on.html [ Failure ]
+
+compositing/tiling/crash-huge-layer.html [ Skip ] # Timeout
+compositing/tiling/huge-layer-with-opacity.html [ Skip ] # Timeout
+compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
+compositing/repaint/become-overlay-composited-layer.html [ Failure ]
+
+compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ Pass ]
+compositing/clipping/cached-cliprect-with-compositing-boundary.html [ Pass ]
+compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ Pass ]
+compositing/transforms/perspective-with-scrolling.html [ Pass ]
+
+compositing/iframes/display-none-subframe.html [ Pass Failure ]
+
+css3/filters/reference-filter-change-repaint.html [ Failure ]
+css3/filters/should-not-have-compositing-layer.html [ Failure ]
+css3/filters/reference-filter-outsets.html [ ImageOnlyFailure ]
+css3/filters/reference-filter-set-filter-regions.html [ ImageOnlyFailure ]
+
+[ Debug ] webgl/2.0.0/conformance/textures/canvas [ Pass Timeout ]
+[ Debug ] webgl/2.0.0/conformance/textures/webgl_canvas [ Pass Timeout ]
+[ Debug ] webgl/2.0.0/conformance2/textures/canvas [ Pass Timeout ]
+[ Debug ] webgl/2.0.0/conformance2/textures/webgl_canvas [ Pass Timeout ]
+[ Debug ] webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Pass Timeout ]
+
+editing/execCommand/insert-list-nested-with-orphaned-live-range.html [ Failure ]
+
+fast/dom/Window/window-appendages-cleared.html [ Failure ]
+fast/dom/null-page-show-modal-dialog-crash.html [ Failure ]
+fast/dom/tab-in-right-alignment.html [ Failure ]
+fast/dom/wrapper-identity.html [ Failure ]
+fast/text/international/text-combine-image-test.html [ Failure ]
+http/tests/clear-site-data/bfcache.html [ Failure ]
+http/tests/misc/policy-delegate-called-twice.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Failure ]
+
+css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]

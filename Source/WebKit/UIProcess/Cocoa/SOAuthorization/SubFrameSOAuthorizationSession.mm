@@ -47,13 +47,13 @@ const char* soAuthorizationPostDidCancelMessageToParent = "<script>parent.postMe
 
 } // namespace
 
-Ref<SOAuthorizationSession> SubFrameSOAuthorizationSession::create(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, FrameIdentifier frameID)
+Ref<SOAuthorizationSession> SubFrameSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, FrameIdentifier frameID)
 {
-    return adoptRef(*new SubFrameSOAuthorizationSession(WTFMove(navigationAction), page, WTFMove(completionHandler), frameID));
+    return adoptRef(*new SubFrameSOAuthorizationSession(delegate, WTFMove(navigationAction), page, WTFMove(completionHandler), frameID));
 }
 
-SubFrameSOAuthorizationSession::SubFrameSOAuthorizationSession(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, FrameIdentifier frameID)
-    : NavigationSOAuthorizationSession(WTFMove(navigationAction), page, InitiatingAction::SubFrame, WTFMove(completionHandler))
+SubFrameSOAuthorizationSession::SubFrameSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, FrameIdentifier frameID)
+    : NavigationSOAuthorizationSession(delegate, WTFMove(navigationAction), page, InitiatingAction::SubFrame, WTFMove(completionHandler))
     , m_frameID(frameID)
 {
     if (auto* frame = WebFrameProxy::webFrame(m_frameID))

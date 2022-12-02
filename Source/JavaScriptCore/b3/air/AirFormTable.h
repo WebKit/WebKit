@@ -32,16 +32,31 @@
 namespace JSC { namespace B3 { namespace Air {
 
 static constexpr uint8_t formRoleShift = 0;
-static constexpr uint8_t formRoleMask = 15;
+static constexpr uint8_t formRoleMask = 0b1111;
 static constexpr uint8_t formBankShift = 4;
-static constexpr uint8_t formBankMask = 1;
+static constexpr uint8_t formBankMask = 0b01;
 static constexpr uint8_t formWidthShift = 5;
-static constexpr uint8_t formWidthMask = 3;
-static constexpr uint8_t formInvalidShift = 7;
+static constexpr uint8_t formWidthMask = 0b111;
 
-#define ENCODE_INST_FORM(role, bank, width) (static_cast<uint8_t>(role) << formRoleShift | static_cast<uint8_t>(bank) << formBankShift | static_cast<uint8_t>(width) << formWidthShift)
+inline constexpr uint8_t encodeFormWidth(Width width)
+{
+    switch (width) {
+    case Width8:
+        return 0b001; // 0 is invalid
+    case Width16:
+        return 0b010;
+    case Width32:
+        return 0b011;
+    case Width64:
+        return 0b100;
+    case Width128:
+        return 0b101;
+    }
+}
 
-#define INVALID_INST_FORM (1 << formInvalidShift)
+#define ENCODE_INST_FORM(role, bank, width) (static_cast<uint8_t>(role) << formRoleShift | static_cast<uint8_t>(bank) << formBankShift | encodeFormWidth(width) << formWidthShift)
+
+#define INVALID_INST_FORM (0)
 
 JS_EXPORT_PRIVATE extern const uint8_t g_formTable[];
 
@@ -57,7 +72,21 @@ inline Bank decodeFormBank(uint8_t value)
 
 inline Width decodeFormWidth(uint8_t value)
 {
-    return static_cast<Width>((value >> formWidthShift) & formWidthMask);
+    switch ((value >> formWidthShift) & formWidthMask) {
+    case 0b001:
+        return Width8;
+    case 0b010:
+        return Width16;
+    case 0b011:
+        return Width32;
+    case 0b100:
+        return Width64;
+    case 0b101:
+        return Width128;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Width64;
+    }
 }
 
 } } } // namespace JSC::B3::Air

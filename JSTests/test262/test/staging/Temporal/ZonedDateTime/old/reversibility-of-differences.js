@@ -7,8 +7,8 @@ description: Reversibility of differences
 features: [Temporal]
 ---*/
 
-var earlier = Temporal.ZonedDateTime.from("1976-11-18T15:23:30.123456789-03:00[America/Santiago]");
-var later = Temporal.ZonedDateTime.from("2019-10-29T10:46:38.271986102-03:00[America/Santiago]");
+var earlier = Temporal.ZonedDateTime.from("1976-11-18T15:23:30.123456789-03:00[-03:00]");
+var later = Temporal.ZonedDateTime.from("2019-10-29T10:46:38.271986102-03:00[-03:00]");
 [
   "hours",
   "minutes",

@@ -14,9 +14,14 @@ features: [Temporal]
 
 const actual = [];
 const expected = [
+  // CopyDataProperties
   "ownKeys options",
+  "getOwnPropertyDescriptor options.extra",
   "get options.extra",
+  // Temporal.Calendar.prototype.dateAdd
   "get options.overflow",
+  // overwriting property in custom calendar dateAdd
+  "getOwnPropertyDescriptor options.overflow",
 ];
 const options = TemporalHelpers.propertyBagObserver(actual, { extra: 5 }, "options");
 

@@ -44,6 +44,7 @@ public:
     static StyleSheetContents* svgStyleSheet;
     static StyleSheetContents* mathMLStyleSheet;
     static StyleSheetContents* mediaControlsStyleSheet;
+    static StyleSheetContents* horizontalFormControlsStyleSheet;
     static StyleSheetContents* fullscreenStyleSheet;
     static StyleSheetContents* plugInsStyleSheet;
 #if ENABLE(SERVICE_CONTROLS)

@@ -26,18 +26,93 @@
 #include "config.h"
 #include "CSSHSL.h"
 
+#include "Exception.h"
+#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSHSL);
 
-CSSHSL::CSSHSL(CSSColorAngle hue, CSSColorPercent saturation, CSSColorPercent lightness, CSSColorPercent alpha)
+ExceptionOr<Ref<CSSHSL>> CSSHSL::create(CSSColorAngle&& hue, CSSColorPercent&& saturation, CSSColorPercent&& lightness, CSSColorPercent&& alpha)
+{
+    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    if (rectifiedHue.hasException())
+        return rectifiedHue.releaseException();
+    auto rectifiedSaturation = rectifyCSSColorPercent(WTFMove(saturation));
+    if (rectifiedSaturation.hasException())
+        return rectifiedSaturation.releaseException();
+    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+    return adoptRef(*new CSSHSL(rectifiedHue.releaseReturnValue(), rectifiedSaturation.releaseReturnValue(), rectifiedLightness.releaseReturnValue(), rectifiedAlpha.releaseReturnValue()));
+}
+
+CSSHSL::CSSHSL(RectifiedCSSColorAngle&& hue, RectifiedCSSColorPercent&& saturation, RectifiedCSSColorPercent&& lightness, RectifiedCSSColorPercent&& alpha)
     : m_hue(WTFMove(hue))
     , m_saturation(WTFMove(saturation))
     , m_lightness(WTFMove(lightness))
     , m_alpha(WTFMove(alpha))
 {
+}
+
+CSSColorAngle CSSHSL::h() const
+{
+    return toCSSColorAngle(m_hue);
+}
+
+ExceptionOr<void> CSSHSL::setH(CSSColorAngle&& hue)
+{
+    auto rectifiedHue = rectifyCSSColorAngle(WTFMove(hue));
+    if (rectifiedHue.hasException())
+        return rectifiedHue.releaseException();
+    m_hue = rectifiedHue.releaseReturnValue();
+    return { };
+}
+
+CSSColorPercent CSSHSL::s() const
+{
+    return toCSSColorPercent(m_saturation);
+}
+
+ExceptionOr<void> CSSHSL::setS(CSSColorPercent&& saturation)
+{
+    auto rectifiedSaturation = rectifyCSSColorPercent(WTFMove(saturation));
+    if (rectifiedSaturation.hasException())
+        return rectifiedSaturation.releaseException();
+    m_saturation = rectifiedSaturation.releaseReturnValue();
+    return { };
+}
+
+CSSColorPercent CSSHSL::l() const
+{
+    return toCSSColorPercent(m_lightness);
+}
+
+ExceptionOr<void> CSSHSL::setL(CSSColorPercent&& lightness)
+{
+    auto rectifiedLightness = rectifyCSSColorPercent(WTFMove(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    m_lightness = rectifiedLightness.releaseReturnValue();
+    return { };
+}
+
+CSSColorPercent CSSHSL::alpha() const
+{
+    return toCSSColorPercent(m_alpha);
+}
+
+ExceptionOr<void> CSSHSL::setAlpha(CSSColorPercent&& alpha)
+{
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTFMove(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+    m_alpha = rectifiedAlpha.releaseReturnValue();
+    return { };
 }
 
 } // namespace WebCore

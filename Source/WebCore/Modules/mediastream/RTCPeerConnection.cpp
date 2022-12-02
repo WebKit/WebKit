@@ -66,11 +66,14 @@
 #include "RTCSessionDescription.h"
 #include "RTCSessionDescriptionInit.h"
 #include "Settings.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
+
+#if USE(LIBWEBRTC)
+#include "LibWebRTCProvider.h"
+#endif
 
 namespace WebCore {
 
@@ -109,7 +112,7 @@ RTCPeerConnection::RTCPeerConnection(Document& document)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
-    , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
+    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif
     , m_backend(PeerConnectionBackend::create(*this))
 {

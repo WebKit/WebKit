@@ -1,0 +1,8 @@
+
+PASS Initially no queries match.
+FAIL Target child assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Target grandchild assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Initially no queries for registered property match.
+FAIL Registered property query child assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Registered property query grandchild assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

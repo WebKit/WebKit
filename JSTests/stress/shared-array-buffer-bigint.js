@@ -22,6 +22,8 @@ function shouldSucceed(f)
 for (bad of [bu64a]) {
     shouldFail(() => Atomics.notify(bad, 0, 0n), TypeError);
     shouldFail(() => Atomics.wait(bad, 0, 0n), TypeError);
+    shouldFail(() => Atomics.waitAsync(bad, 0, 0n), TypeError);
+    shouldFail(() => waiterListSize(bad, 0), TypeError);
 }
 
 for (idx of [-1, -1000000000000, 10000, 10000000000000]) {
@@ -38,6 +40,8 @@ for (idx of [-1, -1000000000000, 10000, 10000000000000]) {
     }
     shouldFail(() => Atomics.notify(bi64a, idx, 0n), RangeError);
     shouldFail(() => Atomics.wait(bi64a, idx, 0n), RangeError);
+    shouldFail(() => Atomics.waitAsync(bi64a, idx, 0n), RangeError);
+    shouldFail(() => waiterListSize(bi64a, idx), RangeError);
 }
 
 for (idx of ["hello"]) {
@@ -54,6 +58,7 @@ for (idx of ["hello"]) {
     }
     shouldSucceed(() => Atomics.notify(bi64a, idx, 0));
     shouldSucceed(() => Atomics.wait(bi64a, idx, 0n, 1));
+    shouldSucceed(() => Atomics.waitAsync(bi64a, idx, 0n, 1));
 }
 
 function runAtomic(array, index, init, name, args, expectedResult, expectedOutcome)
@@ -83,8 +88,17 @@ bi64a[0] = 0n;
 var result = Atomics.wait(bi64a, 0, 1n);
 if (result != "not-equal")
     throw "Error: bad result from Atomics.wait: " + result;
+
+var result = Atomics.waitAsync(bi64a, 0, 1n);
+if (result.value != "not-equal")
+    throw "Error: bad result from Atomics.waitAsync: " + result;
+
 for (timeout of [0, 1, 10]) {
     var result = Atomics.wait(bi64a, 0, 0n, timeout);
     if (result != "timed-out")
         throw "Error: bad result from Atomics.wait: " + result;
 }
+
+var result = Atomics.waitAsync(bi64a, 0, 0n, 0);
+if (result.value != "timed-out")
+    throw "Error: bad result from Atomics.waitAsync: " + result;

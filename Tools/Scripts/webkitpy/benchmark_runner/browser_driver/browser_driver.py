@@ -48,6 +48,10 @@ class BrowserDriver(object):
     def prevent_sleep(self, timeout):
         yield
 
+    @contextmanager
+    def profile(self, timeout):
+        yield
+
     @property
     def webdriver_binary_path(self):
         return get_driver_binary_path(self.browser_name)

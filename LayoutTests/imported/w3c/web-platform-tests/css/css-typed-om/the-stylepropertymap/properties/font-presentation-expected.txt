@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'font-presentation' to CSS-wide keywords Invalid property font-presentation
+FAIL Can set 'font-presentation' to var() references Invalid property font-presentation
+FAIL Can set 'font-presentation' to the 'auto' keyword Invalid property font-presentation
+FAIL Can set 'font-presentation' to the 'text' keyword Invalid property font-presentation
+FAIL Can set 'font-presentation' to the 'emoji' keyword Invalid property font-presentation
+PASS Setting 'font-presentation' to a length throws TypeError
+PASS Setting 'font-presentation' to a percent throws TypeError
+PASS Setting 'font-presentation' to a time throws TypeError
+PASS Setting 'font-presentation' to an angle throws TypeError
+PASS Setting 'font-presentation' to a flexible length throws TypeError
+PASS Setting 'font-presentation' to a number throws TypeError
+PASS Setting 'font-presentation' to a URL throws TypeError
+PASS Setting 'font-presentation' to a transform throws TypeError
 

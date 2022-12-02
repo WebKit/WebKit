@@ -6,124 +6,124 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 valid language ranges
 PASS document.querySelector(':lang(e)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"e\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(e)"
 PASS document.querySelector(':lang(e    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"e\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(e)"
 PASS document.querySelector(':lang(en)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en)"
 PASS document.querySelector(':lang(en    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en)"
 PASS document.querySelector(':lang(en-)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-)"
 PASS document.querySelector(':lang(en-    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-)"
 PASS document.querySelector(':lang(en--)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en--\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en--)"
 PASS document.querySelector(':lang(en--    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en--\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en--)"
 PASS document.querySelector(':lang(en---)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en---\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en---)"
 PASS document.querySelector(':lang(en---    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en---\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en---)"
 PASS document.querySelector(':lang(en-fr)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-fr\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-fr)"
 PASS document.querySelector(':lang(en-fr    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-fr\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-fr)"
 PASS document.querySelector(':lang(en-fr-)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-fr-\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-fr-)"
 PASS document.querySelector(':lang(en-fr-    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-fr-\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-fr-)"
 PASS document.querySelector(':lang(en-fr--)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-fr--\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-fr--)"
 PASS document.querySelector(':lang(en-fr--    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en-fr--\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en-fr--)"
 PASS document.querySelector(':lang(en--fr)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en--fr\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en--fr)"
 PASS document.querySelector(':lang(en--fr    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en--fr\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en--fr)"
 PASS document.querySelector(':lang(en---fr)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en---fr\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en---fr)"
 PASS document.querySelector(':lang(en---fr    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en---fr\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en---fr)"
 PASS document.querySelector(':lang(en---fr---)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en---fr---\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en---fr---)"
 PASS document.querySelector(':lang(en---fr---    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"en---fr---\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(en---fr---)"
 PASS document.querySelector(':lang(de-DE)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-DE\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-DE)"
 PASS document.querySelector(':lang(de-DE    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-DE\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-DE)"
 PASS document.querySelector(':lang(de-DE-1996)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-DE-1996\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-DE-1996)"
 PASS document.querySelector(':lang(de-DE-1996    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-DE-1996\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-DE-1996)"
 PASS document.querySelector(':lang(de-Latn-DE)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-Latn-DE\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-Latn-DE)"
 PASS document.querySelector(':lang(de-Latn-DE    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-Latn-DE\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-Latn-DE)"
 PASS document.querySelector(':lang(de-Latf-DE)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-Latf-DE\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-Latf-DE)"
 PASS document.querySelector(':lang(de-Latf-DE    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-Latf-DE\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-Latf-DE)"
 PASS document.querySelector(':lang(de-Latn-DE-1996)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-Latn-DE-1996\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-Latn-DE-1996)"
 PASS document.querySelector(':lang(de-Latn-DE-1996    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-Latn-DE-1996\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-Latn-DE-1996)"
 PASS document.querySelector(':lang(de-CH)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-CH)"
 PASS document.querySelector(':lang(de-CH    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"de-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(de-CH)"
 PASS document.querySelector(':lang(it-CH)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"it-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(it-CH)"
 PASS document.querySelector(':lang(it-CH    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"it-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(it-CH)"
 PASS document.querySelector(':lang(fr-CH)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"fr-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(fr-CH)"
 PASS document.querySelector(':lang(fr-CH    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"fr-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(fr-CH)"
 PASS document.querySelector(':lang(rm-CH)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"rm-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(rm-CH)"
 PASS document.querySelector(':lang(rm-CH    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"rm-CH\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(rm-CH)"
 PASS document.querySelector(':lang("*-CH")') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"*-CH\")"
@@ -144,10 +144,10 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"*-br-zh\")"
 PASS document.querySelector(':lang(id-\\*-sumatra)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"id-*-sumatra\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(id-\\*-sumatra)"
 PASS document.querySelector(':lang(id-\\*-sumatra    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"id-*-sumatra\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(id-\\*-sumatra)"
 PASS document.querySelector(':lang("*-en-\\*-fr")') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"*-en-*-fr\")"
@@ -162,10 +162,10 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"*-en-*-*\")"
 PASS document.querySelector(':lang(\\*)') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"*\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\\*)"
 PASS document.querySelector(':lang(\\*    )') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"*\")"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\\*)"
 PASS document.querySelector(':lang("*-\\*")') did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(\"*-*\")"

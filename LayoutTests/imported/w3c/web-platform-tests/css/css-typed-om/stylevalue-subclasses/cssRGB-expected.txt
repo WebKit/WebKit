@@ -1,50 +1,50 @@
 
-FAIL Constructing a CSSRGB with an angle CSSUnitValue for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" did not throw
-FAIL Constructing a CSSRGB with a CSSMathValue that doesn"t match <number> for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" did not throw
-FAIL Constructing a CSSRGB with undefined for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" did not throw
-FAIL Constructing a CSSRGB with a CSS math calculation for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" did not throw
-FAIL Constructing a CSSRGB with a CSS number for the alpha channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(0, 0, 0, CSS.number(1))" did not throw
-FAIL Updating CSSRGB. r to an angle CSSUnitValue throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. r to a CSSMathValue that doesn"t match <number> throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. r to undefined throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. r to a CSS math calculation throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. g to an angle CSSUnitValue throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. g to a CSSMathValue that doesn"t match <number> throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. g to undefined throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. g to a CSS math calculation throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. b to an angle CSSUnitValue throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. b to a CSSMathValue that doesn"t match <number> throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. b to undefined throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. b to a CSS math calculation throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. alpha to an angle CSSUnitValue throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. alpha to a CSSMathValue that doesn"t match <number> throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. alpha to undefined throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating CSSRGB. alpha to a CSS math calculation throws a TypeError. assert_throws_js: function "() => result[attr] = value" did not throw
-FAIL Updating the alpha channel to a CSS number throws a TypeError. assert_throws_js: function "() => result.alpha = CSS.number(1)" did not throw
-FAIL CSSRGB can be constructed from three numbers and will get an alpha of 100%. assert_equals: expected "CSSUnitValue" but got "Number"
-FAIL CSSRGB can be constructed from four numbers. assert_equals: expected "CSSUnitValue" but got "Number"
-FAIL CSSRGB.r can be updated with a number with the resulting value being a percentage. assert_equals: expected "CSSUnitValue" but got "Number"
+PASS Constructing a CSSRGB with an angle CSSUnitValue for the color channels throws a SyntaxError.
+PASS Constructing a CSSRGB with a CSSMathValue that doesn"t match <number> for the color channels throws a SyntaxError.
+FAIL Constructing a CSSRGB with undefined for the color channels throws a SyntaxError. assert_throws_dom: function "() => new CSSRGB(color, 0, 0)" did not throw
+FAIL Constructing a CSSRGB with a CSS math calculation for the color channels throws a SyntaxError. assert_throws_dom: function "() => new CSSRGB(color, 0, 0)" did not throw
+PASS Constructing a CSSRGB with a CSS number for the alpha channels throws a SyntaxError.
+PASS Updating CSSRGB. r to an angle CSSUnitValue throws a SyntaxError.
+PASS Updating CSSRGB. r to a CSSMathValue that doesn"t match <number> throws a SyntaxError.
+FAIL Updating CSSRGB. r to undefined throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+FAIL Updating CSSRGB. r to a CSS math calculation throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+PASS Updating CSSRGB. g to an angle CSSUnitValue throws a SyntaxError.
+PASS Updating CSSRGB. g to a CSSMathValue that doesn"t match <number> throws a SyntaxError.
+FAIL Updating CSSRGB. g to undefined throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+FAIL Updating CSSRGB. g to a CSS math calculation throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+PASS Updating CSSRGB. b to an angle CSSUnitValue throws a SyntaxError.
+PASS Updating CSSRGB. b to a CSSMathValue that doesn"t match <number> throws a SyntaxError.
+FAIL Updating CSSRGB. b to undefined throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+FAIL Updating CSSRGB. b to a CSS math calculation throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+PASS Updating CSSRGB. alpha to an angle CSSUnitValue throws a SyntaxError.
+PASS Updating CSSRGB. alpha to a CSSMathValue that doesn"t match <number> throws a SyntaxError.
+FAIL Updating CSSRGB. alpha to undefined throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+FAIL Updating CSSRGB. alpha to a CSS math calculation throws a SyntaxError. assert_throws_dom: function "() => result[attr] = color" did not throw
+PASS Updating the alpha channel to a CSS number throws a SyntaxError.
+PASS CSSRGB can be constructed from three numbers and will get an alpha of 100%.
+PASS CSSRGB can be constructed from four numbers.
+PASS CSSRGB.r can be updated with a number with the resulting value being a percentage.
 PASS CSSRGB.r can be updated with a CSS number.
 PASS CSSRGB.r can be updated with CSS percent.
 PASS CSSRGB.r can be updated with CSS math sum.
 PASS CSSRGB.r can be updated with CSS math product.
 PASS CSSRGB.r can be updated with CSS math max.
 PASS CSSRGB.r can be updated with CSS math min.
-FAIL CSSRGB.g can be updated with a number with the resulting value being a percentage. assert_equals: expected "CSSUnitValue" but got "Number"
+PASS CSSRGB.g can be updated with a number with the resulting value being a percentage.
 PASS CSSRGB.g can be updated with a CSS number.
 PASS CSSRGB.g can be updated with CSS percent.
 PASS CSSRGB.g can be updated with CSS math sum.
 PASS CSSRGB.g can be updated with CSS math product.
 PASS CSSRGB.g can be updated with CSS math max.
 PASS CSSRGB.g can be updated with CSS math min.
-FAIL CSSRGB.b can be updated with a number with the resulting value being a percentage. assert_equals: expected "CSSUnitValue" but got "Number"
+PASS CSSRGB.b can be updated with a number with the resulting value being a percentage.
 PASS CSSRGB.b can be updated with a CSS number.
 PASS CSSRGB.b can be updated with CSS percent.
 PASS CSSRGB.b can be updated with CSS math sum.
 PASS CSSRGB.b can be updated with CSS math product.
 PASS CSSRGB.b can be updated with CSS math max.
 PASS CSSRGB.b can be updated with CSS math min.
-FAIL CSSRGB.alpha can be updated with a number with the resulting value being a percentage. assert_equals: expected "CSSUnitValue" but got "Number"
+PASS CSSRGB.alpha can be updated with a number with the resulting value being a percentage.
 PASS CSSRGB.alpha can be updated with CSS percent.
 PASS CSSRGB.alpha can be updated with CSS math sum.
 PASS CSSRGB.alpha can be updated with CSS math product.

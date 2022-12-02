@@ -29,8 +29,8 @@
 #include "Logging.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Expected.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -232,7 +232,7 @@ void PrivateClickMeasurement::setSourceApplicationBundleIDForTesting(const Strin
 
 static Seconds randomlyBetweenTwentyFourAndFortyEightHours(PrivateClickMeasurement::IsRunningLayoutTest isRunningTest)
 {
-    return isRunningTest == PrivateClickMeasurement::IsRunningLayoutTest::Yes ? 1_s : 24_h + Seconds(randomNumber() * (24_h).value());
+    return isRunningTest == PrivateClickMeasurement::IsRunningLayoutTest::Yes ? 1_s : 24_h + Seconds(cryptographicallyRandomUnitInterval() * (24_h).value());
 }
 
 PCM::AttributionSecondsUntilSendData PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(PCM::AttributionTriggerData&& attributionTriggerData, IsRunningLayoutTest isRunningTest)

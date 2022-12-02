@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "MacroAssemblerCodeRef.h"
+#include "MemoryMode.h"
 #include "WasmCallee.h"
 #include "WasmEmbedder.h"
 #include <wtf/CrossThreadCopier.h>
@@ -47,7 +48,6 @@ namespace Wasm {
 class EntryPlan;
 struct ModuleInformation;
 struct UnlinkedWasmToWasmCall;
-enum class MemoryMode : uint8_t;
 
 class CalleeGroup final : public ThreadSafeRefCounted<CalleeGroup> {
 public:

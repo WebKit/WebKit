@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: action
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "wheel".
 Description: Verifies that we can scroll the page when wheel events are captured
 
 Instructions:
@@ -26,7 +26,7 @@ Nullam in tempor tellus, ac ullamcorper tortor. Cras vel aliquet magna, in congu
 Ut porttitor metus et mauris euismod iaculis. Ut in lorem neque. Nam a sollicitudin ligula, non lobortis sapien. Curabitur ullamcorper justo quis vulputate cursus. Aliquam rhoncus volutpat quam non condimentum. Donec dictum aliquam metus tempor vehicula. Curabitur lorem urna, venenatis vel tellus et, mollis ornare sapien. Aliquam erat elit, tristique at suscipit efficitur, condimentum eget quam. Quisque vel metus nisl. Integer eget cursus neque, sed auctor purus. Sed ac urna nec lectus elementum laoreet. Donec posuere diam ut nibh vestibulum efficitur. Nam ut rhoncus enim, semper sollicitudin libero.
 
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: action
+Harness Error (FAIL), message = Unhandled rejection: Unknown source type "wheel".
 
 NOTRUN wheel scrolling test
 

@@ -89,7 +89,7 @@ public:
     void flushCompositingState(const FloatRect&) override;
     void flushCompositingStateForThisLayerOnly() override;
 
-    void updateBackingStoreIncludingSubLayers(TextureMapper&);
+    WEBCORE_EXPORT void updateBackingStoreIncludingSubLayers(TextureMapper&);
 
     TextureMapperLayer& layer() { return m_layer; }
 

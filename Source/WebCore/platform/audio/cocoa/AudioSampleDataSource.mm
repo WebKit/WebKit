@@ -51,7 +51,6 @@ Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCou
 
 AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount, LoggerHelper& loggerHelper, size_t waitToStartForPushCount)
     : m_waitToStartForPushCount(waitToStartForPushCount)
-    , m_ringBuffer(makeUniqueRef<CARingBuffer>())
     , m_maximumSampleCount(maximumSampleCount)
 #if !RELEASE_LOG_DISABLED
     , m_logger(loggerHelper.logger())
@@ -98,7 +97,8 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
         // Heap allocations are forbidden on the audio thread for performance reasons so we need to
         // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-        m_ringBuffer->allocate(format, static_cast<size_t>(m_maximumSampleCount));
+        m_ringBuffer = InProcessCARingBuffer::allocate(format, static_cast<size_t>(m_maximumSampleCount));
+        RELEASE_ASSERT(m_ringBuffer);
         m_scratchBuffer = AudioSampleBufferList::create(m_outputDescription->streamDescription(), m_maximumSampleCount);
         m_converterInputOffset = 0;
     }
@@ -208,9 +208,7 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
         return false;
     }
 
-    uint64_t startFrame = 0;
-    uint64_t endFrame = 0;
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    auto [startFrame, endFrame] = m_ringBuffer->getFetchTimeBounds();
 
     ASSERT(m_waitToStartForPushCount);
 
@@ -233,7 +231,7 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
         if (!m_isInNeedOfMoreData) {
             m_isInNeedOfMoreData = true;
             DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = Ref { *this }] {
+            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame = startFrame, endFrame = endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = Ref { *this }] {
                 ERROR_LOG(logIdentifier, "need more data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
             });
         }
@@ -257,11 +255,11 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
     }
 
     if (m_volume >= EquivalentToMaxVolume) {
-        m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, CARingBuffer::Mix);
+        m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, CARingBuffer::fetchModeForMixing(m_outputDescription->format()));
         return true;
     }
 
-    if (m_scratchBuffer->copyFrom(m_ringBuffer.get(), sampleCount, timeStamp, CARingBuffer::Copy))
+    if (m_scratchBuffer->copyFrom(*m_ringBuffer, sampleCount, timeStamp, CARingBuffer::Copy))
         return false;
 
     m_scratchBuffer->applyGain(m_volume);
@@ -297,9 +295,7 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
         return false;
 
-    uint64_t startFrame = 0;
-    uint64_t endFrame = 0;
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    auto [startFrame, endFrame] = m_ringBuffer->getFetchTimeBounds();
     if (m_shouldComputeOutputSampleOffset) {
         m_outputSampleOffset = timeStamp + (endFrame - sampleCountPerChunk);
         m_shouldComputeOutputSampleOffset = false;

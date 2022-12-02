@@ -222,16 +222,6 @@ void ResourceLoader::start()
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     if (m_documentLoader && m_documentLoader->scheduleArchiveLoad(*this, m_request))
         return;
-
-#if ENABLE(WEB_ARCHIVE)
-    constexpr auto webArchivePrefix { "webarchive+"_s };
-    if (m_request.url().protocol().startsWith(webArchivePrefix)) {
-        auto url { m_request.url() };
-        const auto unprefixedScheme { url.protocol().substring(webArchivePrefix.length()) };
-        url.setProtocol(unprefixedScheme);
-        m_request.setURL(url);
-    }
-#endif
 #endif
 
     if (m_documentLoader && m_documentLoader->applicationCacheHost().maybeLoadResource(*this, m_request, m_request.url()))
@@ -272,7 +262,7 @@ void ResourceLoader::start()
 
     bool isMainFrameNavigation = frame() && frame()->isMainFrame() && options().mode == FetchOptions::Mode::Navigate;
 
-    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff, WTFMove(sourceOrigin), isMainFrameNavigation);
+    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)
@@ -305,7 +295,7 @@ void ResourceLoader::loadDataURL()
         scheduleContext.scheduledPairs = *page->scheduledRunLoopPairs();
 #endif
     auto mode = DataURLDecoder::Mode::Legacy;
-    if (m_request.requester() == ResourceRequest::Requester::Fetch)
+    if (m_request.requester() == ResourceRequestRequester::Fetch)
         mode = DataURLDecoder::Mode::ForgivingBase64;
     DataURLDecoder::decode(url, scheduleContext, mode, [this, protectedThis = Ref { *this }, url](auto decodeResult) mutable {
         if (this->reachedTerminalState())
@@ -550,6 +540,13 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
                 }
                 document->setUsedLegacyTLS(true);
             }
+        }
+    }
+
+    if (r.wasPrivateRelayed() && m_frame) {
+        if (auto* document = m_frame->document()) {
+            if (!document->wasPrivateRelayed())
+                document->setWasPrivateRelayed(true);
         }
     }
 

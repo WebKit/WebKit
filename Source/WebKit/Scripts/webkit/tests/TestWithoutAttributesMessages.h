@@ -33,7 +33,6 @@
 #endif
 #include "MessageNames.h"
 #include "Plugin.h"
-#include "TestWithoutAttributesMessagesReplies.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
@@ -283,10 +282,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_CreatePlugin; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&)>&&);
-    static void cancelReply(CompletionHandler<void(bool&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_CreatePluginReply; }
-    using AsyncReply = CreatePluginAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
@@ -310,10 +306,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlert; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void()>&&);
-    static void cancelReply(CompletionHandler<void()>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply; }
-    using AsyncReply = RunJavaScriptAlertAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     RunJavaScriptAlert(uint64_t frameID, const String& message)
@@ -337,10 +330,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_GetPlugins; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&&);
-    static void cancelReply(CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_GetPluginsReply; }
-    using AsyncReply = GetPluginsAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
     explicit GetPlugins(bool refresh)
@@ -364,7 +354,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_GetPluginProcessConnection; }
     static constexpr bool isSync = true;
 
-    using DelayedReply = GetPluginProcessConnectionDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
     explicit GetPluginProcessConnection(const String& pluginPath)
@@ -388,7 +377,6 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_TestMultipleAttributes; }
     static constexpr bool isSync = true;
 
-    using DelayedReply = TestMultipleAttributesDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     const Arguments& arguments() const
@@ -494,10 +482,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEvent; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&&);
-    static void cancelReply(CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply; }
-    using AsyncReply = InterpretKeyEventAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
     explicit InterpretKeyEvent(uint32_t type)

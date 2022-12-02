@@ -106,9 +106,6 @@ public:
     bool wantsDeepColorBackingStore() const override;
     void setWantsDeepColorBackingStore(bool) override;
 
-    bool supportsSubpixelAntialiasedText() const override;
-    void setSupportsSubpixelAntialiasedText(bool) override;
-
     bool hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
@@ -153,7 +150,7 @@ public:
     WindRule shapeWindRule() const override;
     void setShapeWindRule(WindRule) override;
 
-    void setEdgeAntialiasingMask(unsigned) override;
+    void setAntialiasesEdges(bool) override;
 
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance) override { m_customAppearance = customAppearance; }

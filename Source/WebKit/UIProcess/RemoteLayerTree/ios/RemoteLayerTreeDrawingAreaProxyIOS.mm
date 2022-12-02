@@ -28,11 +28,12 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
+#import <QuartzCore/CADisplayLink.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-// FIXME: Mac will need something similar; we should figure out how to share this with DisplayRefreshMonitor without
-// breaking WebKit1 behavior or WebKit2-WebKit1 coexistence.
-@interface WKOneShotDisplayLinkHandler : NSObject {
+@interface WKDisplayLinkHandler : NSObject {
     WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;
     CADisplayLink *_displayLink;
 #if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
@@ -49,7 +50,7 @@
 
 @end
 
-@implementation WKOneShotDisplayLinkHandler
+@implementation WKDisplayLinkHandler
 
 - (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy
 {
@@ -80,9 +81,9 @@
             if (page.preferences().webAnimationsCustomFrameRateEnabled() || !page.preferences().preferPageRenderingUpdatesNear60FPSEnabled()) {
                 auto minimumRefreshInterval = _displayLink.maximumRefreshRate;
                 if (minimumRefreshInterval > 0) {
-                    if (auto displayId = page.displayId()) {
+                    if (auto displayID = page.displayID()) {
                         WebCore::FramesPerSecond frameRate = std::round(1.0 / minimumRefreshInterval);
-                        page.windowScreenDidChange(*displayId, frameRate);
+                        page.windowScreenDidChange(*displayID, frameRate);
                     }
                 }
             }
@@ -161,15 +162,20 @@ RemoteLayerTreeDrawingAreaProxyIOS::~RemoteLayerTreeDrawingAreaProxyIOS()
     [m_displayLinkHandler invalidate];
 }
 
+std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyIOS::createScrollingCoordinatorProxy() const
+{
+    return makeUnique<RemoteScrollingCoordinatorProxyIOS>(m_webPageProxy);
+}
+
 DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyIOS::delegatedScrollingMode() const
 {
     return DelegatedScrollingMode::DelegatedToNativeScrollView;
 }
 
-WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxyIOS::displayLinkHandler()
+WKDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxyIOS::displayLinkHandler()
 {
     if (!m_displayLinkHandler)
-        m_displayLinkHandler = adoptNS([[WKOneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]);
+        m_displayLinkHandler = adoptNS([[WKDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]);
     return m_displayLinkHandler.get();
 }
 
@@ -178,12 +184,12 @@ void RemoteLayerTreeDrawingAreaProxyIOS::setPreferredFramesPerSecond(FramesPerSe
     [displayLinkHandler() setPreferredFramesPerSecond:preferredFramesPerSecond];
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayLink()
+void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacks()
 {
     [displayLinkHandler() schedule];
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayLink()
+void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacks()
 {
     [displayLinkHandler() pause];
 }

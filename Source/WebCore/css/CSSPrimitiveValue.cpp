@@ -287,20 +287,6 @@ CSSUnitType CSSPrimitiveValue::primitiveType() const
     return CSSUnitType::CSS_UNKNOWN;
 }
 
-static const AtomString& propertyName(CSSPropertyID propertyID)
-{
-    ASSERT_ARG(propertyID, (propertyID >= firstCSSProperty && propertyID < firstCSSProperty + numCSSProperties));
-
-    return getPropertyNameAtomString(propertyID);
-}
-
-static const AtomString& valueName(CSSValueID valueID)
-{
-    ASSERT_ARG(valueID, (valueID >= firstCSSValueKeyword && valueID <= lastCSSValueKeyword));
-
-    return getValueNameAtomString(valueID);
-}
-
 CSSPrimitiveValue::CSSPrimitiveValue(CSSValueID valueID)
     : CSSValue(PrimitiveClass)
 {
@@ -1205,9 +1191,9 @@ String CSSPrimitiveValue::stringValue() const
     case CSSUnitType::CSS_FONT_FAMILY:
         return m_value.fontFamily->familyName;
     case CSSUnitType::CSS_VALUE_ID:
-        return valueName(m_value.valueID);
+        return nameString(m_value.valueID);
     case CSSUnitType::CSS_PROPERTY_ID:
-        return propertyName(m_value.propertyID);
+        return nameString(m_value.propertyID);
     default:
         return String();
     }
@@ -1426,9 +1412,9 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSSUnitType::CSS_URI:
         return serializeURL(m_value.string);
     case CSSUnitType::CSS_VALUE_ID:
-        return valueName(m_value.valueID);
+        return nameString(m_value.valueID);
     case CSSUnitType::CSS_PROPERTY_ID:
-        return propertyName(m_value.propertyID);
+        return nameString(m_value.propertyID);
     case CSSUnitType::CSS_ATTR:
         return "attr(" + String(m_value.string) + ')';
     case CSSUnitType::CSS_COUNTER_NAME:
@@ -1609,9 +1595,9 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_CQMAX:
         return m_value.num == other.m_value.num;
     case CSSUnitType::CSS_PROPERTY_ID:
-        return propertyName(m_value.propertyID) == propertyName(other.m_value.propertyID);
+        return m_value.propertyID == other.m_value.propertyID;
     case CSSUnitType::CSS_VALUE_ID:
-        return valueName(m_value.valueID) == valueName(other.m_value.valueID);
+        return m_value.valueID == other.m_value.valueID;
     case CSSUnitType::CSS_STRING:
     case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:

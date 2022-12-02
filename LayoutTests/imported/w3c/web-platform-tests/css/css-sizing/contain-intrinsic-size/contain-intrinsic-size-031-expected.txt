@@ -1,18 +1,10 @@
 
 PASS .test 1
-FAIL .test 2 assert_equals:
-<div class="test columns-60px-1 cis-height" data-expected-client-width="60" data-expected-client-height="50"></div>
-clientHeight expected 50 but got 0
-FAIL .test 3 assert_equals:
-<div class="test columns-60px-1 cis-width" data-expected-client-width="100" data-expected-client-height="0"></div>
-clientWidth expected 100 but got 60
-FAIL .test 4 assert_equals:
-<div class="test columns-60px-1 cis-both" data-expected-client-width="100" data-expected-client-height="50"></div>
-clientWidth expected 100 but got 60
+PASS .test 2
+PASS .test 3
+PASS .test 4
 PASS .test 5
-FAIL .test 6 assert_equals:
-<div class="test columns-120px-1 cis-height" data-expected-client-width="120" data-expected-client-height="50"></div>
-clientHeight expected 50 but got 0
+PASS .test 6
 FAIL .test 7 assert_equals:
 <div class="test columns-120px-1 cis-width" data-expected-client-width="100" data-expected-client-height="0"></div>
 clientWidth expected 100 but got 120
@@ -20,13 +12,11 @@ FAIL .test 8 assert_equals:
 <div class="test columns-120px-1 cis-both" data-expected-client-width="100" data-expected-client-height="50"></div>
 clientWidth expected 100 but got 120
 PASS .test 9
-FAIL .test 10 assert_equals:
-<div class="test columns-60px-2 cis-height" data-expected-client-width="125" data-expected-client-height="50"></div>
-clientHeight expected 50 but got 0
+PASS .test 10
 FAIL .test 11 assert_equals:
 <div class="test columns-60px-2 cis-width" data-expected-client-width="100" data-expected-client-height="0"></div>
-clientWidth expected 100 but got 125
+clientWidth expected 100 but got 205
 FAIL .test 12 assert_equals:
 <div class="test columns-60px-2 cis-both" data-expected-client-width="100" data-expected-client-height="50"></div>
-clientWidth expected 100 but got 125
+clientWidth expected 100 but got 205
 

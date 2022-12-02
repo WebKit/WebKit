@@ -1,6 +1,17 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'writing-mode' to CSS-wide keywords
+FAIL Can set 'writing-mode' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'writing-mode' to the 'horizontal-tb' keyword
+PASS Can set 'writing-mode' to the 'vertical-rl' keyword
+PASS Can set 'writing-mode' to the 'vertical-lr' keyword
+FAIL Can set 'writing-mode' to the 'sideways-rl' keyword Invalid values
+FAIL Can set 'writing-mode' to the 'sideways-lr' keyword Invalid values
+PASS Setting 'writing-mode' to a length throws TypeError
+PASS Setting 'writing-mode' to a percent throws TypeError
+PASS Setting 'writing-mode' to a time throws TypeError
+PASS Setting 'writing-mode' to an angle throws TypeError
+PASS Setting 'writing-mode' to a flexible length throws TypeError
+PASS Setting 'writing-mode' to a number throws TypeError
+PASS Setting 'writing-mode' to a URL throws TypeError
+PASS Setting 'writing-mode' to a transform throws TypeError
 

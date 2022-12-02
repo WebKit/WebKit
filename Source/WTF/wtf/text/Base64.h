@@ -29,7 +29,6 @@
 
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Span.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringView.h>
 

@@ -34,6 +34,7 @@ class SerializedType(object):
         self.parent_class_name = parent_class_name
         self.parent_class = None
         self.members = members
+        self.alias = None
         self.condition = condition
         self.encoders = ['Encoder']
         self.serialize_with_function_calls = False
@@ -53,6 +54,8 @@ class SerializedType(object):
                         self.create_using = value
                     if key == 'LegacyPopulateFrom' and value == 'EmptyConstructor':
                         self.populate_from_empty_constructor = True
+                    if key == 'Alias':
+                        self.alias = value
                 else:
                     if attribute == 'Nested':
                         self.nested = True
@@ -78,6 +81,8 @@ class SerializedEnum(object):
         self.attributes = attributes
 
     def namespace_and_name(self):
+        if self.namespace is None:
+            return self.name
         return self.namespace + '::' + self.name
 
     def function_name(self):
@@ -181,6 +186,11 @@ def argument_coder_declarations(serialized_types, skip_nested):
     return result
 
 
+def remove_template_parameters(alias):
+    match = re.search(r'(.*)<', alias)
+    assert match
+    return match.groups()[0]
+
 def generate_header(serialized_types, serialized_enums):
     result = []
     result.append(_license_header)
@@ -195,7 +205,10 @@ def generate_header(serialized_types, serialized_enums):
             continue
         if enum.condition is not None:
             result.append('#if ' + enum.condition)
-        result.append('namespace ' + enum.namespace + ' { enum class ' + enum.name + ' : ' + enum.underlying_type + '; }')
+        if enum.namespace is None:
+            result.append('enum class ' + enum.name + ' : ' + enum.underlying_type + ';')
+        else:
+            result.append('namespace ' + enum.namespace + ' { enum class ' + enum.name + ' : ' + enum.underlying_type + '; }')
         if enum.condition is not None:
             result.append('#endif')
     for type in serialized_types:
@@ -203,10 +216,16 @@ def generate_header(serialized_types, serialized_enums):
             continue
         if type.condition is not None:
             result.append('#if ' + type.condition)
-        if type.namespace is None:
-            result.append(type.struct_or_class + ' ' + type.name + ';')
+        if type.alias is not None:
+            result.append('namespace ' + type.namespace + ' {')
+            result.append('template<typename> class ' + remove_template_parameters(type.alias) + ';')
+            result.append('using ' + type.name + ' = ' + type.alias + ';')
+            result.append('}')
         else:
-            result.append('namespace ' + type.namespace + ' { ' + type.struct_or_class + ' ' + type.name + '; }')
+            if type.namespace is None:
+                result.append(type.struct_or_class + ' ' + type.name + ';')
+            else:
+                result.append('namespace ' + type.namespace + ' { ' + type.struct_or_class + ' ' + type.name + '; }')
         if type.condition is not None:
             result.append('#endif')
     result.append('')
@@ -256,7 +275,7 @@ def check_type_members(type):
     for member in type.members:
         if member.condition is not None:
             result.append('#if ' + member.condition)
-        result.append('    static_assert(std::is_same_v<std::remove_const_t<std::remove_reference_t<decltype(instance.' + member.name + ')>>, ' + member.type + '>);')
+        result.append('    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.' + member.name + ')>, ' + member.type + '>);')
         if member.condition is not None:
             result.append('#endif')
     return result
@@ -333,12 +352,25 @@ def decode_type(type):
                     result.append('        return { ' + type.namespace_and_name() + ' { } };')
             else:
                 assert len(decodable_classes) == 0
-                result.append('    decoder >> ' + sanitize_string_for_variable_name(member.name) + ';')
-                result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
-                result.append('        return std::nullopt;')
-                if 'ReturnEarlyIfTrue' in member.attributes:
-                    result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
-                    result.append('        return { ' + type.namespace_and_name() + ' { } };')
+                r = re.compile(r"SoftLinkedClass='(.*)'")
+                soft_linked_classes = [r.match(m).groups()[0] for m in list(filter(r.match, member.attributes))]
+                if len(soft_linked_classes) == 1:
+                    match = re.search("RetainPtr<(.*)>", member.type)
+                    assert match
+                    result.append('    ' + sanitize_string_for_variable_name(member.name) + ' = IPC::decode<' + match.groups()[0] + '>(decoder, ' + soft_linked_classes[0] + ');')
+                    result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
+                    result.append('        return std::nullopt;')
+                    if 'ReturnEarlyIfTrue' in member.attributes:
+                        result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
+                        result.append('        return { ' + type.namespace_and_name() + ' { } };')
+                else:
+                    assert len(soft_linked_classes) == 0
+                    result.append('    decoder >> ' + sanitize_string_for_variable_name(member.name) + ';')
+                    result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
+                    result.append('        return std::nullopt;')
+                    if 'ReturnEarlyIfTrue' in member.attributes:
+                        result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
+                        result.append('        return { ' + type.namespace_and_name() + ' { } };')
         for attribute in member.attributes:
             match = re.search(r'Validator=\'(.*)\'', attribute)
             if match:
@@ -606,33 +638,37 @@ def parse_serialized_types(file, file_name):
             attributes, namespace, name, underlying_type = match.groups()
             assert underlying_type != 'bool'
             continue
-
         match = re.search(r'(.*)enum class (.*)::(.*) : bool', line)
         if match:
             serialized_enums.append(SerializedEnum(match.groups()[1], match.groups()[2], 'bool', [], type_condition, match.groups()[0]))
             continue
+        match = re.search(r'(.*)enum class (.*) : (.*) {', line)
+        if match:
+            attributes, name, underlying_type = match.groups()
+            assert underlying_type != 'bool'
+            continue
 
-        match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*) : (.*) {', line)
+        match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::(.*) : (.*) {', line)
         if match:
             attributes, struct_or_class, namespace, name, parent_class_name = match.groups()
             continue
-        match = re.search(r'(struct|class) (.*)::(.*) : (.*) {', line)
+        match = re.search(r'(struct|class|alias) (.*)::(.*) : (.*) {', line)
         if match:
             struct_or_class, namespace, name, parent_class_name = match.groups()
             continue
-        match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*) {', line)
+        match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::(.*) {', line)
         if match:
             attributes, struct_or_class, namespace, name = match.groups()
             continue
-        match = re.search(r'(struct|class) (.*)::(.*) {', line)
+        match = re.search(r'(struct|class|alias) (.*)::(.*) {', line)
         if match:
             struct_or_class, namespace, name = match.groups()
             continue
-        match = re.search(r'\[(.*)\] (struct|class) (.*) {', line)
+        match = re.search(r'\[(.*)\] (struct|class|alias) (.*) {', line)
         if match:
             attributes, struct_or_class, name = match.groups()
             continue
-        match = re.search(r'(struct|class) (.*) {', line)
+        match = re.search(r'(struct|class|alias) (.*) {', line)
         if match:
             struct_or_class, name = match.groups()
             continue
@@ -654,6 +690,11 @@ def parse_serialized_types(file, file_name):
             if match:
                 complete, _, allow_list, _ = match.groups()
                 member_attributes.append(allow_list)
+                member_attributes_s = member_attributes_s.replace(complete, "")
+            match = re.search(r"((, |^)+(SoftLinkedClass='.*?'))(, |$)?", member_attributes_s)
+            if match:
+                complete, _, soft_linked_class, _ = match.groups()
+                member_attributes.append(soft_linked_class)
                 member_attributes_s = member_attributes_s.replace(complete, "")
             member_attributes += [member_attribute.strip() for member_attribute in member_attributes_s.split(",")]
             members.append(MemberVariable(member_type, member_name, member_condition, member_attributes))

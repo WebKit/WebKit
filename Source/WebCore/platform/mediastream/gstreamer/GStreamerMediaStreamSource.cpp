@@ -127,6 +127,7 @@ private:
 static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSrc*);
 
 class InternalSource final : public MediaStreamTrackPrivate::Observer,
+    public RealtimeMediaSource::Observer,
     public RealtimeMediaSource::AudioSampleObserver,
     public RealtimeMediaSource::VideoFrameObserver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -162,6 +163,21 @@ public:
         g_signal_connect(m_src.get(), "need-data", G_CALLBACK(+[](GstElement*, unsigned, InternalSource* data) {
             data->m_enoughData = false;
         }), this);
+
+#if USE(GSTREAMER_WEBRTC)
+        auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+        gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_UPSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, InternalSource* internalSource) -> GstPadProbeReturn {
+            auto& trackSource = internalSource->m_track.source();
+            if (trackSource.isIncomingAudioSource()) {
+                auto& source = static_cast<RealtimeIncomingAudioSourceGStreamer&>(trackSource);
+                source.handleUpstreamEvent(GRefPtr<GstEvent>(GST_PAD_PROBE_INFO_EVENT(info)));
+            } else if (trackSource.isIncomingVideoSource()) {
+                auto& source = static_cast<RealtimeIncomingVideoSourceGStreamer&>(trackSource);
+                source.handleUpstreamEvent(GRefPtr<GstEvent>(GST_PAD_PROBE_INFO_EVENT(info)));
+            }
+            return GST_PAD_PROBE_OK;
+        }), this, nullptr);
+#endif
     }
 
     virtual ~InternalSource()
@@ -297,6 +313,12 @@ public:
         }
     }
 
+    void handleDownstreamEvent(GRefPtr<GstEvent>&& event) final
+    {
+        auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+        gst_pad_push_event(pad.get(), event.leakRef());
+    }
+
     void videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata) final
     {
         if (!m_parent || !m_isObserving)
@@ -386,6 +408,19 @@ public:
     {
         assertIsHeld(m_eosLock);
         return m_eosPending;
+    }
+
+    std::optional<uint64_t> queryDecodedVideoFramesCount()
+    {
+        auto query = adoptGRef(gst_query_new_custom(GST_QUERY_CUSTOM, gst_structure_new_empty("webkit-video-decoder-stats")));
+        auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+        if (gst_pad_peer_query(pad.get(), query.get())) {
+            uint64_t decodedFramesCount;
+            if (gst_structure_get_uint64(gst_query_get_structure(query.get()), "decoded-frames", &decodedFramesCount))
+                return decodedFramesCount;
+        }
+
+        return { };
     }
 
 private:

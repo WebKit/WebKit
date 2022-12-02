@@ -1,6 +1,12 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'all' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'all' to var() references assert_equals: expected 2 but got 1
+PASS Setting 'all' to a length throws TypeError
+PASS Setting 'all' to a percent throws TypeError
+PASS Setting 'all' to a time throws TypeError
+PASS Setting 'all' to an angle throws TypeError
+PASS Setting 'all' to a flexible length throws TypeError
+PASS Setting 'all' to a number throws TypeError
+PASS Setting 'all' to a URL throws TypeError
+PASS Setting 'all' to a transform throws TypeError
 

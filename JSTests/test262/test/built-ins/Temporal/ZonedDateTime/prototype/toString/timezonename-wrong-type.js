@@ -8,7 +8,7 @@ info: |
     sec-getoption step 9.a:
       a. Set _value_ to ? ToString(_value_).
     sec-temporal-toshowtimezonenameoption step 1:
-      1. Return ? GetOption(_normalizedOptions_, *"timeZoneName"*, « String », « *"auto"*, *"never"* », *"auto"*).
+      1. Return ? GetOption(_normalizedOptions_, *"timeZoneName"*, « *"string"* », « *"auto"*, *"never"*, *"critical"* », *"auto"*).
     sec-temporal.zoneddatetime.protoype.tostring step 7:
       7. Let _showTimeZone_ be ? ToShowTimeZoneNameOption(_options_).
 includes: [compareArray.js, temporalHelpers.js]

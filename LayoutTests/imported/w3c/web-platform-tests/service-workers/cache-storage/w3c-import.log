@@ -15,4 +15,19 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-abort.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-delete.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-keys-attributes-for-service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-keys.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-match.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-matchAll.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-put.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-storage-buckets.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-storage-keys.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-storage-match.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cache-storage.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/credentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/sandboxed-iframes.https.html

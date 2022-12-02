@@ -38,17 +38,16 @@ public:
     CachedSVGFont(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, const Settings&);
     CachedSVGFont(CachedResourceRequest&&, CachedSVGFont&);
 
-    bool ensureCustomFontData(const AtomString& remoteURI) override;
-
-    RefPtr<Font> createFont(const FontDescription&, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) override;
+    bool ensureCustomFontData() final;
+    RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) final;
 
 private:
     FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
     SVGFontElement* getSVGFontById(const AtomString&) const;
 
-    SVGFontElement* maybeInitializeExternalSVGFontElement(const AtomString& remoteURI);
-    SVGFontFaceElement* firstFontFace(const AtomString& remoteURI);
+    SVGFontElement* maybeInitializeExternalSVGFontElement();
+    SVGFontFaceElement* firstFontFace();
 
     RefPtr<SharedBuffer> m_convertedFont;
     RefPtr<SVGDocument> m_externalSVGDocument;

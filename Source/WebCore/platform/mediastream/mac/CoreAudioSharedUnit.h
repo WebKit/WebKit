@@ -63,6 +63,7 @@ public:
         virtual OSStatus defaultInputDevice(uint32_t*) = 0;
         virtual OSStatus defaultOutputDevice(uint32_t*) = 0;
         virtual void delaySamples(Seconds) { }
+        virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 10_s : 2_s; }
     };
 
     WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
@@ -89,7 +90,6 @@ private:
     static size_t preferredIOBufferSize();
 
     CapabilityValueOrRange sampleRateCapacities() const final { return m_sampleRateCapabilities; }
-    const CAAudioStreamDescription& microphoneFormat() const { return m_microphoneProcFormat; }
 
     bool hasAudioUnit() const final { return !!m_ioUnit; }
     void captureDeviceChanged() final;
@@ -120,8 +120,6 @@ private:
 
     void verifyIsCapturing();
 
-    Seconds verifyCaptureInterval() { return isProducingMicrophoneSamples() ? 10_s : 2_s; }
-
     CreationCallback m_creationCallback;
     GetSampleRateCallback m_getSampleRateCallback;
     std::unique_ptr<InternalUnit> m_ioUnit;
@@ -129,11 +127,11 @@ private:
     // Only read/modified from the IO thread.
     Vector<Ref<AudioSampleDataSource>> m_activeSources;
 
-    CAAudioStreamDescription m_microphoneProcFormat;
+    std::optional<CAAudioStreamDescription> m_microphoneProcFormat;
     RefPtr<AudioSampleBufferList> m_microphoneSampleBuffer;
     double m_latestMicTimeStamp { 0 };
 
-    CAAudioStreamDescription m_speakerProcFormat;
+    std::optional<CAAudioStreamDescription> m_speakerProcFormat;
 
     double m_DTSConversionRatio { 0 };
 
@@ -155,7 +153,7 @@ private:
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
 
-    bool m_shouldUpdateMicrophoneSampleBufferSize { false };
+    std::optional<size_t> m_minimumMicrophoneSampleFrames;
     bool m_isReconfiguring { false };
     bool m_shouldNotifySpeakerSamplesProducer { false };
     bool m_hasNotifiedSpeakerSamplesProducer { false };

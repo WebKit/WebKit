@@ -68,7 +68,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
         return CSSParser::parseCustomPropertyValue(dummyStyle, AtomString { propertyNameWithoutWhitespace }, value, importance, parserContext) != CSSParser::ParseResult::Error;
     }
 
-    if (!isCSSPropertyExposed(propertyID, &document.settings()))
+    if (!isExposed(propertyID, &document.settings()))
         return false;
 
     if (CSSProperty::isDescriptorOnly(propertyID))

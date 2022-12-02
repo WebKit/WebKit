@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 include(WebKitCommon)
 include(target/TargetWTF)
@@ -42,7 +42,7 @@ WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 if (MSVC)
-    WEBKIT_ADD_PRECOMPILED_HEADER("WebKitPrefix.h" "win/WebKitPrefix.cpp" WebKitLegacy_SOURCES)
+    target_precompile_headers(WebKitLegacy PRIVATE win/WebKitPrefix.h)
     list(APPEND WebKitLegacy_SOURCES win/WebKit.resources/WebKit.rc)
     add_definitions(/DWEBKIT_EXPORTS /DFRAMEWORK_NAME=WebKitLegacy)
 endif ()

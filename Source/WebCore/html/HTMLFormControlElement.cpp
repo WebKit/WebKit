@@ -62,7 +62,7 @@ using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : LabelableElement(tagName, document)
-    , FormAssociatedElement(form)
+    , FormListedElement(form)
     , m_disabled(false)
     , m_hasReadOnlyAttribute(false)
     , m_isRequired(false)
@@ -222,7 +222,7 @@ void HTMLFormControlElement::didAttachRenderers()
 
 void HTMLFormControlElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    FormAssociatedElement::didMoveToNewDocument(oldDocument);
+    FormListedElement::didMoveToNewDocument(oldDocument);
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
@@ -255,7 +255,7 @@ Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(In
     if (document().hasDisabledFieldsetElement())
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    FormAssociatedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    FormListedElement::elementInsertedIntoAncestor(*this, insertionType);
 
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
@@ -280,7 +280,7 @@ void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, Contai
     }
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    FormAssociatedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormListedElement::elementRemovedFromAncestor(*this, removalType);
 
     if (wasMatchingInvalidPseudoClass)
         removeInvalidElementToAncestorFromInsertionPoint(*this, &oldParentOfRemovedTree);
@@ -420,7 +420,7 @@ void HTMLFormControlElement::updateWillValidateAndValidity()
     if (!m_willValidate && !wasValid) {
         removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
         if (RefPtr<HTMLFormElement> form = this->form())
-            form->removeInvalidAssociatedFormControlIfNeeded(*this);
+            form->removeInvalidFormControlIfNeeded(*this);
     }
 
     if (!m_willValidate)
@@ -520,18 +520,18 @@ inline bool HTMLFormControlElement::isValidFormControlElement() const
 void HTMLFormControlElement::willChangeForm()
 {
     if (HTMLFormElement* form = this->form())
-        form->removeInvalidAssociatedFormControlIfNeeded(*this);
-    FormAssociatedElement::willChangeForm();
+        form->removeInvalidFormControlIfNeeded(*this);
+    FormListedElement::willChangeForm();
 }
 
 void HTMLFormControlElement::didChangeForm()
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    FormAssociatedElement::didChangeForm();
+    FormListedElement::didChangeForm();
     if (auto* form = this->form()) {
         if (m_willValidateInitialized && m_willValidate && !isValidFormControlElement())
-            form->registerInvalidAssociatedFormControl(*this);
+            form->addInvalidFormControl(*this);
     }
 }
 
@@ -552,13 +552,13 @@ void HTMLFormControlElement::updateValidity()
             if (!m_isValid) {
                 if (isConnected())
                     addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
-                if (HTMLFormElement* form = this->form())
-                    form->registerInvalidAssociatedFormControl(*this);
+                if (auto* form = this->form())
+                    form->addInvalidFormControl(*this);
             } else {
                 if (isConnected())
                     removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
-                if (HTMLFormElement* form = this->form())
-                    form->removeInvalidAssociatedFormControlIfNeeded(*this);
+                if (auto* form = this->form())
+                    form->removeInvalidFormControlIfNeeded(*this);
             }
         }
     }
@@ -573,7 +573,7 @@ void HTMLFormControlElement::updateValidity()
 
 void HTMLFormControlElement::setCustomValidity(const String& error)
 {
-    FormAssociatedElement::setCustomValidity(error);
+    FormListedElement::setCustomValidity(error);
     updateValidity();
 }
 

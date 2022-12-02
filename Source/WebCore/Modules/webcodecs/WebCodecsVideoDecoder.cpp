@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "JSWebCodecsVideoDecoderSupport.h"
 #include "ScriptExecutionContext.h"
+#include "WebCodecsEncodedVideoChunk.h"
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
@@ -156,6 +157,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&&
             init.codedHeight = decodedResult.frame->presentationSize().height();
             init.timestamp = decodedResult.timestamp;
             init.duration = decodedResult.duration;
+            init.colorSpace = decodedResult.frame->colorSpace();
 
             auto videoFrame = WebCodecsVideoFrame::create(WTFMove(decodedResult.frame), WTFMove(init));
             m_output->handleEvent(WTFMove(videoFrame));
@@ -177,12 +179,15 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
 
     ++m_decodeQueueSize;
     queueControlMessageAndProcess([this, chunk = WTFMove(chunk)]() mutable {
+        ++m_beingDecodedQueueSize;
         --m_decodeQueueSize;
         scheduleDequeueEvent();
+
         m_internalDecoder->decode({ { chunk->data(), chunk->byteLength() }, chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }, [this, weakedThis = WeakPtr { *this }](auto&& result) {
             if (!weakedThis)
                 return;
 
+            --m_beingDecodedQueueSize;
             if (!result.isNull()) {
                 closeDecoder(Exception { EncodingError, WTFMove(result) });
                 return;
@@ -199,12 +204,14 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise.copyRef());
+    m_isFlushing = true;
     queueControlMessageAndProcess([this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalDecoder->flush([this, weakedThis = WeakPtr { *this }, clearFlushPromiseCount] {
-            if (!weakedThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
+        m_internalDecoder->flush([this, weakThis = WeakPtr { *this }, clearFlushPromiseCount] {
+            if (!weakThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
 
             m_pendingFlushPromises.takeFirst()->resolve();
+            m_isFlushing = !m_pendingFlushPromises.isEmpty();
         });
     });
     return { };
@@ -338,7 +345,7 @@ const char* WebCodecsVideoDecoder::activeDOMObjectName() const
 
 bool WebCodecsVideoDecoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && m_decodeQueueSize;
+    return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_beingDecodedQueueSize || m_isFlushing);
 }
 
 } // namespace WebCore

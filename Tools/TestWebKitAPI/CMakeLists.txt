@@ -1,4 +1,10 @@
 set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
+set(TestWebKitAPI_DISABLED_WARNINGS
+    -Wno-dangling-else
+    -Wno-sign-compare
+    -Wno-undef
+    -Wno-unused-parameter
+)
 
 macro(WEBKIT_TEST _target)
     WEBKIT_EXECUTABLE(${_target})
@@ -9,10 +15,7 @@ macro(WEBKIT_TEST _target)
     )
 
     if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(${_target} -Wno-dangling-else
-                                               -Wno-sign-compare
-                                               -Wno-undef
-                                               -Wno-unused-parameter)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(${_target} ${TestWebKitAPI_DISABLED_WARNINGS})
     endif ()
 endmacro()
 
@@ -21,7 +24,6 @@ set(TestWTF_SOURCES
     Counters.cpp
     TestsController.cpp
     Utilities.cpp
-    WTFStringUtilities.cpp
 
     Tests/WTF/AtomString.cpp
     Tests/WTF/Bitmap.cpp
@@ -37,7 +39,7 @@ set(TestWTF_SOURCES
     Tests/WTF/CompletionHandlerTests.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp
     Tests/WTF/Condition.cpp
-    Tests/WTF/CrossThreadCopier.cpp
+    Tests/WTF/CrossThreadCopierTests.cpp
     Tests/WTF/CrossThreadTask.cpp
     Tests/WTF/DataMutex.cpp
     Tests/WTF/DateMath.cpp
@@ -146,7 +148,6 @@ WEBKIT_EXECUTABLE_DECLARE(TestWTF)
 if (ENABLE_JAVASCRIPTCORE)
     set(TestJavaScriptCore_SOURCES
         TestsController.cpp
-        WTFStringUtilities.cpp
 
         Tests/JavaScriptCore/DisallowVMEntry.cpp
         Tests/JavaScriptCore/InspectorConsoleMessage.cpp
@@ -177,7 +178,6 @@ if (ENABLE_WEBCORE)
     set(TestWebCore_SOURCES
         TestsController.cpp
         Utilities.cpp
-        WTFStringUtilities.cpp
 
         Tests/WebCore/AffineTransform.cpp
         Tests/WebCore/CSSParser.cpp
@@ -235,7 +235,6 @@ endif ()
 if (ENABLE_WEBKIT_LEGACY)
     set(TestWebKitLegacy_SOURCES
         TestsController.cpp
-        WTFStringUtilities.cpp
     )
 
     set(TestWebKitLegacy_LIBRARIES
@@ -343,17 +342,13 @@ if (ENABLE_WEBKIT)
         JavaScriptTest.cpp
         PlatformUtilities.cpp
         TestsController.cpp
-        WTFStringUtilities.cpp
     )
     target_compile_definitions(TestWebKitAPIBase PRIVATE BUILDING_TestWebKit)
     target_include_directories(TestWebKitAPIBase PRIVATE ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES})
     target_link_libraries(TestWebKitAPIBase PRIVATE WebKit::WebKit WebKit::gtest)
 
     if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase -Wno-dangling-else
-                                                      -Wno-sign-compare
-                                                      -Wno-undef
-                                                      -Wno-unused-parameter)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase ${TestWebKitAPI_DISABLED_WARNINGS} -Wno-deprecated-declarations)
     endif ()
 
     set(TestWebKitAPIInjectedBundle_SOURCES
@@ -404,10 +399,7 @@ if (ENABLE_WEBKIT)
     target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE WebKit::WebKit WebKit::gtest)
 
     if (COMPILER_IS_GCC_OR_CLANG)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle -Wno-dangling-else
-                                                                -Wno-sign-compare
-                                                                -Wno-undef
-                                                                -Wno-unused-parameter)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle ${TestWebKitAPI_DISABLED_WARNINGS})
     endif ()
 
     WEBKIT_EXECUTABLE_DECLARE(TestWebKit)

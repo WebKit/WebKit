@@ -28,6 +28,7 @@
 
 #include "ServiceWorkerNotificationHandler.h"
 #include "WebPageProxy.h"
+#include <WebCore/NotificationData.h>
 
 namespace WebKit {
 

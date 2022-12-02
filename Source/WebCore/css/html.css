@@ -368,7 +368,6 @@ label {
 }
 
 legend {
-    display: block;
     padding-inline-start: 2px;
     padding-inline-end: 2px;
     border: none;
@@ -390,8 +389,8 @@ button {
     appearance: auto;
 }
 
-/* Form controls don't go vertical. */
-input, textarea, select, button, meter, progress {
+/* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
+select, button, meter, progress, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
     writing-mode: horizontal-tb !important;
 }
 
@@ -1033,7 +1032,8 @@ input[type="color"]::-webkit-color-swatch-wrapper {
     border-radius: inherit;
     padding: 2px;
 #else
-    padding: 4px 2px 5px;
+    padding-inline: 2px;
+    padding-block: 4px 5px;
 #endif
     box-sizing: border-box;
     width: 100%;

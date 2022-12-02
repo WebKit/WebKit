@@ -52,10 +52,11 @@ public:
     void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);
     void allCookiesDeleted();
 
+    void clearCache() final;
+
 private:
     WebCookieJar();
 
-    void clearCache() final;
     void clearCacheForHost(const String&) final;
     bool isEligibleForCache(WebFrame&, const URL& firstPartyForCookies, const URL& resourceURL) const;
 

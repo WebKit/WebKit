@@ -55,7 +55,23 @@ else:
 
 @app.route('/__health')
 def health():
-    return 'ready' if checkout.repository else 'cloning'
+    if not checkout.repository:
+        return current_app.response_class(
+            fjson.dumps(dict(status='cloning'), indent=4),
+            mimetype='application/json',
+        )
+
+    if not checkout_routes.commit(ref='main'):
+        return current_app.response_class(
+            fjson.dumps(dict(status='broken'), indent=4),
+            mimetype='application/json',
+            status=500,
+        )
+
+    return current_app.response_class(
+        fjson.dumps(dict(status='ready'), indent=4),
+        mimetype='application/json',
+    )
 
 
 app.register_blueprint(checkout_routes)

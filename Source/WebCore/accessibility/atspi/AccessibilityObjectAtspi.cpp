@@ -1004,7 +1004,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     if (m_coreObject->supportsDragging())
         map.add("grabbed"_s, m_coreObject->isGrabbed() ? "true"_s : "false"_s);
 
-    String keyShortcuts = m_coreObject->keyShortcutsValue();
+    String keyShortcuts = m_coreObject->keyShortcuts();
     if (!keyShortcuts.isEmpty())
         map.add("keyshortcuts"_s, keyShortcuts);
 

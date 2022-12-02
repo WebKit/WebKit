@@ -447,15 +447,14 @@ template<typename, typename = void> inline constexpr bool HasIsValid = false;
 template<typename T> inline constexpr bool HasIsValid<T, std::void_t<decltype(std::declval<T>().isValid())>> = true;
 
 template<typename Item>
-static inline typename std::enable_if_t<!HasIsValid<Item>, bool> isValid(const Item&)
+static inline bool isValid(const Item& item)
 {
-    return true;
-}
-
-template<typename Item>
-static inline typename std::enable_if_t<HasIsValid<Item>, bool> isValid(const Item& item)
-{
-    return item.isValid();
+    if constexpr (HasIsValid<Item>)
+        return item.isValid();
+    else {
+        UNUSED_PARAM(item);
+        return true;
+    }
 }
 
 template<typename Item>
@@ -616,7 +615,7 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
 bool safeCopy(ItemHandle destination, const DisplayListItem& source)
 {
     return std::visit([&](const auto& source) {
-        using DisplayListItemType = typename WTF::RemoveCVAndReference<decltype(source)>::type;
+        using DisplayListItemType = std::remove_cvref_t<decltype(source)>;
         constexpr auto itemType = DisplayListItemType::itemType;
         destination.data[0] = static_cast<uint8_t>(itemType);
         auto itemOffset = destination.data + sizeof(uint64_t);

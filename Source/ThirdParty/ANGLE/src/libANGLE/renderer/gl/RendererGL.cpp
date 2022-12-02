@@ -27,6 +27,7 @@
 #include "libANGLE/renderer/gl/FenceNVGL.h"
 #include "libANGLE/renderer/gl/FramebufferGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
+#include "libANGLE/renderer/gl/PLSProgramCache.h"
 #include "libANGLE/renderer/gl/ProgramGL.h"
 #include "libANGLE/renderer/gl/QueryGL.h"
 #include "libANGLE/renderer/gl/RenderbufferGL.h"
@@ -213,6 +214,7 @@ RendererGL::~RendererGL()
     SafeDelete(mBlitter);
     SafeDelete(mMultiviewClearer);
     SafeDelete(mStateManager);
+    SafeDelete(mPLSProgramCache);
 
     std::lock_guard<std::mutex> lock(mWorkerMutex);
 
@@ -282,7 +284,7 @@ void RendererGL::generateCaps(gl::Caps *outCaps,
 {
     nativegl_gl::GenerateCaps(mFunctions.get(), mFeatures, outCaps, outTextureCaps, outExtensions,
                               outLimitations, &mMaxSupportedESVersion,
-                              &mMultiviewImplementationType);
+                              &mMultiviewImplementationType, &mPixelLocalStorageType);
 }
 
 GLint RendererGL::getGPUDisjoint()
@@ -333,14 +335,16 @@ const gl::Limitations &RendererGL::getNativeLimitations() const
 
 ShPixelLocalStorageType RendererGL::getNativePixelLocalStorageType() const
 {
-    if (!getNativeExtensions().shaderPixelLocalStorageANGLE)
+    return mPixelLocalStorageType;
+}
+
+PLSProgramCache *RendererGL::getPLSProgramCache()
+{
+    if (!mPLSProgramCache)
     {
-        return ShPixelLocalStorageType::NotSupported;
+        mPLSProgramCache = new PLSProgramCache(mFunctions.get(), mNativeCaps);
     }
-    // OpenGL ES only allows read/write access to "r32*" images.
-    return getFunctions()->standard == StandardGL::STANDARD_GL_ES
-               ? ShPixelLocalStorageType::ImageStoreR32PackedFormats
-               : ShPixelLocalStorageType::ImageStoreNativeFormats;
+    return mPLSProgramCache;
 }
 
 MultiviewImplementationTypeGL RendererGL::getMultiviewImplementationType() const
@@ -383,6 +387,12 @@ angle::Result RendererGL::memoryBarrierByRegion(GLbitfield barriers)
     mFunctions->memoryBarrierByRegion(barriers);
     mWorkDoneSinceLastFlush = true;
     return angle::Result::Continue;
+}
+
+void RendererGL::framebufferFetchBarrier()
+{
+    mFunctions->framebufferFetchBarrierEXT();
+    mWorkDoneSinceLastFlush = true;
 }
 
 bool RendererGL::bindWorkerContext(std::string *infoLog)

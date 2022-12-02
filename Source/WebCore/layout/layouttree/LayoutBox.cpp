@@ -92,6 +92,9 @@ bool Box::establishesFormattingContext() const
 
 bool Box::establishesBlockFormattingContext() const
 {
+    if (isInlineIntegrationRoot())
+        return true;
+
     // ICB always creates a new (inital) block formatting context.
     if (is<InitialContainingBlock>(*this))
         return true;

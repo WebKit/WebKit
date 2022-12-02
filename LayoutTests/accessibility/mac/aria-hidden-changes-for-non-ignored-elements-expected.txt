@@ -1,16 +1,9 @@
-One
-Two
-Three
-This one does nothing
-checkbox
 This tests that when aria-hidden is toggled, it will clear out the cached children for non-ignored elements that are descendants.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: axBody.childAtIndex(3).childAtIndex(0).role === 'AXRole: AXButton'
+PASS: axBody.childAtIndex(0).role === 'AXRole: AXCheckBox'
+PASS: axBody.childAtIndex(3).childAtIndex(0).role === 'AXRole: AXButton'
 
-
-PASS body.childAtIndex(3).childAtIndex(0).role is 'AXRole: AXButton'
-PASS body.childAtIndex(0).role is 'AXRole: AXCheckBox'
-PASS body.childAtIndex(3).childAtIndex(0).role is 'AXRole: AXButton'
 PASS successfullyParsed is true
 
 TEST COMPLETE

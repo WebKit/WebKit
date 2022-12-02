@@ -69,7 +69,7 @@ public:
     
     RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
     static Vector<double> parseKeyframeKeyList(const String&);
-    
+
     bool parseSupportsCondition(const String&);
 
     static void parseSheetForInspector(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserObserver&);
@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
 
-    std::optional<CSSSelectorList> parseSelector(const String&);
+    std::optional<CSSSelectorList> parseSelector(const String&, StyleSheetContents* = nullptr);
 
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 

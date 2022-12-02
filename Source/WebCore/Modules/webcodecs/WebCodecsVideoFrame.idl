@@ -40,6 +40,7 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
     EnabledBySetting=WebCodecsEnabled,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=VideoFrame,
+    ReportExtraMemoryCost,
 ] interface WebCodecsVideoFrame {
     constructor(CanvasImageSource image, optional VideoFrameInit init = {});
     constructor(WebCodecsVideoFrame image, optional VideoFrameInit init = {});

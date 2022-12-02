@@ -1,6 +1,16 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'shape-rendering' to CSS-wide keywords
+FAIL Can set 'shape-rendering' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'shape-rendering' to the 'auto' keyword
+FAIL Can set 'shape-rendering' to the 'optimizespeed' keyword assert_equals: expected "optimizespeed" but got "optimizeSpeed"
+PASS Can set 'shape-rendering' to the 'crispedges' keyword
+FAIL Can set 'shape-rendering' to the 'geometricprecision' keyword assert_equals: expected "geometricprecision" but got "geometricPrecision"
+PASS Setting 'shape-rendering' to a length throws TypeError
+PASS Setting 'shape-rendering' to a percent throws TypeError
+PASS Setting 'shape-rendering' to a time throws TypeError
+PASS Setting 'shape-rendering' to an angle throws TypeError
+PASS Setting 'shape-rendering' to a flexible length throws TypeError
+PASS Setting 'shape-rendering' to a number throws TypeError
+PASS Setting 'shape-rendering' to a URL throws TypeError
+PASS Setting 'shape-rendering' to a transform throws TypeError
 

@@ -182,48 +182,6 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
     });
 }
 
-void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier& remotePort, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
-{
-    ASSERT(isMainThread());
-    ASSERT(remotePort == m_ports[0] || remotePort == m_ports[1]);
-
-    // If the remote port is closed there is no pending activity.
-    size_t i = remotePort == m_ports[0] ? 0 : 1;
-    if (m_isClosed[i]) {
-        callback(MessagePortChannelProvider::HasActivity::No);
-        return;
-    }
-
-    // If there are any messages in flight between the ports, there is pending activity.
-    if (hasAnyMessagesPendingOrInFlight()) {
-        callback(MessagePortChannelProvider::HasActivity::Yes);
-        return;
-    }
-
-    // If the port is not currently in a process then it's being transferred as part of a postMessage.
-    // We treat these ports as if they do have activity since they will be revived when the message is delivered.
-    if (!m_processes[i]) {
-        callback(MessagePortChannelProvider::HasActivity::Yes);
-        return;
-    }
-
-    CompletionHandler<void(MessagePortChannelProvider::HasActivity)> outerCallback = [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto hasActivity) mutable {
-        if (hasActivity == MessagePortChannelProvider::HasActivity::Yes) {
-            callback(hasActivity);
-            return;
-        }
-
-        // If the remote port said it had no activity, check again for any messages that might be in flight.
-        // This is because it might have asynchronously sent a message just before it was asked about local activity.
-        if (hasAnyMessagesPendingOrInFlight())
-            hasActivity = MessagePortChannelProvider::HasActivity::Yes;
-
-        callback(hasActivity);
-    };
-
-    m_registry.checkProcessLocalPortForActivity(remotePort, *m_processes[i], WTFMove(outerCallback));
-}
-
 bool MessagePortChannel::hasAnyMessagesPendingOrInFlight() const
 {
     ASSERT(isMainThread());

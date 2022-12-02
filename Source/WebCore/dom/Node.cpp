@@ -777,7 +777,7 @@ static Node::Editability computeEditabilityFromComputedStyle(const RenderStyle& 
     return Node::Editability::ReadOnly;
 }
 
-Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* style, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
+Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
     if (!document().hasLivingRenderTree() || isPseudoElement())
         return Editability::ReadOnly;
@@ -794,8 +794,15 @@ Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* style, Us
         document->updateStyleIfNeeded();
     }
 
-    if (!style)
-        style = isDocumentNode() ? renderStyle() : const_cast<Node*>(this)->computedStyle();
+    auto* style = [&] {
+        if (incomingStyle)
+            return incomingStyle;
+        if (isDocumentNode())
+            return renderStyle();
+        auto* element = is<Element>(this) ? downcast<Element>(this) : parentElementInComposedTree();
+        return element ? const_cast<Element&>(*element).computedStyleForEditability() : nullptr;
+    }();
+
     if (!style)
         return Editability::ReadOnly;
 
@@ -1127,7 +1134,7 @@ Node* Node::pseudoAwareLastChild() const
 
 const RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
 {
-    auto* composedParent = composedTreeAncestors(*this).first();
+    auto* composedParent = parentElementInComposedTree();
     if (!composedParent)
         return nullptr;
     return composedParent->computedStyle(pseudoElementSpecifier);
@@ -2542,10 +2549,7 @@ bool Node::willRespondToMouseClickEventsWithEditability(Editability editability)
     return hasEventListeners(eventNames.mouseupEvent)
         || hasEventListeners(eventNames.mousedownEvent)
         || hasEventListeners(eventNames.clickEvent)
-#if !PLATFORM(IOS_FAMILY)
-        || hasEventListeners(eventNames.DOMActivateEvent)
-#endif
-    ;
+        || hasEventListeners(eventNames.DOMActivateEvent);
 }
 
 bool Node::willRespondToMouseWheelEvents() const

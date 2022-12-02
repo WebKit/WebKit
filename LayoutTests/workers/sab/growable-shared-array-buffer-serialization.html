@@ -1,0 +1,58 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useResizableArrayBuffer=true,--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<title>Growable SharedArrayBuffers should be serializable</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Growable SharedArrayBuffers should be serializable");
+window.jsTestIsAsync = true;
+
+var arrayBuffer = new SharedArrayBuffer(36, { maxByteLength: 128 });
+
+shouldBeTrue(`arrayBuffer.growable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(URL.createObjectURL(blob));
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+(async () => {
+    const worker = await createWorker(`
+        self.onmessage = (event) => {
+            let data = event.data;
+            self.postMessage(data);
+        }
+    `);
+
+    const promise = new Promise(resolve => worker.onmessage = event => resolve(event.data));
+    worker.postMessage(arrayBuffer);
+
+    globalThis.result = await promise;
+    shouldBeTrue(`result.growable`);
+    shouldBe(`result.byteLength`, `36`);
+    shouldBe(`result.maxByteLength`, `128`);
+    result.grow(128);
+    shouldBeTrue(`result.growable`);
+    shouldBe(`result.byteLength`, `128`);
+    shouldBe(`result.maxByteLength`, `128`);
+    shouldBeTrue(`arrayBuffer.growable`);
+    shouldBe(`arrayBuffer.byteLength`, `128`);
+    shouldBe(`arrayBuffer.maxByteLength`, `128`);
+    finishJSTest();
+})();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

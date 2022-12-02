@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'treat-as-public-address'.
-
-
-PASS Local secure page fetches local page.
-PASS Public secure page fetches local page.
-

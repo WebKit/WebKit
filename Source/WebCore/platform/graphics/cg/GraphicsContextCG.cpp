@@ -398,7 +398,7 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
     CGContextStateSaver stateSaver(context);
     CGContextClipToRect(context, destRect);
 
-    setCompositeOperation(options.compositeOperator(), options.blendMode());
+    setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);
@@ -1077,6 +1077,54 @@ void GraphicsContextCG::clearCGShadow()
     CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 }
 
+#if PLATFORM(COCOA)
+static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>& style)
+{
+    if (!style) {
+        CGContextSetStyle(context, nullptr);
+        return;
+    }
+
+    auto cgStyle = WTF::switchOn(*style,
+        [&] (const GraphicsDropShadow& dropShadow) -> RetainPtr<CGStyleRef> {
+#if HAVE(CGSTYLE_CREATE_SHADOW2)
+            return adoptCF(CGStyleCreateShadow2(dropShadow.offset, dropShadow.radius.width(), cachedCGColor(dropShadow.color).get()));
+#else
+            ASSERT_NOT_REACHED();
+            UNUSED_PARAM(dropShadow);
+            return nullptr;
+#endif
+        },
+        [&] (const GraphicsGaussianBlur& gaussianBlur) -> RetainPtr<CGStyleRef> {
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+            ASSERT(gaussianBlur.radius.width() == gaussianBlur.radius.height());
+            CGGaussianBlurStyle gaussianBlurStyle = { 1, gaussianBlur.radius.width() };
+            return adoptCF(CGStyleCreateGaussianBlur(&gaussianBlurStyle));
+#else
+            ASSERT_NOT_REACHED();
+            UNUSED_PARAM(gaussianBlur);
+            return nullptr;
+#endif
+        },
+        [&] (const GraphicsColorMatrix& colorMatrix) -> RetainPtr<CGStyleRef> {
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+            CGColorMatrixStyle colorMatrixStyle = { 1, { 0 } };
+            for (size_t i = 0; i < colorMatrix.values.size(); ++i)
+                colorMatrixStyle.matrix[i] = colorMatrix.values[i];
+            return adoptCF(CGStyleCreateColorMatrix(&colorMatrixStyle));
+#else
+            ASSERT_NOT_REACHED();
+            UNUSED_PARAM(colorMatrix);
+            return nullptr;
+#endif
+        }
+    );
+
+    if (cgStyle)
+        CGContextSetStyle(context, cgStyle.get());
+}
+#endif
+
 void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 {
     if (!state.changes())
@@ -1104,6 +1152,12 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 
         case GraphicsContextState::Change::DropShadow:
             setCGShadow(renderingMode(), state.dropShadow().offset, state.dropShadow().blurRadius, state.dropShadow().color, state.shadowsIgnoreTransforms());
+            break;
+
+        case GraphicsContextState::Change::Style:
+#if PLATFORM(COCOA)
+            setCGStyle(context, state.style());
+#endif
             break;
 
         case GraphicsContextState::Change::Alpha:

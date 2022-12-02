@@ -1,4 +1,0 @@
-
-PASS Local secure page fetches local page.
-PASS Public secure page fetches local page.
-

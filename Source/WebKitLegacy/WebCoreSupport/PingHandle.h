@@ -28,6 +28,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
+#include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -50,8 +51,7 @@ public:
     {
         bool defersLoading = false;
         bool shouldContentSniff = false;
-        bool shouldContentEncodingSniff = true;
-        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, shouldContentEncodingSniff, nullptr, false);
+        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, WebCore::ContentEncodingSniffingPolicy::Default, nullptr, false);
 
         // If the server never responds, this object will hang around forever.
         // Set a very generous timeout, just in case.

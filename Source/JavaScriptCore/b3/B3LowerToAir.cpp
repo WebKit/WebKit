@@ -772,6 +772,9 @@ private:
         case Double:
             opcode = opcodeDouble;
             break;
+        case V128:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         default:
             opcode = Air::Oops;
             break;
@@ -1190,6 +1193,7 @@ private:
             }
             break;
         case Width128:
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1858,6 +1862,7 @@ private:
                     }
                     return Inst();
                 case Width128:
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
                 ASSERT_NOT_REACHED();
@@ -1890,6 +1895,7 @@ private:
                     }
                     return Inst();
                 case Width128:
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
                 ASSERT_NOT_REACHED();
@@ -1940,6 +1946,7 @@ private:
                     }
                     return Inst();
                 case Width128:
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
                 ASSERT_NOT_REACHED();
@@ -1967,6 +1974,7 @@ private:
                     }
                     return Inst();
                 case Width128:
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
                 ASSERT_NOT_REACHED();
@@ -2037,6 +2045,7 @@ private:
                 case Width64:
                     return createSelectInstruction(config.moveConditionally64, relCond, left, right);
                 case Width128:
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
                 ASSERT_NOT_REACHED();
@@ -2054,6 +2063,7 @@ private:
                 case Width64:
                     return createSelectInstruction(config.moveConditionallyTest64, resCond, left, right);
                 case Width128:
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
                 ASSERT_NOT_REACHED();
@@ -2331,7 +2341,7 @@ private:
                 case Width64:
                     break;
                 case Width128:
-                    ASSERT_NOT_REACHED();
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
             }
@@ -2350,7 +2360,7 @@ private:
                     appendTrapping(Air::Branch64, Arg::relCond(MacroAssembler::Equal), valueResultTmp, expectedValueTmp);
                     break;
                 case Width128:
-                    ASSERT_NOT_REACHED();
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
                 m_blockToBlock[m_block]->setSuccessors(success, failure);
@@ -2511,7 +2521,7 @@ private:
                 prepareOpcode = Move;
                 break;
             case Width128:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
         } else {
@@ -3697,6 +3707,7 @@ private:
                 switch (type.kind()) {
                 case Void:
                 case Tuple:
+                case V128:
                     RELEASE_ASSERT_NOT_REACHED();
                     break;
                 case Int32:
@@ -4260,6 +4271,7 @@ private:
             switch (value->type().kind()) {
             case Void:
             case Tuple:
+            case V128:
                 // It's impossible for a void value to be used as a child. We use RetVoid
                 // for void returns.
                 RELEASE_ASSERT_NOT_REACHED();

@@ -22,7 +22,3 @@ Worker - inspector/worker/resources/worker-3.js
 PASS: Worker.workerTerminated
 Worker - inspector/worker/resources/worker-1.js
 
--- Running test case: Worker.workerTerminated.GC
-PASS: Worker.workerTerminated
-No Workers
-

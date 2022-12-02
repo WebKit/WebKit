@@ -181,7 +181,7 @@ void ServiceWorkerDownloadTask::start()
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);
 }
 
-void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference& data, int64_t encodedDataLength)
+void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference& data, uint64_t encodedDataLength)
 {
     ASSERT(!isMainRunLoop());
 

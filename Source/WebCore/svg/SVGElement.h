@@ -87,7 +87,8 @@ public:
     void loadEventTimerFired();
     virtual Timer* loadEventTimer();
 
-    virtual AffineTransform* supplementalTransform() { return nullptr; }
+    virtual AffineTransform* ensureSupplementalTransform() { return nullptr; }
+    virtual AffineTransform* supplementalTransform() const { return nullptr; }
 
     inline void setAnimatedSVGAttributesAreDirty();
     inline void setPresentationalHintStyleIsDirty();

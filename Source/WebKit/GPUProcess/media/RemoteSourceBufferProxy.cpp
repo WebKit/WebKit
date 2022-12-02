@@ -196,18 +196,13 @@ void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
 
 void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
 {
-    SharedMemory::Handle handle;
-
-    auto invokeCallbackAtScopeExit = makeScopeExit([&] {
-        completionHandler(WTFMove(handle));
-    });
-
     auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
-        return;
+        return completionHandler(std::nullopt);
+
     m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()));
 
-    sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    completionHandler(sharedMemory->createHandle(SharedMemory::Protection::ReadOnly));
 }
 
 void RemoteSourceBufferProxy::abort()
@@ -262,7 +257,7 @@ void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded,
     completionHandler(WTFMove(buffered));
 }
 
-void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, RemoveCodedFramesAsyncReply&& completionHandler)
+void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
 {
     m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, isEnded, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         auto buffered = m_sourceBufferPrivate->buffered()->ranges();
@@ -270,9 +265,9 @@ void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const Me
     });
 }
 
-void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded, EvictCodedFramesDelayedReply&& completionHandler)
+void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    m_sourceBufferPrivate->evictCodedFrames(newDataSize, maximumBufferSize, currentTime, duration, isEnded);
+    m_sourceBufferPrivate->evictCodedFrames(newDataSize, maximumBufferSize, currentTime, isEnded);
     completionHandler(m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 

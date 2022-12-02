@@ -10,6 +10,7 @@
 
 #include "egl_loader_autogen.h"
 
+extern "C" {
 ANGLE_UTIL_EXPORT PFNEGLCHOOSECONFIGPROC l_eglChooseConfig;
 ANGLE_UTIL_EXPORT PFNEGLCOPYBUFFERSPROC l_eglCopyBuffers;
 ANGLE_UTIL_EXPORT PFNEGLCREATECONTEXTPROC l_eglCreateContext;
@@ -125,9 +126,7 @@ ANGLE_UTIL_EXPORT PFNEGLPOSTSUBBUFFERNVPROC l_eglPostSubBufferNV;
 ANGLE_UTIL_EXPORT PFNEGLSTREAMCONSUMERGLTEXTUREEXTERNALATTRIBSNVPROC
     l_eglStreamConsumerGLTextureExternalAttribsNV;
 
-namespace angle
-{
-void LoadEGL(LoadProc loadProc)
+void LoadUtilEGL(LoadProc loadProc)
 {
     l_eglChooseConfig  = reinterpret_cast<PFNEGLCHOOSECONFIGPROC>(loadProc("eglChooseConfig"));
     l_eglCopyBuffers   = reinterpret_cast<PFNEGLCOPYBUFFERSPROC>(loadProc("eglCopyBuffers"));
@@ -316,4 +315,4 @@ void LoadEGL(LoadProc loadProc)
         reinterpret_cast<PFNEGLSTREAMCONSUMERGLTEXTUREEXTERNALATTRIBSNVPROC>(
             loadProc("eglStreamConsumerGLTextureExternalAttribsNV"));
 }
-}  // namespace angle
+}  // extern "C"

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <limits>
-#include <wtf/Span.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringView.h>
 

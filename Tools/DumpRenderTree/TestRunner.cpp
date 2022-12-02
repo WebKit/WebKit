@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -268,8 +268,11 @@ static JSValueRef removeAllVisitedLinksCallback(JSContextRef context, JSObjectRe
 
 static JSValueRef removeAllCookiesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->removeAllCookies();
+    controller->removeAllCookies(JSValueToObject(context, arguments[0], 0));
     return JSValueMakeUndefined(context);
 }
 
@@ -2337,6 +2340,11 @@ void TestRunner::uiScriptDidComplete(const String& result, unsigned callbackID)
 void TestRunner::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
 {
     WebCoreTestSupport::setAllowsAnySSLCertificate(allowsAnySSLCertificate);
+}
+
+bool TestRunner::allowsAnySSLCertificate()
+{
+    return WebCoreTestSupport::allowsAnySSLCertificate();
 }
 
 void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)

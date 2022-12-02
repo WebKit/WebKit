@@ -32,112 +32,40 @@
 #include "Logging.h"
 #include <Accelerate/Accelerate.h>
 #include <CoreAudio/CoreAudioTypes.h>
-#include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
-
-const uint32_t kGeneralRingTimeBoundsQueueSize = 32;
-const uint32_t kGeneralRingTimeBoundsQueueMask = kGeneralRingTimeBoundsQueueSize - 1;
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-CARingBufferStorageVector::CARingBufferStorageVector()
-    : m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
+CARingBuffer::CARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams)
+    : m_pointers(numChannelStreams)
+    , m_channelCount(numChannelStreams)
+    , m_bytesPerFrame(bytesPerFrame)
+    , m_frameCount(frameCount)
+    , m_capacityBytes(computeCapacityBytes(bytesPerFrame, frameCount))
 {
+    ASSERT(WTF::isPowerOfTwo(frameCount));
 }
 
-CARingBuffer::CARingBuffer()
-    : m_buffers(makeUniqueRef<CARingBufferStorageVector>())
+CARingBuffer::~CARingBuffer() = default;
+
+CheckedSize CARingBuffer::computeCapacityBytes(size_t bytesPerFrame, size_t frameCount)
 {
+    return CheckedSize { bytesPerFrame } * frameCount;
 }
 
-CARingBuffer::~CARingBuffer()
+CheckedSize CARingBuffer::computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams)
 {
-    deallocate();
+    return computeCapacityBytes(bytesPerFrame, frameCount) * numChannelStreams;
 }
 
-CARingBuffer::CARingBuffer(UniqueRef<CARingBufferStorage>&& storage)
-    : m_buffers(WTFMove(storage))
+void CARingBuffer::initialize()
 {
-}
-
-static CheckedSize computeCapacityBytes(const CAAudioStreamDescription& format, size_t frameCount)
-{
-    CheckedSize capacityBytes = format.bytesPerFrame();
-    capacityBytes *= frameCount;
-    return capacityBytes;
-}
-
-static CheckedSize computeSizeForBuffers(const CAAudioStreamDescription& format, size_t frameCount)
-{
-    auto sizeForBuffers = computeCapacityBytes(format, frameCount);
-    sizeForBuffers *= format.numberOfChannelStreams();
-    return sizeForBuffers;
-}
-
-UniqueRef<CARingBuffer> CARingBuffer::adoptStorage(UniqueRef<CARingBufferStorage>&& storage, const CAAudioStreamDescription& format, size_t frameCount)
-{
-    // Validate the parameters as they may be coming from an untrusted process.
-    auto expectedStorageSize = computeSizeForBuffers(format, frameCount);
-    if (expectedStorageSize.hasOverflowed()) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::adoptStorage: Overflowed when trying to compute the storage size");
-        return makeUniqueRef<CARingBuffer>();
-    }
-    if (storage->size() < expectedStorageSize) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::adoptStorage: Storage size is insufficient for format and frameCount");
-        return makeUniqueRef<CARingBuffer>();
-    }
-
-    auto ringBuffer = makeUniqueRef<CARingBuffer>(WTFMove(storage));
-    ringBuffer->initializeAfterAllocation(format, frameCount);
-    return ringBuffer;
-}
-
-void CARingBuffer::initializeAfterAllocation(const CAAudioStreamDescription& format, size_t frameCount)
-{
-    m_description = format;
-    m_channelCount = format.numberOfChannelStreams();
-    m_bytesPerFrame = format.bytesPerFrame();
-    m_frameCount = frameCount;
-    m_capacityBytes = computeCapacityBytes(format, frameCount);
-
-    m_pointers.resize(m_channelCount);
-    Byte* channelData = static_cast<Byte*>(m_buffers->data());
-
+    Byte* channelData = static_cast<Byte*>(data());
     for (auto& pointer : m_pointers) {
         pointer = channelData;
         channelData += m_capacityBytes;
     }
-
-    flush();
-}
-
-bool CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frameCount)
-{
-    deallocate();
-    frameCount = WTF::roundUpToPowerOfTwo(frameCount);
-
-    auto sizeForBuffers = computeSizeForBuffers(format, frameCount);
-    if (sizeForBuffers.hasOverflowed()) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::allocate: Overflowed when trying to compute the storage size");
-        return false;
-    }
-
-    if (UNLIKELY(!m_buffers->allocate(sizeForBuffers, format, frameCount))) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::allocate: Failed to allocate buffer of the requested size: %lu", sizeForBuffers.value());
-        return false;
-    }
-
-    initializeAfterAllocation(format, frameCount);
-    return true;
-}
-
-void CARingBuffer::deallocate()
-{
-    m_buffers->deallocate();
-    m_pointers.clear();
-    m_channelCount = 0;
-    m_capacityBytes = 0;
-    m_frameCount = 0;
 }
 
 static void ZeroRange(Vector<Byte*>& pointers, size_t offset, size_t nbytes)
@@ -158,49 +86,47 @@ static void StoreABL(Vector<Byte*>& pointers, size_t destOffset, const AudioBuff
     }
 }
 
-static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytes, AudioStreamDescription::PCMFormat format, CARingBuffer::FetchMode mode)
+static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytes, CARingBuffer::FetchMode mode)
 {
     ASSERT(list->mNumberBuffers == pointers.size());
-    AudioBuffer* dest = list->mBuffers;
-    for (auto& pointer : pointers) {
-        if (destOffset > dest->mDataByteSize)
+    auto bufferCount = std::min<size_t>(list->mNumberBuffers, pointers.size());
+    for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex) {
+        auto& pointer = pointers[bufferIndex];
+        auto& dest = list->mBuffers[bufferIndex];
+
+        if (destOffset > dest.mDataByteSize)
             continue;
 
-        auto* destinationData = static_cast<Byte*>(dest->mData) + destOffset;
+        auto* destinationData = static_cast<Byte*>(dest.mData) + destOffset;
         auto* sourceData = pointer + srcOffset;
-        nbytes = std::min<size_t>(nbytes, dest->mDataByteSize - destOffset);
-        if (mode == CARingBuffer::Copy)
+        nbytes = std::min<size_t>(nbytes, dest.mDataByteSize - destOffset);
+        switch (mode) {
+        case CARingBuffer::Copy:
             memcpy(destinationData, sourceData, nbytes);
-        else {
-            switch (format) {
-            case AudioStreamDescription::Int16: {
-                auto* destination = reinterpret_cast<int16_t*>(destinationData);
-                auto* source = reinterpret_cast<int16_t*>(sourceData);
-                for (size_t i = 0; i < nbytes / sizeof(int16_t); i++)
-                    destination[i] += source[i];
-                break;
-            }
-            case AudioStreamDescription::Int32: {
-                auto* destination = reinterpret_cast<int32_t*>(destinationData);
-                vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceData), 1, destination, 1, nbytes / sizeof(int32_t));
-                break;
-            }
-            case AudioStreamDescription::Float32: {
-                auto* destination = reinterpret_cast<float*>(destinationData);
-                vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceData), 1, destination, 1, nbytes / sizeof(float));
-                break;
-            }
-            case AudioStreamDescription::Float64: {
-                auto* destination = reinterpret_cast<double*>(destinationData);
-                vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceData), 1, destination, 1, nbytes / sizeof(double));
-                break;
-            }
-            case AudioStreamDescription::None:
-                ASSERT_NOT_REACHED();
-                break;
-            }
+            break;
+        case CARingBuffer::MixInt16: {
+            auto* destination = reinterpret_cast<int16_t*>(destinationData);
+            auto* source = reinterpret_cast<int16_t*>(sourceData);
+            for (size_t i = 0; i < nbytes / sizeof(int16_t); i++)
+                destination[i] += source[i];
+            break;
         }
-        ++dest;
+        case CARingBuffer::MixInt32: {
+            auto* destination = reinterpret_cast<int32_t*>(destinationData);
+            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceData), 1, destination, 1, nbytes / sizeof(int32_t));
+            break;
+        }
+        case CARingBuffer::MixFloat32: {
+            auto* destination = reinterpret_cast<float*>(destinationData);
+            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceData), 1, destination, 1, nbytes / sizeof(float));
+            break;
+        }
+        case CARingBuffer::MixFloat64: {
+            auto* destination = reinterpret_cast<double*>(destinationData);
+            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceData), 1, destination, 1, nbytes / sizeof(double));
+            break;
+        }
+        }
     }
 }
 
@@ -216,29 +142,19 @@ inline void ZeroABL(AudioBufferList* list, size_t destOffset, size_t nbytes)
     }
 }
 
-void CARingBuffer::flush()
+void CARingBuffer::setTimeBounds(TimeBounds bufferBounds)
 {
-    m_buffers->flush();
+    m_storeBounds = bufferBounds;
+
+    auto& bounds = timeBoundsBuffer();
+    unsigned index = (bounds.index.load(std::memory_order_acquire) + 1) % boundsBufferSize;
+    bounds.buffer[index] = bufferBounds;
+    bounds.index.store(index, std::memory_order_release);
 }
 
-bool CARingBufferStorageVector::allocate(size_t byteCount, const CAAudioStreamDescription&, size_t)
+CARingBuffer::TimeBounds CARingBuffer::getStoreTimeBounds()
 {
-    if (!m_buffer.tryReserveCapacity(byteCount))
-        return false;
-
-    m_buffer.grow(byteCount);
-    return true;
-}
-
-void CARingBufferStorageVector::flush()
-{
-    Locker locker { m_currentFrameBoundsLock };
-    for (auto& timeBounds : m_timeBoundsQueue) {
-        timeBounds.m_startFrame = 0;
-        timeBounds.m_endFrame = 0;
-        timeBounds.m_updateCounter = 0;
-    }
-    m_timeBoundsQueuePtr = 0;
+    return m_storeBounds;
 }
 
 CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t framesToWrite, uint64_t startFrame)
@@ -251,28 +167,27 @@ CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t fram
 
     uint64_t endFrame = startFrame + framesToWrite;
 
-    if (startFrame < currentEndFrame()) {
+    if (startFrame < m_storeBounds.startFrame) {
         // Throw everything out when going backwards.
-        setCurrentFrameBounds(startFrame, startFrame);
-    } else if (endFrame - currentStartFrame() <= m_frameCount) {
+        setTimeBounds({ startFrame, startFrame });
+    } else if (endFrame - m_storeBounds.startFrame <= m_frameCount) {
         // The buffer has not yet wrapped and will not need to.
         // No-op.
     } else {
         // Advance the start time past the region we are about to overwrite
         // starting one buffer of time behind where we're writing.
         uint64_t newStartFrame = endFrame - m_frameCount;
-        uint64_t newEndFrame = std::max(newStartFrame, currentEndFrame());
-        setCurrentFrameBounds(newStartFrame, newEndFrame);
+        uint64_t newEndFrame = std::max(newStartFrame, m_storeBounds.endFrame);
+        setTimeBounds({ newStartFrame, newEndFrame });
     }
 
     // Write the new frames.
     size_t offset0;
     size_t offset1;
-    uint64_t curEnd = currentEndFrame();
 
-    if (startFrame > curEnd) {
+    if (startFrame > m_storeBounds.endFrame) {
         // We are skipping some samples, so zero the range we are skipping.
-        offset0 = frameOffset(curEnd);
+        offset0 = frameOffset(m_storeBounds.endFrame);
         offset1 = frameOffset(startFrame);
         if (offset0 < offset1)
             ZeroRange(m_pointers, offset0, offset1 - offset0);
@@ -294,125 +209,64 @@ CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t fram
     }
 
     // Now update the end time.
-    setCurrentFrameBounds(currentStartFrame(), endFrame);
+    setTimeBounds({ m_storeBounds.startFrame, endFrame });
 
     return Ok;
 }
 
-void CARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
+CARingBuffer::TimeBounds CARingBuffer::getFetchTimeBounds()
 {
-    m_buffers->setCurrentFrameBounds(startTime, endTime);
-}
-
-void CARingBufferStorageVector::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
-{
-    Locker locker { m_currentFrameBoundsLock };
-    uint32_t nextPtr = m_timeBoundsQueuePtr.load() + 1;
-    uint32_t index = nextPtr & kGeneralRingTimeBoundsQueueMask;
-
-    m_timeBoundsQueue[index].m_startFrame = startTime;
-    m_timeBoundsQueue[index].m_endFrame = endTime;
-    m_timeBoundsQueue[index].m_updateCounter = nextPtr;
-    m_timeBoundsQueuePtr++;
-}
-
-void CARingBuffer::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
-{
-    updateFrameBounds();
-    getCurrentFrameBoundsWithoutUpdate(startFrame, endFrame);
-}
-
-void CARingBuffer::getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint64_t& endFrame)
-{
-    m_buffers->getCurrentFrameBounds(startFrame, endFrame);
-}
-
-SUPPRESS_TSAN void CARingBufferStorageVector::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
-{
-    uint32_t curPtr = m_timeBoundsQueuePtr.load();
-    uint32_t index = curPtr & kGeneralRingTimeBoundsQueueMask;
-    auto& bounds = m_timeBoundsQueue[index];
-
-    startFrame = bounds.m_startFrame;
-    endFrame = bounds.m_endFrame;
-}
-
-void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
-{
-    uint64_t startTime;
-    uint64_t endTime;
-
-    getCurrentFrameBoundsWithoutUpdate(startTime, endTime);
-
-    if (startRead > endTime || endRead < startTime) {
-        endRead = startRead;
-        return;
+    auto& bounds = timeBoundsBuffer();
+    unsigned index = bounds.index.load(std::memory_order_acquire);
+    if (UNLIKELY(index >= boundsBufferSize)) {
+        ASSERT_NOT_REACHED();
+        return { };
     }
 
-    startRead = std::max(startRead, startTime);
-    endRead = std::min(endRead, endTime);
-    endRead = std::max(endRead, startRead);
+    auto fetchBounds = bounds.buffer[index];
+    if (fetchBounds.endFrame - fetchBounds.startFrame > m_frameCount) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    return fetchBounds;
 }
 
-uint64_t CARingBuffer::currentStartFrame() const
+static CARingBuffer::TimeBounds clamp(CARingBuffer::TimeBounds value, CARingBuffer::TimeBounds limit)
 {
-    return m_buffers->currentStartFrame();
+    return {
+        std::clamp(value.startFrame, limit.startFrame, limit.endFrame),
+        std::clamp(value.endFrame, limit.startFrame, limit.endFrame)
+    };
 }
 
-SUPPRESS_TSAN uint64_t CARingBufferStorageVector::currentStartFrame() const
+bool CARingBuffer::fetchIfHasEnoughData(AudioBufferList* list, size_t frameCount, uint64_t startRead, FetchMode mode)
 {
-    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
-    return m_timeBoundsQueue[index].m_startFrame;
-}
-
-uint64_t CARingBuffer::currentEndFrame() const
-{
-    return m_buffers->currentEndFrame();
-}
-
-SUPPRESS_TSAN uint64_t CARingBufferStorageVector::currentEndFrame() const
-{
-    uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
-    return m_timeBoundsQueue[index].m_endFrame;
-}
-
-void CARingBuffer::updateFrameBounds()
-{
-    m_buffers->updateFrameBounds();
-}
-
-bool CARingBuffer::fetchIfHasEnoughData(AudioBufferList* list, size_t frameCount, uint64_t startFrame, FetchMode mode)
-{
-    // When the RingBuffer is backed by shared memory, getCurrentFrameBounds() makes sure we pull frame bounds from shared memory before fetching.
-    uint64_t start, end;
-    getCurrentFrameBounds(start, end);
-    if (startFrame < start || startFrame + frameCount > end)
+    auto bufferBounds = getFetchTimeBounds();
+    if (startRead < bufferBounds.startFrame || startRead + frameCount > bufferBounds.endFrame)
         return false;
-
-    fetchInternal(list, frameCount, startFrame, mode);
+    fetchInternal(list, frameCount, startRead, mode, bufferBounds);
     return true;
 }
 
 void CARingBuffer::fetch(AudioBufferList* list, size_t frameCount, uint64_t startRead, FetchMode mode)
 {
-    // When the RingBuffer is backed by shared memory, make sure we pull frame bounds from shared memory before fetching.
-    updateFrameBounds();
-    fetchInternal(list, frameCount, startRead, mode);
+    fetchInternal(list, frameCount, startRead, mode, getFetchTimeBounds());
 }
 
-void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t startRead, FetchMode mode)
+void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t startRead, FetchMode mode, TimeBounds bufferBounds)
 {
     if (!nFrames)
         return;
-    
-    startRead = std::max<uint64_t>(0, startRead);
-    
+
     uint64_t endRead = startRead + nFrames;
     
     uint64_t startRead0 = startRead;
     uint64_t endRead0 = endRead;
-    
-    clipTimeBounds(startRead, endRead);
+    {
+        auto fetchBounds = clamp({ startRead, endRead }, bufferBounds);
+        startRead = fetchBounds.startFrame;
+        endRead = fetchBounds.endFrame;
+    }
 
     if (startRead == endRead) {
         ZeroABL(list, 0, nFrames * m_bytesPerFrame);
@@ -436,12 +290,12 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
     
     if (offset0 < offset1) {
         nbytes = offset1 - offset0;
-        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, m_description.format(), mode);
+        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode);
     } else {
         nbytes = m_capacityBytes - offset0;
-        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, m_description.format(), mode);
+        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode);
         if (offset1)
-            FetchABL(list, destStartByteOffset + nbytes, m_pointers, 0, offset1, m_description.format(), mode);
+            FetchABL(list, destStartByteOffset + nbytes, m_pointers, 0, offset1, mode);
         nbytes += offset1;
     }
     
@@ -452,6 +306,37 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
         dest++;
     }
 }
+
+std::unique_ptr<InProcessCARingBuffer> InProcessCARingBuffer::allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
+{
+    frameCount = WTF::roundUpToPowerOfTwo(frameCount);
+    auto bytesPerFrame = format.bytesPerFrame();
+    auto numChannelStreams = format.numberOfChannelStreams();
+
+    auto checkedSizeForBuffers = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams);
+    if (checkedSizeForBuffers.hasOverflowed()) {
+        RELEASE_LOG_FAULT(Media, "InProcessCARingBuffer::allocate: Overflowed when trying to compute the storage size");
+        return nullptr;
+    }
+    auto sizeForBuffers = checkedSizeForBuffers.value();
+    Vector<uint8_t> buffer;
+    if (!buffer.tryReserveCapacity(sizeForBuffers)) {
+        RELEASE_LOG_FAULT(Media, "InProcessCARingBuffer::allocate: Failed to allocate buffer of the requested size: %lu", sizeForBuffers);
+        return nullptr;
+    }
+    buffer.grow(sizeForBuffers);
+    std::unique_ptr<InProcessCARingBuffer> result { new InProcessCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, WTFMove(buffer) } };
+    result->initialize();
+    return result;
+}
+
+InProcessCARingBuffer::InProcessCARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams, Vector<uint8_t>&& buffer)
+    : CARingBuffer(bytesPerFrame, frameCount, numChannelStreams)
+    , m_buffer(WTFMove(buffer))
+{
+}
+
+InProcessCARingBuffer::~InProcessCARingBuffer() = default;
 
 }
 

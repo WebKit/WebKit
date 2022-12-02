@@ -279,7 +279,8 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if (!completelyClippedOut) {
-        paintReplaced(paintInfo, adjustedPaintOffset);
+        if (!shouldSkipContent())
+            paintReplaced(paintInfo, adjustedPaintOffset);
 
         if (style().hasBorderRadius())
             paintInfo.context().restore();
@@ -320,11 +321,12 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (style().visibility() != Visibility::Visible)
         return false;
     
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
+    LayoutRect paintRect(visualOverflowRect());
+    paintRect.moveBy(paintOffset + location());
 
     // Early exit if the element touches the edges.
-    LayoutUnit top = adjustedPaintOffset.y() + visualOverflowRect().y();
-    LayoutUnit bottom = adjustedPaintOffset.y() + visualOverflowRect().maxY();
+    LayoutUnit top = paintRect.y();
+    LayoutUnit bottom = paintRect.maxY();
     if (isSelected() && m_inlineBoxWrapper) {
         const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
         LayoutUnit selTop = paintOffset.y() + rootBox.selectionTop();
@@ -334,7 +336,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     }
     
     LayoutRect localRepaintRect = paintInfo.rect;
-    if (adjustedPaintOffset.x() + visualOverflowRect().x() >= localRepaintRect.maxX() || adjustedPaintOffset.x() + visualOverflowRect().maxX() <= localRepaintRect.x())
+    if (paintRect.x() >= localRepaintRect.maxX() || paintRect.maxX() <= localRepaintRect.x())
         return false;
 
     if (top >= localRepaintRect.maxY() || bottom <= localRepaintRect.y())
@@ -386,8 +388,10 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
 
 static bool isVideoWithDefaultObjectSize(const RenderReplaced* maybeVideo)
 {
+#if ENABLE(VIDEO)
     if (auto* video = dynamicDowncast<RenderVideo>(maybeVideo))
         return video->hasDefaultObjectSize();
+#endif
     return false;
 } 
 
@@ -511,7 +515,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     if (!hasIntrinsicAspectRatio())
         return;
 
-    if (intrinsicSize.isEmpty())
+    // After supporting contain-intrinsic-size, the intrinsicSize of size containment is not always empty.
+    if (intrinsicSize.isEmpty() || shouldApplySizeContainment())
         return;
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
@@ -556,9 +561,11 @@ static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsic
 
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
+    if (style().logicalWidth().isSpecified())
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
     if (shouldApplyInlineSizeContainment())
         return LayoutUnit();
-    if (style().logicalWidth().isSpecified() || style().logicalWidth().isIntrinsic())
+    if (style().logicalWidth().isIntrinsic())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
 
     RenderBox* contentRenderer = embeddedContentBox();

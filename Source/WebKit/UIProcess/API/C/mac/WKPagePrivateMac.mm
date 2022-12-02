@@ -108,7 +108,7 @@
 
 - (SecTrustRef)serverTrust
 {
-    return _page->pageLoadState().certificateInfo().trust();
+    return _page->pageLoadState().certificateInfo().trust().get();
 }
 
 @end

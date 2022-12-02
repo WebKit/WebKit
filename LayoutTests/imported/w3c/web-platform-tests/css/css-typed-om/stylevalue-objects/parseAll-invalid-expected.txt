@@ -3,5 +3,5 @@ PASS CSSStyleValue.parseAll() with empty property name throws TypeError
 PASS CSSStyleValue.parseAll() with unsupported property name throws TypeError
 PASS CSSStyleValue.parseAll() with invalid value for valid property throws TypeError
 PASS CSSStyleValue.parseAll() with invalid value for shorthand property throws TypeError
-FAIL CSSStyleValue.parseAll() with invalid value for custom property throws TypeError assert_throws_js: function "() => CSSStyleValue.parseAll('--foo', '')" did not throw
+PASS CSSStyleValue.parseAll() with invalid value for custom property throws TypeError
 

@@ -30,11 +30,11 @@
 
 #pragma once
 
+#include <sys/types.h>
 #include <time.h>
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Span.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>

@@ -235,6 +235,7 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
     ShPixelLocalStorageType getNativePixelLocalStorageType() const override;
 
     Renderer11 *getRenderer() const { return mRenderer; }
+    angle::ImageLoadContext getImageLoadContext() const;
 
     angle::Result dispatchCompute(const gl::Context *context,
                                   GLuint numGroupsX,

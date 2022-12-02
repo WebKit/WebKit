@@ -1,0 +1,36 @@
+Verifies that 2D canvases with higher than 5120x2880 resolution don't create accelerated backing stores.
+
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 5208.00 6171.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 5208.00 6171.00)
+      (contentsOpaque 1)
+      (acceleratesDrawing 1)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 50.00)
+          (bounds 512.00 288.00)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 8.00 342.00)
+          (bounds 5120.00 2880.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+        (GraphicsLayer
+          (position 8.00 3226.00)
+          (bounds 5200.00 2900.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (acceleratesDrawing 1)
+        )
+      )
+    )
+  )
+)
+

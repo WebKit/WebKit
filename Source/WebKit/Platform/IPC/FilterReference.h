@@ -448,7 +448,7 @@ template<class Encoder>
 void FilterReference::encodeFilter(const WebCore::Filter& filter, Encoder& encoder)
 {
     encoder << filter.filterType();
-    encoder << filter.renderingMode();
+    encoder << filter.filterRenderingModes();
     encoder << filter.filterScale();
     encoder << filter.clipOperation();
     encoder << filter.filterRegion();
@@ -462,9 +462,9 @@ void FilterReference::encodeFilter(const WebCore::Filter& filter, Encoder& encod
 template<class Decoder>
 RefPtr<WebCore::Filter> FilterReference::decodeFilter(Decoder& decoder, WebCore::FilterFunction::Type filterType)
 {
-    std::optional<WebCore::RenderingMode> renderingMode;
-    decoder >> renderingMode;
-    if (!renderingMode)
+    std::optional<OptionSet<WebCore::FilterRenderingMode>> filterRenderingModes;
+    decoder >> filterRenderingModes;
+    if (!filterRenderingModes)
         return nullptr;
 
     std::optional<WebCore::FloatSize> filterScale;
@@ -490,7 +490,7 @@ RefPtr<WebCore::Filter> FilterReference::decodeFilter(Decoder& decoder, WebCore:
         filter = decodeSVGFilter(decoder);
     
     if (filter) {
-        filter->setRenderingMode(*renderingMode);
+        filter->setFilterRenderingModes(*filterRenderingModes);
         filter->setFilterScale(*filterScale);
         filter->setClipOperation(*clipOperation);
         filter->setFilterRegion(*filterRegion);

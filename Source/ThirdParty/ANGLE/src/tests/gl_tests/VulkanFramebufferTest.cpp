@@ -15,6 +15,7 @@
 // So we need to include ANGLETest.h first to avoid this conflict.
 
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
@@ -31,17 +32,24 @@ namespace
 class VulkanFramebufferTest : public ANGLETest<>
 {
   protected:
+    gl::Context *hackContext() const
+    {
+        egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
+        gl::ContextID contextID = {
+            static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
+        return display->getContext(contextID);
+    }
+
     rx::ContextVk *hackANGLE() const
     {
         // Hack the angle!
-        const gl::Context *context = static_cast<gl::Context *>(getEGLWindow()->getContext());
-        return rx::GetImplAs<rx::ContextVk>(context);
+        return rx::GetImplAs<rx::ContextVk>(hackContext());
     }
 
     rx::TextureVk *hackTexture(GLuint handle) const
     {
         // Hack the angle!
-        const gl::Context *context = static_cast<gl::Context *>(getEGLWindow()->getContext());
+        const gl::Context *context = hackContext();
         const gl::Texture *texture = context->getTexture({handle});
         return rx::vk::GetImpl(texture);
     }

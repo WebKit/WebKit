@@ -49,8 +49,7 @@ WebGLExtension::ExtensionName WebGLDepthTexture::getName() const
 
 bool WebGLDepthTexture::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_OES_depth_texture"_s)
-        || context.supportsExtension("GL_ARB_depth_texture"_s);
+    return context.supportsExtension("GL_OES_depth_texture"_s);
 }
 
 } // namespace WebCore

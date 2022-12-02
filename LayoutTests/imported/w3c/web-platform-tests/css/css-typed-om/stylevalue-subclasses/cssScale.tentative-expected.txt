@@ -1,7 +1,7 @@
 
 PASS Constructing a CSSScale with an angle CSSUnitValue for the coordinates throws a TypeError
 PASS Constructing a CSSScale with a CSSMathValue that doesn't match <number> for the coordinates throws a TypeError
-FAIL Constructing a CSSScale with an invalid division by px/px for the coordinates throws a TypeError assert_throws_js: function "() => new CSSScale(coord, 0)" did not throw
+PASS Constructing a CSSScale with an invalid division by px/px for the coordinates throws a TypeError
 PASS Updating CSSScale.x to an angle CSSUnitValue throws a TypeError
 PASS Updating CSSScale.x to a CSSMathValue that doesn't match <number> throws a TypeError
 PASS Updating CSSScale.x to an invalid division by px/px throws a TypeError

@@ -1,6 +1,6 @@
 The quick brown fox jumps over the lazy dog.
 
-TEXT2: THE quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.
+TEXT2: THE quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.
 
 This tests the ability to select and replace text with respect to selection.
 

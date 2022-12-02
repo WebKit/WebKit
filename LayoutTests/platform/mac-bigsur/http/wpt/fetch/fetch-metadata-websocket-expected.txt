@@ -1,0 +1,7 @@
+
+PASS Websocket Handshake fetch metadata
+FAIL WebSocket Handshake: sec-fetch-dest assert_equals: expected "websocket" but got ""
+FAIL WebSocket Handshake: sec-fetch-mode assert_equals: expected "websocket" but got ""
+FAIL WebSocket Handshake: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS WebSocket Handshake: sec-fetch-user
+

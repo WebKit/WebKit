@@ -76,6 +76,18 @@ function shouldThrow(func, errorMessage) {
     }
 }
 
+shouldThrow(() => {
+    eval(`
+        class x {
+            static {
+                function nested() {
+                    if (0?.[{ [Symbol.toPrimitive]: x => super[new.target()] }] ** 0);
+                }
+            }
+        }
+    `);
+}, `SyntaxError: super is not valid in this context.`);
+
 //  ---------- access to private fields ---------- 
 {
     let getDPrivateField;
@@ -517,6 +529,115 @@ shouldThrow(() => {
     }
 }
 
+// ---------- new.target ----------
+
+{
+    class x {
+        static #f = false;
+        static {
+            if (new.target) {
+                this.#f = false;
+            } else {
+                this.#f = true;
+            }
+        }
+        static {
+            assert(this.#f === true);
+        }
+    }
+}
+
+{
+    class x {
+        static #f = false;
+        static {
+            (() => {
+                if (new.target) {
+                    this.#f = false;
+                } else {
+                    this.#f = true;
+                }
+            })();
+        }
+        static {
+            assert(this.#f === true);
+        }
+    }
+}
+
+{
+    class x {
+        static #f = false;
+        static {
+            function nested() {
+                (() => {
+                    if (new.target) {
+                        x.#f = false;
+                    } else {
+                        x.#f = true;
+                    }
+                })();
+            }
+    
+            nested();
+        }
+        static {
+            assert(this.#f === true);
+        }
+    }
+}
+
+{
+    class x {
+        static y = new.target;
+        static {
+            assert(new.target === undefined);
+        }
+    }
+
+    assert(x.y === undefined);
+}
+
+shouldThrow(() => {
+    eval(`
+        class x {
+            static {
+                if (0?.[{ [Symbol.toPrimitive]: x => super[new.target()] }] ** 0);
+            }
+        }
+    `);
+}, `TypeError: new.target is not a function. (In 'new.target()', 'new.target' is undefined)`);
+
+shouldThrow(() => {
+    eval(`
+        class x {
+            static {
+                {
+                    if (0?.[{ [Symbol.toPrimitive]: x => super[new.target()] }] ** 0);
+                }
+            }
+        }
+    `);
+}, `TypeError: new.target is not a function. (In 'new.target()', 'new.target' is undefined)`);
+
+shouldThrow(() => {
+    eval(`
+        class x {
+            static {
+                function nested() {
+                    class y {
+                        static {
+                            if (0?.[{ [Symbol.toPrimitive]: x => super[new.target()] }] ** 0);
+                        }
+                    }
+                }
+
+                nested();
+            }
+        }
+    `);
+}, `TypeError: new.target is not a function. (In 'new.target()', 'new.target' is undefined)`);
+
 // ---------- others ----------
 {
     function doSomethingWith(x) {
@@ -645,5 +766,13 @@ shouldThrow(() => {
         static {
             foo();
         }
+    }
+}
+
+{
+    class x { 
+        static { 
+            var x; 
+        } 
     }
 }

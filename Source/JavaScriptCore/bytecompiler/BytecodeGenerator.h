@@ -663,28 +663,14 @@ namespace JSC {
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src, ResultType);
 
         template<typename BinaryOp>
-        std::enable_if_t<
-            BinaryOp::opcodeID != op_add
-            && BinaryOp::opcodeID != op_mul
-            && BinaryOp::opcodeID != op_sub
-            && BinaryOp::opcodeID != op_div,
-            RegisterID*>
-        emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes = OperandTypes())
+        RegisterID* emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types = { })
         {
-            BinaryOp::emit(this, dst, src1, src2);
-            return dst;
-        }
-
-        template<typename BinaryOp>
-        std::enable_if_t<
-            BinaryOp::opcodeID == op_add
-            || BinaryOp::opcodeID == op_mul
-            || BinaryOp::opcodeID == op_sub
-            || BinaryOp::opcodeID == op_div,
-            RegisterID*>
-        emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)
-        {
-            BinaryOp::emit(this, dst, src1, src2, m_codeBlock->addBinaryArithProfile(), types);
+            if constexpr (BinaryOp::opcodeID == op_add || BinaryOp::opcodeID == op_mul || BinaryOp::opcodeID == op_sub || BinaryOp::opcodeID == op_div)
+                BinaryOp::emit(this, dst, src1, src2, m_codeBlock->addBinaryArithProfile(), types);
+            else {
+                UNUSED_PARAM(types);
+                BinaryOp::emit(this, dst, src1, src2);
+            }
             return dst;
         }
 
@@ -1290,7 +1276,16 @@ namespace JSC {
         Vector<std::pair<FunctionMetadataNode*, FunctionVariableType>> m_functionsToInitialize;
         bool m_needToInitializeArguments { false };
         RestParameterNode* m_restParameter { nullptr };
-        
+
+        struct AsyncFuncParametersTryCatchInfo {
+            RefPtr<Label> catchStartLabel { nullptr };
+            RefPtr<RegisterID> thrownValue { nullptr };
+        }; 
+        std::optional<AsyncFuncParametersTryCatchInfo> m_asyncFuncParametersTryCatchInfo;
+
+        template<typename EmitBytecodeFunctor>
+        void asyncFuncParametersTryCatchWrap(const EmitBytecodeFunctor&);
+
         Vector<TryRange> m_tryRanges;
         SegmentedVector<TryData, 8> m_tryData;
 

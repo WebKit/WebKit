@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
 end
 
 def isArch(token)
@@ -237,7 +237,7 @@ def isArch(token)
 end
 
 def isWidth(token)
-    token =~ /\A((8)|(16)|(32)|(64)|(Ptr))\Z/
+    token =~ /\A((8)|(16)|(32)|(64)|(Ptr)|(128))\Z/
 end
 
 def isKeyword(token)
@@ -310,7 +310,7 @@ class Parser
 
     def consumeWidth
         result = token.string
-        parseError("Expected width (8, 16, 32, or 64)") unless isWidth(result)
+        parseError("Expected width (8, 16, 32, 64, or 128)") unless isWidth(result)
         advance
         result
     end
@@ -712,7 +712,6 @@ writeH("OpcodeUtils") {
     outp.puts "    const uint8_t* formBase = g_formTable + kind.opcode * #{formTableWidth} + formOffset;"
     outp.puts "    for (size_t i = 0; i < numOperands; ++i) {"
     outp.puts "        uint8_t form = formBase[i];"
-    outp.puts "        ASSERT(!(form & (1 << formInvalidShift)));"
     outp.puts "        func(args[i], decodeFormRole(form), decodeFormBank(form), decodeFormWidth(form));"
     outp.puts "    }"
     outp.puts "}"
@@ -941,6 +940,7 @@ writeH("OpcodeGenerated") {
                 when "DoubleCond"
                 when "StatusCond"
                 when "ZeroReg"
+                when "SIMDInfo"
                 else
                     raise "Unexpected kind: #{kind.name}"
                 end
@@ -1253,6 +1253,8 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asDoubleCondition()"
                 when "StatusCond"
                     outp.print "args[#{index}].asStatusCondition()"
+                when "SIMDInfo"
+                    outp.print "args[#{index}].simdInfo()"
                 end
             }
 

@@ -5,4 +5,5 @@ PASS Fetching about:blank with method POST is KO
 PASS Fetching about:invalid.com with method GET is KO
 PASS Fetching about:config with method GET is KO
 PASS Fetching about:unicorn with method GET is KO
+PASS Fetching about:blank with range header does not affect behavior
 

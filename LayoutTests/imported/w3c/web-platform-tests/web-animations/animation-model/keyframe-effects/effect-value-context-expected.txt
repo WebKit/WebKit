@@ -1,6 +1,6 @@
 
 PASS Effect values reflect changes to font-size on element
-FAIL Effect values reflect changes to font-size on parent element assert_equals: Effect value after updating font-size on parent element expected "300px" but got "150px"
+PASS Effect values reflect changes to font-size on parent element
 PASS Effect values reflect changes to font-size when computed style is not immediately flushed
 PASS Effect values reflect changes to font-size from reparenting
 PASS Effect values reflect changes to target element

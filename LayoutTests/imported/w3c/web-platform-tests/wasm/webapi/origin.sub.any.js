@@ -2,7 +2,7 @@
 
 for (const method of ["compileStreaming", "instantiateStreaming"]) {
   promise_test(t => {
-    const url = "http://{{hosts[alt][]}}:{{ports[http][0]}}/wasm/incrementer.wasm";
+    const url = "http://{{domains[www]}}:{{ports[http][0]}}/wasm/incrementer.wasm";
     const response = fetch(url, { "mode": "no-cors" });
     return promise_rejects_js(t, TypeError, WebAssembly[method](response));
   }, `Opaque response: ${method}`);

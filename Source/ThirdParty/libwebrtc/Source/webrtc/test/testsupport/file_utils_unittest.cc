@@ -40,13 +40,8 @@ std::string Path(absl::string_view path) {
 }
 
 // Remove files and directories in a directory non-recursively and writes the
-<<<<<<< HEAD
 // number of deleted items in `num_deleted_entries`.
 void CleanDir(absl::string_view dir, size_t* num_deleted_entries) {
-=======
-// number of deleted items in |num_deleted_entries|.
-void CleanDir(const std::string& dir, size_t* num_deleted_entries) {
->>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   RTC_DCHECK(num_deleted_entries);
   *num_deleted_entries = 0;
   absl::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);

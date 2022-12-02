@@ -3018,7 +3018,7 @@ private:
                 m_out.storeDouble(value, m_out.baseIndex(m_heaps.indexedDoubleProperties, buffer, m_out.constInt32(index), jsNumber(index)));
             }
 
-            setDouble(m_out.callWithoutSideEffects(Double, m_node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, buffer, m_out.constInt32(m_node->numChildren())));
+            setDouble(vmCall(Double, m_node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, buffer, m_out.constInt32(m_node->numChildren())));
             break;
         }
             
@@ -4989,43 +4989,48 @@ private:
 
     LValue emitGetTypedArrayByteOffsetExceptSettingResult()
     {
-        LValue basePtr = lowCell(m_node->child1());
+        DFG::ArrayMode arrayMode = m_node->arrayMode();
+        LValue base = lowCell(m_node->child1());
+        if (arrayMode.mayBeResizableOrGrowableSharedTypedArray()) {
+#if USE(LARGE_TYPED_ARRAYS)
+            PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+#else
+            PatchpointValue* patchpoint = m_out.patchpoint(Int32);
+#endif
+            patchpoint->appendSomeRegister(base);
+            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->numGPScratchRegisters = 2;
 
-        LBasicBlock wastefulCase = m_out.newBlock();
-        LBasicBlock notNull = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-        
-        ValueFromBlock nullVectorOut = m_out.anchor(m_out.constIntPtr(0));
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
 
-        LValue mode = m_out.load32(basePtr, m_heaps.JSArrayBufferView_mode);
-        m_out.branch(
-            m_out.notEqual(mode, m_out.constInt32(WastefulTypedArray)),
-            unsure(continuation), unsure(wastefulCase));
+                GPRReg resultGPR = params[0].gpr();
+                GPRReg baseGPR = params[1].gpr();
+                GPRReg scratch1GPR = params.gpScratch(0);
+                GPRReg scratch2GPR = params.gpScratch(1);
 
-        LBasicBlock lastNext = m_out.appendTo(wastefulCase, notNull);
+                auto outOfBounds = jit.branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(baseGPR, scratch1GPR, scratch2GPR, arrayMode.type() == Array::AnyTypedArray ? std::nullopt : std::optional { arrayMode.typedArrayType() });
 
-        LValue vector = m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_vector);
-        m_out.branch(m_out.equal(vector, m_out.constIntPtr(JSArrayBufferView::nullVectorPtr())),
-            unsure(continuation), unsure(notNull));
+#if USE(LARGE_TYPED_ARRAYS)
+                jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
+#else
+                jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
+#endif
+                auto done = jit.jump();
 
-        m_out.appendTo(notNull, continuation);
+                outOfBounds.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(0), resultGPR);
+                done.link(&jit);
+            });
+            return patchpoint;
+        }
 
-        LValue butterflyPtr = caged(Gigacage::JSValue, m_out.loadPtr(basePtr, m_heaps.JSObject_butterfly), basePtr);
-        LValue arrayBufferPtr = m_out.loadPtr(butterflyPtr, m_heaps.Butterfly_arrayBuffer);
-
-        LValue vectorPtr = caged(Gigacage::Primitive, vector, basePtr);
-
-        // FIXME: This needs caging.
-        // https://bugs.webkit.org/show_bug.cgi?id=175515
-        LValue dataPtr = m_out.loadPtr(arrayBufferPtr, m_heaps.ArrayBuffer_data);
-        dataPtr = removeArrayPtrTag(dataPtr);
-
-        ValueFromBlock wastefulOut = m_out.anchor(m_out.sub(vectorPtr, dataPtr));
-
-        m_out.jump(continuation);
-        m_out.appendTo(continuation, lastNext);
-
-        return m_out.phi(pointerType(), nullVectorOut, wastefulOut);
+        speculate(UnexpectedResizableArrayBufferView, jsValueValue(base), m_node, m_out.testNonZero32(m_out.load8ZeroExt32(base, m_heaps.JSArrayBufferView_mode), m_out.constInt32(isResizableOrGrowableSharedMode)));
+#if USE(LARGE_TYPED_ARRAYS)
+        return m_out.load64(base, m_heaps.JSArrayBufferView_byteOffset);
+#else
+        return m_out.load32(base, m_heaps.JSArrayBufferView_byteOffset);
+#endif
     }
 
     void compileGetTypedArrayByteOffset()
@@ -5171,6 +5176,40 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(Int64, monoProto, polyProto, slowResult));
     }
+
+    LValue typedArrayLength(LValue base, bool acceptResizable, std::optional<TypedArrayType> typedArrayType)
+    {
+        if (acceptResizable) {
+#if USE(LARGE_TYPED_ARRAYS)
+            PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+#else
+            PatchpointValue* patchpoint = m_out.patchpoint(Int32);
+#endif
+            patchpoint->appendSomeRegister(base);
+            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->numGPScratchRegisters = 2;
+
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                GPRReg resultGPR = params[0].gpr();
+                GPRReg baseGPR = params[1].gpr();
+                GPRReg scratch1GPR = params.gpScratch(0);
+                GPRReg scratch2GPR = params.gpScratch(1);
+
+                jit.loadTypedArrayLength(baseGPR, resultGPR, scratch1GPR, scratch2GPR, typedArrayType);
+            });
+            return patchpoint;
+        }
+
+        speculate(UnexpectedResizableArrayBufferView, jsValueValue(base), m_node, m_out.testNonZero32(m_out.load8ZeroExt32(base, m_heaps.JSArrayBufferView_mode), m_out.constInt32(isResizableOrGrowableSharedMode)));
+#if USE(LARGE_TYPED_ARRAYS)
+        return m_out.load64NonNegative(base, m_heaps.JSArrayBufferView_length);
+#else
+        return m_out.load32NonNegative(base, m_heaps.JSArrayBufferView_length);
+#endif
+    }
+
     
     void compileGetArrayLength()
     {
@@ -5231,20 +5270,21 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
             
-        default:
-            if (m_node->arrayMode().isSomeTypedArrayView()) {
+        default: {
+            DFG::ArrayMode arrayMode = m_node->arrayMode();
+            if (arrayMode.isSomeTypedArrayView()) {
+                LValue length = typedArrayLength(lowCell(m_node->child1()), arrayMode.mayBeResizableOrGrowableSharedTypedArray(), arrayMode.type() == Array::AnyTypedArray ? std::nullopt : std::optional { arrayMode.typedArrayType() });
 #if USE(LARGE_TYPED_ARRAYS)
-                LValue length = m_out.load64NonNegative(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_length);
                 speculate(Overflow, noValue(), nullptr, m_out.above(length, m_out.constInt64(std::numeric_limits<int32_t>::max())));
                 setInt32(m_out.castToInt32(length));
 #else
-                setInt32(m_out.load32NonNegative(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_length));
+                setInt32(length);
 #endif
                 return;
             }
-            
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return;
+        }
         }
     }
 
@@ -5255,7 +5295,8 @@ IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
         RELEASE_ASSERT(m_node->arrayMode().isSomeTypedArrayView());
         // The preprocessor chokes on RELEASE_ASSERT(USE(LARGE_TYPED_ARRAYS)), this is equivalent.
         RELEASE_ASSERT(sizeof(size_t) == sizeof(uint64_t));
-        setStrictInt52(m_out.load64NonNegative(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_length));
+        DFG::ArrayMode arrayMode = m_node->arrayMode();
+        setStrictInt52(typedArrayLength(lowCell(m_node->child1()), arrayMode.mayBeResizableOrGrowableSharedTypedArray(), arrayMode.type() == Array::AnyTypedArray ? std::nullopt : std::optional { arrayMode.typedArrayType() }));
     }
 IGNORE_CLANG_WARNINGS_END
 
@@ -8468,7 +8509,8 @@ IGNORE_CLANG_WARNINGS_END
         
         switch (m_node->child1().useKind()) {
         case Int32Use: {
-            RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType));
+            bool isResizableOrGrowableShared = false;
+            RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType, isResizableOrGrowableShared));
 
             LValue size = m_out.signExt32To64(lowInt32(m_node->child1()));
 
@@ -8477,7 +8519,8 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         case Int52RepUse: {
-            RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType));
+            bool isResizableOrGrowableShared = false;
+            RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType, isResizableOrGrowableShared));
 
             LValue size = lowStrictInt52(m_node->child1());
 
@@ -8487,11 +8530,7 @@ IGNORE_CLANG_WARNINGS_END
 
         case UntypedUse: {
             LValue argument = lowJSValue(m_node->child1());
-
-            LValue result = vmCall(
-                pointerType(), operationNewTypedArrayWithOneArgumentForType(typedArrayType),
-                weakPointer(globalObject), weakPointer(globalObject->typedArrayStructureConcurrently(typedArrayType)), argument);
-
+            LValue result = vmCall(pointerType(), operationNewTypedArrayWithOneArgumentForType(typedArrayType), weakPointer(globalObject), argument);
             setJSValue(result);
             return;
         }
@@ -8518,8 +8557,9 @@ IGNORE_CLANG_WARNINGS_END
         // We assume through the rest of the fast path that the size is a 32-bit number.
         static_assert(isInBounds<int32_t>(JSArrayBufferView::fastSizeLimit));
 
-        LValue byteSize =
+        LValue byteSizeWithoutAdjustment =
             m_out.shl(size64Bits, m_out.constInt32(logElementSize(typedArrayType)));
+        LValue byteSize = byteSizeWithoutAdjustment;
         if (elementSize(typedArrayType) < 8) {
             byteSize = m_out.bitAnd(
                 m_out.add(byteSize, m_out.constIntPtr(7)),
@@ -8570,10 +8610,12 @@ IGNORE_CLANG_WARNINGS_END
         m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_vector);
 #if USE(LARGE_TYPED_ARRAYS)
         m_out.store64(size64Bits, fastResultValue, m_heaps.JSArrayBufferView_length);
+        m_out.store64(m_out.int64Zero, fastResultValue, m_heaps.JSArrayBufferView_byteOffset);
 #else
         m_out.store32(m_out.castToInt32(size64Bits), fastResultValue, m_heaps.JSArrayBufferView_length);
+        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.JSArrayBufferView_byteOffset);
 #endif
-        m_out.store32(m_out.constInt32(FastTypedArray), fastResultValue, m_heaps.JSArrayBufferView_mode);
+        m_out.store32As8(m_out.constInt32(FastTypedArray), fastResultValue, m_heaps.JSArrayBufferView_mode);
 
         mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(fastResultValue);
@@ -9160,7 +9202,7 @@ IGNORE_CLANG_WARNINGS_END
             // FIXME: Revisit JSGlobalObject.
             // https://bugs.webkit.org/show_bug.cgi?id=203204
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-            if (m_graph.isWatchingStringPrototypeIsSaneChainWatchpoint(m_node)) {
+            if (m_graph.isWatchingStringPrototypeChainIsSaneWatchpoint(m_node)) {
                 // FIXME: This could be captured using a Speculation mode that means
                 // "out-of-bounds loads return a trivial value", something like
                 // OutOfBoundsSaneChain.
@@ -15548,7 +15590,7 @@ IGNORE_CLANG_WARNINGS_END
     LValue isFastTypedArray(LValue object)
     {
         return m_out.equal(
-            m_out.load32(object, m_heaps.JSArrayBufferView_mode),
+            m_out.load8ZeroExt32(object, m_heaps.JSArrayBufferView_mode),
             m_out.constInt32(FastTypedArray));
     }
     
@@ -16183,12 +16225,10 @@ IGNORE_CLANG_WARNINGS_END
 
         DataViewData data = m_node->dataViewData();
 
+        LValue length = typedArrayLength(dataView, data.isResizable, TypeDataView);
+
 #if USE(LARGE_TYPED_ARRAYS)
         speculate(OutOfBounds, noValue(), nullptr, m_out.lessThan(index, m_out.constInt32(0)));
-        LValue length = m_out.load64NonNegative(dataView, m_heaps.JSArrayBufferView_length);
-#else
-        // No need for an explicit comparison of index to 0, the check against length catches that case
-        LValue length = m_out.zeroExtPtr(m_out.load32NonNegative(dataView, m_heaps.JSArrayBufferView_length));
 #endif
         LValue indexToCheck = m_out.zeroExtPtr(index);
         if (data.byteSize > 1)
@@ -16332,12 +16372,10 @@ IGNORE_CLANG_WARNINGS_END
 
         DataViewData data = m_node->dataViewData();
 
+        LValue length = typedArrayLength(dataView, data.isResizable, TypeDataView);
+
 #if USE(LARGE_TYPED_ARRAYS)
         speculate(OutOfBounds, noValue(), nullptr, m_out.lessThan(index, m_out.constInt32(0)));
-        LValue length = m_out.load64NonNegative(dataView, m_heaps.JSArrayBufferView_length);
-#else
-        // No need for an explicit comparison of index to 0, the check against length catches that case
-        LValue length = m_out.zeroExtPtr(m_out.load32NonNegative(dataView, m_heaps.JSArrayBufferView_length));
 #endif
         LValue indexToCheck = m_out.zeroExtPtr(index);
         if (data.byteSize > 1)
@@ -16698,7 +16736,7 @@ IGNORE_CLANG_WARNINGS_END
     
     void speculateTruthyObject(Edge edge, LValue cell, SpeculatedType filter)
     {
-        if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+        if (m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(m_node)) {
             FTL_TYPE_CHECK(jsValueValue(cell), edge, filter, isNotObject(cell));
             return;
         }
@@ -17604,7 +17642,7 @@ IGNORE_CLANG_WARNINGS_END
             
             m_out.appendTo(notStringNorHeapBigIntCase, notCellCase);
             LValue isTruthyObject;
-            if (masqueradesAsUndefinedWatchpointIsStillValid())
+            if (m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(m_node))
                 isTruthyObject = m_out.booleanTrue;
             else {
                 LBasicBlock masqueradesCase = m_out.newBlock();
@@ -17689,8 +17727,6 @@ IGNORE_CLANG_WARNINGS_END
         Edge edge, StringOrObjectMode cellMode, EqualNullOrUndefinedMode primitiveMode,
         OperandSpeculationMode operandMode = AutomaticOperandSpeculation)
     {
-        bool validWatchpoint = masqueradesAsUndefinedWatchpointIsStillValid();
-        
         LValue value = lowJSValue(edge, operandMode);
         
         LBasicBlock cellCase = m_out.newBlock();
@@ -17712,7 +17748,7 @@ IGNORE_CLANG_WARNINGS_END
             break;
         }
         
-        if (validWatchpoint) {
+        if (m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(m_node)) {
             results.append(m_out.anchor(m_out.booleanFalse));
             m_out.jump(continuation);
         } else {
@@ -20513,7 +20549,7 @@ IGNORE_CLANG_WARNINGS_END
     void speculateNonNullObject(Edge edge, LValue cell)
     {
         FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecObject, isNotObject(cell));
-        if (masqueradesAsUndefinedWatchpointIsStillValid())
+        if (m_graph.isWatchingObjectPrototypeChainIsSaneWatchpoint(m_node))
             return;
         
         speculate(
@@ -20648,8 +20684,9 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock isWasteful = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LValue mode = m_out.load32(base, m_heaps.JSArrayBufferView_mode);
-        m_out.branch(m_out.equal(mode, m_out.constInt32(WastefulTypedArray)),
+        LValue mode = m_out.load8ZeroExt32(base, m_heaps.JSArrayBufferView_mode);
+        m_out.branch(
+            m_out.testIsZero32(mode, m_out.constInt32(isWastefulTypedArrayMode)),
             unsure(isWasteful), unsure(continuation));
 
         LBasicBlock lastNext = m_out.appendTo(isWasteful, continuation);
@@ -20663,11 +20700,6 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(continuation, lastNext);
     }
 
-    bool masqueradesAsUndefinedWatchpointIsStillValid()
-    {
-        return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_origin.semantic);
-    }
-    
     LValue loadCellState(LValue base)
     {
         return m_out.load8ZeroExt32(base, m_heaps.JSCell_cellState);

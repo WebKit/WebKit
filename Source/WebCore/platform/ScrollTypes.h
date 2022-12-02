@@ -27,6 +27,7 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "RectEdges.h"
 #include <wtf/EnumTraits.h>
 
 namespace WTF {
@@ -228,11 +229,28 @@ inline FloatPoint setValueForAxis(FloatPoint point, ScrollEventAxis axis, float 
     case ScrollEventAxis::Horizontal:
         point.setX(value);
         return point;
-    case ScrollEventAxis::Vertical: point.setY(value);
+    case ScrollEventAxis::Vertical: 
+        point.setY(value);
         return point;
     }
     ASSERT_NOT_REACHED();
     return point;
+}
+
+inline BoxSide boxSideForDirection(ScrollDirection direction)
+{
+    switch (direction) {
+    case ScrollDirection::ScrollUp:
+        return BoxSide::Top;
+    case ScrollDirection::ScrollDown:
+        return BoxSide::Bottom;
+    case ScrollDirection::ScrollLeft:
+        return BoxSide::Left;
+    case ScrollDirection::ScrollRight:
+        return BoxSide::Right;
+    }
+    ASSERT_NOT_REACHED();
+    return BoxSide::Top;
 }
 
 enum ScrollbarControlStateMask {
@@ -404,6 +422,16 @@ template<> struct EnumTraits<WebCore::ScrollGranularity> {
         WebCore::ScrollGranularity::Page,
         WebCore::ScrollGranularity::Document,
         WebCore::ScrollGranularity::Pixel
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ScrollDirection> {
+    using values = EnumValues<
+        WebCore::ScrollDirection,
+        WebCore::ScrollDirection::ScrollUp,
+        WebCore::ScrollDirection::ScrollDown,
+        WebCore::ScrollDirection::ScrollLeft,
+        WebCore::ScrollDirection::ScrollRight
     >;
 };
 } // namespace WTF

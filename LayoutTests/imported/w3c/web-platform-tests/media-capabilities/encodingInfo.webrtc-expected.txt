@@ -23,4 +23,5 @@ PASS Test that encodingInfo returns supported true for the codec video/H265 retu
 PASS Test that encodingInfo returns supported true for the codec video/VP8 returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec video/VP9; profile-id=0 returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec video/VP9; profile-id=2 returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/AV1 returned by RTCRtpSender.getCapabilities()
 

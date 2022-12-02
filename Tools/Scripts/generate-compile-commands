@@ -44,7 +44,8 @@ parser = argparse.ArgumentParser(description='Generate compile_commands.json',
                   https://trac.webkit.org/wiki/Clangd
                   """)
 
-parser.add_argument('built_products_dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
+parser.add_argument('built_products_dir', metavar='built-products-dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
+parser.add_argument('--delete-invalid', action='store_true', help='Delete any invalid json file')
 opts = parser.parse_args()
 
 # Change to the root of WebKit Directory
@@ -91,7 +92,11 @@ for j_file_name in glob.glob(compile_commands_dir + "/*.json"):
     try:
         json.loads(json_contents)
     except Exception:
-        print("Invalid JSON File: " + j_file_name)
+        if opts.delete_invalid:
+            os.remove(j_file_name)
+            print("Deleted invalid JSON File: " + j_file_name)
+        else:
+            print("Invalid JSON File: " + j_file_name)
         continue
 
     # Validate if the json file already exists in the map.

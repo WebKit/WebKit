@@ -57,6 +57,8 @@ public:
     const std::optional<bool>& fullRange() const { return m_state.fullRange; }
     void setfFullRange(std::optional<bool>&& fullRange) { m_state.fullRange = WTFMove(fullRange); }
 
+    VideoColorSpaceInit state() const { return m_state; }
+
 private:
     VideoColorSpace() = default;
     VideoColorSpace(const VideoColorSpaceInit& init)

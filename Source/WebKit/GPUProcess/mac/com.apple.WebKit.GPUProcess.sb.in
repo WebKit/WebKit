@@ -21,17 +21,10 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
-#if USE(SANDBOX_VERSION_2)
-(version 2)
-#else
-(version 1)
-#endif
-(deny default)
-
 #include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
-#if USE(SANDBOX_VERSION_2)
+#if USE(SANDBOX_VERSION_3)
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 5)))
 
@@ -56,9 +49,16 @@
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
 (allow iokit-open-service (iokit-user-client-class "AppleCLCD2"))
 
-(allow file-map-executable
-    (subpath "/System/Library/Components")
-    (subpath "/System/Library/Video/Plug-Ins"))
+(allow iokit-open-service (iokit-registry-entry-class
+    "AppleGFXHDAEngineOutputDP"
+    "AppleUpstreamUserClientDriver"
+    "AudioAUUCDriver"
+    "IOAudioSelectorControl"))
+
+(allow file-map-executable (subpath
+    "/System/Library/Components"
+    "/System/Library/Extensions"
+    "/System/Library/Video/Plug-Ins"))
 
 (allow iokit-open-user-client (iokit-user-client-class "AGXDeviceUserClient"))
 (allow iokit-open-service
@@ -69,9 +69,7 @@
 
 (deny darwin-notification-post (with no-report))
 (deny nvram-get (with no-report))
-
-(allow file-map-executable (with report))
-#endif // USE(SANDBOX_VERSION_2)
+#endif // USE(SANDBOX_VERSION_3)
 
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
@@ -135,6 +133,8 @@
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
     ;; OpenCL
     (allow IOKIT_OPEN_SERVICE
+        (iokit-connection "IOAccelerator"))
+    (allow IOKIT_OPEN_USER_CLIENT
         (iokit-connection "IOAccelerator"))
     (allow IOKIT_OPEN_USER_CLIENT
         (iokit-user-client-class "IOSurfaceRootUserClient"))

@@ -192,10 +192,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 
     list(APPEND WebKit_PRIVATE_LIBRARIES
-        MediaFoundation
-        OpenSSL::SSL
-        mfuuid.lib
-        strmiids.lib
+        comctl32
     )
 endif ()
 

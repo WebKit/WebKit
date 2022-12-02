@@ -187,7 +187,7 @@ enum class AXPropertyName : uint16_t {
     IsVisible,
     IsVisited,
     IsWidget,
-    KeyShortcutsValue,
+    KeyShortcuts,
     Language,
     LinkRelValue,
     LinkedObjects,
@@ -245,6 +245,7 @@ enum class AXPropertyName : uint16_t {
     SupportsDatetimeAttribute,
     SupportsExpanded,
     SupportsExpandedTextValue,
+    SupportsKeyShortcuts,
     SupportsLiveRegion,
     SupportsPath,
     SupportsPosInSet,
@@ -310,8 +311,10 @@ public:
     void updateNode(AXCoreObject&);
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
-    void updateNodeProperty(AXCoreObject&, AXPropertyName);
+    void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); };
+    void updateNodeProperties(AXCoreObject&, const Vector<AXPropertyName>&);
     void updateNodeAndDependentProperties(AXCoreObject&);
+    void updatePropertiesForSelfAndDescendants(AXCoreObject&, const Vector<AXPropertyName>&);
 
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);
@@ -355,9 +358,9 @@ private:
     void collectNodeChangesForSubtree(AXCoreObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovals(const Vector<AXID>&);
-    void queueRemovalsLocked(const Vector<AXID>&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovalsAndUnresolvedChanges(const Vector<AXID>&);
+    void queueRemovals(Vector<AXID>&&);
+    void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
+    void queueRemovalsAndUnresolvedChanges(Vector<AXID>&&);
 
     AXIsolatedTreeID m_treeID;
     unsigned m_maxTreeDepth { 0 };

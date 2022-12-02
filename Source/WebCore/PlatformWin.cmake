@@ -48,13 +48,13 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FontPlatformDataWin.cpp
     platform/graphics/win/FontWin.cpp
     platform/graphics/win/FullScreenController.cpp
+    platform/graphics/win/FullScreenWindow.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageWin.cpp
     platform/graphics/win/IntPointWin.cpp
     platform/graphics/win/IntRectWin.cpp
     platform/graphics/win/IntSizeWin.cpp
-    platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp
     platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/SystemFontDatabaseWin.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
@@ -80,7 +80,6 @@ list(APPEND WebCore_SOURCES
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
     platform/win/PopupMenuWin.cpp
-    platform/win/SSLKeyGeneratorWin.cpp
     platform/win/SearchPopupMenuDB.cpp
     platform/win/SearchPopupMenuWin.cpp
     platform/win/SystemInfo.cpp
@@ -106,9 +105,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/win/FontCustomPlatformData.h
     platform/graphics/win/FullScreenController.h
     platform/graphics/win/FullScreenControllerClient.h
+    platform/graphics/win/FullScreenWindow.h
     platform/graphics/win/GraphicsContextWin.h
     platform/graphics/win/LocalWindowsContext.h
-    platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h
     platform/graphics/win/SharedGDIObject.h
 
     platform/win/BString.h

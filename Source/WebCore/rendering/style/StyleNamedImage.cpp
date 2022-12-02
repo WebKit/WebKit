@@ -28,13 +28,13 @@
 #include "StyleNamedImage.h"
 
 #include "CSSNamedImageValue.h"
-#include <wtf/PointerComparison.h>
+#include "NamedImageGeneratedImage.h"
 
 namespace WebCore {
 
-StyleNamedImage::StyleNamedImage(Ref<CSSNamedImageValue>&& value)
-    : StyleGeneratedImage(Type::NamedImage, value->isFixedSize())
-    , m_imageGeneratorValue { WTFMove(value) }
+StyleNamedImage::StyleNamedImage(String&& name)
+    : StyleGeneratedImage { Type::NamedImage, StyleNamedImage::isFixedSize }
+    , m_name { WTFMove(name) }
 {
 }
 
@@ -42,59 +42,47 @@ StyleNamedImage::~StyleNamedImage() = default;
 
 bool StyleNamedImage::operator==(const StyleImage& other) const
 {
-    if (is<StyleNamedImage>(other))
-        return arePointingToEqualData(m_imageGeneratorValue.ptr(), downcast<StyleNamedImage>(other).m_imageGeneratorValue.ptr());
-    return false;
+    return is<StyleNamedImage>(other) && equals(downcast<StyleNamedImage>(other));
 }
 
-CSSImageGeneratorValue& StyleNamedImage::imageValue()
+bool StyleNamedImage::equals(const StyleNamedImage& other) const
 {
-    return m_imageGeneratorValue;
+    return m_name == other.m_name;
 }
 
-Ref<CSSValue> StyleNamedImage::cssValue() const
+Ref<CSSValue> StyleNamedImage::computedStyleValue(const RenderStyle&) const
 {
-    return m_imageGeneratorValue.copyRef();
+    return CSSNamedImageValue::create(m_name);
 }
 
 bool StyleNamedImage::isPending() const
 {
-    return m_imageGeneratorValue->isPending();
+    return false;
 }
 
-void StyleNamedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
+void StyleNamedImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
-    m_imageGeneratorValue->loadSubimages(loader, options);
 }
 
 RefPtr<Image> StyleNamedImage::image(const RenderElement* renderer, const FloatSize& size) const
 {
-    return renderer ? m_imageGeneratorValue->image(const_cast<RenderElement&>(*renderer), size) : &Image::nullImage();
+    if (!renderer)
+        return &Image::nullImage();
+
+    if (size.isEmpty())
+        return nullptr;
+
+    return NamedImageGeneratedImage::create(m_name, size);
 }
 
-bool StyleNamedImage::knownToBeOpaque(const RenderElement& renderer) const
+bool StyleNamedImage::knownToBeOpaque(const RenderElement&) const
 {
-    return m_imageGeneratorValue->knownToBeOpaque(renderer);
+    return false;
 }
 
-FloatSize StyleNamedImage::fixedSize(const RenderElement& renderer) const
+FloatSize StyleNamedImage::fixedSize(const RenderElement&) const
 {
-    return m_imageGeneratorValue->fixedSize(renderer);
-}
-
-void StyleNamedImage::addClient(RenderElement& renderer)
-{
-    m_imageGeneratorValue->addClient(renderer);
-}
-
-void StyleNamedImage::removeClient(RenderElement& renderer)
-{
-    m_imageGeneratorValue->removeClient(renderer);
-}
-
-bool StyleNamedImage::hasClient(RenderElement& renderer) const
-{
-    return m_imageGeneratorValue->clients().contains(&renderer);
+    return { };
 }
 
 } // namespace WebCore

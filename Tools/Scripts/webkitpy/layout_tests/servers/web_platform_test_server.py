@@ -140,6 +140,12 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
     def ports_to_forward(self):
         return [mapping['port'] for mapping in self._mappings]
 
+    def first_port(self, port_obj):
+        config = wpt_config_json(port_obj)
+        if not config:
+            return None
+        return config["ports"]["http"][0]
+
     def _prepare_config(self):
         self._filesystem.maybe_make_directory(self._output_dir)
         self._output_log_path = self._filesystem.join(self._output_dir, self._log_file_name)

@@ -400,12 +400,11 @@ bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-    toImpl(preferencesRef)->setSubpixelAntialiasedLayerTextEnabled(flag);
 }
 
 bool WKPreferencesGetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->subpixelAntialiasedLayerTextEnabled();
+    return false;
 }
 
 void WKPreferencesSetAcceleratedDrawingEnabled(WKPreferencesRef preferencesRef, bool flag)
@@ -568,14 +567,14 @@ bool WKPreferencesGetDOMTimersThrottlingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->domTimersThrottlingEnabled();
 }
 
-void WKPreferencesSetWebArchiveTestingModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setWebArchiveTestingModeEnabled(enabled);
+    toImpl(preferencesRef)->setWebArchiveDebugModeEnabled(enabled);
 }
 
-bool WKPreferencesGetWebArchiveTestingModeEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->webArchiveTestingModeEnabled();
+    return toImpl(preferencesRef)->webArchiveDebugModeEnabled();
 }
 
 void WKPreferencesSetLocalFileContentSniffingEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -2152,15 +2151,6 @@ void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef)
-{
-    return false;
-}
-
-void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-}
-
-bool WKPreferencesGetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef)
 {
     return false;
 }

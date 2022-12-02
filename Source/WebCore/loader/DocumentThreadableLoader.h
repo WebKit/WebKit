@@ -140,6 +140,7 @@ namespace WebCore {
         std::optional<CrossOriginEmbedderPolicy> m_crossOriginEmbedderPolicy;
         std::optional<CrossOriginPreflightChecker> m_preflightChecker;
         std::optional<HTTPHeaderMap> m_originalHeaders;
+        URL m_responseURL;
 
         ShouldLogError m_shouldLogError;
 #if ENABLE(SERVICE_WORKER)

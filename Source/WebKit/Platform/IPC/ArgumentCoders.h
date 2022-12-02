@@ -49,6 +49,9 @@
 #if OS(WINDOWS)
 #include "ArgumentCodersWin.h"
 #endif
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include "ArgumentCodersUnix.h"
+#endif
 
 namespace IPC {
 
@@ -102,189 +105,58 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
     }
 };
 
-template<typename T0, typename T1> struct ArgumentCoder<ArrayReferenceTuple<T0, T1>> {
-    using ArrayReferenceTupleType = ArrayReferenceTuple<T0, T1>;
+template<typename... Types>
+struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
+    template<size_t Indices>
+    using ArrayReferenceTupleElementType = std::tuple_element_t<Indices, std::tuple<Types...>>;
+
     template<typename Encoder>
-    static void encode(Encoder& encoder, const ArrayReferenceTupleType& arrayReference)
+    static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference)
     {
-        encoder << static_cast<uint64_t>(arrayReference.size());
+        encode(encoder, arrayReference, std::index_sequence_for<Types...> { });
+    }
+
+    template<typename Encoder, size_t... Indices>
+    static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference, std::index_sequence<Indices...>)
+    {
         auto size = arrayReference.size();
+        encoder << static_cast<uint64_t>(size);
         if (UNLIKELY(!size))
             return;
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<0>()), size * sizeof(T0), alignof(T0));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<1>()), size * sizeof(T1), alignof(T1));
-    }
-    static std::optional<ArrayReferenceTupleType> decode(Decoder& decoder)
-    {
-        uint64_t size;
-        if (UNLIKELY(!decoder.decode(size)))
-            return std::nullopt;
-        if (UNLIKELY(!size))
-            return ArrayReferenceTupleType { };
 
-        auto dataSize = CheckedSize { size } * sizeof(T0);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data0 = decoder.decodeFixedLengthReference(dataSize, alignof(T0));
-        if (UNLIKELY(!data0))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T1);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data1 = decoder.decodeFixedLengthReference(dataSize, alignof(T1));
-        if (UNLIKELY(!data1))
-            return std::nullopt;
-        return ArrayReferenceTupleType { reinterpret_cast<const T0*>(data0), reinterpret_cast<const T1*>(data1), static_cast<size_t>(size) };
+        (encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<Indices>()),
+            size * sizeof(ArrayReferenceTupleElementType<Indices>), alignof(ArrayReferenceTupleElementType<Indices>)) , ...);
     }
-};
 
-template<typename T0, typename T1, typename T2> struct ArgumentCoder<ArrayReferenceTuple<T0, T1, T2>> {
-    using ArrayReferenceTupleType = ArrayReferenceTuple<T0, T1, T2>;
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const ArrayReferenceTupleType& arrayReference)
+    template<typename Decoder>
+    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder)
     {
-        encoder << static_cast<uint64_t>(arrayReference.size());
-        auto size = arrayReference.size();
+        auto size = decoder.template decode<uint64_t>();
         if (UNLIKELY(!size))
-            return;
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<0>()), size * sizeof(T0), alignof(T0));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<1>()), size * sizeof(T1), alignof(T1));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<2>()), size * sizeof(T2), alignof(T2));
+            return std::nullopt;
+        if (UNLIKELY(!*size))
+            return ArrayReferenceTuple<Types...> { };
+
+        return decode(decoder, *size);
     }
-    static std::optional<ArrayReferenceTupleType> decode(Decoder& decoder)
-    {
-        uint64_t size;
-        if (UNLIKELY(!decoder.decode(size)))
-            return std::nullopt;
-        if (UNLIKELY(!size))
-            return ArrayReferenceTupleType { };
 
-        auto dataSize = CheckedSize { size } * sizeof(T0);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data0 = decoder.decodeFixedLengthReference(dataSize, alignof(T0));
-        if (UNLIKELY(!data0))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T1);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data1 = decoder.decodeFixedLengthReference(dataSize, alignof(T1));
-        if (UNLIKELY(!data1))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T2);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data2 = decoder.decodeFixedLengthReference(dataSize, alignof(T2));
-        if (UNLIKELY(!data2))
-            return std::nullopt;
-        return ArrayReferenceTupleType { reinterpret_cast<const T0*>(data0), reinterpret_cast<const T1*>(data1), reinterpret_cast<const T2*>(data2), static_cast<size_t>(size) };
-    }
-};
-
-template<typename T0, typename T1, typename T2, typename T3> struct ArgumentCoder<ArrayReferenceTuple<T0, T1, T2, T3>> {
-    using ArrayReferenceTupleType = ArrayReferenceTuple<T0, T1, T2, T3>;
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const ArrayReferenceTupleType& arrayReference)
+    template<typename Decoder, typename... DataPointerTypes>
+    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder, uint64_t size, DataPointerTypes&&... dataPointers)
     {
-        encoder << static_cast<uint64_t>(arrayReference.size());
-        auto size = arrayReference.size();
-        if (UNLIKELY(!size))
-            return;
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<0>()), size * sizeof(T0), alignof(T0));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<1>()), size * sizeof(T1), alignof(T1));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<2>()), size * sizeof(T2), alignof(T2));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<3>()), size * sizeof(T3), alignof(T3));
-    }
-    static std::optional<ArrayReferenceTupleType> decode(Decoder& decoder)
-    {
-        uint64_t size;
-        if (UNLIKELY(!decoder.decode(size)))
-            return std::nullopt;
-        if (UNLIKELY(!size))
-            return ArrayReferenceTupleType { };
+        constexpr size_t Index = sizeof...(DataPointerTypes);
+        static_assert(Index <= sizeof...(Types));
 
-        auto dataSize = CheckedSize { size } * sizeof(T0);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data0 = decoder.decodeFixedLengthReference(dataSize, alignof(T0));
-        if (UNLIKELY(!data0))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T1);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data1 = decoder.decodeFixedLengthReference(dataSize, alignof(T1));
-        if (UNLIKELY(!data1))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T2);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data2 = decoder.decodeFixedLengthReference(dataSize, alignof(T2));
-        if (UNLIKELY(!data2))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T3);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data3 = decoder.decodeFixedLengthReference(dataSize, alignof(T3));
-        if (UNLIKELY(!data3))
-            return std::nullopt;
-        return ArrayReferenceTupleType { reinterpret_cast<const T0*>(data0), reinterpret_cast<const T1*>(data1), reinterpret_cast<const T2*>(data2), reinterpret_cast<const T3*>(data3), static_cast<size_t>(size) };
-    }
-};
-
-template<typename T0, typename T1, typename T2, typename T3, typename T4> struct ArgumentCoder<ArrayReferenceTuple<T0, T1, T2, T3, T4>> {
-    using ArrayReferenceTupleType = ArrayReferenceTuple<T0, T1, T2, T3, T4>;
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const ArrayReferenceTupleType& arrayReference)
-    {
-        encoder << static_cast<uint64_t>(arrayReference.size());
-        auto size = arrayReference.size();
-        if (UNLIKELY(!size))
-            return;
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<0>()), size * sizeof(T0), alignof(T0));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<1>()), size * sizeof(T1), alignof(T1));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<2>()), size * sizeof(T2), alignof(T2));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<3>()), size * sizeof(T3), alignof(T3));
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<4>()), size * sizeof(T4), alignof(T4));
-    }
-    static std::optional<ArrayReferenceTupleType> decode(Decoder& decoder)
-    {
-        uint64_t size;
-        if (UNLIKELY(!decoder.decode(size)))
-            return std::nullopt;
-        if (UNLIKELY(!size))
-            return ArrayReferenceTupleType { };
-
-        auto dataSize = CheckedSize { size } * sizeof(T0);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data0 = decoder.decodeFixedLengthReference(dataSize, alignof(T0));
-        if (UNLIKELY(!data0))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T1);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data1 = decoder.decodeFixedLengthReference(dataSize, alignof(T1));
-        if (UNLIKELY(!data1))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T2);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data2 = decoder.decodeFixedLengthReference(dataSize, alignof(T2));
-        if (UNLIKELY(!data2))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T3);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data3 = decoder.decodeFixedLengthReference(dataSize, alignof(T3));
-        if (UNLIKELY(!data3))
-            return std::nullopt;
-        dataSize = CheckedSize { size } * sizeof(T4);
-        if (UNLIKELY(dataSize.hasOverflowed()))
-            return std::nullopt;
-        const uint8_t* data4 = decoder.decodeFixedLengthReference(dataSize, alignof(T4));
-        if (UNLIKELY(!data4))
-            return std::nullopt;
-        return ArrayReferenceTupleType { reinterpret_cast<const T0*>(data0), reinterpret_cast<const T1*>(data1), reinterpret_cast<const T2*>(data2), reinterpret_cast<const T3*>(data3), reinterpret_cast<const T4*>(data4), static_cast<size_t>(size) };
+        if constexpr (Index < sizeof...(Types)) {
+            using ElementType = ArrayReferenceTupleElementType<Index>;
+            auto dataSize = CheckedSize { size } * sizeof(ElementType);
+            if (UNLIKELY(dataSize.hasOverflowed()))
+                return std::nullopt;
+            const uint8_t* data = decoder.decodeFixedLengthReference(dataSize, alignof(ElementType));
+            if (UNLIKELY(!data))
+                return std::nullopt;
+            return decode(decoder, size, std::forward<DataPointerTypes>(dataPointers)..., reinterpret_cast<const ElementType*>(data) );
+        } else
+            return ArrayReferenceTuple<Types...> { std::forward<DataPointerTypes>(dataPointers)..., static_cast<size_t>(size) };
     }
 };
 
@@ -311,17 +183,22 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
 };
 
 template<typename T> struct ArgumentCoder<std::optional<T>> {
-    template<typename Encoder> static void encode(Encoder& encoder, const std::optional<T>& optional)
+    template<typename Encoder, typename U>
+    static void encode(Encoder& encoder, U&& optional)
     {
+        static_assert(std::is_same_v<std::remove_cvref_t<U>, std::optional<T>>);
+
         if (!optional) {
             encoder << false;
             return;
         }
 
         encoder << true;
-        encoder << optional.value();
+        encoder << std::forward<U>(optional).value();
     }
-    template<typename Decoder> static std::optional<std::optional<T>> decode(Decoder& decoder)
+
+    template<typename Decoder>
+    static std::optional<std::optional<T>> decode(Decoder& decoder)
     {
         std::optional<bool> isEngaged;
         decoder >> isEngaged;
@@ -370,10 +247,11 @@ template<typename T> struct ArgumentCoder<Box<T>> {
 };
 
 template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const std::pair<T, U>& pair)
+    template<typename Encoder, typename V>
+    static void encode(Encoder& encoder, V&& pair)
     {
-        encoder << pair.first << pair.second;
+        static_assert(std::is_same_v<std::remove_cvref_t<V>, std::pair<T, U>>);
+        encoder << std::get<0>(std::forward<V>(pair)) << std::get<1>(std::forward<V>(pair));
     }
 
     template<typename Decoder>
@@ -437,49 +315,45 @@ template<typename T> struct ArgumentCoder<Ref<T>> {
 };
 
 template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& tuple)
     {
-        encode(encoder, tuple, std::index_sequence_for<Elements...> { });
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, std::tuple<Elements...>>);
+        encode(encoder, std::forward<T>(tuple), std::index_sequence_for<Elements...> { });
     }
 
-    template<typename Encoder, size_t... Indices>
-    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple, std::index_sequence<Indices...>)
+    template<typename Encoder, typename T, size_t... Indices>
+    static void encode(Encoder& encoder, T&& tuple, std::index_sequence<Indices...>)
     {
         if constexpr (sizeof...(Indices) > 0)
-            (encoder << ... << std::get<Indices>(tuple));
+            (encoder << ... << std::get<Indices>(std::forward<T>(tuple)));
     }
 
-    template<typename Decoder>
-    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder)
+    template<typename Decoder, typename... DecodedTypes>
+    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder, std::optional<DecodedTypes>&&... decodedObjects)
     {
-        return decode(decoder, std::tuple<> { }, std::index_sequence_for<> { });
-    }
+        constexpr size_t index = sizeof...(DecodedTypes);
+        static_assert(index <= sizeof...(Elements));
+        constexpr bool shouldHandleElement = index < sizeof...(Elements); // MSVC++ workaround (https://webkit.org/b/247226)
 
-    template<typename Decoder, typename OptionalTuple, size_t... Indices>
-    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder, OptionalTuple&& optionalTuple, std::index_sequence<Indices...>)
-    {
-        constexpr size_t Index = sizeof...(Indices);
-        static_assert(Index == std::tuple_size_v<OptionalTuple>);
-
-        if constexpr (Index < sizeof...(Elements)) {
-            std::optional<std::tuple_element_t<Index, std::tuple<Elements...>>> optional;
-            decoder >> optional;
+        if constexpr (shouldHandleElement) {
+            auto optional = decoder.template decode<std::tuple_element_t<index, std::tuple<Elements...>>>();
             if (!optional)
                 return std::nullopt;
-            return decode(decoder, std::forward_as_tuple(std::get<Indices>(WTFMove(optionalTuple))..., WTFMove(optional)), std::make_index_sequence<Index + 1> { });
+            return decode(decoder, WTFMove(decodedObjects)..., WTFMove(optional));
         } else {
-            static_assert(Index == sizeof...(Elements));
-            return std::make_tuple(*std::get<Indices>(WTFMove(optionalTuple))...);
+            static_assert((std::is_same_v<DecodedTypes, Elements> && ...));
+            return std::make_tuple(*WTFMove(decodedObjects)...);
         }
     }
 };
 
 template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType>> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& pair)
     {
-        encoder << pair.key << pair.value;
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, WTF::KeyValuePair<KeyType, ValueType>>);
+        encoder << std::forward_like<T>(pair.key) << std::forward_like<T>(pair.value);
     }
 
     template<typename Decoder>
@@ -499,15 +373,66 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
     }
 };
 
+template<typename T, size_t size> struct ArgumentCoder<std::array<T, size>> {
+    template<typename Encoder, typename U>
+    static void encode(Encoder& encoder, U&& array)
+    {
+        static_assert(std::is_same_v<std::remove_cvref_t<U>, std::array<T, size>>);
+
+        for (auto&& item : array)
+            encoder << std::forward_like<U>(item);
+    }
+
+    template<typename Decoder, typename... DecodedTypes>
+    static std::optional<std::array<T, size>> decode(Decoder& decoder, std::optional<DecodedTypes>&&... decodedObjects)
+    {
+        constexpr size_t index = sizeof...(DecodedTypes);
+        static_assert(index <= size);
+        constexpr bool shouldHandleElement = index < size; // MSVC++ workaround (https://webkit.org/b/247226)
+
+        if constexpr (shouldHandleElement) {
+            auto optional = decoder.template decode<T>();
+            if (!optional)
+                return std::nullopt;
+            return decode(decoder, WTFMove(decodedObjects)..., WTFMove(optional));
+        } else {
+            static_assert((std::is_same_v<DecodedTypes, T> && ...));
+            return std::array<T, size> { *WTFMove(decodedObjects)... };
+        }
+    }
+};
+
+template<typename Key, typename T, Key lastValue> struct ArgumentCoder<EnumeratedArray<Key, T, lastValue>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const EnumeratedArray<Key, T, lastValue>& array)
+    {
+        for (auto& item : array)
+            encoder << item;
+    }
+
+    template<typename Decoder>
+    static std::optional<EnumeratedArray<Key, T, lastValue>> decode(Decoder& decoder)
+    {
+        std::optional<typename EnumeratedArray<Key, T, lastValue>::UnderlyingType> array;
+        decoder >> array;
+        if (!array)
+            return std::nullopt;
+
+        return { WTFMove(*array) };
+    }
+};
+
 template<bool fixedSizeElements, typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder;
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder<false, T, inlineCapacity, OverflowHandler, minCapacity> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
+    template<typename Encoder, typename U>
+    static void encode(Encoder& encoder, U&& vector)
     {
+        static_assert(std::is_same_v<std::remove_cvref_t<U>, Vector<T, inlineCapacity, OverflowHandler, minCapacity>>);
+
         encoder << static_cast<uint64_t>(vector.size());
-        for (size_t i = 0; i < vector.size(); ++i)
-            encoder << vector[i];
+        for (auto&& item : vector)
+            encoder << std::forward_like<U>(item);
     }
 
     template<typename Decoder>
@@ -573,12 +498,14 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
 
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const HashMapType& hashMap)
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& hashMap)
     {
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, HashMapType>);
+
         encoder << static_cast<uint32_t>(hashMap.size());
-        for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
-            encoder << *it;
+        for (auto&& entry : hashMap)
+            encoder << std::forward_like<T>(entry);
     }
 
     template<typename Decoder>
@@ -654,15 +581,14 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
 template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct ArgumentCoder<HashCountedSet<KeyArg, HashArg, KeyTraitsArg>> {
     typedef HashCountedSet<KeyArg, HashArg, KeyTraitsArg> HashCountedSetType;
 
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const HashCountedSetType& hashCountedSet)
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& hashCountedSet)
     {
-        encoder << static_cast<uint64_t>(hashCountedSet.size());
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, HashCountedSetType>);
 
-        for (auto entry : hashCountedSet) {
-            encoder << entry.key;
-            encoder << entry.value;
-        }
+        encoder << static_cast<uint64_t>(hashCountedSet.size());
+        for (auto&& entry : hashCountedSet)
+            encoder << std::forward_like<T>(entry);
     }
 
     template<typename Decoder>
@@ -764,26 +690,28 @@ template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
 };
 
 template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const std::variant<Types...>& variant)
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& variant)
     {
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, std::variant<Types...>>);
+
         unsigned i = variant.index();
         encoder << i;
-        encode(encoder, variant, std::index_sequence_for<Types...> { }, i);
+        encode(encoder, std::forward<T>(variant), std::index_sequence_for<Types...> { }, i);
     }
 
-    template<typename Encoder, size_t... Indices>
-    static void encode(Encoder& encoder, const std::variant<Types...>& variant, std::index_sequence<Indices...>, unsigned i)
+    template<typename Encoder, typename T, size_t... Indices>
+    static void encode(Encoder& encoder, T&& variant, std::index_sequence<Indices...>, unsigned i)
     {
         constexpr size_t Index = sizeof...(Types) - sizeof...(Indices);
         static_assert(Index < sizeof...(Types));
         if (Index == i) {
-            encoder << std::get<Index>(variant);
+            encoder << std::get<Index>(std::forward<T>(variant));
             return;
         }
 
         if constexpr (sizeof...(Indices) > 1)
-            encode(encoder, variant, std::make_index_sequence<sizeof...(Indices) - 1> { }, i);
+            encode(encoder, std::forward<T>(variant), std::make_index_sequence<sizeof...(Indices) - 1> { }, i);
     }
 
     template<typename Decoder>

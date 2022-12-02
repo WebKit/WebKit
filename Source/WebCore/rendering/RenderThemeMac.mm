@@ -256,8 +256,21 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
-bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&) const
+bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, ControlPart part) const
 {
+    switch (part) {
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case AttachmentPart:
+    case BorderlessAttachmentPart:
+        return true;
+#endif
+#if ENABLE(APPLE_PAY)
+    case ApplePayButtonPart:
+        return true;
+#endif
+    default:
+        break;
+    }
     return paintInfo.context().hasPlatformContext();
 }
 
@@ -2379,16 +2392,14 @@ private:
 
 static Color titleTextColorForAttachment(const RenderAttachment& attachment, AttachmentLayoutStyle style)
 {
-    Color result = Color::black;
-    
+    Color result = RenderTheme::singleton().systemColor(CSSValueCanvastext, attachment.styleColorOptions());
     if (style == AttachmentLayoutStyle::Selected) {
         if (attachment.frame().selection().isFocusedAndActive())
-            result = colorFromCocoaColor([NSColor alternateSelectedControlTextColor]);
+            result = RenderTheme::singleton().systemColor(CSSValueAppleSystemAlternateSelectedText, attachment.styleColorOptions());
         else
             result = attachmentTitleInactiveTextColor;
     }
-
-    return attachment.style().colorByApplyingColorFilter(result);
+    return result;
 }
 
 void AttachmentLayout::addTitleLine(CTLineRef line, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment& attachment)

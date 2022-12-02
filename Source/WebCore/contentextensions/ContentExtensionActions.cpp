@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionError.h"
+#include "Logging.h"
 #include "ResourceRequest.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
@@ -782,34 +783,66 @@ void RedirectAction::URLTransformAction::applyToURL(URL& url) const
 
 void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) const
 {
-    auto form = WTF::URLParser::parseURLEncodedForm(url.query());
+    if (!url.hasQuery())
+        return;
 
     HashSet<String> keysToRemove;
     for (auto& key : removeParams)
         keysToRemove.add(key);
-    form.removeAllMatching([&] (auto& keyValue) {
-        return keysToRemove.contains(keyValue.key);
-    });
 
-    Vector<WTF::KeyValuePair<String, String>> keysToAdd;
+    Vector<KeyValuePair<String, String>> keysToAdd;
     HashMap<String, String> keysToReplace;
-    for (auto& keyValue : addOrReplaceParams) {
-        if (keyValue.replaceOnly)
-            keysToReplace.add(keyValue.key, keyValue.value);
+    for (auto& [key, replaceOnly, value] : addOrReplaceParams) {
+        if (replaceOnly)
+            keysToReplace.add(key, value);
         else
-            keysToAdd.append({ keyValue.key, keyValue.value });
+            keysToAdd.append({ key, value });
     }
-    for (auto& keyValue : form) {
-        auto iterator = keysToReplace.find(keyValue.key);
-        if (iterator != keysToReplace.end())
-            keyValue.value = iterator->value;
-    }
-    form.appendVector(WTFMove(keysToAdd));
 
+    bool modifiedQuery = false;
     StringBuilder transformedQuery;
-    for (auto& keyValue : form)
-        transformedQuery.append(transformedQuery.isEmpty() ? "" : "&", keyValue.key, !!keyValue.value ? "=" : "", keyValue.value);
-    url.setQuery(transformedQuery);
+    for (auto bytes : url.query().split('&')) {
+        auto nameAndValue = WTF::URLParser::parseQueryNameAndValue(bytes);
+        if (!nameAndValue) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        auto& key = nameAndValue->key;
+        if (key.isEmpty()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        // Removal takes precedence over replacement.
+        if (keysToRemove.contains(key)) {
+            modifiedQuery = true;
+            RELEASE_LOG(ContentExtensions, "QueryTransform::applyToURL - removing %s", key.utf8().data());
+            continue;
+        }
+
+        if (!transformedQuery.isEmpty())
+            transformedQuery.append('&');
+
+        if (auto iterator = keysToReplace.find(key); iterator != keysToReplace.end()) {
+            modifiedQuery = true;
+            transformedQuery.append(key, '=', iterator->value);
+            continue;
+        }
+
+        transformedQuery.append(bytes);
+    }
+
+    // Adding takes precedence over both removal and replacement.
+    for (auto& [keyToAdd, valueToAdd] : keysToAdd) {
+        if (!transformedQuery.isEmpty())
+            transformedQuery.append('&');
+        transformedQuery.append(keyToAdd, '=', valueToAdd);
+        modifiedQuery = true;
+    }
+
+    if (modifiedQuery)
+        url.setQuery(transformedQuery.toString());
 }
 
 auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() const & -> QueryTransform

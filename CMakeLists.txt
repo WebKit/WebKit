@@ -10,7 +10,7 @@
 # in support of the AppleWin internal build so this version should be kept in
 # sync across those files.
 #
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 project(WebKit)
 
 # Remove this cmake_policy() after upgrading cmake_minimum_required() to 3.20.

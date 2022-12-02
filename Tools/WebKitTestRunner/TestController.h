@@ -161,6 +161,7 @@ public:
 
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
+    void skipPolicyDelegateNotifyDone() { m_skipPolicyDelegateNotifyDone = true; }
 
     // Page Visibility.
     void setHidden(bool);
@@ -192,6 +193,8 @@ public:
 
     void setBlockAllPlugins(bool shouldBlock);
     void setPluginSupportedMode(const String&);
+
+    void dumpPolicyDelegateCallbacks() { m_dumpPolicyDelegateCallbacks = true; }
 
     void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
     void setShouldLogCanAuthenticateAgainstProtectionSpace(bool shouldLog) { m_shouldLogCanAuthenticateAgainstProtectionSpace = shouldLog; }
@@ -262,6 +265,7 @@ public:
     void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString);
     void setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString);
     void setAppBoundDomains(WKArrayRef originURLs);
+    void setManagedDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
 
     void removeAllCookies();
@@ -317,6 +321,7 @@ public:
     void addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type);
     void clearMockMediaDevices();
     void removeMockMediaDevice(WKStringRef persistentID);
+    void setMockMediaDeviceIsEphemeral(WKStringRef, bool);
     void resetMockMediaDevices();
     void setMockCameraOrientation(uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
@@ -370,6 +375,8 @@ public:
     void setPrivateClickMeasurementAppBundleIDForTesting(WKStringRef);
 
     void didSetAppBoundDomains() const;
+
+    void didSetManagedDomains() const;
 
     WKURLRef currentTestURL() const;
 
@@ -539,7 +546,7 @@ private:
     void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef);
 
     static void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
-    void decidePolicyForNavigationAction(WKNavigationActionRef, WKFramePolicyListenerRef);
+    void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef);
 
     static void decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     void decidePolicyForNavigationResponse(WKNavigationResponseRef, WKFramePolicyListenerRef);
@@ -568,7 +575,7 @@ private:
 
 #if PLATFORM(COCOA)
     static void finishCreatingPlatformWebView(PlatformWebView*, const TestOptions&);
-    void configureContentMode(WKWebViewConfiguration *, const TestOptions&);
+    void configureWebpagePreferences(WKWebViewConfiguration *, const TestOptions&);
 #endif
 
     static const char* libraryPathForTesting();
@@ -644,6 +651,7 @@ private:
 
     bool m_policyDelegateEnabled { false };
     bool m_policyDelegatePermissive { false };
+    bool m_skipPolicyDelegateNotifyDone { false };
     bool m_shouldDownloadUndisplayableMIMETypes { false };
     bool m_shouldAllowDeviceOrientationAndMotionAccess { false };
 
@@ -706,6 +714,7 @@ private:
 
     std::optional<long long> m_downloadTotalBytesWritten;
     bool m_shouldLogDownloadSize { false };
+    bool m_dumpPolicyDelegateCallbacks { false };
 };
 
 } // namespace WTR

@@ -1,0 +1,4 @@
+text aom_copy_metadata_to_frame_buffer
+text aom_dsp_rtcd
+text aom_remove_metadata_from_frame_buffer
+text aom_scale_rtcd

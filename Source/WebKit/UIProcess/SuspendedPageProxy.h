@@ -29,7 +29,6 @@
 #include "MessageSender.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
-#include "WebPageProxyMessagesReplies.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -100,7 +99,8 @@ private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
-    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, std::optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&&) final;
+    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
+    bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;
 
     WebPageProxy& m_page;
     WebCore::PageIdentifier m_webPageID;
@@ -113,7 +113,7 @@ private:
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
     RunLoop::Timer<SuspendedPageProxy> m_suspensionTimeoutTimer;
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_suspensionActivity;
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

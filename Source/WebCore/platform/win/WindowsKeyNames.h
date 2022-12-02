@@ -38,11 +38,11 @@ namespace WebCore {
 
 class WindowsKeyNames {
 public:
-    WindowsKeyNames();
+    WEBCORE_EXPORT WindowsKeyNames();
 
-    String domKeyFromParams(WPARAM, LPARAM);
-    String domKeyFromChar(UChar);
-    String domCodeFromLParam(LPARAM);
+    WEBCORE_EXPORT String domKeyFromParams(WPARAM, LPARAM);
+    WEBCORE_EXPORT String domKeyFromChar(UChar);
+    WEBCORE_EXPORT String domCodeFromLParam(LPARAM);
 
     enum class KeyModifier : uint8_t;
     using KeyModifierSet = OptionSet<KeyModifier>;

@@ -26,23 +26,33 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <gio/gio.h>
 #include <wtf/glib/GRefPtr.h>
 
-typedef struct _GVariant GVariant;
 typedef struct _GTlsCertificate GTlsCertificate;
+typedef struct _GUnixFDList GUnixFDList;
+typedef struct _GVariant GVariant;
 
 namespace IPC {
 
 template<> struct ArgumentCoder<GRefPtr<GVariant>> {
-    static void encode(Encoder&, GRefPtr<GVariant>);
+    static void encode(Encoder&, const GRefPtr<GVariant>&);
     static std::optional<GRefPtr<GVariant>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
-    template<typename Encoder>
-    static void encode(Encoder&, GRefPtr<GTlsCertificate>);
-    template<typename Decoder>
+    static void encode(Encoder&, const GRefPtr<GTlsCertificate>&);
     static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<GTlsCertificateFlags> {
+    static void encode(Encoder&, GTlsCertificateFlags);
+    static std::optional<GTlsCertificateFlags> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {
+    static void encode(Encoder&, const GRefPtr<GUnixFDList>&);
+    static std::optional<GRefPtr<GUnixFDList>> decode(Decoder&);
 };
 
 } // namespace IPC

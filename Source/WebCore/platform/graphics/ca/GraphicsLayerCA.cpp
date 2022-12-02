@@ -341,15 +341,6 @@ bool GraphicsLayer::supportsLayerType(Type type)
     return false;
 }
 
-bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
-{
-#if PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
-}
-
 Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
 {
     if (factory) {
@@ -847,15 +838,6 @@ void GraphicsLayerCA::setContentsOpaque(bool opaque)
 
     GraphicsLayer::setContentsOpaque(opaque);
     noteLayerPropertyChanged(ContentsOpaqueChanged);
-}
-
-void GraphicsLayerCA::setSupportsSubpixelAntialiasedText(bool supportsSubpixelAntialiasedText)
-{
-    if (m_supportsSubpixelAntialiasedText == supportsSubpixelAntialiasedText)
-        return;
-
-    GraphicsLayer::setSupportsSubpixelAntialiasedText(supportsSubpixelAntialiasedText);
-    noteLayerPropertyChanged(SupportsSubpixelAntialiasedTextChanged);
 }
 
 void GraphicsLayerCA::setBackfaceVisibility(bool visible)
@@ -2103,9 +2085,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsNeedsDisplay)
         updateContentsNeedsDisplay();
 
-    if (m_uncommittedChanges & SupportsSubpixelAntialiasedTextChanged)
-        updateSupportsSubpixelAntialiasedText();
-
     if (m_uncommittedChanges & DebugIndicatorsChanged)
         updateDebugIndicators();
 
@@ -2274,10 +2253,10 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
 
     // Update position.
     // Position is offset on the layer by the layer anchor point.
-    FloatPoint adjustedPosition(scaledPosition.x() + scaledAnchorPoint.x() * scaledSize.width(), scaledPosition.y() + scaledAnchorPoint.y() * scaledSize.height());
+    FloatPoint3D adjustedPosition(scaledPosition.x() + scaledAnchorPoint.x() * scaledSize.width(), scaledPosition.y() + scaledAnchorPoint.y() * scaledSize.height(), scaledAnchorPoint.z());
 
     if (m_structuralLayer) {
-        FloatPoint layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(), m_position.y() + m_anchorPoint.y() * m_size.height());
+        FloatPoint3D layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(), m_position.y() + m_anchorPoint.y() * m_size.height(), scaledAnchorPoint.z());
         FloatRect layerBounds(m_boundsOrigin, m_size);
 
         m_structuralLayer->setPosition(layerPosition);
@@ -2287,7 +2266,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
         if (m_layerClones) {
             for (auto& clone : m_layerClones->structuralLayerClones) {
                 PlatformCALayer* cloneLayer = clone.value.get();
-                FloatPoint clonePosition = layerPosition;
+                FloatPoint3D clonePosition = layerPosition;
 
                 if (m_replicaLayer && isReplicatedRootClone(clone.key)) {
                     // Maintain the special-case position for the root of a clone subtree,
@@ -2317,7 +2296,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     if (m_layerClones) {
         for (auto& clone : m_layerClones->primaryLayerClones) {
             PlatformCALayer* cloneLayer = clone.value.get();
-            FloatPoint clonePosition = adjustedPosition;
+            FloatPoint3D clonePosition = adjustedPosition;
 
             if (!m_structuralLayer && m_replicaLayer && isReplicatedRootClone(clone.key)) {
                 // Maintain the special-case position for the root of a clone subtree,
@@ -2754,11 +2733,6 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
 void GraphicsLayerCA::updateAcceleratesDrawing()
 {
     m_layer->setAcceleratesDrawing(m_acceleratesDrawing);
-}
-
-void GraphicsLayerCA::updateSupportsSubpixelAntialiasedText()
-{
-    m_layer->setSupportsSubpixelAntialiasedText(m_supportsSubpixelAntialiasedText);
 }
 
 static void setLayerDebugBorder(PlatformCALayer& layer, Color borderColor, float borderWidth)
@@ -4324,7 +4298,6 @@ const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::ReplicatedLayerChanged: return "ReplicatedLayerChanged";
     case LayerChange::ContentsNeedsDisplay: return "ContentsNeedsDisplay";
     case LayerChange::AcceleratesDrawingChanged: return "AcceleratesDrawingChanged";
-    case LayerChange::SupportsSubpixelAntialiasedTextChanged: return "SupportsSubpixelAntialiasedTextChanged";
     case LayerChange::ContentsScaleChanged: return "ContentsScaleChanged";
     case LayerChange::ContentsVisibilityChanged: return "ContentsVisibilityChanged";
     case LayerChange::CoverageRectChanged: return "CoverageRectChanged";
@@ -4513,7 +4486,6 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | BackgroundColorChanged
         | ContentsScaleChanged
         | AcceleratesDrawingChanged
-        | SupportsSubpixelAntialiasedTextChanged
         | FiltersChanged
         | BackdropFiltersChanged
         | MaskLayerChanged
@@ -4556,7 +4528,7 @@ void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer, Composi
     setLayerDebugBorder(*contentsLayer, contentsLayerDebugBorderColor(isShowingDebugBorder()), contentsLayerBorderWidth);
 }
 
-RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, PlatformCALayer *sourceLayer, LayerMap& clones, CloneLevel cloneLevel)
+RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(const CloneID& cloneID, PlatformCALayer *sourceLayer, LayerMap& clones, CloneLevel cloneLevel)
 {
     if (!sourceLayer)
         return nullptr;
@@ -4573,7 +4545,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Platfo
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #if ENABLE(TREE_DEBUGGING)
-        resultLayer->setName(makeString("clone ", cloneID[0U], " of ", sourceLayer->layerID()));
+        resultLayer->setName(makeString("clone ", hex(cloneID[0U]), " of ", sourceLayer->layerID()));
 #else
         resultLayer->setName("clone of " + m_name);
 #endif
@@ -4581,7 +4553,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Platfo
     }
 
     return resultLayer;
-}   
+}
 
 void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
     RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, RefPtr<PlatformCALayer>& backdropLayer, RefPtr<PlatformCALayer>& backdropClippingLayer, CloneLevel cloneLevel)
@@ -4692,9 +4664,8 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replica
         replicaState.setBranchType(ReplicaState::ChildBranch);
     }
 
-    if (contentsClippingLayer && contentsLayer) {
+    if (contentsClippingLayer && contentsLayer)
         contentsClippingLayer->appendSublayer(*contentsLayer);
-    }
 
     if (contentsShapeMaskLayer)
         contentsClippingLayer->setMask(contentsShapeMaskLayer.get());

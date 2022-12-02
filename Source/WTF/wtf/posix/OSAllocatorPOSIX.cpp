@@ -282,4 +282,19 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
         CRASH();
 }
 
+bool OSAllocator::protect(void* address, size_t bytes, bool readable, bool writable)
+{
+    int protection = 0;
+    if (readable) {
+        if (writable)
+            protection = PROT_READ | PROT_WRITE;
+        else
+            protection = PROT_READ;
+    } else {
+        ASSERT(!readable && !writable);
+        protection = PROT_NONE;
+    }
+    return !mprotect(address, bytes, protection);
+}
+
 } // namespace WTF

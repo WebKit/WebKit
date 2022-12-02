@@ -1,0 +1,188 @@
+Tests for the CSS.setGroupingHeaderText command.
+
+
+== Running test suite: CSS.setGroupingHeaderText
+-- Running test case: CSS.setGroupingHeaderText.MediaRule
+PASS: Should have 2 authored rule.
+PASS: Should find grouping of type 'media-rule'.
+Setting text to 'not print'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(max-width: 9999px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'screen and (max-width: 9999px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'screen, (max-width: 9999px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'not all'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(totally-not-supported-but-valid-syntactivally: 42em)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'invalidkeyword, (max-width: 9999px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(max-width: 9999px), invalidkeyword'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'screen {} @media screen'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to ''.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'screen'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+
+-- Running test case: CSS.setGroupingHeaderText.SupportsRule
+PASS: Should have 2 authored rule.
+PASS: Should find grouping of type 'supports-rule'.
+Setting text to '(color: purple)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(color: purple) and (color: green)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'selector(h2 > p)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'not (display: grid)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'not (not (display: grid))'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'not (not (not (display: grid)))'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(totally-not-supported-but-valid-syntactivally: 42em)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'not all'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '|| and (max-width: 9999px)'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '(max-width: 9999px) and ||'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '(color: red) {} @supports(color: red)'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to ''.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '(color: red)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+
+-- Running test case: CSS.setGroupingHeaderText.LayerRule
+PASS: Should have 2 authored rule.
+PASS: Should find grouping of type 'layer-rule'.
+Setting text to 'howdy'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'hello.howdy'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'hello, howdy'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'hello howdy'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'hello {} @layer hello'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to ''.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'hello'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+
+-- Running test case: CSS.setGroupingHeaderText.ContainerRule
+PASS: Should have 2 authored rule.
+PASS: Should find grouping of type 'container-rule'.
+Setting text to 'name (min-width: 42px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(max-width: 9999px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '(totally-not-supported-but-valid-syntactivally: 42em)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to 'screen and (max-width: 9999px)'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'screen, (max-width: 9999px)'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'not all'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to 'invalidkeyword, (max-width: 9999px)'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '(max-width: 9999px), invalidkeyword'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '(min-width:1px) {} @container(min-width:1px)'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to ''.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '(min-width: 1px)'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+

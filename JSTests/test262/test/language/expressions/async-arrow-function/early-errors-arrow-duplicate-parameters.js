@@ -27,6 +27,7 @@ info: |
 negative:
   phase: parse
   type: SyntaxError
+features: [async-functions]
 ---*/
 
 $DONOTEVALUATE();

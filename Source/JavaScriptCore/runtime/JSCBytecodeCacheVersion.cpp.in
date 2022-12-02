@@ -1,0 +1,7 @@
+
+#include "JSCBytecodeCacheVersion.h"
+
+#include "config.h"
+#include <wtf/text/StringHasher.h>
+
+const uint32_t JSCBytecodeCacheVersion = StringHasher::computeHash(CACHED_TYPES_CKSUM);

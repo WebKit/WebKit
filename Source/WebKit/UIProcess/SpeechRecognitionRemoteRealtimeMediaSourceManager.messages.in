@@ -28,7 +28,7 @@ messages -> SpeechRecognitionRemoteRealtimeMediaSourceManager NotRefCounted {
     RemoteCaptureFailed(WebCore::RealtimeMediaSourceIdentifier identifier)
     RemoteSourceStopped(WebCore::RealtimeMediaSourceIdentifier identifier)
 #if PLATFORM(COCOA)
-    SetStorage(WebCore::RealtimeMediaSourceIdentifier identifier, WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
+    SetStorage(WebCore::RealtimeMediaSourceIdentifier identifier, WebKit::ConsumerSharedCARingBuffer::Handle storageHandle, WebCore::CAAudioStreamDescription description)
 #endif
 }
 

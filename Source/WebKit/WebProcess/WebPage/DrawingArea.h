@@ -113,6 +113,9 @@ public:
     virtual bool usesDelegatedPageScaling() const { return false; }
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
+    virtual void registerScrollingTree() { }
+    virtual void unregisterScrollingTree() { }
+
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const { return false; }
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
@@ -129,6 +132,8 @@ public:
     virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
 
     virtual void setShouldScaleViewToFitDocument(bool) { }
+
+    virtual std::optional<WebCore::DestinationColorSpace> displayColorSpace() const { return { }; }
 
     virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
@@ -178,13 +183,12 @@ private:
                                          const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
 #endif
-    virtual void didUpdate() { }
+    virtual void displayDidRefresh() { }
 
     // DisplayRefreshMonitorFactory.
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
 #if PLATFORM(COCOA)
-    // Used by TiledCoreAnimationDrawingArea.
     virtual void setDeviceScaleFactor(float) { }
     virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>) { }
 

@@ -145,8 +145,10 @@ static constexpr auto annotationStyle =
 "} "
 "input.annotation[type='password'] { "
 "    position: static; "
-"    width: 200px; "
-"    margin-top: 100px; "
+"    width: 238px; "
+"    height: 20px; "
+"    margin-top: 110px; "
+"    font-size: 15px; "
 "} "_s;
 
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
@@ -283,11 +285,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [_pdfLayerController accessibilityStringForRangeAttributeForParameter:parameter];
 
     return 0;
-}
-
-- (CPReadingModel *)readingModel
-{
-    return [_pdfLayerController readingModel];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -650,6 +647,10 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
 #endif
     , m_identifier(PDFPluginIdentifier::generate())
 {
+    // FIXME: <rdar://101787977> Replace this with SPI once we get it from PDFKit
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"PDFKit2_UseIOSurfaceForTiles"];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"PDFKit2_UseWhippet"];
+
     auto& document = element.document();
 
 #if ENABLE(UI_PROCESS_PDF_HUD)
@@ -1585,12 +1586,12 @@ FloatSize PDFPlugin::pdfDocumentSizeForPrinting() const
 
 JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
 {
-    static JSStaticFunction jsPDFDocStaticFunctions[] = {
+    static const JSStaticFunction jsPDFDocStaticFunctions[] = {
         { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 },
     };
 
-    static JSClassDefinition jsPDFDocClassDefinition = {
+    static const JSClassDefinition jsPDFDocClassDefinition = {
         0,
         kJSClassAttributeNone,
         "Doc",

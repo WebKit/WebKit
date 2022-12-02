@@ -49,6 +49,8 @@ public:
     
     CSSTransformType getType() const final { return CSSTransformType::Perspective; }
 
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     CSSPerspective(CSSPerspectiveValue);
 

@@ -20,5 +20,6 @@ layer at (0,0) size 800x600
           text run at (0,138) width 35: "Hello"
         RenderEmbeddedObject {OBJECT} at (35,0) size 302x152 [border: (1px solid #AAAAAA)]
         RenderText {#text} at (337,138) size 48x17
-          text run at (337,138) width 48: " World!"
+          text run at (337,138) width 4: " "
+          text run at (341,138) width 44: "World!"
 caret: position 1 of child 1 {OBJECT} of child 3 {DIV} of body

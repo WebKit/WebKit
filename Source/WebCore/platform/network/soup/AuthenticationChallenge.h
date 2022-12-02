@@ -60,6 +60,9 @@ public:
     uint32_t tlsPasswordFlags() const { return m_tlsPasswordFlags; }
     void setTLSPasswordFlags(uint32_t tlsPasswordFlags) { m_tlsPasswordFlags = tlsPasswordFlags; }
 
+    static ProtectionSpace protectionSpaceForClientCertificate(const URL&);
+    static ProtectionSpace protectionSpaceForClientCertificatePassword(const URL&, GTlsPassword*);
+
 private:
     friend class AuthenticationChallengeBase;
     static bool platformCompare(const AuthenticationChallenge&, const AuthenticationChallenge&);

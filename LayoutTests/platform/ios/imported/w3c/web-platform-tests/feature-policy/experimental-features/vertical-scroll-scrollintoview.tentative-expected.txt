@@ -1,0 +1,9 @@
+An <iframe> further below which is not allowed to block scroll.
+
+
+Making sure there is room for vertical scroll
+
+
+PASS Calling 'scrollIntoView()' inside a <iframe> will propagate up by default('vertical-scroll' enabled).
+FAIL Calling 'scrollIntoView()' inside a <iframe> with 'vertical-scroll none;'will not propagate upwards. assert_equals: Main frame must not scroll vertically. expected 0 but got 3851
+

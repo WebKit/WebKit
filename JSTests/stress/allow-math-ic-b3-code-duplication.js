@@ -1,4 +1,5 @@
 //@ skip if $architecture == "x86"
+//@ $skipModes << :lockdown if $buildType == "debug"
 
 function test1() {
     var o1;

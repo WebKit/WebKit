@@ -286,18 +286,29 @@ class Commit(object):
         result = []
         links = set()
         seen_empty = False
+        seen_first_line = False
+        prepend = False
+
         for line in self.message.splitlines():
             if not line and seen_empty:
                 break
             elif not line:
                 seen_empty = True
+                prepend = False
                 continue
             words = line.split()
             for word in [words[0], words[-1]] if words[0] != words[-1] else [words[0]]:
                 candidate = Tracker.from_string(word)
                 if candidate and candidate.link not in links:
-                    result.append(candidate)
                     links.add(candidate.link)
+                    if prepend:
+                        result.insert(len(result) - 1, candidate)
+                    else:
+                        result.append(candidate)
+
+                    if not seen_first_line:
+                        prepend = True
+            seen_first_line = True
         return result
 
     def __repr__(self):

@@ -1,29 +1,30 @@
 function drawFrame(image, canvasId) {
     return new Promise((resolve) => {
-        let canvas = document.getElementById("canvas-" + canvasId);
+        let canvas = document.getElementById(canvasId);
         let context = canvas.getContext("2d");
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
         setTimeout(() => {
-            resolve(String.fromCharCode(canvasId.charCodeAt() + 1));
+            resolve();
         }, 30);
     });
 }
 
-function drawImage(image, canvasId, frameCount) {
-    let promise = drawFrame(image, canvasId);
+function drawImage(image, canvasIds, frameCount) {
+    let promise = drawFrame(image, canvasIds[0]);
     for (let frame = 1; frame < frameCount; ++frame) {
-        promise = promise.then((canvasId) => {
-            return drawFrame(image, canvasId);
+        promise = promise.then(() => {
+            var index = Math.min(frame, canvasIds.length - 1);
+            return drawFrame(image, canvasIds[index]);
         });
     }
     return promise;
 }
 
-function loadImage(src, canvasId, frameCount) {
+function loadImage(src, canvasIds, frameCount) {
     return new Promise((resolve) => {
         let image = new Image;
         image.onload = (() => {
-            drawImage(image, canvasId, frameCount).then(resolve);
+            drawImage(image, canvasIds, frameCount).then(resolve);
         });
         image.src = src;
     });
@@ -41,7 +42,7 @@ function runTest(images) {
     var promises = [];
 
     for (let image of images)
-        promises.push(loadImage(image.src, image.canvasId, image.frameCount));
+        promises.push(loadImage(image.src, image.canvasIds, image.frameCount));
             
     Promise.all(promises).then(() => {
         if (window.testRunner)

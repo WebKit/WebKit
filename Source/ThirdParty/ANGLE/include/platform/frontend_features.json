@@ -39,6 +39,14 @@
             "issue": "http://anglebug.com/5007"
         },
         {
+            "name": "disable_draw_buffers_indexed",
+            "category": "Features",
+            "description": [
+                "Disable support for OES_draw_buffers_indexed and EXT_draw_buffers_indexed"
+            ],
+            "issue": "http://anglebug.com/7724"
+        },
+        {
             "name": "disable_anisotropic_filtering",
             "category": "Workarounds",
             "description": [
@@ -50,6 +58,13 @@
             "category": "Workarounds",
             "description": [
                 "Allow compressed formats"
+            ]
+        },
+        {
+            "name": "single_threaded_texture_decompression",
+            "category": "Workarounds",
+            "description": [
+                "Disables multi-threaded decompression of compressed texture formats"
             ]
         },
         {

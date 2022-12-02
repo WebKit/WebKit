@@ -10,16 +10,15 @@
 
 #include "libANGLE/capture/capture_gles_2_0_autogen.h"
 
+#include "common/gl_enum_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/capture/FrameCapture.h"
-#include "libANGLE/capture/gl_enum_utils.h"
 #include "libANGLE/validationES2.h"
 
 using namespace angle;
 
 namespace gl
 {
-
 CallCapture CaptureActiveTexture(const State &glState, bool isCallValid, GLenum texture)
 {
     ParamBuffer paramBuffer;
@@ -2272,7 +2271,7 @@ CallCapture CaptureStencilFuncSeparate(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLESEnum::StencilFaceDirection, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::TriangleFace, ParamType::TGLenum, face);
     paramBuffer.addEnumParam("func", GLESEnum::StencilFunction, ParamType::TGLenum, func);
     paramBuffer.addValueParam("ref", ParamType::TGLint, ref);
     paramBuffer.addValueParam("mask", ParamType::TGLuint, mask);
@@ -2296,7 +2295,7 @@ CallCapture CaptureStencilMaskSeparate(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLESEnum::StencilFaceDirection, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::TriangleFace, ParamType::TGLenum, face);
     paramBuffer.addValueParam("mask", ParamType::TGLuint, mask);
 
     return CallCapture(angle::EntryPoint::GLStencilMaskSeparate, std::move(paramBuffer));
@@ -2326,7 +2325,7 @@ CallCapture CaptureStencilOpSeparate(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLESEnum::StencilFaceDirection, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::TriangleFace, ParamType::TGLenum, face);
     paramBuffer.addEnumParam("sfail", GLESEnum::StencilOp, ParamType::TGLenum, sfail);
     paramBuffer.addEnumParam("dpfail", GLESEnum::StencilOp, ParamType::TGLenum, dpfail);
     paramBuffer.addEnumParam("dppass", GLESEnum::StencilOp, ParamType::TGLenum, dppass);

@@ -185,12 +185,10 @@ void RemoteLayerTreeDrawingArea::forceRepaintAsync(WebPage& page, CompletionHand
     completionHandler();
 }
 
-#if PLATFORM(IOS_FAMILY)
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
     m_webPage.setDeviceScaleFactor(deviceScaleFactor);
 }
-#endif
 
 DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() const
 {
@@ -401,7 +399,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     });
 }
 
-void RemoteLayerTreeDrawingArea::didUpdate()
+void RemoteLayerTreeDrawingArea::displayDidRefresh()
 {
     // FIXME: This should use a counted replacement for setLayerTreeStateIsFrozen, but
     // the callers of that function are not strictly paired.
@@ -421,7 +419,7 @@ void RemoteLayerTreeDrawingArea::didUpdate()
     ASSERT(!m_displayRefreshMonitorsToNotify);
     m_displayRefreshMonitorsToNotify = &monitorsToNotify;
     while (!monitorsToNotify.isEmpty())
-        monitorsToNotify.takeAny()->didUpdateLayers();
+        monitorsToNotify.takeAny()->triggerDisplayDidRefresh();
     m_displayRefreshMonitorsToNotify = nullptr;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
-CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier)
+CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -62,7 +62,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
         return { "No mock microphone device"_s };
 #endif
 
-    auto source = adoptRef(*new MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+    auto source = adoptRef(*new MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts)));
     if (constraints && source->applyConstraints(*constraints))
         return { };
 
@@ -70,8 +70,8 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
 }
 #endif
 
-MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, String&& hashSalt, PageIdentifier pageIdentifier)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt), pageIdentifier)
+MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_workQueue(WorkQueue::create("MockRealtimeAudioSource Render Queue"))
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {

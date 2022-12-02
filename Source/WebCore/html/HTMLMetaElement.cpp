@@ -32,8 +32,8 @@
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "LegacyMediaQueryEvaluator.h"
-#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "RenderStyle.h"
 #include "Settings.h"
@@ -66,20 +66,23 @@ bool HTMLMetaElement::mediaAttributeMatches()
 {
     auto& document = this->document();
 
-    if (!m_media)
-        m_media = MediaQuerySet::create(attributeWithoutSynchronization(mediaAttr).convertToASCIILowercase(), MediaQueryParserContext(document));
+    if (!m_mediaQueryList) {
+        auto mediaText = attributeWithoutSynchronization(mediaAttr).convertToASCIILowercase();
+        m_mediaQueryList = MQ::MediaQueryParser::parse(mediaText, { document });
+    }
 
     std::optional<RenderStyle> documentStyle;
     if (document.hasLivingRenderTree())
         documentStyle = Style::resolveForDocument(document);
 
-    String mediaType;
+    AtomString mediaType;
     if (auto* frame = document.frame()) {
         if (auto* frameView = frame->view())
             mediaType = frameView->mediaType();
     }
 
-    return LegacyMediaQueryEvaluator(mediaType, document, documentStyle ? &*documentStyle : nullptr).evaluate(*m_media);
+    auto evaluator = MQ::MediaQueryEvaluator { mediaType, document, documentStyle ? &*documentStyle : nullptr };
+    return evaluator.evaluate(*m_mediaQueryList);
 }
 
 const Color& HTMLMetaElement::contentColor()
@@ -122,7 +125,7 @@ void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomString
     }
 
     if (name == mediaAttr) {
-        m_media = nullptr;
+        m_mediaQueryList = { };
         process();
         return;
     }

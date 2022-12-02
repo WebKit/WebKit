@@ -158,4 +158,22 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::No) };
 }
 
+RefPtr<CSSValue> CSSPerspective::toCSSValue() const
+{
+    RefPtr<CSSValue> length;
+    switchOn(m_length, [&](const RefPtr<CSSNumericValue>& numericValue) {
+        length = numericValue->toCSSValue();
+    }, [&](const String&) {
+        // FIXME: Implement this.
+    }, [&](const RefPtr<CSSKeywordValue>& keywordValue) {
+        length = keywordValue->toCSSValue();
+    });
+    if (!length)
+        return nullptr;
+
+    auto result = CSSFunctionValue::create(CSSValuePerspective);
+    result->append(length.releaseNonNull());
+    return result;
+}
+
 } // namespace WebCore

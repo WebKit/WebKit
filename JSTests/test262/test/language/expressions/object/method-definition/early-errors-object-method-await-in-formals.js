@@ -8,6 +8,7 @@ description: It is a SyntaxError if FormalParameters contains await
 negative:
   phase: parse
   type: SyntaxError
+features: [async-functions]
 ---*/
 
 $DONOTEVALUATE();

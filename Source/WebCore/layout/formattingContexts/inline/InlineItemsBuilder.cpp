@@ -504,6 +504,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (!contentLength)
         return inlineItems.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
+    if (inlineTextBox.isCombined())
+        return inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
+
     m_needsVisualReordering = m_needsVisualReordering || TextUtil::containsStrongDirectionalityText(text);
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);

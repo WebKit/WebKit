@@ -48,6 +48,9 @@ public:
 
     bool isImage() const final;
 
+    LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
+    const RenderListItem* listItem() const;
+
 private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
@@ -81,6 +84,7 @@ private:
     RefPtr<StyleImage> m_image;
     WeakPtr<RenderListItem> m_listItem;
     LayoutUnit m_lineOffsetForListItem;
+    LayoutUnit m_lineLogicalOffsetForListItem;
 };
 
 } // namespace WebCore

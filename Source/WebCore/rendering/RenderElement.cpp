@@ -324,7 +324,7 @@ inline bool RenderElement::shouldRepaintForStyleDifference(StyleDifference diff)
     return diff == StyleDifference::Repaint || (diff == StyleDifference::RepaintIfText && hasImmediateNonWhitespaceTextChild());
 }
 
-void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer& newLayers)
+void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
 {
     auto fillImagesAreIdentical = [](const FillLayer* layer1, const FillLayer* layer2) -> bool {
         if (layer1 == layer2)
@@ -345,7 +345,7 @@ void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer
     };
 
     auto isRegisteredWithNewFillImages = [&]() -> bool {
-        for (auto* layer = &newLayers; layer; layer = layer->next()) {
+        for (auto* layer = newLayers; layer; layer = layer->next()) {
             if (layer->image() && !layer->image()->hasClient(*this))
                 return false;
         }
@@ -354,11 +354,11 @@ void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer
 
     // If images have the same characteristics and this element is already registered as a
     // client to the new images, there is nothing to do.
-    if (fillImagesAreIdentical(oldLayers, &newLayers) && isRegisteredWithNewFillImages())
+    if (fillImagesAreIdentical(oldLayers, newLayers) && isRegisteredWithNewFillImages())
         return;
 
     // Add before removing, to avoid removing all clients of an image that is in both sets.
-    for (auto* layer = &newLayers; layer; layer = layer->next()) {
+    for (auto* layer = newLayers; layer; layer = layer->next()) {
         if (layer->image())
             layer->image()->addClient(*this);
     }
@@ -909,19 +909,20 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 
 void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    auto registerImages = [this](auto& style, auto* oldStyle) {
-        updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, style.backgroundLayers());
-        updateFillImages(oldStyle ? &oldStyle->maskLayers() : nullptr, style.maskLayers());
-        updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, style.borderImage().image());
-        updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, style.maskBoxImage().image());
-        updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, style.shapeOutside());
+    auto registerImages = [this](auto* style, auto* oldStyle) {
+        if (!style && !oldStyle)
+            return;
+        updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, style ? &style->backgroundLayers() : nullptr);
+        updateFillImages(oldStyle ? &oldStyle->maskLayers() : nullptr, style ? &style->maskLayers() : nullptr);
+        updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, style ? style->borderImage().image() : nullptr);
+        updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, style ? style->maskBoxImage().image() : nullptr);
+        updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, style ? style->shapeOutside() : nullptr);
     };
 
-    registerImages(style(), oldStyle);
+    registerImages(&style(), oldStyle);
 
     // Are there other pseudo-elements that need the resources to be registered?
-    if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
-        registerImages(*firstLineStyle, oldStyle ? oldStyle->getCachedPseudoStyle(PseudoId::FirstLine) : nullptr);
+    registerImages(style().getCachedPseudoStyle(PseudoId::FirstLine), oldStyle ? oldStyle->getCachedPseudoStyle(PseudoId::FirstLine) : nullptr);
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 
@@ -1040,9 +1041,6 @@ void RenderElement::willBeDestroyed()
     if (hasCounterNodeMap())
         RenderCounter::destroyCounterNodes(*this);
 
-    if (style().hasOutline())
-        view().decrementRendersWithOutline();
-
     RenderObject::willBeDestroyed();
 
     clearSubtreeLayoutRootIfNeeded();
@@ -1065,6 +1063,9 @@ void RenderElement::willBeDestroyed()
 
     if (hasInitializedStyle()) {
         unregisterImages(m_style);
+
+        if (style().hasOutline())
+            view().decrementRendersWithOutline();
 
         if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
             unregisterImages(*firstLineStyle);
@@ -1485,7 +1486,7 @@ void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
 {
     ASSERT(m_hasPausedImageAnimations);
-    if (!isVisibleInDocumentRect(visibleRect))
+    if (!page().imageAnimationEnabled() || !isVisibleInDocumentRect(visibleRect))
         return false;
 
     repaint();
@@ -2133,7 +2134,7 @@ bool RenderElement::createsNewFormattingContext() const
     if (isWritingModeRoot() && isBlockContainer())
         return true;
     return isInlineBlockOrInlineTable() || isFlexItemIncludingDeprecated()
-        || isTableCell() || isTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow()
+        || isTableCell() || isTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isSVGForeignObject()
         || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot || establishesIndependentFormattingContext();
 }
 

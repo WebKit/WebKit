@@ -325,13 +325,9 @@ public:
     
     RegisterSetBuilder usedRegisters();
     
-    bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
+    bool masqueradesAsUndefinedWatchpointSetIsStillValid()
     {
-        return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(codeOrigin);
-    }
-    bool masqueradesAsUndefinedWatchpointIsStillValid()
-    {
-        return masqueradesAsUndefinedWatchpointIsStillValid(m_currentNode->origin.semantic);
+        return m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(m_currentNode);
     }
 
     void compileStoreBarrier(Node*);
@@ -1409,9 +1405,9 @@ public:
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
     void compileResolveRope(Node*);
-    JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR);
+    JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR, GPRReg scratch2GPR);
     JITCompiler::Jump jumpForTypedArrayIsDetachedIfOutOfBounds(Node*, GPRReg baseGPR, JITCompiler::Jump outOfBounds);
-    void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR);
+    void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR, GPRReg scratch2GPR);
     void compileGetTypedArrayByteOffset(Node*);
 #if USE(LARGE_TYPED_ARRAYS)
     void compileGetTypedArrayByteOffsetAsInt52(Node*);

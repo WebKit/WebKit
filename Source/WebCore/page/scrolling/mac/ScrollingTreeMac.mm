@@ -79,53 +79,17 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
 }
 
-using LayerAndPoint = std::pair<CALayer *, FloatPoint>;
-
-static void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint point)
+static bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
 {
-    if (parent.masksToBounds && ![parent containsPoint:point])
-        return;
+    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
+    if (!platformCALayer)
+        return false;
 
-    if (parent.mask && ![parent _web_maskContainsPoint:point])
-        return;
-
-    for (CALayer *layer in [parent sublayers]) {
-        CALayer *layerWithResolvedAnimations = layer;
-
-        if ([[layer animationKeys] count])
-            layerWithResolvedAnimations = [layer presentationLayer];
-
-        auto transform = TransformationMatrix { [layerWithResolvedAnimations transform] };
-        if (!transform.isInvertible())
-            continue;
-
-        CGPoint subviewPoint = [layerWithResolvedAnimations convertPoint:point fromLayer:parent];
-
-        auto handlesEvent = [&] {
-            if (CGRectIsEmpty([layerWithResolvedAnimations frame]))
-                return false;
-
-            if (![layerWithResolvedAnimations containsPoint:subviewPoint])
-                return false;
-
-            auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
-            if (platformCALayer) {
-                // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
-                FloatPoint boundsOrigin = layer.bounds.origin;
-                FloatPoint localPoint = subviewPoint - toFloatSize(boundsOrigin);
-                auto* eventRegion = platformCALayer->eventRegion();
-                return eventRegion && eventRegion->contains(roundedIntPoint(localPoint));
-            }
-            
-            return false;
-        }();
-
-        if (handlesEvent)
-            layersAtPoint.append(std::make_pair(layer, subviewPoint));
-
-        if ([layer sublayers])
-            collectDescendantLayersAtPoint(layersAtPoint, layer, subviewPoint);
-    };
+    // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
+    FloatPoint boundsOrigin = layer.bounds.origin;
+    FloatPoint originRelativePoint = FloatPoint(localPoint) - toFloatSize(boundsOrigin);
+    auto* eventRegion = platformCALayer->eventRegion();
+    return eventRegion && eventRegion->contains(roundedIntPoint(originRelativePoint));
 }
 
 static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
@@ -171,7 +135,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
     pointInContentsLayer.moveBy(scrollOrigin);
 
     Vector<LayerAndPoint, 16> layersAtPoint;
-    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), pointInContentsLayer);
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), pointInContentsLayer, layerEventRegionContainsPoint);
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
 #if !LOG_DISABLED
@@ -211,7 +175,7 @@ OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesFor
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
 
     Vector<LayerAndPoint, 16> layersAtPoint;
-    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point);
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point, layerEventRegionContainsPoint);
 
     if (layersAtPoint.isEmpty())
         return { };

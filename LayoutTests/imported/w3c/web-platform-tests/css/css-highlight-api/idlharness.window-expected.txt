@@ -1,0 +1,30 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial namespace CSS: original namespace defined
+PASS Partial namespace CSS: member names are unique
+PASS Highlight interface: existence and properties of interface object
+FAIL Highlight interface object length assert_equals: wrong value for Highlight.length expected 0 but got 1
+PASS Highlight interface object name
+PASS Highlight interface: existence and properties of interface prototype object
+PASS Highlight interface: existence and properties of interface prototype object's "constructor" property
+PASS Highlight interface: existence and properties of interface prototype object's @@unscopables property
+PASS Highlight interface: setlike<AbstractRange>
+FAIL Highlight interface: attribute priority assert_true: The prototype object must have a property "priority" expected true got false
+FAIL Highlight interface: attribute type assert_true: The prototype object must have a property "type" expected true got false
+FAIL Highlight must be primary interface of new Highlight(new Range()) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Argument 1 ('range') to the Highlight constructor must be an instance of StaticRange"
+FAIL Stringification of new Highlight(new Range()) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Argument 1 ('range') to the Highlight constructor must be an instance of StaticRange"
+FAIL Highlight interface: new Highlight(new Range()) must inherit property "priority" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Argument 1 ('range') to the Highlight constructor must be an instance of StaticRange"
+FAIL Highlight interface: new Highlight(new Range()) must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Argument 1 ('range') to the Highlight constructor must be an instance of StaticRange"
+FAIL HighlightRegistry interface: existence and properties of interface object assert_own_property: self does not have own property "HighlightRegistry" expected property "HighlightRegistry" missing
+FAIL HighlightRegistry interface object length assert_own_property: self does not have own property "HighlightRegistry" expected property "HighlightRegistry" missing
+FAIL HighlightRegistry interface object name assert_own_property: self does not have own property "HighlightRegistry" expected property "HighlightRegistry" missing
+FAIL HighlightRegistry interface: existence and properties of interface prototype object assert_own_property: self does not have own property "HighlightRegistry" expected property "HighlightRegistry" missing
+FAIL HighlightRegistry interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "HighlightRegistry" expected property "HighlightRegistry" missing
+FAIL HighlightRegistry interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "HighlightRegistry" expected property "HighlightRegistry" missing
+FAIL HighlightRegistry interface: maplike<DOMString, Highlight> undefined is not an object (evaluating 'this.get_interface_object().prototype')
+FAIL HighlightRegistry must be primary interface of CSS.highlights assert_own_property: self does not have own property "HighlightRegistry" expected property "HighlightRegistry" missing
+FAIL Stringification of CSS.highlights assert_class_string: class string of CSS.highlights expected "[object HighlightRegistry]" but got "[object HighlightRegister]"
+PASS CSS namespace: operation escape(CSSOMString)
+PASS CSS namespace: attribute highlights
+

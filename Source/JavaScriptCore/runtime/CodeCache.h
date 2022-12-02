@@ -160,20 +160,21 @@ private:
     }
 
     template<typename UnlinkedCodeBlockType>
-    std::enable_if_t<std::is_base_of<UnlinkedCodeBlock, UnlinkedCodeBlockType>::value && !std::is_same<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>::value, UnlinkedCodeBlockType*>
-    fetchFromDisk(VM& vm, const SourceCodeKey& key)
+    UnlinkedCodeBlockType* fetchFromDisk(VM& vm, const SourceCodeKey& key)
     {
-        UnlinkedCodeBlockType* codeBlock = fetchFromDiskImpl<UnlinkedCodeBlockType>(vm, key);
-        if (UNLIKELY(Options::forceDiskCache())) {
-            if (isMainThread())
-                RELEASE_ASSERT(codeBlock);
+        if constexpr (std::is_base_of_v<UnlinkedCodeBlock, UnlinkedCodeBlockType> && !std::is_same_v<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>) {
+            UnlinkedCodeBlockType* codeBlock = fetchFromDiskImpl<UnlinkedCodeBlockType>(vm, key);
+            if (UNLIKELY(Options::forceDiskCache())) {
+                if (isMainThread())
+                    RELEASE_ASSERT(codeBlock);
+            }
+            return codeBlock;
+        } else {
+            UNUSED_PARAM(vm);
+            UNUSED_PARAM(key);
+            return nullptr;
         }
-        return codeBlock;
     }
-
-    template<typename T>
-    std::enable_if_t<!std::is_base_of<UnlinkedCodeBlock, T>::value || std::is_same<T, UnlinkedEvalCodeBlock>::value, T*>
-    fetchFromDisk(VM&, const SourceCodeKey&) { return nullptr; }
 
     // This constant factor biases cache capacity toward allowing a minimum
     // working set to enter the cache before it starts evicting.

@@ -29,5 +29,5 @@ INFOPLIST_FILE = mac/Info.plist
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_PLATFORM_NAME))
 EXCLUDED_SOURCE_FILE_NAMES_maccatalyst = *
-OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Cocoa -framework WebKit
+OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Cocoa -framework UniformTypeIdentifiers -framework WebKit
 STRIP_STYLE = debugging;

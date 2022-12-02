@@ -54,7 +54,7 @@ struct DefaultRefDerefTraits<cairo_font_face_t> {
 template<>
 struct DefaultRefDerefTraits<cairo_scaled_font_t> {
     static void refIfNotNull(cairo_scaled_font_t* ptr);
-    static void derefIfNotNull(cairo_scaled_font_t* ptr);
+    WEBCORE_EXPORT static void derefIfNotNull(cairo_scaled_font_t* ptr);
 };
 
 template<>

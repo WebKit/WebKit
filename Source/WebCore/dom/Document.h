@@ -148,7 +148,6 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class FullscreenManager;
-class GPUCanvasContext;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
 class HTMLBodyElement;
@@ -255,6 +254,10 @@ class ContentChangeObserver;
 class DOMTimerHoldingTank;
 #endif
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+class GPUCanvasContext;
+#endif
+
 struct ApplicationManifest;
 struct BoundaryPoint;
 struct HighlightRangeData;
@@ -331,6 +334,9 @@ using RenderingContext = std::variant<
 #endif
 #if ENABLE(WEBGL2)
     RefPtr<WebGL2RenderingContext>,
+#endif
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    RefPtr<GPUCanvasContext>,
 #endif
     RefPtr<ImageBitmapRenderingContext>,
     RefPtr<CanvasRenderingContext2D>
@@ -667,6 +673,7 @@ public:
     void suspendFontLoading();
 
     RenderView* renderView() const { return m_renderView.get(); }
+    const RenderStyle* initialContainingBlockStyle() const { return m_initialContainingBlockStyle.get(); } // This may end up differing from renderView()->style() due to adjustments.
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
     bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
@@ -1144,6 +1151,8 @@ public:
     void serviceRequestAnimationFrameCallbacks();
     void serviceRequestVideoFrameCallbacks();
 
+    void serviceCaretAnimation();
+
     void windowScreenDidChange(PlatformDisplayID);
 
     void finishedParsing();
@@ -1556,9 +1565,6 @@ public:
     TextAutoSizing& textAutoSizing();
 #endif
 
-    // For debugging rdar://problem/49877867.
-    void setMayBeDetachedFromFrame(bool mayBeDetachedFromFrame) { m_mayBeDetachedFromFrame = mayBeDetachedFromFrame; }
-
     Logger& logger();
     WEBCORE_EXPORT static const Logger& sharedLogger();
 
@@ -1610,8 +1616,6 @@ public:
     WEBCORE_EXPORT void wasLoadedWithDataTransferFromPrevalentResource();
     void downgradeReferrerToRegistrableDomain();
 #endif
-
-    String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&);
 
     void registerArticleElement(Element&);
     void unregisterArticleElement(Element&);
@@ -1721,6 +1725,9 @@ public:
     void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final;
 
+    // This should be used over the settings lazy loading image flag due to a quirk, which may occur causing website images to fail to load properly.
+    bool lazyImageLoadingEnabled() const;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -1752,7 +1759,7 @@ private:
 
     // ScriptExecutionContext
     CSSFontSelector* cssFontSelector() final { return m_fontSelector.ptr(); }
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(String&, bool, bool, LoadedFromOpaqueSource) final;
+    std::unique_ptr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     // FontSelectorClient
@@ -2010,6 +2017,7 @@ private:
     DocumentClasses m_documentClasses;
 
     RenderPtr<RenderView> m_renderView;
+    std::unique_ptr<RenderStyle> m_initialContainingBlockStyle;
 
     WeakHashSet<MediaCanStartListener> m_mediaCanStartListeners;
     WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;
@@ -2283,7 +2291,6 @@ private:
 #endif
     unsigned m_numberOfRejectedSyncXHRs { 0 };
     bool m_isRunningUserScripts { false };
-    bool m_mayBeDetachedFromFrame { true };
     bool m_shouldPreventEnteringBackForwardCacheForTesting { false };
     bool m_hasLoadedThirdPartyScript { false };
     bool m_hasLoadedThirdPartyFrame { false };

@@ -1,0 +1,9 @@
+
+
+PASS textarea[style="writing-mode: horizontal-tb"] rows attribute changes the size correctly
+PASS textarea[style="writing-mode: horizontal-tb"] cols attribute changes the size correctly
+PASS textarea[style="writing-mode: vertical-lr"] rows attribute changes the size correctly
+PASS textarea[style="writing-mode: vertical-lr"] cols attribute changes the size correctly
+PASS textarea[style="writing-mode: vertical-rl"] rows attribute changes the size correctly
+PASS textarea[style="writing-mode: vertical-rl"] cols attribute changes the size correctly
+

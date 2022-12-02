@@ -27,6 +27,7 @@
 
 #include "FormattingContext.h"
 #include "FormattingState.h"
+#include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
 #include "InlineLineBuilder.h"
@@ -35,6 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
+class BlockLayoutState;
 class InlineDamage;
 class InlineFormattingState;
 class LineBox;
@@ -55,11 +57,11 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    void layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&);
+    void layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    void lineLayout(InlineItems&, const LineBuilder::InlineItemRange&, const ConstraintsForInFlowContent&);
+    void lineLayout(InlineItems&, const LineBuilder::InlineItemRange&, const ConstraintsForInlineContent&, BlockLayoutState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, LayoutPoint contentBoxTopLeft);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
@@ -70,7 +72,9 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&);
+    InlineRect createDisplayContentForLine(const LineBuilder::LineContent&, const ConstraintsForInlineContent&);
+    void resetGeometryForClampedContent(const LineBuilder::InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft);
+
     void invalidateFormattingState();
 
     const InlineDamage* m_lineDamage { nullptr };

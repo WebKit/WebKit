@@ -28,11 +28,11 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "SharedCARingBuffer.h"
 #include "SharedMemory.h"
 #include "WebProcess.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/CAAudioStreamDescription.h>
-#include <WebCore/CARingBuffer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/WebAudioBufferList.h>
 
@@ -55,7 +55,7 @@ private:
     RemoteAudioSourceProviderManager();
 
     // Messages
-    void audioStorageChanged(WebCore::MediaPlayerIdentifier, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void audioStorageChanged(WebCore::MediaPlayerIdentifier, ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
     void audioSamplesAvailable(WebCore::MediaPlayerIdentifier, uint64_t startFrame, uint64_t numberOfFrames);
 
     void setConnection(IPC::Connection*);
@@ -65,13 +65,13 @@ private:
     public:
         explicit RemoteAudio(Ref<RemoteAudioSourceProvider>&&);
 
-        void setStorage(const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+        void setStorage(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
         void audioSamplesAvailable(uint64_t startFrame, uint64_t numberOfFrames);
 
     private:
         Ref<RemoteAudioSourceProvider> m_provider;
-        WebCore::CAAudioStreamDescription m_description;
-        std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+        std::optional<WebCore::CAAudioStreamDescription> m_description;
+        std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
         std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
     };
 

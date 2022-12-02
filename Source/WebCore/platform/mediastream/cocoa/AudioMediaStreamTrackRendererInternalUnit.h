@@ -38,14 +38,19 @@ class CAAudioStreamDescription;
 class AudioMediaStreamTrackRendererInternalUnit {
 public:
     virtual ~AudioMediaStreamTrackRendererInternalUnit() = default;
+    class Client {
+    public:
+        virtual ~Client() = default;
+        virtual OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) = 0;
+        virtual void reset() = 0;
+    };
+    WEBCORE_EXPORT static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> create(Client&);
 
-    using RenderCallback = Function<OSStatus(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&)>;
-    using ResetCallback = Function<void()>;
-    WEBCORE_EXPORT static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> createLocalInternalUnit(RenderCallback&&, ResetCallback&&);
-
+    using CreateFunction = UniqueRef<AudioMediaStreamTrackRendererInternalUnit>(*)(AudioMediaStreamTrackRendererInternalUnit::Client&);
+    WEBCORE_EXPORT static void setCreateFunction(CreateFunction);
     virtual void start() = 0;
     virtual void stop() = 0;
-    virtual void retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&&) = 0;
+    virtual void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&) = 0;
     virtual void setAudioOutputDevice(const String&) = 0;
 };
 

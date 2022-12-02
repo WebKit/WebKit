@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -166,6 +166,7 @@ inline bool shouldUseContiguous(ArrayModes arrayModes)
 
 inline bool shouldUseDouble(ArrayModes arrayModes)
 {
+    ASSERT(Options::allowDoubleShape());
     return arrayModesIncludeIgnoringTypedArrays(arrayModes, DoubleShape);
 }
 
@@ -194,30 +195,35 @@ inline bool hasSeenCopyOnWriteArray(ArrayModes arrayModes)
     return arrayModes & ALL_COPY_ON_WRITE_ARRAY_MODES;
 }
 
+enum class ArrayProfileFlag : uint32_t {
+    MayStoreHole = 1 << 0, // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
+    OutOfBounds = 1 << 1,
+    MayBeLargeTypedArray = 1 << 2,
+    MayInterceptIndexedAccesses = 1 << 3,
+    UsesNonOriginalArrayStructures = 1 << 4,
+    MayBeResizableOrGrowableSharedTypedArray = 1 << 5,
+    DidPerformFirstRunPruning = 1 << 6,
+};
+
 class ArrayProfile {
     friend class CodeBlock;
     friend class UnlinkedArrayProfile;
-
 public:
     explicit ArrayProfile() = default;
 
-#if USE(LARGE_TYPED_ARRAYS)
     static constexpr uint64_t s_smallTypedArrayMaxLength = std::numeric_limits<int32_t>::max();
-    void setMayBeLargeTypedArray() { m_mayBeLargeTypedArray = true; }
-    bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return m_mayBeLargeTypedArray; }
-#else
-    bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return false; }
-#endif
+    void setMayBeLargeTypedArray() { m_arrayProfileFlags.add(ArrayProfileFlag::MayBeLargeTypedArray); }
+    bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }
+
+    bool mayBeResizableOrGrowableSharedTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
 
     StructureID* addressOfLastSeenStructureID() { return &m_lastSeenStructureID; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
-    bool* addressOfMayStoreToHole() { return &m_mayStoreToHole; }
 
-    static ptrdiff_t offsetOfMayStoreToHole() { return OBJECT_OFFSETOF(ArrayProfile, m_mayStoreToHole); }
+    static ptrdiff_t offsetOfArrayProfileFlags() { return OBJECT_OFFSETOF(ArrayProfile, m_arrayProfileFlags); }
     static ptrdiff_t offsetOfLastSeenStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_lastSeenStructureID); }
 
-    void setOutOfBounds() { m_outOfBounds = true; }
-    bool* addressOfOutOfBounds() { return &m_outOfBounds; }
+    void setOutOfBounds() { m_arrayProfileFlags.add(ArrayProfileFlag::OutOfBounds); }
     
     void observeStructureID(StructureID structureID) { m_lastSeenStructureID = structureID; }
     void observeStructure(Structure* structure) { m_lastSeenStructureID = structure->id(); }
@@ -229,12 +235,12 @@ public:
     void observeIndexedRead(JSCell*, unsigned index);
 
     ArrayModes observedArrayModes(const ConcurrentJSLocker&) const { return m_observedArrayModes; }
-    bool mayInterceptIndexedAccesses(const ConcurrentJSLocker&) const { return m_mayInterceptIndexedAccesses; }
+    bool mayInterceptIndexedAccesses(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayInterceptIndexedAccesses);; }
     
-    bool mayStoreToHole(const ConcurrentJSLocker&) const { return m_mayStoreToHole; }
-    bool outOfBounds(const ConcurrentJSLocker&) const { return m_outOfBounds; }
+    bool mayStoreToHole(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayStoreHole); }
+    bool outOfBounds(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::OutOfBounds); }
     
-    bool usesOriginalArrayStructures(const ConcurrentJSLocker&) const { return m_usesOriginalArrayStructures; }
+    bool usesOriginalArrayStructures(const ConcurrentJSLocker&) const { return !m_arrayProfileFlags.contains(ArrayProfileFlag::UsesNonOriginalArrayStructures); }
 
     CString briefDescription(const ConcurrentJSLocker&, CodeBlock*);
     CString briefDescriptionWithoutUpdating(const ConcurrentJSLocker&);
@@ -245,27 +251,14 @@ private:
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
     StructureID m_lastSeenStructureID;
-    bool m_mayStoreToHole { false }; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
-    bool m_outOfBounds { false };
-#if USE(LARGE_TYPED_ARRAYS)
-    bool m_mayBeLargeTypedArray { false };
-#endif
-    bool m_mayInterceptIndexedAccesses : 1 { false };
-    bool m_usesOriginalArrayStructures : 1 { true };
-    bool m_didPerformFirstRunPruning : 1 { false };
+    OptionSet<ArrayProfileFlag> m_arrayProfileFlags;
     ArrayModes m_observedArrayModes { 0 };
 };
 static_assert(sizeof(ArrayProfile) == 12);
 
 class UnlinkedArrayProfile {
 public:
-    explicit UnlinkedArrayProfile()
-        : m_usesOriginalArrayStructures(true)
-#if USE(LARGE_TYPED_ARRAYS)
-        , m_mayBeLargeTypedArray(false)
-#endif
-    {
-    }
+    explicit UnlinkedArrayProfile() = default;
 
     void update(ArrayProfile& arrayProfile)
     {
@@ -273,46 +266,15 @@ public:
         m_observedArrayModes = newModes;
         arrayProfile.m_observedArrayModes = newModes;
 
-        if (m_mayStoreToHole)
-            arrayProfile.m_mayStoreToHole = true;
-        else
-            m_mayStoreToHole = arrayProfile.m_mayStoreToHole;
-
-        if (m_outOfBounds)
-            arrayProfile.m_outOfBounds = true;
-        else
-            m_outOfBounds = arrayProfile.m_outOfBounds;
-
-        if (m_mayInterceptIndexedAccesses)
-            arrayProfile.m_mayInterceptIndexedAccesses = true;
-        else
-            m_mayInterceptIndexedAccesses = arrayProfile.m_mayInterceptIndexedAccesses;
-
-        if (!m_usesOriginalArrayStructures)
-            arrayProfile.m_usesOriginalArrayStructures = false;
-        else
-            m_usesOriginalArrayStructures = arrayProfile.m_usesOriginalArrayStructures;
-
-#if USE(LARGE_TYPED_ARRAYS)
-        if (m_mayBeLargeTypedArray)
-            arrayProfile.m_mayBeLargeTypedArray = true;
-        else
-            m_mayBeLargeTypedArray = arrayProfile.m_mayBeLargeTypedArray;
-#endif
+        arrayProfile.m_arrayProfileFlags.add(m_arrayProfileFlags);
+        auto unlinkedArrayProfileFlags = arrayProfile.m_arrayProfileFlags;
+        unlinkedArrayProfileFlags.remove(ArrayProfileFlag::DidPerformFirstRunPruning); // We do not propagate DidPerformFirstRunPruning.
+        m_arrayProfileFlags = unlinkedArrayProfileFlags;
     }
 
 private:
     ArrayModes m_observedArrayModes { 0 };
-    // We keep these as full byte-sized booleans just for speed, because the
-    // alignment of this struct will already make us 8 bytes large. But if we
-    // ever need to add more stuff, these fields can become bitfields.
-    bool m_mayStoreToHole { false };
-    bool m_outOfBounds { false };
-    bool m_mayInterceptIndexedAccesses { false };
-    bool m_usesOriginalArrayStructures : 1;
-#if USE(LARGE_TYPED_ARRAYS)
-    bool m_mayBeLargeTypedArray : 1;
-#endif
+    OptionSet<ArrayProfileFlag> m_arrayProfileFlags { };
 };
 static_assert(sizeof(UnlinkedArrayProfile) <= 8);
 

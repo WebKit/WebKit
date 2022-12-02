@@ -56,15 +56,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSMILElement);
 
-static SMILEventSender& smilBeginEventSender()
+static SMILEventSender& smilEventSender()
 {
-    static NeverDestroyed<SMILEventSender> sender(eventNames().beginEventEvent);
-    return sender;
-}
-
-static SMILEventSender& smilEndEventSender()
-{
-    static NeverDestroyed<SMILEventSender> sender(eventNames().endEventEvent);
+    static NeverDestroyed<SMILEventSender> sender;
     return sender;
 }
 
@@ -162,8 +156,7 @@ SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc, Uniq
 SVGSMILElement::~SVGSMILElement()
 {
     clearResourceReferences();
-    smilBeginEventSender().cancelEvent(*this);
-    smilEndEventSender().cancelEvent(*this);
+    smilEventSender().cancelEvent(*this);
     disconnectConditions();
     if (m_timeContainer && m_targetElement && hasValidAttributeName())
         m_timeContainer->unschedule(this, m_targetElement.get(), m_attributeName);
@@ -1137,17 +1130,17 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
     }
 
     if (oldActiveState == Active && m_activeState != Active) {
-        smilEndEventSender().dispatchEventSoon(*this);
+        smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
         endedActiveInterval();
         if (m_activeState != Frozen)
             stopAnimation(m_targetElement.get());
     } else if (oldActiveState != Active && m_activeState == Active)
-        smilBeginEventSender().dispatchEventSoon(*this);
+        smilEventSender().dispatchEventSoon(*this, eventNames().beginEventEvent);
 
     // Triggering all the pending events if the animation timeline is changed.
     if (seekToTime) {
         if (m_activeState == Inactive || m_activeState == Frozen)
-            smilEndEventSender().dispatchEventSoon(*this);
+            smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
     }
 
     m_nextProgressTime = calculateNextProgressTime(elapsed);
@@ -1224,10 +1217,9 @@ void SVGSMILElement::endedActiveInterval()
     clearTimesWithDynamicOrigins(m_endTimes);
 }
 
-void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender)
+void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender, const AtomString& eventType)
 {
-    ASSERT(eventSender == &smilBeginEventSender() || eventSender == &smilEndEventSender());
-    const AtomString& eventType = eventSender->eventType();
+    ASSERT_UNUSED(eventSender, eventSender == &smilEventSender());
     dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

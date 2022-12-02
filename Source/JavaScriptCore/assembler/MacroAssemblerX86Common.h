@@ -466,6 +466,18 @@ public:
         move32IfNeeded(src, dest);
         lshift32(imm, dest);
     }
+
+    void lshift32(Address src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            load32(src, dest);
+            lshift32(scratchRegister(), dest);
+        } else {
+            load32(src, dest);
+            lshift32(shiftAmount, dest);
+        }
+    }
     
     void mul32(RegisterID src, RegisterID dest)
     {
@@ -3891,6 +3903,16 @@ public:
     void atomicXchg32(RegisterID reg, BaseIndex address)
     {
         m_assembler.xchgl_rm(reg, address.offset, address.base, address.index, address.scale);
+    }
+
+    void atomicLoad32(Address address, RegisterID dest)
+    {
+        load32(address, dest);
+    }
+
+    void atomicLoad32(BaseIndex address, RegisterID dest)
+    {
+        load32(address, dest);
     }
     
     // We take this to mean that it prevents motion of normal stores. So, it's a no-op on x86.

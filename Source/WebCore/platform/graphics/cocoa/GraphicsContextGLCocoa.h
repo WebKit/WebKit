@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class GraphicsLayerContentsDisplayDelegate;
 class ProcessIdentity;
 
 #if ENABLE(VIDEO)
@@ -86,6 +87,7 @@ public:
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
     void setContextVisibility(bool) final;
+    void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
 
 #if PLATFORM(MAC)
@@ -103,6 +105,7 @@ protected:
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
 
     ProcessIdentity m_resourceOwner;
+    DestinationColorSpace m_drawingBufferColorSpace;
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
 #endif

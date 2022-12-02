@@ -27,7 +27,7 @@
 #include "config.h"
 #include "MediaPlayerPrivateMediaFoundation.h"
 
-#if USE(MEDIA_FOUNDATION)
+#if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
 
 #include "CachedResourceLoader.h"
 #include "FrameView.h"
@@ -2971,4 +2971,4 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::getSwapChainPresen
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)

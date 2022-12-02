@@ -52,6 +52,7 @@ NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 
+Platform/IPC/unix/ArgumentCodersUnix.cpp
 Platform/IPC/unix/ConnectionUnix.cpp
 Platform/IPC/unix/IPCSemaphoreUnix.cpp
 
@@ -175,6 +176,7 @@ UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitVersion.cpp @no-unify
 UIProcess/API/glib/WebKitWebContext.cpp @no-unify
 UIProcess/API/glib/WebKitWebResource.cpp @no-unify
+UIProcess/API/glib/WebKitWebResourceLoadManager.cpp @no-unify
 UIProcess/API/glib/WebKitWebView.cpp @no-unify
 UIProcess/API/glib/WebKitWebViewAccessible.cpp @no-unify
 UIProcess/API/glib/WebKitWebViewSessionState.cpp @no-unify
@@ -195,6 +197,8 @@ UIProcess/API/wpe/WebKitPopupMenu.cpp @no-unify
 UIProcess/API/wpe/WebKitRectangle.cpp @no-unify
 UIProcess/API/wpe/WebKitScriptDialogWPE.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewBackend.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewWPE1.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewWPE2.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewWPE.cpp @no-unify
 UIProcess/API/wpe/WPEView.cpp @no-unify
 
@@ -204,7 +208,7 @@ UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
-UIProcess/Gamepad/wpe/UIGamepadProviderWPE.cpp
+UIProcess/Gamepad/libwpe/UIGamepadProviderLibWPE.cpp
 
 UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 

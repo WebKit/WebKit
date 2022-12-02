@@ -112,7 +112,7 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresF
 RefPtr<WebCore::ImageBuffer> RemoteLayerWithRemoteRenderingBackingStoreCollection::allocateBufferForBackingStore(const RemoteLayerBackingStore& backingStore)
 {
     auto renderingMode = backingStore.type() == RemoteLayerBackingStore::Type::IOSurface ? WebCore::RenderingMode::Accelerated : WebCore::RenderingMode::Unaccelerated;
-    return remoteRenderingBackendProxy().createImageBuffer(backingStore.size(), renderingMode, WebCore::RenderingPurpose::LayerBacking, backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat());
+    return remoteRenderingBackendProxy().createImageBuffer(backingStore.size(), renderingMode, WebCore::RenderingPurpose::LayerBacking, backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat());
 }
 
 bool RemoteLayerWithRemoteRenderingBackingStoreCollection::collectBackingStoreBufferIdentifiersToMarkVolatile(RemoteLayerBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now, Vector<WebCore::RenderingResourceIdentifier>& identifiers)

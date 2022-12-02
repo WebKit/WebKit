@@ -77,6 +77,16 @@ static std::atomic<bool> hasInitializedAppBoundDomains = false;
 static std::atomic<bool> keyExists = false;
 #endif
 
+#if ENABLE(MANAGED_DOMAINS)
+static WorkQueue& managedDomainQueue()
+{
+    static auto& queue = WorkQueue::create("com.apple.WebKit.ManagedDomains").leakRef();
+    return queue;
+}
+static std::atomic<bool> hasInitializedManagedDomains = false;
+static std::atomic<bool> managedKeyExists = false;
+#endif
+
 // FIXME: we should not read the values from NSUserDefaults; we should let clients who set the values to pass them via configuration.
 static bool internalFeatureEnabled(const String& key, bool defaultValue = false)
 {
@@ -217,6 +227,9 @@ void WebsiteDataStore::platformInitialize()
     dataStores().add(this);
 #if ENABLE(APP_BOUND_DOMAINS)
     initializeAppBoundDomains();
+#endif
+#if ENABLE(MANAGED_DOMAINS)
+    initializeManagedDomains();
 #endif
 }
 
@@ -696,6 +709,119 @@ void WebsiteDataStore::reinitializeAppBoundDomains()
 {
     hasInitializedAppBoundDomains = false;
     initializeAppBoundDomains(ForceReinitialization::Yes);
+}
+#endif
+
+
+#if ENABLE(MANAGED_DOMAINS)
+static HashSet<WebCore::RegistrableDomain>& managedDomains()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<HashSet<WebCore::RegistrableDomain>> managedDomains;
+    return managedDomains;
+}
+
+NSString *kManagedSitesIdentifier = @"com.apple.mail-shared";
+NSString *kCrossSiteTrackingPreventionRelaxedDomainsKey = @"CrossSiteTrackingPreventionRelaxedDomains";
+
+void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReinitialization)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
+        return;
+
+    managedDomainQueue().dispatch([forceReinitialization] () mutable {
+        if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
+            return;
+        static const auto maxManagedDomainCount = 10;
+        NSArray<NSString *> *crossSiteTrackingPreventionRelaxedDomains = nil;
+#if PLATFORM(MAC)
+        NSDictionary *managedSitesPrefs = [NSDictionary dictionaryWithContentsOfFile:[[NSString stringWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier] stringByStandardizingPath]];
+        crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
+#elif !PLATFORM(MACCATALYST)
+        if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
+            crossSiteTrackingPreventionRelaxedDomains = [[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
+        else
+            crossSiteTrackingPreventionRelaxedDomains = @[];
+#endif
+        managedKeyExists = crossSiteTrackingPreventionRelaxedDomains ? true : false;
+    
+        RunLoop::main().dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains = retainPtr(crossSiteTrackingPreventionRelaxedDomains)] {
+            if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
+                return;
+
+            if (forceReinitialization == ForceReinitialization::Yes)
+                managedDomains().clear();
+
+            for (NSString *data in crossSiteTrackingPreventionRelaxedDomains.get()) {
+                if (managedDomains().size() >= maxManagedDomainCount)
+                    break;
+
+                URL url { data };
+                if (url.protocol().isEmpty())
+                    url.setProtocol("https"_s);
+                if (!url.isValid())
+                    continue;
+                WebCore::RegistrableDomain managedDomain { url };
+                if (managedDomain.isEmpty())
+                    continue;
+                managedDomains().add(managedDomain);
+            }
+            hasInitializedManagedDomains = true;
+            forwardManagedDomainsToITPIfInitialized([] { });
+        });
+    });
+}
+
+void WebsiteDataStore::ensureManagedDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
+{
+    if (hasInitializedManagedDomains) {
+        completionHandler(managedDomains());
+        return;
+    }
+
+    // Hopping to the background thread then back to the main thread
+    // ensures that initializeManagedDomains() has finished.
+    managedDomainQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+            ASSERT(hasInitializedManagedDomains);
+            completionHandler(managedDomains());
+        });
+    });
+}
+
+void WebsiteDataStore::getManagedDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
+{
+    ASSERT(RunLoop::isMain());
+
+    ensureManagedDomains([completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
+        completionHandler(domains);
+    });
+}
+
+std::optional<std::reference_wrapper<HashSet<WebCore::RegistrableDomain>>> WebsiteDataStore::managedDomainsIfInitialized()
+{
+    ASSERT(RunLoop::isMain());
+    if (!hasInitializedManagedDomains)
+        return std::nullopt;
+    return managedDomains();
+}
+
+void WebsiteDataStore::setManagedDomainsForTesting(HashSet<WebCore::RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& domain : domains)
+        RELEASE_ASSERT(domain == "localhost"_s || domain == "127.0.0.1"_s);
+
+    managedDomains() = WTFMove(domains);
+    hasInitializedManagedDomains = true;
+    forwardManagedDomainsToITPIfInitialized(WTFMove(completionHandler));
+}
+
+void WebsiteDataStore::reinitializeManagedDomains()
+{
+    hasInitializedManagedDomains = false;
+    initializeManagedDomains(ForceReinitialization::Yes);
 }
 #endif
 

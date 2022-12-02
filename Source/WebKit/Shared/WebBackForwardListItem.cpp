@@ -46,7 +46,7 @@ Ref<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemSt
 WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState&& backForwardListItemState, WebPageProxyIdentifier pageID)
     : m_itemState(WTFMove(backForwardListItemState))
     , m_pageID(pageID)
-    , m_lastProcessIdentifier(m_itemState.identifier.processIdentifier)
+    , m_lastProcessIdentifier(m_itemState.identifier.processIdentifier())
 {
     auto result = allItems().add(m_itemState.identifier, this);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -188,7 +188,7 @@ SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
 #if !LOG_DISABLED
 const char* WebBackForwardListItem::loggingString()
 {
-    return debugString("Back/forward item ID ", itemID().logString(), ", original URL ", originalURL(), ", current URL ", url(), m_backForwardCacheEntry ? "(has a back/forward cache entry)" : "");
+    return debugString("Back/forward item ID ", itemID().toString(), ", original URL ", originalURL(), ", current URL ", url(), m_backForwardCacheEntry ? "(has a back/forward cache entry)" : "");
 }
 #endif // !LOG_DISABLED
 

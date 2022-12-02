@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/cors-top.txt
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/cors-top.txt.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/data.json
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/dump-authorization-header.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/echo-content.h2.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/echo-content.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/empty.txt
@@ -39,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-put.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-take.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/status.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/sw-intercept-abort.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/sw-intercept.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/top.txt
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/trickle.py

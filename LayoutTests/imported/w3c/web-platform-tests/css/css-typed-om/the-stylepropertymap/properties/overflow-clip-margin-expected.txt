@@ -1,5 +1,9 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL 'overflow-clip-margin' does not supported 'border-box' Invalid property overflow-clip-margin
+FAIL 'overflow-clip-margin' does not supported 'content-box' Invalid property overflow-clip-margin
+FAIL 'overflow-clip-margin' does not supported 'padding-box' Invalid property overflow-clip-margin
+FAIL 'overflow-clip-margin' does not supported 'padding-box 10px' Invalid property overflow-clip-margin
+FAIL 'overflow-clip-margin' does not supported '10px content-box' Invalid property overflow-clip-margin
+FAIL 'overflow-clip-margin' does not supported '0px' Invalid property overflow-clip-margin
+FAIL 'overflow-clip-margin' does not supported '10px' Invalid property overflow-clip-margin
 

@@ -299,22 +299,39 @@ class Utils
         return null;
     }
 
-    static stripExtension(testName)
+    static testPrefix(testName)
     {
-        // Temporary fix, also in Tools/Scripts/webkitpy/layout_tests/constrollers/test_result_writer.py, line 95.
-        // FIXME: Refactor to avoid confusing reference to both test and process names.
-        if (Utils.splitExtension(testName)[1].length > 5)
+        let parts = Utils.splitExtension(testName);
+        let prefix = parts[0];
+        let remains = parts[2];
+        if (remains) {
+            if (remains.includes('?'))
+                prefix += '_' + remains.split('?')[1]
+            else if (remains.includes('#'))
+                prefix += '_' + remains.split('#')[1]
+        } else if (Utils.splitExtension(parts[0])[1].length > 5) {
+            // Temporary fix, also in Tools/Scripts/webkitpy/layout_tests/constrollers/test_result_writer.py, line 115.
+            // FIXME: Refactor to avoid confusing reference to both test and process names.
             return testName;
-        return Utils.splitExtension(testName)[0];
+        }
+        return prefix;
     }
 
     static splitExtension(testName)
     {
-        let index = testName.lastIndexOf('.');
-        if (index == -1) {
-            return [testName, ''];
-        }
-        return [testName.substring(0, index), testName.substring(index + 1)];
+        // Splits 'foo/bar/boo.html?blah' to ['foo/bar/boo', '.html', '?blah']. Last item can be
+        // null if `testName` had no URL fragment or query separator.
+        let filenameIndex = testName.lastIndexOf("/");
+        let buffer = testName.substr(filenameIndex + 1);
+        buffer = buffer.split('?')[0];
+        buffer = buffer.split('#')[0];
+        let parts = buffer.split('.');
+        let extensionIndex = buffer.lastIndexOf(".");
+        let filename = buffer.substr(0, extensionIndex);
+        let ext = buffer.substr(extensionIndex);
+        let remainsIndex = testName.lastIndexOf(ext);
+        let remains = testName.substr(remainsIndex + ext.length);
+        return [testName.substr(0, filenameIndex) + '/' + filename, ext, remains];
     }
 
     static forEach(nodeList, handler)
@@ -1200,7 +1217,7 @@ class TestResultsController
                 TestResultsController._getResultContainer(node).remove();
             else if (url.match('-actual.png$')) {
                 let name = Utils.parentOfType(node, 'tbody').querySelector('.test-link').textContent;
-                TestResultsController._getResultContainer(node).outerHTML = togglingImageFunction(Utils.stripExtension(name));
+                TestResultsController._getResultContainer(node).outerHTML = togglingImageFunction(Utils.testPrefix(name));
             }
         }
     }
@@ -1376,7 +1393,7 @@ class FailuresSectionBuilder extends SectionBuilder {
 
         let actualTokens = testResult.info.actual.split(/\s+/);
 
-        let testPrefix = Utils.stripExtension(testResult.name);
+        let testPrefix = Utils.testPrefix(testResult.name);
         let imageResults = this.imageResultLinks(testResult, testPrefix, actualTokens[0]);
         if (!imageResults && actualTokens.length > 1)
             imageResults = this.imageResultLinks(testResult, 'retries/' + testPrefix, actualTokens[1]);
@@ -1406,12 +1423,12 @@ class FailuresSectionBuilder extends SectionBuilder {
 
     appendTextFailureLinks(testResult, cell)
     {
-        cell.innerHTML += this._resultsController.textResultLinks(Utils.stripExtension(testResult.name));
+        cell.innerHTML += this._resultsController.textResultLinks(Utils.testPrefix(testResult.name));
     }
     
     appendAudioFailureLinks(testResult, cell)
     {
-        let prefix = Utils.stripExtension(testResult.name);
+        let prefix = Utils.testPrefix(testResult.name);
         cell.innerHTML += TestResultsController.resultLink(prefix, '-expected.wav', 'expected audio')
             + TestResultsController.resultLink(prefix, '-actual.wav', 'actual audio')
             + TestResultsController.resultLink(prefix, '-diff.txt', 'textual diff');
@@ -1419,7 +1436,7 @@ class FailuresSectionBuilder extends SectionBuilder {
     
     appendActualOnlyLinks(testResult, cell)
     {
-        let prefix = Utils.stripExtension(testResult.name);
+        let prefix = Utils.testPrefix(testResult.name);
         if (testResult.isMissingAudio())
             cell.innerHTML += TestResultsController.resultLink(prefix, '-actual.wav', 'audio result');
 
@@ -1503,7 +1520,7 @@ class TestsWithStdErrSectionBuilder extends SectionBuilder {
 
     fillTestResultCell(testResult, cell)
     {
-        cell.innerHTML = TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-stderr.txt', 'stderr');
+        cell.innerHTML = TestResultsController.resultLink(Utils.testPrefix(testResult.name), '-stderr.txt', 'stderr');
     }
 };
 
@@ -1513,7 +1530,7 @@ class TimedOutTestsSectionBuilder extends SectionBuilder {
     fillTestResultCell(testResult, cell)
     {
         // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
-        cell.innerHTML = this._resultsController.textResultLinks(Utils.stripExtension(testResult.name));
+        cell.innerHTML = this._resultsController.textResultLinks(Utils.testPrefix(testResult.name));
     }
 };
 
@@ -1522,8 +1539,8 @@ class CrashingTestsSectionBuilder extends SectionBuilder {
 
     fillTestResultCell(testResult, cell)
     {
-        cell.innerHTML = TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-crash-log.txt', 'crash log')
-                       + TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-sample.txt', 'sample');
+        cell.innerHTML = TestResultsController.resultLink(Utils.testPrefix(testResult.name), '-crash-log.txt', 'crash log')
+                       + TestResultsController.resultLink(Utils.testPrefix(testResult.name), '-sample.txt', 'sample');
     }
 };
 
@@ -1531,7 +1548,7 @@ class OtherCrashesSectionBuilder extends SectionBuilder {
     sectionTitle() { return 'Other crashes'; }
     fillTestResultCell(testResult, cell)
     {
-        cell.innerHTML = TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-crash-log.txt', 'crash log');
+        cell.innerHTML = TestResultsController.resultLink(Utils.testPrefix(testResult.name), '-crash-log.txt', 'crash log');
     }
 
     createHistoryCell(testResult)
@@ -1748,24 +1765,30 @@ class TableSorter
 
         let rows = Utils.toArray(testsTable.querySelectorAll('tbody'));
 
+        const LT = reversed ? 1 : -1;
+        const GT = reversed ? -1 : 1;
+
         rows.sort(function(a, b) {
             // Only need to support lexicographic sort for now.
             let aText = TableSorter._textContent(a, sortColumn);
             let bText = TableSorter._textContent(b, sortColumn);
         
-            // Forward sort equal values by test name.
-            if (sortColumn && aText == bText) {
-                let aTestName = TableSorter._textContent(a, 0);
-                let bTestName = TableSorter._textContent(b, 0);
-                if (aTestName == bTestName)
-                    return 0;
-                return aTestName < bTestName ? -1 : 1;
-            }
+            // First, sort numerically by percentage (for the "image results" column).
+            let aPercentage = (/([0-9.]+)%/.exec(aText) || [, 0])[1];
+            let bPercentage = (/([0-9.]+)%/.exec(bText) || [, 0])[1];
+            if (aPercentage != bPercentage)
+                return +aPercentage < +bPercentage ? LT : GT;
 
-            if (reversed)
-                return aText < bText ? 1 : -1;
-            else
-                return aText < bText ? -1 : 1;
+            // Second, sort by the column text.
+            if (aText != bText)
+                return aText < bText ? LT : GT;
+
+            // Finally, forward sort by the test name.
+            let aTestName = TableSorter._textContent(a, 0);
+            let bTestName = TableSorter._textContent(b, 0);
+            if (aTestName != bTestName)
+                return aTestName < bTestName ? -1 : 1;
+            return 0;
         });
 
         for (let row of rows)

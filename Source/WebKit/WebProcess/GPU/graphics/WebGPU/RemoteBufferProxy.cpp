@@ -61,9 +61,14 @@ void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::We
 auto RemoteBufferProxy::getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size) -> MappedRange
 {
     // FIXME: Implement error handling.
-    if (!m_data)
+    auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
+    auto [data] = sendResult.takeReplyOr(std::nullopt);
+
+    if (!data)
         return { };
 
+    m_data = WTFMove(data);
+    m_mapModeFlags = { PAL::WebGPU::MapMode::Write };
     return { m_data->data() + offset, static_cast<size_t>(size.value_or(m_data->size() - offset)) };
 }
 

@@ -41,6 +41,7 @@ enum class WebKitH265 { Off, On };
 enum class WebKitVP9 { Off, Profile0, Profile0And2 };
 enum class WebKitVP9VTB { Off, On };
 enum class WebKitH264LowLatency { Off, On };
+enum class WebKitAv1 { Off, On };
 
 void setApplicationStatus(bool isActive);
 
@@ -71,6 +72,5 @@ struct I420BufferLayout {
 };
 
 CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout) CF_RETURNS_RETAINED;
-bool copyPixelBufferInI420Buffer(uint8_t* buffer, size_t length, CVPixelBufferRef, I420BufferLayout);
 
 }

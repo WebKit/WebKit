@@ -593,7 +593,7 @@ Seconds PrivateClickMeasurementManager::randomlyBetweenFifteenAndThirtyMinutes()
     if (m_isRunningTest)
         return 0_s;
 
-    return debugModeEnabled() ? debugModeSecondsUntilSend : 15_min + Seconds(cryptographicallyRandomNumber() % 900);
+    return debugModeEnabled() ? debugModeSecondsUntilSend : 15_min + Seconds(cryptographicallyRandomNumber<uint32_t>() % 900);
 }
 
 void PrivateClickMeasurementManager::firePendingAttributionRequests()

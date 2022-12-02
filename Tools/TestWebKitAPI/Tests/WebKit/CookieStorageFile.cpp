@@ -27,8 +27,7 @@
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include "WTFStringUtilities.h"
-
+#include "Test.h"
 #include <WebKit/WKPageConfigurationRef.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKWebsiteDataStoreConfigurationRef.h>

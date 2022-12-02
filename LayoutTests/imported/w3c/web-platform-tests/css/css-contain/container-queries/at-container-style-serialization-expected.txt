@@ -4,5 +4,5 @@ FAIL Empty declaration value - spaces assert_equals: expected "style(--foo: )" b
 FAIL Empty declaration value assert_equals: expected "style(--foo: )" but got "STyle(--foo:)"
 PASS Missing declaration value
 FAIL Unknown CSS property after 'or' assert_equals: expected "style((--FOO: BAR) or ( prop: val ))" but got "style( ( --FOO: BAR) OR ( prop: val ) )"
-FAIL Not a style function with space before '(' assert_equals: expected "(--foo: bar)" but got "(--foo: )"
+PASS Not a style function with space before '('
 

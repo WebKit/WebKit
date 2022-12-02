@@ -1,3 +1,7 @@
+Blocked access to external URL http://www.localhost:8800/wasm/incrementer.wasm
+CONSOLE MESSAGE: Fetch API cannot load http://www.localhost:8800/wasm/incrementer.wasm due to access control checks.
+Blocked access to external URL http://www.localhost:8800/wasm/incrementer.wasm
+CONSOLE MESSAGE: Fetch API cannot load http://www.localhost:8800/wasm/incrementer.wasm due to access control checks.
 
 PASS Opaque response: compileStreaming
 PASS Opaque redirect response: compileStreaming

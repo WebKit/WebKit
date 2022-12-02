@@ -14,7 +14,6 @@
         }
 
         run('internals.settings.setMediaCapabilitiesExtensionsEnabled(true)');
-        run('internals.settings.setHDRMediaCapabilitiesEnabled(true)');
 
         run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"hvc1.2.4.H153.B0\"', height: 720, bitrate: 800000, width: 1280, framerate: 24.5 }});");
         info = await shouldResolve(promise);

@@ -26,8 +26,8 @@
 #include "config.h"
 #include <wtf/StdLibExtras.h>
 
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
-#include <wtf/RandomNumber.h>
 
 namespace TestWebKitAPI {
 
@@ -63,9 +63,9 @@ void testFindBitInWord()
 
         // Fill in some random cases.
         for (size_t i = nextTestValue; i < numberOfTestValues; ++i) {
-            startIndex[i] = static_cast<uint8_t>(randomNumber() * bitsInWord);
+            startIndex[i] = static_cast<uint8_t>(cryptographicallyRandomUnitInterval() * bitsInWord);
             uint8_t remainingBits = bitsInWord - startIndex[i];
-            endIndex[i] = static_cast<uint8_t>(randomNumber() * remainingBits) + startIndex[i];
+            endIndex[i] = static_cast<uint8_t>(cryptographicallyRandomUnitInterval() * remainingBits) + startIndex[i];
         }
     };
 

@@ -50,6 +50,8 @@ public:
 
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSUnparsedValue; }
 
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     explicit CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments);
     

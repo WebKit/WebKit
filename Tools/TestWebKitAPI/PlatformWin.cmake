@@ -47,14 +47,6 @@ list(APPEND TestWebCore_LIBRARIES
 )
 
 if (${WTF_PLATFORM_WIN_CAIRO})
-    list(APPEND TestWebCore_LIBRARIES
-        Cairo::Cairo
-        MediaFoundation
-        OpenSSL::SSL
-        mfuuid
-        strmiids
-        vcruntime
-    )
     list(APPEND TestWebCore_SOURCES
         Tests/WebCore/CryptoDigest.cpp
 

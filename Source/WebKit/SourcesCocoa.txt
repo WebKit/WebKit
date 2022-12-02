@@ -152,7 +152,6 @@ Shared/Cocoa/AuxiliaryProcessCocoa.mm
 Shared/Cocoa/CodeSigning.mm
 Shared/Cocoa/CompletionHandlerCallChecker.mm
 Shared/Cocoa/CoreTextHelpers.mm
-Shared/Cocoa/DataDetectionResult.mm
 Shared/Cocoa/DefaultWebBrowserChecks.mm
 Shared/Cocoa/InsertTextOptions.cpp
 Shared/Cocoa/LoadParametersCocoa.mm
@@ -161,7 +160,7 @@ Shared/Cocoa/RevealItem.mm
 Shared/Cocoa/SandboxExtensionCocoa.mm
 Shared/Cocoa/SandboxInitialiationParametersCocoa.mm
 Shared/Cocoa/SandboxUtilities.mm
-Shared/Cocoa/SharedRingBufferStorage.cpp
+Shared/Cocoa/SharedCARingBuffer.cpp
 Shared/Cocoa/TCCSoftLink.mm
 Shared/Cocoa/WebCoreArgumentCodersCocoa.mm
 Shared/Cocoa/WebErrorsCocoa.mm
@@ -210,7 +209,6 @@ Shared/mac/SecItemShim.cpp
 Shared/mac/WebCoreArgumentCodersMac.mm
 Shared/mac/WebEventFactory.mm
 Shared/mac/WebGestureEvent.cpp
-Shared/mac/WebHitTestResultData.mm
 Shared/mac/WebMemorySampler.mac.mm
 
 Shared/mac/MediaFormatReader/CoreMediaWrapped.cpp
@@ -352,8 +350,6 @@ UIProcess/API/Cocoa/WKWindowFeatures.mm
 UIProcess/API/ios/WKWebViewIOS.mm
 UIProcess/API/ios/WKWebViewTestingIOS.mm
 
-UIProcess/API/mac/WKContentViewMac.mm
-UIProcess/API/mac/WKScrollViewMac.mm
 UIProcess/API/mac/WKView.mm
 UIProcess/API/mac/WKWebViewMac.mm
 UIProcess/API/mac/WKWebViewTestingMac.mm
@@ -511,6 +507,7 @@ UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/DisplayLink.cpp
+UIProcess/mac/DisplayLinkProcessProxyClient.cpp
 UIProcess/mac/HighPerformanceGPUManager.mm
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
@@ -549,7 +546,7 @@ UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm
 
 UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm
 UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm
-UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.cpp
+UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollerMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp
@@ -611,6 +608,8 @@ WebProcess/cocoa/VideoFullscreenManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm
 
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
+
+WebProcess/Extensions/Bindings/JSWebExtensionWrapper.cpp
 
 WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp

@@ -53,7 +53,13 @@ shouldBeTrue('number.validity.badInput');
 // Visible value is '-1a'.
 number.focus();
 document.execCommand('SelectAll');
-shouldBeEqualToString('document.getSelection().toString()', '-1a');
+function visibleValue(input) {
+    const shadowRoot = internals.shadowRoot(input);
+    const range = new Range;
+    range.selectNodeContents(shadowRoot.querySelector('[contenteditable]'));
+    return internals.rangeAsText(range);
+}
+shouldBeEqualToString('visibleValue(number)', '-1a');
 shouldBeEqualToString('number.value', '');
 
 debug("The element losts a renderer. The element state should not be changed.");

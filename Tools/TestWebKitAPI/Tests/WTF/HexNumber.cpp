@@ -24,8 +24,8 @@
  */
 
 #include "config.h"
-#include "WTFStringUtilities.h"
 
+#include "Test.h"
 #include <wtf/HexNumber.h>
 
 namespace TestWebKitAPI {

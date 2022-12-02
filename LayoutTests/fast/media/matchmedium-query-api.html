@@ -31,7 +31,7 @@
     testQuery('all and (color)', true);
     testQuery('not projection and (color)', true);
     testQuery('(color)', true);
-    testQuery('(color', false);
+    testQuery('(color', true);
     testQuery('color', false);
 
     testQuery('garbage', false);

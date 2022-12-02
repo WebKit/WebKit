@@ -174,6 +174,9 @@ public:
 #if ENABLE(APP_BOUND_DOMAINS)
     void setAppBoundDomains(HashSet<RegistrableDomain>&&);
 #endif
+#if ENABLE(MANAGED_DOMAINS)
+    void setManagedDomains(HashSet<RegistrableDomain>&&);
+#endif
     virtual bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) = 0;
     virtual void hasStorageAccess(SubFrameDomain&&, TopFrameDomain&&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
     virtual void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessScope, CompletionHandler<void(StorageAccessStatus)>&&) = 0;
@@ -293,6 +296,7 @@ private:
     WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     RegistrableDomain m_standaloneApplicationDomain;
     HashSet<RegistrableDomain> m_appBoundDomains;
+    HashSet<RegistrableDomain> m_managedDomains;
 };
 
 } // namespace WebKit

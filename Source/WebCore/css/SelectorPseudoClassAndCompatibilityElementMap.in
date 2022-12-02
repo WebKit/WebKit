@@ -79,6 +79,7 @@ window-inactive
 -webkit-full-screen-ancestor
 -webkit-full-screen-document
 -webkit-full-screen-controls-hidden
+-webkit-full-screen-parent
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

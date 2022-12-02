@@ -1,0 +1,5 @@
+
+FAIL private to local: success. assert_equals: error expected (undefined) undefined but got (string) "TypeError: Load failed"
+FAIL public to local: success. assert_equals: error expected (undefined) undefined but got (string) "TypeError: Load failed"
+FAIL public to private: success. assert_equals: error expected (undefined) undefined but got (string) "TypeError: Load failed"
+

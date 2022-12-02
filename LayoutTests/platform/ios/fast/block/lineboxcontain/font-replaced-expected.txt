@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x210
-  RenderBlock {HTML} at (0,0) size 800x210
-    RenderBody {BODY} at (8,8) size 784x186
+layer at (0,0) size 800x211
+  RenderBlock {HTML} at (0,0) size 800x211
+    RenderBody {BODY} at (8,8) size 784x187
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 499x19
           text run at (0,0) width 261: "You should see a green rectangle below. "
           text run at (260,0) width 239: "If you see any red, the test has failed."
-      RenderBlock {P} at (0,165) size 784x21 [border: (1px solid #000000)]
+      RenderBlock {P} at (0,165) size 784x22 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 189x19
           text run at (1,1) width 189: "This line should look normal."
-layer at (8,28) size 384x129 scrollHeight 142
+layer at (8,28) size 384x129
   RenderBlock {DIV} at (0,20) size 384x129 [bgcolor=#FF0000]
     RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
       RenderText {#text} at (0,0) size 320x65

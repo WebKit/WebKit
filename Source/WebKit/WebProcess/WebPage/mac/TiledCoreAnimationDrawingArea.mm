@@ -30,6 +30,7 @@
 
 #import "DisplayRefreshMonitorMac.h"
 #import "DrawingAreaProxyMessages.h"
+#import "EventDispatcher.h"
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
 #import "Logging.h"
@@ -52,8 +53,6 @@
 #import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
-#import <WebCore/RenderLayerBacking.h>
-#import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/ScrollbarTheme.h>
@@ -136,6 +135,16 @@ void TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded(
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = m_layerHostingContext->contextID();
     send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
+}
+
+void TiledCoreAnimationDrawingArea::registerScrollingTree()
+{
+    WebProcess::singleton().eventDispatcher().addScrollingTreeForPage(m_webPage);
+}
+
+void TiledCoreAnimationDrawingArea::unregisterScrollingTree()
+{
+    WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(m_webPage);
 }
 
 void TiledCoreAnimationDrawingArea::setNeedsDisplay()
@@ -636,6 +645,11 @@ void TiledCoreAnimationDrawingArea::setColorSpace(std::optional<WebCore::Destina
     m_layerHostingContext->setColorSpace(colorSpace ? colorSpace->platformColorSpace() : nullptr);
 }
 
+std::optional<WebCore::DestinationColorSpace> TiledCoreAnimationDrawingArea::displayColorSpace() const
+{
+    return DestinationColorSpace { m_layerHostingContext->colorSpace() };
+}
+
 RefPtr<WebCore::DisplayRefreshMonitor> TiledCoreAnimationDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
     return DisplayRefreshMonitorMac::create(displayID);
@@ -705,7 +719,7 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
     }
     
     if (showLayer) {
-        if (TiledBacking* tiledBacking = mainFrameTiledBacking()) {
+        if (auto* tiledBacking = mainFrameTiledBacking()) {
             if (PlatformCALayer* indicatorLayer = tiledBacking->tiledScrollingIndicatorLayer())
                 m_debugInfoLayer = indicatorLayer->platformLayer();
         }
@@ -724,22 +738,20 @@ bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const Fram
 
 PlatformCALayer* TiledCoreAnimationDrawingArea::layerForTransientZoom() const
 {
-    RenderLayerBacking* renderViewBacking = m_webPage.mainFrameView()->renderView()->layer()->backing();
+    auto* scaledLayer = dynamicDowncast<GraphicsLayerCA>(m_webPage.mainFrameView()->graphicsLayerForPageScale());
+    if (!scaledLayer)
+        return nullptr;
 
-    if (GraphicsLayer* contentsContainmentLayer = renderViewBacking->contentsContainmentLayer())
-        return downcast<GraphicsLayerCA>(*contentsContainmentLayer).platformCALayer();
-
-    return downcast<GraphicsLayerCA>(*renderViewBacking->graphicsLayer()).platformCALayer();
+    return scaledLayer->platformCALayer();
 }
 
 PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() const
 {
-    RenderLayerCompositor& renderLayerCompositor = m_webPage.mainFrameView()->renderView()->compositor();
+    auto* shadowLayer = dynamicDowncast<GraphicsLayerCA>(m_webPage.mainFrameView()->graphicsLayerForTransientZoomShadow());
+    if (!shadowLayer)
+        return nullptr;
 
-    if (GraphicsLayer* shadowGraphicsLayer = renderLayerCompositor.layerForContentShadow())
-        return downcast<GraphicsLayerCA>(*shadowGraphicsLayer).platformCALayer();
-
-    return nullptr;
+    return shadowLayer->platformCALayer();
 }
     
 static FloatPoint shadowLayerPositionForFrame(FrameView& frameView, FloatPoint origin)
@@ -796,11 +808,13 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     if (scale > currentPageScale)
         return;
 
-    FrameView* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.mainFrameView();
     FloatRect tileCoverageRect = frameView->visibleContentRectIncludingScrollbars();
     tileCoverageRect.moveBy(-origin);
     tileCoverageRect.scale(currentPageScale / scale);
-    frameView->renderView()->layer()->backing()->tiledBacking()->prepopulateRect(tileCoverageRect);
+    
+    if (auto* tiledBacking = mainFrameTiledBacking())
+        tiledBacking->prepopulateRect(tileCoverageRect);
 }
 
 static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(ASCIILiteral keyPath)

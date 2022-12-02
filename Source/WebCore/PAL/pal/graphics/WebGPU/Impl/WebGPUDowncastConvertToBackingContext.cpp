@@ -48,6 +48,8 @@
 #include "WebGPURenderPipelineImpl.h"
 #include "WebGPUSamplerImpl.h"
 #include "WebGPUShaderModuleImpl.h"
+#include "WebGPUSurfaceImpl.h"
+#include "WebGPUSwapChainImpl.h"
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
 
@@ -146,6 +148,16 @@ WGPUSampler DowncastConvertToBackingContext::convertToBacking(const Sampler& sam
 WGPUShaderModule DowncastConvertToBackingContext::convertToBacking(const ShaderModule& shaderModule)
 {
     return static_cast<const ShaderModuleImpl&>(shaderModule).backing();
+}
+
+WGPUSurface DowncastConvertToBackingContext::convertToBacking(const Surface& surface)
+{
+    return static_cast<const SurfaceImpl&>(surface).backing();
+}
+
+WGPUSwapChain DowncastConvertToBackingContext::convertToBacking(const SwapChain& swapChain)
+{
+    return static_cast<const SwapChainImpl&>(swapChain).backing();
 }
 
 WGPUTexture DowncastConvertToBackingContext::convertToBacking(const Texture& texture)

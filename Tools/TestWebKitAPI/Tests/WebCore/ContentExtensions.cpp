@@ -3072,6 +3072,18 @@ TEST_F(ContentExtensionTest, Serialization)
     EXPECT_EQ(modifyHeaders, deserializedModifyHeaders);
 }
 
+TEST_F(ContentExtensionTest, QueryTransformActions)
+{
+    RedirectAction::URLTransformAction::QueryTransform action {
+        { { "foo"_s, true, "bar"_s }, { "one"_s, false, "two"_s } }, /* addOrReplaceParams */
+        { "baz"_s }, /* removeParams */
+    };
+
+    URL testURL { "https://webkit.org/?foo=garply&baz=test&x+y=z&h%20llo=w%20rld"_s };
+    action.applyToURL(testURL);
+    EXPECT_STREQ("https://webkit.org/?foo=bar&x+y=z&h%20llo=w%20rld&one=two", testURL.string().utf8().data());
+}
+
 TEST_F(ContentExtensionTest, IfFrameURL)
 {
     auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"]}}]"_s);

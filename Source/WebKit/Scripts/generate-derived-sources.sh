@@ -9,10 +9,12 @@ cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit"
 
 export WebKit2="${SRCROOT}"
 
-
 if [ -z $1 ] || [ $1 != "sandbox-profiles-ios" ]; then
     /bin/ln -sfh "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" JavaScriptCorePrivateHeaders
     export JavaScriptCore_SCRIPTS_DIR="JavaScriptCorePrivateHeaders"
+
+    /bin/ln -sfh "${WEBCORE_PRIVATE_HEADERS_DIR}" WebCorePrivateHeaders
+    export WebCorePrivateHeaders="WebCorePrivateHeaders"
 fi
 
 if [ ! "$CC" ]; then

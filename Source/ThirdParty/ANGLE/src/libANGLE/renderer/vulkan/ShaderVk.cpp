@@ -13,7 +13,6 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "platform/FeaturesVk_autogen.h"
 
 namespace rx
 {
@@ -99,11 +98,6 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         options->addVulkanXfbEmulationSupportCode = true;
     }
 
-    if (contextVk->getFeatures().generateSPIRVThroughGlslang.enabled)
-    {
-        options->generateSpirvThroughGlslang = true;
-    }
-
     if (contextVk->getFeatures().roundOutputAfterDithering.enabled)
     {
         options->roundOutputAfterDithering = true;
@@ -119,11 +113,17 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         options->pls.type = contextVk->getNativePixelLocalStorageType();
         if (contextVk->getExtensions().shaderPixelLocalStorageCoherentANGLE)
         {
-            ASSERT(contextVk->getFeatures().supportsFragmentShaderPixelInterlock.enabled);
-            // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock in
-            // both Vulkan Glslang and our own backend.
-            options->pls.fragmentSynchronizationType =
-                ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
+            if (options->pls.type == ShPixelLocalStorageType::FramebufferFetch)
+            {
+                options->pls.fragmentSynchronizationType = ShFragmentSynchronizationType::Automatic;
+            }
+            else
+            {
+                ASSERT(contextVk->getFeatures().supportsFragmentShaderPixelInterlock.enabled);
+                // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock
+                options->pls.fragmentSynchronizationType =
+                    ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
+            }
         }
     }
 

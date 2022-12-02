@@ -122,7 +122,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     return matrix;
 }
 
-AffineTransform* SVGGraphicsElement::supplementalTransform()
+AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
 {
     if (!m_supplementalTransform)
         m_supplementalTransform = makeUnique<AffineTransform>();
@@ -146,18 +146,17 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::transformAttr);
         InstanceInvalidationGuard guard(*this);
 
-        if (auto renderer = this->renderer()) {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-            if (document().settings().layerBasedSVGEngineEnabled()) {
-                renderer->updateFromElement();
-                updateSVGRendererForElementChange();
-                return;
-            }
-#endif
-
-            renderer->setNeedsTransformUpdate();
+        if (document().settings().layerBasedSVGEngineEnabled()) {
+            if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()))
+                layerRenderer->updateHasSVGTransformFlags();
+            // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
+            updateSVGRendererForElementChange();
+            return;
         }
-
+#endif
+        if (auto* renderer = this->renderer())
+            renderer->setNeedsTransformUpdate();
         updateSVGRendererForElementChange();
         return;
     }
@@ -209,7 +208,7 @@ void SVGGraphicsElement::didAttachRenderers()
 
 Path SVGGraphicsElement::toClipPath()
 {
-    // FIXME: [LBSE] Stop mutating the path here.
+    // FIXME: [LBSE] Stop mutating the path here and stop calling animatedLocalTransform().
     Path path = pathFromGraphicsElement(this);
     // FIXME: How do we know the element has done a layout?
     path.transform(animatedLocalTransform());

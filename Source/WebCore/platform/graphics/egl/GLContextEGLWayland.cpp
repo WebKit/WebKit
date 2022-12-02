@@ -22,10 +22,15 @@
 #if USE(EGL) && PLATFORM(WAYLAND)
 
 #include "PlatformDisplayWayland.h"
+
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and egl.h checks that to decide whether it's Wayland platform.
 #include <wayland-egl.h>
+#if USE(LIBEPOXY)
+#include <epoxy/egl.h>
+#else
 #include <EGL/egl.h>
+#endif
 
 namespace WebCore {
 

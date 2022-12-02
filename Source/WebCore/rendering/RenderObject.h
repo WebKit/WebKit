@@ -3,7 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -277,7 +277,7 @@ public:
     virtual bool isRenderScrollbarPart() const { return false; }
     virtual bool isRenderVTTCue() const { return false; }
 
-    bool isDocumentElementRenderer() const { return document().documentElement() == &m_node; }
+    bool isDocumentElementRenderer() const { return document().documentElement() == m_node; }
     bool isBody() const { return node() && node()->hasTagName(HTMLNames::bodyTag); }
     bool isHR() const { return node() && node()->hasTagName(HTMLNames::hrTag); }
     bool isLegend() const;
@@ -428,6 +428,7 @@ public:
     bool isAbsolutelyPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Absolute; }
     bool isRelativelyPositioned() const { return m_bitfields.isRelativelyPositioned(); }
     bool isStickilyPositioned() const { return m_bitfields.isStickilyPositioned(); }
+    bool shouldUsePositionedClipping() const { return isAbsolutelyPositioned() || isSVGForeignObject(); }
 
     bool isText() const  { return !m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isLineBreak() const { return m_bitfields.isLineBreak(); }
@@ -497,7 +498,14 @@ public:
     // Returns true if this renderer is rooted.
     bool isRooted() const;
 
-    Node* node() const { return isAnonymous() ? nullptr : &m_node; }
+    Node* node() const
+    { 
+        if (isAnonymous())
+            return nullptr;
+        ASSERT(m_node);
+        return m_node.get(); 
+    }
+
     Node* nonPseudoNode() const { return isPseudoElement() ? nullptr : node(); }
 
     // Returns the styled node that caused the generation of this renderer.
@@ -505,7 +513,7 @@ public:
     // pseudo elements for which their parent node is returned.
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
-    Document& document() const { return m_node.document(); }
+    Document& document() const { ASSERT(m_node); return m_node->document(); }
     Frame& frame() const;
     Page& page() const;
     Settings& settings() const { return page().settings(); }
@@ -597,7 +605,7 @@ public:
     // different offsets apply at different points, so return the offset that applies to the given point.
     virtual LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const;
     // Return the offset from an object up the container() chain. Asserts that none of the intermediate objects have transforms.
-    LayoutSize offsetFromAncestorContainer(RenderElement&) const;
+    LayoutSize offsetFromAncestorContainer(const RenderElement&) const;
 
 #if PLATFORM(IOS_FAMILY)
     virtual void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max());
@@ -730,8 +738,7 @@ public:
     bool canUpdateSelectionOnRootLineBoxes();
 
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
-    // possible bounding box for the selection.
-    LayoutRect selectionRect(bool clipToVisibleContent = true) { return selectionRectForRepaint(nullptr, clipToVisibleContent); }
+    // possible bounding box for the selection. The rect returned is in the coordinate space of the paint invalidation container's backing.
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return LayoutRect(); }
 
     virtual bool canBeSelectionLeaf() const { return false; }
@@ -774,6 +781,9 @@ public:
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
+    void pushOntoTransformState(TransformState&, OptionSet<MapCoordinatesMode>, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const;
+    void pushOntoGeometryMap(RenderGeometryMap&, const RenderLayerModelObject* repaintContainer, RenderElement* container, bool containerSkipped) const;
+
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = nullptr) const { };
 
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
@@ -791,6 +801,10 @@ public:
 
     void addPDFURLRect(const PaintInfo&, const LayoutPoint&) const;
 
+    bool isSkippedContent() const;
+
+    bool shouldSkipContent() const;
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
@@ -798,7 +812,7 @@ protected:
     void setNextSibling(RenderObject* next) { m_next = next; }
     void setParent(RenderElement*);
     //////////////////////////////////////////
-    Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
+    Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); ASSERT(m_node); return *m_node; }
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
@@ -851,7 +865,7 @@ private:
     void checkBlockPositionedObjectsNeedLayout();
 #endif
 
-    Node& m_node;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
 
     RenderElement* m_parent;
     RenderObject* m_previous;

@@ -44,7 +44,6 @@
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
 #include "LegacyRenderSVGRoot.h"
-#include "LibWebRTCProvider.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
@@ -399,6 +398,14 @@ void SVGImage::startAnimation()
         return;
     rootElement->unpauseAnimations();
     rootElement->setCurrentTime(0);
+}
+
+void SVGImage::resumeAnimation()
+{
+    auto rootElement = this->rootElement();
+    if (!rootElement || !rootElement->animationsPaused())
+        return;
+    rootElement->unpauseAnimations();
 }
 
 void SVGImage::stopAnimation()

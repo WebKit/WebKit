@@ -31,12 +31,6 @@
 @class _WKContentRuleListAction;
 
 #if !TARGET_OS_IPHONE
-typedef NS_ENUM(NSInteger, _WKWebGLLoadPolicy) {
-    _WKWebGLLoadPolicyBlockCreation,
-    _WKWebGLLoadPolicyAllowCreation,
-    _WKWebGLLoadPolicyPendingCreation,
-} WK_API_AVAILABLE(macos(10.13.4));
-
 typedef NS_ENUM(NSInteger, _WKPluginModuleLoadPolicy) {
     _WKPluginModuleLoadPolicyLoadNormally,
     _WKPluginModuleLoadPolicyLoadUnsandboxed,
@@ -97,8 +91,6 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView willSnapshotBackForwardListItem:(WKBackForwardListItem *)item;
 - (void)_webViewDidRemoveNavigationGestureSnapshot:(WKWebView *)webView WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
-// FIXME: Remove this SPI completely once rdar://100536399 is fixed.
-- (void)_webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation userInfo:(id <NSSecureCoding>)userInfo WK_API_DEPRECATED("This SPI will be removed", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 - (void)_webView:(WKWebView *)webView URL:(NSURL *)url contentRuleListIdentifiers:(NSArray<NSString *> *)identifiers notifications:(NSArray<NSString *> *)notifications WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
@@ -116,8 +108,6 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData;
 - (void)_webViewDidRequestPasswordForQuickLookDocument:(WKWebView *)webView WK_API_AVAILABLE(ios(11.0));
 #else
-- (void)_webView:(WKWebView *)webView webGLLoadPolicyForURL:(NSURL *)url decisionHandler:(void (^)(_WKWebGLLoadPolicy))decisionHandler WK_API_AVAILABLE(macos(10.13.4));
-- (void)_webView:(WKWebView *)webView resolveWebGLLoadPolicyForURL:(NSURL *)url decisionHandler:(void (^)(_WKWebGLLoadPolicy))decisionHandler WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didFailToInitializePlugInWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didBlockInsecurePluginVersionWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView decidePolicyForPluginLoadWithCurrentPolicy:(_WKPluginModuleLoadPolicy)policy pluginInfo:(NSDictionary *)info completionHandler:(void (^)(_WKPluginModuleLoadPolicy policy, NSString * unavailabilityDescription))completionHandler WK_API_AVAILABLE(macos(10.14.4));

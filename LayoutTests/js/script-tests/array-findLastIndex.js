@@ -1,4 +1,3 @@
-//@ requireOptions("--useArrayFindLastMethod=true")
 description("Tests for Array.prototype.findLastIndex");
 
 shouldBe("Array.prototype.findLastIndex.length", "1");

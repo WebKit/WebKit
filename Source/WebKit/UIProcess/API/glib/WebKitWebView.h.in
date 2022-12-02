@@ -325,17 +325,16 @@ struct _WebKitWebViewClass {
     gboolean   (* run_file_chooser)            (WebKitWebView               *web_view,
                                                 WebKitFileChooserRequest    *request);
 
+    gboolean   (* context_menu)                (WebKitWebView               *web_view,
+                                                WebKitContextMenu           *context_menu,
+#if !ENABLE(2022_GLIB_API)
 #if PLATFORM(GTK)
-    gboolean   (* context_menu)                (WebKitWebView               *web_view,
-                                                WebKitContextMenu           *context_menu,
                                                 GdkEvent                    *event,
-                                                WebKitHitTestResult         *hit_test_result);
 #elif PLATFORM(WPE)
-    gboolean   (* context_menu)                (WebKitWebView               *web_view,
-                                                WebKitContextMenu           *context_menu,
-                                                void                        *event, /* FIXME: Use a wpe thing here. I'm not sure we want to expose libwpe in the API. */
-                                                WebKitHitTestResult         *hit_test_result);
+                                                void                        *event,
 #endif
+#endif
+                                                WebKitHitTestResult         *hit_test_result);
 
     void       (* context_menu_dismissed)      (WebKitWebView               *web_view);
     void       (* submit_form)                 (WebKitWebView               *web_view,
@@ -357,8 +356,11 @@ struct _WebKitWebViewClass {
     gboolean   (* run_color_chooser)           (WebKitWebView               *web_view,
                                                 WebKitColorChooserRequest   *request);
     gboolean   (* show_option_menu)            (WebKitWebView               *web_view,
-                                                GdkRectangle                *rectangle,
-                                                WebKitOptionMenu            *menu);
+                                                WebKitOptionMenu            *menu,
+#if !USE(GTK4)
+                                                GdkEvent                    *event,
+#endif
+                                                GdkRectangle                *rectangle);
 #endif
 
     void       (* web_process_terminated)      (WebKitWebView               *web_view,

@@ -197,7 +197,7 @@ PASS fill-rule (type: discrete) has testAccumulation function
 PASS fill-rule: "nonzero" onto "evenodd"
 PASS fill-rule: "evenodd" onto "nonzero"
 PASS filter (type: filterList) has testAccumulation function
-FAIL filter: same ordered filter functions assert_equals: The value should be blur(30px) brightness(0) at 0ms expected "blur(30px) brightness(0)" but got "blur(30px) brightness(0.4)"
+PASS filter: same ordered filter functions
 PASS filter: mismatched ordered filter functions
 PASS flex-basis (type: lengthPercentageOrCalc) has testAccumulation function
 PASS flex-basis: length

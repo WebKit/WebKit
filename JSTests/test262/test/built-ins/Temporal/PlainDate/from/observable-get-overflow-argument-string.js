@@ -28,6 +28,6 @@ const result = Temporal.PlainDate.from("2021-05-17", object);
 assert.compareArray(actual, expected, "Successful call");
 TemporalHelpers.assertPlainDate(result, 2021, 5, "M05", 17);
 
-actual.splice(0, actual.length);  // empty it for the next check
+actual.splice(0);  // empty it for the next check
 assert.throws(RangeError, () => Temporal.PlainDate.from(7, object));
 assert.compareArray(actual, expected, "Failing call");

@@ -257,6 +257,22 @@ bool RenderLayerScrollableArea::requestScrollPositionUpdate(const ScrollPosition
     return false;
 }
 
+bool RenderLayerScrollableArea::requestStartKeyboardScrollAnimation(const KeyboardScroll& scrollData)
+{
+    if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
+        return scrollingCoordinator->requestStartKeyboardScrollAnimation(*this, scrollData);
+
+    return false;
+}
+
+bool RenderLayerScrollableArea::requestStopKeyboardScrollAnimation(bool immediate)
+{
+    if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
+        return scrollingCoordinator->requestStopKeyboardScrollAnimation(*this, immediate);
+
+    return false;
+}
+
 bool RenderLayerScrollableArea::requestAnimatedScrollToPosition(const ScrollPosition& destinationPosition, ScrollClamping clamping)
 {
 #if ENABLE(ASYNC_SCROLLING)

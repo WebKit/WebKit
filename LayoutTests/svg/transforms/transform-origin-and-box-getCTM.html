@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+  description("Tests getCTM/getScreenCTM in combination with CSS transform-origin / transform-box");
+
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  function rectToString(r) {
+    return "[" + r.x
+          + " " + r.y
+          + " " + r.width
+          + " " + r.height
+          + "]";
+  }
+
+  function matrixToString(matrix) {
+    return "[" + matrix.a.toFixed(1)
+          + " " + matrix.b.toFixed(1)
+          + " " + matrix.c.toFixed(1)
+          + " " + matrix.d.toFixed(1)
+          + " " + matrix.e.toFixed(1)
+          + " " + matrix.f.toFixed(1)
+          + "]";
+  }
+
+  function transformPoint(point, matrix) {
+    return point.matrixTransform(matrix);
+  }
+
+  function transformRect(rect, matrix) {
+	var topLeft = iframe.contentDocument.documentElement.createSVGPoint();
+	topLeft.x = rect.x;
+	topLeft.y = rect.y;
+	topLeft = transformPoint(topLeft, matrix);
+
+	var bottomRight = iframe.contentDocument.documentElement.createSVGPoint();
+	bottomRight.x = rect.x + rect.width;
+	bottomRight.y = rect.y + rect.height;
+	bottomRight = transformPoint(bottomRight, matrix);
+
+	var newRect = iframe.contentDocument.documentElement.createSVGRect();
+	newRect.x = topLeft.x;
+	newRect.y = topLeft.y;
+	newRect.width = bottomRight.x - topLeft.x;
+	newRect.height = bottomRight.y - topLeft.y;
+	return newRect;
+  }
+
+  function getCTMById(id)
+  {
+    return matrixToString(iframe.contentDocument.getElementById(id).getCTM());
+  }
+
+  function getScreenCTMById(id)
+  {
+    return matrixToString(iframe.contentDocument.getElementById(id).getScreenCTM());
+  }
+
+  function getBBoxById(id)
+  {
+    return rectToString(iframe.contentDocument.getElementById(id).getBBox());
+  }
+
+  function getAbsoluteBBoxById(id)
+  {
+    var element = iframe.contentDocument.getElementById(id);
+    return rectToString(transformRect(element.getBBox(), element.getScreenCTM()));
+  }
+
+  var iframe;
+  function startTest() {
+    iframe = document.createElement("iframe");
+    iframe.onload = runTest;
+    iframe.width = "806px"; // 3px border
+    iframe.height = "606px"; // 3px border
+    iframe.src = "transform-origin-and-box.svg";
+    iframe.style = "display: block; border: 10px solid green";
+    document.getElementById("console").appendChild(iframe);
+    shouldBeTrue("!!iframe.contentDocument");
+  }
+  
+  var runTest = function() {
+    shouldBeEqualToString("iframe.contentDocument.toString()", "[object XMLDocument]");
+
+    shouldBeEqualToString("getCTMById('rect1')", "[2.0 0.0 0.0 2.0 -40.0 -40.0]");
+    shouldBeEqualToString("getScreenCTMById('rect1')", "[2.0 0.0 0.0 2.0 -37.0 -37.0]");
+    shouldBeEqualToString("getBBoxById('rect1')", "[30 55 50 50]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect1')", "[23 73 100 100]");
+
+    shouldBeEqualToString("getCTMById('rect2')", "[2.0 0.0 0.0 2.0 -70.0 -50.0]");
+    shouldBeEqualToString("getScreenCTMById('rect2')", "[2.0 0.0 0.0 2.0 -37.0 103.0]");
+    shouldBeEqualToString("getBBoxById('rect2')", "[60 55 50 50]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect2')", "[83 213 100 100]");
+
+    shouldBeEqualToString("getCTMById('rect3')", "[8.0 0.0 0.0 3.0 -280.0 -75.0]");
+    shouldBeEqualToString("getScreenCTMById('rect3')", "[8.0 0.0 0.0 3.0 -247.0 -92.0]");
+    shouldBeEqualToString("getBBoxById('rect3')", "[60 55 25 25]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect3')", "[233 73 200 75]");
+
+    shouldBeEqualToString("getCTMById('rect4')", "[2.0 0.0 0.0 2.0 -40.0 220.0]");
+    shouldBeEqualToString("getScreenCTMById('rect4')", "[2.0 0.0 0.0 2.0 -37.0 223.0]");
+    shouldBeEqualToString("getBBoxById('rect4')", "[30 55 50 50]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect4')", "[23 333 100 100]");
+
+    shouldBeEqualToString("getCTMById('rect5')", "[2.0 0.0 0.0 2.0 10.0 10.0]");
+    shouldBeEqualToString("getScreenCTMById('rect5')", "[2.0 0.0 0.0 2.0 -37.0 363.0]");
+    shouldBeEqualToString("getBBoxById('rect5')", "[60 55 50 50]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect5')", "[83 473 100 100]");
+
+    shouldBeEqualToString("getCTMById('rect6')", "[8.0 0.0 0.0 3.0 -200.0 -15.0]");
+    shouldBeEqualToString("getScreenCTMById('rect6')", "[8.0 0.0 0.0 3.0 -247.0 168.0]");
+    shouldBeEqualToString("getBBoxById('rect6')", "[60 55 25 25]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect6')", "[233 333 200 75]");
+
+    shouldBeEqualToString("getCTMById('rect7')", "[2.0 0.0 0.0 2.0 467.5 17.5]");
+    shouldBeEqualToString("getScreenCTMById('rect7')", "[2.0 0.0 0.0 2.0 470.5 20.5]");
+    shouldBeEqualToString("getBBoxById('rect7')", "[30 55 50 50]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect7')", "[530.5 130.5 100 100]");
+
+    shouldBeEqualToString("getCTMById('rect8')", "[2.0 0.0 0.0 2.0 -155.0 -130.0]");
+    shouldBeEqualToString("getScreenCTMById('rect8')", "[2.0 0.0 0.0 2.0 428.0 123.0]");
+    shouldBeEqualToString("getBBoxById('rect8')", "[60 55 50 50]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect8')", "[548 233 100 100]");
+
+    shouldBeEqualToString("getCTMById('rect9')", "[8.0 0.0 0.0 3.0 -620.0 -195.0]");
+    shouldBeEqualToString("getScreenCTMById('rect9')", "[8.0 0.0 0.0 3.0 3.0 -112.0]");
+    shouldBeEqualToString("getBBoxById('rect9')", "[60 55 25 25]");
+    shouldBeEqualToString("getAbsoluteBBoxById('rect9')", "[483 53 200 75]");
+
+    var script = document.createElement('script');
+    script.src = "../../resources/js-test-post.js";
+    script.onload = completeTest;
+    document.body.appendChild(script);
+  }
+
+  function completeTest() {
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+  
+  startTest();
+</script>
+</body>
+</html>

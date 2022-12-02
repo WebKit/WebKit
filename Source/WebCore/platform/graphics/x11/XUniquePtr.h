@@ -27,12 +27,12 @@
 #define XUniquePtr_h
 
 #if PLATFORM(X11)
+
 #include "PlatformDisplayX11.h"
 #include <X11/Xutil.h>
 
 #if USE(GLX)
 typedef struct __GLXcontextRec* GLXContext;
-extern "C" void glXDestroyContext(::Display*, GLXContext);
 #endif
 
 namespace WebCore {
@@ -66,10 +66,7 @@ using XUniqueGC = XUniquePtr<_XGC>;
 
 #if USE(GLX)
 template<> struct XPtrDeleter<__GLXcontextRec> {
-    void operator() (__GLXcontextRec* ptr)
-    {
-        glXDestroyContext(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), ptr);
-    }
+    void operator() (__GLXcontextRec*) const;
 };
 // Give a name to this to avoid having to use the internal struct name.
 using XUniqueGLXContext = XUniquePtr<__GLXcontextRec>;

@@ -308,18 +308,14 @@ struct HashTraitHasCustomDelete {
 };
 
 template<typename Traits, typename T>
-typename std::enable_if<HashTraitHasCustomDelete<Traits, T>::value>::type
-hashTraitsDeleteBucket(T& value)
+void hashTraitsDeleteBucket(T& value)
 {
-    Traits::customDeleteBucket(value);
-}
-
-template<typename Traits, typename T>
-typename std::enable_if<!HashTraitHasCustomDelete<Traits, T>::value>::type
-hashTraitsDeleteBucket(T& value)
-{
-    value.~T();
-    Traits::constructDeletedValue(value);
+    if constexpr (HashTraitHasCustomDelete<Traits, T>::value)
+        Traits::customDeleteBucket(value);
+    else {
+        value.~T();
+        Traits::constructDeletedValue(value);
+    }
 }
 
 template<typename FirstTraitsArg, typename SecondTraitsArg>

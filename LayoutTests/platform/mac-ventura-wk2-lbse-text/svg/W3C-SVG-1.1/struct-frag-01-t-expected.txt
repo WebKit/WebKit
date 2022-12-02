@@ -1,0 +1,6 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGViewportContainer at (0,0) size 480x360

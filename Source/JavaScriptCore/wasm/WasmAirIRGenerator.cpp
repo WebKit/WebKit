@@ -45,6 +45,7 @@
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyStruct.h"
+#include "SIMDInfo.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmBranchHints.h"
 #include "WasmCallingConvention.h"
@@ -140,6 +141,8 @@ class AirIRGenerator {
 public:
     using ExpressionType = TypedTmp;
     using ResultList = Vector<ExpressionType, 8>;
+
+    static constexpr bool tierSupportsSIMD = true;
 
     struct ControlData {
         ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
@@ -338,6 +341,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
+    ExpressionType addConstant(v128_t);
     ExpressionType addConstant(BasicBlock*, Type, uint64_t);
     ExpressionType addBottom(BasicBlock*, Type);
 
@@ -405,6 +409,229 @@ public:
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType left, ExpressionType right, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
+    // SIMD
+    void notifyFunctionUsesSIMD() { ASSERT(m_info.isSIMDFunction(m_functionIndex)); }
+    PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN addSIMDSplat(SIMDLane, ExpressionType scalar, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType v, ExpressionType shift, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadSplat(SIMDLaneOperation, ExpressionType pointer, uint32_t offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadLane(SIMDLaneOperation, ExpressionType pointer, ExpressionType vector, uint32_t offset, uint8_t laneIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDStoreLane(SIMDLaneOperation, ExpressionType pointer, ExpressionType vector, uint32_t offset, uint8_t laneIndex);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadExtend(SIMDLaneOperation, ExpressionType pointer, uint32_t offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadPad(SIMDLaneOperation, ExpressionType pointer, uint32_t offset, ExpressionType& result);
+
+    // SIMD generated
+
+    #define DEFINE_AIR_OP_FOR_SIGNED_OP(OP) \
+    ALWAYS_INLINE constexpr B3::Air::Opcode airOpForSIMD##OP(SIMDInfo info) { \
+        switch (info.signMode) { \
+        case SIMDSignMode::Unsigned: \
+            switch (info.lane) { \
+                case SIMDLane::i8x16: return B3::Air::Vector##OP##UnsignedInt8; \
+                case SIMDLane::i16x8: return B3::Air::Vector##OP##UnsignedInt16; \
+                default: break; \
+            } \
+            break; \
+        case SIMDSignMode::Signed: \
+            switch (info.lane) { \
+                case SIMDLane::i8x16: return B3::Air::Vector##OP##SignedInt8; \
+                case SIMDLane::i16x8: return B3::Air::Vector##OP##SignedInt16; \
+                default: break; \
+            } \
+            break; \
+        case SIMDSignMode::None: \
+            switch (info.lane) { \
+                case SIMDLane::i32x4: return B3::Air::Vector##OP##Int32; \
+                case SIMDLane::i64x2: return B3::Air::Vector##OP##Int64; \
+                case SIMDLane::f32x4: return B3::Air::Vector##OP##Float32; \
+                case SIMDLane::f64x2: return B3::Air::Vector##OP##Float64; \
+                default: break; \
+            } \
+            break; \
+        } \
+        RELEASE_ASSERT_NOT_REACHED(); \
+        return Oops; \
+    }
+
+    #define DEFINE_AIR_OP_FOR_UNSIGNED_OP(OP) \
+    ALWAYS_INLINE constexpr B3::Air::Opcode airOpForSIMD##OP(SIMDInfo info) { \
+        switch (info.signMode) { \
+        case SIMDSignMode::None: \
+            switch (info.lane) { \
+                case SIMDLane::i8x16: return B3::Air::Vector##OP##Int8; \
+                case SIMDLane::i16x8: return B3::Air::Vector##OP##Int16; \
+                case SIMDLane::i32x4: return B3::Air::Vector##OP##Int32; \
+                case SIMDLane::i64x2: return B3::Air::Vector##OP##Int64; \
+                case SIMDLane::f32x4: return B3::Air::Vector##OP##Float32; \
+                case SIMDLane::f64x2: return B3::Air::Vector##OP##Float64; \
+                default: break; \
+            } \
+            break; \
+        default: break; \
+        } \
+        RELEASE_ASSERT_NOT_REACHED(); \
+        return Oops; \
+    }
+
+    #define AIR_OP_CASE(OP) \
+    else if (op == SIMDLaneOperation::OP) airOp = B3::Air::Vector##OP;
+
+    #define AIR_OP_CASES() \
+    B3::Air::Opcode airOp = B3::Air::Oops; \
+    if (false) { }
+
+    DEFINE_AIR_OP_FOR_SIGNED_OP(ExtractLane)
+    auto addExtractLane(SIMDInfo info, uint8_t lane, ExpressionType v, ExpressionType& result) -> PartialResult
+    {
+        auto airOp = airOpForSIMDExtractLane(info);
+        result = tmpForType(simdScalarType(info.lane));
+        if (isValidForm(airOp, Arg::Imm, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, Arg::imm(lane), v, result);
+            return { };
+        }
+        if (isValidForm(airOp, Arg::Imm, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, Arg::imm(lane), Arg::simdInfo(info), v, result);
+            return { };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    DEFINE_AIR_OP_FOR_UNSIGNED_OP(ReplaceLane)
+    auto addReplaceLane(SIMDInfo info, uint8_t imm, ExpressionType v, ExpressionType s, ExpressionType& result) -> PartialResult
+    {
+        auto airOp = airOpForSIMDReplaceLane(info);
+        result = tmpForType(Types::V128);
+        append(MoveVector, v, result);
+        if (isValidForm(airOp, Arg::Imm, Arg::Tmp, Arg::Tmp, Arg::Tmp))
+            append(airOp, Arg::imm(imm), s, result, airOp == VectorReplaceLaneFloat64 ? tmpForType(Types::I64) : tmpForType(Types::I32));
+        else
+            append(airOp, Arg::imm(imm), s, result);
+        return { };
+    }
+
+    auto addSIMDI_V(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType& result) -> PartialResult
+    {
+        AIR_OP_CASES()
+        AIR_OP_CASE(Bitmask)
+        AIR_OP_CASE(AnyTrue)
+        AIR_OP_CASE(AllTrue)
+        result = tmpForType(Types::I32);
+        if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, v, result);
+            return { };
+        }
+        if (isValidForm(airOp, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, Arg::simdInfo(info), v, result);
+            return { };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto addSIMDV_V(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType& result) -> PartialResult
+    {
+        AIR_OP_CASES()
+        AIR_OP_CASE(Not)
+        AIR_OP_CASE(Demote)
+        AIR_OP_CASE(Promote)
+        AIR_OP_CASE(Abs)
+        AIR_OP_CASE(Neg)
+        AIR_OP_CASE(Popcnt)
+        AIR_OP_CASE(Ceil)
+        AIR_OP_CASE(Floor)
+        AIR_OP_CASE(Trunc)
+        AIR_OP_CASE(Nearest)
+        AIR_OP_CASE(Sqrt)
+        AIR_OP_CASE(ExtaddPairwise)
+        AIR_OP_CASE(Convert)
+        AIR_OP_CASE(ConvertLow)
+        AIR_OP_CASE(ExtendHigh)
+        AIR_OP_CASE(ExtendLow)
+        AIR_OP_CASE(TruncSat)
+        result = tmpForType(Types::V128);
+        if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, v, result);
+            return { };
+        }
+        if (isValidForm(airOp, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, Arg::simdInfo(info), v, result);
+            return { };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto addSIMDBitwiseSelect(ExpressionType v1, ExpressionType v2, ExpressionType c, ExpressionType& result) -> PartialResult
+    {
+        auto airOp = B3::Air::VectorBitwiseSelect;
+        result = tmpForType(Types::V128);
+        append(MoveVector, c, result);
+        append(airOp, v1, v2, result);
+        return { };
+    }
+
+    auto addSIMDRelOp(SIMDLaneOperation, SIMDInfo info, ExpressionType lhs, ExpressionType rhs, Arg relOp, ExpressionType& result) -> PartialResult
+    {
+        AIR_OP_CASES()
+        else if (scalarTypeIsFloatingPoint(info.lane)) airOp = B3::Air::CompareFloatingPointVector;
+        else if (scalarTypeIsIntegral(info.lane)) airOp = B3::Air::CompareIntegerVector;
+        result = tmpForType(Types::V128);
+        if (isValidForm(airOp, Arg::DoubleCond, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+            return { };
+        }
+        if (isValidForm(airOp, Arg::RelCond, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+            return { };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto addSIMDV_VV(SIMDLaneOperation op, SIMDInfo info, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
+    {
+        AIR_OP_CASES()
+        AIR_OP_CASE(And)
+        AIR_OP_CASE(Andnot)
+        AIR_OP_CASE(AvgRound)
+        AIR_OP_CASE(DotProductInt32)
+        AIR_OP_CASE(Add)
+        AIR_OP_CASE(Mul)
+        AIR_OP_CASE(MulSat)
+        AIR_OP_CASE(Sub)
+        AIR_OP_CASE(Div)
+        AIR_OP_CASE(Pmax)
+        AIR_OP_CASE(Pmin)
+        AIR_OP_CASE(Or)
+        AIR_OP_CASE(Swizzle)
+        AIR_OP_CASE(Xor)
+        AIR_OP_CASE(Narrow)
+        AIR_OP_CASE(AddSat)
+        AIR_OP_CASE(SubSat)
+        AIR_OP_CASE(Max)
+        AIR_OP_CASE(Min)
+        result = tmpForType(Types::V128);
+
+        if (isValidForm(airOp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, a, b, result);
+            return { };
+        }
+        if (isValidForm(airOp, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, Arg::simdInfo(info), a, b, result);
+            return { };
+        }
+        if (isValidForm(airOp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, a, b, result, tmpForType(Types::V128));
+            return { };
+        }
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     // Control flow
     ControlData WARN_UNUSED_RETURN addTopLevel(BlockSignature);
     PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack);
@@ -436,6 +663,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
+    PartialResult WARN_UNUSED_RETURN addCrash();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&);
     std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const TypeDefinition&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
 
@@ -561,6 +789,7 @@ private:
     TypedTmp gRef(Type type) { return { newTmp(B3::GP), type }; }
     TypedTmp f32() { return { newTmp(B3::FP), Types::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Types::F64 }; }
+    TypedTmp v128() { return { newTmp(B3::FP), Types::V128 }; }
 
     TypedTmp tmpForType(Type type)
     {
@@ -580,6 +809,8 @@ private:
             return f32();
         case TypeKind::F64:
             return f64();
+        case TypeKind::V128:
+            return v128();
         case TypeKind::Void:
             return { };
         default:
@@ -680,7 +911,7 @@ private:
             patch->append(dummyValue, tmp.rep);
             switch (tmp.rep.kind()) {
             // B3::Value propagates (Late)ColdAny information and later Air will allocate appropriate stack.
-            case B3::ValueRep::ColdAny: 
+            case B3::ValueRep::ColdAny:
             case B3::ValueRep::LateColdAny:
             case B3::ValueRep::SomeRegister:
                 inst.args.append(tmp.tmp);
@@ -815,6 +1046,8 @@ private:
             return MoveFloat;
         case TypeKind::F64:
             return MoveDouble;
+        case TypeKind::V128:
+            return MoveVector;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -834,6 +1067,14 @@ private:
         append(Move, Arg::bigImm(offset), temp);
         append(Add64, temp, base, temp);
         return Arg::addr(temp);
+    }
+
+    B3::Air::Arg materializeSimpleAddrArg(Tmp base, size_t offset)
+    {
+        auto temp = g64();
+        append(Move, Arg::bigImm(offset), temp);
+        append(Add64, temp, base, temp);
+        return Arg::simpleAddr(temp);
     }
 
     void emitLoad(Tmp base, size_t offset, const TypedTmp& result)
@@ -1009,6 +1250,8 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     , m_numImportFunctions(info.importFunctionCount())
     , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
 {
+    if (m_info.isSIMDFunction(m_functionIndex))
+        m_tierUp = nullptr;
     m_currentBlock = m_code.addBlock();
     m_rootBlock = m_currentBlock;
 
@@ -1134,6 +1377,9 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             break;
         case TypeKind::F64:
             append(MoveDouble, arg, m_locals[i]);
+            break;
+        case TypeKind::V128:
+            append(MoveVector, arg, m_locals[i]);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1311,6 +1557,14 @@ auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
             append(type.isF32() ? Move32ToFloat : Move64ToDouble, temp, local);
             break;
         }
+        case TypeKind::V128: {
+            auto temp = g64();
+            append(Xor64, temp, temp);
+            // FIXME clear local
+            append(VectorReplaceLaneInt64, Arg::imm(0), temp, local);
+            append(VectorReplaceLaneInt64, Arg::imm(1), temp, local);
+            break;
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -1347,6 +1601,18 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    return result;
+}
+
+auto AirIRGenerator::addConstant(v128_t value) -> ExpressionType
+{
+    // FIXME: this is bad, we should load
+    auto a = g64();
+    auto result = tmpForType(Types::V128);
+    append(Move, Arg::bigImm(value.u64x2[0]), a);
+    append(VectorReplaceLaneInt64, Arg::imm(0), a, result);
+    append(Move, Arg::bigImm(value.u64x2[1]), a);
+    append(VectorReplaceLaneInt64, Arg::imm(1), a, result);
     return result;
 }
 
@@ -1547,6 +1813,17 @@ auto AirIRGenerator::addUnreachable() -> PartialResult
     return { };
 }
 
+auto AirIRGenerator::addCrash() -> PartialResult
+{
+    B3::PatchpointValue* unreachable = addPatchpoint(B3::Void);
+    unreachable->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    unreachable->effects.terminal = true;
+    emitPatchpoint(unreachable, Tmp());
+    return { };
+}
+
 auto AirIRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     result = g32();
@@ -1565,10 +1842,10 @@ auto AirIRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 
     RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfMemory(), Width64));
     RELEASE_ASSERT(Arg::isValidAddrForm(Memory::offsetOfHandle(), Width64));
-    RELEASE_ASSERT(Arg::isValidAddrForm(MemoryHandle::offsetOfSize(), Width64));
+    RELEASE_ASSERT(Arg::isValidAddrForm(BufferMemoryHandle::offsetOfSize(), Width64));
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfMemory()), temp1);
     append(Move, Arg::addr(temp1, Memory::offsetOfHandle()), temp1);
-    append(Move, Arg::addr(temp1, MemoryHandle::offsetOfSize()), temp1);
+    append(Move, Arg::addr(temp1, BufferMemoryHandle::offsetOfSize()), temp1);
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
     append(Move, Arg::imm(16), temp2);
@@ -1679,7 +1956,7 @@ auto AirIRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partia
     RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfGlobals(), Width64));
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfGlobals()), temp);
 
-    int32_t offset = safeCast<int32_t>(index * sizeof(Register));
+    int32_t offset = safeCast<int32_t>(index * sizeof(Global::Value));
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
         if (Arg::isValidAddrForm(offset, widthForType(toB3Type(type))))
@@ -1717,7 +1994,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
     const Wasm::GlobalInformation& global = m_info.globals[index];
     Type type = global.type;
 
-    int32_t offset = safeCast<int32_t>(index * sizeof(Register));
+    int32_t offset = safeCast<int32_t>(index * sizeof(Global::Value));
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
         if (Arg::isValidAddrForm(offset, widthForType(toB3Type(type))))
@@ -2103,12 +2380,12 @@ auto AirIRGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionTyp
     return { };
 }
 
-#define OPCODE_FOR_WIDTH(opcode, width) ( \
+#define OPCODE_FOR_WIDTH(opcode, width) (\
     (width) == Width8 ? B3::Air::opcode ## 8 : \
     (width) == Width16 ? B3::Air::opcode ## 16 :    \
     (width) == Width32 ? B3::Air::opcode ## 32 :    \
     B3::Air::opcode ## 64)
-#define OPCODE_FOR_CANONICAL_WIDTH(opcode, width) ( \
+#define OPCODE_FOR_CANONICAL_WIDTH(opcode, width) (\
     (width) == Width64 ? B3::Air::opcode ## 64 : B3::Air::opcode ## 32)
 
 inline Width accessWidth(ExtAtomicOpType op)
@@ -3512,6 +3789,279 @@ auto AirIRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero,
     return { };
 }
 
+auto AirIRGenerator::addSIMDLoad(ExpressionType pointer, uint32_t uoffset, ExpressionType& result) -> PartialResult
+{
+    result = v128();
+    auto offset = fixupPointerPlusOffset(pointer, uoffset);
+    Arg addrArg = materializeAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width128)), offset, Width128);
+    appendEffectful(MoveVector, addrArg, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t uoffset) -> PartialResult
+{
+    auto offset = fixupPointerPlusOffset(pointer, uoffset);
+    Arg addrArg = materializeAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width128)), offset, Width128);
+    appendEffectful(MoveVector, value, addrArg);
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDSplat(SIMDLane lane, ExpressionType scalar, ExpressionType& result) -> PartialResult
+{
+    Tmp toSplat = scalar.tmp();
+    if (scalarTypeIsFloatingPoint(lane)) {
+        Tmp gpCast = newTmp(B3::GP);
+        append(elementByteSize(lane) == 4 ? MoveFloatTo32 : MoveDoubleTo64, toSplat, gpCast);
+        toSplat = gpCast;
+    }
+
+    B3::Air::Opcode op;
+    switch (elementByteSize(lane)) {
+    case 1:
+        op = VectorSplat8;
+        break;
+    case 2:
+        op = VectorSplat16;
+        break;
+    case 4:
+        op = VectorSplat32;
+        break;
+    case 8:
+        op = VectorSplat64;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    result = v128();
+    append(op, toSplat, result.tmp());
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType shift, ExpressionType& result) -> PartialResult
+{
+    result = v128();
+    int32_t mask = (elementByteSize(info.lane) * CHAR_BIT) - 1;
+
+    if (isARM64()) {
+        Tmp shiftAmount = newTmp(B3::GP);
+        Tmp shiftVector = newTmp(B3::FP);
+        append(And32, Arg::bitImm(mask), shift.tmp(), shiftAmount);
+        if (op == SIMDLaneOperation::Shr) {
+            // ARM64 doesn't have a version of this instruction for right shift. Instead, if the input to
+            // left shift is negative, it's a right shift by the absolute value of that amount.
+            append(Neg32, shiftAmount);
+        }
+        append(VectorSplat8, shiftAmount, shiftVector);
+        append(info.signMode == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
+
+        return { };
+    }
+
+    // FIXME: implement x86
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+auto AirIRGenerator::addSIMDExtmul(SIMDLaneOperation op, SIMDInfo info, ExpressionType lhs, ExpressionType rhs, ExpressionType& result) -> PartialResult
+{
+    ASSERT(info.signMode != SIMDSignMode::None);
+
+    result = v128();
+
+    auto lhsTmp = newTmp(B3::FP);
+    auto rhsTmp = newTmp(B3::FP);
+
+    auto extOp = op == SIMDLaneOperation::ExtmulLow ? VectorExtendLow : VectorExtendHigh;
+    append(extOp, Arg::simdInfo(info), lhs.tmp(), lhsTmp);
+    append(extOp, Arg::simdInfo(info), rhs.tmp(), rhsTmp);
+    append(VectorMul, Arg::simdInfo(info), lhsTmp, rhsTmp, result.tmp());
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
+{
+    result = v128();
+
+    append(VectorShuffle, Arg::bigImm(imm.u64x2[0]), Arg::bigImm(imm.u64x2[1]), a, b, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result) -> PartialResult
+{
+    B3::Air::Opcode opcode;
+    Width width;
+    switch (op) {
+    case SIMDLaneOperation::LoadSplat8:
+        opcode = VectorLoad8Splat;
+        width = Width8;
+        break;
+    case SIMDLaneOperation::LoadSplat16:
+        opcode = VectorLoad16Splat;
+        width = Width16;
+        break;
+    case SIMDLaneOperation::LoadSplat32:
+        opcode = VectorLoad32Splat;
+        width = Width32;
+        break;
+    case SIMDLaneOperation::LoadSplat64:
+        opcode = VectorLoad64Splat;
+        width = Width64;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    result = v128();
+
+    auto offset = fixupPointerPlusOffset(pointer, uoffset);
+    Arg addrArg = materializeSimpleAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(width)), offset);
+    appendEffectful(opcode, addrArg, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDLoadLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t laneIndex, ExpressionType& result) -> PartialResult
+{
+    B3::Air::Opcode opcode;
+    Width width;
+    switch (op) {
+    case SIMDLaneOperation::LoadLane8:
+        opcode = VectorLoad8Lane;
+        width = Width8;
+        break;
+    case SIMDLaneOperation::LoadLane16:
+        opcode = VectorLoad16Lane;
+        width = Width16;
+        break;
+    case SIMDLaneOperation::LoadLane32:
+        opcode = VectorLoad32Lane;
+        width = Width32;
+        break;
+    case SIMDLaneOperation::LoadLane64:
+        opcode = VectorLoad64Lane;
+        width = Width64;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    result = v128();
+
+    auto offset = fixupPointerPlusOffset(pointer, uoffset);
+    Arg addrArg = materializeSimpleAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(width)), offset);
+    append(MoveVector, vector, result);
+    appendEffectful(opcode, addrArg, Arg::imm(laneIndex), result);
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDStoreLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t laneIndex) -> PartialResult
+{
+    B3::Air::Opcode opcode;
+    Width width;
+    switch (op) {
+    case SIMDLaneOperation::StoreLane8:
+        opcode = VectorStore8Lane;
+        width = Width8;
+        break;
+    case SIMDLaneOperation::StoreLane16:
+        opcode = VectorStore16Lane;
+        width = Width16;
+        break;
+    case SIMDLaneOperation::StoreLane32:
+        opcode = VectorStore32Lane;
+        width = Width32;
+        break;
+    case SIMDLaneOperation::StoreLane64:
+        opcode = VectorStore64Lane;
+        width = Width64;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    auto offset = fixupPointerPlusOffset(pointer, uoffset);
+    Arg addrArg = materializeSimpleAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(width)), offset);
+    appendEffectful(opcode, vector, addrArg, Arg::imm(laneIndex));
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDLoadExtend(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result) -> PartialResult
+{
+    SIMDLane lane;
+    SIMDSignMode signMode;
+
+    switch (op) {
+    case SIMDLaneOperation::LoadExtend8U:
+        lane = SIMDLane::i16x8;
+        signMode = SIMDSignMode::Unsigned;
+        break;
+    case SIMDLaneOperation::LoadExtend8S:
+        lane = SIMDLane::i16x8;
+        signMode = SIMDSignMode::Signed;
+        break;
+    case SIMDLaneOperation::LoadExtend16U:
+        lane = SIMDLane::i32x4;
+        signMode = SIMDSignMode::Unsigned;
+        break;
+    case SIMDLaneOperation::LoadExtend16S:
+        lane = SIMDLane::i32x4;
+        signMode = SIMDSignMode::Signed;
+        break;
+    case SIMDLaneOperation::LoadExtend32U:
+        lane = SIMDLane::i64x2;
+        signMode = SIMDSignMode::Unsigned;
+        break;
+    case SIMDLaneOperation::LoadExtend32S:
+        lane = SIMDLane::i64x2;
+        signMode = SIMDSignMode::Signed;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    result = v128();
+
+    auto offset = fixupPointerPlusOffset(pointer, uoffset);
+    Arg addrArg = materializeAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width64)), offset, Width64);
+    appendEffectful(MoveDouble, addrArg, result);
+    append(VectorExtendLow, Arg::simdInfo({ lane, signMode }), result, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result) -> PartialResult
+{
+    B3::Air::Opcode airOp;
+    Width width;
+    switch (op) {
+    case SIMDLaneOperation::LoadPad32:
+        width = Width32;
+        airOp = MoveFloat;
+        break;
+    case SIMDLaneOperation::LoadPad64:
+        width = Width64;
+        airOp = MoveDouble;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    result = v128();
+
+    auto offset = fixupPointerPlusOffset(pointer, uoffset);
+    Arg addrArg = materializeAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width64)), offset, width);
+    appendEffectful(airOp, addrArg, result);
+
+    return { };
+}
+
 void AirIRGenerator::emitEntryTierUpCheck()
 {
     if (!m_tierUp)
@@ -3676,19 +4226,16 @@ auto AirIRGenerator::addIf(ExpressionType condition, BlockSignature signature, S
     B3::FrequencyClass takenFrequency = B3::FrequencyClass::Normal;
     B3::FrequencyClass notTakenFrequency= B3::FrequencyClass::Normal;
 
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            takenFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            notTakenFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
+    BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+    switch (hint) {
+    case BranchHint::Unlikely:
+        takenFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Likely:
+        notTakenFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Invalid:
+        break;
     }
 
     // Wasm bools are i32.
@@ -3749,7 +4296,10 @@ auto AirIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDe
     for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
         Type type = signature.as<FunctionSignature>()->argumentType(i);
         TypedTmp tmp = tmpForType(type);
-        emitLoad(buffer, i * sizeof(uint64_t), tmp);
+        if (type.isV128())
+            append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), tmp, tmp, tmp);
+        else
+            emitLoad(buffer, i * sizeof(uint64_t), tmp);
         results.append(tmp);
     }
     return { };
@@ -3802,7 +4352,7 @@ Tmp AirIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned ex
     B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple({ B3::pointerType(), B3::pointerType() }));
     patch->effects.exitsSideways = true;
     patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
-    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters());
+    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     patch->clobberLate(clobberLate);
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
@@ -3843,15 +4393,16 @@ auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
 {
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
     patch->effects.terminal = true;
-    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
 
     Vector<ConstrainedTmp, 8> patchArgs;
     patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
     patchArgs.append(ConstrainedTmp(TypedTmp { Tmp(GPRInfo::callFrameRegister), Types::I64 }, B3::ValueRep::reg(GPRInfo::argumentGPR1)));
     unsigned offset = 0;
     for (unsigned i = 0; i < args.size(); ++i) {
-        patchArgs.append(ConstrainedTmp(args[i], B3::ValueRep::stackArgument(offset)));
-        offset += WTF::roundUpToMultipleOf(bytesForWidth(args[i].type().width()), sizeof(EncodedJSValue));
+        if (!args[i].type().isV128())
+            patchArgs.append(ConstrainedTmp(args[i], B3::ValueRep::stackArgument(offset)));
+        offset += sizeof(uint64_t);
     }
 
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(patch, patchArgs);
@@ -3859,7 +4410,7 @@ auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
     patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         handle.generate(jit, params, this);
-        emitThrowImpl(jit, exceptionIndex); 
+        emitThrowImpl(jit, exceptionIndex);
     });
 
     emitPatchpoint(m_currentBlock, patch, Tmp(), WTFMove(patchArgs));
@@ -3870,7 +4421,7 @@ auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
 auto AirIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
-    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
 
     Vector<ConstrainedTmp, 3> patchArgs;
@@ -3939,19 +4490,16 @@ auto AirIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
     B3::FrequencyClass targetFrequency = B3::FrequencyClass::Normal;
     B3::FrequencyClass continuationFrequency = B3::FrequencyClass::Normal;
 
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            targetFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            continuationFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
+    BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+    switch (hint) {
+    case BranchHint::Unlikely:
+        targetFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Likely:
+        continuationFrequency = B3::FrequencyClass::Rare;
+        break;
+    case BranchHint::Invalid:
+        break;
     }
 
     if (condition) {
@@ -4020,7 +4568,7 @@ auto AirIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlDat
 
         params.addLatePath([=, caseJumps = WTFMove(caseJumps), successorLabels = WTFMove(successorLabels)] (CCallHelpers& jit) {
             for (size_t i = 0; i < numTargets; ++i)
-                caseJumps[i].linkTo(*successorLabels[i], &jit);                
+                caseJumps[i].linkTo(*successorLabels[i], &jit);
             fallThrough.linkTo(*successorLabels[numTargets], &jit);
         });
     });
@@ -4082,7 +4630,7 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitC
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
-    patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+    patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
 
     CallInformation locations = wasmCallingConvention().callInformationFor(signature);
     m_code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), locations.headerAndArgumentStackSizeInBytes));
@@ -4261,7 +4809,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
         append(Move, Arg::imm(sizeof(WasmToWasmImportableFunction)), calleeSignatureIndex);
         append(Mul64, calleeIndex, calleeSignatureIndex);
         append(Add64, callableFunctionBuffer, calleeSignatureIndex);
-        
+
         append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
 
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
@@ -4465,13 +5013,13 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
             out.print("Wasm: ", OpcodeOrigin(origin));
     });
     procedure.code().setDisassembler(makeUnique<B3::Air::Disassembler>());
-    
+
     // This means we cannot use either StackmapGenerationParams::usedRegisters() or
     // StackmapGenerationParams::unavailableRegisters(). In exchange for this concession, we
     // don't strictly need to run Air::reportUsedRegisters(), which saves a bit of CPU time at
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
-    
+
     procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
     AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, hasExceptionHandlers, tierUp, signature, result->osrEntryScratchBufferSize);
@@ -4945,7 +5493,7 @@ auto AirIRGenerator::addShift(Type type, B3::Air::Opcode op, ExpressionType valu
         append(op, value, shift, result);
         return { };
     }
-    
+
 #if CPU(X86_64)
     Tmp ecx = Tmp(X86Registers::ecx);
     append(Move, value, result);

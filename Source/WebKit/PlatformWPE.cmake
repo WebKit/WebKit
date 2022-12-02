@@ -248,17 +248,19 @@ set(WPE_WEB_EXTENSION_API_HEADER_TEMPLATES
 GENERATE_API_HEADERS(WPE_API_HEADER_TEMPLATES
     ${DERIVED_SOURCES_WPE_API_DIR}
     WPE_API_INSTALLED_HEADERS
-    "-DPLATFORM(GTK)=0"
-    "-DPLATFORM(WPE)=1"
-    "-DUSE(GTK4)=0"
+    "-DWTF_PLATFORM_GTK=0"
+    "-DWTF_PLATFORM_WPE=1"
+    "-DUSE_GTK4=0"
+    "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
 GENERATE_API_HEADERS(WPE_WEB_EXTENSION_API_HEADER_TEMPLATES
     ${DERIVED_SOURCES_WPE_API_DIR}
     WPE_WEB_EXTENSION_API_INSTALLED_HEADERS
-    "-DPLATFORM(GTK)=0"
-    "-DPLATFORM(WPE)=1"
-    "-DUSE(GTK4)=0"
+    "-DWTF_PLATFORM_GTK=0"
+    "-DWTF_PLATFORM_WPE=1"
+    "-DUSE_GTK4=0"
+    "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
 # To generate WebKitEnumTypes.h we want to use all installed headers, except WebKitEnumTypes.h itself.
@@ -548,6 +550,20 @@ GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
 )
 GI_DOCGEN(WPEJavaScriptCore "${JAVASCRIPTCORE_DIR}/API/glib/docs/jsc.toml.in")
 
+set(WPE_SOURCES_FOR_INTROSPECTION
+    UIProcess/API/wpe/WebKitColor.cpp
+    UIProcess/API/wpe/WebKitInputMethodContextWPE.cpp
+    UIProcess/API/wpe/WebKitRectangle.cpp
+    UIProcess/API/wpe/WebKitWebViewBackend.cpp
+    UIProcess/API/wpe/WebKitWebViewWPE.cpp
+ )
+
+ if (ENABLE_2022_GLIB_API)
+     list(APPEND WPE_SOURCES_FOR_INTROSPECTION UIProcess/API/wpe/WebKitWebViewWPE2.cpp)
+ else ()
+     list(APPEND WPE_SOURCES_FOR_INTROSPECTION UIProcess/API/wpe/WebKitWebViewWPE1.cpp)
+ endif ()
+
 GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
     TARGET WebKit
     PACKAGE wpe-webkit
@@ -563,7 +579,6 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
         ${WPE_API_INSTALLED_HEADERS}
         Shared/API/glib
         UIProcess/API/glib
-        UIProcess/API/wpe
     NO_IMPLICIT_SOURCES
 )
 GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in)

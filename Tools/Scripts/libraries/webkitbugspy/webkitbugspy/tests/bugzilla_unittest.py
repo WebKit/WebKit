@@ -335,7 +335,6 @@ class TestBugzilla(unittest.TestCase):
 
             self.assertEqual(created.project, 'WebKit')
             self.assertEqual(created.component, 'SVG')
-            self.assertEqual(created.version, 'Safari 15')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -348,12 +347,6 @@ What component in 'WebKit' should the bug be associated with?:
     2) Scrolling
     3) Tables
     4) Text
-: 
-What version of 'WebKit' should the bug be associated with?:
-    1) Other
-    2) Safari 15
-    3) Safari Technology Preview
-    4) WebKit Local Build
 : 
 ''',
         )
@@ -420,10 +413,23 @@ What version of 'WebKit' should the bug be associated with?:
     def test_redaction(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
             self.assertEqual(bugzilla.Tracker(self.URL, redact=None).issue(1).redacted, False)
-            self.assertEqual(bugzilla.Tracker(self.URL, redact={'.*': True}).issue(1).redacted, True)
-            self.assertEqual(bugzilla.Tracker(self.URL, redact={'project:WebKit': True}).issue(1).redacted, True)
-            self.assertEqual(bugzilla.Tracker(self.URL, redact={'component:Text': True}).issue(1).redacted, True)
-            self.assertEqual(bugzilla.Tracker(self.URL, redact={'version:Other': True}).issue(1).redacted, True)
+            self.assertTrue(bool(bugzilla.Tracker(self.URL, redact={'.*': True}).issue(1).redacted))
+            self.assertEqual(
+                bugzilla.Tracker(self.URL, redact={'.*': True}).issue(1).redacted,
+                bugzilla.Tracker.Redaction(True, 'is a Bugzilla'),
+            )
+            self.assertEqual(
+                bugzilla.Tracker(self.URL, redact={'project:WebKit': True}).issue(1).redacted,
+                bugzilla.Tracker.Redaction(True, "matches 'project:WebKit'"),
+            )
+            self.assertEqual(
+                bugzilla.Tracker(self.URL, redact={'component:Text': True}).issue(1).redacted,
+                bugzilla.Tracker.Redaction(True, "matches 'component:Text'"),
+            )
+            self.assertEqual(
+                bugzilla.Tracker(self.URL, redact={'version:Other': True}).issue(1).redacted,
+                bugzilla.Tracker.Redaction(True, "matches 'version:Other'"),
+            )
 
     def test_cc_no_radar(self):
         with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(

@@ -1,5 +1,5 @@
 
-FAIL Getting an shorthand property set explicitly in inline style returns a base CSSStyleValue assert_class_string: Shorthand value must be a base CSSStyleValue expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
-FAIL Getting a shorthand property that is partially set in inline style returns null assert_equals: Shorthand value must be null as it is not explicitly set expected null but got object "1px"
+PASS Getting an shorthand property set explicitly in inline style returns a base CSSStyleValue
+PASS Getting a shorthand property that is partially set in inline style returns null
 PASS Getting an attributeStyleMap shorthand property from an element without a style attribute
 

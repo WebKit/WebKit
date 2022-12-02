@@ -190,9 +190,29 @@ struct CGShadowStyle {
 };
 typedef struct CGShadowStyle CGShadowStyle;
 
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+struct CGGaussianBlurStyle {
+    unsigned version;
+    CGFloat radius;
+};
+typedef struct CGGaussianBlurStyle CGGaussianBlurStyle;
+
+struct CGColorMatrixStyle {
+    unsigned version;
+    CGFloat matrix[20];
+};
+typedef struct CGColorMatrixStyle CGColorMatrixStyle;
+#endif
+
 typedef CF_ENUM (int32_t, CGStyleType)
 {
+    kCGStyleUnknown = 0,
     kCGStyleShadow = 1,
+    kCGStyleFocusRing = 2,
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+    kCGStyleGaussianBlur = 3,
+    kCGStyleColorMatrix = 4,
+#endif
 };
 
 #if PLATFORM(MAC)
@@ -344,6 +364,14 @@ CGGradientRef CGGradientCreateWithColorsAndOptions(CGColorSpaceRef, CFArrayRef, 
 
 #if HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
 extern const CFStringRef kCGGradientInterpolatesPremultiplied;
+#endif
+
+#if HAVE(CGSTYLE_CREATE_SHADOW2)
+CGStyleRef CGStyleCreateShadow2(CGSize offset, CGFloat radius, CGColorRef);
+#endif
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
+CGStyleRef CGStyleCreateGaussianBlur(const CGGaussianBlurStyle*);
+CGStyleRef CGStyleCreateColorMatrix(const CGColorMatrixStyle*);
 #endif
 
 #endif // PLATFORM(COCOA)

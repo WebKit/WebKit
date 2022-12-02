@@ -7,18 +7,11 @@ description: Temporal.TimeZone.prototype.getPreviousTransition() works
 features: [Temporal]
 ---*/
 
-var london = Temporal.TimeZone.from("Europe/London");
+var utc = Temporal.TimeZone.from("UTC");
 
-// should return first and last transition
-var a1 = Temporal.Instant.from("2020-06-11T21:01Z");
-var a2 = Temporal.Instant.from("1848-01-01T00:00Z");
-assert.sameValue(london.getPreviousTransition(a1).toString(), "2020-03-29T01:00:00Z");
-assert.sameValue(london.getPreviousTransition(a2).toString(), "1847-12-01T00:01:15Z");
+// no transitions without a TZDB
+var instant = Temporal.Instant.from("2020-06-11T21:01Z");
+assert.sameValue(utc.getPreviousTransition(instant), null);
 
-// should not return the same as its input if the input is a transition point
-var inst = Temporal.Instant.from("2020-06-01T00:00Z");
-assert.sameValue(`${ london.getPreviousTransition(inst) }`, "2020-03-29T01:00:00Z");
-assert.sameValue(`${ london.getPreviousTransition(london.getPreviousTransition(inst)) }`, "2019-10-27T01:00:00Z");
-
-// casts argument
-assert.sameValue(`${ london.getPreviousTransition("2020-06-11T21:01Z") }`, "2020-03-29T01:00:00Z");
+// accepts string as argument
+assert.sameValue(utc.getPreviousTransition("2020-06-11T21:01Z"), null);

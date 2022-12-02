@@ -1,5 +1,3 @@
-//@ requireOptions("--useChangeArrayByCopyMethods=1")
-
 function shouldBe(actual, expected) {
     if (!shallowEqual(actual, expected)){
         throw new Error(`expected ${expected} but got ${actual}`);

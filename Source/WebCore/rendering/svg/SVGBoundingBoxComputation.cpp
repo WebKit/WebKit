@@ -34,6 +34,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
+#include "SVGLayerTransformComputation.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 
@@ -123,20 +124,15 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
 
 FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxComputation::DecorationOptions& options, bool* boundingBoxValid) const
 {
-    auto transformationMatrixFromChild = [] (const RenderLayerModelObject& child) -> std::optional<TransformationMatrix> {
-        if (!child.hasTransform())
+    auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
+        if (!child.hasTransform() || !child.hasLayer())
             return std::nullopt;
 
-        auto* container = child.parent();
-        ASSERT(container);
+        ASSERT(child.isSVGLayerAwareRenderer());
+        ASSERT(!child.isSVGRoot());
 
-        bool containerSkipped = false;
-        ASSERT(container == child.container(nullptr, containerSkipped));
-        ASSERT_UNUSED(containerSkipped, !containerSkipped);
-
-        TransformationMatrix layerTransform;
-        child.getTransformFromContainer(container, LayoutSize(), layerTransform);
-        return layerTransform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(layerTransform));
+        auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(&m_renderer, TransformState::TrackSVGCTMMatrix);
+        return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));
     };
 
     auto uniteBoundingBoxRespectingValidity = [] (bool& boxValid, FloatRect& box, const RenderLayerModelObject& child, const FloatRect& childBoundingBox) {
@@ -173,8 +169,8 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
             childBoundingBoxComputation.adjustBoxForClippingAndEffects({ DecorationOption::OverrideBoxWithFilterBox }, childBox);
 
         if (!options.contains(DecorationOption::IgnoreTransformations)) {
-            if (auto layerTransform = transformationMatrixFromChild(child))
-                childBox = layerTransform->mapRect(childBox);
+            if (auto transform = transformationMatrixFromChild(child))
+                childBox = transform->mapRect(childBox);
         }
 
         if (options == objectBoundingBoxDecoration)

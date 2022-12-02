@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ViewBackend.h"
+#include "xdg-shell-client-protocol.h"
 #include "xdg-shell-unstable-v6-client-protocol.h"
 #include <glib.h>
 #include <unordered_map>
@@ -66,14 +67,11 @@ private:
 #endif
 
     static const struct wl_registry_listener s_registryListener;
-    static const struct zxdg_shell_v6_listener s_xdgWmBaseListener;
     static const struct wl_pointer_listener s_pointerListener;
     static const struct wl_keyboard_listener s_keyboardListener;
     static const struct wl_touch_listener s_touchListener;
     static const struct wl_seat_listener s_seatListener;
     static const struct wl_callback_listener s_frameListener;
-    static const struct zxdg_surface_v6_listener s_xdgSurfaceListener;
-    static const struct zxdg_toplevel_v6_listener s_xdgToplevelListener;
 
 #if WPE_CHECK_VERSION(1, 11, 1)
     static bool onDOMFullscreenRequest(void* data, bool fullscreen);
@@ -134,12 +132,9 @@ private:
 
     struct wl_display* m_display { nullptr };
     struct wl_compositor* m_compositor { nullptr };
-    struct zxdg_shell_v6* m_xdg { nullptr };
     struct wl_seat* m_seat { nullptr };
     GSource* m_eventSource { nullptr };
     struct wl_surface* m_surface { nullptr };
-    struct zxdg_surface_v6* m_xdgSurface { nullptr };
-    struct zxdg_toplevel_v6* m_xdgToplevel { nullptr };
     struct wl_egl_window* m_eglWindow { nullptr };
     EGLContext m_eglContext { nullptr };
     EGLConfig m_eglConfig;
@@ -152,6 +147,26 @@ private:
 #if WPE_CHECK_VERSION(1, 11, 1)
     bool m_waiting_fullscreen_notify { false };
 #endif
+
+    struct XDGStable {
+        static const struct xdg_wm_base_listener s_wmListener;
+        static const struct xdg_surface_listener s_surfaceListener;
+        static const struct xdg_toplevel_listener s_toplevelListener;
+
+        struct xdg_wm_base* wm { nullptr };
+        struct xdg_surface* surface { nullptr };
+        struct xdg_toplevel* toplevel { nullptr };
+    } m_xdg;
+
+    struct XDGUnstable {
+        static const struct zxdg_shell_v6_listener s_shellListener;
+        static const struct zxdg_surface_v6_listener s_surfaceListener;
+        static const struct zxdg_toplevel_v6_listener s_toplevelListener;
+
+        struct zxdg_shell_v6* shell { nullptr };
+        struct zxdg_surface_v6* surface { nullptr };
+        struct zxdg_toplevel_v6* toplevel { nullptr };
+    } m_zxdg;
 };
 
 } // WPEToolingBackends

@@ -142,13 +142,6 @@ bool JSCell::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, u
     return thisObject->methodTable()->deletePropertyByIndex(thisObject, globalObject, identifier);
 }
 
-JSValue JSCell::toThis(JSCell* cell, JSGlobalObject* globalObject, ECMAMode ecmaMode)
-{
-    if (ecmaMode.isStrict())
-        return cell;
-    return cell->toObject(globalObject);
-}
-
 JSValue JSCell::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
     if (isString())

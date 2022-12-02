@@ -37,7 +37,28 @@ namespace WebCore {
 
 class Document;
 
-struct ResolvedURL;
+struct ResolvedURL {
+    String specifiedURLString;
+    URL resolvedURL;
+
+    bool isLocalURL() const;
+};
+
+inline ResolvedURL makeResolvedURL(URL&& resolvedURL)
+{
+    auto string = resolvedURL.string();
+    return { WTFMove(string), WTFMove(resolvedURL) };
+}
+
+inline bool operator==(const ResolvedURL& a, const ResolvedURL& b)
+{
+    return a.specifiedURLString == b.specifiedURLString && a.resolvedURL == b.resolvedURL;
+}
+
+inline bool operator!=(const ResolvedURL& a, const ResolvedURL& b)
+{
+    return !(a == b);
+}
 
 struct CSSParserContext {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -74,6 +95,7 @@ struct CSSParserContext {
     bool gradientPremultipliedAlphaInterpolationEnabled { false };
     bool gradientInterpolationColorSpacesEnabled { false };
     bool subgridEnabled { false };
+    bool masonryEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

@@ -39,6 +39,8 @@ public:
     static ExceptionOr<Ref<CSSMathMax>> create(Vector<Ref<CSSNumericValue>>&&);
     const CSSNumericArray& values() const;
 
+    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Max; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMax; }

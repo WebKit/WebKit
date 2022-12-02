@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 include(WebKitCommon)
 include(target/TargetWTF)
@@ -47,7 +47,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/mediasession"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
-    "${WEBCORE_DIR}/Modules/mediastream/libwebrtc"
     "${WEBCORE_DIR}/Modules/model-element"
     "${WEBCORE_DIR}/Modules/model-element/dummy"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
@@ -157,7 +156,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/mediarecorder"
     "${WEBCORE_DIR}/platform/mediastream"
-    "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
     "${WEBCORE_DIR}/platform/mediarecorder"
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/platform/mock/mediasource"
@@ -262,6 +260,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/cache/CacheQueryOptions.idl
     Modules/cache/DOMCache.idl
+    Modules/cache/MultiCacheQueryOptions.idl
     Modules/cache/DOMCacheStorage.idl
     Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
 
@@ -758,7 +757,9 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
     animation/CSSAnimation.idl
+    animation/CSSAnimationEvent.idl
     animation/CSSTransition.idl
+    animation/CSSTransitionEvent.idl
     animation/CompositeOperation.idl
     animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
@@ -916,7 +917,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/AbortSignal.idl
     dom/AbstractRange.idl
     dom/AddEventListenerOptions.idl
-    dom/AnimationEvent.idl
     dom/Attr.idl
     dom/BeforeUnloadEvent.idl
     dom/BroadcastChannel.idl
@@ -1043,7 +1043,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Touch.idl
     dom/TouchEvent.idl
     dom/TouchList.idl
-    dom/TransitionEvent.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/UIEventInit.idl
@@ -1161,6 +1160,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/TextMetrics.idl
     html/TimeRanges.idl
     html/URLSearchParams.idl
+    html/UserActivation.idl
     html/ValidityState.idl
     html/VideoFrameMetadata.idl
     html/VideoFrameRequestCallback.idl
@@ -1248,6 +1248,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/IntersectionObserverCallback.idl
     page/IntersectionObserverEntry.idl
     page/Location.idl
+    page/Navigator+UserActivation.idl
     page/Navigator.idl
     page/NavigatorCookies.idl
     page/NavigatorID.idl
@@ -1588,7 +1589,6 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferUsage.idl
     Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
     Modules/WebGPU/GPUCanvasConfiguration.idl
-    Modules/WebGPU/GPUCanvasContext.idl
     Modules/WebGPU/GPUColorDict.idl
     Modules/WebGPU/GPUColorTargetState.idl
     Modules/WebGPU/GPUColorWrite.idl
@@ -1722,6 +1722,7 @@ set(WebCore_CSS_VALUE_KEYWORDS
 set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/dialog.css
     ${WEBCORE_DIR}/css/fullscreen.css
+    ${WEBCORE_DIR}/css/horizontalFormControls.css
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/mathml.css
     ${WEBCORE_DIR}/css/plugIns.css
@@ -1853,7 +1854,6 @@ if (ENABLE_WEBGL)
         html/canvas/EXTColorBufferHalfFloat.cpp
         html/canvas/EXTFloatBlend.cpp
         html/canvas/EXTFragDepth.cpp
-        html/canvas/EXTProvokingVertex.cpp
         html/canvas/EXTShaderTextureLOD.cpp
         html/canvas/EXTTextureCompressionBPTC.cpp
         html/canvas/EXTTextureCompressionRGTC.cpp
@@ -1874,7 +1874,6 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLColorBufferFloat.cpp
         html/canvas/WebGLCompressedTextureASTC.cpp
-        html/canvas/WebGLCompressedTextureATC.cpp
         html/canvas/WebGLCompressedTextureETC.cpp
         html/canvas/WebGLCompressedTextureETC1.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
@@ -1895,6 +1894,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.cpp
         html/canvas/WebGLObject.cpp
         html/canvas/WebGLProgram.cpp
+        html/canvas/WebGLProvokingVertex.cpp
         html/canvas/WebGLQuery.cpp
         html/canvas/WebGLRenderbuffer.cpp
         html/canvas/WebGLRenderingContext.cpp
@@ -1920,13 +1920,13 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/EXTColorBufferHalfFloat.idl
     html/canvas/EXTFloatBlend.idl
     html/canvas/EXTFragDepth.idl
-    html/canvas/EXTProvokingVertex.idl
     html/canvas/EXTShaderTextureLOD.idl
     html/canvas/EXTTextureCompressionBPTC.idl
     html/canvas/EXTTextureCompressionRGTC.idl
     html/canvas/EXTTextureFilterAnisotropic.idl
     html/canvas/EXTTextureNorm16.idl
     html/canvas/EXTsRGB.idl
+    html/canvas/GPUCanvasContext.idl
     html/canvas/KHRParallelShaderCompile.idl
     html/canvas/OESDrawBuffersIndexed.idl
     html/canvas/OESElementIndexUint.idl
@@ -1942,7 +1942,6 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLBuffer.idl
     html/canvas/WebGLColorBufferFloat.idl
     html/canvas/WebGLCompressedTextureASTC.idl
-    html/canvas/WebGLCompressedTextureATC.idl
     html/canvas/WebGLCompressedTextureETC.idl
     html/canvas/WebGLCompressedTextureETC1.idl
     html/canvas/WebGLCompressedTexturePVRTC.idl
@@ -1960,6 +1959,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLMultiDraw.idl
     html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.idl
     html/canvas/WebGLProgram.idl
+    html/canvas/WebGLProvokingVertex.idl
     html/canvas/WebGLQuery.idl
     html/canvas/WebGLRenderbuffer.idl
     html/canvas/WebGLRenderingContext.idl
@@ -2037,20 +2037,20 @@ if (USE_XDGMIME)
 endif ()
 
 if (USE_LIBWEBRTC)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/libwebrtc/Source/"
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        "${THIRDPARTY_DIR}/libwebrtc/Source"
         "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
         "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/libvpx/source/libvpx"
-        "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
+        "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp"
+    )
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/mediastream/libwebrtc"
+        "${WEBCORE_DIR}/platform/libwebrtc"
+        "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
+    )
     list(APPEND WebCore_LIBRARIES webrtc)
-    list(APPEND WebCore_SOURCES
-        Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
-        Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp
+    list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+        "platform/SourcesLibWebRTC.txt"
     )
 endif ()
 
@@ -2341,14 +2341,15 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.cpp)
 
 # Generate CSS property names
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleDeclaration+PropertyNames.idl
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/makeprop.pl
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleDeclaration+PropertyNames.idl
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/process-css-properties.py
     DEPENDS ${WebCore_CSS_PROPERTY_NAMES}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
     COMMAND ${PERL_EXECUTABLE} -ne "print" ${WebCore_CSS_PROPERTY_NAMES} > ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json
-    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/makeprop.pl --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --gperf-executable "${GPERF_EXECUTABLE}"
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/process-css-properties.py --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --gperf-executable "${GPERF_EXECUTABLE}"
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp)
 list(APPEND WebCore_IDL_FILES ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleDeclaration+PropertyNames.idl)
@@ -2356,11 +2357,11 @@ list(APPEND WebCore_IDL_FILES ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleDeclaration
 # Generate CSS value keywords
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.in ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.h ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.gperf
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/makevalues.pl
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/process-css-values.py
     DEPENDS ${WebCore_CSS_VALUE_KEYWORDS}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
     COMMAND ${PERL_EXECUTABLE} -ne "print" ${WebCore_CSS_VALUE_KEYWORDS} > ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.in
-    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/makevalues.pl --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${CSS_VALUE_PLATFORM_DEFINES}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --gperf-executable "${GPERF_EXECUTABLE}"
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/process-css-values.py --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${CSS_VALUE_PLATFORM_DEFINES}" --gperf-executable "${GPERF_EXECUTABLE}"
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp)
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/parser/CSSParser.cpp CSSValueKeywords.h)
@@ -2597,9 +2598,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Namespace.cpp)
 
 WEBKIT_COMPUTE_SOURCES(WebCore)
 
-if (MSVC)
-    WEBKIT_ADD_PRECOMPILED_HEADER("WebCorePrefix.h" "WebCorePrefix.cpp" WebCore_SOURCES)
-endif ()
+target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore
@@ -2630,9 +2629,7 @@ if (CMAKE_COMPILER_IS_GNUCXX AND "${LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR}" MATC
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebCore -fno-tree-sra)
 endif ()
 
-if (MSVC)
-    WEBKIT_ADD_PRECOMPILED_HEADER("WebCoreTestSupportPrefix.h" "testing/js/WebCoreTestSupportPrefix.cpp" WebCoreTestSupport_SOURCES)
-endif ()
+target_precompile_headers(WebCoreTestSupport PRIVATE testing/js/WebCoreTestSupportPrefix.h)
 
 WEBKIT_COPY_FILES(Copy_WebCoreTestSupportPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport

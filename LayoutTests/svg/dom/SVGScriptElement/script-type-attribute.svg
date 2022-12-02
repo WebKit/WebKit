@@ -17,7 +17,7 @@ function test() {
         document.getElementById("p0").innerHTML = "FAIL";
 }
 </script>
-<foreignObject>
+<foreignObject width="100%" height="100">
 <xhtml:p>Test that getting/setting the type JS property on SVGScriptElement keeps sync with the type content attribute.</xhtml:p>
 <xhtml:span id="p0">PASS</xhtml:span>
 </foreignObject>

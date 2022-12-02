@@ -24,7 +24,7 @@
 #pragma once
 
 #include "Autofill.h"
-#include "FormAssociatedElement.h"
+#include "FormListedElement.h"
 #include "LabelableElement.h"
 
 #if ENABLE(AUTOCAPITALIZE)
@@ -39,16 +39,16 @@ class HTMLFormElement;
 class HTMLLegendElement;
 class ValidationMessage;
 
-// HTMLFormControlElement is the default implementation of FormAssociatedElement,
+// HTMLFormControlElement is the default implementation of FormListedElement,
 // and form-associated element implementations should use HTMLFormControlElement
 // unless there is a special reason.
-class HTMLFormControlElement : public LabelableElement, public FormAssociatedElement {
+class HTMLFormControlElement : public LabelableElement, public FormListedElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFormControlElement);
     friend class DelayedUpdateValidityScope;
 public:
     virtual ~HTMLFormControlElement();
 
-    HTMLFormElement* form() const final { return FormAssociatedElement::form(); }
+    HTMLFormElement* form() const final { return FormListedElement::form(); }
 
     WEBCORE_EXPORT String formEnctype() const;
     WEBCORE_EXPORT void setFormEnctype(const AtomString&);
@@ -117,7 +117,6 @@ public:
     virtual bool supportsReadOnly() const { return false; }
     bool isReadOnly() const { return supportsReadOnly() && m_hasReadOnlyAttribute; }
     bool isMutable() const { return !isDisabledFormControl() && !isReadOnly(); }
-    void updateReadOnlyState();
 
     WEBCORE_EXPORT String autocomplete() const;
     WEBCORE_EXPORT void setAutocomplete(const AtomString&);
@@ -188,8 +187,8 @@ private:
     HTMLElement& asHTMLElement() final { return *this; }
     const HTMLFormControlElement& asHTMLElement() const final { return *this; }
 
-    FormNamedItem* asFormNamedItem() final { return this; }
     FormAssociatedElement* asFormAssociatedElement() final { return this; }
+    FormListedElement* asFormListedElement() final { return this; }
 
     bool needsMouseFocusableQuirk() const;
 
@@ -244,5 +243,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFormControlElement)
     static bool isType(const WebCore::Element& element) { return element.isFormControlElement(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
-    static bool isType(const WebCore::FormAssociatedElement& element) { return element.isFormControlElement(); }
+    static bool isType(const WebCore::FormListedElement& element) { return element.isFormControlElement(); }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -384,13 +384,6 @@ JSObject* JSString::toObject(JSGlobalObject* globalObject) const
     return StringObject::create(globalObject->vm(), globalObject, const_cast<JSString*>(this));
 }
 
-JSValue JSString::toThis(JSCell* cell, JSGlobalObject* globalObject, ECMAMode ecmaMode)
-{
-    if (ecmaMode.isStrict())
-        return cell;
-    return StringObject::create(globalObject->vm(), globalObject, asString(cell));
-}
-
 bool JSString::getStringPropertyDescriptor(JSGlobalObject* globalObject, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     VM& vm = globalObject->vm();

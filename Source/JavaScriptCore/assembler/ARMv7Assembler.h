@@ -1372,7 +1372,7 @@ public:
             twoWordOp5i6Imm4Reg4EncodedImmSecond(right, lo16),
             twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOVT, hi16),
             twoWordOp5i6Imm4Reg4EncodedImmSecond(right, hi16),
-            static_cast<uint16_t>(OP_CMP_reg_T2 | left)
+            static_cast<uint16_t>(static_cast<uint16_t>(OP_CMP_reg_T2) | static_cast<uint16_t>(left))
         };
         performJITMemcpy(address, instruction, sizeof(uint16_t) * 5);
         cacheFlush(address, sizeof(uint16_t) * 5);
@@ -3037,7 +3037,7 @@ private:
 
         ALWAYS_INLINE void twoWordOp12Reg4FourFours(OpcodeID1 op, RegisterID reg, FourFours ff)
         {
-            m_buffer.putShort(op | reg);
+            m_buffer.putShort(static_cast<uint16_t>(op) | static_cast<uint16_t>(reg));
             m_buffer.putShort(ff.m_u.value);
         }
         
@@ -3070,19 +3070,19 @@ private:
 
         ALWAYS_INLINE void twoWordOp12Reg4Reg4Imm12(OpcodeID1 op, RegisterID reg1, RegisterID reg2, uint16_t imm)
         {
-            m_buffer.putShort(op | reg1);
+            m_buffer.putShort(static_cast<uint16_t>(op) | static_cast<uint16_t>(reg1));
             m_buffer.putShort((reg2 << 12) | imm);
         }
 
         ALWAYS_INLINE void twoWordOp12Reg4Reg4Reg4Imm8(OpcodeID1 op, RegisterID reg1, RegisterID reg2, RegisterID reg3, uint8_t imm)
         {
-            m_buffer.putShort(op | reg1);
+            m_buffer.putShort(static_cast<uint16_t>(op) | static_cast<uint16_t>(reg1));
             m_buffer.putShort((reg2 << 12) | (reg3 << 8) | imm);
         }
 
         ALWAYS_INLINE void twoWordOp12Reg40Imm3Reg4Imm20Imm5(OpcodeID1 op, RegisterID reg1, RegisterID reg2, uint16_t imm1, uint16_t imm2, uint16_t imm3)
         {
-            m_buffer.putShort(op | reg1);
+            m_buffer.putShort(static_cast<uint16_t>(op) | static_cast<uint16_t>(reg1));
             m_buffer.putShort((imm1 << 12) | (reg2 << 8) | (imm2 << 6) | imm3);
         }
 

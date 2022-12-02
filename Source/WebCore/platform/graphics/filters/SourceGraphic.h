@@ -36,7 +36,7 @@ private:
 
     unsigned numberOfEffectInputs() const override { return 0; }
 
-    bool supportsAcceleratedRendering() const override;
+    OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const override;
     std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

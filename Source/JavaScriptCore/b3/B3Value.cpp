@@ -922,6 +922,7 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
             return Int32;
         case Void:
         case Tuple:
+        case V128:
             ASSERT_NOT_REACHED();
         }
         return Void;

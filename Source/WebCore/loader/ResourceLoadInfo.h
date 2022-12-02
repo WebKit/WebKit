@@ -79,7 +79,7 @@ constexpr ResourceFlags AllResourceFlags = LoadTypeMask | ResourceTypeMask | Loa
 // The values -1 and -2 are used for removed and empty values in HashTables.
 static constexpr uint64_t ActionFlagMask = 0x0007FFFF00000000;
 
-OptionSet<ResourceType> toResourceType(CachedResource::Type, ResourceRequestBase::Requester);
+OptionSet<ResourceType> toResourceType(CachedResource::Type, ResourceRequestRequester);
 std::optional<OptionSet<ResourceType>> readResourceType(StringView);
 std::optional<OptionSet<LoadType>> readLoadType(StringView);
 std::optional<OptionSet<LoadContext>> readLoadContext(StringView);

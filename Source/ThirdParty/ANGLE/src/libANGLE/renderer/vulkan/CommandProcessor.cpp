@@ -9,7 +9,6 @@
 
 #include "libANGLE/renderer/vulkan/CommandProcessor.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/trace.h"
 
 namespace rx
 {

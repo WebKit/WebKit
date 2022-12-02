@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#include "AudioUtilitiesCocoa.h"
 #include "CAAudioStreamDescription.h"
 #include "WebAudioBufferList.h"
 
@@ -67,9 +68,7 @@ void MockAudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& co
 void MockAudioDestinationCocoa::tick()
 {
     m_workQueue->dispatch([this, protectedThis = Ref { *this }, sampleRate = sampleRate(), numberOfFramesToProcess = m_numberOfFramesToProcess] {
-        AudioStreamBasicDescription streamFormat;
-        getAudioStreamBasicDescription(streamFormat);
-
+        AudioStreamBasicDescription streamFormat = audioStreamBasicDescriptionForAudioBus(m_outputBus);
         WebAudioBufferList webAudioBufferList { streamFormat, numberOfFramesToProcess };
         render(0., 0, numberOfFramesToProcess, webAudioBufferList.list());
     });

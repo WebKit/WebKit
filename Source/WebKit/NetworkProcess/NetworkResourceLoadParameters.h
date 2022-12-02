@@ -73,6 +73,7 @@ public:
     URL documentURL;
 
     bool isCrossOriginOpenerPolicyEnabled { false };
+    bool isClearSiteDataHeaderEnabled { false };
     bool isDisplayingInitialEmptyDocument { false };
     WebCore::SandboxFlags effectiveSandboxFlags { WebCore::SandboxNone };
     URL openerURL;

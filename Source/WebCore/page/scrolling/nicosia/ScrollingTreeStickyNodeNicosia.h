@@ -30,6 +30,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "NicosiaPlatformLayer.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingTreeStickyNode.h"
 #include <wtf/RefPtr.h>

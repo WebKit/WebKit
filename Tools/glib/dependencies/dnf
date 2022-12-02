@@ -3,36 +3,65 @@
 PACKAGES=(
     # These are dependencies necessary for building WebKitGTK/WPE.
     alsa-lib-devel
-    autoconf
-    automake
+    at-spi2-atk-devel
+    atk-devel
     bubblewrap
+    cairo-devel
     cmake
     gcc-c++
+    gi-docgen
+    gobject-introspection-devel
     gperf
     gstreamer1-devel
     gstreamer1-plugins-bad-free-devel
     gstreamer1-plugins-base-devel
-    gtk-doc
     intltool
+    libatomic
+    libavif-devel
     lcms2-devel
+    libepoxy-devel
     libevent-devel
+    libgcrypt-devel
     libjpeg-turbo-devel
+    libjxl-devel
     libkate-devel
+    libmount-devel
     libpng-devel
     libseccomp-devel
+    libsoup3-devel
+    libsqlite3x-devel
+    libsrtp-devel
     libtasn1-devel
+    libvorbis-devel
+    libv4l-devel
+    libvpx-devel
     libwebp-devel
+    libwpe-devel
+    libxkbcommon-x11-devel
     libxslt-devel
+    mesa-libgbm-devel
+    mesa-libGL-devel
     ninja-build
     openjpeg2-devel
+    openssl-devel
+    opus-devel
     patch
+    perl-autouse
+    perl-English
     perl-File-Copy-Recursive
+    perl-FindBin
     perl-JSON-PP
     perl-Time-HiRes
     perl-version
+    pulseaudio-libs-devel
     ruby
     sqlite-devel
     systemd-devel
+    unifdef
+    wayland-devel
+    wayland-protocols-devel
+    woff2-devel
+    wpebackend-fdo-devel
 
     # These are dependencies necessary for running tests.
     curl
@@ -55,10 +84,13 @@ PACKAGES=(
     expat-devel
     fdk-aac-free-devel
     git
+    gnutls-devel
     gsettings-desktop-schemas-devel
     gyp
+    itstool
     libproxy-devel
     libpsl-devel
+    libtheora-devel
     libuuid-devel
     libxcb-devel
     mesa-libEGL-devel

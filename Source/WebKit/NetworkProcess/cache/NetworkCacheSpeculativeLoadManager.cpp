@@ -346,7 +346,7 @@ bool SpeculativeLoadManager::shouldRegisterLoad(const WebCore::ResourceRequest& 
     return true;
 }
 
-void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const ResourceRequest& request, const Key& resourceKey, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled)
+void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const ResourceRequest& request, const Key& resourceKey, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(request.url().protocolIsInHTTPFamily());
@@ -354,7 +354,7 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
     if (!shouldRegisterLoad(request))
         return;
 
-    auto isMainResource = request.requester() == ResourceRequest::Requester::Main;
+    auto isMainResource = request.requester() == ResourceRequestRequester::Main;
     if (isMainResource) {
         // Mark previous load in this frame as completed if necessary.
         if (auto* pendingFrameLoad = m_pendingFrameLoads.get(frameID))
@@ -370,12 +370,12 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
         m_pendingFrameLoads.add(frameID, pendingFrameLoad.copyRef());
 
         // Retrieve the subresources entry if it exists to start speculative revalidation and to update it.
-        retrieveSubresourcesEntry(resourceKey, [this, weakThis = WeakPtr { *this }, frameID, pendingFrameLoad = WTFMove(pendingFrameLoad), requestIsAppInitiated = request.isAppInitiated(), isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled](std::unique_ptr<SubresourcesEntry> entry) {
+        retrieveSubresourcesEntry(resourceKey, [this, weakThis = WeakPtr { *this }, frameID, pendingFrameLoad = WTFMove(pendingFrameLoad), requestIsAppInitiated = request.isAppInitiated(), isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy](std::unique_ptr<SubresourcesEntry> entry) {
             if (!weakThis)
                 return;
 
             if (entry)
-                startSpeculativeRevalidation(frameID, *entry, requestIsAppInitiated, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled);
+                startSpeculativeRevalidation(frameID, *entry, requestIsAppInitiated, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy);
 
             pendingFrameLoad->setExistingSubresourcesEntry(WTFMove(entry));
         });
@@ -466,7 +466,7 @@ void SpeculativeLoadManager::preconnectForSubresource(const SubresourceInfo& sub
     parameters.webFrameID = frameID.frameID;
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
-    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.request = constructRevalidationRequest(subresourceInfo.key(), subresourceInfo, entry);
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
@@ -478,7 +478,7 @@ void SpeculativeLoadManager::preconnectForSubresource(const SubresourceInfo& sub
 #endif
 }
 
-void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subresourceInfo, std::unique_ptr<Entry> entry, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled)
+void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subresourceInfo, std::unique_ptr<Entry> entry, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
 {
     ASSERT(!entry || entry->needsValidation());
 
@@ -494,11 +494,11 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
     // response sets cookies that are needed for subsequent loads.
     if (pendingLoad && !pendingLoad->didReceiveMainResourceResponse() && subresourceInfo.isFirstParty()) {
         preconnectForSubresource(subresourceInfo, entry.get(), frameID, isNavigatingToAppBoundDomain);
-        pendingLoad->addPostMainResourceResponseTask([this, subresourceInfo, entry = WTFMove(entry), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled]() mutable {
+        pendingLoad->addPostMainResourceResponseTask([this, subresourceInfo, entry = WTFMove(entry), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy]() mutable {
             if (m_pendingPreloads.contains(subresourceInfo.key()))
                 return;
 
-            revalidateSubresource(subresourceInfo, WTFMove(entry), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled);
+            revalidateSubresource(subresourceInfo, WTFMove(entry), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy);
         });
         return;
     }
@@ -507,7 +507,7 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
 
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
 
-    auto revalidator = makeUnique<SpeculativeLoad>(m_cache, frameID, revalidationRequest, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled, [this, key, revalidationRequest, frameID](std::unique_ptr<Entry> revalidatedEntry) {
+    auto revalidator = makeUnique<SpeculativeLoad>(m_cache, frameID, revalidationRequest, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy, [this, key, revalidationRequest, frameID](std::unique_ptr<Entry> revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
 
@@ -563,13 +563,13 @@ static bool canRevalidate(const SubresourceInfo& subresourceInfo, const Entry* e
     return false;
 }
 
-void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo& subresourceInfo, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled)
+void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo& subresourceInfo, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
 {
     if (m_pendingPreloads.contains(key))
         return;
     m_pendingPreloads.add(key, nullptr);
     
-    retrieveEntryFromStorage(subresourceInfo, [this, weakThis = WeakPtr { *this }, key, subresourceInfo, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled](std::unique_ptr<Entry> entry) {
+    retrieveEntryFromStorage(subresourceInfo, [this, weakThis = WeakPtr { *this }, key, subresourceInfo, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy](std::unique_ptr<Entry> entry) {
         if (!weakThis)
             return;
 
@@ -585,7 +585,7 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
         
         if (!entry || entry->needsValidation()) {
             if (canRevalidate(subresourceInfo, entry.get()))
-                revalidateSubresource(subresourceInfo, WTFMove(entry), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled);
+                revalidateSubresource(subresourceInfo, WTFMove(entry), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy);
             return;
         }
         
@@ -593,13 +593,13 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
     });
 }
 
-void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry, bool requestIsAppInitiated, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled)
+void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry, bool requestIsAppInitiated, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
 {
     for (auto& subresourceInfo : entry.subresources()) {
         auto& key = subresourceInfo.key();
         subresourceInfo.setIsAppInitiated(requestIsAppInitiated);
         if (!subresourceInfo.isTransient())
-            preloadEntry(key, subresourceInfo, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityEnabled);
+            preloadEntry(key, subresourceInfo, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy);
         else {
             LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Not preloading '%s' because it is marked as transient", key.identifier().utf8().data());
             m_notPreloadedEntries.add(key, makeUnique<ExpiringEntry>([this, key, frameID] {

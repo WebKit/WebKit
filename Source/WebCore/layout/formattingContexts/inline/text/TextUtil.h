@@ -55,6 +55,12 @@ public:
     enum class IncludeHyphen : uint8_t { No, Yes };
     static FallbackFontList fallbackFontsForText(StringView, const RenderStyle&, IncludeHyphen);
 
+    struct EnclosingAscentDescent {
+        InlineLayoutUnit ascent { 0.f };
+        InlineLayoutUnit descent { 0.f };
+    };
+    static EnclosingAscentDescent enclosingGlyphBoundsForText(StringView, const RenderStyle&);
+
     struct WordBreakLeft {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };

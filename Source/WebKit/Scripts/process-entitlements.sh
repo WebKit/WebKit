@@ -114,6 +114,7 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.private.tcc.allow array
             plistbuddy Add :com.apple.private.tcc.allow:0 string kTCCServiceScreenCapture
             plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+            plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
@@ -160,6 +161,19 @@ function mac_process_network_entitlements()
     fi
 }
 
+function webcontent_sandbox_entitlements()
+{
+    plistbuddy Add :com.apple.private.security.mutable-state-flags array
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:1 string EnableExperimentalSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string EnableExperimentalSandboxWithProbability
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:3 string BlockIOKitInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags array
+    plistbuddy Add :com.apple.private.security.enable-state-flags:0 string EnableExperimentalSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:1 string EnableExperimentalSandboxWithProbability
+    plistbuddy Add :com.apple.private.security.enable-state-flags:2 string BlockIOKitInWebContentSandbox
+}
+
 function mac_process_webcontent_shared_entitlements()
 {
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
@@ -184,10 +198,7 @@ function mac_process_webcontent_shared_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
-            plistbuddy Add :com.apple.private.security.mutable-state-flags array
-            plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
-            plistbuddy Add :com.apple.private.security.mutable-state-flags:1 string EnableExperimentalSandbox
-            plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string EnableExperimentalSandboxWithProbability
+            webcontent_sandbox_entitlements
             plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
@@ -337,10 +348,6 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.security.message-filter bool YES
-    plistbuddy Add :com.apple.private.security.mutable-state-flags array
-    plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
-    plistbuddy Add :com.apple.private.security.mutable-state-flags:1 string EnableExperimentalSandbox
-    plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string EnableExperimentalSandboxWithProbability
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
@@ -349,6 +356,7 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
     plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
+    webcontent_sandbox_entitlements
 }
 
 function ios_family_process_webcontent_entitlements()

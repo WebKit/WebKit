@@ -467,6 +467,102 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_sticky_remote(self):
+        with mocks.remote.GitHub(remote='github.example.com/WebKit/WebKit-security') as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes={
+                'fork': 'https://{}/Contributor/WebKit'.format(remote.hosts[0]),
+                'security': 'https://{}/WebKit/WebKit-security'.format(remote.hosts[0]),
+                'security-fork': 'https://{}/Contributor/WebKit-security'.format(remote.hosts[0]),
+            },
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch', '--remote', 'security'),
+                    path=self.path,
+                ))
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(1, program.main(
+                    args=('pull-request', '-v', '--no-history', '--defaults'),
+                    path=self.path,
+                ))
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'eng/pr-branch' was previously made against the 'security' remote\n"
+            "Prevailing issue indicates it should be made against 'origin'\n"
+            "Cannot automatically determine which is correct, canceling pull-request\n",
+        )
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                '    Found 1 commit...',
+                "Amending commit...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+            ],
+        )
+
+    def test_github_sticky_remote_prompt(self):
+        with mocks.remote.GitHub(remote='github.example.com/WebKit/WebKit-security') as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes={
+                'fork': 'https://{}/Contributor/WebKit'.format(remote.hosts[0]),
+                'security': 'https://{}/WebKit/WebKit-security'.format(remote.hosts[0]),
+                'security-fork': 'https://{}/Contributor/WebKit-security'.format(remote.hosts[0]),
+            },
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch', '--remote', 'security'),
+                    path=self.path,
+                ))
+
+            with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('2'):
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "'eng/pr-branch' was previously made against the 'security' remote, but the prevailing issue indicates it should be made against 'origin'\n"
+            "Which remote would you like to make your pull request against?:\n"
+            "    1) [Cancel]\n"
+            "    2) Use security (previous)\n"
+            "    3) Use origin (new)\n"
+            ": \n"
+            "Making the PR against the 'security' remote\n"
+            "Updated 'PR 1 | [Testing] Amending commits'!\n"
+            "https://github.example.com/WebKit/WebKit-security/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                '    Found 1 commit...',
+                "Amending commit...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR #1 found.',
+                'Checking PR labels for active labels...',
+                "Pushing 'eng/pr-branch' to 'security-fork'...",
+                "Syncing 'main' to remote 'security-fork'",
+                "Updating pull-request for 'eng/pr-branch'...",
+            ],
+        )
+
     def test_github_append(self):
         with mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
@@ -598,7 +694,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -655,7 +750,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -754,7 +848,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -812,20 +905,20 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/1'\n"
-            "Your issue is redacted, diverting to a secure, non-origin remote you have access to.\n"
-            "Error. You do not have access to a secure, non-origin remote\n"
+            "https://bugs.example.com/show_bug.cgi?id=1 is considered the primary issue for your pull request\n"
+            "https://bugs.example.com/show_bug.cgi?id=1 is a Bugzilla and is thus redacted\n"
+            "Pull request needs to be sent to a secure remote for review\n"
             "Would you like to proceed anyways? \n"
             " (Yes/[No]): \n"
             "Created 'PR 1 | Example issue 1'!\n"
             "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
-        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), 'Error. You do not have access to a secure remote to make a pull request for a redacted issue\n')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
@@ -958,7 +1051,6 @@ No pre-PR checks to run""")
             gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Text')
-            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),

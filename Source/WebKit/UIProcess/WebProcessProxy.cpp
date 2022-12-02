@@ -314,8 +314,7 @@ WebProcessProxy::~WebProcessProxy()
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
 #if HAVE(CVDISPLAYLINK)
-    if (state() == State::Running)
-        processPool().stopDisplayLinks(*connection());
+    processPool().stopDisplayLinks(*this);
 #endif
 
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
@@ -348,6 +347,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
         RELEASE_ASSERT(m_pageMap.isEmpty());
         RELEASE_ASSERT(!m_suspendedPageCount);
         RELEASE_ASSERT(m_provisionalPages.computesEmpty());
+        m_previouslyApprovedFilePaths.clear();
     }
 
     ASSERT(m_isInProcessCache != value);
@@ -507,6 +507,10 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::singleton().initializeConnection(connection);
 #endif
+
+#if HAVE(CVDISPLAYLINK)
+    m_displayLinkClient.setConnection(&connection);
+#endif
 }
 
 void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
@@ -515,7 +519,8 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
     ASSERT_UNUSED(connection, this->connection() == &connection);
 
 #if HAVE(CVDISPLAYLINK)
-    processPool().stopDisplayLinks(connection);
+    m_displayLinkClient.setConnection(nullptr);
+    processPool().stopDisplayLinks(*this);
 #endif
 }
 
@@ -621,6 +626,13 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
         RELEASE_ASSERT(m_processPool);
         m_processPool->pageBeginUsingWebsiteDataStore(webPage.identifier(), webPage.websiteDataStore());
     }
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())
+        setRunningBoardThrottlingEnabled();
+#endif
+    if (!webPage.preferences().shouldTakeSuspendedAssertions())
+        m_throttler.setShouldTakeSuspendedAssertion(false);
 
     markProcessAsRecentlyUsed();
     m_pageMap.set(webPage.identifier(), &webPage);
@@ -827,7 +839,7 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
     }
 }
 
-void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
+void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)
 {
     auto* dataStore = websiteDataStore();
     if (!dataStore) {
@@ -1086,10 +1098,19 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         connection()->setIgnoreInvalidMessageForTesting();
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (connection()) {
         if (xpc_connection_t xpcConnection = connection()->xpcConnection())
             m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
+    }
+
+    for (const auto& page : m_pageMap.values()) {
+#if PLATFORM(MAC)
+        if (page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())
+            setRunningBoardThrottlingEnabled();
+#endif
+        if (!page->preferences().shouldTakeSuspendedAssertions())
+            m_throttler.setShouldTakeSuspendedAssertion(false);
     }
 #endif
 
@@ -1112,6 +1133,18 @@ void WebProcessProxy::didDestroyFrame(WebCore::FrameIdentifier frameID, WebPageP
 auto WebProcessProxy::visiblePageToken() const -> VisibleWebPageToken
 {
     return m_visiblePageCounter.count();
+}
+
+void WebProcessProxy::addPreviouslyApprovedFileURL(const URL& url)
+{
+    ASSERT(url.isLocalFile());
+    m_previouslyApprovedFilePaths.add(url.fileSystemPath());
+}
+
+bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
+{
+    ASSERT(url.isLocalFile());
+    return m_previouslyApprovedFilePaths.contains(url.fileSystemPath());
 }
 
 RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)
@@ -1832,6 +1865,7 @@ void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, 
     auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;
     sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, workerType, completionHandler = WTFMove(completionHandler)]() mutable {
 #if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(this);
         UNUSED_PARAM(workerType);
 #endif
         if (weakThis)

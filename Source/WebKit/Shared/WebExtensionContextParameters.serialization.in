@@ -21,7 +21,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+
+file_extension: mm
+
 struct WebKit::WebExtensionContextParameters {
     WebKit::WebExtensionContextIdentifier identifier;
+
+#if PLATFORM(COCOA)
+    URL baseURL;
+    String uniqueIdentifier;
+    RetainPtr<NSDictionary> manifest;
+    double manifestVersion;
+    bool testingMode;
+#endif
 }
+
 #endif

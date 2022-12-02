@@ -62,6 +62,7 @@ public:
         Rotation rotation { Rotation::None };
         WebCore::IntSize size;
         uint32_t pixelFormat { 0 };
+        WebCore::PlatformVideoColorSpace colorSpace;
 
         template<typename Encoder> void encode(Encoder&) const;
         template<typename Decoder> static std::optional<Properties> decode(Decoder&);
@@ -108,7 +109,7 @@ private:
 
 template<typename Encoder> void RemoteVideoFrameProxy::Properties::encode(Encoder& encoder) const
 {
-    encoder << reference << presentationTime << isMirrored << rotation << size << pixelFormat;
+    encoder << reference << presentationTime << isMirrored << rotation << size << pixelFormat << colorSpace;
 }
 
 template<typename Decoder> std::optional<RemoteVideoFrameProxy::Properties> RemoteVideoFrameProxy::Properties::decode(Decoder& decoder)
@@ -119,9 +120,10 @@ template<typename Decoder> std::optional<RemoteVideoFrameProxy::Properties> Remo
     auto rotation = decoder.template decode<Rotation>();
     auto size = decoder.template decode<WebCore::IntSize>();
     auto pixelFormat = decoder.template decode<uint32_t>();
+    auto colorSpace = decoder.template decode<WebCore::PlatformVideoColorSpace>();
     if (!decoder.isValid())
         return std::nullopt;
-    return Properties { WTFMove(*reference), WTFMove(*presentationTime), *isMirrored, *rotation, *size, *pixelFormat };
+    return Properties { WTFMove(*reference), WTFMove(*presentationTime), *isMirrored, *rotation, *size, *pixelFormat, *colorSpace };
 }
 
 TextStream& operator<<(TextStream&, const RemoteVideoFrameProxy::Properties&);

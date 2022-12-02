@@ -9,5 +9,5 @@ PASS Button with inert atribute is unfocusable.
 PASS All focusable elements inside inert subtree are unfocusable
 PASS Can get inert via property
 PASS Elements inside of inert subtrees return false when getting 'inert'
-FAIL Setting inert via property correctly modifies inert state assert_equals: expected true but got false
+PASS Setting inert via property correctly modifies inert state
 

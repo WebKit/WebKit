@@ -53,6 +53,18 @@ class TestRelationship(TestCase):
                 message='Cherry-pick 123@main (r120). <rdar://54321>',
             ))
         )
+        self.assertEqual(
+            ('original', ['123@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='(partial) Cherry-pick of 123@main. <rdar://54321>',
+            ))
+        )
+        self.assertEqual(
+            ('original', ['123@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Cherry-picked 123@main. <rdar://54321>',
+            ))
+        )
 
     def test_revert(self):
         self.assertEqual(
@@ -91,6 +103,20 @@ class TestRelationship(TestCase):
             ('follow-up to', ['1230@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Test-addition (1230@main)',
+            ))
+        )
+
+    def test_double_revert(self):
+        self.assertEqual(
+            ('original', ['1230@main', '0123456789ab']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Reverts "Revert 1230@main (0123456789ab)"',
+            ))
+        )
+        self.assertEqual(
+            ('original', ['1230@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Revert "Revert 1230@main, it broke the build"',
             ))
         )
 
@@ -195,6 +221,50 @@ class TestTrace(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             '6@main | deadbeef1234 | Revert [5@main]\n    reverts 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_revert_c(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='Revert "5@main"', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | Revert "5@main"\n    reverts 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_revert_cherry_pick(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.commits['main'].append(Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='Cherry-pick a30ce8494bf1. rdar://problem/1234', timestamp=int(time.time()),
+                author=repo.head.author,
+            ))
+            repo.commits['main'].append(Commit(
+                hash='feebdaed4321', revision=11, identifier='7@main',
+                message='Revert "Cherry-pick a30ce8494bf1. rdar://problem/1234"', timestamp=int(time.time()),
+                author=repo.head.author,
+            ))
+
+            repo.head = repo.commits['main'][-1]
+
+            self.assertEqual(0, program.main(
+                args=('trace', '7@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '7@main | feebdaed4321 | Revert "Cherry-pick a30ce8494bf1. rdar://problem/1234"\n    reverts 2.1@branch-a | a30ce8494bf1 | 3rd commit\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
 

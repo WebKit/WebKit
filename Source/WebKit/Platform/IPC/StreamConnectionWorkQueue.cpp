@@ -112,11 +112,14 @@ void StreamConnectionWorkQueue::startProcessingThread()
             processStreams();
             if (m_shouldQuit) {
                 processStreams();
+                WTF::Function<void()> cleanup = nullptr;
                 {
                     Locker locker { m_lock };
-                    if (m_cleanupFunction)
-                        m_cleanupFunction();
+                    cleanup = WTFMove(m_cleanupFunction);
+
                 }
+                if (cleanup)
+                    cleanup();
                 return;
             }
             m_wakeUpSemaphore.wait();

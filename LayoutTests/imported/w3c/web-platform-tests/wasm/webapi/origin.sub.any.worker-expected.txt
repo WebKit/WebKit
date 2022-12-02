@@ -1,3 +1,5 @@
+Blocked access to external URL http://www.localhost:8800/wasm/incrementer.wasm
+Blocked access to external URL http://www.localhost:8800/wasm/incrementer.wasm
 
 PASS Opaque response: compileStreaming
 PASS Opaque redirect response: compileStreaming

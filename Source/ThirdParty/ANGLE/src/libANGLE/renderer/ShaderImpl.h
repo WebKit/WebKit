@@ -11,9 +11,9 @@
 
 #include <functional>
 
+#include "common/WorkerThread.h"
 #include "common/angleutils.h"
 #include "libANGLE/Shader.h"
-#include "libANGLE/WorkerThread.h"
 
 namespace gl
 {

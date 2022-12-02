@@ -385,6 +385,13 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideo
         m_videoElementInPictureInPicture = nullptr;
 
     auto contextId = m_videoElements.get(&videoElement);
+    if (!contextId.isValid()) {
+        // We have somehow managed to be asked to exit video fullscreen
+        // for a video element which was either never in fullscreen or
+        // has already been removed. Bail.
+        ASSERT_NOT_REACHED();
+        return;
+    }
     auto& interface = ensureInterface(contextId);
 
     setCurrentlyInFullscreen(interface, false);
@@ -634,7 +641,7 @@ void VideoFullscreenManager::fullscreenMayReturnToInline(PlaybackSessionContextI
     m_page->send(Messages::VideoFullscreenManagerProxy::PreparedToReturnToInline(contextId, true, inlineVideoFrame(*model.videoElement())));
 }
 
-void VideoFullscreenManager::requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier contextId, Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUID::AsyncReply&& reply)
+void VideoFullscreenManager::requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& reply)
 {
     ensureModel(contextId).requestRouteSharingPolicyAndContextUID(WTFMove(reply));
 }

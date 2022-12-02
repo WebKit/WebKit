@@ -27,7 +27,7 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
 // https://drafts.css-houdini.org/css-typed-om/#csshwb
 [
-    EnabledBySetting=CSSTypedOMEnabled,
+    EnabledBySetting=CSSTypedOMEnabled&CSSTypedOMColorEnabled,
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
 ] interface CSSHWB : CSSColorValue {

@@ -23,6 +23,9 @@
 #import "RTCH265ProfileLevelId.h"
 #import "RTCVideoDecoderH265.h"
 #endif
+#if !defined(DISABLE_LIBAOM_AV1)
+#import "sdk/objc/api/video_codec/RTCVideoDecoderAV1.h"
+#endif
 
 #import <VideoToolbox/VideoToolbox.h>
 
@@ -31,9 +34,10 @@
   bool _supportsVP9Profile0;
   bool _supportsVP9Profile2;
   bool _supportsVP9VTB;
+  bool _supportsAv1;
 }
 
-- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 vp9VTB:(bool)supportsVP9VTB
+- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 vp9VTB:(bool)supportsVP9VTB av1:(bool)supportsAv1
 {
   self = [super init];
   if (self) {
@@ -42,7 +46,7 @@
       _supportsVP9Profile2 = supportsVP9Profile2;
       // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
       _supportsVP9VTB = (supportsVP9Profile0 || supportsVP9Profile2) && supportsVP9VTB;
-
+      _supportsAv1 = supportsAv1;
   }
   return self;
 }
@@ -93,7 +97,11 @@
     }]];
   }
 #endif
-
+#if !defined(DISABLE_LIBAOM_AV1)
+  if (_supportsAv1) {
+    [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecAv1Name]];
+  }
+#endif
   return codecs;
 }
 
@@ -114,7 +122,11 @@
         return [RTCVideoDecoderVP9 vp9Decoder];
       }
 #endif
+#if !defined(DISABLE_LIBAOM_AV1)
+  } else if ([info.name isEqualToString:kRTCVideoCodecAv1Name]) {
+    return [RTCVideoDecoderAV1 av1Decoder];
   }
+#endif
 
   return nil;
 }

@@ -11,7 +11,7 @@ jsTestIsAsync = true;
 
 if (window.internals) {
     internals.settings.setAllowDisplayOfInsecureContent(true);
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 }
 
 window.onmessage = function(event) {
@@ -19,7 +19,7 @@ window.onmessage = function(event) {
     // Should be the origin, not the full URL, because we are cross-origin.
     shouldBeEqualToString("referrer", "https://127.0.0.1:8443/");
     if (window.internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
     finishJSTest();
 }
 </script>

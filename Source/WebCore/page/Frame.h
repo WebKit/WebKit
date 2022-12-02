@@ -305,8 +305,7 @@ private:
 
     void dropChildren();
 
-    bool isLocalFrame() const final { return true; }
-    bool isRemoteFrame() const final { return false; }
+    FrameType frameType() const final { return FrameType::Local; }
 
     AbstractDOMWindow* virtualWindow() const final;
 
@@ -388,5 +387,5 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Frame&);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Frame)
-    static bool isType(const WebCore::AbstractFrame& frame) { return frame.isLocalFrame(); }
+static bool isType(const WebCore::AbstractFrame& frame) { return frame.frameType() == WebCore::AbstractFrame::FrameType::Local; }
 SPECIALIZE_TYPE_TRAITS_END()

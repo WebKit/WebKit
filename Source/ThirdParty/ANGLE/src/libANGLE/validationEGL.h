@@ -56,26 +56,28 @@ struct ValidationContext
 
 // Object validation
 bool ValidateDisplay(const ValidationContext *val, const Display *display);
-bool ValidateSurface(const ValidationContext *val, const Display *display, const Surface *surface);
+bool ValidateSurface(const ValidationContext *val, const Display *display, SurfaceID surfaceID);
 bool ValidateConfig(const ValidationContext *val, const Display *display, const Config *config);
-bool ValidateContext(const ValidationContext *val,
-                     const Display *display,
-                     const gl::Context *context);
-bool ValidateImage(const ValidationContext *val, const Display *display, const Image *image);
+bool ValidateContext(const ValidationContext *val, const Display *display, gl::ContextID contextID);
+bool ValidateImage(const ValidationContext *val, const Display *display, ImageID imageID);
 bool ValidateDevice(const ValidationContext *val, const Device *device);
 bool ValidateSync(const ValidationContext *val, const Display *display, const Sync *sync);
 
 // Return the requested object only if it is valid (otherwise nullptr)
 const Thread *GetThreadIfValid(const Thread *thread);
 const Display *GetDisplayIfValid(const Display *display);
-const Surface *GetSurfaceIfValid(const Display *display, const Surface *surface);
-const Image *GetImageIfValid(const Display *display, const Image *image);
+const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID);
+const Image *GetImageIfValid(const Display *display, ImageID imageID);
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream);
-const gl::Context *GetContextIfValid(const Display *display, const gl::Context *context);
+const gl::Context *GetContextIfValid(const Display *display, gl::ContextID contextID);
 const Device *GetDeviceIfValid(const Device *device);
 const Sync *GetSyncIfValid(const Display *display, const Sync *sync);
+const LabeledObject *GetLabeledObjectIfValid(Thread *thread,
+                                             const Display *display,
+                                             ObjectType objectType,
+                                             EGLObjectKHR object);
 LabeledObject *GetLabeledObjectIfValid(Thread *thread,
-                                       const Display *display,
+                                       Display *display,
                                        ObjectType objectType,
                                        EGLObjectKHR object);
 
@@ -109,6 +111,15 @@ typename std::enable_if<std::is_enum<PackedT>::value, PackedT>::type PackParam(F
     return FromEGLenum<PackedT>(from);
 }
 
+// Second case: handling resource ids.
+template <typename PackedT,
+          typename FromT,
+          typename std::enable_if<IsResourceIDType<PackedT>::value>::type * = nullptr>
+PackedT PackParam(FromT from)
+{
+    return {static_cast<GLuint>(reinterpret_cast<uintptr_t>(from))};
+}
+
 // This and the next 2 template specializations handle distinguishing between EGLint, EGLAttrib
 // and other. This is needed because on some architectures EGLint and EGLAttrib are not the same
 // base type. Previously the code conditionally compiled 2 specializations on 64 bit but it turns
@@ -116,7 +127,7 @@ typename std::enable_if<std::is_enum<PackedT>::value, PackedT>::type PackParam(F
 // different did not hold.
 template <typename PackedT,
           typename FromT,
-          typename std::enable_if<!std::is_enum<PackedT>::value>::type *              = nullptr,
+          typename std::enable_if<!std::is_enum<PackedT>::value>::type              * = nullptr,
           typename std::enable_if<std::is_same<FromT, const EGLint *>::value>::type * = nullptr>
 typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
 {
@@ -125,8 +136,8 @@ typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
 
 template <typename PackedT,
           typename FromT,
-          typename std::enable_if<!std::is_enum<PackedT>::value>::type *                 = nullptr,
-          typename std::enable_if<!std::is_same<FromT, const EGLint *>::value>::type *   = nullptr,
+          typename std::enable_if<!std::is_enum<PackedT>::value>::type                 * = nullptr,
+          typename std::enable_if<!std::is_same<FromT, const EGLint *>::value>::type   * = nullptr,
           typename std::enable_if<std::is_same<FromT, const EGLAttrib *>::value>::type * = nullptr>
 typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
 {
@@ -135,12 +146,13 @@ typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
 
 template <typename PackedT,
           typename FromT,
-          typename std::enable_if<!std::is_enum<PackedT>::value>::type *                  = nullptr,
-          typename std::enable_if<!std::is_same<FromT, const EGLint *>::value>::type *    = nullptr,
-          typename std::enable_if<!std::is_same<FromT, const EGLAttrib *>::value>::type * = nullptr>
-typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
+          typename std::enable_if<!std::is_enum<PackedT>::value>::type                  * = nullptr,
+          typename std::enable_if<!std::is_same<FromT, const EGLint *>::value>::type    * = nullptr,
+          typename std::enable_if<!std::is_same<FromT, const EGLAttrib *>::value>::type * = nullptr,
+          typename std::enable_if<!IsResourceIDType<PackedT>::value>::type              * = nullptr>
+typename std::remove_reference<PackedT>::type PackParam(FromT from)
 {
-    return static_cast<PackedT>(attribs);
+    return static_cast<PackedT>(from);
 }
 
 }  // namespace egl

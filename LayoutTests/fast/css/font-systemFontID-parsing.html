@@ -6,9 +6,10 @@
 <div id="testDivValid" style="font: caption"></div>
 <script>
 description("Tests 'font' CSS property parsing with system font values.");
-
+shouldBeNull("testDivInvalid.style.getPropertyCSSValue('font')");
+shouldBeEqualToString("testDivValid.style.getPropertyCSSValue('font')", "caption");
 shouldBeNull("testDivInvalid.style.getPropertyCSSValue('font-family')");
-shouldNotBe("testDivValid.style.getPropertyCSSValue('font-family')", "null");
+shouldBeNull("testDivValid.style.getPropertyCSSValue('font-family')");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

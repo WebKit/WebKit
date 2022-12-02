@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class JSDataView final : public JSArrayBufferView {
+class JSDataView : public JSArrayBufferView {
 public:
     using Base = JSArrayBufferView;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
@@ -45,15 +45,40 @@ public:
         return vm.dataViewSpace<mode>();
     }
 
-    JS_EXPORT_PRIVATE static JSDataView* create(
-        JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
+    JS_EXPORT_PRIVATE static JSDataView* create(JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> byteLength);
     
     // Dummy methods, which don't actually work; these are just in place to
     // placate some template specialization we do elsewhere.
     static JSDataView* createUninitialized(JSGlobalObject*, Structure*, size_t length);
     static JSDataView* create(JSGlobalObject*, Structure*, size_t length);
-    bool set(JSGlobalObject*, size_t, JSObject*, size_t, size_t length);
+    bool setFromTypedArray(JSGlobalObject*, size_t offset, JSArrayBufferView*, size_t objectOffset, size_t length, CopyType);
+    bool setFromArrayLike(JSGlobalObject*, size_t offset, JSObject*, size_t objectOffset, size_t length);
     bool setIndex(JSGlobalObject*, size_t, JSValue);
+
+    template<typename Getter>
+    std::optional<size_t> viewByteLength(Getter& getter)
+    {
+        // https://tc39.es/proposal-resizablearraybuffer/#sec-isviewoutofbounds
+        // https://tc39.es/proposal-resizablearraybuffer/#sec-getviewbytelength
+        if (UNLIKELY(isDetached()))
+            return std::nullopt;
+
+        if (LIKELY(canUseRawFieldsDirectly()))
+            return byteLengthRaw();
+
+        RefPtr<ArrayBuffer> buffer = possiblySharedBuffer();
+        if (!buffer)
+            return 0;
+
+        size_t bufferByteLength = getter(*buffer);
+        size_t byteOffset = byteOffsetRaw();
+        size_t byteLength = byteLengthRaw() + byteOffset; // Keep in mind that byteLengthRaw returns 0 for AutoLength TypedArray.
+        if (byteLength > bufferByteLength)
+            return std::nullopt;
+        if (isAutoLength())
+            return bufferByteLength - byteOffset;
+        return byteLengthRaw();
+    }
     
     ArrayBuffer* possiblySharedBuffer() const { return m_buffer; }
     ArrayBuffer* unsharedBuffer() const
@@ -61,6 +86,7 @@ public:
         RELEASE_ASSERT(!m_buffer->isShared());
         return m_buffer;
     }
+    static ptrdiff_t offsetOfBuffer() { return OBJECT_OFFSETOF(JSDataView, m_buffer); }
     
     RefPtr<DataView> possiblySharedTypedImpl();
     RefPtr<DataView> unsharedTypedImpl();
@@ -75,6 +101,18 @@ private:
     JSDataView(VM&, ConstructionContext&, ArrayBuffer*);
 
     ArrayBuffer* m_buffer;
+};
+
+class JSResizableOrGrowableSharedDataView final : public JSDataView {
+public:
+    using Base = JSDataView;
+    using Base::StructureFlags;
+
+    static constexpr bool isResizableOrGrowableSharedTypedArray = true;
+
+    DECLARE_EXPORT_INFO;
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 };
 
 } // namespace JSC

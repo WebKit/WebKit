@@ -32,6 +32,10 @@
 
 #include <wtf/text/StringHash.h>
 
+#if USE(CORE_TEXT)
+#include "FontCascade.h"
+#endif
+
 namespace WebCore {
 
 struct SameSizeAsFontCascadeDescription {
@@ -43,13 +47,13 @@ struct SameSizeAsFontCascadeDescription {
     AtomString string2;
     int16_t fontSelectionRequest[3];
     float size;
+    std::optional<float> sizeAdjust;
     unsigned bitfields1;
     unsigned bitfields2 : 22;
     void* array;
     float size2;
     unsigned bitfields3 : 10;
 };
-
 static_assert(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), "FontCascadeDescription should stay small");
 
 FontCascadeDescription::FontCascadeDescription()
@@ -129,6 +133,16 @@ String FontCascadeDescription::foldedFamilyName(const String& family)
         return family;
 #endif
     return family.convertToASCIILowercase();
+}
+
+FontSmoothingMode FontCascadeDescription::usedFontSmoothing() const
+{
+    auto fontSmoothingMode = fontSmoothing();
+#if USE(CORE_TEXT)
+    if (FontCascade::shouldDisableFontSubpixelAntialiasingForTesting() && (fontSmoothingMode == FontSmoothingMode::AutoSmoothing || fontSmoothingMode == FontSmoothingMode::SubpixelAntialiased))
+        return FontSmoothingMode::Antialiased;
+#endif
+    return fontSmoothingMode;
 }
 
 } // namespace WebCore

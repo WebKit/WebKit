@@ -46,10 +46,9 @@
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
 #include "LazyLoadImageObserver.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
-#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
 #include "NodeTraversal.h"
 #include "PlatformMouseEvent.h"
@@ -74,10 +73,9 @@ using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
+    , FormAssociatedElement(form)
     , ActiveDOMObject(document)
     , m_imageLoader(makeUnique<HTMLImageLoader>(*this))
-    , m_form(nullptr)
-    , m_formSetByParser(form)
     , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
 {
@@ -102,9 +100,28 @@ Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Doc
 HTMLImageElement::~HTMLImageElement()
 {
     document().removeDynamicMediaQueryDependentImage(*this);
+    setForm(nullptr);
+}
 
-    if (m_form)
-        m_form->removeImgElement(this);
+void HTMLImageElement::resetFormOwner()
+{
+    setForm(HTMLFormElement::findClosestFormAncestor(*this));
+}
+
+void HTMLImageElement::setFormInternal(HTMLFormElement* newForm)
+{
+    if (auto* form = FormAssociatedElement::form())
+        form->unregisterImgElement(*this);
+    FormAssociatedElement::setFormInternal(newForm);
+    if (newForm)
+        newForm->registerImgElement(*this);
+}
+
+void HTMLImageElement::formOwnerRemovedFromTree(const Node& formRoot)
+{
+    Node& rootNode = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope can be outdated.
+    if (&rootNode != &formRoot)
+        setForm(nullptr);
 }
 
 Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document& document, std::optional<unsigned> width, std::optional<unsigned> height)
@@ -225,15 +242,22 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         }
 
         RefPtr documentElement = document().documentElement();
-        LegacyMediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
-        auto* queries = source.parsedMediaAttribute(document());
+        MQ::MediaQueryEvaluator evaluator { document().printing() ? printAtom() : screenAtom(), document(), documentElement ? documentElement->computedStyle() : nullptr };
+        auto& queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
 
-        auto evaluation = !queries || evaluator.evaluate(*queries, &m_mediaQueryDynamicResults);
-        if (!evaluation)
+        auto result = evaluator.evaluate(queries);
+
+        if (!evaluator.collectDynamicDependencies(queries).isEmpty())
+            m_dynamicMediaQueryResults.append({ queries, result });
+
+        if (!result)
             continue;
 
-        SizesAttributeParser sizesParser(source.attributeWithoutSynchronization(sizesAttr).string(), document(), &m_mediaQueryDynamicResults);
+        SizesAttributeParser sizesParser(source.attributeWithoutSynchronization(sizesAttr).string(), document());
+
+        m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
+
         auto sourceSize = sizesParser.length();
 
         candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom(), srcset, sourceSize);
@@ -249,9 +273,17 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
     RefPtr documentElement = document().documentElement();
-    LegacyMediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
+    MQ::MediaQueryEvaluator evaluator { document().printing() ? printAtom() : screenAtom(), document(), documentElement ? documentElement->computedStyle() : nullptr };
 
-    if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))
+    auto hasChanges = [&] {
+        for (auto& results : m_dynamicMediaQueryResults) {
+            if (results.result != evaluator.evaluate(results.mediaQueryList))
+                return true;
+        }
+        return false;
+    }();
+
+    if (!hasChanges)
         return;
 
     selectImageSource(RelevantMutation::No);
@@ -259,7 +291,7 @@ void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 
 void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
 {
-    m_mediaQueryDynamicResults = { };
+    m_dynamicMediaQueryResults = { };
     document().removeDynamicMediaQueryDependentImage(*this);
 
     // First look for the best fit source from our <picture> parent if we have one.
@@ -267,14 +299,15 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
     if (candidate.isEmpty()) {
         setSourceElement(nullptr);
         // If we don't have a <picture> or didn't find a source, then we use our own attributes.
-        SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document(), &m_mediaQueryDynamicResults);
+        SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document());
+        m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
         auto sourceSize = sizesParser.length();
         candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), attributeWithoutSynchronization(srcAttr), attributeWithoutSynchronization(srcsetAttr), sourceSize);
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);
     m_imageLoader->updateFromElementIgnoringPreviousError(relevantMutation);
 
-    if (!m_mediaQueryDynamicResults.isEmpty())
+    if (!m_dynamicMediaQueryResults.isEmpty())
         document().addDynamicMediaQueryDependentImage(*this);
 }
 
@@ -416,22 +449,9 @@ void HTMLImageElement::didAttachRenderers()
 
 Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (m_formSetByParser) {
-        m_form = WTFMove(m_formSetByParser);
-        m_form->registerImgElement(this);
-    }
-
-    if (m_form && rootElement() != m_form->rootElement()) {
-        m_form->removeImgElement(this);
-        m_form = nullptr;
-    }
-
-    if (!m_form) {
-        if (auto* newForm = HTMLFormElement::findClosestFormAncestor(*this)) {
-            m_form = newForm;
-            newForm->registerImgElement(this);
-        }
-    }
+    FormAssociatedElement::elementInsertedIntoAncestor(*this, insertionType);
+    if (!form())
+        resetFormOwner();
 
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
@@ -458,9 +478,6 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
 
 void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (m_form)
-        m_form->removeImgElement(this);
-
     if (removalType.treeScopeChanged && !m_parsedUsemap.isNull())
         oldParentOfRemovedTree.treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
@@ -470,8 +487,8 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
         selectImageSource(RelevantMutation::Yes);
     }
 
-    m_form = nullptr;
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormAssociatedElement::elementRemovedFromAncestor(*this, removalType);
 }
 
 HTMLPictureElement* HTMLImageElement::pictureElement() const
@@ -785,12 +802,6 @@ void HTMLImageElement::setAllowsAnimation(bool allowsAnimation)
 {
     if (auto* image = this->image())
         return image->setAllowsAnimation(allowsAnimation);
-}
-
-void HTMLImageElement::resetAllowsAnimation()
-{
-    if (auto* image = this->image())
-        return image->setAllowsAnimation(std::nullopt);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

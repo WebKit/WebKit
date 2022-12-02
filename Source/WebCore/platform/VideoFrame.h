@@ -29,6 +29,7 @@
 
 #include "FloatSize.h"
 #include "PlaneLayout.h"
+#include "PlatformVideoColorSpace.h"
 #include "VideoPixelFormat.h"
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/CompletionHandler.h>
@@ -41,6 +42,7 @@ namespace WebCore {
 
 class FloatRect;
 class GraphicsContext;
+struct ImageOrientation;
 class NativeImage;
 class ProcessIdentity;
 #if USE(AVFOUNDATION) && PLATFORM(COCOA)
@@ -62,10 +64,10 @@ public:
     virtual ~VideoFrame() = default;
 
     static RefPtr<VideoFrame> fromNativeImage(NativeImage&);
-    static RefPtr<VideoFrame> createNV12(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&);
-    static RefPtr<VideoFrame> createRGBA(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&);
-    static RefPtr<VideoFrame> createBGRA(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&);
-    static RefPtr<VideoFrame> createI420(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&);
+    static RefPtr<VideoFrame> createNV12(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
+    static RefPtr<VideoFrame> createRGBA(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
+    static RefPtr<VideoFrame> createBGRA(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
+    static RefPtr<VideoFrame> createI420(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
 
     enum class Rotation {
         None = 0,
@@ -102,15 +104,18 @@ public:
 
     void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
 
-    void paintInContext(GraphicsContext&, const FloatRect&, bool shouldDiscardAlpha);
+    void paintInContext(GraphicsContext&, const FloatRect&, const ImageOrientation&, bool shouldDiscardAlpha);
+
+    const PlatformVideoColorSpace& colorSpace() const { return m_colorSpace; }
 
 protected:
-    WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation);
+    WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation, PlatformVideoColorSpace&& = { });
 
 private:
     const MediaTime m_presentationTime;
     const bool m_isMirrored;
     const Rotation m_rotation;
+    const PlatformVideoColorSpace m_colorSpace;
 };
 
 }

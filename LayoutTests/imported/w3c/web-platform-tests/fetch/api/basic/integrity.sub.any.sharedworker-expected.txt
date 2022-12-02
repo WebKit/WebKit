@@ -1,0 +1,17 @@
+
+PASS Empty string integrity
+PASS SHA-256 integrity
+PASS SHA-384 integrity
+PASS SHA-512 integrity
+PASS Invalid integrity
+PASS Multiple integrities: valid stronger than invalid
+PASS Multiple integrities: invalid stronger than valid
+PASS Multiple integrities: invalid as strong as valid
+PASS Multiple integrities: both are valid
+PASS Multiple integrities: both are invalid
+PASS CORS empty integrity
+PASS CORS SHA-512 integrity
+PASS CORS invalid integrity
+PASS Empty string integrity for opaque response
+PASS SHA-* integrity for opaque response
+

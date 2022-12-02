@@ -190,6 +190,21 @@ FloatPoint ThreadedScrollingTreeScrollingNodeDelegate::adjustedScrollPosition(co
     return { roundf(position.x()), roundf(position.y()) };
 }
 
+void ThreadedScrollingTreeScrollingNodeDelegate::handleKeyboardScrollRequest(const RequestedKeyboardScrollData& scrollData)
+{
+    switch (scrollData.action) {
+    case KeyboardScrollAction::StartAnimation:
+        m_scrollController.startKeyboardScroll(*scrollData.keyboardScroll);
+        break;
+    case KeyboardScrollAction::StopWithAnimation:
+        m_scrollController.finishKeyboardScroll(false);
+        break;
+    case KeyboardScrollAction::StopImmediately:
+        m_scrollController.finishKeyboardScroll(true);
+        break;
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)

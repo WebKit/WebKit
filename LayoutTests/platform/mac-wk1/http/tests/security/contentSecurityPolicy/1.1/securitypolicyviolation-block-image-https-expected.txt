@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/contentSecurityPolicy/resources/securitypolicyviolation-test.js from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/js-test-resources/js-test-post.js from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Check that a SecurityPolicyViolationEvent is fired upon blocking an image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Kicking off the tests:
+PASS window.e.documentURI is "https://127.0.0.1:8443/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html"
+PASS window.e.referrer is "http://127.0.0.1:8000/"
+PASS window.e.blockedURI is "http://127.0.0.1:8000/security/resources/abe.png"
+PASS window.e.violatedDirective is "img-src"
+PASS window.e.effectiveDirective is "img-src"
+PASS window.e.originalPolicy is "img-src 'none'"
+PASS window.e.sourceFile is "https://127.0.0.1:8443/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html"
+PASS window.e.lineNumber is 25
+PASS window.e.columnNumber is 16
+PASS window.e.statusCode is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

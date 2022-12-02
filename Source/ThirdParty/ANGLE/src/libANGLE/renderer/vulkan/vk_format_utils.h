@@ -242,6 +242,12 @@ VkImageUsageFlags GetMaximalImageUsageFlags(RendererVk *renderer, angle::FormatI
 bool HasFullTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID);
 // Checks if a Vulkan format supports all the features except rendering.
 bool HasNonRenderableTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID);
+// Checks if it is a ETC texture format
+bool IsETCFormat(angle::FormatID formatID);
+// Checks if it is a BC texture format
+bool IsBCFormat(angle::FormatID formatID);
+
+angle::FormatID GetTranscodeBCFormatID(angle::FormatID formatID);
 
 // Get the swizzle state based on format's requirements and emulations.
 gl::SwizzleState GetFormatSwizzle(const angle::Format &angleFormat, const bool sized);

@@ -31,16 +31,17 @@
 
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
-#include "LegacyMediaQueryEvaluator.h"
+#include "MediaQueryEvaluator.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 namespace Style {
 
-RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const LegacyMediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
+RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
     : m_ruleSet(&ruleSet)
     , m_mediaQueryCollector({ evaluator })
     , m_resolver(resolver)
@@ -48,7 +49,7 @@ RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const LegacyMediaQueryEvaluator
 {
 }
 
-RuleSetBuilder::RuleSetBuilder(const LegacyMediaQueryEvaluator& evaluator)
+RuleSetBuilder::RuleSetBuilder(const MQ::MediaQueryEvaluator& evaluator)
     : m_mediaQueryCollector({ evaluator, true })
 {
 }
@@ -66,7 +67,7 @@ RuleSetBuilder::~RuleSetBuilder()
         m_ruleSet->shrinkToFit();
 }
 
-void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const MediaQuerySet* sheetQuery)
+void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const MQ::MediaQueryList& sheetQuery)
 {
     auto canUseDynamicMediaQueryEvaluation = [&] {
         if (!m_resolver)
@@ -105,9 +106,9 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
         }
         if (is<StyleRuleMedia>(*rule)) {
             auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if (m_mediaQueryCollector.pushAndEvaluate(&mediaRule.mediaQueries()))
+            if (m_mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
                 addChildRules(mediaRule.childRules());
-            m_mediaQueryCollector.pop(&mediaRule.mediaQueries());
+            m_mediaQueryCollector.pop(mediaRule.mediaQueries());
             continue;
         }
         if (is<StyleRuleContainer>(*rule)) {
@@ -137,7 +138,7 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             popCascadeLayer(layerRule.name());
             continue;
         }
-        if (is<StyleRuleFontFace>(*rule) || is<StyleRuleFontPaletteValues>(*rule) || is<StyleRuleKeyframes>(*rule)) {
+        if (is<StyleRuleFontFace>(*rule) || is<StyleRuleFontPaletteValues>(*rule) || is<StyleRuleFontFeatureValues>(*rule) || is<StyleRuleKeyframes>(*rule)) {
             disallowDynamicMediaQueryEvaluationIfNeeded();
 
             if (m_resolver)
@@ -224,8 +225,7 @@ void RuleSetBuilder::pushCascadeLayer(const CascadeLayerName& name)
     auto nameResolvingAnonymous = [&] {
         if (name.isEmpty()) {
             // Make unique name for an anonymous layer.
-            unsigned long long random = randomNumber() * std::numeric_limits<unsigned long long>::max();
-            return CascadeLayerName { makeAtomString("anon_"_s, random) };
+            return CascadeLayerName { makeAtomString("anon_"_s, cryptographicallyRandomNumber<uint64_t>()) };
         }
         return name;
     };
@@ -335,6 +335,11 @@ void RuleSetBuilder::addMutatingRulesToResolver()
             m_resolver->invalidateMatchedDeclarationsCache();
             continue;
         }
+        if (is<StyleRuleFontFeatureValues>(rule)) {
+            m_resolver->document().fontSelector().addFontFeatureValuesRule(downcast<StyleRuleFontFeatureValues>(rule.get()));
+            m_resolver->invalidateMatchedDeclarationsCache();
+            continue;
+        }
         if (is<StyleRuleKeyframes>(rule)) {
             m_resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(rule.get()));
             continue;
@@ -344,7 +349,7 @@ void RuleSetBuilder::addMutatingRulesToResolver()
 
 void RuleSetBuilder::updateDynamicMediaQueries()
 {
-    if (m_mediaQueryCollector.hasViewportDependentMediaQueries)
+    if (m_mediaQueryCollector.allDynamicDependencies.contains(MQ::MediaQueryDynamicDependency::Viewport))
         m_ruleSet->m_hasViewportDependentMediaQueries = true;
 
     if (!m_mediaQueryCollector.dynamicMediaQueryRules.isEmpty()) {
@@ -358,36 +363,34 @@ void RuleSetBuilder::updateDynamicMediaQueries()
 
 RuleSetBuilder::MediaQueryCollector::~MediaQueryCollector() = default;
 
-bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* set)
+bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MQ::MediaQueryList& mediaQueries)
 {
-    if (!set)
+    if (mediaQueries.isEmpty())
         return true;
 
-    // Only evaluate static expressions that require style rebuild.
-    MediaQueryDynamicResults dynamicResults;
-    auto mode = collectDynamic ? LegacyMediaQueryEvaluator::Mode::AlwaysMatchDynamic : LegacyMediaQueryEvaluator::Mode::Normal;
+    auto dynamicDependencies = evaluator.collectDynamicDependencies(mediaQueries);
 
-    bool result = evaluator.evaluate(*set, &dynamicResults, mode);
+    allDynamicDependencies.add(dynamicDependencies);
 
-    if (!dynamicResults.viewport.isEmpty())
-        hasViewportDependentMediaQueries = true;
+    if (!dynamicDependencies.isEmpty()) {
+        dynamicContextStack.append({ mediaQueries });
+        if (collectDynamic)
+            return true;
+    }
 
-    if (!dynamicResults.isEmpty())
-        dynamicContextStack.append({ *set });
-
-    return result;
+    return evaluator.evaluate(mediaQueries);
 }
 
-void RuleSetBuilder::MediaQueryCollector::pop(const MediaQuerySet* set)
+void RuleSetBuilder::MediaQueryCollector::pop(const MQ::MediaQueryList& mediaQueries)
 {
-    if (!set || dynamicContextStack.isEmpty() || set != &dynamicContextStack.last().set.get())
+    if (mediaQueries.isEmpty() || dynamicContextStack.isEmpty())
         return;
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
         RuleSet::DynamicMediaQueryRules rules;
-        rules.mediaQuerySets.reserveCapacity(rules.mediaQuerySets.size() + dynamicContextStack.size());
+        rules.mediaQueries.reserveCapacity(rules.mediaQueries.size() + dynamicContextStack.size());
         for (auto& context : dynamicContextStack)
-            rules.mediaQuerySets.uncheckedAppend(context.set.get());
+            rules.mediaQueries.uncheckedAppend(context.queries);
 
         if (collectDynamic) {
             rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);

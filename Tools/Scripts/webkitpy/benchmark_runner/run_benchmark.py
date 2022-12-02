@@ -46,6 +46,7 @@ def config_argument_parser():
     mutual_group.add_argument('--read-results-json', dest='json_file', help='Instead of running a benchmark, format the output saved in JSON_FILE.')
     parser.add_argument('--output-file', default=None, help='Save detailed results to OUTPUT in JSON format. By default, results will not be saved.')
     parser.add_argument('--count', type=int, help='Number of times to run the benchmark (e.g. 5).')
+    parser.add_argument('--timeout', type=int, help='Number of seconds to wait for the benchmark to finish (e.g. 600).')
     parser.add_argument('--driver', default=WebServerBenchmarkRunner.name, choices=list(benchmark_runner_subclasses.keys()), help='Use the specified benchmark driver. Defaults to %s.' % WebServerBenchmarkRunner.name)
     parser.add_argument('--browser', default=default_browser(), choices=BrowserDriverFactory.available_browsers(), help='Browser to run the nechmark in. Defaults to %s.' % default_browser())
     parser.add_argument('--platform', default=default_platform(), choices=BrowserDriverFactory.available_platforms(), help='Platform that this script is running on. Defaults to %s.' % default_platform())
@@ -55,7 +56,8 @@ def config_argument_parser():
     parser.add_argument('--diagnose-directory', dest='diagnose_dir', default=diagnose_directory, help='Directory for storing diagnose information on test failure. Defaults to {}.'.format(diagnose_directory))
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
-    parser.add_argument('--generate-profiles', dest='generate_profiles', action='store_true', help="Collect LLVM profiles for PGO, and copy them to the diagnose directory.")
+    parser.add_argument('--generate-pgo-profiles', dest="generate_pgo_profiles", action='store_true', help="Collect LLVM profiles for PGO, and copy them to the diagnostics directory.")
+    parser.add_argument('--profile', action='store_true', help="Collect profiling traces, and copy them to the diagnostic directory.")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--browser-path', help='Specify the path to a non-default copy of the target browser as a path to the .app.')
@@ -77,13 +79,14 @@ def parse_args(parser=None):
     _log.debug('\tbuild directory\t: %s' % args.build_dir)
     _log.debug('\tplan name\t: %s', args.plan)
 
-    if args.generate_profiles and not os.path.isdir(args.diagnose_dir):
-        _log.error("No diagnose directory to dump profiles to: {}".format(args.diagnose_dir))
-        exit()
+    if (args.generate_pgo_profiles or args.profile) and not args.diagnose_dir:
+        raise Exception('Collecting profiles requires a diagnostic directory (--diagnose-directory) to be set.')
 
-    if args.generate_profiles and args.platform != 'osx':
-        _log.error("Profile generation is currently only supported on macOS.")
-        exit()
+    if args.generate_pgo_profiles and args.platform != 'osx':
+        raise Exception('PGO Profile generation is currently only supported on macOS.')
+
+    if args.profile and args.platform != 'osx':
+        raise Exception('Profile collection is currently only supported on macOS.')
 
     return args
 
@@ -91,10 +94,11 @@ def parse_args(parser=None):
 def run_benchmark_plan(args, plan):
     benchmark_runner_class = benchmark_runner_subclasses[args.driver]
     runner = benchmark_runner_class(plan,
-                                    args.local_copy, args.count, args.build_dir, args.output_file,
+                                    args.local_copy, args.count, args.timeout, args.build_dir, args.output_file,
                                     args.platform, args.browser, args.browser_path, args.scale_unit,
                                     args.show_iteration_values, args.device_id, args.diagnose_dir,
-                                    args.diagnose_dir if args.generate_profiles else None)
+                                    args.diagnose_dir if args.generate_pgo_profiles else None,
+                                    args.diagnose_dir if args.profile else None)
     runner.execute()
 
 

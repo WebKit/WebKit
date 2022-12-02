@@ -1,5 +1,5 @@
 
-FAIL Clearing an empty CSS rule is a no-op styleMap.clear is not a function. (In 'styleMap.clear()', 'styleMap.clear' is undefined)
-FAIL Can clear a CSS rule containing properties styleMap.clear is not a function. (In 'styleMap.clear()', 'styleMap.clear' is undefined)
-FAIL Declared StylePropertyMap.clear updates the CSS rule undefined is not an object (evaluating 'styleMap.clear')
+PASS Clearing an empty CSS rule is a no-op
+PASS Can clear a CSS rule containing properties
+PASS Declared StylePropertyMap.clear updates the CSS rule
 

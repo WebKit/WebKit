@@ -9,6 +9,7 @@
 
 #include "common/debug.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/d3d/d3d11/Context11.h"
@@ -29,19 +30,25 @@ namespace
 class D3D11FormatTablesTest : public ANGLETest<>
 {};
 
+// Hack the angle!
+rx::Context11 *HackANGLE(EGLDisplay dpy, EGLContext ctx)
+{
+    egl::Display *display   = static_cast<egl::Display *>(dpy);
+    gl::ContextID contextID = {static_cast<GLuint>(reinterpret_cast<uintptr_t>(ctx))};
+    gl::Context *context    = display->getContext(contextID);
+    return rx::GetImplAs<rx::Context11>(context);
+}
+
 // This test enumerates all GL formats - for each, it queries the D3D support for
 // using it as a texture, a render target, and sampling from it in the shader. It
 // checks this against our speed-optimized baked tables, and validates they would
 // give the same result.
-// TODO(jmadill): Find out why in 9_3, some format queries return an error.
-// The error seems to appear for formats that are not supported on 9_3.
 TEST_P(D3D11FormatTablesTest, TestFormatSupport)
 {
     ASSERT_EQ(EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE, GetParam().getRenderer());
 
-    // Hack the angle!
-    gl::Context *context     = static_cast<gl::Context *>(getEGLWindow()->getContext());
-    rx::Context11 *context11 = rx::GetImplAs<rx::Context11>(context);
+    rx::Context11 *context11 =
+        HackANGLE(getEGLWindow()->getDisplay(), getEGLWindow()->getContext());
     rx::Renderer11 *renderer = context11->getRenderer();
     const auto &textureCaps  = renderer->getNativeTextureCaps();
 
@@ -157,8 +164,8 @@ TEST_P(D3D11FormatTablesTest, TestFormatSupport)
 // This test validates that all DXGI_FORMATs can be potentially resized without crashes.
 TEST_P(D3D11FormatTablesTest, TestFormatMakeValidSize)
 {
-    gl::Context *context     = static_cast<gl::Context *>(getEGLWindow()->getContext());
-    rx::Context11 *context11 = rx::GetImplAs<rx::Context11>(context);
+    rx::Context11 *context11 =
+        HackANGLE(getEGLWindow()->getDisplay(), getEGLWindow()->getContext());
     rx::Renderer11 *renderer = context11->getRenderer();
 
     const gl::FormatSet &allFormats = gl::GetAllSizedInternalFormats();

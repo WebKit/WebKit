@@ -1,6 +1,14 @@
 
-PASS Getting a body reader after consuming as blob
-PASS Getting a body reader after consuming as text
-PASS Getting a body reader after consuming as json
-PASS Getting a body reader after consuming as arrayBuffer
+PASS Getting a body reader after consuming as blob (body source: fetch)
+PASS Getting a body reader after consuming as text (body source: fetch)
+PASS Getting a body reader after consuming as json (body source: fetch)
+PASS Getting a body reader after consuming as arrayBuffer (body source: fetch)
+PASS Getting a body reader after consuming as blob (body source: stream)
+PASS Getting a body reader after consuming as text (body source: stream)
+PASS Getting a body reader after consuming as json (body source: stream)
+PASS Getting a body reader after consuming as arrayBuffer (body source: stream)
+PASS Getting a body reader after consuming as blob (body source: string)
+PASS Getting a body reader after consuming as text (body source: string)
+PASS Getting a body reader after consuming as json (body source: string)
+PASS Getting a body reader after consuming as arrayBuffer (body source: string)
 

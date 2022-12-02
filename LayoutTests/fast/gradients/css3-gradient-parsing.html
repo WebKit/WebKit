@@ -9,7 +9,18 @@
 
 <script type="text/javascript">
 
-function testGradient(css, queryProp)
+function testGradientSpecifiedValue(css, queryProp)
+{
+    var div = document.createElement('div');
+    div.setAttribute('style', css);
+    document.body.appendChild(div);
+
+    var result = div.style.getPropertyValue(queryProp);
+    document.body.removeChild(div);
+    return result;
+}
+
+function testGradientComputedValue(css, queryProp)
 {
     var div = document.createElement('div');
     div.setAttribute('style', css);
@@ -20,56 +31,89 @@ function testGradient(css, queryProp)
     return result;
 }
 
-function testSame(dir, prop, altProp, value)
-{
-    shouldBeEqualToString('test("' + dir + '", "' + prop + ': ' + value + '", "' + altProp + '")', value);
-    shouldBeEqualToString('test("' + dir + '", "' + altProp + ': ' + value + '", "' + prop + '")', value);
-}
-
 debug('<p>-webkit-linear-gradient</p>');
 
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(top)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(10deg)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(top center, black 0%)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(10px 20%, black 0%)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(left left)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(left center)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0, white)", "background-image")', '"-webkit-linear-gradient(top, black 0px, white)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 10px, white 20px)", "background-image")', '"-webkit-linear-gradient(top, black 10px, white 20px)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(top left, black 0%, white)", "background-image")', '"-webkit-linear-gradient(left top, black 0%, white)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(top, black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(10deg, black 0%, white)", "background-image")', '"-webkit-linear-gradient(10deg, black 0%, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0%", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(top)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(10deg)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(top center, black 0%)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(10px 20%, black 0%)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(left left)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(left center)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0, white)", "background-image")', '"-webkit-linear-gradient(top, black 0px, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 10px, white 20px)", "background-image")', '"-webkit-linear-gradient(top, black 10px, white 20px)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(top left, black 0%, white)", "background-image")', '"-webkit-linear-gradient(left top, black 0%, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(top, black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(10deg, black 0%, white)", "background-image")', '"-webkit-linear-gradient(10deg, black 0%, white)"');
+
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0%", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(top)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(10deg)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(top center, black 0%)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(10px 20%, black 0%)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(left left)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(left center)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0), rgb(255, 255, 255))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 0px, rgb(255, 255, 255))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 0%, rgb(255, 255, 255))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 0%, rgb(255, 255, 255))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0), rgb(255, 255, 255))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 10px, white 20px)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px)"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(top left, black 0%, white)", "background-image")', '"-webkit-linear-gradient(left top, rgb(0, 0, 0) 0%, rgb(255, 255, 255))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(top, black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 0%, rgb(255, 255, 255))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(10deg, black 0%, white)", "background-image")', '"-webkit-linear-gradient(10deg, rgb(0, 0, 0) 0%, rgb(255, 255, 255))"');
 
 debug('<p>-webkit-repeating-linear-gradient</p>');
-shouldBe('testGradient("background-image: -webkit-repeating-linear-gradient(black, white)", "background-image")', '"-webkit-repeating-linear-gradient(top, black, white)"');
+
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-repeating-linear-gradient(black, white)", "background-image")', '"-webkit-repeating-linear-gradient(top, black, white)"');
+shouldBe('testGradientComputedValue("background-image: -webkit-repeating-linear-gradient(black, white)", "background-image")', '"-webkit-repeating-linear-gradient(top, rgb(0, 0, 0), rgb(255, 255, 255))"');
 
 debug('<p>-webkit-radial-gradient</p>');
 
-shouldBe('testGradient("background-image: -webkit-radial-gradient(white, black)", "background-image")', '"-webkit-radial-gradient(center, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(right bottom, white, black)", "background-image")', '"-webkit-radial-gradient(right bottom, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(cover, white, black)", "background-image")', '"-webkit-radial-gradient(center, ellipse cover, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(circle, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle cover, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle contain, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(top, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(center top, circle contain, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(left top, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(left top, circle contain, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(10px 20%, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(10px 20%, circle contain, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(10px, 20%, circle contain, white, black)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(circle 10px 20%, circle contain, white, black)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(circle 10px, circle contain, white, black)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(center, 10px, white, black)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(center, 10px 10px, white, black)", "background-image")', '"-webkit-radial-gradient(center center, 10px 10px, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(ellipse farthest-corner, white, black)", "background-image")', '"-webkit-radial-gradient(center, ellipse farthest-corner, white, black)"');
-shouldBe('testGradient("background-image: -webkit-radial-gradient(circle closest-side, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle closest-side, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(white, black)", "background-image")', '"-webkit-radial-gradient(center, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(right bottom, white, black)", "background-image")', '"-webkit-radial-gradient(right bottom, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(cover, white, black)", "background-image")', '"-webkit-radial-gradient(center, ellipse cover, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(circle, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle cover, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle contain, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(top, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(center top, circle contain, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(left top, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(left top, circle contain, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(10px 20%, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(10px 20%, circle contain, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(10px, 20%, circle contain, white, black)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(circle 10px 20%, circle contain, white, black)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(circle 10px, circle contain, white, black)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(center, 10px, white, black)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(center, 10px 10px, white, black)", "background-image")', '"-webkit-radial-gradient(center center, 10px 10px, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(ellipse farthest-corner, white, black)", "background-image")', '"-webkit-radial-gradient(center, ellipse farthest-corner, white, black)"');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-radial-gradient(circle closest-side, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle closest-side, white, black)"');
+
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(white, black)", "background-image")', '"-webkit-radial-gradient(center, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(right bottom, white, black)", "background-image")', '"-webkit-radial-gradient(right bottom, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(cover, white, black)", "background-image")', '"-webkit-radial-gradient(center, ellipse cover, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(circle, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle cover, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle contain, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(top, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(center top, circle contain, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(left top, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(left top, circle contain, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(10px 20%, circle contain, white, black)", "background-image")', '"-webkit-radial-gradient(10px 20%, circle contain, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(10px, 20%, circle contain, white, black)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(circle 10px 20%, circle contain, white, black)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(circle 10px, circle contain, white, black)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(center, 10px, white, black)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(center, 10px 10px, white, black)", "background-image")', '"-webkit-radial-gradient(center center, 10px 10px, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(ellipse farthest-corner, white, black)", "background-image")', '"-webkit-radial-gradient(center, ellipse farthest-corner, rgb(255, 255, 255), rgb(0, 0, 0))"');
+shouldBe('testGradientComputedValue("background-image: -webkit-radial-gradient(circle closest-side, white, black)", "background-image")', '"-webkit-radial-gradient(center, circle closest-side, rgb(255, 255, 255), rgb(0, 0, 0))"');
 
 debug('<p>-webkit-repeating-radial-gradient</p>');
-shouldBe('testGradient("background-image: -webkit-repeating-radial-gradient(white, black)", "background-image")', '"-webkit-repeating-radial-gradient(center, white, black)"');
+
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-repeating-radial-gradient(white, black)", "background-image")', '"-webkit-repeating-radial-gradient(center, white, black)"');
+shouldBe('testGradientComputedValue("background-image: -webkit-repeating-radial-gradient(white, black)", "background-image")', '"-webkit-repeating-radial-gradient(center, rgb(255, 255, 255), rgb(0, 0, 0))"');
   
 </script>
 

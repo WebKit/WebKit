@@ -51,4 +51,20 @@ void CSSProperty::wrapValueInCommaSeparatedList()
     m_value = WTFMove(list);
 }
 
+Ref<CSSValueList> CSSProperty::createListForProperty(CSSPropertyID propertyID)
+{
+    switch (listValuedPropertySeparator(propertyID)) {
+    case ' ':
+        return CSSValueList::createSpaceSeparated();
+    case ',':
+        return CSSValueList::createCommaSeparated();
+    case '/':
+        return CSSValueList::createSlashSeparated();
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return CSSValueList::createCommaSeparated();
+}
+
 } // namespace WebCore

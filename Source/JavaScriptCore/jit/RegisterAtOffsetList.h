@@ -45,15 +45,7 @@ public:
     void dump(PrintStream&) const;
 
     size_t registerCount() const { return m_registers.size(); }
-    size_t sizeOfAreaInBytes() const
-    {
-#if USE(JSVALUE64)
-        static_assert(sizeof(CPURegister) == sizeof(double));
-        return registerCount() * sizeof(CPURegister);
-#elif USE(JSVALUE32_64)
-        return m_sizeOfAreaInBytes;
-#endif
-    }
+    size_t sizeOfAreaInBytes() const { return m_sizeOfAreaInBytes; }
 
     const RegisterAtOffset& at(size_t index) const
     {
@@ -79,9 +71,7 @@ public:
 
 private:
     FixedVector<RegisterAtOffset> m_registers;
-#if USE(JSVALUE32_64) // On JSVALUE64, we can compute this cheaply
     size_t m_sizeOfAreaInBytes { 0 };
-#endif
 };
 
 } // namespace JSC

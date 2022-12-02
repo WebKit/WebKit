@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test postMessage from AudioWorkletProcessor to AudioWorkletNode"
+PASS Audit report
+PASS > [Test postMessage from AudioWorkletProcessor to AudioWorkletNode]
+PASS   event.module from main thread is an valid WASM module is true.
+PASS < [Test postMessage from AudioWorkletProcessor to AudioWorkletNode] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

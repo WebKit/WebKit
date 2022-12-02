@@ -29,8 +29,11 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "SharedMemory.h"
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+
+#if PLATFORM(COCOA)
+#include "SharedCARingBuffer.h"
+#endif
 
 namespace WTF {
 class MediaTime;
@@ -38,10 +41,6 @@ class MediaTime;
 
 namespace WebCore {
 class CaptureDevice;
-
-#if PLATFORM(COCOA)
-class CAAudioStreamDescription;
-#endif
 }
 
 namespace WebKit {
@@ -61,7 +60,7 @@ private:
     void remoteCaptureFailed(WebCore::RealtimeMediaSourceIdentifier);
     void remoteSourceStopped(WebCore::RealtimeMediaSourceIdentifier);
 #if PLATFORM(COCOA)
-    void setStorage(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void setStorage(WebCore::RealtimeMediaSourceIdentifier, ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
 #endif
 
     // IPC::MessageReceiver.

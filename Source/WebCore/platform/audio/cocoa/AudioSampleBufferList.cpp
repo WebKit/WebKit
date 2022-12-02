@@ -41,7 +41,7 @@ Ref<AudioSampleBufferList> AudioSampleBufferList::create(const CAAudioStreamDesc
 }
 
 AudioSampleBufferList::AudioSampleBufferList(const CAAudioStreamDescription& format, size_t maximumSampleCount)
-    : m_internalFormat(makeUniqueRef<CAAudioStreamDescription>(format))
+    : m_internalFormat(format)
     , m_sampleCapacity(maximumSampleCount)
     , m_maxBufferSizePerChannel(maximumSampleCount * format.bytesPerFrame() / format.numberOfChannelStreams())
     , m_bufferList(makeUniqueRef<WebAudioBufferList>(m_internalFormat, m_maxBufferSizePerChannel))
@@ -97,7 +97,7 @@ void AudioSampleBufferList::applyGain(AudioBufferList& bufferList, float gain, A
 
 void AudioSampleBufferList::applyGain(float gain)
 {
-    applyGain(m_bufferList.get(), gain, m_internalFormat->format());
+    applyGain(m_bufferList.get(), gain, m_internalFormat.format());
 }
 
 static void mixBuffers(WebAudioBufferList& destinationBuffer, const AudioBufferList& sourceBuffer, AudioStreamDescription::PCMFormat format, size_t frameCount)
@@ -160,7 +160,7 @@ OSStatus AudioSampleBufferList::mixFrom(const AudioSampleBufferList& source, siz
 
     m_sampleCount = frameCount;
 
-    mixBuffers(bufferList(), source.bufferList(), m_internalFormat->format(), frameCount);
+    mixBuffers(bufferList(), source.bufferList(), m_internalFormat.format(), frameCount);
     return 0;
 }
 
@@ -182,7 +182,7 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioSampleBufferList& source, si
     for (uint32_t i = 0; i < m_bufferList->bufferCount(); i++) {
         uint8_t* sourceData = static_cast<uint8_t*>(source.bufferList().buffer(i)->mData);
         uint8_t* destination = static_cast<uint8_t*>(m_bufferList->buffer(i)->mData);
-        memcpy(destination, sourceData, frameCount * m_internalFormat->bytesPerPacket());
+        memcpy(destination, sourceData, frameCount * m_internalFormat.bytesPerPacket());
     }
 
     return 0;
@@ -198,7 +198,7 @@ OSStatus AudioSampleBufferList::copyTo(AudioBufferList& buffer, size_t frameCoun
     for (uint32_t i = 0; i < buffer.mNumberBuffers; i++) {
         uint8_t* sourceData = static_cast<uint8_t*>(m_bufferList->buffer(i)->mData);
         uint8_t* destination = static_cast<uint8_t*>(buffer.mBuffers[i].mData);
-        memcpy(destination, sourceData, frameCount * m_internalFormat->bytesPerPacket());
+        memcpy(destination, sourceData, frameCount * m_internalFormat.bytesPerPacket());
     }
 
     return 0;
@@ -211,7 +211,7 @@ OSStatus AudioSampleBufferList::mixFrom(const AudioBufferList& source, size_t fr
     if (source.mNumberBuffers > m_bufferList->bufferCount())
         return kAudio_ParamError;
 
-    mixBuffers(bufferList(), source, m_internalFormat->format(), frameCount);
+    mixBuffers(bufferList(), source, m_internalFormat.format(), frameCount);
     return 0;
 }
 
@@ -226,7 +226,7 @@ void AudioSampleBufferList::reset()
 
 void AudioSampleBufferList::zero()
 {
-    zeroABL(m_bufferList.get(), m_internalFormat->bytesPerPacket() * m_sampleCapacity);
+    zeroABL(m_bufferList.get(), m_internalFormat.bytesPerPacket() * m_sampleCapacity);
 }
 
 void AudioSampleBufferList::zeroABL(AudioBufferList& buffer, size_t byteCount)

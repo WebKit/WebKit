@@ -30,7 +30,7 @@
 #include <pal/spi/cocoa/AppSSOSPI.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -52,7 +52,7 @@ class WebPageProxy;
 enum class SOAuthorizationLoadPolicy : uint8_t;
 
 // A session will only be executed once.
-class SOAuthorizationSession : public ThreadSafeRefCounted<SOAuthorizationSession, WTF::DestructionThread::MainRunLoop>, public CanMakeWeakPtr<SOAuthorizationSession> {
+class SOAuthorizationSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SOAuthorizationSession, WTF::DestructionThread::MainRunLoop> {
 public:
     enum class InitiatingAction : uint8_t {
         Redirect,
@@ -63,8 +63,6 @@ public:
     using UICallback = void (^)(BOOL, NSError *);
 
     virtual ~SOAuthorizationSession();
-
-    void setSOAuthorizationDelegate(WKSOAuthorizationDelegate *);
 
     // Probably not start immediately.
     void shouldStart();
@@ -90,7 +88,7 @@ protected:
         Completed
     };
 
-    SOAuthorizationSession(Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction);
+    SOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction);
 
     void start();
     WebPageProxy* page() const { return m_page.get(); }

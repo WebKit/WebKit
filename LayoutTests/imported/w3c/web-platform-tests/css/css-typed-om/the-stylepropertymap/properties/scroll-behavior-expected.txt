@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'scroll-behavior' to CSS-wide keywords
+FAIL Can set 'scroll-behavior' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'scroll-behavior' to the 'auto' keyword
+PASS Can set 'scroll-behavior' to the 'smooth' keyword
+PASS Setting 'scroll-behavior' to a length throws TypeError
+PASS Setting 'scroll-behavior' to a percent throws TypeError
+PASS Setting 'scroll-behavior' to a time throws TypeError
+PASS Setting 'scroll-behavior' to an angle throws TypeError
+PASS Setting 'scroll-behavior' to a flexible length throws TypeError
+PASS Setting 'scroll-behavior' to a number throws TypeError
+PASS Setting 'scroll-behavior' to a URL throws TypeError
+PASS Setting 'scroll-behavior' to a transform throws TypeError
 

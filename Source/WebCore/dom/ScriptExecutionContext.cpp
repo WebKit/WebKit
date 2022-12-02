@@ -186,6 +186,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
     for (auto& callback : callbacks.values())
         callback();
 
+    auto postMessageCompletionHandlers = WTFMove(m_processMessageWithMessagePortsSoonHandlers);
+    for (auto& completionHandler : postMessageCompletionHandlers)
+        completionHandler();
+
 #if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
 #endif
@@ -198,9 +202,11 @@ ScriptExecutionContext::~ScriptExecutionContext()
 #endif
 }
 
-void ScriptExecutionContext::processMessageWithMessagePortsSoon()
+void ScriptExecutionContext::processMessageWithMessagePortsSoon(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isContextThread());
+    m_processMessageWithMessagePortsSoonHandlers.append(WTFMove(completionHandler));
+
     if (m_willprocessMessageWithMessagePortsSoon)
         return;
 
@@ -219,6 +225,8 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
     ASSERT(m_willprocessMessageWithMessagePortsSoon);
     m_willprocessMessageWithMessagePortsSoon = false;
 
+    auto completionHandlers = std::exchange(m_processMessageWithMessagePortsSoonHandlers, Vector<CompletionHandler<void()>> { });
+
     // Make a frozen copy of the ports so we can iterate while new ones might be added or destroyed.
     for (auto* messagePort : copyToVector(m_messagePorts)) {
         // The port may be destroyed, and another one created at the same address,
@@ -227,6 +235,9 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
         if (m_messagePorts.contains(messagePort) && messagePort->started())
             messagePort->dispatchMessages();
     }
+
+    for (auto& completionHandler : completionHandlers)
+        completionHandler();
 }
 
 void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
@@ -252,7 +263,7 @@ CSSValuePool& ScriptExecutionContext::cssValuePool()
     return CSSValuePool::singleton();
 }
 
-std::unique_ptr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(String&, bool, bool, LoadedFromOpaqueSource)
+std::unique_ptr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource)
 {
     return nullptr;
 }
@@ -330,7 +341,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
 
     // In case there were pending messages at the time the script execution context entered the BackForwardCache,
     // make sure those get dispatched shortly after restoring from the BackForwardCache.
-    processMessageWithMessagePortsSoon();
+    processMessageWithMessagePortsSoon([] { });
 }
 
 void ScriptExecutionContext::stopActiveDOMObjects()

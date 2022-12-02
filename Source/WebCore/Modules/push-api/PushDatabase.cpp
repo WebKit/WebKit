@@ -670,26 +670,6 @@ void PushDatabase::getTopics(CompletionHandler<void(PushTopics&&)>&& completionH
     });
 }
 
-void PushDatabase::getOriginsWithPushSubscriptions(const String& bundleID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    dispatchOnWorkQueue([this, bundleID = crossThreadCopy(bundleID), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto sql = cachedStatementOnQueue(
-            "SELECT securityOrigin "
-            "FROM SubscriptionSets "
-            "WHERE bundleID = ? AND state = 0"_s);
-        if (!sql || sql->bindText(1, bundleID) != SQLITE_OK) {
-            PUSHDB_RELEASE_LOG_BIND_ERROR();
-            return completeOnMainQueue(WTFMove(completionHandler), Vector<String> { });
-        }
-
-        Vector<String> origins;
-        while (sql->step() == SQLITE_ROW)
-            origins.append(sql->columnText(0));
-
-        completeOnMainQueue(WTFMove(completionHandler), WTFMove(origins));
-    });
-}
-
 void PushDatabase::incrementSilentPushCount(const String& bundleID, const String& securityOrigin, CompletionHandler<void(unsigned)>&& completionHandler)
 {
     dispatchOnWorkQueue([this, bundleID = crossThreadCopy(bundleID), securityOrigin = crossThreadCopy(securityOrigin), completionHandler = WTFMove(completionHandler)]() mutable {

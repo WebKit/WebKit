@@ -27,8 +27,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-from-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-001.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-002.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-contenttype.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-static-error.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-static-json.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-static-redirect.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-bad-chunk.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-1.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-2.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-3.any.js
@@ -36,4 +39,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-5.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-6.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-by-pipe.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-util.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-with-broken-then.any.js

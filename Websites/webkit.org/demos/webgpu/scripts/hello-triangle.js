@@ -7,114 +7,87 @@ async function helloTriangle() {
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
     
-    /*** Shader Setup ***/
-    
-    /* GPUShaderModule */
-    const positionLocation = 0;
-    const colorLocation = 1;
-
-    const whlslSource = `
-    struct FragmentData {
-        float4 position : SV_Position;
-        float4 color : attribute(${colorLocation});
-    }
-
-    vertex FragmentData vertexMain(float4 position : attribute(${positionLocation}), float4 color : attribute(${colorLocation}))
-    {
-        FragmentData out;
-
-        out.position = position;
-        out.color = color;
-
-        return out;
-    }
-
-    fragment float4 fragmentMain(float4 color : attribute(${colorLocation})) : SV_Target 0
-    {
-        return color;
-    }
-    `;
-    const shaderModule = device.createShaderModule({ code: whlslSource, isWHLSL: true });
-    
-    /* GPUPipelineStageDescriptors */
-    const vertexStageDescriptor = { module: shaderModule, entryPoint: "vertexMain" };
-    const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fragmentMain" };
-    
     /*** Vertex Buffer Setup ***/
     
     /* Vertex Data */
-    const colorOffset = 4 * 4; // 4 floats of 4 bytes each.
     const vertexStride = 8 * 4;
     const vertexDataSize = vertexStride * 3;
     
     /* GPUBufferDescriptor */
-    const vertexDataBufferDescriptor = { 
+    const vertexDataBufferDescriptor = {
         size: vertexDataSize,
-        usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.VERTEX
+        usage: GPUBufferUsage.VERTEX
     };
+
     /* GPUBuffer */
     const vertexBuffer = device.createBuffer(vertexDataBufferDescriptor);
     
-    /*** Write Data To GPU ***/
+    /*** Shader Setup ***/
     
-    const vertexArrayBuffer = await vertexBuffer.mapWriteAsync();
-    const vertexWriteArray = new Float32Array(vertexArrayBuffer);
-    vertexWriteArray.set([
-        // x, y, z, w, r, g, b, a
-        0, 0.8, 0, 1, 0, 1, 1, 1,
-        -0.8, -0.8, 0, 1, 1, 1, 0, 1,
-        0.8, -0.8, 0, 1, 1, 0, 1, 1
-    ]);
-    vertexBuffer.unmap();
-    
-    /*** Describe Vertex Data For Pipeline ***/
-    
-    const vertexBufferSlot = 0;
-    
-    /* GPUVertexAttributeDescriptors */
-    const positionAttribute = {
-        shaderLocation: positionLocation,
-        offset: 0,
-        format: "float4"
-    };
-    const colorAttribute = {
-        shaderLocation: colorLocation,
-        offset: colorOffset,
-        format: "float4"
-    };
+    const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [{binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {}}] });
+    const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
+    const layout = device.createPipelineLayout(pipelineLayoutDesc);
+/*
+    FIXME: Use WGSL once compiler is brought up
+    const wgslSource = `
+                     @vertex fn main(@builtin(vertex_index) VertexIndex: u32) -> @builtin(position) vec4<f32>
+                     {
+                         var pos = array<vec2<f32>, 3>(
+                             vec2<f32>( 0.0,  0.5),
+                             vec2<f32>(-0.5, -0.5),
+                             vec2<f32>( 0.5, -0.5)
+                         );
+                         return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+                     }
 
-    /* GPUVertexBufferDescriptor */
-    const vertexBufferDescriptor = {
-        stride: vertexStride,
-        attributeSet: [positionAttribute, colorAttribute]
-    };
+                     @fragment fn main() -> @location(0) vec4<f32>
+                     {
+                         return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+                     }
+    `;
+ */
+    const wgslSource = `
+                #include <metal_stdlib>
+                using namespace metal;
+                struct Vertex {
+                   float4 position [[position]];
+                   float4 color;
+                };
 
-    /* GPUVertexInputDescriptor */
-    const vertexInputDescriptor = {
-        vertexBuffers: [vertexBufferDescriptor]
-    };
+                vertex Vertex vsmain(unsigned VertexIndex [[vertex_id]])
+                {
+                   float2 pos[3] = {
+                       float2( 0.0,  0.5),
+                       float2(-0.5, -0.5),
+                       float2( 0.5, -0.5),
+                   };
+
+                   Vertex vout;
+                   vout.position = float4(pos[VertexIndex], 0.0, 1.0);
+                   vout.color = float4(pos[VertexIndex] + float2(0.5, 0.5), 0.0, 1.0);
+                   return vout;
+                }
+
+                fragment float4 fsmain(Vertex in [[stage_in]])
+                {
+                    return in.color;
+                }
+    `;
+
+    const shaderModule = device.createShaderModule({ code: wgslSource, isWHLSL: false, hints: [ {layout: layout }, ] });
     
-    /*** Finish Pipeline State ***/
-    
-    /* GPUBlendDescriptors */
-    const alphaBlendDescriptor = { srcFactor: "one", dstFactor: "zero", operation: "add" };
-    const colorBlendDescriptor = { srcFactor: "one", dstFactor: "zero", operation: "add" };
-    
-    /* GPUColorStateDescriptor */
-    const colorStateDescriptor = {
-        format: "bgra8unorm",
-        alphaBlend: alphaBlendDescriptor,
-        colorBlend: colorBlendDescriptor,
-        writeMask: GPUColorWrite.ALL
-    };
+    /* GPUPipelineStageDescriptors */
+    const vertexStageDescriptor = { module: shaderModule, entryPoint: "vsmain" };
+
+    const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: "bgra8unorm" }, ],  };
     
     /* GPURenderPipelineDescriptor */
+
     const renderPipelineDescriptor = {
-        vertexStage: vertexStageDescriptor,
-        fragmentStage: fragmentStageDescriptor,
-        primitiveTopology: "triangle-list",
-        colorStates: [colorStateDescriptor],
-        vertexInput: vertexInputDescriptor
+        layout: layout,
+        vertex: vertexStageDescriptor,
+        fragment: fragmentStageDescriptor,
+        primitive: {topology: "triangle-list" },
     };
     /* GPURenderPipeline */
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
@@ -125,28 +98,27 @@ async function helloTriangle() {
     canvas.width = 600;
     canvas.height = 600;
 
-    const gpuContext = canvas.getContext("gpu");
+    const gpuContext = canvas.getContext("webgpu");
     
-    /* GPUSwapChainDescriptor */
-    const swapChainDescriptor = { device: device, format: "bgra8unorm" };
-    /* GPUSwapChain */
-    const swapChain = gpuContext.configureSwapChain(swapChainDescriptor);
+    /* GPUCanvasConfiguration */
+    const canvasConfiguration = { device: device, format: "bgra8unorm" };
+    gpuContext.configure(canvasConfiguration);
+    /* GPUTexture */
+    const currentTexture = gpuContext.getCurrentTexture();
     
     /*** Render Pass Setup ***/
     
     /* Acquire Texture To Render To */
     
-    /* GPUTexture */
-    const swapChainTexture = swapChain.getCurrentTexture();
     /* GPUTextureView */
-    const renderAttachment = swapChainTexture.createDefaultView();
+    const renderAttachment = currentTexture.createView();
     
     /* GPUColor */
     const darkBlue = { r: 0.15, g: 0.15, b: 0.5, a: 1 };
     
     /* GPURenderPassColorATtachmentDescriptor */
     const colorAttachmentDescriptor = {
-        attachment: renderAttachment,
+        view: renderAttachment,
         loadOp: "clear",
         storeOp: "store",
         clearColor: darkBlue
@@ -163,15 +135,16 @@ async function helloTriangle() {
     const renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     
     renderPassEncoder.setPipeline(renderPipeline);
-    renderPassEncoder.setVertexBuffers(vertexBufferSlot, [vertexBuffer], [0]);
+    const vertexBufferSlot = 0;
+    renderPassEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
     renderPassEncoder.draw(3, 1, 0, 0); // 3 vertices, 1 instance, 0th vertex, 0th instance.
-    renderPassEncoder.endPass();
+    renderPassEncoder.end();
     
     /* GPUComamndBuffer */
     const commandBuffer = commandEncoder.finish();
     
     /* GPUQueue */
-    const queue = device.getQueue();
+    const queue = device.queue;
     queue.submit([commandBuffer]);
 }
 

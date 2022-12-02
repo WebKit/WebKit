@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "DestinationColorSpace.h"
 #include "GraphicsContextGLAttributes.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsTypesGL.h"
@@ -63,6 +64,37 @@ struct GraphicsContextGLActiveInfo {
     GCGLenum type;
     GCGLint size;
 };
+
+class GraphicsContextGL;
+
+struct GCGLOwned {
+    GCGLOwned() = default;
+    GCGLOwned(const GCGLOwned&) = delete;
+    GCGLOwned(GCGLOwned&&) = delete;
+    ~GCGLOwned();
+
+    GCGLOwned& operator=(const GCGLOwned&) const = delete;
+    GCGLOwned& operator=(GCGLOwned&&) = delete;
+
+    operator PlatformGLObject() const { return m_object; }
+
+    PlatformGLObject leakObject() { return std::exchange(m_object, 0); }
+
+protected:
+    PlatformGLObject m_object = 0;
+};
+
+#define DECLARE_GCGL_OWNED(ClassName) \
+struct GCGLOwned##ClassName : public GCGLOwned { \
+    void ensure(GraphicsContextGL& gl); \
+    void release(GraphicsContextGL& gl); \
+}
+
+DECLARE_GCGL_OWNED(Framebuffer);
+DECLARE_GCGL_OWNED(Renderbuffer);
+DECLARE_GCGL_OWNED(Texture);
+
+#undef DECLARE_GCGL_OWNED
 
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
@@ -788,10 +820,10 @@ public:
     static constexpr GCGLenum RGB16_SNORM_EXT = 0x8F9A;
     static constexpr GCGLenum RGBA16_SNORM_EXT = 0x8F9B;
 
-    // GL_EXT_provoking_vertex
-    static constexpr GCGLenum FIRST_VERTEX_CONVENTION_EXT = 0x8E4D;
-    static constexpr GCGLenum LAST_VERTEX_CONVENTION_EXT = 0x8E4E;
-    static constexpr GCGLenum PROVOKING_VERTEX_EXT = 0x8E4F;
+    // GL_ANGLE_provoking_vertex
+    static constexpr GCGLenum FIRST_VERTEX_CONVENTION_ANGLE = 0x8E4D;
+    static constexpr GCGLenum LAST_VERTEX_CONVENTION_ANGLE = 0x8E4E;
+    static constexpr GCGLenum PROVOKING_VERTEX_ANGLE = 0x8E4F;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
@@ -1450,6 +1482,8 @@ public:
 
     virtual void setContextVisibility(bool) = 0;
 
+    WEBCORE_EXPORT virtual void setDrawingBufferColorSpace(const DestinationColorSpace&);
+
     virtual bool isGLES2Compliant() const = 0;
 
     // Synthesizes an OpenGL error which will be returned from a
@@ -1610,6 +1644,31 @@ inline GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum i
     getInternalformativ(target, internalformat, pname, value);
     return value[0];
 }
+
+inline GCGLOwned::~GCGLOwned()
+{
+    ASSERT(!m_object, "Have you explicitly deleted this object? If so, call release().");
+}
+
+#define IMPLEMENT_GCGL_OWNED(ClassName) \
+inline void GCGLOwned##ClassName::ensure(GraphicsContextGL& gl) \
+{ \
+    if (!m_object) \
+        m_object = gl.create##ClassName(); \
+} \
+\
+inline void GCGLOwned##ClassName::release(GraphicsContextGL& gl) \
+{ \
+    if (m_object) \
+        gl.delete##ClassName(m_object); \
+    m_object = 0; \
+}
+
+IMPLEMENT_GCGL_OWNED(Framebuffer)
+IMPLEMENT_GCGL_OWNED(Renderbuffer)
+IMPLEMENT_GCGL_OWNED(Texture)
+
+#undef IMPLEMENT_GCGL_OWNED
 
 } // namespace WebCore
 

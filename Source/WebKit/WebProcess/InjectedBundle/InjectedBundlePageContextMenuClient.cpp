@@ -46,7 +46,7 @@ InjectedBundlePageContextMenuClient::InjectedBundlePageContextMenuClient(const W
     initialize(client);
 }
 
-bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage& page, const HitTestResult& hitTestResult, const Vector<ContextMenuItem>& proposedMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData)
+bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage& page, const HitTestResult& hitTestResult, const Vector<ContextMenuItem>& proposedMenu, Vector<WebContextMenuItemData>& newMenu, const WebCore::ContextMenuContext&, RefPtr<API::Object>& userData)
 {
     if (!m_client.getContextMenuFromDefaultMenu)
         return false;

@@ -1,3 +1,4 @@
+//@ $skipModes << :lockdown
 //@ if $jitTests then defaultNoEagerRun(*NO_CJIT_OPTIONS) else skip end
 
 function foo(a, inBounds) {

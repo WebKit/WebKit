@@ -164,7 +164,7 @@ std::unique_ptr<VideoEncoder> ObjCVideoEncoderFactory::CreateVideoEncoder(
   // Because of symbol conflict, isKindOfClass doesn't work as expected.
   // See https://bugs.webkit.org/show_bug.cgi?id=198782.
   // if ([encoder isKindOfClass:[RTCWrappedNativeVideoEncoder class]]) {
-  if ([info.name isEqual:@"VP8"] || [info.name isEqual:@"VP9"]) {
+  if ([info.name isEqual:@"VP8"] || [info.name isEqual:@"VP9"] || [info.name isEqual:@"AV1"]) {
     return [(RTCWrappedNativeVideoEncoder *)encoder releaseWrappedEncoder];
   } else {
     return std::unique_ptr<ObjCVideoEncoder>(new ObjCVideoEncoder(encoder));

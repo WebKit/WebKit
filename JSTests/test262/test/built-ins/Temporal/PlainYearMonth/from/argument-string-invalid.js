@@ -4,8 +4,11 @@
 /*---
 esid: sec-temporal.plainyearmonth.from
 description: An invalid ISO string is never supported
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-assert.throws(RangeError, () => Temporal.PlainYearMonth.from("2020-13", { overflow: "reject" }));
-assert.throws(RangeError, () => Temporal.PlainYearMonth.from("2020-13", { overflow: "constrain" }));
+for (const input of TemporalHelpers.ISO.plainYearMonthStringsInvalid()) {
+  assert.throws(RangeError, () => Temporal.PlainYearMonth.from(input, { overflow: "reject" }));
+  assert.throws(RangeError, () => Temporal.PlainYearMonth.from(input, { overflow: "constrain" }));
+}

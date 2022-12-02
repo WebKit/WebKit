@@ -785,6 +785,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 {
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     return isCopyDisplayedPixelBufferAvailable() && [&] {
+        if (m_mediaSourcePrivate && anyOf(m_mediaSourcePrivate->sourceBuffers(), [] (auto& sourceBuffer) {
+            return sourceBuffer->needsVideoLayer();
+        }))
+            return true;
         if (m_sampleBufferDisplayLayer)
             return !CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]);
         return !m_player->playerContentBoxRect().isEmpty();
@@ -1242,6 +1246,11 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldCheckHardwareSupport() const
     return m_player->shouldCheckHardwareSupport();
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::needsVideoLayerChanged()
+{
+    updateDisplayLayerAndDecompressionSession();
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
     if (m_readyState == readyState)
@@ -1501,6 +1510,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldDisableHDR(bool shouldDisabl
 
     ALWAYS_LOG(LOGIDENTIFIER, shouldDisable);
     [m_sampleBufferDisplayLayer setToneMapToStandardDynamicRange:shouldDisable];
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
+{
+    if (!m_sampleBufferDisplayLayer && !newRect.isEmpty())
+        updateDisplayLayerAndDecompressionSession();
 }
 
 WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const

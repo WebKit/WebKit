@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -290,6 +290,22 @@ inline WKTypeID toAPI(API::Object::Type type)
     return static_cast<WKTypeID>(type);
 }
 
+inline OptionSet<WebEventModifier> fromAPI(WKEventModifiers wkModifiers)
+{
+    OptionSet<WebEventModifier> modifiers;
+    if (wkModifiers & kWKEventModifiersShiftKey)
+        modifiers.add(WebEventModifier::ShiftKey);
+    if (wkModifiers & kWKEventModifiersControlKey)
+        modifiers.add(WebEventModifier::ControlKey);
+    if (wkModifiers & kWKEventModifiersAltKey)
+        modifiers.add(WebEventModifier::AltKey);
+    if (wkModifiers & kWKEventModifiersMetaKey)
+        modifiers.add(WebEventModifier::MetaKey);
+    if (wkModifiers & kWKEventModifiersCapsLockKey)
+        modifiers.add(WebEventModifier::CapsLockKey);
+    return modifiers;
+}
+
 inline WKEventModifiers toAPI(OptionSet<WebEventModifier> modifiers)
 {
     WKEventModifiers wkModifiers = 0;
@@ -367,6 +383,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagDownloadImageToDisk;
     case WebCore::ContextMenuItemTagCopyImageToClipboard:
         return kWKContextMenuItemTagCopyImageToClipboard;
+    case WebCore::ContextMenuItemTagPlayAllAnimations:
+        return kWKContextMenuItemTagPlayAllAnimations;
+    case WebCore::ContextMenuItemTagPauseAllAnimations:
+        return kWKContextMenuItemTagPauseAllAnimations;
 #if PLATFORM(GTK)
     case WebCore::ContextMenuItemTagCopyImageUrlToClipboard:
         return kWKContextMenuItemTagCopyImageUrlToClipboard;
@@ -571,6 +591,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagDownloadImageToDisk;
     case kWKContextMenuItemTagCopyImageToClipboard:
         return WebCore::ContextMenuItemTagCopyImageToClipboard;
+    case kWKContextMenuItemTagPlayAllAnimations:
+        return WebCore::ContextMenuItemTagPlayAllAnimations;
+    case kWKContextMenuItemTagPauseAllAnimations:
+        return WebCore::ContextMenuItemTagPauseAllAnimations;
     case kWKContextMenuItemTagOpenFrameInNewWindow:
 #if PLATFORM(GTK)
     case kWKContextMenuItemTagCopyImageUrlToClipboard:

@@ -57,7 +57,7 @@ item.then(({ done, value }) => {
   assert.sameValue(value.b, 2);
   assert.sameValue(value[s], 42);
   assert.sameValue(Object.keys(value).length, 5);
-  assert(Object.hasOwnProperty.call(value, s));
+  assert(Object.prototype.hasOwnProperty.call(value, s), "s is an own property");
 }).then($DONE, $DONE);
 
 assert.sameValue(callCount, 1);

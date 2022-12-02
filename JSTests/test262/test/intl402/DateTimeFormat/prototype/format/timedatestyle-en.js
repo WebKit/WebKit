@@ -17,10 +17,10 @@ const dateOptions = [
 ];
 
 const timeOptions = [
-  ["full", "2:12:47 PM Coordinated Universal Time", "14:12:47 Coordinated Universal Time"],
-  ["long", "2:12:47 PM UTC", "14:12:47 UTC"],
-  ["medium", "2:12:47 PM", "14:12:47"],
-  ["short", "2:12 PM", "14:12"],
+  ["full", "2:12:47\u{202F}PM Coordinated Universal Time", "14:12:47 Coordinated Universal Time"],
+  ["long", "2:12:47\u{202F}PM UTC", "14:12:47 UTC"],
+  ["medium", "2:12:47\u{202F}PM", "14:12:47"],
+  ["short", "2:12\u{202F}PM", "14:12"],
 ];
 
 const options12 = [

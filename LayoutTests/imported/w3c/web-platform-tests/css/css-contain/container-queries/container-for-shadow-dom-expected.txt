@@ -9,4 +9,5 @@ PASS Match container in outer tree for :host::before
 PASS Match container for ::before in ::part selector's originating element tree
 PASS Match container for ::part selector's originating element tree for exportparts
 PASS Match container for slot light tree child fallback
+PASS Should not match container inside shadow tree for ::part()
 

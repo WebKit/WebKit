@@ -42,7 +42,7 @@ class InlineLevelBox {
 public:
     enum class LineSpanningInlineBox { Yes, No };
     static InlineLevelBox createInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
-    static InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize);
+    static InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     static InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
     static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
@@ -56,7 +56,7 @@ public:
         InlineLayoutUnit ascent { 0 };
         InlineLayoutUnit descent { 0 };
     };
-    LayoutBounds layoutBounds() const { return m_layoutBounds; }
+    std::optional<LayoutBounds> layoutBounds() const { return m_layoutBounds; }
 
     bool hasContent() const { return m_hasContent; }
     void setHasContent();
@@ -70,6 +70,9 @@ public:
 
     InlineLayoutUnit preferredLineHeight() const;
     bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative(); }
+
+    bool lineBoxContain() const;
+    bool hasLineBoxContain() const { return m_style.lineBoxContain != RenderStyle::initialLineBoxContain(); }
 
     const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
@@ -111,6 +114,7 @@ private:
     friend class LineBox;
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
+    friend class InlineFormattingGeometry;
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
@@ -134,7 +138,7 @@ private:
     CheckedRef<const Box> m_layoutBox;
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
-    LayoutBounds m_layoutBounds;
+    std::optional<LayoutBounds> m_layoutBounds { };
     InlineLayoutUnit m_ascent { 0 };
     std::optional<InlineLayoutUnit> m_descent;
     bool m_hasContent { false };
@@ -147,6 +151,7 @@ private:
     struct Style {
         const FontMetrics& primaryFontMetrics;
         const Length& lineHeight;
+        WTF::OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
     };
@@ -166,7 +171,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)
@@ -223,24 +228,43 @@ inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
 }
 
-inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize)
+inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
-    return InlineLevelBox { layoutBox, style, logicalLeft, logicalSize, Type::AtomicInlineLevelBox };
+    return InlineLevelBox { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::AtomicInlineLevelBox };
 }
 
 inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning)
 {
-    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox, { } };
+    return InlineLevelBox { layoutBox, style, logicalLeft, { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox, { } };
 }
 
 inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
 {
-    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { }, Type::LineBreakBox };
+    return InlineLevelBox { layoutBox, style, logicalLeft, { }, Type::LineBreakBox };
 }
 
 inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
 {
-    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { }, Type::GenericInlineLevelBox };
+    return InlineLevelBox { layoutBox, style, logicalLeft, { }, Type::GenericInlineLevelBox };
+}
+
+inline bool InlineLevelBox::lineBoxContain() const
+{
+    if (isRootInlineBox())
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+
+    if (isAtomicInlineLevelBox())
+        return m_style.lineBoxContain.contains(LineBoxContain::Replaced);
+
+    if (isInlineBox()) {
+        // Either the inline box itself is included or its text content thorugh Glyph and Font.
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+    }
+
+    if (isLineBreakBox())
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+
+    return true;
 }
 
 }

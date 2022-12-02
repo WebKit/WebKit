@@ -212,10 +212,10 @@ void ResourceRequest::doUpdatePlatformRequest()
     _CFURLRequestSetProtocolProperty(cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertyisTopSite"), isTopSiteCF.get());
 #endif
 
-    unsigned fallbackCount = m_responseContentDispositionEncodingFallbackArray.size();
+    unsigned fallbackCount = m_requestData.m_responseContentDispositionEncodingFallbackArray.size();
     RetainPtr<CFMutableArrayRef> encodingFallbacks = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, fallbackCount, 0));
     for (unsigned i = 0; i != fallbackCount; ++i) {
-        RetainPtr<CFStringRef> encodingName = m_responseContentDispositionEncodingFallbackArray[i].createCFString();
+        RetainPtr<CFStringRef> encodingName = m_requestData.m_responseContentDispositionEncodingFallbackArray[i].createCFString();
         CFStringEncoding encoding = CFStringConvertIANACharSetNameToEncoding(encodingName.get());
         if (encoding != kCFStringEncodingInvalidId)
             CFArrayAppendValue(encodingFallbacks.get(), reinterpret_cast<const void*>(encoding));
@@ -260,7 +260,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
             CFURLRequestSetHTTPHeaderFieldValue(cfRequest.get(), CFSTR("Content-Length"), lengthString.get());
             // Since resource request is already marked updated, we need to keep it up to date too.
             ASSERT(m_resourceRequestUpdated);
-            m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString.get());
+            m_requestData.m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString.get());
         }
     }
 
@@ -274,18 +274,18 @@ void ResourceRequest::doUpdateResourceRequest()
         return;
     }
 
-    m_url = CFURLRequestGetURL(m_cfRequest.get());
+    m_requestData.m_url = CFURLRequestGetURL(m_cfRequest.get());
 
-    if (m_cachePolicy == ResourceRequestCachePolicy::UseProtocolCachePolicy)
-        m_cachePolicy = fromPlatformRequestCachePolicy(CFURLRequestGetCachePolicy(m_cfRequest.get()));
-    m_timeoutInterval = CFURLRequestGetTimeoutInterval(m_cfRequest.get());
-    m_firstPartyForCookies = CFURLRequestGetMainDocumentURL(m_cfRequest.get());
+    if (m_requestData.m_cachePolicy == ResourceRequestCachePolicy::UseProtocolCachePolicy)
+        m_requestData.m_cachePolicy = fromPlatformRequestCachePolicy(CFURLRequestGetCachePolicy(m_cfRequest.get()));
+    m_requestData.m_timeoutInterval = CFURLRequestGetTimeoutInterval(m_cfRequest.get());
+    m_requestData.m_firstPartyForCookies = CFURLRequestGetMainDocumentURL(m_cfRequest.get());
     if (auto method = adoptCF(CFURLRequestCopyHTTPRequestMethod(m_cfRequest.get())))
-        m_httpMethod = method.get();
-    m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
+        m_requestData.m_httpMethod = method.get();
+    m_requestData.m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
     if (resourcePrioritiesEnabled())
-        m_priority = toResourceLoadPriority(CFURLRequestGetRequestPriority(m_cfRequest.get()));
+        m_requestData.m_priority = toResourceLoadPriority(CFURLRequestGetRequestPriority(m_cfRequest.get()));
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<CFURLRef> siteForCookies = adoptCF(checked_cf_cast<CFURLRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"))));
@@ -301,24 +301,24 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 #endif
 
-    m_httpHeaderFields.clear();
+    m_requestData.m_httpHeaderFields.clear();
     if (auto headers = adoptCF(CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get()))) {
         CFIndex headerCount = CFDictionaryGetCount(headers.get());
         Vector<const void*, 128> keys(headerCount);
         Vector<const void*, 128> values(headerCount);
         CFDictionaryGetKeysAndValues(headers.get(), keys.data(), values.data());
         for (int i = 0; i < headerCount; ++i)
-            m_httpHeaderFields.set((CFStringRef)keys[i], (CFStringRef)values[i]);
+            m_requestData.m_httpHeaderFields.set((CFStringRef)keys[i], (CFStringRef)values[i]);
     }
 
-    m_responseContentDispositionEncodingFallbackArray.clear();
+    m_requestData.m_responseContentDispositionEncodingFallbackArray.clear();
     RetainPtr<CFArrayRef> encodingFallbacks = adoptCF(copyContentDispositionEncodingFallbackArray(m_cfRequest.get()));
     if (encodingFallbacks) {
         CFIndex count = CFArrayGetCount(encodingFallbacks.get());
         for (CFIndex i = 0; i < count; ++i) {
             CFStringEncoding encoding = reinterpret_cast<CFIndex>(CFArrayGetValueAtIndex(encodingFallbacks.get(), i));
             if (encoding != kCFStringEncodingInvalidId)
-                m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
+                m_requestData.m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
         }
     }
 

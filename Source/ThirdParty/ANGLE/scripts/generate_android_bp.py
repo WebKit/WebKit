@@ -2,10 +2,9 @@
 #  Use of this source code is governed by a BSD-style license that can be
 #  found in the LICENSE file.
 #
-# Generates an Android.bp file from the json output of a 'gn desc' command.
-# Example usage:
-#   gn desc out/Android --format=json "*" > desc.json
-#   python scripts/generate_android_bp.py desc.json > Android.bp
+# Generates an Android.bp file from the json output of 4 'gn desc' commands.
+# Invoked during Skia rolls by roll_aosp.sh. For local testing, see:
+#  scripts/roll_aosp.sh --genAndroidBp
 
 import json
 import sys
@@ -15,25 +14,30 @@ import argparse
 import functools
 import collections
 
-root_targets = [
+ROOT_TARGETS = [
     "//:libGLESv2",
     "//:libGLESv1_CM",
     "//:libEGL",
 ]
 
-codegen_targets = [
+CODEGEN_TARGETS = [
     "//:libEGL",
 ]
 
-sdk_version = '28'
-stl = 'libc++_static'
+SDK_VERSION = '28'
+STL = 'libc++_static'
 
-abi_arm = 'arm'
-abi_arm64 = 'arm64'
-abi_x86 = 'x86'
-abi_x64 = 'x86_64'
+ABI_ARM = 'arm'
+ABI_ARM64 = 'arm64'
+ABI_X86 = 'x86'
+ABI_X64 = 'x86_64'
 
-abi_targets = [abi_arm, abi_arm64, abi_x86, abi_x64]
+ABI_TARGETS = [ABI_ARM, ABI_ARM64, ABI_X86, ABI_X64]
+
+
+def gn_abi(abi):
+    # gn uses x64, rather than x86_64
+    return 'x64' if abi == ABI_X64 else abi
 
 
 # Makes dict cache-able "by reference" (assumed not to be mutated)
@@ -44,20 +48,6 @@ class BuildInfo(dict):
 
     def __eq__(self, other):
         return self is other
-
-
-# TODO: replace with functools.cache once on python3
-def cache(f):
-    cache = {}
-
-    @functools.wraps(f)
-    def wrapper(*args):
-        key = tuple(args)
-        if key not in cache:
-            cache[key] = f(*args)
-        return cache[key]
-
-    return wrapper
 
 
 def tabs(indent):
@@ -222,7 +212,7 @@ include_blocklist = [
 ]
 
 
-@cache
+@functools.lru_cache(maxsize=None)  # .cache() is py3.9 http://b/246559064#comment8
 def gn_deps_to_blueprint_deps(abi, target, build_info):
     target_info = build_info[abi][target]
     static_libs = []
@@ -233,7 +223,7 @@ def gn_deps_to_blueprint_deps(abi, target, build_info):
     if 'deps' not in target_info:
         return static_libs, defaults
 
-    if target in codegen_targets:
+    if target in CODEGEN_TARGETS:
         target_name = gn_target_to_blueprint_target(target, target_info)
         defaults.append(target_name + '_android_codegen')
 
@@ -320,14 +310,6 @@ def gn_cflags_to_blueprint_cflags(target_info):
                     if re.search(allowlisted_cflag, cflag):
                         result.append(cflag)
 
-    # Chrome and Android use different versions of Clang which support differnt warning options.
-    # Ignore errors about unrecognized warning flags.
-    result.append('-Wno-unknown-warning-option')
-
-    # Override AOSP build flags to match ANGLE's CQ testing and reduce binary size
-    result.append('-Os')
-    result.append('-fno-unwind-tables')
-
     if 'defines' in target_info:
         for define in target_info['defines']:
             # Don't emit ANGLE's CPU-bits define here, it will be part of the arch-specific
@@ -347,36 +329,26 @@ blueprint_library_target_types = {
 
 def merge_bps(bps_for_abis):
     common_bp = {}
-    for abi in abi_targets:
-        for key in bps_for_abis[abi].keys():
-            if isinstance(bps_for_abis[abi][key], list):
-                # Find list values that are common to all ABIs
-                for value in bps_for_abis[abi][key]:
-                    value_in_all_abis = True
-                    for abi2 in abi_targets:
-                        if key == 'defaults':
-                            # arch-specific defaults are not supported
-                            break
-                        value_in_all_abis = value_in_all_abis and (key in bps_for_abis[abi2].keys(
-                        )) and (value in bps_for_abis[abi2][key])
-                    if value_in_all_abis:
-                        if key in common_bp.keys():
-                            common_bp[key].append(value)
-                        else:
-                            common_bp[key] = [value]
-                    else:
-                        if 'arch' not in common_bp.keys():
-                            # Make sure there is an 'arch' entry to hold ABI-specific values
-                            common_bp['arch'] = {}
-                            for abi3 in abi_targets:
-                                common_bp['arch'][abi3] = {}
-                        if key in common_bp['arch'][abi].keys():
-                            common_bp['arch'][abi][key].append(value)
-                        else:
-                            common_bp['arch'][abi][key] = [value]
-            else:
+    for abi in ABI_TARGETS:
+        for key, values in bps_for_abis[abi].items():
+            if not isinstance(values, list):
                 # Assume everything that's not a list is common to all ABIs
-                common_bp[key] = bps_for_abis[abi][key]
+                common_bp[key] = values
+                continue
+
+            # Find list values that are common to all ABIs
+            values_in_all_abis = set.intersection(
+                *[set(bps_for_abis[abi2].get(key, [])) for abi2 in ABI_TARGETS])
+
+            for value in values:
+                if value in values_in_all_abis or key == 'defaults':  # arch-specific defaults are not supported
+                    common_bp.setdefault(key, [])
+                    common_bp[key].append(value)
+                else:
+                    common_bp.setdefault('arch', {abi3: {} for abi3 in ABI_TARGETS})
+                    abi_specific = common_bp['arch'][abi]
+                    abi_specific.setdefault(key, [])
+                    abi_specific[key].append(value)
 
     return common_bp
 
@@ -384,7 +356,7 @@ def merge_bps(bps_for_abis):
 def library_target_to_blueprint(target, build_info):
     bps_for_abis = {}
     blueprint_type = ""
-    for abi in abi_targets:
+    for abi in ABI_TARGETS:
         if target not in build_info[abi].keys():
             bps_for_abis[abi] = {}
             continue
@@ -406,9 +378,11 @@ def library_target_to_blueprint(target, build_info):
 
         bp['cflags'] = gn_cflags_to_blueprint_cflags(target_info)
 
-        bp['sdk_version'] = sdk_version
-        bp['stl'] = stl
-        if target in root_targets:
+        bp['defaults'].append('angle_common_library_cflags')
+
+        bp['sdk_version'] = SDK_VERSION
+        bp['stl'] = STL
+        if target in ROOT_TARGETS:
             bp['vendor'] = True
             bp['target'] = {'android': {'relative_install_path': 'egl'}}
         bps_for_abis[abi] = bp
@@ -510,13 +484,13 @@ def action_target_to_blueprint(abi, target, build_info):
                                                              target_info['args'])
     bp['cmd'] = ' '.join(cmd)
 
-    bp['sdk_version'] = sdk_version
+    bp['sdk_version'] = SDK_VERSION
 
     return blueprint_type, bp
 
 
 def gn_target_to_blueprint(target, build_info):
-    for abi in abi_targets:
+    for abi in ABI_TARGETS:
         gn_type = build_info[abi][target]['type']
         if gn_type in blueprint_library_target_types:
             return library_target_to_blueprint(target, build_info)
@@ -527,7 +501,7 @@ def gn_target_to_blueprint(target, build_info):
             continue
 
 
-@cache
+@functools.lru_cache(maxsize=None)
 def get_gn_target_dependencies(abi, target, build_info):
     result = collections.OrderedDict()
     result[target] = 1
@@ -550,28 +524,23 @@ def main():
     parser = argparse.ArgumentParser(
         description='Generate Android blueprints from gn descriptions.')
 
-    for abi in abi_targets:
-        fixed_abi = abi
-        if abi == abi_x64:
-            fixed_abi = 'x64'  # gn uses x64, rather than x86_64
+    for abi in ABI_TARGETS:
         parser.add_argument(
-            'gn_json_' + fixed_abi,
-            help=fixed_abi +
-            'gn desc in json format. Generated with \'gn desc <out_dir> --format=json "*"\'.')
+            '--gn_json_' + gn_abi(abi),
+            help=gn_abi(abi) +
+            ' gn desc file in json format. Generated with \'gn desc <out_dir> --format=json "*"\'.',
+            required=True)
     args = vars(parser.parse_args())
 
     infos = {}
-    for abi in abi_targets:
-        fixed_abi = abi
-        if abi == abi_x64:
-            fixed_abi = 'x64'  # gn uses x64, rather than x86_64
-        with open(args['gn_json_' + fixed_abi], 'r') as f:
+    for abi in ABI_TARGETS:
+        with open(args['gn_json_' + gn_abi(abi)], 'r') as f:
             infos[abi] = json.load(f)
 
     build_info = BuildInfo(infos)
     targets_to_write = collections.OrderedDict()
-    for abi in abi_targets:
-        for root_target in root_targets:
+    for abi in ABI_TARGETS:
+        for root_target in ROOT_TARGETS:
             targets_to_write.update(get_gn_target_dependencies(abi, root_target, build_info))
 
     blueprint_targets = []
@@ -587,9 +556,24 @@ def main():
         'pluginFor': ['soong_build'],
     }))
 
+    blueprint_targets.append((
+        'cc_defaults',
+        {
+            'name':
+                'angle_common_library_cflags',
+            'cflags': [
+                # Chrome and Android use different versions of Clang which support differnt warning options.
+                # Ignore errors about unrecognized warning flags.
+                '-Wno-unknown-warning-option',
+                '-Os',
+                # Override AOSP build flags to match ANGLE's CQ testing and reduce binary size
+                '-fno-unwind-tables',
+            ],
+        }))
+
     for target in reversed(targets_to_write.keys()):
         blueprint_type, bp = gn_target_to_blueprint(target, build_info)
-        if target in codegen_targets:
+        if target in CODEGEN_TARGETS:
             blueprint_targets.append(('angle_android_codegen', {
                 'name': bp['name'] + '_android_codegen',
             }))
@@ -669,13 +653,13 @@ def main():
         {
             'name': 'ANGLE_java_defaults',
             'sdk_version': 'system_current',
-            'min_sdk_version': sdk_version,
+            'min_sdk_version': SDK_VERSION,
             'compile_multilib': 'both',
             'use_embedded_native_libs': True,
             'jni_libs': [
-                # hack: assume abi_arm
-                gn_target_to_blueprint_target(target, build_info[abi_arm][target])
-                for target in root_targets
+                # hack: assume ABI_ARM
+                gn_target_to_blueprint_target(target, build_info[ABI_ARM][target])
+                for target in ROOT_TARGETS
             ],
             'aaptflags': [
                 '-0 .json',  # Don't compress *.json files
@@ -691,7 +675,7 @@ def main():
     blueprint_targets.append(('android_library', {
         'name': 'ANGLE_library',
         'sdk_version': 'system_current',
-        'min_sdk_version': sdk_version,
+        'min_sdk_version': SDK_VERSION,
         'resource_dirs': ['src/android_system_settings/res',],
         'asset_dirs': ['src/android_system_settings/assets',],
         'aaptflags': ['-0 .json',],

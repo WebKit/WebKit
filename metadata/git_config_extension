@@ -14,3 +14,6 @@
         security = WebKit/teams/security
 [webkitscmpy "pre-pr"]
         style-checker = python3 Tools/Scripts/check-webkit-style
+[webkitscmpy "tests"]
+        layout-tests = LayoutTests
+        api-tests = Tools/TestWebKitAPI

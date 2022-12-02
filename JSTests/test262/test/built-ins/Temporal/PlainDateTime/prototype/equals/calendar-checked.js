@@ -23,7 +23,7 @@ assert.compareArray(actual, []);
 assert.sameValue(dt1.equals(dt2), true, "same calendar string");
 assert.compareArray(actual, ["get calendar1.toString", "call calendar1.toString", "get calendar2.toString", "call calendar2.toString"]);
 
-actual.splice(0, actual.length);  // empty it for the next check
+actual.splice(0);  // empty it for the next check
 assert.sameValue(dt1.equals(dt3), false, "different calendar string");
 assert.compareArray(actual, ["get calendar1.toString", "call calendar1.toString", "get calendar3.toString", "call calendar3.toString"]);
 

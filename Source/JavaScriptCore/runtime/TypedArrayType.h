@@ -141,7 +141,7 @@ inline bool isBigIntTypedView(TypedArrayType type)
     }
 }
 
-inline unsigned logElementSize(TypedArrayType type)
+inline constexpr unsigned logElementSize(TypedArrayType type)
 {
     switch (type) {
     case NotTypedArray:
@@ -163,8 +163,13 @@ inline unsigned logElementSize(TypedArrayType type)
     case TypeBigUint64:
         return 3;
     }
-    RELEASE_ASSERT_NOT_REACHED();
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return 0;
+}
+
+inline constexpr unsigned logElementSize(JSType type)
+{
+    return logElementSize(typedArrayType(type));
 }
 
 inline size_t elementSize(TypedArrayType type)
@@ -174,7 +179,7 @@ inline size_t elementSize(TypedArrayType type)
 
 inline size_t elementSize(JSType type)
 {
-    return static_cast<size_t>(1) << logElementSize(typedArrayType(type));
+    return elementSize(typedArrayType(type));
 }
 
 const ClassInfo* constructorClassInfoForType(TypedArrayType);
@@ -318,6 +323,8 @@ inline constexpr bool isSomeUint8(TypedArrayType type)
     }
     return false;
 }
+
+JS_EXPORT_PRIVATE extern const uint8_t logElementSizes[NumberOfTypedArrayTypes];
 
 } // namespace JSC
 

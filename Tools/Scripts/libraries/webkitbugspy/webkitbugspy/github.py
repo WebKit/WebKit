@@ -56,6 +56,7 @@ class Tracker(GenericTracker):
         'already_exists': 'Another resource has the same value as this field. This can happen in resources that must have some unique key (such as label names).',
         'unprocessable': 'The inputs provided were invalid.'
     }
+    NAME = 'GitHub Issue'
 
 
     class Encoder(GenericTracker.Encoder):
@@ -522,15 +523,9 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if component not in self.projects[project]['components']:
                 raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
 
-            if not version and len(self.projects[project]['versions']) == 1:
-                version = self.projects[project]['versions'][0]
-            elif not version:
-                version = webkitcorepy.Terminal.choose(
-                    "What version of '{}' should the bug be associated with?".format(project),
-                    options=self.projects[project]['versions'], numbered=True,
-                )
-            if version not in self.projects[project]['versions']:
-                raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
+            if version:
+                if version not in self.projects[project]['versions']:
+                    raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
 
         else:
             if project:

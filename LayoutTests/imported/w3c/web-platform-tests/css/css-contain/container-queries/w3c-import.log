@@ -49,16 +49,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-inner-at-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-inside-multicol-with-table.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-longhand-animation-type.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-name-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-name-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-name-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-name-tree-scoped.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-selection.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-invalidation-after-load.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-nested-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-shadow-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-type-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-type-containment.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-type-invalidation.html
@@ -90,6 +93,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/counters-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-property-style-queries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-property-style-query-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/deep-nested-inline-size-containers.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/display-contents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/display-in-container-expected.html
@@ -132,6 +137,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/query-content-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/query-evaluation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/reattach-container-with-dirty-child.html
@@ -160,6 +166,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/top-layer-dialog.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/top-layer-nested-dialog.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/transition-scrollbars.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/transition-style-change-event-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/transition-style-change-event.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/unsupported-axis.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/viewport-units-dynamic.html

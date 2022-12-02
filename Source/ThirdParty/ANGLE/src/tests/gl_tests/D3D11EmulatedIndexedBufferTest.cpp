@@ -9,6 +9,7 @@
 //
 
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/d3d/IndexDataManager.h"
 #include "libANGLE/renderer/d3d/d3d11/Buffer11.h"
@@ -30,7 +31,10 @@ class D3D11EmulatedIndexedBufferTest : public ANGLETest<>
     {
         ASSERT_EQ(EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE, GetParam().getRenderer());
 
-        mContext                 = static_cast<gl::Context *>(getEGLWindow()->getContext());
+        egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
+        gl::ContextID contextID = {
+            static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
+        mContext                 = display->getContext(contextID);
         rx::Context11 *context11 = rx::GetImplAs<rx::Context11>(mContext);
         mRenderer                = context11->getRenderer();
 

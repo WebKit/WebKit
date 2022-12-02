@@ -51,7 +51,7 @@ public:
 private:
     FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
 
-    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 

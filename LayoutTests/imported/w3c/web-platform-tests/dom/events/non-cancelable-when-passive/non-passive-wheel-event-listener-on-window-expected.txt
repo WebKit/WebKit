@@ -1,3 +1,3 @@
 
-FAIL non-passive wheel event listener on window promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
+FAIL non-passive wheel event listener on window promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
 

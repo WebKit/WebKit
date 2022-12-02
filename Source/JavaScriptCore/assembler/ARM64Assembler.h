@@ -32,6 +32,7 @@
 #include "AssemblerCommon.h"
 #include "CPU.h"
 #include "JSCPtrTag.h"
+#include "SIMDInfo.h"
 #include <limits.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
@@ -42,11 +43,15 @@
 #endif
 
 #define CHECK_DATASIZE_OF(datasize) static_assert(datasize == 32 || datasize == 64)
-#define CHECK_MEMOPSIZE_OF(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
-#define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : Datasize_32)
+#define CHECK_DATASIZE_OF_SIMD(datasize) static_assert(datasize == 32 || datasize == 64 || datasize == 128)
+#define CHECK_MEMOPSIZE_OF(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64);
+#define CHECK_MEMOPSIZE_OF_SIMD(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
+#define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : ((datasize == 128) ? Datasize_128 : Datasize_32))
 #define MEMOPSIZE_OF(datasize) ((datasize == 8 || datasize == 128) ? MemOpSize_8_or_128 : (datasize == 16) ? MemOpSize_16 : (datasize == 32) ? MemOpSize_32 : MemOpSize_64)
 #define CHECK_DATASIZE() CHECK_DATASIZE_OF(datasize)
+#define CHECK_DATASIZE_SIMD() CHECK_DATASIZE_OF_SIMD(datasize)
 #define CHECK_MEMOPSIZE() CHECK_MEMOPSIZE_OF(datasize)
+#define CHECK_MEMOPSIZE_SIMD() CHECK_MEMOPSIZE_OF_SIMD(datasize)
 #define CHECK_VECTOR_DATASIZE() ASSERT(datasize == 64 || datasize == 128)
 #define DATASIZE DATASIZE_OF(datasize)
 #define MEMOPSIZE MEMOPSIZE_OF(datasize)
@@ -179,7 +184,6 @@ typedef enum : int8_t {
 
 // ARM64 always has 32 FPU registers 128-bits each. See http://llvm.org/devmtg/2012-11/Northover-AArch64.pdf
 // and Section 5.1.2 in http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf.
-// However, we only use them for 64-bit doubles.
 typedef enum : int8_t {
 #define REGISTER_ID(id, name, r, cs) id,
     FOR_EACH_FP_REGISTER(REGISTER_ID)
@@ -511,18 +515,18 @@ protected:
         return pimm / (datasize / 8);
     }
 
-    enum Datasize {
-        Datasize_32,
-        Datasize_64,
-        Datasize_64_top,
-        Datasize_16
+    enum Datasize : uint8_t {
+        Datasize_32 = 0,
+        Datasize_64 = 1,
+        Datasize_128 = 2,
+        Datasize_16 = 3,
     };
 
-    enum MemOpSize {
-        MemOpSize_8_or_128,
-        MemOpSize_16,
-        MemOpSize_32,
-        MemOpSize_64,
+    enum MemOpSize : uint8_t {
+        MemOpSize_8_or_128 = 0,
+        MemOpSize_16 = 1,
+        MemOpSize_32 = 2,
+        MemOpSize_64 = 3,
     };
 
     enum BranchType {
@@ -744,7 +748,7 @@ public:
     template<int datasize, SetFlags setFlags = DontSetFlags>
     ALWAYS_INLINE void add(RegisterID rd, RegisterID rn, RegisterID rm, ExtendType extend, int amount)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_SIMD();
         insn(addSubtractExtendedRegister(DATASIZE, AddOp_ADD, setFlags, rm, extend, amount, rn, rd));
     }
 
@@ -1468,6 +1472,668 @@ public:
     ALWAYS_INLINE void mneg(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         msub<datasize>(rd, rn, rm, ARM64Registers::zr);
+    }
+
+    static constexpr bool simdQBit(SIMDLane lane)
+    {
+        return elementByteSize(lane) == 8;
+    }
+
+    // returns an imm5
+    static int encodeLaneAndIndex(SIMDLane lane, uint32_t laneIndex)
+    {
+        switch (elementByteSize(lane)) {
+        case 1:
+            ASSERT(laneIndex < 16);
+            return 0b00001 | (laneIndex << 1);
+        case 2:
+            ASSERT(laneIndex < 8);
+            return 0b00010 | (laneIndex << 2);
+        case 4:
+            ASSERT(laneIndex < 4);
+            return 0b00100 | (laneIndex << 3);
+        case 8:
+            ASSERT(laneIndex < 2);
+            return 0b01000 | (laneIndex << 4);
+        case 16:
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return 0;
+    }
+
+    ALWAYS_INLINE void ins(FPRegisterID vd, RegisterID rn, SIMDLane lane, uint32_t laneIndex)
+    {
+        insn(simdGeneral(1, encodeLaneAndIndex(lane, laneIndex), 0b0011, rn, vd));
+    }
+
+    ALWAYS_INLINE void ins(FPRegisterID vd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
+    {
+        // This is insert vector element from another element. Our other element is always the low
+        // bits of "vn"
+        int inst = 0b01101110000000000000010000000000;
+        inst |= encodeLaneAndIndex(lane, laneIndex) << 16;
+        inst |= 0 << 11; // looking at "zero" index of vn
+        inst |= static_cast<int>(vn) << 5;
+        inst |= static_cast<int>(vd);
+        insn(inst);
+    }
+    
+    ALWAYS_INLINE void umov(RegisterID rd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
+    {
+        ASSERT(scalarTypeIsIntegral(lane));
+        insn(simdGeneral(simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0111, vn, rd));
+    }
+
+    ALWAYS_INLINE void smov(RegisterID rd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
+    {
+        ASSERT(scalarTypeIsIntegral(lane));
+        insn(simdGeneral(simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0101, vn, rd));
+    }
+
+    ALWAYS_INLINE void dupElement(FPRegisterID vd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
+    {
+        // Take element from vector and put it in vd
+        ASSERT(scalarTypeIsFloatingPoint(lane));
+        insn(0b01011110000000000000010000000000 | (encodeLaneAndIndex(lane, laneIndex) << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void dupGeneral(FPRegisterID vd, RegisterID rn, SIMDLane lane)
+    {
+        // Take element from gpr and put it in each lane in vd
+        ASSERT(scalarTypeIsIntegral(lane));
+        int imm5;
+        switch (elementByteSize(lane)) {
+        case 1:
+            imm5 = 0b00001;
+            break;
+        case 2:
+            imm5 = 0b00010;
+            break;
+        case 4:
+            imm5 = 0b00100;
+            break;
+        case 8:
+            imm5 = 0b01000;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        insn(0b01001110000000000000110000000000 | (imm5 << 16) | (rn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void fcmeq(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(simdFloatingPointVectorCompare(0, 0, 0, lane, vd, vn, vm));
+    }
+
+    ALWAYS_INLINE void fcmgt(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(simdFloatingPointVectorCompare(1, 1, 0, lane, vd, vn, vm));
+    }
+
+    ALWAYS_INLINE void fcmge(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(simdFloatingPointVectorCompare(1, 0, 0, lane, vd, vn, vm));
+    }
+
+    ALWAYS_INLINE void vectorNot(FPRegisterID vd, FPRegisterID vn)
+    {
+        insn(0b01101110001000000101100000000000 | (vn << 5) | vd);
+    }
+
+    static int sizeForIntegralSIMDOp(SIMDLane lane)
+    {
+        // It's sometimes convenient to pass in floating point lanes
+        // here for conversion ops, so we don't assert against that.
+        switch (elementByteSize(lane)) {
+        case 1:
+            return 0;
+        case 2:
+            return 1;
+        case 4:
+            return 2;
+        case 8:
+            return 3;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    static bool sizeForFloatingPointSIMDOp(SIMDLane lane)
+    {
+        // It's sometimes convenient to pass in integral lanes
+        // here for conversion ops, so we don't assert against that.
+        RELEASE_ASSERT(elementByteSize(lane) == 4 || elementByteSize(lane) == 8);
+        return elementByteSize(lane) == 4 ? 0 : 1;
+    }
+
+    ALWAYS_INLINE void cmeq(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000001000110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void cmeqz(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01'0'01110'00'10000'0100'1'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void cmhi(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000011010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void cmhs(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000011110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void cmgt(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000000011010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void cmge(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000000011110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorAdd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000001000010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void urhadd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000001010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void addpv(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000001011110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void addv(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b010'01110'00'11000'11011'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void zip1(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01'001110'00'0'00000'001110'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void uzip1(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01'001110'00'0'00000'0'0'01'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void ext(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, uint8_t firstLane, SIMDLane lane)
+    {
+        ASSERT(lane == SIMDLane::i8x16);
+        ASSERT_UNUSED(lane, firstLane < elementCount(lane));
+        insn(0b01'101110'00'0'00000'0'0000'0'00000'00000 | (vm << 16) | (firstLane << 11) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorSub(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000001000010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorMul(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        RELEASE_ASSERT(lane == SIMDLane::i16x8 || lane == SIMDLane::i32x4);
+        insn(0b010'01110'00'1'00000'10011'1'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void smullv(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane inputLane, bool Q = 0, bool U = 0)
+    {
+        RELEASE_ASSERT(inputLane != SIMDLane::i64x2 && scalarTypeIsIntegral(inputLane));
+        insn(0b00001110001000001100000000000000 | (Q << 30) | (U << 29) | (sizeForIntegralSIMDOp(inputLane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void smull2v(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane inputLane) { smullv(vd, vn, vm, inputLane, 1, 0); }
+    ALWAYS_INLINE void umullv(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane inputLane) { smullv(vd, vn, vm, inputLane, 0, 1); }
+    ALWAYS_INLINE void umull2v(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane inputLane) { smullv(vd, vn, vm, inputLane, 1, 1); }
+
+    ALWAYS_INLINE void sqrdmlahv(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        // Signed Saturating Rounding Doubling Multiply Accumulate returning High Half (vector)
+        RELEASE_ASSERT(lane == SIMDLane::i16x8);
+        insn(0b01101110000000001000010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFadd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000001101010000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFsub(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110101000001101010000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFmul(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000001101110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFdiv(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000001111110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void umax(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000110010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    template<unsigned destSize>
+    ALWAYS_INLINE void umaxv(FPRegisterID vd, FPRegisterID vn)
+    {
+        static_assert(destSize == 8 || destSize == 16 || destSize == 32);
+        const unsigned Q = 1;
+        const unsigned size = destSize == 8 ? 0 : destSize == 16 ? 1 : 2;
+        insn(0b00101110001100001010100000000000 | (Q << 30) | (size << 22)| (vn << 5) | vd);
+    }
+
+    template<unsigned destSize>
+    ALWAYS_INLINE void uminv(FPRegisterID vd, FPRegisterID vn)
+    {
+        static_assert(destSize == 8 || destSize == 16 || destSize == 32);
+        const unsigned Q = 1;
+        const unsigned size = destSize == 8 ? 0 : destSize == 16 ? 1 : 2;
+        insn(0b00101110001100011010100000000000 | (Q << 30) | (size << 22)| (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void smax(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000000110010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void umin(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000110110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void smin(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000000110110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFmax(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000001111010000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFmin(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110101000001111010000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void bsl(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
+    {
+        insn(0b01101110011000000001110000000000 | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorEor(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
+    {
+        insn(0b01101110001000000001110000000000 | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorAbs(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01001110001000001011100000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFabs(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01001110101000001111100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorNeg(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b0'1'1'01110'00'10000'01011'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFneg(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01101110101000001111100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorCnt(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        ASSERT(lane == SIMDLane::i8x16);
+        insn(0b01001110001000000101100000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFcvtps(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        ASSERT(lane == SIMDLane::f32x4 || lane == SIMDLane::f64x2);
+        insn(0b010'01110'1'0'10000'1101'0'10'00000'00000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFcvtms(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01001110001000011011100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFrintz(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01001110101000011001100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFcvtns(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01001110001000011010100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFsqrt(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01101110101000011111100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    static int immhForExtend(SIMDLane lane)
+    {
+        switch (elementByteSize(lane)) {
+        case 2:
+            return 0b0001;
+        case 4:
+            return 0b0010;
+        case 8:
+            return 0b0100;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    ALWAYS_INLINE void uxtl(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b00101111000000001010010000000000 | (immhForExtend(lane) << 19) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void uxtl2(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01101111000000001010010000000000 | (immhForExtend(lane) << 19) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sxtl(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b000'011110'0000'000'10100'1'00000'00000 | (immhForExtend(lane) << 19) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sxtl2(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b0100'11110'0000'000'10100'1'00000'00000 | (immhForExtend(lane) << 19) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void fcvtl(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        // Convert lower two f32s into two f64s, so sz bit == 1
+        // This represents the input lane, not the output. 
+        // The instruction encodes input element size as 16 << sz_bit
+        ASSERT_UNUSED(lane, lane == SIMDLane::f32x4);
+        insn(0b00001110011000010111100000000000 | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void fcvtn(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        ASSERT_UNUSED(lane, lane == SIMDLane::f64x2);
+        // Convert two f64s into the two lower f32s
+        insn(0b00001110011000010110100000000000 | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void uqxtn(FPRegisterID vd, FPRegisterID vn, SIMDLane inputLane)
+    {
+        SIMDLane lane = narrowedLane(inputLane);
+        insn(0b001'01110'00'10000'10100'10'0000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sqxtn(FPRegisterID vd, FPRegisterID vn, SIMDLane inputLane)
+    {
+        SIMDLane lane = narrowedLane(inputLane);
+        insn(0b00001110001000010100100000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sqxtn2(FPRegisterID vd, FPRegisterID vn, SIMDLane inputLane)
+    {
+        SIMDLane lane = narrowedLane(inputLane);
+        insn(0b01001110001000010100100000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sqxtun(FPRegisterID vd, FPRegisterID vn, SIMDLane inputLane)
+    {
+        SIMDLane lane = narrowedLane(inputLane);
+        insn(0b00101110001000010010100000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sqxtun2(FPRegisterID vd, FPRegisterID vn, SIMDLane inputLane)
+    {
+        SIMDLane lane = narrowedLane(inputLane);
+        insn(0b01101110001000010010100000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void ushl(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000100010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sshl(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000000100010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sshr_vi(FPRegisterID vd, FPRegisterID vn, uint8_t shift, SIMDLane lane)
+    {
+        uint8_t maxShift = elementByteSize(lane) * 8;
+        ASSERT(shift < maxShift && shift < 64 && shift);
+        shift = maxShift - shift;
+        unsigned immh = elementByteSize(lane) | ((shift & 0b0111000) >> 3);
+        unsigned immb = shift & 0b0111;
+        ASSERT(immh);
+        ASSERT(!(immh&(~0b1111)));
+        insn(0b010'011110'0000'000'000001'00000'00000 | (immh << 19) | (immb << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sqadd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000000000110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sqsub(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000000010110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void uqadd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000000110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void uqsub(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01101110001000000010110000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFcvtzs(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01001110101000011011100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFcvtzu(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01101110101000011011100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFrintp(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b010'01110'1'0'10000'1100'0'10'00000'00000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFrintn(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b010'01110'0'0'10000'1100'0'10'00000'00000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFrintm(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b010'01110'0'0'10000'1100'1'10'00000'00000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorScvtf(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01001110001000011101100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorUcvtf(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b01101110001000011101100000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorSaddlp(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b010'01110'00'10000'00'0'10'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorUaddlp(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        insn(0b011'01110'00'10000'00'0'10'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void tbl(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
+    {
+        const unsigned len = 0;
+        const unsigned Q = 1;
+        insn(0b00001110000000000000000000000000 | (Q << 30) | (vm << 16) | (len << 13) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void tbl2(FPRegisterID vd, FPRegisterID vn, FPRegisterID vn2, FPRegisterID vm)
+    {
+        RELEASE_ASSERT(vn2, vn2 == vn + 1);
+        const unsigned len = 1;
+        const unsigned Q = 1;
+        insn(0b00001110000000000000000000000000 | (Q << 30) | (vm << 16) | (len << 13) | (vn << 5) | vd);
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void ld1r(FPRegisterID vt, RegisterID rn)
+    {
+        CHECK_MEMOPSIZE();
+        int sizeEncoding;
+        switch (datasize) {
+        case 8:
+            sizeEncoding = 0;
+            break;
+        case 16:
+            sizeEncoding = 1;
+            break;
+        case 32:
+            sizeEncoding = 2;
+            break;
+        case 64:
+            sizeEncoding = 3;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        insn(0b01001101010000001100000000000000 | (sizeEncoding << 10) | (rn << 5) | vt);
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void ld1(FPRegisterID vt, RegisterID rn, int32_t laneIndex)
+    {
+        CHECK_MEMOPSIZE();
+        int opcode;
+        int Q = 0; // 1 bit
+        int S = 0; // 1 bit
+        int size = 0; // 2 bits
+        switch (datasize) {
+        case 8:
+            RELEASE_ASSERT(laneIndex < 16);
+            opcode = 0;
+            // Encode index in, Q:S:size
+            Q = !!(laneIndex & 0b1000);
+            S = !!(laneIndex & 0b0100);
+            size = laneIndex & 0b0011;
+            break;
+        case 16:
+            RELEASE_ASSERT(laneIndex < 8);
+            // Encode index in, Q:S:size<1>
+            Q = !!(laneIndex & 0b100);
+            S = !!(laneIndex & 0b010);
+            size = (laneIndex & 0b001) << 1;
+            opcode = 1;
+            break;
+        case 32:
+            RELEASE_ASSERT(laneIndex < 4);
+            opcode = 2;
+            size = 0;
+            // Encode index in, Q:S
+            Q = !!(laneIndex & 0b10);
+            S = laneIndex & 0b01;
+            break;
+        case 64:
+            RELEASE_ASSERT(laneIndex < 2);
+            opcode = 2;
+            size = 1;
+            S = 0;
+            // Encode index in, Q
+            Q = laneIndex & 0b1;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        insn(0b00001101010000000000000000000000 | (Q << 30) | (opcode << 14) | (S << 12) | (size << 10) | (rn << 5) | vt);
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void st1(FPRegisterID vt, RegisterID rn, int32_t laneIndex)
+    {
+        CHECK_MEMOPSIZE();
+        int opcode;
+        int Q = 0; // 1 bit
+        int S = 0; // 1 bit
+        int size = 0; // 2 bits
+        switch (datasize) {
+        case 8:
+            RELEASE_ASSERT(laneIndex < 16);
+            opcode = 0;
+            // Encode index in, Q:S:size
+            Q = !!(laneIndex & 0b1000);
+            S = !!(laneIndex & 0b0100);
+            size = laneIndex & 0b0011;
+            break;
+        case 16:
+            RELEASE_ASSERT(laneIndex < 8);
+            // Encode index in, Q:S:size<1>
+            Q = !!(laneIndex & 0b100);
+            S = !!(laneIndex & 0b010);
+            size = (laneIndex & 0b001) << 1;
+            opcode = 1;
+            break;
+        case 32:
+            RELEASE_ASSERT(laneIndex < 4);
+            opcode = 2;
+            size = 0;
+            // Encode index in, Q:S
+            Q = !!(laneIndex & 0b10);
+            S = !!(laneIndex & 0b01);
+            break;
+        case 64:
+            RELEASE_ASSERT(laneIndex < 2);
+            opcode = 2;
+            size = 1;
+            S = 0;
+            // Encode index in, Q
+            Q = laneIndex & 0b1;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        insn(0b0'0'0011010'0'0'000000000000000000000 | (Q << 30) | (opcode << 14) | (S << 12) | (size << 10) | (rn << 5) | vt);
     }
 
     template<int datasize>
@@ -2389,14 +3055,21 @@ public:
     ALWAYS_INLINE void vand(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
     {
         CHECK_VECTOR_DATASIZE();
-        insn(vectorDataProcessingLogical(SIMD_LogicalOp_AND, vm, vn, vd));
+        insn(vectorDataProcessingLogical(datasize, SIMD_LogicalOp_AND, vm, vn, vd));
     }
 
     template<int datasize>
     ALWAYS_INLINE void vorr(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
     {
         CHECK_VECTOR_DATASIZE();
-        insn(vectorDataProcessingLogical(SIMD_LogicalOp_ORR, vm, vn, vd));
+        insn(vectorDataProcessingLogical(datasize, SIMD_LogicalOp_ORR, vm, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void vbic(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
+    {
+        CHECK_VECTOR_DATASIZE();
+        insn(vectorDataProcessingLogical(datasize, SIMD_LogicalOp_BIC, vm, vn, vd));
     }
 
     template<int datasize>
@@ -2557,7 +3230,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void stur(FPRegisterID rt, RegisterID rn, int simm)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_SIMD();
         insn(loadStoreRegisterUnscaledImmediate(MEMOPSIZE, true, datasize == 128 ? MemOp_STORE_V128 : MemOp_STORE, simm, rn, rt));
     }
 
@@ -3553,9 +4226,9 @@ protected:
         return (0x1e200800 | M << 31 | S << 29 | type << 22 | rm << 16 | opcode << 12 | rn << 5 | rd);
     }
 
-    ALWAYS_INLINE static int vectorDataProcessingLogical(SIMD3SameLogical uAndSize, FPRegisterID vm, FPRegisterID vn, FPRegisterID vd)
+    ALWAYS_INLINE static int vectorDataProcessingLogical(int datasize, SIMD3SameLogical uAndSize, FPRegisterID vm, FPRegisterID vn, FPRegisterID vd)
     {
-        const int Q = 0;
+        int Q = datasize == 128;
         return (0xe200400 | Q << 30 | uAndSize << 22 | vm << 16 | SIMD_LogicalOp << 11 | vn << 5 | vd);
     }
 
@@ -3816,6 +4489,18 @@ protected:
     static int fjcvtzsInsn(FPRegisterID dn, RegisterID rd)
     {
         return 0x1e7e0000 | (dn << 5) | rd;
+    }
+    
+    static int simdGeneral(bool Q, int imm5, int imm4, int rn, int rd)
+    {
+        return 0b0'0'0'01110000'00000'0'00'0'0'1'00000'00000 | (Q << 30) | (imm5 << 16) | (imm4 << 11) | (rn << 5) | rd;
+    }
+
+    static int simdFloatingPointVectorCompare(bool U, bool E, bool ac, SIMDLane lane, FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    {
+        bool sz = sizeForFloatingPointSIMDOp(lane);
+        int insn = 0b01001110001000001110010000000000 | (U << 29) | (E << 23) | (sz << 22) | (rm << 16) | (ac << 11) | (rn << 5) | rd;
+        return insn;
     }
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow> m_jumpsToLink;

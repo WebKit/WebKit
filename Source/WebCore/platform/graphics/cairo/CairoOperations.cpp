@@ -847,10 +847,10 @@ void drawPlatformImage(GraphicsContextCairo& platformContext, cairo_surface_t* s
     platformContext.restore();
 }
 
-void drawPattern(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const IntSize& size, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const ImagePaintingOptions& options)
+void drawPattern(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const IntSize& size, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     // FIXME: Investigate why the size has to be passed in as an IntRect.
-    drawPatternToCairoContext(platformContext.cr(), surface, size, tileRect, patternTransform, phase, toCairoOperator(options.compositeOperator(), options.blendMode()), options.interpolationQuality(), destRect);
+    drawPatternToCairoContext(platformContext.cr(), surface, size, tileRect, patternTransform, phase, spacing, toCairoOperator(options.compositeOperator(), options.blendMode()), options.interpolationQuality(), destRect);
 }
 
 void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState, OrientationSizing orientationSizing)

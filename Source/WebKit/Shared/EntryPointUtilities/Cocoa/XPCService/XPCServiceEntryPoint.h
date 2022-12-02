@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,8 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
             JSC::Options::useGenerationalGC() = false;
             JSC::Options::useConcurrentGC() = false;
             JSC::Options::useLLIntICs() = false;
+            JSC::Options::useZombieMode() = true;
+            JSC::Options::allowDoubleShape() = false;
         }
         if (xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
             JSC::ExecutableAllocator::setJITEnabled(false);

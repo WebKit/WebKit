@@ -145,7 +145,12 @@ void SVGSVGElement::updateCurrentTranslate()
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        renderer->updateFromElement();
+        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
+            ASSERT(svgRoot->viewportContainer());
+            svgRoot->viewportContainer()->updateHasSVGTransformFlags();
+        }
+
+        // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
         updateSVGRendererForElementChange();
         return;
     }
@@ -248,17 +253,22 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        if (auto* renderer = this->renderer()) {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-            if (document().settings().layerBasedSVGEngineEnabled()) {
-                renderer->updateFromElement();
-                updateSVGRendererForElementChange();
-                return;
-            }
+        if (document().settings().layerBasedSVGEngineEnabled()) {
+            if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer())) {
+                ASSERT(svgRoot->viewportContainer());
+                svgRoot->viewportContainer()->updateHasSVGTransformFlags();
+            } else if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer()))
+                viewportContainer->updateHasSVGTransformFlags();
+
+            // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
+            updateSVGRendererForElementChange();
+            return;
+        }
 #endif
 
+        if (auto* renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
-        }
 
         updateSVGRendererForElementChange();
         return;
@@ -380,18 +390,26 @@ Ref<SVGTransform> SVGSVGElement::createSVGTransformFromMatrix(DOMMatrix2DInit&& 
 
 AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        // FIXME: [LBSE] Upstream getCTM() support.
-        return { };
-    }
-#endif
-
     AffineTransform viewBoxTransform;
     if (!hasEmptyViewBox()) {
         FloatSize size = currentViewportSizeExcludingZoom();
         viewBoxTransform = viewBoxToViewTransform(size.width(), size.height());
     }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        // LBSE only uses this code path for operation on "detached" elements (no renderer).
+        AffineTransform transform;
+        if (!isOutermostSVGSVGElement()) {
+            SVGLengthContext lengthContext(this);
+            transform.translate(x().value(lengthContext), y().value(lengthContext));
+        }
+
+        if (viewBoxTransform.isIdentity())
+            return transform;
+        return transform.multiply(viewBoxTransform);
+    }
+#endif
 
     AffineTransform transform;
     if (!isOutermostSVGSVGElement()) {
@@ -474,7 +492,7 @@ Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionTy
         // Animations are started at the end of document parsing and after firing the load event,
         // but if we miss that train (deferred programmatic element insertion for example) we need
         // to initialize the time container here.
-        if (!document().parsing() && !document().processingLoadEvent() && document().loadEventFinished() && !m_timeContainer->isStarted())
+        if (!document().parsing() && !document().processingLoadEvent() && document().loadEventFinished())
             m_timeContainer->begin();
     }
     return SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
@@ -499,6 +517,16 @@ void SVGSVGElement::unpauseAnimations()
 {
     if (m_timeContainer->isPaused())
         m_timeContainer->resume();
+}
+
+bool SVGSVGElement::resumePausedAnimationsIfNeeded(const IntRect& visibleRect)
+{
+    bool animationEnabled = document().page() ? document().page()->imageAnimationEnabled() : true;
+    if (!animationEnabled || !renderer() || !renderer()->isVisibleInDocumentRect(visibleRect))
+        return false;
+
+    unpauseAnimations();
+    return true;
 }
 
 bool SVGSVGElement::animationsPaused() const
@@ -812,14 +840,6 @@ Element* SVGSVGElement::getElementById(const AtomString& id)
 bool SVGSVGElement::isValid() const
 {
     return SVGTests::isValid();
-}
-
-void SVGSVGElement::didAttachRenderers()
-{
-    SVGGraphicsElement::didAttachRenderers();
-
-    if (auto* renderer = this->renderer())
-        renderer->updateFromElement();
 }
 
 }

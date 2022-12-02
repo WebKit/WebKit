@@ -153,7 +153,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     result.canEnableAutomaticSpellingCorrection = result.isContentEditable && frame.editor().canEnableAutomaticSpellingCorrection();
 
-    if (result.isMissingPostLayoutData())
+    if (!result.hasPostLayoutAndVisualData())
         return;
 
     auto& selection = frame.selection().selection();
@@ -466,11 +466,6 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     return didPerformAction;
 }
 
-bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
-{
-    return false;
-}
-
 void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {
     NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
@@ -726,22 +721,6 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
     }
 }
 
-#if ENABLE(WEBGL)
-WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL& url)
-{
-    auto sendResult = sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url));
-    auto [policyResult] = sendResult.takeReplyOr(WebGLLoadPolicy::WebGLAllowCreation);
-    return policyResult;
-}
-
-WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL& url)
-{
-    auto sendResult = sendSync(Messages::WebPageProxy::ResolveWebGLPolicyForURL(url));
-    auto [policyResult] = sendResult.takeReplyOr(WebGLLoadPolicy::WebGLAllowCreation);
-    return policyResult;
-}
-#endif // ENABLE(WEBGL)
-
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
 {
@@ -884,19 +863,19 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
             continue;
 
         pageOverlayDidOverrideDataDetectors = true;
-        immediateActionResult.detectedDataActionContext = actionContext->context.get();
-        immediateActionResult.detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(actionContext->range))));
-        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(actionContext->range, indicatorOptions(actionContext->range), TextIndicatorPresentationTransition::FadeIn);
-        immediateActionResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
+        immediateActionResult.platformData.detectedDataActionContext = actionContext->context.get();
+        immediateActionResult.platformData.detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(actionContext->range))));
+        immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(actionContext->range, indicatorOptions(actionContext->range), TextIndicatorPresentationTransition::FadeIn);
+        immediateActionResult.platformData.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
         break;
     }
 
     // FIXME: Avoid scanning if we will just throw away the result (e.g. we're over a link).
     if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && (hitTestResult.innerNode()->isTextNode() || hitTestResult.isOverTextInsideFormControlElement())) {
         if (auto result = DataDetection::detectItemAroundHitTestResult(hitTestResult)) {
-            immediateActionResult.detectedDataActionContext = WTFMove(result->actionContext);
-            immediateActionResult.detectedDataBoundingBox = result->boundingBox;
-            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(result->range, indicatorOptions(result->range), TextIndicatorPresentationTransition::FadeIn);
+            immediateActionResult.platformData.detectedDataActionContext = WTFMove(result->actionContext);
+            immediateActionResult.platformData.detectedDataBoundingBox = result->boundingBox;
+            immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(result->range, indicatorOptions(result->range), TextIndicatorPresentationTransition::FadeIn);
         }
     }
 

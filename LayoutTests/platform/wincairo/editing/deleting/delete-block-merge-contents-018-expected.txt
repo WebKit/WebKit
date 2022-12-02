@@ -16,9 +16,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 756x55
-          text run at (14,14) width 754: "Should see \"Test OK\" in top red box, followed by \"...more text\", in its own red"
-          text run at (768,14) width 2: " "
+        RenderText {#text} at (14,14) size 760x55
+          text run at (14,14) width 760: "Should see \"Test OK\" in top red box, followed by \"...more text\", in its own red "
           text run at (14,42) width 42: "box."
       RenderBlock {DIV} at (0,108) size 784x112
         RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]

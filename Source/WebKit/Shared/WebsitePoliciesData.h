@@ -36,6 +36,7 @@
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <wtf/OptionSet.h>
 
 namespace IPC {
@@ -73,7 +74,7 @@ struct WebsitePoliciesData {
     WebCore::MouseEventPolicy mouseEventPolicy { WebCore::MouseEventPolicy::Default };
     WebCore::ModalContainerObservationPolicy modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
     WebCore::ColorSchemePreference colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };
-    bool networkConnectionIntegrityEnabled { false };
+    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
     bool allowPrivacyProxy { true };
 

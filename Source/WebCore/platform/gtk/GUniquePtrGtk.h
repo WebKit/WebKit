@@ -25,12 +25,10 @@
 
 namespace WTF {
 
-#if USE(GTK4)
-// FIXME: Use GRefPtr in GTK4, this is just to fix the build for now.
-WTF_DEFINE_GPTR_DELETER(GdkEvent, gdk_event_unref)
-#else
+#if !USE(GTK4)
 WTF_DEFINE_GPTR_DELETER(GdkEvent, gdk_event_free)
 #endif
+
 WTF_DEFINE_GPTR_DELETER(GtkTreePath, gtk_tree_path_free)
 
 } // namespace WTF

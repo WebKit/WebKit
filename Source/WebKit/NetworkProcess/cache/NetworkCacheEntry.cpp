@@ -95,7 +95,7 @@ Storage::Record Entry::encodeAsStorageRecord() const
     uint8_t privateRelayed = m_privateRelayed == PrivateRelayed::Yes;
     encoder << static_cast<uint8_t>((isRedirect << 0) | (privateRelayed << 1));
     if (isRedirect)
-        m_redirectRequest->encodeWithoutPlatformData(encoder);
+        encoder << m_redirectRequest;
 
     encoder << m_maxAgeCap;
     
@@ -145,8 +145,11 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     
     if (isRedirect) {
         entry->m_redirectRequest.emplace();
-        if (!entry->m_redirectRequest->decodeWithoutPlatformData(decoder))
+        std::optional<std::optional<WebCore::ResourceRequest>> resourceRequest;
+        decoder >> resourceRequest;
+        if (!resourceRequest)
             return nullptr;
+        entry->m_redirectRequest = WTFMove(*resourceRequest);
     }
 
     std::optional<std::optional<Seconds>> maxAgeCap;
@@ -185,7 +188,8 @@ void Entry::initializeShareableResourceHandleFromStorageRecord() const
     auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, m_sourceStorageRecord.body.size());
     if (!shareableResource)
         return;
-    shareableResource->createHandle(m_shareableResourceHandle);
+    if (auto handle = shareableResource->createHandle())
+        m_shareableResourceHandle = WTFMove(*handle);
 }
 #endif
 

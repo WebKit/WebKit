@@ -27,6 +27,7 @@
 
 #include "CompositeOperation.h"
 #include "IntPoint.h"
+#include "IterationCompositeOperation.h"
 #include "LayoutPoint.h"
 
 namespace WebCore {
@@ -35,17 +36,32 @@ struct BlendingContext {
     double progress { 0 };
     bool isDiscrete { false };
     CompositeOperation compositeOperation { CompositeOperation::Replace };
+    IterationCompositeOperation iterationCompositeOperation { IterationCompositeOperation::Replace };
+    double currentIteration { 0 };
 
-    BlendingContext(double progress = 0, bool isDiscrete = false, CompositeOperation compositeOperation = CompositeOperation::Replace)
+    BlendingContext(double progress = 0, bool isDiscrete = false, CompositeOperation compositeOperation = CompositeOperation::Replace, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
         : progress(progress)
         , isDiscrete(isDiscrete)
         , compositeOperation(compositeOperation)
+        , iterationCompositeOperation(iterationCompositeOperation)
+        , currentIteration(currentIteration)
     {
+    }
+
+    bool isReplace() const
+    {
+        return compositeOperation == CompositeOperation::Replace && iterationCompositeOperation == IterationCompositeOperation::Replace;
     }
 };
 
 inline int blend(int from, int to, const BlendingContext& context)
 {  
+    if (context.iterationCompositeOperation == IterationCompositeOperation::Accumulate && context.currentIteration) {
+        auto iterationIncrement = static_cast<int>(context.currentIteration * static_cast<double>(to));
+        from += iterationIncrement;
+        to += iterationIncrement;
+    }
+
     if (context.compositeOperation == CompositeOperation::Replace)
         return static_cast<int>(roundTowardsPositiveInfinity(from + (static_cast<double>(to) - from) * context.progress));
     return static_cast<int>(roundTowardsPositiveInfinity(static_cast<double>(from) + static_cast<double>(from) + static_cast<double>(to - from) * context.progress));
@@ -53,6 +69,12 @@ inline int blend(int from, int to, const BlendingContext& context)
 
 inline unsigned blend(unsigned from, unsigned to, const BlendingContext& context)
 {
+    if (context.iterationCompositeOperation == IterationCompositeOperation::Accumulate && context.currentIteration) {
+        auto iterationIncrement = static_cast<unsigned>(context.currentIteration * static_cast<double>(to));
+        from += iterationIncrement;
+        to += iterationIncrement;
+    }
+
     if (context.compositeOperation == CompositeOperation::Replace)
         return static_cast<unsigned>(lround(from + (static_cast<double>(to) - from) * context.progress));
     return static_cast<unsigned>(lround(from + from + (static_cast<double>(to) - from) * context.progress));
@@ -60,6 +82,12 @@ inline unsigned blend(unsigned from, unsigned to, const BlendingContext& context
 
 inline double blend(double from, double to, const BlendingContext& context)
 {  
+    if (context.iterationCompositeOperation == IterationCompositeOperation::Accumulate && context.currentIteration) {
+        auto iterationIncrement = context.currentIteration * to;
+        from += iterationIncrement;
+        to += iterationIncrement;
+    }
+
     if (context.compositeOperation == CompositeOperation::Replace)
         return from + (to - from) * context.progress;
     return from + from + (to - from) * context.progress;
@@ -67,6 +95,12 @@ inline double blend(double from, double to, const BlendingContext& context)
 
 inline float blend(float from, float to, const BlendingContext& context)
 {  
+    if (context.iterationCompositeOperation == IterationCompositeOperation::Accumulate && context.currentIteration) {
+        auto iterationIncrement = static_cast<float>(context.currentIteration * to);
+        from += iterationIncrement;
+        to += iterationIncrement;
+    }
+
     if (context.compositeOperation == CompositeOperation::Replace)
         return static_cast<float>(from + (to - from) * context.progress);
     return static_cast<float>(from + from + (to - from) * context.progress);

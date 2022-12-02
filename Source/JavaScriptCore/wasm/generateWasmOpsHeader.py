@@ -70,6 +70,7 @@ type_definitions_except_funcref_externref = ["#define FOR_EACH_WASM_TYPE_EXCEPT_
 type_definitions_except_funcref_externref.extend([t for t in typeMacroizerFiltered(lambda x: x == "funcref" or x == "externref")])
 type_definitions_except_funcref_externref = "".join(type_definitions_except_funcref_externref)
 
+min_type_value = min(wasm.types.items(), key=lambda pair: pair[1]['value'])[1]['value']
 
 def opcodeMacroizer(filter, opcodeField="value", modifier=None):
     inc = 0
@@ -160,6 +161,7 @@ defines.append("\n\n")
 defines = "".join(defines)
 
 opValueSet = set([op for op in wasm.opcodeIterator(lambda op: True, lambda op: opcodes[op]["value"])])
+opValueSet.add(0xFD)  # ExtSIMD
 maxOpValue = max(opValueSet)
 
 
@@ -218,6 +220,7 @@ static constexpr unsigned expectedVersionNumber = """ + wasm.expectedVersionNumb
 
 static constexpr unsigned numTypes = """ + str(len(types)) + """;
 
+static constexpr int minTypeValue = """ + str(min_type_value) + """;
 """ + type_definitions + "\n" + """
 """ + type_definitions_except_funcref_externref + """
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
@@ -227,6 +230,12 @@ enum class TypeKind : int8_t {
 #undef CREATE_ENUM_VALUE
 
 using TypeIndex = uintptr_t;
+
+inline bool typeIndexIsType(TypeIndex index)
+{
+    auto signedIndex = static_cast<std::make_signed<TypeIndex>::type>(index);
+    return (signedIndex < 0) && (signedIndex > minTypeValue);
+}
 
 struct Type {
     TypeKind kind;
@@ -247,15 +256,7 @@ struct Type {
         return kind == TypeKind::RefNull || kind == TypeKind::Externref || kind == TypeKind::Funcref;
     }
 
-    void dump(PrintStream& out) const
-    {
-        switch (kind) {
-        #define CREATE_CASE(name, ...) case TypeKind::name: out.print(#name); break;
-        FOR_EACH_WASM_TYPE(CREATE_CASE)
-        #undef CREATE_CASE
-        }
-    }
-
+    void dump(PrintStream& out) const;
     Width width() const;
 
     // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
@@ -328,6 +329,7 @@ inline TypeKind linearizedToType(int i)
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
     macro(Ext1,  0xFC, Oops, 0) \\
+    macro(ExtSIMD, 0xFD, Oops, 0) \\
     macro(GCPrefix,  0xFB, Oops, 0) \\
     macro(ExtAtomic, 0xFE, Oops, 0)
 
@@ -365,6 +367,8 @@ enum class Ext1OpType : uint8_t {
     FOR_EACH_WASM_TABLE_OP(CREATE_ENUM_VALUE)
     FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_ENUM_VALUE)
 };
+
+enum class ExtSIMDOpType : uint8_t;
 
 enum class GCOpType : uint8_t {
     FOR_EACH_WASM_GC_OP(CREATE_ENUM_VALUE)

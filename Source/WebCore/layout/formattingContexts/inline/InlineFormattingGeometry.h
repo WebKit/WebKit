@@ -47,7 +47,7 @@ public:
     enum class IsIntrinsicWidthMode : uint8_t { Yes, No };
     InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, std::optional<bool> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const;
 
-    bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&, const LineBox&) const;
+    bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&) const;
 
     InlineLayoutUnit initialLineHeight(bool isFirstLine) const;
 

@@ -92,10 +92,13 @@ public:
     void didSetHasHadUserInteraction();
     void didReceiveAllStorageAccessEntries(Vector<String>&& domains);
     void didReceiveLoadedSubresourceDomains(Vector<String>&& domains);
+    void didRemoveAllCookies();
 
     void didRemoveAllSessionCredentials();
 
     void didSetAppBoundDomains();
+
+    void didSetManagedDomains();
 
     void dumpResourceLoadStatistics();
 

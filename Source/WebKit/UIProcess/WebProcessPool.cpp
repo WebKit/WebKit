@@ -217,7 +217,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
 #if PLATFORM(COCOA)
-        determineITPState();
+        determineTrackingPreventionState();
 
         // This can be removed once Safari calls _setLinkedOnOrAfterEverything everywhere that WebKit deploys.
 #if PLATFORM(IOS_FAMILY)
@@ -510,7 +510,7 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 
 bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
-void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&& completionHandler)
 {
     auto* websiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(sessionID);
     if (!websiteDataStore)
@@ -575,7 +575,9 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     remoteWorkerProcesses().add(*remoteWorkerProcessProxy);
 
     auto& preferencesStore = processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store();
-    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore, registrableDomain, serviceWorkerPageIdentifier, WTFMove(completionHandler));
+    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore, registrableDomain, serviceWorkerPageIdentifier, [completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()] () mutable {
+        completionHandler(remoteProcessIdentifier);
+    });
 
     if (!processPool->m_remoteWorkerUserAgent.isNull())
         remoteWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);
@@ -623,9 +625,9 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, WebProcessProxy::IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode)
 {
 #if PLATFORM(COCOA)
-    m_tccPreferenceEnabled = doesAppHaveITPEnabled();
-    if (websiteDataStore && !websiteDataStore->isItpStateExplicitlySet())
-        websiteDataStore->setResourceLoadStatisticsEnabled(m_tccPreferenceEnabled);
+    m_tccPreferenceEnabled = doesAppHaveTrackingPreventionEnabled();
+    if (websiteDataStore && !websiteDataStore->isTrackingPreventionStateExplicitlySet())
+        websiteDataStore->setTrackingPreventionEnabled(m_tccPreferenceEnabled);
 #endif
 
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, isPrewarmed, crossOriginMode);
@@ -770,7 +772,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(containerCachesDirectoryExtensionHandle),
         WTFMove(containerTemporaryDirectoryExtensionHandle),
 #endif
-        websiteDataStore.resourceLoadStatisticsEnabled()
+        websiteDataStore.trackingPreventionEnabled()
     };
 }
 
@@ -818,7 +820,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
-    parameters.shouldUseFontSmoothingForTesting = m_shouldUseFontSmoothingForTesting;
+    parameters.disableFontSubpixelAntialiasingForTesting = m_disableFontSubpixelAntialiasingForTesting;
 
     parameters.textCheckerState = TextChecker::state();
 
@@ -1130,9 +1132,6 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     }
 #endif
 
-    bool shouldTakeSuspendedAssertions = page->preferences().shouldTakeSuspendedAssertions();
-    process->throttler().setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertions);
-
     return page;
 }
 
@@ -1294,10 +1293,10 @@ void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     sendToAllProcesses(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText));
 }
 
-void WebProcessPool::setShouldUseFontSmoothingForTesting(bool useFontSmoothing)
+void WebProcessPool::setDisableFontSubpixelAntialiasingForTesting(bool disable)
 {
-    m_shouldUseFontSmoothingForTesting = useFontSmoothing;
-    sendToAllProcesses(Messages::WebProcess::SetShouldUseFontSmoothingForTesting(useFontSmoothing));
+    m_disableFontSubpixelAntialiasingForTesting = disable;
+    sendToAllProcesses(Messages::WebProcess::SetDisableFontSubpixelAntialiasingForTesting(disable));
 }
 
 void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)
@@ -1828,8 +1827,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
             configuration().setClientWouldBenefitFromAutomaticProcessPrewarming(true);
         }
 
-        page->websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process->coreProcessIdentifier(), RegistrableDomain(navigation->currentRequest().url())), 0);
-
         if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != sourceProcess.ptr()) {
             static std::once_flag onceFlag;
             std::call_once(onceFlag, [] {
@@ -1841,7 +1838,10 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
             LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", sourceURL.string().utf8().data(), navigation->currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
         }
 
-        completionHandler(WTFMove(process), suspendedPage, reason);
+        auto processIdentifier = process->coreProcessIdentifier();
+        page->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url())), [completionHandler = WTFMove(completionHandler), process = WTFMove(process), suspendedPage = WTFMove(suspendedPage), reason] () mutable {
+            completionHandler(WTFMove(process), suspendedPage, reason);
+        });
     });
 }
 
@@ -1984,6 +1984,18 @@ void WebProcessPool::removeMockMediaDevice(const String& persistentId)
 #endif
 }
 
+
+void WebProcessPool::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+{
+#if ENABLE(MEDIA_STREAM)
+    MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
+    sendToAllProcesses(Messages::WebProcess::SetMockMediaDeviceIsEphemeral { persistentId, isEphemeral });
+#if ENABLE(GPU_PROCESS)
+    ensureGPUProcess().setMockMediaDeviceIsEphemeral(persistentId, isEphemeral);
+#endif
+#endif
+}
+
 void WebProcessPool::resetMockMediaDevices()
 {
 #if ENABLE(MEDIA_STREAM)
@@ -2118,6 +2130,19 @@ bool WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion()
             return true;
     }
     return false;
+}
+
+void WebProcessPool::forEachProcessForSession(PAL::SessionID sessionID, const Function<void(WebProcessProxy&)>& apply)
+{
+    for (auto& process : m_processes) {
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+        if (process->isCrashyProcess())
+            continue;
+#endif
+        if (process->isPrewarmed() || process->sessionID() != sessionID)
+            continue;
+        apply(process.get());
+    }
 }
 
 #if ENABLE(SERVICE_WORKER)

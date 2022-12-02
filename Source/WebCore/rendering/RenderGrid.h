@@ -27,6 +27,7 @@
 #pragma once
 
 #include "Grid.h"
+#include "GridMasonryLayout.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "RenderBlock.h"
 
@@ -67,11 +68,11 @@ public:
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
 
-    unsigned autoRepeatCountForDirection(GridTrackSizingDirection direction) const { return m_grid.autoRepeatTracks(direction); }
-    unsigned explicitGridStartForDirection(GridTrackSizingDirection direction) const { return m_grid.explicitGridStart(direction); }
+    unsigned autoRepeatCountForDirection(GridTrackSizingDirection direction) const { return currentGrid().autoRepeatTracks(direction); }
+    unsigned explicitGridStartForDirection(GridTrackSizingDirection direction) const { return currentGrid().explicitGridStart(direction); }
 
     // Required by GridTrackSizingAlgorithm. Keep them under control.
-    LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
+    LayoutUnit guttersSize(GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
     LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
     void updateGridAreaLogicalSize(RenderBox&, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height) const;
@@ -102,15 +103,10 @@ public:
     // nested subgrids, where ancestor may not be our direct parent.
     bool isSubgridOf(GridTrackSizingDirection, const RenderGrid& ancestor);
 
-    const Grid& currentGrid() const
-    {
-        return m_grid;
-    }
+    const Grid& currentGrid() const;
+    Grid& currentGrid();
 
-    unsigned numTracks(GridTrackSizingDirection direction) const
-    {
-        return numTracks(direction, m_grid);
-    }
+    unsigned numTracks(GridTrackSizingDirection) const;
 
     void placeItems();
 
@@ -118,8 +114,10 @@ public:
     LayoutUnit gridGap(GridTrackSizingDirection) const;
     LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
+    LayoutUnit masonryContentSize() const;
 private:
     friend class GridTrackSizingAlgorithm;
+    friend class GridMasonryLayout;
 
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {
@@ -138,23 +136,29 @@ private:
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
     bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
 
+    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     unsigned clampAutoRepeatTracks(GridTrackSizingDirection, unsigned autoRepeatTracks) const;
 
-    std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Grid&, GridTrackSizingDirection) const;
+    std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(GridTrackSizingDirection) const;
 
     void performGridItemsPreLayout(const GridTrackSizingAlgorithm&) const;
 
-    void placeItemsOnGrid(GridTrackSizingAlgorithm&, std::optional<LayoutUnit> availableLogicalWidth) const;
-    void populateExplicitGridAndOrderIterator(Grid&) const;
-    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid&, const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
-    void placeSpecifiedMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
-    void placeAutoMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
+    void placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidth);
+    void populateExplicitGridAndOrderIterator();
+    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
+    void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
+    void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
+    void placeItemUsingMasonryPositioning(Grid&, RenderBox*) const;
     typedef std::pair<unsigned, unsigned> AutoPlacementCursor;
-    void placeAutoMajorAxisItemOnGrid(Grid&, RenderBox&, AutoPlacementCursor&) const;
+    void placeAutoMajorAxisItemOnGrid(RenderBox&, AutoPlacementCursor&);
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
+
+    void allocateSpaceForMasonryVectors(Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition); 
+    void collectMasonryItems(Grid&, unsigned gridAxisTracksCount, GridTrackSizingDirection masonryDirection, HashMap<RenderBox*, GridArea>& itemsOnFirstTrack, Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition) const;
+    bool hasDefiniteGridAxisPosition(const RenderBox* child, GridTrackSizingDirection masonryDirection) const;
 
     bool canPerformSimplifiedLayout() const final;
     void prepareChildForPositionedLayout(RenderBox&);
@@ -215,7 +219,6 @@ private:
     LayoutUnit rowAxisBaselineOffsetForChild(const RenderBox&) const;
 
     unsigned nonCollapsedTracks(GridTrackSizingDirection) const;
-    unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
@@ -230,7 +233,18 @@ private:
 
     bool computeGridPositionsForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
 
-    Grid m_grid;
+    bool isMasonryRows() const;
+    bool isMasonryColumns() const;
+    AutoRepeatType autoRepeatColumnsType() const;
+    AutoRepeatType autoRepeatRowsType() const;
+
+    class GridWrapper {
+        Grid m_layoutGrid;
+    public:
+        GridWrapper(RenderGrid&);
+        void resetCurrentGrid() const;
+        mutable std::reference_wrapper<Grid> m_currentGrid { std::ref(m_layoutGrid) };
+    } m_grid;
 
     GridTrackSizingAlgorithm m_trackSizingAlgorithm;
 
@@ -239,17 +253,18 @@ private:
     ContentAlignmentData m_offsetBetweenColumns;
     ContentAlignmentData m_offsetBetweenRows;
 
+    mutable GridMasonryLayout m_masonryLayout;
+
     typedef HashMap<const RenderBox*, std::optional<size_t>> OutOfFlowPositionsMap;
     OutOfFlowPositionsMap m_outOfFlowItemColumn;
     OutOfFlowPositionsMap m_outOfFlowItemRow;
-
-    std::optional<LayoutUnit> m_minContentSize;
-    std::optional<LayoutUnit> m_maxContentSize;
 
     bool m_hasAnyOrthogonalItem {false};
     bool m_hasAspectRatioBlockSizeDependentItem { false };
     bool m_baselineItemsCached {false};
     bool m_hasAnyBaselineAlignmentItem { false };
+    const unsigned m_masonryDefiniteItemsQuarterCapacity = 4;
+    const unsigned m_masonryIndefiniteItemsHalfCapacity = 2;
 };
 
 } // namespace WebCore

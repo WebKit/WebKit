@@ -72,4 +72,8 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoFrameGStreamer)
+static bool isType(const WebCore::VideoFrame& frame) { return frame.isGStreamer(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

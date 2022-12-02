@@ -143,7 +143,11 @@ if (USE_LIBGBM)
 endif ()
 
 if (ENABLE_GAMEPAD)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/gamepad/libwpe"
+    )
+
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/gamepad/wpe/WPEGamepadProvider.h
+        platform/gamepad/libwpe/GamepadProviderLibWPE.h
     )
 endif ()

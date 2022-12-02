@@ -183,7 +183,7 @@ void Worker::resume()
 
 bool Worker::virtualHasPendingActivity() const
 {
-    return m_contextProxy.hasPendingActivity() || m_scriptLoader;
+    return m_scriptLoader || (m_didStartWorkerGlobalScope && !m_contextProxy.askedToTerminate());
 }
 
 void Worker::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
@@ -218,14 +218,15 @@ void Worker::notifyFinished()
     if (auto policy = parseReferrerPolicy(m_scriptLoader->referrerPolicy(), ReferrerPolicySource::HTTPHeader))
         referrerPolicy = *policy;
 
+    m_didStartWorkerGlobalScope = true;
     WorkerInitializationData initializationData {
 #if ENABLE(SERVICE_WORKER)
         m_scriptLoader->takeServiceWorkerData(),
 #endif
         m_clientIdentifier,
-        context->userAgent(m_scriptLoader->lastRequestURL())
+        context->userAgent(m_scriptLoader->responseURL())
     };
-    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->lastRequestURL(), *sessionID, m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
+    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->responseURL(), *sessionID, m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
     InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script().toString());
 }
 

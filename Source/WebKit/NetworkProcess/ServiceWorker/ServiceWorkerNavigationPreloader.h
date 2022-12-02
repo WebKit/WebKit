@@ -55,7 +55,7 @@ public:
 
     using ResponseCallback = Function<void()>;
     void waitForResponse(ResponseCallback&&);
-    using BodyCallback = Function<void(RefPtr<const WebCore::FragmentedSharedBuffer>&&, int reportedEncodedDataLength)>;
+    using BodyCallback = Function<void(RefPtr<const WebCore::FragmentedSharedBuffer>&&, uint64_t reportedEncodedDataLength)>;
     void waitForBody(BodyCallback&&);
 
     const WebCore::ResourceError& error() const { return m_error; }
@@ -69,12 +69,12 @@ public:
 
 private:
     // NetworkLoadClient.
-    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final { }
+    void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final { }
     bool isSynchronous() const final { return false; }
     bool isAllowedToAskUserForCredentials() const final { return false; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
     void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&&) final;
-    void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, int reportedEncodedDataLength) final;
+    void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength) final;
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;
     bool shouldCaptureExtraNetworkLoadMetrics() const final { return m_shouldCaptureExtraNetworkLoadMetrics; }

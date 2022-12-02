@@ -1,3 +1,3 @@
 
-FAIL Dynamic imports don't delay the load event. assert_array_equals: Window load event shouldn't be delayed by dynamic imports lengths differ, expected array ["import start", "Window load event", "loading", "slow"] length 4, got ["import start", "loading", "slow"] length 3
+FAIL Dynamic imports don't delay the load event. assert_array_equals: Window load event shouldn't be delayed by dynamic imports expected property 1 to be "Window load event" but got "loading" (expected array ["import start", "Window load event", "loading", "slow"] got ["import start", "loading", "Window load event", "slow"])
 

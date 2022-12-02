@@ -399,13 +399,6 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
         // Case 5b: continuation is an inline - in this case the inline's first child is the next sibling
         else
             nextSibling = firstChildConsideringContinuation(continuation);
-        
-        // After case 4, there are chances that nextSibling has the same node as the current renderer,
-        // which might lead to adding the same child repeatedly.
-        if (nextSibling && nextSibling->node() == m_renderer->node()) {
-            if (AccessibilityObject* nextObj = axObjectCache()->getOrCreate(nextSibling))
-                return nextObj->nextSibling();
-        }
     }
 
     if (!nextSibling)
@@ -414,6 +407,13 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     auto* objectCache = axObjectCache();
     if (!objectCache)
         return nullptr;
+
+    // After case 4, there are chances that nextSibling has the same node as the current renderer,
+    // which might lead to adding the same child repeatedly.
+    if (nextSibling->node() && nextSibling->node() == m_renderer->node()) {
+        if (auto* nextObject = objectCache->getOrCreate(nextSibling))
+            return nextObject->nextSibling();
+    }
 
     auto* nextObject = objectCache->getOrCreate(nextSibling);
     auto* nextObjectParent = nextObject ? nextObject->parentObject() : nullptr;
@@ -2669,7 +2669,6 @@ bool AccessibilityRenderObject::shouldIgnoreAttributeRole() const
 
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
-    AXTRACE("AccessibilityRenderObject::determineAccessibilityRole"_s);
     if (!m_renderer)
         return AccessibilityRole::Unknown;
 
@@ -2901,13 +2900,13 @@ void AccessibilityRenderObject::detachRemoteSVGRoot()
 
 AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationChoice createIfNecessary) const
 {
-    if (!is<RenderImage>(renderer()))
+    if (!is<RenderImage>(m_renderer))
         return nullptr;
-    
+
     CachedImage* cachedImage = downcast<RenderImage>(*m_renderer).cachedImage();
     if (!cachedImage)
         return nullptr;
-    
+
     Image* image = cachedImage->image();
     if (!is<SVGImage>(image))
         return nullptr;
@@ -2915,25 +2914,26 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     FrameView* frameView = downcast<SVGImage>(*image).frameView();
     if (!frameView)
         return nullptr;
-    Frame& frame = frameView->frame();
-    
-    Document* document = frame.document();
+
+    Document* document = frameView->frame().document();
     if (!is<SVGDocument>(document))
         return nullptr;
-    
+
     auto rootElement = DocumentSVG::rootElement(*document);
     if (!rootElement)
         return nullptr;
+
     RenderObject* rendererRoot = rootElement->renderer();
     if (!rendererRoot)
         return nullptr;
-    
-    AXObjectCache* cache = frame.document()->axObjectCache();
+
+    // Use the AXObjectCache from this object, not the one from the SVG document above.
+    // The SVG document is not connected to the top document of this object, thus it would result in the AX SVG objects to be created in a separate instance of AXObjectCache.
+    auto* cache = axObjectCache();
     if (!cache)
         return nullptr;
 
-    AccessibilityObject* rootSVGObject = createIfNecessary == Create ? cache->getOrCreate(rendererRoot) : cache->get(rendererRoot);
-
+    auto* rootSVGObject = createIfNecessary == Create ? cache->getOrCreate(rendererRoot) : cache->get(rendererRoot);
     ASSERT(!createIfNecessary || rootSVGObject);
     return dynamicDowncast<AccessibilitySVGRoot>(rootSVGObject);
 }
@@ -3072,7 +3072,6 @@ void AccessibilityRenderObject::addListItemMarker()
 
 void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
 {
-    AXTRACE("AccessibilityRenderObject::updateRoleAfterChildrenCreation"_s);
     // If a menu does not have valid menuitem children, it should not be exposed as a menu.
     auto role = roleValue();
     if (role == AccessibilityRole::Menu) {
@@ -3138,10 +3137,7 @@ void AccessibilityRenderObject::addChildren()
 
 bool AccessibilityRenderObject::canHaveChildren() const
 {
-    if (!m_renderer)
-        return false;
-
-    return AccessibilityNodeObject::canHaveChildren();
+    return m_renderer && AccessibilityNodeObject::canHaveChildren();
 }
 
 bool AccessibilityRenderObject::canHaveSelectedChildren() const

@@ -11,6 +11,7 @@
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 
 #include <cassert>
+#include <cstdint>
 #if ANGLE_MTL_SIMULATE_DISCARD_FRAMEBUFFER
 #    include <random>
 #endif
@@ -361,22 +362,36 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
     [encoder setVisibilityResultMode:mode offset:offset];
 }
 
+#if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_15) || \
+    (defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_0)
+#   define ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE 1
+#endif
+
+#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
+    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
+#   define ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED 1
+#endif
+
 inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
 {
     id<MTLResource> resource = stream->fetch<id<MTLResource>>();
     MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
     mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
     ANGLE_UNUSED_VARIABLE(stages);
-#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+#if ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED
+    [encoder useResource:resource usage:usage stages:stages];
+#else
+#   if ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE
     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13.0))
     {
         [encoder useResource:resource usage:usage stages:stages];
     }
     else
-#endif
+#   endif
     {
         [encoder useResource:resource usage:usage];
     }
+#endif
     [resource ANGLE_MTL_RELEASE];
 }
 
@@ -577,6 +592,11 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf, uint64_t s
     mCompletedBufferSerial.store(
         std::max(mCompletedBufferSerial.load(std::memory_order_relaxed), serial),
         std::memory_order_relaxed);
+}
+
+uint64_t CommandQueue::getNextRenderEncoderSerial()
+{
+    return ++mRenderEncoderCounter;
 }
 
 // CommandBuffer implementation
@@ -1065,7 +1085,9 @@ void RenderCommandEncoderStates::reset()
 // RenderCommandEncoder implemtation
 RenderCommandEncoder::RenderCommandEncoder(CommandBuffer *cmdBuffer,
                                            const OcclusionQueryPool &queryPool)
-    : CommandEncoder(cmdBuffer, RENDER), mOcclusionQueryPool(queryPool)
+    : CommandEncoder(cmdBuffer, RENDER),
+      mOcclusionQueryPool(queryPool),
+      mSerial(cmdBuffer->cmdQueue().getNextRenderEncoderSerial())
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -1556,6 +1578,7 @@ RenderCommandEncoder &RenderCommandEncoder::setBufferForWrite(gl::ShaderType sha
         return *this;
     }
 
+    buffer->setLastWritingRenderEncoderSerial(mSerial);
     cmdBuffer().setWriteDependency(buffer);
 
     id<MTLBuffer> mtlBuffer = (buffer ? buffer->get() : nil);
@@ -2183,10 +2206,14 @@ BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Buffer *buffer)
     }
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
-    // synchronization
-    cmdBuffer().setReadDependency(buffer);
-    [get() synchronizeResource:buffer->get()];
+    if (buffer->get().storageMode == MTLStorageModeManaged)
+    {
+        // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
+        // synchronization
+        cmdBuffer().setReadDependency(buffer);
+
+        [get() synchronizeResource:buffer->get()];
+    }
 #endif
     return *this;
 }

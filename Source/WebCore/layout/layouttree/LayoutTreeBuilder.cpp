@@ -46,6 +46,7 @@
 #include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderChildIterator.h"
+#include "RenderCombineText.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -128,9 +129,9 @@ std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes eleme
     return makeUnique<ElementBox>(WTFMove(elementAttributes), WTFMove(replacedAttributes), WTFMove(style));
 }
 
-std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath,  RenderStyle&& style)
+std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool isCombined, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath,  RenderStyle&& style)
 {
-    return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style));
+    return makeUnique<InlineTextBox>(text, isCombined, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style));
 }
 
 std::unique_ptr<ElementBox> TreeBuilder::createContainer(Box::ElementAttributes elementAttributes, RenderStyle&& style)
@@ -165,9 +166,9 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
         String text = textRenderer.text();
         auto useSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace());
         if (parentContainer.style().display() == DisplayType::Inline)
-            childLayoutBox = createTextBox(text, useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::clone(parentContainer.style()));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::clone(parentContainer.style()));
         else
-            childLayoutBox = createTextBox(text, useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();

@@ -89,7 +89,7 @@ enum class XRTargetRayMode {
 };
 
 // https://immersive-web.github.io/webxr/#feature-descriptor
-enum class SessionFeature {
+enum class SessionFeature : uint8_t {
     ReferenceSpaceTypeViewer,
     ReferenceSpaceTypeLocal,
     ReferenceSpaceTypeLocalFloor,
@@ -599,7 +599,7 @@ std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode
     MachSendRight surfaceSendRight;
     if (!decoder.decode(surfaceSendRight))
         return std::nullopt;
-    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());
+    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight));
     if (!decoder.decode(layerData.isShared))
         return std::nullopt;
 #else

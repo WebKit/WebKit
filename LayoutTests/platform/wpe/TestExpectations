@@ -182,10 +182,6 @@ webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transition
 webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Timeout ]
 webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Timeout ]
 
-# CSS scroll-snap
-webkit.org/b/222259 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
-webkit.org/b/222259 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
-
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure Pass ]
 
@@ -314,13 +310,6 @@ webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
 
-# ENABLE_TOUCH_SLIDER is disabled in WPE.
-fast/events/touch/touch-slider.html [ Skip ]
-
-# WPE does not support touch event canceling
-webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Skip ]
-fast/events/touch/touch-input-element-change-documents.html [ Skip ]
-
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
 model-element/model-element-graphics-layers-opacity.html [ Skip ]
@@ -368,9 +357,6 @@ fast/events/resources/drag-in-frames-left.html [ Skip ]
 fast/events/resources/drag-in-frames-right.html [ Skip ]
 fast/events/shift-drag-selection-on-image-triggers-drag-n-drop.html [ Skip ]
 fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html [ Skip ]
-fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag.html [ Skip ]
-fast/events/touch/gesture/resources/drag-inside-iframe2.html [ Skip ]
-fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
 fast/text/selection-is-prevent-defaulted.html [ Skip ]
 
 css-dark-mode [ Pass ]
@@ -445,8 +431,6 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 
 fast/dom/Window/watchos [ Skip ]
 
-fast/dom/Window/Plug-ins.html [ Failure ]
-
 # Pointer Lock API not implemented
 webkit.org/b/204001 pointer-lock/ [ Skip ]
 webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
@@ -495,14 +479,14 @@ fast/history/page-cache-notification-showing.html [ Skip ]
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
 
-webkit.org/b/177527 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
+webkit.org/b/177527 fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/176757 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
-webkit.org/b/176757 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
+webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
+webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/179948 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
+webkit.org/b/179948 fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
+webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
 
@@ -523,8 +507,6 @@ webkit.org/b/208979 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/208982 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html [ Failure ]
 
 webkit.org/b/208983 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles.html [ Failure ]
-
-webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
 
 webkit.org/b/208985 fast/viewport/ios/shrink-to-fit-large-content-width.html [ Failure ]
 
@@ -746,7 +728,6 @@ webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-wh
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-document.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-root.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-window.html [ Crash ]
-webkit.org/b/244186 fast/events/touch/force-press-event.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS
@@ -826,8 +807,6 @@ webkit.org/b/216650 fast/events/mouse-drag-from-frame-to-other-frame.html [ Fail
 webkit.org/b/216650 fast/events/mouse-drag-from-frame.html [ Failure Pass ]
 webkit.org/b/216650 fast/events/mouse-focus-imagemap.html [ Failure Pass ]
 webkit.org/b/216650 fast/events/mouse-moved-remove-frame-crash.html [ Timeout Pass ]
-
-webkit.org/b/219425 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
 
 webkit.org/b/219465 fast/loader/font-load-timer.html [ ImageOnlyFailure Pass ]
 
@@ -1008,25 +987,6 @@ Bug(WPE) fast/viewport/viewport-legacy-ordering-6.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
 
-# These tests were moved on r187990 from platform/ios-simulator/ios/fast/events/touch
-webkit.org/b/148940 fast/events/touch/document-create-touch-list-ios.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/gesture-event-basic.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/input-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/inserted-fragment-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/moved-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/multi-touch-some-without-handlers.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/ontouchstart-active-selector.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/removed-fragment-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/removed-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/text-node-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/textarea-touch-target.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/touch-event-frames.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/touch-event-pageXY.html [ Skip ]
-webkit.org/b/148940 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
-
-# Need support for internals.settings.setDeviceSupportsMouse
-fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Skip ]
-
 webkit.org/b/174673 fast/events/keyboardevent-code.html [ Failure ]
 
 # clickCount related failures
@@ -1043,7 +1003,6 @@ webkit.org/b/174674 imported/w3c/web-platform-tests/uievents/click/dblclick_even
 webkit.org/b/173419 fast/events/autoscroll-in-textarea.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-in-textfield.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Failure ]
-webkit.org/b/173419 fast/events/before-input-prevent-paste.html [ Failure ]
 webkit.org/b/173419 fast/events/content-changed-during-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/context-activated-by-key-event.html [ Failure ]
 webkit.org/b/173419 fast/events/crash-on-mutate-during-drop.html [ Failure ]
@@ -1051,7 +1010,6 @@ webkit.org/b/173419 fast/events/frame-tab-focus.html [ Failure ]
 webkit.org/b/173419 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-drag-and-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-insert-by-drop.html [ Failure ]
-webkit.org/b/173419 fast/events/input-events-paste-data.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-paste-rich-datatransfer.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
 webkit.org/b/109469 [ Release ] fast/events/mouse-cursor-image-set.html [ Failure ]
@@ -1063,29 +1021,18 @@ webkit.org/b/173419 fast/events/drag-dataTransferItemList.html [ Timeout ]
 webkit.org/b/173419 fast/events/mouseover-button.html [ Failure ]
 webkit.org/b/173419 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/173419 fast/events/no-scroll-on-input-text-selection.html [ Failure ]
-webkit.org/b/173419 fast/events/node-event-anchor-lock.html [ Failure ]
 webkit.org/b/173419 fast/events/option-tab.html [ Failure ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-move-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-onvisibilitychange.html [ Timeout ]
 webkit.org/b/173419 fast/events/page-visibility-transition-test.html [ Timeout ]
-webkit.org/b/173419 fast/events/scroll-after-click-on-tab-index.html [ Timeout ]
 webkit.org/b/173419 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/selectstart-by-drag.html [ Failure ]
-webkit.org/b/173419 fast/events/sequential-focus-navigation-starting-point.html [ Failure ]
 webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
 webkit.org/b/173419 fast/events/shadow-event-path.html [ Failure ]
 webkit.org/b/173419 fast/events/special-key-events-in-input-text.html [ Failure ]
 webkit.org/b/173419 fast/events/standalone-image-drag-to-editable.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
-webkit.org/b/173419 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-webkit.org/b/173419 fast/events/touch/document-create-touch-list.html [ Failure ]
-webkit.org/b/173419 fast/events/touch/multi-touch-grouped-targets.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/multi-touch-inside-nested-iframes.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/touch-target-limited.html [ Timeout ]
-webkit.org/b/173419 fast/events/touch/touch-target.html [ Timeout ]
 webkit.org/b/173419 fast/events/webkit-media-key-events-constructor.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
@@ -1104,9 +1051,6 @@ webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
 
-webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
-webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
-
 webkit.org/b/186879 fast/events/open-window-from-another-frame.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-allowed-from-gesture-initiated-event.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-blocked-from-fake-user-gesture.html [ Timeout ]
@@ -1124,12 +1068,7 @@ Bug(WPE) storage/storageinfo-request-quota.html [ Failure ]
 Bug(WPE) storage/storagequota-query-usage.html [ Failure ]
 Bug(WPE) storage/storagequota-request-quota.html [ Failure ]
 
-Bug(WPE) css3/background/background-repeat-round-auto1.html [ ImageOnlyFailure Pass ]
 Bug(WPE) css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
-Bug(WPE) css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
-Bug(WPE) css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
-
-Bug(WPE) css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
 Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
@@ -1232,15 +1171,11 @@ webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/tex
 webkit.org/b/188971 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
 webkit.org/b/188971 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure ]
 
-webkit.org/b/99026 fast/filter-image/filter-image-svg.html [ ImageOnlyFailure ]
-
-webkit.org/b/188973 fast/css/font-systemFontID-parsing.html [ Failure ]
 webkit.org/b/188975 fast/css/user-drag-none.html [ Failure ]
 
 webkit.org/b/188976 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 webkit.org/b/188977 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 webkit.org/b/188979 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
-webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
 
 webkit.org/b/192891 fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
 

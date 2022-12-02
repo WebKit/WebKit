@@ -31,7 +31,7 @@
 #include "DocumentInlines.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
@@ -213,7 +213,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
     auto cssSheet = CSSStyleSheet::create(StyleSheetContents::create(href, parserContext), *this);
     cssSheet.get().setDisabled(m_alternate);
     cssSheet.get().setTitle(m_title);
-    cssSheet.get().setMediaQueries(MediaQuerySet::create(m_media, MediaQueryParserContext(document())));
+    cssSheet.get().setMediaQueries(MQ::MediaQueryParser::parse(m_media, MediaQueryParserContext(document())));
 
     m_sheet = WTFMove(cssSheet);
 

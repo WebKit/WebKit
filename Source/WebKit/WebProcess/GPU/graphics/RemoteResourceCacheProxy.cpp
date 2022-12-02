@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 
 namespace WebKit {
@@ -101,12 +102,11 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (!bitmap)
         return;
 
-    ShareableBitmapHandle handle;
-    bitmap->createHandle(handle);
-    if (handle.isNull())
+    auto handle = bitmap->createHandle();
+    if (!handle)
         return;
 
-    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
     m_nativeImages.add(image.renderingResourceIdentifier(), image);
 
     // Set itself as an observer to NativeImage, so releaseNativeImage()
@@ -114,7 +114,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     image.addObserver(*this);
 
     // Tell the GPU process to cache this resource.
-    m_remoteRenderingBackendProxy.cacheNativeImage(handle, image.renderingResourceIdentifier());
+    m_remoteRenderingBackendProxy.cacheNativeImage(*handle, image.renderingResourceIdentifier());
 }
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)

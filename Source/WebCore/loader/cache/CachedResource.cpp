@@ -394,6 +394,11 @@ bool CachedResource::isCrossOrigin() const
     return m_responseTainting != ResourceResponse::Tainting::Basic;
 }
 
+bool CachedResource::isCORSCrossOrigin() const
+{
+    return m_responseTainting == ResourceResponse::Tainting::Opaque || m_responseTainting == ResourceResponse::Tainting::Opaqueredirect;
+}
+
 bool CachedResource::isCORSSameOrigin() const
 {
     // Following resource types do not use CORS

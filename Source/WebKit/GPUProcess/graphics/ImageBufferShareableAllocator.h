@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "SharedMemory.h"
 #include <WebCore/ImageBufferAllocator.h>
 #include <WebCore/ProcessIdentity.h>
 

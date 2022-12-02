@@ -39,6 +39,32 @@
 
 namespace WebGPU {
 
+static MTLLoadAction loadAction(WGPULoadOp loadOp)
+{
+    switch (loadOp) {
+    case WGPULoadOp_Load:
+        return MTLLoadActionLoad;
+    case WGPULoadOp_Clear:
+        return MTLLoadActionClear;
+    case WGPULoadOp_Force32:
+        ASSERT_NOT_REACHED();
+        return MTLLoadActionClear;
+    }
+}
+
+static MTLStoreAction storeAction(WGPUStoreOp storeOp)
+{
+    switch (storeOp) {
+    case WGPUStoreOp_Store:
+        return MTLStoreActionStore;
+    case WGPUStoreOp_Discard:
+        return MTLStoreActionDontCare;
+    case WGPUStoreOp_Force32:
+        ASSERT_NOT_REACHED();
+        return MTLStoreActionDontCare;
+    }
+}
+
 Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
@@ -93,10 +119,75 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
     return ComputePassEncoder::createInvalid(m_device);
 }
 
+bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor& descriptor) const
+{
+    // FIXME: Implement this according to
+    // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-beginrenderpass.
+
+    // Some features are explicitly supported by WebGPU, however we do not have support for them.
+    // The following checks reject descriptors using such features.
+    // FIXME: support multisampling.
+    for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
+        if (descriptor.colorAttachments[i].resolveTarget)
+            return false;
+    }
+
+    // FIXME: support depth/stencil
+    if (descriptor.depthStencilAttachment)
+        return false;
+
+    // FIXME: support occlusion
+    if (descriptor.occlusionQuerySet)
+        return false;
+
+    if (descriptor.timestampWriteCount)
+        return false;
+
+    return true;
+}
+
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderPassEncoder::createInvalid(m_device);
+    if (descriptor.nextInChain)
+        return RenderPassEncoder::createInvalid(m_device);
+
+    if (!validateRenderPassDescriptor(descriptor))
+        return RenderPassEncoder::createInvalid(m_device);
+
+    MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+
+    // FIXME: check maximum number of color attachments
+    // Apple1: 4, others: 8
+
+    for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
+        const auto& attachment = descriptor.colorAttachments[i];
+        const auto& mtlAttachment = mtlDescriptor.colorAttachments[i];
+
+        mtlAttachment.clearColor = MTLClearColorMake(attachment.clearColor.r,
+            attachment.clearColor.g,
+            attachment.clearColor.b,
+            attachment.clearColor.a);
+
+        mtlAttachment.texture = fromAPI(attachment.view).texture();
+        mtlAttachment.level = 0;
+        mtlAttachment.slice = 0;
+        mtlAttachment.depthPlane = 0;
+        mtlAttachment.loadAction = loadAction(attachment.loadOp);
+        mtlAttachment.storeAction = storeAction(attachment.storeOp);
+
+        // FIXME: Multisampling support
+        // mtlDescriptor.colorAttachments[i].resolveTexture = fromAPI(attachment.resolveTarget).texture();
+        // mtlAttachment.resolveLevel = 0;
+        // mtlAttachment.resolveSlice = 0;
+        // mtlAttachment.resolveDepthPlane = 0;
+    }
+
+    // FIXME: Depth + stencil texture support
+
+    auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
+
+    return RenderPassEncoder::create(mtlRenderCommandEncoder, m_device);
 }
 
 bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)

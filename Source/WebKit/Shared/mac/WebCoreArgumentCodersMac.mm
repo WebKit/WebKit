@@ -44,23 +44,6 @@
 
 namespace IPC {
 
-template<>
-void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
-{
-    encoder << certificateInfo.trust();
-}
-
-template<>
-std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode(Decoder& decoder)
-{
-    std::optional<RetainPtr<SecTrustRef>> trust;
-    decoder >> trust;
-    if (!trust)
-        return std::nullopt;
-
-    return WebCore::CertificateInfo(WTFMove(*trust));
-}
-
 static void encodeNSError(Encoder& encoder, NSError *nsError)
 {
     String domain = [nsError domain];

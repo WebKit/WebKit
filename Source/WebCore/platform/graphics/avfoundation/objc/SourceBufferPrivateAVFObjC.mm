@@ -600,6 +600,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
     m_keyIDs = WTFMove(keyIDs.value());
     player->initializationDataEncountered("sinf"_s, m_initData->tryCreateArrayBuffer());
+    player->needsVideoLayerChanged();
 
     m_waitingForKey = true;
     player->waitingForKeyChanged();
@@ -608,6 +609,21 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     UNUSED_PARAM(initData);
     UNUSED_PARAM(trackID);
     UNUSED_PARAM(hasSessionSemaphore);
+}
+
+bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
+{
+    if (m_protectedTrackID == notFound)
+        return false;
+
+    if (m_enabledVideoTrackID != m_protectedTrackID)
+        return false;
+
+    // When video content is protected and keys are assigned through
+    // the renderers, decoding content through decompression sessions
+    // will fail. In this scenario, ask the player to create a layer
+    // instead.
+    return sampleBufferRenderersSupportKeySession();
 }
 
 void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
@@ -875,6 +891,9 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
             });
         }
     }
+
+    if (auto* player = this->player())
+        player->needsVideoLayerChanged();
 
     m_mediaSource->hasSelectedVideoChanged(*this);
 }
@@ -1233,6 +1252,10 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaS
 
     // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
     if (!m_cdmInstance)
+        return false;
+
+    // DecompressionSessions doesn't support encrypted media.
+    if (!m_displayLayer)
         return false;
 
     // if sample is encrypted, and keyIDs match the current set of keyIDs: enqueue sample.

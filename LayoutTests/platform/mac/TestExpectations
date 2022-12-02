@@ -104,6 +104,7 @@ fast/images/animated-heics-draw.html [ Pass ]
 fast/images/animated-heics-verify.html [ Pass ]
 fast/images/heic-as-background-image.html [ Pass ]
 
+# AVIF tests
 [ Ventura+ ] fast/images/avif-heif-container-as-image.html [ Pass ]
 
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
@@ -724,7 +725,6 @@ webkit.org/b/114744 media/video-layer-crash.html [ Pass Timeout Failure ]
 webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Timeout ]
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
 webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
-webkit.org/b/121803 media/video-object-fit.html [ Pass ImageOnlyFailure ]
 webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Timeout ]
 webkit.org/b/122042 media/media-controller-playback.html [ Pass Timeout ]
 webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Timeout ]
@@ -974,7 +974,6 @@ webkit.org/b/148636 inspector/css/get-system-fonts.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/getAllStyleSheets.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/matched-style-properties.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/modify-rule-selector.html [ Pass Timeout ]
-webkit.org/b/148636 inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/selector-specificity.html [ Pass Timeout ]
 webkit.org/b/163604 inspector/debugger/breakpoint-action-eval.html [ Pass Timeout ]
 webkit.org/b/165772 inspector/debugger/breakpoint-action-log.html [ Pass Failure ]
@@ -1336,12 +1335,28 @@ fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
 # we should delete the test.
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 
-# <rdar://problem/33437597> Multiple imported/w3c/web-platform-tests/fetch are failing on High Sierra
-imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
-
 # <rdar://problem/33731086>
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
+
+# Tests which pass on Ventura.
+webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.serviceworker.html [ Failure ]
+webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.sharedworker.html [ Failure ]
+webkit.org/b/247705 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
+
+# Tests timing out on BigSur but not timing out on Ventura
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+
+# Flaky subtests. Sometimes fails with Promise rejection, sometimes fails the assertion.
+imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
+
+# fetch ORB image tests which fail
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-mislabeled-as-html.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-unlabeled.sub.html [ ImageOnlyFailure ]
 
 webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]
 
@@ -1599,8 +1614,6 @@ webkit.org/b/206285 inspector/worker/debugger-pause.html [ Pass Failure ]
 
 webkit.org/b/207142 requestidlecallback/requestidlecallback-is-called.html [ Pass Failure ]
 
-webkit.org/b/207225 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Pass Failure ]
-
 webkit.org/b/207226 http/tests/misc/image-blocked-src-change.html [ Pass Failure ]
 
 webkit.org/b/206908 imported/w3c/web-platform-tests/hr-time/basic.any.html [ Pass Failure ]
@@ -1634,8 +1647,6 @@ webkit.org/b/208220 [ Debug ] imported/w3c/web-platform-tests/html/semantics/emb
 webkit.org/b/208078 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Pass Timeout ]
 
 webkit.org/b/208450 webanimations/accelerated-animation-renderer-change.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/238469 imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html [ Skip ]
 
 webkit.org/b/208467 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html [ Pass Failure ]
 
@@ -1954,8 +1965,6 @@ webkit.org/b/219555 inspector/animation/effectChanged.html [ Pass Timeout ]
 
 webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Failure ]
 
-webkit.org/b/219907 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Pass Failure ]
-
 webkit.org/b/219965 [ BigSur+ ] imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Pass Failure ]
 
 webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
@@ -2041,6 +2050,10 @@ webkit.org/b/222239 webgl/2.0.0/conformance/uniforms/uniform-default-values.html
 webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
 
+# No WebGL drawingBufferColorSpace (because no PREDEFINED_COLOR_SPACE_DISPLAY_P3) until Monterey.
+webkit.org/b/247165 [ BigSur ] fast/canvas/webgl/colorspaces-test.html [ Failure ]
+webkit.org/b/247165 [ BigSur ] fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
+
 # ASTC may be supported on M1 macs, but we should skip it for now
 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
 
@@ -2083,7 +2096,7 @@ webkit.org/b/225523 webrtc/direction-change.html [ Pass Timeout Failure ]
 
 webkit.org/b/225528 [ arm64 ] http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
 
-webkit.org/b/225258 [ arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
+js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
 
@@ -2145,7 +2158,7 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure Timeout ]
 
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80344138>:
-[ Monterey+ ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Monterey on OpenSource:
 [ Monterey ] model-element/model-element-graphics-layers-opacity.html [ Pass Failure ]
@@ -2195,7 +2208,6 @@ webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Pass ]
-[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Pass ]
@@ -2272,7 +2284,9 @@ webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
 webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Pass Failure Crash ]
 
-webkit.org/b/237680 imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker-matchAll.tentative.https.html [ Pass Failure ]
+# Note: These tests were previously marked as flaky failures for Big Sur Release WK2 for webkit.org/b/235681, this may need to be re-added once webkit.org/b/248067 is resolved
+webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
+webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
 
 # Plugins
 # FIXME: Remove these tests.
@@ -2293,9 +2307,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 # <rdar://problem/87944426>
 [ BigSur Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
 [ BigSur Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
-
-#rdar://80333071
-[ BigSur+ ] compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
 
 [ BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
 
@@ -2347,10 +2358,6 @@ webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 # The following test only fail on Mac EWS bots.
 webkit.org/b/244012 imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-below-001.xht [ Pass ImageOnlyFailure ]
 
-webkit.org/b/244014 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style-load-after-mutate.html  [ Pass Failure ]
-
-webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/blob-url-workers.window.html [ Pass Failure ]
-
 # These tests are flaky due to "Blocked access to external URL" messages because we don't support WPT domains.
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
@@ -2358,32 +2365,38 @@ imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allow
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 
-webkit.org/b/246355 imported/w3c/web-platform-tests/import-maps/multiple-import-maps/basic.html [ Pass Failure ]
-webkit.org/b/246355 imported/w3c/web-platform-tests/import-maps/multiple-import-maps/with-errors.html [ Pass Failure ]
-
-# These tests have similar harness errors and timeouts. See webkit.org/b/244900
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
-
 webkit.org/b/244928 http/tests/media/fairplay/fps-mse-unmuxed-multiple-keys.html [ Pass Failure ]
-
-webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-cross-origin.https.sub.tentative.html [ Pass Timeout ]
 
 webkit.org/b/245092 webaudio/offlineaudiocontext-gc.html [ Pass Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
 
-# webkit.org/b/246170 4X http/wpt/webauthn/public-key-credential(Layout tests) are constant crashes
-[ Release ] http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html [ Skip ]
-[ Release ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Skip ]
-[ Release ] http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
-[ Release ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
+webkit.org/b/214290 [ BigSur Monterey ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ ImageOnlyFailure ]
+webkit.org/b/214290 [ BigSur Monterey ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ ImageOnlyFailure ]
 
-webkit.org/b/246427 [ Debug ] imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Pass Failure ]
+# SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
+svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
+svg/transforms/transformed-child-in-container.svg [ ImageOnlyFailure ]
+svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
 # webkit.org/b/243681  Newly imported tests that fail on BigSur+
 [ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 [ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Pass Failure ]
 [ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 [ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Pass Failure ]
+
+#webkit.org/b/248537 Batch mark expectations for Ventura test failures
+[ BigSur+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Pass Failure ]
+[ BigSur+ Debug ] inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Crash ]
+[ BigSur+ ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html [ Pass Failure ]
+[ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Pass Failure Timeout ]
+[ Ventura+ x86_64 ] http/tests/media/now-playing-info.html [ Pass Failure ]
+[ BigSur+ x86_64 ] animations/stop-animation-on-suspend.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
+[ Ventura+ ] fast/images/avif-as-image.html [ ImageOnlyFailure Crash ]
+[ BigSur+ ] fast/images/animated-avif.html [ Pass ImageOnlyFailure Timeout Crash ]
+
+webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]

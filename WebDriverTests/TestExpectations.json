@@ -1538,51 +1538,142 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/bidi/log_entry_added/console.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/close/close.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
-    "imported/w3c/webdriver/tests/bidi/log_entry_added/console_args.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/close/invalid.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
-    "imported/w3c/webdriver/tests/bidi/log_entry_added/event_buffer.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/context_created/context_created.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
-    "imported/w3c/webdriver/tests/bidi/log_entry_added/javascript.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/create/invalid.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
-    "imported/w3c/webdriver/tests/bidi/log_entry_added/subscription.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/create/type.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
-    "imported/w3c/webdriver/tests/bidi/new_session/connect.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/get_tree/frames.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
-    "imported/w3c/webdriver/tests/bidi/session_subscribe/subscribe.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/get_tree/invalid.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
-    "imported/w3c/webdriver/tests/bidi/session_unsubscribe/unsubscribe.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/get_tree/max_depth.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/get_tree/root.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/about_blank.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/data_url.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/error.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/frame.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/hash.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/image.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/invalid.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/navigate.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/wait.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log/entry_added/console.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log/entry_added/console_args.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log/entry_added/event_buffer.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log/entry_added/javascript.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log/entry_added/stacktrace.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/log/entry_added/subscription.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/arguments.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/await_promise.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/call_function.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/exception_details.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/invalid.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/result.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/result_ownership.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/sandbox.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/strict_mode.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/await_promise.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/evaluate.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/invalid.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/result.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/result_ownership.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/sandbox.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/strict_mode.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/session/new/connect.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/session/status/status.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/session/subscribe/subscribe.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/session/unsubscribe/unsubscribe.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
     "imported/w3c/webdriver/tests/new_session/websocket_url.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
-    },
-    "imported/w3c/webdriver/tests/get_computed_role/get.py": {
-        "subtests": {
-            "test_no_user_prompt": {
-                "expected": {
-                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/246845"}
-                }
-            },
-            "test_computed_roles[<li role=menuitem>foo-li-menu]": {
-                "expected": {
-                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/246845"}
-                }
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/get_computed_label/get.py": {
-        "expected": {
-            "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/246814"},
-            "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/246814"}
-        }
     }
 }

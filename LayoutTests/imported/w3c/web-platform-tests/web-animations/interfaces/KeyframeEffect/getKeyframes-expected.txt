@@ -1,3 +1,3 @@
 
-FAIL getKeyframes() should serialize its css values with a on keyframe sequence which requires value serilaization of its values assert_equals: value for 'backgroundColor' on ComputedKeyframe #0 expected "rgb(1, 2, 3)" but got "rgb(1,2,3)"
+PASS getKeyframes() should serialize its css values with a on keyframe sequence which requires value serilaization of its values
 

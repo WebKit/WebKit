@@ -35,21 +35,20 @@ class RenderElement;
 
 namespace MQ {
 
-enum class EvaluationResult : uint8_t { False, True, Unknown };
-
 EvaluationResult evaluateLengthFeature(const Feature&, LayoutUnit, const CSSToLengthConversionData&);
-EvaluationResult evaluateRatioFeature(const Feature&, double);
-EvaluationResult evaluateDiscreteFeature(const Feature&, CSSValueID);
+EvaluationResult evaluateRatioFeature(const Feature&, FloatSize);
+EvaluationResult evaluateBooleanFeature(const Feature&, bool);
+EvaluationResult evaluateIntegerFeature(const Feature&, int);
+EvaluationResult evaluateNumberFeature(const Feature&, double);
+EvaluationResult evaluateResolutionFeature(const Feature&, float);
+EvaluationResult evaluateIdentifierFeature(const Feature&, CSSValueID);
 
 template<typename ConcreteEvaluator>
 class GenericMediaQueryEvaluator {
 public:
-    struct FeatureEvaluationContext {
-        CSSToLengthConversionData conversionData;
-        const RenderElement* renderer { nullptr };
-    };
     EvaluationResult evaluateQueryInParens(const QueryInParens&, const FeatureEvaluationContext&) const;
     EvaluationResult evaluateCondition(const Condition&, const FeatureEvaluationContext&) const;
+    EvaluationResult evaluateFeature(const Feature&, const FeatureEvaluationContext&) const;
 
 private:
     const ConcreteEvaluator& concreteEvaluator() const { return static_cast<const ConcreteEvaluator&>(*this); }
@@ -77,9 +76,10 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateConditio
     case LogicalOperator::Not:
         return !concreteEvaluator().evaluateQueryInParens(condition.queries.first(), context);
 
+    // Kleene 3-valued logic.
     case LogicalOperator::And: {
         auto result = EvaluationResult::True;
-        for (auto query : condition.queries) {
+        for (auto& query : condition.queries) {
             auto queryResult = concreteEvaluator().evaluateQueryInParens(query, context);
             if (queryResult == EvaluationResult::False)
                 return EvaluationResult::False;
@@ -91,7 +91,7 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateConditio
 
     case LogicalOperator::Or: {
         auto result = EvaluationResult::False;
-        for (auto query : condition.queries) {
+        for (auto& query : condition.queries) {
             auto queryResult = concreteEvaluator().evaluateQueryInParens(query, context);
             if (queryResult == EvaluationResult::True)
                 return EvaluationResult::True;
@@ -102,6 +102,15 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateConditio
     }
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+template<typename ConcreteEvaluator>
+EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateFeature(const Feature& feature, const FeatureEvaluationContext& context) const
+{
+    if (!feature.schema)
+        return MQ::EvaluationResult::Unknown;
+
+    return feature.schema->evaluate(feature, context);
 }
 
 inline EvaluationResult operator&(EvaluationResult left, EvaluationResult right)

@@ -67,8 +67,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
         platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp
 
-        platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
-
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoCommon.cpp
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.cpp
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.cpp

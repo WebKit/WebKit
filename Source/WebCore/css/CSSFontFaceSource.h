@@ -36,25 +36,21 @@ class CSSFontFace;
 class CSSFontSelector;
 class SharedBuffer;
 class Document;
-class WeakPtrImplWithEventTargetData;
 class Font;
 class FontCreationContext;
-struct FontCustomPlatformData;
 class FontDescription;
-struct FontSelectionSpecifiedCapabilities;
-struct FontVariantSettings;
 class SVGFontFaceElement;
+class WeakPtrImplWithEventTargetData;
 
-template <typename T> class FontTaggedSettings;
-typedef FontTaggedSettings<int> FontFeatureSettings;
+struct FontCustomPlatformData;
 
 class CSSFontFaceSource final : public FontLoadRequestClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI);
-    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CSSFontSelector&, UniqueRef<FontLoadRequest>&&);
-    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, SVGFontFaceElement&);
-    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, Ref<JSC::ArrayBufferView>&&);
+    CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName);
+    CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement&);
+    CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector&, UniqueRef<FontLoadRequest>);
+    CSSFontFaceSource(CSSFontFace& owner, Ref<JSC::ArrayBufferView>&&);
     virtual ~CSSFontFaceSource();
 
     //                      => Success
@@ -69,8 +65,6 @@ public:
         Failure
     };
     Status status() const { return m_status; }
-
-    const AtomString& familyNameOrURI() const { return m_familyNameOrURI; }
 
     void opportunisticallyStartFontDataURLLoading();
 
@@ -89,10 +83,10 @@ private:
 
     void setStatus(Status);
 
-    AtomString m_familyNameOrURI; // URI for remote, built-in font name for local.
+    AtomString m_fontFaceName; // Font name for local fonts
     CSSFontFace& m_face; // Our owning font face.
     WeakPtr<CSSFontSelector> m_fontSelector; // For remote fonts, to orchestrate loading.
-    std::unique_ptr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
+    const std::unique_ptr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
 
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;

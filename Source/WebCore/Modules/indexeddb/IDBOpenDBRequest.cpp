@@ -196,7 +196,7 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
     if (isContextStopped()) {
         switch (data.type()) {
         case IDBResultType::OpenDatabaseSuccess:
-            connectionProxy().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), IDBResourceIdentifier::emptyValue());
+            connectionProxy().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), std::nullopt);
             break;
         case IDBResultType::OpenDatabaseUpgradeNeeded:
             connectionProxy().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), data.transactionInfo().identifier());

@@ -21,6 +21,7 @@ import time
 
 import angle_path_util
 
+from angle_test_util import ANGLE_TRACE_TEST_SUITE
 
 # Currently we only support a single test package name.
 TEST_PACKAGE_NAME = 'com.android.angle.test'
@@ -206,7 +207,7 @@ def _PrepareTestSuite(suite_name):
 
     _AdbShell('mkdir -p /sdcard/chromium_tests_root/')
 
-    if suite_name == 'angle_perftests':
+    if suite_name == ANGLE_TRACE_TEST_SUITE:
         _AddRestrictedTracesJson()
 
     if suite_name == 'angle_end2end_tests':
@@ -216,7 +217,7 @@ def _PrepareTestSuite(suite_name):
         ])
 
 
-def PrepareRestrictedTraces(traces, check_hash=False):
+def PrepareRestrictedTraces(traces):
     start = time.time()
     total_size = 0
     skipped = 0
@@ -224,7 +225,7 @@ def PrepareRestrictedTraces(traces, check_hash=False):
         path_from_root = 'src/tests/restricted_traces/' + trace + '/' + trace + '.angledata.gz'
         local_path = '../../' + path_from_root
         device_path = '/sdcard/chromium_tests_root/' + path_from_root
-        if check_hash and _CompareHashes(local_path, device_path):
+        if _CompareHashes(local_path, device_path):
             skipped += 1
         else:
             total_size += os.path.getsize(local_path)
@@ -328,14 +329,8 @@ def AngleSystemInfo(args):
         return json.loads(_ReadDeviceFile(output_file))
 
 
-def ListTests(suite_name):
-    _EnsureTestSuite(suite_name)
-
-    out_lines = _RunInstrumentation(["--list-tests"]).decode('ascii').split('\n')
-
-    start = out_lines.index('Tests list:')
-    end = out_lines.index('End tests list.')
-    return out_lines[start + 1:end]
+def GetBuildFingerprint():
+    return _AdbShell('getprop ro.build.fingerprint').decode('ascii').strip()
 
 
 def _PullDir(device_dir, local_dir):
@@ -359,14 +354,18 @@ def _RemoveFlag(args, f):
 
 
 def RunSmokeTest():
-    _EnsureTestSuite('angle_perftests')
+    _EnsureTestSuite(ANGLE_TRACE_TEST_SUITE)
 
-    test_name = 'TracePerfTest.Run/vulkan_words_with_friends_2'
+    test_name = 'TraceTest.words_with_friends_2'
     run_instrumentation_timeout = 60
 
     logging.info('Running smoke test (%s)', test_name)
 
-    PrepareRestrictedTraces([GetTraceFromTestName(test_name)])
+    trace_name = GetTraceFromTestName(test_name)
+    if not trace_name:
+        raise Exception('Cannot find trace name from %s.' % test_name)
+
+    PrepareRestrictedTraces([trace_name])
 
     with _TempDeviceFile() as device_test_output_path:
         flags = [
@@ -374,7 +373,7 @@ def RunSmokeTest():
             '1', '--isolated-script-test-output=' + device_test_output_path
         ]
         try:
-            _RunInstrumentationWithTimeout(flags, run_instrumentation_timeout)
+            output = _RunInstrumentationWithTimeout(flags, run_instrumentation_timeout)
         except TimeoutError:
             raise Exception('Smoke test did not finish in %s seconds' %
                             run_instrumentation_timeout)
@@ -383,7 +382,7 @@ def RunSmokeTest():
 
     output_json = json.loads(test_output)
     if output_json['tests'][test_name]['actual'] != 'PASS':
-        raise Exception('Smoke test (%s) failed' % test_name)
+        raise Exception('Smoke test (%s) failed. Output:\n%s' % (test_name, output))
 
     logging.info('Smoke test passed')
 
@@ -414,7 +413,12 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
 
             output = _RunInstrumentationWithTimeout(args, timeout=10 * 60)
 
-            test_output = _ReadDeviceFile(device_test_output_path)
+            if '--list-tests' in args:
+                # When listing tests, there may be no output file. We parse stdout anyways.
+                test_output = '{"interrupted": false}'
+            else:
+                test_output = _ReadDeviceFile(device_test_output_path)
+
             if test_output_path:
                 with open(test_output_path, 'wb') as f:
                     f.write(test_output)
@@ -443,15 +447,10 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
         logging.exception(e)
         result = 1
 
-    return result, output, output_json
+    return result, output.decode(), output_json
 
 
 def GetTraceFromTestName(test_name):
-    m = re.search(r'TracePerfTest.Run/(native|vulkan)_(.*)', test_name)
-    if m:
-        return m.group(2)
-
-    if test_name.startswith('TracePerfTest.Run/'):
-        raise Exception('Unexpected test: %s' % test_name)
-
+    if test_name.startswith('TraceTest.'):
+        return test_name[len('TraceTest.'):]
     return None

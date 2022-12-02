@@ -1,0 +1,5 @@
+
+FAIL Range requests with no rewrites should succeed assert_equals: expected "ok" but got "timeout"
+FAIL Range response out of range of request should succeed assert_equals: expected "ok" but got "timeout"
+FAIL Range requests ignored (200 status) should succeed assert_equals: expected "ok" but got "timeout"
+

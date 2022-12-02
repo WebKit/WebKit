@@ -9,20 +9,22 @@
         testRunner.dumpAsText();
 
       function runTests() {
-          var tests = [["columns:auto 3;", "auto", "3", "auto 3"],
-                       ["columns:auto 10em;", "10em", "auto", "10em auto"],
-                       ["columns:3 auto;", "auto", "3", "auto 3"],
-                       ["columns:10em auto;", "10em", "auto", "10em auto"],
+          var tests = [["columns:auto 3;", "auto", "3", "3"],
+                       ["columns:auto 10em;", "10em", "auto", "10em"],
+                       ["columns:3 auto;", "auto", "3", "3"],
+                       ["columns:10em auto;", "10em", "auto", "10em"],
                        ["columns:7 7em; columns:auto auto auto;", "7em", "7", "7em 7"],
                        ["columns:7 7em; columns:10em auto auto;", "7em", "7", "7em 7"],
                        ["columns:7 7em; columns:auto;", "auto", "auto", "auto"],
-                       ["columns:7 7em; columns:auto auto;",  "auto", "auto", "auto auto"],
+                       ["columns:7 7em; columns:auto auto;",  "auto", "auto", "auto"],
                        ["columns:auto; columns:initial;", "initial", "initial", "initial"],
                        ["columns:auto; columns:initial initial;", "auto", "auto", "auto"],
                        ["columns:auto; columns:inherit;", "inherit", "inherit", "inherit"],
                        ["columns:auto; columns:inherit inherit;", "auto", "auto", "auto"],
                        ["columns:7;", "auto", "7", "7"],
-                       ["columns:7em;", "7em", "auto", "7em"]];
+                       ["columns:7em;", "7em", "auto", "7em"],
+                       ["columns:0 1;", "0px", "1", "0px 1"],
+                       ["columns:1 0;", "0px", "1", "0px 1"]];
 
           tests.forEach(function(test) {
               element.style.cssText = test[0];

@@ -29,9 +29,11 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
+#include "ProcessThrottler.h"
 #include "ResponsivenessTimer.h"
 #include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
+#include <memory>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -124,7 +126,7 @@ public:
     ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 
     bool canSendMessage() const { return state() != State::Terminated;}
-    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, std::optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = std::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, std::optional<IPC::Connection::AsyncReplyHandler> = std::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
     void replyToPendingMessages();
 
@@ -134,6 +136,10 @@ public:
 
     void setProcessSuppressionEnabled(bool);
     bool platformIsBeingDebugged() const;
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    void setRunningBoardThrottlingEnabled();
+#endif
 
     enum class UseLazyStop : bool { No, Yes };
     void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);
@@ -146,6 +152,9 @@ public:
 
     void ref() final { ThreadSafeRefCounted::ref(); }
     void deref() final { ThreadSafeRefCounted::deref(); }
+
+    bool operator==(const AuxiliaryProcessProxy& other) const { return (this == &other); }
+    bool operator!=(const AuxiliaryProcessProxy& other) const { return !(this == &other); }
 
     std::optional<SandboxExtension::Handle> createMobileGestaltSandboxExtensionIfNeeded() const;
 
@@ -165,7 +174,7 @@ protected:
     struct PendingMessage {
         UniqueRef<IPC::Encoder> encoder;
         OptionSet<IPC::SendOption> sendOptions;
-        std::optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>> asyncReplyInfo;
+        std::optional<IPC::Connection::AsyncReplyHandler> asyncReplyHandler;
     };
 
     virtual bool shouldSendPendingMessage(const PendingMessage&) { return true; }
@@ -202,7 +211,7 @@ private:
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    RefPtr<ProcessAssertion> m_lifetimeAssertion;
+    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
 #endif
 };
 
@@ -236,16 +245,12 @@ uint64_t AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHa
     static_assert(!T::isSync, "Async message expected");
 
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
-    uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-    encoder.get() << listenerID;
     encoder.get() << message.arguments();
-    sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
-        if (decoder && decoder->isValid())
-            T::callReply(*decoder, WTFMove(completionHandler));
-        else
-            T::cancelReply(WTFMove(completionHandler));
-    }, listenerID }}, shouldStartProcessThrottlerActivity);
-    return listenerID;
+    auto handler = IPC::Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
+    auto replyID = handler.replyID;
+    if (sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler), shouldStartProcessThrottlerActivity))
+        return replyID;
+    return 0;
 }
     
 } // namespace WebKit

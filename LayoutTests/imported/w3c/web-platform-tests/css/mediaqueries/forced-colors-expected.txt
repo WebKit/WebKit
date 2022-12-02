@@ -2,17 +2,17 @@
 PASS Should be known: '(forced-colors)'
 PASS Should be known: '(forced-colors: none)'
 PASS Should be known: '(forced-colors: active)'
-FAIL Should be parseable: '(forced-colors: 0)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(forced-colors: 0)'
 PASS Should be unknown: '(forced-colors: 0)'
-FAIL Should be parseable: '(forced-colors: no-preference)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(forced-colors: no-preference)'
 PASS Should be unknown: '(forced-colors: no-preference)'
-FAIL Should be parseable: '(forced-colors: 10px)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(forced-colors: 10px)'
 PASS Should be unknown: '(forced-colors: 10px)'
-FAIL Should be parseable: '(forced-colors: active 0)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(forced-colors: active 0)'
 PASS Should be unknown: '(forced-colors: active 0)'
-FAIL Should be parseable: '(forced-colors: none active)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(forced-colors: none active)'
 PASS Should be unknown: '(forced-colors: none active)'
-FAIL Should be parseable: '(forced-colors: active/none)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(forced-colors: active/none)'
 PASS Should be unknown: '(forced-colors: active/none)'
 PASS Check that none evaluates to false in the boolean context
 

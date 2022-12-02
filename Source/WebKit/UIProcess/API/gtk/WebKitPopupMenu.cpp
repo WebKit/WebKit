@@ -41,7 +41,8 @@ void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction
 {
     GRefPtr<WebKitOptionMenu> menu = adoptGRef(webkitOptionMenuCreate(*this, items, selectedIndex));
     const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
-    if (webkitWebViewShowOptionMenu(WEBKIT_WEB_VIEW(m_webView), rect, menu.get(), event)) {
+    webkitOptionMenuSetEvent(menu.get(), const_cast<GdkEvent*>(event));
+    if (webkitWebViewShowOptionMenu(WEBKIT_WEB_VIEW(m_webView), rect, menu.get())) {
         m_menu = WTFMove(menu);
         g_signal_connect_swapped(m_menu.get(), "close", G_CALLBACK(menuCloseCallback), this);
     } else

@@ -102,7 +102,7 @@ float AccessibilityProgressIndicator::maxValueForRange() const
 
 float AccessibilityProgressIndicator::minValueForRange() const
 {
-    if (auto* progress = progressElement())
+    if (progressElement())
         return 0.0;
 
     if (auto* meter = meterElement())

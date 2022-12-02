@@ -1,5 +1,3 @@
-//@ requireOptions("--useAtMethod=1", "--useChangeArrayByCopyMethods=1")
-
 function test(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);

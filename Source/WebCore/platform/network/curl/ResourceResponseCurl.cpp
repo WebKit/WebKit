@@ -55,6 +55,7 @@ bool ResourceResponse::isAppendableHeader(const String &key)
         "server"_s,
         "set-cookie"_s,
         "te"_s,
+        "timing-allow-origin"_s,
         "trailer"_s,
         "transfer-encoding"_s,
         "upgrade"_s,

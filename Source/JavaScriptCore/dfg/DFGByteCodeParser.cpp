@@ -2455,7 +2455,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
                 return false;
 
             ArrayMode mode = getArrayMode(Array::Read);
-            if (!mode.isSomeTypedArrayView())
+            if (!mode.isSomeTypedArrayView() || mode.mayBeResizableOrGrowableSharedTypedArray())
                 return false;
 
             addToGraph(CheckArray, OpInfo(mode.asWord()), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
@@ -2535,10 +2535,10 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
                 // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
                 // https://bugs.webkit.org/show_bug.cgi?id=173171
                 if (globalObject->arraySpeciesWatchpointSet().state() == IsWatched
-                    && globalObject->havingABadTimeWatchpoint()->isStillValid()
+                    && globalObject->havingABadTimeWatchpointSet().isStillValid()
                     && globalObject->arrayPrototypeChainIsSaneWatchpointSet().state() == IsWatched) {
                     m_graph.watchpoints().addLazily(globalObject->arraySpeciesWatchpointSet());
-                    m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+                    m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpointSet());
                     m_graph.watchpoints().addLazily(globalObject->arrayPrototypeChainIsSaneWatchpointSet());
 
                     insertChecks();
@@ -3522,6 +3522,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             uint8_t byteSize;
             NodeType op = DataViewGetInt;
             bool isSigned = false;
+            bool isResizable = false;
             switch (intrinsic) {
             case DataViewGetInt8:
                 isSigned = true;
@@ -3575,9 +3576,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
                 }
             }
 
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView))
+                isResizable = true;
+            else
+                isResizable = getArrayMode(Array::Read).mayBeResizableOrGrowableSharedTypedArray();
+
             DataViewData data { };
             data.isLittleEndian = isLittleEndian;
             data.isSigned = isSigned;
+            data.isResizable = isResizable;
             data.byteSize = byteSize;
 
             setResult(
@@ -3607,6 +3614,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             uint8_t byteSize;
             bool isFloatingPoint = false;
             bool isSigned = false;
+            bool isResizable = false;
             switch (intrinsic) {
             case DataViewSetInt8:
                 isSigned = true;
@@ -3660,9 +3668,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
                 }
             }
 
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView))
+                isResizable = true;
+            else
+                isResizable = getArrayMode(Array::Read).mayBeResizableOrGrowableSharedTypedArray();
+
             DataViewData data { };
             data.isLittleEndian = isLittleEndian;
             data.isSigned = isSigned;
+            data.isResizable = isResizable;
             data.byteSize = byteSize;
             data.isFloatingPoint = isFloatingPoint;
 
@@ -3733,7 +3747,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             insertChecks();
             Node* thisNumber = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             if (argumentCountIncludingThis == 1) {
-                Node* resultNode = addToGraph(ToString, thisNumber);
+                Node* resultNode = addToGraph(NumberToStringWithValidRadixConstant, OpInfo(10), thisNumber);
                 setResult(resultNode);
             } else {
                 Node* radix = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
@@ -3821,26 +3835,32 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 
     switch (variant.intrinsic()) {
     case TypedArrayByteLengthIntrinsic: {
-        bool willNeedGetTypedArrayLengthAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+        bool mayBeLargeTypedArray = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
 #if !USE(LARGE_TYPED_ARRAYS)
-        if (willNeedGetTypedArrayLengthAsInt52)
+        if (mayBeLargeTypedArray)
             return false;
 #endif
-        insertChecks();
-
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
+        bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
         size_t logSize = logElementSize(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
             TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             ASSERT(logSize == logElementSize(curType));
             arrayType = refineTypedArrayType(arrayType, curType);
+            mayBeResizableOrGrowableSharedTypedArray |= isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells());
             ASSERT(arrayType != Array::Generic);
         });
 
-        NodeType op = willNeedGetTypedArrayLengthAsInt52 ? GetTypedArrayLengthAsInt52 : GetArrayLength;
-        Node* lengthNode = addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode);
+#if USE(JSVALUE32_64)
+        if (mayBeResizableOrGrowableSharedTypedArray)
+            return false;
+#endif
+
+        insertChecks();
+        NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
+        Node* lengthNode = addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode);
         // Our ArrayMode shouldn't cause us to exit here so we should be ok to exit without effects.
         m_exitOK = true;
         addToGraph(ExitOK);
@@ -3858,48 +3878,61 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
     }
 
     case TypedArrayLengthIntrinsic: {
-        bool willNeedGetTypedArrayLengthAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+        bool mayBeLargeTypedArray = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
 #if !USE(LARGE_TYPED_ARRAYS)
-        if (willNeedGetTypedArrayLengthAsInt52)
+        if (mayBeLargeTypedArray)
             return false;
 #endif
-        insertChecks();
-
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
+        bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
 
         variant.structureSet().forEach([&] (Structure* structure) {
             TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             arrayType = refineTypedArrayType(arrayType, curType);
+            mayBeResizableOrGrowableSharedTypedArray |= isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells());
             ASSERT(arrayType != Array::Generic);
         });
 
-        NodeType op = willNeedGetTypedArrayLengthAsInt52 ? GetTypedArrayLengthAsInt52 : GetArrayLength;
-        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
+#if USE(JSVALUE32_64)
+        if (mayBeResizableOrGrowableSharedTypedArray)
+            return false;
+#endif
+
+        insertChecks();
+        NodeType op = mayBeLargeTypedArray ? GetTypedArrayLengthAsInt52 : GetArrayLength;
+        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode));
 
         return true;
-
     }
 
     case TypedArrayByteOffsetIntrinsic: {
-        bool willNeedGetTypedArrayByteOffsetAsInt52 = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
+        bool mayBeLargeTypedArray = !isInt32Speculation(prediction) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow);
 #if !USE(LARGE_TYPED_ARRAYS)
-        if (willNeedGetTypedArrayByteOffsetAsInt52)
+        if (mayBeLargeTypedArray)
             return false;
 #endif
-        insertChecks();
 
         TypedArrayType type = typedArrayType((*variant.structureSet().begin())->typeInfo().type());
         Array::Type arrayType = toArrayType(type);
+        bool mayBeResizableOrGrowableSharedTypedArray = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView);
 
         variant.structureSet().forEach([&] (Structure* structure) {
             TypedArrayType curType = typedArrayType(structure->typeInfo().type());
             arrayType = refineTypedArrayType(arrayType, curType);
+            mayBeResizableOrGrowableSharedTypedArray |= isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells());
             ASSERT(arrayType != Array::Generic);
         });
 
-        NodeType op = willNeedGetTypedArrayByteOffsetAsInt52 ? GetTypedArrayByteOffsetAsInt52 : GetTypedArrayByteOffset;
-        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode));
+
+#if USE(JSVALUE32_64)
+        if (mayBeResizableOrGrowableSharedTypedArray)
+            return false;
+#endif
+
+        insertChecks();
+        NodeType op = mayBeLargeTypedArray ? GetTypedArrayByteOffsetAsInt52 : GetTypedArrayByteOffset;
+        set(result, addToGraph(op, OpInfo(ArrayMode(arrayType, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read, mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray).asWord()), thisNode));
 
         return true;
     }
@@ -4074,9 +4107,18 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     
     if (argumentCountIncludingThis != 2)
         return false;
-    
-    if (!function->globalObject()->typedArrayStructureConcurrently(type))
-        return false;
+
+    // Check both structures are already initialized.
+    {
+        constexpr bool isResizableOrGrowableShared = false;
+        if (!function->globalObject()->typedArrayStructureConcurrently(type, isResizableOrGrowableShared))
+            return false;
+    }
+    {
+        constexpr bool isResizableOrGrowableShared = true;
+        if (!function->globalObject()->typedArrayStructureConcurrently(type, isResizableOrGrowableShared))
+            return false;
+    }
 
     insertChecks();
     set(result,
@@ -4278,13 +4320,13 @@ bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
     ASSERT(opcode == op_resolve_scope || opcode == op_get_from_scope || opcode == op_put_to_scope);
 
     JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-    if (needsVarInjectionChecks(type) && globalObject->varInjectionWatchpoint()->hasBeenInvalidated())
+    if (needsVarInjectionChecks(type) && globalObject->varInjectionWatchpointSet().hasBeenInvalidated())
         return true;
 
     switch (type) {
     case GlobalVar:
     case GlobalVarWithVarInjectionChecks: {
-        if (opcode == op_put_to_scope && globalObject->varReadOnlyWatchpoint()->hasBeenInvalidated())
+        if (opcode == op_put_to_scope && globalObject->varReadOnlyWatchpointSet().hasBeenInvalidated())
             return true;
 
         return false;
@@ -5509,7 +5551,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 cachedStructure = cachedStructureID.decode();
             if (metadata.m_toThisStatus != ToThisOK
                 || !cachedStructure
-                || cachedStructure->classInfoForCells()->methodTable.toThis != JSObject::info()->methodTable.toThis
+                || !cachedStructure->classInfoForCells()->isSubClassOf(JSObject::info())
+                || cachedStructure->classInfoForCells()->isSubClassOf(JSScope::info())
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
                 setThis(addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));
@@ -5545,7 +5588,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (function) {
                 if (FunctionRareData* rareData = function->rareData()) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-                    if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
+                    if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
                         Structure* structure = rareData->objectAllocationStructure();
                         JSObject* prototype = rareData->objectAllocationPrototype();
                         if (structure
@@ -5553,6 +5596,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                            m_graph.freeze(globalObject);
+                            m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
                             
                             Node* object = addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure)));
                             if (structure->hasPolyProto()) {
@@ -5626,13 +5671,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 if (function) {
                     if (FunctionRareData* rareData = function->rareData()) {
-                        if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
+                        if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
                                 && structure->classInfoForCells() == (bytecode.m_isInternalPromise ? JSInternalPromise::info() : JSPromise::info())
                                 && structure->globalObject() == globalObject) {
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                                m_graph.freeze(globalObject);
+                                m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
 
                                 Node* promise = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(structure)));
                                 set(VirtualRegister(bytecode.m_dst), promise);
@@ -7752,7 +7799,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
             if (needsVarInjectionChecks(resolveType))
-                m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
+                m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpointSet());
 
             if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
                 JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
@@ -7944,7 +7991,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     
                     JSValue value = pointer->get();
                     if (value) {
-                        m_graph.watchpoints().addLazily(watchpointSet);
+                        m_graph.watchpoints().addLazily(*watchpointSet);
                         set(bytecode.m_dst, weakJSConstant(value));
                         break;
                     }
@@ -8069,7 +8116,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(CheckNotEmpty, value);
                 }
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
-                    m_graph.watchpoints().addLazily(globalObject->varReadOnlyWatchpoint());
+                    m_graph.watchpoints().addLazily(globalObject->varReadOnlyWatchpointSet());
 
                 JSSegmentedVariableObject* scopeObject = jsCast<JSSegmentedVariableObject*>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
                 if (watchpoints) {
@@ -9021,13 +9068,15 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
 
     if (function) {
         if (FunctionRareData* rareData = function->rareData()) {
-            if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
+            if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
                 Structure* structure = rareData->internalFunctionAllocationStructure();
                 if (structure
                     && structure->classInfoForCells() == classInfo
                     && structure->globalObject() == globalObject) {
                     m_graph.freeze(rareData);
                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                    m_graph.freeze(globalObject);
+                    m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
 
                     set(VirtualRegister(bytecode.m_dst), addToGraph(newOp, OpInfo(m_graph.registerStructure(structure))));
                     // The callee is still live up to this point.

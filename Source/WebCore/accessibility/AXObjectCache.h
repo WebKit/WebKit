@@ -143,7 +143,7 @@ enum AXTextChange { AXTextInserted, AXTextDeleted, AXTextAttributesChanged };
 
 enum class PostTarget { Element, ObservableParent };
 
-class AXObjectCache {
+class AXObjectCache : public CanMakeWeakPtr<AXObjectCache> {
     WTF_MAKE_NONCOPYABLE(AXObjectCache); WTF_MAKE_FAST_ALLOCATED;
     friend class AXIsolatedTree;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache&);
@@ -298,6 +298,7 @@ public:
         AXIdAttributeChanged,
         AXImageOverlayChanged,
         AXIsAtomicChanged,
+        AXKeyShortcutsChanged,
         AXLanguageChanged,
         AXLayoutComplete,
         AXLevelChanged,
@@ -530,6 +531,9 @@ private:
     void relationsNeedUpdate(bool);
     HashMap<AXID, AXRelations> relations();
     const HashSet<AXID>& relationTargetIDs();
+
+    // Object creation.
+    Ref<AccessibilityObject> createObjectFromRenderer(RenderObject*);
 
     Document& m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.

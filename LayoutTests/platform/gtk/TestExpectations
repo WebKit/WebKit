@@ -351,9 +351,6 @@ webkit.org/b/99028 fast/autoresize [ Failure ]
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
 webkit.org/b/169918 compositing/clipping/border-radius-overflow-hidden-stacking-context.html [ Failure ]
-webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style.html [ Failure ]
-webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-configs.html [ Failure ]
-webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-enabled.html [ Failure ]
 webkit.org/b/169918 compositing/contents-opaque/control-layer.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/animating.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/rounded-contents-scale.html [ Failure ]
@@ -532,6 +529,11 @@ webkit.org/b/166536 webgl/2.0.y/ [ Skip ]
 webkit.org/b/166536 webgl/pending/conformance2/ [ Skip ]
 webkit.org/b/166536 http/tests/webgl/2.0.y/ [ Skip ]
 
+# No colorspaces in non-Cocoa WebGL.
+fast/canvas/webgl/colorspaces-test.html [ Failure ]
+fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
+fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnlyFailure ]
+
 # These tests reference specific fonts on Mac port.
 Bug(GTK) fast/text/font-weights.html [ WontFix ]
 Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
@@ -575,12 +577,7 @@ editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
 editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
 
 # Tests in the gesture folder exercise IOS-specific code, non appliable to GTK+
-fast/events/touch/gesture [ Skip ]
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
-
-# These tests require touch support
-fast/events/touch [ Skip ]
-imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 # HighDPI support is not enabled
 webkit.org/b/131347 fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
@@ -600,8 +597,6 @@ webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01a.svg [ ImageOnlyFailur
 webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure Pass ]
-
-webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
@@ -956,7 +951,6 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1023,16 +1017,7 @@ webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
 
-webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
-webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/179948 [ Release ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash Timeout ]
-
-webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/182761 accessibility/gtk/aria-busy-changed-notification.html [ Pass Failure ]
 
@@ -1296,6 +1281,10 @@ webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-do
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html [ Skip ]
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion.html [ Skip ]
 
+http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-iframe-ephemeral.html [ Skip ]
+http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Skip ]
+http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Skip ]
+
 webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
 
 # Test is flaky timing out. Also skipped in Mac and iOS.
@@ -1520,8 +1509,6 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 
 webkit.org/b/120596 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
-webkit.org/b/120596 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
-webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
@@ -1671,8 +1658,6 @@ webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Fail
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
-
-webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/200037 fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset.html [ Missing Failure ]
@@ -1847,6 +1832,10 @@ webkit.org/b/224076 imported/w3c/web-platform-tests/css/css-text/white-space/whi
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-filter-no-perspective-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 
+webkit.org/b/241699 imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-abspos.html [ ImageOnlyFailure ]
+webkit.org/b/241699 imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-fixpos.html [ ImageOnlyFailure ]
+webkit.org/b/241699 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-004.html [ ImageOnlyFailure ]
+
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001.html [ ImageOnlyFailure ]
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-computed.html  [ Failure ]
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-valid.html [ Failure ]
@@ -1961,3 +1950,23 @@ webkit.org/b/245900 [ Debug ] fast/inline/inline-box-adjust-position-crash2.html
 
 # http version of this test fails, but https passes. May be a PingLoad issue in GTK
 webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.http.sub.html [ Failure ]
+
+# font-variant-alternates https://bugs.webkit.org/show_bug.cgi?id=246952
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/alternates-order.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-03.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-04.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-05.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-06.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-07.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-08.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-09.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-10.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-11.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-12.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-15.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-16.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-17.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-18.html [ ImageOnlyFailure ]
+
+# vertical form controls
+imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html [ Failure ]

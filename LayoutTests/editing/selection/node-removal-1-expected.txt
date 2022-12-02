@@ -1,0 +1,17 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This tests behavior when a node that serves as the start or end of a selection is removed from the document.
+Ideally, we would just adjust the selection when an endpoint is removed, for now, we just blow away the selection.<br>
+This test creates a selection that ends inside of a node that will be removed.  Then the node is removed.
+
+Before removing node:
+| "\n<#selection-anchor>hello "
+| <span>
+|   id="removeme"
+|   style="color:red;"
+|   "re<#selection-focus>moveme"
+| " world!\n"
+
+After removing node:
+| "\n<#selection-anchor>hello "
+| <#selection-focus>
+| " world!\n"

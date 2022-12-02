@@ -44,8 +44,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
-    SetShouldUseFontSmoothingForTesting(bool useFontSmoothing)
-    SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
+    SetDisableFontSubpixelAntialiasingForTesting(bool disable)
+    SetTrackingPreventionEnabled(bool enabled);
     ClearResourceLoadStatistics();
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
@@ -75,6 +75,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData)
     DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> ()
     DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
+    DeleteAllCookies() -> ()
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
 
@@ -138,6 +139,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     AddMockMediaDevice(struct WebCore::MockMediaDevice device);
     ClearMockMediaDevices();
     RemoveMockMediaDevice(String persistentId);
+    SetMockMediaDeviceIsEphemeral(String persistentId, bool isEphemeral);
     ResetMockMediaDevices();
 
 #if ENABLE(SANDBOX_EXTENSIONS)
@@ -149,7 +151,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ClearCurrentModifierStateForTesting()
 
     SetBackForwardCacheCapacity(unsigned capacity);
-    ClearCachedPage(struct WebCore::BackForwardItemIdentifier backForwardItemID) -> ()
+    ClearCachedPage(WebCore::BackForwardItemIdentifier backForwardItemID) -> ()
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebExtension(struct WebKit::UserMessage userMessage)

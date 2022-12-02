@@ -223,7 +223,7 @@ void WebResourceLoader::didReceiveResponse(ResourceResponse&& response, PrivateR
     m_coreLoader->didReceiveResponse(response, WTFMove(policyDecisionCompletionHandler));
 }
 
-void WebResourceLoader::didReceiveData(IPC::SharedBufferReference&& data, int64_t encodedDataLength)
+void WebResourceLoader::didReceiveData(IPC::SharedBufferReference&& data, uint64_t encodedDataLength)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");

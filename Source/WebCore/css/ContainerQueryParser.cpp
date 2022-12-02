@@ -27,6 +27,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserHelpers.h"
+#include "ContainerQueryFeatures.h"
 
 namespace WebCore {
 
@@ -35,18 +36,18 @@ using namespace MQ;
 Vector<const FeatureSchema*> ContainerQueryParser::featureSchemas()
 {
     return {
-        &CQ::FeatureSchemas::width(),
-        &CQ::FeatureSchemas::height(),
-        &CQ::FeatureSchemas::inlineSize(),
-        &CQ::FeatureSchemas::blockSize(),
-        &CQ::FeatureSchemas::aspectRatio(),
-        &CQ::FeatureSchemas::orientation(),
+        &CQ::Features::width(),
+        &CQ::Features::height(),
+        &CQ::Features::inlineSize(),
+        &CQ::Features::blockSize(),
+        &CQ::Features::aspectRatio(),
+        &CQ::Features::orientation(),
     };
 }
 
-std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
+std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
-    ContainerQueryParser parser(context);
+    ContainerQueryParser parser({ context });
     return parser.consumeContainerQuery(range);
 }
 

@@ -43,6 +43,7 @@
 /third_party/colorama/src
 /third_party/depot_tools
 /third_party/EGL-Registry/src
+/third_party/flatbuffers/src
 /third_party/fuchsia-sdk
 /third_party/gles1_conform
 /third_party/glmark2/src
@@ -52,11 +53,14 @@
 /third_party/jdk/extras/java_8
 /third_party/jinja2
 /third_party/jsoncpp
+/third_party/libdrm
 /third_party/libjpeg_turbo
 /third_party/libpng/src
 /third_party/llvm-build
 /third_party/markupsafe
+/third_party/meson
 /third_party/nasm
+/third_party/ninja
 /third_party/OpenCL-Docs/src
 /third_party/OpenCL-ICD-Loader/src
 /third_party/OpenGL-Registry/src

@@ -102,22 +102,22 @@ class DebugAnnotator : angle::NonCopyable
     virtual void beginEvent(gl::Context *context,
                             angle::EntryPoint entryPoint,
                             const char *eventName,
-                            const char *eventMessage)   = 0;
+                            const char *eventMessage)                    = 0;
     virtual void endEvent(gl::Context *context,
                           const char *eventName,
-                          angle::EntryPoint entryPoint) = 0;
-    virtual void setMarker(const char *markerName)      = 0;
-    virtual bool getStatus()                            = 0;
+                          angle::EntryPoint entryPoint)                  = 0;
+    virtual void setMarker(gl::Context *context, const char *markerName) = 0;
+    virtual bool getStatus(const gl::Context *context)                   = 0;
     // Log Message Handler that gets passed every log message,
     // when debug annotations are initialized,
     // replacing default handling by LogMessage.
     virtual void logMessage(const LogMessage &msg) const = 0;
 };
 
-bool ShouldBeginScopedEvent();
+bool ShouldBeginScopedEvent(const gl::Context *context);
 void InitializeDebugAnnotations(DebugAnnotator *debugAnnotator);
 void UninitializeDebugAnnotations();
-bool DebugAnnotationsActive();
+bool DebugAnnotationsActive(const gl::Context *context);
 bool DebugAnnotationsInitialized();
 
 void InitializeDebugMutexIfNeeded();
@@ -279,7 +279,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
                 context, angle::EntryPoint::entryPoint);                                     \
             do                                                                               \
             {                                                                                \
-                if (gl::ShouldBeginScopedEvent())                                            \
+                if (gl::ShouldBeginScopedEvent(context))                                     \
                 {                                                                            \
                     scopedPerfEventHelper##__LINE__.begin(                                   \
                         "%s(" message ")", GetEntryPointName(angle::EntryPoint::entryPoint), \
@@ -292,7 +292,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
                                                             angle::EntryPoint::entryPoint);       \
             do                                                                                    \
             {                                                                                     \
-                if (gl::ShouldBeginScopedEvent())                                                 \
+                if (gl::ShouldBeginScopedEvent(context))                                          \
                 {                                                                                 \
                     scopedPerfEventHelper.begin("%s(" message ")",                                \
                                                 GetEntryPointName(angle::EntryPoint::entryPoint), \

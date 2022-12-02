@@ -26,56 +26,26 @@
 #pragma once
 
 #include "CSSValueList.h"
-#include "CachedResourceHandle.h"
-#include "ResourceLoaderOptions.h"
-#include <wtf/Function.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CachedImage;
-class CachedResourceLoader;
-class CSSImageValue;
-class Document;
+class StyleImage;
 
 namespace Style {
 class BuilderState;
 }
-
-struct ImageWithScale {
-    RefPtr<CSSValue> value;
-    float scaleFactor { 1 };
-};
 
 class CSSImageSetValue final : public CSSValueList {
 public:
     static Ref<CSSImageSetValue> create();
     ~CSSImageSetValue();
 
-    ImageWithScale selectBestFitImage(const Document&);
-    CachedImage* cachedImage() const;
-
     String customCSSText() const;
 
-    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-
-    void updateDeviceScaleFactor(const Document&);
-
-    Ref<CSSImageSetValue> valueWithStylesResolved(Style::BuilderState&);
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
     CSSImageSetValue();
-
-    ImageWithScale bestImageForScaleFactor();
-
-    void fillImageSet();
-    static inline bool compareByScaleFactor(ImageWithScale first, ImageWithScale second) { return first.scaleFactor < second.scaleFactor; }
-
-    RefPtr<CSSValue> m_selectedImageValue;
-    bool m_accessedBestFitImage { false };
-    ImageWithScale m_bestFitImage;
-    float m_deviceScaleFactor { 1 };
-    Vector<ImageWithScale> m_imagesInSet;
 };
 
 } // namespace WebCore

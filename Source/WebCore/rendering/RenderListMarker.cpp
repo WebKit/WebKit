@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2010 Daniel Bates (dbates@intudata.com)
  *
@@ -1622,14 +1622,13 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     switch (style().listStyleType()) {
     case ListStyleType::Disc:
-        context.drawEllipse(markerRect);
+        context.fillEllipse(markerRect);
         return;
     case ListStyleType::Circle:
-        context.setFillColor(Color::transparentBlack);
-        context.drawEllipse(markerRect);
+        context.strokeEllipse(markerRect);
         return;
     case ListStyleType::Square:
-        context.drawRect(markerRect);
+        context.fillRect(markerRect);
         return;
     default:
         break;
@@ -1769,11 +1768,10 @@ void RenderListMarker::layout()
     LayoutUnit blockOffset;
     for (auto* ancestor = parentBox(*this); ancestor && ancestor != m_listItem.get(); ancestor = parentBox(*ancestor))
         blockOffset += ancestor->logicalTop();
-    if (style().isLeftToRightDirection())
-        m_lineOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
-    else
-        m_lineOffsetForListItem = m_listItem->logicalRightOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
- 
+
+    m_lineLogicalOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
+    m_lineOffsetForListItem = style().isLeftToRightDirection() ? m_lineLogicalOffsetForListItem : m_listItem->logicalRightOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
+
     if (isImage()) {
         updateMarginsAndContent();
         setWidth(m_image->imageSize(this, style().effectiveZoom()).width());
@@ -1948,6 +1946,11 @@ LayoutUnit RenderListMarker::baselinePosition(FontBaseline baselineType, bool fi
 bool RenderListMarker::isInside() const
 {
     return m_listItem->notInList() || style().listStylePosition() == ListStylePosition::Inside;
+}
+
+const RenderListItem* RenderListMarker::listItem() const
+{
+    return m_listItem.get();
 }
 
 FloatRect RenderListMarker::relativeMarkerRect()

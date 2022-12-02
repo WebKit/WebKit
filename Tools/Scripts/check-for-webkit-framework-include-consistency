@@ -88,7 +88,7 @@ def resolve_include(header, included_header, permitted_types)
 end
 
 def verify_includes(header, permitted_types)
-  File.open(header) do |file|
+  File.open(header, :encoding => 'utf-8') do |file|
     file.each_line do |line|
       if /#(include|import) (.*)/.match(line)
         resolve_include(header, $2, permitted_types)

@@ -47,7 +47,6 @@
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "Logging.h"
 #include "MediaList.h"
 #include "NodeRenderStyle.h"
@@ -102,7 +101,7 @@ public:
         auto& document = element.document();
         auto* documentElement = document.documentElement();
         if (!documentElement || documentElement == &element)
-            m_rootElementStyle = document.renderStyle();
+            m_rootElementStyle = document.initialContainingBlockStyle();
         else
             m_rootElementStyle = documentElementStyle ? documentElementStyle : documentElement->renderStyle();
     }
@@ -154,12 +153,12 @@ Resolver::Resolver(Document& document)
     // is always from the document that owns the style selector
     FrameView* view = m_document.view();
     if (view)
-        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { view->mediaType() };
+        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { view->mediaType() };
     else
-        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { };
+        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { };
 
     if (auto* documentElement = m_document.documentElement()) {
-        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.renderStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
+        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         m_document.fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
@@ -168,7 +167,7 @@ Resolver::Resolver(Document& document)
     }
 
     if (m_rootDefaultStyle && view)
-        m_mediaQueryEvaluator = LegacyMediaQueryEvaluator { view->mediaType(), m_document, m_rootDefaultStyle.get() };
+        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { view->mediaType(), m_document, m_rootDefaultStyle.get() };
 
     m_ruleSets.resetAuthorStyle();
     m_ruleSets.resetUserAgentMediaQueryStyle();
@@ -247,7 +246,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
     UserAgentStyle::ensureDefaultStyleSheetsForElement(element);
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    collector.setMedium(&m_mediaQueryEvaluator);
+    collector.setMedium(m_mediaQueryEvaluator);
 
     if (matchingBehavior == RuleMatchingBehavior::MatchOnlyUserAgentRules)
         collector.matchUARules();
@@ -281,13 +280,16 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     bool hasRevert = false;
     for (unsigned i = 0; i < propertyCount; ++i) {
         auto propertyReference = keyframe.properties().propertyAt(i);
-        auto property = CSSProperty::resolveDirectionAwareProperty(propertyReference.id(), elementStyle.direction(), elementStyle.writingMode());
+        auto unresolvedProperty = propertyReference.id();
+        auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
         // The animation-composition and animation-timing-function within keyframes are special
         // because they are not animated; they just describe the composite operation and timing
         // function between this keyframe and the next.
-        bool isAnimatableValue = property != CSSPropertyAnimationTimingFunction && property != CSSPropertyAnimationComposition;
+        bool isAnimatableValue = resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition;
         if (isAnimatableValue)
-            keyframeValue.addProperty(property);
+            keyframeValue.addProperty(resolvedProperty);
+        if (CSSProperty::isDirectionAwareProperty(unresolvedProperty))
+            keyframeValue.setContainsDirectionAwareProperty(true);
         if (auto* value = propertyReference.value()) {
             if (isAnimatableValue && value->isCustomPropertyValue())
                 keyframeValue.addCustomProperty(downcast<CSSCustomPropertyValue>(*value).name());
@@ -306,7 +308,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     if (hasRevert) {
         // In the animation origin, 'revert' rolls back the cascaded value to the user level.
         // Therefore, we need to collect UA and user rules.
-        collector.setMedium(&m_mediaQueryEvaluator);
+        collector.setMedium(m_mediaQueryEvaluator);
         collector.matchUARules();
         collector.matchUserRules();
     }
@@ -409,7 +411,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences)
 {
     list.clear();
 
@@ -417,6 +419,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
     if (keyframeRules.isEmpty())
         return;
 
+    containsCSSVariableReferences = false;
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
@@ -424,6 +427,8 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             KeyframeValue keyframeValue(0, nullptr);
             keyframeValue.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), keyframeValue));
             keyframeValue.setKey(key);
+            if (!containsCSSVariableReferences)
+                containsCSSVariableReferences = keyframeRule->containsCSSVariableReferences();
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
             if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
@@ -449,7 +454,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
     collector.setPseudoElementRequest(pseudoElementRequest);
-    collector.setMedium(&m_mediaQueryEvaluator);
+    collector.setMedium(m_mediaQueryEvaluator);
     collector.matchUARules();
 
     if (m_matchAuthorAndUserStyles) {
@@ -478,15 +483,15 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
 std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 {
     auto* documentElement = m_document.documentElement();
-    if (!documentElement)
+    if (!documentElement || !documentElement->renderStyle())
         return RenderStyle::createPtr();
 
-    auto state = State(*documentElement, m_document.renderStyle());
+    auto state = State(*documentElement, m_document.initialContainingBlockStyle());
 
     state.setStyle(RenderStyle::createPtr());
     state.style()->inheritFrom(*state.rootElementStyle());
 
-    PageRuleCollector collector(m_ruleSets, state.rootElementStyle()->direction());
+    PageRuleCollector collector(m_ruleSets, documentElement->renderStyle()->direction());
     collector.matchAllPageRules(pageIndex);
 
     auto& result = collector.matchResult();
@@ -534,7 +539,7 @@ Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Eleme
     ElementRuleCollector collector(*element, m_ruleSets, nullptr);
     collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoElementRequest({ pseudoId });
-    collector.setMedium(&m_mediaQueryEvaluator);
+    collector.setMedium(m_mediaQueryEvaluator);
     collector.setIncludeEmptyRules(rulesToInclude & EmptyCSSRules);
 
     if (rulesToInclude & UAAndUserCSSRules) {

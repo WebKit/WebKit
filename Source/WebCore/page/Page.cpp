@@ -600,6 +600,7 @@ void Page::settingsDidChange()
 #if USE(LIBWEBRTC)
     m_webRTCProvider->setH265Support(settings().webRTCH265CodecEnabled());
     m_webRTCProvider->setVP9Support(settings().webRTCVP9Profile0CodecEnabled(), settings().webRTCVP9Profile2CodecEnabled());
+    m_webRTCProvider->setAV1Support(settings().webRTCAV1CodecEnabled());
 #endif
 }
 
@@ -1730,6 +1731,10 @@ void Page::updateRendering()
         document.serviceRequestAnimationFrameCallbacks();
     });
 
+    runProcessingStep(RenderingUpdateStep::CaretAnimation, [] (Document& document) {
+        document.serviceCaretAnimation();
+    });
+
     layoutIfNeeded();
 
     runProcessingStep(RenderingUpdateStep::ResizeObservations, [&] (Document& document) {
@@ -1995,7 +2000,7 @@ void Page::setImageAnimationEnabled(bool enabled)
     if (m_imageAnimationEnabled == enabled)
         return;
     m_imageAnimationEnabled = enabled;
-    repaintAnimatedImages();
+    updatePlayStateForAllAnimations();
 }
 
 void Page::suspendScriptedAnimations()
@@ -3464,7 +3469,7 @@ bool Page::useDarkAppearance() const
 {
 #if ENABLE(DARK_MODE_CSS)
     FrameView* view = mainFrame().view();
-    if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"_s))
+    if (!view || view->mediaType() != screenAtom())
         return false;
     if (m_useDarkAppearanceOverride)
         return m_useDarkAppearanceOverride.value();
@@ -3828,13 +3833,18 @@ void Page::recomputeTextAutoSizingInAllFrames()
 
 #endif
 
-bool Page::acceleratedFiltersEnabled() const
+OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes() const
 {
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
-    return settings().acceleratedFiltersEnabled();
-#else
-    return false;
+    if (settings().acceleratedFiltersEnabled())
+        modes.add(FilterRenderingMode::Accelerated);
 #endif
+#if USE(GRAPHICS_CONTEXT_FILTERS)
+    if (settings().graphicsContextFiltersEnabled())
+        modes.add(FilterRenderingMode::GraphicsContext);
+#endif
+    return modes;
 }
 
 bool Page::shouldDisableCorsForRequestTo(const URL& url) const
@@ -3930,6 +3940,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #endif
     case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
     case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
+    case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
     }
     return ts;
 }
@@ -4097,10 +4108,10 @@ void Page::forceRepaintAllFrames()
     }
 }
 
-void Page::repaintAnimatedImages()
+void Page::updatePlayStateForAllAnimations()
 {
     if (auto* view = mainFrame().view())
-        view->repaintVisibleImageAnimationsIncludingSubframes();
+        view->updatePlayStateForAllAnimationsIncludingSubframes();
 }
 
 ScreenOrientationManager* Page::screenOrientationManager() const

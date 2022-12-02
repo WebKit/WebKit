@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-orientation-lock' is an invalid sandbox flag.
 
 
-FAIL Test without 'allow-orientation-lock' sandboxing directive assert_equals: screen.lockOrientation() throws a SecurityError expected "SecurityError" but got "error: NotSupportedError Screen orientation locking is not supported"
-FAIL Test with 'allow-orientation-lock' sandboxing directive assert_equals: screen.orientation lock to portrait-primary expected "portrait-primary" but got "error: NotSupportedError Screen orientation locking is not supported"
+FAIL Test without 'allow-orientation-lock' sandboxing directive assert_equals: screen.lockOrientation() throws a SecurityError expected "SecurityError" but got "NotSupportedError"
+FAIL Test with 'allow-orientation-lock' sandboxing directive assert_equals: screen.orientation lock to portrait-primary expected "portrait-primary" but got "NotSupportedError"
 

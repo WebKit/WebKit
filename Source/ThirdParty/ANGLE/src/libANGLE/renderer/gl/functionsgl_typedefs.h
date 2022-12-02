@@ -1985,6 +1985,9 @@ typedef void(INTERNAL_GL_APIENTRY *PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC)(
                                                                                 GLint level,
                                                                                 GLsizei samples);
 
+// GL_EXT_shader_framebuffer_fetch_non_coherent
+typedef void(INTERNAL_GL_APIENTRY *PFNGLFRAMEBUFFERFETCHBARRIEREXTPROC)();
+
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_GL_FUNCTIONSGLTYPEDEFS_H_

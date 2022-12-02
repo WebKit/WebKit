@@ -611,7 +611,12 @@ EXPORTS
     glBeginPixelLocalStorageANGLE
     glEndPixelLocalStorageANGLE
     glFramebufferMemorylessPixelLocalStorageANGLE
+    glFramebufferPixelLocalClearValuefvANGLE
+    glFramebufferPixelLocalClearValueivANGLE
+    glFramebufferPixelLocalClearValueuivANGLE
     glFramebufferTexturePixelLocalStorageANGLE
+    glGetFramebufferPixelLocalStorageParameterfvANGLE
+    glGetFramebufferPixelLocalStorageParameterivANGLE
     glPixelLocalStorageBarrierANGLE
 
     ; GL_ANGLE_texture_compression_dxt3

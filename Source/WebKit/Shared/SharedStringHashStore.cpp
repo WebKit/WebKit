@@ -70,9 +70,9 @@ SharedStringHashStore::SharedStringHashStore(Client& client)
 {
 }
 
-bool SharedStringHashStore::createSharedMemoryHandle(SharedMemory::Handle& handle)
+std::optional<SharedMemory::Handle> SharedStringHashStore::createSharedMemoryHandle()
 {
-    return m_table.sharedMemory()->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    return m_table.sharedMemory()->createHandle(SharedMemory::Protection::ReadOnly);
 }
 
 void SharedStringHashStore::scheduleAddition(SharedStringHash sharedStringHash)

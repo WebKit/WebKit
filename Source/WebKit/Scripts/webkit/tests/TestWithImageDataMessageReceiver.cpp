@@ -37,31 +37,6 @@
 #include "JSIPCBinding.h"
 #endif
 
-namespace Messages {
-
-namespace TestWithImageData {
-
-void ReceiveImageData::callReply(IPC::Decoder& decoder, CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&& completionHandler)
-{
-    std::optional<RefPtr<WebCore::ImageData>> r0;
-    decoder >> r0;
-    if (!r0) {
-        ASSERT_NOT_REACHED();
-        cancelReply(WTFMove(completionHandler));
-        return;
-    }
-    completionHandler(WTFMove(*r0));
-}
-
-void ReceiveImageData::cancelReply(CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&& completionHandler)
-{
-    completionHandler(IPC::AsyncReplyError<RefPtr<WebCore::ImageData>>::create());
-}
-
-} // namespace TestWithImageData
-
-} // namespace Messages
-
 namespace WebKit {
 
 void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

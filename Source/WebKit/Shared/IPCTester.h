@@ -63,13 +63,14 @@ private:
     // Messages.
     void startMessageTesting(IPC::Connection&, String&& driverName);
     void stopMessageTesting(CompletionHandler<void()>);
-    void createStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
+    void createStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
     void createConnectionTester(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
     void createConnectionTesterAndSendAsyncMessages(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&, uint32_t messageCount);
     void releaseConnectionTester(IPCConnectionTesterIdentifier, CompletionHandler<void()>&&);
     void sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
     void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
+    void sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
 
     void stopIfNeeded();
 

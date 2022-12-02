@@ -240,7 +240,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (global.mutability == Wasm::Immutable) {
                 if (value.inherits<JSWebAssemblyGlobal>()) {
                     JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
-                    if (globalValue->global()->type() != global.type)
+                    if (!isSubtype(globalValue->global()->type(), global.type))
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same type")));
                     if (globalValue->global()->mutability() != Wasm::Immutable)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
@@ -309,6 +309,9 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                         break;
                     case Wasm::TypeKind::F64:
                         m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint64_t>(value.asNumber()));
+                        break;
+                    case Wasm::TypeKind::V128:
+                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "cannot be v128")));
                         break;
                     default:
                         if (Wasm::isExternref(globalType)) {
@@ -401,13 +404,13 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (!memory)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "is not an instance of WebAssembly.Memory")));
 
-            Wasm::PageCount declaredInitial = moduleInformation.memory.initial();
-            Wasm::PageCount importedInitial = memory->memory().initial();
+            PageCount declaredInitial = moduleInformation.memory.initial();
+            PageCount importedInitial = memory->memory().initial();
             if (importedInitial < declaredInitial)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided an 'initial' that is smaller than the module's declared 'initial' import memory size")));
 
-            if (Wasm::PageCount declaredMaximum = moduleInformation.memory.maximum()) {
-                Wasm::PageCount importedMaximum = memory->memory().maximum();
+            if (PageCount declaredMaximum = moduleInformation.memory.maximum()) {
+                PageCount importedMaximum = memory->memory().maximum();
                 if (!importedMaximum)
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "did not have a 'maximum' but the module requires that it does")));
 
@@ -415,7 +418,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided a 'maximum' that is larger than the module's declared 'maximum' import memory size")));
             }
 
-            if ((memory->memory().sharingMode() == Wasm::MemorySharingMode::Shared) != moduleInformation.memory.isShared())
+            if ((memory->memory().sharingMode() == MemorySharingMode::Shared) != moduleInformation.memory.isShared())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided a 'shared' that is different from the module's declared 'shared' import memory attribute")));
 
             // ii. Append v to memories.
@@ -532,16 +535,45 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         for (size_t globalIndex = moduleInformation.firstInternalGlobal; globalIndex < moduleInformation.globals.size(); ++globalIndex) {
             const auto& global = moduleInformation.globals[globalIndex];
             ASSERT(global.initializationType != Wasm::GlobalInformation::IsImport);
+
+            if (global.type == Wasm::Types::V128) {
+                v128_t initialVector;
+
+                if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
+                    ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                    initialVector = m_instance->instance().loadV128Global(global.initialBits.initialBitsOrImportNumber);
+                } else if (global.initializationType == Wasm::GlobalInformation::FromExpression)
+                    initialVector = global.initialBits.initialVector;
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+                switch (global.bindingMode) {
+                case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {
+                    m_instance->instance().setGlobal(globalIndex, initialVector);
+                    break;
+                }
+                case Wasm::GlobalInformation::BindingMode::Portable: {
+                    ASSERT(global.mutability == Wasm::Mutable);
+                    Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::Mutability::Mutable, initialVector);
+                    JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                    scope.assertNoException();
+                    m_instance->linkGlobal(vm, globalIndex, globalValue);
+                    break;
+                }
+                }
+                continue;
+            }
+            ASSERT(global.initializationType != Wasm::GlobalInformation::FromVector);
+
             uint64_t initialBits = 0;
             if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
-                ASSERT(global.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
-                initialBits = m_instance->instance().loadI64Global(global.initialBitsOrImportNumber);
+                ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                initialBits = m_instance->instance().loadI64Global(global.initialBits.initialBitsOrImportNumber);
             } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
-                ASSERT(global.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
-                ASSERT(makeFunctionWrapper(global.initialBitsOrImportNumber).isCallable());
-                initialBits = JSValue::encode(makeFunctionWrapper(global.initialBitsOrImportNumber));
+                ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
+                ASSERT(makeFunctionWrapper(global.initialBits.initialBitsOrImportNumber).isCallable());
+                initialBits = JSValue::encode(makeFunctionWrapper(global.initialBits.initialBitsOrImportNumber));
             } else
-                initialBits = global.initialBitsOrImportNumber;
+                initialBits = global.initialBits.initialBitsOrImportNumber;
 
             switch (global.bindingMode) {
             case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {

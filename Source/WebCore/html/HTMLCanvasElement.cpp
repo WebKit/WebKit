@@ -42,10 +42,12 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GPUBasedCanvasRenderingContext.h"
+#include "GPUCanvasContext.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HostWindow.h"
 #include "ImageBitmapRenderingContext.h"
 #include "ImageBitmapRenderingContextSettings.h"
 #include "ImageBuffer.h"
@@ -143,7 +145,7 @@ Ref<HTMLCanvasElement> HTMLCanvasElement::create(const QualifiedName& tagName, D
 
 HTMLCanvasElement::~HTMLCanvasElement()
 {
-    // FIXME: This has to be called here because CSSCanvasValue::CanvasObserverProxy::canvasDestroyed()
+    // FIXME: This has to be called here because StyleCanvasImage::canvasDestroyed()
     // downcasts the CanvasBase object to HTMLCanvasElement. That invokes virtual methods, which should be
     // avoided in destructors, but works as long as it's done before HTMLCanvasElement destructs completely.
     notifyObserversCanvasDestroyed();
@@ -300,6 +302,14 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         }
 #endif
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+        if (m_context->isWebGPU()) {
+            if (!isWebGPUType(contextId))
+                return { std::nullopt };
+            return { downcast<GPUCanvasContext>(m_context.get()) };
+        }
+#endif
+
         ASSERT_NOT_REACHED();
         return std::optional<RenderingContext> { std::nullopt };
     }
@@ -345,6 +355,15 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     }
 #endif
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    if (isWebGPUType(contextId)) {
+        auto context = createContextWebGPU(contextId);
+        if (!context)
+            return { std::nullopt };
+        return { context };
+    }
+#endif
+
     return std::optional<RenderingContext> { std::nullopt };
 }
 
@@ -359,6 +378,11 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::isWebGLType(type))
         return getContextWebGL(HTMLCanvasElement::toWebGLVersion(type));
+#endif
+
+#if HAVE(WEBGPU_IMPLEMENTATION)
+    if (HTMLCanvasElement::isWebGPUType(type))
+        return getContextWebGPU(type);
 #endif
 
     return nullptr;
@@ -539,6 +563,51 @@ ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const S
         return createContextBitmapRenderer(type, WTFMove(settings));
     return static_cast<ImageBitmapRenderingContext*>(m_context.get());
 }
+
+bool HTMLCanvasElement::isWebGPUType(const String& type)
+{
+    return type == "webgpu"_s;
+}
+
+#if HAVE(WEBGPU_IMPLEMENTATION)
+GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
+{
+    ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
+    ASSERT(!m_context);
+
+    if (!document().settings().webGPU())
+        return nullptr;
+
+    m_context = GPUCanvasContext::create(*this);
+
+    if (m_context) {
+        // Adds the current document as an observer, so that the document calls prepareForDisplay
+        // when the canvas changes.
+        addObserver(document());
+
+        // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
+        invalidateStyleAndLayerComposition();
+    }
+
+    return static_cast<GPUCanvasContext*>(m_context.get());
+}
+
+GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
+{
+    ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
+
+    if (!document().settings().webGPU())
+        return nullptr;
+
+    if (m_context && !m_context->isWebGPU())
+        return nullptr;
+
+    if (!m_context)
+        return createContextWebGPU(type);
+
+    return static_cast<GPUCanvasContext*>(m_context.get());
+}
+#endif // HAVE(WEBGPU_IMPLEMENTATION)
 
 void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect)
 {
@@ -812,7 +881,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
 #endif
 }
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 
 RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 {
@@ -849,6 +918,10 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
     return nullptr;
 #endif
 }
+
+#endif // ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+
+#if ENABLE(MEDIA_STREAM)
 
 ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(std::optional<double>&& frameRequestRate)
 {
@@ -947,7 +1020,7 @@ void HTMLCanvasElement::createImageBuffer() const
         return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
     }();
     ImageBuffer::CreationContext context = { };
-    context.hostWindow = hostWindow;
+    context.graphicsClient = hostWindow;
     context.avoidIOSurfaceSizeCheckInWebProcessForTesting = m_avoidBackendSizeCheckForTesting;
     setImageBuffer(ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, context));
 

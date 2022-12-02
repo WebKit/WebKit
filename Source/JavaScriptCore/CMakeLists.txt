@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 include(WebKitCommon)
 include(target/TargetWTF)
@@ -154,6 +154,20 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyTagConstructor.cpp
     wasm/js/WebAssemblyTagPrototype.cpp
 )
+
+list(APPEND JavaScriptCore_SOURCES
+    runtime/CachedTypes.cpp
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.cpp
+)
+
+add_custom_command(
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/runtime/JSCBytecodeCacheVersion.cpp.in
+    COMMAND ${PERL_EXECUTABLE} -pe s/CACHED_TYPES_CKSUM/__TIMESTAMP__/ ${JAVASCRIPTCORE_DIR}/runtime/JSCBytecodeCacheVersion.cpp.in > ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
+            VERBATIM
+)
+
 
 set(JavaScriptCore_FRAMEWORKS
     WTF
@@ -889,6 +903,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/RegisterAtOffsetList.h
     jit/RegisterMap.h
     jit/RegisterSet.h
+    jit/SIMDInfo.h
     jit/ScratchRegisterAllocator.h
     jit/Snippet.h
     jit/SnippetParams.h
@@ -955,6 +970,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/BooleanObject.h
     runtime/BooleanPrototype.h
     runtime/BrandedStructure.h
+    runtime/BufferMemoryHandle.h
     runtime/Butterfly.h
     runtime/ButterflyInlines.h
     runtime/BytecodeCacheError.h
@@ -1135,6 +1151,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Lookup.h
     runtime/MatchResult.h
     runtime/MathCommon.h
+    runtime/MemoryMode.h
     runtime/MemoryStatistics.h
     runtime/Microtask.h
     runtime/ModuleProgramExecutable.h
@@ -1151,6 +1168,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Operations.h
     runtime/Options.h
     runtime/OptionsList.h
+    runtime/PageCount.h
     runtime/ParseInt.h
     runtime/PrivateFieldPutKind.h
     runtime/PrivateName.h
@@ -1267,13 +1285,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmLLIntTierUpCounter.h
     wasm/WasmMemory.h
     wasm/WasmMemoryInformation.h
-    wasm/WasmMemoryMode.h
     wasm/WasmModule.h
     wasm/WasmModuleInformation.h
     wasm/WasmName.h
     wasm/WasmNameSection.h
     wasm/WasmOSREntryData.h
-    wasm/WasmPageCount.h
+    wasm/WasmSIMDOpcodes.h
     wasm/WasmSections.h
     wasm/WasmTypeDefinition.h
     wasm/WasmStreamingCompiler.h
@@ -1520,6 +1537,8 @@ endif ()
 WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 WEBKIT_FRAMEWORK(JavaScriptCore)
 WEBKIT_FRAMEWORK_TARGET(JavaScriptCore)
+
+target_precompile_headers(JavaScriptCore PRIVATE JavaScriptCorePrefix.h)
 
 if (NOT "${PORT}" STREQUAL "Mac")
     if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")

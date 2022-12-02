@@ -1,7 +1,7 @@
 /*
  * This file is part of the internal font implementation.
  *
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,9 +23,11 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "Font.h"
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -182,5 +184,22 @@ String FontPlatformData::familyName() const
         return adoptCF(CTFontCopyFamilyName(platformFont)).get();
     return { };
 }
+
+#if PLATFORM(COCOA)
+FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
+{
+    FontPlatformData copy(source);
+    copy.updateSize(size);
+    return copy;
+}
+
+void FontPlatformData::updateSize(float size)
+{
+    m_size = size;
+    ASSERT(m_font.get());
+    m_font = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, nullptr));
+    m_ctFont = nullptr;
+}
+#endif
 
 } // namespace WebCore

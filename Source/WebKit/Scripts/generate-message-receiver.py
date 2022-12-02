@@ -73,9 +73,6 @@ def main(argv):
         with open(receiver_message_header, "w+") as header_output:
             header_output.write(webkit.messages.generate_messages_header(receiver))
 
-        with open('%sMessagesReplies.h' % receiver.name, "w+") as reply_header_output:
-            reply_header_output.write(webkit.messages.generate_messages_reply_header(receiver))
-
     with open('MessageNames.h', "w+") as message_names_header_output:
         message_names_header_output.write(webkit.messages.generate_message_names_header(receivers))
 

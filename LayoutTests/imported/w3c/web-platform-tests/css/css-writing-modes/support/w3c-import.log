@@ -72,9 +72,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/embedded-doc-for-background-size-root-vrl-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/embedded-doc-for-background-size-root-vrl-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/embedded-doc-for-background-size-root-vrl-008.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/form-controls-slr.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/form-controls-srl.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/form-controls-vlr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/left-bottom-200x300.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/left-bottom-green-200x300.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/left-center-200x300.png
@@ -152,7 +149,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation-upright-001.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation-upright-vrl-002.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation.js
-/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/vertical-form.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/width-test.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-003-exp-res.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-035-exp-res.png

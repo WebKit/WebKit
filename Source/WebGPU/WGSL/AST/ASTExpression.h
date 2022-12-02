@@ -32,50 +32,38 @@
 
 namespace WGSL::AST {
 
-class Expression : public ASTNode {
+class Expression : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    enum class Kind {
-        BoolLiteral,
-        Int32Literal,
-        Uint32Literal,
-        Float32Literal,
-        AbstractIntLiteral,
-        AbstractFloatLiteral,
-        Identifier,
-        ArrayAccess,
-        StructureAccess,
-        CallableExpression,
-        UnaryExpression,
-    };
-
     using List = UniqueRefVector<Expression>;
 
     Expression(SourceSpan span)
-        : ASTNode(span)
+        : Node(span)
     {
     }
-
-    virtual ~Expression() { }
-
-    virtual Kind kind() const = 0;
-    bool isBoolLiteral() const { return kind() == Kind::BoolLiteral; }
-    bool isInt32Literal() const { return kind() == Kind::Int32Literal; }
-    bool isUInt32Literal() const { return kind() == Kind::Uint32Literal; }
-    bool isFloat32Literal() const { return kind() == Kind::Float32Literal; }
-    bool isAbstractIntLiteral() const { return kind() == Kind::AbstractIntLiteral; }
-    bool isAbstractFloatLiteral() const { return kind() == Kind::AbstractFloatLiteral; }
-    bool isIdentifier() const { return kind() == Kind::Identifier; }
-    bool isArrayAccess() const { return kind() == Kind::ArrayAccess; }
-    bool isStructureAccess() const { return kind() == Kind::StructureAccess; }
-    bool isCallableExpression() const { return kind() == Kind::CallableExpression; }
-    bool isUnaryExpression() const { return kind() == Kind::UnaryExpression; }
 };
 
 } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::Expression& expression) { return expression.predicate; } \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Expression)
+static bool isTypeOf(const WGSL::AST::Node& node)
+{
+    switch (node.kind()) {
+    case WGSL::AST::Node::Kind::AbstractFloatLiteral:
+    case WGSL::AST::Node::Kind::AbstractIntLiteral:
+    case WGSL::AST::Node::Kind::ArrayAccess:
+    case WGSL::AST::Node::Kind::BoolLiteral:
+    case WGSL::AST::Node::Kind::CallableExpression:
+    case WGSL::AST::Node::Kind::Float32Literal:
+    case WGSL::AST::Node::Kind::IdentifierExpression:
+    case WGSL::AST::Node::Kind::Int32Literal:
+    case WGSL::AST::Node::Kind::StructureAccess:
+    case WGSL::AST::Node::Kind::Uint32Literal:
+    case WGSL::AST::Node::Kind::UnaryExpression:
+        return true;
+    default:
+        return false;
+    }
+}
 SPECIALIZE_TYPE_TRAITS_END()

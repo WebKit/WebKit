@@ -133,4 +133,20 @@ void OSAllocator::hintMemoryNotNeededSoon(void*, size_t)
 {
 }
 
+bool OSAllocator::protect(void* address, size_t bytes, bool readable, bool writable)
+{
+    if (!bytes)
+        return true;
+    DWORD protection = 0;
+    if (readable) {
+        if (writable)
+            protection = PAGE_READWRITE;
+        else
+            protection = PAGE_READONLY;
+        return VirtualAlloc(address, bytes, MEM_COMMIT, protection);
+    }
+    ASSERT(!readable && !writable);
+    return VirtualFree(address, bytes, MEM_DECOMMIT);
+}
+
 } // namespace WTF

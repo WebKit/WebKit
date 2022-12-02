@@ -47,10 +47,16 @@ process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_defin
 # FIXME: rdar://90704735 (Run unifdef more uniformly on all WebKit.framework headers)
 
 if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
-    if [[ "${WK_PLATFORM_NAME}" == "macosx" ]]; then
+    if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
-        [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
-    elif [[ "${WK_PLATFORM_NAME}" =~ "iphone" ]]; then
+
+        if [[ "${WK_PLATFORM_NAME}" == "maccatalyst" && "${LLVM_TARGET_TRIPLE_OS_VERSION}" == ios* ]]; then
+            # On Mac Catalyst `LLVM_TARGET_TRIPLE_OS_VERSION` will be in the format `ios{major}.{minor}`.
+            [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${LLVM_TARGET_TRIPLE_OS_VERSION#ios}
+        else
+            [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
+        fi
+    elif [[ "${PLATFORM_NAME}" =~ "iphone" ]]; then
         [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
     fi

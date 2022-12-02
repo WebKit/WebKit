@@ -1,20 +1,13 @@
+<!DOCTYPE html>
 <html>
 <head>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 if (window.testRunner)
      testRunner.dumpEditingCallbacks();
-</script>
-<script>
-function log(str) {
-    if (str == null)
-        str = "null"
-    var li = document.createElement("li");
-    var pre = document.createElement("pre");
-    pre.appendChild(document.createTextNode(str));
-    li.appendChild(pre);
-    var console = document.getElementById("console");
-    console.appendChild(li);
-}
+
+Markup.description('This tests that Selection::getRangeAt(int) returns a valid Range object.');
+Markup.noAutoDump();
 
 function runTest() {
     var elem = document.getElementById("test");
@@ -23,21 +16,14 @@ function runTest() {
     if (window.testRunner)
         window.testRunner.dumpAsText();
 
-    try {
-        sel.setBaseAndExtent(elem, 0, elem, 1);
-        var range = sel.getRangeAt(0);
-        log(range);
-        log(range.startContainer);
-        log(range.endContainer);
-        
-    } catch(e) {
-        log("Error: " + e);
-    }
+    sel.setBaseAndExtent(elem, 0, elem, 1);
+    Markup.addRange(sel.getRangeAt(0));
+    Markup.dump(document.body);
+    Markup.notifyDone();
 }
-</script></head>
+</script>
+</head>
 <body onload="runTest();">
-<p>This tests that Selection::getRangeAt(int) returns a valid Range object.</p>
 <div id="test" style="border:1px solid black; padding:1em;">hello</div>
-<ul id="console"></ul>
 </body>
 </html>

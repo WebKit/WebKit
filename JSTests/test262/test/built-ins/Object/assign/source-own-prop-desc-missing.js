@@ -27,9 +27,8 @@ var source = new Proxy({}, {
 result = Object.assign(target, source);
 
 assert.sameValue(callCount, 1, 'Proxy trap was invoked exactly once');
-assert.sameValue(
-  Object.hasOwnProperty.call(target, 'missing'),
-  false,
+assert(
+  !Object.prototype.hasOwnProperty.call(target, 'missing'),
   'An own property was not created for a property without a property descriptor'
 );
 assert.sameValue(result, target);

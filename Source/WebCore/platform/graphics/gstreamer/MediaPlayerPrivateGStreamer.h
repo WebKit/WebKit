@@ -132,7 +132,6 @@ public:
     virtual ~MediaPlayerPrivateGStreamer();
 
     static void registerMediaEngine(MediaEngineRegistrar);
-    static MediaPlayer::SupportsType extendedSupportsType(const MediaEngineSupportParameters&, MediaPlayer::SupportsType);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     bool hasVideo() const final { return m_hasVideo; }
@@ -384,9 +383,6 @@ protected:
 
 #if USE(GSTREAMER_GL)
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
-    GRefPtr<GstGLColorConvert> m_colorConvert;
-    GRefPtr<GstCaps> m_colorConvertInputCaps;
-    GRefPtr<GstCaps> m_colorConvertOutputCaps;
 #endif
 
     ImageOrientation m_videoSourceOrientation;
@@ -405,6 +401,9 @@ protected:
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
     String errorMessage() const override { return m_errorMessage; }
+
+    void incrementDecodedVideoFramesCount() { m_decodedVideoFrames++; }
+    uint64_t decodedVideoFramesCount() const { return m_decodedVideoFrames; }
 
 private:
     class TaskAtMediaTimeScheduler {
@@ -446,6 +445,8 @@ private:
     GstElement* createVideoSink();
     GstElement* createAudioSink();
     GstElement* audioSink() const;
+
+    bool isMediaStreamPlayer() const;
 
     friend class MediaPlayerFactoryGStreamer;
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
@@ -584,6 +585,7 @@ private:
     GRefPtr<GstElement> m_fpsSink { nullptr };
     uint64_t m_totalVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
+    uint64_t m_decodedVideoFrames { 0 };
 
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 

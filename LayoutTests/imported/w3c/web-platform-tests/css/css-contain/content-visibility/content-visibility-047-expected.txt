@@ -1,6 +1,5 @@
 
 
 
-
-FAIL Tab order navigation skips hidden subtrees assert_equals: expected Element node <input id="five" type="text"></input> but got Element node <input id="two" type="text"></input>
+PASS Tab order navigation skips hidden subtrees
 

@@ -267,7 +267,7 @@ public:
     Element* parentOrShadowHostElement() const;
     void setParentNode(ContainerNode*);
     Node& rootNode() const;
-    Node& traverseToRootNode() const;
+    WEBCORE_EXPORT Node& traverseToRootNode() const;
     Node& shadowIncludingRoot() const;
 
     struct GetRootNodeOptions {

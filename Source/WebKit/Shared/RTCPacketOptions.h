@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCMacros.h>
+#include <optional>
 #include <wtf/Forward.h>
 
 ALLOW_COMMA_BEGIN

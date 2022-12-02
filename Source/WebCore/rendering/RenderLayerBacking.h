@@ -218,7 +218,6 @@ public:
     void setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom);
     
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
-    bool paintsSubpixelAntialiasedText() const { return m_paintsSubpixelAntialiasedText; }
 
     // GraphicsLayerClient interface
     void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
@@ -246,6 +245,7 @@ public:
     bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
     bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
     bool useGiantTiles() const override;
+    bool useCSS3DTransformInteroperability() const override;
     void logFilledVisibleFreshTile(unsigned) override;
     bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
@@ -314,6 +314,7 @@ private:
     bool updateForegroundLayer(bool needsForegroundLayer);
     bool updateBackgroundLayer(bool needsBackgroundLayer);
     bool updateMaskingLayer(bool hasMask, bool hasClipPath);
+    bool updateTransformFlatteningLayer(const RenderLayer* compositingAncestor);
 
     bool requiresLayerForScrollbar(Scrollbar*) const;
     bool requiresHorizontalScrollbarLayer() const;
@@ -400,6 +401,8 @@ private:
     LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;
     LayoutRect computePrimaryGraphicsLayerRect(const RenderLayer* compositedAncestor, const LayoutRect& parentGraphicsLayerRect) const;
 
+    bool shouldSetContentsDisplayDelegate() const;
+
 #if USE(OWNING_LAYER_BEAR_TRAP)
     uintptr_t m_owningLayerBearTrap { BEAR_TRAP_VALUE }; // webkit.org/b.206915
 #endif
@@ -418,6 +421,7 @@ private:
     RefPtr<GraphicsLayer> m_childContainmentLayer; // Only used if we have clipping on a stacking context with compositing children, or if the layer has a tile cache.
     RefPtr<GraphicsLayer> m_viewportAnchorLayer; // Only used on fixed/sticky elements.
     RefPtr<GraphicsLayer> m_maskLayer; // Only used if we have a mask and/or clip-path.
+    RefPtr<GraphicsLayer> m_transformFlatteningLayer;
 
     RefPtr<GraphicsLayer> m_layerForHorizontalScrollbar;
     RefPtr<GraphicsLayer> m_layerForVerticalScrollbar;
@@ -447,7 +451,6 @@ private:
     bool m_backgroundLayerPaintsFixedRootBackground { false };
     bool m_requiresBackgroundLayer { false };
     bool m_hasSubpixelRounding { false };
-    bool m_paintsSubpixelAntialiasedText { false }; // This is for logging only.
 #if ENABLE(ASYNC_SCROLLING)
     bool m_needsEventRegionUpdate { true };
 #endif

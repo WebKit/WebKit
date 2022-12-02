@@ -176,6 +176,7 @@ void WorkerGlobalScope::removeAllEventListeners()
     WorkerOrWorkletGlobalScope::removeAllEventListeners();
     m_performance->removeAllEventListeners();
     m_performance->removeAllObservers();
+    m_reportingScope->removeAllObservers();
 }
 
 bool WorkerGlobalScope::isSecureContext() const
@@ -562,7 +563,7 @@ Ref<FontFaceSet> WorkerGlobalScope::fonts()
     return cssFontSelector()->fontFaceSet();
 }
 
-std::unique_ptr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
+std::unique_ptr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(const String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     return makeUnique<WorkerFontLoadRequest>(completeURL(url), loadedFromOpaqueSource);
 }

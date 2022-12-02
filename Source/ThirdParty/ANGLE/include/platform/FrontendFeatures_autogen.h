@@ -44,6 +44,11 @@ struct FrontendFeatures : FeatureSetBase
                                         "Disable support for GL_OES_get_program_binary", &members,
                                         "http://anglebug.com/5007"};
 
+    FeatureInfo disableDrawBuffersIndexed = {
+        "disableDrawBuffersIndexed", FeatureCategory::FrontendFeatures,
+        "Disable support for OES_draw_buffers_indexed and EXT_draw_buffers_indexed", &members,
+        "http://anglebug.com/7724"};
+
     FeatureInfo disableAnisotropicFiltering = {
         "disableAnisotropicFiltering",
         FeatureCategory::FrontendWorkarounds,
@@ -55,6 +60,13 @@ struct FrontendFeatures : FeatureSetBase
         "allowCompressedFormats",
         FeatureCategory::FrontendWorkarounds,
         "Allow compressed formats",
+        &members,
+    };
+
+    FeatureInfo singleThreadedTextureDecompression = {
+        "singleThreadedTextureDecompression",
+        FeatureCategory::FrontendWorkarounds,
+        "Disables multi-threaded decompression of compressed texture formats",
         &members,
     };
 

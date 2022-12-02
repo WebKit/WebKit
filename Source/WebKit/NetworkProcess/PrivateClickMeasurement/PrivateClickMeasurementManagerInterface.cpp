@@ -204,7 +204,7 @@ void handlePCMMessage(Span<const uint8_t> encodedMessage)
     if (UNLIKELY(!arguments))
         return;
 
-    IPC::callMemberFunction(WTFMove(*arguments), &daemonManager(), Info::MemberFunction);
+    IPC::callMemberFunction(&daemonManager(), Info::MemberFunction, WTFMove(*arguments));
 }
 
 static void handlePCMMessageSetDebugModeIsEnabled(const Daemon::Connection& connection, Span<const uint8_t> encodedMessage)
@@ -241,7 +241,7 @@ void handlePCMMessageWithReply(Span<const uint8_t> encodedMessage, CompletionHan
         replySender(Info::encodeReply(args...));
     }};
 
-    IPC::callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), &daemonManager(), Info::MemberFunction);
+    IPC::callMemberFunction(&daemonManager(), Info::MemberFunction, WTFMove(*arguments), WTFMove(completionHandler));
 }
 
 void doDailyActivityInManager()

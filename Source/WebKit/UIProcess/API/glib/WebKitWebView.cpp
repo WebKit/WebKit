@@ -60,6 +60,7 @@
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebKitWebResourceLoadManager.h"
 #include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewInternal.h"
 #include "WebKitWebViewPrivate.h"
@@ -73,6 +74,7 @@
 #include <jsc/JSCContextPrivate.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/JSDOMExceptionHandling.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/URLSoup.h>
 #include <glib/gi18n-lib.h>
 #include <libsoup/soup.h>
@@ -215,8 +217,6 @@ enum {
 
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
-typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
-
 class PageLoadStateObserver;
 
 #if PLATFORM(WPE)
@@ -292,7 +292,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitFindController> findController;
 
     GRefPtr<WebKitWebResource> mainResource;
-    LoadingResourcesMap loadingResourcesMap;
+    std::unique_ptr<WebKitWebResourceLoadManager> resourceLoadManager;
 
     WebKitScriptDialog* currentScriptDialog;
 
@@ -493,6 +493,11 @@ void WebKitWebViewClient::didChangePageID(WKWPE::View&)
 void WebKitWebViewClient::didReceiveUserMessage(WKWPE::View&, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     webkitWebViewDidReceiveUserMessage(m_webView, WTFMove(message), WTFMove(completionHandler));
+}
+
+WebKitWebResourceLoadManager* WebKitWebViewClient::webResourceLoadManager()
+{
+    return webkitWebViewGetWebResourceLoadManager(m_webView);
 }
 #endif
 
@@ -745,6 +750,8 @@ static void webkitWebViewConstructed(GObject* object)
     priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
 
+    priv->resourceLoadManager = makeUnique<WebKitWebResourceLoadManager>(webView);
+
     // The related view is only valid during the construction.
     priv->relatedView = nullptr;
 
@@ -986,71 +993,6 @@ static gboolean webkitWebViewAccumulatorObjectHandled(GSignalInvocationHint*, GV
 
     return !object;
 }
-
-#if PLATFORM(GTK) && USE(GTK4)
-static GdkEvent* gValueGetEvent(const GValue* value)
-{
-    g_return_val_if_fail(G_VALUE_HOLDS(value, GDK_TYPE_EVENT), NULL);
-
-    return reinterpret_cast<GdkEvent*>(value->data[0].v_pointer);
-}
-
-typedef gboolean (*ContextMenuCallback) (gpointer, WebKitContextMenu*, GdkEvent*, WebKitHitTestResult*, gpointer);
-
-static void webkitWebViewContextMenuMarshal(GClosure* closure, GValue* returnValue, guint nParams, const GValue* params, gpointer, gpointer marshalData)
-{
-    auto* cc = reinterpret_cast<GCClosure*>(closure);
-    gpointer data1, data2;
-
-    g_return_if_fail(returnValue);
-    g_return_if_fail(nParams == 4);
-
-    if (G_CCLOSURE_SWAP_DATA(closure)) {
-        data1 = closure->data;
-        data2 = g_value_peek_pointer(&params[0]);
-    } else {
-        data1 = g_value_peek_pointer(&params[0]);
-        data2 = closure->data;
-    }
-
-    auto* menu = WEBKIT_CONTEXT_MENU(g_value_get_object(&params[1]));
-    auto* event = gValueGetEvent(&params[2]);
-    auto* result = WEBKIT_HIT_TEST_RESULT(g_value_get_object(&params[3]));
-
-    auto callback = reinterpret_cast<ContextMenuCallback>(marshalData ? marshalData : cc->callback);
-    gboolean ret = callback(data1, menu, event, result, data2);
-    g_value_set_boolean(returnValue, ret);
-}
-
-static void webkitWebViewContextMenuMarshalVa(GClosure* closure, GValue* returnValue, gpointer instance, va_list args, gpointer marshalData, int, GType*)
-{
-    auto* cc = reinterpret_cast<GCClosure*>(closure);
-    gpointer data1, data2;
-
-    g_return_if_fail(returnValue);
-
-    if (G_CCLOSURE_SWAP_DATA(closure)) {
-        data1 = closure->data;
-        data2 = instance;
-    } else {
-        data1 = instance;
-        data2 = closure->data;
-    }
-
-    va_list argsCopy;
-    G_VA_COPY(argsCopy, args);
-
-    GRefPtr<WebKitContextMenu> menu = WEBKIT_CONTEXT_MENU(va_arg(argsCopy, gpointer));
-    GRefPtr<GdkEvent> event = reinterpret_cast<GdkEvent*>(va_arg(argsCopy, gpointer));
-    GRefPtr<WebKitHitTestResult> result = WEBKIT_HIT_TEST_RESULT(va_arg(argsCopy, gpointer));
-
-    va_end(argsCopy);
-
-    auto callback = reinterpret_cast<ContextMenuCallback>(marshalData ? marshalData : cc->callback);
-    gboolean ret = callback(data1, menu.get(), event.get(), result.get(), data2);
-    g_value_set_boolean(returnValue, ret);
-}
-#endif
 
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
@@ -2070,92 +2012,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         G_TYPE_BOOLEAN, 1, /* number of parameters */
         WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
 
-    /**
-     * WebKitWebView::context-menu:
-     * @web_view: the #WebKitWebView on which the signal is emitted
-     * @context_menu: the proposed #WebKitContextMenu
-     * @event: the #GdkEvent that triggered the context menu
-     * @hit_test_result: a #WebKitHitTestResult
-     *
-     * Emitted when a context menu is about to be displayed to give the application
-     * a chance to customize the proposed menu, prevent the menu from being displayed,
-     * or build its own context menu.
-     * <itemizedlist>
-     * <listitem><para>
-     *  To customize the proposed menu you can use webkit_context_menu_prepend(),
-     *  webkit_context_menu_append() or webkit_context_menu_insert() to add new
-     *  #WebKitContextMenuItem<!-- -->s to @context_menu, webkit_context_menu_move_item()
-     *  to reorder existing items, or webkit_context_menu_remove() to remove an
-     *  existing item. The signal handler should return %FALSE, and the menu represented
-     *  by @context_menu will be shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  To prevent the menu from being displayed you can just connect to this signal
-     *  and return %TRUE so that the proposed menu will not be shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  To build your own menu, you can remove all items from the proposed menu with
-     *  webkit_context_menu_remove_all(), add your own items and return %FALSE so
-     *  that the menu will be shown. You can also ignore the proposed #WebKitContextMenu,
-     *  build your own #GtkMenu and return %TRUE to prevent the proposed menu from being shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  If you just want the default menu to be shown always, simply don't connect to this
-     *  signal because showing the proposed context menu is the default behaviour.
-     * </para></listitem>
-     * </itemizedlist>
-     *
-     * The @event is expected to be one of the following types:
-     * <itemizedlist>
-     * <listitem><para>
-     * a #GdkEventButton of type %GDK_BUTTON_PRESS when the context menu
-     * was triggered with mouse.
-     * </para></listitem>
-     * <listitem><para>
-     * a #GdkEventKey of type %GDK_KEY_PRESS if the keyboard was used to show
-     * the menu.
-     * </para></listitem>
-     * <listitem><para>
-     * a generic #GdkEvent of type %GDK_NOTHING when the #GtkWidget::popup-menu
-     * signal was used to show the context menu.
-     * </para></listitem>
-     * </itemizedlist>
-     *
-     * If the signal handler returns %FALSE the context menu represented by @context_menu
-     * will be shown, if it return %TRUE the context menu will not be shown.
-     *
-     * The proposed #WebKitContextMenu passed in @context_menu argument is only valid
-     * during the signal emission.
-     *
-     * Returns: %TRUE to stop other handlers from being invoked for the event.
-     *    %FALSE to propagate the event further.
-     */
-    signals[CONTEXT_MENU] = g_signal_new(
-        "context-menu",
-        G_TYPE_FROM_CLASS(webViewClass),
-        G_SIGNAL_RUN_LAST,
-        G_STRUCT_OFFSET(WebKitWebViewClass, context_menu),
-        g_signal_accumulator_true_handled, nullptr,
-#if USE(GTK4)
-        webkitWebViewContextMenuMarshal,
-#else
-        g_cclosure_marshal_generic,
-#endif
-        G_TYPE_BOOLEAN, 3,
-        WEBKIT_TYPE_CONTEXT_MENU,
-#if PLATFORM(GTK)
-#if USE(GTK4)
-        GDK_TYPE_EVENT,
-#else
-        GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
-#endif
-#elif PLATFORM(WPE)
-        G_TYPE_POINTER, // FIXME: use a wpe thing here. I'm not sure we want to expose libwpe in the API.
-#endif
-        WEBKIT_TYPE_HIT_TEST_RESULT);
-#if USE(GTK4)
-    g_signal_set_va_marshaller(signals[CONTEXT_MENU], G_TYPE_FROM_CLASS(webViewClass), webkitWebViewContextMenuMarshalVa);
-#endif
+    signals[CONTEXT_MENU] = createContextMenuSignal(webViewClass);
 
     /**
      * WebKitWebView::context-menu-dismissed:
@@ -2461,7 +2318,6 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webkitWebViewWatchForChangesInFavicon(webView);
 #endif
         webkitWebViewCompleteAuthenticationRequest(webView);
-        priv->loadingResourcesMap.clear();
         priv->mainResource = nullptr;
         webView->priv->isActiveURIChangeBlocked = false;
         break;
@@ -2751,28 +2607,17 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 }
 #endif
 
-void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy& frame, uint64_t resourceIdentifier, WebKitURIRequest* request)
+WebKitWebResourceLoadManager* webkitWebViewGetWebResourceLoadManager(WebKitWebView* webView)
 {
-    WebKitWebViewPrivate* priv = webView->priv;
-    bool isMainResource = frame.isMainFrame() && !priv->mainResource;
-    WebKitWebResource* resource = webkitWebResourceCreate(frame, request, isMainResource);
-    if (isMainResource)
-        priv->mainResource = resource;
-    priv->loadingResourcesMap.set(resourceIdentifier, adoptGRef(resource));
-    g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, request);
+    return webView->priv->resourceLoadManager.get();
 }
 
-WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
+void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebKitWebResource* resource, ResourceRequest&& request)
 {
-    GRefPtr<WebKitWebResource> resource = webView->priv->loadingResourcesMap.get(resourceIdentifier);
-    return resource.get();
-}
-
-void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    ASSERT(priv->loadingResourcesMap.contains(resourceIdentifier));
-    priv->loadingResourcesMap.remove(resourceIdentifier);
+    if (webkitWebResourceIsMainResource(resource))
+        webView->priv->mainResource = resource;
+    GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
+    g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, uriRequest.get());
 }
 
 void webkitWebViewEnterFullScreen(WebKitWebView* webView)
@@ -2815,11 +2660,15 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
     if (userData)
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
+    webkitContextMenuSetEvent(contextMenu.get(), webkitWebViewBaseTakeContextMenuEvent(webViewBase));
 
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
-    GUniquePtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
     gboolean returnValue;
-    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), contextMenuEvent.get(), hitTestResult.get(), &returnValue);
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(),
+#if !USE(GTK4)
+        webkit_context_menu_get_event(contextMenu.get()),
+#endif
+        hitTestResult.get(), &returnValue);
     if (returnValue)
         return;
 
@@ -2842,7 +2691,11 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     gboolean returnValue;
-    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), nullptr, hitTestResult.get(), &returnValue);
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(),
+#if !ENABLE(2022_GLIB_API)
+        nullptr,
+#endif
+        hitTestResult.get(), &returnValue);
 }
 #endif
 
@@ -2905,11 +2758,15 @@ WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView* webV
 }
 
 #if PLATFORM(GTK)
-bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, WebKitOptionMenu* menu, const GdkEvent* event)
+bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, WebKitOptionMenu* menu)
 {
     GdkRectangle menuRect = rect;
     gboolean handled;
-    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu, event, &menuRect, &handled);
+    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu,
+#if !USE(GTK4)
+        webkit_option_menu_get_event(menu),
+#endif
+        &menuRect, &handled);
     return handled;
 }
 #endif
@@ -3207,7 +3064,7 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
-    getPage(webView).loadAlternateHTML({ reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }, "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) });
+    getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(Vector<uint8_t>(reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0)), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) });
 }
 
 /**
@@ -3938,7 +3795,7 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
     // We keep a reference to the js context in the view only when this method is called
     // for backwards compatibility.
     if (!webView->priv->jsContext)
-        webView->priv->jsContext = SharedJavascriptContext::singleton().getOrCreateContext();
+        webView->priv->jsContext = API::SerializedScriptValue::sharedJSCContext();
     return jscContextGetJSContext(webView->priv->jsContext.get());
 }
 #endif
@@ -4602,7 +4459,7 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
 
     const auto& certificateInfo = mainFrame->certificateInfo();
     if (certificate)
-        *certificate = certificateInfo.certificate();
+        *certificate = certificateInfo.certificate().get();
     if (errors)
         *errors = certificateInfo.tlsErrors();
 

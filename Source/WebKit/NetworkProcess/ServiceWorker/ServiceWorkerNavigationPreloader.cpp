@@ -64,7 +64,7 @@ void ServiceWorkerNavigationPreloader::start()
 
     if (m_session->cache()) {
         NetworkCache::GlobalFrameID globalID { m_parameters.webPageProxyID, m_parameters.webPageID, m_parameters.webFrameID };
-        m_session->cache()->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityEnabled, [this, weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
+        m_session->cache()->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityPolicy, [this, weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
             if (!weakThis || m_isCancelled)
                 return;
 
@@ -181,7 +181,7 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
         callback();
 }
 
-void ServiceWorkerNavigationPreloader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
+void ServiceWorkerNavigationPreloader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, uint64_t reportedEncodedDataLength)
 {
     if (m_bodyCallback)
         m_bodyCallback(RefPtr { &buffer }, reportedEncodedDataLength);

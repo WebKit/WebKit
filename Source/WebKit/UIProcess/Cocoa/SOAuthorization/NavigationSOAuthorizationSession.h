@@ -42,16 +42,12 @@ namespace WebKit {
 //      Idle => !isInWindow => Waiting => become isInWindow => Active => Completed
 class NavigationSOAuthorizationSession : public SOAuthorizationSession, private WebViewDidMoveToWindowObserver {
 public:
-    using SOAuthorizationSession::weakPtrFactory;
-    using SOAuthorizationSession::WeakValueType;
-    using SOAuthorizationSession::WeakPtrImplType;
-
     ~NavigationSOAuthorizationSession();
 
 protected:
     using Callback = CompletionHandler<void(bool)>;
 
-    NavigationSOAuthorizationSession(Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction, Callback&&);
+    NavigationSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction, Callback&&);
 
     void invokeCallback(bool intercepted) { m_callback(intercepted); }
 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "LibWebRTCProvider.h"
-
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 
 #include "GStreamerVideoDecoderFactory.h"

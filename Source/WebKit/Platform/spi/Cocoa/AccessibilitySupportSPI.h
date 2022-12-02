@@ -68,6 +68,9 @@ void _AXSSetEnhanceTextLegibilityEnabledApp(AXValueState enabled, CFStringRef ap
 void _AXSSetDarkenSystemColorsApp(AXValueState enabled, CFStringRef appID);
 void _AXSInvertColorsSetEnabledApp(AXValueState enabled, CFStringRef appID);
 
+extern CFStringRef kAXSReduceMotionAutoplayAnimatedImagesChangedNotification;
+extern Boolean _AXSReduceMotionAutoplayAnimatedImagesEnabled(void);
+
 extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
 Boolean _AXSFullKeyboardAccessEnabled();
 

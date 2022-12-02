@@ -1211,14 +1211,14 @@ ResourceError DocumentLoader::interruptedForPolicyChangeError() const
     if (!frameLoader())
         return {};
 
-    return frameLoader()->client().interruptedForPolicyChangeError(request());
+    auto error = frameLoader()->client().interruptedForPolicyChangeError(request());
+    error.setType(ResourceError::Type::Cancellation);
+    return error;
 }
 
 void DocumentLoader::stopLoadingForPolicyChange()
 {
-    ResourceError error = interruptedForPolicyChangeError();
-    error.setType(ResourceError::Type::Cancellation);
-    cancelMainResourceLoad(error);
+    cancelMainResourceLoad(interruptedForPolicyChangeError());
 }
 
 #if ENABLE(SERVICE_WORKER)
@@ -1228,21 +1228,6 @@ static inline bool shouldUseActiveServiceWorkerFromParent(const Document& docume
     return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
 }
 #endif
-
-#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-bool DocumentLoader::isLoadingRemoteArchive() const
-{
-#if ENABLE(MHTML)
-    return m_archive && m_archive->shouldOverrideBaseURL();
-#else
-    bool isQuickLookPreview = false;
-#if USE(QUICK_LOOK)
-    isQuickLookPreview = isQuickLookPreviewURL(m_response.url());
-#endif // QUICK_LOOK
-    return m_archive && !m_frame->settings().webArchiveTestingModeEnabled() && !isQuickLookPreview;
-#endif // !MHTML
-}
-#endif // WEBARCHIVE || MHTML
 
 void DocumentLoader::commitData(const SharedBuffer& data)
 {
@@ -1271,21 +1256,9 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             return;
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        if (isLoadingRemoteArchive()) {
-            auto& url { m_archive->mainResource()->url() };
-            if (m_archive->shouldOverrideBaseURL())
-                document.setBaseURLOverride(url);
-#if ENABLE(WEB_ARCHIVE)
-            constexpr auto webArchivePrefix { "webarchive+"_s };
-            if (url.protocol().startsWith(webArchivePrefix)) {
-                auto unprefixedScheme { url.protocol().substring(webArchivePrefix.length()) };
-                if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(unprefixedScheme.toStringWithoutCopying()))
-                    document.securityOrigin().grantLoadLocalResources();
-            }
-#endif // WEB_ARCHIVE
-        }
-#endif // WEB_ARCHIVE || MHTML
-
+        if (m_archive && m_archive->shouldOverrideBaseURL())
+            document.setBaseURLOverride(m_archive->mainResource()->url());
+#endif
 #if ENABLE(SERVICE_WORKER)
         if (m_canUseServiceWorkers) {
             if (!document.securityOrigin().isOpaque()) {
@@ -1840,7 +1813,12 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader& loader, const ResourceR
     if (!m_archive)
         return false;
 
-    DOCUMENTLOADER_RELEASE_LOG("scheduleArchiveLoad: Failed to unarchive subresource");
+#if ENABLE(WEB_ARCHIVE)
+    // The idea of WebArchiveDebugMode is that we should fail instead of trying to fetch from the network.
+    // Returning true ensures the caller will not try to fetch from the network.
+    if (m_frame->settings().webArchiveDebugModeEnabled() && responseMIMEType() == "application/x-webarchive"_s)
+        return true;
+#endif
 
     // If we want to load from the archive only, then we should always return true so that the caller
     // does not try to fetch from the network.
@@ -2109,6 +2087,8 @@ void DocumentLoader::startLoadingMainResource()
     ASSERT(timing().startTime());
 
     willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
+        request.setRequester(ResourceRequestRequester::Main);
+
         m_request = request;
         // FIXME: Implement local URL interception by getting the service worker of the parent.
 
@@ -2118,7 +2098,6 @@ void DocumentLoader::startLoadingMainResource()
             return;
         }
 
-        request.setRequester(ResourceRequest::Requester::Main);
         // If this is a reload the cache layer might have made the previous request conditional. DocumentLoader can't handle 304 responses itself.
         request.makeUnconditional();
 

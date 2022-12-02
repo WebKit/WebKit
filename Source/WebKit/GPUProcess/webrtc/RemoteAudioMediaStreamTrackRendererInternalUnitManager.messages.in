@@ -24,10 +24,10 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
 messages -> RemoteAudioMediaStreamTrackRendererInternalUnitManager NotRefCounted {
-    CreateUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier) -> (WebCore::CAAudioStreamDescription description, size_t frameChunkSize)
+    CreateUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier) -> (std::optional<WebCore::CAAudioStreamDescription> description, size_t frameChunkSize)
     DeleteUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 
-    StartUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames, IPC::Semaphore renderSemaphore)
+    StartUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, WebKit::ConsumerSharedCARingBuffer::Handle storageHandle, IPC::Semaphore renderSemaphore)
     StopUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 
     SetAudioOutputDevice(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, String deviceId)

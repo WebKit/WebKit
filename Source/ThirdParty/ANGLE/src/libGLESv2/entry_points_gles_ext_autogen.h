@@ -648,11 +648,21 @@ ANGLE_EXPORT void GL_APIENTRY GL_FramebufferTexturePixelLocalStorageANGLE(GLint 
                                                                           GLuint backingtexture,
                                                                           GLint level,
                                                                           GLint layer);
-ANGLE_EXPORT void GL_APIENTRY GL_BeginPixelLocalStorageANGLE(GLsizei planes,
-                                                             const GLenum *loadops,
-                                                             const void *cleardata);
-ANGLE_EXPORT void GL_APIENTRY GL_EndPixelLocalStorageANGLE();
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferPixelLocalClearValuefvANGLE(GLint plane,
+                                                                        const GLfloat *value);
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferPixelLocalClearValueivANGLE(GLint plane,
+                                                                        const GLint *value);
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferPixelLocalClearValueuivANGLE(GLint plane,
+                                                                         const GLuint *value);
+ANGLE_EXPORT void GL_APIENTRY GL_BeginPixelLocalStorageANGLE(GLsizei n, const GLenum *loadops);
+ANGLE_EXPORT void GL_APIENTRY GL_EndPixelLocalStorageANGLE(GLsizei n, const GLenum *storeops);
 ANGLE_EXPORT void GL_APIENTRY GL_PixelLocalStorageBarrierANGLE();
+ANGLE_EXPORT void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameterfvANGLE(GLint plane,
+                                                                                 GLenum pname,
+                                                                                 GLfloat *params);
+ANGLE_EXPORT void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameterivANGLE(GLint plane,
+                                                                                 GLenum pname,
+                                                                                 GLint *params);
 
 // GL_ANGLE_texture_compression_dxt3
 

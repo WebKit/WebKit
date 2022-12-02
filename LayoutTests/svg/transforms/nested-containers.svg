@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<g transform="scale(0.125 0.125)">
+  <g transform="scale(160 160)">
+      <circle fill="blue" cx="10" cy="10" r="5"/>
+  </g>
+</g>
+</svg>

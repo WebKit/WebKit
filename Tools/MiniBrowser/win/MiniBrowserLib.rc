@@ -109,6 +109,9 @@ BEGIN
         MENUITEM "Proxy Settings...",           IDM_PROXY_SETTINGS
         MENUITEM "Set Default URL to Current URL", IDM_SET_DEFAULT_URL
         MENUITEM SEPARATOR
+        MENUITEM "Clear Cookies",               IDM_CLEAR_COOKIES
+        MENUITEM "Clear Website Data",          IDM_CLEAR_WEBSITE_DATA
+        MENUITEM SEPARATOR
         MENUITEM "Disable Images",              IDM_DISABLE_IMAGES
         MENUITEM "Disable Styles",              IDM_DISABLE_STYLES
         MENUITEM "Disable JavaScript",          IDM_DISABLE_JAVASCRIPT

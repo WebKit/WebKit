@@ -192,27 +192,6 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color)
     Cairo::fillRect(*this, rect, color, Cairo::ShadowState(state()));
 }
 
-void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient)
-{
-    auto pattern = gradient.createPattern(1.0, fillGradientSpaceTransform());
-    if (!pattern)
-        return;
-
-    save();
-    Cairo::fillRect(*this, rect, pattern.get());
-    restore();
-}
-
-void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
-{
-    auto& state = this->state();
-    CompositeOperator previousOperator = compositeOperation();
-
-    Cairo::State::setCompositeOperation(*this, compositeOperator, blendMode);
-    Cairo::fillRect(*this, rect, color, Cairo::ShadowState(state));
-    Cairo::State::setCompositeOperation(*this, previousOperator, BlendMode::Normal);
-}
-
 void GraphicsContextCairo::clip(const FloatRect& rect)
 {
     Cairo::clip(*this, rect);
@@ -396,8 +375,7 @@ void GraphicsContextCairo::drawPattern(NativeImage& nativeImage, const FloatRect
     if (!patternTransform.isInvertible())
         return;
 
-    UNUSED_PARAM(spacing);
-    Cairo::drawPattern(*this, nativeImage.platformImage().get(), nativeImage.size(), destRect, tileRect, patternTransform, phase, options);
+    Cairo::drawPattern(*this, nativeImage.platformImage().get(), nativeImage.size(), destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 RenderingMode GraphicsContextCairo::renderingMode() const

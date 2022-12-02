@@ -249,8 +249,6 @@ private:
     void mockMediaPlaybackTargetPickerDismissPopup() override;
 #endif
 
-    String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&) const final;
-
 #if PLATFORM(MAC)
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&) final;
 #endif

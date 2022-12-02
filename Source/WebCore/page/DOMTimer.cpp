@@ -34,10 +34,10 @@
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
@@ -407,7 +407,7 @@ std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) c
     if (!alignmentInterval)
         return std::nullopt;
     
-    static const double randomizedProportion = randomNumber();
+    static const double randomizedProportion = cryptographicallyRandomUnitInterval();
 
     // Force alignment to randomizedAlignment fraction of the way between alignemntIntervals, e.g.
     // if alignmentInterval is 10_ms and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...

@@ -131,6 +131,10 @@ private:
     State m_state { State::ModuleHeader };
     Section m_section { Section::Begin };
     Section m_previousKnownSection { Section::Begin };
+
+#if ASSERT_ENABLED
+    Vector<uint8_t> m_buffer;
+#endif
 };
 
 

@@ -61,7 +61,7 @@ private:
 
     Ref<MediaRecorderPrivateWriter> m_writer;
     RefPtr<VideoFrame> m_blackFrame;
-    CAAudioStreamDescription m_description;
+    std::optional<CAAudioStreamDescription> m_description;
     std::unique_ptr<WebAudioBufferList> m_audioBuffer;
 };
 

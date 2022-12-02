@@ -1,0 +1,11 @@
+This test ensures shadow DOM descendants of something that is aria-modal are accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button.isIgnored is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button One
+Button Two Before Button Button Three After Button

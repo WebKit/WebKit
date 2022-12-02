@@ -59,6 +59,7 @@
 #include "WebUserContentControllerProxy.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/CairoUtilities.h>
+#include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
@@ -74,6 +75,7 @@
 #include <glib/gi18n-lib.h>
 #include <memory>
 #include <pal/system/SleepDisabler.h>
+#include <utility>
 #include <wtf/Compiler.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -222,8 +224,10 @@ struct MotionEvent {
 
 #if !USE(GTK4)
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
-#endif
 typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
+#else
+typedef HashMap<uint32_t, GRefPtr<GdkEvent>> TouchEventsMap;
+#endif
 
 struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
@@ -280,7 +284,11 @@ struct _WebKitWebViewBasePrivate {
     GtkWidget* inspectorView { nullptr };
     AttachmentSide inspectorAttachmentSide { AttachmentSide::Bottom };
     unsigned inspectorViewSize { 0 };
+#if USE(GTK4)
+    GRefPtr<GdkEvent> contextMenuEvent;
+#else
     GUniquePtr<GdkEvent> contextMenuEvent;
+#endif
     WebContextMenuProxyGtk* activeContextMenuProxy { nullptr };
     InputMethodFilter inputMethodFilter;
     KeyBindingTranslator keyBindingTranslator;
@@ -1220,7 +1228,7 @@ static void webkitWebViewBaseButtonPressed(WebKitWebViewBase* webViewBase, int c
 
     // If it's a right click event save it as a possible context menu event.
     if (button == GDK_BUTTON_SECONDARY)
-        priv->contextMenuEvent.reset(gdk_event_copy(event));
+        priv->contextMenuEvent = event;
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, clickCount, std::nullopt));
 }
@@ -1597,14 +1605,22 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
         if (priv->touchEvents.isEmpty())
             priv->pageGrabbedTouch = false;
         ASSERT(!priv->touchEvents.contains(sequence));
+#if USE(GTK4)
+        GRefPtr<GdkEvent> event = touchEvent;
+#else
         GUniquePtr<GdkEvent> event(gdk_event_copy(touchEvent));
+#endif
         priv->touchEvents.add(sequence, WTFMove(event));
         break;
     }
     case GDK_TOUCH_UPDATE: {
         auto it = priv->touchEvents.find(sequence);
         ASSERT(it != priv->touchEvents.end());
+#if USE(GTK4)
+        it->value = touchEvent;
+#else
         it->value.reset(gdk_event_copy(touchEvent));
+#endif
         break;
     }
     case GDK_TOUCH_CANCEL:
@@ -1864,6 +1880,16 @@ static gboolean webkitWebViewBaseGrabFocus(GtkWidget* widget)
 }
 #endif
 
+#if USE(GTK4)
+static void webkitWebViewBaseMoveFocus(GtkWidget* widget, GtkDirectionType direction)
+{
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+    if (priv->dialog)
+        g_signal_emit_by_name(priv->dialog, "move-focus", direction);
+
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->move_focus(widget, direction);
+}
+#else
 static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direction)
 {
     // If a dialog is active, we need to forward focus events there. This
@@ -1877,6 +1903,7 @@ static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direc
 
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus(widget, direction);
 }
+#endif
 
 #if USE(GTK4)
 static void webkitWebViewBaseCssChanged(GtkWidget* widget, GtkCssStyleChange* change)
@@ -2224,7 +2251,11 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 #endif
     widgetClass->map = webkitWebViewBaseMap;
     widgetClass->unmap = webkitWebViewBaseUnmap;
+#if USE(GTK4)
+    widgetClass->move_focus = webkitWebViewBaseMoveFocus;
+#else
     widgetClass->focus = webkitWebViewBaseFocus;
+#endif
 #if USE(GTK4)
     widgetClass->grab_focus = webkitWebViewBaseGrabFocus;
 #else
@@ -2432,10 +2463,17 @@ WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebView
     return webkitWebViewBase->priv->activeContextMenuProxy;
 }
 
-GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
+#if USE(GTK4)
+GRefPtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
 {
-    return webkitWebViewBase->priv->contextMenuEvent.release();
+    return std::exchange(webkitWebViewBase->priv->contextMenuEvent, nullptr);
 }
+#else
+GUniquePtr<GdkEvent> webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
+{
+    return WTFMove(webkitWebViewBase->priv->contextMenuEvent);
+}
+#endif
 
 void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
 {
@@ -2551,8 +2589,8 @@ void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, 
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase* webkitWebViewBase)
 {
     const auto& editorState = webkitWebViewBase->priv->pageProxy->editorState();
-    if (!editorState.isMissingPostLayoutData()) {
-        webkitWebViewBase->priv->inputMethodFilter.notifyCursorRect(editorState.postLayoutData->caretRectAtStart);
+    if (editorState.hasPostLayoutAndVisualData()) {
+        webkitWebViewBase->priv->inputMethodFilter.notifyCursorRect(editorState.visualData->caretRectAtStart);
         webkitWebViewBase->priv->inputMethodFilter.notifySurrounding(editorState.postLayoutData->surroundingContext, editorState.postLayoutData->surroundingContextCursorPosition,
             editorState.postLayoutData->surroundingContextSelectionPosition);
     }
@@ -2678,6 +2716,8 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
         gtk_snapshot_pop(snapshot.get());
 
     GRefPtr<GskRenderNode> renderNode = adoptGRef(gtk_snapshot_to_node(snapshot.get()));
+    if (!renderNode)
+        return nullptr;
 
     graphene_rect_t viewport = { 0, 0, static_cast<float>(size.width()), static_cast<float>(size.height()) };
     GdkTexture* texture = gsk_renderer_render_texture(renderer, renderNode.get(), &viewport);

@@ -50,7 +50,9 @@ input = document.getElementById('text');
 shouldBe('input.value', '" foo bar "');
 input.focus();
 document.execCommand('SelectAll');
-shouldBe('document.getSelection().toString()', '" foo bar "');
+shouldBe('input.selectionStart', '0');
+shouldBe('input.selectionEnd', '9');
+shouldBeEqualToString('input.value.substring(input.selectionStart, input.selectionEnd)', ' foo bar ');
 
 input.value = 'foo\0bar';
 shouldBeEqualToString('input.value', 'foo\0bar');

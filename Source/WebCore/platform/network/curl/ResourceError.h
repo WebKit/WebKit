@@ -45,10 +45,6 @@ public:
     }
 
     WEBCORE_EXPORT static ResourceError httpError(int errorCode, const URL& failingURL, Type = Type::General);
-    static ResourceError sslError(int errorCode, unsigned sslErrors, const URL& failingURL);
-
-    unsigned sslErrors() const { return m_sslErrors; }
-    void setSslErrors(unsigned sslErrors) { m_sslErrors = sslErrors; }
 
     bool isSSLConnectError() const;
     WEBCORE_EXPORT bool isSSLCertVerificationError() const;
@@ -59,8 +55,6 @@ private:
     void doPlatformIsolatedCopy(const ResourceError&);
 
     static ASCIILiteral curlErrorDomain;
-
-    unsigned m_sslErrors { 0 };
 };
 
 } // namespace WebCore

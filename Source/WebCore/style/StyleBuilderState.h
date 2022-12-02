@@ -92,8 +92,7 @@ public:
     bool useSVGZoomRulesForLength() const;
     ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
-    Ref<CSSValue> resolveImageStyles(CSSValue&);
-    RefPtr<StyleImage> createStyleImage(CSSValue&);
+    RefPtr<StyleImage> createStyleImage(const CSSValue&);
     std::optional<FilterOperations> createFilterOperations(const CSSValue&);
 
     static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);

@@ -48,7 +48,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::CallableExpression; }
+    Kind kind() const override;
     TypeDecl& target() { return m_target; }
     Expression::List& arguments() { return m_arguments; }
 
@@ -63,4 +63,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(CallableExpression, isCallableExpression())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(CallableExpression)

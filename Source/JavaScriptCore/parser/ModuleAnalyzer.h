@@ -39,7 +39,7 @@ class ModuleAnalyzer {
 public:
     ModuleAnalyzer(JSGlobalObject*, const Identifier& moduleKey, const SourceCode&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables, CodeFeatures);
 
-    JSModuleRecord* analyze(ModuleProgramNode&);
+    Expected<JSModuleRecord*, String> analyze(ModuleProgramNode&);
 
     VM& vm() { return m_vm; }
 
@@ -47,12 +47,15 @@ public:
 
     void appendRequestedModule(const Identifier&, RefPtr<ScriptFetchParameters>&&);
 
+    void fail(const String& errorMessage) { m_errorMessage = errorMessage; }
+
 private:
     void exportVariable(ModuleProgramNode&, const RefPtr<UniquedStringImpl>&, const VariableEnvironmentEntry&);
 
     VM& m_vm;
     JSModuleRecord* m_moduleRecord;
     IdentifierSet m_requestedModules;
+    String m_errorMessage;
 };
 
 } // namespace JSC

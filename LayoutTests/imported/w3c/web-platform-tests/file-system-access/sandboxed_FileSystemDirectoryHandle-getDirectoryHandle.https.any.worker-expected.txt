@@ -1,6 +1,6 @@
 
 PASS getDirectoryHandle(create=false) rejects for non-existing directories
-FAIL getDirectoryHandle(create=true) creates an empty directory promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...entry of handle...')"
+PASS getDirectoryHandle(create=true) creates an empty directory
 PASS getDirectoryHandle(create=false) returns existing directories
 PASS getDirectoryHandle(create=true) returns existing directories without erasing
 FAIL getDirectoryHandle() when a file already exists with the same name promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException TypeMismatchError: property "code" is equal to undefined, expected 17

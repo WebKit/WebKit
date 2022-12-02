@@ -11,6 +11,7 @@
 
 #include "common/entry_points_enum_autogen.h"
 #include "common/string_utils.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/MemoryProgramCache.h"
@@ -750,14 +751,14 @@ gl::GraphicsResetStatus Context11::getResetStatus()
 
 angle::Result Context11::insertEventMarker(GLsizei length, const char *marker)
 {
-    mRenderer->getAnnotator()->setMarker(marker);
+    mRenderer->getDebugAnnotatorContext()->setMarker(marker);
     return angle::Result::Continue;
 }
 
 angle::Result Context11::pushGroupMarker(GLsizei length, const char *marker)
 {
-    mRenderer->getAnnotator()->beginEvent(nullptr, angle::EntryPoint::GLPushGroupMarkerEXT, marker,
-                                          marker);
+    mRenderer->getDebugAnnotatorContext()->beginEvent(angle::EntryPoint::GLPushGroupMarkerEXT,
+                                                      marker, marker);
     mMarkerStack.push(std::string(marker));
     return angle::Result::Continue;
 }
@@ -769,8 +770,8 @@ angle::Result Context11::popGroupMarker()
     {
         marker = mMarkerStack.top().c_str();
         mMarkerStack.pop();
-        mRenderer->getAnnotator()->endEvent(nullptr, marker,
-                                            angle::EntryPoint::GLPopGroupMarkerEXT);
+        mRenderer->getDebugAnnotatorContext()->endEvent(marker,
+                                                        angle::EntryPoint::GLPopGroupMarkerEXT);
     }
     return angle::Result::Continue;
 }
@@ -1044,5 +1045,10 @@ void Context11::handleResult(HRESULT hr,
     errorStream << ": " << message;
 
     mErrors->handleError(glErrorCode, errorStream.str().c_str(), file, function, line);
+}
+
+angle::ImageLoadContext Context11::getImageLoadContext() const
+{
+    return getRenderer()->getDisplay()->getImageLoadContext();
 }
 }  // namespace rx

@@ -1,0 +1,8 @@
+
+
+PASS unlock() doesn't throw when there is no lock
+PASS unlock() returns a void value
+PASS unlock() doesn't throw when there is no lock with fullscreen
+PASS unlock() aborts a pending lock request
+FAIL unlock() aborts a pending lock request across documents promise_rejects_dom: function "function () { throw e }" threw object "SecurityError: Locking the screen orientation is only allowed when in fullscreen" that is not a DOMException AbortError: property "code" is equal to 18, expected 20
+

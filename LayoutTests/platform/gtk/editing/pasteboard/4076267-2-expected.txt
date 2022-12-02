@@ -25,5 +25,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,44) size 784x26 [border: (2px solid #FFAAAA)]
         RenderBlock {DIV} at (2,2) size 780x22 [border: (2px solid #AAAAFF)]
           RenderText {#text} at (2,2) size 573x17
-            text run at (2,2) width 573: "there should be a single trailing space between the '.' and the last character in this sentence ."
+            text run at (2,2) width 565: "there should be a single trailing space between the '.' and the last character in this sentence"
+            text run at (567,2) width 4: " "
+            text run at (571,2) width 4: "."
 caret: position 96 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body

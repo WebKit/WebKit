@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSCellInlines.h"
+#include "JSTypedArrays.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 
@@ -130,19 +131,24 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker& locker, Co
 void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock* codeBlock, Structure* lastSeenStructure)
 {
     m_observedArrayModes |= arrayModesFromStructure(lastSeenStructure);
-    
-    if (!m_didPerformFirstRunPruning
-        && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
+
+    if (!m_arrayProfileFlags.contains(ArrayProfileFlag::DidPerformFirstRunPruning) && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
         m_observedArrayModes = arrayModesFromStructure(lastSeenStructure);
-        m_didPerformFirstRunPruning = true;
+        m_arrayProfileFlags.add(ArrayProfileFlag::DidPerformFirstRunPruning);
     }
-    
-    m_mayInterceptIndexedAccesses |=
-        lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
+
+    if (lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
+        m_arrayProfileFlags.add(ArrayProfileFlag::MayInterceptIndexedAccesses);
+
     JSGlobalObject* globalObject = codeBlock->globalObject();
-    if (!globalObject->isOriginalArrayStructure(lastSeenStructure)
-        && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure))
-        m_usesOriginalArrayStructures = false;
+    bool isResizableOrGrowableShared = false;
+    if (!globalObject->isOriginalArrayStructure(lastSeenStructure) && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure, isResizableOrGrowableShared))
+        m_arrayProfileFlags.add(ArrayProfileFlag::UsesNonOriginalArrayStructures);
+
+    if (isTypedArrayTypeIncludingDataView(lastSeenStructure->typeInfo().type())) {
+        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(lastSeenStructure->classInfoForCells()))
+            m_arrayProfileFlags.add(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray);
+    }
 }
 
 void ArrayProfile::observeIndexedRead(JSCell* cell, unsigned index)
@@ -175,14 +181,16 @@ CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJSLocker&)
 
     if (m_observedArrayModes)
         out.print(comma, ArrayModesDump(m_observedArrayModes));
-    if (m_mayStoreToHole)
+    if (m_arrayProfileFlags.contains(ArrayProfileFlag::MayStoreHole))
         out.print(comma, "Hole");
-    if (m_outOfBounds)
+    if (m_arrayProfileFlags.contains(ArrayProfileFlag::OutOfBounds))
         out.print(comma, "OutOfBounds");
-    if (m_mayInterceptIndexedAccesses)
+    if (m_arrayProfileFlags.contains(ArrayProfileFlag::MayInterceptIndexedAccesses))
         out.print(comma, "Intercept");
-    if (m_usesOriginalArrayStructures)
+    if (!m_arrayProfileFlags.contains(ArrayProfileFlag::UsesNonOriginalArrayStructures))
         out.print(comma, "Original");
+    if (!m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray))
+        out.print(comma, "Resizable");
 
     return out.toCString();
 }

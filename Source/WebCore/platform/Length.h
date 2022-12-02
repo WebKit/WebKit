@@ -126,7 +126,7 @@ public:
     bool isSpecified() const;
     bool isSpecifiedOrIntrinsic() const;
 
-    float nonNanCalculatedValue(float maxValue) const;
+    WEBCORE_EXPORT float nonNanCalculatedValue(float maxValue) const;
 
     bool isLegacyIntrinsic() const;
 

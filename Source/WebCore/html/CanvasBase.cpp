@@ -26,13 +26,13 @@
 #include "config.h"
 #include "CanvasBase.h"
 
-#include "CSSCanvasValue.h"
 #include "CanvasRenderingContext.h"
 #include "Element.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "StyleCanvasImage.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
@@ -125,7 +125,7 @@ void CanvasBase::addObserver(CanvasObserver& observer)
 {
     m_observers.add(observer);
 
-    if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
+    if (is<StyleCanvasImage>(observer))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
 }
 
@@ -133,7 +133,7 @@ void CanvasBase::removeObserver(CanvasObserver& observer)
 {
     m_observers.remove(observer);
 
-    if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
+    if (is<StyleCanvasImage>(observer))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
 }
 
@@ -181,13 +181,12 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
 {
     HashSet<Element*> cssCanvasClients;
     for (auto& observer : m_observers) {
-        if (!is<CSSCanvasValue::CanvasObserverProxy>(observer))
+        if (!is<StyleCanvasImage>(observer))
             continue;
 
-        auto clients = downcast<CSSCanvasValue::CanvasObserverProxy>(observer).ownerValue().clients();
-        for (auto& entry : clients) {
-            if (RefPtr<Element> element = entry.key->element())
-                cssCanvasClients.add(element.get());
+        for (auto& client : downcast<StyleCanvasImage>(observer).clients().values()) {
+            if (auto element = client->element())
+                cssCanvasClients.add(element);
         }
     }
     return cssCanvasClients;

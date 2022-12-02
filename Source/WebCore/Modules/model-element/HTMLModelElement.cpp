@@ -65,6 +65,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLModelElement);
 
 HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& document)
@@ -677,6 +679,25 @@ String HTMLModelElement::inlinePreviewUUIDForTesting() const
     return m_modelPlayer->inlinePreviewUUIDForTesting();
 }
 #endif
+
+void HTMLModelElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+{
+    if (name == widthAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
+    } else if (name == heightAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
+    } else
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+}
+
+bool HTMLModelElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
+{
+    if (name == widthAttr || name == heightAttr)
+        return true;
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
+}
 
 }
 

@@ -1,12 +1,12 @@
 
-FAIL Property font-stretch value 'ultra-condensed' assert_equals: expected "50%" but got "ultra-condensed"
-FAIL Property font-stretch value 'extra-condensed' assert_equals: expected "62.5%" but got "extra-condensed"
-FAIL Property font-stretch value 'condensed' assert_equals: expected "75%" but got "condensed"
-FAIL Property font-stretch value 'semi-condensed' assert_equals: expected "87.5%" but got "semi-condensed"
-FAIL Property font-stretch value 'normal' assert_equals: expected "100%" but got "normal"
-FAIL Property font-stretch value 'semi-expanded' assert_equals: expected "112.5%" but got "semi-expanded"
-FAIL Property font-stretch value 'expanded' assert_equals: expected "125%" but got "expanded"
-FAIL Property font-stretch value 'extra-expanded' assert_equals: expected "150%" but got "extra-expanded"
-FAIL Property font-stretch value 'ultra-expanded' assert_equals: expected "200%" but got "ultra-expanded"
+PASS Property font-stretch value 'ultra-condensed'
+PASS Property font-stretch value 'extra-condensed'
+PASS Property font-stretch value 'condensed'
+PASS Property font-stretch value 'semi-condensed'
+PASS Property font-stretch value 'normal'
+PASS Property font-stretch value 'semi-expanded'
+PASS Property font-stretch value 'expanded'
+PASS Property font-stretch value 'extra-expanded'
+PASS Property font-stretch value 'ultra-expanded'
 PASS Property font-stretch value '234.5%'
 

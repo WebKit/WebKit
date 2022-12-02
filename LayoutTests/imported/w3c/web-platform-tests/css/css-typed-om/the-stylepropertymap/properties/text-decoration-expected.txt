@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS 'text-decoration' does not supported 'underline'
+FAIL 'text-decoration' does not supported 'underline dotted #ff3028' assert_not_equals: Unsupported value must not be null got disallowed value null
+FAIL 'text-decoration' does not supported 'green wavy underline' assert_not_equals: Unsupported value must not be null got disallowed value null
 

@@ -119,8 +119,8 @@ public:
     bool staleWhileRevalidateEnabled() const { return m_staleWhileRevalidateEnabled; }
     void setStaleWhileRevalidateEnabled(bool enabled) { m_staleWhileRevalidateEnabled = enabled; }
 
-    bool resourceLoadStatisticsDebugModeEnabled() const { return m_resourceLoadStatisticsDebugModeEnabled; }
-    void setResourceLoadStatisticsDebugModeEnabled(bool enabled) { m_resourceLoadStatisticsDebugModeEnabled = enabled; }
+    bool resourceLoadStatisticsDebugModeEnabled() const { return m_trackingPreventionDebugModeEnabled; }
+    void setResourceLoadStatisticsDebugModeEnabled(bool enabled) { m_trackingPreventionDebugModeEnabled = enabled; }
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
     void setTestSpeedMultiplier(unsigned multiplier) { m_testSpeedMultiplier = multiplier; }
@@ -287,7 +287,7 @@ private:
     URL m_standaloneApplicationURL;
     bool m_enableInAppBrowserPrivacyForTesting { false };
     bool m_allowsHSTSWithUntrustedRootCertificate { false };
-    bool m_resourceLoadStatisticsDebugModeEnabled { false };
+    bool m_trackingPreventionDebugModeEnabled { false };
     String m_pcmMachServiceName;
     String m_webPushMachServiceName;
 #if !HAVE(NSURLSESSION_WEBSOCKET)

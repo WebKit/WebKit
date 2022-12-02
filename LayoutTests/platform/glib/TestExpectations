@@ -91,12 +91,6 @@ crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
 http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
 http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 
-# AVIF tests
-fast/images/avif-image-decoding.html [ Pass ]
-fast/images/avif-as-image.html [ Pass ]
-fast/images/animated-avif.html [ Pass ]
-http/tests/images/avif-partial-load-crash.html [ Pass ]
-
 fast/text/emoji-gender-3.html [ Pass ]
 fast/text/emoji-gender-4.html [ Pass ]
 fast/text/emoji-gender-5.html [ Pass ]
@@ -249,6 +243,7 @@ imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ Pass ]
 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ]
 
 # Tests need rebasing
+http/wpt/webcodecs [ Skip ]
 imported/w3c/web-platform-tests/webcodecs [ Skip ]
 
 # Tests that timeout on Apple platforms.
@@ -459,6 +454,7 @@ webkit.org/b/228915 accessibility/selected-state-changed-notifications.html [ Ti
 
 # Not supported
 accessibility/embedded-image-description.html [ Skip ]
+accessibility/aria-keyshortcuts.html [ Skip ]
 
 # Not supported. Skipped also in mac-wk1 and win ports.
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
@@ -582,10 +578,12 @@ webkit.org/b/234606 fast/gradients/conic-gradient-alpha-unpremultiplied.html [ I
 webkit.org/b/234606 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hsl.html [ ImageOnlyFailure ]
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hwb.html [ ImageOnlyFailure ]
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-lch.html [ ImageOnlyFailure ]
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-oklch.html [ ImageOnlyFailure ]
+
+# Remove when Cairo will support non-sRGB interpolation methods.
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hsl.html [ Skip ]
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hwb.html [ Skip ]
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-lch.html [ Skip ]
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-oklch.html [ Skip ]
 
 webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
@@ -1180,6 +1178,17 @@ http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSCon
 # SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+imported/w3c/web-platform-tests/fetch/metadata/generated [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/private-network-access [ DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/248536 imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.html [ Failure ]
+
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Pass Failure ]
+
+# Timeouts. Some flaky, others timing out routinely.
+webkit.org/b/247692 imported/w3c/web-platform-tests/fetch/metadata/generated/element-img-environment-change.sub.html [ Skip ]
+webkit.org/b/247692 imported/w3c/web-platform-tests/fetch/metadata/generated/element-img-environment-change.https.sub.html [ Skip ]
+
 # The tests are crashing, timing out and passing. Mark as Skip for now.
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Skip ]
 webkit.org/b/177940 workers/wasm-hashset-many.html [ Skip ]
@@ -1187,6 +1196,9 @@ webkit.org/b/177940 workers/wasm-hashset.html [ Skip ]
 
 webkit.org/b/201981 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Failure Pass ]
+
+http/wpt/service-workers/fetch-service-worker-preload-use-download-and-clone.https.html [ Failure ]
+http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ Failure ]
 
 webkit.org/b/238738 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 webkit.org/b/238738238738 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Failure ]
@@ -1296,9 +1308,22 @@ webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/root-elem
 
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 
-# Compositing/z-index needs LBSE enabled builds, which is off by default for this port.
+# The following tests need LBSE enabled builds, which is off by default for this port.
 svg/compositing [ Skip ]
 svg/z-index [ Skip ]
+svg/foreignObject/respect-block-margin.html [ Skip ]
+
+# SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
+svg/custom/circle-move-invalidation-small-viewBox.svg [ ImageOnlyFailure ]
+svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
+svg/transforms/transformed-child-in-container-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-child-in-container.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-container-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-container.svg [ ImageOnlyFailure ]
+svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
@@ -1463,6 +1488,8 @@ webkit.org/b/235885 webrtc/datachannel/datachannel-stats.html [ Skip ]
 webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Skip ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
 
+webrtc/video-av1.html [ Skip ]
+
 # GStreamer's DTLS agent currently generates RSA certificates only. DTLS 1.2 is not supported yet (AFAIK).
 webrtc/datachannel/dtls10.html [ Failure ]
 
@@ -1542,8 +1569,6 @@ webkit.org/b/235885 webrtc/remove-track.html [ Failure ]
 webkit.org/b/235885 webrtc/utf8-sdp.html [ Failure ]
 webkit.org/b/235885 webrtc/video-getParameters.html [ Failure ]
 webkit.org/b/235885 webrtc/video-mediastreamtrack-stats.html [ Failure ]
-webkit.org/b/235885 webrtc/video-mute-vp8.html [ Timeout ]
-webkit.org/b/235885 webrtc/video-mute.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
@@ -1878,24 +1903,11 @@ imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.s
 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.any.html [ DumpJSConsoleLogInStdErr ]
 
 # These are skipped globally as they only work with the web-platform.test domain.
-imported/w3c/web-platform-tests/fetch/metadata/redirect/cross-site-redirect.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-cross-site.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/multiple-redirect-same-site.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/same-origin-redirect.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/redirect/same-site-redirect.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/fetch.https.sub.any.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/fetch.https.sub.any.worker.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/font.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/img.https.sub.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/report.https.sub.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Pass ]
 # These tests work totally fine but have unreliable ordering for test output making them flakey.
-imported/w3c/web-platform-tests/fetch/metadata/form.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/history.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/iframe.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
 
@@ -2015,7 +2027,6 @@ fast/css/watchos [ Skip ]
 fast/dom/Window/watchos [ Skip ]
 fast/events/ios [ Skip ]
 fast/events/pointer/ios [ Skip ]
-fast/events/touch/ios [ Skip ]
 fast/events/watchos [ Skip ]
 fast/forms/ios [ Skip ]
 fast/forms/textarea/ios [ Skip ]
@@ -2121,6 +2132,10 @@ webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers
 media/media-allowed-codecs.html [ Skip ]
 media/media-allowed-containers.html [ Skip ]
 media/media-source/media-source-allowed-codecs.html [ Skip ]
+
+# These tests require touch support
+fast/events/touch [ Skip ]
+imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
@@ -2358,8 +2373,6 @@ webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFai
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
-webkit.org/b/141837 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
-webkit.org/b/141837 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
@@ -2385,7 +2398,6 @@ webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
-webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.
@@ -2571,7 +2583,6 @@ webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Fail
 webkit.org/b/201981 http/wpt/service-workers/mac/throttleable.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Failure Pass ]
 
-webkit.org/b/205186 compositing/contents-format/subpixel-antialiased-text.html [ ImageOnlyFailure ]
 webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFailure ]
 webkit.org/b/205998 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked.html [ ImageOnlyFailure ]
 
@@ -3009,6 +3020,8 @@ webkit.org/b/236298 fast/text/simple-line-layout-with-justified-punctuation.html
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 
 webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
+
+webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ Pass ImageOnlyFailure ]
 
 # Failure since import.
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.tentative.sub.html [ Failure ]

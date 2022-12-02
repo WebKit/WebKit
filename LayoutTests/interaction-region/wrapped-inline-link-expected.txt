@@ -18,7 +18,6 @@ Line
         (region
             (rect (-3,-3) width=36 height=78)
 )
-        (hasLightBackground 1)
         (borderRadius 0.00)])
       )
     )

@@ -1,5 +1,5 @@
 Body needed for test_driver.click()
 
-FAIL Feature-Policy header clipboard-write "*" allows the top-level document. promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL Feature-Policy header clipboard-write "*" allows the top-level document. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-write"."
 PASS Feature-Policy header clipboard-write "*" allows same-origin iframes.
 

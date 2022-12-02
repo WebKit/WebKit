@@ -100,42 +100,7 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
     return WTFMove(result);
 }
 
-RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
-    : anchorPoint(0.5, 0.5, 0)
-    , contentsRect(WebCore::FloatPoint(), WebCore::FloatSize(1, 1))
-    , maskLayerID(0)
-    , clonedLayerID(0)
-    , timeOffset(0)
-    , speed(1)
-    , contentsScale(1)
-    , cornerRadius(0)
-    , borderWidth(0)
-    , opacity(1)
-    , backgroundColor(WebCore::Color::transparentBlack)
-    , borderColor(WebCore::Color::black)
-    , edgeAntialiasingMask(kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge)
-    , customAppearance(WebCore::GraphicsLayer::CustomAppearance::None)
-    , minificationFilter(WebCore::PlatformCALayer::FilterType::Linear)
-    , magnificationFilter(WebCore::PlatformCALayer::FilterType::Linear)
-    , blendMode(WebCore::BlendMode::Normal)
-    , windRule(WebCore::WindRule::NonZero)
-    , hidden(false)
-    , backingStoreAttached(true)
-    , geometryFlipped(false)
-    , doubleSided(true)
-    , masksToBounds(false)
-    , opaque(false)
-    , contentsHidden(false)
-    , userInteractionEnabled(true)
-#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    , isSeparated(false)
-#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    , isSeparatedPortal(false)
-    , isDescendentOfSeparatedPortal(false)
-#endif
-#endif
-{
-}
+RemoteLayerTreeTransaction::LayerProperties::LayerProperties() = default;
 
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperties& other)
     : changedProperties(other.changedProperties)
@@ -150,6 +115,9 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , shapePath(other.shapePath)
     , maskLayerID(other.maskLayerID)
     , clonedLayerID(other.clonedLayerID)
+#if ENABLE(SCROLLING_THREAD)
+    , scrollingNodeID(other.scrollingNodeID)
+#endif
     , timeOffset(other.timeOffset)
     , speed(other.speed)
     , contentsScale(other.contentsScale)
@@ -158,12 +126,12 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , opacity(other.opacity)
     , backgroundColor(other.backgroundColor)
     , borderColor(other.borderColor)
-    , edgeAntialiasingMask(other.edgeAntialiasingMask)
     , customAppearance(other.customAppearance)
     , minificationFilter(other.minificationFilter)
     , magnificationFilter(other.magnificationFilter)
     , blendMode(other.blendMode)
     , windRule(other.windRule)
+    , antialiasesEdges(other.antialiasesEdges)
     , hidden(other.hidden)
     , backingStoreAttached(other.backingStoreAttached)
     , geometryFlipped(other.geometryFlipped)
@@ -236,6 +204,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
     if (changedProperties & SublayerTransformChanged)
         encoder << *sublayerTransform;
 
+    if (changedProperties & AntialiasesEdgesChanged)
+        encoder << antialiasesEdges;
+
     if (changedProperties & HiddenChanged)
         encoder << hidden;
 
@@ -259,6 +230,11 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 
     if (changedProperties & ClonedContentsChanged)
         encoder << clonedLayerID;
+
+#if ENABLE(SCROLLING_THREAD)
+    if (changedProperties & ScrollingNodeIDChanged)
+        encoder << scrollingNodeID;
+#endif
 
     if (changedProperties & ContentsRectChanged)
         encoder << contentsRect;
@@ -305,9 +281,6 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 
     if (changedProperties & FiltersChanged)
         encoder << *filters;
-
-    if (changedProperties & EdgeAntialiasingMaskChanged)
-        encoder << edgeAntialiasingMask;
 
     if (changedProperties & CustomAppearanceChanged)
         encoder << customAppearance;
@@ -411,6 +384,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         result.sublayerTransform = makeUnique<WebCore::TransformationMatrix>(transform);
     }
 
+    if (result.changedProperties & AntialiasesEdgesChanged) {
+        if (!decoder.decode(result.antialiasesEdges))
+            return false;
+    }
+
     if (result.changedProperties & HiddenChanged) {
         if (!decoder.decode(result.hidden))
             return false;
@@ -450,6 +428,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(result.clonedLayerID))
             return false;
     }
+
+#if ENABLE(SCROLLING_THREAD)
+    if (result.changedProperties & ScrollingNodeIDChanged) {
+        if (!decoder.decode(result.scrollingNodeID))
+            return false;
+    }
+#endif
 
     if (result.changedProperties & ContentsRectChanged) {
         if (!decoder.decode(result.contentsRect))
@@ -536,11 +521,6 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(*filters))
             return false;
         result.filters = WTFMove(filters);
-    }
-
-    if (result.changedProperties & EdgeAntialiasingMaskChanged) {
-        if (!decoder.decode(result.edgeAntialiasingMask))
-            return false;
     }
 
     if (result.changedProperties & CustomAppearanceChanged) {
@@ -915,6 +895,11 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ClonedContentsChanged)
             ts.dumpProperty("clonedLayer", layerProperties.clonedLayerID);
 
+#if ENABLE(SCROLLING_THREAD)
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ScrollingNodeIDChanged)
+            ts.dumpProperty("scrollingNodeID", layerProperties.scrollingNodeID);
+#endif
+
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
             ts.dumpProperty("contentsRect", layerProperties.contentsRect);
 
@@ -963,8 +948,8 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
                 ts.dumpProperty("removed animation", name);
         }
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
-            ts.dumpProperty("edgeAntialiasingMask", layerProperties.edgeAntialiasingMask);
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AntialiasesEdgesChanged)
+            ts.dumpProperty("antialiasesEdges", layerProperties.antialiasesEdges);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
             ts.dumpProperty("customAppearance", layerProperties.customAppearance);
@@ -989,7 +974,7 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 
 void RemoteLayerTreeTransaction::dump() const
 {
-    fprintf(stderr, "%s", description().utf8().data());
+    WTFLogAlways("%s", description().utf8().data());
 }
 
 String RemoteLayerTreeTransaction::description() const

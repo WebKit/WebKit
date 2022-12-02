@@ -1039,7 +1039,9 @@ void StateManagerGL::updateProgramImageBindings(const gl::Context *context)
     if (!executable || !program)
         return;
 
-    ASSERT(context->getClientVersion() >= gl::ES_3_1 || program->getImageBindings().empty());
+    ASSERT(context->getClientVersion() >= gl::ES_3_1 ||
+           context->getExtensions().shaderPixelLocalStorageANGLE ||
+           program->getImageBindings().empty());
     for (size_t imageUnitIndex : executable->getActiveImagesMask())
     {
         const gl::ImageUnit &imageUnit = glState.getImageUnit(imageUnitIndex);

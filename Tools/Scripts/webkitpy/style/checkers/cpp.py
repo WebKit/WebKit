@@ -230,7 +230,7 @@ def _convert_to_lower_with_underscores(text):
     # (This puts an underscore before A in isA but not A in CBA).
     text = sub(r'(?<=[a-z0-9])([A-Z])(?=\b)', r'_\1', text)
 
-    # Next add underscores when you have a captial letter which is followed by a capital letter
+    # Next add underscores when you have a capital letter which is followed by a capital letter
     # but is not proceeded by one. (This puts an underscore before A in 'WordADay').
     text = sub(r'(?<=[a-z0-9])([A-Z][A-Z_])', r'_\1', text)
 
@@ -3597,6 +3597,10 @@ def _classify_include(filename, include, is_system, include_state):
     # then we consider it the primary header.
     target_base = FileInfo(filename).base_name()
     include_base = FileInfo(include).base_name()
+
+    # Test .cpp, .mm, .c files do not have primary header files.
+    if any(target_base.endswith(suffix) for suffix in ['Test', 'Tests']):
+        return _OTHER_HEADER
 
     # If we haven't encountered a primary header, then be lenient in checking.
     if not include_state.visited_primary_section():

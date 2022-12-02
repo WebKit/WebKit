@@ -225,6 +225,15 @@ bool KeyframeList::containsAnimatableProperty() const
     return false;
 }
 
+bool KeyframeList::containsDirectionAwareProperty() const
+{
+    for (auto& keyframe : m_keyframes) {
+        if (keyframe.containsDirectionAwareProperty())
+            return true;
+    }
+    return false;
+}
+
 bool KeyframeList::usesContainerUnits() const
 {
     for (auto& keyframe : m_keyframes) {

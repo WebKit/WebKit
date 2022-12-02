@@ -124,6 +124,10 @@
 #define EGL_WaitSyncKHR l_EGL_WaitSyncKHR
 #define EGL_PostSubBufferNV l_EGL_PostSubBufferNV
 #define EGL_StreamConsumerGLTextureExternalAttribsNV l_EGL_StreamConsumerGLTextureExternalAttribsNV
+
+#if defined(__cplusplus)
+extern "C" {
+#endif  // defined(__cplusplus)
 ANGLE_NO_EXPORT extern PFNEGLCHOOSECONFIGPROC l_EGL_ChooseConfig;
 ANGLE_NO_EXPORT extern PFNEGLCOPYBUFFERSPROC l_EGL_CopyBuffers;
 ANGLE_NO_EXPORT extern PFNEGLCREATECONTEXTPROC l_EGL_CreateContext;
@@ -243,11 +247,12 @@ ANGLE_NO_EXPORT extern PFNEGLPOSTSUBBUFFERNVPROC l_EGL_PostSubBufferNV;
 ANGLE_NO_EXPORT extern PFNEGLSTREAMCONSUMERGLTEXTUREEXTERNALATTRIBSNVPROC
     l_EGL_StreamConsumerGLTextureExternalAttribsNV;
 
-namespace angle
-{
-using GenericProc = void (*)();
-using LoadProc    = GenericProc(KHRONOS_APIENTRY *)(const char *);
-ANGLE_NO_EXPORT void LoadEGL_EGL(LoadProc loadProc);
-}  // namespace angle
+typedef void (*GenericProc)(void);
+typedef GenericProc(KHRONOS_APIENTRY *LoadProc)(const char *);
+ANGLE_NO_EXPORT void LoadLibEGL_EGL(LoadProc loadProc);
+
+#if defined(__cplusplus)
+}  // extern "C"
+#endif  // defined(__cplusplus)
 
 #endif  // LIBEGL_EGL_LOADER_AUTOGEN_H_

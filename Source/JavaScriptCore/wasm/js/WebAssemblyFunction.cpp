@@ -78,6 +78,8 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     Wasm::Instance* wasmInstance = &instance->instance();
 
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
+        if (signature.argumentType(argIndex).isV128())
+            return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, Wasm::errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use))));
         uint64_t value = fromJSValue(globalObject, signature.argumentType(argIndex), callFrame->argument(argIndex));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         boxedArgs.append(JSValue::decode(value));
@@ -139,7 +141,7 @@ bool WebAssemblyFunction::usesTagRegisters() const
 RegisterSet WebAssemblyFunction::calleeSaves() const
 {
     // Pessimistically save callee saves in BoundsChecking mode since the LLInt always bounds checks
-    RegisterSetBuilder result = Wasm::PinnedRegisterInfo::get().toSave(Wasm::MemoryMode::BoundsChecking);
+    RegisterSetBuilder result = Wasm::PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking);
     if (usesTagRegisters()) {
         RegisterSetBuilder tagCalleeSaves = RegisterSetBuilder::calleeSaveRegisters();
         tagCalleeSaves.filter(RegisterSetBuilder::runtimeTagRegisters());
@@ -181,16 +183,23 @@ Wasm::Instance* WebAssemblyFunction::previousInstance(CallFrame* callFrame)
 
 CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 {
+    if (Options::forceICFailure())
+        return nullptr;
+
     VM& vm = this->vm();
     CCallHelpers jit;
 
-    const auto& typeDefinition = Wasm::TypeInformation::get(typeIndex());
+    JIT_COMMENT(jit, "jsCallEntrypointSlow");
+
+    const auto& typeDefinition = Wasm::TypeInformation::get(typeIndex()).expand();
     const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
     const auto& pinnedRegs = Wasm::PinnedRegisterInfo::get();
     RegisterAtOffsetList registersToSpill = usedCalleeSaveRegisters();
 
     const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
     Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+    if (wasmCallInfo.argumentsOrResultsIncludeV128)
+        return nullptr;
     Wasm::CallInformation jsCallInfo = Wasm::jsCallingConvention().callInformationFor(typeDefinition, Wasm::CallRole::Callee);
     RegisterAtOffsetList savedResultRegisters = wasmCallInfo.computeResultsOffsetList();
 
@@ -387,13 +396,13 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         auto mode = instance()->memoryMode();
 
         if (isARM64E()) {
-            if (mode == Wasm::MemoryMode::BoundsChecking)
+            if (mode == MemoryMode::BoundsChecking)
                 scratchOrBoundsCheckingSize = pinnedRegs.boundsCheckingSizeRegister;
             else
                 scratchOrBoundsCheckingSize = stackLimitGPR;
             jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedBoundsCheckingSize()), scratchOrBoundsCheckingSize);
         } else {
-            if (mode == Wasm::MemoryMode::BoundsChecking)
+            if (mode == MemoryMode::BoundsChecking)
                 jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister);
         }
 

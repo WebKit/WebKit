@@ -1,0 +1,116 @@
+; Copyright (C) 2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(macro (define-once form)
+  (let* ((ps (cdr form))
+         (signature (car ps))
+         (body (cdr ps))
+         (name (car signature)))
+    (if (not (defined? name))
+        `(define ,signature ,@body))))
+
+(define-once (home-literal . relative-subpaths)
+  (apply literal (map home-relative-path relative-subpaths)))
+
+(define-once (home-subpath . relative-subpaths)
+  (apply subpath (map home-relative-path relative-subpaths)))
+
+(define-once (home-prefix . relative-subpaths)
+  (apply prefix (map home-relative-path relative-subpaths)))
+
+(define-once (home-regex . relative-regexes)
+  (require-all
+    (apply any-home-regex relative-regexes)
+    (home-subpath "")))
+
+(define-once (home-relative-path relative-subpath)
+  (string-append "${HOME}" relative-subpath))
+
+(define-once (front-user-home-literal . relative-subpaths)
+  (apply literal (map front-user-home-relative-path relative-subpaths)))
+  
+(define-once (front-user-home-prefix . relative-subpaths)
+  (apply prefix (map front-user-home-relative-path relative-subpaths)))
+  
+(define-once (front-user-home-subpath . relative-subpaths)
+  (apply subpath (map front-user-home-relative-path relative-subpaths)))
+
+(define-once (front-user-home-relative-path relative-subpath)
+  (string-append "${FRONT_USER_HOME}" relative-subpath))
+
+(define-once (%at-finalize func)
+    (let*
+        ((orig-finalize %finalize)
+         (run-func-then-finalize
+             (lambda ()
+                 (func)
+                 (orig-finalize))))
+        ;; Override the SBPL finalizer to run the given function
+        ;; at the end of compilation.
+        (set! %finalize run-func-then-finalize)))
+
+(define-once (%elevated-precedence-finalize)
+    (lambda () #f))
+
+(define-once (%at-elevated-precedence-finalize func)
+    (let*
+        ((orig-finalize %elevated-precedence-finalize)
+         (new-finalize
+             (lambda ()
+                 (orig-finalize)
+                 (func))))
+        (set! %elevated-precedence-finalize new-finalize)))
+
+(if (not (defined? '%have-registered-elevated-precedence-finalize))
+    (begin
+        (define %have-registered-elevated-precedence-finalize #t)
+        (%at-finalize (lambda () (%elevated-precedence-finalize)))))
+
+(macro (with-elevated-precedence form)
+    (let* ((rules (cdr form)))
+        ;; Later rules override earlier rules so emit the given rules as
+        ;; late as possible to give them high precendence.
+        `(%at-elevated-precedence-finalize (lambda () ,@rules))))
+
+(define-once (well-known-system-group-container-path relative-subpath)
+  (string-append "/private/var/containers/Shared/SystemGroup" relative-subpath))
+
+(define-once (well-known-system-group-container-literal . relative-subpaths)
+  (apply literal (map well-known-system-group-container-path relative-subpaths)))
+
+(define-once (well-known-system-group-container-subpath . relative-subpaths)
+  (apply subpath (map well-known-system-group-container-path relative-subpaths)))
+
+(define-once (allow-well-known-system-group-container-subpath-read . subpaths)
+  (for-each
+    (lambda (relative-path)
+      (allow file-read*
+             (well-known-system-group-container-subpath relative-path)))
+      subpaths))
+
+(define-once (allow-well-known-system-group-container-literal-read . subpaths)
+  (for-each
+    (lambda (relative-path)
+      (allow file-read*
+             (well-known-system-group-container-literal relative-path)))
+      subpaths))

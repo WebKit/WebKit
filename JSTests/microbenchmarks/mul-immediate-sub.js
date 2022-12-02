@@ -1,4 +1,5 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown if $architecture == "mips"
 function doTest(max) {
     let sum = 0
     for (let i=0; i<max; ++i) {

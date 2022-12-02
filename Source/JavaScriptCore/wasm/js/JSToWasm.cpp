@@ -236,6 +236,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
         ASSERT(wasmContextInstanceGPR != savedResultsGPR);
         jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, savedResultsGPR);
+        JIT_COMMENT(jit, "operationAllocateResultsArray");
         jit.callOperation(operationAllocateResultsArray);
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
@@ -277,6 +278,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     result->entrypoint.calleeSaveRegisters = registersToSpill;
 
     size_t totalFrameSize = registersToSpill.sizeOfAreaInBytes();
+#if USE(JSVALUE64)
+    ASSERT(totalFrameSize == toSave.numberOfSetGPRs() * sizeof(CPURegister));
+#endif
     CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(typeDefinition);
     RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
     totalFrameSize += wasmFrameConvention.headerAndArgumentStackSizeInBytes;
@@ -297,6 +301,26 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     }
 
     GPRReg wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
+
+    // https://webassembly.github.io/spec/js-api/index.html#exported-function-exotic-objects
+    // If parameters or results contain v128, throw a TypeError.
+    // Note: the above error is thrown each time the [[Call]] method is invoked.
+    if (Options::useWebAssemblySIMD() && (wasmFrameConvention.argumentsOrResultsIncludeV128)) {
+        GPRReg currentInstanceGPR = InvalidGPRReg;
+        if (Context::useFastTLS()) {
+            currentInstanceGPR = pinnedRegs.baseMemoryPointer;
+            jit.loadWasmContextInstance(currentInstanceGPR);
+        } else {
+            currentInstanceGPR = pinnedRegs.wasmContextInstancePointer;
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, JSCallingConvention::instanceStackOffset), wasmContextInstanceGPR);
+            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
+        }
+        ASSERT(currentInstanceGPR != InvalidGPRReg);
+
+        JIT_COMMENT(jit, "Throw an exception because this function uses v128");
+        emitThrowWasmToJSException(jit, currentInstanceGPR, ExceptionType::TypeErrorInvalidV128Use);
+        return result;
+    }
 
     {
         CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(typeDefinition, CallRole::Callee);
@@ -361,11 +385,11 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
 
         GPRReg currentInstanceGPR = Context::useFastTLS() ? baseMemory : wasmContextInstanceGPR;
         if (isARM64E()) {
-            if (mode == Wasm::MemoryMode::BoundsChecking)
+            if (mode == MemoryMode::BoundsChecking)
                 size = pinnedRegs.boundsCheckingSizeRegister;
             jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), size);
         } else {
-            if (mode == Wasm::MemoryMode::BoundsChecking)
+            if (mode == MemoryMode::BoundsChecking)
                 jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister);
         }
 

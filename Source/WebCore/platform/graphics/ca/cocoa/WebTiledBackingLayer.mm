@@ -113,16 +113,6 @@
     return _tileController->wantsDeepColorBackingStore();
 }
 
-- (void)setSupportsSubpixelAntialiasedText:(BOOL)supportsSubpixelAntialiasedText
-{
-    _tileController->setSupportsSubpixelAntialiasedText(supportsSubpixelAntialiasedText);
-}
-
-- (BOOL)supportsSubpixelAntialiasedText
-{
-    return _tileController->supportsSubpixelAntialiasedText();
-}
-
 - (void)setContentsScale:(CGFloat)contentsScale
 {
     _tileController->setContentsScale(contentsScale);

@@ -36,7 +36,7 @@
 #include <WebCore/SpeechRecognitionCaptureSource.h>
 
 #if PLATFORM(COCOA)
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/WebAudioBufferList.h>
 #else
@@ -62,9 +62,6 @@ public:
         : m_identifier(identifier)
         , m_source(WTFMove(source))
         , m_connection(WTFMove(connection))
-#if PLATFORM(COCOA)
-        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&Source::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
-#endif
     {
         m_source->addObserver(*this);
         m_source->addAudioSampleObserver(*this);
@@ -72,9 +69,6 @@ public:
 
     ~Source()
     {
-#if PLATFORM(COCOA)
-        storage().invalidate();
-#endif
         m_source->removeAudioSampleObserver(*this);
         m_source->removeObserver(*this);
     }
@@ -88,13 +82,6 @@ public:
     {
         m_source->stop();
     }
-
-#if PLATFORM(COCOA)
-    SharedRingBufferStorage& storage()
-    {
-        return static_cast<SharedRingBufferStorage&>(m_ringBuffer.storage());
-    }
-#endif
 
 private:
     void sourceStopped() final
@@ -113,11 +100,15 @@ private:
         if (m_description != description) {
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
             m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
-            m_ringBuffer.allocate(m_description.streamDescription(), m_description.sampleRate() * 2);
+            size_t numberOfFrames = m_description->sampleRate() * 2;
+            auto& format = m_description->streamDescription();
+            auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, numberOfFrames);
+            m_ringBuffer = WTFMove(ringBuffer);
+            m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), format), 0);
         }
 
         ASSERT(is<WebAudioBufferList>(audioData));
-        m_ringBuffer.store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
+        m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
         m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::RemoteAudioSamplesAvailable(m_identifier, time, numberOfFrames), 0);
 #else
         UNUSED_PARAM(time);
@@ -126,19 +117,6 @@ private:
         UNUSED_PARAM(numberOfFrames);
 #endif
     }
-
-#if PLATFORM(COCOA)
-
-    void storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& description, size_t numberOfFrames)
-    {
-        DisableMallocRestrictionsForCurrentThreadScope scope;
-        SharedMemory::Handle handle;
-        if (storage)
-            storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), description, numberOfFrames), 0);
-    }
-
-#endif
 
     void audioUnitWillStart() final
     {
@@ -155,8 +133,8 @@ private:
     Ref<IPC::Connection> m_connection;
 
 #if PLATFORM(COCOA)
-    CARingBuffer m_ringBuffer;
-    CAAudioStreamDescription m_description { };
+    std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
+    std::optional<CAAudioStreamDescription> m_description { };
 #endif
 };
 

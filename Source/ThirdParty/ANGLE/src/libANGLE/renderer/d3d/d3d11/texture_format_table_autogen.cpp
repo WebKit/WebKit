@@ -1974,6 +1974,166 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          nullptr);
             return info;
         }
+        case GL_PALETTE4_R5_G6_B5_OES:
+        {
+            static constexpr Format info(GL_PALETTE4_R5_G6_B5_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE4_RGB5_A1_OES:
+        {
+            static constexpr Format info(GL_PALETTE4_RGB5_A1_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE4_RGB8_OES:
+        {
+            static constexpr Format info(GL_PALETTE4_RGB8_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE4_RGBA4_OES:
+        {
+            static constexpr Format info(GL_PALETTE4_RGBA4_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE4_RGBA8_OES:
+        {
+            static constexpr Format info(GL_PALETTE4_RGBA8_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE8_R5_G6_B5_OES:
+        {
+            static constexpr Format info(GL_PALETTE8_R5_G6_B5_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE8_RGB5_A1_OES:
+        {
+            static constexpr Format info(GL_PALETTE8_RGB5_A1_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE8_RGB8_OES:
+        {
+            static constexpr Format info(GL_PALETTE8_RGB8_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE8_RGBA4_OES:
+        {
+            static constexpr Format info(GL_PALETTE8_RGBA4_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_PALETTE8_RGBA8_OES:
+        {
+            static constexpr Format info(GL_PALETTE8_RGBA8_OES,
+                                         angle::FormatID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
         case GL_R11F_G11F_B10F:
         {
             static constexpr Format info(GL_R11F_G11F_B10F,

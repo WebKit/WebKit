@@ -43,6 +43,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
+#include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include <pal/Logging.h>
@@ -108,9 +109,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasUnsupportedFloat:
         stream << "complicated float";
         break;
-    case AvoidanceReason::FlowHasLineBoxContainProperty:
-        stream << "line-box-contain value indicates variable line height";
-        break;
     case AvoidanceReason::FlowHasUnsupportedWritingMode:
         stream << "unsupported writing mode (vertical-rl/horizontal-bt";
         break;
@@ -119,12 +117,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowHasLineSnap:
         stream << "-webkit-line-snap property";
-        break;
-    case AvoidanceReason::FlowHasTextCombine:
-        stream << "text combine";
-        break;
-    case AvoidanceReason::FlowTextIsCombineText:
-        stream << "text is combine";
         break;
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
@@ -150,11 +142,14 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
         break;
-    case AvoidanceReason::FlowIsUnsupportedListItem:
-        stream << "list item with text-indent";
+    case AvoidanceReason::ChildIsUnsupportedListItem:
+        stream << "list item with floats";
         break;
     case AvoidanceReason::FlowHasInitialLetter:
         stream << "intial letter";
+        break;
+    case AvoidanceReason::FlowIsVTTCue:
+        stream << "media track";
         break;
     default:
         break;
@@ -308,24 +303,46 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     OptionSet<AvoidanceReason> reasons;
     if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
-    if (style.hasTextCombine())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
     if (!style.hangingPunctuation().isEmpty())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
     if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
     // These are non-standard properties.
-    if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    if (!renderer.parent()->style().lineClamp().isNone()) {
+    auto deprecatedFlexBoxAncestor = [&]() -> RenderBlock* {
         // Line clamp is on the deprecated flex box and not the root.
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
+        for (auto* ancestor = renderer.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            if (is<RenderDeprecatedFlexibleBox>(*ancestor))
+                return ancestor;
+            if (ancestor->establishesIndependentFormattingContext())
+                return nullptr;
+        }
+        return nullptr;
+    };
+    if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone()) {
+        auto isSupportedLineClamp = [&] {
+            if (ancestor->style().lineClamp().isPercentage())
+                return false;
+            for (auto* flexItem = ancestor->firstChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
+                if (!is<RenderBlockFlow>(*flexItem))
+                    return false;
+                auto* firstInFlowChild = downcast<RenderBlockFlow>(*flexItem).firstChild();
+                if (!firstInFlowChild || !firstInFlowChild->isInline())
+                    return false;
+                // No anchor box support either (let's just disable content with links).
+                for (auto* inFlowChild = downcast<RenderBlockFlow>(*flexItem).lastChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
+                    if (inFlowChild->style().isLink())
+                        return false;
+                }
+            }
+            return true;
+        };
+        if (!isSupportedLineClamp())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
     }
-
     return reasons;
 }
 
@@ -350,8 +367,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     OptionSet<AvoidanceReason> reasons;
 
     if (is<RenderText>(child)) {
-        if (child.isCombineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
         if (child.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
 
@@ -398,37 +413,27 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     };
 
     auto& renderer = downcast<RenderElement>(child);
-    if (is<RenderReplaced>(renderer)) {
-        if (!isSupportedFloatingOrPositioned(renderer))
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
+    if (renderer.isSVGRootOrLegacySVGRoot())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
 
-        if (renderer.isSVGRootOrLegacySVGRoot())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+    if (renderer.isRubyRun())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
 
-        return reasons;
-    }
-
-    if (is<RenderListItem>(renderer)) {
-        if (!isSupportedFloatingOrPositioned(renderer))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
-        return reasons;
-    }
-
-    if (is<RenderListMarker>(renderer) && is<RenderListItem>(renderer.parent()) && !is<RenderListMarker>(renderer.nextSibling()))
-        return reasons;
-
-    if (is<RenderTable>(renderer)) {
+    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)) {
         if (!isSupportedFloatingOrPositioned(renderer))
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         return reasons;
     }
 
-    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer)) {
-        if (!isSupportedFloatingOrPositioned(renderer))
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
-        if (renderer.isRubyRun())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
+    if (is<RenderListMarker>(renderer)) {
+        auto& listMarker = downcast<RenderListMarker>(renderer);
+        auto* associatedListItem = listMarker.listItem();
+        for (auto* ancestor = listMarker.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            if (ancestor->containsFloats())
+                SET_REASON_AND_RETURN_IF_NEEDED(ChildIsUnsupportedListItem, reasons, includeReasons);
+            if (ancestor == associatedListItem)
+                break;
+        }
         return reasons;
     }
 
@@ -488,8 +493,12 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-    if (is<RenderListItem>(flow) && (flow.isPositioned() || flow.isFloating()))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
+#if ENABLE(VIDEO)
+    if (is<RenderVTTCue>(flow) || is<RenderVTTCue>(flow.parent())) {
+        // First child of the RenderVTTCue is the backdropBox.
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsVTTCue, reasons, includeReasons);
+    }
+#endif
 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())

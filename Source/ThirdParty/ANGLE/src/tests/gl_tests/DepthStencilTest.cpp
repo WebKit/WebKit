@@ -10,7 +10,6 @@
 
 #include "test_utils/ANGLETest.h"
 
-#include "platform/FeaturesVk_autogen.h"
 #include "test_utils/gl_raii.h"
 
 using namespace angle;

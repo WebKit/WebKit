@@ -39,8 +39,13 @@
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LinkIcon.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/CString.h>
+
+namespace WebKit {
+class WebKitWebResourceLoadManager;
+}
 
 void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
@@ -72,13 +77,12 @@ void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, W
 void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>);
 void webkitWebViewHandleDownloadRequest(WebKitWebView*, WebKit::DownloadProxy*);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
-void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy&, uint64_t resourceIdentifier, WebKitURIRequest*);
+WebKit::WebKitWebResourceLoadManager* webkitWebViewGetWebResourceLoadManager(WebKitWebView*);
+void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKitWebResource*, WebCore::ResourceRequest&&);
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
-WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 #if PLATFORM(GTK)
 void webKitWebViewDidReceiveSnapshot(WebKitWebView*, uint64_t callbackID, WebKit::WebImage*);
 #endif
-void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 void webkitWebViewMaximizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
 void webkitWebViewMinimizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
 void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&&);
@@ -98,12 +102,9 @@ WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
 
 #if PLATFORM(GTK)
 bool webkitWebViewEmitRunColorChooser(WebKitWebView*, WebKitColorChooserRequest*);
-bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKitOptionMenu*, const GdkEvent*);
 #endif
 
-#if PLATFORM(WPE)
 bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKitOptionMenu*);
-#endif
 
 gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*);
 gboolean webkitWebViewScriptDialog(WebKitWebView*, WebKitScriptDialog*);
@@ -124,3 +125,4 @@ void webkitWebViewDeleteSurrounding(WebKitWebView*, int offset, unsigned charact
 void webkitWebViewSetIsWebProcessResponsive(WebKitWebView*, bool);
 
 guint createShowOptionMenuSignal(WebKitWebViewClass*);
+guint createContextMenuSignal(WebKitWebViewClass*);

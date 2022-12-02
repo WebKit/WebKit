@@ -27,9 +27,10 @@
 #include "CacheStorageConnection.h"
 
 #include "FetchResponse.h"
-#include <wtf/RandomNumber.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {
+
 using namespace WebCore::DOMCacheEngine;
 
 static inline uint64_t formDataSize(const FormData& formData)
@@ -67,7 +68,7 @@ uint64_t CacheStorageConnection::computeRecordBodySize(const FetchResponse& resp
         uint64_t realSize = computeRealBodySize(body);
 
         // Padding the size as per https://github.com/whatwg/storage/issues/31.
-        uint64_t sizeWithPadding = realSize + static_cast<uint64_t>(randomNumber() * 128000);
+        uint64_t sizeWithPadding = realSize + static_cast<uint64_t>(cryptographicallyRandomUnitInterval() * 128000);
         sizeWithPadding = ((sizeWithPadding / 32000) + 1) * 32000;
 
         m_opaqueResponseToSizeWithPaddingMap.set(response.opaqueLoadIdentifier(), sizeWithPadding);

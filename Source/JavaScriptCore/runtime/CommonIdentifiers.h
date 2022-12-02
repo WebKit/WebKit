@@ -136,6 +136,8 @@
     macro(go) \
     macro(granularity) \
     macro(groups) \
+    macro(grow) \
+    macro(growable) \
     macro(has) \
     macro(hasIndices) \
     macro(hasOwn) \
@@ -169,6 +171,7 @@
     macro(isPrototypeOf) \
     macro(isView) \
     macro(isWatchpoint) \
+    macro(isWellFormed) \
     macro(isWordLike) \
     macro(jettisonReason) \
     macro(join) \
@@ -180,6 +183,7 @@
     macro(line) \
     macro(locale) \
     macro(localeMatcher) \
+    macro(maxByteLength) \
     macro(maximumFractionDigits) \
     macro(maximumSignificantDigits) \
     macro(message) \
@@ -226,6 +230,8 @@
     macro(raw) \
     macro(region) \
     macro(replace) \
+    macro(resizable) \
+    macro(resize) \
     macro(resolve) \
     macro(roundingIncrement) \
     macro(roundingMode) \
@@ -265,7 +271,9 @@
     macro(toPrecision) \
     macro(toString) \
     macro(toTemporalInstant) \
+    macro(toWellFormed) \
     macro(trailingZeroDisplay) \
+    macro(transfer) \
     macro(type) \
     macro(uid) \
     macro(unicode) \

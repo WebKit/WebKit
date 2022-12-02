@@ -1,0 +1,23 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EXPECTED (video.currentTime == '18') OK
+Appending PTS=0, DTS=0, sync
+Appending PTS=3, DTS=1
+Appending PTS=1, DTS=2
+Appending PTS=2, DTS=3
+Appending PTS=4, DTS=4
+Appending PTS=5, DTS=5, sync
+Appending PTS=8, DTS=6
+Appending PTS=6, DTS=7
+Appending PTS=7, DTS=8
+Appending PTS=9, DTS=9
+Appending PTS=10, DTS=10, sync
+Appending PTS=13, DTS=11
+Appending PTS=11, DTS=12
+Appending PTS=12, DTS=13
+Appending PTS=14, DTS=14
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+EXPECTED (bufferedRanges() == '[ 10...15 ]') OK
+END OF TEST
+

@@ -26,98 +26,14 @@
 #pragma once
 
 #include "ProcessIdentifier.h"
+#include "ProcessQualified.h"
 #include <wtf/DebugUtilities.h>
 #include <wtf/Hasher.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
-struct BackForwardItemIdentifier {
-    ProcessIdentifier processIdentifier;
-    enum ItemIdentifierType { };
-    ObjectIdentifier<ItemIdentifierType> itemIdentifier;
-
-    explicit operator bool() const { return processIdentifier && itemIdentifier; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<BackForwardItemIdentifier> decode(Decoder&);
-
-    String string() const { return makeString(processIdentifier.toUInt64(), '-', itemIdentifier.toUInt64()); }
-
-    WEBCORE_EXPORT bool isValid() const;
-
-#if !LOG_DISABLED
-    const char* logString() const;
-#endif
-};
-
-inline void add(Hasher& hasher, const BackForwardItemIdentifier& identifier)
-{
-    add(hasher, identifier.processIdentifier, identifier.itemIdentifier);
-}
-
-#if !LOG_DISABLED
-
-inline const char* BackForwardItemIdentifier::logString() const
-{
-    return debugString(makeString(processIdentifier.toUInt64(), '-', itemIdentifier.toUInt64()));
-}
-
-#endif
-
-inline bool operator==(const BackForwardItemIdentifier& a, const BackForwardItemIdentifier& b)
-{
-    return a.processIdentifier == b.processIdentifier &&  a.itemIdentifier == b.itemIdentifier;
-}
-
-inline bool operator!=(const BackForwardItemIdentifier& a, const BackForwardItemIdentifier& b)
-{
-    return !(a == b);
-}
-
-template<class Encoder>
-void BackForwardItemIdentifier::encode(Encoder& encoder) const
-{
-    encoder << processIdentifier << itemIdentifier;
-}
-
-template<class Decoder>
-std::optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decoder& decoder)
-{
-    std::optional<ProcessIdentifier> processIdentifier;
-    decoder >> processIdentifier;
-    if (!processIdentifier)
-        return std::nullopt;
-
-    std::optional<ObjectIdentifier<ItemIdentifierType>> itemIdentifier;
-    decoder >> itemIdentifier;
-    if (!itemIdentifier)
-        return std::nullopt;
-
-    BackForwardItemIdentifier result = { WTFMove(*processIdentifier), WTFMove(*itemIdentifier) };
-    if (!result.isValid())
-        return std::nullopt;
-    return result;
-}
+enum BackForwardItemIdentifierType { };
+using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 
 } // namespace WebCore
-
-namespace WTF {
-
-struct BackForwardItemIdentifierHash {
-    static unsigned hash(const WebCore::BackForwardItemIdentifier& key) { return computeHash(key); }
-    static bool equal(const WebCore::BackForwardItemIdentifier& a, const WebCore::BackForwardItemIdentifier& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-template<> struct HashTraits<WebCore::BackForwardItemIdentifier> : GenericHashTraits<WebCore::BackForwardItemIdentifier> {
-    static WebCore::BackForwardItemIdentifier emptyValue() { return { }; }
-
-    static void constructDeletedValue(WebCore::BackForwardItemIdentifier& slot) { new (NotNull, &slot.processIdentifier) WebCore::ProcessIdentifier(WTF::HashTableDeletedValue); }
-
-    static bool isDeletedValue(const WebCore::BackForwardItemIdentifier& slot) { return slot.processIdentifier.isHashTableDeletedValue(); }
-};
-
-template<> struct DefaultHash<WebCore::BackForwardItemIdentifier> : BackForwardItemIdentifierHash { };
-
-} // namespace WTF

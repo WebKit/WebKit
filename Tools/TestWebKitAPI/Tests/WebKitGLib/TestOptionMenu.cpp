@@ -28,7 +28,6 @@ using PlatformRectangle = GdkRectangle;
 using PlatformRectangle = WebKitRectangle;
 #endif
 
-#if !PLATFORM(GTK) || !USE(GTK4)
 class OptionMenuTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(OptionMenuTest);
@@ -55,7 +54,7 @@ public:
     }
 
     static gboolean showOptionMenuCallback(WebKitWebView* webView, WebKitOptionMenu* menu,
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
         GdkEvent* event,
 #endif
         PlatformRectangle* rect, OptionMenuTest* test)
@@ -63,6 +62,9 @@ public:
         g_assert_true(test->m_webView == webView);
         g_assert_nonnull(rect);
         g_assert_true(WEBKIT_IS_OPTION_MENU(menu));
+#if PLATFORM(GTK) && !USE(GTK4)
+        g_assert_true(webkit_option_menu_get_event(menu) == event);
+#endif
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(menu));
         test->showOptionMenu(menu, rect);
         return TRUE;
@@ -302,17 +304,13 @@ static void testOptionMenuSelect(OptionMenuTest* test, gconstpointer)
     g_assert_nonnull(result);
     g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(result), ==, 1);
 }
-#endif // !PLATFORM(GTK) || !USE(GTK4)
 
 void beforeAll()
 {
-#if !PLATFORM(GTK) || !USE(GTK4)
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246716
     OptionMenuTest::add("WebKitWebView", "option-menu-simple", testOptionMenuSimple);
     OptionMenuTest::add("WebKitWebView", "option-menu-groups", testOptionMenuGroups);
     OptionMenuTest::add("WebKitWebView", "option-menu-activate", testOptionMenuActivate);
     OptionMenuTest::add("WebKitWebView", "option-menu-select", testOptionMenuSelect);
-#endif
 }
 
 void afterAll()

@@ -1,0 +1,68 @@
+/*!\mainpage AOMedia AV1 Codec
+
+  \tableofcontents
+
+  \section aom_sdk AOMedia Codec SDK
+
+  \subsection main_intro Introduction
+  Welcome to the AOMedia Codec SDK. This SDK allows you to integrate your
+  applications with the AOM and AV1 video codecs.
+
+  This distribution of the AOMedia Codec SDK includes the following support:
+
+  \if av1_encoder
+  - \ref aom_encoder
+  \endif
+  \if av1_decoder
+  - \ref aom_decoder
+  \endif
+
+
+  \subsection main_startpoints Starting Points
+  - Consult the \ref changelog for a complete list of improvements in this
+    release.
+  \if av1_md_support
+  - [README](\ref LREADME) contains instructions on compiling the sample applications.
+  \else
+  - \ref readme contains instructions on compiling the sample applications.
+  \endif
+  - Read the \ref usage "usage" for a narrative on codec usage.
+  - Read the \ref samples "sample code" for examples of how to interact with the
+    codec.
+  - \ref codec reference
+  \if encoder
+  - \ref encoder reference
+  \endif
+  \if decoder
+  - \ref decoder reference
+  \endif
+  <br>
+
+  \section av1_guide AV1 Developer's Guide
+
+  \if av1_encoder
+  - \ref encoder_guide
+  \endif
+
+  \if av1_decoder
+  - \ref decoder_guide
+  \endif
+  <br>
+
+  \section main_support Support Options & FAQ
+  The AOMedia project is an open source project supported by its community.
+  For questions about this SDK or for help, please visit http://aomedia.org/
+  and email the aomediacodec@jointdevelopment.kavi.com list.
+*/
+
+/*!\page changelog CHANGELOG
+   \verbinclude CHANGELOG
+*/
+
+\ifnot av1_md_support
+/*!\page readme README.md
+   \include README.md
+*/
+\endif
+
+/*!\defgroup codecs Supported Codecs */

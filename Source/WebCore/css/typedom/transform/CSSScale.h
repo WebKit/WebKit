@@ -53,6 +53,8 @@ public:
 
     CSSTransformType getType() const final { return CSSTransformType::Scale; }
 
+    RefPtr<CSSValue> toCSSValue() const final;
+
 private:
     CSSScale(CSSTransformComponent::Is2D, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>);
 

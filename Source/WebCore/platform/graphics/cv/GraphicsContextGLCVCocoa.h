@@ -68,8 +68,6 @@ private:
     GCGLint m_uvTextureSizeUniformLocation { -1 };
 
     struct TextureContent {
-        // FIXME: Switch back to UnsafePointer<IOSurfaceRef> once UnsafePointer is safe to compare.
-        // http://webkit.org/b/235435
         intptr_t surface { 0 };
         uint32_t surfaceSeed { 0 };
         GCGLint level { 0 };

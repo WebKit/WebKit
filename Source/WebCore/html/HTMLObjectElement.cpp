@@ -65,7 +65,7 @@ using namespace HTMLNames;
 
 inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLPlugInImageElement(tagName, document)
-    , FormAssociatedElement(form)
+    , FormListedElement(form)
 {
     ASSERT(hasTagName(objectTag));
 }
@@ -295,7 +295,7 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 Node::InsertedIntoAncestorResult HTMLObjectElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLPlugInImageElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    FormAssociatedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    FormListedElement::elementInsertedIntoAncestor(*this, insertionType);
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
@@ -307,7 +307,7 @@ void HTMLObjectElement::didFinishInsertingNode()
 void HTMLObjectElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLPlugInImageElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    FormAssociatedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormListedElement::elementRemovedFromAncestor(*this, removalType);
 }
 
 void HTMLObjectElement::childrenChanged(const ChildChange& change)
@@ -461,7 +461,7 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 
 void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    FormAssociatedElement::didMoveToNewDocument(oldDocument);
+    FormListedElement::didMoveToNewDocument(oldDocument);
     HTMLPlugInImageElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 

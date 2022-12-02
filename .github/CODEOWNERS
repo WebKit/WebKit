@@ -74,16 +74,16 @@
 # ================================================================================
 # Web Inspector
 
-/Source/JavaScriptCore/debugger @dcrousso @patrickangle
-/Source/JavaScriptCore/inspector @dcrousso @patrickangle
-/Source/WebCore/inspector @dcrousso @patrickangle
+/Source/JavaScriptCore/debugger @patrickangle
+/Source/JavaScriptCore/inspector @patrickangle
+/Source/WebCore/inspector @patrickangle
 /Source/WebInspectorUI @dcrousso @patrickangle
-/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
-/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
-/Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle
-/LayoutTests/http/tests/inspector @dcrousso @patrickangle
-/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
-/LayoutTests/inspector @dcrousso @patrickangle
+/Source/WebKit/UIProcess/Inspector @patrickangle
+/Source/WebKit/WebProcess/Inspector @patrickangle
+/Tools/Scripts/webkitpy/inspector @patrickangle
+/LayoutTests/http/tests/inspector @patrickangle
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @patrickangle
+/LayoutTests/inspector @patrickangle
 
 # ================================================================================
 # WebCore
@@ -95,26 +95,21 @@
 /Source/WebCore/editing @rniwa
 /LayoutTests/editing @rniwa
 
-/Source/WebCore/Modules/applepay @dcrousso
-/Source/WebCore/Modules/paymentrequest @dcrousso
-/LayoutTests/http/tests/paymentrequest @dcrousso
-/LayoutTests/http/tests/ssl/applepay @dcrousso
-
-/Source/WebCore/Modules/applepay-ams-ui @dcrousso
-/LayoutTests/http/tests/ssl/applepay-ams-ui @dcrousso
-
-/Source/WebCore/Modules/mediacontrols @dcrousso
-/Source/WebCore/Modules/modern-media-controls @dcrousso
-/LayoutTests/media/modern-media-controls @dcrousso
-
+/Source/WebCore/Modules/applicationmanifest/ @marcoscaceres
 /Source/WebCore/Modules/beacon @cdumez
+/Source/WebCore/Modules/contact-picker @marcoscaceres
 /Source/WebCore/Modules/entriesapi @cdumez
-/Source/WebCore/Modules/geolocation @cdumez
+/Source/WebCore/Modules/geolocation @cdumez @marcoscaceres
+/Source/WebCore/Modules/model-element @graouts @marcoscaceres
 /Source/WebCore/Modules/notifications @cdumez
+/Source/WebCore/Modules/paymentrequest @marcoscaceres
+/Source/WebCore/Modules/permissions @marcoscaceres
+/Source/WebCore/Modules/screen-wake-lock @marcoscaceres
 /Source/WebCore/Modules/web-locks @cdumez
 /Source/WebCore/Modules/webaudio @cdumez
 /Source/WebCore/bindings @cdumez
 /Source/WebCore/html @cdumez @rniwa
+/Source/WebCore/html/UserActivation.* @marcoscaceres
 /Source/WebCore/loader @cdumez
 /Source/WebCore/workers @cdumez
 /Source/WebCore/worklets @cdumez
@@ -122,9 +117,16 @@
 /Source/WebCore/page @cdumez
 
 /Source/WebCore/animation @graouts
-/Source/WebCore/Modules/model-element @graouts
+
 
 /Source/WebCore/crypto/ @zdobersek
+
+/LayoutTests/http/tests/paymentrequest @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/payment-request @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/web-share @marcoscaceres
 
 # ================================================================================
 # WebKit

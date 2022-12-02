@@ -69,6 +69,7 @@
 #import <pal/Logging.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
@@ -182,6 +183,12 @@ SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #endif
 
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGE_CONTROL)
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
+SOFT_LINK_CONSTANT_MAY_FAIL(libAccessibility, kAXSReduceMotionAutoplayAnimatedImagesChangedNotification, CFStringRef)
+#endif
+
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
 
 @interface WKProcessPoolWeakObserver : NSObject {
@@ -260,6 +267,10 @@ static AccessibilityPreferences accessibilityPreferences()
     preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
 #endif
     preferences.enhanceTextLegibilityOverall = _AXSEnhanceTextLegibilityEnabled();
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGE_CONTROL)
+    if (auto* functionPointer = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr())
+        preferences.imageAnimationEnabled = functionPointer();
+#endif
     return preferences;
 }
 
@@ -296,10 +307,15 @@ static bool determineIfWeShouldCrashWhenCreatingWebProcess()
     std::call_once(
         onceFlag,
         [&] {
-            if (isInternalBuild()
-                && ![[getOSASystemConfigurationClass() automatedDeviceGroup] isEqualToString:@"CanaryExperimentOptOut"]
-                && !canaryInBaseState())
-                shouldCrashResult = true;
+            if (isInternalBuild()) {
+                auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
+
+                RELEASE_LOG(Process, "shouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
+
+                if (![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"]
+                    && !canaryInBaseState())
+                    shouldCrashResult = true;
+            }
         });
 
     return shouldCrashResult;
@@ -490,7 +506,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
-    if (!isFullWebBrowser()) {
+    if (!isFullWebBrowser() || isRunningTest(WebCore::applicationBundleIdentifier())) {
         if (auto trustdExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt))
             parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
         parameters.enableDecodingHEIC = true;
@@ -522,12 +538,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.hasStylusDevice = [[WKStylusDeviceObserver sharedInstance] hasStylusDevice];
 #endif
 
-    // If we're using the GPU process for DOM rendering, we can't query the maximum IOSurface size in the Web Content process.
-    // However, querying this is a launch time regression, so limit this to only the necessary case.
-    if (m_defaultPageGroup->preferences().useGPUProcessForDOMRenderingEnabled())
-        parameters.maximumIOSurfaceSize = WebCore::IOSurface::maximumSize();
-
+#if HAVE(IOSURFACE)
+    parameters.maximumIOSurfaceSize = WebCore::IOSurface::maximumSize();
     parameters.bytesPerRowIOSurfaceAlignment = WebCore::IOSurface::bytesPerRowAlignment();
+#endif
 
     parameters.accessibilityPreferences = accessibilityPreferences();
 #if PLATFORM(IOS_FAMILY)
@@ -817,6 +831,10 @@ void WebProcessPool::registerNotificationObservers()
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification);
 #endif
+#if HAVE(ACCESSIBILITY_ANIMATED_IMAGE_CONTROL)
+    if (canLoadkAXSReduceMotionAutoplayAnimatedImagesChangedNotification())
+        addCFNotificationObserver(accessibilityPreferencesChangedCallback, getkAXSReduceMotionAutoplayAnimatedImagesChangedNotification());
+#endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
@@ -887,6 +905,7 @@ bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
 }
 
 #if HAVE(CVDISPLAYLINK)
+
 std::optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
@@ -899,45 +918,45 @@ std::optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore
     return frameRate;
 }
 
-void WebProcessPool::startDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+void WebProcessPool::startDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
-        displayLink->addObserver(connection.uniqueID(), observerID, preferredFramesPerSecond);
+        displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
         return;
     }
 
     auto displayLink = makeUnique<DisplayLink>(displayID);
-    displayLink->addObserver(connection.uniqueID(), observerID, preferredFramesPerSecond);
+    displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
     m_displayLinks.add(WTFMove(displayLink));
 }
 
-void WebProcessPool::stopDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
+void WebProcessPool::stopDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->removeObserver(connection.uniqueID(), observerID);
+        displayLink->removeObserver(processProxy.displayLinkClient(), observerID);
 }
 
-void WebProcessPool::stopDisplayLinks(IPC::Connection& connection)
+void WebProcessPool::stopDisplayLinks(WebProcessProxy& processProxy)
 {
     for (auto& displayLink : m_displayLinks.displayLinks())
-        displayLink->removeObservers(connection.uniqueID());
+        displayLink->removeClient(processProxy.displayLinkClient());
 }
 
-void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] WebProcessPool::setDisplayLinkPreferredFramesPerSecond - display " << displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
 
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->setPreferredFramesPerSecond(connection.uniqueID(), observerID, preferredFramesPerSecond);
+        displayLink->setObserverPreferredFramesPerSecond(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
 }
 
-void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(IPC::Connection& connection, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
+void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebProcessProxy& processProxy, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
 {
     if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
         if (wantsFullSpeedUpdates)
-            displayLink->incrementFullSpeedRequestClientCount(connection.uniqueID());
+            displayLink->incrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
         else
-            displayLink->decrementFullSpeedRequestClientCount(connection.uniqueID());
+            displayLink->decrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
     }
 }
 

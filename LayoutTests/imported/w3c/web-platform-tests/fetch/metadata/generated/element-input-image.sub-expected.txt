@@ -1,0 +1,21 @@
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL http://www.localhost:8800/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination, no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: object "Error: Failed to query for recorded headers."
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination, no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination, no attributes assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: object "Error: Failed to query for recorded headers."
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination, no attributes assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination, no attributes assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: object "Error: Failed to query for recorded headers."
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination, no attributes assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination, no attributes
+FAIL sec-fetch-user - Not sent to non-trustworthy same-site destination, no attributes promise_test: Unhandled rejection with value: object "Error: Failed to query for recorded headers."
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination, no attributes
+FAIL sec-fetch-site - HTTPS downgrade (header not sent), no attributes assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+PASS sec-fetch-site - HTTPS upgrade, no attributes
+PASS sec-fetch-site - HTTPS downgrade-upgrade, no attributes
+

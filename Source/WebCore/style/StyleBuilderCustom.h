@@ -150,6 +150,7 @@ public:
     static void applyValueWritingMode(BuilderState&, CSSValue&);
     static void applyValueAlt(BuilderState&, CSSValue&);
     static void applyValueWillChange(BuilderState&, CSSValue&);
+    static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
     static void applyValueColorScheme(BuilderState&, CSSValue&);
@@ -722,6 +723,11 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
 
 inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialLineHeight(builderState);
+        return;
+    }
+
     std::optional<Length> lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
     if (!lineHeight)
         return;
@@ -1468,8 +1474,7 @@ inline std::pair<StyleColor, SVGPaintType> colorAndSVGPaintType(BuilderState& bu
     } else if (localValue.isValueID() && localValue.valueID() == CSSValueNone)
         paintType = url.isEmpty() ? SVGPaintType::None : SVGPaintType::URINone;
     else if (StyleColor::isCurrentColor(localValue)) {
-        // FIXME: We should resolve currentcolor at use time, not now.
-        color = builderState.style().color();
+        color = StyleColor::currentColor();
         paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
         builderState.style().setDisallowsFastPathInheritance();
     } else {
@@ -1563,7 +1568,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
 
     bool didSet = false;
     for (auto& item : downcast<CSSValueList>(value)) {
-        if (is<CSSImageGeneratorValue>(item) || is<CSSImageSetValue>(item) || is<CSSImageValue>(item)) {
+        if (item->isImage()) {
             builderState.style().setContent(builderState.createStyleImage(item.get()), didSet);
             didSet = true;
             continue;
@@ -1647,6 +1652,10 @@ inline void BuilderCustom::applyInitialFontVariantLigatures(BuilderState& builde
 
 inline void BuilderCustom::applyValueFontVariantLigatures(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialFontVariantLigatures(builderState);
+        return;
+    }
     auto fontDescription = builderState.fontDescription();
     auto variantLigatures = extractFontVariantLigatures(value);
     fontDescription.setVariantCommonLigatures(variantLigatures.commonLigatures);
@@ -1680,6 +1689,10 @@ inline void BuilderCustom::applyInitialFontVariantNumeric(BuilderState& builderS
 
 inline void BuilderCustom::applyValueFontVariantNumeric(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialFontVariantNumeric(builderState);
+        return;
+    }
     auto fontDescription = builderState.fontDescription();
     auto variantNumeric = extractFontVariantNumeric(value);
     fontDescription.setVariantNumericFigure(variantNumeric.figure);
@@ -1710,6 +1723,10 @@ inline void BuilderCustom::applyInitialFontVariantEastAsian(BuilderState& builde
 
 inline void BuilderCustom::applyValueFontVariantEastAsian(BuilderState& builderState, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+        applyInitialFontVariantEastAsian(builderState);
+        return;
+    }
     auto fontDescription = builderState.fontDescription();
     auto variantEastAsian = extractFontVariantEastAsian(value);
     fontDescription.setVariantEastAsianVariant(variantEastAsian.variant);
@@ -1735,12 +1752,12 @@ inline void BuilderCustom::applyInitialFontVariantAlternates(BuilderState& build
 inline void BuilderCustom::applyValueFontVariantAlternates(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID()));
         // Apply "normal" value (which is the same as initial).
         applyInitialFontVariantAlternates(builderState);
         return;
     }
-    
+
     if (value.isFontVariantAlternatesValue()) {
         auto alternates = downcast<CSSFontVariantAlternatesValue>(value).value();
         auto fontDescription = builderState.fontDescription();
@@ -1813,40 +1830,38 @@ inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builde
     return 0.25f;
 }
 
-inline void BuilderCustom::applyInitialFontStyle(BuilderState& builderState)
+static inline void applyFontStyle(BuilderState& state, std::optional<FontSelectionValue> slope, FontStyleAxis axis)
 {
-    auto fontDescription = builderState.fontDescription();
-    fontDescription.setItalic(FontCascadeDescription::initialItalic());
-    fontDescription.setFontStyleAxis(FontCascadeDescription::initialFontStyleAxis());
-    builderState.setFontDescription(WTFMove(fontDescription));
-}
-
-inline void BuilderCustom::applyInheritFontStyle(BuilderState& builderState)
-{
-    auto fontDescription = builderState.fontDescription();
-    fontDescription.setItalic(builderState.parentFontDescription().italic());
-    fontDescription.setFontStyleAxis(builderState.parentFontDescription().fontStyleAxis());
-    builderState.setFontDescription(WTFMove(fontDescription));
-}
-
-inline void BuilderCustom::applyValueFontStyle(BuilderState& builderState, CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        auto valueID = downcast<CSSPrimitiveValue>(value).valueID();
-        ASSERT_UNUSED(valueID, CSSPropertyParserHelpers::isSystemFontShorthand(valueID));
-
-        auto fontDescription = builderState.fontDescription();
-        fontDescription.setItalic(std::nullopt);
-        fontDescription.setFontStyleAxis(FontStyleAxis::slnt);
-        builderState.setFontDescription(WTFMove(fontDescription));
+    auto& description = state.fontDescription();
+    if (description.italic() == slope && description.fontStyleAxis() == axis)
         return;
-    }
 
-    auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
-    auto fontDescription = builderState.fontDescription();
-    fontDescription.setItalic(BuilderConverter::convertFontStyleFromValue(fontStyleValue));
-    fontDescription.setFontStyleAxis(fontStyleValue.fontStyleValue->valueID() == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
-    builderState.setFontDescription(WTFMove(fontDescription));
+    auto copy = description;
+    copy.setItalic(slope);
+    copy.setFontStyleAxis(axis);
+    state.setFontDescription(WTFMove(copy));
+}
+
+inline void BuilderCustom::applyInitialFontStyle(BuilderState& state)
+{
+    applyFontStyle(state, FontCascadeDescription::initialItalic(), FontCascadeDescription::initialFontStyleAxis());
+}
+
+inline void BuilderCustom::applyInheritFontStyle(BuilderState& state)
+{
+    applyFontStyle(state, state.parentFontDescription().italic(), state.parentFontDescription().fontStyleAxis());
+}
+
+inline void BuilderCustom::applyValueFontStyle(BuilderState& state, CSSValue& value)
+{
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    auto keyword = primitiveValue ? primitiveValue->valueID() : CSSValueOblique;
+
+    std::optional<FontSelectionValue> slope;
+    if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
+        slope = BuilderConverter::convertFontStyleFromValue(value);
+
+    applyFontStyle(state, slope, keyword == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
 }
 
 inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSValue& value)
@@ -1907,6 +1922,19 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         return;
 
     builderState.setFontSize(fontDescription, std::min(maximumAllowedFontSize, size));
+    builderState.setFontDescription(WTFMove(fontDescription));
+}
+
+inline void BuilderCustom::applyValueFontSizeAdjust(BuilderState& builderState, CSSValue& value)
+{
+    auto fontDescription = builderState.fontDescription();
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isNumber())
+        fontDescription.setFontSizeAdjust(primitiveValue.floatValue());
+    else {
+        ASSERT(primitiveValue.valueID() == CSSValueNone || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
+        fontDescription.setFontSizeAdjust(std::nullopt);
+    }
     builderState.setFontDescription(WTFMove(fontDescription));
 }
 
@@ -2050,7 +2078,7 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
             break;
         default:
             if (primitiveValue.isPropertyID()) {
-                if (!isCSSPropertyExposed(primitiveValue.propertyID(), &builderState.document().settings()))
+                if (!isExposed(primitiveValue.propertyID(), &builderState.document().settings()))
                     break;
                 willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
             }

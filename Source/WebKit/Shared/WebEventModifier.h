@@ -25,6 +25,12 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
+namespace WebCore {
+class NavigationAction;
+}
+
 namespace WebKit {
 
 enum class WebEventModifier : uint8_t {
@@ -34,5 +40,7 @@ enum class WebEventModifier : uint8_t {
     MetaKey     = 1 << 3,
     CapsLockKey = 1 << 4,
 };
+
+OptionSet<WebEventModifier> modifiersForNavigationAction(const WebCore::NavigationAction&);
 
 } // namespace WebKit

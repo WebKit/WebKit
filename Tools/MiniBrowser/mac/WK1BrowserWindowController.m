@@ -76,9 +76,6 @@
     [_webView setFrameLoadDelegate:nil];
     [_webView setUIDelegate:nil];
     [_webView setResourceLoadDelegate:nil];
-    [_webView release];
-
-    [super dealloc];
 }
 
 - (void)userAgentDidChange:(NSNotification *)notification
@@ -214,7 +211,6 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (void)windowWillClose:(NSNotification *)notification
 {
     [[[NSApplication sharedApplication] browserAppDelegate] browserWindowWillClose:self.window];
-    [self autorelease];
 }
 
 - (double)currentZoomFactor
@@ -329,7 +325,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     [[WebPreferences standardPreferences] setShowRepaintCounter:settings.layerBordersVisible];
     [[WebPreferences standardPreferences] setSuppressesIncrementalRendering:settings.incrementalRenderingSuppressed];
     [[WebPreferences standardPreferences] setAcceleratedDrawingEnabled:settings.acceleratedDrawingEnabled];
-    [[WebPreferences standardPreferences] setSubpixelAntialiasedLayerTextEnabled:settings.subpixelAntialiasedLayerTextEnabled];
     [[WebPreferences standardPreferences] setResourceLoadStatisticsEnabled:settings.resourceLoadStatisticsEnabled];
     [[WebPreferences standardPreferences] setLargeImageAsyncDecodingEnabled:settings.largeImageAsyncDecodingEnabled];
     [[WebPreferences standardPreferences] setAnimatedImageAsyncDecodingEnabled:settings.animatedImageAsyncDecodingEnabled];
@@ -449,7 +444,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     alert.informativeText = message;
 
     [alert runModal];
-    [alert release];
 }
 
 - (BOOL)webView:(WebView *)sender runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
@@ -463,9 +457,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     [alert addButtonWithTitle:@"Stay On Page"];
 
     NSModalResponse response = [alert runModal];
-    
-    [alert release];
-
     return response == NSAlertFirstButtonReturn;
 }
 

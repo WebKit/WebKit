@@ -96,7 +96,6 @@ private:
 
     Type type() const final { return Type::DedicatedWorker; }
 
-    ExceptionOr<void> importScripts(const FixedVector<String>& urls) final;
     EventTargetInterface eventTargetInterface() const final;
 
     void prepareForDestruction() final;

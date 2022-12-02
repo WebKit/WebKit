@@ -282,7 +282,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
 #endif
     }
 
-    // By default, camera, microphone, speaker-selection, display-capture, fullscreen and xr-spatial-tracking, screen-wake-lock policy is 'self'.
+    // By default, camera, microphone, speaker-selection, display-capture, fullscreen, xr-spatial-tracking, screen-wake-lock, and web-share policy is 'self'.
     if (!isCameraInitialized)
         policy.m_cameraRule.allowedList.add(document.securityOrigin().data());
     if (!isMicrophoneInitialized)
@@ -298,7 +298,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     if (!isPaymentInitialized)
         policy.m_paymentRule.allowedList.add(document.securityOrigin().data());
     if (!isWebShareInitialized)
-        policy.m_webShareRule.type = FeaturePolicy::AllowRule::Type::All;
+        policy.m_webShareRule.allowedList.add(document.securityOrigin().data());
 #if ENABLE(DEVICE_ORIENTATION)
     if (!isGyroscopeInitialized)
         policy.m_gyroscopeRule.allowedList.add(document.securityOrigin().data());

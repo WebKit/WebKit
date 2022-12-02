@@ -776,7 +776,7 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void(
 
 void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_editorState = state;
+    updateEditorState(state);
     if (m_keyEventQueue.isEmpty())
         completionHandler(false);
     else
@@ -1117,7 +1117,7 @@ void WebPageProxy::didUpdateEditorState(const EditorState& oldEditorState, const
 
 void WebPageProxy::dispatchDidUpdateEditorState()
 {
-    if (!m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement || m_editorState.isMissingPostLayoutData())
+    if (!m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement || !m_editorState.hasPostLayoutData())
         return;
 
     pageClient().didUpdateEditorState();
@@ -1176,16 +1176,16 @@ WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() co
     if (m_editorState.selectionIsNone)
         return { };
 
-    if (m_editorState.isMissingPostLayoutData())
+    if (!m_editorState.hasVisualData())
         return { };
 
     WebCore::FloatRect bounds;
-    auto& postLayoutData = *m_editorState.postLayoutData;
+    auto& visualData = *m_editorState.visualData;
     if (m_editorState.selectionIsRange) {
-        for (auto& geometry : postLayoutData.selectionGeometries)
+        for (auto& geometry : visualData.selectionGeometries)
             bounds.unite(geometry.rect());
     } else
-        bounds = postLayoutData.caretRectAtStart;
+        bounds = visualData.caretRectAtStart;
 
     return bounds;
 }

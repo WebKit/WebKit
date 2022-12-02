@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/PropertySlot.h>
 #include <JavaScriptCore/VM.h>
+#include <wtf/Platform.h>
 
 namespace TestWebKitAPI {
 

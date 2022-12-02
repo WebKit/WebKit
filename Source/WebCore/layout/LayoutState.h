@@ -68,6 +68,7 @@ public:
 
     FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const;
 
+    void destroyBlockFormattingState(const ElementBox& formattingContextRoot);
     void destroyInlineFormattingState(const ElementBox& formattingContextRoot);
 
     bool hasFormattingState(const ElementBox& formattingRoot) const;

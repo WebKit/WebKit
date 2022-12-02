@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,6 +95,7 @@ void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& 
     avifRGBImage decodedRGBImage;
     avifRGBImageSetDefaults(&decodedRGBImage, m_avifDecoder->image);
     decodedRGBImage.depth = 8;
+    decodedRGBImage.alphaPremultiplied = m_decoder->premultiplyAlpha();
     decodedRGBImage.format = AVIF_RGB_FORMAT_BGRA;
     decodedRGBImage.rowBytes = imageSize.width() * sizeof(uint32_t);
     decodedRGBImage.pixels = reinterpret_cast<uint8_t*>(buffer.backingStore()->pixelAt(0, 0));
@@ -110,22 +112,6 @@ void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& 
 size_t AVIFImageReader::imageCount() const
 {
     return m_avifDecoder->imageCount;
-}
-
-double AVIFImageReader::repetitionCount() const
-{
-    double trackDuration = m_avifDecoder->duration;
-    if (!trackDuration)
-        return 0.0;
-
-    double accumulatedFrameDuration = 0.0;
-    for (int i = 0; i < m_avifDecoder->imageCount; ++i) {
-        avifImageTiming timing;
-        if (avifDecoderNthImageTiming(m_avifDecoder.get(), i, &timing) != AVIF_RESULT_OK)
-            return 0.0;
-        accumulatedFrameDuration += timing.duration;
-    }
-    return accumulatedFrameDuration / trackDuration;
 }
 
 }

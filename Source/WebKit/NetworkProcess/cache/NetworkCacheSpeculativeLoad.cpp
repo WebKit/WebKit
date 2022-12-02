@@ -42,7 +42,7 @@ namespace NetworkCache {
 
 using namespace WebCore;
 
-SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled, RevalidationCompletionHandler&& completionHandler)
+SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy, RevalidationCompletionHandler&& completionHandler)
     : m_cache(cache)
     , m_completionHandler(WTFMove(completionHandler))
     , m_originalRequest(request)
@@ -65,11 +65,11 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.webFrameID = globalFrameID.frameID;
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
-    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.request = m_originalRequest;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     parameters.allowPrivacyProxy = allowPrivacyProxy;
-    parameters.networkConnectionIntegrityEnabled = networkConnectionIntegrityEnabled;
+    parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *networkSession);
     m_networkLoad->startWithScheduling();
 }
@@ -123,7 +123,7 @@ void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, Pr
     completionHandler(PolicyAction::Use);
 }
 
-void SpeculativeLoad::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
+void SpeculativeLoad::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, uint64_t reportedEncodedDataLength)
 {
     ASSERT(!m_cacheEntry);
 

@@ -38,6 +38,10 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(IOSURFACE)
+#include <IOSurface/IOSurfaceRef.h>
+#endif
+
 namespace PAL::WebGPU {
 
 class BindGroup;
@@ -67,6 +71,10 @@ class Sampler;
 struct SamplerDescriptor;
 class ShaderModule;
 struct ShaderModuleDescriptor;
+class Surface;
+struct SurfaceDescriptor;
+class SwapChain;
+struct SwapChainDescriptor;
 class Texture;
 struct TextureDescriptor;
 
@@ -93,6 +101,9 @@ public:
 
     virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
     virtual Ref<Texture> createTexture(const TextureDescriptor&) = 0;
+    virtual Ref<Texture> createSurfaceTexture(const TextureDescriptor&, const Surface&) = 0;
+    virtual Ref<Surface> createSurface(const SurfaceDescriptor&) = 0;
+    virtual Ref<SwapChain> createSwapChain(const Surface&, const SwapChainDescriptor&) = 0;
     virtual Ref<Sampler> createSampler(const SamplerDescriptor&) = 0;
     virtual Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
 
@@ -113,7 +124,6 @@ public:
 
     virtual void pushErrorScope(ErrorFilter) = 0;
     virtual void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) = 0;
-
     class DeviceLostClient {
         virtual ~DeviceLostClient() = default;
         virtual void deviceLost() = 0;

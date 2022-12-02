@@ -1,0 +1,7 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+http://127.0.0.1:8000/loading/resources/oauth-subresource.py - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+

@@ -1,3 +1,3 @@
 
-FAIL font-size-adjust responsive to inherited font-size-adjust changes assert_equals: expected (string) "none" but got (undefined) undefined
+PASS font-size-adjust responsive to inherited font-size-adjust changes
 

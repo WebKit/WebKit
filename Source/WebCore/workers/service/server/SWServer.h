@@ -131,9 +131,10 @@ public:
     };
 
     using SoftUpdateCallback = Function<void(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&&, CompletionHandler<void(WorkerFetchResult&&)>&&)>;
-    using CreateContextConnectionCallback = Function<void(const WebCore::RegistrableDomain&, std::optional<ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&)>;
-    using AppBoundDomainsCallback = Function<void(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&)>;
-    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, SoftUpdateCallback&&, CreateContextConnectionCallback&&, AppBoundDomainsCallback&&);
+    using CreateContextConnectionCallback = Function<void(const RegistrableDomain&, std::optional<ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&)>;
+    using AppBoundDomainsCallback = Function<void(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&)>;
+    using AddAllowedFirstPartyForCookiesCallback = Function<void(ProcessIdentifier, WebCore::RegistrableDomain&&)>;
+    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, SoftUpdateCallback&&, CreateContextConnectionCallback&&, AppBoundDomainsCallback&&, AddAllowedFirstPartyForCookiesCallback&&);
 
     WEBCORE_EXPORT ~SWServer();
 
@@ -259,7 +260,7 @@ public:
 private:
     unsigned maxRegistrationCount();
     bool allowLoopbackIPAddress(const String&);
-    void validateRegistrationDomain(WebCore::RegistrableDomain, ServiceWorkerJobType, bool, CompletionHandler<void(bool)>&&);
+    void validateRegistrationDomain(RegistrableDomain, ServiceWorkerJobType, bool, CompletionHandler<void(bool)>&&);
 
     void scriptFetchFinished(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, WorkerFetchResult&&);
 
@@ -317,13 +318,15 @@ private:
     Vector<Function<void(const HashSet<SecurityOriginData>&)>> m_getOriginsWithRegistrationsCallbacks;
     HashMap<RegistrableDomain, SWServerToContextConnection*> m_contextConnections;
 
+    // FIXME: This is a lot of callbacks. Make a delegate interface instead.
     CreateContextConnectionCallback m_createContextConnectionCallback;
-    HashSet<WebCore::RegistrableDomain> m_pendingConnectionDomains;
+    HashSet<RegistrableDomain> m_pendingConnectionDomains;
     Vector<CompletionHandler<void()>> m_importCompletedCallbacks;
     SoftUpdateCallback m_softUpdateCallback;
     AppBoundDomainsCallback m_appBoundDomainsCallback;
+    AddAllowedFirstPartyForCookiesCallback m_addAllowedFirstPartyForCookiesCallback;
     
-    HashSet<WebCore::RegistrableDomain> m_appBoundDomains;
+    HashSet<RegistrableDomain> m_appBoundDomains;
     bool m_shouldRunServiceWorkersOnMainThreadForTesting { false };
     bool m_hasServiceWorkerEntitlement { false };
     bool m_hasReceivedAppBoundDomains { false };

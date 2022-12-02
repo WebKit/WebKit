@@ -438,25 +438,18 @@ String FontCascade::normalizeSpaces(const UChar* characters, unsigned length)
     return normalizeSpacesInternal(characters, length);
 }
 
-static std::atomic<bool> shouldUseFontSmoothingForTesting = true;
+static std::atomic<bool> disableFontSubpixelAntialiasingForTesting = false;
 
-void FontCascade::setShouldUseSmoothingForTesting(bool shouldUseSmoothing)
+void FontCascade::setDisableFontSubpixelAntialiasingForTesting(bool disable)
 {
     ASSERT(isMainThread());
-    shouldUseFontSmoothingForTesting = shouldUseSmoothing;
+    disableFontSubpixelAntialiasingForTesting = disable;
 }
 
-bool FontCascade::shouldUseSmoothingForTesting()
+bool FontCascade::shouldDisableFontSubpixelAntialiasingForTesting()
 {
-    return shouldUseFontSmoothingForTesting;
+    return disableFontSubpixelAntialiasingForTesting;
 }
-
-#if !USE(CORE_TEXT) || PLATFORM(WIN)
-bool FontCascade::isSubpixelAntialiasingAvailable()
-{
-    return false;
-}
-#endif
 
 void FontCascade::setCodePath(CodePath p)
 {
@@ -1329,7 +1322,7 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
 
         if (&nextFontData != fontData) {
             if (shouldDrawIfLoading(*fontData, customFontNotReadyAction))
-                context.drawGlyphs(*fontData, glyphBuffer.glyphs(lastFrom), glyphBuffer.advances(lastFrom), nextGlyph - lastFrom, startPoint, m_fontDescription.fontSmoothing());
+                context.drawGlyphs(*fontData, glyphBuffer.glyphs(lastFrom), glyphBuffer.advances(lastFrom), nextGlyph - lastFrom, startPoint, m_fontDescription.usedFontSmoothing());
 
             lastFrom = nextGlyph;
             fontData = &nextFontData;
@@ -1342,7 +1335,7 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
     }
 
     if (shouldDrawIfLoading(*fontData, customFontNotReadyAction))
-        context.drawGlyphs(*fontData, glyphBuffer.glyphs(lastFrom), glyphBuffer.advances(lastFrom), nextGlyph - lastFrom, startPoint, m_fontDescription.fontSmoothing());
+        context.drawGlyphs(*fontData, glyphBuffer.glyphs(lastFrom), glyphBuffer.advances(lastFrom), nextGlyph - lastFrom, startPoint, m_fontDescription.usedFontSmoothing());
     point.setX(nextX);
 }
 

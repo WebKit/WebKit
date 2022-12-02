@@ -1,4 +1,6 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function doTest(arr1) {
     let arr2 = []
     for (let i=0; i<arr1.length; ++i) {

@@ -127,7 +127,7 @@ void pas_segregated_page_switch_lock_and_rebias_while_ineligible_impl(
         page_lock = page->lock_ptr;
         PAS_TESTING_ASSERT(page_lock);
 
-        if (*held_lock == page_lock && *held_lock == &cache_node->page_lock) {
+        if (*held_lock == page_lock && cache_node && *held_lock == &cache_node->page_lock) {
             pas_compiler_fence();
             return;
         }

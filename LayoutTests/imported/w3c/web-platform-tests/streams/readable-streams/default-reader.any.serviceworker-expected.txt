@@ -1,16 +1,12 @@
 
-FAIL ReadableStreamDefaultReader constructor should get a ReadableStream object as argument assert_throws_js: function "() => new ReadableStreamDefaultReader('potato')" threw object "ReferenceError: Can't find variable: ReadableStreamDefaultReader" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL ReadableStreamDefaultReader closed should always return the same promise object Can't find variable: ReadableStreamDefaultReader
-FAIL Constructing a ReadableStreamDefaultReader directly should fail if the stream is already locked (via direct construction) Can't find variable: ReadableStreamDefaultReader
-FAIL Getting a ReadableStreamDefaultReader via getReader should fail if the stream is already locked (via direct construction) Can't find variable: ReadableStreamDefaultReader
-FAIL Constructing a ReadableStreamDefaultReader directly should fail if the stream is already locked (via getReader) assert_throws_js: constructing directly should fail function "() => new ReadableStreamDefaultReader(rs)" threw object "ReferenceError: Can't find variable: ReadableStreamDefaultReader" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS ReadableStreamDefaultReader constructor should get a ReadableStream object as argument
+PASS ReadableStreamDefaultReader closed should always return the same promise object
+PASS Constructing a ReadableStreamDefaultReader directly should fail if the stream is already locked (via direct construction)
+PASS Getting a ReadableStreamDefaultReader via getReader should fail if the stream is already locked (via direct construction)
+PASS Constructing a ReadableStreamDefaultReader directly should fail if the stream is already locked (via getReader)
 PASS Getting a ReadableStreamDefaultReader via getReader should fail if the stream is already locked (via getReader)
-FAIL Constructing a ReadableStreamDefaultReader directly should be OK if the stream is closed Can't find variable: ReadableStreamDefaultReader
-FAIL Constructing a ReadableStreamDefaultReader directly should be OK if the stream is errored Can't find variable: ReadableStreamDefaultReader
+PASS Constructing a ReadableStreamDefaultReader directly should be OK if the stream is closed
+PASS Constructing a ReadableStreamDefaultReader directly should be OK if the stream is errored
 PASS Reading from a reader for an empty stream will wait until a chunk is available
 PASS cancel() on a reader does not release the reader
 PASS closed should be fulfilled after stream is closed (.closed access before acquiring)

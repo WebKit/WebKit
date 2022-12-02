@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformTimeRanges_h
-#define PlatformTimeRanges_h
+#pragma once
 
 #include <algorithm>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Vector.h>
 
@@ -50,6 +50,7 @@ public:
     MediaTime end(unsigned index, bool& valid) const;
     MediaTime duration(unsigned index) const;
     MediaTime maximumBufferedTime() const;
+    MediaTime minimumBufferedTime() const;
 
     void invert();
     void intersectWith(const PlatformTimeRanges&);
@@ -70,99 +71,59 @@ public:
     MediaTime totalDuration() const;
 
     void dump(PrintStream&) const;
+    String toString() const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PlatformTimeRanges> decode(Decoder&);
-
-private:
     // We consider all the Ranges to be semi-bounded as follow: [start, end[
     struct Range {
-        Range() { }
-        Range(const MediaTime& start, const MediaTime& end)
-            : m_start(start)
-            , m_end(end)
-        {
-        }
-
-        MediaTime m_start;
-        MediaTime m_end;
-
-        template<class Encoder>
-        void encode(Encoder& encoder) const
-        {
-            encoder << m_start;
-            encoder << m_end;
-        }
-
-        template <class Decoder>
-        static std::optional<Range> decode(Decoder& decoder)
-        {
-            std::optional<MediaTime> start;
-            decoder >> start;
-            if (!start)
-                return std::nullopt;
-
-            std::optional<MediaTime> end;
-            decoder >> end;
-            if (!end)
-                return std::nullopt;
-
-            return {{ WTFMove(*start), WTFMove(*end) }};
-        }
+        MediaTime start;
+        MediaTime end;
 
         inline bool isPointInRange(const MediaTime& point) const
         {
-            return m_start <= point && point < m_end;
+            return start <= point && point < end;
         }
         
         inline bool isOverlappingRange(const Range& range) const
         {
-            return isPointInRange(range.m_start) || isPointInRange(range.m_end) || range.isPointInRange(m_start);
+            return isPointInRange(range.start) || isPointInRange(range.end) || range.isPointInRange(start);
         }
 
         inline bool isContiguousWithRange(const Range& range) const
         {
-            return range.m_start == m_end || range.m_end == m_start;
+            return range.start == end || range.end == start;
         }
         
         inline Range unionWithOverlappingOrContiguousRange(const Range& range) const
         {
             Range ret;
 
-            ret.m_start = std::min(m_start, range.m_start);
-            ret.m_end = std::max(m_end, range.m_end);
+            ret.start = std::min(start, range.start);
+            ret.end = std::max(end, range.end);
 
             return ret;
         }
 
         inline bool isBeforeRange(const Range& range) const
         {
-            return range.m_start >= m_end;
+            return range.start >= end;
         }
     };
+
+private:
+    friend struct IPC::ArgumentCoder<PlatformTimeRanges, void>;
 
     PlatformTimeRanges(Vector<Range>&&);
 
     Vector<Range> m_ranges;
 };
 
-template<class Encoder>
-void PlatformTimeRanges::encode(Encoder& encoder) const
-{
-    encoder << m_ranges;
-}
-
-template <class Decoder>
-std::optional<PlatformTimeRanges> PlatformTimeRanges::decode(Decoder& decoder)
-{
-    std::optional<Vector<Range>> buffered;
-    decoder >> buffered;
-    if (!buffered)
-        return std::nullopt;
-
-    return {{ WTFMove(*buffered) }};
-}
-
 } // namespace WebCore
 
-#endif
+namespace WTF {
+template<typename> struct LogArgument;
+
+template<> struct LogArgument<WebCore::PlatformTimeRanges> {
+    static String toString(const WebCore::PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }
+};
+
+} // namespace WTF

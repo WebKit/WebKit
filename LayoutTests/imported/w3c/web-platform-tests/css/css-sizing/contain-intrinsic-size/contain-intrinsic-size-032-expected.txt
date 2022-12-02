@@ -1,30 +1,24 @@
 
 
 FAIL .test 1 assert_equals:
-<select class="test ciw-none cih-none" data-expected-client-width="36" data-expected-client-height="18"></select>
-clientWidth expected 36 but got 34
+<select class="test ciw-none cih-none" data-expected-client-width="34" data-expected-client-height="16"></select>
+clientHeight expected 16 but got 12
 FAIL .test 2 assert_equals:
-<select class="test ciw-none cih-0" data-expected-client-width="36" data-expected-client-height="0"></select>
-clientWidth expected 36 but got 34
-FAIL .test 3 assert_equals:
-<select class="test ciw-none cih-100" data-expected-client-width="36" data-expected-client-height="100"></select>
-clientWidth expected 36 but got 34
+<select class="test ciw-none cih-0" data-expected-client-width="34" data-expected-client-height="0"></select>
+clientHeight expected 0 but got 12
+PASS .test 3
 FAIL .test 4 assert_equals:
-<select class="test ciw-0 cih-none" data-expected-client-width="0" data-expected-client-height="18"></select>
-clientWidth expected 0 but got 34
+<select class="test ciw-0 cih-none" data-expected-client-width="0" data-expected-client-height="16"></select>
+clientHeight expected 16 but got 12
 FAIL .test 5 assert_equals:
 <select class="test ciw-0 cih-0" data-expected-client-width="0" data-expected-client-height="0"></select>
-clientWidth expected 0 but got 34
-FAIL .test 6 assert_equals:
-<select class="test ciw-0 cih-100" data-expected-client-width="0" data-expected-client-height="100"></select>
-clientWidth expected 0 but got 34
+clientHeight expected 0 but got 12
+PASS .test 6
 FAIL .test 7 assert_equals:
-<select class="test ciw-100 cih-none" data-expected-client-width="100" data-expected-client-height="18"></select>
-clientWidth expected 100 but got 34
+<select class="test ciw-100 cih-none" data-expected-client-width="100" data-expected-client-height="16"></select>
+clientHeight expected 16 but got 12
 FAIL .test 8 assert_equals:
 <select class="test ciw-100 cih-0" data-expected-client-width="100" data-expected-client-height="0"></select>
-clientWidth expected 100 but got 34
-FAIL .test 9 assert_equals:
-<select class="test ciw-100 cih-100" data-expected-client-width="100" data-expected-client-height="100"></select>
-clientWidth expected 100 but got 34
+clientHeight expected 0 but got 12
+PASS .test 9
 

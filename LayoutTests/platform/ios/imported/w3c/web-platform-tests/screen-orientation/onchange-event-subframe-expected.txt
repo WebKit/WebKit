@@ -1,3 +1,7 @@
 
+
+Harness Error (TIMEOUT), message = null
+
 PASS Test subframes receive orientation change events
+TIMEOUT Check directly that events are fired in right order (from top to bottom) Test timed out
 

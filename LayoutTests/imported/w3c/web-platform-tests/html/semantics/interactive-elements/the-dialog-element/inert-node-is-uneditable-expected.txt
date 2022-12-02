@@ -1,4 +1,4 @@
 I'm not editable while the dialog is showing. I'm editable.
 
-FAIL Test that inert nodes cannot be edited. The test passes if the only text you can edit is in the dialog. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
+FAIL Test that inert nodes cannot be edited. The test passes if the only text you can edit is in the dialog. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
 

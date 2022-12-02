@@ -44,8 +44,8 @@ StaticCSSValuePool::StaticCSSValuePool()
     m_whiteColor.construct(CSSValue::StaticCSSValue, Color::white);
     m_blackColor.construct(CSSValue::StaticCSSValue, Color::black);
 
-    for (unsigned i = firstCSSValueKeyword; i <= lastCSSValueKeyword; ++i)
-        m_identifierValues[i].construct(CSSValue::StaticCSSValue, static_cast<CSSValueID>(i));
+    for (auto keyword : allCSSValueKeywords())
+        m_identifierValues[static_cast<uint16_t>(keyword)].construct(CSSValue::StaticCSSValue, keyword);
 
     for (unsigned i = 0; i < (maximumCacheableIntegerValue + 1); ++i) {
         m_pixelValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
@@ -75,7 +75,7 @@ CSSValuePool& CSSValuePool::singleton()
 
 Ref<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ident)
 {
-    RELEASE_ASSERT(ident >= firstCSSValueKeyword && ident <= lastCSSValueKeyword);
+    RELEASE_ASSERT(ident < std::size(staticCSSValuePool->m_identifierValues));
     return staticCSSValuePool->m_identifierValues[ident].get();
 }
 

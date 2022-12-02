@@ -22,7 +22,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CoordinatedGraphicsState.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerTransform.h"
@@ -74,6 +73,7 @@ public:
     void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer*) override;
     bool replaceChild(GraphicsLayer*, Ref<GraphicsLayer>&&) override;
     void removeFromParent() override;
+    void setEventRegion(EventRegion&&) override;
 #if ENABLE(SCROLLING_THREAD)
     void setScrollingNodeID(ScrollingNodeID) override;
 #endif

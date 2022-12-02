@@ -207,6 +207,7 @@ private:
     unsigned m_error : 1;
     unsigned m_uploadListenerFlag : 1;
     unsigned m_uploadComplete : 1;
+    unsigned m_wasAbortedByClient : 1;
     unsigned m_responseCacheIsValid : 1;
     unsigned m_readyState : 3; // State
     unsigned m_responseType : 3; // ResponseType
@@ -252,8 +253,8 @@ private:
 
     std::optional<ExceptionCode> m_exceptionCode;
     RefPtr<UserGestureToken> m_userGestureToken;
-    TaskCancellationGroup m_pendingAbortEvent;
     std::atomic<bool> m_hasRelevantEventListener;
+    bool m_wasDidSendDataCalledForTotalBytes { false };
 };
 
 inline auto XMLHttpRequest::responseType() const -> ResponseType

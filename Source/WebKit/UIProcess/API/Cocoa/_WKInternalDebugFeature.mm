@@ -50,6 +50,28 @@
     return _internalDebugFeature->name();
 }
 
+- (WebFeatureStatus)status
+{
+    switch (_internalDebugFeature->status()) {
+    case API::FeatureStatus::Embedder:
+        return WebFeatureStatusEmbedder;
+    case API::FeatureStatus::Unstable:
+        return WebFeatureStatusUnstable;
+    case API::FeatureStatus::Internal:
+        return WebFeatureStatusInternal;
+    case API::FeatureStatus::Developer:
+        return WebFeatureStatusDeveloper;
+    case API::FeatureStatus::Testable:
+        return WebFeatureStatusTestable;
+    case API::FeatureStatus::Preview:
+        return WebFeatureStatusPreview;
+    case API::FeatureStatus::Stable:
+        return WebFeatureStatusStable;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 - (NSString *)key
 {
     return _internalDebugFeature->key();

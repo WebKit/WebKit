@@ -653,6 +653,13 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void lshift32(Address src, RegisterID shiftAmount, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        load32(src, temp.data());
+        lshift32(temp.data(), shiftAmount, dest);
+    }
+
     void lshift64(RegisterID shiftAmount, RegisterID dest)
     {
         lshift64(dest, shiftAmount, dest);
@@ -671,6 +678,13 @@ public:
     void lshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.slliInsn(dest, src, uint32_t(imm.m_value & ((1 << 6) - 1)));
+    }
+
+    void lshift64(Address src, RegisterID shiftAmount, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        load64(src, temp.data());
+        lshift64(temp.data(), shiftAmount, dest);
     }
 
     void rshift32(RegisterID shiftAmount, RegisterID dest)
@@ -1751,6 +1765,73 @@ public:
     {
         m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, src);
     }
+
+    // The RISC-V V vector extension is not yet standardized
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveVector);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(loadVector);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(storeVector);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorReplaceLaneInt64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorReplaceLaneInt32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorReplaceLaneInt16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorReplaceLaneInt8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorReplaceLaneFloat64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorReplaceLaneFloat32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneInt64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneInt32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneSignedInt16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneUnsignedInt16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneSignedInt8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneUnsignedInt8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneFloat64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractLaneFloat32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSplat8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSplat16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSplat32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSplat64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compareFloatingPointVector);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compareIntegerVector);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compareIntegerVectorWithZero);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAdd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSub);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAddSat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSubSat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMul);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorDiv);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMin);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMax);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorPmin);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorPmax);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorNarrow);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorBitwiseSelect);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorNot);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAnd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAndnot);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorOr);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorXor);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAbs);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorNeg);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorPopcnt);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorCeil);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorFloor);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTrunc);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTruncSat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvert);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvertLow);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorNearest);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSqrt);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtendLow);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtendHigh);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorPromote);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorDemote);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAnyTrue);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAllTrue);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorBitmask);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtaddPairwise);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAvgRound);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMulSat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorDotProductInt32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSwizzle);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorShuffle);
 
     template<PtrTag resultTag, PtrTag locationTag>
     static CodePtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
@@ -3461,6 +3542,38 @@ public:
         }
 
         return failure;
+    }
+
+    void atomicLoad32(Address address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.lwInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
+    }
+
+    void atomicLoad32(BaseIndex address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.lwInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
+    }
+
+    void atomicLoad64(Address address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.ldInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
+    }
+
+    void atomicLoad64(BaseIndex address, RegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        memoryFence();
+        m_assembler.ldInsn(dest, resolution.base, Imm::I(resolution.offset));
+        loadFence();
     }
 
     void moveConditionally32(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID src, RegisterID dest)

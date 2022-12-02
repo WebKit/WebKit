@@ -10,6 +10,9 @@ layer at (0,0) size 800x600
       RenderInline {SPAN} at (0,0) size 277x19 [border: (1px solid #000000)]
         RenderText {#text} at (1,18) size 275x17
           text run at (1,18) width 275: "These two boxes should be the same width."
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
 layer at (284,50) size 100x100
   RenderImage {IMG} at (284,50) size 100x100 [bgcolor=#008000]
 layer at (284,150) size 100x100

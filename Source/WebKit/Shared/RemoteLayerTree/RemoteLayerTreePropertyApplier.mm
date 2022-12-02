@@ -249,7 +249,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged
         || properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreAttachmentChanged)
     {
-        RemoteLayerBackingStore* backingStore = properties.backingStore.get();
+        auto* backingStore = properties.backingStore.get();
         if (backingStore && properties.backingStoreAttached)
             backingStore->applyBackingStoreToLayer(layer, layerContentsType, layerTreeHost->replayCGDisplayListsIntoBackingStore());
         else {
@@ -264,8 +264,8 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & RemoteLayerTreeTransaction::AnimationsChanged)
         PlatformCAAnimationRemote::updateLayerAnimations(layer, layerTreeHost, properties.addedAnimations, properties.keyPathsOfAnimationsToRemove);
 
-    if (properties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
-        layer.edgeAntialiasingMask = properties.edgeAntialiasingMask;
+    if (properties.changedProperties & RemoteLayerTreeTransaction::AntialiasesEdgesChanged)
+        layer.edgeAntialiasingMask = properties.antialiasesEdges ? (kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge) : 0;
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
         updateCustomAppearance(layer, properties.customAppearance);
@@ -303,6 +303,11 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged)
         node.setEventRegion(properties.eventRegion);
+
+#if ENABLE(SCROLLING_THREAD)
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ScrollingNodeIDChanged)
+        node.setScrollingNodeID(properties.scrollingNodeID);
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     applyPropertiesToUIView(node.uiView(), properties, relatedLayers);

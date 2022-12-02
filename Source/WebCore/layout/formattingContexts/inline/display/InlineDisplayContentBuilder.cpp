@@ -180,8 +180,25 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
 
         return inkOverflow;
     };
-    auto& content = downcast<InlineTextBox>(layoutBox).content();
+    auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
+    auto& content = inlineTextBox.content();
     auto& text = lineRun.textContent();
+
+    if (inlineTextBox.isCombined()) {
+        static auto objectReplacementCharacterString = NeverDestroyed<String> { &objectReplacementCharacter, 1 };
+        // The rendered text is the actual combined content, while the "original" one is blank.
+        boxes.append({ m_lineIndex
+            , InlineDisplay::Box::Type::Text
+            , layoutBox
+            , lineRun.bidiLevel()
+            , textRunRect
+            , inkOverflow()
+            , lineRun.expansion()
+            , InlineDisplay::Box::Text { text->start, 1, objectReplacementCharacterString, content }
+        });
+        return;
+    }
+
     auto adjustedContentToRender = [&] {
         return text->needsHyphen ? makeString(StringView(content).substring(text->start, text->length), style.hyphenString()) : String();
     };
@@ -881,6 +898,11 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(DisplayBo
 
 void InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(DisplayBoxes& boxes)
 {
+    if (boxes.isEmpty()) {
+        // Line clamp may produce a completely empty IFC.
+        return;
+    }
+
     HashMap<const Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
 
     ASSERT(boxes[0].isRootInlineBox());

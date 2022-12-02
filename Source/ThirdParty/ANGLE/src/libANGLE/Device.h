@@ -38,6 +38,7 @@ class Device final : public LabeledObject, angle::NonCopyable
 
     const DeviceExtensions &getExtensions() const;
     const std::string &getExtensionString() const;
+    const std::string &getDeviceString(EGLint name);
 
     rx::DeviceImpl *getImplementation() { return mImplementation.get(); }
 
@@ -54,6 +55,7 @@ class Device final : public LabeledObject, angle::NonCopyable
 
     DeviceExtensions mDeviceExtensions;
     std::string mDeviceExtensionString;
+    std::map<EGLint, std::string> mDeviceStrings;
 };
 }  // namespace egl
 

@@ -91,9 +91,14 @@ public:
 
                 // forEachArg must return Arg&'s that point into the args array.
                 inst.forEachArg(
-                    [&] (Arg& arg, Arg::Role, Bank, Width) {
+                    [&] (Arg& arg, Arg::Role role, Bank, Width width) {
                         VALIDATE(&arg >= &inst.args[0], ("At ", arg, " in ", inst, " in ", *block));
                         VALIDATE(&arg <= &inst.args.last(), ("At ", arg, " in ", inst, " in ", *block));
+
+                        // FIXME: replace with a check for wasm simd instructions.
+                        VALIDATE(Options::useWebAssemblySIMD()
+                            || !Arg::isAnyUse(role)
+                            || width <= Width64, ("At ", inst, " in ", *block, " arg ", arg));
                     });
                 
                 switch (inst.kind.opcode) {
@@ -105,6 +110,11 @@ public:
                     // be fixed though. Ditto for shuffles that would do fences, which is the other
                     // use of this bit.
                     VALIDATE(!inst.kind.effects, ("At ", inst, " in ", *block));
+                    break;
+                case VectorExtendLow:
+                case VectorExtendHigh:
+                    VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) <= 8, ("At ", inst, " in ", *block));
+                    VALIDATE(elementByteSize(inst.args[0].simdInfo().lane) >= 2, ("At ", inst, " in ", *block));
                     break;
                 default:
                     break;

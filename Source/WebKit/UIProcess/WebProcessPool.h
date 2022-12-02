@@ -200,6 +200,7 @@ public:
     // null checks in WebPageProxy.
     WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID).get(); }
 
+    void forEachProcessForSession(PAL::SessionID, const Function<void(WebProcessProxy&)>&);
     template<typename T> void sendToAllProcesses(const T& message);
     template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
 
@@ -242,13 +243,15 @@ public:
     void handleMemoryPressureWarning(Critical);
 
 #if HAVE(CVDISPLAYLINK)
-    std::optional<WebCore::FramesPerSecond> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
-    void startDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
-    void stopDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID);
-    void setDisplayLinkPreferredFramesPerSecond(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
-    void stopDisplayLinks(IPC::Connection&);
+    DisplayLinkCollection& displayLinks() { return m_displayLinks; }
 
-    void setDisplayLinkForDisplayWantsFullSpeedUpdates(IPC::Connection&, WebCore::PlatformDisplayID, bool wantsFullSpeedUpdates);
+    std::optional<WebCore::FramesPerSecond> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
+
+    void startDisplayLink(WebProcessProxy&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
+    void stopDisplayLink(WebProcessProxy&, DisplayLinkObserverID, WebCore::PlatformDisplayID);
+    void setDisplayLinkPreferredFramesPerSecond(WebProcessProxy&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
+    void stopDisplayLinks(WebProcessProxy&);
+    void setDisplayLinkForDisplayWantsFullSpeedUpdates(WebProcessProxy&, WebCore::PlatformDisplayID, bool wantsFullSpeedUpdates);
 #endif
 
     void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
@@ -260,7 +263,7 @@ public:
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
 
     void setAlwaysUsesComplexTextCodePath(bool);
-    void setShouldUseFontSmoothingForTesting(bool);
+    void setDisableFontSubpixelAntialiasingForTesting(bool);
     
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
@@ -384,7 +387,7 @@ public:
 
     void updateRemoteWorkerUserAgent(const String& userAgent);
     UserContentControllerIdentifier userContentControllerIdentifierForRemoteWorkers();
-    static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
+    static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
@@ -466,7 +469,8 @@ public:
 
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
-    void removeMockMediaDevice(const String& persistentId);
+    void removeMockMediaDevice(const String&);
+    void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
 
     void sendDisplayConfigurationChangedMessageForTesting();
@@ -526,6 +530,9 @@ public:
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void hardwareConsoleStateChanged();
 #endif
+
+    bool operator==(const WebProcessPool& other) const { return (this == &other); }
+    bool operator!=(const WebProcessPool& other) const { return !(this == &other); }
 
 private:
     void platformInitialize();
@@ -668,7 +675,7 @@ private:
     HashSet<String> m_schemesToRegisterAsCanDisplayOnlyIfCanRequest;
 
     bool m_alwaysUsesComplexTextCodePath { false };
-    bool m_shouldUseFontSmoothingForTesting { true };
+    bool m_disableFontSubpixelAntialiasingForTesting { false };
 
     Vector<String> m_fontAllowList;
 
@@ -841,10 +848,9 @@ void WebProcessPool::sendToAllProcesses(const T& message)
 template<typename T>
 void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::SessionID sessionID)
 {
-    for (auto& process : m_processes) {
-        if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
-            process->send(T(message), 0);
-    }
+    forEachProcessForSession(sessionID, [&](auto& process) {
+        process.send(T(message), 0);
+    });
 }
 
 template<typename T>

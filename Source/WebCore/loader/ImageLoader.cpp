@@ -99,22 +99,9 @@ static TextStream& operator<<(TextStream& ts, ImageLoading loading)
 }
 #endif // !LOG_DISABLED
 
-// FIXME: beforeload event no longer exists. Delete this code.
-static ImageEventSender& beforeLoadEventSender()
-{
-    static NeverDestroyed<ImageEventSender> sender(eventNames().beforeloadEvent);
-    return sender;
-}
-
 static ImageEventSender& loadEventSender()
 {
-    static NeverDestroyed<ImageEventSender> sender(eventNames().loadEvent);
-    return sender;
-}
-
-static ImageEventSender& errorEventSender()
-{
-    static NeverDestroyed<ImageEventSender> sender(eventNames().errorEvent);
+    static NeverDestroyed<ImageEventSender> sender;
     return sender;
 }
 
@@ -142,17 +129,9 @@ ImageLoader::~ImageLoader()
     if (m_image)
         m_image->removeClient(*this);
 
-    ASSERT(m_hasPendingBeforeLoadEvent || !beforeLoadEventSender().hasPendingEvents(*this));
-    if (m_hasPendingBeforeLoadEvent)
-        beforeLoadEventSender().cancelEvent(*this);
-
-    ASSERT(m_hasPendingLoadEvent || !loadEventSender().hasPendingEvents(*this));
-    if (m_hasPendingLoadEvent)
+    ASSERT(m_hasPendingLoadEvent || m_hasPendingErrorEvent || !loadEventSender().hasPendingEvents(*this));
+    if (m_hasPendingLoadEvent || m_hasPendingErrorEvent)
         loadEventSender().cancelEvent(*this);
-
-    ASSERT(m_hasPendingErrorEvent || !errorEventSender().hasPendingEvents(*this));
-    if (m_hasPendingErrorEvent)
-        errorEventSender().cancelEvent(*this);
 }
 
 void ImageLoader::clearImage()
@@ -172,17 +151,10 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
     CachedImage* oldImage = m_image.get();
     if (oldImage) {
         m_image = nullptr;
-        if (m_hasPendingBeforeLoadEvent) {
-            beforeLoadEventSender().cancelEvent(*this);
-            m_hasPendingBeforeLoadEvent = false;
-        }
-        if (m_hasPendingLoadEvent) {
+        m_hasPendingBeforeLoadEvent = false;
+        if (m_hasPendingLoadEvent || m_hasPendingErrorEvent) {
             loadEventSender().cancelEvent(*this);
-            m_hasPendingLoadEvent = false;
-        }
-        if (m_hasPendingErrorEvent) {
-            errorEventSender().cancelEvent(*this);
-            m_hasPendingErrorEvent = false;
+            m_hasPendingLoadEvent = m_hasPendingErrorEvent = false;
         }
         m_imageComplete = true;
         if (oldImage)
@@ -251,9 +223,9 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 #if !LOG_DISABLED
             auto oldState = m_lazyImageLoadState;
 #endif
-            if (!isDeferred() && isImageElement) {
+            if (m_lazyImageLoadState == LazyImageLoadState::None && isImageElement) {
                 auto& imageElement = downcast<HTMLImageElement>(element());
-                if (imageElement.isLazyLoadable() && document.settings().lazyImageLoadingEnabled()) {
+                if (imageElement.isLazyLoadable() && document.lazyImageLoadingEnabled()) {
                     m_lazyImageLoadState = LazyImageLoadState::Deferred;
                     request.setIgnoreForRequestCount(true);
                 }
@@ -270,14 +242,14 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         if (!newImage && !pageIsBeingDismissed(document)) {
             m_failedLoadURL = attr;
             m_hasPendingErrorEvent = true;
-            errorEventSender().dispatchEventSoon(*this);
+            loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
         } else
             clearFailedLoadURL();
     } else if (!attr.isNull()) {
         // Fire an error event if the url is empty.
         m_failedLoadURL = attr;
         m_hasPendingErrorEvent = true;
-        errorEventSender().dispatchEventSoon(*this);
+        loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
     }
 
     didUpdateCachedImage(relevantMutation, WTFMove(newImage));
@@ -293,12 +265,9 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
     if (newImage != oldImage || relevantMutation == RelevantMutation::Yes) {
         LOG_WITH_STREAM(LazyLoading, stream << " switching from old image " << oldImage << " to image " << newImage.get() << " " << (newImage ? newImage->url() : URL()));
 
-        if (m_hasPendingBeforeLoadEvent) {
-            beforeLoadEventSender().cancelEvent(*this);
-            m_hasPendingBeforeLoadEvent = false;
-        }
+        m_hasPendingBeforeLoadEvent = false;
         if (m_hasPendingLoadEvent) {
-            loadEventSender().cancelEvent(*this);
+            loadEventSender().cancelEvent(*this, eventNames().loadEvent);
             m_hasPendingLoadEvent = false;
         }
 
@@ -307,7 +276,7 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
         // this load and we should not cancel the event.
         // FIXME: If both previous load and this one got blocked with an error, we can receive one error event instead of two.
         if (m_hasPendingErrorEvent && newImage) {
-            errorEventSender().cancelEvent(*this);
+            loadEventSender().cancelEvent(*this, eventNames().errorEvent);
             m_hasPendingErrorEvent = false;
         }
 
@@ -326,8 +295,7 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
                 LazyLoadImageObserver::observe(element());
 
             // If newImage is cached, addClient() will result in the load event
-            // being queued to fire. Ensure this happens after beforeload is
-            // dispatched.
+            // being queued to fire.
             newImage->addClient(*this);
         } else
             resetLazyImageLoading(element().document());
@@ -380,7 +348,7 @@ inline void ImageLoader::rejectDecodePromises(ASCIILiteral message)
 
 void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
-    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " notifyFinished - hasPendingBeforeLoadEvent " << hasPendingBeforeLoadEvent() << " hasPendingLoadEvent " << m_hasPendingLoadEvent);
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " notifyFinished - hasPendingLoadEvent " << m_hasPendingLoadEvent);
 
     ASSERT(m_failedLoadURL.isEmpty());
     ASSERT_UNUSED(resource, &resource == m_image.get());
@@ -406,7 +374,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         clearImageWithoutConsideringPendingLoadEvent();
 
         m_hasPendingErrorEvent = true;
-        errorEventSender().dispatchEventSoon(*this);
+        loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
 
         auto message = makeString("Cannot load image ", imageURL.string(), " due to access control checks.");
         element().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
@@ -434,7 +402,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
     if (hasPendingDecodePromises())
         decode();
-    loadEventSender().dispatchEventSoon(*this);
+    loadEventSender().dispatchEventSoon(*this, eventNames().loadEvent);
 }
 
 RenderImageResource* ImageLoader::renderImageResource()
@@ -556,12 +524,9 @@ void ImageLoader::timerFired()
     m_protectedElement = nullptr;
 }
 
-void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
+void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender, const AtomString& eventType)
 {
-    ASSERT(eventSender == &beforeLoadEventSender() || eventSender == &loadEventSender() || eventSender == &errorEventSender());
-    const AtomString& eventType = eventSender->eventType();
-    if (eventType == eventNames().beforeloadEvent)
-        dispatchPendingBeforeLoadEvent();
+    ASSERT_UNUSED(eventSender, eventSender == &loadEventSender());
     if (eventType == eventNames().loadEvent)
         dispatchPendingLoadEvent();
     if (eventType == eventNames().errorEvent)
@@ -602,7 +567,7 @@ void ImageLoader::dispatchPendingErrorEvent()
     if (!m_hasPendingErrorEvent)
         return;
     m_hasPendingErrorEvent = false;
-    errorEventSender().cancelEvent(*this);
+    loadEventSender().cancelEvent(*this, eventNames().errorEvent);
     if (element().document().hasLivingRenderTree())
         element().dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
@@ -611,19 +576,9 @@ void ImageLoader::dispatchPendingErrorEvent()
     updatedHasPendingEvent();
 }
 
-void ImageLoader::dispatchPendingBeforeLoadEvents(Page* page)
-{
-    beforeLoadEventSender().dispatchPendingEvents(page);
-}
-
 void ImageLoader::dispatchPendingLoadEvents(Page* page)
 {
     loadEventSender().dispatchPendingEvents(page);
-}
-
-void ImageLoader::dispatchPendingErrorEvents(Page* page)
-{
-    errorEventSender().dispatchPendingEvents(page);
 }
 
 void ImageLoader::elementDidMoveToNewDocument(Document& oldDocument)

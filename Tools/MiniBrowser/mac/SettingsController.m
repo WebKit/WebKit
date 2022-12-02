@@ -52,7 +52,6 @@ static NSString * const UsesGameControllerFrameworkKey = @"UsesGameControllerFra
 static NSString * const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
 static NSString * const AcceleratedDrawingEnabledPreferenceKey = @"AcceleratedDrawingEnabled";
 static NSString * const DisplayListDrawingEnabledPreferenceKey = @"DisplayListDrawingEnabled";
-static NSString * const SubpixelAntialiasedLayerTextEnabledPreferenceKey = @"SubpixelAntialiasedLayerTextEnabled";
 static NSString * const ResourceLoadStatisticsEnabledPreferenceKey = @"ResourceLoadStatisticsEnabled";
 
 static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
@@ -83,10 +82,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     InternalDebugFeatureTag,
 };
 
-@interface SettingsController ()
-@property (nonatomic, retain) NSMenu *menu;
-@end
-
 @implementation SettingsController
 
 - (instancetype)initWithMenu:(NSMenu *)menu
@@ -95,12 +90,9 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     if (!self)
         return nil;
 
-    _menu = [menu retain];
-
     NSArray *onByDefaultPrefs = @[
         UseWebKit2ByDefaultPreferenceKey,
         AcceleratedDrawingEnabledPreferenceKey,
-        SubpixelAntialiasedLayerTextEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
         WebViewFillsWindowKey,
@@ -113,154 +105,119 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
             [userDefaults setBool:YES forKey:prefName];
     }
 
-    [self _populateMenu];
+    [self _populateMenu:menu];
 
     return self;
 }
 
-- (void)dealloc
-{
-    [_menu release];
-    [super dealloc];
-}
-
-- (void)_addItemWithTitle:(NSString *)title action:(SEL)action indented:(BOOL)indented
+static NSMenuItem *addItemToMenuWithTarget(NSMenu *menu, NSString *title, id target, SEL action, BOOL indent, NSInteger tag)
 {
     NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:action keyEquivalent:@""];
-    [item setTarget:self];
-    if (indented)
-        [item setIndentationLevel:1];
-    [_menu addItem:item];
-    [item release];
+    if (action)
+        item.target = target;
+    if (tag)
+        item.tag = tag;
+    if (indent)
+        item.indentationLevel = 1;
+    [menu addItem:item];
+    return item;
 }
 
-- (void)_addHeaderWithTitle:(NSString *)title
+static void addSeparatorToMenu(NSMenu *menu)
 {
-    [_menu addItem:[NSMenuItem separatorItem]];
-    [_menu addItem:[[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""] autorelease]];
+    [menu addItem:[NSMenuItem separatorItem]];
 }
 
-- (void)_populateMenu
+static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 {
-    [self _addItemWithTitle:@"Use WebKit2 By Default" action:@selector(toggleUseWebKit2ByDefault:) indented:NO];
-    [self _addItemWithTitle:@"Create Editor By Default" action:@selector(toggleCreateEditorByDefault:) indented:NO];
-    [self _addItemWithTitle:@"Set Default URL to Current URL" action:@selector(setDefaultURLToCurrentURL:) indented:NO];
+    NSMenuItem *submenuItem = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
+    NSMenu *submenu = [[NSMenu alloc] initWithTitle:title];
+    [submenuItem setSubmenu:submenu];
+    [menu addItem:submenuItem];
+    return submenu;
+}
 
-    [_menu addItem:[NSMenuItem separatorItem]];
+- (void)_populateMenu:(NSMenu *)menu
+{
+    __block bool indent = false;
 
-    NSMenuItem *userAgentSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"User Agent" action:nil keyEquivalent:@""];
-    NSMenu *userAgentMenu = [[NSMenu alloc] initWithTitle:@"User Agent"];
-    [self buildUserAgentsMenu:userAgentMenu];
-    [userAgentSubmenuItem setSubmenu:userAgentMenu];
-    [_menu addItem:userAgentSubmenuItem];
-    [userAgentMenu release];
-    [userAgentSubmenuItem release];
+    __auto_type addItemToMenu = ^(NSMenu *menu, NSString *title, SEL action, BOOL indent, NSInteger tag) {
+        return addItemToMenuWithTarget(menu, title, self, action, indent, tag);
+    };
 
-    [_menu addItem:[NSMenuItem separatorItem]];
+    __auto_type addItem = ^(NSString *title, SEL action) {
+        return addItemToMenu(menu, title, action, indent, 0);
+    };
 
-    [self _addItemWithTitle:@"Use Transparent Windows" action:@selector(toggleUseTransparentWindows:) indented:NO];
-    [self _addItemWithTitle:@"Use Paginated Mode" action:@selector(toggleUsePaginatedMode:) indented:NO];
-    [self _addItemWithTitle:@"Show Layer Borders" action:@selector(toggleShowLayerBorders:) indented:NO];
-    [self _addItemWithTitle:@"Enable Legacy Line Layout Visual Coverage" action:@selector(toggleLegacyLineLayoutVisualCoverageEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Suppress Incremental Rendering in New Windows" action:@selector(toggleIncrementalRenderingSuppressed:) indented:NO];
-    [self _addItemWithTitle:@"Enable Accelerated Drawing" action:@selector(toggleAcceleratedDrawingEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable Display List Drawing" action:@selector(toggleDisplayListDrawingEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable Subpixel-antialiased Layer Text" action:@selector(toggleSubpixelAntialiasedLayerTextEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable Resource Load Statistics" action:@selector(toggleResourceLoadStatisticsEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable Large Image Async Decoding" action:@selector(toggleLargeImageAsyncDecodingEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable Animated Image Async Decoding" action:@selector(toggleAnimatedImageAsyncDecodingEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable color-filter" action:@selector(toggleAppleColorFilterEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Punch Out White Backgrounds in Dark Mode" action:@selector(togglePunchOutWhiteBackgroundsInDarkMode:) indented:NO];
-    [self _addItemWithTitle:@"Use System Appearance" action:@selector(toggleUseSystemAppearance:) indented:NO];
-    [self _addHeaderWithTitle:@"WebKit2-only Settings"];
+    __auto_type addSeparator = ^{
+        addSeparatorToMenu(menu);
+    };
 
-    [self _addItemWithTitle:@"Reserve Space For Banners" action:@selector(toggleReserveSpaceForBanners:) indented:YES];
-    [self _addItemWithTitle:@"Show Tiled Scrolling Indicator" action:@selector(toggleShowTiledScrollingIndicator:) indented:YES];
-    [self _addItemWithTitle:@"Use UI-Side Compositing" action:@selector(toggleUseUISideCompositing:) indented:YES];
-    [self _addItemWithTitle:@"Disable Per-Window Web Processes" action:@selector(togglePerWindowWebProcessesDisabled:) indented:YES];
-    [self _addItemWithTitle:@"Show Resource Usage Overlay" action:@selector(toggleShowResourceUsageOverlay:) indented:YES];
-    [self _addItemWithTitle:@"Load All Site Icons Per-Page" action:@selector(toggleLoadsAllSiteIcons:) indented:YES];
-    [self _addItemWithTitle:@"Use GameController.framework on macOS (Restart required)" action:@selector(toggleUsesGameControllerFramework:) indented:YES];
-    [self _addItemWithTitle:@"Disable network cache speculative revalidation" action:@selector(toggleNetworkCacheSpeculativeRevalidationDisabled:) indented:YES];
-    [self _addItemWithTitle:@"Enable Process Swap on window.open() with an opener" action:@selector(toggleProcessSwapOnWindowOpenWithOpener:) indented:YES];
-
-    NSMenuItem *debugOverlaysSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Debug Overlays" action:nil keyEquivalent:@""];
-    NSMenu *debugOverlaysMenu = [[NSMenu alloc] initWithTitle:@"Debug Overlays"];
-    [debugOverlaysSubmenuItem setSubmenu:debugOverlaysMenu];
-
-    NSMenuItem *nonFastScrollableRegionItem = [[NSMenuItem alloc] initWithTitle:@"Non-fast Scrollable Region" action:@selector(toggleDebugOverlay:) keyEquivalent:@""];
-    [nonFastScrollableRegionItem setTag:NonFastScrollableRegionOverlayTag];
-    [nonFastScrollableRegionItem setTarget:self];
-    [debugOverlaysMenu addItem:[nonFastScrollableRegionItem autorelease]];
-
-    NSMenuItem *wheelEventHandlerRegionItem = [[NSMenuItem alloc] initWithTitle:@"Wheel Event Handler Region" action:@selector(toggleDebugOverlay:) keyEquivalent:@""];
-    [wheelEventHandlerRegionItem setTag:WheelEventHandlerRegionOverlayTag];
-    [wheelEventHandlerRegionItem setTarget:self];
-    [debugOverlaysMenu addItem:[wheelEventHandlerRegionItem autorelease]];
-
-    NSMenuItem *interactionRegionItem = [[NSMenuItem alloc] initWithTitle:@"Interaction Region" action:@selector(toggleDebugOverlay:) keyEquivalent:@""];
-    [interactionRegionItem setTag:InteractionRegionOverlayTag];
-    [interactionRegionItem setTarget:self];
-    [debugOverlaysMenu addItem:[interactionRegionItem autorelease]];
-
-    [debugOverlaysMenu release];
+    __auto_type addSubmenu = ^(NSString *title) {
+        return addSubmenuToMenu(menu, title);
+    };
     
-    [_menu addItem:debugOverlaysSubmenuItem];
-    [debugOverlaysSubmenuItem release];
+    addItem(@"Use WebKit2 By Default", @selector(toggleUseWebKit2ByDefault:));
+    addItem(@"Create Editor By Default", @selector(toggleCreateEditorByDefault:));
+    addItem(@"Set Default URL to Current URL", @selector(setDefaultURLToCurrentURL:));
 
-    NSMenuItem *experimentalFeaturesSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Experimental Features" action:nil keyEquivalent:@""];
-    NSMenu *experimentalFeaturesMenu = [[NSMenu alloc] initWithTitle:@"Experimental Features"];
-    [experimentalFeaturesSubmenuItem setSubmenu:experimentalFeaturesMenu];
+    addSeparator();
 
-    NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
+    NSMenu *userAgentMenu = addSubmenu(@"User Agent");
+    [self buildUserAgentsMenu:userAgentMenu];
 
-    for (_WKExperimentalFeature *feature in experimentalFeatures) {
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:feature.name action:@selector(toggleExperimentalFeature:) keyEquivalent:@""];
+    addSeparator();
+
+    addItem(@"Use Transparent Windows", @selector(toggleUseTransparentWindows:));
+    addItem(@"Use Paginated Mode", @selector(toggleUsePaginatedMode:));
+    addItem(@"Show Layer Borders", @selector(toggleShowLayerBorders:));
+    addItem(@"Enable Legacy Line Layout Visual Coverage", @selector(toggleLegacyLineLayoutVisualCoverageEnabled:));
+    addItem(@"Suppress Incremental Rendering in New Windows", @selector(toggleIncrementalRenderingSuppressed:));
+    addItem(@"Enable Accelerated Drawing", @selector(toggleAcceleratedDrawingEnabled:));
+    addItem(@"Enable Display List Drawing", @selector(toggleDisplayListDrawingEnabled:));
+    addItem(@"Enable Resource Load Statistics", @selector(toggleResourceLoadStatisticsEnabled:));
+    addItem(@"Enable Large Image Async Decoding", @selector(toggleLargeImageAsyncDecodingEnabled:));
+    addItem(@"Enable Animated Image Async Decoding", @selector(toggleAnimatedImageAsyncDecodingEnabled:));
+    addItem(@"Enable color-filter", @selector(toggleAppleColorFilterEnabled:));
+    addItem(@"Punch Out White Backgrounds in Dark Mode", @selector(togglePunchOutWhiteBackgroundsInDarkMode:));
+    addItem(@"Use System Appearance", @selector(toggleUseSystemAppearance:));
+
+    addSeparator();
+    addItem(@"WebKit2-only Settings", nil);
+    indent = YES;
+    addItem(@"Reserve Space For Banners", @selector(toggleReserveSpaceForBanners:));
+    addItem(@"Show Tiled Scrolling Indicator", @selector(toggleShowTiledScrollingIndicator:));
+    addItem(@"Use UI-Side Compositing", @selector(toggleUseUISideCompositing:));
+    addItem(@"Disable Per-Window Web Processes", @selector(togglePerWindowWebProcessesDisabled:));
+    addItem(@"Load All Site Icons Per-Page", @selector(toggleLoadsAllSiteIcons:));
+    addItem(@"Use GameController.framework on macOS (Restart required)", @selector(toggleUsesGameControllerFramework:));
+    addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
+    addItem(@"Enable Process Swap on window.open() with an opener", @selector(toggleProcessSwapOnWindowOpenWithOpener:));
+    indent = NO;
+
+    NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
+    addItemToMenu(debugOverlaysMenu, @"Non-fast Scrollable Region", @selector(toggleDebugOverlay:), NO, NonFastScrollableRegionOverlayTag);
+    addItemToMenu(debugOverlaysMenu, @"Wheel Event Handler Region", @selector(toggleDebugOverlay:), NO, WheelEventHandlerRegionOverlayTag);
+    addItemToMenu(debugOverlaysMenu, @"Interaction Region", @selector(toggleDebugOverlay:), NO, InteractionRegionOverlayTag);
+    addItemToMenu(debugOverlaysMenu, @"Resource Usage", @selector(toggleShowResourceUsageOverlay:), NO, 0);
+
+    NSMenu *experimentalFeaturesMenu = addSubmenu(@"Experimental Features");
+    for (_WKExperimentalFeature *feature in WKPreferences._experimentalFeatures) {
+        NSMenuItem *item = addItemToMenu(experimentalFeaturesMenu, feature.name, @selector(toggleExperimentalFeature:), NO, ExperimentalFeatureTag);
         item.toolTip = feature.details;
         item.representedObject = feature;
-
-        [item setTag:ExperimentalFeatureTag];
-        [item setTarget:self];
-        [experimentalFeaturesMenu addItem:[item autorelease]];
     }
+    addSeparatorToMenu(experimentalFeaturesMenu);
+    addItemToMenu(experimentalFeaturesMenu, @"Reset All to Defaults", @selector(resetAllExperimentalFeatures:), NO, 0);
 
-    [experimentalFeaturesMenu addItem:[NSMenuItem separatorItem]];
-    NSMenuItem *resetExperimentalFeaturesToDefaultsItem = [[NSMenuItem alloc] initWithTitle:@"Reset All to Defaults" action:@selector(resetAllExperimentalFeatures:) keyEquivalent:@""];
-    [resetExperimentalFeaturesToDefaultsItem setTarget:self];
-    [experimentalFeaturesMenu addItem:resetExperimentalFeaturesToDefaultsItem];
-    [resetExperimentalFeaturesToDefaultsItem release];
-
-    [_menu addItem:experimentalFeaturesSubmenuItem];
-    [experimentalFeaturesSubmenuItem release];
-    [experimentalFeaturesMenu release];
-
-    NSMenuItem *internalDebugFeaturesSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Internal Features" action:nil keyEquivalent:@""];
-    NSMenu *internalDebugFeaturesMenu = [[NSMenu alloc] initWithTitle:@"Internal Features"];
-    [internalDebugFeaturesSubmenuItem setSubmenu:internalDebugFeaturesMenu];
-
-    NSArray<_WKInternalDebugFeature *> *internalDebugFeatures = [WKPreferences _internalDebugFeatures];
-
-    for (_WKInternalDebugFeature *feature in internalDebugFeatures) {
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:feature.name action:@selector(toggleInternalDebugFeature:) keyEquivalent:@""];
+    NSMenu *internalDebugFeaturesMenu = addSubmenu(@"Internal Features");
+    for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
+        NSMenuItem *item = addItemToMenu(internalDebugFeaturesMenu, feature.name, @selector(toggleInternalDebugFeature:), NO, InternalDebugFeatureTag);
         item.toolTip = feature.details;
         item.representedObject = feature;
-
-        [item setTag:InternalDebugFeatureTag];
-        [item setTarget:self];
-        [internalDebugFeaturesMenu addItem:[item autorelease]];
     }
-
-    [internalDebugFeaturesMenu addItem:[NSMenuItem separatorItem]];
-    NSMenuItem *resetInternalFeaturesToDefaultsItem = [[NSMenuItem alloc] initWithTitle:@"Reset All to Defaults" action:@selector(resetAllInternalDebugFeatures:) keyEquivalent:@""];
-    [resetInternalFeaturesToDefaultsItem setTarget:self];
-    [internalDebugFeaturesMenu addItem:resetInternalFeaturesToDefaultsItem];
-    [resetInternalFeaturesToDefaultsItem release];
-
-    [_menu addItem:internalDebugFeaturesSubmenuItem];
-    [internalDebugFeaturesSubmenuItem release];
-    [internalDebugFeaturesMenu release];
-
-    [self _addHeaderWithTitle:@"WebKit1-only Settings"];
+    addSeparatorToMenu(internalDebugFeaturesMenu);
+    addItemToMenu(internalDebugFeaturesMenu, @"Reset All to Defaults", @selector(resetAllInternalDebugFeatures:), NO, 0);
 }
 
 + (NSArray *)userAgentData
@@ -320,28 +277,29 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         @"identifier" : @"default",
     };
 
-    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:@"Default" action:@selector(changeCutomUserAgent:) keyEquivalent:@""];
-    [menuItem setTarget:self];
-    [menuItem setRepresentedObject:defaultUAInfo];
+    __auto_type addItem = ^(NSString *title, SEL action) {
+        return addItemToMenuWithTarget(menu, title, self, action, NO, 0);
+    };
 
-    [menu addItem:menuItem];
-    [menuItem release];
+    __auto_type addSeparator = ^{
+        addSeparatorToMenu(menu);
+    };
 
-    [menu addItem:[NSMenuItem separatorItem]];
+    NSMenuItem *defaultItem = addItem(@"Default", @selector(changeCustomUserAgent:));
+    defaultItem.representedObject = defaultUAInfo;
 
-    for (NSDictionary *userAgentData in [[self class] userAgentData]) {
+    addSeparator();
+
+    for (NSDictionary *userAgentData in SettingsController.userAgentData) {
         NSString *name = userAgentData[@"label"];
         
         if ([name isEqualToString:@"-"]) {
-            [menu addItem:[NSMenuItem separatorItem]];
+            addSeparator();
             continue;
         }
-        
-        menuItem = [[NSMenuItem alloc] initWithTitle:name action:@selector(changeCutomUserAgent:) keyEquivalent:@""];
-        [menuItem setTarget:self];
-        [menuItem setRepresentedObject:userAgentData];
-        [menu addItem:menuItem];
-        [menuItem release];
+
+        NSMenuItem *item = addItem(name, @selector(changeCustomUserAgent:));
+        item.representedObject = userAgentData;
     }
 }
 
@@ -370,8 +328,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self acceleratedDrawingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDisplayListDrawingEnabled:))
         [menuItem setState:[self displayListDrawingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleSubpixelAntialiasedLayerTextEnabled:))
-        [menuItem setState:[self subpixelAntialiasedLayerTextEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleResourceLoadStatisticsEnabled:))
         [menuItem setState:[self resourceLoadStatisticsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleLargeImageAsyncDecodingEnabled:))
@@ -404,7 +360,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self perWindowWebProcessesDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDebugOverlay:))
         [menuItem setState:[self debugOverlayVisible:menuItem] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(changeCutomUserAgent:)) {
+    else if (action == @selector(changeCustomUserAgent:)) {
 
         NSString *savedUAIdentifier = [[NSUserDefaults standardUserDefaults] stringForKey:CustomUserAgentPreferenceKey];
         NSDictionary *userAgentDict = [menuItem representedObject];
@@ -494,9 +450,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [alert addButtonWithTitle:@"Switch and Quit"];
     [alert addButtonWithTitle:@"Cancel"];
 
-    NSModalResponse response = [alert runModal];    
-    [alert release];
-
+    NSModalResponse response = [alert runModal];
     if (response != NSAlertFirstButtonReturn)
         return;
 
@@ -557,16 +511,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)displayListDrawingEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:DisplayListDrawingEnabledPreferenceKey];
-}
-
-- (void)toggleSubpixelAntialiasedLayerTextEnabled:(id)sender
-{
-    [self _toggleBooleanDefault:SubpixelAntialiasedLayerTextEnabledPreferenceKey];
-}
-
-- (BOOL)subpixelAntialiasedLayerTextEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:SubpixelAntialiasedLayerTextEnabledPreferenceKey];
 }
 
 - (void)toggleReserveSpaceForBanners:(id)sender
@@ -812,7 +756,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     return nil;
 }
 
-- (void)changeCutomUserAgent:(id)sender
+- (void)changeCustomUserAgent:(id)sender
 {
     NSDictionary *userAgentDict = [sender representedObject];
     if (!userAgentDict)

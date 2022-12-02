@@ -111,7 +111,7 @@ void ProgressTracker::reset()
 
 void ProgressTracker::progressStarted(Frame& frame)
 {
-    LOG(Progress, "Progress started (%p) - frame %p(\"%s\"), value %f, tracked frames %d, originating frame %p", this, &frame, frame.tree().uniqueName().string().utf8().data(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
+    LOG(Progress, "Progress started (%p) - frame %p(frameID %" PRIu64 "), value %f, tracked frames %d, originating frame %p", this, &frame, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
 
     m_client->willChangeEstimatedProgress();
 
@@ -148,7 +148,7 @@ void ProgressTracker::progressEstimateChanged(Frame& frame)
 
 void ProgressTracker::progressCompleted(Frame& frame)
 {
-    LOG(Progress, "Progress completed (%p) - frame %p(\"%s\"), value %f, tracked frames %d, originating frame %p", this, &frame, frame.tree().uniqueName().string().utf8().data(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
+    LOG(Progress, "Progress completed (%p) - frame %p(frameID %" PRIu64 "), value %f, tracked frames %d, originating frame %p", this, &frame, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
     PROGRESS_TRACKER_RELEASE_LOG("progressCompleted: frame %p, value %f, tracked frames %d, originating frame %p, isMainLoad %d", &frame, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad);
 
     if (m_numProgressTrackedFrames <= 0)

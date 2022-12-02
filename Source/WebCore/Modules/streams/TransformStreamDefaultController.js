@@ -27,6 +27,9 @@ function initializeTransformStreamDefaultController()
 {
     "use strict";
 
+    if (arguments.length !== 1 && arguments[0] !== @isTransformStream)
+        @throwTypeError("TransformStreamDefaultController constructor should not be called directly");
+
     return this;
 }
 
@@ -45,24 +48,26 @@ function desiredSize()
     return @readableStreamDefaultControllerGetDesiredSize(readableController);
 }
 
-function enqueue(chunk)
+function enqueue()
 {
     "use strict";
 
     if (!@isTransformStreamDefaultController(this))
         throw @makeThisTypeError("TransformStreamDefaultController", "enqueue");
 
+    const chunk = arguments[0];
     @transformStreamDefaultControllerEnqueue(this, chunk);
 }
 
-function error(e)
+function error()
 {
     "use strict";
 
     if (!@isTransformStreamDefaultController(this))
         throw @makeThisTypeError("TransformStreamDefaultController", "error");
 
-    @transformStreamDefaultControllerError(this, e);
+    const reason = arguments[0];
+    @transformStreamDefaultControllerError(this, reason);
 }
 
 function terminate()

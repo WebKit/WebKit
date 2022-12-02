@@ -45,6 +45,11 @@ RefPtr<ImageBuffer> ImageBitmapBacking::takeImageBuffer()
     return WTFMove(m_bitmapData);
 }
 
+RefPtr<ImageBuffer> ImageBitmapBacking::takeImageBufferForDifferentThread()
+{
+    return ImageBuffer::sinkIntoBufferForDifferentThread(WTFMove(m_bitmapData));
+}
+
 unsigned ImageBitmapBacking::width() const
 {
     // FIXME: Is this the right width?

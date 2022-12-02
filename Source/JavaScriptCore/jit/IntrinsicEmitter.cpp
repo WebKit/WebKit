@@ -34,6 +34,7 @@
 #include "IntrinsicGetterAccessCase.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
+#include "JSTypedArrays.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 
@@ -62,7 +63,10 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(StructureStubInfo& stubIn
     case TypedArrayLengthIntrinsic: {
         if (!isTypedView(structure->typeInfo().type()))
             return false;
-        
+#if USE(JSVALUE32_64)
+        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()))
+            return false;
+#endif
         return true;
     }
     case UnderscoreProtoIntrinsic: {
@@ -75,6 +79,19 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(StructureStubInfo& stubIn
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+bool IntrinsicGetterAccessCase::doesCalls() const
+{
+    switch (intrinsic()) {
+    case TypedArrayByteOffsetIntrinsic:
+    case TypedArrayByteLengthIntrinsic:
+    case TypedArrayLengthIntrinsic:
+        return isResizableOrGrowableSharedTypedArrayIncludingDataView(structure()->classInfoForCells());
+    default:
+        return false;
+    }
+    return false;
+}
+
 void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state)
 {
     CCallHelpers& jit = *state.jit;
@@ -85,6 +102,25 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
 
     switch (intrinsic()) {
     case TypedArrayLengthIntrinsic: {
+#if USE(JSVALUE64)
+        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure()->classInfoForCells())) {
+            auto allocator = state.makeDefaultScratchAllocator(state.scratchGPR);
+            GPRReg scratch2GPR = allocator.allocateScratchGPR();
+
+            ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+            jit.loadTypedArrayLength(baseGPR, valueGPR, state.scratchGPR, scratch2GPR, typedArrayType(structure()->typeInfo().type()));
+#if USE(LARGE_TYPED_ARRAYS)
+            jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
+#else
+            jit.boxInt32(valueGPR, valueRegs);
+#endif
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            state.succeed();
+            return;
+        }
+#endif
+
 #if USE(LARGE_TYPED_ARRAYS)
         jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
@@ -98,6 +134,26 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
 
     case TypedArrayByteLengthIntrinsic: {
         TypedArrayType type = typedArrayType(structure()->typeInfo().type());
+
+#if USE(JSVALUE64)
+        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure()->classInfoForCells())) {
+            auto allocator = state.makeDefaultScratchAllocator(state.scratchGPR);
+            GPRReg scratch2GPR = allocator.allocateScratchGPR();
+
+            ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+            jit.loadTypedArrayByteLength(baseGPR, valueGPR, state.scratchGPR, scratch2GPR, typedArrayType(structure()->typeInfo().type()));
+#if USE(LARGE_TYPED_ARRAYS)
+            jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
+#else
+            jit.boxInt32(valueGPR, valueRegs);
+#endif
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            state.succeed();
+            return;
+        }
+#endif
+
 #if USE(LARGE_TYPED_ARRAYS)
         jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
         if (elementSize(type) > 1)
@@ -116,35 +172,40 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
     }
 
     case TypedArrayByteOffsetIntrinsic: {
-        GPRReg scratchGPR = state.scratchGPR;
+#if USE(JSVALUE64)
+        if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure()->classInfoForCells())) {
+            auto allocator = state.makeDefaultScratchAllocator(state.scratchGPR);
+            GPRReg scratch2GPR = allocator.allocateScratchGPR();
 
-        CCallHelpers::Jump emptyByteOffset = jit.branch32(
-            MacroAssembler::NotEqual,
-            MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
-            TrustedImm32(WastefulTypedArray));
-
-        jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-        jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), valueGPR);
-#if CPU(ARM64E)
-        jit.removeArrayPtrTag(valueGPR);
+            ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+            auto outOfBounds = jit.branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(baseGPR, state.scratchGPR, scratch2GPR, typedArrayType(structure()->typeInfo().type()));
+#if USE(LARGE_TYPED_ARRAYS)
+            jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), valueGPR);
+#else
+            jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), valueGPR);
 #endif
-        jit.loadPtr(MacroAssembler::Address(scratchGPR, Butterfly::offsetOfArrayBuffer()), scratchGPR);
-        jit.loadPtr(MacroAssembler::Address(scratchGPR, ArrayBuffer::offsetOfData()), scratchGPR);
-#if CPU(ARM64E)
-        jit.removeArrayPtrTag(scratchGPR);
-#endif
-        jit.subPtr(scratchGPR, valueGPR);
+            auto done = jit.jump();
 
-        CCallHelpers::Jump done = jit.jump();
-        
-        emptyByteOffset.link(&jit);
-        jit.move(TrustedImmPtr(nullptr), valueGPR);
-        
-        done.link(&jit);
+            outOfBounds.link(&jit);
+            jit.move(CCallHelpers::TrustedImm32(0), valueGPR);
+
+            done.link(&jit);
+#if USE(LARGE_TYPED_ARRAYS)
+            jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
+#else
+            jit.boxInt32(valueGPR, valueRegs);
+#endif
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            state.succeed();
+            return;
+        }
+#endif
 
 #if USE(LARGE_TYPED_ARRAYS)
+        jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), valueGPR);
         jit.boxInt52(valueGPR, valueGPR, state.scratchGPR, state.scratchFPR);
 #else
+        jit.load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), valueGPR);
         jit.boxInt32(valueGPR, valueRegs);
 #endif
         state.succeed();

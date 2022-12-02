@@ -29,7 +29,7 @@ from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canon
                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
                    DeleteStaleBuildFiles, DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
-                   RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
+                   MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
@@ -329,6 +329,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
+        self.addStep(MapBranchAlias())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
         self.addStep(CheckOutPullRequest())

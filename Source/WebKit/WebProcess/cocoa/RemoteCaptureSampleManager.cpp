@@ -30,7 +30,7 @@
 #include "RemoteCaptureSampleManagerMessages.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
-#include "SharedRingBufferStorage.h"
+#include "SharedCARingBuffer.h"
 #include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
 #include <WebCore/VideoFrameCV.h>
@@ -128,7 +128,7 @@ void RemoteCaptureSampleManager::setVideoFrameObjectHeapProxy(RemoteVideoFrameOb
     m_videoFrameObjectHeapProxy = proxy;
 }
 
-void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier identifier, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
+void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -137,7 +137,7 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for storageChanged", identifier.toUInt64());
         return;
     }
-    iterator->value->setStorage(handle, description, numberOfFrames, WTFMove(semaphore), mediaTime, frameChunkSize);
+    iterator->value->setStorage(WTFMove(handle), description, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
 void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata)
@@ -204,34 +204,28 @@ void RemoteCaptureSampleManager::RemoteAudio::startThread()
             if (m_shouldStopThread)
                 break;
 
-            auto currentTime = m_startTime + MediaTime { m_readOffset, static_cast<uint32_t>(m_description.sampleRate()) };
+            auto currentTime = m_startTime + MediaTime { m_readOffset, static_cast<uint32_t>(m_description->sampleRate()) };
             m_ringBuffer->fetch(m_buffer->list(), m_frameChunkSize, m_readOffset);
             m_readOffset += m_frameChunkSize;
 
-            m_source->remoteAudioSamplesAvailable(currentTime, *m_buffer, m_description, m_frameChunkSize);
+            m_source->remoteAudioSamplesAvailable(currentTime, *m_buffer, *m_description, m_frameChunkSize);
         } while (!m_shouldStopThread);
     };
     m_thread = Thread::create("RemoteCaptureSampleManager::RemoteAudio thread", WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
 }
 
-void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
+void RemoteCaptureSampleManager::RemoteAudio::setStorage(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
 {
     stopThread();
-
-    if (!numberOfFrames) {
-        m_ringBuffer = nullptr;
-        m_buffer = nullptr;
+    m_buffer = nullptr;
+    m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
+    if (!m_ringBuffer)
         return;
-    }
-
     m_semaphore = WTFMove(semaphore);
     m_description = description;
     m_startTime = mediaTime;
     m_frameChunkSize = frameChunkSize;
-
-    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_buffer = makeUnique<WebAudioBufferList>(description, m_frameChunkSize);
-
     startThread();
 }
 

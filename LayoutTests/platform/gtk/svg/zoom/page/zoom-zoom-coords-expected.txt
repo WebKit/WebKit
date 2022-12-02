@@ -53,11 +53,11 @@ PASS image1.height.toFixed(2) is "25.00"
 PASS image1.right.toFixed(2) is "150.00"
 PASS image1.bottom.toFixed(2) is "275.00"
 PASS text1.left.toFixed(2) is "100.00"
-FAIL text1.top.toFixed(2) should be 282.66. Was 282.58.
-PASS text1.width.toFixed(2) is "49.20"
-PASS text1.height.toFixed(2) is "6.16"
-PASS text1.right.toFixed(2) is "149.20"
-FAIL text1.bottom.toFixed(2) should be 288.82. Was 288.73.
+FAIL text1.top.toFixed(2) should be 282.95. Was 282.58.
+FAIL text1.width.toFixed(2) should be 45.55. Was 49.20.
+FAIL text1.height.toFixed(2) should be 5.70. Was 6.16.
+FAIL text1.right.toFixed(2) should be 145.55. Was 149.20.
+FAIL text1.bottom.toFixed(2) should be 288.64. Was 288.73.
 
 PASS svg2.left.toFixed(2) is "75.00"
 PASS svg2.top.toFixed(2) is "100.00"
@@ -78,11 +78,11 @@ PASS image2.height.toFixed(2) is "25.00"
 PASS image2.right.toFixed(2) is "225.00"
 PASS image2.bottom.toFixed(2) is "125.00"
 PASS text2.left.toFixed(2) is "175.00"
-FAIL text2.top.toFixed(2) should be 132.66. Was 132.75.
-PASS text2.width.toFixed(2) is "47.44"
-PASS text2.height.toFixed(2) is "5.94"
-PASS text2.right.toFixed(2) is "222.44"
-FAIL text2.bottom.toFixed(2) should be 138.60. Was 138.69.
+FAIL text2.top.toFixed(2) should be 132.95. Was 132.75.
+FAIL text2.width.toFixed(2) should be 45.55. Was 47.44.
+FAIL text2.height.toFixed(2) should be 5.70. Was 5.94.
+FAIL text2.right.toFixed(2) should be 220.55. Was 222.44.
+FAIL text2.bottom.toFixed(2) should be 138.64. Was 138.69.
 
 PASS svg3.left.toFixed(2) is "900.00"
 PASS svg3.top.toFixed(2) is "500.00"
@@ -103,11 +103,11 @@ PASS image3.height.toFixed(2) is "50.00"
 PASS image3.right.toFixed(2) is "1200.00"
 PASS image3.bottom.toFixed(2) is "550.00"
 PASS text3.left.toFixed(2) is "1100.00"
-FAIL text3.top.toFixed(2) should be 565.33. Was 565.16.
-PASS text3.width.toFixed(2) is "98.41"
-PASS text3.height.toFixed(2) is "12.31"
-PASS text3.right.toFixed(2) is "1198.41"
-FAIL text3.bottom.toFixed(2) should be 577.64. Was 577.47.
+FAIL text3.top.toFixed(2) should be 565.38. Was 565.16.
+FAIL text3.width.toFixed(2) should be 96.16. Was 98.41.
+FAIL text3.height.toFixed(2) should be 12.03. Was 12.31.
+FAIL text3.right.toFixed(2) should be 1196.16. Was 1198.41.
+FAIL text3.bottom.toFixed(2) should be 577.41. Was 577.47.
 
 PASS successfullyParsed is true
 

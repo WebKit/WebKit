@@ -27,11 +27,23 @@
 #include "TextFlags.h"
 
 #include "FontCascade.h"
+#include "FontFeatureValues.h"
 #include <functional>
 #include <numeric>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF::TextStream& operator<<(TextStream& ts, FontSmoothingMode mode)
+{
+    switch (mode) {
+    case FontSmoothingMode::AutoSmoothing: ts << "auto"; break;
+    case FontSmoothingMode::NoSmoothing: ts << "no-smoothing"; break;
+    case FontSmoothingMode::Antialiased: ts << "antialiased"; break;
+    case FontSmoothingMode::SubpixelAntialiased: ts << "subpixel-antialiased"; break;
+    }
+    return ts;
+}
 
 WTF::TextStream& operator<<(TextStream& ts, ExpansionBehavior::Behavior behavior)
 {
@@ -61,48 +73,33 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
     return ts;
 }
 
-template <typename T> using BinOp = std::function<T(T, T)>;
-
-template <typename T>
-T reduce(const std::vector<T>& vec, const BinOp<T>& binOp, std::optional<T> initial = { })
-{
-    if (vec.empty())
-        return initial ? *initial : T { };
-
-    auto accumulator = initial ? *initial : vec[0];
-    auto start = initial ? 0 : 1;
-    for (size_t i = start ; i < vec.size() ; i++)
-        accumulator = binOp(accumulator, vec[i]);
-
-    return accumulator;
-}
-
 WTF::TextStream& operator<<(TextStream& ts, FontVariantAlternates alternates)
 {
     if (alternates.isNormal())
         ts << "normal";
     else {
         auto values = alternates.values();
-        std::vector<String> result;
-        if (values.stylistic)
-            result.push_back("stylistic(" + *values.stylistic + ")");
-        if (values.historicalForms)
-            result.push_back("historical-forms"_s);
-        if (values.styleset)
-            result.push_back("styleset(" + *values.styleset + ")");
-        if (values.characterVariant)
-            result.push_back("character-variant(" + *values.characterVariant + ")");
-        if (values.swash)
-            result.push_back("swash(" + *values.swash + ")");
-        if (values.ornaments)
-            result.push_back("ornaments(" + *values.ornaments + ")");
-        if (values.annotation)
-            result.push_back("annotation(" + *values.annotation + ")");
-        
-        BinOp<String> addWithSpace = [](auto a, auto b) { 
-            return a + " " + b;
+        StringBuilder builder;
+        auto append = [&builder] <typename ...Ts> (Ts&& ...args) {
+            // Separate elements with a space.
+            builder.append(builder.isEmpty() ? "": " ", std::forward<Ts>(args)...);
         };
-        ts << reduce(result, addWithSpace);
+        if (values.stylistic)
+            append("stylistic(", *values.stylistic, ")");
+        if (values.historicalForms)
+            append("historical-forms"_s);
+        if (!values.styleset.isEmpty())
+            append("styleset(", makeStringByJoining(values.styleset, ", "_s), ")");
+        if (!values.characterVariant.isEmpty())
+            append("character-variant(", makeStringByJoining(values.characterVariant, ", "_s), ")");
+        if (values.swash)
+            append("swash(", *values.swash, ")");
+        if (values.ornaments)
+            append("ornaments(", *values.ornaments, ")");
+        if (values.annotation)
+            append("annotation(", *values.annotation, ")");
+        
+        ts << builder.toString();
     }
     return ts;
 }
@@ -115,9 +112,7 @@ void add(Hasher& hasher, const FontVariantAlternatesValues& key)
 void add(Hasher& hasher, const FontVariantAlternates& key)
 {
     add(hasher, key.m_val.index());
-    if (key.isNormal())
-        add(hasher, 0);
-    else
+    if (!key.isNormal())
         add(hasher, key.values());
 }
 
@@ -145,7 +140,7 @@ WTF::TextStream& operator<<(TextStream& ts, FontVariantCaps caps)
     return ts;
 }
 
-FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings)
+FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings, RefPtr<FontFeatureValues> fontFeatureValues)
 {
     FeaturesMap features;
     
@@ -279,12 +274,62 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
     }
 
     if (!variantSettings.alternates.isNormal()) {
-        auto values = variantSettings.alternates.values();
+        const auto& values = variantSettings.alternates.values();
         if (values.historicalForms)
             features.set(fontFeatureTag("hist"), 1);
         
-        // TODO: handle other tags.
-        // https://bugs.webkit.org/show_bug.cgi?id=246121
+        if (fontFeatureValues) {
+            auto lookupTags = [](const std::optional<String>& name, const auto& tags) -> Span<const unsigned> {
+                if (!name)
+                    return { };
+
+                auto found = tags.find(*name);
+                if (found == tags.end())
+                    return { };
+
+                return Span { found->value };
+                
+            };
+
+            auto addFeatureTagWithValue = [&features, &lookupTags] (const auto& name, const auto& tags, const FontTag& codename) {
+                for (unsigned value : lookupTags(name, tags)) {
+                    if (value < 1 || value > 99)
+                        continue;
+
+                    features.set(codename, value);
+                }
+            };
+
+            // https://www.w3.org/TR/css-fonts-4/#multi-value-features
+            auto makeTag = [] (unsigned value, std::array<char, 2> codename) {
+                    char rightDigit = '0' + (value % 10);
+                    char leftDigit = '0' + (value / 10);
+                    return FontTag { codename[0], codename[1], leftDigit, rightDigit };
+            };
+
+            // For styleset and character-variant, the tag name itself is the actual conveyor of information.
+            auto addFeatureTags = [&](const Vector<String>& names, const auto& tags, std::array<char, 2> codename) {
+                for (const auto& name : names) {
+                    for (unsigned value : lookupTags(name, tags)) {
+                        if (value < 1 || value > 99)
+                            continue;
+
+                        features.set(makeTag(value, codename), 1);
+                    }
+                }
+            };
+
+            addFeatureTags(values.styleset, fontFeatureValues->styleset(), { 's', 's' });
+            addFeatureTags(values.characterVariant, fontFeatureValues->characterVariant(), { 'c', 'v' });
+            addFeatureTagWithValue(values.stylistic, fontFeatureValues->stylistic(), fontFeatureTag("salt"));
+
+            // "swash" feature sets 2 flags.
+            addFeatureTagWithValue(values.swash, fontFeatureValues->swash(), fontFeatureTag("swsh"));
+            addFeatureTagWithValue(values.swash, fontFeatureValues->swash(), fontFeatureTag("cswh"));
+
+            addFeatureTagWithValue(values.ornaments, fontFeatureValues->ornaments(), fontFeatureTag("ornm"));
+            addFeatureTagWithValue(values.annotation, fontFeatureValues->annotation(), fontFeatureTag("nalt"));
+        }
     }
 
     switch (variantSettings.eastAsianVariant) {

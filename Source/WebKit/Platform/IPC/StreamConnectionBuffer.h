@@ -69,11 +69,19 @@ class Encoder;
 //   This would move the alignedSpan implementation to the StreamConnectionBuffer.
 // * All atomic variable loads are untrusted, so they're clamped. Violations are not reported, though.
 class StreamConnectionBuffer {
+    WTF_MAKE_NONCOPYABLE(StreamConnectionBuffer);
 public:
     explicit StreamConnectionBuffer(size_t memorySize);
     StreamConnectionBuffer(StreamConnectionBuffer&&);
     ~StreamConnectionBuffer();
-    StreamConnectionBuffer& operator=(StreamConnectionBuffer&&);
+
+    struct Handle {
+        WebKit::SharedMemory::Handle memory;
+        void encode(Encoder&) const;
+        static std::optional<Handle> decode(Decoder&);
+    };
+    static std::optional<StreamConnectionBuffer> map(Handle&&);
+    Handle createHandle();
 
     size_t wrapOffset(size_t offset) const
     {
@@ -112,8 +120,6 @@ public:
     size_t dataSize() const { return m_dataSize; }
 
     static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ClientOffset::serverIsSleepingTag)) - 1; }
-    void encode(Encoder&) const;
-    static std::optional<StreamConnectionBuffer> decode(Decoder&);
 
     Span<uint8_t> headerForTesting();
     Span<uint8_t> dataForTesting();

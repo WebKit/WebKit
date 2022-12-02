@@ -161,8 +161,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
     }
 
+    auto* jsFunctionGlobalObject = jsFunction->globalObject();
+
     RefPtr<Event> savedEvent;
-    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunction->globalObject());
+    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunctionGlobalObject);
     if (jsFunctionWindow) {
         savedEvent = jsFunctionWindow->currentEvent();
 
@@ -176,9 +178,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             jsFunctionWindow->setCurrentEvent(savedEvent.get());
     });
 
-    JSGlobalObject* lexicalGlobalObject = jsFunction->globalObject();
+    JSGlobalObject* lexicalGlobalObject = jsFunctionGlobalObject;
 
     JSValue handleEventFunction = jsFunction;
+
+    Ref protectedThis { *this };
 
     auto callData = JSC::getCallData(handleEventFunction);
 
@@ -192,18 +196,16 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             auto* exception = scope.exception();
             scope.clearException();
             event.target()->uncaughtExceptionInEventHandler();
-            reportException(lexicalGlobalObject, exception);
+            reportException(jsFunctionGlobalObject, exception);
             return;
         }
         callData = JSC::getCallData(handleEventFunction);
         if (callData.type == CallData::Type::None) {
             event.target()->uncaughtExceptionInEventHandler();
-            reportException(lexicalGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s));
+            reportException(jsFunctionGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s));
             return;
         }
     }
-
-    Ref<JSEventListener> protectedThis(*this);
 
     MarkedArgumentBuffer args;
     args.append(toJS(lexicalGlobalObject, globalObject, &event));
@@ -229,7 +231,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
         if (exception) {
             event.target()->uncaughtExceptionInEventHandler();
-            reportException(lexicalGlobalObject, exception);
+            reportException(jsFunctionGlobalObject, exception);
             return true;
         }
         return false;

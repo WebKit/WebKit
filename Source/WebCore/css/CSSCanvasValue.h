@@ -25,99 +25,33 @@
 
 #pragma once
 
-#include "CSSImageGeneratorValue.h"
-#include "CanvasBase.h"
-#include "HTMLCanvasElement.h"
-#include "RenderElement.h"
+#include "CSSValue.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class StyleImage;
 
 namespace Style {
 class BuilderState;
 }
 
-class Document;
-
-class CSSCanvasValue final : public CSSImageGeneratorValue {
+class CSSCanvasValue final : public CSSValue {
 public:
-    static Ref<CSSCanvasValue> create(const String& name) { return adoptRef(*new CSSCanvasValue(name)); }
+    static Ref<CSSCanvasValue> create(String name) { return adoptRef(*new CSSCanvasValue(WTFMove(name))); }
     ~CSSCanvasValue();
 
     String customCSSText() const;
-
-    RefPtr<Image> image(RenderElement&, const FloatSize&);
-    bool isFixedSize() const { return true; }
-    FloatSize fixedSize(const RenderElement&);
-
-    HTMLCanvasElement* element() const { return m_element; }
-
-    bool isPending() const { return false; }
-    void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&) { }
-
     bool equals(const CSSCanvasValue&) const;
 
-    // NOTE: We put the CanvasObserver in a member instead of inheriting from it
-    // to avoid adding a vptr to CSSCanvasValue.
-    class CanvasObserverProxy final : public CanvasObserver {
-    public:
-        explicit CanvasObserverProxy(CSSCanvasValue& ownerValue)
-            : m_ownerValue(ownerValue)
-        {
-        }
-
-        bool isCanvasObserverProxy() const final { return true; }
-
-        const CSSCanvasValue& ownerValue() const { return m_ownerValue; }
-
-    private:
-        void canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>& changedRect) final
-        {
-            ASSERT(is<HTMLCanvasElement>(canvasBase));
-            m_ownerValue.canvasChanged(downcast<HTMLCanvasElement>(canvasBase), changedRect);
-        }
-        void canvasResized(CanvasBase& canvasBase) final
-        {
-            ASSERT(is<HTMLCanvasElement>(canvasBase));
-            m_ownerValue.canvasResized(downcast<HTMLCanvasElement>(canvasBase));
-        }
-        void canvasDestroyed(CanvasBase& canvasBase) final
-        {
-            ASSERT(is<HTMLCanvasElement>(canvasBase));
-            m_ownerValue.canvasDestroyed(downcast<HTMLCanvasElement>(canvasBase));
-        }
-
-        CSSCanvasValue& m_ownerValue;
-    };
-
-    Ref<CSSCanvasValue> valueWithStylesResolved(Style::BuilderState&) { return *this; }
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
-    explicit CSSCanvasValue(const String& name)
-        : CSSImageGeneratorValue(CanvasClass)
-        , m_canvasObserver(*this)
-        , m_name(name)
-    {
-    }
+    explicit CSSCanvasValue(String&&);
 
-    void canvasChanged(HTMLCanvasElement&, const std::optional<FloatRect>& changedRect);
-    void canvasResized(HTMLCanvasElement&);
-    void canvasDestroyed(HTMLCanvasElement&);
-
-    HTMLCanvasElement* element(Document&);
-
-    CanvasObserverProxy m_canvasObserver;
-
-    // The name of the canvas.
     String m_name;
-    // The document supplies the element and owns it.
-    HTMLCanvasElement* m_element { nullptr };
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCanvasValue, isCanvasValue())
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSCanvasValue::CanvasObserverProxy)
-    static bool isType(const WebCore::CanvasObserver& canvasObserver) { return canvasObserver.isCanvasObserverProxy(); }
-SPECIALIZE_TYPE_TRAITS_END()
-

@@ -404,7 +404,7 @@
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    DDActionContext *actionContext = _hitTestResultData.detectedDataActionContext.get();
+    DDActionContext *actionContext = _hitTestResultData.platformData.detectedDataActionContext.get();
     if (!actionContext)
         return nil;
 
@@ -414,19 +414,19 @@
         return nil;
 
     RefPtr<WebKit::WebPageProxy> page = _page.get();
-    WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.detectedDataOriginatingPageOverlay;
+    WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.platformData.detectedDataOriginatingPageOverlay;
     _currentActionContext = [actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
-        if (_hitTestResultData.detectedDataTextIndicator)
-            page->setTextIndicator(_hitTestResultData.detectedDataTextIndicator->data());
+        if (_hitTestResultData.platformData.detectedDataTextIndicator)
+            page->setTextIndicator(_hitTestResultData.platformData.detectedDataTextIndicator->data());
         page->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
     } interactionStoppedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID));
         [self _clearImmediateActionState];
     }];
 
-    [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.detectedDataBoundingBox toView:nil]]];
+    [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.platformData.detectedDataBoundingBox toView:nil]]];
 
     NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
 

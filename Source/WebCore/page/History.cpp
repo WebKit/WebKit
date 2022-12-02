@@ -43,6 +43,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(History);
@@ -203,6 +207,14 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     };
     if (!protocolHostAndPortAreEqual(fullURL, documentURL) || fullURL.user() != documentURL.user() || fullURL.password() != documentURL.password())
         return createBlockedURLSecurityErrorWithMessageSuffix("Protocols, domains, ports, usernames, and passwords must match.");
+
+    if (fullURL.isLocalFile()
+#if PLATFORM(COCOA)
+        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PushStateFilePathRestriction)
+#endif
+        && fullURL.fileSystemPath() != documentURL.fileSystemPath()) {
+        return createBlockedURLSecurityErrorWithMessageSuffix("Only differences in query and fragment are allowed for file: URLs.");
+    }
 
     const auto& documentSecurityOrigin = frame->document()->securityOrigin();
     // We allow sandboxed documents, 'data:'/'file:' URLs, etc. to use 'pushState'/'replaceState' to modify the URL query and fragments.

@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-class CSSFontStyleValue;
 class CSSFontStyleRangeValue;
+class CSSPrimitiveValue;
 class CSSValue;
 class CSSValueList;
 class CSSValuePool;
@@ -49,15 +49,15 @@ public:
     static RefPtr<CSSValue> parseFontFaceStyle(const String&, ScriptExecutionContext&);
     static RefPtr<CSSValue> parseFontFaceWeight(const String&, ScriptExecutionContext&);
     static RefPtr<CSSValue> parseFontFaceStretch(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSValue> parseFontFaceUnicodeRange(const String&, ScriptExecutionContext&);
+    static RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String&, ScriptExecutionContext&);
     static RefPtr<CSSValue> parseFontFaceFeatureSettings(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
+    static RefPtr<CSSPrimitiveValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
 };
 
 namespace CSSPropertyParserHelpersWorkerSafe {
 
 RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
+RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
 RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);

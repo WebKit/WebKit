@@ -149,19 +149,6 @@ ResourceUsageOverlayVisible:
     WebCore:
       default: false
 
-SubpixelAntialiasedLayerTextEnabled:
-  type: bool
-  webcoreOnChange: setNeedsRecalcStyleInAllFrames
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(MAC)": true
-      default: false
-    WebKit:
-      "PLATFORM(MAC)": true
-      default: false
-    WebCore:
-      default: false
-
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 TiledScrollingIndicatorVisible:
   type: bool

@@ -33,6 +33,7 @@
 #include "JITOperations.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
+#include "JSDataView.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SuperSampler.h"
@@ -48,7 +49,7 @@ namespace JSC {
 
 AssemblyHelpers::Jump AssemblyHelpers::branchIfFastTypedArray(GPRReg baseGPR)
 {
-    return branch32(
+    return branch8(
         Equal,
         Address(baseGPR, JSArrayBufferView::offsetOfMode()),
         TrustedImm32(FastTypedArray));
@@ -56,7 +57,7 @@ AssemblyHelpers::Jump AssemblyHelpers::branchIfFastTypedArray(GPRReg baseGPR)
 
 AssemblyHelpers::Jump AssemblyHelpers::branchIfNotFastTypedArray(GPRReg baseGPR)
 {
-    return branch32(
+    return branch8(
         NotEqual,
         Address(baseGPR, JSArrayBufferView::offsetOfMode()),
         TrustedImm32(FastTypedArray));
@@ -1482,6 +1483,232 @@ void AssemblyHelpers::getArityPadding(VM& vm, unsigned numberOfParameters, GPRRe
     subPtr(GPRInfo::callFrameRegister, scratchGPR0, scratchGPR1);
     stackOverflow.append(branchPtr(Above, AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR1));
 }
+
+#if USE(JSVALUE64)
+
+AssemblyHelpers::JumpList AssemblyHelpers::branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg baseGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType> typedArrayType)
+{
+    ASSERT(scratchGPR != scratch2GPR);
+    // valueGPR can be baseGPR
+
+    JumpList outOfBounds;
+
+    outOfBounds.append(branchTestPtr(MacroAssembler::Zero, MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector())));
+
+    load8(Address(baseGPR, JSArrayBufferView::offsetOfMode()), scratchGPR);
+    and32(TrustedImm32(resizabilityAndAutoLengthMask), scratchGPR, scratch2GPR);
+    auto canUseRawFieldsDirectly = branch32(BelowOrEqual, scratch2GPR, TrustedImm32(isGrowableSharedMode));
+
+    // Three cases come here.
+    //     GrowableSharedAutoLengthWastefulTypedArray
+    //     ResizableNonSharedWastefulTypedArray
+    //     ResizableNonSharedAutoLengthWastefulTypedArray
+
+    loadPtr(Address(baseGPR, JSObject::butterflyOffset()), scratch2GPR);
+    loadPtr(Address(scratch2GPR, Butterfly::offsetOfArrayBuffer()), scratch2GPR);
+
+    auto isGrowableShared = branchTest32(NonZero, scratchGPR, TrustedImm32(isGrowableSharedMode));
+#if USE(LARGE_TYPED_ARRAYS)
+    load64(Address(scratch2GPR, ArrayBuffer::offsetOfSizeInBytes()), scratch2GPR);
+#else
+    load32(Address(scratch2GPR, ArrayBuffer::offsetOfSizeInBytes()), scratch2GPR);
+#endif
+    auto loadedFromResizable = jump();
+
+    isGrowableShared.link(this);
+    loadPtr(Address(scratch2GPR, ArrayBuffer::offsetOfShared()), scratch2GPR);
+#if USE(LARGE_TYPED_ARRAYS)
+    atomicLoad64(Address(scratch2GPR, SharedArrayBufferContents::offsetOfSizeInBytes()), scratch2GPR);
+#else
+    atomicLoad32(Address(scratch2GPR, SharedArrayBufferContents::offsetOfSizeInBytes()), scratch2GPR);
+#endif
+
+    loadedFromResizable.link(this);
+
+    // It never overflows since it is already checked at the construction.
+#if USE(LARGE_TYPED_ARRAYS)
+    if (typedArrayType) {
+        load64(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+        if (elementSize(typedArrayType.value()) > 1)
+            lshift64(TrustedImm32(logElementSize(typedArrayType.value())), scratchGPR);
+    } else {
+        load8(Address(baseGPR, JSObject::typeInfoTypeOffset()), scratchGPR);
+        addPtr(TrustedImmPtr(logElementSizes), scratchGPR);
+        load8(Address(scratchGPR, -FirstTypedArrayType), scratchGPR);
+        lshift64(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR, scratchGPR);
+    }
+    add64(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), scratchGPR);
+    outOfBounds.append(branch64(Above, scratchGPR, scratch2GPR));
+#else
+    if (typedArrayType) {
+        load32(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+        if (elementSize(typedArrayType.value()) > 1)
+            lshift32(TrustedImm32(logElementSize(typedArrayType.value())), scratchGPR);
+    } else {
+        load8(Address(baseGPR, JSObject::typeInfoTypeOffset()), scratchGPR);
+        addPtr(TrustedImmPtr(logElementSizes), scratchGPR);
+        load8(Address(scratchGPR, -FirstTypedArrayType), scratchGPR);
+        lshift32(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR, scratchGPR);
+    }
+    add32(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), scratchGPR);
+    outOfBounds.append(branch32(Above, scratchGPR, scratch2GPR));
+#endif
+
+    canUseRawFieldsDirectly.link(this);
+
+    return outOfBounds;
+}
+
+void AssemblyHelpers::loadTypedArrayByteLengthImpl(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType> typedArrayType, TypedArrayField field)
+{
+    ASSERT(scratchGPR != scratch2GPR);
+    ASSERT(scratchGPR != valueGPR);
+    // scratch2GPR can be valueGPR
+    // valueGPR can be baseGPR
+
+    load8(Address(baseGPR, JSArrayBufferView::offsetOfMode()), scratchGPR);
+    and32(TrustedImm32(resizabilityAndAutoLengthMask), scratchGPR, scratch2GPR);
+    auto canUseRawFieldsDirectly = branch32(BelowOrEqual, scratch2GPR, TrustedImm32(isGrowableSharedMode));
+
+    // Three cases come here.
+    //     GrowableSharedAutoLengthWastefulTypedArray
+    //     ResizableNonSharedWastefulTypedArray
+    //     ResizableNonSharedAutoLengthWastefulTypedArray
+
+    if (typedArrayType && typedArrayType.value() == TypeDataView)
+        loadPtr(Address(baseGPR, JSDataView::offsetOfBuffer()), scratch2GPR);
+    else {
+        loadPtr(Address(baseGPR, JSObject::butterflyOffset()), scratch2GPR);
+        loadPtr(Address(scratch2GPR, Butterfly::offsetOfArrayBuffer()), scratch2GPR);
+    }
+
+    auto isGrowableShared = branchTest32(NonZero, scratchGPR, TrustedImm32(isGrowableSharedMode));
+#if USE(LARGE_TYPED_ARRAYS)
+    load64(Address(scratch2GPR, ArrayBuffer::offsetOfSizeInBytes()), scratch2GPR);
+#else
+    load32(Address(scratch2GPR, ArrayBuffer::offsetOfSizeInBytes()), scratch2GPR);
+#endif
+    auto loadedFromResizable = jump();
+
+    isGrowableShared.link(this);
+    loadPtr(Address(scratch2GPR, ArrayBuffer::offsetOfShared()), scratch2GPR);
+#if USE(LARGE_TYPED_ARRAYS)
+    atomicLoad64(Address(scratch2GPR, SharedArrayBufferContents::offsetOfSizeInBytes()), scratch2GPR);
+#else
+    atomicLoad32(Address(scratch2GPR, SharedArrayBufferContents::offsetOfSizeInBytes()), scratch2GPR);
+#endif
+
+    loadedFromResizable.link(this);
+
+    // It never overflows since it is already checked at the construction.
+#if USE(LARGE_TYPED_ARRAYS)
+    if (typedArrayType) {
+        load64(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+        if (elementSize(typedArrayType.value()) > 1)
+            lshift64(TrustedImm32(logElementSize(typedArrayType.value())), scratchGPR);
+    } else {
+        load8(Address(baseGPR, JSObject::typeInfoTypeOffset()), scratchGPR);
+        addPtr(TrustedImmPtr(logElementSizes), scratchGPR);
+        load8(Address(scratchGPR, -FirstTypedArrayType), scratchGPR);
+        lshift64(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR, scratchGPR);
+    }
+    add64(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), scratchGPR);
+    auto outOfBounds = branch64(Above, scratchGPR, scratch2GPR);
+#else
+    if (typedArrayType) {
+        load32(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+        if (elementSize(typedArrayType.value()) > 1)
+            lshift32(TrustedImm32(logElementSize(typedArrayType.value())), scratchGPR);
+    } else {
+        load8(Address(baseGPR, JSObject::typeInfoTypeOffset()), scratchGPR);
+        addPtr(TrustedImmPtr(logElementSizes), scratchGPR);
+        load8(Address(scratchGPR, -FirstTypedArrayType), scratchGPR);
+        lshift32(Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR, scratchGPR);
+    }
+    add32(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), scratchGPR);
+    auto outOfBounds = branch32(Above, scratchGPR, scratch2GPR);
+#endif
+
+    auto nonAutoLength = branchTest8(Zero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isAutoLengthMode));
+
+    JumpList doneCases;
+
+#if USE(LARGE_TYPED_ARRAYS)
+    if (field == TypedArrayField::ByteLength) {
+        sub64(scratch2GPR, scratchGPR, valueGPR);
+        ASSERT(typedArrayType);
+        if (elementSize(typedArrayType.value()) > 1)
+            and64(TrustedImm64(~static_cast<uint64_t>(elementSize(typedArrayType.value()) - 1)), valueGPR);
+    } else {
+        if (typedArrayType) {
+            sub64(scratch2GPR, scratchGPR, valueGPR);
+            if (elementSize(typedArrayType.value()) > 1)
+                urshift64(TrustedImm32(logElementSize(typedArrayType.value())), valueGPR);
+        } else {
+            sub64(scratch2GPR, scratchGPR, scratch2GPR); // Do not change valueGPR until we use baseGPR.
+            load8(Address(baseGPR, JSObject::typeInfoTypeOffset()), scratchGPR);
+            addPtr(TrustedImmPtr(logElementSizes), scratchGPR);
+            load8(Address(scratchGPR, -FirstTypedArrayType), scratchGPR);
+            urshift64(scratch2GPR, scratchGPR, valueGPR);
+        }
+    }
+#else
+    if (field == TypedArrayField::ByteLength) {
+        sub32(scratch2GPR, scratchGPR, valueGPR);
+        ASSERT(typedArrayType);
+        if (elementSize(typedArrayType.value()) > 1)
+            and32(TrustedImm32(~static_cast<uint32_t>(elementSize(typedArrayType.value()) - 1)), valueGPR);
+    } else {
+        if (typedArrayType) {
+            sub32(scratch2GPR, scratchGPR, valueGPR);
+            if (elementSize(typedArrayType.value()) > 1)
+                urshift32(TrustedImm32(logElementSize(typedArrayType.value())), valueGPR);
+        } else {
+            sub32(scratch2GPR, scratchGPR, scratch2GPR); // Do not change valueGPR until we use baseGPR.
+            load8(Address(baseGPR, JSObject::typeInfoTypeOffset()), scratchGPR);
+            addPtr(TrustedImmPtr(logElementSizes), scratchGPR);
+            load8(Address(scratchGPR, -FirstTypedArrayType), scratchGPR);
+            urshift32(scratch2GPR, scratchGPR, valueGPR);
+        }
+    }
+#endif
+    doneCases.append(jump());
+
+    outOfBounds.link(this);
+    move(TrustedImm32(0), valueGPR);
+    doneCases.append(jump());
+
+    nonAutoLength.link(this);
+    canUseRawFieldsDirectly.link(this);
+#if USE(LARGE_TYPED_ARRAYS)
+    load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+    if (field == TypedArrayField::ByteLength) {
+        ASSERT(typedArrayType);
+        if (elementSize(typedArrayType.value()) > 1)
+            lshift64(TrustedImm32(logElementSize(typedArrayType.value())), valueGPR);
+    }
+#else
+    load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
+    if (field == TypedArrayField::ByteLength) {
+        ASSERT(typedArrayType);
+        if (elementSize(typedArrayType.value()) > 1)
+            lshift32(TrustedImm32(logElementSize(typedArrayType.value())), valueGPR);
+    }
+#endif
+    doneCases.link(this);
+}
+
+void AssemblyHelpers::loadTypedArrayByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType typedArrayType)
+{
+    loadTypedArrayByteLengthImpl(baseGPR, valueGPR, scratchGPR, scratch2GPR, typedArrayType, TypedArrayField::ByteLength);
+}
+
+void AssemblyHelpers::loadTypedArrayLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType> typedArrayType)
+{
+    loadTypedArrayByteLengthImpl(baseGPR, valueGPR, scratchGPR, scratch2GPR, typedArrayType, TypedArrayField::Length);
+}
+
+#endif
 
 } // namespace JSC
 

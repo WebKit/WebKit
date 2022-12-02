@@ -28,14 +28,15 @@
 
 namespace API {
 
-Ref<InternalDebugFeature> InternalDebugFeature::create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden)
+Ref<InternalDebugFeature> InternalDebugFeature::create(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
 {
-    return adoptRef(*new InternalDebugFeature(name, key, details, defaultValue, hidden));
+    return adoptRef(*new InternalDebugFeature(name, key, status, details, defaultValue, hidden));
 }
 
-InternalDebugFeature::InternalDebugFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue, bool hidden)
+InternalDebugFeature::InternalDebugFeature(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
     : m_name(name)
     , m_key(key)
+    , m_status(status)
     , m_details(details)
     , m_defaultValue(defaultValue)
     , m_hidden(hidden)

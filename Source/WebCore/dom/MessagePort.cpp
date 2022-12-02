@@ -67,7 +67,7 @@ void MessagePort::ref() const
 void MessagePort::deref() const
 {
     // This custom deref() function ensures that as long as the lock to allMessagePortsLock is taken, no MessagePort will be destroyed.
-    // This allows isExistingMessagePortLocallyReachable and notifyMessageAvailable to easily query the map and manipulate MessagePort instances.
+    // This allows notifyMessageAvailable to easily query the map and manipulate MessagePort instances.
 
     if (!--m_refCount) {
         Locker locker { allMessagePortsLock };
@@ -85,11 +85,10 @@ void MessagePort::deref() const
     }
 }
 
-bool MessagePort::isExistingMessagePortLocallyReachable(const MessagePortIdentifier& identifier)
+bool MessagePort::isMessagePortAliveForTesting(const MessagePortIdentifier& identifier)
 {
     Locker locker { allMessagePortsLock };
-    auto* port = allMessagePorts().get(identifier);
-    return port && port->isLocallyReachable();
+    return allMessagePorts().contains(identifier);
 }
 
 void MessagePort::notifyMessageAvailable(const MessagePortIdentifier& identifier)
@@ -162,10 +161,8 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
 {
     LOG(MessagePorts, "Attempting to post message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 
-    registerLocalActivity();
-
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(state, messageValue, WTFMove(options.transfer), ports);
+    auto messageData = SerializedScriptValue::create(state, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 
@@ -200,8 +197,6 @@ TransferredMessagePort MessagePort::disentangle()
     ASSERT(m_entangled);
     m_entangled = false;
 
-    registerLocalActivity();
-
     auto& context = *scriptExecutionContext();
     MessagePortChannelProvider::fromContext(context).messagePortDisentangled(m_identifier);
 
@@ -215,13 +210,6 @@ TransferredMessagePort MessagePort::disentangle()
     return { identifier(), remoteIdentifier() };
 }
 
-void MessagePort::registerLocalActivity()
-{
-    // Any time certain local operations happen, we dirty our own state to delay GC.
-    m_hasHadLocalActivitySinceLastCheck = true;
-    m_mightBeEligibleForGC = false;
-}
-
 // Invoked to notify us that there are messages available for this port.
 // This code may be called from another thread, and so should not call any non-threadsafe APIs (i.e. should not call into the entangled channel or access mutable variables).
 void MessagePort::messageAvailable()
@@ -232,7 +220,7 @@ void MessagePort::messageAvailable()
     if (!context || context->activeDOMObjectsAreSuspended())
         return;
 
-    context->processMessageWithMessagePortsSoon();
+    context->processMessageWithMessagePortsSoon([pendingActivity = makePendingActivity(*this)] { });
 }
 
 void MessagePort::start()
@@ -241,20 +229,16 @@ void MessagePort::start()
     if (!isEntangled())
         return;
 
-    registerLocalActivity();
-
     ASSERT(scriptExecutionContext());
     if (m_started)
         return;
 
     m_started = true;
-    scriptExecutionContext()->processMessageWithMessagePortsSoon();
+    scriptExecutionContext()->processMessageWithMessagePortsSoon([pendingActivity = makePendingActivity(*this)] { });
 }
 
 void MessagePort::close()
 {
-    m_mightBeEligibleForGC = true;
-
     if (m_isDetached)
         return;
     m_isDetached = true;
@@ -284,20 +268,14 @@ void MessagePort::dispatchMessages()
     if (!context || context->activeDOMObjectsAreSuspended() || !isEntangled())
         return;
 
-    auto messagesTakenHandler = [this, weakThis = WeakPtr { *this }](Vector<MessageWithMessagePorts>&& messages, CompletionHandler<void()>&& completionCallback) mutable {
+    auto messagesTakenHandler = [this, protectedThis = makePendingActivity(*this)](Vector<MessageWithMessagePorts>&& messages, CompletionHandler<void()>&& completionCallback) mutable {
         auto scopeExit = makeScopeExit(WTFMove(completionCallback));
-
-        if (!weakThis)
-            return;
 
         LOG(MessagePorts, "MessagePort %s (%p) dispatching %zu messages", m_identifier.logString().utf8().data(), this, messages.size());
 
         auto* context = scriptExecutionContext();
-        if (!context)
+        if (!context || !context->globalObject())
             return;
-
-        if (!messages.isEmpty())
-            registerLocalActivity();
 
         ASSERT(context->isContextThread());
 
@@ -306,9 +284,14 @@ void MessagePort::dispatchMessages()
             // close() in Worker onmessage handler should prevent next message from dispatching.
             if (contextIsWorker && downcast<WorkerGlobalScope>(*context).isClosing())
                 return;
+
             auto ports = MessagePort::entanglePorts(*context, WTFMove(message.transferredPorts));
+            auto event = MessageEvent::create(*context->globalObject(), message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports));
+
             // Per specification, each MessagePort object has a task source called the port message queue.
-            queueTaskToDispatchEvent(*this, TaskSource::PostedMessageQueue, MessageEvent::create(message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports)));
+            queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, event = WTFMove(event)] {
+                dispatchEvent(event.event);
+            });
         }
     };
 
@@ -327,67 +310,19 @@ void MessagePort::dispatchEvent(Event& event)
     EventTarget::dispatchEvent(event);
 }
 
-void MessagePort::updateActivity(MessagePortChannelProvider::HasActivity hasActivity)
-{
-    bool hasHadLocalActivity = m_hasHadLocalActivitySinceLastCheck;
-    m_hasHadLocalActivitySinceLastCheck = false;
-
-    if (hasActivity == MessagePortChannelProvider::HasActivity::No && !hasHadLocalActivity)
-        m_isRemoteEligibleForGC = true;
-
-    if (hasActivity == MessagePortChannelProvider::HasActivity::Yes)
-        m_isRemoteEligibleForGC = false;
-
-    m_isAskingRemoteAboutGC = false;
-}
-
+// https://html.spec.whatwg.org/multipage/web-messaging.html#ports-and-garbage-collection
 bool MessagePort::virtualHasPendingActivity() const
 {
-    m_mightBeEligibleForGC = true;
-
     // If the ScriptExecutionContext has been shut down on this object close()'ed, we can GC.
     auto* context = scriptExecutionContext();
     if (!context || m_isDetached)
         return false;
 
-    // If this object has been idle since the remote port declared itself elgibile for GC, we can GC.
-    if (!m_hasHadLocalActivitySinceLastCheck && m_isRemoteEligibleForGC)
-        return false;
-
-    // If this MessagePort has no message event handler then the existence of remote activity cannot keep it alive.
+    // If this MessagePort has no message event handler then there is no point in keeping it alive.
     if (!m_hasMessageEventListener)
         return false;
 
-    // If we're not in the middle of asking the remote port about collectability, do so now.
-    if (!m_isAskingRemoteAboutGC) {
-        RefPtr<WorkerOrWorkletThread> workerOrWorkletThread;
-        if (is<WorkerOrWorkletGlobalScope>(*context))
-            workerOrWorkletThread = downcast<WorkerOrWorkletGlobalScope>(*context).workerOrWorkletThread();
-
-        callOnMainThread([remoteIdentifier = m_remoteIdentifier, weakThis = WeakPtr { *this }, workerOrWorkletThread = WTFMove(workerOrWorkletThread)]() mutable {
-            MessagePortChannelProvider::singleton().checkRemotePortForActivity(remoteIdentifier, [weakThis = WTFMove(weakThis), workerOrWorkletThread = WTFMove(workerOrWorkletThread)](auto hasActivity) mutable {
-                if (!workerOrWorkletThread) {
-                    if (weakThis)
-                        weakThis->updateActivity(hasActivity);
-                    return;
-                }
-
-                workerOrWorkletThread->runLoop().postTaskForMode([weakThis = WTFMove(weakThis), hasActivity](auto&) mutable {
-                    if (weakThis)
-                        weakThis->updateActivity(hasActivity);
-                }, WorkerRunLoop::defaultMode());
-            });
-        });
-        m_isAskingRemoteAboutGC = true;
-    }
-
-    // Since we need an answer from the remote object, we have to pretend we have pending activity for now.
-    return true;
-}
-
-bool MessagePort::isLocallyReachable() const
-{
-    return !m_mightBeEligibleForGC;
+    return m_entangled;
 }
 
 MessagePort* MessagePort::locallyEntangledPort() const
@@ -440,7 +375,6 @@ bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListene
         if (listener->isAttribute())
             start();
         m_hasMessageEventListener = true;
-        registerLocalActivity();
     }
 
     return EventTarget::addEventListener(eventType, WTFMove(listener), options);

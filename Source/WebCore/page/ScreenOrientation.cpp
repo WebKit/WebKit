@@ -110,6 +110,12 @@ void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
         promise->reject(Exception { SecurityError, "Only first party documents can lock the screen orientation"_s });
         return;
     }
+
+    if (document->page() && !document->page()->isVisible()) {
+        promise->reject(Exception { SecurityError, "Only visible documents can lock the screen orientation"_s });
+        return;
+    }
+
     if (document->settings().fullscreenRequirementForScreenOrientationLockingEnabled()) {
 #if ENABLE(FULLSCREEN_API)
         if (!document->fullscreenManager().isFullscreen()) {
@@ -156,6 +162,9 @@ ExceptionOr<void> ScreenOrientation::unlock()
 
     if (!document->isSameOriginAsTopDocument())
         return { };
+
+    if (document->page() && !document->page()->isVisible())
+        return Exception { SecurityError, "Only visible documents can unlock the screen orientation"_s };
 
     if (auto* manager = this->manager())
         manager->unlock();

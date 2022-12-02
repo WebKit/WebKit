@@ -401,7 +401,7 @@ unsigned GridPositionsResolver::explicitGridColumnCount(const RenderGrid& gridCo
         GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, ForColumns);
         return parent.gridSpanForChild(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridColumns().size() + gridContainer.autoRepeatCountForDirection(ForColumns), gridContainer.style().namedGridAreaColumnCount()), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridColumnTrackSizes().size() + gridContainer.autoRepeatCountForDirection(ForColumns), gridContainer.style().namedGridAreaColumnCount()), GridPosition::max());
 }
 
 unsigned GridPositionsResolver::explicitGridRowCount(const RenderGrid& gridContainer)
@@ -411,7 +411,7 @@ unsigned GridPositionsResolver::explicitGridRowCount(const RenderGrid& gridConta
         GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, ForRows);
         return parent.gridSpanForChild(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridRows().size() + gridContainer.autoRepeatCountForDirection(ForRows), gridContainer.style().namedGridAreaRowCount()), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridRowTrackSizes().size() + gridContainer.autoRepeatCountForDirection(ForRows), gridContainer.style().namedGridAreaRowCount()), GridPosition::max());
 }
 
 static unsigned lookAheadForNamedGridLine(int start, unsigned numberOfLines, NamedLineCollection& linesCollection)

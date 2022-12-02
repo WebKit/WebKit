@@ -4,6 +4,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ByteLengthQueuingStrategyBuiltins.c
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ByteLengthQueuingStrategyBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyNames.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyParsing.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyParsing.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSStyleDeclaration+PropertyNames.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSValueKeywords.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSValueKeywords.h
@@ -319,6 +321,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimationEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSColor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSColorValue.cpp
@@ -443,6 +447,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransformValue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransformValue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransition.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransitionEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTransitionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTranslate.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSTranslate.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSUnitValue.cpp
@@ -813,8 +819,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFloatBlend.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFloatBlend.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFragDepth.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFragDepth.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTProvokingVertex.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTProvokingVertex.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTShaderTextureLOD.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTShaderTextureLOD.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureCompressionBPTC.cpp
@@ -1725,6 +1729,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEventInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMultiCacheQueryOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMultiCacheQueryOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMutationEvent.cpp
@@ -1767,6 +1773,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+ScreenWakeLock.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+ScreenWakeLock.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+UserActivation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebXR.cpp
@@ -2701,6 +2709,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserActivation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserActivation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandler.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandler.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandlersNamespace.cpp
@@ -2809,8 +2819,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLColorBufferFloat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLColorBufferFloat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureASTC.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureASTC.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureATC.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureATC.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureETC.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureETC.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureETC1.cpp
@@ -2845,6 +2853,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLMultiDrawInstancedBaseVertex
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLMultiDrawInstancedBaseVertexBaseInstance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProgram.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProgram.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProvokingVertex.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProvokingVertex.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLQuery.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLQuery.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLRenderbuffer.cpp

@@ -165,6 +165,8 @@ void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, co
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         downloadProxy.setDestinationFilename(destination);
+        if (auto* controller = systemPreviewController(downloadProxy))
+            controller->setDestinationURL(URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename()));
         return;
     }
 #endif
@@ -280,7 +282,7 @@ void LegacyDownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore
 #if USE(SYSTEM_PREVIEW)
 void LegacyDownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
 {
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (auto* webPage = downloadProxy.originatingPage()) {
         RELEASE_LOG(ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
         ASSERT(!m_activity);

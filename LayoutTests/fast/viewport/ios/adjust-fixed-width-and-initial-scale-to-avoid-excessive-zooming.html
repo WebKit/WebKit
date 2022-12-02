@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ShouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=200, initial-scale=2">
+<style>
+body, html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#bar {
+    width: 200px;
+    height: 44px;
+    background: linear-gradient(to right, red 0%, green 50%, blue 100%);
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that when the `IgnoreMetaViewport` policy is enabled, a meta viewport that specifies an explicit width (with a large initial scale) doesn't cause us to zoom in excessively.");
+
+async function runTest() {
+    await UIHelper.renderingUpdate();
+    shouldBeTrue("visualViewport.scale < 2");
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <div id="bar"></div>
+</body>
+</html>

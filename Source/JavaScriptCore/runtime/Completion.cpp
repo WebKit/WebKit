@@ -83,8 +83,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
 
     PrivateName privateName(PrivateName::Description, "EntryPointModule"_s);
     ModuleAnalyzer moduleAnalyzer(globalObject, Identifier::fromUid(privateName), source, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables(), moduleProgramNode->features());
-    moduleAnalyzer.analyze(*moduleProgramNode);
-    return true;
+    return !!moduleAnalyzer.analyze(*moduleProgramNode);
 }
 
 RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)

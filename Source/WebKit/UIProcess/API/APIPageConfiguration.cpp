@@ -65,6 +65,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_userContentController = this->m_userContentController;
 #if ENABLE(WK_WEB_EXTENSIONS)
     copy->m_webExtensionController = this->m_webExtensionController;
+    copy->m_weakWebExtensionController = this->m_weakWebExtensionController;
 #endif
     copy->m_pageGroup = this->m_pageGroup;
     copy->m_preferences = this->m_preferences;
@@ -146,6 +147,16 @@ WebExtensionController* PageConfiguration::webExtensionController()
 void PageConfiguration::setWebExtensionController(WebExtensionController* webExtensionController)
 {
     m_webExtensionController = webExtensionController;
+}
+
+WebExtensionController* PageConfiguration::weakWebExtensionController()
+{
+    return m_weakWebExtensionController.get();
+}
+
+void PageConfiguration::setWeakWebExtensionController(WebExtensionController* webExtensionController)
+{
+    m_weakWebExtensionController = webExtensionController;
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 

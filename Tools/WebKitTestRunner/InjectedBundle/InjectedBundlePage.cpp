@@ -41,8 +41,6 @@
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundleFramePrivate.h>
 #include <WebKit/WKBundleHitTestResult.h>
-#include <WebKit/WKBundleNavigationAction.h>
-#include <WebKit/WKBundleNavigationActionPrivate.h>
 #include <WebKit/WKBundleNodeHandlePrivate.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
@@ -149,25 +147,6 @@ static WTF::String string(WKBundlePageRef page, WKBundleScriptWorldRef world, WK
     );
 }
 
-static WKRetainPtr<WKStringRef> NavigationTypeToString(WKFrameNavigationType type)
-{
-    switch (type) {
-    case kWKFrameNavigationTypeLinkClicked:
-        return toWK("link clicked");
-    case kWKFrameNavigationTypeFormSubmitted:
-        return toWK("form submitted");
-    case kWKFrameNavigationTypeBackForward:
-        return toWK("back/forward");
-    case kWKFrameNavigationTypeReload:
-        return toWK("reload");
-    case kWKFrameNavigationTypeFormResubmitted:
-        return toWK("form resubmitted");
-    case kWKFrameNavigationTypeOther:
-        return toWK("other");
-    }
-    return toWK("illegal value");
-}
-
 static WTF::String styleDecToStr(WKBundleCSSStyleDeclarationRef)
 {
     // DumpRenderTree calls -[DOMCSSStyleDeclaration description], which just dumps class name and object address.
@@ -197,27 +176,27 @@ static inline bool isLocalFileScheme(WKStringRef scheme)
 
 static const char divider = '/';
 
-static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
+WTF::String pathSuitableForTestResult(WKURLRef fileURL)
 {
-    if (!fileUrl)
+    if (!fileURL)
         return "(null)"_s;
 
-    auto schemeString = adoptWK(WKURLCopyScheme(fileUrl));
+    auto schemeString = adoptWK(WKURLCopyScheme(fileURL));
     if (!isLocalFileScheme(schemeString.get()))
-        return toWTFString(adoptWK(WKURLCopyString(fileUrl)));
+        return toWTFString(adoptWK(WKURLCopyString(fileURL)));
 
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     auto mainFrameURL = adoptWK(WKBundleFrameCopyURL(mainFrame));
     if (!mainFrameURL)
         mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
 
-    String pathString = toWTFString(adoptWK(WKURLCopyPath(fileUrl)));
+    String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
     String mainFrameURLPathString = toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get())));
     auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind(divider) + 1);
     
     if (!basePath.isEmpty() && pathString.startsWith(basePath))
         return pathString.substring(basePath.length());
-    return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileUrl))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
+    return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
 }
 
 static HashMap<uint64_t, String>& assignedUrlsCache()
@@ -269,7 +248,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didHandleOnloadEventsForFrame,
         0, // didLayoutForFrame
         0, // didNewFirstVisuallyNonEmptyLayout_unavailable
-        didDetectXSSForFrame,
+        0, // didDetectXSSForFrame
         0, // shouldGoToBackForwardListItem
         0, // didCreateGlobalObjectForFrame
         0, // willDisconnectDOMWindowExtensionFromGlobalObject
@@ -301,17 +280,6 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0 // shouldUseCredentialStorage
     };
     WKBundlePageSetResourceLoadClient(m_page, &resourceLoadClient.base);
-
-    WKBundlePagePolicyClientV0 policyClient = {
-        { 0, this },
-        decidePolicyForNavigationAction,
-        decidePolicyForNewWindowAction,
-        decidePolicyForResponse,
-        unableToImplementPolicy
-    };
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WKBundlePageSetPolicyClient(m_page, &policyClient.base);
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     WKBundlePageUIClientV2 uiClient = {
         { 2, this },
@@ -565,11 +533,6 @@ void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundlePageRef page,
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didDisplayInsecureContentForFrame(frame);
 }
 
-void InjectedBundlePage::didDetectXSSForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didDetectXSSForFrame(frame);
-}
-
 void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
@@ -794,7 +757,6 @@ void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuild
 void InjectedBundlePage::dump()
 {
     auto& injectedBundle = InjectedBundle::singleton();
-    ASSERT(injectedBundle.isTestRunning());
 
     // Force a paint before dumping. This matches DumpRenderTree on Windows. (DumpRenderTree on Mac
     // does this at a slightly different time.) See <http://webkit.org/b/55469> for details.
@@ -1003,13 +965,6 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef)
         injectedBundle.outputText("didRunInsecureContent\n"_s);
 }
 
-void InjectedBundlePage::didDetectXSSForFrame(WKBundleFrameRef)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
-        injectedBundle.outputText("didDetectXSS\n"_s);
-}
-
 void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)
 {
     if (!InjectedBundle::singleton().isTestRunning())
@@ -1079,7 +1034,12 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
         }
         if (!mainFrameIsExternal && !isAllowedHost(host.get())) {
             auto blockedURL = makeString(urlString.get());
-            replace(blockedURL, JSC::Yarr::RegularExpression("&key=[^&]+&"_s), "&key=GENERATED_KEY&"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("\\?key=[-0123456789abcdefABCDEF]+"_s), "?key=GENERATED_KEY"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("&key=[-0123456789abcdefABCDEF]+"_s), "&key=GENERATED_KEY"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("%3Fkey%3D[-0123456789abcdefABCDEF]+"_s), "%3Fkey%3DGENERATED_KEY"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("%26key%3D[-0123456789abcdefABCDEF]+"_s), "%26key%3DGENERATED_KEY"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("%253Fkey%253D[-0123456789abcdefABCDEF]+"_s), "%253Fkey%253DGENERATED_KEY"_s);
+            replace(blockedURL, JSC::Yarr::RegularExpression("%2526key%253D[-0123456789abcdefABCDEF]+"_s), "%2526key%253DGENERATED_KEY"_s);
             replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
             injectedBundle.outputText(makeString("Blocked access to external URL ", blockedURL, '\n'));
             return nullptr;
@@ -1183,86 +1143,6 @@ bool InjectedBundlePage::shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, 
 
     // The default behavior is the cache the response.
     return true;
-}
-
-// Policy Client Callbacks
-
-WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo)
-{
-    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(page, frame, navigationAction, request, userData);
-}
-
-WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNewWindowAction(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKStringRef frameName, WKTypeRef* userData, const void* clientInfo)
-{
-    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->decidePolicyForNewWindowAction(page, frame, navigationAction, request, frameName, userData);
-}
-
-WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForResponse(WKBundlePageRef page, WKBundleFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo)
-{
-    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->decidePolicyForResponse(page, frame, response, request, userData);
-}
-
-void InjectedBundlePage::unableToImplementPolicy(WKBundlePageRef page, WKBundleFrameRef frame, WKErrorRef error, WKTypeRef* userData, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->unableToImplementPolicy(page, frame, error, userData);
-}
-
-WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKTypeRef* userData)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    if (!injectedBundle.isTestRunning())
-        return WKBundlePagePolicyActionUse;
-
-    if (injectedBundle.testRunner()->shouldDumpPolicyCallbacks()) {
-        injectedBundle.outputText(makeString(" - decidePolicyForNavigationAction\n", string(request),
-            " is main frame - ", WKBundleFrameIsMainFrame(frame) ? "yes" : "no",
-            " should open URLs externally - ", WKBundleNavigationActionGetShouldOpenExternalURLs(navigationAction) ? "yes" : "no", '\n'));
-    }
-
-    if (!injectedBundle.testRunner()->isPolicyDelegateEnabled())
-        return WKBundlePagePolicyActionPassThrough;
-
-    auto url = adoptWK(WKURLRequestCopyURL(request));
-    auto urlScheme = adoptWK(WKURLCopyScheme(url.get()));
-
-    StringBuilder stringBuilder;
-    stringBuilder.append("Policy delegate: attempt to load ");
-    if (isLocalFileScheme(urlScheme.get()))
-        stringBuilder.append(adoptWK(WKURLCopyLastPathComponent(url.get())).get());
-    else
-        stringBuilder.append(adoptWK(WKURLCopyString(url.get())).get());
-    stringBuilder.append(" with navigation type \'", NavigationTypeToString(WKBundleNavigationActionGetNavigationType(navigationAction)).get(), '\'');
-    auto hitTestResultRef = adoptWK(WKBundleNavigationActionCopyHitTestResult(navigationAction));
-    if (hitTestResultRef) {
-        auto nodeHandleRef = adoptWK(WKBundleHitTestResultCopyNodeHandle(hitTestResultRef.get()));
-        stringBuilder.append(" originating from ", dumpPath(m_page, m_world.get(), nodeHandleRef.get()));
-    }
-
-    stringBuilder.append('\n');
-    injectedBundle.outputText(stringBuilder.toString());
-
-    injectedBundle.testRunner()->notifyDone();
-
-    return WKBundlePagePolicyActionPassThrough;
-}
-
-WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNewWindowAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKStringRef, WKTypeRef*)
-{
-    return WKBundlePagePolicyActionPassThrough;
-}
-
-WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForResponse(WKBundlePageRef page, WKBundleFrameRef, WKURLResponseRef response, WKURLRequestRef, WKTypeRef*)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    if (injectedBundle.testRunner() && injectedBundle.testRunner()->isPolicyDelegateEnabled() && WKURLResponseIsAttachment(response)) {
-        InjectedBundle::singleton().outputText(makeString("Policy delegate: resource is an attachment, suggested file name \'", adoptWK(WKURLResponseCopySuggestedFilename(response)).get(), "'\n"));
-    }
-
-    return WKBundlePagePolicyActionPassThrough;
-}
-
-void InjectedBundlePage::unableToImplementPolicy(WKBundlePageRef, WKBundleFrameRef, WKErrorRef, WKTypeRef*)
-{
 }
 
 // UI Client Callbacks

@@ -32,6 +32,7 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
+    ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/AccessibilityCommonCocoa.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/ActivateFontsCocoa.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm
 
@@ -39,7 +40,6 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityNotificationHandler.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityTextMarkerRangeMac.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/mac/InjectedBundleMac.mm
-    ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityCommonMac.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityTextMarkerMac.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/mac/AccessibilityUIElementMac.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/mac/TestRunnerMac.mm

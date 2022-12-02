@@ -147,7 +147,7 @@ public:
             return end();
 
         while (true) {
-            auto& bucket = m_table[weakRandomUint32() & tableSizeMask()];
+            auto& bucket = m_table[weakRandomNumber<uint32_t>() & tableSizeMask()];
             if (!isEmptyBucket(bucket))
                 return makeKnownGoodIterator(&bucket);
         }

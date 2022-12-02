@@ -188,8 +188,11 @@ class Issue(object):
         )
         for key, value in self.tracker._redact.items():
             if key.search(match_string):
-                return value
-        return False
+                return self.tracker.Redaction(
+                    redacted=value,
+                    reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
+                )
+        return self.tracker.Redaction(redacted=False)
 
     def set_component(self, project=None, component=None, version=None):
         return self.tracker.set(self, project=project, component=component, version=version)

@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+FAIL Can set 'speak' to CSS-wide keywords Invalid property speak
+FAIL Can set 'speak' to var() references Invalid property speak
+FAIL Can set 'speak' to the 'auto' keyword Invalid property speak
+FAIL Can set 'speak' to the 'never' keyword Invalid property speak
+FAIL Can set 'speak' to the 'always' keyword Invalid property speak
+PASS Setting 'speak' to a length throws TypeError
+PASS Setting 'speak' to a percent throws TypeError
+PASS Setting 'speak' to a time throws TypeError
+PASS Setting 'speak' to an angle throws TypeError
+PASS Setting 'speak' to a flexible length throws TypeError
+PASS Setting 'speak' to a number throws TypeError
+PASS Setting 'speak' to a URL throws TypeError
+PASS Setting 'speak' to a transform throws TypeError
 

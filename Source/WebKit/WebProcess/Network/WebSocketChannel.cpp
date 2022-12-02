@@ -38,6 +38,7 @@
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/Page.h>
 #include <WebCore/WebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
@@ -119,18 +120,18 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     if (request->url() != url && m_client)
         m_client->didUpgradeURL();
 
-    bool networkConnectionIntegrityEnabled = false;
+    OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
     bool allowPrivacyProxy { true };
     if (auto* frame = m_document ? m_document->frame() : nullptr) {
         if (auto* mainFrameDocumentLoader = frame->mainFrame().document() ? frame->mainFrame().document()->loader() : nullptr) {
             allowPrivacyProxy = mainFrameDocumentLoader->allowPrivacyProxy();
-            networkConnectionIntegrityEnabled = mainFrameDocumentLoader->networkConnectionIntegrityEnabled();
+            networkConnectionIntegrityPolicy = mainFrameDocumentLoader->networkConnectionIntegrityPolicy();
         }
     }
 
     m_inspector.didCreateWebSocket(url);
     m_url = request->url();
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, networkConnectionIntegrityEnabled });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, networkConnectionIntegrityPolicy });
     return ConnectStatus::OK;
 }
 

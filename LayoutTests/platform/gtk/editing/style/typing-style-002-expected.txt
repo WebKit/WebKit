@@ -50,6 +50,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (83,14) size 54x26
               text run at (83,14) width 54: "sxxxx"
           RenderText {#text} at (136,14) size 44x26
-            text run at (136,14) width 44: " text"
+            text run at (136,14) width 7: " "
+            text run at (142,14) width 38: "text"
         RenderText {#text} at (0,0) size 0x0
 caret: position 5 of child 0 {#text} of child 1 {I} of child 1 {SPAN} of child 1 {DIV} of body

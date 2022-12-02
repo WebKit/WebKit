@@ -24,6 +24,7 @@
 
 #include "APICast.h"
 #include "ArrayBuffer.h"
+#include "AtomicsObject.h"
 #include "BigIntConstructor.h"
 #include "BytecodeCacheError.h"
 #include "CatchScope.h"
@@ -214,7 +215,7 @@ static void checkException(GlobalObject*, bool isLastFile, bool hasException, JS
 class Message : public ThreadSafeRefCounted<Message> {
 public:
 #if ENABLE(WEBASSEMBLY)
-    using Content = std::variant<ArrayBufferContents, Ref<Wasm::MemoryHandle>>;
+    using Content = std::variant<ArrayBufferContents, RefPtr<SharedArrayBufferContents>>;
 #else
     using Content = std::variant<ArrayBufferContents>;
 #endif
@@ -383,6 +384,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentBroadcast);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentGetReport);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentLeaving);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentMonotonicNow);
+static JSC_DECLARE_HOST_FUNCTION(functionWaiterListSize);
 static JSC_DECLARE_HOST_FUNCTION(functionWaitForReport);
 static JSC_DECLARE_HOST_FUNCTION(functionHeapCapacity);
 static JSC_DECLARE_HOST_FUNCTION(functionFlashHeapAccess);
@@ -683,6 +685,8 @@ private:
         addFunction(vm, agent, "getReport"_s, functionDollarAgentGetReport, 0);
         addFunction(vm, agent, "leaving"_s, functionDollarAgentLeaving, 0);
         addFunction(vm, agent, "monotonicNow"_s, functionDollarAgentMonotonicNow, 0);
+
+        addFunction(vm, "waiterListSize"_s, functionWaiterListSize, 2);
 
         addFunction(vm, "waitForReport"_s, functionWaitForReport, 0);
 
@@ -1730,7 +1734,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFr
     if (!isBinary)
         return JSValue::encode(jsString(vm, String::fromUTF8WithLatin1Fallback(content->data(), content->length())));
 
-    Structure* structure = globalObject->typedArrayStructure(TypeUint8);
+    Structure* structure = globalObject->typedArrayStructure(TypeUint8, content->isResizableOrGrowableShared());
     JSObject* result = JSUint8Array::create(vm, structure, WTFMove(content));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -2290,12 +2294,16 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
             return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTFMove(nativeBuffer));
         }
 #if ENABLE(WEBASSEMBLY)
-        if (std::holds_alternative<Ref<Wasm::MemoryHandle>>(content)) {
+        if (std::holds_alternative<RefPtr<SharedArrayBufferContents>>(content)) {
             JSWebAssemblyMemory* jsMemory = JSC::JSWebAssemblyMemory::tryCreate(globalObject, vm, globalObject->webAssemblyMemoryStructure());
             scope.releaseAssertNoException();
-            Ref<Wasm::Memory> memory = Wasm::Memory::create(std::get<Ref<Wasm::MemoryHandle>>(WTFMove(content)),
-                [&vm, jsMemory] (Wasm::Memory::GrowSuccess, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });
-            jsMemory->adopt(WTFMove(memory));
+            auto handler = [&vm, jsMemory](Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); };
+            RefPtr<Wasm::Memory> memory;
+            if (auto shared = std::get<RefPtr<SharedArrayBufferContents>>(WTFMove(content)))
+                memory = Wasm::Memory::create(shared.releaseNonNull(), WTFMove(handler));
+            else
+                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, WTFMove(handler));
+            jsMemory->adopt(memory.releaseNonNull());
             return jsMemory;
         }
 #endif
@@ -2359,11 +2367,11 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
 
 #if ENABLE(WEBASSEMBLY)
     JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(callFrame->argument(0));
-    if (memory && memory->memory().sharingMode() == Wasm::MemorySharingMode::Shared) {
+    if (memory && memory->memory().sharingMode() == MemorySharingMode::Shared) {
         Workers::singleton().broadcast(
             [&] (const AbstractLocker& locker, Worker& worker) {
-                Ref<Wasm::MemoryHandle> handle { memory->memory().handle() };
-                RefPtr<Message> message = adoptRef(new Message(WTFMove(handle), index));
+                RefPtr<SharedArrayBufferContents> contents { memory->memory().shared() };
+                RefPtr<Message> message = adoptRef(new Message(WTFMove(contents), index));
                 worker.enqueue(locker, message);
             });
         return JSValue::encode(jsUndefined());
@@ -2392,6 +2400,11 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentLeaving, (JSGlobalObject*, CallFrame
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentMonotonicNow, (JSGlobalObject*, CallFrame*))
 {
     return JSValue::encode(jsNumber(MonotonicTime::now().secondsSinceEpoch().milliseconds()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionWaiterListSize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return getWaiterListSize(globalObject, callFrame);
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionWaitForReport, (JSGlobalObject* globalObject, CallFrame*))
@@ -2458,14 +2471,14 @@ JSC_DEFINE_HOST_FUNCTION(functionTotalCompileTime, (JSGlobalObject*, CallFrame*)
 #endif
 }
 
+IGNORE_GCC_WARNINGS_BEGIN("unused-but-set-parameter")
 template<typename ValueType>
-typename std::enable_if<!std::is_fundamental<ValueType>::value>::type addOption(VM&, JSObject*, const Identifier&, ValueType) { }
-
-template<typename ValueType>
-typename std::enable_if<std::is_fundamental<ValueType>::value>::type addOption(VM& vm, JSObject* optionsObject, const Identifier& identifier, ValueType value)
+void addOption(VM& vm, JSObject* optionsObject, const Identifier& identifier, ValueType value)
 {
-    optionsObject->putDirect(vm, identifier, JSValue(value));
+    if constexpr (std::is_fundamental_v<ValueType>)
+        optionsObject->putDirect(vm, identifier, JSValue(value));
 }
+IGNORE_GCC_WARNINGS_END
 
 JSC_DEFINE_HOST_FUNCTION(functionJSCOptions, (JSGlobalObject* globalObject, CallFrame*))
 {
@@ -2629,11 +2642,11 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
         });
     };
 
+    // We need to add the dispatch callback to the run loop even the delay is 0 secs, otherwise 
+    // it will cause setTimeout starvation problem (see stress test settimeout-starvation.js).
     JSValue timeout = callFrame->argument(1);
-    if (timeout.isNumber() && timeout.asNumber())
-        RunLoop::current().dispatchAfter(Seconds::fromMilliseconds(timeout.asNumber()), WTFMove(dispatch));
-    else
-        dispatch();
+    Seconds delay = timeout.isNumber() ? Seconds::fromMilliseconds(timeout.asNumber()) : Seconds(0);
+    RunLoop::current().dispatchAfter(delay, WTFMove(dispatch));
 
     return JSValue::encode(jsUndefined());
 }
@@ -2944,11 +2957,17 @@ JSC_DEFINE_HOST_FUNCTION(functionWebAssemblyMemoryMode, (JSGlobalObject* globalO
     if (!Wasm::isSupported())
         return throwVMTypeError(globalObject, scope, "WebAssemblyMemoryMode should only be called if the useWebAssembly option is set"_s);
 
+    auto createString = [&](MemoryMode mode) {
+        StringPrintStream out;
+        out.print(mode);
+        return out.toString();
+    };
+
     if (JSObject* object = callFrame->argument(0).getObject()) {
         if (auto* memory = jsDynamicCast<JSWebAssemblyMemory*>(object))
-            return JSValue::encode(jsString(vm, String::fromLatin1(makeString(memory->memory().mode()))));
+            return JSValue::encode(jsString(vm, createString(memory->memory().mode())));
         if (auto* instance = jsDynamicCast<JSWebAssemblyInstance*>(object))
-            return JSValue::encode(jsString(vm, String::fromLatin1(makeString(instance->memoryMode()))));
+            return JSValue::encode(jsString(vm, createString(instance->memoryMode())));
     }
 
     return throwVMTypeError(globalObject, scope, "WebAssemblyMemoryMode expects either a WebAssembly.Memory or WebAssembly.Instance"_s);
@@ -3538,7 +3557,6 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::AllowUnfinalizedAccessScope scope;
     Options::initialize();
     Options::useSharedArrayBuffer() = true;
-    Options::useAtMethod() = true;
     
 #if PLATFORM(IOS_FAMILY)
     Options::crashIfCantAllocateJITMemory() = true;

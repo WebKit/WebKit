@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal.timezone.prototype.id
+esid: sec-get-temporal.timezone.prototype.id
 description: Throw a TypeError if the receiver is invalid
 features: [Symbol, Temporal]
 ---*/

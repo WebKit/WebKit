@@ -102,8 +102,7 @@ WebKitWebEditor* webkitWebEditorCreate(WebKitWebPage* webPage)
  * webkit_web_editor_get_page:
  * @editor: a #WebKitWebEditor
  *
- * Gets the #WebKitWebPage that is associated with the #WebKitWebEditor that can
- * be used to access the #WebKitDOMDocument currently loaded into it.
+ * Gets the #WebKitWebPage that is associated with the #WebKitWebEditor.
  *
  * Returns: (transfer none): the associated #WebKitWebPage
  *

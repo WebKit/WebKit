@@ -438,6 +438,11 @@ TranslatorMetalDirect::TranslatorMetalDirect(sh::GLenum type,
     TIntermBlock &root,
     DriverUniformMetal &driverUniforms)
 {
+    if (!usesSampleMask())
+    {
+        return true;
+    }
+
     // This transformation leaves the tree in an inconsistent state by using a variable that's
     // defined in text, outside of the knowledge of the AST.
     mValidateASTOptions.validateVariableReferences = false;
@@ -856,9 +861,7 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
             AddFragDepthEXTDeclaration(*this, *root, symbolTable);
         }
 
-        // Always add sample_mask. It will be guarded by a function constant decided at runtime.
-        bool usesSampleMask = true;
-        if (usesSampleMask)
+        if (usesSampleMask())
         {
             AddSampleMaskDeclaration(*root, symbolTable);
         }
@@ -940,8 +943,8 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
         }
 
         if (useClipDistance &&
-            !ReplaceClipDistanceAssignments(this, root, &getSymbolTable(), getShaderType(),
-                                            driverUniforms->getClipDistancesEnabled()))
+            !ZeroDisabledClipDistanceAssignments(this, root, &getSymbolTable(), getShaderType(),
+                                                 driverUniforms->getClipDistancesEnabled()))
         {
             return false;
         }

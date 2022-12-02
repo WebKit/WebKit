@@ -159,7 +159,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL resourceLoadStatisticsEnabled;
 @property (nonatomic) BOOL canvasUsesAcceleratedDrawing;
 @property (nonatomic) BOOL acceleratedCompositingEnabled;
-@property (nonatomic) BOOL subpixelAntialiasedLayerTextEnabled;
 @property (nonatomic) BOOL showDebugBorders;
 @property (nonatomic) BOOL legacyLineLayoutVisualCoverageEnabled;
 @property (nonatomic) BOOL showRepaintCounter;
@@ -305,7 +304,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @interface WebPreferences (WebPrivateTesting)
 + (void)_switchNetworkLoaderToNewTestingSession;
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
-+ (void)_clearNetworkLoaderSession;
++ (void)_clearNetworkLoaderSession:(void (^)(void))completionHandler;
 
 - (void)_setBoolPreferenceForTestingWithValue:(BOOL)value forKey:(NSString *)key;
 - (void)_setUInt32PreferenceForTestingWithValue:(uint32_t)value forKey:(NSString *)key;
@@ -370,6 +369,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL experimentalNotificationsEnabled;
 @property (nonatomic) BOOL selectionAcrossShadowBoundariesEnabled;
 @property (nonatomic, getter=isXSSAuditorEnabled) BOOL XSSAuditorEnabled;
+@property (nonatomic) BOOL subpixelAntialiasedLayerTextEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -364,6 +364,14 @@
 #define USE_GLYPH_DISPLAY_LIST_CACHE 1
 #endif
 
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000)
+#if PLATFORM(IOS_FAMILY) || (USE(APPLE_INTERNAL_SDK) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000)
 #define USE_RUNNINGBOARD 1
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000)
+#define USE_AVIF 1
+#endif
+
+#if PLATFORM(COCOA) && (HAVE(CGSTYLE_CREATE_SHADOW2) || HAVE(CGSTYLE_COLORMATRIX_BLUR))
+#define USE_GRAPHICS_CONTEXT_FILTERS 1
 #endif

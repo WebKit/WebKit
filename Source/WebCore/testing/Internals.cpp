@@ -148,6 +148,7 @@
 #include "MediaUsageInfo.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
+#include "MessagePort.h"
 #include "MockAudioDestinationCocoa.h"
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
@@ -304,6 +305,10 @@
 
 #if ENABLE(WEB_RTC)
 #include "RTCPeerConnection.h"
+#endif
+
+#if USE(LIBWEBRTC)
+#include "LibWebRTCProvider.h"
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -783,6 +788,17 @@ ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) con
     return element.timeContainer().animationFrameDelay().value();
 }
 
+Vector<Ref<SVGSVGElement>> Internals::allSVGSVGElements() const
+{
+    Vector<Ref<SVGSVGElement>> elements;
+    for (auto* document : Document::allDocuments()) {
+        if (!document->svgExtensions())
+            continue;
+        elements.appendVector(document->accessSVGExtensions().allSVGSVGElements());
+    }
+    return elements;
+}
+
 String Internals::address(Node& node)
 {
     return makeString("0x", hex(reinterpret_cast<uintptr_t>(&node)));
@@ -1051,10 +1067,8 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
 
 void Internals::setImageAnimationEnabled(bool enabled)
 {
-    if (auto* page = contextDocument() ? contextDocument()->page() : nullptr) {
-        if (page->settings().imageAnimationControlEnabled())
-            page->setImageAnimationEnabled(enabled);
-    }
+    if (auto* page = contextDocument() ? contextDocument()->page() : nullptr)
+        page->setImageAnimationEnabled(enabled);
 }
 
 void Internals::resumeImageAnimation(HTMLImageElement& element)
@@ -1874,11 +1888,6 @@ ExceptionOr<void> Internals::setMarkedTextMatchesAreHighlighted(bool flag)
 void Internals::invalidateFontCache()
 {
     FontCache::invalidateAllFontCaches();
-}
-
-void Internals::setFontSmoothingEnabled(bool enabled)
-{
-    FontCascade::setShouldUseSmoothingForTesting(enabled);
 }
 
 ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
@@ -2850,6 +2859,17 @@ bool Internals::isDocumentAlive(const String& documentIdentifier) const
     auto uuid = UUID::parseVersion4(documentIdentifier);
     ASSERT(uuid);
     return uuid ? Document::allDocumentsMap().contains({ *uuid, Process::identifier() }) : false;
+}
+
+uint64_t Internals::messagePortIdentifier(const MessagePort& port) const
+{
+    return port.identifier().portIdentifier.toUInt64();
+}
+
+bool Internals::isMessagePortAlive(uint64_t messagePortIdentifier) const
+{
+    MessagePortIdentifier portIdentifier { Process::identifier(), makeObjectIdentifier<MessagePortIdentifier::PortIdentifierType>(messagePortIdentifier) };
+    return MessagePort::isMessagePortAliveForTesting(portIdentifier);
 }
 
 uint64_t Internals::storageAreaMapCount() const
@@ -5205,9 +5225,9 @@ String Internals::resourceLoadStatisticsForURL(const DOMURL& url)
     return ResourceLoadObserver::shared().statisticsForURL(url.href());
 }
 
-void Internals::setResourceLoadStatisticsEnabled(bool enable)
+void Internals::setTrackingPreventionEnabled(bool enable)
 {
-    DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enable);
+    DeprecatedGlobalSettings::setTrackingPreventionEnabled(enable);
 }
 
 String Internals::composedTreeAsText(Node& node)
@@ -5248,6 +5268,15 @@ bool Internals::hasTransientActivation()
     if (auto* document = contextDocument()) {
         if (auto* window = document->domWindow())
             return window->hasTransientActivation();
+    }
+    return false;
+}
+
+bool Internals::consumeTransientActivation()
+{
+    if (auto* document = contextDocument()) {
+        if (auto* window = document->domWindow())
+            return window->consumeTransientActivation();
     }
     return false;
 }
@@ -6955,6 +6984,11 @@ bool Internals::hasSleepDisabler() const
 {
     auto* document = contextDocument();
     return document ? document->hasSleepDisabler() : false;
+}
+
+void Internals::acceptTypedArrays(Int32Array&)
+{
+    // Do nothing.
 }
 
 } // namespace WebCore

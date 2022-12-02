@@ -11,6 +11,7 @@
 
 #include "common/debug.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/renderer/ContextImpl.h"
 
 namespace rx
 {
@@ -23,6 +24,14 @@ std::shared_ptr<WaitableCompileEvent> ShaderNULL::compile(const gl::Context *con
                                                           gl::ShCompilerInstance *compilerInstance,
                                                           ShCompileOptions *options)
 {
+    const gl::Extensions &extensions = context->getImplementation()->getExtensions();
+    if (extensions.shaderPixelLocalStorageANGLE)
+    {
+        ASSERT(context->getImplementation()->getNativePixelLocalStorageType() ==
+               ShPixelLocalStorageType::FramebufferFetch);
+        options->pls.type                        = ShPixelLocalStorageType::FramebufferFetch;
+        options->pls.fragmentSynchronizationType = ShFragmentSynchronizationType::Automatic;
+    }
     return compileImpl(context, compilerInstance, mState.getSource(), options);
 }
 

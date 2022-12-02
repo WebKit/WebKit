@@ -39,5 +39,30 @@ struct MediaQuery {
 
 using MediaQueryList = Vector<MediaQuery>;
 
+struct MediaQueryResult {
+    MediaQueryList mediaQueryList;
+    bool result;
+};
+
+enum class MediaQueryDynamicDependency : uint8_t  {
+    Viewport = 1 << 0,
+    Appearance = 1 << 1,
+    Accessibility = 1 << 2,
+};
+
+template<typename TraverseFunction>
+void traverseFeatures(const MediaQuery& query, TraverseFunction&& function)
+{
+    if (query.condition)
+        traverseFeatures(*query.condition, function);
+}
+
+template<typename TraverseFunction>
+void traverseFeatures(const MediaQueryList& list, TraverseFunction&& function)
+{
+    for (auto& query : list)
+        traverseFeatures(query, function);
+}
+
 }
 }

@@ -121,6 +121,9 @@ public:
     bool hasBlurredShadow() const { return dropShadow().isBlurred(); }
     bool hasShadow() const { return dropShadow().hasOutsets(); }
 
+    std::optional<GraphicsStyle> style() const { return m_state.style(); }
+    void setStyle(const std::optional<GraphicsStyle>& style) { m_state.setStyle(style); didUpdateState(m_state); }
+
     CompositeMode compositeMode() const { return m_state.compositeMode(); }
     CompositeOperator compositeOperation() const { return compositeMode().operation; }
     BlendMode blendMode() const { return compositeMode().blendMode; }
@@ -371,8 +374,8 @@ private:
     virtual bool supportsTransparencyLayers() const { return true; }
 
 protected:
-    void fillEllipseAsPath(const FloatRect&);
-    void strokeEllipseAsPath(const FloatRect&);
+    WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
+    WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatRect&, bool printing, Color&);
 

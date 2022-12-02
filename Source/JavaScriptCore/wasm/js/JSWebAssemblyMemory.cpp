@@ -80,70 +80,72 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(JSGlobalObject* globalObject)
 
     auto* wrapper = m_bufferWrapper.get();
     if (wrapper) {
-        if (m_memory->sharingMode() == Wasm::MemorySharingMode::Default)
-            return wrapper;
-
-        ASSERT(m_memory->sharingMode() == Wasm::MemorySharingMode::Shared);
         // If SharedArrayBuffer's underlying memory is not grown, we continue using cached wrapper.
         if (wrapper->impl()->byteLength() == memory().size())
             return wrapper;
     }
 
-    Ref<Wasm::MemoryHandle> protectedHandle = m_memory->handle();
-    CagedUniquePtr<Gigacage::Primitive, uint8_t> pointerForEmpty;
-
-    void* memory = m_memory->memory();
-    size_t size = m_memory->size();
-    if (!memory) {
-        ASSERT(!size);
-        constexpr unsigned allocationSize = 1;
-        pointerForEmpty = CagedUniquePtr<Gigacage::Primitive, uint8_t>::tryCreate(allocationSize);
-        if (!pointerForEmpty) {
-            throwOutOfMemoryError(globalObject, throwScope);
-            return nullptr;
+    if (m_memory->sharingMode() == MemorySharingMode::Shared && m_memory->shared()) {
+        m_buffer = ArrayBuffer::createShared(*m_memory->shared());
+        m_buffer->makeWasmMemory();
+    } else {
+        Ref<BufferMemoryHandle> protectedHandle = m_memory->handle();
+        void* memory = m_memory->memory();
+        size_t size = m_memory->size();
+        CagedUniquePtr<Gigacage::Primitive, uint8_t> pointerForEmpty;
+        if (!memory) {
+            ASSERT(!size);
+            constexpr unsigned allocationSize = 1;
+            pointerForEmpty = CagedUniquePtr<Gigacage::Primitive, uint8_t>::tryCreate(allocationSize);
+            if (!pointerForEmpty) {
+                throwOutOfMemoryError(globalObject, throwScope);
+                return nullptr;
+            }
+            memory = pointerForEmpty.get(allocationSize);
         }
-        memory = pointerForEmpty.get(allocationSize);
+        ASSERT(memory);
+        auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle), pointerForEmpty = WTFMove(pointerForEmpty)] (void*) { });
+        m_buffer = ArrayBuffer::createFromBytes(memory, size, WTFMove(destructor));
+        m_buffer->makeWasmMemory();
+        if (m_memory->sharingMode() == MemorySharingMode::Shared)
+            m_buffer->makeShared();
     }
-    ASSERT(memory);
-    auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle), pointerForEmpty = WTFMove(pointerForEmpty)] (void*) { });
-    m_buffer = ArrayBuffer::createFromBytes(memory, size, WTFMove(destructor));
-    m_buffer->makeWasmMemory();
-    if (m_memory->sharingMode() == Wasm::MemorySharingMode::Shared)
-        m_buffer->makeShared();
+
     auto* arrayBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(m_buffer->sharingMode()), m_buffer.get());
-    if (m_memory->sharingMode() == Wasm::MemorySharingMode::Shared) {
+    if (m_memory->sharingMode() == MemorySharingMode::Shared) {
         objectConstructorFreeze(globalObject, arrayBuffer);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
+
     m_bufferWrapper.set(vm, this, arrayBuffer);
     RELEASE_ASSERT(m_bufferWrapper);
     return m_bufferWrapper.get();
 }
 
-Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, uint32_t delta)
+PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, uint32_t delta)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto grown = memory().grow(vm, Wasm::PageCount(delta));
+    auto grown = memory().grow(vm, PageCount(delta));
     if (!grown) {
         switch (grown.error()) {
-        case Wasm::Memory::GrowFailReason::InvalidDelta:
+        case GrowFailReason::InvalidDelta:
             throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow expects the delta to be a valid page count"_s));
             break;
-        case Wasm::Memory::GrowFailReason::InvalidGrowSize:
+        case GrowFailReason::InvalidGrowSize:
             throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow expects the grown size to be a valid page count"_s));
             break;
-        case Wasm::Memory::GrowFailReason::WouldExceedMaximum:
+        case GrowFailReason::WouldExceedMaximum:
             throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow would exceed the memory's declared maximum size"_s));
             break;
-        case Wasm::Memory::GrowFailReason::OutOfMemory:
+        case GrowFailReason::OutOfMemory:
             throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));
             break;
-        case Wasm::Memory::GrowFailReason::GrowSharedUnavailable:
+        case GrowFailReason::GrowSharedUnavailable:
             throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow for shared memory is unavailable"_s));
             break;
         }
-        return Wasm::PageCount();
+        return PageCount();
     }
 
     return grown.value();
@@ -153,8 +155,8 @@ JSObject* JSWebAssemblyMemory::type(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
 
-    Wasm::PageCount minimum = m_memory->initial();
-    Wasm::PageCount maximum = m_memory->maximum();
+    PageCount minimum = m_memory->initial();
+    PageCount maximum = m_memory->maximum();
 
     JSObject* result;
     if (maximum.isValid()) {
@@ -164,17 +166,17 @@ JSObject* JSWebAssemblyMemory::type(JSGlobalObject* globalObject)
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
     result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(minimum.pageCount()));
-    result->putDirect(vm, Identifier::fromString(vm, "shared"_s), jsBoolean(m_memory->sharingMode() == Wasm::MemorySharingMode::Shared));
+    result->putDirect(vm, Identifier::fromString(vm, "shared"_s), jsBoolean(m_memory->sharingMode() == MemorySharingMode::Shared));
 
     return result;
 }
 
 
-void JSWebAssemblyMemory::growSuccessCallback(VM& vm, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount)
+void JSWebAssemblyMemory::growSuccessCallback(VM& vm, PageCount oldPageCount, PageCount newPageCount)
 {
     // We need to clear out the old array buffer because it might now be pointing to stale memory.
     if (m_buffer) {
-        if (m_memory->sharingMode() == Wasm::MemorySharingMode::Default)
+        if (m_memory->sharingMode() == MemorySharingMode::Default)
             m_buffer->detach(vm);
         m_buffer = nullptr;
         m_bufferWrapper.clear();

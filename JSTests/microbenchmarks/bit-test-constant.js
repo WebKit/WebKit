@@ -1,4 +1,6 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
+
 let glob = 0
 
 function doTest(number) {

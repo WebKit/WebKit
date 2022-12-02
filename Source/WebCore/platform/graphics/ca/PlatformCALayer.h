@@ -191,9 +191,6 @@ public:
     virtual bool wantsDeepColorBackingStore() const = 0;
     virtual void setWantsDeepColorBackingStore(bool) = 0;
 
-    virtual bool supportsSubpixelAntialiasedText() const = 0;
-    virtual void setSupportsSubpixelAntialiasedText(bool) = 0;
-
     virtual bool hasContents() const = 0;
     virtual CFTypeRef contents() const = 0;
     virtual void setContents(CFTypeRef) = 0;
@@ -240,7 +237,7 @@ public:
     virtual float cornerRadius() const = 0;
     virtual void setCornerRadius(float) = 0;
 
-    virtual void setEdgeAntialiasingMask(unsigned) = 0;
+    virtual void setAntialiasesEdges(bool) = 0;
     
     // Only used by LayerTypeShapeLayer.
     virtual FloatRoundedRect shapeRoundedRect() const = 0;

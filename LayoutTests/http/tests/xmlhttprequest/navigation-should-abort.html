@@ -8,10 +8,10 @@
         var req = new XMLHttpRequest();
         req.open("GET", "resources/endlessxml.py");
         req.onerror = function () {
-            console.log("FAIL: Expected 'abort', got 'error'.");
+            console.log("PASS: Expected 'error', got 'error'.");
         };
         req.onabort = function () {
-            console.log("PASS: Expected 'abort', got 'abort'.");
+            console.log("FAIL: Expected 'error', got 'abort'.");
         };
         req.send(null);
 

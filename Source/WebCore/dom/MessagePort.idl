@@ -27,6 +27,7 @@
 
 [
     ActiveDOMObject,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker,AudioWorklet),
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
@@ -37,4 +38,5 @@
     undefined close();
 
     attribute EventHandler onmessage;
+    attribute EventHandler onmessageerror;
 };

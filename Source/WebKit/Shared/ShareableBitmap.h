@@ -92,8 +92,7 @@ public:
     // Create a shareable bitmap from a ReadOnly handle.
     static std::optional<Ref<ShareableBitmap>> createReadOnly(const std::optional<ShareableBitmapHandle>&);
 
-    // Create a handle.
-    bool createHandle(ShareableBitmapHandle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+    std::optional<ShareableBitmapHandle> createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
     
     // Create a ReadOnly handle.
     std::optional<ShareableBitmapHandle> createReadOnlyHandle() const;

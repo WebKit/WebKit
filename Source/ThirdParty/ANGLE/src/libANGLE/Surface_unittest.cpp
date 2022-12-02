@@ -25,7 +25,7 @@ namespace
 class MockSurfaceImpl : public rx::SurfaceImpl
 {
   public:
-    MockSurfaceImpl() : SurfaceImpl(mockState), mockState(nullptr, egl::AttributeMap()) {}
+    MockSurfaceImpl() : SurfaceImpl(mockState), mockState({1}, nullptr, egl::AttributeMap()) {}
     virtual ~MockSurfaceImpl() { destructor(); }
 
     MOCK_METHOD1(destroy, void(const egl::Display *));
@@ -65,7 +65,7 @@ TEST(SurfaceTest, DestructionDeletesImpl)
 
     egl::Config config;
     egl::Surface *surface = new egl::WindowSurface(
-        &factory, &config, static_cast<EGLNativeWindowType>(0), egl::AttributeMap(), false);
+        &factory, {1}, &config, static_cast<EGLNativeWindowType>(0), egl::AttributeMap(), false);
 
     EXPECT_CALL(*impl, destroy(_)).Times(1).RetiresOnSaturation();
     EXPECT_CALL(*impl, destructor()).Times(1).RetiresOnSaturation();

@@ -1,4 +1,6 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 function foo(o)
 {
     var result = 0;

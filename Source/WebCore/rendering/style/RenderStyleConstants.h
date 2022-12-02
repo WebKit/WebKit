@@ -781,6 +781,23 @@ enum class TextUnderlinePosition : uint8_t {
     FromFont
 };
 
+enum class LeadingTrim : uint8_t {
+    Normal,
+    Start,
+    End,
+    Both
+};
+
+enum class TextEdgeType : uint8_t {
+    Leading,
+    Text,
+    CapHeight,
+    ExHeight,
+    Alphabetic,
+    CJKIdeographic,
+    CJKIdeographicInk
+};
+
 enum class TextZoom : uint8_t {
     Normal,
     Reset
@@ -1152,13 +1169,6 @@ enum class ScrollSnapStop : uint8_t {
     Always,
 };
 
-#if ENABLE(CSS_TRAILING_WORD)
-enum class TrailingWord : uint8_t {
-    Auto,
-    PartiallyBalanced
-};
-#endif
-
 // These are all minimized combinations of paint-order.
 enum class PaintOrder : uint8_t {
     Normal,
@@ -1323,6 +1333,8 @@ WTF::TextStream& operator<<(WTF::TextStream&, TextOverflow);
 WTF::TextStream& operator<<(WTF::TextStream&, TextSecurity);
 WTF::TextStream& operator<<(WTF::TextStream&, TextTransform);
 WTF::TextStream& operator<<(WTF::TextStream&, TextUnderlinePosition);
+WTF::TextStream& operator<<(WTF::TextStream&, LeadingTrim);
+WTF::TextStream& operator<<(WTF::TextStream&, TextEdgeType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextZoom);
 WTF::TextStream& operator<<(WTF::TextStream&, TransformBox);
 WTF::TextStream& operator<<(WTF::TextStream&, TransformStyle3D);

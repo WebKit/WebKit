@@ -1,0 +1,4 @@
+
+FAIL caches from different buckets have different contents promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storageBuckets.open')"
+FAIL cache.open promise is rejected when bucket is gone promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storageBuckets.open')"
+

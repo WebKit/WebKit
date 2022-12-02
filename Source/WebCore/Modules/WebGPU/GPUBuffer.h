@@ -65,6 +65,8 @@ private:
     }
 
     Ref<PAL::WebGPU::Buffer> m_backing;
+    PAL::WebGPU::Buffer::MappedRange m_mappedRange;
+    JSC::ArrayBuffer* m_arrayBuffer { nullptr };
 };
 
 }

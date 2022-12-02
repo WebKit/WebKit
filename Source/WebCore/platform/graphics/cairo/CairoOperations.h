@@ -141,7 +141,7 @@ void clearRect(GraphicsContextCairo&, const FloatRect&);
 void drawGlyphs(GraphicsContextCairo&, const FillSource&, const StrokeSource&, const ShadowState&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&, FontSmoothingMode);
 
 void drawPlatformImage(GraphicsContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, const ImagePaintingOptions&, float, const ShadowState&);
-void drawPattern(GraphicsContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const ImagePaintingOptions&);
+void drawPattern(GraphicsContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&);
 WEBCORE_EXPORT void drawSurface(GraphicsContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, InterpolationQuality, float, const ShadowState&, OrientationSizing operationSizing = OrientationSizing::Normal);
 
 void drawRect(GraphicsContextCairo&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);

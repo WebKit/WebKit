@@ -108,9 +108,9 @@ void AdaptiveStructureWatchpointAdaptor::add(CodeBlock* codeBlock, const ObjectP
 DesiredWatchpoints::DesiredWatchpoints() { }
 DesiredWatchpoints::~DesiredWatchpoints() { }
 
-void DesiredWatchpoints::addLazily(WatchpointSet* set)
+void DesiredWatchpoints::addLazily(WatchpointSet& set)
 {
-    m_sets.addLazily(set);
+    m_sets.addLazily(&set);
 }
 
 void DesiredWatchpoints::addLazily(InlineWatchpointSet& set)

@@ -36,7 +36,7 @@ PASS group5.every(property => !property.startsWith("Webkit")) is true
 PASS group5.every(property => !property.startsWith("Epub")) is true
 PASS group5.every(property => !property.includes("-")) is true
 PASS group5.every(property => property.startsWith("epub")) is true
-PASS group6 is ["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyShorthand", "isPropertyImplicit", "getPropertyCSSValue"]
+PASS group6 is ["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyCSSValue"]
 PASS successfullyParsed is true
 
 TEST COMPLETE

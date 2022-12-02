@@ -1,0 +1,32 @@
+
+PASS Same-origin fetch
+PASS Same-site fetch
+PASS Cross-site fetch
+PASS Same-origin mode
+PASS CORS mode
+PASS no-CORS mode
+PASS Same-origin fetch: sec-fetch-dest
+PASS Same-origin fetch: sec-fetch-mode
+PASS Same-origin fetch: sec-fetch-site
+PASS Same-origin fetch: sec-fetch-user
+PASS Same-site fetch: sec-fetch-dest
+PASS Same-site fetch: sec-fetch-mode
+PASS Same-site fetch: sec-fetch-site
+PASS Same-site fetch: sec-fetch-user
+PASS Cross-site fetch: sec-fetch-dest
+PASS Cross-site fetch: sec-fetch-mode
+PASS Cross-site fetch: sec-fetch-site
+PASS Cross-site fetch: sec-fetch-user
+PASS Same-origin mode: sec-fetch-dest
+PASS Same-origin mode: sec-fetch-mode
+PASS Same-origin mode: sec-fetch-site
+PASS Same-origin mode: sec-fetch-user
+PASS CORS mode: sec-fetch-dest
+PASS CORS mode: sec-fetch-mode
+PASS CORS mode: sec-fetch-site
+PASS CORS mode: sec-fetch-user
+PASS no-CORS mode: sec-fetch-dest
+PASS no-CORS mode: sec-fetch-mode
+PASS no-CORS mode: sec-fetch-site
+PASS no-CORS mode: sec-fetch-user
+

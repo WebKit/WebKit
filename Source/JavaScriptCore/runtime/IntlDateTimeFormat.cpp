@@ -856,7 +856,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     for (unsigned i = 0; i < fractionalSecondDigits; ++i)
         skeletonBuilder.append('S');
 
-    TimeZoneName timeZoneName = intlOption<TimeZoneName>(globalObject, options, vm.propertyNames->timeZoneName, { { "short"_s, TimeZoneName::Short }, { "long"_s, TimeZoneName::Long }, { "shortOffset"_s, TimeZoneName::ShortOffset }, { "longOffset"_s, TimeZoneName::LongOffset }, { "shortGeneric"_s, TimeZoneName::ShortGeneric}, { "longGeneric"_s, TimeZoneName::LongGeneric } }, "timeZoneName must be \"short\", \"long\", \"shortOffset\", \"longOffset\", \"shortGenric\", or \"longGeneric\""_s, TimeZoneName::None);
+    TimeZoneName timeZoneName = intlOption<TimeZoneName>(globalObject, options, vm.propertyNames->timeZoneName, { { "short"_s, TimeZoneName::Short }, { "long"_s, TimeZoneName::Long }, { "shortOffset"_s, TimeZoneName::ShortOffset }, { "longOffset"_s, TimeZoneName::LongOffset }, { "shortGeneric"_s, TimeZoneName::ShortGeneric}, { "longGeneric"_s, TimeZoneName::LongGeneric } }, "timeZoneName must be \"short\", \"long\", \"shortOffset\", \"longOffset\", \"shortGeneric\", or \"longGeneric\""_s, TimeZoneName::None);
     RETURN_IF_EXCEPTION(scope, void());
     switch (timeZoneName) {
     case TimeZoneName::Short:
@@ -1686,7 +1686,7 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
     //     H:    (15, 19) UFIELD_CATEGORY_DATE year
     //
     //  We use UFIELD_CATEGORY_DATE_INTERVAL_SPAN range to determine each part is either "startRange", "endRange", or "shared".
-    //  It is gurarnteed that UFIELD_CATEGORY_DATE_INTERVAL_SPAN comes first before any other parts including that range.
+    //  It is guaranteed that UFIELD_CATEGORY_DATE_INTERVAL_SPAN comes first before any other parts including that range.
     //  For example, in the above formatted string, " – " is "shared" part. For UFIELD_CATEGORY_DATE ranges, we generate corresponding
     //  part object with types such as "month". And non populated parts (e.g. "/") become "literal" parts.
     //  In the above case, expected parts are,

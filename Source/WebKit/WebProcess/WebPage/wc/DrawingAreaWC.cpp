@@ -259,7 +259,7 @@ void DrawingAreaWC::sendUpdateAC()
                     send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, WTFMove(*updateInfo)));
                     return;
                 }
-                didUpdate();
+                displayDidRefresh();
             });
         });
     });
@@ -287,7 +287,7 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect, 1
 void DrawingAreaWC::sendUpdateNonAC()
 {
     if (m_dirtyRegion.isEmpty()) {
-        didUpdate();
+        displayDidRefresh();
         return;
     }
     IntRect bounds = m_dirtyRegion.bounds();
@@ -328,7 +328,7 @@ void DrawingAreaWC::sendUpdateNonAC()
             if (!weakThis)
                 return;
             if (stateID != m_backingStoreStateID) {
-                didUpdate();
+                displayDidRefresh();
                 return;
             }
 
@@ -368,7 +368,7 @@ RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
     return ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, nullptr);
 }
 
-void DrawingAreaWC::didUpdate()
+void DrawingAreaWC::displayDidRefresh()
 {
     m_waitDidUpdate = false;
     if (m_forceRepaintCompletionHandler) {

@@ -65,27 +65,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
         proxyIdentifier = WebPage::fromCorePage(*page).webPageProxyIdentifier();
     }
 
-    m_requests.append(PermissionRequest { WTFMove(origin), descriptor, proxyIdentifier, source, WTFMove(completionHandler) });
-    tryProcessingRequests();
-}
-
-void WebPermissionController::tryProcessingRequests()
-{
-    while (!m_requests.isEmpty()) {
-        auto& currentRequest = m_requests.first();
-        if (currentRequest.isWaitingForReply)
-            return;
-
-        currentRequest.isWaitingForReply = true;
-        WebProcess::singleton().sendWithAsyncReply(Messages::WebPermissionControllerProxy::Query(currentRequest.origin, currentRequest.descriptor, currentRequest.identifier, currentRequest.source), [this, weakThis = WeakPtr { *this }](auto state) {
-            RefPtr protectedThis { weakThis.get() };
-            if (!protectedThis)
-                return;
-
-            m_requests.takeFirst().completionHandler(state);
-            tryProcessingRequests();
-        });
-    }
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebPermissionControllerProxy::Query(origin, descriptor, proxyIdentifier, source), WTFMove(completionHandler));
 }
 
 void WebPermissionController::addObserver(WebCore::PermissionObserver& observer)

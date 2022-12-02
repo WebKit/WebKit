@@ -160,8 +160,8 @@ static void emitDocumentLoaded(GDBusConnection* connection)
 static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* extension)
 {
 #if PLATFORM(GTK)
-    WebKitDOMDocument* document = webkit_web_page_get_dom_document(webPage);
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+    WebKitDOMDocument* document = webkit_web_page_get_dom_document(webPage);
     GRefPtr<WebKitDOMDOMWindow> window = adoptGRef(webkit_dom_document_get_default_view(document));
     webkit_dom_dom_window_webkit_message_handlers_post_message(window.get(), "dom", "DocumentLoaded");
     G_GNUC_END_IGNORE_DEPRECATIONS;
@@ -272,6 +272,10 @@ static GVariant* serializeNode(JSCValue* node)
 
 static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu, WebKitWebHitTestResult* hitTestResult, gpointer)
 {
+#if PLATFORM(GTK)
+    g_assert_null(webkit_context_menu_get_event(menu));
+#endif
+
     const char* pageURI = webkit_web_page_get_uri(page);
     if (!g_strcmp0(pageURI, "ContextMenuTestDefault")) {
         webkit_context_menu_set_user_data(menu, serializeContextMenu(menu));
@@ -303,22 +307,6 @@ static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu
     }
 
     return FALSE;
-}
-
-static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMessage* consoleMessage)
-{
-    g_assert_nonnull(consoleMessage);
-    GRefPtr<GVariant> variant = g_variant_new("(uusus)", webkit_console_message_get_source(consoleMessage),
-        webkit_console_message_get_level(consoleMessage), webkit_console_message_get_text(consoleMessage),
-        webkit_console_message_get_line(consoleMessage), webkit_console_message_get_source_id(consoleMessage));
-    GUniquePtr<char> messageString(g_variant_print(variant.get(), FALSE));
-    GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(webPage)));
-    GRefPtr<JSCValue> console = adoptGRef(jsc_context_evaluate(jsContext.get(), "window.webkit.messageHandlers.console", -1));
-    g_assert_true(JSC_IS_VALUE(console.get()));
-    if (jsc_value_is_object(console.get())) {
-        GRefPtr<JSCValue> result = adoptGRef(jsc_value_object_invoke_method(console.get(), "postMessage", G_TYPE_STRING, messageString.get(), G_TYPE_NONE));
-        g_assert_true(JSC_IS_VALUE(result.get()));
-    }
 }
 
 static void emitFormControlsAssociated(GDBusConnection* connection, const char* formIds)
@@ -518,7 +506,6 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), extension);
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), nullptr);
-    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
     g_signal_connect(webPage, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
     g_signal_connect(webPage, "form-controls-associated-for-frame", G_CALLBACK(formControlsAssociatedForFrameCallback), extension);
     g_signal_connect(webPage, "will-submit-form", G_CALLBACK(willSubmitFormCallback), extension);
@@ -606,10 +593,9 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         if (!page)
             return;
 
-        WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
-        GRefPtr<JSCValue> jsDocument = adoptGRef(webkit_frame_get_js_value_for_dom_object(frame, WEBKIT_DOM_OBJECT(document)));
+        GRefPtr<JSCValue> jsDocument = adoptGRef(jsc_context_get_value(jsContext.get(), "document"));
         GRefPtr<JSCValue> jsInputElement = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, elementID, G_TYPE_NONE));
         WebKitDOMNode* node = webkit_dom_node_for_js_value(jsInputElement.get());
         gboolean isUserEdited = webkit_dom_element_html_input_element_is_user_edited(WEBKIT_DOM_ELEMENT(node));

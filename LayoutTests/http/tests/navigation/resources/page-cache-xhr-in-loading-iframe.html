@@ -17,9 +17,6 @@ function doXHR()
     xhr.addEventListener("error", () => {
         doXHR();
     });
-    xhr.addEventListener("abort", () => {
-        doXHR();
-    });
     xhr.addEventListener("progress", () => {
     });
 

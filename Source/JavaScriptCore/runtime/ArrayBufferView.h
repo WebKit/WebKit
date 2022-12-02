@@ -73,22 +73,63 @@ public:
     {
         if (isDetached())
             return nullptr;
-        return m_baseAddress.getMayBeNull(byteLength());
+        return m_baseAddress.getMayBeNull(m_byteLength);
     }
 
     void* data() const { return baseAddress(); }
 
+    size_t byteOffsetRaw() const { return m_byteOffset; }
+
     size_t byteOffset() const
     {
-        if (isDetached())
+        if (UNLIKELY(isDetached()))
             return 0;
-        return m_byteOffset;
+
+        if (LIKELY(!isResizableOrGrowableShared()))
+            return byteOffsetRaw();
+
+        size_t bufferByteLength = m_buffer->byteLength(std::memory_order_seq_cst);
+        size_t byteOffsetStart = byteOffsetRaw();
+        size_t byteOffsetEnd = 0;
+        if (isAutoLength())
+            byteOffsetEnd = bufferByteLength;
+        else
+            byteOffsetEnd = byteOffsetStart + byteLengthRaw();
+        if (UNLIKELY(!(byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength)))
+            return 0;
+        return byteOffsetRaw();
     }
 
-    size_t byteLength() const { return m_byteLength; }
+    size_t byteLengthRaw() const { return m_byteLength; }
+
+    size_t byteLength() const
+    {
+        if (UNLIKELY(isDetached()))
+            return 0;
+
+        if (LIKELY(!isResizableOrGrowableShared()))
+            return byteLengthRaw();
+
+        size_t bufferByteLength = m_buffer->byteLength(std::memory_order_seq_cst);
+        size_t byteOffsetStart = byteOffsetRaw();
+        size_t byteOffsetEnd = 0;
+        if (isAutoLength())
+            byteOffsetEnd = bufferByteLength;
+        else
+            byteOffsetEnd = byteOffsetStart + byteLengthRaw();
+        if (UNLIKELY(!(byteOffsetStart > bufferByteLength || byteOffsetEnd > bufferByteLength)))
+            return 0;
+        if (!isAutoLength())
+            return byteLengthRaw();
+        return roundDownToMultipleOf(JSC::elementSize(m_type), bufferByteLength - byteOffsetStart);
+    }
 
     JS_EXPORT_PRIVATE void setDetachable(bool);
     bool isDetachable() const { return m_isDetachable; }
+    bool isResizableOrGrowableShared() const { return m_isResizableNonShared || m_isGrowableShared; }
+    bool isResizableNonShared() const { return m_isResizableNonShared; }
+    bool isGrowableShared() const { return m_isGrowableShared; }
+    bool isAutoLength() const { return m_isAutoLength; }
 
     inline ~ArrayBufferView();
 
@@ -115,7 +156,7 @@ public:
     JS_EXPORT_PRIVATE void operator delete(ArrayBufferView*, std::destroying_delete_t);
 
 protected:
-    JS_EXPORT_PRIVATE ArrayBufferView(TypedArrayType, RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
+    JS_EXPORT_PRIVATE ArrayBufferView(TypedArrayType, RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> byteLength);
 
     inline bool setImpl(ArrayBufferView*, size_t byteOffset);
 
@@ -133,31 +174,31 @@ protected:
         size_t *offset,
         size_t *numElements)
     {
+        size_t byteLength = buffer.byteLength();
         size_t maxOffset = (std::numeric_limits<size_t>::max() - arrayByteOffset) / sizeof(T);
         if (*offset > maxOffset) {
-            *offset = buffer.byteLength();
+            *offset = byteLength;
             *numElements = 0;
             return;
         }
         CheckedSize adjustedOffset = *offset;
         adjustedOffset *= sizeof(T);
         adjustedOffset += arrayByteOffset;
-        if (adjustedOffset.hasOverflowed() || adjustedOffset.value() > buffer.byteLength())
-            *offset = buffer.byteLength();
+        if (adjustedOffset.hasOverflowed() || adjustedOffset.value() > byteLength)
+            *offset = byteLength;
         else
             *offset = adjustedOffset.value();
-        size_t remainingElements = (buffer.byteLength() - *offset) / sizeof(T);
+        size_t remainingElements = (byteLength - *offset) / sizeof(T);
         *numElements = std::min(remainingElements, *numElements);
     }
 
     TypedArrayType m_type { TypedArrayType::NotTypedArray };
-#if USE(LARGE_TYPED_ARRAYS)
-    uint64_t m_byteOffset : 63;
-#else
-    uint32_t m_byteOffset : 31;
-#endif
-    bool m_isDetachable : 1 { true };
-    UCPURegister m_byteLength;
+    bool m_isDetachable { true };
+    bool m_isResizableNonShared : 1 { false };
+    bool m_isGrowableShared : 1 { false };
+    bool m_isAutoLength : 1 { false };
+    size_t m_byteOffset;
+    size_t m_byteLength;
 
     using BaseAddress = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
@@ -179,17 +220,20 @@ ArrayBufferView::~ArrayBufferView()
 
 bool ArrayBufferView::setImpl(ArrayBufferView* array, size_t byteOffset)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, array->byteLength(), byteLength()))
+    size_t byteLength = this->byteLength();
+    size_t arrayByteLength = array->byteLength();
+    if (!isSumSmallerThanOrEqual(byteOffset, arrayByteLength, byteLength))
         return false;
 
     uint8_t* base = static_cast<uint8_t*>(baseAddress());
-    memmove(base + byteOffset, array->baseAddress(), array->byteLength());
+    memmove(base + byteOffset, array->baseAddress(), arrayByteLength);
     return true;
 }
 
 bool ArrayBufferView::setRangeImpl(const void* data, size_t dataByteLength, size_t byteOffset)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, dataByteLength, byteLength()))
+    size_t byteLength = this->byteLength();
+    if (!isSumSmallerThanOrEqual(byteOffset, dataByteLength, byteLength))
         return false;
 
     uint8_t* base = static_cast<uint8_t*>(baseAddress());

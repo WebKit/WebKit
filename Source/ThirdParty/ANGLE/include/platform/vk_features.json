@@ -257,14 +257,6 @@
             "issue": "http://anglebug.com/6048"
         },
         {
-            "name": "disable_fifo_present_mode",
-            "category": "Workarounds",
-            "description": [
-                "VK_PRESENT_MODE_FIFO_KHR causes random timeouts"
-            ],
-            "issue": "http://anglebug.com/3153"
-        },
-        {
             "name": "force_D16_tex_filter",
             "category": "Workarounds",
             "description": [
@@ -599,14 +591,6 @@
             "issue": "http://anglebug.com/4901"
         },
         {
-            "name": "generate_SPIRV_through_glslang",
-            "category": "Features",
-            "description": [
-                "Translate SPIR-V through glslang."
-            ],
-            "issue": "http://anglebug.com/4889"
-        },
-        {
             "name": "prefer_driver_uniform_over_spec_const",
             "category": "Features",
             "description": [
@@ -762,7 +746,7 @@
             "name": "permanently_switch_to_framebuffer_fetch_mode",
             "category": "Features",
             "description": [
-                "Whether the context should permanently switch to framebuffer fetch mode on first",
+                "Whether the context should permanently switch to framebuffer fetch mode on first ",
                 "encounter"
             ]
         },
@@ -810,7 +794,7 @@
             "name": "precision_safe_division",
             "category": "Workarounds",
             "description": [
-                "Special case handling for platforms that do not generate 1.0f even when the dividend and",
+                "Special case handling for platforms that do not generate 1.0f even when the dividend and ",
                 "divisor have the same value"
             ]
         },
@@ -858,7 +842,7 @@
             "name": "force_static_vertex_stride_state",
             "category": "Workarounds",
             "description": [
-                "Force static state for VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT due to",
+                "Force static state for VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT due to ",
                 "driver bugs"
             ],
             "issue": "https://bugs.fuchsia.dev/p/fuchsia/issues/detail?id=107106"
@@ -955,7 +939,7 @@
             "name": "use_non_zero_stencil_write_mask_static_state",
             "category": "Workarounds",
             "description": [
-                "Work around a driver bug where 0 in stencil write mask static state would make the",
+                "Work around a driver bug where 0 in stencil write mask static state would make the ",
                 "corresponding dynamic state malfunction in the presence of discard or alpha to coverage"
             ],
             "issue": "http://anglebug.com/7556"
@@ -1022,6 +1006,69 @@
             "description": [
                 "VkDisplay supports presentation through a present family queue"
             ]
+        },
+        {
+            "name": "supports_compute_transcode_etc_to_bc",
+            "category": "Features",
+            "description": [
+                 "supports compute shader transcode etc format to bc format"
+            ]
+        },
+        {
+            "name": "supports_graphics_pipeline_library",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_graphics_pipeline_library extension"
+            ],
+            "issue": "https://anglebug.com/7369"
+        },
+        {
+            "name": "prefer_monolithic_pipelines_over_libraries",
+            "category": "Workarounds",
+            "description": [
+                "Whether monolithic pipelines perform significantly better than libraries"
+            ],
+            "issue": "https://anglebug.com/7369"
+        },
+        {
+            "name": "sync_monolithic_pipelines_to_blob_cache",
+            "category": "Workarounds",
+            "description": [
+                "Whether it's beneficial to store monolithic pipelines in the blob cache when ",
+                "VK_EXT_graphics_pipeline_library is in use.  Otherwise the libraries are stored ",
+                "only, and monolithic pipelines are recreated on every run"
+            ],
+            "issue": "https://anglebug.com/7369"
+        },
+        {
+            "name": "merge_program_pipeline_caches_to_global_cache",
+            "category": "Workarounds",
+            "description": [
+                "Whether it's beneficial to merge the pipeline cache for the shaders subset of the ",
+                "pipeline into the monolithic pipeline cache.  Only useful on platforms where ",
+                "monolithic pipelines can reuse blobs from partial pipelines"
+            ],
+            "issue": "https://anglebug.com/7369"
+        },
+        {
+            "name": "supports_pipeline_protected_access",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_pipeline_protected_access extension"
+            ],
+            "issue": "https://anglebug.com/7714"
+	},
+	{
+            "name": "prefer_submit_on_any_samples_passed_query_end",
+            "category": "Workarounds",
+            "description":["Submit commands to driver when last GL_ANY_SAMPLES_PASSED query is made for performance improvements."],
+            "issue": "https://issuetracker.google.com/250706693"
+        },
+	{
+            "name": "force_wait_for_submission_to_complete_for_query_result",
+            "category": "Workarounds",
+            "description":["Force wait for submission to complete before calling getQueryResult(wait)."],
+            "issue": "https://issuetracker.google.com/253522366"
         }
     ]
 }

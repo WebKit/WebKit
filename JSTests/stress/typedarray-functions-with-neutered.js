@@ -57,7 +57,7 @@ function checkProtoFunc(testArgs) {
         } catch (e) {
             if (testArgs.error)
                 return e == testArgs.error;
-            return e == "TypeError: Underlying ArrayBuffer has been detached from the view";
+            return e == "TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds";
         }
         return false;
     }
@@ -96,7 +96,7 @@ function callWithArgs(func, array, args, argNum) {
     try {
         func.call(array, ...args);
     } catch (e) {
-        if (e != "TypeError: Underlying ArrayBuffer has been detached from the view")
+        if (e != "TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds")
             throw new Error(e);
         failed = false;
     }

@@ -3,9 +3,8 @@ Tests the behavior of the resize / orientationchange event listeners on both the
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Before rotation
-After rotation
-PASS eventListenerCalls is 4
+Triggering rotation...
+PASS gotAllEvents() became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

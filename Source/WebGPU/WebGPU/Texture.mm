@@ -1399,7 +1399,7 @@ static MTLTextureUsage usage(WGPUTextureUsageFlags usage)
     return result;
 }
 
-static MTLPixelFormat pixelFormat(WGPUTextureFormat textureFormat)
+MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
     case WGPUTextureFormat_R8Unorm:
@@ -1776,7 +1776,7 @@ WGPUTextureFormat Texture::aspectSpecificFormat(WGPUTextureFormat format, WGPUTe
     }
 }
 
-static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WGPUTextureFormat textureFormat)
+std::optional<MTLPixelFormat> Texture::depthOnlyAspectMetalFormat(WGPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
     case WGPUTextureFormat_R8Unorm:
@@ -1888,7 +1888,7 @@ static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WGPUTextureForma
     }
 }
 
-static std::optional<MTLPixelFormat> stencilOnlyAspectMetalFormat(WGPUTextureFormat textureFormat)
+std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
     case WGPUTextureFormat_R8Unorm:
@@ -2031,17 +2031,28 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonP
 #endif
 }
 
-Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor, IOSurfaceRef ioSurfaceBacking)
+Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 {
+    IOSurfaceRef ioSurfaceBacking = nullptr;
     Vector<WGPUTextureFormat> viewFormats;
-    if (descriptor.nextInChain) {
-        if (descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats))
+    const auto* current = descriptor.nextInChain;
+    while (current) {
+        bool viewFormatsSpecified = false;
+        if (current->sType == static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats) && !viewFormatsSpecified) {
+            if (viewFormatsSpecified)
+                return Texture::createInvalid(*this);
+
+            viewFormatsSpecified = true;
+
+            const auto& descriptorViewFormats = reinterpret_cast<const WGPUTextureDescriptorViewFormats&>(*current);
+            viewFormats = Vector { descriptorViewFormats.viewFormats, descriptorViewFormats.viewFormatsCount };
+        } else if (current->sType == static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorCocoaSurfaceBacking)) {
+            const auto& descriptorIOSurface = reinterpret_cast<const WGPUTextureDescriptorCocoaCustomSurface&>(*current);
+            ioSurfaceBacking = descriptorIOSurface.surface;
+        } else
             return Texture::createInvalid(*this);
-        const auto& descriptorViewFormats = reinterpret_cast<const WGPUTextureDescriptorViewFormats&>(*descriptor.nextInChain);
-        if (descriptor.nextInChain->next != nullptr)
-            return Texture::createInvalid(*this);
-        // This copy is temporary, just until WGPUTextureDescriptorViewFormats gets folded into WGPUTextureDescriptor.
-        viewFormats = Vector { descriptorViewFormats.viewFormats, descriptorViewFormats.viewFormatsCount };
+
+        current = current->next;
     }
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createtexture
@@ -2103,7 +2114,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor, IOSu
         return Texture::createInvalid(*this);
     }
 
-    textureDescriptor.pixelFormat = pixelFormat(descriptor.format);
+    textureDescriptor.pixelFormat = Texture::pixelFormat(descriptor.format);
 
     textureDescriptor.mipmapLevelCount = descriptor.mipLevelCount;
 
@@ -2149,8 +2160,12 @@ std::optional<WGPUTextureViewDescriptor> Texture::resolveTextureViewDescriptorDe
 
     WGPUTextureViewDescriptor resolved = descriptor;
 
-    if (resolved.format == WGPUTextureFormat_Undefined)
-        resolved.format = m_descriptor.format;
+    if (resolved.format == WGPUTextureFormat_Undefined) {
+        if (auto format = resolveTextureFormat(m_descriptor.format, descriptor.aspect))
+            resolved.format = *format;
+        else
+            resolved.format = m_descriptor.format;
+    }
 
     if (resolved.mipLevelCount == WGPU_MIP_LEVEL_COUNT_UNDEFINED) {
         auto mipLevelCount = checkedDifference<uint32_t>(m_descriptor.mipLevelCount, resolved.baseMipLevel);
@@ -2205,6 +2220,21 @@ std::optional<WGPUTextureViewDescriptor> Texture::resolveTextureViewDescriptorDe
     return resolved;
 }
 
+std::optional<WGPUTextureFormat> Texture::resolveTextureFormat(WGPUTextureFormat format, WGPUTextureAspect aspect)
+{
+    switch (aspect) {
+    case WGPUTextureAspect_All:
+        return format;
+    case WGPUTextureAspect_DepthOnly:
+        return depthSpecificFormat(format);
+    case WGPUTextureAspect_StencilOnly:
+        return stencilSpecificFormat(format);
+    case WGPUTextureAspect_Force32:
+    default:
+        return { };
+    }
+}
+
 uint32_t Texture::arrayLayerCount() const
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-array-layer-count
@@ -2227,20 +2257,12 @@ bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) co
     if (!isValid())
         return false;
 
-    switch (descriptor.aspect) {
-    case WGPUTextureAspect_All:
-        break;
-    case WGPUTextureAspect_StencilOnly:
-        if (!containsStencilAspect(m_descriptor.format))
+    if (descriptor.aspect == WGPUTextureAspect_All) {
+        if (descriptor.format != m_descriptor.format && !m_viewFormats.contains(descriptor.format))
             return false;
-        break;
-    case WGPUTextureAspect_DepthOnly:
-        if (!containsDepthAspect(m_descriptor.format))
+    } else {
+        if (descriptor.format != resolveTextureFormat(m_descriptor.format, descriptor.aspect))
             return false;
-        break;
-    case WGPUTextureAspect_Force32:
-        ASSERT_NOT_REACHED();
-        return false;
     }
 
     if (!descriptor.mipLevelCount)
@@ -2257,8 +2279,10 @@ bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) co
     if (endArrayLayer.hasOverflowed() || endArrayLayer.value() > arrayLayerCount())
         return false;
 
-    if (descriptor.format != m_descriptor.format && !m_viewFormats.contains(descriptor.format))
-        return false;
+    if (m_descriptor.sampleCount > 1) {
+        if (descriptor.dimension != WGPUTextureViewDimension_2D)
+            return false;
+    }
 
     switch (descriptor.dimension) {
     case WGPUTextureViewDimension_Undefined:
@@ -2345,26 +2369,8 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
         return TextureView::createInvalid(m_device);
     }
 
-    std::optional<MTLPixelFormat> pixelFormat;
-    if (isDepthOrStencilFormat(descriptor->format)) {
-        switch (descriptor->aspect) {
-        case WGPUTextureAspect_All:
-            pixelFormat = WebGPU::pixelFormat(descriptor->format);
-            break;
-        case WGPUTextureAspect_StencilOnly:
-            pixelFormat = stencilOnlyAspectMetalFormat(descriptor->format);
-            break;
-        case WGPUTextureAspect_DepthOnly:
-            pixelFormat = depthOnlyAspectMetalFormat(descriptor->format);
-            break;
-        case WGPUTextureAspect_Force32:
-            ASSERT_NOT_REACHED();
-            return TextureView::createInvalid(m_device);
-        }
-    }
-    if (!pixelFormat)
-        return TextureView::createInvalid(m_device);
-    ASSERT(*pixelFormat != MTLPixelFormatInvalid);
+    auto pixelFormat = Texture::pixelFormat(descriptor->format);
+    ASSERT(pixelFormat != MTLPixelFormatInvalid);
 
     MTLTextureType textureType;
     switch (descriptor->dimension) {
@@ -2411,7 +2417,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
     auto slices = NSMakeRange(descriptor->baseArrayLayer, descriptor->arrayLayerCount);
 
-    id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:*pixelFormat textureType:textureType levels:levels slices:slices];
+    id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:pixelFormat textureType:textureType levels:levels slices:slices];
     if (!texture)
         return TextureView::createInvalid(m_device);
 

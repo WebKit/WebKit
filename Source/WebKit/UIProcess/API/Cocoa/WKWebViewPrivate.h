@@ -192,6 +192,8 @@ for this property.
 */
 @property (nonatomic, readonly) BOOL _negotiatedLegacyTLS WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
+@property (nonatomic, readonly) BOOL _wasPrivateRelayed WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 // FIXME: Remove these once nobody is using them.
@@ -426,6 +428,7 @@ for this property.
 - (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
 - (void)_didLoadNonAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
 
+- (void)_loadServiceWorker:(NSURL *)url usingModules:(BOOL)usingModules completionHandler:(void (^)(BOOL success))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_loadServiceWorker:(NSURL *)url completionHandler:(void (^)(BOOL success))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_suspendPage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));

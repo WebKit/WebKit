@@ -71,7 +71,6 @@ public:
     virtual void didRemoveFrameFromHierarchy(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didDisplayInsecureContentForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didRunInsecureContentForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
-    virtual void didDetectXSSForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
 
     virtual void didFirstLayoutForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }

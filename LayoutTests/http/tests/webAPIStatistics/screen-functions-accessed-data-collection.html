@@ -4,7 +4,7 @@
     <title>Test for screen functions accessed data collection in resource load statistics</title>
 </head>
 <script>
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 </script>
 <body>
 <p> Tests for screen functions accessed data collection in ResourceLoadStatistics plist by querying for all the screen properties and dumping the entire resource load statistics map. </p>
@@ -36,7 +36,7 @@
         testRunner.dumpAsText();
         testRunner.dumpResourceLoadStatistics();
         testRunner.waitUntilDone();
-        internals.setResourceLoadStatisticsEnabled(true);
+        internals.setTrackingPreventionEnabled(true);
         runTestRunnerTest();
     }
 </script>

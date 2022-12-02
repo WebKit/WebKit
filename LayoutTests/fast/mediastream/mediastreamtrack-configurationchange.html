@@ -29,6 +29,9 @@
         });
 
         assert_equals(track.label, "Mock audio device 2");
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        assert_equals(track.readyState, "live");
     }, "Trigger configurationchange event in case OS changes microphone on its own");
     </script>
 </body>

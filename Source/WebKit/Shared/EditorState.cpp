@@ -56,84 +56,91 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
     if (!editorState.canEnableAutomaticSpellingCorrection)
         ts.dumpProperty("canEnableAutomaticSpellingCorrection", editorState.canEnableAutomaticSpellingCorrection);
 #endif
-    if (editorState.isMissingPostLayoutData())
-        ts.dumpProperty("isMissingPostLayoutData()", editorState.isMissingPostLayoutData());
 
-    if (editorState.isMissingPostLayoutData())
-        return ts;
+    ts.dumpProperty("hasPostLayoutData", editorState.hasPostLayoutData());
 
-    TextStream::GroupScope scope(ts);
-    ts << "postLayoutData";
-    if (editorState.postLayoutData->typingAttributes != AttributeNone)
-        ts.dumpProperty("typingAttributes", editorState.postLayoutData->typingAttributes);
-#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
-    if (editorState.postLayoutData->caretRectAtStart != IntRect())
-        ts.dumpProperty("caretRectAtStart", editorState.postLayoutData->caretRectAtStart);
-#endif
+    if (editorState.hasPostLayoutData()) {
+        TextStream::GroupScope scope(ts);
+        ts << "postLayoutData";
+        if (editorState.postLayoutData->typingAttributes != AttributeNone)
+            ts.dumpProperty("typingAttributes", editorState.postLayoutData->typingAttributes);
 #if PLATFORM(COCOA)
-    if (editorState.postLayoutData->selectedTextLength)
-        ts.dumpProperty("selectedTextLength", editorState.postLayoutData->selectedTextLength);
-    if (editorState.postLayoutData->textAlignment != NoAlignment)
-        ts.dumpProperty("textAlignment", editorState.postLayoutData->textAlignment);
-    if (editorState.postLayoutData->textColor.isValid())
-        ts.dumpProperty("textColor", editorState.postLayoutData->textColor);
-    if (editorState.postLayoutData->enclosingListType != NoList)
-        ts.dumpProperty("enclosingListType", editorState.postLayoutData->enclosingListType);
-    if (editorState.postLayoutData->baseWritingDirection != WebCore::WritingDirection::Natural)
-        ts.dumpProperty("baseWritingDirection", static_cast<uint8_t>(editorState.postLayoutData->baseWritingDirection));
+        if (editorState.postLayoutData->selectedTextLength)
+            ts.dumpProperty("selectedTextLength", editorState.postLayoutData->selectedTextLength);
+        if (editorState.postLayoutData->textAlignment != NoAlignment)
+            ts.dumpProperty("textAlignment", editorState.postLayoutData->textAlignment);
+        if (editorState.postLayoutData->textColor.isValid())
+            ts.dumpProperty("textColor", editorState.postLayoutData->textColor);
+        if (editorState.postLayoutData->enclosingListType != NoList)
+            ts.dumpProperty("enclosingListType", editorState.postLayoutData->enclosingListType);
+        if (editorState.postLayoutData->baseWritingDirection != WebCore::WritingDirection::Natural)
+            ts.dumpProperty("baseWritingDirection", static_cast<uint8_t>(editorState.postLayoutData->baseWritingDirection));
 #endif // PLATFORM(COCOA)
 #if PLATFORM(IOS_FAMILY)
-    if (editorState.postLayoutData->selectionClipRect != IntRect())
-        ts.dumpProperty("selectionClipRect", editorState.postLayoutData->selectionClipRect);
-    if (editorState.postLayoutData->caretRectAtEnd != IntRect())
-        ts.dumpProperty("caretRectAtEnd", editorState.postLayoutData->caretRectAtEnd);
-    if (!editorState.postLayoutData->selectionGeometries.isEmpty())
-        ts.dumpProperty("selectionGeometries", editorState.postLayoutData->selectionGeometries);
-    if (!editorState.postLayoutData->markedTextRects.isEmpty())
-        ts.dumpProperty("markedTextRects", editorState.postLayoutData->markedTextRects);
-    if (editorState.postLayoutData->markedText.length())
-        ts.dumpProperty("markedText", editorState.postLayoutData->markedText);
-    if (editorState.postLayoutData->markedTextCaretRectAtStart != IntRect())
-        ts.dumpProperty("markedTextCaretRectAtStart", editorState.postLayoutData->markedTextCaretRectAtStart);
-    if (editorState.postLayoutData->markedTextCaretRectAtEnd != IntRect())
-        ts.dumpProperty("markedTextCaretRectAtEnd", editorState.postLayoutData->markedTextCaretRectAtEnd);
-    if (editorState.postLayoutData->wordAtSelection.length())
-        ts.dumpProperty("wordAtSelection", editorState.postLayoutData->wordAtSelection);
-    if (editorState.postLayoutData->characterAfterSelection)
-        ts.dumpProperty("characterAfterSelection", editorState.postLayoutData->characterAfterSelection);
-    if (editorState.postLayoutData->characterBeforeSelection)
-        ts.dumpProperty("characterBeforeSelection", editorState.postLayoutData->characterBeforeSelection);
-    if (editorState.postLayoutData->twoCharacterBeforeSelection)
-        ts.dumpProperty("twoCharacterBeforeSelection", editorState.postLayoutData->twoCharacterBeforeSelection);
+        if (editorState.postLayoutData->markedText.length())
+            ts.dumpProperty("markedText", editorState.postLayoutData->markedText);
+        if (editorState.postLayoutData->wordAtSelection.length())
+            ts.dumpProperty("wordAtSelection", editorState.postLayoutData->wordAtSelection);
+        if (editorState.postLayoutData->characterAfterSelection)
+            ts.dumpProperty("characterAfterSelection", editorState.postLayoutData->characterAfterSelection);
+        if (editorState.postLayoutData->characterBeforeSelection)
+            ts.dumpProperty("characterBeforeSelection", editorState.postLayoutData->characterBeforeSelection);
+        if (editorState.postLayoutData->twoCharacterBeforeSelection)
+            ts.dumpProperty("twoCharacterBeforeSelection", editorState.postLayoutData->twoCharacterBeforeSelection);
 
-    if (editorState.postLayoutData->isReplaceAllowed)
-        ts.dumpProperty("isReplaceAllowed", editorState.postLayoutData->isReplaceAllowed);
-    if (editorState.postLayoutData->hasContent)
-        ts.dumpProperty("hasContent", editorState.postLayoutData->hasContent);
-    ts.dumpProperty("isStableStateUpdate", editorState.postLayoutData->isStableStateUpdate);
-    if (editorState.postLayoutData->insideFixedPosition)
-        ts.dumpProperty("insideFixedPosition", editorState.postLayoutData->insideFixedPosition);
-    if (editorState.postLayoutData->caretColor.isValid())
-        ts.dumpProperty("caretColor", editorState.postLayoutData->caretColor);
+        if (editorState.postLayoutData->isReplaceAllowed)
+            ts.dumpProperty("isReplaceAllowed", editorState.postLayoutData->isReplaceAllowed);
+        if (editorState.postLayoutData->hasContent)
+            ts.dumpProperty("hasContent", editorState.postLayoutData->hasContent);
+        ts.dumpProperty("isStableStateUpdate", editorState.postLayoutData->isStableStateUpdate);
+        if (editorState.postLayoutData->insideFixedPosition)
+            ts.dumpProperty("insideFixedPosition", editorState.postLayoutData->insideFixedPosition);
+        if (editorState.postLayoutData->caretColor.isValid())
+            ts.dumpProperty("caretColor", editorState.postLayoutData->caretColor);
 #endif
 #if PLATFORM(MAC)
-    if (editorState.postLayoutData->selectionBoundingRect != IntRect())
-        ts.dumpProperty("selectionBoundingRect", editorState.postLayoutData->selectionBoundingRect);
-    if (editorState.postLayoutData->candidateRequestStartPosition)
-        ts.dumpProperty("candidateRequestStartPosition", editorState.postLayoutData->candidateRequestStartPosition);
-    if (editorState.postLayoutData->paragraphContextForCandidateRequest.length())
-        ts.dumpProperty("paragraphContextForCandidateRequest", editorState.postLayoutData->paragraphContextForCandidateRequest);
-    if (editorState.postLayoutData->stringForCandidateRequest.length())
-        ts.dumpProperty("stringForCandidateRequest", editorState.postLayoutData->stringForCandidateRequest);
+        if (editorState.postLayoutData->selectionBoundingRect != IntRect())
+            ts.dumpProperty("selectionBoundingRect", editorState.postLayoutData->selectionBoundingRect);
+        if (editorState.postLayoutData->candidateRequestStartPosition)
+            ts.dumpProperty("candidateRequestStartPosition", editorState.postLayoutData->candidateRequestStartPosition);
+        if (editorState.postLayoutData->paragraphContextForCandidateRequest.length())
+            ts.dumpProperty("paragraphContextForCandidateRequest", editorState.postLayoutData->paragraphContextForCandidateRequest);
+        if (editorState.postLayoutData->stringForCandidateRequest.length())
+            ts.dumpProperty("stringForCandidateRequest", editorState.postLayoutData->stringForCandidateRequest);
 #endif
 
-    if (editorState.postLayoutData->canCut)
-        ts.dumpProperty("canCut", editorState.postLayoutData->canCut);
-    if (editorState.postLayoutData->canCopy)
-        ts.dumpProperty("canCopy", editorState.postLayoutData->canCopy);
-    if (editorState.postLayoutData->canPaste)
-        ts.dumpProperty("canPaste", editorState.postLayoutData->canPaste);
+        if (editorState.postLayoutData->canCut)
+            ts.dumpProperty("canCut", editorState.postLayoutData->canCut);
+        if (editorState.postLayoutData->canCopy)
+            ts.dumpProperty("canCopy", editorState.postLayoutData->canCopy);
+        if (editorState.postLayoutData->canPaste)
+            ts.dumpProperty("canPaste", editorState.postLayoutData->canPaste);
+    }
 
+    ts.dumpProperty("hasVisualData", editorState.hasVisualData());
+
+    if (editorState.hasVisualData()) {
+        TextStream::GroupScope scope(ts);
+        ts << "visualData";
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+        if (editorState.visualData->caretRectAtStart != IntRect())
+            ts.dumpProperty("caretRectAtStart", editorState.visualData->caretRectAtStart);
+#endif
+#if PLATFORM(IOS_FAMILY)
+        if (editorState.visualData->selectionClipRect != IntRect())
+            ts.dumpProperty("selectionClipRect", editorState.visualData->selectionClipRect);
+        if (editorState.visualData->caretRectAtEnd != IntRect())
+            ts.dumpProperty("caretRectAtEnd", editorState.visualData->caretRectAtEnd);
+        if (!editorState.visualData->selectionGeometries.isEmpty())
+            ts.dumpProperty("selectionGeometries", editorState.visualData->selectionGeometries);
+        if (!editorState.visualData->markedTextRects.isEmpty())
+            ts.dumpProperty("markedTextRects", editorState.visualData->markedTextRects);
+        if (editorState.visualData->markedTextCaretRectAtStart != IntRect())
+            ts.dumpProperty("markedTextCaretRectAtStart", editorState.visualData->markedTextCaretRectAtStart);
+        if (editorState.visualData->markedTextCaretRectAtEnd != IntRect())
+            ts.dumpProperty("markedTextCaretRectAtEnd", editorState.visualData->markedTextCaretRectAtEnd);
+#endif
+    }
     return ts;
 }
 

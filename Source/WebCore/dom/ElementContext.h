@@ -47,50 +47,10 @@ struct ElementContext {
     {
         return webPageIdentifier == other.webPageIdentifier && documentIdentifier == other.documentIdentifier && elementIdentifier == other.elementIdentifier;
     }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ElementContext> decode(Decoder&);
 };
 
 inline bool operator==(const ElementContext& a, const ElementContext& b)
 {
     return a.boundingRect == b.boundingRect && a.isSameElement(b);
 }
-
-template<class Encoder>
-void ElementContext::encode(Encoder& encoder) const
-{
-    encoder << boundingRect;
-    encoder << webPageIdentifier;
-    encoder << documentIdentifier;
-    encoder << elementIdentifier;
-}
-
-template<class Decoder>
-std::optional<ElementContext> ElementContext::decode(Decoder& decoder)
-{
-    ElementContext context;
-
-    if (!decoder.decode(context.boundingRect))
-        return std::nullopt;
-
-    auto pageIdentifier = PageIdentifier::decode(decoder);
-    if (!pageIdentifier)
-        return std::nullopt;
-    context.webPageIdentifier = *pageIdentifier;
-
-    std::optional<ScriptExecutionContextIdentifier> documentIdentifier;
-    decoder >> documentIdentifier;
-    if (!documentIdentifier)
-        return std::nullopt;
-    context.documentIdentifier = *documentIdentifier;
-
-    auto elementIdentifier = ElementIdentifier::decode(decoder);
-    if (!elementIdentifier)
-        return std::nullopt;
-    context.elementIdentifier = *elementIdentifier;
-
-    return context;
-}
-
 }

@@ -341,6 +341,11 @@ void GPUProcessProxy::removeMockMediaDevice(const String& persistentId)
     send(Messages::GPUProcess::RemoveMockMediaDevice { persistentId }, 0);
 }
 
+void GPUProcessProxy::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+{
+    send(Messages::GPUProcess::SetMockMediaDeviceIsEphemeral { persistentId, isEphemeral }, 0);
+}
+
 void GPUProcessProxy::resetMockMediaDevices()
 {
     send(Messages::GPUProcess::ResetMockMediaDevices { }, 0);
@@ -482,7 +487,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         return;
     }
     
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     if (xpc_connection_t connection = this->connection()->xpcConnection())
         m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
 #endif
@@ -628,7 +633,7 @@ void GPUProcessProxy::displayConfigurationChanged(CGDirectDisplayID displayID, C
     send(Messages::GPUProcess::DisplayConfigurationChanged { displayID, flags }, 0);
 }
 
-void GPUProcessProxy::setScreenProperties(const ScreenProperties& properties)
+void GPUProcessProxy::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
     send(Messages::GPUProcess::SetScreenProperties { properties }, 0);
 }

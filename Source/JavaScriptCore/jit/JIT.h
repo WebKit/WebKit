@@ -321,15 +321,14 @@ namespace JSC {
         template<typename Op>
         static inline constexpr bool isProfiledOp = std::is_same_v<decltype(Op::Metadata::m_profile), ValueProfile>;
         template<typename Op>
-        std::enable_if_t<isProfiledOp<Op>, void>
-        emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
-        { // This assumes that the value to profile is in jsRegT10.
-            emitValueProfilingSite(bytecode, jsRegT10);
+        void emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
+        {
+            // This assumes that the value to profile is in jsRegT10.
+            if constexpr (isProfiledOp<Op>)
+                emitValueProfilingSite(bytecode, jsRegT10);
+            else
+                UNUSED_PARAM(bytecode);
         }
-        template<typename Op>
-        std::enable_if_t<!isProfiledOp<Op>, void>
-        emitValueProfilingSiteIfProfiledOpcode(Op)
-        { }
 
         template <typename Bytecode>
         void emitArrayProfilingSiteWithCell(const Bytecode&, RegisterID cellGPR, RegisterID scratchGPR);

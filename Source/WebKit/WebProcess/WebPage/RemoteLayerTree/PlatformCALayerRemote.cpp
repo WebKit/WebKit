@@ -672,15 +672,6 @@ void PlatformCALayerRemote::setWantsDeepColorBackingStore(bool wantsDeepColorBac
     updateBackingStore();
 }
 
-bool PlatformCALayerRemote::supportsSubpixelAntialiasedText() const
-{
-    return false;
-}
-
-void PlatformCALayerRemote::setSupportsSubpixelAntialiasedText(bool)
-{
-}
-
 bool PlatformCALayerRemote::hasContents() const
 {
     return !!m_properties.backingStore;
@@ -740,6 +731,9 @@ Color PlatformCALayerRemote::backgroundColor() const
 
 void PlatformCALayerRemote::setBackgroundColor(const Color& value)
 {
+    if (value == m_properties.backgroundColor)
+        return;
+
     m_properties.backgroundColor = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackgroundColorChanged);
 }
@@ -847,10 +841,13 @@ void PlatformCALayerRemote::setCornerRadius(float value)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CornerRadiusChanged);
 }
 
-void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned value)
+void PlatformCALayerRemote::setAntialiasesEdges(bool antialiases)
 {
-    m_properties.edgeAntialiasingMask = value;
-    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged);
+    if (antialiases == m_properties.antialiasesEdges)
+        return;
+
+    m_properties.antialiasesEdges = antialiases;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AntialiasesEdgesChanged);
 }
 
 FloatRoundedRect PlatformCALayerRemote::shapeRoundedRect() const
@@ -905,11 +902,14 @@ GraphicsLayer::CustomAppearance PlatformCALayerRemote::customAppearance() const
 
 void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance)
 {
+    if (customAppearance == m_properties.customAppearance)
+        return;
+
     m_properties.customAppearance = customAppearance;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }
 
-void PlatformCALayerRemote::setEventRegion(const WebCore::EventRegion& eventRegion)
+void PlatformCALayerRemote::setEventRegion(const EventRegion& eventRegion)
 {
     if (m_properties.eventRegion == eventRegion)
         return;
@@ -917,6 +917,22 @@ void PlatformCALayerRemote::setEventRegion(const WebCore::EventRegion& eventRegi
     m_properties.eventRegion = eventRegion;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EventRegionChanged);
 }
+
+#if ENABLE(SCROLLING_THREAD)
+ScrollingNodeID PlatformCALayerRemote::scrollingNodeID() const
+{
+    return m_properties.scrollingNodeID;
+}
+
+void PlatformCALayerRemote::setScrollingNodeID(ScrollingNodeID nodeID)
+{
+    if (nodeID == m_properties.scrollingNodeID)
+        return;
+
+    m_properties.scrollingNodeID = nodeID;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ScrollingNodeIDChanged);
+}
+#endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 bool PlatformCALayerRemote::isSeparated() const

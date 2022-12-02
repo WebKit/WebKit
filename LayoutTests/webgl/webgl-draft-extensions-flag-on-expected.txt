@@ -5,12 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 TEST COMPLETE: 7 PASS, 0 FAIL
 
 
-PASS webgl2:EXT_provoking_vertex: Supported
-PASS webgl2:EXT_provoking_vertex: Has object.
 PASS webgl2:WEBGL_draw_instanced_base_vertex_base_instance: Supported
 PASS webgl2:WEBGL_draw_instanced_base_vertex_base_instance: Has object.
 PASS webgl2:WEBGL_multi_draw_instanced_base_vertex_base_instance: Supported
 PASS webgl2:WEBGL_multi_draw_instanced_base_vertex_base_instance: Has object.
+PASS webgl2:WEBGL_provoking_vertex: Supported
+PASS webgl2:WEBGL_provoking_vertex: Has object.
 PASS successfullyParsed is true
 
 TEST COMPLETE

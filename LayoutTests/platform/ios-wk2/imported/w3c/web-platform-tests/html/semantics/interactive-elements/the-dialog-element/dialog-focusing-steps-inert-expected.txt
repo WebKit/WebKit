@@ -1,7 +1,0 @@
-
-
-FAIL dialog.show(): focusing steps should not change focus when dialog is inert assert_equals: dialog.show(): focusing steps should not change focus when dialog is inert expected Element node <input id="outer-input"></input> but got Element node <input autofocus=""></input>
-FAIL dialog.showModal(): focusing steps should apply focus fixup rule when dialog is inert assert_equals: dialog.showModal(): focusing steps should apply focus fixup rule when dialog is inert expected Element node <body>
-<input id="outer-input">
-<dialog inert="" open="">... but got Element node <input autofocus=""></input>
-

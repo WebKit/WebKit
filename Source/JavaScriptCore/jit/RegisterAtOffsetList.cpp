@@ -39,13 +39,14 @@ RegisterAtOffsetList::RegisterAtOffsetList() { }
 RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSetBuilder, OffsetBaseType offsetBaseType)
     : m_registers(registerSetBuilder.numberOfSetRegisters())
 {
-    ASSERT(!registerSetBuilder.hasAnyWideRegisters());
+    ASSERT(!registerSetBuilder.hasAnyWideRegisters() || Options::useWebAssemblySIMD());
 
     size_t sizeOfAreaInBytes = registerSetBuilder.byteSizeOfSetRegisters();
-#if USE(JSVALUE32_64)
     m_sizeOfAreaInBytes = sizeOfAreaInBytes;
-#endif
-    ASSERT(this->sizeOfAreaInBytes() == sizeOfAreaInBytes);
+#if USE(JSVALUE64)
+    static_assert(sizeof(CPURegister) == sizeof(double));
+    ASSERT(this->sizeOfAreaInBytes() == registerCount() * sizeof(CPURegister) || Options::useWebAssemblySIMD());
+#endif    
 
     ptrdiff_t startOffset = 0;
     if (offsetBaseType == FramePointerBased)
@@ -55,8 +56,7 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSetBuilder, Offse
     unsigned index = 0;
 
     registerSetBuilder.forEachWithWidth([&] (Reg reg, Width width) {
-        size_t registerSize = bytesForWidth(width);
-        offset = WTF::roundUpToMultipleOf(registerSize, offset);
+        offset = WTF::roundUpToMultipleOf(alignmentForWidth(width), offset);
         m_registers[index++] = RegisterAtOffset(reg, offset, width);
         offset += bytesForWidth(width);
     });

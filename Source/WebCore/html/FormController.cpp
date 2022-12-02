@@ -189,8 +189,8 @@ static String formSignature(const HTMLFormElement& form)
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     unsigned count = 0;
     builder.append(" [");
-    for (auto& control : form.unsafeAssociatedElements()) {
-        auto element = control->asFormAssociatedElement();
+    for (auto& control : form.unsafeListedElements()) {
+        auto element = control->asFormListedElement();
         if (!is<HTMLFormControlElementWithState>(element))
             continue;
         Ref controlWithState = downcast<HTMLFormControlElementWithState>(*element);
@@ -345,7 +345,7 @@ void FormController::restoreControlStateFor(HTMLFormControlElementWithState& con
 
 void FormController::restoreControlStateIn(HTMLFormElement& form)
 {
-    for (auto& element : form.copyAssociatedElementsVector()) {
+    for (auto& element : form.copyListedElementsVector()) {
         if (!is<HTMLFormControlElementWithState>(element))
             continue;
         auto& control = downcast<HTMLFormControlElementWithState>(element.get());

@@ -18,25 +18,34 @@ tag`${1}`;
 
 assert(Array.isArray(templateObject.raw), 'The template object is an array');
 
-assert(templateObject.hasOwnProperty('raw'));
-verifyNotEnumerable(templateObject, 'raw');
-verifyNotWritable(templateObject, 'raw')
-verifyNotConfigurable(templateObject, 'raw');
+verifyProperty(templateObject, 'raw', {
+  enumerable: false,
+  writable: false,
+  configurable: false,
+});
 
 assert(Array.isArray(templateObject), 'The "raw" object is an array');
 
-verifyEnumerable(templateObject, '0');
-verifyNotWritable(templateObject, '0')
-verifyNotConfigurable(templateObject, '0');
+verifyProperty(templateObject, '0', {
+  enumerable: true,
+  writable: false,
+  configurable: false,
+});
 
-verifyNotEnumerable(templateObject, 'length');
-verifyNotWritable(templateObject, 'length')
-verifyNotConfigurable(templateObject, 'length');
+verifyProperty(templateObject, 'length', {
+  enumerable: false,
+  writable: false,
+  configurable: false,
+});
 
-verifyEnumerable(templateObject.raw, '0');
-verifyNotWritable(templateObject.raw, '0')
-verifyNotConfigurable(templateObject.raw, '0');
+verifyProperty(templateObject.raw, '0', {
+  enumerable: true,
+  writable: false,
+  configurable: false,
+});
 
-verifyNotEnumerable(templateObject.raw, 'length');
-verifyNotWritable(templateObject.raw, 'length')
-verifyNotConfigurable(templateObject.raw, 'length');
+verifyProperty(templateObject.raw, 'length', {
+  enumerable: false,
+  writable: false,
+  configurable: false,
+});

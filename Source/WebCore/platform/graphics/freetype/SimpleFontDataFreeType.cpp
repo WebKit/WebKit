@@ -192,7 +192,7 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescripti
     ASSERT(m_platformData.scaledFont());
     return Font::create(FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
         m_platformData.fcPattern(),
-        scaleFactor * fontDescription.computedSize(),
+        scaleFactor * m_platformData.size(),
         m_platformData.isFixedWidth(),
         m_platformData.syntheticBold(),
         m_platformData.syntheticOblique(),

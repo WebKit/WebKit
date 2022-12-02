@@ -64,7 +64,7 @@ public:
 
     ExceptionOr<void> configure(WebCodecsVideoEncoderConfig&&);
     ExceptionOr<void> encode(Ref<WebCodecsVideoFrame>&&, WebCodecsVideoEncoderEncodeOptions&&);
-    ExceptionOr<void> flush(Ref<DeferredPromise>&&);
+    void flush(Ref<DeferredPromise>&&);
     ExceptionOr<void> reset();
     ExceptionOr<void> close();
 
@@ -99,6 +99,7 @@ private:
 
     WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_encodeQueueSize { 0 };
+    size_t m_beingEncodedQueueSize { 0 };
     Ref<WebCodecsEncodedVideoChunkOutputCallback> m_output;
     Ref<WebCodecsErrorCallback> m_error;
     std::unique_ptr<VideoEncoder> m_internalEncoder;
@@ -111,6 +112,7 @@ private:
     WebCodecsVideoEncoderConfig m_baseConfiguration;
     VideoEncoder::ActiveConfiguration m_activeConfiguration;
     bool m_hasNewActiveConfiguration { false };
+    bool m_isFlushing { false };
 };
 
 }

@@ -59,7 +59,7 @@ std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(co
             return std::nullopt;
     }
 
-    WebGPUIdentifier occlusionQuerySet;
+    std::optional<WebGPUIdentifier> occlusionQuerySet;
     if (renderPassDescriptor.occlusionQuerySet) {
         occlusionQuerySet = convertToBacking(*renderPassDescriptor.occlusionQuerySet);
         if (!occlusionQuerySet)
@@ -101,7 +101,7 @@ std::optional<PAL::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::conv
 
     PAL::WebGPU::QuerySet* occlusionQuerySet = nullptr;
     if (renderPassDescriptor.occlusionQuerySet) {
-        occlusionQuerySet = convertQuerySetFromBacking(renderPassDescriptor.occlusionQuerySet);
+        occlusionQuerySet = convertQuerySetFromBacking(renderPassDescriptor.occlusionQuerySet.value());
         if (!occlusionQuerySet)
             return std::nullopt;
     }

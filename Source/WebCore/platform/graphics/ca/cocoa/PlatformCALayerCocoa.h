@@ -114,9 +114,6 @@ public:
     bool wantsDeepColorBackingStore() const override;
     void setWantsDeepColorBackingStore(bool) override;
 
-    bool supportsSubpixelAntialiasedText() const override;
-    void setSupportsSubpixelAntialiasedText(bool) override;
-
     bool hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
@@ -160,7 +157,7 @@ public:
     float cornerRadius() const override;
     void setCornerRadius(float) override;
 
-    void setEdgeAntialiasingMask(unsigned) override;
+    void setAntialiasesEdges(bool) override;
 
     FloatRoundedRect shapeRoundedRect() const override;
     void setShapeRoundedRect(const FloatRoundedRect&) override;
@@ -228,7 +225,6 @@ private:
 #endif
     EventRegion m_eventRegion;
     bool m_wantsDeepColorBackingStore { false };
-    bool m_supportsSubpixelAntialiasedText { false };
     bool m_backingStoreAttached { true };
 };
 

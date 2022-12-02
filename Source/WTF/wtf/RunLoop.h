@@ -94,7 +94,6 @@ public:
     WTF_EXPORT_PRIVATE ~RunLoop() final;
 
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
-    WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&);
 #if USE(COCOA_EVENT_LOOP)
     WTF_EXPORT_PRIVATE static void dispatch(const SchedulePairHashSet&, Function<void()>&&);
 #endif
@@ -130,7 +129,6 @@ public:
 #endif
 
     class TimerBase {
-        WTF_MAKE_FAST_ALLOCATED;
         friend class RunLoop;
     public:
         WTF_EXPORT_PRIVATE explicit TimerBase(RunLoop&);
@@ -180,6 +178,7 @@ public:
 
     template <typename TimerFiredClass>
     class Timer : public TimerBase {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         typedef void (TimerFiredClass::*TimerFiredFunction)();
 
@@ -201,11 +200,8 @@ public:
         Function<void()> m_function;
     };
 
-private:
-    class Holder;
-    static ThreadSpecific<Holder>& runLoopHolder();
-
-    class DispatchTimer final : public TimerBase {
+    class DispatchTimer final : public TimerBase, public ThreadSafeRefCounted<DispatchTimer> {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         DispatchTimer(RunLoop& runLoop)
             : TimerBase(runLoop)
@@ -221,6 +217,12 @@ private:
 
         Function<void()> m_function;
     };
+
+    WTF_EXPORT_PRIVATE Ref<RunLoop::DispatchTimer> dispatchAfter(Seconds, Function<void()>&&);
+
+private:
+    class Holder;
+    static ThreadSpecific<Holder>& runLoopHolder();
 
     RunLoop();
 

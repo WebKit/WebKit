@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -344,8 +344,12 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
 
 void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeOrInlineSizeContainment();
-    if (!shouldIgnoreDescendantContentForLogicalWidth) {
+    if (shouldApplySizeContainment()) {
+        if (auto width = explicitIntrinsicInnerLogicalWidth()) {
+            minLogicalWidth = width.value();
+            maxLogicalWidth = width.value();
+        }
+    } else if (!shouldApplyInlineSizeContainment()) {
         if (childrenInline())
             computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
         else
@@ -929,18 +933,28 @@ LayoutUnit RenderBlockFlow::marginOffsetForSelfCollapsingBlock()
 void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode applyDelta)
 {
     LayoutUnit startPosition = borderStart() + paddingStart();
+    LayoutUnit initialStartPosition = startPosition;
     if (shouldPlaceVerticalScrollbarOnLeft() && isHorizontalWritingMode())
         startPosition += (style().isLeftToRightDirection() ? 1 : -1) * verticalScrollbarWidth();
     LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
 
-    // Add in our start margin.
     LayoutUnit childMarginStart = marginStartForChild(child);
     LayoutUnit newPosition = startPosition + childMarginStart;
-        
-    // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats. They need
-    // to shift over as necessary to dodge any floats that might get in the way.
+
+    LayoutUnit positionToAvoidFloats;
+    
     if (child.avoidsFloats() && containsFloats())
-        newPosition += computeStartPositionDeltaForChildAvoidingFloats(child, marginStartForChild(child));
+        positionToAvoidFloats = startOffsetForLine(logicalTopForChild(child), IndentTextOrNot::DoNotIndentText, logicalHeightForChild(child));
+
+    // If the child has an offset from the content edge to avoid floats then use that, otherwise let any negative
+    // margin pull it back over the content edge or any positive margin push it out.
+    // If the child is being centred then the margin calculated to do that has factored in any offset required to
+    // avoid floats, so use it if necessary.
+
+    if (style().textAlign() == TextAlignMode::WebKitCenter || child.style().marginStartUsing(&style()).isAuto())
+        newPosition = std::max(newPosition, positionToAvoidFloats + childMarginStart);
+    else if (positionToAvoidFloats > initialStartPosition)
+        newPosition = std::max(newPosition, positionToAvoidFloats);
 
     setLogicalLeftForChild(child, style().isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), applyDelta);
 }
@@ -1146,16 +1160,11 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
 
     LayoutUnit beforeCollapseLogicalTop = logicalHeight();
     LayoutUnit logicalTop = beforeCollapseLogicalTop;
-
-    LayoutUnit clearanceForSelfCollapsingBlock;
-    
     // If the child's previous sibling is a self-collapsing block that cleared a float then its top border edge has been set at the bottom border edge
     // of the float. Since we want to collapse the child's top margin with the self-collapsing block's top and bottom margins we need to adjust our parent's height to match the 
     // margin top of the self-collapsing block. If the resulting collapsed margin leaves the child still intruding into the float then we will want to clear it.
-    if (!marginInfo.canCollapseWithMarginBefore() && is<RenderBlockFlow>(prevSibling) && downcast<RenderBlockFlow>(*prevSibling).isSelfCollapsingBlock()) {
-        clearanceForSelfCollapsingBlock = downcast<RenderBlockFlow>(*prevSibling).marginOffsetForSelfCollapsingBlock();
-        setLogicalHeight(logicalHeight() - clearanceForSelfCollapsingBlock);
-    }
+    if (!marginInfo.canCollapseWithMarginBefore() && is<RenderBlockFlow>(prevSibling) && downcast<RenderBlockFlow>(*prevSibling).isSelfCollapsingBlock())
+        setLogicalHeight(logicalHeight() - downcast<RenderBlockFlow>(*prevSibling).marginOffsetForSelfCollapsingBlock());
 
     if (childIsSelfCollapsing) {
         // This child has no height. We need to compute our
@@ -1213,10 +1222,10 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
             addOverhangingFloats(block, false);
         setLogicalHeight(oldLogicalHeight);
 
-        // If |child|'s previous sibling is a self-collapsing block that cleared a float and margin collapsing resulted in |child| moving up
+        // If |child|'s previous sibling is or contains a self-collapsing block that cleared a float and margin collapsing resulted in |child| moving up
         // into the margin area of the self-collapsing block then the float it clears is now intruding into |child|. Layout again so that we can look for
         // floats in the parent that overhang |child|'s new logical top.
-        bool logicalTopIntrudesIntoFloat = clearanceForSelfCollapsingBlock > 0 && logicalTop < beforeCollapseLogicalTop;
+        bool logicalTopIntrudesIntoFloat = logicalTop < beforeCollapseLogicalTop;
         if (child && logicalTopIntrudesIntoFloat && containsFloats() && !child->avoidsFloats() && lowestFloatLogicalBottom() > logicalTop)
             child->setNeedsLayout();
     }
@@ -3040,8 +3049,8 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
             return std::nullopt;
     }
     // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
-    float boxHeight = synthesizedBaselineFromBorderBox(*this, lineDirection) + (lineDirection == HorizontalLine ? m_marginBox.bottom() : m_marginBox.left());
-    float lastBaseline = 0;
+    auto boxHeight = synthesizedBaseline(*this, *parentStyle(), lineDirection, BorderBox) + (lineDirection == HorizontalLine ? m_marginBox.bottom() : m_marginBox.left());
+    LayoutUnit lastBaseline;
     if (!childrenInline()) {
         auto inlineBlockBaseline = RenderBlock::inlineBlockBaseline(lineDirection);
         if (!inlineBlockBaseline)
@@ -3601,6 +3610,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     bool needsUpdateReplacedDimensions = false;
+    auto& layoutState = *view().frameView().layoutContext().layoutState();
 
     if (!modernLineLayout()) {
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
@@ -3608,7 +3618,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     }
 
     auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
-    layoutFormattingContextLineLayout.updateFormattingRootGeometryAndInvalidate();
+    layoutFormattingContextLineLayout.updateInlineContentConstraints();
 
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
@@ -3634,6 +3644,10 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
                 downcast<RenderCounter>(renderer).updateCounter();
             continue;
         }
+        if (is<RenderCombineText>(renderer)) {
+            downcast<RenderCombineText>(renderer).combineTextIfNeeded();
+            continue;
+        }
     }
 
     layoutFormattingContextLineLayout.updateInlineContentDimensions();
@@ -3656,7 +3670,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     layoutFormattingContextLineLayout.layout();
 
-    if (view().frameView().layoutContext().layoutState()->isPaginated())
+    if (layoutState.isPaginated())
         layoutFormattingContextLineLayout.adjustForPagination();
 
     auto newBorderBoxBottom = computeBorderBoxBottom();
@@ -3675,6 +3689,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     inflateRepaintTopAndBottomWithInkOverflow();
 
     setLogicalHeight(newBorderBoxBottom);
+    if (layoutState.hasLineClamp())
+        layoutState.setVisibleLineCountForLineClamp(layoutState.visibleLineCountForLineClamp().value_or(0) + layoutFormattingContextLineLayout.lineCount());
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -4224,7 +4240,14 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 // Case (2). Inline replaced elements and floats.
                 // Terminate the current line as far as minwidth is concerned.
                 LayoutUnit childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth;
-                computeChildPreferredLogicalWidths(*child, childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth);
+                if (is<RenderBox>(*child) && child->isHorizontalWritingMode() != isHorizontalWritingMode()) {
+                    auto& box = downcast<RenderBox>(*child);
+                    auto extent = box.computeLogicalHeight(box.borderAndPaddingLogicalHeight(), 0).m_extent;
+                    childMinPreferredLogicalWidth = extent;
+                    childMaxPreferredLogicalWidth = extent;
+                } else
+                    computeChildPreferredLogicalWidths(*child, childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth);
+
                 childMin += childMinPreferredLogicalWidth.ceilToFloat();
                 childMax += childMaxPreferredLogicalWidth.ceilToFloat();
 

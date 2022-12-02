@@ -1,4 +1,4 @@
 
 PASS CSSStyleValue parsed from string serializes to given string
-FAIL Shorthand CSSStyleValue parsed from string serializes to given string assert_equals: expected "blue" but got "initial"
+PASS Shorthand CSSStyleValue parsed from string serializes to given string
 

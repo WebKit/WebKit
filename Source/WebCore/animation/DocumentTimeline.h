@@ -79,6 +79,8 @@ public:
     WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForElement(Element&) const;    
     WEBCORE_EXPORT unsigned numberOfAnimationTimelineInvalidationsForTesting() const;
 
+    Seconds convertTimelineTimeToOriginRelativeTime(Seconds) const;
+
     std::optional<FramesPerSecond> maximumFrameRate() const;
 
 private:

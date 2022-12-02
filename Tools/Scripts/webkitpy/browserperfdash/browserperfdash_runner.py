@@ -43,12 +43,13 @@ def parse_args():
     parser.add_argument('--config-file', dest='config_file', default=None, required=True, help='Configuration file for sending the results to the performance dashboard server(s).')
     parser.add_argument('--browser-version', dest='browser_version', default=None, required=True, help='A string that identifies the browser version.')
     # arguments shared with run-benchmark.
-    parser.add_argument('--build-directory', dest='buildDir', help='Path to the browser executable. e.g. WebKitBuild/Release/')
+    parser.add_argument('--build-directory', dest='buildDir', help='Path to the browser executable (e.g. WebKitBuild/Release/).')
     parser.add_argument('--platform', dest='platform', default=default_platform(), choices=BrowserDriverFactory.available_platforms())
     parser.add_argument('--browser', dest='browser', default=default_browser(), choices=BrowserDriverFactory.available_browsers())
     parser.add_argument('--driver', default=WebServerBenchmarkRunner.name, choices=benchmark_runner_subclasses.keys(), help='Use the specified benchmark driver. Defaults to %s.' % WebServerBenchmarkRunner.name)
-    parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark. e.g. PerformanceTests/SunSpider/')
-    parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark. e.g. 5')
+    parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark (e.g. PerformanceTests/SunSpider/).')
+    parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark (e.g. 5).')
+    parser.add_argument('--timeout', dest='timeoutOverride', type=int, help='Number of seconds to wait for the benchmark to finish (e.g. 600).')
     mutual_group = parser.add_mutually_exclusive_group(required=True)
     mutual_group.add_argument('--plan', dest='plan', help='Benchmark plan to run. e.g. speedometer, jetstream')
     mutual_group.add_argument('--allplans', action='store_true', help='Run all available benchmark plans sequentially')
@@ -168,7 +169,7 @@ class BrowserPerfDashRunner(object):
                 # Run test and save test info
                 with tempfile.NamedTemporaryFile() as temp_result_file:
                     benchmark_runner_class = benchmark_runner_subclasses[self._args.driver]
-                    runner = benchmark_runner_class(plan, self._args.localCopy, self._args.countOverride, self._args.buildDir, temp_result_file.name, self._args.platform, self._args.browser, None)
+                    runner = benchmark_runner_class(plan, self._args.localCopy, self._args.countOverride, self._args.timeoutOverride, self._args.buildDir, temp_result_file.name, self._args.platform, self._args.browser, None)
                     runner.execute()
                     _log.info('Finished benchmark plan: {plan_name}'.format(plan_name=plan))
                     # Fill test info for upload

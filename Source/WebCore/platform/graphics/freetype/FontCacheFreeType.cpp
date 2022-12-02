@@ -34,6 +34,7 @@
 #include FT_TRUETYPE_IDS_H
 #include "RefPtrCairo.h"
 #include "RefPtrFontconfig.h"
+#include "StyleFontSizeFunctions.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -461,14 +462,20 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
             FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }
 #endif
-    auto platformData = makeUnique<FontPlatformData>(fontFace.get(), WTFMove(resultPattern), fontDescription.computedPixelSize(), fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
+
+    auto size = fontDescription.computedPixelSize();
+    FontPlatformData platformData(fontFace.get(), WTFMove(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
+
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);
+
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently
     // supports three encodings in FcFreeTypeCharIndex: Unicode, Symbol and AppleRoman.
     // If this font doesn't have one of these three encodings, don't select it.
-    if (!platformData->hasCompatibleCharmap())
+    if (!platformDataUniquePtr->hasCompatibleCharmap())
         return nullptr;
 
-    return platformData;
+    return platformDataUniquePtr;
 }
 
 std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&)

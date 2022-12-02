@@ -33,6 +33,7 @@
 #include "FontDatabase.h"
 #include "FontFamilySpecificationCoreText.h"
 #include "FontPaletteValues.h"
+#include "StyleFontSizeFunctions.h"
 #include "SystemFontDatabaseCoreText.h"
 #include <CoreText/SFNTLayoutTypes.h>
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -477,7 +478,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     // FIXME: Implement Step 6: the font-variation-settings descriptor inside @font-face
 
     // Step 7: Consult with font-feature-settings inside @font-face
-    if (fontCreationContext.fontFaceFeatures() && !fontCreationContext.fontFaceFeatures()->isEmpty()) {
+    if (fontCreationContext.fontFaceFeatures()) {
         for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures())
             applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
     }
@@ -485,7 +486,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     // FIXME: Move font-optical-sizing handling here. It should be step 9.
 
     // Step 10: Font-variant
-    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
+    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings, fontCreationContext.fontFeatureValues()))
         applyFeature(newFeature.key, newFeature.value);
 
     // Step 11: Other properties
@@ -1101,7 +1102,6 @@ static void autoActivateFont(const String& name, CGFloat size)
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
 {
     float size = fontDescription.computedPixelSize();
-
     auto& fontDatabase = database(fontDescription.shouldAllowUserInstalledFonts());
     auto font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size);
 
@@ -1126,7 +1126,10 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription).boldObliquePair();
 
-    return makeUnique<FontPlatformData>(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+    FontPlatformData platformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    return makeUnique<FontPlatformData>(platformData);
 }
 
 void FontCache::platformPurgeInactiveFontData()

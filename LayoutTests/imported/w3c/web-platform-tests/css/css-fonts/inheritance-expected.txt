@@ -10,10 +10,10 @@ PASS Property font-optical-sizing has initial value auto
 PASS Property font-optical-sizing inherits
 PASS Property font-size has initial value 16px
 PASS Property font-size inherits
-FAIL Property font-size-adjust has initial value none assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
-FAIL Property font-size-adjust inherits assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
-FAIL Property font-stretch has initial value 100% assert_equals: expected "100%" but got "normal"
-FAIL Property font-stretch inherits assert_equals: expected "75%" but got "condensed"
+PASS Property font-size-adjust has initial value none
+PASS Property font-size-adjust inherits
+PASS Property font-stretch has initial value 100%
+PASS Property font-stretch inherits
 PASS Property font-style has initial value normal
 PASS Property font-style inherits
 PASS Property font-synthesis has initial value weight style small-caps

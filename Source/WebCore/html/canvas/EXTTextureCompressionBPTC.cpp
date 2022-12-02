@@ -54,8 +54,7 @@ WebGLExtension::ExtensionName EXTTextureCompressionBPTC::getName() const
 
 bool EXTTextureCompressionBPTC::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_EXT_texture_compression_bptc"_s)
-        || context.supportsExtension("GL_ARB_texture_compression_bptc"_s);
+    return context.supportsExtension("GL_EXT_texture_compression_bptc"_s);
 }
 
 } // namespace WebCore

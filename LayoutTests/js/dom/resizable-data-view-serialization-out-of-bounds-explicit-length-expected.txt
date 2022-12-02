@@ -1,0 +1,25 @@
+Resizable ArrayBuffers should be serializable OOB explicit length
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS arrayBuffer.resizable is true
+PASS arrayBuffer.byteLength is 36
+PASS arrayBuffer.maxByteLength is 128
+PASS view.byteLength is 4
+PASS view.byteOffset is 4
+PASS structuredClone(view) threw exception DataCloneError: The object can not be cloned..
+PASS arrayBuffer.resizable is true
+PASS arrayBuffer.byteLength is 0
+PASS arrayBuffer.maxByteLength is 128
+PASS view.byteLength threw exception TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds.
+PASS view.byteOffset threw exception TypeError: Underlying ArrayBuffer has been detached from the view or out-of-bounds.
+PASS arrayBuffer.resizable is true
+PASS arrayBuffer.byteLength is 36
+PASS arrayBuffer.maxByteLength is 128
+PASS view.byteLength is 4
+PASS view.byteOffset is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

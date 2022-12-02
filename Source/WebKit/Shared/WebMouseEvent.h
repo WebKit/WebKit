@@ -35,6 +35,10 @@
 #include <WebCore/PointerEventTypeNames.h>
 #include <WebCore/PointerID.h>
 
+namespace WebCore {
+class NavigationAction;
+}
+
 namespace WebKit {
 
 enum class GestureWasCancelled : bool { No, Yes };
@@ -45,12 +49,14 @@ enum class WebMouseEventButton : int32_t {
     RightButton,
     NoButton = -2
 };
+WebMouseEventButton mouseButton(const WebCore::NavigationAction&);
 
 enum class WebMouseEventSyntheticClickType : uint32_t {
     NoTap,
     OneFingerTap,
     TwoFingerTap
 };
+WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationAction&);
 
 class WebMouseEvent : public WebEvent {
 public:

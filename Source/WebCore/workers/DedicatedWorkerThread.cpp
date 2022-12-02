@@ -58,11 +58,4 @@ Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const Work
     return scope;
 }
 
-void DedicatedWorkerThread::runEventLoop()
-{
-    // Notify the parent object of our current active state before calling the superclass to run the event loop.
-    m_workerObjectProxy.reportPendingActivity(globalScope()->hasPendingActivity());
-    WorkerThread::runEventLoop();
-}
-
 } // namespace WebCore

@@ -653,7 +653,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
                 }
             };
             clearDescendantFloats();
-            downcast<RenderBlockFlow>(renderer).removeFloatingObjects();
+            removeFloatingObjects(downcast<RenderBlock>(renderer));
             // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
             // It copies the logic of RenderBlock::addChildIgnoringContinuation
             if (renderer.previousSibling() && renderer.previousSibling()->isAnonymousBlock())
@@ -898,12 +898,22 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 {
-    if (is<RenderBlock>(renderer))
-        firstLetterBuilder().updateAfterDescendants(downcast<RenderBlock>(renderer));
-    if (is<RenderListItem>(renderer))
-        listBuilder().updateItemMarker(downcast<RenderListItem>(renderer));
-    if (is<RenderBlockFlow>(renderer))
-        multiColumnBuilder().updateAfterDescendants(downcast<RenderBlockFlow>(renderer));
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
+        svgBuilder().updateAfterDescendants(*svgRoot);
+        return; // A RenderSVGRoot cannot be a RenderBlock, RenderListItem or RenderBlockFlow: early return.
+    }
+#endif
+
+    // Do not early return here in any case. For example, RenderListItem derives
+    // from RenderBlockFlow and indirectly from RenderBlock thus fulfilling all
+    // update conditions below.
+    if (auto* block = dynamicDowncast<RenderBlock>(renderer))
+        firstLetterBuilder().updateAfterDescendants(*block);
+    if (auto* listItem = dynamicDowncast<RenderListItem>(renderer))
+        listBuilder().updateItemMarker(*listItem);
+    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+        multiColumnBuilder().updateAfterDescendants(*blockFlow);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& parent, RenderObject& child)

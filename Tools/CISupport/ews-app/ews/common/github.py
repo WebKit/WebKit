@@ -215,7 +215,8 @@ class GitHubEWS(GitHub):
         return u'{}{}\n{}\n{}'.format(description, self.STATUS_BUBBLE_START, ews_comment, self.STATUS_BUBBLE_END)
 
     def generate_comment_text_for_change(self, change):
-        hash_url = 'https://github.com/{}/commit/{}'.format(change.pr_project, change.change_id)
+        repository_url = 'https://github.com/{}'.format(change.pr_project)
+        hash_url = '{}/commit/{}'.format(repository_url, change.change_id)
 
         comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
@@ -236,7 +237,7 @@ class GitHubEWS(GitHub):
         regular_comment = u'{}{}'.format(hash_url, comment)
         folded_comment = u'EWS run on current version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
         if change.comment_id == -1:
-            pr_url = GitHub.pr_url(change.pr_id)
+            pr_url = GitHub.pr_url(change.pr_id, repository_url=repository_url)
             folded_comment = u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
 
         return (regular_comment, folded_comment)

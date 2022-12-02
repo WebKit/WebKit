@@ -42,7 +42,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     ClearTrackBuffers()
     SetAllTrackBuffersNeedRandomAccess()
     RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes)
-    EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded) -> (uint64_t totalTrackBufferSizeInBytes) Synchronous
+    EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime, bool isEnded) -> (uint64_t totalTrackBufferSizeInBytes) Synchronous
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime)
     SetGroupStartTimestamp(MediaTime timestamp)
     SetGroupStartTimestampToEndTimestamp()

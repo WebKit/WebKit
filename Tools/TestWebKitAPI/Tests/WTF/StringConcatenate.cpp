@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "WTFStringUtilities.h"
+#include "Test.h"
 #include <cstddef>
 #include <cstdint>
 #include <unicode/uvernum.h>

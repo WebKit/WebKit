@@ -66,3 +66,5 @@ WK_EXTERN NSString * const _WKMenuItemIdentifierShowSpellingPanel WK_API_AVAILAB
 WK_EXTERN NSString * const _WKMenuItemIdentifierCheckSpelling WK_API_AVAILABLE(macos(13.0), ios(16.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCheckSpellingWhileTyping WK_API_AVAILABLE(macos(13.0), ios(16.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCheckGrammarWithSpelling WK_API_AVAILABLE(macos(13.0), ios(16.0));
+WK_EXTERN NSString * const _WKMenuItemIdentifierPlayAllAnimations WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierPauseAllAnimations WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

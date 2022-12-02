@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,8 +57,8 @@ public:
     static bool lowPowerVideoAudioBufferSizeEnabled() { return shared().m_lowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
-    static bool resourceLoadStatisticsEnabled() { return shared().m_resourceLoadStatisticsEnabledEnabled; }
-    WEBCORE_EXPORT static void setResourceLoadStatisticsEnabled(bool);
+    static bool trackingPreventionEnabled() { return shared().m_trackingPreventionEnabled; }
+    WEBCORE_EXPORT static void setTrackingPreventionEnabled(bool);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
@@ -83,8 +83,7 @@ public:
 #endif
 
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
-    static bool allowsAnySSLCertificate();
-
+    WEBCORE_EXPORT static bool allowsAnySSLCertificate();
 
     static void setPaintTimingEnabled(bool isEnabled) { shared().m_isPaintTimingEnabled = isEnabled; }
     static bool paintTimingEnabled() { return shared().m_isPaintTimingEnabled; }
@@ -97,9 +96,6 @@ public:
 
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
-
-    static void setImageBitmapEnabled(bool isEnabled) { shared().m_isImageBitmapEnabled = isEnabled; }
-    static bool imageBitmapEnabled() { return shared().m_isImageBitmapEnabled; }
 
 #if ENABLE(OFFSCREEN_CANVAS)
     static void setOffscreenCanvasEnabled(bool isEnabled) { shared().m_isOffscreenCanvasEnabled = isEnabled; }
@@ -119,11 +115,6 @@ public:
 
     static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
     static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
-
-#if ENABLE(WEBXR)
-    static void setWebXREnabled(bool isEnabled) { shared().m_webXREnabled = isEnabled; }
-    static bool webXREnabled() { return shared().m_webXREnabled; }
-#endif
 
     static void setAccessibilityObjectModelEnabled(bool isEnabled) { shared().m_accessibilityObjectModelEnabled = isEnabled; }
     static bool accessibilityObjectModelEnabled() { return shared().m_accessibilityObjectModelEnabled; }
@@ -248,11 +239,6 @@ public:
     static bool webMParserEnabled() { return shared().m_webMParserEnabled; }
 #endif
 
-#if HAVE(CELESTIAL)
-    static void setDisableMediaExperiencePIDInheritance(bool isDisabled) { shared().m_disableMediaExperiencePIDInheritance = isDisabled; }
-    static bool disableMediaExperiencePIDInheritance() { return shared().m_disableMediaExperiencePIDInheritance; }
-#endif
-
 #if ENABLE(VORBIS)
     WEBCORE_EXPORT static void setVorbisDecoderEnabled(bool isEnabled);
     static bool vorbisDecoderEnabled() { return shared().m_vorbisDecoderEnabled; }
@@ -316,7 +302,7 @@ private:
     bool m_manageAudioSession;
 
     bool m_lowPowerVideoAudioBufferSizeEnabled;
-    bool m_resourceLoadStatisticsEnabledEnabled;
+    bool m_trackingPreventionEnabled;
     bool m_allowsAnySSLCertificate;
 
     String m_networkInterfaceName;
@@ -325,7 +311,6 @@ private:
     bool m_isMenuItemElementEnabled { false };
     bool m_isDirectoryUploadEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };
-    bool m_isImageBitmapEnabled { true };
 #if ENABLE(OFFSCREEN_CANVAS)
     bool m_isOffscreenCanvasEnabled { false };
 #endif
@@ -335,9 +320,6 @@ private:
     bool m_isCacheAPIEnabled { false };
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
-#if ENABLE(WEBXR)
-    bool m_webXREnabled { false };
-#endif
     bool m_accessibilityObjectModelEnabled { false };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
@@ -421,10 +403,6 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     bool m_webMParserEnabled { false };
-#endif
-
-#if HAVE(CELESTIAL)
-    bool m_disableMediaExperiencePIDInheritance { false };
 #endif
 
 #if ENABLE(VORBIS)

@@ -3,14 +3,15 @@ CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/common/blank.html d
 
 Harness Error (TIMEOUT), message = null
 
-PASS document.open() aborts documents that are navigating through Location (XMLHttpRequest)
+TIMEOUT document.open() aborts documents that are navigating through Location (XMLHttpRequest) Test timed out
 PASS document.open() aborts documents that are navigating through Location (fetch())
 PASS document.open() aborts documents that are navigating through Location (image loading)
 TIMEOUT document.open() aborts documents that are navigating through iframe loading (XMLHttpRequest) Test timed out
 PASS document.open() aborts documents that are navigating through iframe loading (fetch())
 PASS document.open() aborts documents that are navigating through iframe loading (image loading)
-PASS document.open() aborts documents that are queued for navigation through .click() (XMLHttpRequest)
+TIMEOUT document.open() aborts documents that are queued for navigation through .click() (XMLHttpRequest) Test timed out
 PASS document.open() aborts documents that are queued for navigation through .click() (fetch())
 PASS document.open() aborts documents that are queued for navigation through .click() (image loading)
+
 
 

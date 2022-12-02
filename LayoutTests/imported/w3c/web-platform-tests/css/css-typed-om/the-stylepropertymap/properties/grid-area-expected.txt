@@ -1,5 +1,9 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS 'grid-area' does not supported 'a'
+PASS 'grid-area' does not supported 'a / a'
+PASS 'grid-area' does not supported 'auto'
+PASS 'grid-area' does not supported 'auto / auto'
+PASS 'grid-area' does not supported '2 / 1 / 2'
+PASS 'grid-area' does not supported 'span 3'
+PASS 'grid-area' does not supported '2 span / a span'
 

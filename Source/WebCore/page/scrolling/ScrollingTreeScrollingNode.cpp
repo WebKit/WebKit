@@ -106,6 +106,9 @@ void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
         handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
 
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::KeyboardScrollData))
+        handleKeyboardScrollRequest(scrollingStateNode.keyboardScrollData());
+
     // This synthetic bit is added back in ScrollingTree::propagateSynchronousScrollingReasons().
 #if ENABLE(SCROLLING_THREAD)
     m_synchronousScrollingReasons.remove(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling);
@@ -259,6 +262,12 @@ void ScrollingTreeScrollingNode::serviceScrollAnimation(MonotonicTime currentTim
 void ScrollingTreeScrollingNode::setScrollAnimationInProgress(bool animationInProgress)
 {
     scrollingTree().setScrollAnimationInProgressForNode(scrollingNodeID(), animationInProgress);
+}
+
+void ScrollingTreeScrollingNode::handleKeyboardScrollRequest(const RequestedKeyboardScrollData& scrollData)
+{
+    if (m_delegate)
+        m_delegate->handleKeyboardScrollRequest(scrollData);
 }
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)

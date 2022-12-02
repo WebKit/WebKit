@@ -41,6 +41,7 @@ class LocalCurrentTraitCollection {
 
 public:
     WEBCORE_EXPORT LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
+    WEBCORE_EXPORT LocalCurrentTraitCollection(UITraitCollection *);
     WEBCORE_EXPORT ~LocalCurrentTraitCollection();
 
 private:

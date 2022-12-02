@@ -14,10 +14,10 @@ getClientRects on a g:
 { x 0.00 y 104.00 width 260.00 height 110.00 }
 
 getClientRects on a path:
-{ x 25.00 y 139.00 width 60.00 height 60.00 }
+{ x 30.00 y 144.00 width 50.00 height 50.00 }
 
 getClientRects on text:
-{ x 25.00 y 139.00 width 60.00 height 60.00 }
+{ x 30.00 y 144.00 width 50.00 height 50.00 }
 PASS successfullyParsed is true
 
 TEST COMPLETE

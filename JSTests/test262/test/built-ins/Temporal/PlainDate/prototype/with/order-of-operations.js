@@ -8,10 +8,14 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.PlainDate(2000, 5, 2);
 const expected = [
+  // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
+  // CalendarFields
+  "get this.calendar.fields",
+  "call this.calendar.fields",
+  // PrepareTemporalFields
   "get fields.day",
   "get fields.day.valueOf",
   "call fields.day.valueOf",
@@ -24,15 +28,43 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
+  // PrepareTemporalFields on receiver
+  "get this.calendar.day",
+  "call this.calendar.day",
+  "get this.calendar.month",
+  "call this.calendar.month",
+  "get this.calendar.monthCode",
+  "call this.calendar.monthCode",
+  "get this.calendar.year",
+  "call this.calendar.year",
+  // CalendarMergeFields
+  "get this.calendar.mergeFields",
+  "call this.calendar.mergeFields",
+  // CalendarDateFromFields
+  "get this.calendar.dateFromFields",
+  "call this.calendar.dateFromFields",
+  // inside Calendar.p.dateFromFields
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 const actual = [];
+
+const calendar = TemporalHelpers.calendarObserver(actual, "this.calendar");
+const instance = new Temporal.PlainDate(2000, 5, 2, calendar);
+// clear observable operations that occurred during the constructor call
+actual.splice(0);
+
 const fields = TemporalHelpers.propertyBagObserver(actual, {
   year: 1.7,
   month: 1.7,
   monthCode: "M01",
   day: 1.7,
 }, "fields");
-const result = instance.with(fields);
-TemporalHelpers.assertPlainDate(result, 1, 1, "M01", 1);
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
+
+const options = TemporalHelpers.propertyBagObserver(actual, {
+  overflow: "constrain",
+}, "options");
+
+instance.with(fields, options);
 assert.compareArray(actual, expected, "order of operations");

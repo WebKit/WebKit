@@ -1,0 +1,26 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useResizableArrayBuffer=true,--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<title>Resizable ArrayBuffers serialization</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Resizable ArrayBuffers should be serializable");
+var arrayBuffer = new ArrayBuffer(36, { maxByteLength: 128 });
+shouldBeTrue(`arrayBuffer.resizable`);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+var cloned = structuredClone(arrayBuffer);
+shouldBeTrue(`cloned.resizable`);
+shouldBe(`cloned.byteLength`, `36`);
+shouldBe(`cloned.maxByteLength`, `128`);
+cloned.resize(128);
+shouldBe(`arrayBuffer.byteLength`, `36`);
+shouldBe(`arrayBuffer.maxByteLength`, `128`);
+shouldBe(`cloned.byteLength`, `128`);
+shouldBe(`cloned.maxByteLength`, `128`);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

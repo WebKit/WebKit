@@ -25,6 +25,8 @@
 #include "config.h"
 #include "LibWebRTCRtpReceiverBackend.h"
 
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+
 #include "Document.h"
 #include "LibWebRTCAudioModule.h"
 #include "LibWebRTCDtlsTransportBackend.h"
@@ -35,8 +37,6 @@
 #include "RTCRtpTransformBackend.h"
 #include "RealtimeIncomingAudioSource.h"
 #include "RealtimeIncomingVideoSource.h"
-
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

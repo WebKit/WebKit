@@ -71,6 +71,7 @@ public: // DOM
 
     void pauseAnimations();
     void unpauseAnimations();
+    bool resumePausedAnimationsIfNeeded(const IntRect&);
     bool animationsPaused() const;
     bool hasActiveAnimation() const;
     float getCurrentTime() const;
@@ -129,7 +130,6 @@ private:
     bool selfHasRelativeLengths() const override;
     bool isValid() const override;
 
-    void didAttachRenderers() final;
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;

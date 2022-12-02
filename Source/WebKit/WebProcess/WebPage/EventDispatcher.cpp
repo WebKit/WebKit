@@ -71,23 +71,25 @@ EventDispatcher::~EventDispatcher()
 }
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
-void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
+void EventDispatcher::addScrollingTreeForPage(WebPage& webPage)
 {
     Locker locker { m_scrollingTreesLock };
 
-    ASSERT(webPage->corePage()->scrollingCoordinator());
-    ASSERT(!m_scrollingTrees.contains(webPage->identifier()));
+    ASSERT(webPage.scrollingCoordinator());
+    ASSERT(!m_scrollingTrees.contains(webPage.identifier()));
 
-    AsyncScrollingCoordinator& scrollingCoordinator = downcast<AsyncScrollingCoordinator>(*webPage->corePage()->scrollingCoordinator());
-    m_scrollingTrees.set(webPage->identifier(), downcast<ThreadedScrollingTree>(scrollingCoordinator.scrollingTree()));
+    auto& scrollingCoordinator = downcast<AsyncScrollingCoordinator>(*webPage.scrollingCoordinator());
+    auto* scrollingTree = dynamicDowncast<ThreadedScrollingTree>(scrollingCoordinator.scrollingTree());
+    ASSERT(scrollingTree);
+    m_scrollingTrees.set(webPage.identifier(), scrollingTree);
 }
 
-void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
+void EventDispatcher::removeScrollingTreeForPage(WebPage& webPage)
 {
     Locker locker { m_scrollingTreesLock };
-    ASSERT(m_scrollingTrees.contains(webPage->identifier()));
+    ASSERT(m_scrollingTrees.contains(webPage.identifier()));
 
-    m_scrollingTrees.remove(webPage->identifier());
+    m_scrollingTrees.remove(webPage.identifier());
 }
 #endif
 

@@ -96,6 +96,10 @@ void ScreenOrientationProvider::platformStartListeningForChanges()
 
 void ScreenOrientationProvider::platformStopListeningForChanges()
 {
+    if (!m_systemObserver)
+        return;
+
+    m_systemObserver.get().provider = nullptr;
     m_systemObserver = nullptr;
 }
 
@@ -103,12 +107,6 @@ void ScreenOrientationProvider::setWindow(UIWindow *window)
 {
     m_window = window;
     screenOrientationDidChange();
-}
-
-void ScreenOrientationProvider::platformDestroy()
-{
-    if (m_systemObserver)
-        m_systemObserver.get().provider = nullptr;
 }
 
 } // namespace WebCore

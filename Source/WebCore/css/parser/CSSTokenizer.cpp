@@ -601,7 +601,7 @@ CSSParserToken CSSTokenizer::consumeIdentLikeToken()
             m_input.advanceUntilNonWhitespace();
             UChar next = m_input.peek(0);
             if (next != '"' && next != '\'')
-                return consumeUrlToken();
+                return consumeURLToken();
         }
         return blockStart(LeftParenthesisToken, FunctionToken, name);
     }
@@ -655,7 +655,7 @@ static bool isNonPrintableCodePoint(UChar cc)
 }
 
 // http://dev.w3.org/csswg/css-syntax/#consume-url-token
-CSSParserToken CSSTokenizer::consumeUrlToken()
+CSSParserToken CSSTokenizer::consumeURLToken()
 {
     m_input.advanceUntilNonWhitespace();
 

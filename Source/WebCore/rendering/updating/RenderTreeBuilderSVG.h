@@ -43,6 +43,8 @@ public:
     SVG(RenderTreeBuilder&);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    void updateAfterDescendants(RenderSVGRoot&);
+
     void attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 #endif
@@ -65,6 +67,7 @@ public:
 private:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     RenderSVGViewportContainer& findOrCreateParentForChild(RenderSVGRoot&);
+    RenderSVGViewportContainer& createViewportContainer(RenderSVGRoot&);
 #endif
     RenderTreeBuilder& m_builder;
 };

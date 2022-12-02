@@ -169,7 +169,7 @@ void Debug::insertMessage(GLenum source,
         const char *messageTypeString = GLMessageTypeToString(type);
         const char *severityString    = GLSeverityToString(severity);
         std::ostringstream messageStream;
-        if (entryPoint != angle::EntryPoint::GLInvalid)
+        if (entryPoint != angle::EntryPoint::Invalid)
         {
             messageStream << GetEntryPointName(entryPoint) << ": ";
         }
@@ -369,7 +369,7 @@ void Debug::insertPerfWarning(GLenum severity, const char *message, uint32_t *re
 
     // Release the lock before we call insertMessage. It will re-acquire the lock.
     insertMessage(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_PERFORMANCE, 0, severity, std::move(msg),
-                  gl::LOG_INFO, angle::EntryPoint::GLInvalid);
+                  gl::LOG_INFO, angle::EntryPoint::Invalid);
 }
 
 bool Debug::isMessageEnabled(GLenum source, GLenum type, GLuint id, GLenum severity) const

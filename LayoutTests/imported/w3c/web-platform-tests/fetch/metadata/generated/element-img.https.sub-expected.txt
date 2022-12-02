@@ -1,0 +1,48 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY&count=1
+
+Harness Error (TIMEOUT), message = null
+
+PASS sec-fetch-site - src - Same origin, no attributes
+PASS sec-fetch-site - srcset - Same origin, no attributes
+PASS sec-fetch-site - src - Cross-site, no attributes
+PASS sec-fetch-site - srcset - Cross-site, no attributes
+FAIL sec-fetch-site - src - Same site, no attributes promise_test: Unhandled rejection with value: object "Error: Failed to query for recorded headers."
+FAIL sec-fetch-site - srcset - Same site, no attributes promise_test: Unhandled rejection with value: object "Error: Failed to query for recorded headers."
+PASS sec-fetch-site - src - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - srcset - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+TIMEOUT sec-fetch-site - src - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes Test timed out
+NOTRUN sec-fetch-site - srcset - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes
+NOTRUN sec-fetch-site - src - Cross-Site -> Same Origin, no attributes
+NOTRUN sec-fetch-site - srcset - Cross-Site -> Same Origin, no attributes
+NOTRUN sec-fetch-site - src - Cross-Site -> Same-Site, no attributes
+NOTRUN sec-fetch-site - srcset - Cross-Site -> Same-Site, no attributes
+NOTRUN sec-fetch-site - src - Cross-Site -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - srcset - Cross-Site -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - src - Same-Origin -> Same Origin, no attributes
+NOTRUN sec-fetch-site - srcset - Same-Origin -> Same Origin, no attributes
+NOTRUN sec-fetch-site - src - Same-Origin -> Same-Site, no attributes
+NOTRUN sec-fetch-site - srcset - Same-Origin -> Same-Site, no attributes
+NOTRUN sec-fetch-site - src - Same-Origin -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - srcset - Same-Origin -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - src - Same-Site -> Same Origin, no attributes
+NOTRUN sec-fetch-site - srcset - Same-Site -> Same Origin, no attributes
+NOTRUN sec-fetch-site - src - Same-Site -> Same-Site, no attributes
+NOTRUN sec-fetch-site - srcset - Same-Site -> Same-Site, no attributes
+NOTRUN sec-fetch-site - src - Same-Site -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - srcset - Same-Site -> Cross-Site, no attributes
+NOTRUN sec-fetch-site - src - HTTPS downgrade-upgrade, no attributes
+NOTRUN sec-fetch-mode - src - no attributes
+NOTRUN sec-fetch-mode - src - attributes: crossorigin
+NOTRUN sec-fetch-mode - src - attributes: crossorigin=anonymous
+NOTRUN sec-fetch-mode - src - attributes: crossorigin=use-credentials
+NOTRUN sec-fetch-mode - srcset - no attributes
+NOTRUN sec-fetch-mode - srcset - attributes: crossorigin
+NOTRUN sec-fetch-mode - srcset - attributes: crossorigin=anonymous
+NOTRUN sec-fetch-mode - srcset - attributes: crossorigin=use-credentials
+NOTRUN sec-fetch-dest - src - no attributes
+NOTRUN sec-fetch-dest - srcset - no attributes
+NOTRUN sec-fetch-user - src - no attributes
+NOTRUN sec-fetch-user - srcset - no attributes
+

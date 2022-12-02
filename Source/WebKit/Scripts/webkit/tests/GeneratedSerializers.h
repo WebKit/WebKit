@@ -31,6 +31,7 @@
 #if ENABLE(BOOL_ENUM)
 namespace EnumNamespace { enum class BoolEnumType : bool; }
 #endif
+enum class EnumWithoutNamespace : uint8_t;
 #if ENABLE(UINT16_ENUM)
 namespace EnumNamespace { enum class EnumType : uint16_t; }
 #endif
@@ -46,6 +47,10 @@ namespace WebCore { class InheritsFrom; }
 namespace WebCore { class InheritanceGrandchild; }
 namespace WTF { class Seconds; }
 namespace WTF { class CreateUsingClass; }
+namespace WebCore {
+template<typename> class RectEdges;
+using FloatBoxExtent = RectEdges<float>;
+}
 
 namespace IPC {
 
@@ -107,11 +112,17 @@ template<> struct ArgumentCoder<WTF::CreateUsingClass> {
     static std::optional<WTF::CreateUsingClass> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<WebCore::FloatBoxExtent> {
+    static void encode(Encoder&, const WebCore::FloatBoxExtent&);
+    static std::optional<WebCore::FloatBoxExtent> decode(Decoder&);
+};
+
 } // namespace IPC
 
 
 namespace WTF {
 
+template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t);
 #if ENABLE(UINT16_ENUM)
 template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
 #endif

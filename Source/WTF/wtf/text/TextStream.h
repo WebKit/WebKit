@@ -330,6 +330,26 @@ TextStream& operator<<(TextStream& ts, const OptionSet<Option>& options)
     return ts << "]";
 }
 
+template<typename T, size_t size>
+TextStream& operator<<(TextStream& ts, const std::array<T, size>& array)
+{
+    ts << "[";
+
+    unsigned count = 0;
+    for (const auto& value : array) {
+        if (count)
+            ts << ", ";
+        ts << value;
+        if (++count == ts.containerSizeLimit())
+            break;
+    }
+
+    if (count != array.size())
+        ts << ", ...";
+
+    return ts << "]";
+}
+
 template<typename, typename = void, typename = void, typename = void, typename = void, size_t = 0>
 struct supports_text_stream_insertion : std::false_type { };
 
@@ -362,6 +382,9 @@ struct supports_text_stream_insertion<RefPtr<T>> : supports_text_stream_insertio
 
 template<typename T>
 struct supports_text_stream_insertion<Ref<T>> : supports_text_stream_insertion<T> { };
+
+template<typename T, size_t size>
+struct supports_text_stream_insertion<std::array<T, size>> : supports_text_stream_insertion<T> { };
 
 template<typename T>
 struct ValueOrEllipsis {

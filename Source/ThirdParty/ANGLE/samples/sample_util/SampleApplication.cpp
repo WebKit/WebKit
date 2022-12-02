@@ -26,46 +26,6 @@ namespace
 {
 const char *kUseAngleArg = "--use-angle=";
 const char *kUseGlArg    = "--use-gl=native";
-
-using DisplayTypeInfo = std::pair<const char *, EGLint>;
-
-const DisplayTypeInfo kDisplayTypes[] = {
-    {"d3d9", EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE},
-    {"d3d11", EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE},
-    {"gl", EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE},
-    {"gles", EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE},
-    {"metal", EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE},
-    {"null", EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE},
-    {"swiftshader", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
-    {"vulkan", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
-};
-
-EGLint GetDisplayTypeFromArg(const char *displayTypeArg)
-{
-    for (const auto &displayTypeInfo : kDisplayTypes)
-    {
-        if (strcmp(displayTypeInfo.first, displayTypeArg) == 0)
-        {
-            std::cout << "Using ANGLE back-end API: " << displayTypeInfo.first << std::endl;
-            return displayTypeInfo.second;
-        }
-    }
-
-    std::cout << "Unknown ANGLE back-end API: " << displayTypeArg << std::endl;
-    return EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
-}
-
-EGLint GetDeviceTypeFromArg(const char *displayTypeArg)
-{
-    if (strcmp(displayTypeArg, "swiftshader") == 0)
-    {
-        return EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
-    }
-    else
-    {
-        return EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
-    }
-}
 }  // anonymous namespace
 
 bool IsGLExtensionEnabled(const std::string &extName)
@@ -97,9 +57,11 @@ SampleApplication::SampleApplication(std::string name,
     {
         if (strncmp(argv[argIndex], kUseAngleArg, strlen(kUseAngleArg)) == 0)
         {
-            const char *arg            = argv[argIndex] + strlen(kUseAngleArg);
-            mPlatformParams.renderer   = GetDisplayTypeFromArg(arg);
-            mPlatformParams.deviceType = GetDeviceTypeFromArg(arg);
+            const char *arg = argv[argIndex] + strlen(kUseAngleArg);
+            mPlatformParams.renderer =
+                angle::GetPlatformANGLETypeFromArg(arg, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE);
+            mPlatformParams.deviceType = angle::GetANGLEDeviceTypeFromArg(
+                arg, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
         }
 
         if (strncmp(argv[argIndex], kUseGlArg, strlen(kUseGlArg)) == 0)

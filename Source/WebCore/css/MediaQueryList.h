@@ -21,11 +21,14 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "LegacyMediaQueryEvaluator.h"
-#include "MediaList.h"
+#include "MediaQuery.h"
 #include "MediaQueryMatcher.h"
 
 namespace WebCore {
+
+namespace MQ {
+class MediaQueryEvaluator;
+}
 
 // MediaQueryList interface is specified at https://drafts.csswg.org/cssom-view/#the-mediaquerylist-interface
 // The objects of this class are returned by window.matchMedia. They may be used to
@@ -35,7 +38,7 @@ namespace WebCore {
 class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(MediaQueryList);
 public:
-    static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);
+    static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, MQ::MediaQueryList&&, bool matches);
     ~MediaQueryList();
 
     String media() const;
@@ -44,7 +47,7 @@ public:
     void addListener(RefPtr<EventListener>&&);
     void removeListener(RefPtr<EventListener>&&);
 
-    void evaluate(LegacyMediaQueryEvaluator&, MediaQueryMatcher::EventMode);
+    void evaluate(MQ::MediaQueryEvaluator&, MediaQueryMatcher::EventMode);
 
     void detachFromMatcher();
 
@@ -52,7 +55,7 @@ public:
     using RefCounted::deref;
 
 private:
-    MediaQueryList(Document&, MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);
+    MediaQueryList(Document&, MediaQueryMatcher&, MQ::MediaQueryList&&, bool matches);
 
     void setMatches(bool);
 
@@ -67,7 +70,8 @@ private:
     bool virtualHasPendingActivity() const final;
 
     RefPtr<MediaQueryMatcher> m_matcher;
-    Ref<MediaQuerySet> m_media;
+    const MQ::MediaQueryList m_mediaQueries;
+    const OptionSet<MQ::MediaQueryDynamicDependency> m_dynamicDependencies;
     unsigned m_evaluationRound; // Indicates if the query has been evaluated after the last style selector change.
     unsigned m_changeRound; // Used to know if the query has changed in the last style selector change.
     bool m_matches;

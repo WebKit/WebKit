@@ -1,0 +1,9 @@
+Post-navigation activation state in child
+
+Tests that navigating a same-origin child frame resets its activation states.
+
+Click inside the yellow area.
+
+
+PASS Post-navigation state reset.
+

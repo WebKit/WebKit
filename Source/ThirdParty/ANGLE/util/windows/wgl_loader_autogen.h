@@ -51,6 +51,10 @@
 #define _wglGetPixelFormatAttribivARB l__wglGetPixelFormatAttribivARB
 #define _wglGetSwapIntervalEXT l__wglGetSwapIntervalEXT
 #define _wglSwapIntervalEXT l__wglSwapIntervalEXT
+
+#if defined(__cplusplus)
+extern "C" {
+#endif  // defined(__cplusplus)
 extern PFNCHOOSEPIXELFORMATPROC l__ChoosePixelFormat;
 extern PFNDESCRIBEPIXELFORMATPROC l__DescribePixelFormat;
 extern PFNGETENHMETAFILEPIXELFORMATPROC l__GetEnhMetaFilePixelFormat;
@@ -85,11 +89,12 @@ extern PFNWGLGETPIXELFORMATATTRIBIVARBPROC l__wglGetPixelFormatAttribivARB;
 extern PFNWGLGETSWAPINTERVALEXTPROC l__wglGetSwapIntervalEXT;
 extern PFNWGLSWAPINTERVALEXTPROC l__wglSwapIntervalEXT;
 
-namespace angle
-{
-using GenericProc = void (*)();
-using LoadProc    = GenericProc(KHRONOS_APIENTRY *)(const char *);
+typedef void (*GenericProc)(void);
+typedef GenericProc(KHRONOS_APIENTRY *LoadProc)(const char *);
 void LoadWGL(LoadProc loadProc);
-}  // namespace angle
+
+#if defined(__cplusplus)
+}  // extern "C"
+#endif  // defined(__cplusplus)
 
 #endif  // UTIL_WINDOWS_WGL_LOADER_AUTOGEN_H_

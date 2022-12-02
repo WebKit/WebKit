@@ -258,6 +258,12 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/cocoa/VideoFullscreenManager
 )
 
+list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/Cocoa/DataDetectionResult.serialization.in
+    Shared/Cocoa/RevealItem.serialization.in
+    Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
+)
+
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/Cocoa/RemoteObjectInvocation.h
     Shared/API/Cocoa/RemoteObjectRegistry.h

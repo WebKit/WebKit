@@ -373,7 +373,6 @@ def parse_args(args):
     if options.use_gpu_process:
         host = Host()
         host.initialize_scm()
-        options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/gpu-process/TestExpectations'))
         if not options.internal_feature:
             options.internal_feature = []
         options.internal_feature.append('CaptureAudioInGPUProcessEnabled')
@@ -437,6 +436,14 @@ def _set_up_derived_options(port, options):
         options.time_out_ms = str(port.default_timeout_ms())
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
+
+    if port.port_name == "mac" and options.use_gpu_process and options.remote_layer_tree:
+        host = Host()
+        host.initialize_scm()
+        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup/TestExpectations'))
+        if not options.additional_platform_directory:
+            options.additional_platform_directory = []
+        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
 
     if options.additional_platform_directory:
         additional_platform_directories = []

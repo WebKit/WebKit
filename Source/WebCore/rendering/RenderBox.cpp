@@ -34,6 +34,7 @@
 #include "EventHandler.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
+#include "FontBaseline.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -85,6 +86,7 @@
 #include "TransformState.h"
 #include <algorithm>
 #include <math.h>
+#include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
@@ -356,45 +358,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     bool isDocElementRenderer = isDocumentElementRenderer();
 
     if (isDocElementRenderer || isBodyRenderer) {
-        auto* documentElementRenderer = document().documentElement()->renderer();
-        auto& viewStyle = view().mutableStyle();
-        bool rootStyleChanged = false;
-        bool viewDirectionOrWritingModeChanged = false;
-        auto* rootRenderer = isBodyRenderer ? documentElementRenderer : nullptr;
-
-        auto propagateWritingModeToRenderViewIfApplicable = [&] {
-            // Propagate the new writing mode and direction up to the RenderView.
-            if (!documentElementRenderer)
-                return;
-            if (!isBodyRenderer || !(shouldApplyAnyContainment() || documentElementRenderer->shouldApplyAnyContainment())) {
-                if (viewStyle.direction() != newStyle.direction() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetDirection())) {
-                    viewStyle.setDirection(newStyle.direction());
-                    viewDirectionOrWritingModeChanged = true;
-                    if (isBodyRenderer) {
-                        rootRenderer->mutableStyle().setDirection(newStyle.direction());
-                        rootStyleChanged = true;
-                    }
-                    setNeedsLayoutAndPrefWidthsRecalc();
-
-                    view().frameView().topContentDirectionDidChange();
-                }
-
-                if (viewStyle.writingMode() != newStyle.writingMode() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetWritingMode())) {
-                    viewStyle.setWritingMode(newStyle.writingMode());
-                    viewDirectionOrWritingModeChanged = true;
-                    view().setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
-                    view().markAllDescendantsWithFloatsForLayout();
-                    if (isBodyRenderer) {
-                        rootStyleChanged = true;
-                        rootRenderer->mutableStyle().setWritingMode(newStyle.writingMode());
-                        rootRenderer->setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
-                    }
-                    setNeedsLayoutAndPrefWidthsRecalc();
-                }
-            }
-        };
-        propagateWritingModeToRenderViewIfApplicable();
-
 #if ENABLE(DARK_MODE_CSS)
         view().frameView().recalculateBaseBackgroundColor();
 #endif
@@ -402,18 +365,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         view().frameView().recalculateScrollbarOverlayStyle();
         
         const Pagination& pagination = view().frameView().pagination();
-        if (viewDirectionOrWritingModeChanged && pagination.mode != Pagination::Unpaginated) {
-            viewStyle.setColumnStylesFromPaginationMode(pagination.mode);
-            if (view().multiColumnFlow())
-                view().updateColumnProgressionFromStyle(viewStyle);
-        }
-        
-        if (viewDirectionOrWritingModeChanged && view().multiColumnFlow())
-            view().updateStylesForColumnChildren();
-        
-        if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlow())
-            downcast<RenderBlockFlow>(*rootRenderer).updateStylesForColumnChildren();
-        
         if (isBodyRenderer && pagination.mode != Pagination::Unpaginated && page().paginationLineGridEnabled()) {
             // Propagate the body font back up to the RenderView and use it as
             // the basis of the grid.
@@ -2051,6 +2002,12 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     return false;
 }
 
+void RenderBox::clipContentForBorderRadius(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor)
+{
+    auto innerBorder = style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size()));
+    context.clipRoundedRect(innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+}
+
 bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
 {
     if (paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::SelfOutline || paintInfo.phase == PaintPhase::Mask)
@@ -2058,10 +2015,10 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
 
     bool isControlClip = hasControlClip();
     bool isOverflowClip = hasNonVisibleOverflow() && !layer()->isSelfPaintingLayer();
-    
+
     if (!isControlClip && !isOverflowClip)
         return false;
-    
+
     if (paintInfo.phase == PaintPhase::Outline)
         paintInfo.phase = PaintPhase::ChildOutlines;
     else if (paintInfo.phase == PaintPhase::ChildBlockBackground) {
@@ -2073,7 +2030,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
     paintInfo.context().save();
     if (style().hasBorderRadius())
-        paintInfo.context().clipRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+        clipContentForBorderRadius(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
     paintInfo.context().clip(clipRect);
 
     if (paintInfo.phase == PaintPhase::EventRegion)
@@ -2312,22 +2269,10 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
     // order to avoid piping this flag down the method chain.
     if (mode.contains(IgnoreStickyOffsets) && isStickilyPositioned())
         containerOffset -= stickyPositionOffset();
-    
-    bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
-    if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
-    } else
-        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 
-    if (containerSkipped) {
-        // There can't be a transform between ancestorContainer and o, because transforms create containers, so it should be safe
-        // to just subtract the delta between the ancestorContainer and o.
-        LayoutSize containerOffset = ancestorContainer->offsetFromAncestorContainer(*container);
-        transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
+    if (containerSkipped)
         return;
-    }
 
     mode.remove(ApplyContainerFlip);
 
@@ -2343,29 +2288,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     if (!container)
         return nullptr;
 
-    bool isFixedPos = isFixedPositioned();
-    LayoutSize adjustmentForSkippedAncestor;
-    if (ancestorSkipped) {
-        // There can't be a transform between repaintContainer and container, because transforms create containers, so it should be safe
-        // to just subtract the delta between the ancestor and container.
-        adjustmentForSkippedAncestor = -ancestorToStopAt->offsetFromAncestorContainer(*container);
-    }
-
-    bool offsetDependsOnPoint = false;
-    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(), &offsetDependsOnPoint);
-
-    bool preserve3D = container->style().preserves3D() || style().preserves3D();
-    if (shouldUseTransformFromContainer(container) && (geometryMap.mapCoordinatesFlags() & UseTransforms)) {
-        TransformationMatrix t;
-        getTransformFromContainer(container, containerOffset, t);
-        t.translateRight(adjustmentForSkippedAncestor.width(), adjustmentForSkippedAncestor.height());
-        
-        geometryMap.push(this, t, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
-    } else {
-        containerOffset += adjustmentForSkippedAncestor;
-        geometryMap.push(this, containerOffset, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
-    }
-    
+    pushOntoGeometryMap(geometryMap, ancestorToStopAt, container, ancestorSkipped);
     return ancestorSkipped ? ancestorToStopAt : container;
 }
 
@@ -2657,10 +2580,6 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
         computePositionedLogicalWidth(computedValues, fragment);
         return;
     }
-
-    // If layout is limited to a subtree, the subtree root's logical width does not change.
-    if (element() && !view().frameView().layoutContext().isLayoutPending() && view().frameView().layoutContext().subtreeLayoutRoot() == this)
-        return;
 
     // The parent box is flexing us, so it has increased or decreased our
     // width.  Use the width from the style context.
@@ -3071,8 +2990,11 @@ void RenderBox::updateLogicalHeight()
         // We need the exact width of border and padding here, yet we can't use borderAndPadding* interfaces.
         // Because these interfaces evetually call borderAfter/Before, and RenderBlock::borderBefore
         // adds extra border to fieldset by adding intrinsicBorderForFieldset which is not needed here.
+        LayoutUnit intrinsicHeight;
+        if (auto height = explicitIntrinsicInnerLogicalHeight())
+            intrinsicHeight = height.value();
         auto borderAndPadding = RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
-        setLogicalHeight(borderAndPadding + scrollbarLogicalHeight());
+        setLogicalHeight(intrinsicHeight + borderAndPadding + scrollbarLogicalHeight());
     }
 
     cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
@@ -3213,7 +3135,12 @@ LayoutUnit RenderBox::computeLogicalHeightWithoutLayout() const
     // FIXME:: We should probably return something other than just
     // border + padding, but for now we have no good way to do anything else
     // without layout, so we just use that.
-    LogicalExtentComputedValues computedValues = computeLogicalHeight(borderAndPaddingLogicalHeight(), 0_lu);
+    auto estimatedHeight = borderAndPaddingLogicalHeight();
+    if (shouldApplySizeContainment()) {
+        if (auto height = explicitIntrinsicInnerLogicalHeight())
+            estimatedHeight += height.value() + scrollbarLogicalHeight();
+    }
+    LogicalExtentComputedValues computedValues = computeLogicalHeight(estimatedHeight, 0_lu);
     return computedValues.m_extent;
 }
 
@@ -5034,14 +4961,30 @@ void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& d
     if (paintContainmentApplies())
         return;
 
-    // Add in visual overflow from the child.  Even if the child clips its overflow, it may still
+    // Add in visual overflow from the child. Even if the child clips its overflow, it may still
     // have visual overflow of its own set from box shadows or reflections. It is unnecessary to propagate this
     // overflow if we are clipping our own overflow.
-    if (child->hasSelfPaintingLayer() || hasPotentiallyScrollableOverflow())
+    if (hasPotentiallyScrollableOverflow())
         return;
-    LayoutRect childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
-    childVisualOverflowRect.move(delta);
-    addVisualOverflow(childVisualOverflowRect);
+
+    std::optional<LayoutRect> childVisualOverflowRect;
+    auto computeChildVisualOverflowRect = [&] () {
+        childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
+        childVisualOverflowRect->move(delta);
+    };
+    // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
+    if (fragmentedFlow) {
+        computeChildVisualOverflowRect();
+        fragmentedFlow->addFragmentsVisualOverflow(this, *childVisualOverflowRect);
+    } else {
+        // Update our visual overflow in case the child spills out the block, but only if we were going to paint
+        // the child block ourselves.
+        if (child->hasSelfPaintingLayer())
+            return;
+    }
+    if (!childVisualOverflowRect)
+        computeChildVisualOverflowRect();
+    addVisualOverflow(*childVisualOverflowRect);
 }
 
 void RenderBox::addLayoutOverflow(const LayoutRect& rect)
@@ -5349,42 +5292,14 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
         rect.setX(width() - rect.maxX());
 }
 
-LayoutPoint RenderBox::topLeftLocation() const
+LayoutPoint RenderBox::topLeftLocationWithFlipping() const
 {
-    if (!view().frameView().hasFlippedBlockRenderers())
-        return location();
-    
-    RenderBlock* containerBlock = containingBlock();
+    ASSERT(view().frameView().hasFlippedBlockRenderers());
+
+    auto* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
         return location();
     return containerBlock->flipForWritingModeForChild(*this, location());
-}
-
-LayoutSize RenderBox::topLeftLocationOffset() const
-{
-    if (!view().frameView().hasFlippedBlockRenderers())
-        return locationOffset();
-
-    RenderBlock* containerBlock = containingBlock();
-    if (!containerBlock || containerBlock == this)
-        return locationOffset();
-    
-    LayoutRect rect(frameRect());
-    containerBlock->flipForWritingMode(rect); // FIXME: This is wrong if we are an absolutely positioned object enclosed by a relative-positioned inline.
-    return LayoutSize(rect.x(), rect.y());
-}
-
-void RenderBox::applyTopLeftLocationOffsetWithFlipping(LayoutPoint& point) const
-{
-    RenderBlock* containerBlock = containingBlock();
-    if (!containerBlock || containerBlock == this) {
-        point.move(m_frameRect.x(), m_frameRect.y());
-        return;
-    }
-    
-    LayoutRect rect(frameRect());
-    containerBlock->flipForWritingMode(rect); // FIXME: This is wrong if we are an absolutely positioned object  enclosed by a relative-positioned inline.
-    point.move(rect.x(), rect.y());
 }
 
 bool RenderBox::shouldIgnoreAspectRatio() const
@@ -5538,9 +5453,18 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
         minimumValueForLength(padding.bottom(), viewportRect.height()), minimumValueForLength(padding.left(), viewportRect.width()));
 }
 
-LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
+LayoutUnit synthesizedBaseline(const RenderBox& box, const RenderStyle& parentStyle, LineDirectionMode direction, BaselineSynthesisEdge edge)
 {
-    return direction == HorizontalLine ? box.height() : box.width();
+    auto boxSize = direction == HorizontalLine ? box.height() : box.width();
+
+    if (edge == ContentBox)
+        boxSize -= direction == HorizontalLine ? box.verticalBorderAndPaddingExtent() : box.horizontalBorderAndPaddingExtent();
+    else if (edge == MarginBox)
+        boxSize += direction == HorizontalLine ? box.verticalMarginExtent() : box.horizontalMarginExtent();
+    
+    if (parentStyle.isHorizontalWritingMode() || parentStyle.textOrientation() == TextOrientation::Sideways)
+        return boxSize;
+    return boxSize / 2;
 }
 
 LayoutUnit RenderBox::intrinsicLogicalWidth() const
@@ -5553,6 +5477,28 @@ LayoutUnit RenderBox::intrinsicLogicalWidth() const
 bool RenderBox::shouldIgnoreMinMaxSizes() const
 {
     return isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
+}
+
+std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
+{
+    ASSERT(shouldApplySizeContainment());
+    if (style().containIntrinsicWidthType() == ContainIntrinsicSizeType::None)
+        return std::nullopt;
+
+    auto width = style().containIntrinsicWidth();
+    ASSERT(width.has_value());
+    return std::optional<LayoutUnit> { width->value() };
+}
+
+std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
+{
+    ASSERT(shouldApplySizeContainment());
+    if (style().containIntrinsicHeightType() == ContainIntrinsicSizeType::None)
+        return std::nullopt;
+
+    auto height = style().containIntrinsicHeight();
+    ASSERT(height.has_value());
+    return std::optional<LayoutUnit> { height->value() };
 }
 
 } // namespace WebCore

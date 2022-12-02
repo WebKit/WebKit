@@ -8,6 +8,7 @@
 
 #include "libANGLE/renderer/gl/ProgramGL.h"
 
+#include "common/WorkerThread.h"
 #include "common/angleutils.h"
 #include "common/bitset_utils.h"
 #include "common/debug.h"
@@ -16,7 +17,6 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/ProgramLinkedResources.h"
 #include "libANGLE/Uniform.h"
-#include "libANGLE/WorkerThread.h"
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
@@ -198,8 +198,8 @@ class ProgramGL::LinkEventGL final : public LinkEvent
                 std::shared_ptr<ProgramGL::LinkTask> linkTask,
                 PostLinkImplFunctor &&functor)
         : mLinkTask(linkTask),
-          mWaitableEvent(std::shared_ptr<angle::WaitableEvent>(
-              angle::WorkerThreadPool::PostWorkerTask(workerPool, mLinkTask))),
+          mWaitableEvent(
+              std::shared_ptr<angle::WaitableEvent>(workerPool->postWorkerTask(mLinkTask))),
           mPostLinkImplFunctor(functor)
     {}
 

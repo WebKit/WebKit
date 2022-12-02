@@ -471,9 +471,9 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     String targetId = request.initiatorIdentifier();
 
     if (type == InspectorPageAgent::OtherResource) {
-        if (m_loadingXHRSynchronously || request.requester() == ResourceRequest::Requester::XHR)
+        if (m_loadingXHRSynchronously || request.requester() == ResourceRequestRequester::XHR)
             type = InspectorPageAgent::XHRResource;
-        else if (request.requester() == ResourceRequest::Requester::Fetch)
+        else if (request.requester() == ResourceRequestRequester::Fetch)
             type = InspectorPageAgent::FetchResource;
         else if (loader && equalIgnoringFragmentIdentifier(request.url(), loader->url()) && !loader->isCommitted())
             type = InspectorPageAgent::DocumentResource;

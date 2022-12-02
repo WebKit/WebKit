@@ -20,6 +20,8 @@ async function runTest() {
 
     internals.setShowAutoFillButton(input, "Credentials");
 
+    await UIHelper.renderingUpdate();
+
     document.execCommand("insertText", true, "Test");
 
     shouldBeEqualToString("input.value", "Test");

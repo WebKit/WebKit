@@ -6,7 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 766x35
           text run at (0,0) width 512: "This tests for setting the selection at a position inside a document in designMode. "
-          text run at (512,0) width 250: "You should see a caret at the start of the"
-          text run at (761,0) width 5: " "
+          text run at (512,0) width 254: "You should see a caret at the start of the "
           text run at (0,18) width 35: "body."
 caret: position 0 of child 0 {#text} of child 1 {P} of body

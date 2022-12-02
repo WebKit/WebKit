@@ -96,7 +96,7 @@ private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
-    void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, bool shouldContentEncodingSniff);
+    void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy);
 
 #if ENABLE(TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();
@@ -131,6 +131,6 @@ private:
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
 void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *);
 
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool isThirdParty);
+void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool);
 
 } // namespace WebKit

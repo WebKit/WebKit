@@ -25,6 +25,7 @@
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGContainer.h"
+#include "RenderSVGRoot.h"
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class SVGSVGElement;
 class RenderSVGViewportContainer final : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGViewportContainer);
 public:
-    RenderSVGViewportContainer(Document&, RenderStyle&&);
+    RenderSVGViewportContainer(RenderSVGRoot&, RenderStyle&&);
     RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);
 
     SVGSVGElement& svgSVGElement() const;
@@ -41,7 +42,6 @@ public:
     FloatSize viewportSize() const { return m_viewport.size(); }
 
     void updateFromStyle() final;
-    void updateFromElement() final;
 
 private:
     bool isSVGViewportContainer() const final { return true; }
@@ -59,11 +59,11 @@ private:
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
     LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const final;
     void updateLayerTransform() final;
-
-    bool needsHasSVGTransformFlag() const;
+    bool needsHasSVGTransformFlags() const final;
 
     AffineTransform m_supplementalLayerTransform;
     FloatRect m_viewport;
+    WeakPtr<RenderSVGRoot> m_owningSVGRoot;
 };
 
 } // namespace WebCore

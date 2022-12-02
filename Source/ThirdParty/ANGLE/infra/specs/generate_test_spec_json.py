@@ -40,6 +40,12 @@ ADDITIONAL_MIXINS = {
             ],
         }
     },
+    'timeout_120m': {
+        'swarming': {
+            'hard_timeout': 7200,
+            'io_timeout': 300
+        }
+    },
 }
 
 MIXIN_FILE_NAME = os.path.join(THIS_DIR, 'mixins.pyl')

@@ -14,7 +14,7 @@ window.onload = function()
 {
     try {
         for( var i = 0; i < 75; ++i ) {
-            history.replaceState(0, 0, i.toString());
+            history.replaceState(0, 0, "#" + i);
             log("Successfully added item: " + i);
         }
     } catch (e) {

@@ -102,10 +102,11 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsRequiredFormCon
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsValid, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsWindowInactive, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDir, bool, (const Element&, uint32_t));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudoClass, bool, (const Element&, const Vector<AtomString>&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudoClass, bool, (const Element&, const FixedVector<PossiblyQuotedIdentifier>&));
 #if ENABLE(FULLSCREEN_API)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenDocumentPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenParentPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAncestorPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenControlsHiddenPseudoClass, bool, (const Element&));
@@ -275,7 +276,7 @@ struct SelectorFragment {
     const CSSSelector* tagNameSelector = nullptr;
     const AtomString* id = nullptr;
     Vector<TextDirection> dirList;
-    Vector<const Vector<AtomString>*> languageArgumentsList;
+    Vector<const FixedVector<PossiblyQuotedIdentifier>*> languageArgumentsList;
     Vector<const AtomStringImpl*, 8> classNames;
     HashSet<unsigned> pseudoClasses;
     Vector<CodePtr<JSC::OperationPtrTag>, 4> unoptimizedPseudoClasses;
@@ -378,7 +379,7 @@ private:
     void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementMatchesDir(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsInLanguage(Assembler::JumpList& failureCases, const SelectorFragment&);
-    void generateElementIsInLanguage(Assembler::JumpList& failureCases, const Vector<AtomString>*);
+    void generateElementIsInLanguage(Assembler::JumpList& failureCases, const FixedVector<PossiblyQuotedIdentifier>*);
     void generateElementIsLastChild(Assembler::JumpList& failureCases);
     void generateElementIsOnlyChild(Assembler::JumpList& failureCases);
     void generateElementHasPlaceholderShown(Assembler::JumpList& failureCases);
@@ -726,6 +727,11 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenDocumentPseudoClass, bool, (c
     return matchesFullScreenDocumentPseudoClass(element);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenParentPseudoClass, bool, (const Element& element))
+{
+    return matchesFullScreenParentPseudoClass(element);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenAncestorPseudoClass, bool, (const Element& element))
 {
     return matchesFullScreenAncestorPseudoClass(element);
@@ -810,7 +816,7 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesDir, bool, (const Element& element, uin
     return element.effectiveTextDirection() == static_cast<TextDirection>(direction);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesLangPseudoClass, bool, (const Element& element, const Vector<AtomString>& argumentList))
+JSC_DEFINE_JIT_OPERATION(operationMatchesLangPseudoClass, bool, (const Element& element, const FixedVector<PossiblyQuotedIdentifier>& argumentList))
 {
     return matchesLangPseudoClass(element, argumentList);
 }
@@ -901,6 +907,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFullScreenDocument:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenDocumentPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassFullScreenParent:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenParentPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFullScreenAncestor:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenAncestorPseudoClass));
@@ -1084,13 +1093,11 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 return FunctionType::CannotMatchAnything;
             return FunctionType::SimpleSelectorChecker;
         }
+
     case CSSSelector::PseudoClassLang:
-        {
-            const Vector<AtomString>* selectorLangArgumentList = selector.argumentList();
-            ASSERT(selectorLangArgumentList && !selectorLangArgumentList->isEmpty());
-            fragment.languageArgumentsList.append(selectorLangArgumentList);
-            return FunctionType::SimpleSelectorChecker;
-        }
+        ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
+        fragment.languageArgumentsList.append(selector.argumentList());
+        return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassIs:
     case CSSSelector::PseudoClassWhere:
@@ -3606,11 +3613,11 @@ void SelectorCodeGenerator::generateElementMatchesDir(Assembler::JumpList& failu
 
 void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    for (const Vector<AtomString>* languageArguments : fragment.languageArgumentsList)
+    for (auto* languageArguments : fragment.languageArgumentsList)
         generateElementIsInLanguage(failureCases, languageArguments);
 }
 
-void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const Vector<AtomString>* languageArguments)
+void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const FixedVector<PossiblyQuotedIdentifier>* languageArguments)
 {
     LocalRegisterWithPreference langRangeRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
     m_assembler.move(Assembler::TrustedImmPtr(languageArguments), langRangeRegister);

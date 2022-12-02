@@ -44,7 +44,7 @@ public:
 
     SharedStringHashStore(Client&);
 
-    bool createSharedMemoryHandle(SharedMemory::Handle&);
+    std::optional<SharedMemory::Handle> createSharedMemoryHandle();
 
     void scheduleAddition(WebCore::SharedStringHash);
     void scheduleRemoval(WebCore::SharedStringHash);

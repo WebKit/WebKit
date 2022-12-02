@@ -783,9 +783,11 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_Clear:
         return "Clear"_s;
     case GDK_KEY_Down:
+    case GDK_KEY_KP_Down:
         return "Down"_s;
         // "End"
     case GDK_KEY_End:
+    case GDK_KEY_KP_End:
         return "End"_s;
         // "Enter"
     case GDK_KEY_ISO_Enter:
@@ -845,14 +847,18 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_Help:
         return "Help"_s;
     case GDK_KEY_Home:
+    case GDK_KEY_KP_Home:
         return "Home"_s;
     case GDK_KEY_Insert:
         return "Insert"_s;
     case GDK_KEY_Left:
+    case GDK_KEY_KP_Left:
         return "Left"_s;
     case GDK_KEY_Page_Down:
+    case GDK_KEY_KP_Page_Down:
         return "PageDown"_s;
     case GDK_KEY_Page_Up:
+    case GDK_KEY_KP_Page_Up:
         return "PageUp"_s;
     case GDK_KEY_Pause:
         return "Pause"_s;
@@ -860,10 +866,12 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_Print:
         return "PrintScreen"_s;
     case GDK_KEY_Right:
+    case GDK_KEY_KP_Right:
         return "Right"_s;
     case GDK_KEY_Select:
         return "Select"_s;
     case GDK_KEY_Up:
+    case GDK_KEY_KP_Up:
         return "Up"_s;
         // Standard says that DEL becomes U+007F.
     case GDK_KEY_Delete:
@@ -1340,28 +1348,35 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     }
 }
 
-bool PlatformKeyboardEvent::currentCapsLockState()
-{
-#if USE(GTK4)
-    return gdk_device_get_caps_lock_state(gdk_seat_get_keyboard(gdk_display_get_default_seat(gdk_display_get_default())));
-#else
-    return gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default()));
-#endif
-}
-
-void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
     GdkModifierType state;
 #if USE(GTK4)
-    state = static_cast<GdkModifierType>(0);
+    state = static_cast<GdkModifierType>(0); // FIXME: Implement.
 #else
     gtk_get_current_event_state(&state);
 #endif
 
-    shiftKey = state & GDK_SHIFT_MASK;
-    ctrlKey = state & GDK_CONTROL_MASK;
-    altKey = state & GDK_MOD1_MASK;
-    metaKey = state & GDK_META_MASK;
+    OptionSet<PlatformEvent::Modifier> modifiers;
+
+    if (state & GDK_SHIFT_MASK)
+        modifiers.add(PlatformEvent::Modifier::ShiftKey);
+    if (state & GDK_CONTROL_MASK)
+        modifiers.add(PlatformEvent::Modifier::ControlKey);
+    if (state & GDK_MOD1_MASK)
+        modifiers.add(PlatformEvent::Modifier::AltKey);
+    if (state & GDK_META_MASK)
+        modifiers.add(PlatformEvent::Modifier::MetaKey);
+
+#if USE(GTK4)
+    bool capsLockActive = gdk_device_get_caps_lock_state(gdk_seat_get_keyboard(gdk_display_get_default_seat(gdk_display_get_default())));
+#else
+    bool capsLockActive = gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default()));
+#endif
+    if (capsLockActive)
+        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
+
+    return modifiers;
 }
 
 bool PlatformKeyboardEvent::modifiersContainCapsLock(unsigned modifier)

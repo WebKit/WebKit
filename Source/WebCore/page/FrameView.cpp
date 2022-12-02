@@ -1025,6 +1025,51 @@ GraphicsLayer* FrameView::graphicsLayerForPlatformWidget(PlatformWidget platform
     return widgetLayer->backing()->parentForSublayers();
 }
 
+GraphicsLayer* FrameView::graphicsLayerForPageScale()
+{
+    auto* page = frame().page();
+    if (!page)
+        return nullptr;
+
+    if (page->delegatesScaling()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto* renderView = this->renderView();
+    if (!renderView)
+        return nullptr;
+
+    if (!renderView->hasLayer() || !renderView->layer()->isComposited())
+        return nullptr;
+
+    auto* backing = renderView->layer()->backing();
+    if (auto* contentsContainmentLayer = backing->contentsContainmentLayer())
+        return contentsContainmentLayer;
+
+    return backing->graphicsLayer();
+}
+
+#if HAVE(RUBBER_BANDING)
+GraphicsLayer* FrameView::graphicsLayerForTransientZoomShadow()
+{
+    auto* page = frame().page();
+    if (!page)
+        return nullptr;
+
+    if (page->delegatesScaling()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto* renderView = this->renderView();
+    if (!renderView)
+        return nullptr;
+
+    return renderView->compositor().layerForContentShadow();
+}
+#endif
+
 LayoutRect FrameView::fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const
 {
     LayoutPoint scrollPosition;
@@ -1362,15 +1407,15 @@ void FrameView::removeEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObjec
     m_embeddedObjectsToUpdate->remove(&embeddedObject);
 }
 
-void FrameView::setMediaType(const String& mediaType)
+void FrameView::setMediaType(const AtomString& mediaType)
 {
     m_mediaType = mediaType;
 }
 
-String FrameView::mediaType() const
+AtomString FrameView::mediaType() const
 {
     // See if we have an override type.
-    String overrideType = frame().loader().client().overrideMediaType();
+    auto overrideType = frame().loader().client().overrideMediaType();
     InspectorInstrumentation::applyEmulatedMedia(frame(), overrideType);
     if (!overrideType.isNull())
         return overrideType;
@@ -1382,11 +1427,11 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
     if (printing) {
         if (m_mediaTypeWhenNotPrinting.isNull())
             m_mediaTypeWhenNotPrinting = mediaType();
-        setMediaType("print"_s);
+        setMediaType(printAtom());
     } else {
         if (!m_mediaTypeWhenNotPrinting.isNull())
             setMediaType(m_mediaTypeWhenNotPrinting);
-        m_mediaTypeWhenNotPrinting = String();
+        m_mediaTypeWhenNotPrinting = nullAtom();
     }
 }
 
@@ -2253,7 +2298,7 @@ bool FrameView::scrollToFragment(const URL& url)
                 // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
                 TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
                 maintainScrollPositionAtScrollToTextFragmentRange(range);
-                if (frame().settings().scrollToTextFragmentIndicatorEnabled())
+                if (frame().settings().scrollToTextFragmentIndicatorEnabled() && !frame().page()->isControlledByAutomation())
                     m_delayedTextFragmentIndicatorTimer.startOneShot(100_ms);
                 return true;
             }
@@ -2555,6 +2600,9 @@ bool FrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const Render
     if (options.revealMode == SelectionRevealMode::DoNotReveal)
         return false;
 
+    if (renderer.isSkippedContent())
+        return false;
+
     auto* layer = renderer.enclosingLayer();
     if (!layer)
         return false;
@@ -2832,13 +2880,10 @@ void FrameView::resumeVisibleImageAnimations(const IntRect& visibleRect)
         renderView->resumePausedImageAnimationsIfNeeded(visibleRect);
 }
 
-void FrameView::repaintVisibleImageAnimations(const IntRect& visibleRect)
+void FrameView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
 {
-    if (visibleRect.isEmpty())
-        return;
-
     if (auto* renderView = frame().contentRenderer())
-        renderView->repaintImageAnimationsIfNeeded(visibleRect);
+        renderView->updatePlayStateForAllAnimations(visibleRect);
 }
 
 void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect)
@@ -2876,10 +2921,10 @@ void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
     });
 }
 
-void FrameView::repaintVisibleImageAnimationsIncludingSubframes()
+void FrameView::updatePlayStateForAllAnimationsIncludingSubframes()
 {
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
-        frameView.repaintVisibleImageAnimations(visibleRect);
+        frameView.updatePlayStateForAllAnimations(visibleRect);
     });
 }
 
@@ -2965,6 +3010,22 @@ bool FrameView::isRubberBandInProgress() const
 
     if (auto scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isRubberBandInProgress();
+
+    return false;
+}
+
+bool FrameView::requestStartKeyboardScrollAnimation(const KeyboardScroll& scrollData)
+{
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->requestStartKeyboardScrollAnimation(*this, scrollData);
+
+    return false;
+}
+
+bool FrameView::requestStopKeyboardScrollAnimation(bool immediate)
+{
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->requestStopKeyboardScrollAnimation(*this, immediate);
 
     return false;
 }
@@ -3586,11 +3647,13 @@ void FrameView::scrollToTextFragmentRange()
     if (!m_pendingTextFragmentIndicatorRange)
         return;
 
-    auto rangeText = plainText(m_pendingTextFragmentIndicatorRange.value());
-    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+    if (needsLayout())
         return;
 
-    auto range = m_pendingTextFragmentIndicatorRange.value();
+    auto range = *m_pendingTextFragmentIndicatorRange;
+    auto rangeText = plainText(range);
+    if (m_pendingTextFragmentIndicatorText != plainText(range))
+        return;
 
     LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToTextFragmentRange() " << range);
 
@@ -3693,7 +3756,12 @@ void FrameView::performPostLayoutTasks()
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "FrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
-    frame().selection().updateAppearanceAfterLayout();
+
+    if (auto& selection = frame().selection(); selection.isFocusedAndActive()) {
+        // FIXME (247041): We should be able to remove this appearance update altogether,
+        // and instead defer updates until the next rendering update.
+        selection.updateAppearanceAfterLayout();
+    }
 
     flushPostLayoutTasksQueue();
 

@@ -31,15 +31,13 @@ layer at (0,0) size 785x685
     RenderBody {BODY} at (8,8) size 769x653
       RenderBlock (anonymous) at (0,0) size 769x84
         RenderText {#text} at (0,0) size 750x55
-          text run at (0,0) width 744: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line"
-          text run at (744,0) width 6: " "
+          text run at (0,0) width 750: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line "
           text run at (0,28) width 338: "2\" should be bold. Fix for this bug: "
         RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
           RenderText {#text} at (338,28) size 257x27
             text run at (338,28) width 257: "<rdar://problem/3939523>"
         RenderText {#text} at (595,28) size 744x55
-          text run at (595,28) width 143: " in some cases,"
-          text run at (738,28) width 6: " "
+          text run at (595,28) width 149: " in some cases, "
           text run at (0,56) width 537: "text does not retain style info after pressing return twice"
       RenderBlock {DIV} at (0,84) size 769x12
       RenderBlock {P} at (0,120) size 769x56 [border: (2px solid #0000FF)]

@@ -21,8 +21,15 @@
 
 #define ANGLE_OBJC_CP_PROPERTY(DST, SRC, PROPERTY) \
     (DST).PROPERTY = static_cast<__typeof__((DST).PROPERTY)>(ToObjC((SRC).PROPERTY))
+#define ANGLE_OBJC_CP_PROPERTY2(DST, SRC, PROPERTY, DST_PROPERTY)  \
+    (DST).DST_PROPERTY = static_cast<__typeof__((DST).DST_PROPERTY)>(ToObjC((SRC).PROPERTY))
 
 #define ANGLE_PROP_EQ(LHS, RHS, PROP) ((LHS).PROP == (RHS).PROP)
+
+#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
+    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
+#   define ANGLE_MTL_RENDER_PIPELINE_DESC_RASTER_SAMPLE_COUNT_AVAILABLE 1
+#endif
 
 namespace rx
 {
@@ -150,7 +157,11 @@ AutoObjCPtr<MTLRenderPipelineDescriptor *> CreateMTLRenderPipelineDescriptor(
     }
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, depthAttachmentPixelFormat);
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, stencilAttachmentPixelFormat);
+#if ANGLE_MTL_RENDER_PIPELINE_DESC_RASTER_SAMPLE_COUNT_AVAILABLE
+    ANGLE_OBJC_CP_PROPERTY2(objCDesc.get(), desc.outputDescriptor, sampleCount, rasterSampleCount);
+#else
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, sampleCount);
+#endif
 
 #if ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, inputPrimitiveTopology);
@@ -825,27 +836,11 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
 {
     ASSERT(deviceMaxRenderTargets <= kMaxRenderTargets);
 
-    ANGLE_MTL_OBJC_SCOPE
+    for (uint32_t i = 0; i < numColorAttachments; ++i)
     {
-        for (uint32_t i = 0; i < numColorAttachments; ++i)
-        {
-            ToObjC(colorAttachments[i], objCDesc.colorAttachments[i]);
-        }
-        for (uint32_t i = numColorAttachments; i < deviceMaxRenderTargets; ++i)
-        {
-            // Inactive render target
-            objCDesc.colorAttachments[i].texture     = nil;
-            objCDesc.colorAttachments[i].level       = 0;
-            objCDesc.colorAttachments[i].slice       = 0;
-            objCDesc.colorAttachments[i].depthPlane  = 0;
-            objCDesc.colorAttachments[i].loadAction  = MTLLoadActionDontCare;
-            objCDesc.colorAttachments[i].storeAction = MTLStoreActionDontCare;
-        }
-
-        ToObjC(depthAttachment, objCDesc.depthAttachment);
-        ToObjC(stencilAttachment, objCDesc.stencilAttachment);
+        ToObjC(colorAttachments[i], objCDesc.colorAttachments[i]);
     }
-    for (uint32_t i = numColorAttachments; i < kMaxRenderTargets; ++i)
+    for (uint32_t i = numColorAttachments; i < deviceMaxRenderTargets; ++i)
     {
         // Inactive render target
         objCDesc.colorAttachments[i].texture     = nil;

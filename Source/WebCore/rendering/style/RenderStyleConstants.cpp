@@ -672,7 +672,7 @@ TextStream& operator<<(TextStream& ts, ListStylePosition position)
 
 TextStream& operator<<(TextStream& ts, ListStyleType styleType)
 {
-    return ts << getValueName(toCSSValueID(styleType)).characters();
+    return ts << nameLiteral(toCSSValueID(styleType)).characters();
 }
 
 TextStream& operator<<(TextStream& ts, MarqueeBehavior marqueeBehavior)
@@ -1145,6 +1145,31 @@ TextStream& operator<<(TextStream& ts, TextUnderlinePosition underlinePosition)
     case TextUnderlinePosition::Auto: ts << "Auto"; break;
     case TextUnderlinePosition::Under: ts << "Under"; break;
     case TextUnderlinePosition::FromFont: ts << "FromFont"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, LeadingTrim leadingTrim)
+{
+    switch (leadingTrim) {
+    case LeadingTrim::Normal: ts << "Normal"; break;
+    case LeadingTrim::Start: ts << "Start"; break;
+    case LeadingTrim::End: ts << "End"; break;
+    case LeadingTrim::Both: ts << "Both"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, TextEdgeType textEdgeType)
+{
+    switch (textEdgeType) {
+    case TextEdgeType::Leading: ts << "half-leading"; break;
+    case TextEdgeType::Text: ts << "text-over/under baseline"; break;
+    case TextEdgeType::CapHeight: ts << "cap-height baseline"; break;
+    case TextEdgeType::ExHeight: ts << "x-height baseline"; break;
+    case TextEdgeType::Alphabetic: ts << "alphabetic baseline"; break;
+    case TextEdgeType::CJKIdeographic: ts << "ideographic-over baseline"; break;
+    case TextEdgeType::CJKIdeographicInk: ts << "ideographic-ink-over/ink-under baseline"; break;
     }
     return ts;
 }

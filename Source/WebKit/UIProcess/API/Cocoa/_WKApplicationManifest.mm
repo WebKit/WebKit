@@ -155,6 +155,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     URL scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
     URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
+    URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
     WebCore::CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
     NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
 
@@ -165,6 +166,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
         WTFMove(scopeURL),
         static_cast<WebCore::ApplicationManifest::Display>(display),
         WTFMove(startURL),
+        WTFMove(manifestId),
         WebCore::roundAndClampToSRGBALossy(themeColor.CGColor),
         makeVector<WebCore::ApplicationManifest::Icon>(icons),
     };
@@ -192,6 +194,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     [aCoder encodeObject:self.scope forKey:@"scope"];
     [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().display) forKey:@"display"];
     [aCoder encodeObject:self.startURL forKey:@"start_url"];
+    [aCoder encodeObject:self.manifestId forKey:@"manifestId"];
     [aCoder encodeObject:self.themeColor forKey:@"theme_color"];
     [aCoder encodeObject:self.icons forKey:@"icons"];
 }
@@ -265,6 +268,11 @@ static NSString *nullableNSString(const WTF::String& string)
     }).autorelease();
 }
 
+- (NSURL *)manifestId
+{
+    return _applicationManifest->applicationManifest().id;
+}
+
 #else // ENABLE(APPLICATION_MANIFEST)
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
@@ -323,6 +331,11 @@ static NSString *nullableNSString(const WTF::String& string)
 }
 
 - (NSArray<_WKApplicationManifestIcon *> *)icons
+{
+    return nil;
+}
+
+- (NSURL *)manifestId
 {
     return nil;
 }

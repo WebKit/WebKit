@@ -127,11 +127,6 @@ CurlContext::CurlContext()
     if (logFile)
         m_logFile = fopen(logFile, "a");
 #endif
-
-#if ENABLE(TLS_DEBUG)
-    if (auto filePath = envVar.read("SSLKEYLOGFILE"))
-        m_tlsKeyLogFilePath = filePath;
-#endif
 }
 
 CurlContext::~CurlContext()
@@ -342,9 +337,10 @@ void CurlHandle::enableSSLForHost(const String& host)
         setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
     }
 
-    const auto& cipherList = sslHandle.getCipherList();
-    if (!cipherList.isEmpty())
-        setSslCipherList(cipherList.utf8().data());
+    setSslCipherList(sslHandle.cipherList().data());
+
+    if (const auto& ecCurves = sslHandle.ecCurves(); !ecCurves.isNull())
+        setSslECCurves(ecCurves.data());
 
     setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
 
@@ -353,6 +349,8 @@ void CurlHandle::enableSSLForHost(const String& host)
 #else
     if (auto* path = std::get_if<String>(&sslHandle.getCACertInfo()))
         setCACertPath(path->utf8().data());
+    else if (auto data = std::get_if<CertificateInfo::Certificate>(&sslHandle.getCACertInfo()))
+        setCACertBlob(const_cast<uint8_t*>(data->data()), data->size());
 #endif
 }
 
@@ -376,11 +374,6 @@ CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
 CURLcode CurlHandle::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData)
 {
     return static_cast<CurlHandle*>(userData)->willSetupSslCtx(sslCtx);
-}
-
-int CurlHandle::sslErrors() const
-{
-    return m_sslVerifier ? m_sslVerifier->sslErrors() : 0;
 }
 
 CURLcode CurlHandle::perform()
@@ -564,6 +557,19 @@ void CurlHandle::setCACertPath(const char* path)
         curl_easy_setopt(m_handle, CURLOPT_CAINFO, path);
 }
 
+void CurlHandle::setCACertBlob(void* data, size_t length)
+{
+    if (!data || !length)
+        return;
+
+    curl_blob blob;
+    blob.data = data;
+    blob.len = length;
+    blob.flags = CURL_BLOB_NOCOPY;
+
+    curl_easy_setopt(m_handle, CURLOPT_CAINFO_BLOB, &blob);
+}
+
 void CurlHandle::setSslVerifyPeer(VerifyPeer verifyPeer)
 {
     curl_easy_setopt(m_handle, CURLOPT_SSL_VERIFYPEER, static_cast<long>(verifyPeer));
@@ -592,6 +598,11 @@ void CurlHandle::setSslKeyPassword(const char* password)
 void CurlHandle::setSslCipherList(const char* cipherList)
 {
     curl_easy_setopt(m_handle, CURLOPT_SSL_CIPHER_LIST, cipherList);
+}
+
+void CurlHandle::setSslECCurves(const char* ecCurves)
+{
+    curl_easy_setopt(m_handle, CURLOPT_SSL_EC_CURVES, ecCurves);
 }
 
 void CurlHandle::enableProxyIfExists()
@@ -724,13 +735,12 @@ std::optional<long long> CurlHandle::getContentLength()
     if (!m_handle)
         return std::nullopt;
 
-    double contentLength;
-
-    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
+    curl_off_t contentLength;
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &contentLength);
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    return static_cast<long long>(contentLength);
+    return contentLength;
 }
 
 std::optional<long> CurlHandle::getHttpAuthAvail()
@@ -772,6 +782,19 @@ std::optional<long> CurlHandle::getHttpVersion()
     return version;
 }
 
+std::optional<long> CurlHandle::getSSLVerifyResult() const
+{
+    if (!m_handle)
+        return std::nullopt;
+
+    long verifyResult;
+    auto errorCode = curl_easy_getinfo(m_handle, CURLINFO_SSL_VERIFYRESULT, &verifyResult);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    return verifyResult;
+}
+
 std::optional<SSL*> CurlHandle::sslConnection() const
 {
     curl_tlssessioninfo* info = nullptr;
@@ -793,6 +816,7 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
     double appConnect = 0.0;
     double startTransfer = 0.0;
     long version = 0;
+    curl_off_t responseBodySize = 0;
 
     if (!m_handle)
         return std::nullopt;
@@ -814,6 +838,10 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
         return std::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_DOWNLOAD_T, &responseBodySize);
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
@@ -842,6 +870,8 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
     else if (version == CURL_HTTP_VERSION_3)
         networkLoadMetrics.protocol = httpVersion3;
 
+    networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
+
     return networkLoadMetrics;
 }
 
@@ -850,7 +880,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     long requestHeaderSize = 0;
     curl_off_t requestBodySize = 0;
     long responseHeaderSize = 0;
-    curl_off_t responseBodySize = 0;
     char* ip = nullptr;
     long port = 0;
 
@@ -867,10 +896,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     if (errorCode != CURLE_OK)
         return;
 
-    errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_DOWNLOAD_T, &responseBodySize);
-    if (errorCode != CURLE_OK)
-        return;
-
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_IP, &ip);
     if (errorCode != CURLE_OK)
         return;
@@ -878,8 +903,6 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_PORT, &port);
     if (errorCode != CURLE_OK)
         return;
-
-    networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
 
     auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
     if (!m_tlsConnectionInfo) {
@@ -907,15 +930,19 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
-    if (m_sslVerifier && !m_sslVerifier->certificateInfo().isEmpty())
-        return m_sslVerifier->certificateInfo();
-
-    // If you use an existing HTTP/2 connection, SSLVerifier does not exist.
     if (m_certificateInfo)
         return *m_certificateInfo;
 
+    if (m_sslVerifier) {
+        if (auto certificateInfo = m_sslVerifier->createCertificateInfo(getSSLVerifyResult())) {
+            m_certificateInfo = WTFMove(certificateInfo);
+            return *m_certificateInfo;
+        }
+    }
+
+    // If you use an existing HTTP/2 connection, SSLVerifier does not exist.
     if (auto ssl = sslConnection()) {
-        if (auto certificateInfo = OpenSSL::createCertificateInfo(*ssl)) {
+        if (auto certificateInfo = OpenSSL::createCertificateInfo(getSSLVerifyResult(), *ssl)) {
             m_certificateInfo = WTFMove(certificateInfo);
             return *m_certificateInfo;
         }

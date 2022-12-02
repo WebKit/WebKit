@@ -31,11 +31,26 @@
 
 #include <os/log_private.h>
 
+#else
+
+typedef uint32_t os_trace_mode_t;
+
+OS_ENUM(_os_trace_commonmodes, os_trace_mode_t,
+    OS_TRACE_MODE_INFO                          = 0x01,
+    OS_TRACE_MODE_DEBUG                         = 0x02,
+    OS_TRACE_MODE_BACKTRACE                     = 0x04,
+    OS_TRACE_MODE_STREAM_LIVE                   = 0x08,
+    OS_TRACE_MODE_OFF                           = 0x0400,
+);
+
 #endif
 
 WTF_EXTERN_C_BEGIN
 
 OS_EXPORT OS_NOTHROW OS_NOT_TAIL_CALLED OS_NONNULL5
 void os_log_with_args(os_log_t oslog, os_log_type_t type, const char *format, va_list args, void *ret_addr);
+
+OS_EXPORT OS_NOTHROW
+void os_trace_set_mode(os_trace_mode_t mode);
 
 WTF_EXTERN_C_END

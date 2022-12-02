@@ -31,7 +31,9 @@
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutUnit.h"
 #include "RenderStyle.h"
 
@@ -411,8 +413,17 @@ bool BlockMarginCollapse::marginsCollapseThrough(const ElementBox& layoutBox) co
                 if (!inlineFormattingState.lines().isEmpty())
                     return false;
                 // Any float box in this formatting context prevents collapsing through.
-                auto& floats = inlineFormattingState.floatingState().floats();
-                for (auto& floatItem : floats) {
+                auto parentBlockFormattingState = [&] () -> BlockFormattingState& {
+                    if (layoutBox.establishesBlockFormattingContext())
+                        return layoutState.formattingStateForBlockFormattingContext(layoutBox);
+                    for (auto& containingBlock : containingBlockChain(layoutBox)) {
+                        if (containingBlock.establishesBlockFormattingContext())
+                            return layoutState.formattingStateForBlockFormattingContext(containingBlock);
+                    }
+                    ASSERT_NOT_REACHED();
+                    return layoutState.formattingStateForBlockFormattingContext(FormattingContext::initialContainingBlock(layoutBox));
+                };
+                for (auto& floatItem : parentBlockFormattingState().floatingState().floats()) {
                     if (floatItem.isInFormattingContextOf(layoutBox))
                         return false;
                 }

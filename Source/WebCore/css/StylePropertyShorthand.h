@@ -30,8 +30,7 @@ class StylePropertyShorthand {
 public:
     StylePropertyShorthand() = default;
 
-    template<unsigned numProperties>
-    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID (&properties)[numProperties])
+    template<unsigned numProperties> StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID (&properties)[numProperties])
         : m_properties(properties)
         , m_length(numProperties)
         , m_shorthandID(id)
@@ -70,5 +69,21 @@ constexpr bool isShorthandCSSProperty(CSSPropertyID id)
 {
     return id >= firstShorthandProperty && id <= lastShorthandProperty;
 }
+
+constexpr std::pair<CSSPropertyID, CSSValueID> fontShorthandSubpropertiesResetToInitialValues[] = {
+    { CSSPropertyFontSizeAdjust, CSSValueNone },
+    { CSSPropertyFontKerning, CSSValueAuto },
+    { CSSPropertyFontVariantAlternates, CSSValueNormal },
+    { CSSPropertyFontVariantLigatures, CSSValueNormal },
+    { CSSPropertyFontVariantNumeric, CSSValueNormal },
+    { CSSPropertyFontVariantEastAsian, CSSValueNormal },
+    { CSSPropertyFontVariantPosition, CSSValueNormal },
+    { CSSPropertyFontFeatureSettings, CSSValueNormal },
+#if ENABLE(VARIATION_FONTS)
+    { CSSPropertyFontOpticalSizing, CSSValueAuto },
+    { CSSPropertyFontVariationSettings, CSSValueNormal },
+#endif
+    { CSSPropertyFontPalette, CSSValueNormal },
+};
 
 } // namespace WebCore

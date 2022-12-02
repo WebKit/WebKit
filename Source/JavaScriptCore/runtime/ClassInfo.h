@@ -75,9 +75,6 @@ struct MethodTable {
     using GetOwnPropertySlotByIndexFunctionPtr = bool (*)(JSObject*, JSGlobalObject*, unsigned, PropertySlot&);
     GetOwnPropertySlotByIndexFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertySlotByIndex);
 
-    using ToThisFunctionPtr = JSValue (*)(JSCell*, JSGlobalObject*, ECMAMode);
-    ToThisFunctionPtr METHOD_TABLE_ENTRY(toThis);
-
     using GetOwnPropertyNamesFunctionPtr = void (*)(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertyNames);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnSpecialPropertyNames);
@@ -159,7 +156,6 @@ struct MethodTable {
         &ClassName::deletePropertyByIndex, \
         &ClassName::getOwnPropertySlot, \
         &ClassName::getOwnPropertySlotByIndex, \
-        &ClassName::toThis, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::getOwnSpecialPropertyNames, \
         &ClassName::customHasInstance, \
@@ -176,7 +172,8 @@ struct MethodTable {
         &ClassName::visitOutputConstraints, \
         &ClassName::visitOutputConstraints, \
     }, \
-    sizeof(ClassName),
+    sizeof(ClassName), \
+    ClassName::isResizableOrGrowableSharedTypedArray, \
 
 struct CLASS_INFO_ALIGNMENT ClassInfo {
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
@@ -191,6 +188,7 @@ struct CLASS_INFO_ALIGNMENT ClassInfo {
     const std::optional<JSTypeRange> inheritsJSTypeRange; // This is range of JSTypes for doing inheritance checking. Has the form: [firstJSType, lastJSType] (inclusive).
     MethodTable methodTable;
     const unsigned staticClassSize;
+    const bool isResizableOrGrowableSharedTypedArray;
 
     static ptrdiff_t offsetOfParentClass()
     {

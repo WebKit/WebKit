@@ -258,7 +258,8 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
     if (!isTypedView(m_blob.type()))
         return false;
 
-    return jsCast<const JSArrayBufferView*>(cell)->mode() == WastefulTypedArray;
+    TypedArrayMode mode = jsCast<const JSArrayBufferView*>(cell)->mode();
+    return isWastefulTypedArray(mode);
 }
 
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)

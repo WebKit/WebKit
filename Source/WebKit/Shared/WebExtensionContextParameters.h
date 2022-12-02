@@ -27,12 +27,25 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+OBJC_CLASS NSDictionary;
+
 #include "WebExtensionContextIdentifier.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 struct WebExtensionContextParameters {
     WebExtensionContextIdentifier identifier;
+
+#if PLATFORM(COCOA)
+    URL baseURL;
+    String uniqueIdentifier;
+    RetainPtr<NSDictionary> manifest;
+    double manifestVersion;
+    bool testingMode;
+#endif
 };
 
 } // namespace WebKit

@@ -1,5 +1,8 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS 'offset' does not supported 'auto'
+PASS 'offset' does not supported '10px 30px'
+PASS 'offset' does not supported 'none'
+PASS 'offset' does not supported 'ray(45deg closest-side)'
+PASS 'offset' does not supported 'path("M 100 100 L 300 100 L 200 300 z")'
+PASS 'offset' does not supported 'ray(45deg closest-side) / 40px 20px'
 

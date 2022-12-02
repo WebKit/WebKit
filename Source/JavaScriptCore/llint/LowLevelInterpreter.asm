@@ -1357,32 +1357,23 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     
     # Sweet, now we know that we have a typed array. Do some basic things now.
 
-    if ARM64E
-        const length = t6
-        const scratch = t7
-        if LARGE_TYPED_ARRAYS
-            loadq JSArrayBufferView::m_length[base], length
-            bqaeq index, length, slowPath
-        else
-            loadi JSArrayBufferView::m_length[base], length
-            biaeq index, length, slowPath
-        end
-    else
-        # length and scratch are intentionally undefined on this branch because they are not used on other platforms.
-        if LARGE_TYPED_ARRAYS
-            bqaeq index, JSArrayBufferView::m_length[base], slowPath
-        else
-            biaeq index, JSArrayBufferView::m_length[base], slowPath
-        end
-    end
-
+    btbnz JSArrayBufferView::m_mode[base], (constexpr isResizableOrGrowableSharedMode), slowPath
     if LARGE_TYPED_ARRAYS
+        bqaeq index, JSArrayBufferView::m_length[base], slowPath
         bqbeq index, SmallTypedArrayMaxLength, .smallTypedArray
-        setLargeTypedArray()
+        setLargeTypedArray(t3)
 .smallTypedArray:
+    else
+        biaeq index, JSArrayBufferView::m_length[base], slowPath
     end
 
     loadp JSArrayBufferView::m_vector[base], t3
+    # length and scratch are intentionally undefined on this branch because they are not used on other platforms.
+    if ARM64E
+        const length = t6
+        const scratch = t7
+        loadq JSArrayBufferView::m_length[base], length
+    end
     cagedPrimitive(t3, length, base, scratch)
 
     # Now bisect through the various types:
@@ -1478,7 +1469,7 @@ end
 macro varReadOnlyCheck(slowPath, scratch)
     loadp CodeBlock[cfr], scratch
     loadp CodeBlock::m_globalObject[scratch], scratch
-    loadp JSGlobalObject::m_varReadOnlyWatchpoint[scratch], scratch
+    loadp JSGlobalObject::m_varReadOnlyWatchpointSet[scratch], scratch
     bbeq WatchpointSet::m_state[scratch], IsInvalidated, slowPath
 end
 
@@ -2756,6 +2747,14 @@ op(wasm_function_prologue, macro ()
 end)
 
 op(wasm_function_prologue_no_tls, macro ()
+    crash()
+end)
+
+op(wasm_function_prologue_simd, macro ()
+    crash()
+end)
+
+op(wasm_function_prologue_no_tls_simd, macro ()
     crash()
 end)
 

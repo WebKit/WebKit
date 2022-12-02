@@ -268,6 +268,7 @@ public:
         ViewportConstraints                         = 1LLU << 42,
         // ScrollingStateOverflowScrollProxyNode
         OverflowScrollingNode                       = 1LLU << 43,
+        KeyboardScrollData                          = 1LLU << 44,
     };
     
     bool hasChangedProperties() const { return !m_changedProperties.isEmpty(); }

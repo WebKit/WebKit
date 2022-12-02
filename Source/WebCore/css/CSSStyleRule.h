@@ -22,14 +22,17 @@
 #pragma once
 
 #include "CSSRule.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class CSSStyleDeclaration;
+class DeclaredStylePropertyMap;
+class StylePropertyMap;
 class StyleRuleCSSStyleDeclaration;
 class StyleRule;
 
-class CSSStyleRule final : public CSSRule {
+class CSSStyleRule final : public CSSRule, public CanMakeWeakPtr<CSSStyleRule> {
 public:
     static Ref<CSSStyleRule> create(StyleRule& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSStyleRule(rule, sheet)); }
 
@@ -43,6 +46,8 @@ public:
     // FIXME: Not CSSOM. Remove.
     StyleRule& styleRule() const { return m_styleRule.get(); }
 
+    StylePropertyMap& styleMap();
+
 private:
     CSSStyleRule(StyleRule&, CSSStyleSheet*);
 
@@ -53,6 +58,7 @@ private:
     String generateSelectorText() const;
 
     Ref<StyleRule> m_styleRule;
+    Ref<DeclaredStylePropertyMap> m_styleMap;
     RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 

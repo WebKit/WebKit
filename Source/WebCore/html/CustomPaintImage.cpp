@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,25 +31,26 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleImageValue.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "CustomPaintCanvas.h"
 #include "GraphicsContext.h"
+#include "HashMapStylePropertyMapReadOnly.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "JSCSSPaintCallback.h"
 #include "JSDOMExceptionHandling.h"
+#include "MainThreadStylePropertyMapReadOnly.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
-#include "StylePropertyMap.h"
-
 #include <JavaScriptCore/ConstructData.h>
 
 namespace WebCore {
 
-CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
+CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, const RenderElement& element, const Vector<String>& arguments)
     : m_paintDefinition(definition)
     , m_inputProperties(definition.inputProperties)
     , m_element(element)
@@ -60,75 +61,19 @@ CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& def
 
 CustomPaintImage::~CustomPaintImage() = default;
 
-static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Element& element)
+static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
 {
     ComputedStyleExtractor extractor(&element);
 
-    if (isCustomPropertyName(name)) {
-        auto value = extractor.customPropertyValue(name);
-        return StylePropertyMapReadOnly::customPropertyValueOrDefault(name, element.document(), value.get(), &element);
-    }
+    if (isCustomPropertyName(name))
+        return extractor.customPropertyValue(name);
 
     CSSPropertyID propertyID = cssPropertyID(name);
     if (!propertyID)
         return nullptr;
 
-    auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
-    return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
+    return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
 }
-
-class HashMapStylePropertyMap final : public StylePropertyMap {
-public:
-    static Ref<StylePropertyMap> create(HashMap<AtomString, RefPtr<CSSStyleValue>>&& map)
-    {
-        return adoptRef(*new HashMapStylePropertyMap(WTFMove(map)));
-    }
-
-    static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Element& element)
-    {
-        ComputedStyleExtractor extractor(&element);
-
-        if (isCustomPropertyName(name)) {
-            auto value = extractor.customPropertyValue(name);
-            return StylePropertyMapReadOnly::customPropertyValueOrDefault(name, element.document(), value.get(), &element);
-        }
-
-        CSSPropertyID propertyID = cssPropertyID(name);
-        if (!propertyID)
-            return nullptr;
-
-        auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
-        return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
-    }
-
-private:
-    explicit HashMapStylePropertyMap(HashMap<AtomString, RefPtr<CSSStyleValue>>&& map)
-        : m_map(WTFMove(map))
-    {
-    }
-
-    void clearElement() override { }
-
-    ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const final { return m_map.get(property); }
-
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const final
-    {
-        // FIXME: implement.
-        return Vector<RefPtr<CSSStyleValue>>();
-    }
-
-    unsigned size() const final { return m_map.size(); }
-
-    Vector<StylePropertyMapEntry> entries() const final
-    {
-        // FIXME: implement.
-        return { };
-    }
-
-    ExceptionOr<bool> has(const AtomString& property) const final { return m_map.contains(property); }
-
-    HashMap<AtomString, RefPtr<CSSStyleValue>> m_map;
-};
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
 {
@@ -151,7 +96,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     auto canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
     RefPtr context = canvas->getContext();
 
-    HashMap<AtomString, RefPtr<CSSStyleValue>> propertyValues;
+    HashMap<AtomString, RefPtr<CSSValue>> propertyValues;
 
     if (auto* element = m_element->element()) {
         for (auto& name : m_inputProperties)
@@ -159,7 +104,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     }
 
     auto size = CSSPaintSize::create(destSize.width(), destSize.height());
-    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMap::create(WTFMove(propertyValues));
+    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMapReadOnly::create(WTFMove(propertyValues));
 
     auto& vm = paintConstructor.getObject()->vm();
     JSC::JSLockHolder lock(vm);

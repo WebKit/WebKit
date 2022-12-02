@@ -89,7 +89,7 @@ private:
     // Background thread variables.
     Vector<Ref<AudioSampleDataSource>> m_renderSources;
     RefPtr<AudioSampleDataSource> m_mixedSource;
-    CAAudioStreamDescription m_outputStreamDescription;
+    std::optional<CAAudioStreamDescription> m_outputStreamDescription;
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
     size_t m_sampleCount { 0 };
     size_t m_writeCount { 0 };

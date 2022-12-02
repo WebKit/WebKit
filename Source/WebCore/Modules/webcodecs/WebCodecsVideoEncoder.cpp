@@ -29,13 +29,17 @@
 #if ENABLE(WEB_CODECS)
 
 #include "DOMException.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "JSWebCodecsVideoEncoderSupport.h"
 #include "Logging.h"
+#include "WebCodecsEncodedVideoChunk.h"
 #include "WebCodecsEncodedVideoChunkMetadata.h"
 #include "WebCodecsEncodedVideoChunkOutputCallback.h"
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsVideoEncoderConfig.h"
 #include "WebCodecsVideoEncoderEncodeOptions.h"
+#include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -92,6 +96,22 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&&
 
     m_state = WebCodecsCodecState::Configured;
     m_isKeyChunkRequired = true;
+
+    if (m_internalEncoder) {
+        queueControlMessageAndProcess([this, config]() mutable {
+            m_isMessageQueueBlocked = true;
+            m_internalEncoder->flush([this, weakedThis = WeakPtr { *this }, config = WTFMove(config)]() mutable {
+                if (!weakedThis)
+                    return;
+
+                if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
+                    return;
+
+                m_isMessageQueueBlocked = false;
+                processControlMessageQueue();
+            });
+        });
+    }
 
     queueControlMessageAndProcess([this, config = WTFMove(config), identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
@@ -161,7 +181,7 @@ WebCodecsEncodedVideoChunkMetadata WebCodecsVideoEncoder::createEncodedChunkMeta
         m_activeConfiguration.visibleHeight ? m_activeConfiguration.visibleHeight : m_baseConfiguration.height,
         m_activeConfiguration.displayWidth ? m_activeConfiguration.displayWidth : m_baseConfiguration.displayWidth,
         m_activeConfiguration.displayHeight ? m_activeConfiguration.displayHeight : m_baseConfiguration.displayHeight,
-        { },
+        m_activeConfiguration.colorSpace,
         HardwareAcceleration::NoPreference,
         { }
     };
@@ -193,11 +213,14 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
 
     ++m_encodeQueueSize;
     queueControlMessageAndProcess([this, internalFrame = internalFrame.releaseNonNull(), timestamp = frame->timestamp(), duration = frame->duration(), options = WTFMove(options)]() mutable {
+        ++m_beingEncodedQueueSize;
         --m_encodeQueueSize;
+        scheduleDequeueEvent();
         m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame, [this, weakedThis = WeakPtr { *this }](auto&& result) {
             if (!weakedThis)
                 return;
 
+            --m_beingEncodedQueueSize;
             if (!result.isNull()) {
                 if (auto* context = scriptExecutionContext())
                     context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("VideoEncoder encode failed: ", result));
@@ -209,21 +232,24 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
     return { };
 }
 
-ExceptionOr<void> WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
+void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
 {
-    if (m_state != WebCodecsCodecState::Configured)
-        return Exception { InvalidStateError, "VideoEncoder is not configured"_s };
+    if (m_state != WebCodecsCodecState::Configured) {
+        promise->reject(Exception { InvalidStateError, "VideoEncoder is not configured"_s });
+        return;
+    }
 
     m_pendingFlushPromises.append(promise.copyRef());
+    m_isFlushing = true;
     queueControlMessageAndProcess([this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalEncoder->flush([this, weakedThis = WeakPtr { *this }, clearFlushPromiseCount] {
-            if (!weakedThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
+        m_internalEncoder->flush([this, weakThis = WeakPtr { *this }, clearFlushPromiseCount] {
+            if (!weakThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
 
             m_pendingFlushPromises.takeFirst()->resolve();
+            m_isFlushing = !m_pendingFlushPromises.isEmpty();
         });
     });
-    return { };
 }
 
 ExceptionOr<void> WebCodecsVideoEncoder::reset()
@@ -355,7 +381,7 @@ const char* WebCodecsVideoEncoder::activeDOMObjectName() const
 
 bool WebCodecsVideoEncoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && m_encodeQueueSize;
+    return m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_beingEncodedQueueSize || m_isFlushing);
 }
 
 } // namespace WebCore

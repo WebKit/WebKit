@@ -682,7 +682,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const WebCore::StringWithDire
     }
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>, std::optional<WebCore::UsedLegacyTLS>)
+void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>, std::optional<WebCore::UsedLegacyTLS>, std::optional<WebCore::WasPrivateRelayed>)
 {
     // Tell the client we've committed this URL.
     ASSERT([m_webFrame->_private->webFrameView documentView] != nil);
@@ -1093,17 +1093,6 @@ void WebFrameLoaderClient::didRunInsecureContent(WebCore::SecurityOrigin& origin
     if (implementations->didRunInsecureContentFunc) {
         RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
         CallFrameLoadDelegate(implementations->didRunInsecureContentFunc, webView, @selector(webView:didRunInsecureContent:), webSecurityOrigin.get());
-    }
-}
-
-void WebFrameLoaderClient::didDetectXSS(const URL& insecureURL, bool didBlockEntirePage)
-{
-    WebView *webView = getWebView(m_webFrame.get());   
-    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations->didDetectXSSFunc) {
-        // FIXME: must pass didBlockEntirePage if we want to do more on mac than just pass tests.
-        NSURL* insecureNSURL = insecureURL;
-        CallFrameLoadDelegate(implementations->didDetectXSSFunc, webView, @selector(webView:didDetectXSS:), insecureNSURL);
     }
 }
 
@@ -1902,34 +1891,13 @@ void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Exp
     completionHandler(makeUnexpected(WebCore::internalError(url)));
 }
 
-String WebFrameLoaderClient::overrideMediaType() const
+AtomString WebFrameLoaderClient::overrideMediaType() const
 {
     NSString* overrideType = [getWebView(m_webFrame.get()) mediaStyle];
     if (overrideType)
-        return overrideType;
-    return String();
+        return AtomString(overrideType);
+    return nullAtom();
 }
-
-#if ENABLE(WEBGL)
-static bool shouldBlockWebGL()
-{
-#if PLATFORM(MAC)
-    return WebCore::WebGLBlocklist::shouldBlockWebGL();
-#else
-    return false;
-#endif
-}
-
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const URL&) const
-{
-    return shouldBlockWebGL() ? WebCore::WebGLLoadPolicy::WebGLBlockCreation : WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-}
-
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const URL&) const
-{
-    return shouldBlockWebGL() ? WebCore::WebGLLoadPolicy::WebGLBlockCreation : WebCore::WebGLLoadPolicy::WebGLAllowCreation;
-}
-#endif // ENABLE(WEBGL)
 
 void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld& world)
 {

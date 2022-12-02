@@ -2,6 +2,6 @@
 PASS StylePropertyMap iterates properties in correct order
 PASS StylePropertyMap iterator returns CSS properties with the correct CSSStyleValue
 PASS StylePropertyMap iterator returns list-valued properties with the correct CSSStyleValue
-FAIL StylePropertyMap iterator returns custom properties with the correct CSSStyleValue assert_equals: expected " A" but got "A"
+PASS StylePropertyMap iterator returns custom properties with the correct CSSStyleValue
 PASS Computed StylePropertyMap sorts custom properties in increasing code-point order
 

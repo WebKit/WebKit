@@ -48,55 +48,33 @@ using namespace WebCore;
 static constexpr size_t defaultStreamSize = 1 << 21;
 
 namespace {
-template<typename T0, typename T1, typename S0, typename S1>
-IPC::ArrayReferenceTuple<T0, T1> toArrayReferenceTuple(GCGLSpanTuple<const S0, const S1> spanTuple)
+
+template<typename... Types, typename... SpanTupleTypes, size_t... Indices>
+IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<SpanTupleTypes...>& spanTuple, std::index_sequence<Indices...>)
 {
-    return IPC::ArrayReferenceTuple {
-        reinterpret_cast<const T0*>(spanTuple.data0),
-        reinterpret_cast<const T1*>(spanTuple.data1),
+    return IPC::ArrayReferenceTuple<Types...> {
+        reinterpret_cast<const std::tuple_element_t<Indices, std::tuple<Types...>>*>(spanTuple.template data<Indices>())...,
         spanTuple.bufSize };
 }
-template<typename T0, typename T1, typename T2, typename S0, typename S1, typename S2>
-IPC::ArrayReferenceTuple<T0, T1, T2> toArrayReferenceTuple(GCGLSpanTuple<const S0, const S1, const S2> spanTuple)
+
+template<typename... Types, typename... SpanTupleTypes>
+IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<SpanTupleTypes...>& spanTuple)
 {
-    return IPC::ArrayReferenceTuple {
-        reinterpret_cast<const T0*>(spanTuple.data0),
-        reinterpret_cast<const T1*>(spanTuple.data1),
-        reinterpret_cast<const T2*>(spanTuple.data2),
-        spanTuple.bufSize };
+    static_assert(sizeof...(Types) == sizeof...(SpanTupleTypes));
+    return toArrayReferenceTuple<Types...>(spanTuple, std::index_sequence_for<Types...> { });
 }
-template<typename T0, typename T1, typename T2, typename T3, typename S0, typename S1, typename S2, typename S3>
-IPC::ArrayReferenceTuple<T0, T1, T2, T3> toArrayReferenceTuple(GCGLSpanTuple<const S0, const S1, const S2, const S3> spanTuple)
-{
-    return IPC::ArrayReferenceTuple {
-        reinterpret_cast<const T0*>(spanTuple.data0),
-        reinterpret_cast<const T1*>(spanTuple.data1),
-        reinterpret_cast<const T2*>(spanTuple.data2),
-        reinterpret_cast<const T3*>(spanTuple.data3),
-        spanTuple.bufSize };
-}
-template<typename T0, typename T1, typename T2, typename T3, typename T4, typename S0, typename S1, typename S2, typename S3, typename S4>
-IPC::ArrayReferenceTuple<T0, T1, T2, T3, T4> toArrayReferenceTuple(GCGLSpanTuple<const S0, const S1, const S2, const S3, const S4> spanTuple)
-{
-    return IPC::ArrayReferenceTuple {
-        reinterpret_cast<const T0*>(spanTuple.data0),
-        reinterpret_cast<const T1*>(spanTuple.data1),
-        reinterpret_cast<const T2*>(spanTuple.data2),
-        reinterpret_cast<const T3*>(spanTuple.data3),
-        reinterpret_cast<const T4*>(spanTuple.data4),
-        spanTuple.bufSize };
-}
+
 }
 
 RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection& gpuProcessConnection, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
     : GraphicsContextGL(attributes)
     , m_gpuProcessConnection(&gpuProcessConnection)
-    , m_streamConnection(gpuProcessConnection.connection(), defaultStreamSize)
 {
+    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize);
+    m_streamConnection = WTFMove(clientConnection);
     m_gpuProcessConnection->addClient(*this);
-    m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64(), *this);
-    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, m_streamConnection.streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_streamConnection.open();
+    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_streamConnection->open(*this);
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
@@ -365,7 +343,7 @@ void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& 
         return;
     }
     ASSERT(!m_didInitialize);
-    m_streamConnection.setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+    m_streamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
     initialize(availableExtensions, requestedExtensions);
 }
@@ -411,7 +389,7 @@ void RemoteGraphicsContextGLProxy::waitUntilInitialized()
         return;
     if (m_didInitialize)
         return;
-    if (m_streamConnection.waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_graphicsContextGLIdentifier, defaultSendTimeout))
+    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_graphicsContextGLIdentifier, defaultSendTimeout))
         return;
     markContextLost();
 }
@@ -427,16 +405,14 @@ void RemoteGraphicsContextGLProxy::abandonGpuProcess()
 {
     auto gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr);
     gpuProcessConnection->removeClient(*this);
-    gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
     m_gpuProcessConnection = nullptr;
 }
 
 void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
 {
     if (auto gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr)) {
-        m_streamConnection.invalidate();
+        m_streamConnection->invalidate();
         gpuProcessConnection->removeClient(*this);
-        gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
         gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(m_graphicsContextGLIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     ASSERT(isContextLost());

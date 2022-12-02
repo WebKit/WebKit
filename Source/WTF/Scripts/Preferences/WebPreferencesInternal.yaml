@@ -97,6 +97,18 @@ AsyncOverflowScrollingEnabled:
     WebCore:
       default: false
 
+AttachmentElementEnabled:
+  type: bool
+  webcoreBinding: DeprecatedGlobalSettings
+  humanReadableName: "Attachment Element"
+  humanReadableDescription: "Enable rendering of <attachment> elements"
+  condition: ENABLE(ATTACHMENT_ELEMENT)
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultAttachmentElementEnabled()
+    WebKit:
+      default: false
+
 AutomaticLiveResizeEnabled:
   type: bool
   humanReadableName: "Enable Automatic Live Resize"
@@ -106,6 +118,20 @@ AutomaticLiveResizeEnabled:
   defaultValue:
     WebKit:
       "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      default: false
+
+BackgroundWebContentRunningBoardThrottlingEnabled:
+  type: bool
+  humanReadableName: "Enable background web content throttling via RunningBoard"
+  humanReadableDescription: "Enable background web content throttling via RunningBoard"
+  exposed: [ WebKit ]
+  condition: PLATFORM(MAC) && USE(RUNNINGBOARD)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
       default: false
 
 BlockIOKitInWebContentSandbox:
@@ -275,7 +301,8 @@ EventHandlerDrivenSmoothKeyboardScrollingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA) || PLATFORM(WIN)": true
+      "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false
@@ -387,6 +414,20 @@ GetUserMediaRequiresFocus:
       default: true
     WebCore:
       default: true
+
+GraphicsContextFiltersEnabled:
+   type: bool
+   webcoreOnChange: setNeedsRelayoutAllFrames
+   humanReadableName: "GraphicsContext Filter Rendering"
+   humanReadableDescription: "GraphicsContext Filter Rendering"
+   condition: USE(GRAPHICS_CONTEXT_FILTERS)
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+     WebCore:
+       default: false
 
 ICECandidateFilteringEnabled:
   type: bool
@@ -873,6 +914,16 @@ SampleBufferContentKeySessionSupportEnabled:
       default: false
     WebCore:
       default: false
+
+SanitizeLookalikeCharactersInLinksEnabled:
+  type: bool
+  humanReadableName: "Sanitize Lookalike Characters in Links"
+  humanReadableDescription: "Enable Sanitization for Lookalike Characters in Links"
+  webcoreBinding: none
+  condition: ENABLE(NETWORK_CONNECTION_INTEGRITY)
+  defaultValue:
+    WebKit:
+      default: true
 
 ScrollingPerformanceTestingEnabled:
   type: bool

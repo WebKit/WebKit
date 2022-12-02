@@ -1,0 +1,5 @@
+
+
+FAIL Fully unlocking the screen orientation causes a pending lock to be aborted promise_rejects_dom: function "function () { throw e }" threw object "NotSupportedError: Screen orientation locking is not supported" that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL Fully unlocking the screen orientation causes a pending lock in a nested browsing context to be aborted promise_rejects_dom: function "function () { throw e }" threw object "SecurityError: Locking the screen orientation is only allowed when in fullscreen" that is not a DOMException AbortError: property "code" is equal to 18, expected 20
+

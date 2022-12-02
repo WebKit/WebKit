@@ -42,13 +42,16 @@
 
 namespace WebCore {
 
-Ref<MediaKeySystemAccess> MediaKeySystemAccess::create(const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
+Ref<MediaKeySystemAccess> MediaKeySystemAccess::create(Document& document, const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
 {
-    return adoptRef(*new MediaKeySystemAccess(keySystem, WTFMove(configuration), WTFMove(implementation)));
+    auto access = adoptRef(*new MediaKeySystemAccess(document, keySystem, WTFMove(configuration), WTFMove(implementation)));
+    access->suspendIfNeeded();
+    return access;
 }
 
-MediaKeySystemAccess::MediaKeySystemAccess(const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
-    : m_keySystem(keySystem)
+MediaKeySystemAccess::MediaKeySystemAccess(Document& document, const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
+    : ActiveDOMObject(document)
+    , m_keySystem(keySystem)
     , m_configuration(new MediaKeySystemConfiguration(WTFMove(configuration)))
     , m_implementation(WTFMove(implementation))
 {
@@ -64,7 +67,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
     // When this method is invoked, the user agent must run the following steps:
     // 1. Let promise be a new promise.
     // 2. Run the following steps in parallel:
-    document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }, promise = WTFMove(promise)] () mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }, promise = WTFMove(promise)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

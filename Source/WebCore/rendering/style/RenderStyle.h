@@ -125,6 +125,8 @@ class TransformationMatrix;
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 
+struct TextEdge;
+
 using PseudoStyleCache = Vector<std::unique_ptr<RenderStyle>, 4>;
 
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<const T&>(u); }
@@ -371,6 +373,7 @@ public:
     float specifiedFontSize() const;
     float computedFontSize() const;
     unsigned computedFontPixelSize() const;
+    std::optional<float> fontSizeAdjust() const { return fontDescription().fontSizeAdjust(); }
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
     FontVariationSettings fontVariationSettings() const { return fontDescription().variationSettings(); }
@@ -394,6 +397,9 @@ public:
     TextIndentLine textIndentLine() const { return static_cast<TextIndentLine>(m_rareInheritedData->textIndentLine); }
     TextIndentType textIndentType() const { return static_cast<TextIndentType>(m_rareInheritedData->textIndentType); }
     TextJustify textJustify() const { return static_cast<TextJustify>(m_rareInheritedData->textJustify); }
+
+    LeadingTrim leadingTrim() const { return static_cast<LeadingTrim>(m_rareNonInheritedData->leadingTrim); }
+    TextEdge textEdge() const;
 
     const Length& wordSpacing() const;
     float letterSpacing() const;
@@ -549,6 +555,8 @@ public:
 
     ContentVisibility contentVisibility() const { return static_cast<ContentVisibility>(m_rareNonInheritedData->contentVisibility); }
 
+    bool effectiveSkipsContent() const { return m_rareInheritedData->effectiveSkipsContent; }
+
     ContainIntrinsicSizeType containIntrinsicWidthType() const { return static_cast<ContainIntrinsicSizeType>(m_rareNonInheritedData->containIntrinsicWidthType); }
     ContainIntrinsicSizeType containIntrinsicHeightType() const { return static_cast<ContainIntrinsicSizeType>(m_rareNonInheritedData->containIntrinsicHeightType); }
     std::optional<Length> containIntrinsicWidth() const { return m_rareNonInheritedData->containIntrinsicWidth; }
@@ -578,8 +586,8 @@ public:
     const StyleSelfAlignmentData& justifyItems() const { return m_rareNonInheritedData->justifyItems; }
     const StyleSelfAlignmentData& justifySelf() const { return m_rareNonInheritedData->justifySelf; }
 
-    const Vector<GridTrackSize>& gridColumns() const { return m_rareNonInheritedData->grid->gridColumns(); }
-    const Vector<GridTrackSize>& gridRows() const { return m_rareNonInheritedData->grid->gridRows(); }
+    const Vector<GridTrackSize>& gridColumnTrackSizes() const { return m_rareNonInheritedData->grid->gridColumnTrackSizes(); }
+    const Vector<GridTrackSize>& gridRowTrackSizes() const { return m_rareNonInheritedData->grid->gridRowTrackSizes(); }
     const GridTrackList& gridColumnList() const { return m_rareNonInheritedData->grid->columns(); }
     const GridTrackList& gridRowList() const { return m_rareNonInheritedData->grid->rows(); }
     const Vector<GridTrackSize>& gridAutoRepeatColumns() const { return m_rareNonInheritedData->grid->gridAutoRepeatColumns(); }
@@ -604,6 +612,8 @@ public:
     GridAutoFlow gridAutoFlow() const { return static_cast<GridAutoFlow>(m_rareNonInheritedData->grid->gridAutoFlow); }
     bool gridSubgridRows() const { return m_rareNonInheritedData->grid->subgridRows(); }
     bool gridSubgridColumns() const { return m_rareNonInheritedData->grid->subgridColumns(); }
+    bool gridMasonryRows() const { return m_rareNonInheritedData->grid->masonryRows(); }
+    bool gridMasonryColumns() const { return m_rareNonInheritedData->grid->masonryColumns(); }
     bool isGridAutoFlowDirectionRow() const { return (m_rareNonInheritedData->grid->gridAutoFlow & InternalAutoFlowDirectionRow); }
     bool isGridAutoFlowDirectionColumn() const { return (m_rareNonInheritedData->grid->gridAutoFlow & InternalAutoFlowDirectionColumn); }
     bool isGridAutoFlowAlgorithmSparse() const { return (m_rareNonInheritedData->grid->gridAutoFlow & InternalAutoFlowAlgorithmSparse); }
@@ -884,10 +894,6 @@ public:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;
 
-#if ENABLE(CSS_TRAILING_WORD)
-    TrailingWord trailingWord() const { return TrailingWord::Auto; }
-#endif
-
 #if ENABLE(APPLE_PAY)
     ApplePayButtonStyle applePayButtonStyle() const { return static_cast<ApplePayButtonStyle>(m_rareNonInheritedData->applePayButtonStyle); }
     ApplePayButtonType applePayButtonType() const { return static_cast<ApplePayButtonType>(m_rareNonInheritedData->applePayButtonType); }
@@ -1019,6 +1025,7 @@ public:
 
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);
+    void setFontSizeAdjust(std::optional<float>);
 
     void setFontVariationSettings(FontVariationSettings);
     void setFontWeight(FontSelectionValue);
@@ -1050,6 +1057,9 @@ public:
     void setTextIndentLine(TextIndentLine v) { SET_VAR(m_rareInheritedData, textIndentLine, static_cast<unsigned>(v)); }
     void setTextIndentType(TextIndentType v) { SET_VAR(m_rareInheritedData, textIndentType, static_cast<unsigned>(v)); }
     void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, static_cast<unsigned>(v)); }
+
+    void setLeadingTrim(LeadingTrim value) { SET_VAR(m_rareNonInheritedData, leadingTrim, static_cast<unsigned>(value)); }
+    void setTextEdge(TextEdge);
 
 #if ENABLE(TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(Length&&);
@@ -1111,6 +1121,8 @@ public:
     void setContainIntrinsicHeight(std::optional<Length> height) { SET_VAR(m_rareNonInheritedData, containIntrinsicHeight, height); }
 
     void setContentVisibility(ContentVisibility value) { SET_VAR(m_rareNonInheritedData, contentVisibility, static_cast<unsigned>(value)); }
+
+    void setEffectiveSkipsContent(bool effectiveSkipsContent) { SET_VAR(m_rareInheritedData, effectiveSkipsContent, effectiveSkipsContent); }
 
     void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
     void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }
@@ -1275,7 +1287,7 @@ public:
     void setColumnWidth(float f) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoWidth, false); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, width, f); }
     void setHasAutoColumnWidth() { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoWidth, true); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, width, 0); }
     void setColumnCount(unsigned short c) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoCount, false); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, count, c); }
-    void setHasAutoColumnCount() { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoCount, true); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, count, 0); }
+    void setHasAutoColumnCount() { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoCount, true); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, count, initialColumnCount()); }
     void setColumnFill(ColumnFill columnFill) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, fill, static_cast<unsigned>(columnFill)); }
     void setColumnGap(GapLength&& gapLength) { SET_VAR(m_rareNonInheritedData, columnGap, WTFMove(gapLength)); }
     void setRowGap(GapLength&& gapLength) { SET_VAR(m_rareNonInheritedData, rowGap, WTFMove(gapLength)); }
@@ -1401,10 +1413,6 @@ public:
 
     void setTextSecurity(TextSecurity security) { SET_VAR(m_rareInheritedData, textSecurity, static_cast<unsigned>(security)); }
     void setInputSecurity(InputSecurity security) { SET_VAR(m_rareNonInheritedData, inputSecurity, static_cast<unsigned>(security)); }
-
-#if ENABLE(CSS_TRAILING_WORD)
-    void setTrailingWord(TrailingWord) { }
-#endif
 
 #if ENABLE(APPLE_PAY)
     void setApplePayButtonStyle(ApplePayButtonStyle style) { SET_VAR(m_rareNonInheritedData, applePayButtonStyle, static_cast<unsigned>(style)); }
@@ -1666,6 +1674,8 @@ public:
     static Length initialMargin() { return Length(LengthType::Fixed); }
     static Length initialPadding() { return Length(LengthType::Fixed); }
     static Length initialTextIndent() { return Length(LengthType::Fixed); }
+    static LeadingTrim initialLeadingTrim() { return LeadingTrim::Normal; }
+    static TextEdge initialTextEdge();
     static Length initialZeroLength() { return Length(LengthType::Fixed); }
     static Length initialOneLength() { return Length(1, LengthType::Fixed); }
     static unsigned short initialWidows() { return 2; }
@@ -1809,18 +1819,14 @@ public:
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
 
-#if ENABLE(CSS_TRAILING_WORD)
-    static TrailingWord initialTrailingWord() { return TrailingWord::Auto; }
-#endif
-
 #if ENABLE(APPLE_PAY)
     static ApplePayButtonStyle initialApplePayButtonStyle() { return ApplePayButtonStyle::Black; }
     static ApplePayButtonType initialApplePayButtonType() { return ApplePayButtonType::Plain; }
 #endif
 
     // The initial value is 'none' for grid tracks.
-    static Vector<GridTrackSize> initialGridColumns() { return Vector<GridTrackSize>(); }
-    static Vector<GridTrackSize> initialGridRows() { return Vector<GridTrackSize>(); }
+    static Vector<GridTrackSize> initialGridColumnTrackSizes() { return Vector<GridTrackSize>(); }
+    static Vector<GridTrackSize> initialGridRowTrackSizes() { return Vector<GridTrackSize>(); }
 
     static Vector<GridTrackSize> initialGridAutoRepeatTracks() { return Vector<GridTrackSize>(); }
     static unsigned initialGridAutoRepeatInsertionPoint() { return 0; }

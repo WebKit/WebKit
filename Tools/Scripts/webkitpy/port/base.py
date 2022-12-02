@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2013-2019 Apple Inc. All rights reserved.
 #
@@ -26,6 +27,23 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Copyright (c) 2017 Michał Bultrowicz (https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12)
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Abstract base class of Port-specific entry points for the layout tests
 test infrastructure (the Port and Driver classes)."""
@@ -36,7 +54,9 @@ import logging
 import os
 import optparse
 import re
+import socket
 import sys
+import time
 
 from collections import OrderedDict
 from webkitcorepy import string_utils, decorators
@@ -655,9 +675,11 @@ class Port(object):
     def perf_tests_dir(self):
         return self._webkit_finder.perf_tests_dir()
 
-    def skipped_layout_tests(self, test_list, device_type=None):
+    def skipped_layout_tests(self, device_type=None):
         """Returns tests skipped outside of the TestExpectations files."""
-        return set(self._tests_for_other_platforms(device_type=device_type)).union(self._skipped_tests_for_unsupported_features(test_list))
+        return set(self._tests_for_other_platforms(device_type=device_type)) | set(
+            self.get_option("ignore_tests", [])
+        )
 
     @memoized
     def skipped_perf_tests(self):
@@ -971,6 +993,24 @@ class Port(object):
 
         Port._web_platform_test_server = web_platform_test_server.WebPlatformTestServer(self, "wptwk")
         Port._web_platform_test_server.start()
+
+        # Wait until a 5 seconds timeout happens or the HTTP server has actually finally started.
+        # https://gist.github.com/butla/2d9a4c0f35ea47b7452156c96a4e7b12
+        port = Port._web_platform_test_server.first_port(self)
+        if port is None:
+            return
+        host = 'localhost'
+        start_time = time.perf_counter()
+        timeout = 5
+        while True:
+            try:
+                with socket.create_connection((host, port), timeout=timeout):
+                    break
+            except OSError:
+                time.sleep(0.01)
+                if time.perf_counter() - start_time >= timeout:
+                    raise TimeoutError('Waited too long for the port {} on host {} to start accepting '
+                                       'connections.'.format(port, host))
 
     def web_platform_test_server_doc_root(self):
         return web_platform_test_server.doc_root(self).replace('\\', self.TEST_PATH_SEPARATOR) + self.TEST_PATH_SEPARATOR
@@ -1451,9 +1491,6 @@ class Port(object):
                 basename = self._filesystem.basename(entry)
                 dirs_to_skip.append('platform/%s' % basename)
         return dirs_to_skip
-
-    def _skipped_tests_for_unsupported_features(self, test_list):
-        return []
 
     def _wk2_port_name(self):
         # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc,

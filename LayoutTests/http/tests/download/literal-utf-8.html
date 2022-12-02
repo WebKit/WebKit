@@ -3,7 +3,9 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.setCustomPolicyDelegate(true, true);
+    if (testRunner.skipPolicyDelegateNotifyDone) { testRunner.skipPolicyDelegateNotifyDone() }
 }
+onload = () => { if (window.testRunner) { testRunner.notifyDone() } }
 </script>
 <p>Downloaded file name should be "SUóóåSS.txt" (letters "CCE" are Cyrillic).</p>
 <iframe src="resources/literal-utf-8.py"></iframe>

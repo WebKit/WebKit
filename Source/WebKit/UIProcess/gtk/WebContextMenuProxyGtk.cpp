@@ -261,6 +261,16 @@ Vector<Ref<WebContextMenuItem>> WebContextMenuProxyGtk::proposedItems() const
     return proposedAPIItems;
 }
 
+void WebContextMenuProxyGtk::show()
+{
+    if (m_context.type() != ContextMenuContext::Type::ContextMenu) {
+        useContextMenuItems(proposedItems());
+        return;
+    }
+
+    WebContextMenuProxy::show();
+}
+
 void WebContextMenuProxyGtk::showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&& items)
 {
     if (!items.isEmpty())

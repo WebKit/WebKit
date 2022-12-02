@@ -57,6 +57,8 @@ public:
     float deviceScaleFactor() const;
 
     LayerHostingMode layerHostingMode() const;
+    
+    std::optional<WebCore::DestinationColorSpace> displayColorSpace() const;
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);
 

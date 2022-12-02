@@ -179,7 +179,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ScrollBy(uint32_t scrollDirection, enum:uint8_t WebCore::ScrollGranularity scrollGranularity)
     CenterSelectionInVisibleArea()
 
-    GoToBackForwardItem(uint64_t navigationID, struct WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:uint8_t WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<WebKit::WebsitePoliciesData> websitePolicies, bool lastNavigationWasAppInitiated, std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume)
+    GoToBackForwardItem(uint64_t navigationID, WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:uint8_t WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<WebKit::WebsitePoliciesData> websitePolicies, bool lastNavigationWasAppInitiated, std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, std::optional<String> topPrivatelyControlledDomain)
     TryRestoreScrollPosition()
 
     LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)
@@ -201,7 +201,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     UpdateBackForwardListForReattach(Vector<WebKit::BackForwardListItemState> itemStates)
     SetCurrentHistoryItemForReattach(struct WebKit::BackForwardListItemState itemState)
 
-    DidRemoveBackForwardItem(struct WebCore::BackForwardItemIdentifier backForwardItemID)
+    DidRemoveBackForwardItem(WebCore::BackForwardItemIdentifier backForwardItemID)
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
     NotifyUserScripts()
@@ -211,8 +211,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision, Vector<WebKit::SandboxExtension::Handle> networkExtensionsSandboxExtensions)
 #endif
-
-    ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::FormSubmitListenerIdentifier listenerID)
 
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()
@@ -256,6 +254,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ChangeFontAttributes(WebCore::FontAttributeChanges changes)
 
     PreferencesDidChange(struct WebKit::WebPreferencesStore store)
+    PreferencesDidChangeDuringDOMPrintOperation(struct WebKit::WebPreferencesStore store)
 
     SetUserAgent(String userAgent)
     SetCustomTextEncodingName(String encodingName)
@@ -414,7 +413,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam
-    UserMediaAccessWasGranted(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::CaptureDevice audioDevice, WebCore::CaptureDevice videoDevice, String mediaDeviceIdentifierHashSalt, WebKit::SandboxExtension::Handle sandboxExtensionHandle) -> ()
+    UserMediaAccessWasGranted(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::CaptureDevice audioDevice, WebCore::CaptureDevice videoDevice, struct WebCore::MediaDeviceHashSalts mediaDeviceIdentifierHashSalts, WebKit::SandboxExtension::Handle sandboxExtensionHandle) -> ()
     UserMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier userMediaID, uint64_t reason, String invalidConstraint)
     CaptureDevicesChanged()
 #if USE(GSTREAMER)
@@ -439,11 +438,16 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Printing.
     BeginPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)
+    BeginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)
     EndPrinting()
+    EndPrintingDuringDOMPrintOperation()
     ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin)
+    ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin)
 #if PLATFORM(COCOA)
     DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmapHandle image)
+    DrawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmapHandle image)
     DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data)
+    DrawPagesToPDFDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data)
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (size_t pageCount) Synchronous
     DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (RefPtr<WebCore::SharedBuffer> data)
@@ -452,6 +456,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 #if PLATFORM(GTK)
     DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebKit::SharedMemory::Handle> data, WebCore::ResourceError error)
+    DrawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebKit::SharedMemory::Handle> data, WebCore::ResourceError error)
 #endif
 
     # Media
@@ -600,7 +605,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     URLSchemeTaskWillPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (WebCore::ResourceRequest actualRequest)
     URLSchemeTaskDidPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest)
     URLSchemeTaskDidReceiveResponse(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response)
-    URLSchemeTaskDidReceiveData(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, IPC::SharedBufferReference data)
+    URLSchemeTaskDidReceiveData(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, Ref<WebCore::SharedBuffer> data)
     URLSchemeTaskDidComplete(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceError error)
 
     SetIsSuspended(bool suspended)
@@ -654,7 +659,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
     StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules) -> ()
-    CompleteTextManipulation(Vector<WebCore::TextManipulationController::ManipulationItem> items) -> (bool allFailed, Vector<WebCore::TextManipulationController::ManipulationFailure> failures)
+    CompleteTextManipulation(Vector<WebCore::TextManipulationItem> items) -> (bool allFailed, Vector<WebCore::TextManipulationController::ManipulationFailure> failures)
 
     SetOverriddenMediaType(String mediaType)
     GetProcessDisplayName() -> (String displayName)

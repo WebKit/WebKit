@@ -92,6 +92,11 @@ class MacOSLayoutTraits extends LayoutTraits
         return true;
     }
 
+    inheritsBorderRadius()
+    {
+        return false;
+    }
+
     toString()
     {
         const mode = this.isFullscreen ? "Fullscreen" : "Inline";

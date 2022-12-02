@@ -1,6 +1,15 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'filter' to CSS-wide keywords
+FAIL Can set 'filter' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'filter' to the 'none' keyword
+PASS Setting 'filter' to a length throws TypeError
+PASS Setting 'filter' to a percent throws TypeError
+PASS Setting 'filter' to a time throws TypeError
+PASS Setting 'filter' to an angle throws TypeError
+PASS Setting 'filter' to a flexible length throws TypeError
+PASS Setting 'filter' to a number throws TypeError
+PASS Setting 'filter' to a URL throws TypeError
+PASS Setting 'filter' to a transform throws TypeError
+PASS 'filter' does not supported 'blur(2px)'
+FAIL 'filter' does not supported 'url(filters.svg) blur(4px) saturate(150%)' assert_equals: Unsupported value can be set on different element expected "url(\"filters.svg\") blur(4px) saturate(150%)" but got "url(\"filters.svg\")"
 

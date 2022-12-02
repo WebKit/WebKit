@@ -19,7 +19,7 @@ PASS Removes an animation when another animation uses a shorthand
 PASS Removes an animation that uses a shorthand
 PASS Removes an animation by another animation using logical properties
 PASS Removes an animation using logical properties
-FAIL Removes an animation by another animation using logical properties after updating the context assert_equals: expected "removed" but got "active"
+PASS Removes an animation by another animation using logical properties after updating the context
 PASS Removes an animation after updating another animation's effect's target
 PASS Removes an animation after updating its effect's target
 PASS Removes an animation after updating another animation's effect to one with a different target
@@ -27,7 +27,7 @@ PASS Removes an animation after updating its effect to one with a different targ
 PASS Does NOT remove a CSS animation tied to markup
 PASS Removes a CSS animation no longer tied to markup
 PASS Does NOT remove a CSS transition tied to markup
-FAIL Removes a CSS transition no longer tied to markup assert_equals: expected "removed" but got "active"
+PASS Removes a CSS transition no longer tied to markup
 PASS Dispatches an event when removing
 PASS Does NOT dispatch a remove event twice
 PASS Does NOT remove an animation after making a redundant change to another animation's current time

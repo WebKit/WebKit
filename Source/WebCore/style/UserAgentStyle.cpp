@@ -46,10 +46,9 @@
 #include "HTMLMediaElement.h"
 #include "HTMLObjectElement.h"
 #include "HTMLSpanElement.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "MathMLElement.h"
+#include "MediaQueryEvaluator.h"
 #include "Page.h"
-#include "Quirks.h"
 #include "RenderTheme.h"
 #include "RuleSetBuilder.h"
 #include "SVGElement.h"
@@ -75,6 +74,7 @@ StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
+StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 #if ENABLE(SERVICE_CONTROLS)
 StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
 #endif
@@ -95,15 +95,15 @@ StyleSheetContents* UserAgentStyle::legacyFormControlsIOSStyleSheet;
 StyleSheetContents* UserAgentStyle::alternateFormControlDesignStyleSheet;
 #endif
 
-static const LegacyMediaQueryEvaluator& screenEval()
+static const MQ::MediaQueryEvaluator& screenEval()
 {
-    static NeverDestroyed<const LegacyMediaQueryEvaluator> staticScreenEval(String(MAKE_STATIC_STRING_IMPL("screen")));
+    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticScreenEval(screenAtom());
     return staticScreenEval;
 }
 
-static const LegacyMediaQueryEvaluator& printEval()
+static const MQ::MediaQueryEvaluator& printEval()
 {
-    static NeverDestroyed<const LegacyMediaQueryEvaluator> staticPrintEval(String(MAKE_STATIC_STRING_IMPL("print")));
+    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticPrintEval(printAtom());
     return staticPrintEval;
 }
 
@@ -129,9 +129,9 @@ void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
             continue;
         auto& mediaRule = downcast<StyleRuleMedia>(*rule);
         auto& mediaQuery = mediaRule.mediaQueries();
-        if (screenEval().evaluate(mediaQuery, nullptr))
+        if (screenEval().evaluate(mediaQuery))
             continue;
-        if (printEval().evaluate(mediaQuery, nullptr))
+        if (printEval().evaluate(mediaQuery))
             continue;
         mediaQueryStyleSheet->parserAppendRule(mediaRule.copy());
     }
@@ -230,12 +230,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 
 #if ENABLE(FULLSCREEN_API)
     if (!fullscreenStyleSheet && element.document().fullscreenManager().isFullscreen()) {
-        StringBuilder fullscreenRules;
-        fullscreenRules.appendCharacters(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet));
-        fullscreenRules.append(RenderTheme::singleton().extraFullScreenStyleSheet());
-        if (element.document().quirks().needsBlackFullscreenBackgroundQuirk())
-            fullscreenRules.append(":-webkit-full-screen { background-color: black; }"_s);
-        fullscreenStyleSheet = parseUASheet(fullscreenRules.toString());
+        fullscreenStyleSheet = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)));
         addToDefaultStyle(*fullscreenStyleSheet);
     }
 #endif // ENABLE(FULLSCREEN_API)
@@ -253,6 +248,13 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         addToDefaultStyle(*alternateFormControlDesignStyleSheet);
     }
 #endif
+
+    if ((is<HTMLFormControlElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element)) && !element.document().settings().verticalFormControlsEnabled()) {
+        if (!horizontalFormControlsStyleSheet) {
+            horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet, sizeof(horizontalFormControlsUserAgentStyleSheet)));
+            addToDefaultStyle(*horizontalFormControlsStyleSheet);
+        }
+    }
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
     ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());

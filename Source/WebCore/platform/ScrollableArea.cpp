@@ -132,6 +132,22 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     return scrollAnimator().singleAxisScroll(axis, scrollDelta, ScrollAnimator::ScrollBehavior::RespectScrollSnap);
 }
 
+void ScrollableArea::beginKeyboardScroll(const KeyboardScroll& scrollData)
+{
+    bool startedAnimation = requestStartKeyboardScrollAnimation(scrollData);
+
+    if (startedAnimation)
+        setScrollAnimationStatus(ScrollAnimationStatus::Animating);
+}
+
+void ScrollableArea::endKeyboardScroll(bool immediate)
+{
+    bool finishedAnimation = requestStopKeyboardScrollAnimation(immediate);
+
+    if (finishedAnimation)
+        setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
+}
+
 void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithoutAnimation " << position);

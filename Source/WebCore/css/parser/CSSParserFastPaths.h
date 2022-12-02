@@ -48,11 +48,6 @@ public:
 
     // Properties handled here shouldn't be explicitly handled in CSSPropertyParser.
     static bool isKeywordPropertyID(CSSPropertyID);
-
-    // Returns whether a property may be handled by the fast path but has other
-    // non-keyword values which should be handled by the CSSPropertyParser.
-    static bool isPartialKeywordPropertyID(CSSPropertyID);
-
     static bool isValidKeywordPropertyAndValue(CSSPropertyID, CSSValueID, const CSSParserContext&);
 
     // Parses numeric and named colors.

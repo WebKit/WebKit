@@ -4,9 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,1) size 782x60
-        text run at (0,1) width 411: "All the text here should be the same size."
-        text run at (410,1) width 7: " "
-        text run at (416,1) width 366: "All the text here should be the same "
+        text run at (0,1) width 782: "All the text here should be the same size. All the text here should be the same "
         text run at (0,32) width 46: "size."
         text run at (45,32) width 7: " "
       RenderText {#text} at (0,0) size 0x0

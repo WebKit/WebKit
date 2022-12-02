@@ -43,8 +43,8 @@ class AbstractFrame : public ThreadSafeRefCounted<AbstractFrame, WTF::Destructio
 public:
     virtual ~AbstractFrame();
 
-    virtual bool isLocalFrame() const = 0;
-    virtual bool isRemoteFrame() const = 0;
+    enum class FrameType : bool { Local, Remote };
+    virtual FrameType frameType() const = 0;
 
     WindowProxy& windowProxy() { return m_windowProxy; }
     const WindowProxy& windowProxy() const { return m_windowProxy; }
@@ -55,7 +55,7 @@ public:
     WEBCORE_EXPORT void detachFromPage();
 
 protected:
-    AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*);
+    AbstractFrame(Page&, FrameIdentifier, AbstractFrame* parent);
     void resetWindowProxy();
 
 private:

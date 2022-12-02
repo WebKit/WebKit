@@ -56,16 +56,16 @@
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-#if HAVE(PHOTOS_UI_PRIVATE)
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+SOFT_LINK_PRIVATE_FRAMEWORK(PhotosUICore)
+SOFT_LINK_CLASS(PhotosUICore, PXActivityProgressController)
+#else
 SOFT_LINK_PRIVATE_FRAMEWORK(PhotosUIPrivate)
 SOFT_LINK_CLASS(PhotosUIPrivate, PUActivityProgressController)
 #endif
 
 #if HAVE(PHOTOS_UI)
 SOFT_LINK_FRAMEWORK(PhotosUI)
-#if !HAVE(PHOTOS_UI_PRIVATE)
-SOFT_LINK_CLASS(PhotosUI, PUActivityProgressController)
-#endif
 SOFT_LINK_CLASS(PhotosUI, PHPickerConfiguration)
 SOFT_LINK_CLASS(PhotosUI, PHPickerViewController)
 SOFT_LINK_CLASS(PhotosUI, PHPickerResult)
@@ -80,7 +80,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 static inline UIImagePickerControllerCameraDevice cameraDeviceForMediaCaptureType(WebCore::MediaCaptureType mediaCaptureType)
 {
-    return mediaCaptureType == WebCore::MediaCaptureTypeUser ? UIImagePickerControllerCameraDeviceFront : UIImagePickerControllerCameraDeviceRear;
+    return mediaCaptureType == WebCore::MediaCaptureType::MediaCaptureTypeUser ? UIImagePickerControllerCameraDeviceFront : UIImagePickerControllerCameraDeviceRear;
 }
 
 static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTType *conformToUTType)
@@ -204,7 +204,11 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 @implementation WKFileUploadMediaTranscoder {
     RetainPtr<NSTimer> _progressTimer;
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+    RetainPtr<PXActivityProgressController> _progressController;
+#else
     RetainPtr<PUActivityProgressController> _progressController;
+#endif
     RetainPtr<AVAssetExportSession> _exportSession;
     RetainPtr<NSArray<_WKFileUploadItem *>> _items;
     RetainPtr<NSString> _temporaryDirectoryPath;
@@ -232,7 +236,11 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 - (void)start
 {
+#if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
+    _progressController = adoptNS([allocPXActivityProgressControllerInstance() init]);
+#else
     _progressController = adoptNS([allocPUActivityProgressControllerInstance() init]);
+#endif
     [_progressController setTitle:WEB_UI_STRING_KEY("Preparing…", "Preparing (file upload)", "Title for file upload progress view")];
     [_progressController showAnimated:YES allowDelay:YES];
 
@@ -507,7 +515,7 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
             _allowedImagePickerTypes.add({ WKFileUploadPanelImagePickerType::Video });
     }
 
-    _mediaCaptureType = WebCore::MediaCaptureTypeNone;
+    _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeNone;
 #if ENABLE(MEDIA_CAPTURE)
     _mediaCaptureType = parameters->mediaCaptureType();
 #endif
@@ -815,20 +823,20 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront] || [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
         if (![UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
-            _mediaCaptureType = WebCore::MediaCaptureTypeEnvironment;
+            _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeEnvironment;
 
         if (![UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear])
-            _mediaCaptureType = WebCore::MediaCaptureTypeUser;
+            _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeUser;
 
         return;
     }
 
-    _mediaCaptureType = WebCore::MediaCaptureTypeNone;
+    _mediaCaptureType = WebCore::MediaCaptureType::MediaCaptureTypeNone;
 }
 
 - (BOOL)_shouldMediaCaptureOpenMediaDevice
 {
-    if (_mediaCaptureType == WebCore::MediaCaptureTypeNone || ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    if (_mediaCaptureType == WebCore::MediaCaptureType::MediaCaptureTypeNone || ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
         return NO;
 
     return YES;
@@ -848,7 +856,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     [_cameraPicker _setRequiresPickingConfirmation:YES];
     [_cameraPicker _setShowsFileSizePicker:YES];
 
-    if (_mediaCaptureType != WebCore::MediaCaptureTypeNone)
+    if (_mediaCaptureType != WebCore::MediaCaptureType::MediaCaptureTypeNone)
         [_cameraPicker setCameraDevice:cameraDeviceForMediaCaptureType(_mediaCaptureType)];
 
     [self _presentFullscreenViewController:_cameraPicker.get() animated:YES];

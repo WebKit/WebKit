@@ -144,6 +144,7 @@ class TypeProfiler;
 class TypeProfilerLog;
 class Watchdog;
 class WatchpointSet;
+class Waiter;
 
 #if ENABLE(DFG_JIT) && ASSERT_ENABLED
 #define ENABLE_DFG_DOES_GC_VALIDATION 1
@@ -284,6 +285,9 @@ private:
     ScratchBuffer* m_scratchBuffer;
 };
 
+enum VMIdentifierType { };
+using VMIdentifier = ObjectIdentifier<VMIdentifierType>;
+
 class VM : public ThreadSafeRefCounted<VM>, public DoublyLinkedListNode<VM> {
 public:
     // WebCore has a one-to-one mapping of threads to VMs;
@@ -330,8 +334,7 @@ public:
     FuzzerAgent* fuzzerAgent() const { return m_fuzzerAgent.get(); }
     void setFuzzerAgent(std::unique_ptr<FuzzerAgent>&&);
 
-    static unsigned numberOfIDs() { return s_numberOfIDs.load(); }
-    unsigned id() const { return m_id; }
+    VMIdentifier identifier() const { return m_identifier; }
     bool isEntered() const { return !!entryScope; }
 
     inline CallFrame* topJSCallFrame() const;
@@ -375,11 +378,7 @@ public:
     void throwTerminationException();
 
 private:
-    unsigned nextID();
-
-    static Atomic<unsigned> s_numberOfIDs;
-
-    unsigned m_id;
+    VMIdentifier m_identifier;
     RefPtr<JSLock> m_apiLock;
     Ref<WTF::RunLoop> m_runLoop;
 
@@ -918,6 +917,8 @@ public:
     template<typename Func>
     void forEachDebugger(const Func&);
 
+    Ref<Waiter> syncWaiter();
+
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
@@ -1036,6 +1037,8 @@ private:
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
+
+    Ref<Waiter> m_syncWaiter;
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

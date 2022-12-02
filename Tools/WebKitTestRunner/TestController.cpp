@@ -133,12 +133,6 @@ static WKDataRef copyWebCryptoMasterKey(WKPageRef, const void*)
     return WKDataCreate((const uint8_t*)"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 16);
 }
 
-static WKStringRef copySignedPublicKeyAndChallengeString(WKPageRef, const void*)
-{
-    // Any fake response would do, all we need for testing is to implement the callback.
-    return WKStringCreateWithUTF8CString("MIHFMHEwXDANBgkqhkiG9w0BAQEFAANLADBIAkEAnX0TILJrOMUue%2BPtwBRE6XfV%0AWtKQbsshxk5ZhcUwcwyvcnIq9b82QhJdoACdD34rqfCAIND46fXKQUnb0mvKzQID%0AAQABFhFNb3ppbGxhSXNNeUZyaWVuZDANBgkqhkiG9w0BAQQFAANBAAKv2Eex2n%2FS%0Ar%2F7iJNroWlSzSMtTiQTEB%2BADWHGj9u1xrUrOilq%2Fo2cuQxIfZcNZkYAkWP4DubqW%0Ai0%2F%2FrgBvmco%3D");
-}
-
 void TestController::navigationDidBecomeDownloadShared(WKDownloadRef download, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidStart(download);
@@ -553,7 +547,7 @@ PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* par
         didRemoveNavigationGestureSnapshot,
         webProcessDidTerminate, // webProcessDidTerminate
         nullptr, // contentRuleListNotification
-        copySignedPublicKeyAndChallengeString,
+        nullptr, // copySignedPublicKeyAndChallengeString
         navigationActionDidBecomeDownload,
         navigationResponseDidBecomeDownload,
         nullptr // contextMenuDidCreateDownload
@@ -673,7 +667,7 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
 {
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-        auto randomNumber = cryptographicallyRandomNumber();
+        auto randomNumber = cryptographicallyRandomNumber<uint32_t>();
 
         WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ApplicationCache", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache", pathSeparator, randomNumber)).get());
@@ -734,6 +728,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
         }
 
         WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
+        WKContextSetDisableFontSubpixelAntialiasingForTesting(TestController::singleton().context(), true);
 
         platformInitializeContext();
     }
@@ -985,7 +980,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         didRemoveNavigationGestureSnapshot,
         webProcessDidTerminate, // webProcessDidTerminate
         nullptr, // contentRuleListNotification
-        copySignedPublicKeyAndChallengeString,
+        nullptr, // copySignedPublicKeyAndChallengeString
         navigationActionDidBecomeDownload,
         navigationResponseDidBecomeDownload,
         nullptr // contextMenuDidCreateDownload
@@ -1055,6 +1050,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         if (enableAllExperimentalFeatures) {
             WKPreferencesEnableAllExperimentalFeatures(preferences);
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("AlternateWebMPlayerEnabled").get());
+            WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("SiteIsolationEnabled").get());
         }
 
         WKPreferencesResetAllInternalDebugFeatures(preferences);
@@ -1089,6 +1085,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     auto resetMessageBody = adoptWK(WKMutableDictionaryCreate());
 
+    setValue(resetMessageBody, "ResetStage", resetStage == ResetStage::AfterTest ? "AfterTest" : "BeforeTest");
+
     setValue(resetMessageBody, "ShouldGC", m_gcBetweenTests);
 
     auto allowedHostsValue = adoptWK(WKMutableArrayCreate());
@@ -1100,10 +1098,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     if (!jscOptions.empty())
         setValue(resetMessageBody, "JSCOptions", jscOptions.c_str());
 
-    if (resetStage == ResetStage::AfterTest)
-        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
 
-    WKContextSetShouldUseFontSmoothingForTesting(TestController::singleton().context(), false);
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
     WKWebsiteDataStoreClearCachedCredentials(websiteDataStore());
@@ -1179,6 +1175,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
+    m_skipPolicyDelegateNotifyDone = false;
 
     // Reset Content Extensions.
     resetContentExtensions();
@@ -1261,6 +1258,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     }
 
     m_downloadTotalBytesWritten = { };
+    m_dumpPolicyDelegateCallbacks = false;
 
     return m_doneResetting;
 }
@@ -2073,11 +2071,6 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         return setHTTPCookieAcceptPolicy(policy, WTFMove(completionHandler));
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllCookies")) {
-        removeAllCookies();
-        return completionHandler(nullptr);
-    }
-
     completionHandler(m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).get());
 }
 
@@ -2807,12 +2800,69 @@ void TestController::unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailab
     printf("MISSING PLUGIN BUTTON PRESSED\n");
 }
 
-void TestController::decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(navigationAction, listener);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(page, navigationAction, listener);
 }
 
-void TestController::decidePolicyForNavigationAction(WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener)
+static inline bool isLocalFileScheme(WKStringRef scheme)
+{
+    return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "file");
+}
+
+WTF::String pathSuitableForTestResult(WKURLRef fileURL, WKPageRef page)
+{
+    if (!fileURL)
+        return "(null)"_s;
+
+    auto schemeString = adoptWK(WKURLCopyScheme(fileURL));
+    if (!isLocalFileScheme(schemeString.get()))
+        return toWTFString(adoptWK(WKURLCopyString(fileURL)));
+
+    WKFrameRef mainFrame = WKPageGetMainFrame(page);
+    auto mainFrameURL = adoptWK(WKFrameCopyURL(mainFrame));
+    if (!mainFrameURL)
+        mainFrameURL = adoptWK(WKFrameCopyProvisionalURL(mainFrame));
+
+    String pathString = toWTFString(adoptWK(WKURLCopyPath(fileURL)));
+    String mainFrameURLPathString = mainFrameURL ? toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get()))) : ""_s;
+    auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind('/') + 1);
+    
+    if (!basePath.isEmpty() && pathString.startsWith(basePath))
+        return pathString.substring(basePath.length());
+    return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
+}
+
+static String string(WKURLRequestRef request, WKPageRef page)
+{
+    auto url = adoptWK(WKURLRequestCopyURL(request));
+    auto firstParty = adoptWK(WKURLRequestCopyFirstPartyForCookies(request));
+    auto httpMethod = adoptWK(WKURLRequestCopyHTTPMethod(request));
+    return makeString("<NSURLRequest URL ", pathSuitableForTestResult(url.get(), page),
+        ", main document URL ", pathSuitableForTestResult(firstParty.get(), page),
+        ", http method ", WKStringIsEmpty(httpMethod.get()) ? "(none)" : "", toWTFString(httpMethod.get()), '>');
+}
+
+static const char* navigationTypeToString(WKFrameNavigationType type)
+{
+    switch (type) {
+    case kWKFrameNavigationTypeLinkClicked:
+        return "link clicked";
+    case kWKFrameNavigationTypeFormSubmitted:
+        return "form submitted";
+    case kWKFrameNavigationTypeBackForward:
+        return "back/forward";
+    case kWKFrameNavigationTypeReload:
+        return "reload";
+    case kWKFrameNavigationTypeFormResubmitted:
+        return "form resubmitted";
+    case kWKFrameNavigationTypeOther:
+        return "other";
+    }
+    return "illegal value";
+}
+
+void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener)
 {
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
     WKRetainPtr<WKNavigationActionRef> retainedNavigationAction { navigationAction };
@@ -2837,6 +2887,30 @@ void TestController::decidePolicyForNavigationAction(WKNavigationActionRef navig
     };
     m_shouldSwapToEphemeralSessionOnNextNavigation = false;
     m_shouldSwapToDefaultSessionOnNextNavigation = false;
+
+    auto request = adoptWK(WKNavigationActionCopyRequest(navigationAction));
+    if (auto targetFrame = adoptWK(WKNavigationActionCopyTargetFrameInfo(navigationAction)); targetFrame && m_dumpPolicyDelegateCallbacks) {
+        m_currentInvocation->outputText(makeString(" - decidePolicyForNavigationAction\n", string(request.get(), page),
+            " is main frame - ", targetFrame && WKFrameInfoGetIsMainFrame(targetFrame.get()) ? "yes" : "no",
+            " should open URLs externally - ", WKNavigationActionGetShouldOpenExternalSchemes(navigationAction) ? "yes" : "no", '\n'));
+    }
+
+    if (m_policyDelegateEnabled) {
+        auto url = adoptWK(WKURLRequestCopyURL(request.get()));
+        auto urlScheme = adoptWK(WKURLCopyScheme(url.get()));
+
+        StringBuilder stringBuilder;
+        stringBuilder.append("Policy delegate: attempt to load ");
+        if (isLocalFileScheme(urlScheme.get()))
+            stringBuilder.append(toWTFString(adoptWK(WKURLCopyLastPathComponent(url.get())).get()));
+        else
+            stringBuilder.append(toWTFString(adoptWK(WKURLCopyString(url.get())).get()));
+        stringBuilder.append(" with navigation type \'", navigationTypeToString(WKNavigationActionGetNavigationType(navigationAction)), '\'');
+        stringBuilder.append('\n');
+        m_currentInvocation->outputText(stringBuilder.toString());
+        if (!m_skipPolicyDelegateNotifyDone)
+            WKPagePostMessageToInjectedBundle(mainWebView()->page(), toWK("NotifyDone").get(), nullptr);
+    }
 
     if (m_shouldDecideNavigationPolicyAfterDelay)
         RunLoop::main().dispatch(WTFMove(decisionFunction));
@@ -2868,6 +2942,12 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
         else
             WKFramePolicyListenerIgnore(retainedListener.get());
     };
+
+    auto response = adoptWK(WKNavigationResponseCopyResponse(navigationResponse));
+    if (m_policyDelegateEnabled) {
+        if (WKURLResponseIsAttachment(response.get()))
+            m_currentInvocation->outputText(makeString("Policy delegate: resource is an attachment, suggested file name \'", toWTFString(adoptWK(WKURLResponseCopySuggestedFilename(response.get())).get()), "'\n"));
+    }
 
     if (m_shouldDecideResponsePolicyAfterDelay)
         RunLoop::main().dispatch(WTFMove(decisionFunction));
@@ -3736,6 +3816,30 @@ void TestController::setAppBoundDomains(WKArrayRef originURLs)
     m_currentInvocation->didSetAppBoundDomains();
 }
 
+struct ManagedDomainsCallbackContext {
+    explicit ManagedDomainsCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    bool done { false };
+    TestController& testController;
+};
+
+static void didSetManagedDomainsCallback(void* callbackContext)
+{
+    auto* context = static_cast<ManagedDomainsCallbackContext*>(callbackContext);
+    context->done = true;
+}
+
+void TestController::setManagedDomains(WKArrayRef originURLs)
+{
+    ManagedDomainsCallbackContext context(*this);
+    WKWebsiteDataStoreSetManagedDomainsForTesting(originURLs, &context, didSetManagedDomainsCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetManagedDomains();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     ResourceStatisticsCallbackContext context(*this);
@@ -3749,6 +3853,7 @@ void TestController::removeAllCookies()
     GenericVoidContext context(*this);
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), &context, genericVoidCallback);
     runUntil(context.done, noTimeout);
+    m_currentInvocation->didRemoveAllCookies();
 }
 
 void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type)
@@ -3764,6 +3869,11 @@ void TestController::clearMockMediaDevices()
 void TestController::removeMockMediaDevice(WKStringRef persistentID)
 {
     WKRemoveMockMediaDevice(platformContext(), persistentID);
+}
+
+void TestController::setMockMediaDeviceIsEphemeral(WKStringRef persistentID, bool isEphemeral)
+{
+    WKSetMockMediaDeviceIsEphemeral(platformContext(), persistentID, isEphemeral);
 }
 
 void TestController::resetMockMediaDevices()

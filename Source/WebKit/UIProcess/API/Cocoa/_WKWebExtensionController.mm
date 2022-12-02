@@ -32,25 +32,11 @@
 
 #import "WebExtensionController.h"
 #import "_WKWebExtensionContextInternal.h"
+#import "_WKWebExtensionControllerConfigurationInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKWebExtensionController
-
-+ (BOOL)supportsSecureCoding
-{
-    return YES;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    return [self init];
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    // Nothing to meaningfully encode.
-}
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -59,7 +45,19 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtensionController>(self);
+    API::Object::constructInWrapper<WebKit::WebExtensionController>(self, WebKit::WebExtensionControllerConfiguration::createDefault());
+
+    return self;
+}
+
+- (instancetype)initWithConfiguration:(_WKWebExtensionControllerConfiguration *)configuration
+{
+    NSParameterAssert(configuration);
+
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<WebKit::WebExtensionController>(self, configuration._webExtensionControllerConfiguration.copy());
 
     return self;
 }
@@ -72,28 +70,43 @@
     _webExtensionController->~WebExtensionController();
 }
 
+- (_WKWebExtensionControllerConfiguration *)configuration
+{
+    return _webExtensionController->configuration().copy()->wrapper();
+}
+
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext
 {
+    NSParameterAssert(extensionContext);
+
     return [self loadExtensionContext:extensionContext error:nullptr];
 }
 
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
+    NSParameterAssert(extensionContext);
+
     return _webExtensionController->load(extensionContext._webExtensionContext, outError);
 }
 
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext
 {
+    NSParameterAssert(extensionContext);
+
     return [self unloadExtensionContext:extensionContext error:nullptr];
 }
 
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
+    NSParameterAssert(extensionContext);
+
     return _webExtensionController->unload(extensionContext._webExtensionContext, outError);
 }
 
 - (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
 {
+    NSParameterAssert(extension);
+
     if (auto extensionContext = _webExtensionController->extensionContext(extension._webExtension))
         return extensionContext->wrapper();
     return nil;
@@ -137,6 +150,21 @@ static inline NSSet *toAPI(const T& inputSet)
 }
 
 #else // ENABLE(WK_WEB_EXTENSIONS)
+
+- (instancetype)init
+{
+    return nil;
+}
+
+- (instancetype)initWithConfiguration:(_WKWebExtensionControllerConfiguration *)configuration
+{
+    return nil;
+}
+
+- (_WKWebExtensionControllerConfiguration *)configuration
+{
+    return nil;
+}
 
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext
 {

@@ -501,6 +501,7 @@ void webkit_download_set_destination(WebKitDownload* download, const gchar* uri)
 {
     g_return_if_fail(WEBKIT_IS_DOWNLOAD(download));
     g_return_if_fail(uri);
+    g_return_if_fail(uri[0] != '\0');
 
     WebKitDownloadPrivate* priv = download->priv;
     if (priv->destinationURI == uri)

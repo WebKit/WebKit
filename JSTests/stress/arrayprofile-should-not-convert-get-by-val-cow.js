@@ -3,6 +3,8 @@ function assertEq(a, b) {
         throw new Error("values not the same: " + a + " and " + b);
 }
 
+var allowDoubleShape = $vm.allowDoubleShape();
+
 function withArrayArgInt32(i, array) {
     let result = array[i];
     assertEq($vm.indexingMode(array), "CopyOnWriteArrayWithInt32");
@@ -19,14 +21,20 @@ noInline(withArrayLiteralInt32);
 
 function withArrayArgDouble(i, array) {
     let result = array[i];
-    assertEq($vm.indexingMode(array), "CopyOnWriteArrayWithDouble");
+    if (allowDoubleShape)
+        assertEq($vm.indexingMode(array), "CopyOnWriteArrayWithDouble");
+    else
+        assertEq($vm.indexingMode(array), "CopyOnWriteArrayWithContiguous");
 }
 noInline(withArrayArgDouble);
 
 function withArrayLiteralDouble(i) {
     let array = [0,1.3145,2];
     let result = array[i];
-    assertEq($vm.indexingMode(array), "CopyOnWriteArrayWithDouble");
+    if (allowDoubleShape)
+        assertEq($vm.indexingMode(array), "CopyOnWriteArrayWithDouble");
+    else
+        assertEq($vm.indexingMode(array), "CopyOnWriteArrayWithContiguous");        
 }
 noInline(withArrayLiteralDouble);
 

@@ -69,6 +69,11 @@ function selectRange(id, start, end, expectedText) {
         var absStartPos = toAbsoluteCoordinates(startPos, element);
         var absEndPos = toAbsoluteCoordinates(endPos, element);
 
+        // Round the points "inwards" to avoid being affected by the truncation taking place in 
+        // eventSender.mouseMoveTo(...).
+        absStartPos.x = Math.ceil(absStartPos.x);
+        absEndPos.x = Math.floor(absEndPos.x);
+
         // Move to selection origin and hold down mouse
         eventSender.mouseMoveTo(absStartPos.x, absStartPos.y);
         eventSender.mouseDown();

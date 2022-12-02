@@ -470,7 +470,7 @@ void DrawingAreaCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
 #endif
 }
 
-void DrawingAreaCoordinatedGraphics::didUpdate()
+void DrawingAreaCoordinatedGraphics::displayDidRefresh()
 {
     // We might get didUpdate messages from the UI process even after we've
     // entered accelerated compositing mode. Ignore them.
@@ -833,7 +833,9 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     if (!bitmap)
         return;
 
-    if (!bitmap->createHandle(updateInfo.bitmapHandle))
+    if (auto handle = bitmap->createHandle())
+        updateInfo.bitmapHandle = WTFMove(*handle);
+    else
         return;
 
     auto rects = m_dirtyRegion.rects();

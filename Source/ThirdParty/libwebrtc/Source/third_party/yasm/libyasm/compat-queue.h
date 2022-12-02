@@ -102,6 +102,11 @@
  */
 
 /*
+ * Clean-up macros.
+ */
+#define TRASHIT(x)      do {(x) = (void *)0;} while (0)
+
+/*
  * Singly-linked List declarations.
  */
 #define SLIST_HEAD(name, type)                                          \
@@ -165,11 +170,15 @@ struct {                                                                \
                         curelm = SLIST_NEXT(curelm, field);             \
                 SLIST_NEXT(curelm, field) =                             \
                     SLIST_NEXT(SLIST_NEXT(curelm, field), field);       \
+                TRASHIT((elm)->field.sle_next);                         \
         }                                                               \
 } while (0)
 
 #define SLIST_REMOVE_HEAD(head, field) do {                             \
-        SLIST_FIRST((head)) = SLIST_NEXT(SLIST_FIRST((head)), field);   \
+        __typeof__(SLIST_FIRST((head))) __remove_elem =                 \
+            SLIST_FIRST((head));                                        \
+        SLIST_FIRST((head)) = SLIST_NEXT(__remove_elem, field);         \
+        TRASHIT(__remove_elem->field.sle_next);                         \
 } while (0)
 
 /*
@@ -257,18 +266,23 @@ struct {                                                                \
                 if ((STAILQ_NEXT(curelm, field) =                       \
                      STAILQ_NEXT(STAILQ_NEXT(curelm, field), field)) == NULL)\
                         (head)->stqh_last = &STAILQ_NEXT((curelm), field);\
+                TRASHIT((elm)->field.stqe_next);                        \
         }                                                               \
 } while (0)
 
 #define STAILQ_REMOVE_HEAD(head, field) do {                            \
+        __typeof__(STAILQ_FIRST((head))) __remove_elem =                \
+            STAILQ_FIRST((head));                                       \
         if ((STAILQ_FIRST((head)) =                                     \
-             STAILQ_NEXT(STAILQ_FIRST((head)), field)) == NULL)         \
+             STAILQ_NEXT(__remove_elem, field)) == NULL)                \
                 (head)->stqh_last = &STAILQ_FIRST((head));              \
+        TRASHIT(__remove_elem->field.stqe_next);                        \
 } while (0)
 
 #define STAILQ_REMOVE_HEAD_UNTIL(head, elm, field) do {                 \
         if ((STAILQ_FIRST((head)) = STAILQ_NEXT((elm), field)) == NULL) \
                 (head)->stqh_last = &STAILQ_FIRST((head));              \
+        TRASHIT((elm)->field.stqe_next);                                \
 } while (0)
 
 /*
@@ -339,6 +353,8 @@ struct {                                                                \
                 LIST_NEXT((elm), field)->field.le_prev =                \
                     (elm)->field.le_prev;                               \
         *(elm)->field.le_prev = LIST_NEXT((elm), field);                \
+        TRASHIT((elm)->field.le_next);                                  \
+        TRASHIT((elm)->field.le_prev);                                  \
 } while (0)
 
 /*
@@ -451,6 +467,8 @@ struct {                                                                \
                 (head)->tqh_last = (elm)->field.tqe_prev;               \
         }                                                               \
         *(elm)->field.tqe_prev = TAILQ_NEXT((elm), field);              \
+        TRASHIT((elm)->field.tqe_next);                                 \
+        TRASHIT((elm)->field.tqe_prev);                                 \
 } while (0)
 
 #endif /* !SYS_QUEUE_H */

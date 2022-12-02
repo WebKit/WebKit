@@ -122,9 +122,9 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef da
 {
     auto* websiteDataStore = WebKit::toImpl(dataStoreRef);
 #if ENABLE(TRACKING_PREVENTION)
-    websiteDataStore->useExplicitITPState();
+    websiteDataStore->useExplicitTrackingPreventionState();
 #endif
-    websiteDataStore->setResourceLoadStatisticsEnabled(enable);
+    websiteDataStore->setTrackingPreventionEnabled(enable);
 }
 
 void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsEphemeralFunction completionHandler)
@@ -140,7 +140,7 @@ void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef dataStoreRef,
 
 bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef)
 {
-    return WebKit::toImpl(dataStoreRef)->resourceLoadStatisticsEnabled();
+    return WebKit::toImpl(dataStoreRef)->trackingPreventionEnabled();
 }
 
 void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef dataStoreRef, bool enable)
@@ -701,6 +701,31 @@ void WKWebsiteDataStoreSetAppBoundDomainsForTesting(WKArrayRef originURLsRef, vo
 #endif
 }
 
+void WKWebsiteDataStoreSetManagedDomainsForTesting(WKArrayRef originURLsRef, void* context, WKWebsiteDataStoreSetManagedDomainsForTestingFunction completionHandler)
+{
+#if ENABLE(MANAGED_DOMAINS)
+    RefPtr<API::Array> originURLsArray = WebKit::toImpl(originURLsRef);
+    size_t newSize = originURLsArray ? originURLsArray->size() : 0;
+    HashSet<WebCore::RegistrableDomain> domains;
+    domains.reserveInitialCapacity(newSize);
+    for (size_t i = 0; i < newSize; ++i) {
+        auto* originURL = originURLsArray->at<API::URL>(i);
+        if (!originURL)
+            continue;
+
+        domains.add(WebCore::RegistrableDomain { URL { originURL->string() } });
+    }
+
+    WebKit::WebsiteDataStore::setManagedDomainsForTesting(WTFMove(domains), [context, completionHandler] {
+        completionHandler(context);
+    });
+#else
+    UNUSED_PARAM(originURLsRef);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(completionHandler);
+#endif
+}
+
 void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler)
 {
 #if ENABLE(TRACKING_PREVENTION)
@@ -727,6 +752,14 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
 void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)
 {
     OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::DOMCache;
+    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
+        callback(context);
+    });
+}
+
+void WKWebsiteDataStoreRemoveNetworkCache(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveNetworkCacheCallback callback)
+{
+    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::DiskCache;
     WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
         callback(context);
     });

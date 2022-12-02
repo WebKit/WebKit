@@ -34,6 +34,7 @@ namespace WGSL::AST {
 
 class AssignmentStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     AssignmentStatement(SourceSpan span, std::unique_ptr<Expression>&& lhs, UniqueRef<Expression>&& rhs)
         : Statement(span)
@@ -42,7 +43,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Assignment; }
+    Kind kind() const override;
     Expression* maybeLhs() { return m_lhs.get(); }
     Expression& rhs() { return m_rhs; }
 
@@ -54,4 +55,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(AssignmentStatement, isAssignment())
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(AssignmentStatement)

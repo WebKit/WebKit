@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1945,7 +1945,7 @@ JSObjectRef AccessibilityUIElement::makeJSAccessibilityUIElement(JSContextRef co
 
 JSClassRef AccessibilityUIElement::getJSClass()
 {
-    static JSStaticValue staticValues[] = {
+    static const JSStaticValue staticValues[] = {
         { "accessibilityValue", getAccessibilityValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "role", getRoleCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "subrole", getSubroleCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2041,7 +2041,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { 0, 0, 0, 0 }
     };
 
-    static JSStaticFunction staticFunctions[] = {
+    static const JSStaticFunction staticFunctions[] = {
         { "allAttributes", allAttributesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributesOfLinkedUIElements", attributesOfLinkedUIElementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributesOfDocumentLinks", attributesOfDocumentLinksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2175,7 +2175,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { 0, 0, 0 }
     };
 
-    static JSClassDefinition classDefinition = {
+    static const JSClassDefinition classDefinition = {
         0, kJSClassAttributeNone, "AccessibilityUIElement", 0, staticValues, staticFunctions,
         0, finalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };

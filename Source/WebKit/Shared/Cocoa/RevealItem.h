@@ -41,11 +41,9 @@ public:
     RevealItem() = default;
     RevealItem(RetainPtr<RVItem>&&);
     
-    void encode(IPC::Encoder&) const;
-    static std::optional<RevealItem> decode(IPC::Decoder&);
-    
     RVItem *item() const { return m_item.get(); }
 private:
+    friend struct IPC::ArgumentCoder<RevealItem, void>;
     RetainPtr<RVItem> m_item;
 };
 

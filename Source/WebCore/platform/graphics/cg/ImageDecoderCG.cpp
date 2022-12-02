@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -588,8 +588,13 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
 
 String ImageDecoderCG::decodeUTI(const SharedBuffer& data) const
 {
-    auto uti = String(CGImageSourceGetType(m_nativeDecoder.get()));
-    if (uti != "public.heif"_s && uti != "public.heic"_s)
+    return decodeUTI(m_nativeDecoder.get(), data);
+}
+
+String ImageDecoderCG::decodeUTI(CGImageSourceRef imageSource, const SharedBuffer& data)
+{
+    auto uti = String(CGImageSourceGetType(imageSource));
+    if (uti != "public.heif"_s && uti != "public.heic"_s && uti != "public.heics"_s)
         return uti;
 
     if (data.size() < sizeof(unsigned)) {

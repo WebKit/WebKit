@@ -84,7 +84,7 @@ void GPUProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 }
 
 #if PLATFORM(MAC)
-void GPUProcess::setScreenProperties(const ScreenProperties& screenProperties)
+void GPUProcess::setScreenProperties(const WebCore::ScreenProperties& screenProperties)
 {
 #if !HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
     // Only override HDR support at the MediaToolbox level if AVPlayer.videoRangeOverride support is

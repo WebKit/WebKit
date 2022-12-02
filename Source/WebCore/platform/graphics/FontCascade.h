@@ -110,7 +110,7 @@ public:
     // This constructor is only used if the platform wants to start with a native font.
     WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = FontSmoothingMode::AutoSmoothing);
 
-    FontCascade(const FontCascade&);
+    WEBCORE_EXPORT FontCascade(const FontCascade&);
     WEBCORE_EXPORT FontCascade& operator=(const FontCascade&);
 
     WEBCORE_EXPORT bool operator==(const FontCascade& other) const;
@@ -198,10 +198,8 @@ public:
     static bool leftExpansionOpportunity(StringView, TextDirection);
     static bool rightExpansionOpportunity(StringView, TextDirection);
 
-    WEBCORE_EXPORT static void setShouldUseSmoothingForTesting(bool);
-    WEBCORE_EXPORT static bool shouldUseSmoothingForTesting();
-
-    static bool isSubpixelAntialiasingAvailable();
+    WEBCORE_EXPORT static void setDisableFontSubpixelAntialiasingForTesting(bool);
+    WEBCORE_EXPORT static bool shouldDisableFontSubpixelAntialiasingForTesting();
 
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
     CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;

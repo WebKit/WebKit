@@ -40,6 +40,7 @@ template<> struct ClientTraits<WKBundlePageContextMenuClientBase> {
 }
 
 namespace WebCore {
+class ContextMenuContext;
 class ContextMenuItem;
 class HitTestResult;
 }
@@ -53,7 +54,7 @@ public:
     explicit InjectedBundlePageContextMenuClient(const WKBundlePageContextMenuClientBase*);
 
 private:
-    bool getCustomMenuFromDefaultItems(WebPage&, const WebCore::HitTestResult&, const Vector<WebCore::ContextMenuItem>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData) override;
+    bool getCustomMenuFromDefaultItems(WebPage&, const WebCore::HitTestResult&, const Vector<WebCore::ContextMenuItem>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, const WebCore::ContextMenuContext&, RefPtr<API::Object>& userData) override;
     void prepareForImmediateAction(WebPage&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) override;
 };
 

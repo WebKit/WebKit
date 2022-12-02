@@ -25,22 +25,30 @@
 
 #include "config.h"
 
-#include "WTFStringUtilities.h"
-
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
+
+#if defined(NDEBUG)
+// Compile the test but disable it for non-Debug builds.
+namespace WTF::Detail  {
+std::atomic<int> wtfStringCopyCount;
+};
+#define MAYBE_COPY_COUNT_TEST(test) DISABLED_##test
+#else
+#define MAYBE_COPY_COUNT_TEST(test) test
+#endif
 
 namespace TestWebKitAPI {
 
 #define EXPECT_N_WTF_STRING_COPIES(count, expr) \
     do { \
-        wtfStringCopyCount = 0; \
+        WTF::Detail::wtfStringCopyCount = 0; \
         String __testString = expr; \
         (void)__testString; \
-        EXPECT_EQ(count, wtfStringCopyCount) << #expr; \
+        EXPECT_EQ(count, WTF::Detail::wtfStringCopyCount) << #expr; \
     } while (false)
 
-TEST(WTF, StringOperators)
+TEST(WTF, MAYBE_COPY_COUNT_TEST(StringOperators))
 {
     String string("String"_s);
     AtomString atomString("AtomString"_s);
@@ -49,7 +57,7 @@ TEST(WTF, StringOperators)
     String stringViewBacking { "StringView"_s };
     StringView stringView { stringViewBacking };
 
-    EXPECT_EQ(0, wtfStringCopyCount);
+    WTF::Detail::wtfStringCopyCount = 0;
 
     EXPECT_N_WTF_STRING_COPIES(2, string + string);
     EXPECT_N_WTF_STRING_COPIES(2, string + atomString);

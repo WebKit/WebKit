@@ -29,7 +29,6 @@
 #include "ArgumentCodersGLib.h"
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
-#include <gio/gunixfdlist.h>
 
 namespace WebKit {
 
@@ -46,14 +45,7 @@ void UserMessage::encode(IPC::Encoder& encoder) const
     }
 
     encoder << parameters;
-
-    Vector<UnixFileDescriptor> attachments;
-    if (fileDescriptors) {
-        int length = g_unix_fd_list_get_length(fileDescriptors.get());
-        for (int i = 0; i < length; ++i)
-            attachments.append(UnixFileDescriptor { g_unix_fd_list_get(fileDescriptors.get(), i, nullptr), UnixFileDescriptor::Adopt });
-    }
-    encoder << attachments;
+    encoder << fileDescriptors;
 }
 
 std::optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
@@ -84,17 +76,11 @@ std::optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
         return std::nullopt;
     result.parameters = WTFMove(*parameters);
 
-    std::optional<Vector<UnixFileDescriptor>> attachments;
-    decoder >> attachments;
-    if (!attachments)
+    std::optional<GRefPtr<GUnixFDList>> fileDescriptors;
+    decoder >> fileDescriptors;
+    if (!fileDescriptors)
         return std::nullopt;
-    if (!attachments->isEmpty()) {
-        result.fileDescriptors = adoptGRef(g_unix_fd_list_new());
-        for (auto& attachment : *attachments) {
-            if (g_unix_fd_list_append(result.fileDescriptors.get(), attachment.release(), nullptr) == -1)
-                return std::nullopt;
-        }
-    }
+    result.fileDescriptors = WTFMove(*fileDescriptors);
 
     return result;
 }

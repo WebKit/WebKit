@@ -1,4 +1,4 @@
 
-FAIL StylePropertyMap.getAll() with a shorthand property set explicitly in inline style returns a base CSSStyleValue assert_equals: Result must be a list with one item expected 1 but got 0
+PASS StylePropertyMap.getAll() with a shorthand property set explicitly in inline style returns a base CSSStyleValue
 PASS StylePropertyMap.getAll() with a shorthand property that is partially in inline style returns empty list
 

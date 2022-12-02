@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Test.h"
 #include "Utilities.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
@@ -252,7 +253,7 @@ TEST(WTF_RunLoopDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(CapabilityIsCurrentFa
         Thread::create("CapabilityIsCurrentNegative thread", [&] {
             assertIsCurrent(RunLoop::main()); // This should assert.
         })->waitForCompletion();
-    }, "ASSERTION FAILED: runLoop.isCurrent()");
+    }, "ASSERTION FAILED: runLoop.isCurrent\\(\\)");
 }
 
 TEST(WTF_RunLoop, Create)

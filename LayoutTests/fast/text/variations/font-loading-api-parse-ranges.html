@@ -15,7 +15,7 @@ shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100 200a
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '50 150' })).weight", "50 150");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '2 3' })).weight", "2 3");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '-3 -2' })).status","error");
-shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '5 4' })).status","error");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '5 4' })).weight","5 4");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100 200 3' })).status","error");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100 200 a' })).status","error");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '-3' })).status","error");
@@ -31,7 +31,7 @@ shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 20
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '50% 60%' })).stretch", "50% 60%");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '2% 3%' })).stretch", "2% 3%");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '-3% -2%' })).status","error");
-shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '5% 4%' })).status","error");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '5% 4%' })).stretch","5% 4%");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% 3%' })).status","error");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% a' })).status","error");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '-3%' })).status","error");
@@ -46,7 +46,7 @@ shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 1
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 50deg 60deg' })).style", "oblique 50deg 60deg");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 2deg 3deg' })).style", "oblique 2deg 3deg");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique -3deg -2deg' })).style", "oblique -3deg -2deg");
-shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 5deg 4deg' })).status","error");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 5deg 4deg' })).style","oblique 5deg 4deg");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg 3deg' })).status","error");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg a' })).status","error");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique -3deg' })).style", "oblique -3deg");

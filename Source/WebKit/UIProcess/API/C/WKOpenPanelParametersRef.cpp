@@ -72,7 +72,7 @@ WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef)
 bool WKOpenPanelParametersGetMediaCaptureType(WKOpenPanelParametersRef parametersRef)
 {
 #if ENABLE(MEDIA_CAPTURE)
-    return toImpl(parametersRef)->mediaCaptureType();
+    return toImpl(parametersRef)->mediaCaptureType() != WebCore::MediaCaptureType::MediaCaptureTypeNone;
 #else
     UNUSED_PARAM(parametersRef);
     return false;

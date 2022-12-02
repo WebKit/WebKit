@@ -362,7 +362,7 @@ static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points,
     CGContextStrokePath(context);
 }
 
-bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings) const
+bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings, ControlPart) const
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (settings.iOSFormControlRefreshEnabled())
@@ -2433,10 +2433,11 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
     auto deviceScaleFactor = box.document().deviceScaleFactor();
     auto styleColorOptions = box.styleColorOptions();
 
+    bool isReversedInlineDirection = (!isHorizontal && box.style().isHorizontalWritingMode()) || !box.style().isLeftToRightDirection();
     for (auto& optionElement : dataList->suggestions()) {
         if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
             auto tickFraction = (*optionValue - min) / (max - min);
-            auto tickRatio = isHorizontal && box.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+            auto tickRatio = isReversedInlineDirection ? 1.0 - tickFraction : tickFraction;
             if (isHorizontal)
                 tickRect.setX(rect.x() + tickRatio * (rect.width() - tickRect.width()));
             else

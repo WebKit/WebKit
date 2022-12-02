@@ -191,22 +191,22 @@ TEST(WKWebExtension, ContentScriptsParsing)
     auto exampleURL = [NSURL URLWithString:@"https://example.com/"];
 
     EXPECT_NULL(testExtension.errors);
-    EXPECT_TRUE([testExtension hasInjectedContentForURL:webkitURL]);
-    EXPECT_TRUE([testExtension hasInjectedContentForURL:exampleURL]);
+    EXPECT_TRUE([testExtension _hasStaticInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testExtension _hasStaticInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*/" ], @"exclude_matches": @[ @"*://*.example.com/" ] } ];
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NULL(testExtension.errors);
-    EXPECT_TRUE([testExtension hasInjectedContentForURL:webkitURL]);
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:exampleURL]);
+    EXPECT_TRUE([testExtension _hasStaticInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*.example.com/" ] } ];
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NULL(testExtension.errors);
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
-    EXPECT_TRUE([testExtension hasInjectedContentForURL:exampleURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testExtension _hasStaticInjectedContentForURL:exampleURL]);
 
     // Invalid cases
 
@@ -215,32 +215,32 @@ TEST(WKWebExtension, ContentScriptsParsing)
 
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:exampleURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @{ @"invalid": @YES };
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:exampleURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ ] } ];
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:exampleURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:webkitURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"run_at": @"invalid" } ];
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
-    EXPECT_FALSE([testExtension hasInjectedContentForURL:webkitURL]);
-    EXPECT_TRUE([testExtension hasInjectedContentForURL:exampleURL]);
+    EXPECT_FALSE([testExtension _hasStaticInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testExtension _hasStaticInjectedContentForURL:exampleURL]);
 }
 
 TEST(WKWebExtension, PermissionsParsing)
@@ -448,6 +448,7 @@ TEST(WKWebExtension, BackgroundParsing)
 #else
     EXPECT_TRUE(testExtension.backgroundContentIsPersistent);
 #endif
+    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
     EXPECT_NULL(testExtension.errors);
 
     testManifestDictionary[@"background"] = @{ @"page": @"test.html", @"persistent": @NO };
@@ -516,6 +517,7 @@ TEST(WKWebExtension, BackgroundParsing)
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
     EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -591,6 +593,20 @@ TEST(WKWebExtension, BackgroundParsing)
     EXPECT_NOT_NULL(testExtension.errors);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidBackgroundPersistence));
+
+    testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js", @"type": @"module", @"persistent": @NO };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+
+    EXPECT_TRUE(testExtension.hasBackgroundContent);
+    EXPECT_TRUE(testExtension._backgroundContentUsesModules);
+    EXPECT_NULL(testExtension.errors);
+
+    testManifestDictionary[@"background"] = @{ @"scripts": @[ @"test.js", @"test2.js" ], @"type": @"module", @"persistent": @NO };
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+
+    EXPECT_TRUE(testExtension.hasBackgroundContent);
+    EXPECT_TRUE(testExtension._backgroundContentUsesModules);
+    EXPECT_NULL(testExtension.errors);
 }
 
 } // namespace TestWebKitAPI

@@ -60,6 +60,23 @@ SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBe
 {
 }
 
+SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal)
+    : m_quad(quad)
+    , m_behavior(behavior)
+    , m_direction(direction)
+    , m_minX(minX)
+    , m_maxX(maxX)
+    , m_maxY(maxY)
+    , m_lineNumber(lineNumber)
+    , m_isLineBreak(isLineBreak)
+    , m_isFirstOnLine(isFirstOnLine)
+    , m_isLastOnLine(isLastOnLine)
+    , m_containsStart(containsStart)
+    , m_containsEnd(containsEnd)
+    , m_isHorizontal(isHorizontal)
+{
+}
+
 void SelectionGeometry::setLogicalLeft(int left)
 {
     auto rect = this->rect();

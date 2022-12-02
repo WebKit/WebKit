@@ -33,32 +33,6 @@
 
 namespace WebCore {
 
-static AudioMediaStreamTrackRendererUnit::CreateInternalUnitFunction& getCreateInternalUnitFunction()
-{
-    static NeverDestroyed<AudioMediaStreamTrackRendererUnit::CreateInternalUnitFunction> function;
-    return function;
-}
-
-void AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction(CreateInternalUnitFunction&& function)
-{
-    getCreateInternalUnitFunction() = WTFMove(function);
-}
-
-static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> createInternalUnit(AudioMediaStreamTrackRendererUnit& unit)
-{
-    AudioMediaStreamTrackRendererInternalUnit::RenderCallback renderCallback = [&unit](auto sampleCount, auto& list, auto sampleTime, auto hostTime, auto& flags) {
-        unit.render(sampleCount, list, sampleTime, hostTime, flags);
-        return 0;
-    };
-    AudioMediaStreamTrackRendererInternalUnit::ResetCallback resetCallback = [&unit]() { unit.reset(); };
-
-    auto& function = getCreateInternalUnitFunction();
-    if (function)
-        return function(WTFMove(renderCallback), WTFMove(resetCallback));
-
-    return AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(WTFMove(renderCallback), WTFMove(resetCallback));
-}
-
 AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton()
 {
     static NeverDestroyed<AudioMediaStreamTrackRendererUnit> registry;
@@ -66,7 +40,7 @@ AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton(
 }
 
 AudioMediaStreamTrackRendererUnit::AudioMediaStreamTrackRendererUnit()
-    : m_internalUnit(createInternalUnit(*this))
+    : m_internalUnit(AudioMediaStreamTrackRendererInternalUnit::create(*this))
 {
 }
 
@@ -154,7 +128,7 @@ void AudioMediaStreamTrackRendererUnit::reset()
     });
 }
 
-void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&& callback)
+void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
 {
     ASSERT(isMainThread());
     m_internalUnit->retrieveFormatDescription(WTFMove(callback));
@@ -174,7 +148,7 @@ void AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary()
     m_hasPendingRenderSources = false;
 }
 
-void AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferList& ioData, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags& actionFlags)
+OSStatus AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferList& ioData, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags& actionFlags)
 {
     // For performance reasons, we forbid heap allocations while doing rendering on the audio thread.
     ForbidMallocUseForCurrentThreadScope forbidMallocUse;
@@ -191,6 +165,7 @@ void AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferLi
     }
     if (!hasCopiedData)
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;
+    return 0;
 }
 
 } // namespace WebCore

@@ -26,7 +26,7 @@ function testI31New() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: i31.new value to type F32 expected I32"
+    "WebAssembly.Module doesn't validate: i31.new value to type F32 expected I32, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   )
 
   // Use i31 in global and also export to JS via global.
@@ -156,7 +156,7 @@ function testI31Get() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: i31.get_s ref to type RefNull expected I31ref"
+    "WebAssembly.Module doesn't validate: i31.get_s ref to type Externref expected I31ref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   )
 
   assert.throws(

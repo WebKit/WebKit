@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+</head>
+<body>
+
+<img id="img" src="../resources/animation.gif" />
+
+<script>
+description("This test ensures that the 'Play All Animations' and 'Pause All Animations' context menu items appear and behave correctly when activated.");
+
+var img = document.getElementById("img");
+window.addEventListener("load", () => {
+  window.jsTestIsAsync = true;
+  if (!window.internals)
+    return;
+  internals.settings.setImageAnimationControlEnabled(true);
+
+  shouldBecomeEqual("internals.isImageAnimating(img)", "true", () => {
+    debug("Pausing all animations via the context menu item.");
+    eventSender.mouseMoveTo(1, 1);
+    eventSender.contextClick().find(item => item.title === "Pause All Animations").click();
+
+    shouldBecomeEqual("internals.isImageAnimating(img)", "false", () => {
+      debug("Playing all animations via the context menu item.");
+      eventSender.contextClick().find(item => item.title === "Play All Animations").click();
+
+      shouldBecomeEqual("internals.isImageAnimating(img)", "true", () => {
+        internals.settings.setImageAnimationControlEnabled(false);
+        internals.clearMemoryCache();
+        finishJSTest();
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

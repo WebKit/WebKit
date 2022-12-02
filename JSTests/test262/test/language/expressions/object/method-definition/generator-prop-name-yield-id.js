@@ -16,4 +16,7 @@ var obj = {
   *[yield]() {}
 };
 
-assert.sameValue(Object.hasOwnProperty.call(obj, 'propName'), true);
+assert(
+  Object.prototype.hasOwnProperty.call(obj, 'propName'),
+  "The property name is taken from the 'yield' variable"
+);

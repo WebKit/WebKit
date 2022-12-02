@@ -29,6 +29,7 @@
 #include "FontCache.h"
 #include "FontFamilySpecificationCoreTextCache.h"
 #include "FontSelector.h"
+#include "StyleFontSizeFunctions.h"
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
@@ -46,8 +47,8 @@ FontFamilySpecificationCoreText::~FontFamilySpecificationCoreText() = default;
 
 FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fontDescription) const
 {
-    auto& fontPlatformData = FontFamilySpecificationCoreTextCache::forCurrentThread().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&] () {
-        auto size = fontDescription.computedSize();
+    auto size = fontDescription.computedSize();
+    auto& originalPlatformData = FontFamilySpecificationCoreTextCache::forCurrentThread().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&]() {
 
         auto font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
 
@@ -57,7 +58,9 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 
         return makeUnique<FontPlatformData>(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
     });
-    return FontRanges(FontCache::forCurrentThread().fontForPlatformData(fontPlatformData));
+
+    originalPlatformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    return FontRanges(FontCache::forCurrentThread().fontForPlatformData(originalPlatformData));
 }
 
 }

@@ -1,0 +1,129 @@
+{
+    "contexts": [
+        "type",
+        "interface",
+        "namespace",
+        "attribute",
+        "operation",
+        "argument",
+        "callback-function",
+        "dictionary",
+        "dictionary-member",
+        "enum",
+        "constant",
+        "union-member",
+        "iterable",
+        "map-like",
+        "set-like",
+        "includes"
+    ],
+    "attributes": {
+        "Conditional": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "CallbackHandler": {
+            "contextsAllowed": ["argument"]
+        },
+        "CannotBeEmpty": {
+            "contextsAllowed": ["argument"]
+        },
+        "ConvertNullStringTo": {
+            "contextsAllowed": ["argument", "attribute", "operation"],
+            "values": ["Null", "EmptyString"]
+        },
+        "ConvertNullToNullString": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
+        "ConvertNullAndUndefinedToString": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
+        "Custom": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "CustomHeader": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetPropertyNames": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomHasProperty": {
+            "contextsAllowed": ["interface"]
+        },
+        "DeleteProperty": {
+            "contextsAllowed": ["operation"]
+        },
+        "DOMString": {
+            "contextsAllowed": ["argument"]
+        },
+        "DontEnum": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "Dynamic": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "GetProperty": {
+            "contextsAllowed": ["operation"]
+        },
+        "ImplementedAs": {
+            "contextsAllowed": ["attribute", "constant", "dictionary", "dictionary-member", "enum", "interface", "operation"],
+            "values": ["*"]
+        },
+        "MainWorldOnly": {
+            "contextsAllowed": ["attribute", "interface", "operation"]
+        },
+        "NeedsFrame": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "NeedsFrameWithCallbackHandler": {
+            "contextsAllowed": ["interface"]
+        },
+        "NeedsPage": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "NeedsPageWithCallbackHandler": {
+            "contextsAllowed": ["interface"]
+        },
+        "NeedsScriptContext": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "NoImplementation": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "NSArray": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
+        "NSDictionary": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
+        "NSObject": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
+        "Optional": {
+            "contextsAllowed": ["argument"]
+        },
+        "ProcessArgumentsLeftToRight": {
+            "contextsAllowed": ["operation"]
+        },
+        "RaisesException": {
+            "contextsAllowed": ["operation"]
+        },
+        "ReturnsPromiseWhenCallbackIsOmitted": {
+            "contextsAllowed": ["interface", "operation"]
+        },
+        "Serialization": {
+            "contextsAllowed": ["argument"],
+            "values": ["JSON", "Web"]
+        },
+        "SetProperty": {
+            "contextsAllowed": ["operation"]
+        },
+        "URL": {
+            "contextsAllowed": ["argument", "attribute", "operation"]
+        },
+        "ValuesAllowed": {
+            "contextsAllowed": ["argument"]
+        }
+    }
+}

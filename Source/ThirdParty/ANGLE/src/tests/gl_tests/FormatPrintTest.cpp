@@ -14,8 +14,9 @@
 // But 'None' is also defined as a numeric constant 0L in <X11/X.h>.
 // So we need to include ANGLETest.h first to avoid this conflict.
 
+#include "common/gl_enum_utils.h"
 #include "libANGLE/Context.h"
-#include "libANGLE/capture/gl_enum_utils.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/formatutils.h"
 #include "util/EGLWindow.h"
 
@@ -35,7 +36,10 @@ class FormatPrintTest : public ANGLETest<>
 TEST_P(FormatPrintTest, PrintAllSupportedFormats)
 {
     // Hack the angle!
-    gl::Context *context = static_cast<gl::Context *>(getEGLWindow()->getContext());
+    egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
+    gl::ContextID contextID = {
+        static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
+    gl::Context *context                                 = display->getContext(contextID);
     const gl::InternalFormatInfoMap &allSupportedFormats = gl::GetInternalFormatMap();
 
     std::cout << std::endl

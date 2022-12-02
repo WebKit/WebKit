@@ -36,6 +36,7 @@
 #include "ImageQualityController.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
+#include "LegacyRenderSVGRoot.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
@@ -50,8 +51,12 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderQuote.h"
+#include "RenderSVGRoot.h"
 #include "RenderTreeBuilder.h"
 #include "RenderWidget.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGImage.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
@@ -89,6 +94,23 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
 RenderView::~RenderView()
 {
     ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
+}
+
+void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
+
+    bool writingModeChanged = oldStyle && style().writingMode() != oldStyle->writingMode();
+    bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
+
+    if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
+        if (frameView().pagination().mode != Pagination::Unpaginated)
+            updateColumnProgressionFromStyle(style());
+        updateStylesForColumnChildren();
+    }
+
+    if (directionChanged)
+        frameView().topContentDirectionDidChange();
 }
 
 void RenderView::scheduleLazyRepaint(RenderBox& renderer)
@@ -891,24 +913,79 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
     }
     for (auto& pair : toRemove)
         removeRendererWithPausedImageAnimations(*pair.first, *pair.second);
+
+    Vector<SVGSVGElement*> svgSvgElementsToRemove;
+    m_SVGSVGElementsWithPausedImageAnimation.forEach([&] (WeakPtr<SVGSVGElement, WeakPtrImplWithEventTargetData> svgSvgElement) {
+        if (svgSvgElement && svgSvgElement->resumePausedAnimationsIfNeeded(visibleRect))
+            svgSvgElementsToRemove.append(svgSvgElement.get());
+    });
+    for (auto& svgSvgElement : svgSvgElementsToRemove)
+        m_SVGSVGElementsWithPausedImageAnimation.remove(*svgSvgElement);
 }
 
-void RenderView::repaintImageAnimationsIfNeeded(const IntRect& visibleRect)
+static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
 {
-    for (auto& element : descendantsOfType<RenderElement>(*this)) {
-        if (!element.isVisibleInDocumentRect(visibleRect))
-            continue;
+    if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
+        return svgSvgElement;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderElement))
+        return &svgRoot->svgSVGElement();
+#endif
+    if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderElement))
+        return &svgRoot->svgSVGElement();
 
-        // FIXME: Check whether the background image(s) can animate before repainting.
-        if (element.style().hasBackgroundImage()) {
-            element.repaint();
-            continue;
-        }
+    return nullptr;
+}
 
-        if (auto* renderImage = dynamicDowncast<RenderImage>(element)) {
-            if (renderImage->hasAnimatedImage()) {
-                element.repaint();
-                continue;
+void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
+{
+    bool animationEnabled = page().imageAnimationEnabled();
+    for (auto& renderElement : descendantsOfType<RenderElement>(*this)) {
+        bool needsRepaint = false;
+        bool shouldAnimate = animationEnabled && renderElement.isVisibleInDocumentRect(visibleRect);
+
+        auto updateAnimation = [&](CachedImage* cachedImage) {
+            if (!cachedImage)
+                return;
+
+            bool hasPausedAnimation = renderElement.hasPausedImageAnimations();
+            auto* image = cachedImage->image();
+            if (auto* svgImage = dynamicDowncast<SVGImage>(image)) {
+                if (shouldAnimate && hasPausedAnimation) {
+                    svgImage->resumeAnimation();
+                    removeRendererWithPausedImageAnimations(renderElement, *cachedImage);
+                } else if (!hasPausedAnimation) {
+                    svgImage->stopAnimation();
+                    addRendererWithPausedImageAnimations(renderElement, *cachedImage);
+                }
+            } else if (image && image->isAnimated()) {
+                // Animations of this type require a repaint to be paused or resumed.
+                if (shouldAnimate && hasPausedAnimation) {
+                    needsRepaint = true;
+                    removeRendererWithPausedImageAnimations(renderElement, *cachedImage);
+                } else if (!hasPausedAnimation) {
+                    needsRepaint = true;
+                    addRendererWithPausedImageAnimations(renderElement, *cachedImage);
+                }
+            }
+        };
+
+        for (const auto* layer = &renderElement.style().backgroundLayers(); layer; layer = layer->next())
+            updateAnimation(layer->image() ? layer->image()->cachedImage() : nullptr);
+
+        if (auto* renderImage = dynamicDowncast<RenderImage>(renderElement))
+            updateAnimation(renderImage->cachedImage());
+
+        if (needsRepaint)
+            renderElement.repaint();
+
+        if (auto* svgSvgElement = svgSvgElementFrom(renderElement)) {
+            if (shouldAnimate) {
+                svgSvgElement->unpauseAnimations();
+                m_SVGSVGElementsWithPausedImageAnimation.remove(*svgSvgElement);
+            } else {
+                svgSvgElement->pauseAnimations();
+                m_SVGSVGElementsWithPausedImageAnimation.add(*svgSvgElement);
             }
         }
     }

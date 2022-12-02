@@ -435,6 +435,22 @@ void DynamicHLSL::generateVaryingLinkHLSL(const VaryingPacking &varyingPacking,
         hlslStream << "    float4 gl_Position : " << builtins.glPosition.str() << ";\n";
     }
 
+    if (builtins.glClipDistance.enabled)
+    {
+        hlslStream << "    float4 gl_ClipDistance0 : " << builtins.glClipDistance.str() << "0;\n";
+        if (!builtins.glCullDistance.enabled)
+            hlslStream << "    float4 gl_ClipDistance1 : " << builtins.glClipDistance.str()
+                       << "1;\n";
+    }
+
+    if (builtins.glCullDistance.enabled)
+    {
+        hlslStream << "    float4 gl_CullDistance0 : " << builtins.glCullDistance.str() << "0;\n";
+        if (!builtins.glClipDistance.enabled)
+            hlslStream << "    float4 gl_CullDistance1 : " << builtins.glCullDistance.str()
+                       << "1;\n";
+    }
+
     if (builtins.glFragCoord.enabled)
     {
         hlslStream << "    float4 gl_FragCoord : " << builtins.glFragCoord.str() << ";\n";
@@ -572,6 +588,37 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
     if (vertexBuiltins.glPosition.enabled)
     {
         vertexGenerateOutput << "    output.gl_Position = gl_Position;\n";
+    }
+
+    if (vertexBuiltins.glClipDistance.enabled)
+    {
+        if (vertexBuiltins.glCullDistance.enabled)
+        {
+            vertexGenerateOutput << "    output.gl_ClipDistance0 = (float4)gl_ClipDistance"
+                                    "* bool4(clipDistancesEnabled & int4(1, 2, 4, 8));\n";
+        }
+        else
+        {
+            vertexGenerateOutput << "    output.gl_ClipDistance0 = ((float4[2])gl_ClipDistance)[0] "
+                                    "* bool4(clipDistancesEnabled & int4(1, 2, 4, 8));\n";
+            vertexGenerateOutput << "    output.gl_ClipDistance1 = ((float4[2])gl_ClipDistance)[1] "
+                                    "* bool4(clipDistancesEnabled & int4(16, 32, 64, 128));\n";
+        }
+    }
+
+    if (vertexBuiltins.glCullDistance.enabled)
+    {
+        if (vertexBuiltins.glClipDistance.enabled)
+        {
+            vertexGenerateOutput << "    output.gl_CullDistance0 = (float4)gl_CullDistance;\n";
+        }
+        else
+        {
+            vertexGenerateOutput
+                << "    output.gl_CullDistance0 = ((float4[2])gl_CullDistance)[0];\n";
+            vertexGenerateOutput
+                << "    output.gl_CullDistance1 = ((float4[2])gl_CullDistance)[1];\n";
+        }
     }
 
     if (vertexBuiltins.glViewIDOVR.enabled)
@@ -863,6 +910,32 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
         else
         {
             pixelPrologue << "    gl_FrontFacing = isFrontFace;\n";
+        }
+    }
+
+    if (fragmentShader && fragmentShader->usesClipDistance())
+    {
+        if (vertexBuiltins.glCullDistance.enabled)
+        {
+            pixelPrologue << "    (float4)gl_ClipDistance = input.gl_ClipDistance0;\n";
+        }
+        else
+        {
+            pixelPrologue << "    ((float4[2])gl_ClipDistance)[0] = input.gl_ClipDistance0;\n";
+            pixelPrologue << "    ((float4[2])gl_ClipDistance)[1] = input.gl_ClipDistance1;\n";
+        }
+    }
+
+    if (fragmentShader && fragmentShader->usesCullDistance())
+    {
+        if (vertexBuiltins.glClipDistance.enabled)
+        {
+            pixelPrologue << "    (float4)gl_CullDistance = input.gl_CullDistance0;\n";
+        }
+        else
+        {
+            pixelPrologue << "    ((float4[2])gl_CullDistance)[0] = input.gl_CullDistance0;\n";
+            pixelPrologue << "    ((float4[2])gl_CullDistance)[1] = input.gl_CullDistance1;\n";
         }
     }
 
@@ -1479,6 +1552,16 @@ void BuiltinVaryingsD3D::updateBuiltins(gl::ShaderType shaderType,
     if (metadata.usesTransformFeedbackGLPosition())
     {
         builtins->glPosition.enable(userSemantic, reservedSemanticIndex++);
+    }
+
+    if (metadata.usesClipDistance())
+    {
+        builtins->glClipDistance.enableSystem("SV_ClipDistance");
+    }
+
+    if (metadata.usesCullDistance())
+    {
+        builtins->glCullDistance.enableSystem("SV_CullDistance");
     }
 
     if (metadata.usesFragCoord())

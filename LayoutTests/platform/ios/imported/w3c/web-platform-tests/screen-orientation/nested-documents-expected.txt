@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: Locking the screen orientation is only allowed when in fullscreen
+
+
+Harness Error (FAIL), message = Test named 'Requesting orientation lock from one document cancels the lock request from another document' specified 1 'cleanup' function, and 1 failed.
+
+FAIL Requesting orientation lock from one document cancels the lock request from another document assert_unreached: Should have rejected: undefined Reached unreachable code
+NOTRUN The orientation lock from one document affects lock requests from other documents
+

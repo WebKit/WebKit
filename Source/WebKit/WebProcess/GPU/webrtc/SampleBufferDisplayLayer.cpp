@@ -32,7 +32,6 @@
 #include "LayerHostingContext.h"
 #include "Logging.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
-#include "RemoteSampleBufferDisplayLayerManagerMessagesReplies.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SampleBufferDisplayLayerManager.h"

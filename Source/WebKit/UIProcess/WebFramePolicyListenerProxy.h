@@ -59,6 +59,7 @@ public:
     
     void didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&&);
     void didReceiveAppBoundDomainResult(std::optional<NavigatingToAppBoundDomain>);
+    void didReceiveManagedDomainResult(std::optional<NavigatingToAppBoundDomain>);
 
 private:
     WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult);

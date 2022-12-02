@@ -1,6 +1,14 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'background-image' to CSS-wide keywords
+FAIL Can set 'background-image' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'background-image' to the 'none' keyword
+PASS Can set 'background-image' to an image
+PASS Setting 'background-image' to a length throws TypeError
+PASS Setting 'background-image' to a percent throws TypeError
+PASS Setting 'background-image' to a time throws TypeError
+PASS Setting 'background-image' to an angle throws TypeError
+PASS Setting 'background-image' to a flexible length throws TypeError
+PASS Setting 'background-image' to a number throws TypeError
+PASS Setting 'background-image' to a URL throws TypeError
+PASS Setting 'background-image' to a transform throws TypeError
 

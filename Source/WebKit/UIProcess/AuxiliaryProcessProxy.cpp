@@ -202,20 +202,20 @@ bool AuxiliaryProcessProxy::wasTerminated() const
 #endif
 }
 
-bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions, std::optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions, std::optional<IPC::Connection::AsyncReplyHandler> asyncReplyHandler, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     // FIXME: We should turn this into a RELEASE_ASSERT().
     ASSERT(isMainRunLoop());
     if (!isMainRunLoop()) {
-        callOnMainRunLoop([protectedThis = Ref { *this }, encoder = WTFMove(encoder), sendOptions, asyncReplyInfo = WTFMove(asyncReplyInfo), shouldStartProcessThrottlerActivity]() mutable {
-            protectedThis->sendMessage(WTFMove(encoder), sendOptions, WTFMove(asyncReplyInfo), shouldStartProcessThrottlerActivity);
+        callOnMainRunLoop([protectedThis = Ref { *this }, encoder = WTFMove(encoder), sendOptions, asyncReplyHandler = WTFMove(asyncReplyHandler), shouldStartProcessThrottlerActivity]() mutable {
+            protectedThis->sendMessage(WTFMove(encoder), sendOptions, WTFMove(asyncReplyHandler), shouldStartProcessThrottlerActivity);
         });
         return true;
     }
 
-    if (asyncReplyInfo && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
-        auto completionHandler = std::exchange(asyncReplyInfo->first, nullptr);
-        asyncReplyInfo->first = [activity = throttler().backgroundActivity({ }), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
+    if (asyncReplyHandler && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
+        auto completionHandler = WTFMove(asyncReplyHandler->completionHandler);
+        asyncReplyHandler->completionHandler = [activity = throttler().backgroundActivity({ }), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
             completionHandler(decoder);
         };
     }
@@ -223,22 +223,25 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
     switch (state()) {
     case State::Launching:
         // If we're waiting for the child process to launch, we need to stash away the messages so we can send them once we have a connection.
-        m_pendingMessages.append({ WTFMove(encoder), sendOptions, WTFMove(asyncReplyInfo) });
+        m_pendingMessages.append({ WTFMove(encoder), sendOptions, WTFMove(asyncReplyHandler) });
         return true;
 
     case State::Running:
-        if (asyncReplyInfo)
-            IPC::addAsyncReplyHandler(*connection(), asyncReplyInfo->second, std::exchange(asyncReplyInfo->first, nullptr));
-        if (connection()->sendMessage(WTFMove(encoder), sendOptions))
-            return true;
+        if (asyncReplyHandler) {
+            if (connection()->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(*asyncReplyHandler), sendOptions))
+                return true;
+        } else {
+            if (connection()->sendMessage(WTFMove(encoder), sendOptions))
+                return true;
+        }
         break;
 
     case State::Terminated:
         break;
     }
 
-    if (asyncReplyInfo && asyncReplyInfo->first) {
-        RunLoop::current().dispatch([completionHandler = WTFMove(asyncReplyInfo->first)]() mutable {
+    if (asyncReplyHandler && asyncReplyHandler->completionHandler) {
+        RunLoop::current().dispatch([completionHandler = WTFMove(asyncReplyHandler->completionHandler)]() mutable {
             completionHandler(nullptr);
         });
     }
@@ -289,7 +292,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
         return;
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeAssertion = ProcessAssertion::create(xpc_connection_get_pid(connectionIdentifier.xpcConnection.get()), "Lifetime assertion"_s, ProcessAssertionType::Foreground);
+    m_lifetimeActivity = throttler().foregroundActivity("Lifetime Activity"_s).moveToUniquePtr();
 #endif
 
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier);
@@ -300,9 +303,10 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     for (auto&& pendingMessage : std::exchange(m_pendingMessages, { })) {
         if (!shouldSendPendingMessage(pendingMessage))
             continue;
-        if (pendingMessage.asyncReplyInfo)
-            IPC::addAsyncReplyHandler(*connection(), pendingMessage.asyncReplyInfo->second, WTFMove(pendingMessage.asyncReplyInfo->first));
-        m_connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
+        if (pendingMessage.asyncReplyHandler)
+            m_connection->sendMessageWithAsyncReply(WTFMove(pendingMessage.encoder), WTFMove(*pendingMessage.asyncReplyHandler), pendingMessage.sendOptions);
+        else
+            m_connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
 }
 
@@ -310,8 +314,8 @@ void AuxiliaryProcessProxy::replyToPendingMessages()
 {
     ASSERT(isMainRunLoop());
     for (auto& pendingMessage : std::exchange(m_pendingMessages, { })) {
-        if (pendingMessage.asyncReplyInfo)
-            pendingMessage.asyncReplyInfo->first(nullptr);
+        if (pendingMessage.asyncReplyHandler)
+            pendingMessage.asyncReplyHandler->completionHandler(nullptr);
     }
 }
 
@@ -469,6 +473,13 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
 {
 }
 
+#endif
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+void AuxiliaryProcessProxy::setRunningBoardThrottlingEnabled()
+{
+    m_lifetimeActivity = nullptr;
+}
 #endif
 
 } // namespace WebKit

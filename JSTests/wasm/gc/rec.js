@@ -235,7 +235,7 @@ function testRecDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "control flow returns with unexpected type. Ref is not a Ref, in function at index 1"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. ((() -> [Ref], () -> [Ref]).1) is not a ((() -> [Ref], () -> [Ref]).0), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   instantiate(`
@@ -243,7 +243,7 @@ function testRecDeclaration() {
       (rec (type (func (param i32))) (type (struct)))
       (elem declare funcref (ref.func 0))
       (func (type 0))
-      (func (call_ref (i32.const 42) (ref.func 0)))
+      (func (call_ref 0 (i32.const 42) (ref.func 0)))
       (start 1)
     )
   `);

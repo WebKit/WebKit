@@ -8,7 +8,7 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.PlainDateTime(2000, 5, 2, 15, "gregory");
+const instance = new Temporal.PlainDateTime(2000, 5, 2, 15, 0, 0, 0, 0, 0, "gregory");
 const base = { era: "ad", month: 5, day: 2, calendar: "gregory" };
 
 [Infinity, -Infinity].forEach((inf) => {

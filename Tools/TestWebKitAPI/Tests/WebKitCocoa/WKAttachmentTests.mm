@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "Test.h"
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
@@ -32,6 +31,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "NSItemProviderAdditions.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
@@ -1951,6 +1951,25 @@ TEST(WKAttachmentTests, UserDragNonePreventsDragOnAttachmentElement)
 #endif
 }
 
+TEST(WKAttachmentTests, PasteRawUnnamedPDFData)
+{
+    RetainPtr pdfData = testPDFData();
+#if PLATFORM(MAC)
+    [NSPasteboard.generalPasteboard declareTypes:@[(__bridge NSString *)kUTTypePDF] owner:nil];
+    [NSPasteboard.generalPasteboard setData:pdfData.get() forType:(__bridge NSString *)kUTTypePDF];
+#else
+    [UIPasteboard.generalPasteboard setData:pdfData.get() forPasteboardType:UTTypePDF.identifier];
+#endif
+
+    auto webView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    EXPECT_EQ(1U, observer.observer().inserted.count);
+    _WKAttachment *attachment = observer.observer().inserted[0];
+    EXPECT_WK_STREQ("application/pdf", attachment.info.contentType);
+    EXPECT_TRUE([pdfData isEqualToData:attachment.info.data]);
+}
+
 #pragma mark - Platform-specific tests
 
 #if PLATFORM(MAC)
@@ -2707,6 +2726,20 @@ TEST(WKAttachmentTestsIOS, CopyAttachmentUsingElementAction)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WKAttachmentTestsIOS, PasteRichTextCopiedFromNotes)
+{
+    UIPasteboard.generalPasteboard.items = @[@{
+        @"com.apple.notes.richtext" : [@"foo" dataUsingEncoding:NSUTF8StringEncoding],
+        UTTypeHTML.identifier : [@"<p>foo</p>" dataUsingEncoding:NSUTF8StringEncoding]
+    }];
+
+    auto webView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    EXPECT_EQ(0U, observer.observer().inserted.count);
+    EXPECT_WK_STREQ("foo", [webView contentsAsString]);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

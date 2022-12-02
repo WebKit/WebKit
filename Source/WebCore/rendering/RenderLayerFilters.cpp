@@ -34,6 +34,7 @@
 #include "CSSFilter.h"
 #include "CachedSVGDocument.h"
 #include "CachedSVGDocumentReference.h"
+#include "FilterTargetSwitcher.h"
 #include "Logging.h"
 #include "RenderSVGResourceFilter.h"
 #include <wtf/NeverDestroyed.h>
@@ -127,20 +128,6 @@ IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const F
     return CSSFilter::calculateOutsets(renderer, operations, targetBoundingBox);
 }
 
-GraphicsContext* RenderLayerFilters::inputContext()
-{
-    return m_sourceImage ? &m_sourceImage->context() : nullptr;
-}
-
-void RenderLayerFilters::allocateBackingStoreIfNeeded(GraphicsContext& context)
-{
-    auto& filter = *m_filter;
-    auto logicalSize = filter.scaledByFilterScale(m_filterRegion.size());
-
-    if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize)
-        m_sourceImage = context.createScaledImageBuffer(m_filterRegion.size(), filter.filterScale(), DestinationColorSpace::SRGB(), filter.renderingMode());
-}
-
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
     auto expandedDirtyRect = dirtyRect;
@@ -160,7 +147,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_filter || m_targetBoundingBox != targetBoundingBox) {
         m_targetBoundingBox = targetBoundingBox;
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_renderingMode, m_filterScale, Filter::ClipOperation::Unite, m_targetBoundingBox, context);
+        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_preferredFilterRenderingModes, m_filterScale, Filter::ClipOperation::Unite, m_targetBoundingBox, context);
     }
 
     if (!m_filter)
@@ -185,44 +172,34 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
     if (!filter.hasFilterThatMovesPixels())
         m_repaintRect = dirtyRect;
+    else if (hasUpdatedBackingStore)
+        m_repaintRect = filterRegion;
     else {
-        if (hasUpdatedBackingStore)
-            m_repaintRect = filterRegion;
-        else {
-            m_repaintRect = dirtyRect;
-            m_repaintRect.unite(layerRepaintRect);
-            m_repaintRect.intersect(filterRegion);
-        }
+        m_repaintRect = dirtyRect;
+        m_repaintRect.unite(layerRepaintRect);
+        m_repaintRect.intersect(filterRegion);
     }
 
-    m_paintOffset = filterRegion.location();
     resetDirtySourceRect();
-
     filter.setFilterRegion(m_filterRegion);
-    allocateBackingStoreIfNeeded(context);
 
-    auto* sourceGraphicsContext = inputContext();
-    if (!sourceGraphicsContext)
+    if (!m_targetSwitcher || hasUpdatedBackingStore)
+        m_targetSwitcher = FilterTargetSwitcher::create(context, filter, filterRegion, DestinationColorSpace::SRGB());
+
+    if (!m_targetSwitcher)
         return nullptr;
 
-    // Translate the context so that the contents of the layer is captured in the offscreen memory buffer.
-    sourceGraphicsContext->save();
-    sourceGraphicsContext->translate(-m_paintOffset);
-    sourceGraphicsContext->clearRect(m_repaintRect);
-    sourceGraphicsContext->clip(m_repaintRect);
+    m_targetSwitcher->beginClipAndDrawSourceImage(context, m_repaintRect);
 
-    return sourceGraphicsContext;
+    return m_targetSwitcher->drawingContext(context);
 }
 
 void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
 {
     LOG_WITH_STREAM(Filters, stream << "\nRenderLayerFilters " << this << " applyFilterEffect");
 
-    ASSERT(inputContext());
-    inputContext()->restore();
-
-    FilterResults results;
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_filterRegion, *m_filter, results);
+    ASSERT(m_targetSwitcher);
+    m_targetSwitcher->endClipAndDrawSourceImage(destinationContext);
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");
 }

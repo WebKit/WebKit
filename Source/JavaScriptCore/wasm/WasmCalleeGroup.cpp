@@ -166,14 +166,14 @@ bool CalleeGroup::isSafeToRun(MemoryMode memoryMode)
         return false;
 
     switch (m_mode) {
-    case Wasm::MemoryMode::BoundsChecking:
+    case MemoryMode::BoundsChecking:
         return true;
 #if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-    case Wasm::MemoryMode::Signaling:
+    case MemoryMode::Signaling:
         // Code being in Signaling mode means that it performs no bounds checks.
         // Its memory, even if empty, absolutely must also be in Signaling mode
         // because the page protection detects out-of-bounds accesses.
-        return memoryMode == Wasm::MemoryMode::Signaling;
+        return memoryMode == MemoryMode::Signaling;
 #endif
     }
     RELEASE_ASSERT_NOT_REACHED();

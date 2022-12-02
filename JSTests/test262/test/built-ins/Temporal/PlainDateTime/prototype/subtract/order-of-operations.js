@@ -8,8 +8,8 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
 const expected = [
+  // ToTemporalDurationRecord
   "get fields.days",
   "get fields.days.valueOf",
   "call fields.days.valueOf",
@@ -40,8 +40,21 @@ const expected = [
   "get fields.years",
   "get fields.years.valueOf",
   "call fields.years.valueOf",
+  // AddDateTime
+  "get this.calendar.dateAdd",
+  "call this.calendar.dateAdd",
+  // inside Calendar.p.dateAdd
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 const actual = [];
+
+const calendar = TemporalHelpers.calendarObserver(actual, "this.calendar");
+const instance = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar);
+// clear observable operations that occurred during the constructor call
+actual.splice(0);
+
 const fields = TemporalHelpers.propertyBagObserver(actual, {
   years: 1,
   months: 1,
@@ -54,7 +67,8 @@ const fields = TemporalHelpers.propertyBagObserver(actual, {
   microseconds: 1,
   nanoseconds: 1,
 }, "fields");
-const result = instance.subtract(fields);
-TemporalHelpers.assertPlainDateTime(result, 1999, 3, "M03", 25, 11, 33, 55, 986, 653, 320);
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
+
+const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constrain" }, "options");
+
+instance.subtract(fields, options);
 assert.compareArray(actual, expected, "order of operations");

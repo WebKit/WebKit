@@ -82,7 +82,7 @@ set(ANGLE_SOURCES
     ${angle_system_utils_sources}
     src/common/angle_version_info.cpp
     src/libANGLE/capture/FrameCapture_mock.cpp
-    src/libANGLE/capture/frame_capture_utils_mock.cpp
+    src/libANGLE/capture/serialize_mock.cpp
 )
 
 if (WIN32)

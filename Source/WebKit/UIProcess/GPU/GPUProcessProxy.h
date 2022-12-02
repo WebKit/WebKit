@@ -28,14 +28,12 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "AuxiliaryProcessProxy.h"
-#include "GPUProcessProxyMessagesReplies.h"
 #include "ProcessLauncher.h"
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
-#include "WebProcessProxyMessagesReplies.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <memory>
@@ -85,6 +83,7 @@ public:
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();
     void removeMockMediaDevice(const String&);
+    void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockMicrophoneConfigurationChange();

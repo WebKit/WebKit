@@ -74,7 +74,7 @@ public:
         bool m_isInitialized { false };
         bool m_isWaitingForResult { false };
     };
-    Ref<Iterator> createIterator();
+    Ref<Iterator> createIterator(ScriptExecutionContext*);
 
 private:
     FileSystemDirectoryHandle(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);

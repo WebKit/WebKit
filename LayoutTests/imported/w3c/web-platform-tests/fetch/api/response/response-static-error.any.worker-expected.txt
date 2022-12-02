@@ -1,4 +1,5 @@
 
 PASS Check response returned by static method error()
+PASS Ensure response headers are immutable
 PASS the 'guard' of the Headers instance should be immutable
 

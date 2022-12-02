@@ -1,8 +1,7 @@
 
-PASS Test that screen.orientation.unlock() doesn't throw when there is no lock with fullscreen
-PASS Test that screen.orientation.unlock() doesn't throw when there is no lock
-PASS Test that screen.orientation.unlock() returns a void value
+Harness Error (FAIL), message = Test named 'Test that screen.orientation.lock returns a promise which will be fulfilled with a void value.' specified 1 'cleanup' function, and 1 failed.
+
 FAIL Test that screen.orientation.lock returns a promise which will be fulfilled with a void value. promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
-PASS Test that screen.orientation.lock returns a pending promise.
-FAIL Test that screen.orientation.lock() is actually async promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+NOTRUN Test that screen.orientation.lock returns a pending promise.
+NOTRUN Test that screen.orientation.lock() is actually async
 

@@ -1,6 +1,16 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'background-size' to CSS-wide keywords
+FAIL Can set 'background-size' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'background-size' to a length assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to the 'auto' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Can set 'background-size' to the 'cover' keyword
+PASS Can set 'background-size' to the 'contain' keyword
+PASS Setting 'background-size' to a time throws TypeError
+PASS Setting 'background-size' to an angle throws TypeError
+PASS Setting 'background-size' to a flexible length throws TypeError
+FAIL Setting 'background-size' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'background-size' to a URL throws TypeError
+PASS Setting 'background-size' to a transform throws TypeError
+PASS 'background-size' does not supported '200px 100px'
 

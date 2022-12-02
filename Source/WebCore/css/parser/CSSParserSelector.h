@@ -63,7 +63,7 @@ public:
     void setPseudoClassType(CSSSelector::PseudoClassType type) { m_selector->setPseudoClassType(type); }
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>&&);
-    void setArgumentList(std::unique_ptr<Vector<AtomString>>);
+    void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }

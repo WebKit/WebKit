@@ -40,6 +40,14 @@
 }
 
 math {
+    direction: ltr;
+    writing-mode: horizontal-tb !important;
+    text-indent: 0;
+    letter-spacing: normal;
+    line-height: normal;
+    word-spacing: normal;
+    font-style: normal;
+    font-weight: normal;
     display: inline;
     math-style: compact;
 
@@ -50,30 +58,6 @@ math {
     http://www.mathml-association.org/MathMLinHTML5/S3.html#SS1.SSS1
     */
     -webkit-line-box-contain: glyphs replaced;
-
-    /*
-    Inheriting the following properties can cause excessive spacing of mathematical formulas so we
-    just reset them to their default values.
-    */
-    text-indent: 0;
-    line-height: normal;
-    word-spacing: normal;
-    letter-spacing: normal;
-
-    /*
-    In some countries and languages, text is written from right-to-left while mathematical formulas
-    are written from left-to-write. Hence it is wrong to inherit the direction and we reset that
-    property to left-to-write. Per the MathML specification, authors should explicitly use the "dir"
-    attribute on the <math> element if they want to force the overall direction of the mathematical
-    formulas.
-    */
-    direction: ltr;
-
-    /*
-    Mathematical formula inside an italic paragraph should not inherit the font-style as this gives
-    poor rendering and is confusing with the mathvariant italic.
-    */
-    font-style: normal;
 
     /* Fonts with appropriate Unicode coverage and OpenType features are required for good math
     rendering. These requirements as well as the up-to-date list of known math fonts to fulfill
@@ -145,8 +129,6 @@ math {
        /* Mathematical fonts generally use "serif" style. Hence we append the generic "serif" family
        as a fallback in order to increase our chance to find a mathematical font. */
        serif;
-
-    /* FIXME: Should we reset more CSS properties (http://webkit.org/b/156839)? */
 }
 
 math[display="block" i] {

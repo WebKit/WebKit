@@ -1,15 +1,15 @@
-check1
-check2
-check2
 This tests that input types masquerading as checkboxes will use the aria-checked values for its value.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: accessibilityController.accessibleElementById('aria-checked-true-checkbox').intValue === 1
+PASS: accessibilityController.accessibleElementById('aria-checked-false-checkbox').intValue === 0
+PASS: accessibilityController.accessibleElementById('aria-checked-mixed-checkbox').intValue === 2
+PASS: accessibilityController.accessibleElementById('aria-checked-missing-checkbox').intValue === 0
 
-
-PASS accessibilityController.focusedElement.intValue is 1
-PASS accessibilityController.focusedElement.intValue is 0
-PASS accessibilityController.focusedElement.intValue is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE
+check1
+check2
+check3
+check4
 

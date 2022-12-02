@@ -4,7 +4,7 @@ PASS Animation of font-family in ::marker
 PASS Animation of font-feature-settings in ::marker
 PASS Animation of font-kerning in ::marker
 PASS Animation of font-size in ::marker
-FAIL Animation of font-size-adjust in ::marker assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
+PASS Animation of font-size-adjust in ::marker
 PASS Animation of font-stretch in ::marker
 PASS Animation of font-style in ::marker
 PASS Animation of font-synthesis in ::marker
@@ -51,7 +51,7 @@ PASS Transition of font-family in ::marker
 PASS Transition of font-feature-settings in ::marker
 PASS Transition of font-kerning in ::marker
 PASS Transition of font-size in ::marker
-FAIL Transition of font-size-adjust in ::marker assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
+PASS Transition of font-size-adjust in ::marker
 PASS Transition of font-stretch in ::marker
 PASS Transition of font-style in ::marker
 PASS Transition of font-synthesis in ::marker

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ static JSValueRef JSNodeList_item(JSContextRef context, JSObjectRef object, JSOb
     return JSValueMakeUndefined(context);
 }
 
-static JSStaticFunction JSNodeList_staticFunctions[] = {
+static const JSStaticFunction JSNodeList_staticFunctions[] = {
     { "item", JSNodeList_item, kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
@@ -61,7 +61,7 @@ static JSValueRef JSNodeList_length(JSContextRef context, JSObjectRef thisObject
     return JSValueMakeNumber(context, NodeList_length(nodeList));
 }
 
-static JSStaticValue JSNodeList_staticValues[] = {
+static const JSStaticValue JSNodeList_staticValues[] = {
     { "length", JSNodeList_length, NULL, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0, 0 }
 };

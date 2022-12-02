@@ -27,7 +27,7 @@
 
 @interface WebFeature (Internal)
 
-- (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden;
+- (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name status:(WebFeatureStatus)status details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden;
 
 @end
 

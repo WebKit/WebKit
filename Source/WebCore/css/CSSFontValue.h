@@ -1,6 +1,6 @@
-/*
+/**
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,13 +20,12 @@
 
 #pragma once
 
-#include "CSSFontStyleValue.h"
 #include "CSSValue.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSPrimitiveValue;
+class CSSValue;
 class CSSValueList;
 
 class CSSFontValue final : public CSSValue {
@@ -40,7 +39,7 @@ public:
 
     bool equals(const CSSFontValue&) const;
 
-    RefPtr<CSSFontStyleValue> style;
+    RefPtr<CSSValue> style;
     RefPtr<CSSPrimitiveValue> variant;
     RefPtr<CSSPrimitiveValue> weight;
     RefPtr<CSSPrimitiveValue> stretch;

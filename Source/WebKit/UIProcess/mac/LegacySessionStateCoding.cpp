@@ -259,29 +259,13 @@ enum class FormDataElementType {
     EncodedBlob = 2,
 };
 
-static bool isValidEnum(FormDataElementType type)
-{
-    switch (type) {
-    case FormDataElementType::Data:
-    case FormDataElementType::EncodedFile:
-    case FormDataElementType::EncodedBlob:
-        return true;
-    }
-
-    return false;
-}
-
 static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBody::Element& element)
 {
-    switch (element.type) {
-    case HTTPBody::Element::Type::Data:
-        encoder << FormDataElementType::Data;
-        encoder << element.data;
-        break;
-
-    case HTTPBody::Element::Type::File:
-        encoder << FormDataElementType::EncodedFile;
-        encoder << element.filePath;
+    encoder << static_cast<uint32_t>(element.data.index());
+    WTF::switchOn(element.data, [&] (const Vector<uint8_t>& data) {
+        encoder << data;
+    }, [&] (const HTTPBody::Element::FileData& fileData) {
+        encoder << fileData.filePath;
 
         // Used to be generatedFilename.
         encoder << String();
@@ -289,16 +273,13 @@ static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBo
         // Used to be shouldGenerateFile.
         encoder << false;
 
-        encoder << element.fileStart;
-        encoder << element.fileLength.value_or(-1);
-        encoder << element.expectedFileModificationTime.value_or(WallTime::nan()).secondsSinceEpoch().value();
-        break;
+        encoder << fileData.fileStart;
+        encoder << fileData.fileLength.value_or(-1);
+        encoder << fileData.expectedFileModificationTime.value_or(WallTime::nan()).secondsSinceEpoch().value();
 
-    case HTTPBody::Element::Type::Blob:
-        encoder << FormDataElementType::EncodedBlob;
-        encoder << element.blobURLString;
-        break;
-    }
+    }, [&] (const String& blobURLString) {
+        encoder << blobURLString;
+    });
 }
 
 static void encodeFormData(HistoryEntryDataEncoder& encoder, const HTTPBody& formData)
@@ -333,7 +314,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 
     encoder << frameState.documentSequenceNumber;
 
-    frameState.validateDocumentState();
+    FrameState::validateDocumentState(frameState.documentState());
     encoder << static_cast<uint64_t>(frameState.documentState().size());
     for (const auto& documentState : frameState.documentState())
         encoder << documentState;
@@ -813,19 +794,22 @@ private:
 
 static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::Element& formDataElement)
 {
-    std::optional<FormDataElementType> elementType;
+    uint32_t elementType;
     decoder >> elementType;
-    if (!elementType)
+    if (!decoder.isValid())
         return;
 
-    switch (elementType.value()) {
-    case FormDataElementType::Data:
-        formDataElement.type = HTTPBody::Element::Type::Data;
-        decoder >> formDataElement.data;
+    switch (elementType) {
+    case WTF::alternativeIndexV<Vector<uint8_t>, HTTPBody::Element::Data>: {
+        Vector<uint8_t> data;
+        decoder >> data;
+        formDataElement.data = WTFMove(data);
         break;
+    }
 
-    case FormDataElementType::EncodedFile: {
-        decoder >> formDataElement.filePath;
+    case WTF::alternativeIndexV<HTTPBody::Element::FileData, HTTPBody::Element::Data>: {
+        HTTPBody::Element::FileData fileData;
+        decoder >> fileData.filePath;
 
         String generatedFilename;
         decoder >> generatedFilename;
@@ -833,8 +817,8 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
         bool shouldGenerateFile;
         decoder >> shouldGenerateFile;
 
-        decoder >> formDataElement.fileStart;
-        if (formDataElement.fileStart < 0) {
+        decoder >> fileData.fileStart;
+        if (fileData.fileStart < 0) {
             decoder.markInvalid();
             return;
         }
@@ -842,23 +826,27 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
         int64_t fileLength;
         decoder >> fileLength;
         if (fileLength != -1) {
-            if (fileLength < formDataElement.fileStart)
+            if (fileLength < fileData.fileStart)
                 return;
 
-            formDataElement.fileLength = fileLength;
+            fileData.fileLength = fileLength;
         }
 
         double expectedFileModificationTime;
         decoder >> expectedFileModificationTime;
         if (!std::isnan(expectedFileModificationTime))
-            formDataElement.expectedFileModificationTime = WallTime::fromRawSeconds(expectedFileModificationTime);
+            fileData.expectedFileModificationTime = WallTime::fromRawSeconds(expectedFileModificationTime);
 
+        formDataElement.data = WTFMove(fileData);
         break;
     }
 
-    case FormDataElementType::EncodedBlob:
-        decoder >> formDataElement.blobURLString;
+    case WTF::alternativeIndexV<String, HTTPBody::Element::Data>: {
+        String blobURLString;
+        decoder >> blobURLString;
+        formDataElement.data = WTFMove(blobURLString);
         break;
+    }
     }
 }
 

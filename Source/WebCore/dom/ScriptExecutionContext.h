@@ -168,8 +168,7 @@ public:
     void willDestroyDestructionObserver(ContextDestructionObserver&);
 
     // MessagePort is conceptually a kind of ActiveDOMObject, but it needs to be tracked separately for message dispatch.
-    void processMessageWithMessagePortsSoon();
-    void dispatchMessagePortEvents();
+    void processMessageWithMessagePortsSoon(CompletionHandler<void()>&&);
     void createdMessagePort(MessagePort&);
     void destroyedMessagePort(MessagePort&);
 
@@ -177,7 +176,7 @@ public:
 
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
     virtual CSSValuePool& cssValuePool();
-    virtual std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
+    virtual std::unique_ptr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
     WEBCORE_EXPORT static void setCrossOriginMode(CrossOriginMode);
@@ -362,6 +361,8 @@ private:
     virtual void refScriptExecutionContext() = 0;
     virtual void derefScriptExecutionContext() = 0;
 
+    void dispatchMessagePortEvents();
+
     enum class ShouldContinue { No, Yes };
     void forEachActiveDOMObject(const Function<ShouldContinue(ActiveDOMObject&)>&) const;
 
@@ -393,6 +394,7 @@ private:
     bool m_inDispatchErrorEvent { false };
     mutable bool m_activeDOMObjectAdditionForbidden { false };
     bool m_willprocessMessageWithMessagePortsSoon { false };
+    Vector<CompletionHandler<void()>> m_processMessageWithMessagePortsSoonHandlers;
 
 #if ASSERT_ENABLED
     bool m_inScriptExecutionContextDestructor { false };

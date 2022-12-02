@@ -587,8 +587,6 @@ public:
     virtual void didInsertMenuItemElement(HTMLMenuItemElement&) { }
     virtual void didRemoveMenuItemElement(HTMLMenuItemElement&) { }
 
-    virtual String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&) const { return emptyString(); }
-
     virtual void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) { }
 
     virtual bool userIsInteracting() const { return false; }

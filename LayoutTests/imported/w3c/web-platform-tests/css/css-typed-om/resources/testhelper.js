@@ -31,6 +31,9 @@ function assert_color_channel_approx_equals(a, b) {
         assert_approx_equals(a[i].value, b[i].value, epsilonForUnitType(a.unit));
       }
       break;
+    case 'CSSKeywordValue':
+      assert_equals(a.value, b.value);
+      break;
     default:
       assert_equals(a.unit, b.unit);
       assert_approx_equals(a.value, b.value, epsilonForUnitType(a.unit));
@@ -79,10 +82,6 @@ function assert_style_value_equals(a, b) {
     case 'CSSVariableReferenceValue':
       assert_equals(a.variable, b.variable);
       assert_style_value_equals(a.fallback, b.fallback);
-      break;
-    case 'CSSPositionValue':
-      assert_style_value_equals(a.x, b.x);
-      assert_style_value_equals(a.y, b.y);
       break;
     case 'CSSTransformValue':
       assert_style_value_array_equals(a, b);

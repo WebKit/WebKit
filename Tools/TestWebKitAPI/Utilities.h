@@ -25,13 +25,9 @@
 
 #pragma once
 
-#include <wtf/Seconds.h>
+#include "WTFTestUtilities.h"
 
-#if ASSERT_ENABLED
-#define MAYBE_ASSERT_ENABLED_DEATH_TEST(name) name##DeathTest
-#else
-#define MAYBE_ASSERT_ENABLED_DEATH_TEST(name) DISABLED_##name##DeathTest
-#endif
+#include <wtf/Seconds.h>
 
 namespace TestWebKitAPI::Util {
 

@@ -471,6 +471,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                        gl::SamplerFormat format,
                                        gl::Texture **textureOut);
     void updateColorMasks();
+    void updateMissingOutputsMask();
     void updateBlendFuncsAndEquations();
     void updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples);
     void updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples);
@@ -618,14 +619,15 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         return flushOutsideRenderPassCommands();
     }
 
-    angle::Result beginNewRenderPass(const vk::Framebuffer &framebuffer,
+    angle::Result beginNewRenderPass(vk::MaybeImagelessFramebuffer &framebuffer,
                                      const gl::Rectangle &renderArea,
                                      const vk::RenderPassDesc &renderPassDesc,
                                      const vk::AttachmentOpsArray &renderPassAttachmentOps,
                                      const vk::PackedAttachmentCount colorAttachmentCount,
                                      const vk::PackedAttachmentIndex depthStencilAttachmentIndex,
                                      const vk::PackedClearValuesArray &clearValues,
-                                     vk::RenderPassCommandBuffer **commandBufferOut);
+                                     vk::RenderPassCommandBuffer **commandBufferOut,
+                                     vk::RenderPassSerial *renderPassSerialOut);
 
     // Only returns true if we have a started RP and we've run setupDraw.
     bool hasStartedRenderPass() const
@@ -634,10 +636,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         return mRenderPassCommandBuffer && mRenderPassCommands->started();
     }
 
-    bool hasStartedRenderPassWithFramebuffer(vk::Framebuffer *framebuffer)
+    bool hasStartedRenderPassWithSerial(const vk::RenderPassSerial renderPassSerial) const
     {
         return hasStartedRenderPass() &&
-               mRenderPassCommands->getFramebufferHandle() == framebuffer->getHandle();
+               mRenderPassCommands->getRenderPassSerial() == renderPassSerial;
     }
 
     bool hasStartedRenderPassWithCommands() const
@@ -652,7 +654,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     }
 
     // TODO(https://anglebug.com/4968): Support multiple open render passes.
-    void restoreFinishedRenderPass(vk::Framebuffer *framebuffer);
+    void restoreFinishedRenderPass(const vk::RenderPassSerial renderPassSerial);
 
     uint32_t getCurrentSubpassIndex() const;
     uint32_t getCurrentViewCount() const;
@@ -775,6 +777,17 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // RenderpassCommands if exists, or outsideRenderPassCommands)
     void retainResource(vk::Resource *resource);
 
+    // Whether VK_EXT_pipeline_robustness should be used to enable robust buffer access in the
+    // pipeline.
+    bool shouldUsePipelineRobustness() const
+    {
+        return getFeatures().supportsPipelineRobustness.enabled && mState.hasRobustAccess();
+    }
+
+    vk::ComputePipelineFlags getComputePipelineFlags() const;
+
+    angle::ImageLoadContext getImageLoadContext() const;
+
   private:
     // Dirty bits.
     enum DirtyBitType : size_t
@@ -782,6 +795,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         // Dirty bits that must be processed before the render pass is started.  The handlers for
         // these dirty bits don't record any commands.
 
+        // the AnySamplePassed render pass query has been ended.
+        DIRTY_BIT_ANY_SAMPLE_PASSED_QUERY_END,
         // A glMemoryBarrier has been called and command buffers may need flushing.
         DIRTY_BIT_MEMORY_BARRIER,
         // Update default attribute buffers.
@@ -849,6 +864,9 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // Dirty bit handlers that can break the render pass must always be specified before
     // DIRTY_BIT_RENDER_PASS.
+    static_assert(
+        DIRTY_BIT_ANY_SAMPLE_PASSED_QUERY_END < DIRTY_BIT_RENDER_PASS,
+        "Render pass breaking dirty bit must be handled before the render pass dirty bit");
     static_assert(
         DIRTY_BIT_MEMORY_BARRIER < DIRTY_BIT_RENDER_PASS,
         "Render pass breaking dirty bit must be handled before the render pass dirty bit");
@@ -1072,6 +1090,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result handleDirtyGraphicsReadOnlyDepthFeedbackLoopMode(
         DirtyBits::Iterator *dirtyBitsIterator,
         DirtyBits dirtyBitMask);
+    angle::Result handleDirtyAnySamplePassedQueryEnd(DirtyBits::Iterator *dirtyBitsIterator,
+                                                     DirtyBits dirtyBitMask);
     angle::Result handleDirtyGraphicsRenderPass(DirtyBits::Iterator *dirtyBitsIterator,
                                                 DirtyBits dirtyBitMask);
     angle::Result handleDirtyGraphicsEventLog(DirtyBits::Iterator *dirtyBitsIterator,
@@ -1296,9 +1316,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // An alternative could have been to set the static state unconditionally to non-zero.  This is
     // avoided however, as on the affected driver that would disable certain optimizations.
     void updateStencilWriteWorkaround();
-
-    SpecConstUsageBits getCurrentProgramSpecConstUsageBits() const;
-    void updateGraphicsPipelineDescWithSpecConstUsageBits(SpecConstUsageBits usageBits);
 
     angle::Result updateShaderResourcesDescriptorDesc(PipelineType pipelineType);
 
@@ -1526,6 +1543,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // A graph built from pipeline descs and their transitions.
     std::ostringstream mPipelineCacheGraph;
+
+    // The latest serial used for a started render pass.
+    vk::RenderPassSerial mCurrentRenderPassSerial;
+    RenderPassSerialFactory mRenderPassSerialFactory;
 };
 
 ANGLE_INLINE angle::Result ContextVk::endRenderPassIfTransformFeedbackBuffer(

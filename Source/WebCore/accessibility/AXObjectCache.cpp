@@ -300,6 +300,14 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
             if (auto* axObject = getOrCreate(node)) {
                 if (!axObject->computeAccessibilityIsIgnored())
                     return true;
+
+#if USE(ATSPI)
+                // When using ATSPI, an accessibility object with 'StaticText' role is ignored.
+                // Its content is exposed by its parent.
+                // Treat such elements as having accessible content.
+                if (axObject->roleValue() == AccessibilityRole::StaticText)
+                    return true;
+#endif
             }
 
             // Don't descend into subtrees for non-visible nodes.
@@ -589,7 +597,7 @@ static bool isSimpleImage(const RenderObject& renderer)
     return true;
 }
 
-static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
+Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
     Node* node = renderer->node();
@@ -623,10 +631,10 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 #endif
 
     if (renderer->isSVGRootOrLegacySVGRoot())
-        return AccessibilitySVGRoot::create(renderer);
-    
+        return AccessibilitySVGRoot::create(renderer, this);
+
     if (is<SVGElement>(node))
-        return AccessibilitySVGElement::create(renderer);
+        return AccessibilitySVGElement::create(renderer, this);
 
     if (isSimpleImage(*renderer))
         return AXImage::create(downcast<RenderImage>(renderer));
@@ -789,26 +797,27 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     if (!renderer)
         return nullptr;
 
-    if (AccessibilityObject* obj = get(renderer))
-        return obj;
+    if (auto* object = get(renderer))
+        return object;
 
     // Don't create an object for this renderer if it's being destroyed.
     if (renderer->beingDestroyed())
         return nullptr;
-    RefPtr<AccessibilityObject> newObj = createFromRenderer(renderer);
+
+    RefPtr object = createObjectFromRenderer(renderer);
 
     // Will crash later if we have two objects for the same renderer.
     ASSERT(!get(renderer));
 
-    cacheAndInitializeWrapper(newObj.get(), renderer);
+    cacheAndInitializeWrapper(object.get(), renderer);
     // Compute the object's initial ignored status.
-    newObj->recomputeIsIgnored();
+    object->recomputeIsIgnored();
     // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
-    if (newObj->isDetached())
+    if (object->isDetached())
         return nullptr;
-    
-    return newObj.get();
+
+    return object.get();
 }
 
 AXCoreObject* AXObjectCache::rootObject()
@@ -827,10 +836,11 @@ AXCoreObject* AXObjectCache::rootObject()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree() const
 {
+    AXTRACE(makeString("AXObjectCache::getOrCreateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     if (!m_pageID)
         return nullptr;
 
-    auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
+    RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID);
     if (!tree) {
         tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
             return AXIsolatedTree::create(const_cast<AXObjectCache*>(this));
@@ -913,10 +923,8 @@ void AXObjectCache::remove(AXID axID)
         return;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
-            tree->removeNode(*object);
-    }
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->removeNode(*object);
 #endif
 
     object->detach(AccessibilityDetachmentType::ElementDestroyed);
@@ -1887,18 +1895,26 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
 
 void AXObjectCache::handleActiveDescendantChanged(Element& element)
 {
-    if (!document().frame()->selection().isFocusedAndActive() || document().focusedElement() != &element)
+    if (!document().frame()->selection().isFocusedAndActive())
         return;
 
     auto* object = getOrCreate(&element);
     if (!object)
         return;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(*object, AXNotification::AXActiveDescendantChanged);
+#endif
+
+    // Notify active descendant changes only for the focused element.
+    if (document().focusedElement() != &element)
+        return;
+
     auto* activeDescendant = object->activeDescendant();
     // We want to notify that the combo box has changed its active descendant,
     // but we do not want to change the focus, because focus should remain with the combo box.
     if (activeDescendant && (object->isComboBox() || object->shouldFocusActiveDescendant())) {
-        auto target = object;
+        auto* target = object;
 
 #if PLATFORM(COCOA)
         // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
@@ -1910,7 +1926,12 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
         }
 #endif
 
-        postNotification(target, &document(), AXActiveDescendantChanged);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        if (target != object)
+            updateIsolatedTree(target, AXNotification::AXActiveDescendantChanged);
+#endif
+
+        postPlatformNotification(target, AXNotification::AXActiveDescendantChanged);
     }
 }
 
@@ -2000,7 +2021,8 @@ bool AXObjectCache::shouldProcessAttributeChange(Element* element, const Qualifi
 void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName& attrName, const AtomString& oldValue, const AtomString& newValue)
 {
     AXTRACE(makeString("AXObjectCache::handleAttributeChange 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-    AXLOG(makeString("attribute ", attrName.localName().string(), " for element ", element ? element->debugDescription() : String("nullptr"_s)));
+    AXLOG(makeString("attribute ", attrName.localName(), " for element ", element ? element->debugDescription() : String("nullptr"_s)));
+    AXLOG(makeString("old value: ", oldValue, " new value: ", newValue));
 
     if (!shouldProcessAttributeChange(element, attrName))
         return;
@@ -2083,6 +2105,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXFlowToChanged);
     else if (attrName == aria_grabbedAttr)
         postNotification(element, AXGrabbedStateChanged);
+    else if (attrName == aria_keyshortcutsAttr)
+        postNotification(element, AXKeyShortcutsChanged);
     else if (attrName == aria_levelAttr)
         postNotification(element, AXLevelChanged);
     else if (attrName == aria_liveAttr)
@@ -3596,8 +3620,8 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredMenuListChange.clear();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_deferredRegenerateIsolatedTree && m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID)) {
+    if (m_deferredRegenerateIsolatedTree) {
+        if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
             if (auto* webArea = rootWebArea()) {
                 AXLOG("Regenerating isolated tree from AXObjectCache::performDeferredCacheUpdate().");
                 tree->generateSubtree(*webArea);
@@ -3685,26 +3709,22 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXColumnIndex);
             break;
         case AXDisabledStateChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetFocusAttribute);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::IsEnabled);
+            tree->updatePropertiesForSelfAndDescendants(*notification.first, { AXPropertyName::CanSetFocusAttribute, AXPropertyName::IsEnabled });
             break;
         case AXExpandedChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsExpanded);
             break;
         case AXMaximumValueChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::MaxValueForRange);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::MaxValueForRange, AXPropertyName::ValueForRange });
             break;
         case AXMinimumValueChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::MinValueForRange);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::MinValueForRange, AXPropertyName::ValueForRange });
             break;
         case AXOrientationChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::Orientation);
             break;
         case AXPositionInSetChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::PosInSet);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsPosInSet);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::PosInSet, AXPropertyName::SupportsPosInSet });
             break;
         case AXSortDirectionChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
@@ -3713,8 +3733,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::IdentifierAttribute);
             break;
         case AXReadOnlyStatusChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetValueAttribute);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::ReadOnlyValue);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::CanSetValueAttribute, AXPropertyName::ReadOnlyValue });
             break;
         case AXRequiredStatusChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsRequired);
@@ -3730,14 +3749,16 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;
         case AXSetSizeChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SetSize);
-            tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsSetSize);
+            tree->updateNodeProperties(*notification.first, { AXPropertyName::SetSize, AXPropertyName::SupportsSetSize });
             break;
         case AXTableHeadersChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::ColumnHeaders);
             break;
         case AXURLChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::URL);
+            break;
+        case AXKeyShortcutsChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::KeyShortcuts);
             break;
         case AXActiveDescendantChanged:
         case AXRoleChanged:
@@ -4050,12 +4071,9 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 void AXObjectCache::updateRelationsIfNeeded()
 {
-    AXTRACE(makeString("AXObjectCache::updateRelationsIfNeeded 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-
     if (!m_relationsNeedUpdate)
         return;
     relationsNeedUpdate(false);
-    AXLOG("Updating relations.");
     m_relations.clear();
     m_relationTargets.clear();
     updateRelationsForTree(m_document.rootNode());
@@ -4134,8 +4152,8 @@ void AXObjectCache::relationsNeedUpdate(bool needUpdate)
     m_relationsNeedUpdate = needUpdate;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_relationsNeedUpdate && m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
+    if (m_relationsNeedUpdate) {
+        if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
             tree->relationsNeedUpdate(true);
     }
 #endif

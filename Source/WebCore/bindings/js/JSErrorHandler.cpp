@@ -110,15 +110,15 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
 
         InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
-        if (jsFunctionWindow)
-            jsFunctionWindow->setCurrentEvent(savedEvent.get());
-
         if (exception)
-            reportException(globalObject, exception);
+            reportException(jsFunction->globalObject(), exception);
         else {
             if (returnValue.isTrue())
                 event.preventDefault();
         }
+
+        if (jsFunctionWindow)
+            jsFunctionWindow->setCurrentEvent(savedEvent.get());
     }
 }
 

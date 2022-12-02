@@ -73,7 +73,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldAlwaysUseComplexTextCodePath;
     encoder << shouldEnableMemoryPressureReliefLogging;
     encoder << shouldSuppressMemoryPressureHandler;
-    encoder << shouldUseFontSmoothingForTesting;
+    encoder << disableFontSubpixelAntialiasingForTesting;
     encoder << fontAllowList;
     encoder << overrideLanguages;
 #if USE(GSTREAMER)
@@ -288,7 +288,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.shouldSuppressMemoryPressureHandler))
         return false;
-    if (!decoder.decode(parameters.shouldUseFontSmoothingForTesting))
+    if (!decoder.decode(parameters.disableFontSubpixelAntialiasingForTesting))
         return false;
     if (!decoder.decode(parameters.fontAllowList))
         return false;

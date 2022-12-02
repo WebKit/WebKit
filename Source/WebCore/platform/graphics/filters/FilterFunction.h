@@ -28,6 +28,8 @@
 #include "FilterEffectGeometry.h"
 #include "FilterImage.h"
 #include "FilterImageVector.h"
+#include "FilterRenderingMode.h"
+#include "FilterStyle.h"
 #include "FloatRect.h"
 #include "LengthBox.h"
 #include <wtf/RefCounted.h>
@@ -93,14 +95,17 @@ public:
     static AtomString sourceGraphicName() { return filterName(Type::SourceGraphic); }
     AtomString filterName() const { return filterName(m_filterType); }
 
-    virtual bool supportsAcceleratedRendering() const { return false; }
+    virtual OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const { return FilterRenderingMode::Software; }
     virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&, FilterResults&) { return nullptr; }
+    virtual FilterStyleVector createFilterStyles(const Filter&, const FilterStyle&) const { return { }; }
 
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation = FilterRepresentation::TestOutput) const = 0;
 
 private:
     Type m_filterType;
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FilterFunction&);
 
 } // namespace WebCore
 

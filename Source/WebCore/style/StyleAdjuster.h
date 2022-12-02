@@ -42,6 +42,8 @@ enum class AnimationImpact;
 
 namespace Style {
 
+class Update;
+
 class Adjuster {
 public:
     Adjuster(const Document&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
@@ -51,6 +53,8 @@ public:
 
     static void adjustSVGElementStyle(RenderStyle&, const SVGElement&);
     static void adjustEventListenerRegionTypesForRootStyle(RenderStyle&, const Document&);
+    static void propagateToDocumentElementAndInitialContainingBlock(Update&, const Document&);
+    static std::unique_ptr<RenderStyle> restoreUsedDocumentElementStyleToComputed(const RenderStyle&);
 
 #if ENABLE(TEXT_AUTOSIZING)
     struct AdjustmentForTextAutosizing {

@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "CSSVariableReferenceValue.h"
 
 namespace WebCore {
 

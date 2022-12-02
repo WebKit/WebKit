@@ -1,4 +1,5 @@
 //@ skip if $model =~ /^Apple Watch/
+//@ $skipModes << :lockdown if $buildType == "debug"
 
 function C() {
     this.x = 4;

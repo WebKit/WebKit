@@ -32,11 +32,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
               list(APPEND GSTREAMER_COMPONENTS transcoder)
           endif ()
 
-          if (USE_GSTREAMER_WEB_RTC)
+          if (USE_GSTREAMER_WEBRTC)
               list(APPEND GSTREAMER_COMPONENTS webrtc)
           endif ()
 
-          find_package(GStreamer 1.14.0 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+          find_package(GStreamer 1.16.2 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 
           if (ENABLE_WEB_AUDIO)
               if (NOT PC_GSTREAMER_AUDIO_FOUND OR NOT PC_GSTREAMER_FFT_FOUND)

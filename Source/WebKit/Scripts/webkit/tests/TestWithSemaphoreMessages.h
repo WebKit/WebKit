@@ -28,7 +28,6 @@
 #include "Connection.h"
 #include "IPCSemaphore.h"
 #include "MessageNames.h"
-#include "TestWithSemaphoreMessagesReplies.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -69,10 +68,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
     static constexpr bool isSync = false;
 
-    static void callReply(IPC::Decoder&, CompletionHandler<void(IPC::Semaphore&&)>&&);
-    static void cancelReply(CompletionHandler<void(IPC::Semaphore&&)>&&);
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
-    using AsyncReply = ReceiveSemaphoreAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
     const Arguments& arguments() const

@@ -47,8 +47,6 @@ class AudioMediaStreamTrackRendererInternalUnitManager {
 public:
     AudioMediaStreamTrackRendererInternalUnitManager() = default;
 
-    UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteInternalUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&, WebCore::AudioMediaStreamTrackRendererInternalUnit::ResetCallback&&);
-
     class Proxy;
     void add(Proxy&);
     void remove(Proxy&);
@@ -59,6 +57,8 @@ public:
 private:
     HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, WeakPtr<Proxy>> m_proxies;
 };
+
+UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::Client&);
 
 }
 

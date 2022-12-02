@@ -1,0 +1,7 @@
+
+FAIL Redirect to escaped UTF-8 assert_true: http://web-platform.test:8800/fetch/api/resources/top.txt?%E2%98%83%E2%98%83 ends with top.txt?%E2%98%83%e2%98%83 expected true got false
+FAIL Redirect to unescaped UTF-8 assert_true: http://web-platform.test:8800/fetch/api/resources/top.txt?%C3%A2%C2%98%C2%83 ends with top.txt?%E2%98%83 expected true got false
+FAIL Redirect to escaped and unescaped UTF-8 assert_true: http://web-platform.test:8800/fetch/api/resources/top.txt?%C3%A2%C2%98%C2%83%E2%98%83 ends with top.txt?%E2%98%83%e2%98%83 expected true got false
+FAIL Escaping produces double-percent assert_true: http://web-platform.test:8800/fetch/api/resources/top.txt?%%C3%A2%C2%98%C2%83 ends with top.txt?%%E2%98%83 expected true got false
+FAIL Redirect to invalid UTF-8 assert_true: http://web-platform.test:8800/fetch/api/resources/top.txt?%C3%AF%C2%BF%C2%BD ends with top.txt?%FF expected true got false
+

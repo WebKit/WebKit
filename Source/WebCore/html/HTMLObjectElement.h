@@ -22,14 +22,14 @@
 
 #pragma once
 
-#include "FormAssociatedElement.h"
+#include "FormListedElement.h"
 #include "HTMLPlugInImageElement.h"
 
 namespace WebCore {
 
 class HTMLFormElement;
 
-class HTMLObjectElement final : public HTMLPlugInImageElement, public FormAssociatedElement {
+class HTMLObjectElement final : public HTMLPlugInImageElement, public FormListedElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLObjectElement);
 public:
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
@@ -54,7 +54,7 @@ public:
     using HTMLPlugInImageElement::ref;
     using HTMLPlugInImageElement::deref;
 
-    HTMLFormElement* form() const final { return FormAssociatedElement::form(); }
+    HTMLFormElement* form() const final { return FormListedElement::form(); }
 
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);
@@ -91,8 +91,8 @@ private:
     void refFormAssociatedElement() final { ref(); }
     void derefFormAssociatedElement() final { deref(); }
 
-    FormNamedItem* asFormNamedItem() final { return this; }
     FormAssociatedElement* asFormAssociatedElement() final { return this; }
+    FormListedElement* asFormListedElement() final { return this; }
 
     // These functions can be called concurrently for ValidityState.
     HTMLObjectElement& asHTMLElement() final { return *this; }

@@ -5,7 +5,7 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 if (window.internals)
-    internals.setResourceLoadStatisticsEnabled(false);
+    internals.setTrackingPreventionEnabled(false);
 
 function clickLink() {
     // Should be the origin, not the full URL, because we are cross-origin.

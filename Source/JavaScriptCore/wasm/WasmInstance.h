@@ -35,7 +35,7 @@
 #include "WriteBarrier.h"
 #include <wtf/BitVector.h>
 #include <wtf/RefPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace JSC {
 
@@ -46,7 +46,7 @@ namespace Wasm {
 
 class Instance;
 
-class Instance : public ThreadSafeRefCounted<Instance>, public CanMakeWeakPtr<Instance> {
+class Instance : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Instance> {
     friend LLIntOffsetsExtractor;
 
 public:
@@ -97,7 +97,7 @@ public:
     void setMemory(Ref<Memory>&& memory)
     {
         m_memory = WTFMove(memory);
-        m_memory.get()->registerInstance(this);
+        m_memory.get()->registerInstance(*this);
         updateCachedMemory();
     }
     void updateCachedMemory()
@@ -152,6 +152,27 @@ public:
                 return;
         }
         slot->m_primitive = bits;
+    }
+
+    v128_t loadV128Global(unsigned i) const
+    {
+        Global::Value* slot = m_globals.get() + i;
+        if (m_globalsToBinding.get(i)) {
+            slot = slot->m_pointer;
+            if (!slot)
+                return { };
+        }
+        return slot->m_vector;
+    }
+    void setGlobal(unsigned i, v128_t bits)
+    {
+        Global::Value* slot = m_globals.get() + i;
+        if (m_globalsToBinding.get(i)) {
+            slot = slot->m_pointer;
+            if (!slot)
+                return;
+        }
+        slot->m_vector = bits;
     }
     void setGlobal(unsigned, JSValue);
     void linkGlobal(unsigned, Ref<Global>&&);

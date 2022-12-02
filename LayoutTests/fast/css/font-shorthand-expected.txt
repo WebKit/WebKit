@@ -1,84 +1,183 @@
 Test
 Font for '12px monospace':
-font-style: normal (original property was font and property was implicitly set.)
-font-variant-caps: normal (original property was font and property was implicitly set.)
-font-weight: normal (original property was font and property was implicitly set.)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: normal (original property was font and property was implicitly set.)
-font-family: monospace (original property was font)
+font-style: normal
+font-variant-caps: normal
+font-weight: normal
+font-stretch: normal
+font-size: 12px
+line-height: normal
+font-family: monospace
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for '12px/24px serif':
-font-style: normal (original property was font and property was implicitly set.)
-font-variant-caps: normal (original property was font and property was implicitly set.)
-font-weight: normal (original property was font and property was implicitly set.)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: 24px (original property was font)
-font-family: serif (original property was font)
+font-style: normal
+font-variant-caps: normal
+font-weight: normal
+font-stretch: normal
+font-size: 12px
+line-height: 24px
+font-family: serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'normal 12px serif':
-font-style: normal (original property was font)
-font-variant-caps: normal (original property was font and property was implicitly set.)
-font-weight: normal (original property was font and property was implicitly set.)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: normal (original property was font and property was implicitly set.)
-font-family: serif (original property was font)
+font-style: normal
+font-variant-caps: normal
+font-weight: normal
+font-stretch: normal
+font-size: 12px
+line-height: normal
+font-family: serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'normal normal 12px serif':
-font-style: normal (original property was font)
-font-variant-caps: normal (original property was font)
-font-weight: normal (original property was font and property was implicitly set.)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: normal (original property was font and property was implicitly set.)
-font-family: serif (original property was font)
+font-style: normal
+font-variant-caps: normal
+font-weight: normal
+font-stretch: normal
+font-size: 12px
+line-height: normal
+font-family: serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'normal normal normal 12px serif':
-font-style: normal (original property was font)
-font-variant-caps: normal (original property was font)
-font-weight: normal (original property was font)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: normal (original property was font and property was implicitly set.)
-font-family: serif (original property was font)
+font-style: normal
+font-variant-caps: normal
+font-weight: normal
+font-stretch: normal
+font-size: 12px
+line-height: normal
+font-family: serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'italic small-caps 12px/24px serif':
-font-style: italic (original property was font)
-font-variant-caps: small-caps (original property was font)
-font-weight: normal (original property was font and property was implicitly set.)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: 24px (original property was font)
-font-family: serif (original property was font)
+font-style: italic
+font-variant-caps: small-caps
+font-weight: normal
+font-stretch: normal
+font-size: 12px
+line-height: 24px
+font-family: serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'italic bold 12px/24px serif':
-font-style: italic (original property was font)
-font-variant-caps: normal (original property was font and property was implicitly set.)
-font-weight: bold (original property was font)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 12px (original property was font)
-line-height: 24px (original property was font)
-font-family: serif (original property was font)
+font-style: italic
+font-variant-caps: normal
+font-weight: bold
+font-stretch: normal
+font-size: 12px
+line-height: 24px
+font-family: serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'small-caps bold 14px/28px Arial, sans-serif':
-font-style: normal (original property was font and property was implicitly set.)
-font-variant-caps: small-caps (original property was font)
-font-weight: bold (original property was font)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 14px (original property was font)
-line-height: 28px (original property was font)
-font-family: Arial, sans-serif (original property was font)
+font-style: normal
+font-variant-caps: small-caps
+font-weight: bold
+font-stretch: normal
+font-size: 14px
+line-height: 28px
+font-family: Arial, sans-serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'italic small-caps bold 14px/28px Arial, sans-serif':
-font-style: italic (original property was font)
-font-variant-caps: small-caps (original property was font)
-font-weight: bold (original property was font)
-font-stretch: normal (original property was font and property was implicitly set.)
-font-size: 14px (original property was font)
-line-height: 28px (original property was font)
-font-family: Arial, sans-serif (original property was font)
+font-style: italic
+font-variant-caps: small-caps
+font-weight: bold
+font-stretch: normal
+font-size: 14px
+line-height: 28px
+font-family: Arial, sans-serif
+font-size-adjust: none
+font-kerning: auto
+font-variant-alternates: normal
+font-variant-ligatures: normal
+font-variant-numeric: normal
+font-variant-east-asian: normal
+font-variant-position: normal
+font-feature-settings: normal
+font-optical-sizing: auto
+font-variation-settings: normal
+font-palette: normal
 
 Font for 'italic small-caps bold 12px/24px':
 

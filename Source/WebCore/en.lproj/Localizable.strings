@@ -892,6 +892,9 @@
 /* Media Pause context menu item */
 "Pause" = "Pause";
 
+/* Pause All Animations context menu item */
+"Pause All Animations" = "Pause All Animations";
+
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
 "Photo Library (file upload action sheet)" = "Photo Library";
 
@@ -900,6 +903,9 @@
 
 /* Media Play context menu item */
 "Play" = "Play";
+
+/* Play All Animations context menu item */
+"Play All Animations" = "Play All Animations";
 
 /* accessibility help text for enter full screen button */
 "Play movie in full screen mode" = "Play movie in full screen mode";
@@ -1272,6 +1278,9 @@
 
 /* Full Screen Deceptive Website Warning Sheet Content Text */
 "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information." = "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.";
+
+/* Full Screen Warning Banner Content Text */
+"”%@” is in full screen.\nSwipe down to exit." = "”%@” is in full screen.\nSwipe down to exit.";
 
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";

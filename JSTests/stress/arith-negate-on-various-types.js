@@ -1,4 +1,5 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
 //@ defaultNoEagerRun
 "use strict";
 

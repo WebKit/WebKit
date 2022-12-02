@@ -64,23 +64,6 @@ static int toVMMemoryLedger(MemoryLedger memoryLedger)
 }
 #endif
 
-static inline std::optional<size_t> safeRoundPage(size_t size)
-{
-    size_t roundedSize;
-    if (__builtin_add_overflow(size, static_cast<size_t>(PAGE_MASK), &roundedSize))
-        return std::nullopt;
-    roundedSize &= ~static_cast<size_t>(PAGE_MASK);
-    return roundedSize;
-}
-
-SharedMemory::Handle::Handle() = default;
-
-SharedMemory::Handle::Handle(Handle&&) = default;
-
-auto SharedMemory::Handle::operator=(Handle&& other) -> Handle& = default;
-
-SharedMemory::Handle::~Handle() = default;
-
 void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 {
 #if HAVE(MACH_MEMORY_ENTRY)
@@ -132,10 +115,6 @@ bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
     if (!decoder.decode(bufferSize))
         return false;
 
-    auto roundedSize = safeRoundPage(bufferSize);
-    if (UNLIKELY(!roundedSize))
-        return false;
-
     auto sendRight = decoder.decode<MachSendRight>();
     if (UNLIKELY(!decoder.isValid()))
         return false;
@@ -159,15 +138,9 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     ASSERT(size);
 
-    auto roundedSize = safeRoundPage(size);
-    if (!roundedSize) {
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate shared memory (%zu bytes) due to overflow", nullptr, size);
-        return nullptr;
-    }
-
     mach_vm_address_t address = 0;
     // Using VM_FLAGS_PURGABLE so that we can later transfer ownership of the memory via mach_memory_entry_ownership().
-    kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, *roundedSize, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
+    kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, size, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
     if (kr != KERN_SUCCESS) {
         RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %" PUBLIC_LOG_STRING " (%x)", nullptr, size, mach_error_string(kr), kr);
         return nullptr;
@@ -195,27 +168,21 @@ static inline vm_prot_t machProtection(SharedMemory::Protection protection)
 
 static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, SharedMemory::Protection protection, mach_port_t parentEntry)
 {
-    auto roundedSize = safeRoundPage(size);
-    if (!roundedSize) {
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory (%zu bytes) due to overflow", nullptr, size);
-        return { };
-    }
-
-    memory_object_size_t memoryObjectSize = *roundedSize;
+    memory_object_size_t memoryObjectSize = size;
     mach_port_t port = MACH_PORT_NULL;
 
 #if HAVE(MEMORY_ATTRIBUTION_VM_SHARE_SUPPORT)
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
         RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
         return { };
     }
 #else
     // First try without MAP_MEM_VM_SHARE because it prevents memory ownership transfer. We only pass the MAP_MEM_VM_SHARE flag as a fallback.
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK, &port, parentEntry);
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
         RELEASE_LOG(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory, will try again with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
-        kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
+        kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
         if (kr != KERN_SUCCESS) {
             RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
             return { };
@@ -249,15 +216,11 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
 {
     if (handle.isNull())
         return nullptr;
-    auto roundedSize = safeRoundPage(handle.m_size);
-    if (UNLIKELY(!roundedSize)) {
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map %zu bytes due to overflow", nullptr, handle.m_size);
-        return nullptr;
-    }
 
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
-    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, *roundedSize, 0, VM_FLAGS_ANYWHERE, handle.m_handle.sendRight(), 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
+
+    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, handle.m_handle.sendRight(), 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
     if (kr != KERN_SUCCESS) {
         RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map shared memory. %" PUBLIC_LOG_STRING " (%x)", nullptr, mach_error_string(kr), kr);
         return nullptr;
@@ -274,13 +237,7 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
 SharedMemory::~SharedMemory()
 {
     if (m_data) {
-        auto roundedSize = safeRoundPage(m_size);
-        if (!roundedSize) {
-            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate memory (%zu bytes) due to overflow", this, m_size);
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
-        kern_return_t kr = mach_vm_deallocate(mach_task_self(), toVMAddress(m_data), *roundedSize);
+        kern_return_t kr = mach_vm_deallocate(mach_task_self(), toVMAddress(m_data), m_size);
         if (kr != KERN_SUCCESS) {
             RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate shared memory. %" PUBLIC_LOG_STRING " (%x)", this, mach_error_string(kr), kr);
             ASSERT_NOT_REACHED();
@@ -288,25 +245,20 @@ SharedMemory::~SharedMemory()
     }
 }
     
-bool SharedMemory::createHandle(Handle& handle, Protection protection)
+auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 {
+    Handle handle;
     ASSERT(!handle.m_handle);
     ASSERT(!handle.m_size);
 
-    auto roundedSize = safeRoundPage(m_size);
-    if (!roundedSize) {
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::createHandle: Failed to create handle (%zu bytes) due to overflow", this, m_size);
-        return false;
-    }
-
     auto sendRight = createSendRight(protection);
     if (!sendRight)
-        return false;
+        return std::nullopt;
 
     handle.m_handle = WTFMove(sendRight);
     handle.m_size = m_size;
 
-    return true;
+    return WTFMove(handle);
 }
 
 WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const

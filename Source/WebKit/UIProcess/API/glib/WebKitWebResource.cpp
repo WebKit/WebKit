@@ -22,7 +22,9 @@
 
 #include "APIData.h"
 #include "WebFrameProxy.h"
-#include "WebKitURIRequest.h"
+#include "WebKitPrivate.h"
+#include "WebKitURIRequestPrivate.h"
+#include "WebKitURIResponsePrivate.h"
 #include "WebKitWebResourcePrivate.h"
 #include "WebPageProxy.h"
 #include <glib/gi18n-lib.h>
@@ -159,6 +161,10 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
      * This signal is emitted after response is received,
      * every time new data has been received. It's
      * useful to know the progress of the resource load operation.
+     *
+     * This is signal is deprecated since version 2.40 and it's never emitted.
+     *
+     * Deprecated: 2.40
      */
     signals[RECEIVED_DATA] = g_signal_new(
         "received-data",
@@ -233,52 +239,50 @@ static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CStrin
     g_object_notify_by_pspec(G_OBJECT(resource), sObjProperties[PROP_URI]);
 }
 
-WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, WebKitURIRequest* request, bool isMainResource)
+WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::ResourceRequest& request)
 {
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     resource->priv->frame = &frame;
-    resource->priv->uri = webkit_uri_request_get_uri(request);
-    resource->priv->isMainResource = isMainResource;
+    resource->priv->uri = request.url().string().utf8();
+    resource->priv->isMainResource = frame.isMainFrame() && request.requester() == WebCore::ResourceRequestRequester::Main;
     return resource;
 }
 
-void webkitWebResourceSentRequest(WebKitWebResource* resource, WebKitURIRequest* request, WebKitURIResponse* redirectResponse)
+void webkitWebResourceSentRequest(WebKitWebResource* resource, WebCore::ResourceRequest&& request, WebCore::ResourceResponse&& redirectResponse)
 {
-    webkitWebResourceUpdateURI(resource, webkit_uri_request_get_uri(request));
-    g_signal_emit(resource, signals[SENT_REQUEST], 0, request, redirectResponse);
+    GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
+    webkitWebResourceUpdateURI(resource, webkit_uri_request_get_uri(uriRequest.get()));
+    GRefPtr<WebKitURIResponse> uriRedirectResponse = !redirectResponse.isNull() ? adoptGRef(webkitURIResponseCreateForResourceResponse(redirectResponse)) : nullptr;
+    g_signal_emit(resource, signals[SENT_REQUEST], 0, uriRequest.get(), uriRedirectResponse.get());
 }
 
-void webkitWebResourceSetResponse(WebKitWebResource* resource, WebKitURIResponse* response)
+void webkitWebResourceSetResponse(WebKitWebResource* resource, WebCore::ResourceResponse&& response)
 {
-    resource->priv->response = response;
+    resource->priv->response = adoptGRef(webkitURIResponseCreateForResourceResponse(response));
     g_object_notify_by_pspec(G_OBJECT(resource), sObjProperties[PROP_RESPONSE]);
-}
-
-void webkitWebResourceNotifyProgress(WebKitWebResource* resource, guint64 bytesReceived)
-{
-    g_signal_emit(resource, signals[RECEIVED_DATA], 0, bytesReceived);
 }
 
 void webkitWebResourceFinished(WebKitWebResource* resource)
 {
-    g_signal_emit(resource, signals[FINISHED], 0, NULL);
-}
-
-void webkitWebResourceFailed(WebKitWebResource* resource, GError* error)
-{
-    g_signal_emit(resource, signals[FAILED], 0, error);
-    g_signal_emit(resource, signals[FINISHED], 0, NULL);
-}
-
-void webkitWebResourceFailedWithTLSErrors(WebKitWebResource* resource, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
-{
-    g_signal_emit(resource, signals[FAILED_WITH_TLS_ERRORS], 0, certificate, tlsErrors);
     g_signal_emit(resource, signals[FINISHED], 0, nullptr);
 }
 
-WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource* resource)
+void webkitWebResourceFailed(WebKitWebResource* resource, WebCore::ResourceError&& resourceError)
 {
-    return resource->priv->frame.get();
+    if (resourceError.tlsErrors())
+        g_signal_emit(resource, signals[FAILED_WITH_TLS_ERRORS], 0, resourceError.certificate(), static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()));
+    else {
+        GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
+            toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
+        g_signal_emit(resource, signals[FAILED], 0, error.get());
+    }
+
+    webkitWebResourceFinished(resource);
+}
+
+bool webkitWebResourceIsMainResource(WebKitWebResource* resource)
+{
+    return resource->priv->isMainResource;
 }
 
 /**

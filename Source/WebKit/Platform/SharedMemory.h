@@ -65,13 +65,7 @@ public:
     };
 
     class Handle {
-        WTF_MAKE_NONCOPYABLE(Handle);
     public:
-        Handle();
-        ~Handle();
-        Handle(Handle&&);
-        Handle& operator=(Handle&&);
-
         bool isNull() const;
 
         size_t size() const { return m_size; }
@@ -118,7 +112,7 @@ public:
 
     ~SharedMemory();
 
-    bool createHandle(Handle&, Protection);
+    std::optional<Handle> createHandle(Protection);
 
     size_t size() const { return m_size; }
     void* data() const

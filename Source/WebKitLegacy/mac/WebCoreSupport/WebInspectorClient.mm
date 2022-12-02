@@ -349,7 +349,7 @@ void WebInspectorFrontendClient::showCertificate(const CertificateInfo& certific
     if (!window)
         window = [NSApp keyWindow];
 
-    [certificatePanel beginSheetForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust() showGroup:YES];
+    [certificatePanel beginSheetForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust().get() showGroup:YES];
 
     // This must be called after the trust panel has been displayed, because the certificateView doesn't exist beforehand.
     SFCertificateView *certificateView = [certificatePanel certificateView];

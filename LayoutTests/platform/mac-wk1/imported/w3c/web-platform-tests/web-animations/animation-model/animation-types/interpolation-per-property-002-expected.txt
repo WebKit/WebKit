@@ -338,9 +338,9 @@ PASS word-break uses discrete animation when animating between "keep-all" and "b
 PASS word-spacing (type: lengthPercentageOrCalc) has testInterpolation function
 PASS word-spacing supports animating as a length
 PASS word-spacing supports animating as a length of rem
-FAIL word-spacing supports animating as a percentage assert_equals: The value should be 30% at 500ms expected "30%" but got "0.75px"
-FAIL word-spacing supports animating as combination units "px" and "%" assert_equals: The value should be calc(10% + 5px) at 500ms expected "calc(10% + 5px)" but got "0.5px"
-FAIL word-spacing supports animating as combination units "%" and "em" assert_equals: The value should be calc(5% + 10px) at 500ms expected "calc(5% + 10px)" but got "20px"
+PASS word-spacing supports animating as a percentage
+PASS word-spacing supports animating as combination units "px" and "%"
+PASS word-spacing supports animating as combination units "%" and "em"
 PASS word-spacing supports animating as combination units "em" and "rem"
 FAIL word-spacing supports animating as combination units "px" and "calc" assert_equals: The value should be calc(10% + 10px) at 500ms expected "calc(10% + 10px)" but got "0px"
 FAIL word-spacing supports animating as a calc assert_equals: The value should be calc(15% + 15px) at 500ms expected "calc(15% + 15px)" but got "0px"

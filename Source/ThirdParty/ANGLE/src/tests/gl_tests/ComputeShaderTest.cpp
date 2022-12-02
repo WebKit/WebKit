@@ -1224,6 +1224,8 @@ void main()
 
     glDispatchCompute(1, 1, 1);
 
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
     const GLuint *ptr = reinterpret_cast<const GLuint *>(glMapBufferRange(
         GL_SHADER_STORAGE_BUFFER, 0, kWidth * kHeight * kArrayStride, GL_MAP_READ_BIT));
@@ -1293,6 +1295,8 @@ void main()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 
     glDispatchCompute(1, 1, 1);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
     const GLuint *ptr = reinterpret_cast<const GLuint *>(glMapBufferRange(

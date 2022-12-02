@@ -114,6 +114,8 @@ enum {
     WebMenuItemTagAddHighlightToNewQuickNote,
     WebMenuItemTagRevealImage,
     WebMenuItemTagTranslate,
+    WebMenuItemTagPlayAllAnimations,
+    WebMenuItemTagPauseAllAnimations,
 };
 
 // Deprecated; remove when there are no more clients.
@@ -322,7 +324,5 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 #endif
 
 - (NSData *)webCryptoMasterKeyForWebView:(WebView *)sender;
-
-- (NSString *)signedPublicKeyAndChallengeStringForWebView:(WebView *)sender;
 
 @end

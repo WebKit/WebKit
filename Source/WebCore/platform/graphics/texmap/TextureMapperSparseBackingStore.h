@@ -41,12 +41,12 @@ class TextureMapperSparseBackingStore final : public TextureMapperBackingStore {
 public:
     using TileIndex = WebCore::IntPoint;
 
-    void setSize(const IntSize&);
-    void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
-    void drawBorder(TextureMapper&, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
-    void drawRepaintCounter(TextureMapper&, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
-    void updateContents(TextureMapper&, const TileIndex&, Image&, const IntRect& dirtyRect);
-    void removeTile(const TileIndex&);
+    WEBCORE_EXPORT void setSize(const IntSize&);
+    WEBCORE_EXPORT void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
+    WEBCORE_EXPORT void drawBorder(TextureMapper&, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
+    WEBCORE_EXPORT void drawRepaintCounter(TextureMapper&, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
+    WEBCORE_EXPORT void updateContents(TextureMapper&, const TileIndex&, Image&, const IntRect& dirtyRect);
+    WEBCORE_EXPORT void removeTile(const TileIndex&);
 
 private:
     TransformationMatrix adjustedTransformForRect(const FloatRect&);

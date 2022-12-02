@@ -32,13 +32,12 @@
 
 namespace JSC {
 
-DataView::DataView(RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t byteLength)
+DataView::DataView(RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> byteLength)
     : ArrayBufferView(TypeDataView, WTFMove(buffer), byteOffset, byteLength)
 {
 }
 
-Ref<DataView> DataView::create(
-    RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t byteLength)
+Ref<DataView> DataView::create(RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> byteLength)
 {
     return adoptRef(*new DataView(WTFMove(buffer), byteOffset, byteLength));
 }
@@ -49,11 +48,25 @@ Ref<DataView> DataView::create(RefPtr<ArrayBuffer>&& buffer)
     return create(WTFMove(buffer), 0, byteLength);
 }
 
+RefPtr<DataView> DataView::wrappedAs(Ref<ArrayBuffer>&& buffer, size_t byteOffset, std::optional<size_t> byteLength)
+{
+    ASSERT(byteLength || buffer->isResizableOrGrowableShared());
+
+    // We do not check verifySubRangeLength for resizable buffer case since this function is only called from already created JS DataViews.
+    // It is possible that verifySubRangeLength fails when underlying ArrayBuffer is resized, but it is OK since it will be just recognized as OOB DataView.
+    if (!buffer->isResizableOrGrowableShared()) {
+        if (!ArrayBufferView::verifySubRangeLength(buffer.get(), byteOffset, byteLength.value_or(0), 1))
+            return nullptr;
+    }
+
+    return adoptRef(*new DataView(WTFMove(buffer), byteOffset, byteLength));
+}
+
 JSArrayBufferView* DataView::wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject)
 {
     return JSDataView::create(
-        lexicalGlobalObject, globalObject->typedArrayStructure(TypeDataView), possiblySharedBuffer(), byteOffset(),
-        byteLength());
+        lexicalGlobalObject, globalObject->typedArrayStructure(TypeDataView, isResizableOrGrowableShared()), possiblySharedBuffer(), byteOffsetRaw(),
+        isAutoLength() ? std::nullopt : std::optional { byteLengthRaw() });
 }
 
 } // namespace JSC

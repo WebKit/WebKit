@@ -160,7 +160,7 @@ private:
     void bufferASCIICharacter(UChar);
     void bufferCharacter(UChar);
     template<typename CharacterType> void bufferCharacters(Span<const CharacterType>);
-    void bufferCharacters(ASCIILiteral literal) { bufferCharacters(Span { literal.characters8(), literal.length() }); }
+    void bufferCharacters(ASCIILiteral literal) { bufferCharacters(literal.span8()); }
 
     bool emitAndResumeInDataState(SegmentedString&);
     bool emitAndReconsumeInDataState();

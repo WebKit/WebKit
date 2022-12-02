@@ -27,7 +27,7 @@ PASS MathML parsing &Amacr;
 PASS MathML parsing &amacr;
 PASS MathML parsing &amalg;
 PASS MathML parsing &amp;
-FAIL MathML parsing &AMP; assert_true: expected true got false
+PASS MathML parsing &AMP;
 PASS MathML parsing &andand;
 PASS MathML parsing &And;
 PASS MathML parsing &and;
@@ -1007,7 +1007,7 @@ PASS MathML parsing &lstrok;
 PASS MathML parsing &ltcc;
 PASS MathML parsing &ltcir;
 PASS MathML parsing &lt;
-FAIL MathML parsing &LT; assert_true: expected true got false
+PASS MathML parsing &LT;
 PASS MathML parsing &Lt;
 PASS MathML parsing &ltdot;
 PASS MathML parsing &lthree;
@@ -1294,7 +1294,7 @@ PASS MathML parsing &nvHarr;
 PASS MathML parsing &nvinfin;
 PASS MathML parsing &nvlArr;
 PASS MathML parsing &nvle;
-FAIL MathML parsing &nvlt; assert_equals: MathML parsing the entity reference caused a parse error; expected 3 but got 1
+PASS MathML parsing &nvlt;
 PASS MathML parsing &nvltrie;
 PASS MathML parsing &nvrArr;
 PASS MathML parsing &nvrtrie;

@@ -207,7 +207,6 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 {
     m_request = input.m_request;
     m_requestURL = m_request.url();
-    m_navigationPreloadIdentifier = input.navigationPreloadIdentifier();
 
     m_options = input.m_options;
     m_referrer = input.m_referrer;

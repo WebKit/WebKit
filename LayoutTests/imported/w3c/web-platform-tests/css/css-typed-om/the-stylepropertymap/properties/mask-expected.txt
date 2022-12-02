@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS 'mask' does not supported 'none'
+PASS 'mask' does not supported 'url(mask.png)'
 

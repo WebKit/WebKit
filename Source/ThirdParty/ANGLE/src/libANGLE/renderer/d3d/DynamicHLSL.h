@@ -104,6 +104,8 @@ struct BuiltinInfo
 
     BuiltinVarying dxPosition;
     BuiltinVarying glPosition;
+    BuiltinVarying glClipDistance;
+    BuiltinVarying glCullDistance;
     BuiltinVarying glFragCoord;
     BuiltinVarying glPointCoord;
     BuiltinVarying glPointSize;

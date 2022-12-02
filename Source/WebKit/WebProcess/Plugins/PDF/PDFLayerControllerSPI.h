@@ -29,7 +29,6 @@
 
 #import <Quartz/Quartz.h>
 
-@class CPReadingModel;
 @class PDFViewLayout;
 
 typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
@@ -145,7 +144,6 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 
 // Accessibility
 
-- (CPReadingModel *)readingModel;
 - (id)accessibilityFocusedUIElement;
 - (NSArray *)accessibilityAttributeNames;
 - (BOOL)accessibilityIsAttributeSettable:(NSString *)attribute;

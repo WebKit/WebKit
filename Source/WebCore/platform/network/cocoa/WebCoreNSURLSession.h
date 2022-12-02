@@ -74,7 +74,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     HashSet<RefPtr<WebCore::SecurityOrigin>> _origins;
     Lock _dataTasksLock;
     BOOL _invalidated;
-    NSUInteger _nextTaskIdentifier;
+    std::atomic<uint64_t> _nextTaskIdentifier;
     OSObjectPtr<dispatch_queue_t> _internalQueue;
     WebCoreNSURLSessionCORSAccessCheckResults _corsResults;
     RefPtr<WebCore::RangeResponseGenerator> _rangeResponseGenerator;

@@ -25,7 +25,7 @@
 #include "config.h"
 #include "LibWebRTCPeerConnectionBackend.h"
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "Document.h"
 #include "IceCandidate.h"
@@ -411,4 +411,4 @@ std::optional<bool> LibWebRTCPeerConnectionBackend::canTrickleIceCandidates() co
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

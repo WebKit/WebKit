@@ -72,7 +72,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSHTMLMediaElement.h"
 #include "JSMediaControlsHost.h"
-#include "LegacyMediaQueryEvaluator.h"
 #include "LoadableTextTrack.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -84,6 +83,7 @@
 #include "MediaFragmentURIParser.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
+#include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkingContext.h"
@@ -958,7 +958,7 @@ void HTMLMediaElement::didAttachRenderers()
         if (m_mediaSession && m_mediaSession->wantsToObserveViewportVisibilityForAutoplay())
             renderer->registerForVisibleInViewportCallback();
     }
-    updateShouldAutoplay();
+    scheduleUpdateShouldAutoplay();
 }
 
 void HTMLMediaElement::willDetachRenderers()
@@ -969,7 +969,7 @@ void HTMLMediaElement::willDetachRenderers()
 
 void HTMLMediaElement::didDetachRenderers()
 {
-    updateShouldAutoplay();
+    scheduleUpdateShouldAutoplay();
 }
 
 void HTMLMediaElement::didRecalcStyle(Style::Change)
@@ -1229,6 +1229,10 @@ void HTMLMediaElement::prepareForLoad()
 
     m_loadState = WaitingForSource;
     m_currentSourceNode = nullptr;
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    m_playbackBlockedWaitingForKey = false;
+#endif
 
     if (!document().hasBrowsingContext())
         return;
@@ -3505,9 +3509,9 @@ void HTMLMediaElement::seekTask()
         noSeekRequired = true;
 
 #if ENABLE(MEDIA_SOURCE)
-    // Always notify the media engine of a seek if the source is not closed. This ensures that the source is
-    // always in a flushed state when the 'seeking' event fires.
-    if (m_mediaSource && !m_mediaSource->isClosed())
+    // Always notify the media engine of a seek if the source is not closed and there is seekable ranges.
+    // This ensures that the source is always in a flushed state when the 'seeking' event fires.
+    if (m_mediaSource && !m_mediaSource->isClosed() && seekableRanges->length())
         noSeekRequired = false;
 #endif
 
@@ -4861,8 +4865,6 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         if (!webkitClosedCaptionsVisible() && closedCaptionsVisible() && displayMode == CaptionUserPreferences::AlwaysOn)
             m_webkitLegacyClosedCaptionOverride = true;
     }
-
-    m_processingPreferenceChange = false;
 }
 
 static JSC::JSValue controllerJSValue(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, HTMLMediaElement& media)
@@ -4967,6 +4969,9 @@ void HTMLMediaElement::layoutSizeChanged()
     auto task = [this] {
         if (auto root = userAgentShadowRoot())
             root->dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+        if (m_mediaControlsHost)
+            m_mediaControlsHost->updateCaptionDisplaySizes();
     };
     queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, WTFMove(task));
 
@@ -4983,7 +4988,7 @@ void HTMLMediaElement::layoutSizeChanged()
 
 void HTMLMediaElement::visibilityDidChange()
 {
-    updateShouldAutoplay();
+    scheduleUpdateShouldAutoplay();
 }
 
 void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
@@ -5106,6 +5111,8 @@ void HTMLMediaElement::configureTextTracks()
     if (otherTracks.tracks.size())
         configureTextTrackGroup(otherTracks);
 
+    m_processingPreferenceChange = false;
+
     updateCaptionContainer();
     configureTextTrackDisplay();
 }
@@ -5160,12 +5167,12 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         if (mediaURL.isEmpty())
             goto CheckAgain;
 
-        if (auto* media = source->parsedMediaAttribute(document())) {
+        if (auto mediaQueryList = source->parsedMediaAttribute(document()); !mediaQueryList.isEmpty()) {
             if (shouldLog)
                 INFO_LOG(LOGIDENTIFIER, "'media' is ", source->attributeWithoutSynchronization(mediaAttr));
             auto* renderer = this->renderer();
             LOG(MediaQueries, "HTMLMediaElement %p selectNextSourceChild evaluating media queries", this);
-            if (!LegacyMediaQueryEvaluator { "screen"_s, document(), renderer ? &renderer->style() : nullptr }.evaluate(*media))
+            if (!MQ::MediaQueryEvaluator { screenAtom(), document(), renderer ? &renderer->style() : nullptr }.evaluate(mediaQueryList))
                 goto CheckAgain;
         }
 
@@ -6069,6 +6076,7 @@ void HTMLMediaElement::cancelPendingTasks()
     m_resumeTaskCancellationGroup.cancel();
     m_seekTaskCancellationGroup.cancel();
     m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup.cancel();
+    m_updateShouldAutoplayTaskCancellationGroup.cancel();
 #if !HAVE(MEDIA_VOLUME_PER_ELEMENT)
     m_volumeRevertTaskCancellationGroup.cancel();
 #endif
@@ -6123,8 +6131,7 @@ void HTMLMediaElement::userCancelledLoad()
     m_readyState = HAVE_NOTHING;
     updateMediaController();
 
-    auto* context = scriptExecutionContext();
-    if (!context || context->activeDOMObjectsAreStopped())
+    if (isSuspended())
         return; // Document is about to be destructed. Avoid updating layout in updateActiveTextTrackCues.
 
     updateActiveTextTrackCues(MediaTime::zeroTime());
@@ -6727,7 +6734,7 @@ void HTMLMediaElement::exitFullscreen()
         }
     }
 
-    if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped()) {
+    if (isSuspended()) {
         setFullscreenMode(VideoFullscreenModeNone);
         document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
     } else if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
@@ -6975,7 +6982,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     if (m_processingPreferenceChange)
         return;
 
-    if (document().activeDOMObjectsAreStopped())
+    if (isSuspended())
         return;
 
     bool haveVisibleTextTrack = false;
@@ -8050,7 +8057,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 {
     // Don't execute script if the controls script hasn't been injected yet, or we have
     // stopped/suspended the object.
-    if (!m_mediaControlsHost || document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped())
+    if (!m_mediaControlsHost || isSuspended())
         return;
 
 #if !ENABLE(MODERN_MEDIA_CONTROLS)
@@ -8624,6 +8631,16 @@ void HTMLMediaElement::isVisibleInViewportChanged()
         mediaSession().isVisibleInViewportChanged();
         updateShouldAutoplay();
         schedulePlaybackControlsManagerUpdate();
+    });
+}
+
+void HTMLMediaElement::scheduleUpdateShouldAutoplay()
+{
+    if (m_updateShouldAutoplayTaskCancellationGroup.hasPendingTask())
+        return;
+
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_updateShouldAutoplayTaskCancellationGroup, [this] () {
+        updateShouldAutoplay();
     });
 }
 

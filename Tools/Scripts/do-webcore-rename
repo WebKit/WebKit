@@ -107,13 +107,8 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "valueOr" => "value_or",
-    "WTF::nullopt" => "std::nullopt",
-    "WTF::nullopt_t" => "std::nullopt_t",
-    "WTF::Optional" => "std::optional",
-    "WTF::makeOptional" => "std::make_optional",
-    "makeOptional" => "std::make_optional",
-    "Optional<" => "std::optional<",
+    "RandomNumber.h" => "WeakRandomNumber.h",
+    "RandomNumber.cpp" => "WeakRandomNumber.cpp",
 );
 
 my %renamesContemplatedForTheFuture = (

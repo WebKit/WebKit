@@ -26,10 +26,12 @@
 #import "config.h"
 #import "WKNavigationActionInternal.h"
 
+#import "APIHitTestResult.h"
 #import "NavigationActionData.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationInternal.h"
 #import "WebEventFactory.h"
+#import "_WKHitTestResultInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
 #import <WebCore/FloatPoint.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -235,6 +237,20 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
     if (!page)
         return;
     page->websiteDataStore().storePrivateClickMeasurement(*privateClickMeasurement);
+}
+
+- (_WKHitTestResult *)_hitTestResult
+{
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    auto& webHitTestResultData = _navigationAction->webHitTestResultData();
+    if (!webHitTestResultData)
+        return nil;
+
+    auto apiHitTestResult = API::HitTestResult::create(webHitTestResultData.value());
+    return retainPtr(wrapper(apiHitTestResult)).autorelease();
+#else
+    return nil;
+#endif
 }
 
 @end

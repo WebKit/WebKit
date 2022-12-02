@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "InlineFormattingConstraints.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
@@ -75,7 +76,7 @@ public:
 
     bool shouldSwitchToLegacyOnInvalidation() const;
 
-    void updateFormattingRootGeometryAndInvalidate();
+    void updateInlineContentConstraints();
     void updateInlineContentDimensions();
     void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
     void updateOverflow();
@@ -136,7 +137,6 @@ private:
     Layout::LayoutState& layoutState() { return *m_layoutState; }
 
     Layout::InlineDamage& ensureLineDamage();
-    
 
     const Layout::ElementBox& rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
@@ -147,7 +147,9 @@ private:
     
     BoxTree m_boxTree;
     WeakPtr<Layout::LayoutState> m_layoutState;
+    Layout::BlockFormattingState& m_blockFormattingState;
     Layout::InlineFormattingState& m_inlineFormattingState;
+    std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;

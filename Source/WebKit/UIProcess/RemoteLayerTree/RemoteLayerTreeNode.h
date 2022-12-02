@@ -75,6 +75,11 @@ public:
 
     static NSString *appendLayerDescription(NSString *description, CALayer *);
 
+#if ENABLE(SCROLLING_THREAD)
+    WebCore::ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
+    void setScrollingNodeID(WebCore::ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+#endif
+
 private:
     void initializeLayer();
 
@@ -86,6 +91,10 @@ private:
 #endif
 
     WebCore::EventRegion m_eventRegion;
+
+#if ENABLE(SCROLLING_THREAD)
+    WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
+#endif
 
     WebCore::GraphicsLayer::PlatformLayerID m_actingScrollContainerID { 0 };
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_stationaryScrollContainerIDs;

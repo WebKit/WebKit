@@ -1,0 +1,17 @@
+
+
+PASS input[type=text] in vertical-lr: typing characters in input should not cause the page to scroll
+PASS input[type=text] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=email] in vertical-lr: typing characters in input should not cause the page to scroll
+PASS input[type=email] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=tel] in vertical-lr: typing characters in input should not cause the page to scroll
+PASS input[type=tel] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=url] in vertical-lr: typing characters in input should not cause the page to scroll
+PASS input[type=url] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=password] in vertical-lr: typing characters in input should not cause the page to scroll
+PASS input[type=password] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=search] in vertical-lr: typing characters in input should not cause the page to scroll
+PASS input[type=search] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=number] in vertical-lr: typing characters in input should not cause the page to scroll
+PASS input[type=number] in vertical-rl: typing characters in input should not cause the page to scroll
+

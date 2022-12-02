@@ -585,7 +585,7 @@ PASS HTMLBodyElement interface: attribute onbeforeunload
 PASS HTMLBodyElement interface: attribute onhashchange
 PASS HTMLBodyElement interface: attribute onlanguagechange
 PASS HTMLBodyElement interface: attribute onmessage
-FAIL HTMLBodyElement interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
+PASS HTMLBodyElement interface: attribute onmessageerror
 PASS HTMLBodyElement interface: attribute onoffline
 PASS HTMLBodyElement interface: attribute ononline
 PASS HTMLBodyElement interface: attribute onpagehide
@@ -609,7 +609,7 @@ PASS HTMLBodyElement interface: document.createElement("body") must inherit prop
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onhashchange" with the proper type
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onlanguagechange" with the proper type
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onmessage" with the proper type
-FAIL HTMLBodyElement interface: document.createElement("body") must inherit property "onmessageerror" with the proper type assert_inherits: property "onmessageerror" not found in prototype chain
+PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onmessageerror" with the proper type
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onoffline" with the proper type
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "ononline" with the proper type
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onpagehide" with the proper type
@@ -4526,7 +4526,7 @@ PASS Window interface: attribute onbeforeunload
 PASS Window interface: attribute onhashchange
 PASS Window interface: attribute onlanguagechange
 PASS Window interface: attribute onmessage
-FAIL Window interface: attribute onmessageerror assert_own_property: The global object must have a property "onmessageerror" expected property "onmessageerror" missing
+PASS Window interface: attribute onmessageerror
 PASS Window interface: attribute onoffline
 PASS Window interface: attribute ononline
 PASS Window interface: attribute onpagehide
@@ -4681,7 +4681,7 @@ PASS Window interface: window must inherit property "onbeforeunload" with the pr
 PASS Window interface: window must inherit property "onhashchange" with the proper type
 PASS Window interface: window must inherit property "onlanguagechange" with the proper type
 PASS Window interface: window must inherit property "onmessage" with the proper type
-FAIL Window interface: window must inherit property "onmessageerror" with the proper type assert_own_property: expected property "onmessageerror" missing
+PASS Window interface: window must inherit property "onmessageerror" with the proper type
 PASS Window interface: window must inherit property "onoffline" with the proper type
 PASS Window interface: window must inherit property "ononline" with the proper type
 PASS Window interface: window must inherit property "onpagehide" with the proper type
@@ -5055,7 +5055,7 @@ PASS MessagePort interface: operation postMessage(any, optional StructuredSerial
 PASS MessagePort interface: operation start()
 PASS MessagePort interface: operation close()
 PASS MessagePort interface: attribute onmessage
-FAIL MessagePort interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
+PASS MessagePort interface: attribute onmessageerror
 PASS BroadcastChannel interface: existence and properties of interface object
 PASS BroadcastChannel interface object length
 PASS BroadcastChannel interface object name
@@ -5080,7 +5080,7 @@ PASS Worker interface: operation terminate()
 PASS Worker interface: operation postMessage(any, sequence<object>)
 PASS Worker interface: operation postMessage(any, optional StructuredSerializeOptions)
 PASS Worker interface: attribute onmessage
-FAIL Worker interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
+PASS Worker interface: attribute onmessageerror
 PASS Worker interface: attribute onerror
 PASS SharedWorker interface: existence and properties of interface object
 PASS SharedWorker interface object length
@@ -5205,7 +5205,7 @@ PASS HTMLFrameSetElement interface: attribute onbeforeunload
 PASS HTMLFrameSetElement interface: attribute onhashchange
 PASS HTMLFrameSetElement interface: attribute onlanguagechange
 PASS HTMLFrameSetElement interface: attribute onmessage
-FAIL HTMLFrameSetElement interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
+PASS HTMLFrameSetElement interface: attribute onmessageerror
 PASS HTMLFrameSetElement interface: attribute onoffline
 PASS HTMLFrameSetElement interface: attribute ononline
 PASS HTMLFrameSetElement interface: attribute onpagehide
@@ -5225,7 +5225,7 @@ PASS HTMLFrameSetElement interface: document.createElement("frameset") must inhe
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onhashchange" with the proper type
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onlanguagechange" with the proper type
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onmessage" with the proper type
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onmessageerror" with the proper type assert_inherits: property "onmessageerror" not found in prototype chain
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onmessageerror" with the proper type
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onoffline" with the proper type
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "ononline" with the proper type
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpagehide" with the proper type

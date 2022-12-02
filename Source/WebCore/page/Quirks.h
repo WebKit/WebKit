@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Event.h"
+#include <optional>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -64,7 +65,6 @@ public:
     bool shouldAutoplayForArbitraryUserGesture() const;
     bool shouldAutoplayWebAudioForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
-    bool shouldStripQuotationMarkInFontFaceSetFamily() const;
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
@@ -82,13 +82,12 @@ public:
     bool shouldDisableContentChangeObserverTouchEventAdjustment() const;
     bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
     bool shouldHideSearchFieldResultsButton() const;
-    bool shouldDisableResolutionMediaQuery() const;
     bool shouldExposeShowModalDialog() const;
 
     bool needsMillisecondResolutionForHighResTimeStamp() const;
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
-    WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const;
+    WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
     WEBCORE_EXPORT bool shouldAvoidResizingWhenInputViewBoundsChange() const;
@@ -134,10 +133,7 @@ public:
     bool needsVP9FullRangeFlagQuirk() const;
     bool needsHDRPixelDepthQuirk() const;
     
-    bool needsAkamaiMediaPlayerQuirk(const HTMLVideoElement&) const;
     bool needsFlightAwareSerializationQuirk() const;
-
-    bool needsBlackFullscreenBackgroundQuirk() const;
 
     bool requiresUserGestureToPauseInPictureInPicture() const;
     bool requiresUserGestureToLoadInPictureInPicture() const;
@@ -165,6 +161,8 @@ public:
     bool shouldEnableApplicationCacheQuirk() const;
     bool shouldEnableFontLoadingAPIQuirk() const;
     bool needsVideoShouldMaintainAspectRatioQuirk() const;
+
+    bool shouldDisableLazyImageLoadingQuirk() const;
     
 private:
     bool needsQuirks() const;
@@ -220,6 +218,7 @@ private:
     mutable std::optional<bool> m_shouldEnableFontLoadingAPIQuirk;
     mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
     mutable std::optional<bool> m_shouldExposeShowModalDialog;
+    mutable std::optional<bool> m_shouldDisableLazyImageLoadingQuirk;
 };
 
 } // namespace WebCore

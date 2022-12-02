@@ -30,6 +30,9 @@ class MediaControls extends LayoutNode
     {
         super(`<div class="media-controls"></div>`);
 
+        if (layoutTraits?.inheritsBorderRadius())
+            this.element.classList.add("inherits-border-radius");
+
         this._scaleFactor = 1;
 
         this.width = width;
@@ -56,12 +59,12 @@ class MediaControls extends LayoutNode
         this.invalidPlacard = new InvalidPlacard(this);
 
         // FIXME: Adwaita layout doesn't have an icon for pip-placard.
-        if (this.layoutTraits.supportsPiP())
+        if (this.layoutTraits?.supportsPiP())
             this.pipPlacard = new PiPPlacard(this);
         else
             this.pipPlacard = null;
 
-        if (this.layoutTraits.supportsAirPlay()) {
+        if (this.layoutTraits?.supportsAirPlay()) {
             this.airplayButton = new AirplayButton(this);
             this.airplayPlacard = new AirplayPlacard(this);
         } else {

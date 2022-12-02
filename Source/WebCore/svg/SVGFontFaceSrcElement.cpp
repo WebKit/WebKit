@@ -47,17 +47,17 @@ Ref<SVGFontFaceSrcElement> SVGFontFaceSrcElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFontFaceSrcElement(tagName, document));
 }
 
-Ref<CSSValueList> SVGFontFaceSrcElement::srcValue() const
+Ref<CSSValueList> SVGFontFaceSrcElement::createSrcValue() const
 {
-    Ref<CSSValueList> list = CSSValueList::createCommaSeparated();
+    auto list = CSSValueList::createCommaSeparated();
     for (auto& child : childrenOfType<SVGElement>(*this)) {
-        RefPtr<CSSFontFaceSrcValue> srcValue;
-        if (is<SVGFontFaceUriElement>(child))
-            srcValue = downcast<SVGFontFaceUriElement>(child).srcValue();
-        else if (is<SVGFontFaceNameElement>(child))
-            srcValue = downcast<SVGFontFaceNameElement>(child).srcValue();
-        if (srcValue && srcValue->resource().length())
-            list->append(srcValue.releaseNonNull());
+        if (auto* element = dynamicDowncast<SVGFontFaceUriElement>(child)) {
+            if (auto srcValue = element->createSrcValue(); !srcValue->isEmpty())
+                list->append(WTFMove(srcValue));
+        } else if (auto* element = dynamicDowncast<SVGFontFaceNameElement>(child)) {
+            if (auto srcValue = element->createSrcValue(); !srcValue->isEmpty())
+                list->append(WTFMove(srcValue));
+        }
     }
     return list;
 }

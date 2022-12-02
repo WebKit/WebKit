@@ -23,6 +23,9 @@
 #define WebKitContextMenu_h
 
 #include <glib-object.h>
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 
 G_BEGIN_DECLS
@@ -112,6 +115,11 @@ webkit_context_menu_set_user_data        (WebKitContextMenu     *menu,
 
 WEBKIT_API GVariant *
 webkit_context_menu_get_user_data        (WebKitContextMenu     *menu);
+
+#if PLATFORM(GTK)
+WEBKIT_API GdkEvent *
+webkit_context_menu_get_event            (WebKitContextMenu     *menu);
+#endif
 
 G_END_DECLS
 

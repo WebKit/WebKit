@@ -29,6 +29,7 @@
 #include "RemoteWebLockRegistryMessages.h"
 #include "WebLockRegistryProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/WebLockManagerSnapshot.h>
 
 namespace WebKit {
 

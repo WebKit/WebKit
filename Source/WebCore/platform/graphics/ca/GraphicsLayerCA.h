@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GraphicsLayer.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "PlatformCAAnimation.h"
 #include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
@@ -104,7 +105,6 @@ public:
     WEBCORE_EXPORT void setBackgroundColor(const Color&) override;
 
     WEBCORE_EXPORT void setContentsOpaque(bool) override;
-    WEBCORE_EXPORT void setSupportsSubpixelAntialiasedText(bool) override;
 
     WEBCORE_EXPORT void setBackfaceVisibility(bool) override;
 
@@ -406,7 +406,7 @@ private:
     RefPtr<PlatformCALayer> fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
     
     Ref<PlatformCALayer> cloneLayer(PlatformCALayer *, CloneLevel);
-    RefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap&, CloneLevel);
+    RefPtr<PlatformCALayer> findOrMakeClone(const CloneID&, PlatformCALayer *, LayerMap&, CloneLevel);
 
     void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
         RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer,
@@ -447,7 +447,6 @@ private:
     void updateAnimations();
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
-    void updateSupportsSubpixelAntialiasedText();
     void updateDebugIndicators();
     void updateTiles();
     void updateRootRelativeScale();
@@ -562,33 +561,32 @@ private:
         ReplicatedLayerChanged                  = 1LLU << 21,
         ContentsNeedsDisplay                    = 1LLU << 22,
         AcceleratesDrawingChanged               = 1LLU << 23,
-        SupportsSubpixelAntialiasedTextChanged  = 1LLU << 24,
-        ContentsScaleChanged                    = 1LLU << 25,
-        ContentsVisibilityChanged               = 1LLU << 26,
-        CoverageRectChanged                     = 1LLU << 27,
-        FiltersChanged                          = 1LLU << 28,
-        BackdropFiltersChanged                  = 1LLU << 29,
-        BackdropFiltersRectChanged              = 1LLU << 30,
-        TilingAreaChanged                       = 1LLU << 31,
-        DebugIndicatorsChanged                  = 1LLU << 32,
-        CustomAppearanceChanged                 = 1LLU << 33,
-        BlendModeChanged                        = 1LLU << 34,
-        ShapeChanged                            = 1LLU << 35,
-        WindRuleChanged                         = 1LLU << 36,
-        UserInteractionEnabledChanged           = 1LLU << 37,
-        NeedsComputeVisibleAndCoverageRect      = 1LLU << 38,
-        EventRegionChanged                      = 1LLU << 39,
+        ContentsScaleChanged                    = 1LLU << 24,
+        ContentsVisibilityChanged               = 1LLU << 25,
+        CoverageRectChanged                     = 1LLU << 26,
+        FiltersChanged                          = 1LLU << 27,
+        BackdropFiltersChanged                  = 1LLU << 28,
+        BackdropFiltersRectChanged              = 1LLU << 29,
+        TilingAreaChanged                       = 1LLU << 30,
+        DebugIndicatorsChanged                  = 1LLU << 31,
+        CustomAppearanceChanged                 = 1LLU << 32,
+        BlendModeChanged                        = 1LLU << 33,
+        ShapeChanged                            = 1LLU << 34,
+        WindRuleChanged                         = 1LLU << 35,
+        UserInteractionEnabledChanged           = 1LLU << 36,
+        NeedsComputeVisibleAndCoverageRect      = 1LLU << 37,
+        EventRegionChanged                      = 1LLU << 38,
 #if ENABLE(SCROLLING_THREAD)
-        ScrollingNodeChanged                    = 1LLU << 40,
+        ScrollingNodeChanged                    = 1LLU << 39,
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-        SeparatedChanged                        = 1LLU << 41,
+        SeparatedChanged                        = 1LLU << 40,
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-        SeparatedPortalChanged                  = 1LLU << 42,
-        DescendentOfSeparatedPortalChanged      = 1LLU << 43,
+        SeparatedPortalChanged                  = 1LLU << 41,
+        DescendentOfSeparatedPortalChanged      = 1LLU << 42,
 #endif
 #endif
-        ContentsScalingFiltersChanged           = 1LLU << 44,
+        ContentsScalingFiltersChanged           = 1LLU << 43,
     };
     typedef uint64_t LayerChangeFlags;
     static const char* layerChangeAsString(LayerChange);

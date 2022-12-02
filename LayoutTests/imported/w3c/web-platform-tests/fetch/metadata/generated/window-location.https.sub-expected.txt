@@ -1,0 +1,80 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS sec-fetch-site - Same origin - location
+PASS sec-fetch-site - Same origin - location.href
+FAIL sec-fetch-site - Same origin - location.assign assert_array_equals: expected property 0 to be "same-origin" but got "none" (expected array ["same-origin"] got ["none"])
+FAIL sec-fetch-site - Same origin - location.replace assert_array_equals: expected property 0 to be "same-origin" but got "none" (expected array ["same-origin"] got ["none"])
+PASS sec-fetch-site - Cross-site - location
+PASS sec-fetch-site - Cross-site - location.href
+FAIL sec-fetch-site - Cross-site - location.assign assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - Cross-site - location.replace assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+TIMEOUT sec-fetch-site - Same site - location Test timed out
+NOTRUN sec-fetch-site - Same site - location.href
+NOTRUN sec-fetch-site - Same site - location.assign
+NOTRUN sec-fetch-site - Same site - location.replace
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - location
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - location.href
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - location.assign
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - location.replace
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - location
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - location.href
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - location.assign
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - location.replace
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin - location
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin - location.href
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin - location.assign
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin - location.replace
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site - location
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site - location.href
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site - location.assign
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site - location.replace
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site - location
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site - location.href
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site - location.assign
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site - location.replace
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin - location
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin - location.href
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin - location.assign
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin - location.replace
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site - location
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site - location.href
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site - location.assign
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site - location.replace
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site - location
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site - location.href
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site - location.assign
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site - location.replace
+NOTRUN sec-fetch-site - Same-Site -> Same Origin - location
+NOTRUN sec-fetch-site - Same-Site -> Same Origin - location.href
+NOTRUN sec-fetch-site - Same-Site -> Same Origin - location.assign
+NOTRUN sec-fetch-site - Same-Site -> Same Origin - location.replace
+NOTRUN sec-fetch-site - Same-Site -> Same-Site - location
+NOTRUN sec-fetch-site - Same-Site -> Same-Site - location.href
+NOTRUN sec-fetch-site - Same-Site -> Same-Site - location.assign
+NOTRUN sec-fetch-site - Same-Site -> Same-Site - location.replace
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site - location
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site - location.href
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site - location.assign
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site - location.replace
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade - location
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade - location.href
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade - location.assign
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade - location.replace
+NOTRUN sec-fetch-mode - location
+NOTRUN sec-fetch-mode - location.href
+NOTRUN sec-fetch-mode - location.assign
+NOTRUN sec-fetch-mode - location.replace
+NOTRUN sec-fetch-dest - location
+NOTRUN sec-fetch-dest - location.href
+NOTRUN sec-fetch-dest - location.assign
+NOTRUN sec-fetch-dest - location.replace
+NOTRUN sec-fetch-user - location
+NOTRUN sec-fetch-user - location.href
+NOTRUN sec-fetch-user - location.assign
+NOTRUN sec-fetch-user - location.replace
+NOTRUN sec-fetch-user - location with user activation
+NOTRUN sec-fetch-user - location.href with user activation
+NOTRUN sec-fetch-user - location.assign with user activation
+NOTRUN sec-fetch-user - location.replace with user activation
+

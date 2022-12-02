@@ -1,0 +1,14 @@
+This test checks that markers are correct when auto correcting in the blockquote. If you type "l" and " ", there should be blue dots under the word: "notational". This test also makes sure that the replacement does not cause breaking out of blockquotes.
+
+PASS internals.hasAutocorrectedMarker(5, 10) is true
+PASS document.querySelectorAll("blockquote").length is 1
+PASS document.querySelector("blockquote").innerText.indexOf("notational") is 18
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+would this
+test notational 
+make a difference?
+
+

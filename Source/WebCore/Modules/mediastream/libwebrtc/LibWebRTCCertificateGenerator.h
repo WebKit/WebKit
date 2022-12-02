@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "PeerConnectionBackend.h"
 
@@ -41,4 +41,4 @@ void generateCertificate(Ref<SecurityOrigin>&&, LibWebRTCProvider&, const PeerCo
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

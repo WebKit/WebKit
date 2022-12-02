@@ -1,0 +1,43 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS sec-fetch-site - Same origin - GET
+PASS sec-fetch-site - Same origin - POST
+PASS sec-fetch-site - Cross-site - GET
+PASS sec-fetch-site - Cross-site - POST
+TIMEOUT sec-fetch-site - Same site - GET Test timed out
+NOTRUN sec-fetch-site - Same site - POST
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - GET
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect - POST
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - GET
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect - POST
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin - GET
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin - POST
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site - GET
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site - POST
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site - GET
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site - POST
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin - GET
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin - POST
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site - GET
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site - POST
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site - GET
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site - POST
+NOTRUN sec-fetch-site - Same-Site -> Same Origin - GET
+NOTRUN sec-fetch-site - Same-Site -> Same Origin - POST
+NOTRUN sec-fetch-site - Same-Site -> Same-Site - GET
+NOTRUN sec-fetch-site - Same-Site -> Same-Site - POST
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site - GET
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site - POST
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade - GET
+NOTRUN sec-fetch-site - HTTPS downgrade-upgrade - POST
+NOTRUN sec-fetch-mode - GET
+NOTRUN sec-fetch-mode - POST
+NOTRUN sec-fetch-dest - GET
+NOTRUN sec-fetch-dest - POST
+NOTRUN sec-fetch-user - GET
+NOTRUN sec-fetch-user - GET with user activation
+NOTRUN sec-fetch-user - POST
+NOTRUN sec-fetch-user - POST with user activation
+

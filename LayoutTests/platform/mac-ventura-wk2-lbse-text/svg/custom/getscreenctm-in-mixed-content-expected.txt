@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {html} at (0,0) size 800x52
+    RenderBody {body} at (8,8) size 784x36
+      RenderText {#text} at (0,0) size 174x18
+        text run at (0,0) width 174: "This tests the behaviour of "
+      RenderInline {code} at (0,0) size 220x15
+        RenderText {#text} at (173,2) size 220x15
+          text run at (173,2) width 220: "SVGLocatable::getScreenCTM()"
+      RenderText {#text} at (392,0) size 112x18
+        text run at (392,0) width 112: " in mixed content"
+      RenderBR {br} at (503,0) size 1x18
+      RenderText {#text} at (0,18) size 322x18
+        text run at (0,18) width 322: "If the test passes you should see a green rectangle."
+layer at (30,100) size 400x200
+  RenderBlock (positioned) {div} at (30,100) size 400x200
+    RenderText {#text} at (0,0) size 0x0
+layer at (30,100) size 400x200
+  RenderSVGRoot {svg} at (0,0) size 400x200
+layer at (30,100) size 400x200
+  RenderSVGViewportContainer at (0,0) size 400x200
+layer at (30,100) size 200x100
+  RenderSVGRect {rect} at (0,0) size 200x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=100.00]

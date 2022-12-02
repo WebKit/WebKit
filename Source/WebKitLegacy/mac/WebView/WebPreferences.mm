@@ -52,6 +52,7 @@
 #import <WebCore/WebCoreJITOperations.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/text/TextEncodingRegistry.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Compiler.h>
 #import <wtf/MainThread.h>
 #import <wtf/OptionSet.h>
@@ -1044,6 +1045,15 @@ public:
 #endif
 }
 
+- (BOOL)isJavaEnabled
+{
+    return NO;
+}
+
+- (void)setJavaEnabled:(BOOL)flag
+{
+}
+
 @end
 
 @implementation WebPreferences (WebPrivate)
@@ -1792,16 +1802,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setShowDebugBorders:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitShowDebugBordersPreferenceKey];
-}
-
-- (BOOL)subpixelAntialiasedLayerTextEnabled
-{
-    return [self _boolValueForKey:WebKitSubpixelAntialiasedLayerTextEnabledPreferenceKey];
-}
-
-- (void)setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitSubpixelAntialiasedLayerTextEnabledPreferenceKey];
 }
 
 - (BOOL)legacyLineLayoutVisualCoverageEnabled
@@ -2917,9 +2917,11 @@ static RetainPtr<NSString>& classIBCreatorID()
     CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 }
 
-+ (void)_clearNetworkLoaderSession
++ (void)_clearNetworkLoaderSession:(void (^)(void))completionHandler
 {
-    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies([] { });
+    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies([completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
 }
 
 - (void)_setBoolPreferenceForTestingWithValue:(BOOL)value forKey:(NSString *)key
@@ -3268,7 +3270,7 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 @end
 
-@implementation WebPreferences (WebPrivateObsolete)
+@implementation WebPreferences (WebPrivateDeprecated)
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
@@ -3422,12 +3424,12 @@ static RetainPtr<NSString>& classIBCreatorID()
 {
 }
 
-- (BOOL)isJavaEnabled
+- (BOOL)subpixelAntialiasedLayerTextEnabled
 {
     return NO;
 }
 
-- (void)setJavaEnabled:(BOOL)flag
+- (void)setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
 {
 }
 

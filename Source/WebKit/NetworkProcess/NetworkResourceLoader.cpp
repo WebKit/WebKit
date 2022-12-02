@@ -88,13 +88,13 @@ using namespace WebCore;
 struct NetworkResourceLoader::SynchronousLoadData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    SynchronousLoadData(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& reply)
+    SynchronousLoadData(CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
         : delayedReply(WTFMove(reply))
     {
         ASSERT(delayedReply);
     }
     ResourceRequest currentRequest;
-    Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply delayedReply;
+    CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)> delayedReply;
     ResourceResponse response;
     ResourceError error;
 };
@@ -110,11 +110,11 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
 
     data.response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(metrics));
 
-    data.delayedReply(data.error, data.response, responseBuffer);
+    data.delayedReply(data.error, data.response, WTFMove(responseBuffer));
     data.delayedReply = nullptr;
 }
 
-NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& synchronousReply)
+NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& synchronousReply)
     : m_parameters { WTFMove(parameters) }
     , m_connection { connection }
     , m_fileReferences(connection.resolveBlobReferences(m_parameters))
@@ -134,7 +134,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (synchronousReply || m_parameters.shouldRestrictHTTPResponseAccess || m_parameters.options.keepAlive) {
         NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityEnabled, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
+        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityPolicy, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
         m_networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
@@ -286,7 +286,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     }
 
     LOADER_RELEASE_LOG("retrieveCacheEntry: Checking the HTTP disk cache");
-    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityEnabled, [this, weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
+    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityPolicy, [this, weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
         if (!weakThis)
             return;
 
@@ -406,15 +406,15 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
         return false;
     };
 
-    auto resourceType = [] (WebCore::ResourceRequestBase::Requester requester, WebCore::FetchOptions::Destination destination) {
+    auto resourceType = [] (WebCore::ResourceRequestRequester requester, WebCore::FetchOptions::Destination destination) {
         switch (requester) {
-        case WebCore::ResourceRequestBase::Requester::XHR:
+        case WebCore::ResourceRequestRequester::XHR:
             return ResourceLoadInfo::Type::XMLHTTPRequest;
-        case WebCore::ResourceRequestBase::Requester::Fetch:
+        case WebCore::ResourceRequestRequester::Fetch:
             return ResourceLoadInfo::Type::Fetch;
-        case WebCore::ResourceRequestBase::Requester::Ping:
+        case WebCore::ResourceRequestRequester::Ping:
             return ResourceLoadInfo::Type::Ping;
-        case WebCore::ResourceRequestBase::Requester::Beacon:
+        case WebCore::ResourceRequestRequester::Beacon:
             return ResourceLoadInfo::Type::Beacon;
         default:
             break;
@@ -746,6 +746,9 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
 
 void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
+    if (!m_parameters.isClearSiteDataHeaderEnabled)
+        return completionHandler();
+
     auto headerValue = response.httpHeaderField(HTTPHeaderName::ClearSiteData);
     if (headerValue.isEmpty())
         return completionHandler();
@@ -970,10 +973,10 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
     });
 }
 
-void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
+void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, uint64_t reportedEncodedDataLength)
 {
     if (!m_numBytesReceived)
-        LOADER_RELEASE_LOG("didReceiveData: Started receiving data (reportedEncodedDataLength=%d)", reportedEncodedDataLength);
+        LOADER_RELEASE_LOG("didReceiveData: Started receiving data (reportedEncodedDataLength=%" PRIu64 ")", reportedEncodedDataLength);
     m_numBytesReceived += buffer.size();
 
     ASSERT(!m_cacheEntryForValidation);
@@ -988,16 +991,14 @@ void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuff
     }
     if (isCrossOriginPrefetch())
         return;
-    // FIXME: At least on OS X Yosemite we always get -1 from the resource handle.
-    unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer.size();
 
     if (m_bufferedData) {
         m_bufferedData.append(buffer);
-        m_bufferedDataEncodedDataLength += encodedDataLength;
+        m_bufferedDataEncodedDataLength += reportedEncodedDataLength;
         startBufferingTimerIfNeeded();
         return;
     }
-    sendBuffer(buffer, encodedDataLength);
+    sendBuffer(buffer, reportedEncodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
@@ -1162,6 +1163,14 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(redirectResponse)) {
         didFailLoading(*error);
         return;
+    }
+
+    if (auto authorization = request.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull()
+#if PLATFORM(COCOA)
+        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects)
+#endif
+        && protocolHostAndPortAreEqual(request.url(), redirectRequest.url())) {
+        redirectRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
     }
 
     if (m_networkLoadChecker) {
@@ -1391,7 +1400,7 @@ void NetworkResourceLoader::continueDidReceiveResponse()
         m_responseCompletionHandler(PolicyAction::Use);
 }
 
-void NetworkResourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void NetworkResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
     if (!isSynchronous())
         send(Messages::WebResourceLoader::DidSendData(bytesSent, totalBytesToBeSent));
@@ -1739,7 +1748,7 @@ static void logCookieInformationInternal(NetworkConnectionToWebProcess& connecti
     ASSERT(NetworkResourceLoader::shouldLogCookieInformation(connection, networkStorageSession.sessionID()));
 
     Vector<WebCore::Cookie> cookies;
-    if (!networkStorageSession.getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No, cookies))
+    if (!networkStorageSession.getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, ApplyTrackingPrevention::Yes, ShouldRelaxThirdPartyCookieBlocking::No, cookies))
         return;
 
     auto escapedURL = escapeForJSON(url.string());

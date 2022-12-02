@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015, 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,26 +26,31 @@
 #include "config.h"
 #include "CSSNamedImageValue.h"
 
-#include "NamedImageGeneratedImage.h"
+#include "StyleNamedImage.h"
 
 namespace WebCore {
+
+CSSNamedImageValue::CSSNamedImageValue(String&& name)
+    : CSSValue { NamedImageClass }
+    , m_name { WTFMove(name) }
+{
+}
+
+CSSNamedImageValue::~CSSNamedImageValue() = default;
 
 String CSSNamedImageValue::customCSSText() const
 {
     return makeString("-webkit-named-image(", m_name, ')');
 }
 
-RefPtr<Image> CSSNamedImageValue::image(RenderElement&, const FloatSize& size)
-{
-    if (size.isEmpty())
-        return nullptr;
-
-    return NamedImageGeneratedImage::create(m_name, size);
-}
-
 bool CSSNamedImageValue::equals(const CSSNamedImageValue& other) const
 {
     return m_name == other.m_name;
+}
+
+RefPtr<StyleImage> CSSNamedImageValue::createStyleImage(Style::BuilderState&) const
+{
+    return StyleNamedImage::create(m_name);
 }
 
 } // namespace WebCore

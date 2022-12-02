@@ -633,33 +633,38 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
         else if (base->type() == StringType)
             accessType = AccessCase::IndexedStringLoad;
         else if (isTypedView(base->type())) {
-            switch (base->type()) {
+            auto* typedArray = jsCast<JSArrayBufferView*>(base);
+#if USE(JSVALUE32_64)
+            if (typedArray->isResizableOrGrowableShared())
+                return GiveUpOnCache;
+#endif
+            switch (typedArray->type()) {
             case Int8ArrayType:
-                accessType = AccessCase::IndexedTypedArrayInt8Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt8Load : AccessCase::IndexedTypedArrayInt8Load;
                 break;
             case Uint8ArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint8Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint8Load : AccessCase::IndexedTypedArrayUint8Load;
                 break;
             case Uint8ClampedArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint8ClampedLoad;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint8ClampedLoad : AccessCase::IndexedTypedArrayUint8ClampedLoad;
                 break;
             case Int16ArrayType:
-                accessType = AccessCase::IndexedTypedArrayInt16Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt16Load : AccessCase::IndexedTypedArrayInt16Load;
                 break;
             case Uint16ArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint16Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint16Load : AccessCase::IndexedTypedArrayUint16Load;
                 break;
             case Int32ArrayType:
-                accessType = AccessCase::IndexedTypedArrayInt32Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt32Load : AccessCase::IndexedTypedArrayInt32Load;
                 break;
             case Uint32ArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint32Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint32Load : AccessCase::IndexedTypedArrayUint32Load;
                 break;
             case Float32ArrayType:
-                accessType = AccessCase::IndexedTypedArrayFloat32Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayFloat32Load : AccessCase::IndexedTypedArrayFloat32Load;
                 break;
             case Float64ArrayType:
-                accessType = AccessCase::IndexedTypedArrayFloat64Load;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayFloat64Load : AccessCase::IndexedTypedArrayFloat64Load;
                 break;
             // FIXME: Optimize BigInt64Array / BigUint64Array in IC
             // https://bugs.webkit.org/show_bug.cgi?id=221183
@@ -676,6 +681,7 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
                 accessType = AccessCase::IndexedInt32Load;
                 break;
             case DoubleShape:
+                ASSERT(Options::allowDoubleShape());
                 accessType = AccessCase::IndexedDoubleLoad;
                 break;
             case ContiguousShape:
@@ -1072,33 +1078,38 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
 
         AccessCase::AccessType accessType;
         if (isTypedView(base->type())) {
-            switch (base->type()) {
+            auto* typedArray = jsCast<JSArrayBufferView*>(base);
+#if USE(JSVALUE32_64)
+            if (typedArray->isResizableOrGrowableShared())
+                return GiveUpOnCache;
+#endif
+            switch (typedArray->type()) {
             case Int8ArrayType:
-                accessType = AccessCase::IndexedTypedArrayInt8Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt8Store : AccessCase::IndexedTypedArrayInt8Store;
                 break;
             case Uint8ArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint8Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint8Store : AccessCase::IndexedTypedArrayUint8Store;
                 break;
             case Uint8ClampedArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint8ClampedStore;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint8ClampedStore : AccessCase::IndexedTypedArrayUint8ClampedStore;
                 break;
             case Int16ArrayType:
-                accessType = AccessCase::IndexedTypedArrayInt16Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt16Store : AccessCase::IndexedTypedArrayInt16Store;
                 break;
             case Uint16ArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint16Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint16Store : AccessCase::IndexedTypedArrayUint16Store;
                 break;
             case Int32ArrayType:
-                accessType = AccessCase::IndexedTypedArrayInt32Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt32Store : AccessCase::IndexedTypedArrayInt32Store;
                 break;
             case Uint32ArrayType:
-                accessType = AccessCase::IndexedTypedArrayUint32Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayUint32Store : AccessCase::IndexedTypedArrayUint32Store;
                 break;
             case Float32ArrayType:
-                accessType = AccessCase::IndexedTypedArrayFloat32Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayFloat32Store : AccessCase::IndexedTypedArrayFloat32Store;
                 break;
             case Float64ArrayType:
-                accessType = AccessCase::IndexedTypedArrayFloat64Store;
+                accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayFloat64Store : AccessCase::IndexedTypedArrayFloat64Store;
                 break;
             // FIXME: Optimize BigInt64Array / BigUint64Array in IC
             // https://bugs.webkit.org/show_bug.cgi?id=221183
@@ -1115,6 +1126,7 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
                 accessType = AccessCase::IndexedInt32Store;
                 break;
             case DoubleShape:
+                ASSERT(Options::allowDoubleShape());
                 accessType = AccessCase::IndexedDoubleStore;
                 break;
             case ContiguousShape:

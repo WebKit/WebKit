@@ -327,23 +327,23 @@ MutableStyleProperties& StyleRuleFontFace::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-StyleRuleFontFeatureValues::StyleRuleFontFeatureValues(const Vector<AtomString>& fontFamilies, const FontFeatureValuesValue& value)
+StyleRuleFontFeatureValues::StyleRuleFontFeatureValues(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&& value)
     : StyleRuleBase(StyleRuleType::FontFeatureValues)
     , m_fontFamilies(fontFamilies)
-    , m_value(value)
+    , m_value(WTFMove(value))
 {
 }
 
-StyleRuleFontFeatureValuesBlock::StyleRuleFontFeatureValuesBlock(FontFeatureValuesType type, const Vector<Tag>& tags)
+StyleRuleFontFeatureValuesBlock::StyleRuleFontFeatureValuesBlock(FontFeatureValuesType type, const Vector<FontFeatureValuesTag>& tags)
     : StyleRuleBase(StyleRuleType::FontFeatureValuesBlock)
     , m_type(type)
     , m_tags(tags)
 {
 }
 
-Ref<StyleRuleFontFeatureValues> StyleRuleFontFeatureValues::create(const Vector<AtomString>& fontFamilies, const FontFeatureValuesValue& values)
+Ref<StyleRuleFontFeatureValues> StyleRuleFontFeatureValues::create(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&& values)
 {
-    return adoptRef(*new StyleRuleFontFeatureValues(fontFamilies, values));
+    return adoptRef(*new StyleRuleFontFeatureValues(fontFamilies, WTFMove(values)));
 }
 
 Ref<StyleRuleFontPaletteValues> StyleRuleFontPaletteValues::create(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
@@ -386,21 +386,21 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
     m_childRules.remove(index);
 }
 
-StyleRuleMedia::StyleRuleMedia(Ref<MediaQuerySet>&& media, Vector<RefPtr<StyleRuleBase>>&& rules)
+StyleRuleMedia::StyleRuleMedia(MQ::MediaQueryList&& mediaQueries, Vector<RefPtr<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Media, WTFMove(rules))
-    , m_mediaQueries(WTFMove(media))
+    , m_mediaQueries(WTFMove(mediaQueries))
 {
 }
 
 StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& other)
     : StyleRuleGroup(other)
-    , m_mediaQueries(other.m_mediaQueries->copy())
+    , m_mediaQueries(other.m_mediaQueries)
 {
 }
 
-Ref<StyleRuleMedia> StyleRuleMedia::create(Ref<MediaQuerySet>&& media, Vector<RefPtr<StyleRuleBase>>&& rules)
+Ref<StyleRuleMedia> StyleRuleMedia::create(MQ::MediaQueryList&& mediaQueries, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
-    return adoptRef(*new StyleRuleMedia(WTFMove(media), WTFMove(rules)));
+    return adoptRef(*new StyleRuleMedia(WTFMove(mediaQueries), WTFMove(rules)));
 }
 
 Ref<StyleRuleMedia> StyleRuleMedia::copy() const

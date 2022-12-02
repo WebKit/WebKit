@@ -27,13 +27,35 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
 #import "TestCocoa.h"
+#import "TestNavigationDelegate.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKWebExtensionContextPrivate.h>
 #import <WebKit/_WKWebExtensionControllerPrivate.h>
 #import <WebKit/_WKWebExtensionPrivate.h>
 
 namespace TestWebKitAPI {
+
+TEST(WKWebExtensionController, Configuration)
+{
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+    EXPECT_TRUE(testController.configuration.persistent);
+    EXPECT_NULL(testController.configuration.identifier);
+
+    testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    EXPECT_FALSE(testController.configuration.persistent);
+    EXPECT_NULL(testController.configuration.identifier);
+
+    NSUUID *identifier = [NSUUID UUID];
+    _WKWebExtensionControllerConfiguration *configuration = [_WKWebExtensionControllerConfiguration configurationWithIdentifier:identifier];
+
+    testController = [[_WKWebExtensionController alloc] initWithConfiguration:configuration];
+    EXPECT_TRUE(testController.configuration.persistent);
+    EXPECT_NS_EQUAL(testController.configuration.identifier, identifier);
+}
 
 TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 {
@@ -113,19 +135,14 @@ TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
     EXPECT_FALSE(testContextOne.loaded);
 }
 
-// FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=246632 is resolved 
-#if PLATFORM(IOS)
-TEST(WKWebExtensionController, DISABLED_BackgroundPageLoading)
-#else
 TEST(WKWebExtensionController, BackgroundPageLoading)
-#endif
 {
     NSDictionary *resources = @{
         @"background.html": @"<body>Hello world!</body>",
         @"background.js": @"console.log('Hello World!')"
     };
 
-    NSMutableDictionary *manifest = [@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0", @"background": @{ @"page": @"background.html" } } mutableCopy];
+    NSMutableDictionary *manifest = [@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0", @"background": @{ @"page": @"background.html", @"persistent": @NO } } mutableCopy];
 
     _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
     _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initWithExtension:testExtension];
@@ -184,6 +201,99 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
     EXPECT_NULL(error);
 
     EXPECT_NULL(testExtension.errors);
+}
+
+TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
+{
+    NSDictionary *resources = @{
+        @"main.js": @"import { x } from './exports.js'; x;",
+        @"exports.js": @"const x = 805; export { x };",
+    };
+
+    NSMutableDictionary *manifest = [@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0", @"background": @{ @"scripts": @[ @"main.js", @"exports.js" ], @"type": @"module", @"persistent": @NO } } mutableCopy];
+
+    _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initWithExtension:testExtension];
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+
+    EXPECT_NULL(testExtension.errors);
+
+    NSError *error;
+    EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    // Wait for the background to load.
+    TestWebKitAPI::Util::runFor(4_s);
+
+    // No errors means success.
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    EXPECT_NULL(testExtension.errors);
+
+    manifest[@"background"] = @{ @"service_worker": @"main.js", @"type": @"module" };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
+    testContext = [[_WKWebExtensionContext alloc] initWithExtension:testExtension];
+
+    EXPECT_NULL(testExtension.errors);
+
+    EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
+    EXPECT_NULL(error);
+
+    // Wait for the background to load.
+    TestWebKitAPI::Util::runFor(4_s);
+
+    // No errors means success.
+    EXPECT_NULL(testExtension.errors);
+}
+
+TEST(WKWebExtensionController, ContentScriptLoading)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "Hello World"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    auto *manifest = @{ @"manifest_version": @3, @"content_scripts": @[ @{ @"js": @[ @"content.js" ], @"matches": @[ @"*://localhost/*" ] } ] };
+
+    auto *contentScript = Util::constructScript(@[
+        // Exposed to content scripts
+        @"browser.test.assertEq(typeof browser.runtime.id, 'string')",
+        @"browser.test.assertEq(typeof browser.runtime.getManifest(), 'object')",
+        @"browser.test.assertEq(typeof browser.runtime.getURL(''), 'string')",
+
+        // Not exposed to content scripts
+        @"browser.test.assertEq(browser.runtime.getPlatformInfo, undefined)",
+        @"browser.test.assertEq(browser.runtime.lastError, undefined)",
+
+        // Finish
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initWithExtension:extension.get()]);
+
+    _WKWebExtensionMatchPattern *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://localhost/*"];
+    [manager.get().context setPermissionState:_WKWebExtensionContextPermissionStateGrantedExplicitly forMatchPattern:matchPattern];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+
+    navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    [manager loadAndRun];
 }
 
 } // namespace TestWebKitAPI

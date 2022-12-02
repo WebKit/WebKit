@@ -37,7 +37,8 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (29,14) size 0x26
           RenderBR {BR} at (14,41) size 0x26
           RenderText {#text} at (14,68) size 201x26
-            text run at (14,68) width 91: " war. We "
+            text run at (14,68) width 6: " "
+            text run at (20,68) width 85: "war. We "
             text run at (104,68) width 111: "of that war."
         RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 4 {#text} of child 1 {SPAN} of child 1 {DIV} of body

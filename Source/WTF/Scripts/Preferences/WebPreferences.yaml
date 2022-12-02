@@ -313,16 +313,6 @@ AsynchronousSpellCheckingEnabled:
     WebCore:
       default: false
 
-AttachmentElementEnabled:
-  type: bool
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(ATTACHMENT_ELEMENT)
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultAttachmentElementEnabled()
-    WebKit:
-      default: false
-
 AuthorAndUserStylesEnabled:
   type: bool
   webKitLegacyPreferenceKey: WebKitAuthorAndUserStylesEnabledPreferenceKey
@@ -2516,17 +2506,6 @@ WebArchiveDebugModeEnabled:
     WebCore:
       default: false
 
-WebArchiveTestingModeEnabled:
-  type: bool
-  condition: ENABLE(WEB_ARCHIVE)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 WebAudioEnabled:
   type: bool
   condition: ENABLE(WEB_AUDIO)
@@ -2553,10 +2532,13 @@ WebGPU:
   type: bool
   defaultValue:
     WebKitLegacy:
+      "ENABLE(WEBGPU_BY_DEFAULT)": true
       default: false
     WebKit:
+      "ENABLE(WEBGPU_BY_DEFAULT)": true
       default: false
     WebCore:
+      "ENABLE(WEBGPU_BY_DEFAULT)": true
       default: false
 
 WebMFormatReaderEnabled:

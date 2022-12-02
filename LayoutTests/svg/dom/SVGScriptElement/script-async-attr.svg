@@ -13,7 +13,7 @@ function test() {
 </script>
 <script type="text/javascript" id="s0" xlink:href="resources/thisShouldNotExist.null" async="async"></script>
 </defs>
-<foreignObject>
+<foreignObject width="100%" height="100">
 <xhtml:p>Tests that the async attribute is not supported for SVG scripts.</xhtml:p>
 <xhtml:span id="p0">FAIL</xhtml:span>
 </foreignObject>

@@ -30,6 +30,8 @@
     Exposed=Window,
     JSGenerateToNativeObject
 ] interface HTMLModelElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
     [URL] readonly attribute USVString currentSrc;
 
     readonly attribute boolean complete;

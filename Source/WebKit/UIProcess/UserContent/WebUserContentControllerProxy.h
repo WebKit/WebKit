@@ -66,7 +66,7 @@ struct WebPageCreationParameters;
 struct UserContentControllerParameters;
 enum class InjectUserScriptImmediately : bool;
 
-class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
+class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, public IPC::MessageReceiver {
 public:
     static Ref<WebUserContentControllerProxy> create()
     { 
@@ -115,11 +115,14 @@ public:
 
     void contentWorldDestroyed(API::ContentWorld&);
 
+    bool operator==(const WebUserContentControllerProxy& other) const { return (this == &other); }
+    bool operator!=(const WebUserContentControllerProxy& other) const { return !(this == &other); }
+
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&, Messages::WebUserContentControllerProxy::DidPostMessage::AsyncReply&&);
+    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&, CompletionHandler<void(IPC::DataReference&&, const String&)>&&);
 
     void addContentWorld(API::ContentWorld&);
 

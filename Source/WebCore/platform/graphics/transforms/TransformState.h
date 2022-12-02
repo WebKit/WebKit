@@ -74,7 +74,7 @@ public:
     
     TransformState(const TransformState& other) { *this = other; }
 
-    TransformState& operator=(const TransformState&);
+    WEBCORE_EXPORT TransformState& operator=(const TransformState&);
 
     void setQuad(const FloatQuad& quad)
     {
@@ -102,8 +102,8 @@ public:
 
     void move(const LayoutSize&, TransformAccumulation = FlattenTransform);
     void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
-    void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
-    void flatten(bool* wasClamped = nullptr);
+    WEBCORE_EXPORT void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
+    WEBCORE_EXPORT void flatten(bool* wasClamped = nullptr);
 
     // Return the coords of the point or quad in the last flattened layer
     FloatPoint lastPlanarPoint() const { return m_lastPlanarPoint; }
@@ -113,8 +113,8 @@ public:
 
     // Return the point or quad mapped through the current transform
     FloatPoint mappedPoint(bool* wasClamped = nullptr) const;
-    FloatQuad mappedQuad(bool* wasClamped = nullptr) const;
-    std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
+    WEBCORE_EXPORT FloatQuad mappedQuad(bool* wasClamped = nullptr) const;
+    WEBCORE_EXPORT std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
     TransformationMatrix* accumulatedTransform() const { return m_accumulatedTransform.get(); }
     std::unique_ptr<TransformationMatrix> releaseTrackedTransform() { return WTFMove(m_trackedTransform); }

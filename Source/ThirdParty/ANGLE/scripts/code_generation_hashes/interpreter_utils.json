@@ -1,0 +1,18 @@
+{
+  "scripts/gen_interpreter_utils.py":
+    "318f0e766e025f9d072cee9204f84922",
+  "third_party/EGL-Registry/src/api/egl.xml":
+    "2056d54ea07156f1988ca1366bdee21a",
+  "third_party/OpenCL-Docs/src/xml/cl.xml":
+    "6d0bf09e20a8f8c3ae440d79eda08bf9",
+  "third_party/OpenGL-Registry/src/xml/gl.xml":
+    "49f0afe5cac23951c74420e457b0cb23",
+  "third_party/OpenGL-Registry/src/xml/glx.xml":
+    "94f3eee4b076801d117804eb466714b7",
+  "third_party/OpenGL-Registry/src/xml/wgl.xml":
+    "eae784bf4d1b983a42af5671b140b7c4",
+  "util/capture/trace_fixture.h":
+    "89256da141793ba367c1d0fb8d8e5eb8",
+  "util/capture/trace_interpreter_autogen.cpp":
+    "4be0f78467f54d43729b1831f04ed12c"
+}

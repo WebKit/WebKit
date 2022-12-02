@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
 private:
-    bool canPaint(const PaintInfo&, const Settings&) const final;
+    bool canPaint(const PaintInfo&, const Settings&, ControlPart) const final;
 
     LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const override;
 

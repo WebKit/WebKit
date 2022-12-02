@@ -37,27 +37,28 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionControllerIdentifier, WebExtensionController*>& webExtensionControllers()
+static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>& webExtensionControllers()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WebExtensionController*>> controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>> controllers;
     return controllers;
 }
 
 WebExtensionController* WebExtensionController::get(WebExtensionControllerIdentifier identifier)
 {
-    return webExtensionControllers().get(identifier);
+    return webExtensionControllers().get(identifier).get();
 }
 
-WebExtensionController::WebExtensionController()
-    : m_identifier(WebExtensionControllerIdentifier::generate())
+WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfiguration> configuration)
+    : m_configuration(configuration)
+    , m_identifier(WebExtensionControllerIdentifier::generate())
 {
+    ASSERT(!webExtensionControllers().contains(m_identifier));
     webExtensionControllers().add(m_identifier, this);
 }
 
 WebExtensionController::~WebExtensionController()
 {
-    ASSERT(webExtensionControllers().contains(m_identifier));
-    webExtensionControllers().remove(m_identifier);
+    unloadAll();
 }
 
 WebExtensionControllerParameters WebExtensionController::parameters() const
@@ -66,7 +67,23 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
 
     parameters.identifier = identifier();
 
+    Vector<WebExtensionContextParameters> contextParameters;
+    contextParameters.reserveInitialCapacity(extensionContexts().size());
+
+    for (auto& context : extensionContexts())
+        contextParameters.append(context->parameters());
+
+    parameters.contextParameters = contextParameters;
+
     return parameters;
+}
+
+WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses() const
+{
+    WebProcessProxySet processes;
+    for (auto& page : m_pages)
+        processes.add(page.process());
+    return processes;
 }
 
 } // namespace WebKit

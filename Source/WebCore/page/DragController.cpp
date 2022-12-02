@@ -128,16 +128,8 @@ bool isDraggableLink(const Element& element)
     
 static PlatformMouseEvent createMouseEvent(const DragData& dragData)
 {
-    bool shiftKey = false;
-    bool ctrlKey = false;
-    bool altKey = false;
-    bool metaKey = false;
-
-    PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-
-    return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(),
-                              LeftButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey,
-                              metaKey, WallTime::now(), ForceAtClick, NoTap);
+    auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
+    return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(), LeftButton, PlatformEvent::MouseMoved, 0, modifiers, WallTime::now(), ForceAtClick, NoTap);
 }
 
 DragController::DragController(Page& page, std::unique_ptr<DragClient>&& client)

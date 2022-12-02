@@ -1,0 +1,5 @@
+
+
+PASS Setup activating worker
+PASS Service worker load uses preload through calling fetch on the fetch event request
+

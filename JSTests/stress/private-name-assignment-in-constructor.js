@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $buildType == "debug"
+
 class Foo {
   #foo;
   constructor() {

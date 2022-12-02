@@ -1,6 +1,86 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'scroll-padding-top' to CSS-wide keywords
+FAIL Can set 'scroll-padding-top' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-top' to a percent Invalid values
+FAIL Can set 'scroll-padding-top' to a length Invalid values
+PASS Setting 'scroll-padding-top' to a time throws TypeError
+PASS Setting 'scroll-padding-top' to an angle throws TypeError
+PASS Setting 'scroll-padding-top' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-top' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-top' to a URL throws TypeError
+PASS Setting 'scroll-padding-top' to a transform throws TypeError
+PASS Can set 'scroll-padding-left' to CSS-wide keywords
+FAIL Can set 'scroll-padding-left' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-left' to a percent Invalid values
+FAIL Can set 'scroll-padding-left' to a length Invalid values
+PASS Setting 'scroll-padding-left' to a time throws TypeError
+PASS Setting 'scroll-padding-left' to an angle throws TypeError
+PASS Setting 'scroll-padding-left' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-left' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-left' to a URL throws TypeError
+PASS Setting 'scroll-padding-left' to a transform throws TypeError
+PASS Can set 'scroll-padding-right' to CSS-wide keywords
+FAIL Can set 'scroll-padding-right' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-right' to a percent Invalid values
+FAIL Can set 'scroll-padding-right' to a length Invalid values
+PASS Setting 'scroll-padding-right' to a time throws TypeError
+PASS Setting 'scroll-padding-right' to an angle throws TypeError
+PASS Setting 'scroll-padding-right' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-right' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-right' to a URL throws TypeError
+PASS Setting 'scroll-padding-right' to a transform throws TypeError
+PASS Can set 'scroll-padding-bottom' to CSS-wide keywords
+FAIL Can set 'scroll-padding-bottom' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-bottom' to a percent Invalid values
+FAIL Can set 'scroll-padding-bottom' to a length Invalid values
+PASS Setting 'scroll-padding-bottom' to a time throws TypeError
+PASS Setting 'scroll-padding-bottom' to an angle throws TypeError
+PASS Setting 'scroll-padding-bottom' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-bottom' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-bottom' to a URL throws TypeError
+PASS Setting 'scroll-padding-bottom' to a transform throws TypeError
+PASS Can set 'scroll-padding-inline-start' to CSS-wide keywords
+FAIL Can set 'scroll-padding-inline-start' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-inline-start' to a percent Invalid values
+FAIL Can set 'scroll-padding-inline-start' to a length Invalid values
+PASS Setting 'scroll-padding-inline-start' to a time throws TypeError
+PASS Setting 'scroll-padding-inline-start' to an angle throws TypeError
+PASS Setting 'scroll-padding-inline-start' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-inline-start' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-inline-start' to a URL throws TypeError
+PASS Setting 'scroll-padding-inline-start' to a transform throws TypeError
+PASS Can set 'scroll-padding-block-start' to CSS-wide keywords
+FAIL Can set 'scroll-padding-block-start' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-block-start' to a percent Invalid values
+FAIL Can set 'scroll-padding-block-start' to a length Invalid values
+PASS Setting 'scroll-padding-block-start' to a time throws TypeError
+PASS Setting 'scroll-padding-block-start' to an angle throws TypeError
+PASS Setting 'scroll-padding-block-start' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-block-start' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-block-start' to a URL throws TypeError
+PASS Setting 'scroll-padding-block-start' to a transform throws TypeError
+PASS Can set 'scroll-padding-inline-end' to CSS-wide keywords
+FAIL Can set 'scroll-padding-inline-end' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-inline-end' to a percent Invalid values
+FAIL Can set 'scroll-padding-inline-end' to a length Invalid values
+PASS Setting 'scroll-padding-inline-end' to a time throws TypeError
+PASS Setting 'scroll-padding-inline-end' to an angle throws TypeError
+PASS Setting 'scroll-padding-inline-end' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-inline-end' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-inline-end' to a URL throws TypeError
+PASS Setting 'scroll-padding-inline-end' to a transform throws TypeError
+PASS Can set 'scroll-padding-block-end' to CSS-wide keywords
+FAIL Can set 'scroll-padding-block-end' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'scroll-padding-block-end' to a percent Invalid values
+FAIL Can set 'scroll-padding-block-end' to a length Invalid values
+PASS Setting 'scroll-padding-block-end' to a time throws TypeError
+PASS Setting 'scroll-padding-block-end' to an angle throws TypeError
+PASS Setting 'scroll-padding-block-end' to a flexible length throws TypeError
+FAIL Setting 'scroll-padding-block-end' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-block-end' to a URL throws TypeError
+PASS Setting 'scroll-padding-block-end' to a transform throws TypeError
+PASS 'scroll-padding' does not supported '0%'
+PASS 'scroll-padding' does not supported '1px 2px'
+PASS 'scroll-padding' does not supported '3% 4px 5%'
+PASS 'scroll-padding' does not supported '6px 7% 8% 9px'
 

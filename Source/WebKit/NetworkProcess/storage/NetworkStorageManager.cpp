@@ -945,19 +945,21 @@ void NetworkStorageManager::cloneSessionStorageNamespace(IPC::Connection& connec
     }
 }
 
-void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    bool hasQuotaError = false;
+    bool hasError = false;
+    HashMap<String, String> allItems;
     auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
-        return completionHandler(hasQuotaError);
+        return completionHandler(hasError, WTFMove(allItems));
 
     auto result = storageArea->setItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(value), WTFMove(urlString));
-    if (!result)
-        hasQuotaError = (result.error() == StorageError::QuotaExceeded);
-    completionHandler(hasQuotaError);
+    hasError = !result;
+    if (hasError)
+        allItems = storageArea->allItems();
+    completionHandler(hasError, WTFMove(allItems));
 
     writeOriginToFileIfNecessary(storageArea->origin(), storageArea);
 }
@@ -1025,10 +1027,12 @@ void NetworkStorageManager::databaseConnectionClosed(uint64_t databaseConnection
         connection->connectionClosedFromClient();
 }
 
-void NetworkStorageManager::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+void NetworkStorageManager::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
 {
-    if (auto transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
-        transaction->abortWithoutCallback();
+    if (transactionIdentifier) {
+        if (auto transaction = m_idbStorageRegistry->transaction(*transactionIdentifier))
+            transaction->abortWithoutCallback();
+    }
 
     if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->connectionClosedFromClient();

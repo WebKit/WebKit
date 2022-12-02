@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,9 +48,8 @@ const double ForceAtForceClick = 2;
         {
         }
 
-        PlatformMouseEvent(const IntPoint& position, const IntPoint& globalPosition, MouseButton button, PlatformEvent::Type type,
-                           int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, WallTime timestamp, double force, SyntheticClickType syntheticClickType, PointerID pointerId = mousePointerID)
-            : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
+        PlatformMouseEvent(const IntPoint& position, const IntPoint& globalPosition, MouseButton button, PlatformEvent::Type type, int clickCount, OptionSet<PlatformEvent::Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, PointerID pointerId = mousePointerID)
+            : PlatformEvent(type, modifiers, timestamp)
             , m_button(button)
             , m_syntheticClickType(syntheticClickType)
             , m_position(position)
@@ -82,7 +81,7 @@ const double ForceAtForceClick = 2;
 #endif
 
 #if PLATFORM(WIN)
-        PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool didActivateWebView = false);
+        WEBCORE_EXPORT PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool didActivateWebView = false);
         void setClickCount(int count) { m_clickCount = count; }
         bool didActivateWebView() const { return m_didActivateWebView; }
 #endif

@@ -85,52 +85,91 @@ bool GStreamerPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
     return m_endpoint->setConfiguration(configuration);
 }
 
-void GStreamerPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
-{
-    m_endpoint->getStats(nullptr, WTFMove(promise));
-}
-
 static inline GStreamerRtpSenderBackend& backendFromRTPSender(RTCRtpSender& sender)
 {
     ASSERT(!sender.isStopped());
     return static_cast<GStreamerRtpSenderBackend&>(*sender.backend());
 }
 
+void GStreamerPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
+{
+    GUniquePtr<GstStructure> additionalStats(gst_structure_new_empty("stats"));
+    for (auto& sender : connection().getSenders()) {
+        auto& backend = backendFromRTPSender(sender);
+        const GstStructure* stats = nullptr;
+        if (auto* videoSource = backend.videoSource())
+            stats = videoSource->stats();
+
+        if (!stats)
+            continue;
+
+        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
+            auto* resultStructure = static_cast<GstStructure*>(userData);
+            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
+            return TRUE;
+        }, additionalStats.get());
+    }
+    for (auto& receiver : connection().getReceivers()) {
+        auto& track = receiver.get().track();
+        if (!is<RealtimeIncomingVideoSourceGStreamer>(track.source()))
+            continue;
+
+        auto& source = static_cast<RealtimeIncomingVideoSourceGStreamer&>(track.source());
+        const auto* stats = source.stats();
+        if (!stats)
+            continue;
+
+        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
+            auto* resultStructure = static_cast<GstStructure*>(userData);
+            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
+            return TRUE;
+        }, additionalStats.get());
+    }
+    m_endpoint->getStats(nullptr, additionalStats.get(), WTFMove(promise));
+}
+
 void GStreamerPeerConnectionBackend::getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise)
 {
     if (!sender.backend()) {
-        m_endpoint->getStats(nullptr, WTFMove(promise));
+        m_endpoint->getStats(nullptr, nullptr, WTFMove(promise));
         return;
     }
 
     auto& backend = backendFromRTPSender(sender);
     GRefPtr<GstPad> pad;
+    const GstStructure* additionalStats = nullptr;
     if (RealtimeOutgoingAudioSourceGStreamer* source = backend.audioSource())
         pad = source->pad();
-    else if (RealtimeOutgoingVideoSourceGStreamer* source = backend.videoSource())
+    else if (RealtimeOutgoingVideoSourceGStreamer* source = backend.videoSource()) {
         pad = source->pad();
-    m_endpoint->getStats(pad.get(), WTFMove(promise));
+        additionalStats = source->stats();
+    }
+
+    m_endpoint->getStats(pad.get(), additionalStats, WTFMove(promise));
 }
 
 void GStreamerPeerConnectionBackend::getStats(RTCRtpReceiver& receiver, Ref<DeferredPromise>&& promise)
 {
     if (!receiver.backend()) {
-        m_endpoint->getStats(nullptr, WTFMove(promise));
+        m_endpoint->getStats(nullptr, nullptr, WTFMove(promise));
         return;
     }
 
     GstElement* bin = nullptr;
+    const GstStructure* additionalStats = nullptr;
     auto& source = receiver.track().privateTrack().source();
     if (source.isIncomingAudioSource())
         bin = static_cast<RealtimeIncomingAudioSourceGStreamer&>(source).bin();
-    else if (source.isIncomingVideoSource())
-        bin = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source).bin();
-    else
+    else if (source.isIncomingVideoSource()) {
+        auto& incomingVideoSource = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source);
+        bin = incomingVideoSource.bin();
+        additionalStats = incomingVideoSource.stats();
+    } else
         RELEASE_ASSERT_NOT_REACHED();
 
     auto sinkPad = adoptGRef(gst_element_get_static_pad(bin, "sink"));
     auto srcPad = adoptGRef(gst_pad_get_peer(sinkPad.get()));
-    m_endpoint->getStats(srcPad.get(), WTFMove(promise));
+    m_endpoint->getStats(srcPad.get(), additionalStats, WTFMove(promise));
 }
 
 void GStreamerPeerConnectionBackend::doSetLocalDescription(const RTCSessionDescription* description)

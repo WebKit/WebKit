@@ -109,7 +109,7 @@ class HooksUnittest(testing.PathTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json(), [])
 
-        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "Failed to update 'branch-a' from 'origin'\n")
 
     @mock_app
     def test_hmac(self, app=None, client=None):

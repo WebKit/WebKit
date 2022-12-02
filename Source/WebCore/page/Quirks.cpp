@@ -37,6 +37,7 @@
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "HTMLBodyElement.h"
+#include "HTMLCollection.h"
 #include "HTMLDivElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
@@ -225,59 +226,6 @@ bool Quirks::shouldHideSearchFieldResultsButton() const
     return false;
 }
 
-bool Quirks::shouldDisableResolutionMediaQuery() const
-{
-    if (!needsQuirks())
-        return false;
-    auto host = m_document->url().host();
-
-    if (equalLettersIgnoringASCIICase(host, "www.carrentals.com"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.cheaptickets.com"_s))
-        return true;
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    if (topPrivatelyControlledDomain(host.toString()).startsWith("ebookers."_s))
-        return true;
-
-    if (topPrivatelyControlledDomain(host.toString()).startsWith("expedia."_s))
-        return true;
-#endif
-
-    if (host.endsWithIgnoringASCIICase(".hoteis.com"_s))
-        return true;
-
-    if (host.endsWithIgnoringASCIICase(".hoteles.com"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.hotels.cn"_s))
-        return true;
-
-    if (host.endsWithIgnoringASCIICase(".hotels.com"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.mrjet.se"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.orbitz.com"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.travelocity.ca"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.travelocity.com"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.wotif.com"_s))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "www.wotif.co.nz"_s))
-        return true;
-
-    return false;
-}
-
 bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
 {
     if (!needsQuirks())
@@ -285,15 +233,6 @@ bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
     // webkit.org/b/210527
     auto host = m_document->url().host();
     return equalLettersIgnoringASCIICase(host, "www.icourse163.org"_s);
-}
-
-bool Quirks::shouldStripQuotationMarkInFontFaceSetFamily() const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "docs.google.com"_s);
 }
 
 bool Quirks::isTouchBarUpdateSupressedForHiddenContentEditable() const
@@ -337,7 +276,7 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
     return false;
 }
 
-static bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost(StringView host)
+static bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasForHost(StringView host)
 {
 #if PLATFORM(IOS_FAMILY)
     return equalLettersIgnoringASCIICase(host, "docs.google.com"_s);
@@ -393,12 +332,12 @@ bool Quirks::shouldAvoidUsingIOS13ForGmail() const
 #endif
 }
 
-bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const
+bool Quirks::shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const
 {
     if (!needsQuirks())
         return false;
 
-    return shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost(m_document->topDocument().url().host());
+    return shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasForHost(m_document->topDocument().url().host());
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -439,8 +378,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
             return startsWithLettersIgnoringASCIICase(url.path(), "/website/templates/"_s) ? ShouldDispatchSimulatedMouseEvents::No : ShouldDispatchSimulatedMouseEvents::Yes;
         }
 
-        if ((host == "desmos.com"_s || host.endsWith(".desmos.com"_s)) && startsWithLettersIgnoringASCIICase(url.path(), "/calculator/"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "trello.com"_s || host.endsWith(".trello.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "airtable.com"_s || host.endsWith(".airtable.com"_s))
@@ -1197,7 +1134,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
 
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, bool isParentProcessAFullWebBrowser, IsSyntheticClick isSyntheticClick) const
 {
-    if (!DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() || !isParentProcessAFullWebBrowser)
+    if (!DeprecatedGlobalSettings::trackingPreventionEnabled() || !isParentProcessAFullWebBrowser)
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
 #if ENABLE(TRACKING_PREVENTION)
@@ -1341,34 +1278,6 @@ bool Quirks::needsHDRPixelDepthQuirk() const
     return *m_needsHDRPixelDepthQuirk;
 }
 
-// FIXME: remove this once rdar://66739450 has been fixed.
-bool Quirks::needsAkamaiMediaPlayerQuirk(const HTMLVideoElement& element) const
-{
-#if PLATFORM(IOS_FAMILY)
-    // Akamai Media Player begins polling `webkitDisplayingFullscreen` every 100ms immediately after calling
-    // `webkitEnterFullscreen` and exits fullscreen as soon as it returns false. r262456 changed the HTMLMediaPlayer state
-    // machine so `webkitDisplayingFullscreen` doesn't return true until the fullscreen window has been opened in the
-    // UI process, which causes Akamai Media Player to frequently exit fullscreen mode immediately.
-
-    static NeverDestroyed<const AtomString> akamaiHTML5(MAKE_STATIC_STRING_IMPL("akamai-html5"));
-    static NeverDestroyed<const AtomString> akamaiMediaElement(MAKE_STATIC_STRING_IMPL("akamai-media-element"));
-    static NeverDestroyed<const AtomString> ampHTML5(MAKE_STATIC_STRING_IMPL("amp-html5"));
-    static NeverDestroyed<const AtomString> ampMediaElement(MAKE_STATIC_STRING_IMPL("amp-media-element"));
-
-    if (!needsQuirks())
-        return false;
-
-    if (!element.hasClass())
-        return false;
-
-    auto& classNames = element.classNames();
-    return (classNames.contains(akamaiHTML5) && classNames.contains(akamaiMediaElement)) || (classNames.contains(ampHTML5) && classNames.contains(ampMediaElement));
-#else
-    UNUSED_PARAM(element);
-    return false;
-#endif
-}
-
 // FIXME: remove this once rdar://92531240 has been fixed.
 bool Quirks::needsFlightAwareSerializationQuirk() const
 {
@@ -1379,21 +1288,6 @@ bool Quirks::needsFlightAwareSerializationQuirk() const
         m_needsFlightAwareSerializationQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "flightaware.com"_s);
 
     return *m_needsFlightAwareSerializationQuirk;
-}
-
-bool Quirks::needsBlackFullscreenBackgroundQuirk() const
-{
-    // MLB.com sets a black background-color on the :backdrop pseudo element, which WebKit does not yet support. This
-    // quirk can be removed once support for :backdrop psedue element is added.
-    if (!needsQuirks())
-        return false;
-
-    if (!m_needsBlackFullscreenBackgroundQuirk) {
-        auto host = m_document->topDocument().url().host();
-        m_needsBlackFullscreenBackgroundQuirk = equalLettersIgnoringASCIICase(host, "mlb.com"_s) || host.endsWithIgnoringASCIICase(".mlb.com"_s);
-    }
-
-    return *m_needsBlackFullscreenBackgroundQuirk;
 }
 
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
@@ -1572,9 +1466,39 @@ bool Quirks::shouldExposeShowModalDialog() const
         return false;
     if (!m_shouldExposeShowModalDialog) {
         auto domain = RegistrableDomain(m_document->url()).string();
-        m_shouldExposeShowModalDialog = domain == "pandora.com"_s;
+        // Marcus: <rdar://101086391>.
+        // Pandora: <rdar://100243111>.
+        // Soundcloud: <rdar://102913500>.
+        m_shouldExposeShowModalDialog = domain == "pandora.com"_s || domain == "marcus.com"_s || domain == "soundcloud.com"_s;
     }
     return *m_shouldExposeShowModalDialog;
+}
+
+bool Quirks::shouldDisableLazyImageLoadingQuirk() const
+{
+    // Images are displaying as fully grey when loaded lazily in significant percentage of page loads.
+    // This issue is not observed when lazy image loading is disabled, and has been fixed in future Gatsby versions.
+    // This quirk is only applied to IKEA.com when "<meta name="generator" content="Gatsby 4.24.1" />" is present.
+    // This quirk can be removed once the gatsby version has been upgraded.
+    // Further discussion can be found here https://github.com/webcompat/web-bugs/issues/113635.
+
+    if (!needsQuirks())
+        return false;
+
+    if (m_shouldDisableLazyImageLoadingQuirk)
+        return m_shouldDisableLazyImageLoadingQuirk.value();
+
+    m_shouldDisableLazyImageLoadingQuirk = false;
+
+    if (RegistrableDomain(m_document->url()).string() != "ikea.com"_s)
+        return false;
+
+    auto* metaElement = m_document->getElementsByTagName("meta"_s)->namedItem("generator"_s);
+    
+    if (metaElement && metaElement->getAttribute("content"_s) == "Gatsby 4.24.1"_s)
+        m_shouldDisableLazyImageLoadingQuirk = true;
+
+    return m_shouldDisableLazyImageLoadingQuirk.value();
 }
 
 }

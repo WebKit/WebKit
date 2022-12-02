@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "PlatformVideoColorSpace.h"
 #include "VideoFrame.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
@@ -53,6 +54,7 @@ public:
         std::optional<size_t> displayWidth;
         std::optional<size_t> displayHeight;
         std::optional<Vector<uint8_t>> description;
+        std::optional<PlatformVideoColorSpace> colorSpace;
     };
     struct EncodedFrame {
         Vector<uint8_t> data;

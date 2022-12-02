@@ -46,12 +46,6 @@ void WebPage::platformDetach()
 {
 }
 
-bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
-{
-    notImplemented();
-    return false;
-}
-
 bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 {
     notImplemented();

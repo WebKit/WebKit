@@ -73,11 +73,6 @@ std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemo
     return WTFMove(m_remoteLayerTreeHost);
 }
 
-std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxy::createScrollingCoordinatorProxy() const
-{
-    return makeUnique<RemoteScrollingCoordinatorProxy>(m_webPageProxy);
-}
-
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
     if (!m_webPageProxy.hasRunningProcess())
@@ -109,8 +104,8 @@ void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
 void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 {
     m_lastSentSize = m_size;
-    send(Messages::DrawingArea::UpdateGeometry(m_size, false /* flushSynchronously */, MachSendRight()));
     m_isWaitingForDidUpdateGeometry = true;
+    send(Messages::DrawingArea::UpdateGeometry(m_size, false /* flushSynchronously */, MachSendRight()));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
@@ -129,7 +124,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
     m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
 
-    bool didUpdateEditorState = layerTreeTransaction.hasEditorState() && m_webPageProxy.updateEditorState(layerTreeTransaction.editorState());
+    bool didUpdateEditorState = layerTreeTransaction.hasEditorState() && m_webPageProxy.updateEditorState(layerTreeTransaction.editorState(), WebPageProxy::ShouldMergeVisualEditorState::Yes);
 
     if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
         if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
@@ -171,7 +166,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     if (std::exchange(m_didUpdateMessageState, NeedsDidUpdate) == MissedCommit)
         didRefreshDisplay();
-    scheduleDisplayLink();
+
+    scheduleDisplayRefreshCallbacks();
 
     if (didUpdateEditorState)
         m_webPageProxy.dispatchDidUpdateEditorState();
@@ -322,7 +318,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
 
     if (m_didUpdateMessageState != NeedsDidUpdate) {
         m_didUpdateMessageState = MissedCommit;
-        pauseDisplayLink();
+        pauseDisplayRefreshCallbacks();
         return;
     }
     
@@ -331,7 +327,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit
     // if we find API to do so, but for now we will make extra buffers if need be.
-    send(Messages::DrawingArea::DidUpdate());
+    send(Messages::DrawingArea::DisplayDidRefresh());
 
     m_lastVisibleTransactionID = m_transactionIDForPendingCACommit;
 

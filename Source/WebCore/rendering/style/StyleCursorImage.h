@@ -25,31 +25,46 @@
 #pragma once
 
 #include "StyleMultiImage.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
-class CSSCursorImageValue;
+class CSSValue;
+class Document;
+class WeakPtrImplWithEventTargetData;
+class SVGCursorElement;
 
-struct ImageWithScale;
+enum class LoadedFromOpaqueSource : uint8_t;
 
 class StyleCursorImage final : public StyleMultiImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleCursorImage> create(CSSCursorImageValue&);
+    static Ref<StyleCursorImage> create(Ref<StyleImage>&&, const std::optional<IntPoint>&, const URL&, LoadedFromOpaqueSource);
     virtual ~StyleCursorImage();
 
-    bool operator==(const StyleImage& other) const;
+    bool operator==(const StyleImage&) const final;
+    bool equals(const StyleCursorImage&) const;
+    bool equalInputImages(const StyleCursorImage&) const;
 
     bool usesDataProtocol() const final;
 
+    void cursorElementRemoved(SVGCursorElement&);
+    void cursorElementChanged(SVGCursorElement&);
+
 private:
-    explicit StyleCursorImage(CSSCursorImageValue&);
+    explicit StyleCursorImage(Ref<StyleImage>&&, const std::optional<IntPoint>& hotSpot, const URL&, LoadedFromOpaqueSource);
 
     void setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom) final;
-    Ref<CSSValue> cssValue() const final;
-    ImageWithScale selectBestFitImage(const Document&) const final;
+    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
+    ImageWithScale selectBestFitImage(const Document&) final;
 
-    Ref<CSSCursorImageValue> m_cssValue;
+    SVGCursorElement* updateCursorElement(const Document&);
+
+    Ref<StyleImage> m_image;
+    std::optional<IntPoint> m_hotSpot;
+    URL m_originalURL;
+    LoadedFromOpaqueSource m_loadedFromOpaqueSource;
+    WeakHashSet<SVGCursorElement, WeakPtrImplWithEventTargetData> m_cursorElements;
 };
 
 } // namespace WebCore

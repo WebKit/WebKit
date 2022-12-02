@@ -1,4 +1,5 @@
 //@ skip if not $jitTests
+//@ $skipModes << :lockdown
 //@ requireOptions("--forceUnlinkedDFG=0")
 //@ defaultNoEagerRun
 "use strict";

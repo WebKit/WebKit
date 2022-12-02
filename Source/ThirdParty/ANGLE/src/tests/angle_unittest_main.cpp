@@ -8,24 +8,11 @@
 #include "gtest/gtest.h"
 #include "test_utils/runner/TestSuite.h"
 
-namespace
-{
-#if defined(ANGLE_ENABLE_VULKAN) || defined(ANGLE_ENABLE_METAL)
-static constexpr bool kCanUseGlslang = true;
-#else
-static constexpr bool kCanUseGlslang = false;
-#endif  // defined(ANGLE_ENABLE_VULKAN) || defined(ANGLE_ENABLE_METAL)
-}  // anonymous namespace
-
 class CompilerTestEnvironment : public testing::Environment
 {
   public:
     void SetUp() override
     {
-        if (kCanUseGlslang)
-        {
-            sh::InitializeGlslang();
-        }
         if (!sh::Initialize())
         {
             FAIL() << "Failed to initialize the compiler.";
@@ -34,10 +21,6 @@ class CompilerTestEnvironment : public testing::Environment
 
     void TearDown() override
     {
-        if (kCanUseGlslang)
-        {
-            sh::FinalizeGlslang();
-        }
         if (!sh::Finalize())
         {
             FAIL() << "Failed to finalize the compiler.";

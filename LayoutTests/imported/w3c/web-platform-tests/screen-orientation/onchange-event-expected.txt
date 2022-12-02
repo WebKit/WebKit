@@ -1,4 +1,6 @@
 
+Harness Error (FAIL), message = Test named 'Test that orientationchange event is not fired when the orientation does not change.' specified 1 'cleanup' function, and 1 failed.
+
 FAIL Test that orientationchange event is not fired when the orientation does not change. promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
-FAIL Test that orientationchange event is fired when the orientation changes. promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+NOTRUN Test that orientationchange event is fired when the orientation changes.
 

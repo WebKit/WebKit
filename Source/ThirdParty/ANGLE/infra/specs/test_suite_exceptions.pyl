@@ -21,6 +21,16 @@
       },
     },
   },
+  'angle_gles1_conformance_tests': {
+    'replacements': {
+      # anglebug.com/7750 blue screen
+      'win10-x64-intel': {
+        'args': {
+          '--batch-size': '256',
+        },
+      }
+    },
+  },
   'angle_restricted_trace_gold_tests': {
     'modifications': {
       'win10-x64-intel': {
@@ -29,6 +39,12 @@
         ],
       },
     },
+  },
+  'angle_trace_interpreter_tests': {
+    'remove_from': [
+      # TODO: Implement on Android. http://anglebug.com/7777
+      'android-arm64-pixel4',
+    ],
   },
   'angle_white_box_tests': {
     'modifications': {

@@ -1,18 +1,18 @@
 
-FAIL Should be known: '(prefers-reduced-data)' assert_true: Can parse with JS expected true got false
-FAIL Should be known: '(prefers-reduced-data: no-preference)' assert_true: Can parse with JS expected true got false
-FAIL Should be known: '(prefers-reduced-data: reduce)' assert_true: Can parse with JS expected true got false
-FAIL Should be parseable: '(prefers-reduced-data: 0)' assert_true: Can parse with JS expected true got false
+FAIL Should be known: '(prefers-reduced-data)' assert_true: expected true got false
+FAIL Should be known: '(prefers-reduced-data: no-preference)' assert_true: expected true got false
+FAIL Should be known: '(prefers-reduced-data: reduce)' assert_true: expected true got false
+PASS Should be parseable: '(prefers-reduced-data: 0)'
 PASS Should be unknown: '(prefers-reduced-data: 0)'
-FAIL Should be parseable: '(prefers-reduced-data: none)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-data: none)'
 PASS Should be unknown: '(prefers-reduced-data: none)'
-FAIL Should be parseable: '(prefers-reduced-data: 10px)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-data: 10px)'
 PASS Should be unknown: '(prefers-reduced-data: 10px)'
-FAIL Should be parseable: '(prefers-reduced-data: no-preference reduce)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-data: no-preference reduce)'
 PASS Should be unknown: '(prefers-reduced-data: no-preference reduce)'
-FAIL Should be parseable: '(prefers-reduced-data: reduced)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-data: reduced)'
 PASS Should be unknown: '(prefers-reduced-data: reduced)'
-FAIL Should be parseable: '(prefers-reduced-data: no-preference/reduce)' assert_true: Can parse with JS expected true got false
+PASS Should be parseable: '(prefers-reduced-data: no-preference/reduce)'
 PASS Should be unknown: '(prefers-reduced-data: no-preference/reduce)'
 FAIL Check that no-preference evaluates to false in the boolean context assert_equals: expected true but got false
 PASS Check that invalid evaluates to false

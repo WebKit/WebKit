@@ -110,10 +110,12 @@
 #include "VMInlines.h"
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
+#include "WaiterListManager.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WideningNumberPredictionFuzzerAgent.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
 #include <wtf/SimpleStats.h>
@@ -135,8 +137,6 @@
 #endif
 
 namespace JSC {
-
-Atomic<unsigned> VM::s_numberOfIDs;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
 
@@ -190,24 +190,14 @@ void VM::computeCanUseJIT()
 #endif
 }
 
-inline unsigned VM::nextID()
-{
-    for (;;) {
-        unsigned currentNumberOfIDs = s_numberOfIDs.load();
-        unsigned newID = currentNumberOfIDs + 1;
-        if (s_numberOfIDs.compareExchangeWeak(currentNumberOfIDs, newID))
-            return newID;
-    }
-}
-
 static bool vmCreationShouldCrash = false;
 
 VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
-    : m_id(nextID())
+    : m_identifier(VMIdentifier::generateThreadSafe())
     , m_apiLock(adoptRef(new JSLock(this)))
     , m_runLoop(runLoop ? *runLoop : WTF::RunLoop::current())
-    , m_random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber())
-    , m_heapRandom(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber())
+    , m_random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber<uint32_t>())
+    , m_heapRandom(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber<uint32_t>())
     , m_integrityRandom(*this)
     , heap(*this, heapType)
     , clientHeap(heap)
@@ -223,6 +213,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , m_codeCache(makeUnique<CodeCache>())
     , m_intlCache(makeUnique<IntlCache>())
     , m_builtinExecutables(makeUnique<BuiltinExecutables>(*this))
+    , m_syncWaiter(adoptRef(*new Waiter(this)))
 {
     if (UNLIKELY(vmCreationShouldCrash))
         CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
@@ -260,8 +251,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     symbolTableStructure.set(*this, SymbolTable::createStructure(*this, nullptr, jsNull()));
 
     immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithInt32) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
-    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithDouble) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble));
-    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous));
+    Structure* copyOnWriteArrayWithContiguousStructure = JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous);
+    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithDouble) - NumberOfIndexingShapes].set(*this,
+        Options::allowDoubleShape() ? JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
+    immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].set(*this, copyOnWriteArrayWithContiguousStructure);
 
     sourceCodeStructure.set(*this, JSSourceCode::createStructure(*this, nullptr, jsNull()));
     scriptFetcherStructure.set(*this, JSScriptFetcher::createStructure(*this, nullptr, jsNull()));
@@ -404,7 +397,10 @@ void waitForVMDestruction()
 VM::~VM()
 {
     Locker destructionLocker { s_destructionLock.read() };
-    
+
+    if (Options::useAtomicsWaitAsync() && vmType == Default)
+        WaiterListManager::singleton().unregisterVM(this);
+
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
@@ -1387,6 +1383,12 @@ bool VM::isScratchBuffer(void* ptr)
             return true;
     }
     return false;
+}
+
+Ref<Waiter> VM::syncWaiter()
+{
+    m_syncWaiter->setVM(this);
+    return m_syncWaiter;
 }
 
 void VM::ensureShadowChicken()

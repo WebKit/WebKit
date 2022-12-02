@@ -36,6 +36,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/WeakRandom.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

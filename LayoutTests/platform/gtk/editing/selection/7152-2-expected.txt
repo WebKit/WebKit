@@ -27,13 +27,10 @@ layer at (0,0) size 800x600
             text run at (131,0) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7152"
         RenderText {#text} at (473,0) size 783x71
           text run at (473,0) width 9: ". "
-          text run at (481,0) width 298: "Adding visible candidates after tables, at [table,"
-          text run at (778,0) width 5: " "
-          text run at (0,18) width 767: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside"
-          text run at (766,18) width 5: " "
+          text run at (481,0) width 302: "Adding visible candidates after tables, at [table, "
+          text run at (0,18) width 771: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside "
           text run at (0,36) width 104: "an atomic node. "
-          text run at (104,36) width 669: "It didn't make the same assumption about start of a selection, but for good measure, we also test a selection"
-          text run at (773,36) width 4: " "
+          text run at (104,36) width 673: "It didn't make the same assumption about start of a selection, but for good measure, we also test a selection "
           text run at (0,54) width 232: "that starts at a position before a table."
 selection start: position 0 of child 1 {TABLE} of body
 selection end:   position 341 of child 2 {#text} of child 5 {P} of body

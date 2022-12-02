@@ -21,17 +21,12 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
-#if USE(SANDBOX_VERSION_2)
-(version 2)
-#else
-(version 1)
-#endif
-(deny default)
-
 #include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
-#if USE(SANDBOX_VERSION_2)
+#if USE(SANDBOX_VERSION_3)
+(allow dynamic-code-generation)
+
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 5 65)))
 
@@ -41,8 +36,10 @@
 (allow process-info-rusage (target self))
 
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
-(allow iokit-open-service (iokit-registry-entry-class "IOAccelerator"))
-(allow iokit-open-service (iokit-registry-entry-class "AppleM2ScalerCSCDriver"))
+(allow iokit-open-service (iokit-registry-entry-class
+    "AGPM"
+    "IOAccelerator"
+    "AppleM2ScalerCSCDriver"))
 
 (deny iokit-open-service (with no-report) (iokit-registry-entry-class "AppleJPEGDriver"))
 
@@ -50,11 +47,12 @@
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow file-map-executable))
 (allow file-map-executable
-    (subpath "/System/Library/Components"))
+    (subpath "/System/Library/Components")
+    (subpath "/System/Library/Video/Plug-Ins"))
 #else
     (allow file-map-executable)
 #endif
-#endif // USE(SANDBOX_VERSION_2)
+#endif // USE(SANDBOX_VERSION_3)
 
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
@@ -338,19 +336,9 @@
         (preference-domain "com.apple.opengl")
         (preference-domain "com.nvidia.OpenGL"))
     ;; CVMS
-    (allow mach-lookup
-        (require-all
-            (extension "com.apple.webkit.extension.mach")
-            (global-name "com.apple.cvmsServ")
-        )
-    )
-    (deny mach-lookup
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.mach"))
-            (global-name "com.apple.cvmsServ")
-        )
-    )
-    (allow file-read*
+    (deny mach-lookup (with telemetry-backtrace)
+        (global-name "com.apple.cvmsServ"))
+    (deny file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
     ;; OpenCL
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
@@ -1502,7 +1490,7 @@
 
 (allow file-read-data
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow ipc-posix-shm
     (ipc-posix-name-prefix "CFPBS:")) ; <rdar://problem/13757475>
 #endif
@@ -2348,11 +2336,6 @@
 )
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-;; This rule enables the WebContent process to enable the "BlockIOKitInWebContentSandbox" sandbox variable
-;; by reading a preference from the domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox".
-(deny user-preference-read (with enable-state-flag "BlockIOKitInWebContentSandbox")
-    (preference-domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"))
-
 (with-filter (state-flag "BlockIOKitInWebContentSandbox")
     (deny iokit-open-service (with telemetry-backtrace))
     (deny iokit-open-user-client (with telemetry-backtrace))

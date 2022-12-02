@@ -34,6 +34,7 @@
 #include "IntRect.h"
 #include "LayoutPoint.h"
 #include "LengthBox.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 
 namespace WTF {
@@ -57,28 +58,6 @@ public:
     LayoutRect(const IntRect& rect) : m_location(rect.location()), m_size(rect.size()) { }
     
     WEBCORE_EXPORT explicit LayoutRect(const FloatRect&); // don't do this implicitly since it's lossy
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << m_location << m_size;
-    }
-
-    template<class Decoder>
-    static std::optional<LayoutRect> decode(Decoder& decoder)
-    {
-        std::optional<LayoutPoint> layoutPoint;
-        decoder >> layoutPoint;
-        if (!layoutPoint)
-            return std::nullopt;
-
-        std::optional<LayoutSize> layoutSize;
-        decoder >> layoutSize;
-        if (!layoutSize)
-            return std::nullopt;
-
-        return {{ *layoutPoint, *layoutSize }};
-    }
 
     LayoutPoint location() const { return m_location; }
     LayoutSize size() const { return m_size; }
@@ -220,10 +199,11 @@ public:
         // Return a rect that is slightly smaller than the true max rect to allow pixelSnapping to round up to the nearest IntRect without overflowing.
         return LayoutRect(LayoutUnit::nearlyMin() / 2, LayoutUnit::nearlyMin() / 2, LayoutUnit::nearlyMax(), LayoutUnit::nearlyMax());
     }
-    
+
     operator FloatRect() const { return FloatRect(m_location, m_size); }
 
 private:
+    friend struct IPC::ArgumentCoder<WebCore::LayoutRect, void>;
     void setLocationAndSizeFromEdges(LayoutUnit left, LayoutUnit top, LayoutUnit right, LayoutUnit bottom);
 
     LayoutPoint m_location;

@@ -17,4 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-percent-height-multicol-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-scroll-percent-height-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-table-in-flex-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/table-root-direction-propagation-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/unicode-bidi-select-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/wm-body-propagation-crash.html

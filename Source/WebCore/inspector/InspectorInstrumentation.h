@@ -192,7 +192,7 @@ public:
     static void didRecalculateStyle(Document&);
     static void didScheduleStyleRecalculation(Document&);
     static void applyUserAgentOverride(Frame&, String&);
-    static void applyEmulatedMedia(Frame&, String&);
+    static void applyEmulatedMedia(Frame&, AtomString&);
 
     static void flexibleBoxRendererBeganLayout(const RenderObject&);
     static void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
@@ -416,7 +416,7 @@ private:
     static void didRecalculateStyleImpl(InstrumentingAgents&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents&, Document&);
     static void applyUserAgentOverrideImpl(InstrumentingAgents&, String&);
-    static void applyEmulatedMediaImpl(InstrumentingAgents&, String&);
+    static void applyEmulatedMediaImpl(InstrumentingAgents&, AtomString&);
 
     static void flexibleBoxRendererBeganLayoutImpl(InstrumentingAgents&, const RenderObject&);
     static void flexibleBoxRendererWrappedToNextLineImpl(InstrumentingAgents&, const RenderObject&, size_t lineStartItemIndex);
@@ -1058,7 +1058,7 @@ inline void InspectorInstrumentation::applyUserAgentOverride(Frame& frame, Strin
         applyUserAgentOverrideImpl(*agents, userAgent);
 }
 
-inline void InspectorInstrumentation::applyEmulatedMedia(Frame& frame, String& media)
+inline void InspectorInstrumentation::applyEmulatedMedia(Frame& frame, AtomString& media)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))

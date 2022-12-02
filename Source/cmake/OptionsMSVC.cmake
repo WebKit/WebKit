@@ -94,6 +94,12 @@ add_compile_options(
     /wd4722 # 'function' : destructor never returns, potential memory leak
             # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4722
 
+    /wd4723 # The second operand in a divide operation evaluated to zero at compile time, giving undefined results.
+            # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4723
+
+    /wd4805 # 'operation' : unsafe mix of type 'type' and type 'type' in operation
+            # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4805
+            
     /wd4838 # conversion from 'type_1' to 'type_2' requires a narrowing conversion
             # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4838
 
@@ -158,31 +164,6 @@ if (NOT ${CMAKE_CXX_FLAGS} STREQUAL "")
     string(REGEX REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(/W4)
 endif ()
-
-if (MSVC_STATIC_RUNTIME)
-    message(STATUS "Using multithreaded, static version of the run-time library")
-    set(MSVC_RUNTIME_COMPILE_FLAG "/MT")
-    set(MSVC_RUNTIME_LINKER_FLAGS "/NODEFAULTLIB:MSVCRT /NODEFAULTLIB:MSVCRTD")
-else ()
-    message(STATUS "Using multithreaded, dynamic version of the run-time library")
-    set(MSVC_RUNTIME_COMPILE_FLAG "/MD")
-    # No linker flags are required
-endif ()
-
-foreach (flag_var
-    CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-    CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-    CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-    CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-    # Use the multithreaded static runtime library instead of the default DLL runtime.
-    string(REGEX REPLACE "/MD" "${MSVC_RUNTIME_COMPILE_FLAG}" ${flag_var} "${${flag_var}}")
-
-    # No debug runtime, even in debug builds.
-    if (NOT DEBUG_SUFFIX)
-        string(REGEX REPLACE "${MSVC_RUNTIME_COMPILE_FLAG}d" "${MSVC_RUNTIME_COMPILE_FLAG}" ${flag_var} "${${flag_var}}")
-        string(REGEX REPLACE "/D_DEBUG" "" ${flag_var} "${${flag_var}}")
-    endif ()
-endforeach ()
 
 # Make sure incremental linking is turned off, as it creates unacceptably long link times.
 string(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replace_CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS})

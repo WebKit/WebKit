@@ -44,7 +44,7 @@ class DeflateResultHolder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DeflateResultHolder(WebSocketDeflateFramer&);
-    ~DeflateResultHolder();
+    WEBCORE_EXPORT ~DeflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }
     String failureReason() const { return m_failureReason; }
@@ -61,7 +61,7 @@ class InflateResultHolder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InflateResultHolder(WebSocketDeflateFramer&);
-    ~InflateResultHolder();
+    WEBCORE_EXPORT ~InflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }
     String failureReason() const { return m_failureReason; }
@@ -76,16 +76,16 @@ private:
 
 class WebSocketDeflateFramer {
 public:
-    std::unique_ptr<WebSocketExtensionProcessor> createExtensionProcessor();
+    WEBCORE_EXPORT std::unique_ptr<WebSocketExtensionProcessor> createExtensionProcessor();
 
     bool enabled() const { return m_enabled; }
 
-    std::unique_ptr<DeflateResultHolder> deflate(WebSocketFrame&);
+    WEBCORE_EXPORT std::unique_ptr<DeflateResultHolder> deflate(WebSocketFrame&);
     void resetDeflateContext();
-    std::unique_ptr<InflateResultHolder> inflate(WebSocketFrame&);
+    WEBCORE_EXPORT std::unique_ptr<InflateResultHolder> inflate(WebSocketFrame&);
     void resetInflateContext();
 
-    void didFail();
+    WEBCORE_EXPORT void didFail();
 
     void enableDeflate(int windowBits, WebSocketDeflater::ContextTakeOverMode);
 

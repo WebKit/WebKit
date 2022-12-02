@@ -26,6 +26,8 @@
 #pragma once
 
 #include <WebCore/MessagePortChannelProvider.h>
+#include <WebCore/MessagePortIdentifier.h>
+#include <WebCore/MessageWithMessagePorts.h>
 
 namespace WebKit {
 
@@ -33,6 +35,8 @@ class WebMessagePortChannelProvider final : public WebCore::MessagePortChannelPr
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static WebMessagePortChannelProvider& singleton();
+
+    void messagePortSentToRemote(const WebCore::MessagePortIdentifier&);
 
 private:
     WebMessagePortChannelProvider();
@@ -44,7 +48,8 @@ private:
     void messagePortClosed(const WebCore::MessagePortIdentifier& local) final;
     void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&) final;
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier& remoteTarget) final;
-    void checkRemotePortForActivity(const WebCore::MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) final;
+
+    HashMap<WebCore::MessagePortIdentifier, Vector<WebCore::MessageWithMessagePorts>> m_inProcessPortMessages;
 };
 
 } // namespace WebKit

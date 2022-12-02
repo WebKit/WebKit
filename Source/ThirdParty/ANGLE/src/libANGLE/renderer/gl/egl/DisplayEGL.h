@@ -106,6 +106,8 @@ class DisplayEGL : public DisplayGL
 
     const FunctionsEGL *getFunctionsEGL() const;
 
+    DeviceImpl *createDevice() override;
+
     bool supportsDmaBufFormat(EGLint format) const override;
     egl::Error queryDmaBufFormats(EGLint maxFormats, EGLint *formats, EGLint *numFormats) override;
     egl::Error queryDmaBufModifiers(EGLint format,

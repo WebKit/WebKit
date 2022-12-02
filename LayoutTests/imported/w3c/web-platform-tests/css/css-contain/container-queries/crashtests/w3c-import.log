@@ -19,6 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1346969-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1362391-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-layout-root-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-quotes-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-remove-insert-evaluator-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/columns-in-table-001-crash.html
@@ -40,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/inline-with-columns-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/input-column-group-container-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/input-placeholder-inline-size-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/marker-gcs-after-disconnect-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/math-block-container-child-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/orthogonal-replaced-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/pseudo-container-crash.html

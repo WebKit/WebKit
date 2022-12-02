@@ -1,0 +1,5 @@
+There should be a blue square below.
+
+
+PASS #root 1
+

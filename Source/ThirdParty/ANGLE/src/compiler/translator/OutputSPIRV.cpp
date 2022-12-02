@@ -362,7 +362,7 @@ class OutputSPIRVTraverser : public TIntermTraverser
                                                uint32_t fieldIndex);
 
     TCompiler *mCompiler;
-    [[maybe_unused]] const ShCompileOptions &mCompileOptions;
+    ANGLE_MAYBE_UNUSED_PRIVATE_FIELD const ShCompileOptions &mCompileOptions;
 
     SPIRVBuilder mBuilder;
 

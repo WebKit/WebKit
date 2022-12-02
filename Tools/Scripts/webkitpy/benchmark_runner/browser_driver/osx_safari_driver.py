@@ -20,30 +20,28 @@ class OSXSafariDriver(OSXBrowserDriver):
         self._safari_process = None
         self._safari_preferences = ["-HomePage", "about:blank", "-WarnAboutFraudulentWebsites", "0", "-ExtensionsEnabled", "0", "-ShowStatusBar", "0", "-NewWindowBehavior", "1", "-NewTabBehavior", "1", "-AlwaysRestoreSessionAtLaunch", "0", "-ApplePersistenceIgnoreStateQuietly", "1"]
         super(OSXSafariDriver, self).prepare_env(config)
+        self._enable_signposts = config["enable_signposts"]
         self._maximize_window()
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        if browser_build_path or browser_path:
-            self._launch_url_with_custom_path(url, options, browser_build_path, browser_path)
-            return
-
         env = {}
         for key, value in os.environ.items():
-            if re.match(r"^__XPC_", key):
+            if re.match(r'^__XPC_', key):
                 env[key] = value
+        if self._enable_signposts:
+            env['WEBKIT_SIGNPOSTS_ENABLED'] = '1'
+            env['__XPC_WEBKIT_SIGNPOSTS_ENABLED'] = '1'
+            env['__XPC_JSC_exposeProfilersOnGlobalObject'] = '1'
+        if browser_build_path or browser_path:
+            self._launch_url_with_custom_path(url, options, browser_build_path, browser_path, env)
+            return
+        self._safari_process = self._launch_process(None, 'Safari.app', url, ['--url', url, '--args'] + self._safari_preferences, env=env)
 
-        self._safari_process = self._launch_process(None, "Safari.app", url, ["--url", url, "--args"] + self._safari_preferences, env=env)
-
-    def _launch_url_with_custom_path(self, url, options, browser_build_path, browser_path):
+    def _launch_url_with_custom_path(self, url, options, browser_build_path, browser_path, env):
         safari_app_path = '/Applications/Safari.app'
         safari_binary_path = os.path.join(safari_app_path, 'Contents/MacOS/Safari')
 
-        _log.info("WARNING: Using custom paths to launch Safari (--browser-path or --build-directory) can return inaccurate results if the test is run remotely.")
-
-        env = {}
-        for key, value in os.environ.items():
-            if re.match(r"^__XPC_", key):
-                env[key] = value
+        _log.info('WARNING: Using custom paths to launch Safari (--browser-path or --build-directory) can return inaccurate results if the test is run remotely.')
 
         if browser_build_path:
             browser_build_absolute_path = os.path.abspath(browser_build_path)
@@ -66,7 +64,7 @@ class OSXSafariDriver(OSXBrowserDriver):
             if os.path.exists(safari_binary_path):
                 safari_app_path = browser_path
             else:
-                raise Exception('Could not find Safari.app at {}'.format(safari_app_path))
+                raise Exception('Could not find Safari.app at {}'.format(browser_path))
 
         args = [safari_binary_path] + self._safari_preferences
         _log.info('Launching safari: %s with url: %s' % (safari_binary_path, url))
@@ -93,7 +91,7 @@ class OSXSafariDriver(OSXBrowserDriver):
             if contains_frameworks:
                 assert '.framework' in output, 'No framework is loaded from "{}"'.format(browser_build_path)
 
-        subprocess.Popen(['open', '-a', safari_app_path, url])
+        subprocess.Popen(['open', '-a', safari_app_path, url], env=env)
 
     def launch_driver(self, url, options, browser_build_path):
         from selenium import webdriver
@@ -104,7 +102,7 @@ class OSXSafariDriver(OSXBrowserDriver):
     def close_browsers(self):
         super(OSXSafariDriver, self).close_browsers()
         if self._safari_process and self._safari_process.returncode:
-            sys.exit('Browser crashed with exitcode %d' % self._process.returncode)
+            sys.exit('Browser crashed with exitcode %d' % self._safari_process.returncode)
 
     @classmethod
     def _maximize_window(cls):

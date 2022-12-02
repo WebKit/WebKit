@@ -104,8 +104,6 @@ private:
 #endif
 };
 
-enum class DestructionThread { Any, Main, MainRunLoop };
-
 template<class T, DestructionThread destructionThread = DestructionThread::Any> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
 public:
     void deref() const

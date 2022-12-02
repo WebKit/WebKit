@@ -36,8 +36,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (91,14) size 31x26
               text run at (91,14) width 31: "rd "
           RenderText {#text} at (121,14) size 731x53
-            text run at (121,14) width 618: "should be selected, since the test deleted it a character at a time"
-            text run at (738,14) width 7: " "
+            text run at (121,14) width 624: "should be selected, since the test deleted it a character at a time "
             text run at (14,41) width 209: "and then did an undo."
         RenderText {#text} at (0,0) size 0x0
 selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

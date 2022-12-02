@@ -1258,10 +1258,10 @@ void Heap::checkConn(GCConductor conn)
     unsigned worldState = m_worldState.load();
     switch (conn) {
     case GCConductor::Mutator:
-        RELEASE_ASSERT(worldState & mutatorHasConnBit, worldState, asInt(m_lastPhase), asInt(m_currentPhase), asInt(m_nextPhase), vm().id(), VM::numberOfIDs(), vm().isEntered());
+        RELEASE_ASSERT(worldState & mutatorHasConnBit, worldState, asInt(m_lastPhase), asInt(m_currentPhase), asInt(m_nextPhase), vm().identifier().toUInt64(), vm().isEntered());
         return;
     case GCConductor::Collector:
-        RELEASE_ASSERT(!(worldState & mutatorHasConnBit), worldState, asInt(m_lastPhase), asInt(m_currentPhase), asInt(m_nextPhase), vm().id(), VM::numberOfIDs(), vm().isEntered());
+        RELEASE_ASSERT(!(worldState & mutatorHasConnBit), worldState, asInt(m_lastPhase), asInt(m_currentPhase), asInt(m_nextPhase), vm().identifier().toUInt64(), vm().isEntered());
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -1345,7 +1345,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
     m_beforeGC = MonotonicTime::now();
 
     if (!Options::seedOfVMRandomForFuzzer())
-        vm().random().setSeed(cryptographicallyRandomNumber());
+        vm().random().setSeed(cryptographicallyRandomNumber<uint32_t>());
 
     if (m_collectionScope) {
         dataLogLn("Collection scope already set during GC: ", *m_collectionScope);

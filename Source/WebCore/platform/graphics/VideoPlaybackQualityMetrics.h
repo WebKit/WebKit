@@ -35,47 +35,6 @@ struct VideoPlaybackQualityMetrics {
     uint32_t corruptedVideoFrames { 0 };
     double totalFrameDelay { 0 };
     uint32_t displayCompositedVideoFrames { 0 };
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << totalVideoFrames;
-        encoder << droppedVideoFrames;
-        encoder << corruptedVideoFrames;
-        encoder << totalFrameDelay;
-        encoder << displayCompositedVideoFrames;
-    }
-
-    template <class Decoder>
-    static std::optional<VideoPlaybackQualityMetrics> decode(Decoder& decoder)
-    {
-        std::optional<uint32_t> totalVideoFrames;
-        decoder >> totalVideoFrames;
-        if (!totalVideoFrames)
-            return std::nullopt;
-
-        std::optional<uint32_t> droppedVideoFrames;
-        decoder >> droppedVideoFrames;
-        if (!droppedVideoFrames)
-            return std::nullopt;
-
-        std::optional<uint32_t> corruptedVideoFrames;
-        decoder >> corruptedVideoFrames;
-        if (!corruptedVideoFrames)
-            return std::nullopt;
-
-        std::optional<double> totalFrameDelay;
-        decoder >> totalFrameDelay;
-        if (!totalFrameDelay)
-            return std::nullopt;
-
-        std::optional<uint32_t> displayCompositedVideoFrames;
-        decoder >> displayCompositedVideoFrames;
-        if (!displayCompositedVideoFrames)
-            return std::nullopt;
-
-        return {{ *totalVideoFrames, *droppedVideoFrames, *corruptedVideoFrames, *totalFrameDelay, *displayCompositedVideoFrames }};
-    }
 };
 
 } // namespace WebCore

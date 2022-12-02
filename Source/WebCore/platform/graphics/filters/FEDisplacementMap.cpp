@@ -68,7 +68,7 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
-FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
+FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
 }

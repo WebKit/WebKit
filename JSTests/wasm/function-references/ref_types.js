@@ -208,7 +208,7 @@ async function testRefGlobalCheck() {
       )
     },
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: set_global 0 with type Ref with a variable of type RefNull, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
+    "WebAssembly.Module doesn't validate: set_global 0 with type Externref with a variable of type Externref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
   );
 }
 
@@ -272,7 +272,7 @@ async function testNonNullExternrefIncompatible() {
         "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x6f\x01\x6b\x6f\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"
       ),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. RefNull is not a Ref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Externref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
   );
 }
 
@@ -300,7 +300,7 @@ async function testNonNullFuncrefIncompatible() {
         "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x70\x01\x6b\x70\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"
       ),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. RefNull is not a Ref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Funcref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
   );
 }
 

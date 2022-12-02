@@ -17,9 +17,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/304-update.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/README.md
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/cache-mode.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/credentials.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/freshness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/heuristic.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/http-cache/http-cache.js

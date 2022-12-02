@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,32 @@
 
 #pragma once
 
-#include "CSSImageGeneratorValue.h"
-#include "Image.h"
+#include "CSSValue.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class StyleImage;
 
 namespace Style {
 class BuilderState;
 }
 
-class CSSNamedImageValue final : public CSSImageGeneratorValue {
+class CSSNamedImageValue final : public CSSValue {
 public:
-    static Ref<CSSNamedImageValue> create(const String& name)
+    static Ref<CSSNamedImageValue> create(String name)
     {
-        return adoptRef(*new CSSNamedImageValue(name));
+        return adoptRef(*new CSSNamedImageValue(WTFMove(name)));
     }
+    ~CSSNamedImageValue();
 
     String customCSSText() const;
-
-    bool isFixedSize() const { return false; }
-    bool isPending() const { return false; }
-
-    RefPtr<Image> image(RenderElement&, const FloatSize&);
-
     bool equals(const CSSNamedImageValue&) const;
 
-    Ref<CSSNamedImageValue> valueWithStylesResolved(Style::BuilderState&) { return *this; }
+    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
-    explicit CSSNamedImageValue(const String& name)
-        : CSSImageGeneratorValue(NamedImageClass)
-        , m_name(name)
-    {
-    }
+    explicit CSSNamedImageValue(String&&);
 
     String m_name;
 };

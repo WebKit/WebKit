@@ -29,14 +29,17 @@
 #include "APINavigationResponse.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKNavigationResponseGetTypeID()
 {
-    return toAPI(API::NavigationResponse::APIType);
+    return WebKit::toAPI(API::NavigationResponse::APIType);
 }
 
 bool WKNavigationResponseCanShowMIMEType(WKNavigationResponseRef response)
 {
-    return toImpl(response)->canShowMIMEType();
+    return WebKit::toImpl(response)->canShowMIMEType();
+}
+
+WKURLResponseRef WKNavigationResponseCopyResponse(WKNavigationResponseRef response)
+{
+    return WebKit::toAPI(API::URLResponse::create(WebKit::toImpl(response)->response()).leakRef());
 }

@@ -55,7 +55,8 @@ namespace WebCore {
     macro(TextDecoder) \
     macro(TextEncoder) \
     macro(URL) \
-    macro(URLSearchParams)
+    macro(URLSearchParams) \
+    macro(UserActivation)
 #endif
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
@@ -461,6 +462,7 @@ namespace WebCore {
     macro(XRWebGLLayer) \
     macro(abortAlgorithm) \
     macro(abortSteps) \
+    macro(addAbortAlgorithmToSignal) \
     macro(appendFromJS) \
     macro(applicationCache) \
     macro(associatedReadableByteStreamController) \
@@ -587,6 +589,7 @@ namespace WebCore {
     macro(reader) \
     macro(readyPromise) \
     macro(readyPromiseCapability) \
+    macro(removeAbortAlgorithmFromSignal) \
     macro(requestAnimationFrame) \
     macro(requestIdleCallback) \
     macro(response) \
@@ -646,7 +649,6 @@ namespace WebCore {
     macro(webkitOfflineAudioContext) \
     macro(webkitOscillatorNode) \
     macro(webkitSpeechRecognition) \
-    macro(whenSignalAborted) \
     macro(window) \
     macro(writable) \
     macro(writeAlgorithm) \

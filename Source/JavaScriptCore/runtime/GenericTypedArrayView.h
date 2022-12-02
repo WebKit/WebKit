@@ -35,10 +35,10 @@ class GenericTypedArrayView final : public ArrayBufferView {
 public:
     static Ref<GenericTypedArrayView> create(size_t length);
     static Ref<GenericTypedArrayView> create(const typename Adaptor::Type* array, size_t length);
-    static Ref<GenericTypedArrayView> create(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t length);
+    static Ref<GenericTypedArrayView> create(RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);
     static RefPtr<GenericTypedArrayView> tryCreate(size_t length);
     static RefPtr<GenericTypedArrayView> tryCreate(const typename Adaptor::Type* array, size_t length);
-    static RefPtr<GenericTypedArrayView> tryCreate(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t length);
+    static RefPtr<GenericTypedArrayView> tryCreate(RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);
     
     static Ref<GenericTypedArrayView> createUninitialized(size_t length);
     static RefPtr<GenericTypedArrayView> tryCreateUninitialized(size_t length);
@@ -67,9 +67,12 @@ public:
     
     size_t length() const
     {
-        if (isDetached())
-            return 0;
         return byteLength() / sizeof(typename Adaptor::Type);
+    }
+
+    size_t lengthRaw() const
+    {
+        return byteLengthRaw() / sizeof(typename Adaptor::Type);
     }
 
     typename Adaptor::Type item(size_t index) const
@@ -105,8 +108,10 @@ public:
 
     JSArrayBufferView* wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject);
 
+    static RefPtr<GenericTypedArrayView<Adaptor>> wrappedAs(Ref<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);
+
 private:
-    GenericTypedArrayView(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t length);
+    GenericTypedArrayView(RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);
 };
 
 } // namespace JSC

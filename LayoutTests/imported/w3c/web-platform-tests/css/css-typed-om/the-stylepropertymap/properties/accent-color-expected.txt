@@ -1,6 +1,19 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSPositionValue
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSPositionValue
-
+PASS Can set 'accent-color' to CSS-wide keywords
+FAIL Can set 'accent-color' to var() references assert_equals: expected 2 but got 1
+PASS Can set 'accent-color' to the 'currentcolor' keyword
+FAIL Can set 'accent-color' to the 'auto' keyword assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+PASS Setting 'accent-color' to a length throws TypeError
+PASS Setting 'accent-color' to a percent throws TypeError
+PASS Setting 'accent-color' to a time throws TypeError
+PASS Setting 'accent-color' to an angle throws TypeError
+PASS Setting 'accent-color' to a flexible length throws TypeError
+PASS Setting 'accent-color' to a number throws TypeError
+PASS Setting 'accent-color' to a URL throws TypeError
+PASS Setting 'accent-color' to a transform throws TypeError
+FAIL 'accent-color' does not supported 'red' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+PASS 'accent-color' does not supported '#bbff00'
+PASS 'accent-color' does not supported 'rgb(255, 255, 128)'
+PASS 'accent-color' does not supported 'hsl(50, 33%, 25%)'
+FAIL 'accent-color' does not supported 'transparent' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
 

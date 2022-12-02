@@ -100,18 +100,25 @@ class TestResultWriter(object):
 
         ext_parts = fs.splitext(self._test_name)
         output_basename = ext_parts[0]
-        if len(ext_parts) > 1 and '?' in ext_parts[1]:
-            output_basename += '_' + ext_parts[1].split('?')[1]
-        if len(ext_parts) > 1 and '#' in ext_parts[1]:
-            output_basename += '_' + ext_parts[1].split('#')[1]
+        extension = ext_parts[1]
 
-        output_filename = fs.join(self._root_output_dir, output_basename + ext_parts[1])
+        # Find the actual file extension while keeping track of URI fragment or query, if any. Only
+        # the last extra part will be used for naming the output file, eg if self._test_name is
+        # "foo.html?bar#blah" then final output_basename will be "foo_blah" and extension will be
+        # ".html".
+        extra_part = ''
+        for char in ('?', '#'):
+            index = extension.find(char)
+            if index != -1:
+                extension, extra_part = extension[:index], extension[index + 1:]
 
-        # Temporary fix, also in LayoutTests/fast/harness/results.html, line 275.
-        # FIXME: Refactor to avoid confusing reference to both test and process names.
-        if len(fs.splitext(output_filename)[1]) - 1 > 5:
-            return output_filename + modifier
-        return fs.splitext(output_filename)[0] + modifier
+        if len(extension) - 1 > 5:
+            # Temporary fix, also in LayoutTests/fast/harness/results.html, line 313.
+            # FIXME: Refactor to avoid confusing reference to both test and process names.
+            return fs.join(self._root_output_dir, self._test_name) + modifier
+        elif extra_part:
+            output_basename += '_' + extra_part
+        return fs.join(self._root_output_dir, output_basename) + modifier
 
     def _write_binary_file(self, path, contents):
         if contents is not None:

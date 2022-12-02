@@ -266,7 +266,3 @@ extern NSString * const kCAContextPortNumber;
 extern NSString * const kCAContextSecure;
 extern NSString * const kCAContentsFormatRGBA10XR;
 #endif
-
-#if PLATFORM(MAC)
-extern NSString * const kCAContentsFormatRGBA8ColorRGBA8LinearGlyphMask;
-#endif

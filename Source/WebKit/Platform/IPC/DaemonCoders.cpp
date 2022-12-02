@@ -116,7 +116,7 @@ std::optional<WTF::WallTime> Coder<WTF::WallTime>::decode(Decoder& decoder)
 void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& instance)
 {
 #if PLATFORM(COCOA)
-    auto data = adoptCF(SecTrustSerialize(instance.trust(), nullptr));
+    auto data = adoptCF(SecTrustSerialize(instance.trust().get(), nullptr));
     if (!data) {
         encoder << false;
         return;

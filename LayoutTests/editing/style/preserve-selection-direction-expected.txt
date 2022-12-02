@@ -1,20 +1,22 @@
 Bug 110979: Selection direction is not preserved when applying styles
-
 This test verifies that selection direction is preserved when applying styles.
 
-This is some sample text
-selection.collapse(editable.firstChild, 3);
-selection.extend(editable.firstChild, 8);
-document.execCommand('foreColor', false, 'green');
-PASS selection.anchorOffset is 0
-PASS selection.focusOffset is 5
-editable.innerHTML = 'This is some sample text';
-selection.collapse(editable.firstChild, 8);
-selection.extend(editable.firstChild, 3);
-document.execCommand('foreColor', false, 'green');
-PASS selection.anchorOffset is 5
-PASS selection.focusOffset is 0
-PASS successfullyParsed is true
+Before foreColor 1:
+| "Thi<#selection-anchor>s is <#selection-focus>some sample text"
 
-TEST COMPLETE
+After foreColor 1:
+| "Thi"
+| <font>
+|   color="#008000"
+|   "<#selection-anchor>s is <#selection-focus>"
+| "some sample text"
 
+Before foreColor 2:
+| "Thi<#selection-focus>s is <#selection-anchor>some sample text"
+
+After foreColor 2:
+| "Thi"
+| <font>
+|   color="#008000"
+|   "<#selection-focus>s is <#selection-anchor>"
+| "some sample text"

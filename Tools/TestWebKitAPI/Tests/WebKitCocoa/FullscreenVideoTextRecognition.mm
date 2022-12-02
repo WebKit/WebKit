@@ -236,7 +236,12 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
 
 namespace TestWebKitAPI {
 
+// FIXME: Re-enable this test for iOS once webkit.org/b/248094 is resolved
+#if PLATFORM(IOS)
+TEST(FullscreenVideoTextRecognition, DISABLED_TogglePlaybackInElementFullscreen)
+#else
 TEST(FullscreenVideoTextRecognition, TogglePlaybackInElementFullscreen)
+#endif
 {
     auto webView = [FullscreenVideoTextRecognitionWebView create];
     [webView loadVideoSource:@"test.mp4"];
@@ -263,7 +268,12 @@ TEST(FullscreenVideoTextRecognition, AddVideoAfterEnteringFullscreen)
     [webView waitForImageAnalysisToBegin];
 }
 
+// FIXME: Re-enable this test for iOS once webkit.org/b/248094 is resolved
+#if PLATFORM(IOS)
+TEST(FullscreenVideoTextRecognition, DISABLED_DoNotAnalyzeVideoAfterExitingFullscreen)
+#else
 TEST(FullscreenVideoTextRecognition, DoNotAnalyzeVideoAfterExitingFullscreen)
+#endif
 {
     auto webView = [FullscreenVideoTextRecognitionWebView create];
     [webView loadVideoSource:@"test.mp4"];

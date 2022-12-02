@@ -1,0 +1,45 @@
+
+PASS local to local: no preflight required.
+PASS local to private: no preflight required.
+PASS local to public: no preflight required.
+FAIL local to public: PUT preflight failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+PASS local to public: PUT preflight success.
+FAIL private to local: failed preflight. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL private to local: missing CORS headers on preflight response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL private to local: missing PNA header on preflight response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL private to local: missing CORS headers on final response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL private to local: success. assert_equals: error expected (undefined) undefined but got (string) "TypeError: Load failed"
+PASS private to local: PUT success.
+FAIL private to local: no-CORS mode failed preflight. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL private to local: no-CORS mode missing CORS headers on preflight response. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL private to local: no-CORS mode missing PNA header on preflight response. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+PASS private to local: no-CORS mode success.
+PASS private to private: no preflight required.
+PASS private to public: no preflight required.
+FAIL public to local: failed preflight. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL public to local: missing CORS headers on preflight response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public to local: missing PNA header on preflight response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public to local: missing CORS headers on final response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public to local: success. assert_equals: error expected (undefined) undefined but got (string) "TypeError: Load failed"
+PASS public to local: PUT success.
+FAIL public to local: no-CORS mode failed preflight. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL public to local: no-CORS mode missing CORS headers on preflight response. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL public to local: no-CORS mode missing PNA header on preflight response. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+PASS public to local: no-CORS mode success.
+FAIL public to private: failed preflight. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL public to private: missing CORS headers on preflight response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public to private: missing PNA header on preflight response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public to private: missing CORS headers on final response. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public to private: success. assert_equals: error expected (undefined) undefined but got (string) "TypeError: Load failed"
+PASS public to private: PUT success.
+FAIL public to private: no-CORS mode failed preflight. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL public to private: no-CORS mode missing CORS headers on preflight response. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL public to private: no-CORS mode missing PNA header on preflight response. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+PASS public to private: no-CORS mode success.
+PASS public to public: no preflight required.
+FAIL treat-as-public-address to local: failed preflight. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL treat-as-public-address to local: success. assert_equals: response ok expected true but got false
+FAIL treat-as-public-address to private: failed preflight. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL treat-as-public-address to private: success. assert_equals: error expected (undefined) undefined but got (string) "TypeError: Load failed"
+PASS treat-as-public-address to public: no preflight required.
+

@@ -11,7 +11,7 @@ layer at (0,0) size 800x111
           RenderMathMLUnderOver {mover} at (0,0) size 60x37
             RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (7,1) size 46x6
-              RenderBlock (anonymous) at (0,0) size 13x19
+              RenderBlock (anonymous) at (0,0) size 13x18
                 RenderText {#text} at (0,-67) size 13x158
                   text run at (0,-67) width 13: "^"
         RenderText {#text} at (60,34) size 4x17
@@ -29,7 +29,7 @@ layer at (0,0) size 800x111
           RenderMathMLUnderOver {mover} at (0,0) size 60x39
             RenderMathMLSpace {mspace} at (0,8) size 60x31 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (7,1) size 46x8
-              RenderBlock (anonymous) at (0,0) size 13x9
+              RenderBlock (anonymous) at (0,0) size 13x8
                 RenderText {#text} at (0,-77) size 13x158
                   text run at (0,-77) width 13: "~"
         RenderText {#text} at (188,34) size 4x17
@@ -38,7 +38,7 @@ layer at (0,0) size 800x111
           RenderMathMLUnderOver {mover} at (0,0) size 60x49
             RenderMathMLSpace {mspace} at (0,18) size 60x31 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (0,1) size 60x18
-              RenderBlock (anonymous) at (0,0) size 12x16
+              RenderBlock (anonymous) at (0,0) size 12x15
                 RenderText {#text} at (0,-70) size 12x158
                   text run at (0,-70) width 12: "\x{AF}"
         RenderText {#text} at (252,34) size 4x17
@@ -47,7 +47,7 @@ layer at (0,0) size 800x111
           RenderMathMLUnderOver {mover} at (0,0) size 60x37
             RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (7,1) size 46x6
-              RenderBlock (anonymous) at (0,0) size 12x18
+              RenderBlock (anonymous) at (0,0) size 12x17
                 RenderText {#text} at (0,-68) size 12x158
                   text run at (0,-68) width 12: "\x{2C6}"
         RenderText {#text} at (316,34) size 4x17
@@ -56,7 +56,7 @@ layer at (0,0) size 800x111
           RenderMathMLUnderOver {mover} at (0,0) size 60x37
             RenderMathMLSpace {mspace} at (0,6) size 60x31 [bgcolor=#008000]
             RenderMathMLOperator {mo} at (7,1) size 46x6
-              RenderBlock (anonymous) at (0,0) size 12x18
+              RenderBlock (anonymous) at (0,0) size 12x17
                 RenderText {#text} at (0,-68) size 12x158
                   text run at (0,-68) width 12: "\x{2C7}"
         RenderText {#text} at (0,0) size 0x0

@@ -12,12 +12,13 @@ if (window.IPC) { // For compiles with !ENABLE(IPC_TESTING_API)
     for (const processTarget of IPC.processTargets) {
         if (processTarget == "UI")
             continue; // Crashing UI is not supported.
-        const streamConnection = IPC.createStreamClientConnection(processTarget, bufferSize);
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSize);
+        streamConnection.open();
         IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
             { type: 'uint64_t', value: streamTesterID },
-            { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },
+            { type: 'StreamServerConnectionHandle', value: serverConnectionHandle },
         ]);
-        const arguments = IPC.waitForMessage(processTarget, streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
         streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
 
         // Test starts here.
@@ -30,6 +31,7 @@ if (window.IPC) { // For compiles with !ENABLE(IPC_TESTING_API)
             `crashing sync message must return failure for ${ processTarget }`);
         assert_less_than(Date.now() - start, 500, `crashing sync message must complete in 500ms for ${ processTarget }`);
         console.log(`ttt: ${Date.now() - start}`);
+        streamConnection.invalidate();
     }
 }
 done();

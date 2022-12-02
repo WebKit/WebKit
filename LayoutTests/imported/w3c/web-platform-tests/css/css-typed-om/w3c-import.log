@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/factory-absolute-length.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/factory-duration.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/factory-frequency.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/perspective-typed-arithmetic-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.html

@@ -55,13 +55,47 @@ public:
     struct RegistryLookupResult {
         bool isSupported { false };
         bool isUsingHardware { false };
+        GRefPtr<GstElementFactory> factory;
 
         operator bool() const { return isSupported; }
+
+        static RegistryLookupResult merge(const RegistryLookupResult& a, const RegistryLookupResult& b)
+        {
+            return RegistryLookupResult {
+                a.isSupported && b.isSupported,
+                a.isSupported && b.isSupported && a.isUsingHardware && b.isUsingHardware,
+                nullptr
+            };
+        }
+
+        friend bool operator==(const RegistryLookupResult& lhs, const RegistryLookupResult& rhs)
+        {
+            return lhs.isSupported == rhs.isSupported && lhs.isUsingHardware == rhs.isUsingHardware;
+        }
+
+        friend bool operator!=(const RegistryLookupResult& lhs, const RegistryLookupResult& rhs)
+        {
+            return !(lhs == rhs);
+        }
     };
     RegistryLookupResult isDecodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Decoding, mediaConfiguration); };
     RegistryLookupResult isEncodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Encoding, mediaConfiguration); }
 
-    bool isCodecSupported(Configuration, const String& codec, bool usingHardware = false) const;
+    struct CodecLookupResult {
+        CodecLookupResult() = default;
+        CodecLookupResult(bool isSupported, const GRefPtr<GstElementFactory>& factory)
+            : isSupported(isSupported)
+            , factory(factory)
+        {
+        }
+
+        operator bool() const { return isSupported; }
+
+        bool isSupported { false };
+        GRefPtr<GstElementFactory> factory;
+    };
+
+    CodecLookupResult isCodecSupported(Configuration, const String& codec, bool usingHardware = false) const;
     MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const;
     bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
@@ -122,7 +156,7 @@ protected:
     };
     void fillMimeTypeSetFromCapsMapping(const ElementFactories&, const Vector<GstCapsWebKitMapping>&);
 
-    bool isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
+    CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
 
 private:
     const char* configurationNameForLogging(Configuration) const;
@@ -156,9 +190,9 @@ private:
 
     bool m_isMediaSource { false };
     HashSet<String, ASCIICaseInsensitiveHash> m_decoderMimeTypeSet;
-    HashMap<AtomString, bool> m_decoderCodecMap;
+    HashMap<AtomString, RegistryLookupResult> m_decoderCodecMap;
     HashSet<String, ASCIICaseInsensitiveHash> m_encoderMimeTypeSet;
-    HashMap<AtomString, bool> m_encoderCodecMap;
+    HashMap<AtomString, RegistryLookupResult> m_encoderCodecMap;
 };
 
 } // namespace WebCore

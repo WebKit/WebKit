@@ -187,6 +187,13 @@ scrollbars/scrollbars-on-positioned-content.html [ Failure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
 
+# SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
+svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
+svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
+svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
+
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html
@@ -1764,24 +1771,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-i
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-indent-vrl-014.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-indent-vrl-016.xht [ ImageOnlyFailure ]
 
-# Manual tests.
-imported/w3c/web-platform-tests/web-share/share-cancel-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-extra-argument-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-extra-field-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-files-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-image-manual.tentative.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-non-string-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-null-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-simple-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-unicode-strings-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-unicode-strings-nonutf8-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-data-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-empty-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-encoding-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-noscheme-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-pathonly-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-url-relative-manual.https.html [ Skip ]
-
 # rdar://problem/59595496
 quicklook/keynote-09.html [ Failure ]
 quicklook/keynote.html [ ImageOnlyFailure ]
@@ -2007,6 +1996,13 @@ webkit.org/b/228114 imported/w3c/web-platform-tests/fetch/content-type/script.wi
 
 webkit.org/b/230418 imported/w3c/web-platform-tests/fetch/data-urls/base64.any.worker.html [ Pass Crash ]
 
+# These are timing out.
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
+webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
 
 webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
@@ -2029,7 +2025,6 @@ webkit.org/b/228604 [ Release ] http/wpt/mediarecorder/set-srcObject-MediaStream
 
 # These tests currently fail or are flaky in EWS on iOS 14.
 editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.html [ Pass Timeout ]
-webkit.org/b/245984 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Timeout ]
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
 webkit.org/b/231962 editing/selection/modal-dialog-select-paragraph.html [ Failure ]
@@ -2114,7 +2109,6 @@ webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-consecutive-confirmat
 webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-rejection.html [ Pass Timeout ]
 webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Failure Timeout ]
 
-webkit.org/b/245691 fast/events/ios/rotation/orientationchange-event-listener-on.body.html [ Pass Timeout Failure ]
 webkit.org/b/231622 fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html [ Pass Timeout ]
 
 webkit.org/b/231623 [ Debug ] fast/scrolling/ios/click-events-during-momentum-scroll-in-main-frame.html [ Pass Timeout ]
@@ -2189,16 +2183,6 @@ webkit.org/b/238691 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Tim
 
 ############ end of test failures related to GPU Process on by default
 
-# webkit.org/b/237346 REGRESSION(r290539): [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
-http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Pass Failure ]
-http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Pass Failure ]
-
-# rdar://86037417 WindowServer returned not alive with context:,unresponsive work processor(s)
-http/tests/model/model-document.html [ Skip ]
-http/tests/model/model-document-interactive.html [ Skip ]
-accessibility/model-element-attributes.html [ Skip ]
-model-element/model-element-interactive.html [ Skip ]
-
 webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
 
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
@@ -2230,9 +2214,7 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
 
-webkit.org/b/242812 [ Release arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
-
-webkit.org/b/241205 [ Release arm64 ] fast/forms/textfield-outline.html [ Pass Failure ]
+js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/242904 [ Debug ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
@@ -2316,17 +2298,14 @@ fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
 
 webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Pass Timeout ]
 
-webkit.org/b/243515 [ Debug ] svg/z-index/shapes-with-zindex.svg [ Pass Crash ]
-webkit.org/b/243515 [ Debug ] svg/z-index/group-with-zindex.svg [ Pass Crash ]
-webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding-margin.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-with-border-overflow-visible.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-shape-child.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-group-child.html [ Pass Crash ImageOnlyFailure ]
-webkit.org/b/243515 [ Debug ] svg/compositing/outermost-svg-directly-composited-group-child-overflow-hidden.html [ Pass Crash ]
+webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding-margin.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border-overflow-visible.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-shape-child.html [ Pass ImageOnlyFailure ]
+webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-group-child.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/243589 [ Debug ] http/wpt/service-workers/update-with-importScripts.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html [ Pass Crash ]
@@ -2350,8 +2329,6 @@ webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfac
 
 webkit.org/b/244913 [ Debug ] fast/mediastream/getDisplayMedia-displaySurface.html [ Skip ]
 
-webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-cross-origin.https.sub.tentative.html [ Pass Timeout ]
-
 webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure Timeout ]
 
 webkit.org/b/245009 http/wpt/service-workers/controlled-sharedworker.https.html [ Pass Failure ]
@@ -2362,13 +2339,6 @@ webkit.org/b/245091 http/wpt/shared-workers/connect-event-ordering.html [ Pass F
 
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]
 
-# webkit.org/b/245543 New Test(254408@main): [ iOS16 ] 5X css3/filters/effect-(Layout tests) are constant image failures
-css3/filters/effect-contrast-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-grayscale-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-saturate-hw.html [ ImageOnlyFailure ]
-css3/filters/effect-sepia-hw.html [ ImageOnlyFailure ]
-
 # webkit.org/b/245586 [ iOS16 ] 3X imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/(Layout tests) are constant failures
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
@@ -2377,15 +2347,9 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createIma
 webkit.org/b/245588 mathml/presentation/mathvariant-inheritance.html [ ImageOnlyFailure ]
 webkit.org/b/245588 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
-webkit.org/b/245590 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
-
-webkit.org/b/245592 imported/w3c/web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-138.html [ ImageOnlyFailure ]
-
 webkit.org/b/245595 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 
 webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure ]
-
-webkit.org/b/245608 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Failure ]
 
 webkit.org/b/245613 scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html [ Pass Failure ]
 
@@ -2400,10 +2364,7 @@ webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-di
 
 webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html [ Pass Failure ]
 
-# webkit.org/b/245967 3X imported/w3c/web-platform-tests/feature-policy/(Layout tests) failing since added
-imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html [ Pass Failure ]
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
-imported/w3c/web-platform-tests/feature-policy/experimental-features/vertical-scroll-scrollintoview.tentative.html [ Failure ]
+webkit.org/b/245967 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
 
@@ -2413,15 +2374,11 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 [ Release ] http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
 [ Release ] http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
 
-webkit.org/b/246427 imported/w3c/web-platform-tests/preload/preload-referrer-policy.html [ Pass Failure ]
-
 # webkit.org/b/243681  Newly imported tests that fail on iOS16
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 
 webkit.org/b/246547 animations/steps-transform-rendering-updates.html [ Pass Failure ]
-
-webkit.org/b/246698 media/video-object-fit.html [ ImageOnlyFailure ]
 
 # webkit.org/b/246701 Flaky failure only on iOS
 imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Pass Failure ]
@@ -2431,3 +2388,12 @@ imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Pass Failure ]
+
+# UserActivation tests rely on test_driver.click() which is not supported on iOS
+imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/user-activation-interface.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/activation-same-and-cross-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html

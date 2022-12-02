@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body contenteditable>
+<span id="content">abc def ghi</span>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description(`This tests selecting by granularity results in focus and anchor of selection to be adjusted<br>
+To manually test, double click or double tap on "def".`);
+
+jsTestIsAsync = true;
+
+function runAssertions() {
+    shouldBe('getSelection().anchorNode', 'content.firstChild');
+    shouldBe('getSelection().anchorOffset', '4');
+    shouldBe('getSelection().focusNode', 'content.firstChild');
+    shouldBe('getSelection().focusOffset', '7');
+    shouldBe('getSelection().rangeCount', '1');
+    evalAndLog('window.range = getSelection().getRangeAt(0);')
+    shouldBe('range.startContainer', 'content.firstChild');
+    shouldBe('range.startOffset', '4');
+    shouldBe('range.endContainer', 'content.firstChild');
+    shouldBe('range.endOffset', '7');
+}
+
+async function runTest()
+{
+    getSelection().removeAllRanges();
+    await UIHelper.selectWordByDoubleTapOrClick(content, content.offsetWidth / 2, content.offsetHeight / 2);
+    runAssertions();
+}
+
+if (window.eventSender) {
+    (async () => {
+        await runTest();
+        finishJSTest();        
+    })();
+} else {
+    let timer = null;
+    document.addEventListener('selectionchange', () => {
+        if (timer)
+            clearTimeout(timer);
+        timer = setTimeout(runAssertions, 1000);
+    });
+}
+
+</script>
+</body>
+</html>

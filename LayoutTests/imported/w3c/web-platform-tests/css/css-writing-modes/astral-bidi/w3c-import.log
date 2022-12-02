@@ -17,8 +17,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/adlam-anti-ref-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/adlam-anti-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/adlam-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/adlam-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/adlam.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-anti-ref-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-anti-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/cypriot.html

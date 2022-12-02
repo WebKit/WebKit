@@ -107,7 +107,7 @@ inline TypedArrayType toTypedArrayType(JSTypedArrayType type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType type, RefPtr<ArrayBuffer>&& buffer, size_t offset, size_t length)
+static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType type, RefPtr<ArrayBuffer>&& buffer, size_t offset, std::optional<size_t> length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -115,29 +115,13 @@ static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
+    bool isResizableOrGrowableShared = buffer->isResizableOrGrowableShared();
     switch (type) {
-    case kJSTypedArrayTypeInt8Array:
-        return JSInt8Array::create(globalObject, globalObject->typedArrayStructure(TypeInt8), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeInt16Array:
-        return JSInt16Array::create(globalObject, globalObject->typedArrayStructure(TypeInt16), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeInt32Array:
-        return JSInt32Array::create(globalObject, globalObject->typedArrayStructure(TypeInt32), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeUint8Array:
-        return JSUint8Array::create(globalObject, globalObject->typedArrayStructure(TypeUint8), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeUint8ClampedArray:
-        return JSUint8ClampedArray::create(globalObject, globalObject->typedArrayStructure(TypeUint8Clamped), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeUint16Array:
-        return JSUint16Array::create(globalObject, globalObject->typedArrayStructure(TypeUint16), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeUint32Array:
-        return JSUint32Array::create(globalObject, globalObject->typedArrayStructure(TypeUint32), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeFloat32Array:
-        return JSFloat32Array::create(globalObject, globalObject->typedArrayStructure(TypeFloat32), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeFloat64Array:
-        return JSFloat64Array::create(globalObject, globalObject->typedArrayStructure(TypeFloat64), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeBigInt64Array:
-        return JSBigInt64Array::create(globalObject, globalObject->typedArrayStructure(TypeBigInt64), WTFMove(buffer), offset, length);
-    case kJSTypedArrayTypeBigUint64Array:
-        return JSBigUint64Array::create(globalObject, globalObject->typedArrayStructure(TypeBigUint64), WTFMove(buffer), offset, length);
+#define JSC_TYPED_ARRAY_FACTORY(type) case kJSTypedArrayType##type##Array: { \
+        return JS##type##Array::create(globalObject, globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared), WTFMove(buffer), offset, length.value()); \
+    }
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_FACTORY)
+#undef JSC_TYPED_ARRAY_CHECK
     case kJSTypedArrayTypeArrayBuffer:
     case kJSTypedArrayTypeNone:
         RELEASE_ASSERT_NOT_REACHED();
@@ -225,7 +209,10 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
     unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
 
-    JSObject* result = createTypedArray(globalObject, arrayType, WTFMove(buffer), 0, buffer->byteLength() / elementByteSize);
+    std::optional<size_t> length;
+    if (!buffer->isResizableOrGrowableShared())
+        length = buffer->byteLength() / elementByteSize;
+    JSObject* result = createTypedArray(globalObject, arrayType, WTFMove(buffer), 0, length);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
@@ -286,7 +273,7 @@ size_t JSObjectGetTypedArrayByteLength(JSContextRef, JSObjectRef objectRef, JSVa
     JSObject* object = toJS(objectRef);
 
     if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
-        return typedArray->length() * elementSize(typedArray->type());
+        return typedArray->byteLength();
 
     return 0;
 }

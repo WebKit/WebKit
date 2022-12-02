@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AudioSampleDataConverter.h"
+#include "CAAudioStreamDescription.h"
 #include "CARingBuffer.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/LoggerHelper.h>
@@ -114,7 +115,7 @@ private:
 
     RefPtr<AudioSampleBufferList> m_scratchBuffer;
 
-    UniqueRef<CARingBuffer> m_ringBuffer;
+    std::unique_ptr<InProcessCARingBuffer> m_ringBuffer;
     size_t m_maximumSampleCount { 0 };
 
     float m_volume { 1.0 };

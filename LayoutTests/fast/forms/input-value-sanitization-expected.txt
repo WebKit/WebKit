@@ -16,7 +16,9 @@ PASS input.value is "50"
 
 Text:
 PASS input.value is " foo bar "
-PASS document.getSelection().toString() is " foo bar "
+PASS input.selectionStart is 0
+PASS input.selectionEnd is 9
+PASS input.value.substring(input.selectionStart, input.selectionEnd) is " foo bar "
 PASS input.value is "foo\u0000bar"
 PASS input.value is "foo\bbar"
 PASS input.value is "foo\tbar"

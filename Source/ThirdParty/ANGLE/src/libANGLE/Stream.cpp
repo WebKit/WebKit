@@ -10,7 +10,7 @@
 #include "libANGLE/Stream.h"
 
 #include <EGL/eglext.h>
-#include <platform/Platform.h>
+#include <platform/PlatformMethods.h>
 
 #include "common/debug.h"
 #include "common/mathutil.h"

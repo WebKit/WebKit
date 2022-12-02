@@ -257,7 +257,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
     m_jit.move(TrustedImm32(0), resultGPR);
 
     JITCompiler::JumpList done;
-    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+    if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         if (!isKnownNotCell(operand.node()))
             done.append(m_jit.branchIfCell(JSValueRegs(argGPR)));
     } else {
@@ -309,7 +309,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
     GPRReg resultGPR = result.gpr();
 
     // First, handle the case where "operand" is a cell.
-    if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+    if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
         if (!isKnownNotCell(operand.node())) {
             JITCompiler::Jump isCell = m_jit.branchIfCell(JSValueRegs(argGPR));
             addBranch(isCell, notTaken);
@@ -1727,10 +1727,10 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     GPRReg op2GPR = op2.gpr();
     GPRReg resultGPR = result.gpr();
 
-    bool masqueradesAsUndefinedWatchpointValid =
-        masqueradesAsUndefinedWatchpointIsStillValid();
+    bool masqueradesAsUndefinedWatchpointSetValid =
+        masqueradesAsUndefinedWatchpointSetIsStillValid();
 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
     } else {
@@ -1748,7 +1748,7 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     MacroAssembler::Jump rightNotCell = m_jit.branchIfNotCell(JSValueRegs(op2GPR));
     
     // We know that within this branch, rightChild must be a cell. 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueRegs(op2GPR), rightChild, (~SpecCellCheck) | SpecObject, m_jit.branchIfNotObject(op2GPR));
     } else {
@@ -1801,10 +1801,10 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     GPRReg op2GPR = op2.gpr();
     GPRReg resultGPR = result.gpr();
     
-    bool masqueradesAsUndefinedWatchpointValid = 
-        masqueradesAsUndefinedWatchpointIsStillValid();
+    bool masqueradesAsUndefinedWatchpointSetValid = 
+        masqueradesAsUndefinedWatchpointSetIsStillValid();
 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
     } else {
@@ -1822,7 +1822,7 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     MacroAssembler::Jump rightNotCell = m_jit.branchIfNotCell(JSValueRegs(op2GPR));
     
     // We know that within this branch, rightChild must be a cell. 
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueRegs(op2GPR), rightChild, (~SpecCellCheck) | SpecObject, m_jit.branchIfNotObject(op2GPR));
     } else {
@@ -1992,10 +1992,10 @@ void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
     GPRTemporary structure;
     GPRReg structureGPR = InvalidGPRReg;
 
-    bool masqueradesAsUndefinedWatchpointValid =
-        masqueradesAsUndefinedWatchpointIsStillValid();
+    bool masqueradesAsUndefinedWatchpointSetValid =
+        masqueradesAsUndefinedWatchpointSetIsStillValid();
 
-    if (!masqueradesAsUndefinedWatchpointValid) {
+    if (!masqueradesAsUndefinedWatchpointSetValid) {
         // The masquerades as undefined case will use the structure register, so allocate it here.
         // Do this at the top of the function to avoid branching around a register allocation.
         GPRTemporary realStructure(this);
@@ -2004,7 +2004,7 @@ void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
     }
 
     MacroAssembler::Jump notCell = m_jit.branchIfNotCell(JSValueRegs(valueGPR));
-    if (masqueradesAsUndefinedWatchpointValid) {
+    if (masqueradesAsUndefinedWatchpointSetValid) {
         DFG_TYPE_CHECK(
             JSValueRegs(valueGPR), nodeUse, (~SpecCellCheck) | SpecObject, m_jit.branchIfNotObject(valueGPR));
     } else {
@@ -2116,7 +2116,7 @@ void SpeculativeJIT::compileToBoolean(Node* node, bool invert)
         FPRTemporary valueFPR(this);
         FPRTemporary tempFPR(this);
 
-        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointSetIsStillValid();
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
         std::optional<GPRTemporary> scratch;
         GPRReg scratchGPR = InvalidGPRReg;
@@ -2152,7 +2152,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
     GPRReg scratchGPR = scratch.gpr();
     GPRReg structureGPR = InvalidGPRReg;
 
-    bool objectMayMasqueradeAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+    bool objectMayMasqueradeAsUndefined = !masqueradesAsUndefinedWatchpointSetIsStillValid();
     if (objectMayMasqueradeAsUndefined) {
         GPRTemporary realStructure(this);
         structure.adopt(realStructure);
@@ -2263,7 +2263,7 @@ void SpeculativeJIT::emitUntypedBranch(Edge nodeUse, BasicBlock* taken, BasicBlo
                 skipHeapBigIntCase.link(&m_jit);
         }
 
-        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointSetIsStillValid();
         if (shouldCheckMasqueradesAsUndefined) {
             branchTest8(MacroAssembler::Zero, MacroAssembler::Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), taken);
             m_jit.emitLoadStructure(vm(), valueGPR, temp1GPR);
@@ -2927,7 +2927,8 @@ void SpeculativeJIT::compileNewTypedArrayWithInt52Size(Node* node)
 {
     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
     auto typedArrayType = node->typedArrayType();
-    RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType));
+    bool isResizableOrGrowableShared = false;
+    RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType, isResizableOrGrowableShared));
     RELEASE_ASSERT(structure.get());
 
     SpeculateStrictInt52Operand size(this, node->child1());
@@ -2940,10 +2941,26 @@ void SpeculativeJIT::compileGetTypedArrayLengthAsInt52(Node* node)
 {
     // If arrayMode is ForceExit, we would not compile this node and hence, should not have arrived here.
     DFG_ASSERT(m_graph, node, node->arrayMode().isSomeTypedArrayView());
+    if (node->arrayMode().mayBeResizableOrGrowableSharedTypedArray()) {
+        SpeculateCellOperand base(this, node->child1());
+        GPRTemporary scratch1(this);
+        GPRTemporary result(this);
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg scratch1GPR = scratch1.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        m_jit.loadTypedArrayLength(baseGPR, resultGPR, scratch1GPR, resultGPR, node->arrayMode().type() == Array::AnyTypedArray ? std::nullopt : std::optional { node->arrayMode().typedArrayType() });
+
+        strictInt52Result(resultGPR, node);
+        return;
+    }
+
     SpeculateCellOperand base(this, node->child1());
     GPRTemporary result(this, Reuse, base);
     GPRReg baseGPR = base.gpr();
     GPRReg resultGPR = result.gpr();
+    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
     m_jit.load64(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
     static_assert(MAX_ARRAY_BUFFER_SIZE < (1ull << 52), "there is a risk that the size of a typed array won't fit in an Int52");
     strictInt52Result(resultGPR, node);
@@ -2951,55 +2968,38 @@ void SpeculativeJIT::compileGetTypedArrayLengthAsInt52(Node* node)
 
 void SpeculativeJIT::compileGetTypedArrayByteOffsetAsInt52(Node* node)
 {
+    if (node->arrayMode().mayBeResizableOrGrowableSharedTypedArray()) {
+        SpeculateCellOperand base(this, node->child1());
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+        GPRTemporary result(this);
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg scratch1GPR = scratch1.gpr();
+        GPRReg scratch2GPR = scratch2.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        auto outOfBounds = m_jit.branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(baseGPR, scratch1GPR, scratch2GPR, node->arrayMode().type() == Array::AnyTypedArray ? std::nullopt : std::optional { node->arrayMode().typedArrayType() });
+        m_jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
+        auto done = m_jit.jump();
+
+        outOfBounds.link(&m_jit);
+        m_jit.move(CCallHelpers::TrustedImm32(0), resultGPR);
+        done.link(&m_jit);
+
+        strictInt52Result(resultGPR, node);
+        return;
+    }
     SpeculateCellOperand base(this, node->child1());
-    GPRTemporary vector(this);
-    GPRTemporary data(this);
+    GPRTemporary result(this);
 
     GPRReg baseGPR = base.gpr();
-    GPRReg vectorGPR = vector.gpr();
-    GPRReg dataGPR = data.gpr();
+    GPRReg resultGPR = result.gpr();
 
-    GPRReg arrayBufferGPR = dataGPR;
+    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 
-    JITCompiler::Jump emptyByteOffset = m_jit.branch32(
-        MacroAssembler::NotEqual,
-        MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
-        TrustedImm32(WastefulTypedArray));
-
-    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
-
-    JITCompiler::Jump nullVector = m_jit.branchPtr(JITCompiler::Equal, vectorGPR, TrustedImmPtr(JSArrayBufferView::nullVectorPtr()));
-
-    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
-    m_jit.cageWithoutUntagging(Gigacage::JSValue, dataGPR);
-
-    cageTypedArrayStorage(baseGPR, vectorGPR);
-
-    m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), arrayBufferGPR);
-    // FIXME: This needs caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175515
-    m_jit.loadPtr(MacroAssembler::Address(arrayBufferGPR, ArrayBuffer::offsetOfData()), dataGPR);
-#if CPU(ARM64E)
-    m_jit.removeArrayPtrTag(dataGPR);
-#endif
-
-    m_jit.subPtr(dataGPR, vectorGPR);
-
-    JITCompiler::Jump done = m_jit.jump();
-
-#if CPU(ARM64E)
-    nullVector.link(&m_jit);
-#endif
-    emptyByteOffset.link(&m_jit);
-    m_jit.move(TrustedImmPtr(nullptr), vectorGPR);
-
-    done.link(&m_jit);
-#if !CPU(ARM64E)
-    ASSERT(!JSArrayBufferView::nullVectorPtr());
-    nullVector.link(&m_jit);
-#endif
-
-    strictInt52Result(vectorGPR, node);
+    m_jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
+    strictInt52Result(resultGPR, node);
 }
 #endif // USE(LARGE_TYPED_ARRAYS)
 
@@ -3650,12 +3650,20 @@ void SpeculativeJIT::compile(Node* node)
         
         SpeculateCellOperand base(this, baseEdge);
         SpeculateStrictInt32Operand index(this, indexEdge);
-        GPRTemporary scratch (this);
+        GPRTemporary scratch(this);
 
         baseGPR = base.gpr();
         indexGPR = index.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+
+        std::optional<GPRTemporary> scratch2;
+        GPRReg scratch2GPR = InvalidGPRReg;
+        if (node->arrayMode().mayBeResizableOrGrowableSharedTypedArray()) {
+            scratch2.emplace(this);
+            scratch2GPR = scratch2->gpr();
+        }
         
-        emitTypedArrayBoundsCheck(node, baseGPR, indexGPR, scratch.gpr());
+        emitTypedArrayBoundsCheck(node, baseGPR, indexGPR, scratchGPR, scratch2GPR);
         
         GPRTemporary args[2];
         
@@ -4738,7 +4746,7 @@ void SpeculativeJIT::compile(Node* node)
         
         isCell.link(&m_jit);
         JITCompiler::Jump notMasqueradesAsUndefined;
-        if (masqueradesAsUndefinedWatchpointIsStillValid()) {
+        if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
             m_jit.move(TrustedImm32(0), result.gpr());
             notMasqueradesAsUndefined = m_jit.jump();
         } else {
@@ -5637,12 +5645,15 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg dataViewGPR = dataView.gpr();
         speculateDataViewObject(node->child1(), dataViewGPR);
 
+        DataViewData data = node->dataViewData();
+
         SpeculateInt32Operand index(this, node->child2());
         GPRReg indexGPR = index.gpr();
 
         GPRTemporary temp1(this);
-        GPRReg t1 = temp1.gpr();
         GPRTemporary temp2(this);
+
+        GPRReg t1 = temp1.gpr();
         GPRReg t2 = temp2.gpr();
 
         std::optional<SpeculateBooleanOperand> isLittleEndianOperand;
@@ -5650,21 +5661,23 @@ void SpeculativeJIT::compile(Node* node)
             isLittleEndianOperand.emplace(this, node->child3());
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
 
-        DataViewData data = node->dataViewData();
+        if (data.isResizable)
+            m_jit.loadTypedArrayLength(dataViewGPR, t1, t2, t1, TypeDataView);
+        else {
+            speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(dataViewGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(dataViewGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+#if USE(LARGE_TYPED_ARRAYS)
+            m_jit.load64(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
+#else
+            // No need for an explicit check against 0 here, negative indices are caught by the comparison with length right after
+            m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
+#endif
+        }
 
+        speculationCheck(OutOfBounds, JSValueRegs(), node, m_jit.branch32(MacroAssembler::LessThan, indexGPR, TrustedImm32(0)));
         m_jit.zeroExtend32ToWord(indexGPR, t2);
         if (data.byteSize > 1)
             m_jit.add64(TrustedImm32(data.byteSize - 1), t2);
-#if USE(LARGE_TYPED_ARRAYS)
-        speculationCheck(OutOfBounds, JSValueRegs(), node,
-            m_jit.branch32(MacroAssembler::LessThan, indexGPR, TrustedImm32(0)));
-        m_jit.load64(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
-#else
-        // No need for an explicit check against 0 here, negative indices are caught by the comparison with length right after
-        m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
-#endif
-        speculationCheck(OutOfBounds, JSValueRegs(), node,
-            m_jit.branch64(MacroAssembler::AboveOrEqual, t2, t1));
+        speculationCheck(OutOfBounds, JSValueRegs(), node, m_jit.branch64(MacroAssembler::AboveOrEqual, t2, t1));
 
         m_jit.loadPtr(JITCompiler::Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
         cageTypedArrayStorage(dataViewGPR, t2, false);
@@ -5849,10 +5862,11 @@ void SpeculativeJIT::compile(Node* node)
         }
 
         GPRTemporary temp1(this);
-        GPRReg t1 = temp1.gpr();
         GPRTemporary temp2(this);
-        GPRReg t2 = temp2.gpr();
         GPRTemporary temp3(this);
+
+        GPRReg t1 = temp1.gpr();
+        GPRReg t2 = temp2.gpr();
         GPRReg t3 = temp3.gpr();
 
         std::optional<SpeculateBooleanOperand> isLittleEndianOperand;
@@ -5860,19 +5874,23 @@ void SpeculativeJIT::compile(Node* node)
             isLittleEndianOperand.emplace(this, m_graph.varArgChild(node, 3));
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
 
+        if (data.isResizable)
+            m_jit.loadTypedArrayLength(dataViewGPR, t1, t2, t1, TypeDataView);
+        else {
+            speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(dataViewGPR), node, m_jit.branchTest8(MacroAssembler::NonZero, CCallHelpers::Address(dataViewGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+#if USE(LARGE_TYPED_ARRAYS)
+            m_jit.load64(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
+#else
+            // No need for an explicit check against 0 here, negative indices are caught by the comparison with length right after
+            m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
+#endif
+        }
+
+        speculationCheck(OutOfBounds, JSValueRegs(), node, m_jit.branch32(MacroAssembler::LessThan, indexGPR, TrustedImm32(0)));
         m_jit.zeroExtend32ToWord(indexGPR, t2);
         if (data.byteSize > 1)
             m_jit.add64(TrustedImm32(data.byteSize - 1), t2);
-#if USE(LARGE_TYPED_ARRAYS)
-        speculationCheck(OutOfBounds, JSValueRegs(), node,
-            m_jit.branch32(MacroAssembler::LessThan, indexGPR, TrustedImm32(0)));
-        m_jit.load64(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
-#else
-        // No need for an explicit check against 0 here, negative indices are caught by the comparison with length right after
-        m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
-#endif
-        speculationCheck(OutOfBounds, JSValueRegs(), node,
-            m_jit.branch64(MacroAssembler::AboveOrEqual, t2, t1));
+        speculationCheck(OutOfBounds, JSValueRegs(), node, m_jit.branch64(MacroAssembler::AboveOrEqual, t2, t1));
 
         m_jit.loadPtr(JITCompiler::Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
         cageTypedArrayStorage(dataViewGPR, t2, false);

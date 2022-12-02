@@ -59,7 +59,7 @@ public:
     virtual bool isPlaying() = 0;
 
     // Sample-rate conversion may happen in AudioDestination to the hardware sample-rate
-    virtual float sampleRate() const = 0;
+    virtual float sampleRate() const { return m_sampleRate; }
     WEBCORE_EXPORT static float hardwareSampleRate();
 
     virtual unsigned framesPerBuffer() const = 0;
@@ -75,13 +75,17 @@ public:
     void callRenderCallback(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess, const AudioIOPosition& outputPosition);
 
 protected:
-    explicit AudioDestination(AudioIOCallback&);
+    explicit AudioDestination(AudioIOCallback&, float sampleRate);
 
     Lock m_callbackLock;
     AudioIOCallback* m_callback WTF_GUARDED_BY_LOCK(m_callbackLock) { nullptr };
+
+private:
+    const float m_sampleRate;
 };
 
-inline AudioDestination::AudioDestination(AudioIOCallback& callback)
+inline AudioDestination::AudioDestination(AudioIOCallback& callback, float sampleRate)
+    : m_sampleRate(sampleRate)
 {
     Locker locker { m_callbackLock };
     m_callback = &callback;

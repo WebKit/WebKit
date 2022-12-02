@@ -38,6 +38,7 @@
 struct _UIWebTouchEvent;
 #endif
 #elif PLATFORM(GTK)
+#include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GUniquePtrGtk.h>
 #elif USE(LIBWPE)
 #include <wpe/wpe.h>
@@ -71,7 +72,9 @@ private:
     Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTouchEvent*);
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(GTK4)
+    GRefPtr<GdkEvent> m_nativeEvent;
+#elif PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
 #elif USE(LIBWPE)
     struct wpe_input_touch_event_raw m_fallbackTouchPoint;

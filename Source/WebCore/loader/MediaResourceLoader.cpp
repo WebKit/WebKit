@@ -88,7 +88,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     DataBufferingPolicy bufferingPolicy = options & LoadOption::BufferData ? DataBufferingPolicy::BufferData : DataBufferingPolicy::DoNotBufferData;
     auto cachingPolicy = options & LoadOption::DisallowCaching ? CachingPolicy::DisallowCaching : CachingPolicy::AllowCaching;
 
-    request.setRequester(ResourceRequest::Requester::Media);
+    request.setRequester(ResourceRequestRequester::Media);
 
     if (m_element)
         request.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*m_element));

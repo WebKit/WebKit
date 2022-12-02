@@ -23,8 +23,8 @@ PASS Font-style (supports): 'oblique' followed by isolated minus is invalid
 PASS Font-style (supports): 'oblique' followed by minus and angle separated by space is invalid
 PASS Font-style (supports): 'oblique' followed by minus and non-number is invalid
 PASS Font-style (supports): 'oblique' followed by calc is valid
-FAIL Font-style (supports): 'oblique' followed by calc is valid even if it must be clamped (no computation) assert_equals: Font-style supports: 'oblique' followed by calc is valid even if it must be clamped (no computation) expected true but got false
-FAIL Font-style (supports): 'oblique' followed by calc is valid even if it must be clamped (with computation) assert_equals: Font-style supports: 'oblique' followed by calc is valid even if it must be clamped (with computation) expected true but got false
+PASS Font-style (supports): 'oblique' followed by calc is valid even if it must be clamped (no computation)
+PASS Font-style (supports): 'oblique' followed by calc is valid even if it must be clamped (with computation)
 PASS Font-style (supports): 'oblique' followed by calc is valid even if it mixes units (with computation)
 PASS Font-style (computed): 'italic' is valid
 PASS Font-style (computed): 'oblique' is valid
@@ -39,7 +39,7 @@ PASS Font-style (computed): 'oblique' followed by maxumum 90 degree angle is val
 PASS Font-style (computed): 'oblique' followed by minimum -90 degree angle is valid
 PASS Font-style (computed): 'oblique' followed by positive angle is valid
 PASS Font-style (computed): 'oblique' followed by calc is valid
-FAIL Font-style (computed): 'oblique' followed by calc is valid even if it must be clamped (no computation) assert_equals: Font-style computed style: 'oblique' followed by calc is valid even if it must be clamped (no computation) expected "oblique -90deg" but got "normal"
-FAIL Font-style (computed): 'oblique' followed by calc is valid even if it must be clamped (with computation) assert_equals: Font-style computed style: 'oblique' followed by calc is valid even if it must be clamped (with computation) expected "oblique 90deg" but got "normal"
+PASS Font-style (computed): 'oblique' followed by calc is valid even if it must be clamped (no computation)
+PASS Font-style (computed): 'oblique' followed by calc is valid even if it must be clamped (with computation)
 PASS Font-style (computed): 'oblique' followed by calc is valid even if it mixes units (with computation)
 

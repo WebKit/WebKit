@@ -1,17 +1,11 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.20.3.tar.xz
-  ref: 7a11c13b55dd1d2386dd902219e41cbfcdda8e1e0aa3e738186c95074b35da4f
+  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.20.4.tar.xz
+  ref: a1a3f53b3604d9a04fdd0bf9a1a616c3d2dab5320489e9ecee1178e81e33a16a
 # https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2341/
 - kind: patch
   path: patches/gst-plugins-bad-mr-2341.patch
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2918 (candidate for 1.20 backport)
-- kind: patch
-  path: patches/gst-plugins-bad-openh264-Register-debug-categories-earlier.patch
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2919 (candidate for 1.20 backport)
-- kind: patch
-  path: patches/gst-plugins-bad-openh264enc-Fix-constrained-high-encoding.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -20,9 +14,9 @@ depends:
 - freedesktop-sdk.bst:components/openjpeg.bst
 - freedesktop-sdk.bst:components/libdrm.bst
 - sdk/libkate.bst
+- sdk/libopenh264.bst
 - sdk/libusrsctp.bst
 - freedesktop-sdk.bst:components/libusb.bst
-- filtered-openh264.bst
 - freedesktop-sdk.bst:components/aom.bst
 - freedesktop-sdk.bst:components/librsvg.bst
 - freedesktop-sdk.bst:components/frei0r.bst

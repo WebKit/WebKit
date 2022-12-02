@@ -41,11 +41,7 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 {
     ASSERT(data->size() >= ruleListDataSize(topURLFiltersBytecodeOffset, topURLFiltersBytecodeSize));
     encoder << identifier;
-
-    SharedMemory::Handle handle;
-    data->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    encoder << handle;
-
+    encoder << data->createHandle(SharedMemory::Protection::ReadOnly);
     encoder << actionsOffset;
     encoder << actionsSize;
     encoder << urlFiltersBytecodeOffset;
@@ -63,8 +59,9 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
     if (!identifier)
         return std::nullopt;
 
-    SharedMemory::Handle handle;
-    if (!decoder.decode(handle))
+    std::optional<std::optional<SharedMemory::Handle>> handle;
+    decoder >> handle;
+    if (!handle)
         return std::nullopt;
 
     std::optional<size_t> actionsOffset;
@@ -106,7 +103,10 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
     decoder >> frameURLFiltersBytecodeSize;
     if (!frameURLFiltersBytecodeSize)
         return std::nullopt;
-    auto data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    
+    if (!*handle)
+        return std::nullopt;
+    auto data = SharedMemory::map(**handle, SharedMemory::Protection::ReadOnly);
     if (!data)
         return std::nullopt;
     if (data->size() < ruleListDataSize(*topURLFiltersBytecodeOffset, *topURLFiltersBytecodeSize))

@@ -439,7 +439,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setMarkedTextMatchesAreHighlighted(boolean flag);
 
     undefined invalidateFontCache();
-    undefined setFontSmoothingEnabled(boolean enabled);
 
     undefined setScrollViewPosition(long x, long y);
 
@@ -572,6 +571,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     readonly attribute boolean areSVGAnimationsPaused;
     double svgAnimationsInterval(SVGSVGElement element);
+    sequence<SVGSVGElement> allSVGSVGElements();
 
     boolean testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
 
@@ -893,7 +893,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [CallWith=CurrentGlobalObject] boolean isReadableStreamDisturbed(any stream);
 
     DOMString resourceLoadStatisticsForURL(DOMURL url);
-    undefined setResourceLoadStatisticsEnabled(boolean enable);
+    undefined setTrackingPreventionEnabled(boolean enable);
 
     undefined setCanShowModalDialogOverride(boolean allow);
 
@@ -975,6 +975,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     DOMString documentIdentifier(Document document);
     boolean isDocumentAlive(DOMString documentIdentifier);
+
+    unsigned long long messagePortIdentifier(MessagePort port);
+    boolean isMessagePortAlive(unsigned long long messagePortIdentifier);
 
     readonly attribute unsigned long long storageAreaMapCount;
 
@@ -1175,4 +1178,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement element);
 
     boolean hasSleepDisabler();
+
+    undefined acceptTypedArrays(Int32Array target);
+
+    boolean consumeTransientActivation();
 };

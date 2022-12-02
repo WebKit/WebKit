@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CAAudioStreamDescription.h"
 #include "CARingBuffer.h"
 #include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
@@ -57,7 +58,7 @@ public:
     OSStatus mixFrom(const AudioBufferList&, size_t count = SIZE_MAX);
     OSStatus copyTo(AudioBufferList&, size_t count = SIZE_MAX);
 
-    const AudioStreamBasicDescription& streamDescription() const { return m_internalFormat->streamDescription(); }
+    const AudioStreamBasicDescription& streamDescription() const { return m_internalFormat.streamDescription(); }
     const WebAudioBufferList& bufferList() const { return m_bufferList; }
     WebAudioBufferList& bufferList() { return m_bufferList; }
 
@@ -77,7 +78,7 @@ public:
 protected:
     AudioSampleBufferList(const CAAudioStreamDescription&, size_t);
 
-    UniqueRef<CAAudioStreamDescription> m_internalFormat;
+    CAAudioStreamDescription m_internalFormat;
 
     uint64_t m_timestamp { 0 };
     double m_hostTime { -1 };

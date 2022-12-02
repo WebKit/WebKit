@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/WeakGCMap.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -73,6 +74,10 @@ public:
     DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!vm().heap.mutatorShouldBeFenced()); return m_guardedObjects; }
 
     ScriptExecutionContext* scriptExecutionContext() const;
+
+    // https://tc39.es/ecma262/#sec-agent-clusters
+    String agentClusterID() const;
+    static String defaultAgentClusterID();
 
     // Make binding code generation easier.
     JSDOMGlobalObject* globalObject() { return this; }

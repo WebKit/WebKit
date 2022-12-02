@@ -1,3 +1,3 @@
 
-FAIL WebAssembly.Modules cannot cross agent clusters, shared worker edition The object can not be cloned.
+PASS WebAssembly.Modules cannot cross agent clusters, shared worker edition
 

@@ -121,7 +121,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     LazyInitialized<RetainPtr<WKPreferences>> _preferences;
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
 #if ENABLE(WK_WEB_EXTENSIONS)
-    LazyInitialized<RetainPtr<_WKWebExtensionController>> _webExtensionController;
+    RetainPtr<_WKWebExtensionController> _webExtensionController;
+    WeakObjCPtr<_WKWebExtensionController> _weakWebExtensionController;
 #endif
     LazyInitialized<RetainPtr<_WKVisitedLinkStore>> _visitedLinkStore;
     LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
@@ -300,11 +301,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     [coder encodeObject:self.userContentController forKey:@"userContentController"];
     [coder encodeObject:self.websiteDataStore forKey:@"websiteDataStore"];
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto *controller = self._webExtensionControllerIfExists)
-        [coder encodeObject:controller forKey:@"webExtensionController"];
-#endif
-
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
 
     if (_applicationNameForUserAgent)
@@ -343,11 +339,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     self.preferences = [coder decodeObjectOfClass:[WKPreferences class] forKey:@"preferences"];
     self.userContentController = [coder decodeObjectOfClass:[WKUserContentController class] forKey:@"userContentController"];
     self.websiteDataStore = [coder decodeObjectOfClass:[WKWebsiteDataStore class] forKey:@"websiteDataStore"];
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    if ([coder containsValueForKey:@"webExtensionController"])
-        self._webExtensionController = [coder decodeObjectOfClass:[_WKWebExtensionController class] forKey:@"webExtensionController"];
-#endif
 
     self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
 
@@ -402,8 +393,11 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto *controller = self._webExtensionControllerIfExists)
+    if (auto *controller = self->_webExtensionController.get())
         configuration._webExtensionController = controller;
+
+    if (auto controller = self->_weakWebExtensionController.get())
+        configuration->_weakWebExtensionController = controller.get();
 #endif
 
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
@@ -509,28 +503,44 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _userContentController.set(userContentController);
 }
 
-- (_WKWebExtensionController *)_webExtensionControllerIfExists
+- (_WKWebExtensionController *)_strongWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return _webExtensionController.peek();
+    return _webExtensionController.get();
 #else
-    return nullptr;
+    return nil;
 #endif
 }
 
 - (_WKWebExtensionController *)_webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return _webExtensionController.get([] { return adoptNS([[_WKWebExtensionController alloc] init]); });
+    return self._weakWebExtensionController ?: _webExtensionController.get();
 #else
-    return nullptr;
+    return nil;
 #endif
 }
 
 - (void)_setWebExtensionController:(_WKWebExtensionController *)webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _webExtensionController.set(webExtensionController);
+    _webExtensionController = webExtensionController;
+#endif
+}
+
+- (_WKWebExtensionController *)_weakWebExtensionController
+{
+#if ENABLE(WK_WEB_EXTENSIONS)
+    return _weakWebExtensionController.getAutoreleased();
+#else
+    return nil;
+#endif
+}
+
+- (void)_setWeakWebExtensionController:(_WKWebExtensionController *)webExtensionController
+{
+#if ENABLE(WK_WEB_EXTENSIONS)
+    _weakWebExtensionController = webExtensionController;
 #endif
 }
 

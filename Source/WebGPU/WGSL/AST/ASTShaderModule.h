@@ -36,12 +36,12 @@
 
 namespace WGSL::AST {
 
-class ShaderModule final : ASTNode {
+class ShaderModule final : Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
     ShaderModule(SourceSpan span, GlobalDirective::List&& directives, Decl::List&& decls)
-        : ASTNode(span)
+        : Node(span)
         , m_directives(WTFMove(directives))
     {
         for (size_t i = decls.size(); i > 0; --i) {
@@ -64,6 +64,8 @@ public:
         }
     }
 
+    Kind kind() const override;
+
     GlobalDirective::List& directives() { return m_directives; }
     StructDecl::List& structs() { return m_structs; }
     VariableDecl::List& globalVars() { return m_globalVars; }
@@ -78,3 +80,5 @@ private:
 };
 
 } // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ShaderModule)

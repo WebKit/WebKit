@@ -4,12 +4,13 @@
 /*---
 esid: sec-temporal-zoneddatetime-objects
 description: properties around DST
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-var tz = new Temporal.TimeZone("America/Los_Angeles");
-var hourBeforeDstStart = new Temporal.PlainDateTime(2020, 3, 8, 1).toZonedDateTime(tz);
-var dayBeforeDstStart = new Temporal.PlainDateTime(2020, 3, 7, 2, 30).toZonedDateTime(tz);
+var tz = TemporalHelpers.springForwardFallBackTimeZone();
+var hourBeforeDstStart = new Temporal.PlainDateTime(2000, 4, 2, 1).toZonedDateTime(tz);
+var dayBeforeDstStart = new Temporal.PlainDateTime(2000, 4, 1, 2, 30).toZonedDateTime(tz);
 
 // hoursInDay works with DST start
 assert.sameValue(hourBeforeDstStart.hoursInDay, 23);
@@ -18,33 +19,17 @@ assert.sameValue(hourBeforeDstStart.hoursInDay, 23);
 assert.sameValue(dayBeforeDstStart.hoursInDay, 24);
 
 // hoursInDay works with DST end
-var dstEnd = Temporal.ZonedDateTime.from("2020-11-01T01:00-08:00[America/Los_Angeles]");
+var dstEnd = Temporal.PlainDateTime.from("2000-10-29T01:00").toZonedDateTime(tz);
 assert.sameValue(dstEnd.hoursInDay, 25);
-
-// hoursInDay works with non-hour DST change
-var zdt1 = Temporal.ZonedDateTime.from("2020-10-04T12:00[Australia/Lord_Howe]");
-assert.sameValue(zdt1.hoursInDay, 23.5);
-var zdt2 = Temporal.ZonedDateTime.from("2020-04-05T12:00[Australia/Lord_Howe]");
-assert.sameValue(zdt2.hoursInDay, 24.5);
-
-// hoursInDay works with non-half-hour DST change
-var zdt = Temporal.ZonedDateTime.from("1933-01-01T12:00[Asia/Singapore]");
-assert(Math.abs(zdt.hoursInDay - 23.666666666666668) < Number.EPSILON);
-
-// hoursInDay works when day starts at 1:00 due to DST start at midnight
-var zdt = Temporal.ZonedDateTime.from("2015-10-18T12:00:00-02:00[America/Sao_Paulo]");
-assert.sameValue(zdt.hoursInDay, 23);
 
 // startOfDay works
 var start = dayBeforeDstStart.startOfDay();
 assert.sameValue(`${ start.toPlainDate() }`, `${ dayBeforeDstStart.toPlainDate() }`);
 assert.sameValue(`${ start.toPlainTime() }`, "00:00:00");
 
-// startOfDay works when day starts at 1:00 due to DST start at midnight
-var zdt = Temporal.ZonedDateTime.from("2015-10-18T12:00:00-02:00[America/Sao_Paulo]");
-assert.sameValue(`${ zdt.startOfDay().toPlainTime() }`, "01:00:00");
-var dayAfterSamoaDateLineChange = Temporal.ZonedDateTime.from("2011-12-31T22:00+14:00[Pacific/Apia]");
-var dayBeforeSamoaDateLineChange = Temporal.ZonedDateTime.from("2011-12-29T22:00-10:00[Pacific/Apia]");
+var samoa = TemporalHelpers.crossDateLineTimeZone();
+var dayAfterSamoaDateLineChange = Temporal.PlainDateTime.from("2011-12-31T22:00").toZonedDateTime(samoa);
+var dayBeforeSamoaDateLineChange = Temporal.PlainDateTime.from("2011-12-29T22:00").toZonedDateTime(samoa);
 
 // startOfDay works after Samoa date line change
 var start = dayAfterSamoaDateLineChange.startOfDay();
