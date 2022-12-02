@@ -361,7 +361,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
     auto* globalObject = context ? context->globalObject() : nullptr;
     if (!globalObject)
         return Exception { InvalidStateError };
-    return ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), adoptRef(*new BlobStreamSource(*context, *this)));
+    return ReadableStream::create(*globalObject, adoptRef(*new BlobStreamSource(*context, *this)));
 }
 
 #if ASSERT_ENABLED

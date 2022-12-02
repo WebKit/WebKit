@@ -516,7 +516,6 @@ namespace WebCore {
     macro(flushAlgorithm) \
     macro(focus) \
     macro(frames) \
-    macro(getInternalReadableStream) \
     macro(getInternalWritableStream) \
     macro(getMatchedCSSRules) \
     macro(getTracks) \
@@ -531,7 +530,6 @@ namespace WebCore {
     macro(inFlightWriteRequest) \
     macro(indexedDB) \
     macro(initializeWith) \
-    macro(internalReadable) \
     macro(internalStream) \
     macro(internalWritable) \
     macro(isAbortSignal) \

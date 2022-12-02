@@ -78,7 +78,7 @@ bool FetchBodyOwner::isDisturbed() const
         return true;
 
     if (body().readableStream())
-        return body().readableStream()->disturbed();
+        return body().readableStream()->isDisturbed();
 
     return false;
 }
@@ -92,7 +92,7 @@ bool FetchBodyOwner::isDisturbedOrLocked() const
         return true;
 
     if (body().readableStream())
-        return body().readableStream()->disturbed() || body().readableStream()->locked();
+        return body().readableStream()->isDisturbed() || body().readableStream()->isLocked();
 
     return false;
 }
@@ -341,7 +341,7 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
 {
     ASSERT(!m_readableStreamSource);
     if (isDisturbed()) {
-        auto streamOrException = ReadableStream::create(state, { }, { });
+        auto streamOrException = ReadableStream::create(state, nullptr);
         if (UNLIKELY(streamOrException.hasException()))
             return streamOrException.releaseException();
         m_body->setReadableStream(streamOrException.releaseReturnValue());
@@ -350,7 +350,7 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
     }
 
     m_readableStreamSource = adoptRef(*new FetchBodySource(*this));
-    auto streamOrException = ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&state), *m_readableStreamSource);
+    auto streamOrException = ReadableStream::create(state, m_readableStreamSource);
     if (UNLIKELY(streamOrException.hasException())) {
         m_readableStreamSource = nullptr;
         return streamOrException.releaseException();
