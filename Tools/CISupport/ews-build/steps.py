@@ -178,7 +178,7 @@ class GitHubMixin(object):
             )
             if response.status_code // 100 != 2:
                 self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-                return None
+                return False if response.status_code // 100 == 4 else None
         except Exception as e:
             # Catching all exceptions here to safeguard access token.
             self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
@@ -193,7 +193,7 @@ class GitHubMixin(object):
         pr_url = '{}/pulls/{}'.format(api_url, pr_number)
         content = self.fetch_data_from_url_with_authentication_github(pr_url)
         if not content:
-            return None
+            return content
 
         for attempt in range(retry + 1):
             try:
@@ -248,6 +248,9 @@ class GitHubMixin(object):
         return sorted([reviewer for reviewer, _id in last_approved.items() if _id > last_rejected.get(reviewer, 0)])
 
     def _is_pr_closed(self, pr_json):
+        # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
+        if pr_json is False:
+            return 1
         if not pr_json or not pr_json.get('state'):
             self._addToLog('stdio', 'Cannot determine pull request status.\n')
             return -1
@@ -256,6 +259,9 @@ class GitHubMixin(object):
         return 0
 
     def _is_hash_outdated(self, pr_json):
+        # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
+        if pr_json is False:
+            return 1
         pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
         if not pr_sha:
             self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')

@@ -5200,6 +5200,17 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc
 
+    def test_deleted_pr(self):
+        self.setupStep(ValidateChange(verifyBugClosed=True))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: False
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '1ad60d45a112301f7b9f93dac06134524dae8480')
+        self.expectOutcome(result=FAILURE, state_string='Pull request 1234 is already closed')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
     def test_fast_cq_patches_trigger_fast_cq_mode(self):
         fast_cq_patch_titles = ('REVERT OF r1234', 'revert of r1234', 'REVERT of 123456@main', '[fast-cq]Patch', '[FAST-cq] patch', 'fast-cq-patch', 'FAST-CQ Patch')
         for fast_cq_patch_title in fast_cq_patch_titles:
