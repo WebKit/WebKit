@@ -92,7 +92,7 @@ void JSMicrotask::run(JSGlobalObject* globalObject)
     }
 
     if (LIKELY(!vm.hasPendingTerminationException())) {
-        profiledCall(globalObject, ProfilingReason::Microtask, job, handlerCallData, jsUndefined(), handlerArguments);
+        profiledCall(globalObject, ProfilingReason::Microtask, m_job.get(), handlerCallData, jsUndefined(), handlerArguments);
         scope.clearExceptionExceptTermination();
     }
 
