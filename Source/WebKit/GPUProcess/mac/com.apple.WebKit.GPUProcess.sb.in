@@ -21,17 +21,10 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
-#if USE(SANDBOX_VERSION_2)
-(version 2)
-#else
-(version 1)
-#endif
-(deny default)
-
 #include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
-#if USE(SANDBOX_VERSION_2)
+#if USE(SANDBOX_VERSION_3)
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 5)))
 
@@ -76,7 +69,7 @@
 
 (deny darwin-notification-post (with no-report))
 (deny nvram-get (with no-report))
-#endif // USE(SANDBOX_VERSION_2)
+#endif // USE(SANDBOX_VERSION_3)
 
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can

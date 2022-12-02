@@ -21,49 +21,23 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
-(version 1)
-(deny default (with partial-symbolication))
-(deny nvram*)
-(deny system-privilege)
-(allow system-audit file-read-metadata)
+#include "Shared/Sandbox/iOS/common.sb"
 
-;; Silence spurious logging due to rdar://20117923 and rdar://72366475
-(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+#if USE(SANDBOX_VERSION_3)
+(allow system-fcntl
+    (fcntl-command
+        F_ADDFILESIGS_RETURN
+        F_CHECK_LV
+        F_GETPATH))
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5)))
+#endif
 
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
 ;;;
-
-(import "util.sb")
-
-(define-once (allow-read-and-issue-generic-extensions . filters)
-    (allow file-read*
-           (apply require-any filters))
-    (allow file-issue-extension
-        (require-all
-            (extension-class "com.apple.app-sandbox.read")
-            (apply require-any filters))))
-
-(define-once (managed-configuration-read-public)
-    (allow file-read* (with telemetry)
-           (well-known-system-group-container-subpath "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/PublicInfo")
-           (front-user-home-subpath "/Library/ConfigurationProfiles/PublicInfo")
-           (front-user-home-subpath "/Library/UserConfigurationProfiles/PublicInfo")))
-
-(define-once (allow-preferences-common)
-    (allow file-read-metadata
-           (home-literal "")
-           (home-literal "/Library/Preferences")))
-
-(define-once (mobile-preferences-read . domains)
-    (allow-preferences-common)
-    (for-each (lambda (domain)
-        (begin
-            (allow user-preference-read (preference-domain domain))
-            (allow file-read*
-                (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
-        domains))
 
 (define-once (asset-access . options)
     (let ((asset-access-filter
@@ -210,10 +184,10 @@
 ;;; Declare that the application uses the OpenGL, Metal, and CoreML hardware & frameworks.
 ;;;
 (define-once (opengl)
-    (allow iokit-open
-           (iokit-connection "IOGPU")
-           (iokit-user-client-class
-                "AGXDeviceUserClient"))
+    (allow iokit-open*
+        (iokit-connection "IOGPU"))
+    (allow iokit-open-user-client
+        (iokit-user-client-class "AGXDeviceUserClient"))
 
     (allow iokit-get-properties
         (iokit-property "IOGLBundleName")
@@ -239,7 +213,7 @@
         (allow file-read* file-map-executable
                (subpath "/Developer"))
 
-        (allow ipc-posix-shm
+        (allow ipc-posix-shm*
                (ipc-posix-name-prefix "stack-logs")
                (ipc-posix-name-prefix "OA-")
                (ipc-posix-name-prefix "/FSM-"))
@@ -291,7 +265,7 @@
         (global-name "com.apple.CARenderServer"))
 
     ; UIKit-required IOKit nodes.
-    (allow iokit-open
+    (allow iokit-open-user-client
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
         ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
         (iokit-user-client-class "IOSurfaceRootUserClient"))
@@ -483,7 +457,7 @@
 ;;;
 
 (deny mach-lookup (xpc-service-name-prefix ""))
-(deny iokit-get-properties (with partial-symbolication))
+(deny iokit-get-properties)
 (deny lsopen)
 
 ;;;
@@ -510,9 +484,8 @@
 
 ;; Silently deny unnecessary accesses caused by MessageUI framework.
 ;; This can be removed once <rdar://problem/47038102> is resolved.
-(deny file-read*
-    (home-literal "/Library/Preferences/com.apple.mobilemail.plist")
-    (with no-log))
+(deny file-read* (with no-report)
+    (home-literal "/Library/Preferences/com.apple.mobilemail.plist"))
 
 (allow file-read*
     (home-subpath "/Library/Fonts"))
@@ -527,9 +500,8 @@
 (uikit-requirements)
 
 ; Silently deny writes when CFData attempts to write to the cache directory.
-(deny file-write*
-    (home-literal "/Library/Caches/DateFormats.plist")
-    (with no-log))
+(deny file-write* (with no-report)
+    (home-literal "/Library/Caches/DateFormats.plist"))
 
 ; <rdar://problem/7595408> , <rdar://problem/7643881>
 (opengl)
@@ -538,9 +510,8 @@
 ; which will attempt to create the plist if it doesn't exist -- from any application.  Only SpringBoard is
 ; allowed to write its plist; ignore all others, they don't know what they are doing.
 ; See <rdar://problem/9375027> for sample backtraces.
-(deny file-write*
-    (home-prefix "/Library/Preferences/com.apple.springboard.plist")
-    (with no-log))
+(deny file-write* (with no-report)
+    (home-prefix "/Library/Preferences/com.apple.springboard.plist"))
 
 ;;;
 ;;; End UIKit-apps.sb content
@@ -687,7 +658,7 @@
 (deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
 #if HAVE(AGX_COMPILER_SERVICE)
-(allow iokit-open
+(allow iokit-open-user-client
     (require-all
         (extension "com.apple.webkit.extension.iokit")
         (iokit-user-client-class
@@ -703,11 +674,10 @@
             "IOAccelSharedUserClient2")))
 #endif // HAVE(AGX_COMPILER_SERVICE)
 
-(deny mach-lookup (with no-log)
-    (xpc-service-name "com.apple.audio.toolbox.reporting.service")
-)
+(deny mach-lookup (with no-report)
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
-(deny mach-lookup (with no-log)
+(deny mach-lookup (with no-report)
     (global-name "com.apple.audio.AudioComponentRegistrar"))
 
 (deny mach-lookup

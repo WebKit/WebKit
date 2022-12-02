@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2022 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -21,78 +21,19 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
-(version 1)
-(deny default (with partial-symbolication))
-(deny nvram*)
-(deny system-privilege)
-(allow system-audit file-read-metadata)
+#include "Shared/Sandbox/iOS/common.sb"
 
-;; Silence spurious logging due to rdar://20117923 and rdar://72366475
-(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+#if USE(SANDBOX_VERSION_3)
+(allow dynamic-code-generation)
+#endif
 
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
 ;;;
 
-(import "util.sb")
-
-(define-once (allow-read-and-issue-generic-extensions . filters)
-    (allow file-read*
-           (apply require-any filters))
-    (allow file-issue-extension
-        (require-all
-            (extension-class "com.apple.app-sandbox.read")
-            (apply require-any filters))))
-
-(define-once (allow-read-write-and-issue-generic-extensions . filters)
-    (allow file-read* file-write*
-           (apply require-any filters))
-    (allow file-read-metadata
-           (apply require-any filters))
-    (allow file-issue-extension
-        (require-all
-            (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
-            (apply require-any filters))))
-
-(define-once (managed-configuration-read-public)
-    (allow file-read*
-           (well-known-system-group-container-subpath "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/PublicInfo")
-           (front-user-home-subpath "/Library/ConfigurationProfiles/PublicInfo")
-           (front-user-home-subpath "/Library/UserConfigurationProfiles/PublicInfo")))
-
-(define-once (managed-configuration-read . files)
-    (if (null? files)
-        (allow file-read*
-               (well-known-system-group-container-subpath "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles")
-               (front-user-home-subpath "/Library/ConfigurationProfiles")
-               (front-user-home-subpath "/Library/UserConfigurationProfiles"))
-        (for-each
-            (lambda (file)
-                (allow file-read*
-                    (well-known-system-group-container-literal
-                        (string-append "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/" file))
-                    (front-user-home-literal
-                        (string-append "/Library/ConfigurationProfiles/" file)
-                        (string-append "/Library/UserConfigurationProfiles/" file))))
-            files)))
-
-(define-once (allow-preferences-common)
-    (allow file-read-metadata
-           (home-literal "")
-           (home-literal "/Library/Preferences")))
-
-(define-once (mobile-preferences-read . domains)
-    (allow-preferences-common)
-    (for-each (lambda (domain)
-        (begin
-            (allow user-preference-read (preference-domain domain))
-            (allow file-read*
-                (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
-        domains))
-
 (define-once (framebuffer-access)
-    (deny iokit-open (with telemetry-backtrace)
+    (deny iokit-open-user-client (with telemetry-backtrace)
         (iokit-user-client-class "IOMobileFramebufferUserClient"))
 
     ; IOMobileFramebuffer
@@ -198,7 +139,7 @@
 ;;;
 (define-once (opengl)
     ;; Items not seen in testing
-    (deny iokit-open (with telemetry)
+    (deny iokit-open-user-client (with telemetry)
            (iokit-connection "IOGPU")
            (iokit-user-client-class
                 "AGXCommandQueue"
@@ -213,12 +154,12 @@
                 "IOAccelSharedUserClient2"))
 
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-    (allow iokit-open
+    (allow iokit-open*
         (require-all
             (extension "com.apple.webkit.extension.iokit")
             (iokit-connection "IOGPU")))
 
-    (allow iokit-open
+    (allow iokit-open-user-client
         (require-all
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AGXDeviceUserClient"))) ;; Used by WebGL
@@ -258,7 +199,7 @@
         (allow file-read* file-map-executable
                (subpath "/Developer"))
 
-        (allow ipc-posix-shm
+        (allow ipc-posix-shm*
                (ipc-posix-name-prefix "stack-logs")
                (ipc-posix-name-prefix "OA-")
                (ipc-posix-name-prefix "/FSM-"))
@@ -354,13 +295,13 @@
         (global-name "com.apple.CARenderServer"))
 
     ; UIKit-required IOKit nodes.
-    (deny iokit-open (with telemetry)
+    (deny iokit-open-user-client (with telemetry)
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
     ; WebKit-required IOKit classes
-    (allow iokit-open
+    (allow iokit-open-user-client
         (require-all
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
@@ -381,7 +322,7 @@
         )
     )
 
-    (allow iokit-open
+    (allow iokit-open-user-client
         (require-all
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "IOSurfaceRootUserClient"))) ;; Needed by Tiled Grid code.
@@ -611,7 +552,7 @@
 ;;;
 
 (deny mach-lookup (xpc-service-name-prefix ""))
-(deny iokit-get-properties (with partial-symbolication))
+(deny iokit-get-properties)
 (deny lsopen)
 
 ;;;
@@ -655,9 +596,8 @@
 
 ;; Silently deny unnecessary accesses caused by MessageUI framework.
 ;; This can be removed once <rdar://problem/47038102> is resolved.
-(deny file-read*
-    (home-literal "/Library/Preferences/com.apple.mobilemail.plist")
-    (with no-log))
+(deny file-read* (with no-report)
+    (home-literal "/Library/Preferences/com.apple.mobilemail.plist"))
 
 ;; <rdar://problem/12985925> Need read access to /var/mobile/Library/Fonts to all apps
 (allow file-read*
@@ -685,9 +625,8 @@
 (allow file-read*
     (home-literal "/Library/Caches/DateFormats.plist"))
 ; Silently deny writes when CFData attempts to write to the cache directory.
-(deny file-write*
-    (home-literal "/Library/Caches/DateFormats.plist")
-    (with no-log))
+(deny file-write* (with no-report)
+    (home-literal "/Library/Caches/DateFormats.plist"))
 
 (framebuffer-access)
 
@@ -698,9 +637,8 @@
 ; which will attempt to create the plist if it doesn't exist -- from any application.  Only SpringBoard is
 ; allowed to write its plist; ignore all others, they don't know what they are doing.
 ; See <rdar://problem/9375027> for sample backtraces.
-(deny file-write*
-    (home-prefix "/Library/Preferences/com.apple.springboard.plist")
-    (with no-log))
+(deny file-write* (with no-report)
+    (home-prefix "/Library/Preferences/com.apple.springboard.plist"))
 
 ;; <rdar://problem/34986314>
 (mobile-preferences-read "com.apple.indigo")
@@ -918,39 +856,36 @@
 )
 
 ;; <rdar://problem/60983812>
-(deny file-write*
-    (home-subpath "/Library/Preferences/")
-    (with no-log))
+(deny file-write* (with no-report)
+    (home-subpath "/Library/Preferences/"))
 
-(deny mach-lookup (with no-log)
-    (global-name "com.apple.containermanagerd")
-)
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.containermanagerd"))
 
 (deny mach-lookup
     (global-name "com.apple.mobilegestalt.xpc"))
 
-(deny mach-lookup (with no-log)
-    (xpc-service-name "com.apple.audio.toolbox.reporting.service")
-)
+(deny mach-lookup (with no-report)
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-(allow iokit-open
+(allow iokit-open-user-client
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "IOSurfaceRootUserClient")))
 
-(allow iokit-open (with report) (with telemetry-backtrace)
+(allow iokit-open* (with report) (with telemetry-backtrace)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-connection "IOGPU")))
 #endif
 
-(deny iokit-open
+(deny iokit-open-user-client
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "IOSurfaceAcceleratorClient")))
 
-(deny iokit-open (with no-log)
+(deny iokit-open-user-client (with no-report)
     (iokit-user-client-class "AppleJPEGDriverUserClient"))
 
 #if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
@@ -963,11 +898,11 @@
 
 (with-filter (state-flag "BlockIOKitInWebContentSandbox")
     (deny iokit-open-service)
-    (deny iokit-open (with telemetry-backtrace)
+    (deny iokit-open-user-client (with telemetry-backtrace)
         (require-all
             (require-not (extension "com.apple.webkit.extension.iokit"))
             (iokit-user-client-class "IOSurfaceRootUserClient")))
-    (deny iokit-open (with telemetry-backtrace)
+    (deny iokit-open* (with telemetry-backtrace)
         (require-all
             (require-not (extension "com.apple.webkit.extension.iokit"))
             (iokit-connection "IOGPU")))
@@ -1016,7 +951,7 @@
             "com.apple.iconservices")))
 
 #if HAVE(AGX_COMPILER_SERVICE)
-(allow iokit-open
+(allow iokit-open-user-client
     (require-all
         (extension "com.apple.webkit.extension.iokit")
         (iokit-user-client-class
@@ -1535,7 +1470,7 @@
     )
 )
 
-(deny darwin-notification-post (with no-log))
+(deny darwin-notification-post (with no-report))
 (allow darwin-notification-post
     (notification-name
         "_AXNotification_AXSClassicInvertColorsPreference"

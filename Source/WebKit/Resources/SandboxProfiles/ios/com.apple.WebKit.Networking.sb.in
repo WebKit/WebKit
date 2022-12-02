@@ -21,45 +21,49 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
-(version 1)
-(deny default (with partial-symbolication))
-(deny nvram*)
-(deny system-privilege)
-(allow system-audit file-read-metadata)
+#include "Shared/Sandbox/iOS/common.sb"
+
+#if USE(SANDBOX_VERSION_3)
+(allow system-fcntl
+    (fcntl-command
+        F_BARRIERFSYNC
+        F_GETFL
+        F_GETPATH
+        F_GETPROTECTIONCLASS
+        F_OFD_GETLK
+        F_OFD_SETLK
+        F_OFD_SETLKWTIMEOUT
+        F_RDADVISE
+        F_SETCONFINED
+        F_SETFL))
+
+(allow file-link)
+
+(allow system-necp-client-action)
+(allow necp-client-open)
+
+(allow socket-ioctl)
+
+(allow socket-option-set (with telemetry) (with report))
+(allow socket-option-get (with telemetry) (with report))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name
+            SO_NOSIGPIPE
+            SO_RCVBUF)))
+#endif
 
 (allow system-privilege (with grant)
     (require-all
         (privilege-id PRIV_NET_PRIVILEGED_SOCKET_DELEGATE)
         (require-entitlement "com.apple.private.network.socket-delegate")))
 
-;; Silence spurious logging due to rdar://20117923 and rdar://72366475
-(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
-
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
 ;;;
-
-(import "util.sb")
-
-(define-once (allow-read-and-issue-generic-extensions . filters)
-    (allow file-read*
-           (apply require-any filters))
-    (allow file-issue-extension
-        (require-all
-            ;; APP_SANDBOX_READ - default for sandbox_issue_extension() & sandbox_issue_fs_extension().
-            (extension-class "com.apple.app-sandbox.read")
-            (apply require-any filters))))
-
-(define-once (allow-read-write-and-issue-generic-extensions . filters)
-    (allow file-read* file-write* 
-           (apply require-any filters))
-    (allow file-read-metadata
-           (apply require-any filters))
-    (allow file-issue-extension
-        (require-all
-            (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
-            (apply require-any filters))))
 
 (define-once (allow-network-common)
     ;; <rdar://problem/8645367>
@@ -89,16 +93,17 @@
     ;; <rdar://problem/7693463>
     (deny system-socket (socket-domain AF_ROUTE))
 
-    (if gizmo?
-        (with-filter
-            (require-any
-                (require-entitlement "com.apple.security.network.client")
-                (require-entitlement "com.apple.security.network.server"))
-            (allow network-outbound (literal "/private/var/run/mDNSResponder"))
-            (allow mach-lookup (global-name "com.apple.dnssd.service"))) ;; <rdar://problem/55562091>
-        (begin
-            (allow network-outbound (literal "/private/var/run/mDNSResponder"))
-            (allow mach-lookup (global-name "com.apple.dnssd.service")))) ;; <rdar://problem/55562091>
+#if PLATFORM(WATCHOS)
+    (with-filter
+        (require-any
+            (require-entitlement "com.apple.security.network.client")
+            (require-entitlement "com.apple.security.network.server"))
+        (allow network-outbound (literal "/private/var/run/mDNSResponder"))
+        (allow mach-lookup (global-name "com.apple.dnssd.service"))) ;; <rdar://problem/55562091>
+#else
+    (allow network-outbound (literal "/private/var/run/mDNSResponder"))
+    (allow mach-lookup (global-name "com.apple.dnssd.service")) ;; <rdar://problem/55562091>
+#endif
 
     (deny mach-lookup 
            (global-name "com.apple.SystemConfiguration.helper")
@@ -130,7 +135,7 @@
            (global-name "com.apple.usymptomsd")
            (global-name "com.apple.symptoms.symptomsd.managed_events")) ; <rdar://problem/32768772>
 
-    (with-filter (entitlement-is-present "com.apple.private.networkextension.configuration")
+    (with-filter (require-entitlement "com.apple.private.networkextension.configuration")
            (allow file-read*  (literal "/private/var/preferences/com.apple.networkextension.plist")))
 
     (allow file-read* 
@@ -181,11 +186,12 @@
             (executable-bundle)
             (extension-class "com.apple.nsurlsessiond.readonly")))
 
+#if PLATFORM(WATCHOS)
     ;; <rdar://problem/20617514>
-    (when gizmo?
-        (allow mach-lookup
-            (global-name "com.apple.nsurlsessiond.NSURLSessionProxyService")
-            (global-name "com.apple.sharingd.NSURLSessionProxyService")))
+    (allow mach-lookup
+        (global-name "com.apple.nsurlsessiond.NSURLSessionProxyService")
+        (global-name "com.apple.sharingd.NSURLSessionProxyService"))
+#endif
 
     ;; <rdar://problem/15608009>
     (deny mach-lookup 
@@ -264,7 +270,7 @@
         domains))
 
 (define-once (mobile-keybag-access)
-    (allow iokit-open
+    (allow iokit-open-user-client
         (iokit-user-client-class "AppleKeyStoreUserClient") ;; Needed by NSURLCache
 ))
 
@@ -278,7 +284,7 @@
 
         ;; <rdar://problem/7674121>
         ;; <rdar://problem/9151290>
-        (allow ipc-posix-shm
+        (allow ipc-posix-shm*
                (ipc-posix-name-prefix "stack-logs")
                (ipc-posix-name-prefix "OA-")
                (ipc-posix-name-prefix "/FSM-"))
@@ -514,9 +520,8 @@
 ;; enough access to make it possible.
 
 ;; IOKit user clients
-(deny iokit-open 
-       (iokit-user-client-class "RootDomainUserClient") ;; Needed by PowerObserver
-)
+(deny iokit-open-user-client
+    (iokit-user-client-class "RootDomainUserClient")) ;; Needed by PowerObserver
 
 ;; Various services required by CFNetwork and other frameworks
 (deny mach-lookup 
@@ -598,7 +603,7 @@
     (allow file-read* file-write-data file-ioctl 
         (literal "/dev/dtracehelper"))
 ; else
-    (deny (with no-log) file-read* file-write-data file-ioctl
+    (deny (with no-report) file-read* file-write-data file-ioctl
         (literal "/dev/dtracehelper"))
 )
 
