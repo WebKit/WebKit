@@ -498,6 +498,10 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::SortDirection:
             propertyMap.set(AXPropertyName::SortDirection, static_cast<int>(axObject.sortDirection()));
             break;
+        case AXPropertyName::KeyShortcuts:
+            propertyMap.set(AXPropertyName::SupportsKeyShortcuts, axObject.supportsKeyShortcuts());
+            propertyMap.set(AXPropertyName::KeyShortcuts, axObject.keyShortcuts().isolatedCopy());
+            break;
         case AXPropertyName::SupportsPosInSet:
             propertyMap.set(AXPropertyName::SupportsPosInSet, axObject.supportsPosInSet());
             break;

@@ -224,7 +224,8 @@ private:
     Vector<String> classList() const override;
     AccessibilityCurrentState currentState() const override { return static_cast<AccessibilityCurrentState>(intAttributeValue(AXPropertyName::CurrentState)); }
     bool supportsCurrent() const override { return boolAttributeValue(AXPropertyName::SupportsCurrent); }
-    const String keyShortcutsValue() const override { return stringAttributeValue(AXPropertyName::KeyShortcutsValue); }
+    bool supportsKeyShortcuts() const override { return boolAttributeValue(AXPropertyName::SupportsKeyShortcuts); }
+    String keyShortcuts() const override { return stringAttributeValue(AXPropertyName::KeyShortcuts); }
     bool supportsSetSize() const override { return boolAttributeValue(AXPropertyName::SupportsSetSize); }
     bool supportsPosInSet() const override { return boolAttributeValue(AXPropertyName::SupportsPosInSet); }
     int setSize() const override { return intAttributeValue(AXPropertyName::SetSize); }

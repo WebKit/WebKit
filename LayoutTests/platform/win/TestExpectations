@@ -1685,6 +1685,7 @@ accessibility/aria-table-with-presentational-elements.html [ Skip ]
 webkit.org/b/149177 accessibility/ax-value-with-search.html [ Skip ]
 
 accessibility/aria-roles-unignored.html [ Skip ]
+accessibility/aria-keyshortcuts.html [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]

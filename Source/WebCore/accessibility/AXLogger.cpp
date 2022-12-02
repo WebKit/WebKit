@@ -451,6 +451,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXIsAtomicChanged:
         stream << "AXIsAtomicChanged";
         break;
+    case AXObjectCache::AXNotification::AXKeyShortcutsChanged:
+        stream << "AXKeyShortcutsChanged";
+        break;
     case AXObjectCache::AXNotification::AXLanguageChanged:
         stream << "AXLanguageChanged";
         break;
