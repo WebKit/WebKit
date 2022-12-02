@@ -1040,6 +1040,15 @@ no-punctuation
 antialiased
 subpixel-antialiased
 
+// text-edge
+leading
+// text
+cap
+ex
+// ideographic
+ideographic-ink
+// alphabetic
+
 // text-rendering
 //auto
 optimizeSpeed

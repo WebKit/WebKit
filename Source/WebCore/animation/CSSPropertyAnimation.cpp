@@ -3788,6 +3788,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyScrollSnapAlign:
         case CSSPropertyScrollSnapStop:
         case CSSPropertyScrollSnapType:
+        case CSSPropertyTextEdge:
         case CSSPropertySize:
         case CSSPropertySpeakAs:
         case CSSPropertySrc:

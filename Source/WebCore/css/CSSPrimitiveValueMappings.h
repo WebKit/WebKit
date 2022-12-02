@@ -5227,6 +5227,59 @@ template<> inline CSSPrimitiveValue::operator ScrollSnapStop() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEdgeType textEdgeType)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (textEdgeType) {
+    case TextEdgeType::Leading:
+        m_value.valueID = CSSValueLeading;
+        break;
+    case TextEdgeType::Text:
+        m_value.valueID = CSSValueText;
+        break;
+    case TextEdgeType::CapHeight:
+        m_value.valueID = CSSValueCap;
+        break;
+    case TextEdgeType::ExHeight:
+        m_value.valueID = CSSValueEx;
+        break;
+    case TextEdgeType::Alphabetic:
+        m_value.valueID = CSSValueAlphabetic;
+        break;
+    case TextEdgeType::CJKIdeographic:
+        m_value.valueID = CSSValueIdeographic;
+        break;
+    case TextEdgeType::CJKIdeographicInk:
+        m_value.valueID = CSSValueIdeographicInk;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextEdgeType() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueLeading:
+        return TextEdgeType::Leading;
+    case CSSValueText:
+        return TextEdgeType::Text;
+    case CSSValueCap:
+        return TextEdgeType::CapHeight;
+    case CSSValueEx:
+        return TextEdgeType::ExHeight;
+    case CSSValueAlphabetic:
+        return TextEdgeType::Alphabetic;
+    case CSSValueIdeographic:
+        return TextEdgeType::CJKIdeographic;
+    case CSSValueIdeographicInk:
+        return TextEdgeType::CJKIdeographicInk;
+    default:
+        ASSERT_NOT_REACHED();
+        return TextEdgeType::Leading;
+    }
+}
+
 #if ENABLE(APPLE_PAY)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonStyle e)
     : CSSValue(PrimitiveClass)
