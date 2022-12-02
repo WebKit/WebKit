@@ -48,15 +48,17 @@ using namespace WebCore;
 
 std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(WebPage& webPage)
 {
-    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(webPage));
+    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy({ RenderingBackendIdentifier::generate(), webPage.webPageProxyIdentifier(), webPage.identifier() }, RunLoop::main()));
 }
 
-RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(WebPage& webPage)
-    : m_parameters {
-        RenderingBackendIdentifier::generate(),
-        webPage.webPageProxyIdentifier(),
-        webPage.identifier()
-    }
+std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
+{
+    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(parameters, dispatcher));
+}
+
+RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
+    : m_parameters(parameters)
+    , m_dispatcher(dispatcher)
 {
 }
 
@@ -65,30 +67,32 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
     for (auto& markAsVolatileHandlers : m_markAsVolatileRequests.values())
         markAsVolatileHandlers(false);
 
-    if (!m_gpuProcessConnection)
+    if (!m_streamConnection)
         return;
-    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(renderingBackendIdentifier()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+
+    ensureOnMainRunLoop([ident = renderingBackendIdentifier()]() {
+        WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(ident), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    });
     disconnectGPUProcess();
 }
 
-GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
+void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
-    if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
-        m_gpuProcessConnection->addClient(*this);
-
+    if (!m_streamConnection) {
         static constexpr auto connectionBufferSize = 1 << 21;
         auto [streamConnection, serverHandle] = IPC::StreamClientConnection::create(connectionBufferSize);
         m_streamConnection = WTFMove(streamConnection);
-        m_streamConnection->open(*this);
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_streamConnection->open(*this, m_dispatcher);
+
+        ensureOnMainRunLoop([params = m_parameters, serverHandle = WTFMove(serverHandle)]() mutable {
+            WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(params, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        });
     }
-    return *m_gpuProcessConnection;
 }
 
-void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnection&)
+void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
 {
-    if (!m_gpuProcessConnection)
+    if (!m_streamConnection)
         return;
     disconnectGPUProcess();
     // Note: The cache will call back to this to setup a new connection.
@@ -97,10 +101,6 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
 
 void RemoteRenderingBackendProxy::disconnectGPUProcess()
 {
-    m_gpuProcessConnection->removeClient(*this);
-    m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
-    m_gpuProcessConnection = nullptr;
-
     if (m_destroyGetPixelBufferSharedMemoryTimer.isActive())
         m_destroyGetPixelBufferSharedMemoryTimer.stop();
     m_getPixelBufferSharedMemory = nullptr;
@@ -377,7 +377,7 @@ void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatile
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
 {
-    if (!m_gpuProcessConnection)
+    if (!m_streamConnection)
         return;
     sendToStream(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
     m_renderingUpdateID.increment();
@@ -385,7 +385,7 @@ void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
 
 void RemoteRenderingBackendProxy::didPaintLayers()
 {
-    if (!m_gpuProcessConnection)
+    if (!m_streamConnection)
         return;
     m_remoteResourceCacheProxy.didPaintLayers();
 }

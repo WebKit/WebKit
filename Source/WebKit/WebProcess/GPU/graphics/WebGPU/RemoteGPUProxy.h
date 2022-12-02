@@ -45,7 +45,7 @@ class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::MessageReceiver, private GPUProcessConnection::Client {
+class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::Connection::Client, private GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteGPUProxy> create(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
@@ -69,8 +69,10 @@ private:
     RemoteGPUProxy& operator=(const RemoteGPUProxy&) = delete;
     RemoteGPUProxy& operator=(RemoteGPUProxy&&) = delete;
 
-    // IPC::MessageReceiver
+    // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didClose(IPC::Connection&) final { }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;

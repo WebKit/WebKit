@@ -65,16 +65,12 @@ namespace WebKit {
 class WebPage;
 
 class RemoteRenderingBackendProxy
-    : private IPC::MessageReceiver
-    , public GPUProcessConnection::Client {
+    : public IPC::Connection::Client {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
+    static std::unique_ptr<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
     ~RemoteRenderingBackendProxy();
-
-    using GPUProcessConnection::Client::weakPtrFactory;
-    using GPUProcessConnection::Client::WeakValueType;
-    using GPUProcessConnection::Client::WeakPtrImplType;
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
@@ -133,7 +129,7 @@ public:
 
     RenderingBackendIdentifier ensureBackendCreated();
 
-    bool isGPUProcessConnectionClosed() const { return !m_gpuProcessConnection; }
+    bool isGPUProcessConnectionClosed() const { return !m_streamConnection; }
 
     void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
@@ -150,8 +146,10 @@ public:
         sendToStream(WTFMove(message), renderingBackendIdentifier());
     }
 
+    SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
+
 private:
-    explicit RemoteRenderingBackendProxy(WebPage&);
+    explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
     IPC::StreamClientConnection& streamConnection();
 
@@ -161,10 +159,11 @@ private:
         return streamConnection().sendSync(WTFMove(message), renderingBackendIdentifier(), timeout);
     }
 
-    // GPUProcessConnection::Client
-    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
+    // Connection::Client
+    void didClose(IPC::Connection&) final;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
     void disconnectGPUProcess();
-    GPUProcessConnection& ensureGPUProcessConnection();
+    void ensureGPUProcessConnection();
 
     // Returns std::nullopt if no update is needed or allocation failed.
     // Returns handle if that should be sent to the receiver process.
@@ -177,7 +176,6 @@ private:
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
 
-    GPUProcessConnection* m_gpuProcessConnection { nullptr };
     RefPtr<IPC::Connection> m_connection;
     std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;
@@ -185,6 +183,7 @@ private:
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
     HashMap<MarkSurfacesAsVolatileRequestIdentifier, CompletionHandler<void(bool)>> m_markAsVolatileRequests;
+    SerialFunctionDispatcher& m_dispatcher;
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;

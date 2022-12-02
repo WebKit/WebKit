@@ -77,7 +77,7 @@ public:
         wakeUpServer(WakeUpServer::Yes);
     }
 
-    void open(MessageReceiver&, SerialFunctionDispatcher& = RunLoop::current());
+    void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
 
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
@@ -136,14 +136,14 @@ private:
     class DedicatedConnectionClient final : public Connection::Client {
         WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
     public:
-        DedicatedConnectionClient(MessageReceiver&);
+        DedicatedConnectionClient(Connection::Client&);
         // Connection::Client overrides.
         void didReceiveMessage(Connection&, Decoder&) final;
         bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
         void didClose(Connection&) final;
         void didReceiveInvalidMessage(Connection&, MessageName) final;
     private:
-        MessageReceiver& m_receiver;
+        Connection::Client& m_receiver;
     };
     std::optional<DedicatedConnectionClient> m_dedicatedConnectionClient;
     uint64_t m_currentDestinationID { 0 };

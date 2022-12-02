@@ -74,20 +74,34 @@ public:
         return m_messages.takeLast();
     }
 
+    void waitUntilClosed()
+    {
+        while (!m_closed)
+            Util::spinRunLoop(1);
+
+    }
+
     void addMessage(IPC::Decoder& decoder)
     {
+        ASSERT(!m_closed);
         Locker locker { m_lock };
         m_messages.insert(0, { decoder.messageName(), decoder.destinationID() });
         m_continueWaitForMessage = true;
+    }
+
+    void markClosed()
+    {
+        m_closed = true;
     }
 
 protected:
     Lock m_lock;
     Vector<MessageInfo> m_messages WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<bool> m_continueWaitForMessage { false };
+    std::atomic<bool> m_closed { false };
 };
 
-class MockMessageReceiver : public IPC::MessageReceiver, public WaitForMessageMixin {
+class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin {
 public:
     // IPC::Connection::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
@@ -99,6 +113,13 @@ public:
     {
         return false;
     }
+
+    void didClose(IPC::Connection&) final
+    {
+        markClosed();
+    }
+
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { ASSERT_NOT_REACHED(); }
 };
 
 class MockStreamMessageReceiver : public IPC::StreamMessageReceiver, public WaitForMessageMixin {
@@ -144,8 +165,9 @@ TEST_F(StreamConnectionTest, OpenConnections)
 {
     m_clientConnection->open(m_mockClientReceiver);
     m_serverConnection->open();
-    m_clientConnection->invalidate();
     m_serverConnection->invalidate();
+    m_mockClientReceiver.waitUntilClosed();
+    m_clientConnection->invalidate();
 }
 
 TEST_F(StreamConnectionTest, SendLocalMessage)
