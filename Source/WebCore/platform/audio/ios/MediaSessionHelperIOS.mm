@@ -258,9 +258,6 @@ void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
 
     m_presentedApplicationPID = pid;
 
-    if (DeprecatedGlobalSettings::disableMediaExperiencePIDInheritance())
-        return;
-
     if (!canLoadAVSystemController_PIDToInheritApplicationStateFrom())
         return;
 
