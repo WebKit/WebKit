@@ -212,6 +212,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 
     switch (propertyID) {
     case CSSPropertyAll:
+    case CSSPropertyMarker:
         return getCommonValue(shorthand);
     case CSSPropertyAnimation:
     case CSSPropertyBackground:
@@ -332,12 +333,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyWebkitTextOrientation:
         ASSERT(shorthand.length() == 1);
         if (auto value = getPropertyCSSValue(shorthand.properties()[0]))
-            return value->cssText();
-        return String();
-    case CSSPropertyMarker:
-        ASSERT(shorthand.length() == 3);
-        // FIXME: Stop ignoring marker-mid and marker-end (http://webkit.org/b/248308).
-        if (auto value = getPropertyCSSValue(CSSPropertyMarkerStart))
             return value->cssText();
         return String();
     default:
@@ -1669,8 +1664,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
 
     // FIXME: If font-variant-ligatures is none, this depends on the value of the longhand.
     case CSSPropertyFontVariant:
-    // FIXME: Serialization ignores marker-mid and marker-end (http://webkit.org/b/248308).
-    case CSSPropertyMarker:
     // FIXME: These shorthands are avoided for unknown legacy reasons, probably shouldn't be avoided.
     case CSSPropertyBackground:
     case CSSPropertyBorderBlockEnd:
