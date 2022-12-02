@@ -59,6 +59,13 @@ PasteboardCustomData::Entry::Entry(const String& dataType)
 PasteboardCustomData::Entry::Entry() = default;
 PasteboardCustomData::Entry::Entry(Entry&&) = default;
 
+PasteboardCustomData::Entry::Entry(const String& type, const String& customData, const std::variant<String, Ref<WebCore::SharedBuffer>>& platformData)
+    : type(type)
+    , customData(customData)
+    , platformData(platformData)
+{
+}
+
 PasteboardCustomData::Entry& PasteboardCustomData::Entry::operator=(const Entry& entry)
 {
     type = entry.type;

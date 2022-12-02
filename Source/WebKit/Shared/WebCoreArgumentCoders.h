@@ -228,11 +228,6 @@ template<> struct ArgumentCoder<WebCore::TouchActionData> {
     static std::optional<WebCore::TouchActionData> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
-    static void encode(Encoder&, const WebCore::EventTrackingRegions&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::EventTrackingRegions&);
-};
-
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::RectEdges<bool>&);
@@ -303,11 +298,6 @@ template<> struct ArgumentCoder<WebCore::Font> {
     static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::DecomposedGlyphs> {
-    static void encode(Encoder&, const WebCore::DecomposedGlyphs&);
-    static std::optional<Ref<WebCore::DecomposedGlyphs>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::ResourceError> {
     static void encode(Encoder&, const WebCore::ResourceError&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ResourceError&);
@@ -339,11 +329,6 @@ template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {
 
 #endif
 
-template<> struct ArgumentCoder<WebCore::PasteboardCustomData> {
-    static void encode(Encoder&, const WebCore::PasteboardCustomData&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PasteboardCustomData&);
-};
-
 #if USE(SOUP)
 template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {
     static void encode(Encoder&, const WebCore::SoupNetworkProxySettings&);
@@ -357,11 +342,6 @@ template<> struct ArgumentCoder<WebCore::CurlProxySettings> {
     static std::optional<WebCore::CurlProxySettings> decode(Decoder&);
 };
 #endif
-
-template<> struct ArgumentCoder<WebCore::DatabaseDetails> {
-    static void encode(Encoder&, const WebCore::DatabaseDetails&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::DatabaseDetails&);
-};
 
 template<> struct ArgumentCoder<WebCore::DictationAlternative> {
     static void encode(Encoder&, const WebCore::DictationAlternative&);
@@ -422,11 +402,6 @@ template<> struct ArgumentCoder<WebCore::ContentFilterUnblockHandler> {
 };
 #endif
 
-template<> struct ArgumentCoder<WebCore::TextIndicatorData> {
-    static void encode(Encoder&, const WebCore::TextIndicatorData&);
-    static std::optional<WebCore::TextIndicatorData> decode(Decoder&);
-};
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);
@@ -435,11 +410,6 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::MediaPlaybackTargetContext::Type, WebCore::MediaPlaybackTargetContext&);
 };
 #endif
-
-template<> struct ArgumentCoder<WebCore::RecentSearch> {
-    static void encode(Encoder&, const WebCore::RecentSearch&);
-    static std::optional<WebCore::RecentSearch> decode(Decoder&);
-};
 
 #if ENABLE(APPLE_PAY)
 
@@ -489,13 +459,6 @@ template<> struct ArgumentCoder<WebCore::PaymentSessionError> {
 
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-template<> struct ArgumentCoder<WebCore::MediaConstraints> {
-    static void encode(Encoder&, const WebCore::MediaConstraints&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::MediaConstraints&);
-};
-#endif
-
 #if ENABLE(SERVICE_WORKER)
 
 template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientData> {
@@ -509,11 +472,6 @@ template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
 };
 
 #endif
-
-template<> struct ArgumentCoder<WebCore::PromisedAttachmentInfo> {
-    static void encode(Encoder&, const WebCore::PromisedAttachmentInfo&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PromisedAttachmentInfo&);
-};
 
 template<> struct ArgumentCoder<RefPtr<WebCore::SecurityOrigin>> {
     static void encode(Encoder&, const RefPtr<WebCore::SecurityOrigin>&);

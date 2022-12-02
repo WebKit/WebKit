@@ -228,26 +228,6 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
     return {{ WTFMove(identifier), WTFMove(updateResponseCounter), WTFMove(requestHeadersGuard), WTFMove(request), WTFMove(options.value()), WTFMove(referrer), WTFMove(responseHeadersGuard), WTFMove(response), WTFMove(responseBody), responseBodySize }};
 }
 
-void ArgumentCoder<EventTrackingRegions>::encode(Encoder& encoder, const EventTrackingRegions& eventTrackingRegions)
-{
-    encoder << eventTrackingRegions.asynchronousDispatchRegion;
-    encoder << eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
-}
-
-bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTrackingRegions& eventTrackingRegions)
-{
-    std::optional<Region> asynchronousDispatchRegion;
-    decoder >> asynchronousDispatchRegion;
-    if (!asynchronousDispatchRegion)
-        return false;
-    EventTrackingRegions::EventSpecificSynchronousDispatchRegions eventSpecificSynchronousDispatchRegions;
-    if (!decoder.decode(eventSpecificSynchronousDispatchRegions))
-        return false;
-    eventTrackingRegions.asynchronousDispatchRegion = WTFMove(*asynchronousDispatchRegion);
-    eventTrackingRegions.eventSpecificSynchronousDispatchRegions = WTFMove(eventSpecificSynchronousDispatchRegions);
-    return true;
-}
-
 void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bool>& boxEdges)
 {
     SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
@@ -278,26 +258,6 @@ std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decode
 }
 
 #endif // ENABLE(META_VIEWPORT)
-
-void ArgumentCoder<RecentSearch>::encode(Encoder& encoder, const RecentSearch& recentSearch)
-{
-    encoder << recentSearch.string << recentSearch.time;
-}
-
-std::optional<RecentSearch> ArgumentCoder<RecentSearch>::decode(Decoder& decoder)
-{
-    std::optional<String> string;
-    decoder >> string;
-    if (!string)
-        return std::nullopt;
-    
-    std::optional<WallTime> time;
-    decoder >> time;
-    if (!time)
-        return std::nullopt;
-    
-    return {{ WTFMove(*string), WTFMove(*time) }};
-}
 
 void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 {
@@ -650,27 +610,6 @@ std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
     return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value(), renderingResourceIdentifier);
 }
 
-void ArgumentCoder<DecomposedGlyphs>::encode(Encoder& encoder, const DecomposedGlyphs& decomposedGlyphs)
-{
-    encoder << decomposedGlyphs.positionedGlyphs();
-    encoder << decomposedGlyphs.renderingResourceIdentifier();
-}
-
-std::optional<Ref<DecomposedGlyphs>> ArgumentCoder<DecomposedGlyphs>::decode(Decoder& decoder)
-{
-    std::optional<PositionedGlyphs> positionedGlyphs;
-    decoder >> positionedGlyphs;
-    if (!positionedGlyphs)
-        return std::nullopt;
-
-    std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-    decoder >> renderingResourceIdentifier;
-    if (!renderingResourceIdentifier)
-        return std::nullopt;
-
-    return DecomposedGlyphs::create(WTFMove(*positionedGlyphs), *renderingResourceIdentifier);
-}
-
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 {
     encoder << cursor.type();
@@ -833,81 +772,6 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
     return true;
 }
 #endif
-
-void ArgumentCoder<DatabaseDetails>::encode(Encoder& encoder, const DatabaseDetails& details)
-{
-    encoder << details.name();
-    encoder << details.displayName();
-    encoder << details.expectedUsage();
-    encoder << details.currentUsage();
-    encoder << details.creationTime();
-    encoder << details.modificationTime();
-}
-    
-bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& details)
-{
-    String name;
-    if (!decoder.decode(name))
-        return false;
-
-    String displayName;
-    if (!decoder.decode(displayName))
-        return false;
-
-    uint64_t expectedUsage;
-    if (!decoder.decode(expectedUsage))
-        return false;
-
-    uint64_t currentUsage;
-    if (!decoder.decode(currentUsage))
-        return false;
-
-    std::optional<WallTime> creationTime;
-    if (!decoder.decode(creationTime))
-        return false;
-
-    std::optional<WallTime> modificationTime;
-    if (!decoder.decode(modificationTime))
-        return false;
-
-    details = DatabaseDetails(name, displayName, expectedUsage, currentUsage, creationTime, modificationTime);
-    return true;
-}
-
-template<> struct ArgumentCoder<PasteboardCustomData::Entry> {
-    static void encode(Encoder&, const PasteboardCustomData::Entry&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, PasteboardCustomData::Entry&);
-};
-
-void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const PasteboardCustomData::Entry& data)
-{
-    encoder << data.type << data.customData << data.platformData;
-}
-
-bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, PasteboardCustomData::Entry& data)
-{
-    return decoder.decode(data.type) && decoder.decode(data.customData) && decoder.decode(data.platformData);
-}
-
-void ArgumentCoder<PasteboardCustomData>::encode(Encoder& encoder, const PasteboardCustomData& data)
-{
-    encoder << data.origin();
-    encoder << data.data();
-}
-
-bool ArgumentCoder<PasteboardCustomData>::decode(Decoder& decoder, PasteboardCustomData& data)
-{
-    String origin;
-    if (!decoder.decode(origin))
-        return false;
-
-    Vector<PasteboardCustomData::Entry> items;
-    if (!decoder.decode(items))
-        return false;
-
-    data = PasteboardCustomData(WTFMove(origin), WTFMove(items));
-    return true;
-}
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -1421,61 +1285,6 @@ std::optional<BlobPart> ArgumentCoder<BlobPart>::decode(Decoder& decoder)
     return std::nullopt;
 }
 
-void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndicatorData& textIndicatorData)
-{
-    encoder << textIndicatorData.selectionRectInRootViewCoordinates;
-    encoder << textIndicatorData.textBoundingRectInRootViewCoordinates;
-    encoder << textIndicatorData.textRectsInBoundingRectCoordinates;
-    encoder << textIndicatorData.contentImageWithoutSelectionRectInRootViewCoordinates;
-    encoder << textIndicatorData.contentImageScaleFactor;
-    encoder << textIndicatorData.estimatedBackgroundColor;
-    encoder << textIndicatorData.presentationTransition;
-    encoder << textIndicatorData.options;
-
-    encoder << textIndicatorData.contentImage;
-    encoder << textIndicatorData.contentImageWithHighlight;
-    encoder << textIndicatorData.contentImageWithoutSelection;
-}
-
-std::optional<TextIndicatorData> ArgumentCoder<TextIndicatorData>::decode(Decoder& decoder)
-{
-    TextIndicatorData textIndicatorData;
-    if (!decoder.decode(textIndicatorData.selectionRectInRootViewCoordinates))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.textBoundingRectInRootViewCoordinates))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.textRectsInBoundingRectCoordinates))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.contentImageWithoutSelectionRectInRootViewCoordinates))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.estimatedBackgroundColor))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.presentationTransition))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.options))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.contentImage))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.contentImageWithHighlight))
-        return std::nullopt;
-
-    if (!decoder.decode(textIndicatorData.contentImageWithoutSelection))
-        return std::nullopt;
-
-    return textIndicatorData;
-}
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const MediaPlaybackTargetContext& target)
 {
@@ -1520,26 +1329,6 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
     target = MediaPlaybackTargetContext(deviceName, mockState);
 
     return true;
-}
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-void ArgumentCoder<MediaConstraints>::encode(Encoder& encoder, const WebCore::MediaConstraints& constraint)
-{
-    encoder << constraint.mandatoryConstraints
-        << constraint.advancedConstraints
-        << constraint.isValid;
-}
-
-bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaConstraints& constraints)
-{
-    std::optional<WebCore::MediaTrackConstraintSetMap> mandatoryConstraints;
-    decoder >> mandatoryConstraints;
-    if (!mandatoryConstraints)
-        return false;
-    constraints.mandatoryConstraints = WTFMove(*mandatoryConstraints);
-    return decoder.decode(constraints.advancedConstraints)
-        && decoder.decode(constraints.isValid);
 }
 #endif
 
@@ -1636,30 +1425,6 @@ bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, Se
 }
 
 #endif
-
-void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const PromisedAttachmentInfo& info)
-{
-#if ENABLE(ATTACHMENT_ELEMENT)
-    encoder << info.attachmentIdentifier;
-#endif
-    encoder << info.additionalTypes;
-    encoder << info.additionalData;
-}
-
-bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAttachmentInfo& info)
-{
-#if ENABLE(ATTACHMENT_ELEMENT)
-    if (!decoder.decode(info.attachmentIdentifier))
-        return false;
-#endif
-
-    if (!decoder.decode(info.additionalTypes))
-        return false;
-    if (!decoder.decode(info.additionalData))
-        return false;
-
-    return true;
-}
 
 void ArgumentCoder<RefPtr<SecurityOrigin>>::encode(Encoder& encoder, const RefPtr<SecurityOrigin>& origin)
 {

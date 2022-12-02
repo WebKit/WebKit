@@ -499,6 +499,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebPushMessage.serialization.in \
 	Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in \
 	Shared/ApplePay/PaymentSetupConfiguration.serialization.in \
+	Shared/Databases/IndexedDB/WebIDBResult.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/mac/WebHitTestResultPlatformData.serialization.in \
