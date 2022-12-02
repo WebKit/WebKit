@@ -449,25 +449,6 @@ protected:
         return result;
     }
 
-    Vector<String> getOriginsWithPushSubscriptions()
-    {
-        __block bool done = false;
-        __block Vector<String> result;
-
-        [m_dataStore _getOriginsWithPushSubscriptions:^(NSSet<WKSecurityOrigin *> *origins) {
-            for (WKSecurityOrigin *origin in origins) {
-                if (origin.port)
-                    result.append(makeString(String(origin.protocol), "://"_s, String(origin.host), ":"_s, String::number(origin.port)));
-                else
-                    result.append(makeString(String(origin.protocol), "://"_s, String(origin.host)));
-            }
-            done = true;
-        }];
-
-        TestWebKitAPI::Util::run(&done);
-        return result;
-    }
-
     ~WebPushDTest()
     {
         cleanUpTestWebPushD(m_tempDirectory.get());
@@ -695,10 +676,6 @@ TEST_F(WebPushDTest, SubscribeTest)
     ASSERT_EQ([subscription[@"keys"][@"p256dh"] length], 87u);
 
     ASSERT_TRUE(hasPushSubscription());
-
-    auto result = getOriginsWithPushSubscriptions();
-    EXPECT_EQ(result.size(), 1u);
-    EXPECT_EQ(result.first(), m_origin);
 }
 
 TEST_F(WebPushDTest, SubscribeFailureTest)

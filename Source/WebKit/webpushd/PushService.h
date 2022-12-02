@@ -64,8 +64,6 @@ public:
     void subscribe(const String& bundleIdentifier, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
     void unsubscribe(const String& bundleIdentifier, const String& scope, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&&);
 
-    void getOriginsWithPushSubscriptions(const String& bundleIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
-
     void setPushesEnabledForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, bool, CompletionHandler<void()>&&);
 
     void removeRecordsForBundleIdentifier(const String& bundleIdentifier, CompletionHandler<void(unsigned)>&&);
