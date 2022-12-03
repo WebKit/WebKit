@@ -213,6 +213,12 @@ static TextMetrics primaryFontMetricsForInlineBox(const InlineLevelBox& inlineBo
     return { { ascent, descent }, lineGap, inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight()) };
 }
 
+static bool isTextEdgeLeading(TextEdge textEdge)
+{
+    ASSERT(textEdge.over != TextEdgeType::Leading || textEdge.under == TextEdgeType::Leading);
+    return textEdge.over == TextEdgeType::Leading;
+}
+
 void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineBox, InlineLevelBox& inlineLevelBox) const
 {
     auto setAscentAndDescent = [&] (auto ascentAndDescent) {
@@ -225,16 +231,15 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         auto setLayoutBounds = [&] {
             auto logicalHeight = textMetrics.ascentAndDescent.ascent + textMetrics.ascentAndDescent.descent;
             auto halfLeading = InlineLayoutUnit { };
-            if (textMetrics.preferredLineHeight) {
+            if (textMetrics.preferredLineHeight)
+                halfLeading = (*textMetrics.preferredLineHeight - logicalHeight) / 2;
+            else {
+                // https://www.w3.org/TR/css-inline-3/#inline-height
                 // If line-height computes to normal and either text-edge is leading or this is the root inline box,
                 // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
-                // https://www.w3.org/TR/css-inline-3/#inline-height
-                // Since text-edge is not supported yet and the initial value is leading, we should just apply it to
-                // all inline boxes.
-                halfLeading = (*textMetrics.preferredLineHeight - logicalHeight) / 2;
-            } else {
-                // Preferred line height is purely font metrics based (i.e glyphs stretch the line).
-                halfLeading = (textMetrics.lineGap - logicalHeight) / 2;
+                auto incorporateHalfLeading = inlineLevelBox.isRootInlineBox() || isTextEdgeLeading(inlineLevelBox.textEdge());
+                if (incorporateHalfLeading)
+                    halfLeading = (textMetrics.lineGap - logicalHeight) / 2;
             }
             inlineLevelBox.setLayoutBounds({ floorf(textMetrics.ascentAndDescent.ascent + halfLeading), ceilf(textMetrics.ascentAndDescent.descent + halfLeading) });
         };
