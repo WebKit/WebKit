@@ -372,7 +372,7 @@
 - (BOOL)webkitFullscreenEnabled
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::DocumentFullscreen::webkitFullscreenEnabled(*IMPL);
+    return WebCore::DocumentFullscreen::fullscreenEnabled(*IMPL);
 }
 
 - (DOMElement *)webkitFullscreenElement

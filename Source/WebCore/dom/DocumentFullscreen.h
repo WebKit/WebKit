@@ -40,9 +40,8 @@ class Element;
 class DocumentFullscreen {
 public:
     static void exitFullscreen(Document&, Ref<DeferredPromise>&&);
-    static bool fullscreenEnabled(Document&);
+    static bool fullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
 
-    static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
     static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
     static void webkitExitFullscreen(Document& document) { document.fullscreenManager().exitFullscreen(); }
     static bool webkitIsFullScreen(Document& document) { return document.fullscreenManager().isFullscreen(); }

@@ -48,14 +48,6 @@ void DocumentFullscreen::exitFullscreen(Document& document, Ref<DeferredPromise>
     });
 }
 
-// https://fullscreen.spec.whatwg.org/#dom-document-fullscreenenabled
-bool DocumentFullscreen::fullscreenEnabled(Document& document)
-{
-    if (!document.isFullyActive())
-        return false;
-    return document.fullscreenManager().isFullscreenEnabled();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(FULLSCREEN_API)

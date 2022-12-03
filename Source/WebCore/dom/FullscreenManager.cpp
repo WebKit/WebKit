@@ -416,10 +416,13 @@ void FullscreenManager::exitFullscreen()
     });
 }
 
+// https://fullscreen.spec.whatwg.org/#dom-document-fullscreenenabled
 bool FullscreenManager::isFullscreenEnabled() const
 {
-    // 4. The fullscreenEnabled attribute must return true if the context object and all ancestor
-    // browsing context's documents have their fullscreen enabled flag set, or false otherwise.
+    // FIXME: This check should move in isFeaturePolicyAllowedByDocumentAndAllOwners according to the spec.
+    // See https://html.spec.whatwg.org/multipage/iframe-embed-object.html#allowed-to-use.
+    if (!document().isFullyActive())
+        return false;
 
     // Top-level browsing contexts are implied to have their allowFullscreen attribute set.
     return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document());

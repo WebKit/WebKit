@@ -30,14 +30,14 @@
     DisabledByQuirk=shouldDisableElementFullscreen,
     ImplementedBy=DocumentFullscreen
 ] partial interface Document {
-    [LegacyLenientSetter, EnabledBySetting=UnprefixedFullscreenAPIEnabled, ImplementedAs=fullscreenEnabled] readonly attribute boolean fullscreenEnabled;
+    [LegacyLenientSetter, EnabledBySetting=UnprefixedFullscreenAPIEnabled] readonly attribute boolean fullscreenEnabled;
     [LegacyLenientSetter, Unscopable, EnabledBySetting=UnprefixedFullscreenAPIEnabled, ImplementedAs=webkitIsFullScreen] readonly attribute boolean fullscreen; // historical
     [EnabledBySetting=UnprefixedFullscreenAPIEnabled] Promise<undefined> exitFullscreen();
     [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenchange;
     [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenerror;
 
     // Legacy WebKit-specific versions.
-    readonly attribute boolean webkitFullscreenEnabled;
+    [ImplementedAs=fullscreenEnabled] readonly attribute boolean webkitFullscreenEnabled;
     readonly attribute Element? webkitFullscreenElement;
     undefined webkitExitFullscreen();
     [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
