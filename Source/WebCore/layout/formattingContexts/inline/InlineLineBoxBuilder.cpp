@@ -254,6 +254,14 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
                     descent += halfLeading;
                 }
             }
+            if (!shouldIncorporateHalfLeading) {
+                // Additionally, when text-edge is not leading, the layout bounds are inflated by the sum of the margin,
+                // border, and padding on each side.
+                ASSERT(!inlineLevelBox.isRootInlineBox());
+                auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
+                ascent += inlineBoxGeometry.marginBorderAndPaddingBefore();
+                descent += inlineBoxGeometry.marginBorderAndPaddingAfter();
+            }
             inlineLevelBox.setLayoutBounds({ floorf(ascent), ceilf(descent) });
         };
         setLayoutBounds();
