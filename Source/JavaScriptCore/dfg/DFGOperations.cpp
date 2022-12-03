@@ -3910,7 +3910,7 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, codeBlock);
         RETURN_IF_EXCEPTION(throwScope, void());
 
-        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThis();
+        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThisForDirectCall();
         if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
             codePtr = functionExecutable->entrypointFor(kind, MustCheckArity);
         else

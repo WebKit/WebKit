@@ -1007,7 +1007,7 @@ void SpeculativeJIT::emitCall(Node* node)
         ASSERT(!m_graph.m_plan.isUnlinked());
         auto* linkedCallLinkInfo = std::get<OptimizingCallLinkInfo*>(callLinkInfo);
         linkedCallLinkInfo->setExecutableDuringCompilation(executable);
-        linkedCallLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
+        linkedCallLinkInfo->setDirectCallMaxArgumentCountIncludingThis(numAllocatedArgs);
 
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);

@@ -862,7 +862,7 @@ void SpeculativeJIT::emitCall(Node* node)
     if (isDirect) {
         auto* info = std::get<OptimizingCallLinkInfo*>(callLinkInfo);
         info->setExecutableDuringCompilation(executable);
-        info->setMaxArgumentCountIncludingThis(numAllocatedArgs);
+        info->setDirectCallMaxArgumentCountIncludingThis(numAllocatedArgs);
 
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);

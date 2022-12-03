@@ -104,7 +104,7 @@ public:
 
     bool isClosureCall() const; // Returns true if any callee is a closure call.
     
-    unsigned maxArgumentCountIncludingThis() const { return m_maxArgumentCountIncludingThis; }
+    unsigned maxArgumentCountIncludingThisForVarargs() const { return m_maxArgumentCountIncludingThisForVarargs; }
     
     bool finalize(VM&);
     
@@ -128,7 +128,7 @@ private:
     bool m_couldTakeSlowPath { false };
     bool m_isProved { false };
     bool m_isBasedOnStub { false };
-    unsigned m_maxArgumentCountIncludingThis { 0 };
+    uint8_t m_maxArgumentCountIncludingThisForVarargs { 0 }; // More than UINT8_MAX will be recorded as UINT8_MAX.
 };
 
 } // namespace JSC
