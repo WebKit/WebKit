@@ -197,6 +197,9 @@ struct AscentAndDescent {
     InlineLayoutUnit descent { 0 };
 
     InlineLayoutUnit height() const { return ascent + descent; }
+    // FIXME: Remove this.
+    // We need floor/ceil to match legacy layout integral positioning.
+    AscentAndDescent round() const { return { floorf(ascent), ceilf(descent) }; }
 };
 struct TextMetrics {
     AscentAndDescent ascentAndDescent { };
@@ -265,16 +268,14 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
             inlineLevelBox.setLayoutBounds({ floorf(ascent), ceilf(descent) });
         };
         setLayoutBounds();
-        // We need floor/ceil to match legacy layout integral positioning.
-        setAscentAndDescent(AscentAndDescent { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
+        setAscentAndDescent(textMetrics.ascentAndDescent.round());
         inlineLevelBox.setLogicalHeight(textMetrics.ascentAndDescent.height());
         return;
     }
     if (inlineLevelBox.isLineBreakBox()) {
-        auto parentTextMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType());
-        // We need floor/ceil to match legacy layout integral positioning.
-        setAscentAndDescent(AscentAndDescent { floorf(parentTextMetrics.ascentAndDescent.ascent), ceilf(parentTextMetrics.ascentAndDescent.descent) });
-        inlineLevelBox.setLogicalHeight(parentTextMetrics.ascentAndDescent.height());
+        auto parentAscentAndDescent = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType()).ascentAndDescent;
+        setAscentAndDescent(parentAscentAndDescent.round());
+        inlineLevelBox.setLogicalHeight(parentAscentAndDescent.height());
         return;
     }
     if (inlineLevelBox.isListMarker()) {
@@ -286,18 +287,13 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         inlineLevelBox.setLogicalHeight(marginBoxHeight);
         if (lineBox.baselineType() == IdeographicBaseline) {
             // FIXME: We should rely on the integration baseline.
-            auto parentTextMetrics = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType());
-            // We need floor/ceil to match legacy layout integral positioning.
-            setAscentAndDescent(AscentAndDescent { floorf(parentTextMetrics.ascentAndDescent.ascent), ceilf(parentTextMetrics.ascentAndDescent.descent) });
+            auto parentAscentAndDescent = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType()).ascentAndDescent;
+            setAscentAndDescent(parentAscentAndDescent.round());
             return;
         }
-        if (auto ascent = downcast<ElementBox>(layoutBox).baselineForIntegration()) {
-            auto textMetrics = TextMetrics { { *ascent, marginBoxHeight - *ascent }, { }, { } };
-            // We need floor/ceil to match legacy layout integral positioning.
-            setAscentAndDescent(AscentAndDescent { floorf(textMetrics.ascentAndDescent.ascent), ceilf(textMetrics.ascentAndDescent.descent) });
-            return;
-        }
-        setAscentAndDescent(AscentAndDescent { marginBoxHeight, { } });
+        if (auto ascent = downcast<ElementBox>(layoutBox).baselineForIntegration())
+            return setAscentAndDescent(AscentAndDescent { *ascent, marginBoxHeight - *ascent }.round());
+        setAscentAndDescent(AscentAndDescent { marginBoxHeight, { } }.round());
         return;
     }
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
