@@ -48,6 +48,7 @@
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSMapTable;
+OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSUUID;
@@ -123,7 +124,9 @@ public:
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
-    bool load(WebExtensionController&, NSError ** = nullptr);
+    bool isPersistent() const { return hasCustomUniqueIdentifier(); }
+
+    bool load(WebExtensionController&, String storageDirectory, NSError ** = nullptr);
     bool unload(NSError ** = nullptr);
 
     bool isLoaded() const { return !!m_extensionController; }
@@ -135,6 +138,8 @@ public:
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&);
+
+    bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
     void setUniqueIdentifier(String&&);
@@ -211,6 +216,11 @@ public:
 private:
     explicit WebExtensionContext();
 
+    String stateFilePath() const;
+    NSDictionary *currentState() const;
+    NSDictionary *readStateFromStorage();
+    void writeStateToStorage() const;
+
     void postAsyncNotification(NSString *notificationName, PermissionsSet&);
     void postAsyncNotification(NSString *notificationName, MatchPatternSet&);
 
@@ -253,11 +263,16 @@ private:
 
     WebExtensionContextIdentifier m_identifier;
 
+    String m_storageDirectory;
+
+    RetainPtr<NSMutableDictionary> m_state;
+
     RefPtr<WebExtension> m_extension;
     WeakPtr<WebExtensionController> m_extensionController;
 
     URL m_baseURL;
     String m_uniqueIdentifier = UUID::createVersion4().toString();
+    bool m_customUniqueIdentifier { false };
 
     RefPtr<API::ContentWorld> m_contentScriptWorld;
 

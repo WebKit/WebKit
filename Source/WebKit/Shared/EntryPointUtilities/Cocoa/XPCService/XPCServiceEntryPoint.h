@@ -90,25 +90,33 @@ template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
     if (initializerMessage) {
+        bool optionsChanged = false;
         if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
             JSC::Config::configureForTesting();
         if (xpc_dictionary_get_bool(initializerMessage, "enable-captive-portal-mode")) {
-            JSC::ExecutableAllocator::setJITEnabled(false);
             JSC::Options::initialize();
             JSC::Options::AllowUnfinalizedAccessScope scope;
+            JSC::ExecutableAllocator::disableJIT();
             JSC::Options::useGenerationalGC() = false;
             JSC::Options::useConcurrentGC() = false;
             JSC::Options::useLLIntICs() = false;
             JSC::Options::useZombieMode() = true;
             JSC::Options::allowDoubleShape() = false;
+            optionsChanged = true;
+        } else if (xpc_dictionary_get_bool(initializerMessage, "disable-jit")) {
+            JSC::Options::initialize();
+            JSC::Options::AllowUnfinalizedAccessScope scope;
+            JSC::ExecutableAllocator::disableJIT();
+            optionsChanged = true;
         }
-        if (xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
-            JSC::ExecutableAllocator::setJITEnabled(false);
         if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
             JSC::Options::initialize();
             JSC::Options::AllowUnfinalizedAccessScope scope;
             JSC::Options::useSharedArrayBuffer() = true;
+            optionsChanged = true;
         }
+        if (optionsChanged)
+            JSC::Options::notifyOptionsChanged();
     }
 
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);

@@ -121,7 +121,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     LazyInitialized<RetainPtr<WKPreferences>> _preferences;
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
 #if ENABLE(WK_WEB_EXTENSIONS)
-    LazyInitialized<RetainPtr<_WKWebExtensionController>> _webExtensionController;
+    RetainPtr<_WKWebExtensionController> _webExtensionController;
     WeakObjCPtr<_WKWebExtensionController> _weakWebExtensionController;
 #endif
     LazyInitialized<RetainPtr<_WKVisitedLinkStore>> _visitedLinkStore;
@@ -393,7 +393,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    if (auto *controller = self->_webExtensionController.peek())
+    if (auto *controller = self->_webExtensionController.get())
         configuration._webExtensionController = controller;
 
     if (auto controller = self->_weakWebExtensionController.get())
@@ -506,27 +506,25 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 - (_WKWebExtensionController *)_strongWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return _webExtensionController.peek();
+    return _webExtensionController.get();
 #else
-    return nullptr;
+    return nil;
 #endif
 }
 
 - (_WKWebExtensionController *)_webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return self._weakWebExtensionController ?: _webExtensionController.get([] {
-        return adoptNS([[_WKWebExtensionController alloc] init]);
-    });
+    return self._weakWebExtensionController ?: _webExtensionController.get();
 #else
-    return nullptr;
+    return nil;
 #endif
 }
 
 - (void)_setWebExtensionController:(_WKWebExtensionController *)webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _webExtensionController.set(webExtensionController);
+    _webExtensionController = webExtensionController;
 #endif
 }
 
@@ -535,7 +533,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(WK_WEB_EXTENSIONS)
     return _weakWebExtensionController.getAutoreleased();
 #else
-    return nullptr;
+    return nil;
 #endif
 }
 

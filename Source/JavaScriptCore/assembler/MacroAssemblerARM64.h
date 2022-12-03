@@ -5294,12 +5294,11 @@ public:
     void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
         // (i_1 * i_2 + 2^14) >> 15
-        // <=> 
+        // <=>
         // (i_1 * i_2 * 2 + 2^15) >> 16
         // <=>
         // i_1 * i_2 * 2 + 2^15 (high half)
-        vectorXor({ SIMDLane::v128, SIMDSignMode::None }, dest, dest, dest);
-        m_assembler.sqrdmlahv(dest, a, b, SIMDLane::i16x8);
+        m_assembler.sqrdmulhv(dest, a, b, SIMDLane::i16x8);
     }
 
     void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch) 

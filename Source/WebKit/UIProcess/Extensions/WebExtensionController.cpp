@@ -48,8 +48,9 @@ WebExtensionController* WebExtensionController::get(WebExtensionControllerIdenti
     return webExtensionControllers().get(identifier).get();
 }
 
-WebExtensionController::WebExtensionController()
-    : m_identifier(WebExtensionControllerIdentifier::generate())
+WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfiguration> configuration)
+    : m_configuration(configuration)
+    , m_identifier(WebExtensionControllerIdentifier::generate())
 {
     ASSERT(!webExtensionControllers().contains(m_identifier));
     webExtensionControllers().add(m_identifier, this);

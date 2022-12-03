@@ -1,15 +1,3 @@
-// This tests that elements that are not live regions do not have the live region attrs.
-no live region
-
-// These test that they have the correct default values for aria-live.
-test
-test
-test
-test
-test
-// These test that elements with live regions on have the right attributes
-h3
-
 This tests that the attributes used for ARIA live regions behave correctly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -45,4 +33,13 @@ PASS accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic') i
 PASS successfullyParsed is true
 
 TEST COMPLETE
+no live region
+
+test
+test
+test
+test
+test
+h3
+
 

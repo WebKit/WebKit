@@ -69,7 +69,7 @@ public:
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t, JITCompilationEffort) { return nullptr; }
 
-    static void setJITEnabled(bool) { };
+    static void disableJIT() { };
     
     bool isValidExecutableMemory(const AbstractLocker&, void*) { return false; }
 
@@ -169,7 +169,7 @@ public:
     static void dumpProfile() { }
 #endif
     
-    JS_EXPORT_PRIVATE static void setJITEnabled(bool);
+    JS_EXPORT_PRIVATE static void disableJIT();
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes, JITCompilationEffort);
 

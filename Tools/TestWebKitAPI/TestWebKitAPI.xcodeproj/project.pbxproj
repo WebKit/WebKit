@@ -2002,6 +2002,7 @@
 		1C15498E2926F701001B9E5B /* WebExtensionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WebExtensionUtilities.mm; path = cocoa/WebExtensionUtilities.mm; sourceTree = "<group>"; };
 		1C15498F2926F944001B9E5B /* WebExtensionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebExtensionUtilities.h; path = cocoa/WebExtensionUtilities.h; sourceTree = "<group>"; };
 		1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIExtension.mm; sourceTree = "<group>"; };
+		1C1549DA293A6D7F001B9E5B /* WKWebExtensionControllerConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionControllerConfiguration.mm; sourceTree = "<group>"; };
 		1C24DEEC263001DE00450D07 /* TextStyleFontSize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextStyleFontSize.mm; sourceTree = "<group>"; };
 		1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresource.mm; sourceTree = "<group>"; };
 		1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresourcePlugIn.mm; sourceTree = "<group>"; };
@@ -4074,6 +4075,7 @@
 				1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */,
 				1CBEE26228F47FA9006D1A02 /* WKWebExtensionContext.mm */,
 				1CAB9B7128F5E08900E6C77E /* WKWebExtensionController.mm */,
+				1C1549DA293A6D7F001B9E5B /* WKWebExtensionControllerConfiguration.mm */,
 				1CFAA40928974405009F894D /* WKWebExtensionMatchPattern.mm */,
 				5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */,
 				371195AA1FE5797700A1FB92 /* WKWebViewAlwaysShowsScroller.mm */,

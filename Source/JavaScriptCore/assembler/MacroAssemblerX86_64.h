@@ -2472,16 +2472,51 @@ public:
 
     void vectorSplat(SIMDLane lane, RegisterID src, FPRegisterID dest)
     {
-        ASSERT(scalarTypeIsIntegral(lane));
-        UNUSED_PARAM(lane);
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dest);
+        m_assembler.movq_rr(src, dest);
+        switch (lane) {
+        case SIMDLane::i64x2:
+            m_assembler.movddup(dest, dest);
+            return;
+        case SIMDLane::i32x4:
+            m_assembler.shufps(dest, dest, 0);
+            return;
+        case SIMDLane::i16x8:
+            m_assembler.pshuflw(dest, dest, 0);
+            m_assembler.punpcklqdq(dest, dest);
+            return;
+        case SIMDLane::i8x16:
+            vectorReplaceLane(SIMDLane::i8x16, TrustedImm32(1), src, dest);
+            m_assembler.pshuflw(dest, dest, 0);
+            m_assembler.punpcklqdq(dest, dest);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorSplat(SIMDLane lane, FPRegisterID src, FPRegisterID dest)
+    {
+        switch (lane) {
+        case SIMDLane::f32x4:
+            if (src != dest)
+                m_assembler.pshufd(dest, src, 0);
+            else
+                m_assembler.shufps(dest, dest, 0);
+            return;
+        case SIMDLane::f64x2:
+            m_assembler.movddup(src, dest);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     void vectorSplat8(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i8x16, src, dest); }
     void vectorSplat16(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i16x8, src, dest); }
     void vectorSplat32(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i32x4, src, dest); }
     void vectorSplat64(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i64x2, src, dest); }
+    void vectorSplatFloat32(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f32x4, src, dest); }
+    void vectorSplatFloat64(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f64x2, src, dest); }
 
     void vectorAddSat(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {

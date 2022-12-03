@@ -53,6 +53,7 @@ extern "C" {
     M(DiskPersistency) \
     M(DragAndDrop) \
     M(EME) \
+    M(Extensions) \
     M(Fullscreen) \
     M(Gamepad) \
     M(IPC) \

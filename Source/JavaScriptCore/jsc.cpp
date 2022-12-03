@@ -3766,7 +3766,7 @@ void CommandLine::parseArguments(int argc, char** argv)
             : "All JSC runtime options:";
         JSC::Options::dumpAllOptions(dumpOptionsLevel, optionsTitle);
     }
-    JSC::Options::ensureOptionsAreCoherent();
+    JSC::Options::assertOptionsAreCoherent();
     if (needToExit)
         jscExit(EXIT_SUCCESS);
 }

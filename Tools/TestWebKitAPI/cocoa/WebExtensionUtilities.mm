@@ -44,7 +44,7 @@
 
     _extension = extension;
     _context = [[_WKWebExtensionContext alloc] initWithExtension:extension];
-    _controller = [[_WKWebExtensionController alloc] init];
+    _controller = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     _context._testingMode = YES;
 

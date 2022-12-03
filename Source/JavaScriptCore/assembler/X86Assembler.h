@@ -263,6 +263,7 @@ private:
         OP2_MOVSD_WsdVsd    = 0x11,
         OP2_MOVSS_VsdWsd    = 0x10,
         OP2_MOVSS_WsdVsd    = 0x11,
+        OP2_MOVDDUP         = 0x12,
         OP2_MOVAPD_VpdWpd   = 0x28,
         OP2_MOVAPS_VpdWpd   = 0x28,
         OP2_CVTSI2SD_VsdEd  = 0x2A,
@@ -270,6 +271,7 @@ private:
         OP2_CVTTSS2SI_GdWsd = 0x2C,
         OP2_UCOMISD_VsdWsd  = 0x2E,
         OP2_RDTSC           = 0x31,
+        OP2_3BYTE_ESCAPE_38 = 0x38,
         OP2_3BYTE_ESCAPE_3A = 0x3A,
         OP2_CMOVCC          = 0x40,
         OP2_ADDSD_VsdWsd    = 0x58,
@@ -284,6 +286,7 @@ private:
         OP2_ANDNPD_VpdWpd   = 0x55,
         OP2_ORPS_VpdWpd     = 0x56,
         OP2_XORPD_VpdWpd    = 0x57,
+        OP2_PUNPCKLQDQ      = 0x6C,
         OP2_MOVD_VdEd       = 0x6E,
         OP2_MOVD_EdVd       = 0x7E,
         OP2_JCC_rel32       = 0x80,
@@ -310,12 +313,14 @@ private:
         OP2_PEXTRW_GdUdIb   = 0xC5,
         OP2_SHUFPS          = 0xC6,
         OP2_BSWAP           = 0xC8,
+        OP2_PSHUFD          = 0x70,
         OP2_PSLLQ_UdqIb     = 0x73,
         OP2_PSRLQ_UdqIb     = 0x73,
         OP2_POR_VdqWdq      = 0XEB,
     } TwoByteOpcodeID;
     
     typedef enum {
+        OP3_PSHUFB           = 0x00,
         OP3_ROUNDSS_VssWssIb = 0x0A,
         OP3_ROUNDSD_VsdWsdIb = 0x0B,
         OP3_LFENCE           = 0xE8,
@@ -2370,6 +2375,8 @@ public:
     }
 #endif
     
+    // FIXME: All destinations should be on the right side.
+    // https://bugs.webkit.org/show_bug.cgi?id=248703
     void pinsr(XMMRegisterID vd, RegisterID rn, SIMDLane lane, uint8_t laneIndex)
     {
         m_formatter.pinsr((RegisterID) vd, rn, lane, laneIndex);
@@ -2391,6 +2398,49 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
 
         m_formatter.immediate8((uint8_t) laneIndex);
+    }
+
+    void pshufd(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    {
+        // https://www.felixcloutier.com/x86/pshufd
+        // 66 0F 70 /r ib PSHUFD xmm1, xmm2/m128, imm8
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PSHUFD, (RegisterID) vd, (RegisterID) vn);
+        m_formatter.immediate8((uint8_t) controlBits);
+    }
+
+    void pshufb(XMMRegisterID vd, XMMRegisterID vn)
+    {
+        // https://www.felixcloutier.com/x86/pshufb
+        // 66 0F 38 00 /r PSHUFB xmm1, xmm2/m128
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PSHUFB, (RegisterID) vd, (RegisterID) vn);
+    }
+
+    void pshuflw(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    {
+        // https://www.felixcloutier.com/x86/pshuflw
+        // F2 0F 70 /r ib PSHUFLW xmm1, xmm2/m128, imm8
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_PSHUFD, (RegisterID) vd, (RegisterID) vn);
+        m_formatter.immediate8((uint8_t) controlBits);
+    }
+
+    void pshufhw(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    {
+        // https://www.felixcloutier.com/x86/pshufhw
+        // F3 0F 70 /r ib PSHUFHW xmm1, xmm2/m128, imm8
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_PSHUFD, (RegisterID) vd, (RegisterID) vn);
+        m_formatter.immediate8((uint8_t) controlBits);
+    }   
+
+    void punpcklqdq(XMMRegisterID vd, XMMRegisterID vn)
+    {
+        // https://www.felixcloutier.com/x86/punpcklbw:punpcklwd:punpckldq:punpcklqdq
+        // 66 0F 6C /r PUNPCKLQDQ xmm1, xmm2/m128
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PUNPCKLQDQ, (RegisterID) vd, (RegisterID) vn);
     }
 
     void shufps(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
@@ -3198,6 +3248,14 @@ public:
     {
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_MOVD_VdEd, (RegisterID)dst, src);
+    }
+
+    void movddup(XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/movddup
+        // F2 0F 12 /r MOVDDUP xmm1, xmm2/m64
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVDDUP, (RegisterID)dst, (RegisterID)src);
     }
 
 #if CPU(X86_64)
@@ -4387,6 +4445,7 @@ private:
 
             ALWAYS_INLINE void threeBytesVex(bool isVEX256, OneByteOpcodeID simdPrefix, VexImpliedBytes impliedBytes, bool isW1, RegisterID r, RegisterID x, RegisterID b)
             {
+                // https://en.wikipedia.org/wiki/VEX_prefix
                 uint8_t firstByte = VexPrefix::ThreeBytes;        // 0xC4
 
                 uint8_t secondByte = 0;

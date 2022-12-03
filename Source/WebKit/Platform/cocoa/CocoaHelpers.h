@@ -78,7 +78,4 @@ NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
 NSDate *toAPI(const WallTime&);
 WallTime toImpl(NSDate *);
 
-NSUUID *toAPI(const UUID&);
-UUID toImpl(NSUUID *);
-
 } // namespace WebKit

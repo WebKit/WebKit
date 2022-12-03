@@ -285,6 +285,7 @@ Tests/WebKitCocoa/WKWebExtensionAPIExtension.mm
 Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm
 Tests/WebKitCocoa/WKWebExtensionContext.mm
 Tests/WebKitCocoa/WKWebExtensionController.mm
+Tests/WebKitCocoa/WKWebExtensionControllerConfiguration.mm
 Tests/WebKitCocoa/WKWebExtensionMatchPattern.mm
 Tests/WebKitCocoa/WKWebViewAlwaysShowsScroller.mm
 Tests/WebKitCocoa/WKWebViewCandidateTests.mm

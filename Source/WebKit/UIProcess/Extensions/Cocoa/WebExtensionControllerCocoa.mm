@@ -33,17 +33,26 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "SandboxUtilities.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxyMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
+#import <wtf/FileSystem.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
+
+String WebExtensionController::storageDirectory(WebExtensionContext& extensionContext) const
+{
+    if (m_configuration->isPersistent() && extensionContext.isPersistent())
+        return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), extensionContext.uniqueIdentifier());
+    return nullString();
+}
 
 bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError **outError)
 {
@@ -76,7 +85,11 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
         return handler;
     });
 
-    if (!extensionContext.load(*this, outError)) {
+    auto extensionDirectory = storageDirectory(extensionContext);
+    if (!!extensionDirectory && !FileSystem::makeAllDirectories(extensionDirectory))
+        RELEASE_LOG(Extensions, "Failed to create directory %{public}s", extensionDirectory.utf8().data());
+
+    if (!extensionContext.load(*this, extensionDirectory, outError)) {
         m_extensionContexts.remove(extensionContext);
         m_extensionContextBaseURLMap.remove(extensionContext.baseURL());
 

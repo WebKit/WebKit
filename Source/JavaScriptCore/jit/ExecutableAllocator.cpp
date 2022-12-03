@@ -157,23 +157,25 @@ static bool isJITEnabled()
 #endif
 }
 
-void ExecutableAllocator::setJITEnabled(bool enabled)
+void ExecutableAllocator::disableJIT()
 {
-    bool jitEnabled = !g_jscConfig.jitDisabled;
     ASSERT(!g_jscConfig.fixedVMPoolExecutableAllocator);
-    if (jitEnabled == enabled)
+    if (g_jscConfig.jitDisabled) {
+        RELEASE_ASSERT(!Options::useJIT());
         return;
+    }
 
-    g_jscConfig.jitDisabled = !enabled;
+    g_jscConfig.jitDisabled = true;
+    Options::useJIT() = false;
 
 #if HAVE(IOS_JIT_RESTRICTIONS)
-    if (!enabled && processHasEntitlement("dynamic-codesigning"_s)) {
+    if (processHasEntitlement("dynamic-codesigning"_s)) {
         // Because of an OS quirk, even after the JIT region has been unmapped,
         // the OS thinks that region is reserved, and as such, can cause Gigacage
         // allocation to fail. We work around this by initializing the Gigacage
         // first.
-        // Note: when called, setJITEnabled() is always called extra early in the
-        // process bootstrap. Under normal operation (when setJITEnabled() isn't
+        // Note: when called, disableJIT() is always called extra early in the
+        // process bootstrap. Under normal operation (when disableJIT() isn't
         // called at all), we will naturally initialize the Gigacage before we
         // allocate the JIT region. Hence, this workaround is merely ensuring the
         // same behavior of allocation ordering.
@@ -187,7 +189,7 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
         const void* executableMemoryAllocationFailure = reinterpret_cast<void*>(-1);
         RELEASE_ASSERT_WITH_MESSAGE(allocation && allocation != executableMemoryAllocationFailure, "We should not have allocated executable memory before disabling the JIT.");
         RELEASE_ASSERT_WITH_MESSAGE(!munmap(allocation, size), "Unmapping executable memory should succeed so we do not have any executable memory in the address space");
-        RELEASE_ASSERT_WITH_MESSAGE(mmap(nullptr, size, protection, flags, fd, 0) == executableMemoryAllocationFailure, "Allocating executable memory should fail after setJITEnabled(false) is called.");
+        RELEASE_ASSERT_WITH_MESSAGE(mmap(nullptr, size, protection, flags, fd, 0) == executableMemoryAllocationFailure, "Allocating executable memory should fail after disableJIT() is called.");
     }
 #endif
 }

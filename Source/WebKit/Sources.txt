@@ -543,6 +543,7 @@ UIProcess/Downloads/DownloadProxyMap.cpp
 
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
+UIProcess/Extensions/WebExtensionControllerConfiguration.cpp
 
 UIProcess/Gamepad/UIGamepad.cpp
 UIProcess/Gamepad/UIGamepadProvider.cpp

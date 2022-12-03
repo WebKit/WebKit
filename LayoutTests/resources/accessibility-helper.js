@@ -177,6 +177,14 @@ async function expectAsyncExpression(expression, expectedValue) {
     debug(`PASS ${evalExpression}`);
 }
 
+async function waitForFocus(id) {
+    document.getElementById(id).focus();
+    await waitFor(() => {
+        const focusedElement = accessibilityController.focusedElement;
+        return focusedElement && focusedElement.domIdentifier === id;
+    });
+}
+
 function evalAndReturn(expression) {
     if (typeof expression !== "string")
         debug("FAIL: evalAndReturn() expects a string argument");

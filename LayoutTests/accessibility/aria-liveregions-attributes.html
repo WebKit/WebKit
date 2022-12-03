@@ -1,22 +1,22 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
-// This tests that elements that are not live regions do not have the live region attrs.
+<!-- This tests that elements that are not live regions do not have the live region attrs. -->
 <h3 tabindex=0 id="h3">no live region</h3>
 
-// These test that they have the correct default values for aria-live.
-
+<!-- These test that they have the correct default values for aria-live. -->
 <div tabindex=0 id="alert" role="alert">test</div>
 <div tabindex=0 id="alertdialog" role="alertdialog">test</div>
 <div tabindex=0 id="log" role="log">test</div>
 <div tabindex=0 id="status" role="status">test</div>
 <div tabindex=0 id="timer" role="timer">test</div>
 
-// These test that elements with live regions on have the right attributes
+<!-- These test that elements with live regions on have the right attributes -->
 <div tabindex=0 id="liveregion" role="group" aria-busy="true" aria-live="polite" aria-relevant="additions">
 <h3 tabindex=0 aria-atomic="true" id="h3live">h3</h3>
 </div>
@@ -30,78 +30,75 @@
 <div tabindex=0 id="liveregion_timer" role="timer"><!-- atomic=false, live=off --></div>
 <div tabindex=0 id="liveregion_marquee" role="marquee"><!-- atomic=false, live=off --></div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+description("This tests that the attributes used for ARIA live regions behave correctly.");
 
-    description("This tests that the attributes used for ARIA live regions behave correctly.");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
-  
-          // Make sure that regular elements are not exposing ARIA live attributes.
-          document.getElementById("h3").focus();
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXElementBusy')", "true");
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIARelevant')", "false");
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIAAtomic')", "false");
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
+    setTimeout(async function() {
+        // Make sure that regular elements are not exposing ARIA live attributes.
+        await waitForFocus("h3");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXElementBusy')", "true");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIARelevant')", "false");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIAAtomic')", "false");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
 
-          // Make sure that specific aria roles get the right aria live values.
-          document.getElementById("alert").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
+        // Make sure that specific aria roles get the right aria live values.
+        await waitForFocus("alert");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
 
-          document.getElementById("alertdialog").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
+        await waitForFocus("alertdialog");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
 
-          document.getElementById("log").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
+        await waitForFocus("log");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
 
-          document.getElementById("status").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
+        await waitForFocus("status");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
 
-          document.getElementById("timer").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'off'");
+        await waitForFocus("timer");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'off'");
 
-          // Test the other attributes for a live region
-          document.getElementById("liveregion").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIARelevant')", "'additions'");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXElementBusy')", "true");
+        // Test the other attributes for a live region
+        await waitForFocus("liveregion");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIARelevant')", "'additions'");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXElementBusy')", "true");
 
-          document.getElementById("h3live").focus();
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIARelevant')", "false");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXElementBusy')", "false");
+        await waitForFocus("h3live");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIARelevant')", "false");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXElementBusy')", "false");
 
-          // when an element has no specific aria-relevant, it should be additions text by default.
-          document.getElementById("liveregion2").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIARelevant')", "'additions text'");
- 
-          document.getElementById("liveregion_alert").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
+        // when an element has no specific aria-relevant, it should be additions text by default.
+        await waitForFocus("liveregion2");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIARelevant')", "'additions text'");
 
-          document.getElementById("liveregion_status").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
+        await waitForFocus("liveregion_alert");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
 
-          document.getElementById("liveregion_log").focus();
-          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
+        await waitForFocus("liveregion_status");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
 
-          document.getElementById("liveregion_timer").focus();
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
+        await waitForFocus("liveregion_log");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
 
-          document.getElementById("liveregion_marquee").focus();
-          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
-          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
+        await waitForFocus("liveregion_timer");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
 
-    }
+        await waitForFocus("liveregion_marquee");
+        shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
+        shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
 
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
