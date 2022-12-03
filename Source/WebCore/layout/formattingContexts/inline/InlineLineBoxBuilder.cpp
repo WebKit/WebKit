@@ -229,19 +229,32 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
     if (inlineLevelBox.isInlineBox()) {
         auto textMetrics = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType());
         auto setLayoutBounds = [&] {
-            auto logicalHeight = textMetrics.ascentAndDescent.ascent + textMetrics.ascentAndDescent.descent;
-            auto halfLeading = InlineLayoutUnit { };
-            if (textMetrics.preferredLineHeight)
-                halfLeading = (*textMetrics.preferredLineHeight - logicalHeight) / 2;
-            else {
+            auto shouldIncorporateHalfLeading = inlineLevelBox.isRootInlineBox() || isTextEdgeLeading(inlineLevelBox.textEdge());
+            auto ascent = textMetrics.ascentAndDescent.ascent;
+            auto descent = textMetrics.ascentAndDescent.descent;
+            if (textMetrics.preferredLineHeight) {
+                // https://www.w3.org/TR/css-inline-3/#inline-height
+                // When computed line-height is not normal, calculate the leading L as L = line-height - (A + D).
+                // Half the leading (its half-leading) is added above A, and the other half below D,
+                // giving an effective ascent above the baseline of A′ = A + L/2, and an effective descent of D′ = D + L/2.
+                auto halfLeading = (*textMetrics.preferredLineHeight - (ascent + descent)) / 2;
+                if (!shouldIncorporateHalfLeading) {
+                    // However, if text-edge is not leading and this is not the root inline box, if the half-leading is positive, treat it as zero.
+                    halfLeading = std::min(halfLeading, 0.f);
+                }
+                ascent += halfLeading;
+                descent += halfLeading;
+            } else {
                 // https://www.w3.org/TR/css-inline-3/#inline-height
                 // If line-height computes to normal and either text-edge is leading or this is the root inline box,
                 // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
-                auto incorporateHalfLeading = inlineLevelBox.isRootInlineBox() || isTextEdgeLeading(inlineLevelBox.textEdge());
-                if (incorporateHalfLeading)
-                    halfLeading = (textMetrics.lineGap - logicalHeight) / 2;
+                if (shouldIncorporateHalfLeading) {
+                    auto halfLeading = (textMetrics.lineGap - (ascent + descent)) / 2;
+                    ascent += halfLeading;
+                    descent += halfLeading;
+                }
             }
-            inlineLevelBox.setLayoutBounds({ floorf(textMetrics.ascentAndDescent.ascent + halfLeading), ceilf(textMetrics.ascentAndDescent.descent + halfLeading) });
+            inlineLevelBox.setLayoutBounds({ floorf(ascent), ceilf(descent) });
         };
         setLayoutBounds();
         // We need floor/ceil to match legacy layout integral positioning.
