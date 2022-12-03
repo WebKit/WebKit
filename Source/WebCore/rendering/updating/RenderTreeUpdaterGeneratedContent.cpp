@@ -177,13 +177,22 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
 {
     if (!renderer.canHaveGeneratedChildren())
         return;
-    // ::backdrop does not inherit style, hence using the view style as parent style
-    auto style = renderer.getCachedPseudoStyle(PseudoId::Backdrop, &renderer.view().style());
 
-    // Destroy ::backdrop if new element no longer is in top layer, or if it is hidden
-    if ((renderer.element() && !renderer.element()->isInTopLayer()) || !style || style->display() == DisplayType::None) {
+    auto destroyBackdropIfNeeded = [&renderer, this]() {
         if (WeakPtr backdropRenderer = renderer.backdropRenderer())
             m_updater.m_builder.destroy(*backdropRenderer);
+    };
+
+    // Intentionally bail out early here to avoid computing the style.
+    if (!renderer.element() || !renderer.element()->isInTopLayer()) {
+        destroyBackdropIfNeeded();
+        return;
+    }
+
+    // ::backdrop does not inherit style, hence using the view style as parent style
+    auto style = renderer.getCachedPseudoStyle(PseudoId::Backdrop, &renderer.view().style());
+    if (!style || style->display() == DisplayType::None) {
+        destroyBackdropIfNeeded();
         return;
     }
 
