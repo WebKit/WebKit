@@ -944,8 +944,6 @@ public:
     bool hasMutationObservers() const { return !m_mutationObserverTypes.isEmpty(); }
     void addMutationObserverTypes(MutationObserverOptions types) { m_mutationObserverTypes.add(types); }
 
-    CSSStyleDeclaration* getOverrideStyle(Element*, const String&) { return nullptr; }
-
     // Handles an HTTP header equivalent set by a meta tag using <meta http-equiv="..." content="...">. This is called
     // when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta
     // tag. This enables scripts to use meta tags to perform refreshes and set expiry dates in addition to them being

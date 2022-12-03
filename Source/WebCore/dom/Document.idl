@@ -88,10 +88,6 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     attribute DOMString? xmlVersion;
     attribute boolean xmlStandalone;
 
-    // Non standard: Blink has already dropped this (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/s3ezjTuC8ig).
-    // And it's just a stub that always returns null, so we can probably remove it some time soon.
-    CSSStyleDeclaration? getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
-
     // Non standard: It has been superseeded by caretPositionFromPoint which we do not implement yet.
     Range caretRangeFromPoint(optional long x = 0, optional long y = 0);
 
