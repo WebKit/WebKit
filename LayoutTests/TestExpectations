@@ -5980,5 +5980,8 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multi
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur.html [ ImageOnlyFailure ]
 
+# Needs non-zero line gap in 'Arial'
+fast/text/text-edge-no-half-leading-simple.html [ Skip ]
+
 # This test isn't working as expected, it will be fixed in webkit.org/b/248148.
 webkit.org/b/248148 fullscreen/full-screen-layer-dump.html [ Failure ]
