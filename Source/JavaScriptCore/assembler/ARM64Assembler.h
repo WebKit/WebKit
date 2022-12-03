@@ -1700,7 +1700,14 @@ public:
     {
         // Signed Saturating Rounding Doubling Multiply Accumulate returning High Half (vector)
         RELEASE_ASSERT(lane == SIMDLane::i16x8);
-        insn(0b01101110000000001000010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+        insn(0b01101110'00'0'00000'100001'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void sqrdmulhv(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        // Signed Saturating Rounding Doubling Multiply returning High half (vector).
+        RELEASE_ASSERT(lane == SIMDLane::i16x8);
+        insn(0b01101110'00'1'00000'101101'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
     }
 
     ALWAYS_INLINE void vectorFadd(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
