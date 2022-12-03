@@ -219,9 +219,45 @@ static bool isTextEdgeLeading(TextEdge textEdge)
 void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, FontBaseline fontBaseline) const
 {
     ASSERT(inlineBox.isInlineBox());
-    auto ascentAndDescent = primaryFontMetricsForInlineBox(inlineBox, fontBaseline);
-    auto ascent = ascentAndDescent.ascent;
-    auto descent = ascentAndDescent.descent;
+    auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
+    auto ascent = [&]() -> InlineLayoutUnit {
+        if (inlineBox.isRootInlineBox() || inlineBox.textEdge().over == TextEdgeType::Leading)
+            return fontMetrics.ascent(fontBaseline);
+
+        switch (inlineBox.textEdge().over) {
+        case TextEdgeType::Text:
+            return fontMetrics.ascent(fontBaseline);
+        case TextEdgeType::CapHeight:
+            return fontMetrics.floatCapHeight();
+        case TextEdgeType::ExHeight:
+            return fontMetrics.xHeight();
+        case TextEdgeType::CJKIdeographic:
+        case TextEdgeType::CJKIdeographicInk:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return fontMetrics.ascent(fontBaseline);
+        default:
+            ASSERT_NOT_REACHED();
+            return fontMetrics.ascent(fontBaseline);
+        }
+    }();
+    auto descent = [&]() -> InlineLayoutUnit {
+        if (inlineBox.isRootInlineBox() || inlineBox.textEdge().over == TextEdgeType::Leading)
+            return fontMetrics.descent(fontBaseline);
+
+        switch (inlineBox.textEdge().under) {
+        case TextEdgeType::Text:
+            return fontMetrics.descent(fontBaseline);
+        case TextEdgeType::Alphabetic:
+            return 0.f;
+        case TextEdgeType::CJKIdeographic:
+        case TextEdgeType::CJKIdeographicInk:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return fontMetrics.descent(fontBaseline);
+        default:
+            ASSERT_NOT_REACHED();
+            return fontMetrics.descent(fontBaseline);
+        }
+    }();
     auto shouldIncorporateHalfLeading = inlineBox.isRootInlineBox() || isTextEdgeLeading(inlineBox.textEdge());
 
     if (!inlineBox.isPreferredLineHeightFontMetricsBased()) {
