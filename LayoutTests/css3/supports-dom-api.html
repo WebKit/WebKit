@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 <script>
     description("Test window.CSS.supports()");
 
     shouldBeTrue('CSS.supports("display: none")');
-    shouldBeTrue('CSS.supports("(display: none)")');
     shouldBeTrue('CSS.supports("  display: none ")');
+    shouldBeTrue('CSS.supports("(display: none)")');
     shouldBeFalse('CSS.supports("(display: deadbeef)")');
 
     shouldBeFalse('CSS.supports("display: deadbeef")');
     shouldBeTrue('CSS.supports("(display: none) and ((display: block) or (display: inline))")');
     shouldBeTrue('CSS.supports("(not (display: deadbeef)) and (display: block)")');
-    shouldBeTrue('CSS.supports("top: -webkit-calc(80% - 20px)")');
+    shouldBeTrue('CSS.supports("top: calc(80% - 20px)")');
     shouldBeTrue('CSS.supports("background-color: rgb(0, 128, 0)")');
     shouldBeTrue('CSS.supports("background: url(\'/blah\')")');
     shouldBeFalse('CSS.supports("background: invalid(\'/blah\')")');
@@ -56,7 +56,6 @@
     shouldBeFalse('CSS.supports("(display: none) or(-webkit-transition: all 1s    )")');
     shouldBeTrue('CSS.supports("(((((((display: none)))))))")');
     shouldBeFalse('CSS.supports("(!important)")');
-    shouldBeFalse('CSS.supports("!important")');
     shouldBeFalse('CSS.supports("not not not not (display: none)")');
 
     // Functions.
@@ -73,19 +72,20 @@
     shouldBeFalse('CSS.supports("dis\\nplay", "none")');
     shouldBeFalse('CSS.supports("display", "rainbow")');
     shouldBeFalse('CSS.supports("display", "url(rainbow.png)")');
-    shouldBeTrue('CSS.supports(" background   ", "url(rainbow.png)")');
+    shouldBeFalse('CSS.supports(" background   ", "url(rainbow.png)")');
     shouldBeFalse('CSS.supports("background", "invalid(rainbow.png)")');
     shouldBeTrue('CSS.supports("background-color", "#000")');
     shouldBeTrue('CSS.supports("background-color", "rgba(0,0,0,0)")');
     shouldBeTrue('CSS.supports("background-color", "inherit")');
+    shouldBeFalse('CSS.supports("font-family", "\'\\n\'")');
 
-    shouldBeTrue('CSS.supports("display", "none !important")');
-    shouldBeTrue('CSS.supports("display", "none!important")');
+    shouldBeFalse('CSS.supports("display", "none !important")');
+    shouldBeFalse('CSS.supports("display", "none!important")');
     shouldBeFalse('CSS.supports("display", "!important none")');
     shouldBeFalse('CSS.supports("display", "none !important ! important ")');
-    shouldBeTrue('CSS.supports("display", "none ! important")');
-    shouldBeTrue('CSS.supports("display", "none ! \timportant")');
-    shouldBeTrue('CSS.supports("display", "none ! \\nimportant")');
+    shouldBeFalse('CSS.supports("display", "none ! important")');
+    shouldBeFalse('CSS.supports("display", "none ! \timportant")');
+    shouldBeFalse('CSS.supports("display", "none ! \\nimportant")');
 
     shouldBeFalse('CSS.supports("", "")');
     shouldBeFalse('CSS.supports(true, "")');
@@ -96,7 +96,71 @@
     shouldBeFalse('CSS.supports("content", [])');
     shouldBeFalse('CSS.supports("content", "!important")');
     shouldBeFalse('CSS.supports("(display: none)", undefined)');
+
+    // Test that __qem is internal
+    shouldBeFalse('CSS.supports("margin", "1__qem")');
+
+    // shorthands and CSS wide keywords
+    shouldBeTrue('CSS.supports("border", "1px solid #000")');
+    shouldBeTrue('CSS.supports("border", "inherit")');
+    shouldBeFalse('CSS.supports("border", "1px solid inherit")');
+    shouldBeFalse('CSS.supports("border", "inherit solid #000")');
+    shouldBeTrue('CSS.supports("border-bottom", "thick green")');
+    shouldBeTrue('CSS.supports("border-bottom", "inherit")');
+    shouldBeFalse('CSS.supports("border-bottom", "thick green inherit")');
+    shouldBeFalse('CSS.supports("border-bottom", "inherit thick green")');
+    shouldBeTrue('CSS.supports("border-left", "thick green")');
+    shouldBeTrue('CSS.supports("border-left", "inherit")');
+    shouldBeFalse('CSS.supports("border-left", "thick green inherit")');
+    shouldBeFalse('CSS.supports("border-left", "inherit thick green")');
+    shouldBeTrue('CSS.supports("border-right", "thick green")');
+    shouldBeTrue('CSS.supports("border-right", "inherit")');
+    shouldBeFalse('CSS.supports("border-right", "thick green inherit")');
+    shouldBeFalse('CSS.supports("border-right", "inherit thick green")');
+    shouldBeTrue('CSS.supports("border-top", "thick green")');
+    shouldBeTrue('CSS.supports("border-top", "inherit")');
+    shouldBeFalse('CSS.supports("border-top", "thick green inherit")');
+    shouldBeFalse('CSS.supports("border-top", "inherit thick green")');
+    shouldBeTrue('CSS.supports("border-radius", "1px 0 3px 4px")');
+    shouldBeTrue('CSS.supports("border-radius", "inherit")');
+    shouldBeFalse('CSS.supports("border-radius", "1px 0 3px inherit")');
+    shouldBeFalse('CSS.supports("border-radius", "inherit 0 3px 4px")');
+    shouldBeTrue('CSS.supports("border-spacing", "5px 5px")');
+    shouldBeTrue('CSS.supports("border-spacing", "inherit")');
+    shouldBeFalse('CSS.supports("border-spacing", "5px inherit")');
+    shouldBeFalse('CSS.supports("border-spacing", "inherit 5px")');
+    shouldBeTrue('CSS.supports("font", "italic small-caps bolder 16px/3 cursive")');
+    shouldBeTrue('CSS.supports("font", "inherit")');
+    shouldBeFalse('CSS.supports("font", "italic small-caps bolder 16px/3 inherit")');
+    shouldBeFalse('CSS.supports("font", "inherit small-caps bolder 16px/3 cursive")');
+    shouldBeTrue('CSS.supports("list-style", "georgian inside")');
+    shouldBeTrue('CSS.supports("list-style", "inherit")');
+    shouldBeFalse('CSS.supports("list-style", "georgian inherit")');
+    shouldBeFalse('CSS.supports("list-style", "inherit inside")');
+    
+    // border-width, border-color, border-style and padding use same code path as margin
+    shouldBeTrue('CSS.supports("margin", "5px")');
+    shouldBeTrue('CSS.supports("margin", "inherit")');
+    shouldBeFalse('CSS.supports("margin", "inherit 5px")');
+    shouldBeFalse('CSS.supports("margin", "5px inherit")');
+    shouldBeFalse('CSS.supports("margin", "inherit 5px 5px")');
+    shouldBeFalse('CSS.supports("margin", "inherit 5px 5px 5px")');
+    shouldBeTrue('CSS.supports("outline", "1px solid #000")');
+    shouldBeTrue('CSS.supports("outline", "inherit")');
+    shouldBeFalse('CSS.supports("outline", "1px solid inherit")');
+    shouldBeFalse('CSS.supports("outline", "inherit solid #000")');
+    shouldBeTrue('CSS.supports("overflow", "scroll")');
+    shouldBeTrue('CSS.supports("overflow", "inherit")');
+    shouldBeFalse('CSS.supports("overflow", "inherit scroll")');
+    shouldBeFalse('CSS.supports("overflow", "scroll inherit")');
+    shouldBeTrue('CSS.supports("transform", "scaleX(2)")');
+    shouldBeTrue('CSS.supports("transform", "inherit")');
+    shouldBeFalse('CSS.supports("transform", "scaleX(2) inherit")');
+    shouldBeFalse('CSS.supports("transform", "inherit scaleX(2)")');
+    shouldBeTrue('CSS.supports("transition", "margin-left 4s")');
+    shouldBeTrue('CSS.supports("transition", "inherit")');
+    shouldBeFalse('CSS.supports("transition", "margin-left inherit")');
+    shouldBeFalse('CSS.supports("transition", "inherit 4s")');
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
