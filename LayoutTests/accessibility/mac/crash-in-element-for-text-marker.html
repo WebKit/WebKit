@@ -1,9 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body id="body" role="group">
 
 asdf
 
@@ -11,34 +12,34 @@ asdf
 
 asdf
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This protects against a crash when AXUIElementForTextMarker is queried with an empty text marker.\n\n";
 
-    description("This protects against a crash when AXUIElementForTextMarker is queried with an empty text marker.");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
+    const content = accessibilityController.accessibleElementById("content");
+    // Get a marker that is invalid (the next one after the end of the body).
+    const textMarkerRange = content.textMarkerRangeForElement(content);
+    const endMarker = content.endTextMarkerForTextMarkerRange(textMarkerRange);
 
-          document.getElementById("content").focus();
-          var content = accessibilityController.focusedElement;
+    const body = accessibilityController.accessibleElementById("body");
+    const initialBodyChildrenCount = body.childrenCount;
+    // Remove "content" so that the text marker becomes invalid.
+    document.getElementById("body").removeChild(document.getElementById("content"));
 
-          // get a marker that is invalid (the next one after the end of the body).
-          var textMarkerRange = content.textMarkerRangeForElement(content);
-          var endMarker = content.endTextMarkerForTextMarkerRange(textMarkerRange);
+    setTimeout(async function() {
+        // Wait for the element to be removed from the AX tree.
+        await waitFor(() => initialBodyChildrenCount > body.childrenCount);
 
-          // Remove "content" so that the text marker becomes invalid.
-          document.getElementById("body").removeChild(document.getElementById("content"));
+        // Ask for the UI element for the marker of the deleted object (should not crash).
+        body.accessibilityElementForTextMarker(endMarker);
 
-          document.getElementById("body").focus();
-          var body = accessibilityController.focusedElement;
-
-          // Ask for the ui element for that marker (should not crash).
-          body.accessibilityElementForTextMarker(endMarker);
-    }
-
+        debug(output);
+        finishJSTest();
+    });
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+
