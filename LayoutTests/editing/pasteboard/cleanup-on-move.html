@@ -13,7 +13,7 @@
 Markup.description('This test drags a selection of a couple of <li> and drops them after another <li> in the same list. It verifies that no empty <li> (actually with a <br> inside) are left after the moving operation.');
 
 if (window.testRunner) {
-    selectListItems("two", "three", 5);
+    selectListItems("two", "three", 1);
     Markup.dump("test", "The original list looks like this. 'two' and 'three' are selected and are going to be dropped after 'four'");
     dragSelectionToTarget("two", "four");
     Markup.dump("test", "'two' and 'three' should appear as <li> after 'four' and no empty <li> (nor a <br> placeholder) should be there");
