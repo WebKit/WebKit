@@ -116,8 +116,8 @@ public:
     JS_EXPORT_PRIVATE static void dumpAllOptions(DumpLevel, const char* title = nullptr);
     JS_EXPORT_PRIVATE static void dumpAllOptionsInALine(StringBuilder&);
 
-    JS_EXPORT_PRIVATE static void ensureOptionsAreCoherent();
-    static void recomputeDependentOptions();
+    JS_EXPORT_PRIVATE static void assertOptionsAreCoherent();
+    JS_EXPORT_PRIVATE static void notifyOptionsChanged();
 
 #define DECLARE_OPTION_ACCESSORS(type_, name_, defaultValue_, availability_, description_) \
 private: \
