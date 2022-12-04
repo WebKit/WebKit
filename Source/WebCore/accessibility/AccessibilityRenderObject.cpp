@@ -939,12 +939,15 @@ Path AccessibilityRenderObject::elementPath() const
     if (is<LegacyRenderSVGShape>(renderer()) && downcast<LegacyRenderSVGShape>(*m_renderer).hasPath()) {
         Path path = downcast<LegacyRenderSVGShape>(*m_renderer).path();
 
+        auto* cache = axObjectCache();
+        if (!cache)
+            return path;
+
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
         if (auto svgRoot = ancestorsOfType<LegacyRenderSVGRoot>(*m_renderer).first()) {
-            LayoutPoint parentOffset = axObjectCache()->getOrCreate(&*svgRoot)->elementRect().location();
+            LayoutPoint parentOffset = cache->getOrCreate(&*svgRoot)->elementRect().location();
             path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
         }
-
         return path;
     }
 
@@ -952,12 +955,15 @@ Path AccessibilityRenderObject::elementPath() const
     if (is<RenderSVGShape>(renderer()) && downcast<RenderSVGShape>(*m_renderer).hasPath()) {
         Path path = downcast<RenderSVGShape>(*m_renderer).path();
 
+        auto* cache = axObjectCache();
+        if (!cache)
+            return path;
+
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
         if (auto svgRoot = ancestorsOfType<RenderSVGRoot>(*m_renderer).first()) {
-            LayoutPoint parentOffset = axObjectCache()->getOrCreate(&*svgRoot)->elementRect().location();
+            LayoutPoint parentOffset = cache->getOrCreate(&*svgRoot)->elementRect().location();
             path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
         }
-
         return path;
     }
 #endif
@@ -2545,13 +2551,15 @@ AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& po
     if (is<HTMLOptionElement>(*node))
         node = downcast<HTMLOptionElement>(*node).ownerSelectElement();
     
-    RenderObject* obj = node->renderer();
-    if (!obj)
+    auto* renderer = node->renderer();
+    if (!renderer)
         return nullptr;
     
-    AXCoreObject* result = obj->document().axObjectCache()->getOrCreate(obj);
-    result->updateChildrenIfNecessary();
+    auto* result = renderer->document().axObjectCache()->getOrCreate(renderer);
+    if (!result)
+        return nullptr;
 
+    result->updateChildrenIfNecessary();
     // Allow the element to perform any hit-testing it might need to do to reach non-render children.
     result = static_cast<AccessibilityObject*>(result->elementAccessibilityHitTest(point));
     
@@ -2943,7 +2951,7 @@ void AccessibilityRenderObject::addRemoteSVGChildren()
     AccessibilitySVGRoot* root = remoteSVGRootElement(Create);
     if (!root)
         return;
-    
+
     // In order to connect the AX hierarchy from the SVG root element from the loaded resource
     // the parent must be set, because there's no other way to get back to who created the image.
     root->setParent(this);

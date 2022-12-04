@@ -2428,13 +2428,16 @@ bool AccessibilityNodeObject::isFocused() const
     if (!focusedElement)
         return false;
 
-    // A web area is represented by the Document node in the DOM tree, which isn't focusable.
-    // Check instead if the frame's selection controller is focused
-    if (focusedElement == m_node
-        || (roleValue() == AccessibilityRole::WebArea && document.frame()->selection().isFocusedAndActive()))
+    if (focusedElement == m_node)
         return true;
 
-    return false;
+    // A web area is represented by the Document node in the DOM tree which isn't focusable.
+    // Instead, check if the frame's selection is focused.
+    if (roleValue() != AccessibilityRole::WebArea)
+        return false;
+
+    auto* frame = document.frame();
+    return frame ? frame->selection().isFocusedAndActive() : false;
 }
 
 void AccessibilityNodeObject::setFocused(bool on)
