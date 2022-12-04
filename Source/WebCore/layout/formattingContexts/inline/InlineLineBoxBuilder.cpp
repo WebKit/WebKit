@@ -294,6 +294,59 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
     inlineBox.setLayoutBounds({ floorf(ascent), ceilf(descent) });
 }
 
+AscentAndDescent LineBoxBuilder::computedAsentAndDescentForInlineBox(InlineLevelBox& inlineBox, FontBaseline fontBaseline) const
+{
+    ASSERT(inlineBox.isInlineBox());
+    if (inlineBox.isRootInlineBox())
+        return primaryFontMetricsForInlineBox(inlineBox, fontBaseline);
+
+    auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
+    auto leadingTrim = inlineBox.leadingTrim();
+    if (leadingTrim == LeadingTrim::Normal)
+        return primaryFontMetricsForInlineBox(inlineBox, fontBaseline);
+    auto ascent = [&]() -> InlineLayoutUnit {
+        if (leadingTrim == LeadingTrim::End)
+            return fontMetrics.ascent(fontBaseline);
+
+        switch (inlineBox.textEdge().over) {
+        case TextEdgeType::Leading:
+        case TextEdgeType::Text:
+            return fontMetrics.ascent(fontBaseline);
+        case TextEdgeType::CapHeight:
+            return fontMetrics.floatCapHeight();
+        case TextEdgeType::ExHeight:
+            return fontMetrics.xHeight();
+        case TextEdgeType::CJKIdeographic:
+        case TextEdgeType::CJKIdeographicInk:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return fontMetrics.ascent(fontBaseline);
+        default:
+            ASSERT_NOT_REACHED();
+            return fontMetrics.ascent(fontBaseline);
+        }
+    };
+    auto descent = [&]() -> InlineLayoutUnit {
+        if (leadingTrim == LeadingTrim::Start)
+            return fontMetrics.descent(fontBaseline);
+
+        switch (inlineBox.textEdge().under) {
+        case TextEdgeType::Leading:
+        case TextEdgeType::Text:
+            return fontMetrics.descent(fontBaseline);
+        case TextEdgeType::Alphabetic:
+            return 0.f;
+        case TextEdgeType::CJKIdeographic:
+        case TextEdgeType::CJKIdeographicInk:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return fontMetrics.descent(fontBaseline);
+        default:
+            ASSERT_NOT_REACHED();
+            return fontMetrics.descent(fontBaseline);
+        }
+    };
+    return { ascent(), descent() };
+}
+
 void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineBox, InlineLevelBox& inlineLevelBox) const
 {
     auto setAscentAndDescent = [&] (auto ascentAndDescent, bool applyLegacyRounding = true) {
@@ -304,9 +357,13 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
 
     if (inlineLevelBox.isInlineBox()) {
         setLayoutBoundsForInlineBox(inlineLevelBox, lineBox.baselineType());
-        auto ascentAndDescent = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType());
+        auto ascentAndDescent = computedAsentAndDescentForInlineBox(inlineLevelBox, lineBox.baselineType());
         setAscentAndDescent(ascentAndDescent);
         inlineLevelBox.setLogicalHeight(ascentAndDescent.height());
+
+        // With leading-trim, the inline box top is not always where the content starts.
+        auto fontMetricAscent = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType()).ascent;
+        inlineLevelBox.setInlineBoxContentOffsetForLeadingTrim(fontMetricAscent - ascentAndDescent.ascent);
         return;
     }
     if (inlineLevelBox.isLineBreakBox()) {
