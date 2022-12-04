@@ -4172,10 +4172,10 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
     if (typingStyle && typingStyle->style()) {
         auto value = typingStyle->style()->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (value && value->isValueList()) {
-            CSSValueList& valueList = downcast<CSSValueList>(*value);
-            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough).ptr()))
+            auto& valueList = downcast<CSSValueList>(*value);
+            if (valueList.hasValue(CSSValueLineThrough))
                 attributes.hasStrikeThrough = true;
-            if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline).ptr()))
+            if (valueList.hasValue(CSSValueUnderline))
                 attributes.hasUnderline = true;
         }
     } else {

@@ -2271,8 +2271,8 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             HashSet<CSSPropertyID> explicitZeroProperties;
             HashSet<CSSPropertyID> explicitOneProperties;
             auto styleProperties = keyframe.style;
-            for (unsigned i = 0; i < styleProperties->propertyCount(); ++i) {
-                auto property = styleProperties->propertyAt(i).id();
+            for (auto propertyReference : styleProperties.get()) {
+                auto property = propertyReference.id();
                 // All properties may end up being implicit.
                 implicitProperties.add(property);
                 if (!keyframe.computedOffset)
@@ -2324,9 +2324,8 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
             if (keyframe.composite != CompositeOperationOrAuto::Add && keyframe.composite != CompositeOperationOrAuto::Accumulate)
                 continue;
             auto styleProperties = keyframe.style;
-            for (unsigned i = 0; i < styleProperties->propertyCount(); ++i) {
-                auto property = styleProperties->propertyAt(i).id();
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property))
+            for (auto property : styleProperties.get()) {
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property.id()))
                     return true;
             }
         }

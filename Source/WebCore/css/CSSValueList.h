@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "CSSValueKeywords.h"
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
@@ -44,6 +45,8 @@ public:
         return adoptRef(*new CSSValueList(SlashSeparator));
     }
 
+    Ref<CSSValueList> copy();
+
     size_t length() const { return m_values.size(); }
     CSSValue* item(size_t index) { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
     const CSSValue* item(size_t index) const { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
@@ -58,9 +61,10 @@ public:
 
     void append(Ref<CSSValue>&&);
     void prepend(Ref<CSSValue>&&);
-    bool removeAll(CSSValue*);
-    bool hasValue(CSSValue*) const;
-    Ref<CSSValueList> copy();
+    bool removeAll(CSSValue&);
+    bool removeAll(CSSValueID);
+    bool hasValue(CSSValue&) const;
+    bool hasValue(CSSValueID) const;
 
     String customCSSText() const;
     bool equals(const CSSValueList&) const;

@@ -152,8 +152,8 @@ void PropertySetCSSStyleDeclaration::deref()
 unsigned PropertySetCSSStyleDeclaration::length() const
 {
     unsigned exposed = 0;
-    for (unsigned i = 0; i < m_propertySet->propertyCount(); i++) {
-        if (isExposed(m_propertySet->propertyAt(i).id()))
+    for (auto property : *m_propertySet) {
+        if (isExposed(property.id()))
             exposed++;
     }
     return exposed;

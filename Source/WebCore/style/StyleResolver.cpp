@@ -276,10 +276,8 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
 std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, KeyframeValue& keyframeValue)
 {
     // Add all the animating properties to the keyframe.
-    unsigned propertyCount = keyframe.properties().propertyCount();
     bool hasRevert = false;
-    for (unsigned i = 0; i < propertyCount; ++i) {
-        auto propertyReference = keyframe.properties().propertyAt(i);
+    for (auto propertyReference : keyframe.properties()) {
         auto unresolvedProperty = propertyReference.id();
         auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
         // The animation-composition and animation-timing-function within keyframes are special

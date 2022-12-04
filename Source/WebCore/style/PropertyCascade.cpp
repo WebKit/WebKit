@@ -185,13 +185,10 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
     if (m_maximumCascadeLayerPriorityForRollback && !includePropertiesForRollback())
         return false;
 
-    auto& styleProperties = *matchedProperties.properties;
     auto propertyAllowlist = matchedProperties.allowlistType;
     bool hasImportantProperties = false;
 
-    for (unsigned i = 0, count = styleProperties.propertyCount(); i < count; ++i) {
-        auto current = styleProperties.propertyAt(i);
-
+    for (auto current : *matchedProperties.properties) {
         if (current.isImportant())
             hasImportantProperties = true;
         if (important != current.isImportant())
@@ -203,7 +200,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
             ASSERT(!current.value()->isInheritValue());
             continue;
         }
-        CSSPropertyID propertyID = current.id();
+        auto propertyID = current.id();
 
 #if ENABLE(VIDEO)
         if (propertyAllowlist == PropertyAllowlist::Cue && !isValidCueStyleProperty(propertyID))
@@ -243,8 +240,8 @@ bool PropertyCascade::addNormalMatches(CascadeLevel cascadeLevel)
 
 static bool hasImportantProperties(const StyleProperties& properties)
 {
-    for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
-        if (properties.propertyAt(i).isImportant())
+    for (auto property : properties) {
+        if (property.isImportant())
             return true;
     }
     return false;

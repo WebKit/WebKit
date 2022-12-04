@@ -96,8 +96,8 @@ String StyleRuleKeyframe::cssText() const
 
 bool StyleRuleKeyframe::containsCSSVariableReferences() const
 {
-    for (unsigned i = 0; i < m_properties->propertyCount(); ++i) {
-        if (auto* cssValue = m_properties->propertyAt(i).value()) {
+    for (auto property : m_properties.get()) {
+        if (auto* cssValue = property.value()) {
             if (cssValue->hasVariableReferences())
                 return true;
         }
