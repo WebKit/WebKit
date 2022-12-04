@@ -2181,7 +2181,7 @@ public:
     void compareFloatingPointVector(DoubleCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        (void) left; (void) right; (void) dest;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
 
         switch (cond) {
         case DoubleEqualAndOrdered:
@@ -2206,7 +2206,7 @@ public:
     void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        (void) left; (void) right; (void) dest;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
 
         switch (cond) {
         case Equal:
@@ -2241,67 +2241,67 @@ public:
     void compareIntegerVectorWithZero(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID vector, FPRegisterID dest) 
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        (void) cond; (void) vector; (void) dest;
+        UNUSED_PARAM(cond); UNUSED_PARAM(vector); UNUSED_PARAM(dest);
     }
 
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            (void) left;
+            UNUSED_PARAM(left);
         else
-            (void) left;
-        (void) left; (void) right; (void) dest;
+            UNUSED_PARAM(left);
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
     }
 
     void vectorSub(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            (void) left;
+            UNUSED_PARAM(left);
         else
-            (void) left;
-        (void) left; (void) right; (void) dest;
+            UNUSED_PARAM(left);
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
     }
 
     void vectorMul(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            (void) left;
+            UNUSED_PARAM(left);
         else
-            (void) left;
-        (void) left; (void) right; (void) dest;
+            UNUSED_PARAM(left);
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
     }
 
     void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        (void) left; (void) right; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorMax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        (void) right; (void) dest;
+        UNUSED_PARAM(right); UNUSED_PARAM(dest);
         if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            (void) left;
+            UNUSED_PARAM(left);
         else {
             ASSERT(simdInfo.signMode != SIMDSignMode::None);
             if (simdInfo.signMode == SIMDSignMode::Signed)
-                (void) left;
+                UNUSED_PARAM(left);
             else
-                (void) left;
+                UNUSED_PARAM(left);
         }
     }
 
     void vectorMin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        (void) right; (void) dest;
+        UNUSED_PARAM(right); UNUSED_PARAM(dest);
         if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            (void) left;
+            UNUSED_PARAM(left);
         else {
             ASSERT(simdInfo.signMode != SIMDSignMode::None);
             if (simdInfo.signMode == SIMDSignMode::Signed)
-                (void) left;
+                UNUSED_PARAM(left);
             else
-                (void) left;
+                UNUSED_PARAM(left);
         }
     }
 
@@ -2309,91 +2309,91 @@ public:
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         // right > left, dest = left
-        (void) left; (void) right; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorPmax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         // left > right, dest = left
-        (void) left; (void) right; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorBitwiseSelect(FPRegisterID left, FPRegisterID right, FPRegisterID inputBitsAndDest)
     {
-        (void) left; (void) right; (void) inputBitsAndDest;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(inputBitsAndDest);
     }
 
     void vectorNot(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        (void) input; (void) dest;
+        UNUSED_PARAM(input); UNUSED_PARAM(dest);
     }
 
     void vectorAnd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        (void) left; (void) right; (void) dest;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
     }
 
     void vectorAndnot(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        (void) left; (void) right; (void) dest;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
     }
 
     void vectorOr(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        (void) left; (void) right; (void) dest;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
     }
 
     void vectorXor(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        (void) left; (void) right; (void) dest;
+        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
     }
 
     void vectorAbs(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            (void) dest;
+            UNUSED_PARAM(dest);
         else
-            (void) dest;
-        (void) input;
+            UNUSED_PARAM(dest);
+        UNUSED_PARAM(input);
     }
 
     void vectorNeg(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            (void) dest;
+            UNUSED_PARAM(dest);
         else
-            (void) dest;
-        (void) input;
+            UNUSED_PARAM(dest);
+        UNUSED_PARAM(input);
     }
 
     void vectorPopcnt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT(simdInfo.lane == SIMDLane::i8x16);
-        (void) input; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        (void) input; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        (void) input; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        (void) input; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorTruncSat(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
@@ -2408,13 +2408,13 @@ public:
     void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        (void) input; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorSqrt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        (void) input; (void) dest; (void) simdInfo;
+        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     void vectorExtendLow(SIMDInfo, FPRegisterID, FPRegisterID)
@@ -2548,15 +2548,15 @@ public:
     void vectorLoad32Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
     void vectorLoad64Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
 
-    void vectorAnyTrue(FPRegisterID vec, RegisterID dest) { (void) vec; (void) dest; }
-    void vectorAllTrue(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { (void) simdInfo, (void) vec; (void) dest; }
-    void vectorBitmask(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { (void) simdInfo, (void) vec; (void) dest; }
-    void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest) { (void) simdInfo, (void) vec; (void) dest; }
-    void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) simdInfo, (void) a; (void) b; (void) dest; }
-    void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) a; (void) b; (void) dest; }
-    void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID) { (void) a; (void) b; (void) dest; }
-    void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) a; (void) b; (void) dest; }
-    void vectorShuffle(TrustedImm64 immLow, TrustedImm64 immHigh, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) immLow; (void) immHigh; (void) a; (void) b; (void) dest; }
+    void vectorAnyTrue(FPRegisterID vec, RegisterID dest) { UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
+    void vectorAllTrue(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
+    void vectorBitmask(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
+    void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
+    void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
+    void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
+    void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID) { UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
+    void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
+    void vectorShuffle(TrustedImm64 immLow, TrustedImm64 immHigh, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(immLow); UNUSED_PARAM(immHigh); UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
 
     // Misc helper functions.
 
