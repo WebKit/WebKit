@@ -4403,8 +4403,6 @@ webkit.org/b/234706 imported/w3c/web-platform-tests/css/css-writing-modes/text-c
 webkit.org/b/234706 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-001.html [ ImageOnlyFailure ]
 webkit.org/b/234706 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-value-digits4-002.html [ ImageOnlyFailure ]
 webkit.org/b/234705 imported/w3c/web-platform-tests/css/css-pseudo/marker-text-combine-upright.html [ ImageOnlyFailure ]
-webkit.org/b/234761 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-break-inside-001.html [ ImageOnlyFailure ]
-webkit.org/b/234761 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-break-inside-001a.html [ ImageOnlyFailure ]
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-compression-001.html [ ImageOnlyFailure ]
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-compression-002.html [ ImageOnlyFailure ]
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-compression-003.html [ ImageOnlyFailure ]
