@@ -58,6 +58,12 @@
 		1C4FAE8228FC7E6900FFE212 /* ipred_prepare_tmpl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAD3C28FC71B900FFE212 /* ipred_prepare_tmpl.c */; };
 		1C4FAE8328FC7E6900FFE212 /* loopfilter_tmpl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAD2928FC71B900FFE212 /* loopfilter_tmpl.c */; };
 		1C4FAE8428FC7E6900FFE212 /* cdef_tmpl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAD0D28FC71B900FFE212 /* cdef_tmpl.c */; };
+		410B38F0292CBFA50003E515 /* dav1d.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FACFD28FC714500FFE212 /* dav1d.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B38F1292CBFE30003E515 /* picture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FACF728FC714500FFE212 /* picture.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B38F2292CBFEC0003E515 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FACFC28FC714500FFE212 /* common.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B38F3292CBFF10003E515 /* data.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FACF928FC714500FFE212 /* data.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B38F4292CC0150003E515 /* headers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FACFA28FC714500FFE212 /* headers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B38F5292CC02C0003E515 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4FAE4628FC77AF00FFE212 /* version.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,7 +102,7 @@
 		1C4FACF728FC714500FFE212 /* picture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = picture.h; sourceTree = "<group>"; };
 		1C4FACF828FC714500FFE212 /* version.h.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = version.h.in; sourceTree = "<group>"; };
 		1C4FACF928FC714500FFE212 /* data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data.h; sourceTree = "<group>"; };
-		1C4FACFA28FC714500FFE212 /* headers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = headers.h; sourceTree = "<group>"; };
+		1C4FACFA28FC714500FFE212 /* headers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = headers.h; sourceTree = "<group>"; wrapsLines = 0; };
 		1C4FACFB28FC714500FFE212 /* meson.build */ = {isa = PBXFileReference; lastKnownFileType = text; path = meson.build; sourceTree = "<group>"; };
 		1C4FACFC28FC714500FFE212 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		1C4FACFD28FC714500FFE212 /* dav1d.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dav1d.h; sourceTree = "<group>"; };
@@ -972,6 +978,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				410B38F2292CBFEC0003E515 /* common.h in Headers */,
+				410B38F3292CBFF10003E515 /* data.h in Headers */,
+				410B38F0292CBFA50003E515 /* dav1d.h in Headers */,
+				410B38F4292CC0150003E515 /* headers.h in Headers */,
+				410B38F1292CBFE30003E515 /* picture.h in Headers */,
+				410B38F5292CC02C0003E515 /* version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -476,6 +476,29 @@
 		410B38E8292BAA610003E515 /* sad_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 410B35A0292B6E730003E515 /* sad_neon.c */; };
 		410B38E9292BAA610003E515 /* transpose_neon.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B35A1292B6E740003E515 /* transpose_neon.h */; };
 		410B38EB292BAAF20003E515 /* arm_cpudetect.c in Sources */ = {isa = PBXBuildFile; fileRef = 410B38EA292BAAF10003E515 /* arm_cpudetect.c */; };
+		410B3913292CC1800003E515 /* compare_row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FC292CC1700003E515 /* compare_row.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3914292CC1800003E515 /* basic_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FD292CC1700003E515 /* basic_types.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3915292CC1800003E515 /* loongson_intrinsics.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FE292CC1700003E515 /* loongson_intrinsics.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3916292CC1800003E515 /* macros_msa.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FF292CC1710003E515 /* macros_msa.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3917292CC1800003E515 /* scale_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3900292CC1710003E515 /* scale_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3918292CC1800003E515 /* scale_uv.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3901292CC1710003E515 /* scale_uv.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3919292CC1800003E515 /* scale_row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3902292CC1720003E515 /* scale_row.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B391A292CC1800003E515 /* compare.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3903292CC1730003E515 /* compare.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B391B292CC1800003E515 /* video_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3904292CC1730003E515 /* video_common.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B391C292CC1800003E515 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3905292CC1740003E515 /* version.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B391D292CC1800003E515 /* convert_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3906292CC1750003E515 /* convert_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B391E292CC1800003E515 /* rotate_row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3907292CC1760003E515 /* rotate_row.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B391F292CC1800003E515 /* convert_from.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3908292CC1770003E515 /* convert_from.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3920292CC1800003E515 /* rotate.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3909292CC1770003E515 /* rotate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3921292CC1800003E515 /* mjpeg_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390A292CC1780003E515 /* mjpeg_decoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3922292CC1800003E515 /* convert_from_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390B292CC1780003E515 /* convert_from_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3923292CC1800003E515 /* convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390C292CC1790003E515 /* convert.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3924292CC1800003E515 /* scale_rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390D292CC1790003E515 /* scale_rgb.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3925292CC1800003E515 /* scale.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390E292CC17A0003E515 /* scale.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3926292CC1800003E515 /* cpu_id.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390F292CC17B0003E515 /* cpu_id.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3927292CC1800003E515 /* planar_functions.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3910292CC17C0003E515 /* planar_functions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3928292CC1800003E515 /* row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3911292CC17E0003E515 /* row.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		410B3929292CC1800003E515 /* rotate_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3912292CC17E0003E515 /* rotate_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		410BA1232570F60C002E2F8A /* deprecated_rtp_sender_egress.cc in Sources */ = {isa = PBXBuildFile; fileRef = 410BA1212570F60C002E2F8A /* deprecated_rtp_sender_egress.cc */; };
 		410BA1242570F60C002E2F8A /* deprecated_rtp_sender_egress.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA1222570F60C002E2F8A /* deprecated_rtp_sender_egress.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		410BA1292570F6A5002E2F8A /* libaom_av1_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA1272570F6A5002E2F8A /* libaom_av1_decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2454,13 +2477,13 @@
 		41B675C2216599A80040A75D /* highbd_quantize_intrin_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 41C62912212E2DE4002313D4 /* highbd_quantize_intrin_sse2.c */; };
 		41B675C3216599A80040A75D /* highbd_variance_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 41C62916212E2DE6002313D4 /* highbd_variance_sse2.c */; };
 		41B8D76428C8875200E5FA37 /* i210_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41B8D75C28C8874D00E5FA37 /* i210_buffer.cc */; };
-		41B8D76528C8875200E5FA37 /* i422_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D75D28C8874E00E5FA37 /* i422_buffer.h */; };
+		41B8D76528C8875200E5FA37 /* i422_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D75D28C8874E00E5FA37 /* i422_buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41B8D76628C8875200E5FA37 /* i422_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41B8D75E28C8874E00E5FA37 /* i422_buffer.cc */; };
 		41B8D76728C8875200E5FA37 /* frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D75F28C8874F00E5FA37 /* frame_buffer.h */; };
-		41B8D76828C8875200E5FA37 /* i210_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D76028C8874F00E5FA37 /* i210_buffer.h */; };
+		41B8D76828C8875200E5FA37 /* i210_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D76028C8874F00E5FA37 /* i210_buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41B8D76928C8875200E5FA37 /* frame_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41B8D76128C8874F00E5FA37 /* frame_buffer.cc */; };
 		41B8D76A28C8875200E5FA37 /* i444_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41B8D76228C8875100E5FA37 /* i444_buffer.cc */; };
-		41B8D76B28C8875200E5FA37 /* i444_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D76328C8875200E5FA37 /* i444_buffer.h */; };
+		41B8D76B28C8875200E5FA37 /* i444_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D76328C8875200E5FA37 /* i444_buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41B8D77328C887DF00E5FA37 /* rtc_event_field_encoding_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41B8D76C28C887DD00E5FA37 /* rtc_event_field_encoding_parser.cc */; };
 		41B8D77428C887DF00E5FA37 /* rtc_event_end_log.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8D76D28C887DD00E5FA37 /* rtc_event_end_log.h */; };
 		41B8D77528C887DF00E5FA37 /* rtc_event_field_extraction.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41B8D76E28C887DE00E5FA37 /* rtc_event_field_extraction.cc */; };
@@ -5084,6 +5107,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
+		410B392C292CC6890003E515 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*/libyuv/include/libyuv/*.h";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(HEADER_OUTPUT_DIR)/libyuv/$(INPUT_FILE_NAME)",
+			);
+			script = "# Type a script or drag a script file from your workspace to insert its path.\ncp -f \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
 		41CB0A57215C8E060097B8AA /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -6113,6 +6149,30 @@
 		410B38C8292BAA4D0003E515 /* av1_fwd_txfm2d_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = av1_fwd_txfm2d_neon.c; path = neon/av1_fwd_txfm2d_neon.c; sourceTree = "<group>"; };
 		410B38C9292BAA4F0003E515 /* encodetxb_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = encodetxb_neon.c; path = neon/encodetxb_neon.c; sourceTree = "<group>"; };
 		410B38EA292BAAF10003E515 /* arm_cpudetect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_cpudetect.c; sourceTree = "<group>"; };
+		410B38F7292CC0B40003E515 /* libyuv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libyuv.h; sourceTree = "<group>"; };
+		410B38FC292CC1700003E515 /* compare_row.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compare_row.h; sourceTree = "<group>"; };
+		410B38FD292CC1700003E515 /* basic_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = basic_types.h; sourceTree = "<group>"; };
+		410B38FE292CC1700003E515 /* loongson_intrinsics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loongson_intrinsics.h; sourceTree = "<group>"; };
+		410B38FF292CC1710003E515 /* macros_msa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros_msa.h; sourceTree = "<group>"; };
+		410B3900292CC1710003E515 /* scale_argb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale_argb.h; sourceTree = "<group>"; };
+		410B3901292CC1710003E515 /* scale_uv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale_uv.h; sourceTree = "<group>"; };
+		410B3902292CC1720003E515 /* scale_row.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale_row.h; sourceTree = "<group>"; };
+		410B3903292CC1730003E515 /* compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compare.h; sourceTree = "<group>"; };
+		410B3904292CC1730003E515 /* video_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_common.h; sourceTree = "<group>"; };
+		410B3905292CC1740003E515 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		410B3906292CC1750003E515 /* convert_argb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convert_argb.h; sourceTree = "<group>"; };
+		410B3907292CC1760003E515 /* rotate_row.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rotate_row.h; sourceTree = "<group>"; };
+		410B3908292CC1770003E515 /* convert_from.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convert_from.h; sourceTree = "<group>"; };
+		410B3909292CC1770003E515 /* rotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rotate.h; sourceTree = "<group>"; };
+		410B390A292CC1780003E515 /* mjpeg_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mjpeg_decoder.h; sourceTree = "<group>"; };
+		410B390B292CC1780003E515 /* convert_from_argb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convert_from_argb.h; sourceTree = "<group>"; };
+		410B390C292CC1790003E515 /* convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convert.h; sourceTree = "<group>"; };
+		410B390D292CC1790003E515 /* scale_rgb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale_rgb.h; sourceTree = "<group>"; };
+		410B390E292CC17A0003E515 /* scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale.h; sourceTree = "<group>"; };
+		410B390F292CC17B0003E515 /* cpu_id.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpu_id.h; sourceTree = "<group>"; };
+		410B3910292CC17C0003E515 /* planar_functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = planar_functions.h; sourceTree = "<group>"; };
+		410B3911292CC17E0003E515 /* row.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = row.h; sourceTree = "<group>"; };
+		410B3912292CC17E0003E515 /* rotate_argb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rotate_argb.h; sourceTree = "<group>"; };
 		410BA1212570F60C002E2F8A /* deprecated_rtp_sender_egress.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = deprecated_rtp_sender_egress.cc; sourceTree = "<group>"; };
 		410BA1222570F60C002E2F8A /* deprecated_rtp_sender_egress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deprecated_rtp_sender_egress.h; sourceTree = "<group>"; };
 		410BA1262570F6A5002E2F8A /* libaom_av1_decoder_absent.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libaom_av1_decoder_absent.cc; sourceTree = "<group>"; };
@@ -11863,6 +11923,45 @@
 			path = common;
 			sourceTree = "<group>";
 		};
+		410B38F6292CC0950003E515 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				410B38FB292CC1460003E515 /* libyuv */,
+				410B38F7292CC0B40003E515 /* libyuv.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		410B38FB292CC1460003E515 /* libyuv */ = {
+			isa = PBXGroup;
+			children = (
+				410B38FD292CC1700003E515 /* basic_types.h */,
+				410B3903292CC1730003E515 /* compare.h */,
+				410B38FC292CC1700003E515 /* compare_row.h */,
+				410B390C292CC1790003E515 /* convert.h */,
+				410B3906292CC1750003E515 /* convert_argb.h */,
+				410B3908292CC1770003E515 /* convert_from.h */,
+				410B390B292CC1780003E515 /* convert_from_argb.h */,
+				410B390F292CC17B0003E515 /* cpu_id.h */,
+				410B38FE292CC1700003E515 /* loongson_intrinsics.h */,
+				410B38FF292CC1710003E515 /* macros_msa.h */,
+				410B390A292CC1780003E515 /* mjpeg_decoder.h */,
+				410B3910292CC17C0003E515 /* planar_functions.h */,
+				410B3909292CC1770003E515 /* rotate.h */,
+				410B3912292CC17E0003E515 /* rotate_argb.h */,
+				410B3907292CC1760003E515 /* rotate_row.h */,
+				410B3911292CC17E0003E515 /* row.h */,
+				410B390E292CC17A0003E515 /* scale.h */,
+				410B3900292CC1710003E515 /* scale_argb.h */,
+				410B390D292CC1790003E515 /* scale_rgb.h */,
+				410B3902292CC1720003E515 /* scale_row.h */,
+				410B3901292CC1710003E515 /* scale_uv.h */,
+				410B3905292CC1740003E515 /* version.h */,
+				410B3904292CC1730003E515 /* video_common.h */,
+			);
+			path = libyuv;
+			sourceTree = "<group>";
+		};
 		410BA1252570F67B002E2F8A /* av1 */ = {
 			isa = PBXGroup;
 			children = (
@@ -16696,6 +16795,7 @@
 		5C4B4D2D1E4323AA002651C8 /* libyuv */ = {
 			isa = PBXGroup;
 			children = (
+				410B38F6292CC0950003E515 /* include */,
 				5C4B4D2E1E4323C4002651C8 /* source */,
 			);
 			path = libyuv;
@@ -19863,6 +19963,29 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				410B3914292CC1800003E515 /* basic_types.h in Headers */,
+				410B391A292CC1800003E515 /* compare.h in Headers */,
+				410B3913292CC1800003E515 /* compare_row.h in Headers */,
+				410B3923292CC1800003E515 /* convert.h in Headers */,
+				410B391D292CC1800003E515 /* convert_argb.h in Headers */,
+				410B391F292CC1800003E515 /* convert_from.h in Headers */,
+				410B3922292CC1800003E515 /* convert_from_argb.h in Headers */,
+				410B3926292CC1800003E515 /* cpu_id.h in Headers */,
+				410B3915292CC1800003E515 /* loongson_intrinsics.h in Headers */,
+				410B3916292CC1800003E515 /* macros_msa.h in Headers */,
+				410B3921292CC1800003E515 /* mjpeg_decoder.h in Headers */,
+				410B3927292CC1800003E515 /* planar_functions.h in Headers */,
+				410B3920292CC1800003E515 /* rotate.h in Headers */,
+				410B3929292CC1800003E515 /* rotate_argb.h in Headers */,
+				410B391E292CC1800003E515 /* rotate_row.h in Headers */,
+				410B3928292CC1800003E515 /* row.h in Headers */,
+				410B3925292CC1800003E515 /* scale.h in Headers */,
+				410B3917292CC1800003E515 /* scale_argb.h in Headers */,
+				410B3924292CC1800003E515 /* scale_rgb.h in Headers */,
+				410B3919292CC1800003E515 /* scale_row.h in Headers */,
+				410B3918292CC1800003E515 /* scale_uv.h in Headers */,
+				410B391C292CC1800003E515 /* version.h in Headers */,
+				410B391B292CC1800003E515 /* video_common.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22484,12 +22607,14 @@
 			buildConfigurationList = 5C0884DA1E4A980100403995 /* Build configuration list for PBXNativeTarget "yuv" */;
 			buildPhases = (
 				5C0884D51E4A980100403995 /* Headers */,
+				410B392B292CC3F30003E515 /* (Legacy) Nest Headers */,
 				5C0884D61E4A980100403995 /* Sources */,
 				5C0884D71E4A980100403995 /* Frameworks */,
 				5C0884D81E4A980100403995 /* CopyFiles */,
 				5C0884D91E4A980100403995 /* CopyFiles */,
 			);
 			buildRules = (
+				410B392C292CC6890003E515 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -22683,6 +22808,24 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		410B392B292CC3F30003E515 /* (Legacy) Nest Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "(Legacy) Nest Headers";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyNestHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" -UseNewBuildSystem=YES\n";
+		};
 		41F2354122F39AC000B4FCDB /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

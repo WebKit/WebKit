@@ -45,11 +45,15 @@ namespace webrtc {
 struct SdpVideoFormat;
 class VideoDecoderFactory;
 
-using WebKitVideoDecoder = void*;
+struct WebKitVideoDecoder {
+    using Value = void*;
+    Value value { nullptr };
+    bool isWebRTCVideoDecoder { false };
+};
 using VideoDecoderCreateCallback = WebKitVideoDecoder(*)(const SdpVideoFormat& format);
-using VideoDecoderReleaseCallback = int32_t(*)(WebKitVideoDecoder);
-using VideoDecoderDecodeCallback = int32_t(*)(WebKitVideoDecoder, uint32_t timeStamp, const uint8_t*, size_t length, uint16_t width, uint16_t height);
-using VideoDecoderRegisterDecodeCompleteCallback = int32_t(*)(WebKitVideoDecoder, void* decodedImageCallback);
+using VideoDecoderReleaseCallback = int32_t(*)(WebKitVideoDecoder::Value);
+using VideoDecoderDecodeCallback = int32_t(*)(WebKitVideoDecoder::Value, uint32_t timeStamp, const uint8_t*, size_t length, uint16_t width, uint16_t height);
+using VideoDecoderRegisterDecodeCompleteCallback = int32_t(*)(WebKitVideoDecoder::Value, void* decodedImageCallback);
 
 void setVideoDecoderCallbacks(VideoDecoderCreateCallback, VideoDecoderReleaseCallback, VideoDecoderDecodeCallback, VideoDecoderRegisterDecodeCompleteCallback);
 
