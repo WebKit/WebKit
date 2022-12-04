@@ -211,8 +211,10 @@ static AscentAndDescent primaryFontMetricsForInlineBox(const InlineLevelBox& inl
     return { ascent, descent };
 }
 
-static bool isTextEdgeLeading(TextEdge textEdge)
+static bool isTextEdgeLeading(const InlineLevelBox& inlineBox)
 {
+    ASSERT(inlineBox.isInlineBox());
+    auto textEdge = inlineBox.textEdge();
     ASSERT(textEdge.over != TextEdgeType::Leading || textEdge.under == TextEdgeType::Leading);
     return textEdge.over == TextEdgeType::Leading;
 }
@@ -259,7 +261,6 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
             return fontMetrics.descent(fontBaseline);
         }
     }();
-    auto shouldIncorporateHalfLeading = inlineBox.isRootInlineBox() || isTextEdgeLeading(inlineBox.textEdge());
 
     if (!inlineBox.isPreferredLineHeightFontMetricsBased()) {
         // https://www.w3.org/TR/css-inline-3/#inline-height
@@ -267,7 +268,7 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
         // Half the leading (its half-leading) is added above A, and the other half below D,
         // giving an effective ascent above the baseline of A′ = A + L/2, and an effective descent of D′ = D + L/2.
         auto halfLeading = (inlineBox.preferredLineHeight() - (ascent + descent)) / 2;
-        if (!shouldIncorporateHalfLeading) {
+        if (!isTextEdgeLeading(inlineBox) && !inlineBox.isRootInlineBox()) {
             // However, if text-edge is not leading and this is not the root inline box, if the half-leading is positive, treat it as zero.
             halfLeading = std::min(halfLeading, 0.f);
         }
@@ -277,6 +278,7 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
         // https://www.w3.org/TR/css-inline-3/#inline-height
         // If line-height computes to normal and either text-edge is leading or this is the root inline box,
         // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
+        auto shouldIncorporateHalfLeading = inlineBox.isRootInlineBox() || isTextEdgeLeading(inlineBox);
         if (shouldIncorporateHalfLeading) {
             InlineLayoutUnit lineGap = inlineBox.primarymetricsOfPrimaryFont().lineSpacing();
             auto halfLeading = (lineGap - (ascent + descent)) / 2;
@@ -284,7 +286,7 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
             descent += halfLeading;
         }
     }
-    if (!shouldIncorporateHalfLeading) {
+    if (!isTextEdgeLeading(inlineBox) && !inlineBox.isRootInlineBox()) {
         // Additionally, when text-edge is not leading, the layout bounds are inflated by the sum of the margin,
         // border, and padding on each side.
         ASSERT(!inlineBox.isRootInlineBox());
