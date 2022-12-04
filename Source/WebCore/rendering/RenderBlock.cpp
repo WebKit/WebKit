@@ -2033,6 +2033,19 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPo
 
 Node* RenderBlock::nodeForHitTest() const
 {
+    // If we're a ::backdrop pseudo-element, we should hit-test to the element that generated it.
+    // This matches the behavior that other browsers have.
+    if (style().styleType() == PseudoId::Backdrop) {
+        for (auto& element : document().topLayerElements()) {
+            if (!element->renderer())
+                continue;
+            ASSERT(element->renderer()->backdropRenderer());
+            if (element->renderer()->backdropRenderer() == this)
+                return element.ptr();
+        }
+        ASSERT_NOT_REACHED();
+    }
+
     // If we are in the margins of block elements that are part of a
     // continuation we're actually still inside the enclosing element
     // that was split. Use the appropriate inner node.
