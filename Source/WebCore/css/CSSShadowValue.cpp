@@ -41,8 +41,11 @@ String CSSShadowValue::customCSSText() const
 {
     StringBuilder text;
 
-    if (color)
+    if (color) {
+        if (!text.isEmpty())
+            text.append(' ');
         text.append(color->cssText());
+    }
     if (x) {
         if (!text.isEmpty())
             text.append(' ');
