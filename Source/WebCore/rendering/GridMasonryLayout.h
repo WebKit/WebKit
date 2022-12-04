@@ -38,13 +38,14 @@ public:
     {
     }
 
-    void performMasonryPlacement(const HashMap<RenderBox*, GridArea>& firstTrackItems, const Vector<RenderBox*> itemsWithDefiniteGridAxisPosition, const Vector<RenderBox*> itemsWithIndefinitePosition, GridTrackSizingDirection masonryAxisDirection);
+    void performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
     LayoutUnit offsetForChild(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
 private:
 
     GridArea nextMasonryPositionForItem(const RenderBox* item);
 
+    void collectMasonryItems();
     void addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>& firstTrackItems); 
     void placeItemsWithDefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithDefinitePosition);
     void placeItemsWithIndefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithIndefinitePosition);
@@ -52,20 +53,34 @@ private:
     void insertIntoGridAndLayoutItem(RenderBox*, const GridArea&);
 
     void resizeAndResetRunningPositions();
+    void allocateCapacityForMasonryVectors();
     LayoutUnit masonryAxisMarginBoxForItem(const RenderBox* child);
     void updateRunningPositions(const RenderBox* child, const GridArea&);
     void updateItemOffset(const RenderBox* child, LayoutUnit offset);
+    inline GridTrackSizingDirection gridAxisDirection() const;
+
+    bool hasDefiniteGridAxisPosition(const RenderBox* child, GridTrackSizingDirection masonryDirection) const;
+    static bool itemGridAreaStartsAtFirstLine(const GridArea& area, GridTrackSizingDirection masonryDirection)
+    {
+        return !(masonryDirection == ForRows ? area.rows.startLine() : area.columns.startLine());
+    }
 
     unsigned m_gridAxisTracksCount;
+
+    HashMap<RenderBox*, GridArea> m_firstTrackItems;
+    Vector<RenderBox*> m_itemsWithDefiniteGridAxisPosition;
+    Vector<RenderBox*> m_itemsWithIndefiniteGridAxisPosition;
+
     Vector<LayoutUnit> m_runningPositions;
     HashMap<const RenderBox*, LayoutUnit> m_itemOffsets;
     RenderGrid& m_renderGrid;
     LayoutUnit m_masonryAxisGridGap;
     LayoutUnit m_gridContentSize;
 
-    const GridSpan m_masonryAxisSpan = GridSpan::masonryAxisTranslatedDefiniteGridSpan();
     GridTrackSizingDirection m_masonryAxisDirection;
-    GridTrackSizingDirection m_gridAxisDirection;
+    const GridSpan m_masonryAxisSpan = GridSpan::masonryAxisTranslatedDefiniteGridSpan();
+    const unsigned m_masonryDefiniteItemsQuarterCapacity = 4;
+    const unsigned m_masonryIndefiniteItemsHalfCapacity = 2;
 };
 
 } // end namespace WebCore

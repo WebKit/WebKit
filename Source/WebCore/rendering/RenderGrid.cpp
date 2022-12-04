@@ -815,15 +815,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
         // FIXME: We should be able to short circuit the initial placement (https://bugs.webkit.org/show_bug.cgi?id=248291)
         performAutoPlacement();
-
-        HashMap<RenderBox*, GridArea> firstTrackItems;
-        Vector<RenderBox*> itemsWithDefiniteGridAxisPosition;
-        Vector<RenderBox*> itemsWithIndefinitePosition;
-
-        collectMasonryItems(currentGrid(), gridAxisTracksBeforeAutoPlacement, masonryAxisDirection, firstTrackItems, itemsWithDefiniteGridAxisPosition, itemsWithIndefinitePosition);
-        currentGrid().setupGridForMasonryLayout();
-        populateExplicitGridAndOrderIterator();
-        m_masonryLayout.performMasonryPlacement(firstTrackItems, itemsWithDefiniteGridAxisPosition, itemsWithIndefinitePosition, masonryAxisDirection);
+        m_masonryLayout.performMasonryPlacement(gridAxisTracksBeforeAutoPlacement, masonryAxisDirection);
     };
 
     if (isMasonryRows())
@@ -844,52 +836,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 #endif
 }
 
-void RenderGrid::allocateSpaceForMasonryVectors(Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition)
-{
-    auto gridCapacity = numTracks(ForRows) * numTracks(ForColumns);
-    itemsWithDefiniteGridAxisPosition.reserveInitialCapacity(gridCapacity / m_masonryDefiniteItemsQuarterCapacity);
-    itemsWithIndefinitePosition.reserveInitialCapacity(gridCapacity / m_masonryIndefiniteItemsHalfCapacity);
-}
-
 LayoutUnit RenderGrid::masonryContentSize() const
 {
     return m_masonryLayout.gridContentSize();
-}
-
-static bool itemGridAreaStartsAtFirstLine(const GridArea& area, GridTrackSizingDirection masonryDirection)
-{
-    return !(masonryDirection == ForRows ? area.rows.startLine() : area.columns.startLine());
-}
-
-bool RenderGrid::hasDefiniteGridAxisPosition(const RenderBox* child, GridTrackSizingDirection gridAxisDirection) const 
-{
-    auto itemSpan = GridPositionsResolver::resolveGridPositionsFromStyle(*this, *child, gridAxisDirection);
-    return !itemSpan.isIndefinite();
-}
-
-static bool itemGridAreaIsWithinImplicitGrid(const GridArea& area, unsigned gridAxisLinesCount, GridTrackSizingDirection gridAxisDirection)
-{
-    auto itemSpan = gridAxisDirection == ForColumns ? area.columns : area.rows;
-    return itemSpan.startLine() <  gridAxisLinesCount && itemSpan.endLine() < gridAxisLinesCount;
-}
-
-void RenderGrid::collectMasonryItems(Grid& grid, unsigned availableGridAxisTracks, GridTrackSizingDirection masonryDirection, HashMap<RenderBox*, GridArea>& itemsOnFirstTrack, Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition) const
-{
-    ASSERT(availableGridAxisTracks);
-
-    auto gridAxisDirection = masonryDirection == ForRows ? ForColumns : ForRows;
-    for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
-        if (grid.orderIterator().shouldSkipChild(*child))
-            continue;
-
-        auto gridArea = grid.gridItemArea(*child);
-        if (itemsOnFirstTrack.size() != availableGridAxisTracks && itemGridAreaStartsAtFirstLine(gridArea, masonryDirection) && itemGridAreaIsWithinImplicitGrid(gridArea, availableGridAxisTracks + 1, gridAxisDirection))
-            itemsOnFirstTrack.add(child, gridArea);
-        else if (hasDefiniteGridAxisPosition(child, gridAxisDirection))
-            itemsWithDefiniteGridAxisPosition.append(child);
-        else 
-            itemsWithIndefinitePosition.append(child);
-    }
 }
 
 void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algorithm) const

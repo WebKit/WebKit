@@ -156,9 +156,11 @@ private:
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
 
-    void allocateSpaceForMasonryVectors(Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition); 
-    void collectMasonryItems(Grid&, unsigned gridAxisTracksCount, GridTrackSizingDirection masonryDirection, HashMap<RenderBox*, GridArea>& itemsOnFirstTrack, Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition, Vector<RenderBox*>& itemsWithIndefinitePosition) const;
-    bool hasDefiniteGridAxisPosition(const RenderBox* child, GridTrackSizingDirection masonryDirection) const;
+    static bool itemGridAreaIsWithinImplicitGrid(const GridArea& area, unsigned gridAxisLinesCount, GridTrackSizingDirection gridAxisDirection)
+    {
+        auto itemSpan = gridAxisDirection == ForColumns ? area.columns : area.rows;
+        return itemSpan.startLine() <  gridAxisLinesCount && itemSpan.endLine() < gridAxisLinesCount;
+    }
 
     bool canPerformSimplifiedLayout() const final;
     void prepareChildForPositionedLayout(RenderBox&);
@@ -263,8 +265,6 @@ private:
     bool m_hasAspectRatioBlockSizeDependentItem { false };
     bool m_baselineItemsCached {false};
     bool m_hasAnyBaselineAlignmentItem { false };
-    const unsigned m_masonryDefiniteItemsQuarterCapacity = 4;
-    const unsigned m_masonryIndefiniteItemsHalfCapacity = 2;
 };
 
 } // namespace WebCore
