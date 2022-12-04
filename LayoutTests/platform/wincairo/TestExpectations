@@ -958,7 +958,6 @@ webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [
 
 http/wpt/service-workers/cors-preflight-star.any-serviceworker.html [ Failure ]
 http/wpt/service-workers/fetchEvent.https.html [ Pass Failure ]
-http/wpt/service-workers/file-upload.html [ Failure ]
 http/wpt/service-workers/mac/throttleable.https.html [ Failure ]
 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]

@@ -2157,9 +2157,6 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure Timeout ]
 
-# webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80344138>:
-[ Monterey ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
-
 # webkit.org/b/228200 Setting multiple test expectations for Monterey on OpenSource:
 [ Monterey ] model-element/model-element-graphics-layers-opacity.html [ Pass Failure ]
 [ Monterey Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure Crash ]

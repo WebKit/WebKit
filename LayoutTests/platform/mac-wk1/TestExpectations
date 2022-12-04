@@ -1049,9 +1049,6 @@ imported/w3c/web-platform-tests/dom/idlharness.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/fetch-preflight.https.sub.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/serviceworker-accessors.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/sharedworker.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/service_worker_idl.https.html [ Skip ]
 imported/w3c/web-platform-tests/push-api [ Skip ]
@@ -1494,7 +1491,6 @@ webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
-webkit.org/b/244304 pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
 # webkit.org/b/163585
 media/track/track-cues-enter-exit.html [ Pass Crash ]
