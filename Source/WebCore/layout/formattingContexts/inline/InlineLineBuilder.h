@@ -86,6 +86,12 @@ public:
         InlineLayoutUnit contentLogicalWidth { 0.f };
         InlineLayoutUnit contentLogicalRight { 0.f };
         InlineLayoutUnit hangingContentWidth { 0.f };
+        enum class FirstFormattedLine : uint8_t {
+            No,
+            WithinIFC,
+            WithinBFC
+        };
+        FirstFormattedLine isFirstFormattedLine { FirstFormattedLine::WithinIFC };
         bool isLastLineWithInlineContent { true };
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;

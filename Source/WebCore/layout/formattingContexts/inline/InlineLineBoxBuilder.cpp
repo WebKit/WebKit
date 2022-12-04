@@ -116,20 +116,21 @@ static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode t
     return { };
 }
 
-LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext)
+LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const LineBuilder::LineContent& lineContent)
     : m_inlineFormattingContext(inlineFormattingContext)
+    , m_lineContent(lineContent)
 {
 }
 
-LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
+LineBox LineBoxBuilder::build(size_t lineIndex)
 {
-    auto& rootStyle = lineIndex ? rootBox().firstLineStyle() : rootBox().style();
-    auto rootInlineBoxAlignmentOffset = valueOrDefault(Layout::horizontalAlignmentOffset(rootStyle.textAlign(), rootStyle.textAlignLast(), lineContent, lineContent.inlineBaseDirection == TextDirection::LTR));
+    auto& lineContent = this->lineContent();
+    auto rootInlineBoxAlignmentOffset = valueOrDefault(Layout::horizontalAlignmentOffset(rootStyle().textAlign(), rootStyle().textAlignLast(), lineContent, lineContent.inlineBaseDirection == TextDirection::LTR));
     // FIXME: The overflowing hanging content should be part of the ink overflow.  
     auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth - lineContent.hangingContentWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
-    constructInlineLevelBoxes(lineBox, lineContent, lineIndex);
-    adjustIdeographicBaselineIfApplicable(lineBox, lineIndex);
-    adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineContent, lineBox, lineIndex);
+    constructInlineLevelBoxes(lineBox);
+    adjustIdeographicBaselineIfApplicable(lineBox);
+    adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
     auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
     lineBox.setLogicalRect({ lineContent.lineLogicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight });
     return lineBox;
@@ -294,7 +295,7 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
     inlineBox.setLayoutBounds({ floorf(ascent), ceilf(descent) });
 }
 
-AscentAndDescent LineBoxBuilder::computedAsentAndDescentForInlineBox(InlineLevelBox& inlineBox, FontBaseline fontBaseline) const
+AscentAndDescent LineBoxBuilder::computedAsentAndDescentForInlineBox(const InlineLevelBox& inlineBox, FontBaseline fontBaseline) const
 {
     ASSERT(inlineBox.isInlineBox());
     if (inlineBox.isRootInlineBox())
@@ -418,17 +419,17 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
     ASSERT_NOT_REACHED();
 }
 
-void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuilder::LineContent& lineContent, size_t lineIndex)
+void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalPropertiesForInlineLevelBox(lineBox, rootInlineBox);
 
     auto styleToUse = [&] (const auto& layoutBox) -> const RenderStyle& {
-        return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
+        return isFirstLine() ? layoutBox.firstLineStyle() : layoutBox.style();
     };
 
     auto lineHasContent = false;
-    for (auto& run : lineContent.runs) {
+    for (auto& run : lineContent().runs) {
         auto& layoutBox = run.layoutBox();
         auto& style = styleToUse(layoutBox);
         auto runHasContent = [&] () -> bool {
@@ -486,7 +487,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
             logicalLeft += std::max(0_lu, marginStart);
             auto initialLogicalWidth = rootInlineBox.logicalWidth() - (logicalLeft - rootInlineBox.logicalLeft());
-            ASSERT(initialLogicalWidth >= 0 || lineContent.hangingContentWidth || std::isnan(initialLogicalWidth));
+            ASSERT(initialLogicalWidth >= 0 || lineContent().hangingContentWidth || std::isnan(initialLogicalWidth));
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
@@ -542,11 +543,11 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
     lineBox.setHasContent(lineHasContent);
 }
 
-void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(const LineBuilder::LineContent& lineContent, LineBox& lineBox, size_t lineIndex)
+void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox& lineBox)
 {
     // While line-box-contain normally tells whether a certain type of content should be included when computing the line box height,
     // font and Glyphs values affect the "size" of the associated inline boxes (which affects the line box height).
-    auto lineBoxContain = !lineIndex ? rootBox().firstLineStyle().lineBoxContain() : rootBox().style().lineBoxContain();
+    auto lineBoxContain = isFirstLine() ? rootBox().firstLineStyle().lineBoxContain() : rootBox().style().lineBoxContain();
 
     // Collect layout bounds based on the contain property and set them on the inline boxes when they are applicable.
     HashMap<InlineLevelBox*, TextUtil::EnclosingAscentDescent> inlineBoxBoundsMap;
@@ -596,13 +597,13 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(const L
 
     if (lineBoxContain.contains(LineBoxContain::Glyphs)) {
         // Compute text content (glyphs) hugging inline box layout bounds.
-        for (auto run : lineContent.runs) {
+        for (auto run : lineContent().runs) {
             if (!run.isText())
                 continue;
 
             auto& textBox = downcast<InlineTextBox>(run.layoutBox());
             auto textContent = run.textContent();
-            auto& style = !lineIndex ? textBox.firstLineStyle() : textBox.style();
+            auto& style = isFirstLine() ? textBox.firstLineStyle() : textBox.style();
             auto enclosingAscentDescentForRun = TextUtil::enclosingGlyphBoundsForText(StringView(textBox.content()).substring(textContent->start, textContent->length), style);
 
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(textBox.parent());
@@ -627,7 +628,7 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(const L
     }
 }
 
-void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, size_t lineIndex)
+void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
 {
     // Re-compute the ascent/descent values for the inline boxes on the line (including the root inline box)
     // when the style/content needs ideographic baseline setup in vertical writing mode.
@@ -635,7 +636,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
 
     auto lineNeedsIdeographicBaseline = [&] {
         auto styleToUse = [&] (auto& inlineLevelBox) -> const RenderStyle& {
-            return !lineIndex ? inlineLevelBox.layoutBox().firstLineStyle() : inlineLevelBox.layoutBox().style();
+            return isFirstLine() ? inlineLevelBox.layoutBox().firstLineStyle() : inlineLevelBox.layoutBox().style();
         };
         auto& rootInlineBoxStyle = styleToUse(rootInlineBox);
         if (rootInlineBoxStyle.isHorizontalWritingMode())
