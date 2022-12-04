@@ -2137,21 +2137,21 @@ public:
 
     void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
     {
-        m_assembler.pinsr(dest, src, simdLane, lane.m_value);
+        m_assembler.pinsr(simdLane, lane.m_value, src, dest);
     }
 
     void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest, RegisterID scratch)
     {
         // FIXME: Maybe we can use INSERTPS instead to get rid of the scratch register.
         moveDoubleTo64(src, scratch);
-        m_assembler.pinsr(dest, scratch, simdLane, lane.m_value);
+        m_assembler.pinsr(simdLane, lane.m_value, scratch, dest);
     }
 
     DEFINE_SIMD_FUNCS(vectorReplaceLane);
     
     void vectorExtractLane(SIMDLane simdLane, SIMDSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
     {
-        m_assembler.pextr(dest, src, simdLane, lane.m_value);
+        m_assembler.pextr(simdLane, lane.m_value, src, dest);
         if (signMode == SIMDSignMode::Signed)
             signExtendForSIMDLane(dest, simdLane);
     }
@@ -2163,13 +2163,13 @@ public:
             ASSERT(lane.m_value < 4);
             if (src != dest)
                 m_assembler.movaps_rr(src, dest);
-            m_assembler.shufps(dest, dest, lane.m_value);
+            m_assembler.shufps(lane.m_value, dest, dest);
             return;
         case SIMDLane::f64x2:
             ASSERT(lane.m_value < 2);
             if (src != dest)
                 m_assembler.movapd_rr(src, dest);
-            m_assembler.shufpd(dest, dest, lane.m_value);
+            m_assembler.shufpd(lane.m_value, dest, dest);
             return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2478,15 +2478,15 @@ public:
             m_assembler.movddup(dest, dest);
             return;
         case SIMDLane::i32x4:
-            m_assembler.shufps(dest, dest, 0);
+            m_assembler.shufps(0, dest, dest);
             return;
         case SIMDLane::i16x8:
-            m_assembler.pshuflw(dest, dest, 0);
+            m_assembler.pshuflw(0, dest, dest);
             m_assembler.punpcklqdq(dest, dest);
             return;
         case SIMDLane::i8x16:
             vectorReplaceLane(SIMDLane::i8x16, TrustedImm32(1), src, dest);
-            m_assembler.pshuflw(dest, dest, 0);
+            m_assembler.pshuflw(0, dest, dest);
             m_assembler.punpcklqdq(dest, dest);
             return;
         default:
@@ -2499,9 +2499,9 @@ public:
         switch (lane) {
         case SIMDLane::f32x4:
             if (src != dest)
-                m_assembler.pshufd(dest, src, 0);
+                m_assembler.pshufd(0, src, dest);
             else
-                m_assembler.shufps(dest, dest, 0);
+                m_assembler.shufps(0, dest, dest);
             return;
         case SIMDLane::f64x2:
             m_assembler.movddup(src, dest);
