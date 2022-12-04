@@ -72,7 +72,10 @@ AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
     auto target = SVGURIReference::targetElementFromIRIString(href, use.treeScope());
     if (!target.element)
         return nullptr;
-    return axObjectCache()->getOrCreate(target.element.get());
+
+    if (auto* cache = axObjectCache())
+        return cache->getOrCreate(target.element.get());
+    return nullptr;
 }
 
 template <typename ChildrenType>
@@ -284,6 +287,9 @@ AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
 {
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
         return m_ariaRole;
+
+    if (!m_renderer)
+        return AccessibilityRole::Unknown;
 
     Element* svgElement = element();
 
