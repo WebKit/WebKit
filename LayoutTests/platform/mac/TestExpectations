@@ -104,6 +104,9 @@ fast/images/animated-heics-draw.html [ Pass ]
 fast/images/animated-heics-verify.html [ Pass ]
 fast/images/heic-as-background-image.html [ Pass ]
 
+# Enabled in rdar://102830993
+fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Skip ]
+
 # AVIF tests
 [ Ventura+ ] fast/images/avif-heif-container-as-image.html [ Pass ]
 

@@ -1297,6 +1297,13 @@ fast/css/accent-color/text.html [ ImageOnlyFailure ]
 
 webanimations/frame-rate [ Skip ]
 
+# Enabled in rdar://102830993
+fast/images/animations-resume-from-last-displayed-frame.html [ Skip ]
+fast/images/individual-animation-toggle.html [ Skip ]
+fast/images/page-wide-animation-toggle.html [ Skip ]
+fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Skip ]
+fast/images/pagewide-play-pause-offscreen-animations.html [ Skip ]
+
 # NOTIFICATION_EVENT is Ventura+
 http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
 http/tests/workers/service/shownotification-allowed.html [ Skip ]

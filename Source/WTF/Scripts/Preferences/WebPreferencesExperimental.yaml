@@ -845,9 +845,9 @@ HighlightAPIEnabled:
 
 ImageAnimationControlEnabled:
   type: bool
-  webcoreOnChange: setImageAnimationControlEnabledChanged
   humanReadableName: "Image Animation Control Enabled"
   humanReadableDescription: "Control image animations."
+  condition: ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
   defaultValue:
     WebKitLegacy:
       default: false

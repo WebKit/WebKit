@@ -1995,13 +1995,15 @@ void Page::setLoadSchedulingMode(LoadSchedulingMode mode)
     platformStrategies()->loaderStrategy()->setResourceLoadSchedulingMode(*this, m_loadSchedulingMode);
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::setImageAnimationEnabled(bool enabled)
 {
-    if (m_imageAnimationEnabled == enabled)
+    if (m_imageAnimationEnabled == enabled || !settings().imageAnimationControlEnabled())
         return;
     m_imageAnimationEnabled = enabled;
     updatePlayStateForAllAnimations();
 }
+#endif
 
 void Page::suspendScriptedAnimations()
 {

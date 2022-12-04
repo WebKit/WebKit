@@ -1073,6 +1073,7 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
     return image && (image->isAnimating() || image->animationPending());
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Internals::setImageAnimationEnabled(bool enabled)
 {
     if (auto* page = contextDocument() ? contextDocument()->page() : nullptr)
@@ -1088,6 +1089,7 @@ void Internals::pauseImageAnimation(HTMLImageElement& element)
 {
     element.setAllowsAnimation(false);
 }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 unsigned Internals::imagePendingDecodePromisesCountForTesting(HTMLImageElement& element)
 {
