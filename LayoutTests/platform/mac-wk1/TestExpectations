@@ -2188,7 +2188,6 @@ webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 
 webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/show-modal-focusing-steps.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html [ Pass Failure ]
 
 # webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1. 
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]

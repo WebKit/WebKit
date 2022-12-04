@@ -1736,6 +1736,8 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
 
+webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
+
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]
 [ Ventura+ ] webrtc/canvas-to-peer-connection.html [ Pass Failure Timeout ]

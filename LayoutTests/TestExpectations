@@ -839,6 +839,7 @@ imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-ani
 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-transition-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-hidden-attribute.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-object.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/popups/popup-appearance.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/popups/popup-backdrop-appearance.tentative.html [ ImageOnlyFailure ] 
 imported/w3c/web-platform-tests/html/semantics/popups/popup-defaultopen-display.tentative.html [ ImageOnlyFailure ]
@@ -1000,6 +1001,9 @@ fast/dom/connected-subframe-counter-overflow.html [ Slow ]
 
 # Reenable it when having a custom gc exposed in service workers.
 [ Debug ] http/wpt/service-workers/fetchEvent.https.html [ Skip ]
+
+webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.html [ Failure ]
+webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload.https.html [ Failure ]
 
 [ Debug ] http/tests/workers/worker-messageport-2.html [ Slow ]
 
