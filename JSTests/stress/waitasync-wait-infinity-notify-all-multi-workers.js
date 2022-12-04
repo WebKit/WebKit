@@ -59,7 +59,7 @@ for (; ;) {
     var report = waitForReport();
     if (report == "done") {
         if (!--numWorkers) {
-            print("All workers done!");
+            // print("All workers done!");
             break;
         }
     } else
