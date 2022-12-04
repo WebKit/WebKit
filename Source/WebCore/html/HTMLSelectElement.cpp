@@ -5,7 +5,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -456,8 +456,10 @@ ExceptionOr<void> HTMLSelectElement::setItem(unsigned index, HTMLOptionElement* 
         return { };
     }
 
-    if (index > maxSelectItems - 1)
-        index = maxSelectItems - 1;
+    if (index >= length() && index >= maxSelectItems) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("Blocked attempt to expand the option list and set an option at index. The maximum list length is ", maxSelectItems, '.'));
+        return { };
+    }
 
     int diff = index - length();
     

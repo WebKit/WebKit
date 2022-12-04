@@ -1,28 +1,24 @@
-<p>This test that setting HTMLSelectElement.length is capped to 10,000, but that you can add additional Option elements by calling add.</p>
-<pre id="console"></pre>
+<p>This test that setting HTMLSelectElement.length is capped to 100,000, and you can't add additional Option elements too.</p>
+<div id="console"></div>
 <select id="theSelect"></select>
-
+<script src="../../resources/js-test.js"></script>
 <script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
-
-    function log(msg)
-    {
-        document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
-    }
-
     var sel = document.getElementById('theSelect');
-    log("Select length is " + sel.length);
+    shouldBe('sel.length', '0');
 
-    log("Trying: - sel.length = 20000;");
-    sel.length = 20000;
-    log("Select length is " + sel.length);
+    debug('Trying: - sel.length = 100001;');
+    sel.length = 100001;
+    shouldBe('sel.length', '0');
 
-    log("Trying: - sel.add(new Option, 0);");
+    debug('Trying: - sel.add(new Option, 0);');
     sel.add(new Option, 0);
-    log("Select length is " + sel.length);
+    shouldBe('sel.length', '1');
 
-    log("Trying: - sel.length = 0;");
+    debug('Trying: - sel.length = 0;');
     sel.length = 0;
-    log("Select length is " + sel.length);
+    shouldBe('sel.length', '0');
+
+    debug('Index setter:');
+    shouldBe('sel[100001] = new Option(); sel.length', '0');
+    shouldBe('sel.options[100001] = new Option(); sel.length', '0');
 </script>
