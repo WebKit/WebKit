@@ -1,164 +1,285 @@
 Initial gamepads length: 0
 Connecting 20 different gamepads
 Connecting gamepad:
-[object Gamepad]
 Name: 0
 Index: 0
 Mapping:
 Axes:
 Buttons:
-onconnectedgamepad event fired (1).
+ongamepadconnected event fired (1).
+Name: 0
+Index: 0
+Mapping:
+Axes:
+Buttons:
+gamepadconnected event fired (1).
+[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad]
 Name: 1
 Index: 1
 Mapping:
 Axes: 0
 Buttons: false-0
-onconnectedgamepad event fired (2).
+ongamepadconnected event fired (2).
+Name: 1
+Index: 1
+Mapping:
+Axes: 0
+Buttons: false-0
+gamepadconnected event fired (2).
+[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 2
 Index: 2
 Mapping:
 Axes: 0,0
 Buttons: false-0 false-0
-onconnectedgamepad event fired (3).
+ongamepadconnected event fired (3).
+Name: 2
+Index: 2
+Mapping:
+Axes: 0,0
+Buttons: false-0 false-0
+gamepadconnected event fired (3).
+[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 3
 Index: 3
 Mapping:
 Axes: 0,0,0
 Buttons: false-0 false-0 false-0
-onconnectedgamepad event fired (4).
+ongamepadconnected event fired (4).
+Name: 3
+Index: 3
+Mapping:
+Axes: 0,0,0
+Buttons: false-0 false-0 false-0
+gamepadconnected event fired (4).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 4
 Index: 4
 Mapping:
 Axes: 0,0,0,0
 Buttons: false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (5).
+ongamepadconnected event fired (5).
+Name: 4
+Index: 4
+Mapping:
+Axes: 0,0,0,0
+Buttons: false-0 false-0 false-0 false-0
+gamepadconnected event fired (5).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 5
 Index: 5
 Mapping:
 Axes: 0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (6).
+ongamepadconnected event fired (6).
+Name: 5
+Index: 5
+Mapping:
+Axes: 0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (6).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 6
 Index: 6
 Mapping:
 Axes: 0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (7).
+ongamepadconnected event fired (7).
+Name: 6
+Index: 6
+Mapping:
+Axes: 0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (7).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 7
 Index: 7
 Mapping:
 Axes: 0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (8).
+ongamepadconnected event fired (8).
+Name: 7
+Index: 7
+Mapping:
+Axes: 0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (8).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 8
 Index: 8
 Mapping:
 Axes: 0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (9).
+ongamepadconnected event fired (9).
+Name: 8
+Index: 8
+Mapping:
+Axes: 0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (9).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 9
 Index: 9
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (10).
+ongamepadconnected event fired (10).
+Name: 9
+Index: 9
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (10).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 10
 Index: 10
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (11).
+ongamepadconnected event fired (11).
+Name: 10
+Index: 10
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (11).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 11
 Index: 11
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (12).
+ongamepadconnected event fired (12).
+Name: 11
+Index: 11
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (12).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 12
 Index: 12
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (13).
+ongamepadconnected event fired (13).
+Name: 12
+Index: 12
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (13).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 13
 Index: 13
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (14).
+ongamepadconnected event fired (14).
+Name: 13
+Index: 13
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (14).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 14
 Index: 14
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (15).
+ongamepadconnected event fired (15).
+Name: 14
+Index: 14
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (15).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 15
 Index: 15
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (16).
+ongamepadconnected event fired (16).
+Name: 15
+Index: 15
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (16).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 16
 Index: 16
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (17).
+ongamepadconnected event fired (17).
+Name: 16
+Index: 16
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (17).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 17
 Index: 17
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (18).
+ongamepadconnected event fired (18).
+Name: 17
+Index: 17
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (18).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 18
 Index: 18
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
-onconnectedgamepad event fired (19).
+ongamepadconnected event fired (19).
+Name: 18
+Index: 18
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (19).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Connecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 19
 Index: 19
 Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+ongamepadconnected event fired (20).
+Name: 19
+Index: 19
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepadconnected event fired (20).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Verifying there are 20 connected gamepads in the set of all gamepads
 [object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Name: 0
@@ -262,73 +383,205 @@ Mapping:
 Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
 Disconnecting gamepads in reverse order, making sure gamepads array remains as expected
-onconnectedgamepad event fired (20).
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],
-ondisconnectedgamepad event fired (19).
+ongamepaddisconnected event fired (19).
+Name: 19
+Index: 19
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (19).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,
-ondisconnectedgamepad event fired (18).
+ongamepaddisconnected event fired (18).
+Name: 18
+Index: 18
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (18).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,
-ondisconnectedgamepad event fired (17).
+ongamepaddisconnected event fired (17).
+Name: 17
+Index: 17
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (17).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,
-ondisconnectedgamepad event fired (16).
+ongamepaddisconnected event fired (16).
+Name: 16
+Index: 16
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (16).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,
-ondisconnectedgamepad event fired (15).
+ongamepaddisconnected event fired (15).
+Name: 15
+Index: 15
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (15).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,
-ondisconnectedgamepad event fired (14).
+ongamepaddisconnected event fired (14).
+Name: 14
+Index: 14
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (14).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,
-ondisconnectedgamepad event fired (13).
+ongamepaddisconnected event fired (13).
+Name: 13
+Index: 13
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (13).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,
-ondisconnectedgamepad event fired (12).
+ongamepaddisconnected event fired (12).
+Name: 12
+Index: 12
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (12).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,
-ondisconnectedgamepad event fired (11).
+ongamepaddisconnected event fired (11).
+Name: 11
+Index: 11
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (11).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,
-ondisconnectedgamepad event fired (10).
+ongamepaddisconnected event fired (10).
+Name: 10
+Index: 10
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (10).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,
-ondisconnectedgamepad event fired (9).
+ongamepaddisconnected event fired (9).
+Name: 9
+Index: 9
+Mapping:
+Axes: 0,0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (9).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,
-ondisconnectedgamepad event fired (8).
+ongamepaddisconnected event fired (8).
+Name: 8
+Index: 8
+Mapping:
+Axes: 0,0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (8).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,
-ondisconnectedgamepad event fired (7).
+ongamepaddisconnected event fired (7).
+Name: 7
+Index: 7
+Mapping:
+Axes: 0,0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (7).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,
-ondisconnectedgamepad event fired (6).
+ongamepaddisconnected event fired (6).
+Name: 6
+Index: 6
+Mapping:
+Axes: 0,0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (6).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,
-ondisconnectedgamepad event fired (5).
+ongamepaddisconnected event fired (5).
+Name: 5
+Index: 5
+Mapping:
+Axes: 0,0,0,0,0
+Buttons: false-0 false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (5).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,,
-ondisconnectedgamepad event fired (4).
+ongamepaddisconnected event fired (4).
+Name: 4
+Index: 4
+Mapping:
+Axes: 0,0,0,0
+Buttons: false-0 false-0 false-0 false-0
+gamepaddisconnected event fired (4).
+[object Gamepad],[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,,,
-ondisconnectedgamepad event fired (3).
+ongamepaddisconnected event fired (3).
+Name: 3
+Index: 3
+Mapping:
+Axes: 0,0,0
+Buttons: false-0 false-0 false-0
+gamepaddisconnected event fired (3).
+[object Gamepad],[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],[object Gamepad],,,,,,,,,,,,,,,,,,
-ondisconnectedgamepad event fired (2).
+ongamepaddisconnected event fired (2).
+Name: 2
+Index: 2
+Mapping:
+Axes: 0,0
+Buttons: false-0 false-0
+gamepaddisconnected event fired (2).
+[object Gamepad],[object Gamepad]
 Disconnecting gamepad:
-[object Gamepad],,,,,,,,,,,,,,,,,,,
-ondisconnectedgamepad event fired (1).
+ongamepaddisconnected event fired (1).
+Name: 1
+Index: 1
+Mapping:
+Axes: 0
+Buttons: false-0
+gamepaddisconnected event fired (1).
+[object Gamepad]
 Disconnecting gamepad:
-,,,,,,,,,,,,,,,,,,,
+ongamepaddisconnected event fired (0).
+Name: 0
+Index: 0
+Mapping:
+Axes:
+Buttons:
+gamepaddisconnected event fired (0).
+
 Checking non-zero'ed details for a gamepad
-ondisconnectedgamepad event fired (0).
-Connecting gamepad:
-,,,,,,,,,,[object Gamepad],,,,,,,,,
 Name: Awesome Joystick 5000
 Index: 10
 Mapping: standard
 Axes: 0.7,-0.9,1,-1
 Buttons: true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1
+ongamepadconnected event fired (1).
+Name: Awesome Joystick 5000
+Index: 10
+Mapping: standard
+Axes: 0.7,-0.9,1,-1
+Buttons: true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1
+gamepadconnected event fired (1).
+Disconnecting final gamepad
+ongamepaddisconnected event fired (0).
+Name: Awesome Joystick 5000
+Index: 10
+Mapping: standard
+Axes: 0.7,-0.9,1,-1
+Buttons: true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1 true-1
+gamepaddisconnected event fired (0).
 
