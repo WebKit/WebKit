@@ -234,9 +234,10 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
         case TextEdgeType::ExHeight:
             return fontMetrics.xHeight();
         case TextEdgeType::CJKIdeographic:
+            return fontMetrics.ascent(IdeographicBaseline);
         case TextEdgeType::CJKIdeographicInk:
             ASSERT_NOT_IMPLEMENTED_YET();
-            return fontMetrics.ascent(fontBaseline);
+            return fontMetrics.ascent(IdeographicBaseline);
         default:
             ASSERT_NOT_REACHED();
             return fontMetrics.ascent(fontBaseline);
@@ -252,9 +253,10 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
         case TextEdgeType::Alphabetic:
             return 0.f;
         case TextEdgeType::CJKIdeographic:
+            return fontMetrics.descent(IdeographicBaseline);
         case TextEdgeType::CJKIdeographicInk:
             ASSERT_NOT_IMPLEMENTED_YET();
-            return fontMetrics.descent(fontBaseline);
+            return fontMetrics.descent(IdeographicBaseline);
         default:
             ASSERT_NOT_REACHED();
             return fontMetrics.descent(fontBaseline);
