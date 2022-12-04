@@ -102,7 +102,7 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
         return;
 
     // If type is PanelTypeReversion, then the new range has been set. So we shouldn't clear it.
-    if (type == AlternativeTextTypeCorrection)
+    if (type == AlternativeTextType::Correction)
         m_rangeWithAlternative = std::nullopt;
     m_type = type;
     m_timer.startOneShot(correctionPanelTimerInterval);
@@ -201,7 +201,7 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
     if (!m_rangeWithAlternative || !m_isActive)
         return false;
 
-    if (m_type != AlternativeTextTypeCorrection)
+    if (m_type != AlternativeTextType::Correction)
         return false;
 
     Position caretPosition = m_document.selection().selection().start();
@@ -238,7 +238,7 @@ void AlternativeTextController::timerFired()
 {
     m_isDismissedByEditing = false;
     switch (m_type) {
-    case AlternativeTextTypeCorrection: {
+    case AlternativeTextType::Correction: {
         VisibleSelection selection(m_document.selection().selection());
         VisiblePosition start(selection.start(), selection.affinity());
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
@@ -247,7 +247,7 @@ void AlternativeTextController::timerFired()
         m_document.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange, adjacentWordRange, std::nullopt);
     }
         break;
-    case AlternativeTextTypeReversion: {
+    case AlternativeTextType::Reversion: {
         if (!m_rangeWithAlternative)
             break;
         String replacementString = std::get<AutocorrectionReplacement>(m_details);
@@ -262,7 +262,7 @@ void AlternativeTextController::timerFired()
         }
     }
         break;
-    case AlternativeTextTypeSpellingSuggestions: {
+    case AlternativeTextType::SpellingSuggestions: {
         if (!m_rangeWithAlternative || plainText(*m_rangeWithAlternative) != m_originalText)
             break;
         String paragraphText = plainText(TextCheckingParagraph(*m_rangeWithAlternative).paragraphRange());
@@ -282,7 +282,7 @@ void AlternativeTextController::timerFired()
         }
     }
         break;
-    case AlternativeTextTypeDictationAlternatives:
+    case AlternativeTextType::DictationAlternatives:
     {
 #if USE(DICTATION_ALTERNATIVES)
         if (!m_rangeWithAlternative)
@@ -315,18 +315,18 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
     m_isActive = false;
 
     switch (m_type) {
-    case AlternativeTextTypeCorrection:
+    case AlternativeTextType::Correction:
         if (result.length())
             applyAlternativeTextToRange(*m_rangeWithAlternative, result, m_type, markerTypesForAutocorrection());
         else if (!m_isDismissedByEditing)
             addMarker(*m_rangeWithAlternative, DocumentMarker::RejectedCorrection, m_originalText);
         break;
-    case AlternativeTextTypeReversion:
-    case AlternativeTextTypeSpellingSuggestions:
+    case AlternativeTextType::Reversion:
+    case AlternativeTextType::SpellingSuggestions:
         if (result.length())
             applyAlternativeTextToRange(*m_rangeWithAlternative, result, m_type, markerTypesForReplacement());
         break;
-    case AlternativeTextTypeDictationAlternatives:
+    case AlternativeTextType::DictationAlternatives:
         if (result.length())
             applyAlternativeTextToRange(*m_rangeWithAlternative, result, m_type, markerTypesForAppliedDictationAlternative());
         break;
@@ -549,12 +549,12 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
     case DocumentMarker::Spelling:
         m_rangeWithAlternative = WTFMove(wordRange);
         m_details = emptyString();
-        startAlternativeTextUITimer(AlternativeTextTypeSpellingSuggestions);
+        startAlternativeTextUITimer(AlternativeTextType::SpellingSuggestions);
         break;
     case DocumentMarker::Replacement:
         m_rangeWithAlternative = WTFMove(wordRange);
         m_details = marker.description();
-        startAlternativeTextUITimer(AlternativeTextTypeReversion);
+        startAlternativeTextUITimer(AlternativeTextType::Reversion);
         break;
     case DocumentMarker::DictationAlternatives: {
         auto& markerData = std::get<DocumentMarker::DictationData>(marker.data());
@@ -562,7 +562,7 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
             return false;
         m_rangeWithAlternative = WTFMove(wordRange);
         m_details = markerData.context;
-        startAlternativeTextUITimer(AlternativeTextTypeDictationAlternatives);
+        startAlternativeTextUITimer(AlternativeTextType::DictationAlternatives);
     }
         break;
     default:
@@ -584,7 +584,7 @@ AlternativeTextClient* AlternativeTextController::alternativeTextClient()
 String AlternativeTextController::markerDescriptionForAppliedAlternativeText(AlternativeTextType alternativeTextType, DocumentMarker::MarkerType markerType)
 {
 #if USE(AUTOCORRECTION_PANEL)
-    if (alternativeTextType != AlternativeTextTypeReversion && alternativeTextType != AlternativeTextTypeDictationAlternatives && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
+    if (alternativeTextType != AlternativeTextType::Reversion && alternativeTextType != AlternativeTextType::DictationAlternatives && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
         return m_originalText;
 #else
     UNUSED_PARAM(alternativeTextType);
@@ -675,7 +675,7 @@ void AlternativeTextController::applyDictationAlternative(const String& alternat
         return;
     for (auto* marker : selection->startContainer().document().markers().markersInRange(*selection, DocumentMarker::DictationAlternatives))
         removeDictationAlternativesForMarker(*marker);
-    applyAlternativeTextToRange(*selection, alternativeString, AlternativeTextTypeDictationAlternatives, markerTypesForAppliedDictationAlternative());
+    applyAlternativeTextToRange(*selection, alternativeString, AlternativeTextType::DictationAlternatives, markerTypesForAppliedDictationAlternative());
 #else
     UNUSED_PARAM(alternativeString);
 #endif

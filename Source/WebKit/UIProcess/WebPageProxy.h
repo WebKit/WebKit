@@ -81,7 +81,7 @@
 #include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
 #include "WindowKind.h"
-#include <WebCore/ActivityState.h>
+#include <WebCore/AlternativeTextClient.h>
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/Color.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -2514,7 +2514,7 @@ private:
 
 #if PLATFORM(MAC)
     void substitutionsPanelIsShowing(CompletionHandler<void(bool)>&&);
-    void showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
+    void showCorrectionPanel(WebCore::AlternativeTextType panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     void dismissCorrectionPanel(int32_t reason);
     void dismissCorrectionPanelSoon(int32_t reason, CompletionHandler<void(String)>&&);
     void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);

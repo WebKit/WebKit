@@ -35,18 +35,17 @@ using namespace WebCore;
 static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextType alternativeTextType)
 {
     switch (alternativeTextType) {
-    case AlternativeTextTypeCorrection:
+    case AlternativeTextType::Correction:
         return NSCorrectionIndicatorTypeDefault;
-    case AlternativeTextTypeReversion:
+    case AlternativeTextType::Reversion:
         return NSCorrectionIndicatorTypeReversion;
-    case AlternativeTextTypeSpellingSuggestions:
+    case AlternativeTextType::SpellingSuggestions:
         return NSCorrectionIndicatorTypeGuesses;
-    case AlternativeTextTypeDictationAlternatives:
+    case AlternativeTextType::DictationAlternatives:
         ASSERT_NOT_REACHED();
-        break;
+        return NSCorrectionIndicatorTypeDefault;
     }
-    ASSERT_NOT_REACHED();
-    return NSCorrectionIndicatorTypeDefault;
+    
 }
 
 CorrectionPanel::CorrectionPanel()

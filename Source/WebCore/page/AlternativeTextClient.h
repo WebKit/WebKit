@@ -38,11 +38,11 @@ enum ReasonForDismissingAlternativeText {
     ReasonForDismissingAlternativeTextAccepted
 };
 
-enum AlternativeTextType {
-    AlternativeTextTypeCorrection = 0,
-    AlternativeTextTypeReversion,
-    AlternativeTextTypeSpellingSuggestions,
-    AlternativeTextTypeDictationAlternatives
+enum class AlternativeTextType : uint8_t {
+    Correction = 0,
+    Reversion,
+    SpellingSuggestions,
+    DictationAlternatives
 };
 
 enum class AutocorrectionResponse {
@@ -68,3 +68,16 @@ public:
 };
     
 } // namespace WebCore
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::AlternativeTextType> {
+    using values = EnumValues<
+        WebCore::AlternativeTextType,
+        WebCore::AlternativeTextType::Correction,
+        WebCore::AlternativeTextType::Reversion,
+        WebCore::AlternativeTextType::SpellingSuggestions,
+        WebCore::AlternativeTextType::DictationAlternatives
+    >;
+};
+
+}

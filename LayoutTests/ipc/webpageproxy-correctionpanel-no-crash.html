@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.IPC)
+    IPC.sendMessage('UI',IPC.webPageProxyID,IPC.messages.WebPageProxy_ShowCorrectionPanel.name,[{type: 'uint8_t',value: 120},{type: 'float',value: 134.3630587066791},{type: 'float',value: 659.5882936421311},{type: 'float',value: 249},{type: 'uint8_t',value: 3},{type: 'String',value: ""},{type: 'String',value: ""},{type: 'Vector',value: [[{type: 'String',value: "cancelOperation"}],[{type: 'String',value: ""}],[{type: 'String',value: "page-9"}],[{type: 'String',value: ""}],[{type: 'String',value: "cancelOperation"}],[{type: 'String',value: "file:///tmp/ipcfuzz"}],[{type: 'String',value: ""}],[{type: 'String',value: "com.apple.pasteboard.clipboard"}]]}]);
+</script>
+This test passes if it does not crash.
+</body>
+</html>

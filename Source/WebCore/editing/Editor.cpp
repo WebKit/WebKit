@@ -3320,7 +3320,7 @@ void Editor::addTextToKillRing(const String& text, KillRingInsertionMode mode)
 
 void Editor::startAlternativeTextUITimer()
 {
-    m_alternativeTextController->startAlternativeTextUITimer(AlternativeTextTypeCorrection);
+    m_alternativeTextController->startAlternativeTextUITimer(AlternativeTextType::Correction);
 }
 
 void Editor::handleAlternativeTextUIResult(const String& correction)
