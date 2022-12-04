@@ -10,7 +10,8 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > BODY > HT
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 8 of #text > BODY > HTML > #document to 8 of #text > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > BODY > HTML > #document to 8 of #text > BODY > HTML > #document toDOMRange:range from 11 of #text > BODY > HTML > #document to 11 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > BODY > HTML > #document to 7 of #text > BODY > HTML > #document toDOMRange:range from 11 of #text > BODY > HTML > #document to 11 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -30,7 +31,5 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
                 RenderText {#text} at (0,0) size 69x19
-                  text run at (0,0) width 44: "foo bar"
-                  text run at (44,0) width 4: " "
-                  text run at (48,0) width 21: "baz"
+                  text run at (0,0) width 69: "foo bar baz"
         RenderText {#text} at (0,0) size 0x0

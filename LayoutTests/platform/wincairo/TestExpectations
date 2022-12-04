@@ -2456,3 +2456,7 @@ fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
 
 editing/selection/user-select-all-with-shift-live-range.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/path/default.html [ Failure ]
+
+fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
+transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
+fast/css/focus-ring-continuations.html [ Failure ]
