@@ -4724,6 +4724,7 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/
 
 # contain-intrinsic-size
 webkit.org/b/246338 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-007.html [ Skip ]
+webkit.org/b/246338 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-009.html [ Skip ]
 webkit.org/b/246283 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-003.html [ Skip ]
 
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html [ ImageOnlyFailure ]

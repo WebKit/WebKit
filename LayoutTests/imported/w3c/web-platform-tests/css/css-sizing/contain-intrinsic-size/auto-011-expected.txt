@@ -1,0 +1,4 @@
+
+FAIL contain:size does not prevent recording last remembered size assert_equals: Using last remembered size - clientWidth expected 20 but got 2
+FAIL contain:inline-size does not prevent recording last remembered inline size assert_equals: Size containment for inline axis - clientWidth expected 20 but got 0
+

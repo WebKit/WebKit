@@ -24,6 +24,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001.html
@@ -107,6 +109,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-030.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-031.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-033.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-002-expected.html
