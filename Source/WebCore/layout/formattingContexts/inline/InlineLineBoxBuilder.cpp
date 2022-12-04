@@ -131,8 +131,7 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
     constructInlineLevelBoxes(lineBox);
     adjustIdeographicBaselineIfApplicable(lineBox);
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
-    auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
-    lineBox.setLogicalRect({ lineContent.lineLogicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight });
+    computeLineBoxGeometry(lineBox);
     return lineBox;
 }
 
@@ -698,6 +697,63 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
         }
         adjustLayoutBoundsWithIdeographicBaseline(inlineLevelBox);
     }
+}
+
+void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
+{
+    auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
+
+    auto& rootStyle = this->rootStyle();
+    auto shouldTrimBlockStartOfLineBox = isFirstLine() && (rootStyle.leadingTrim() == LeadingTrim::Start || rootStyle.leadingTrim() == LeadingTrim::Both) && rootStyle.textEdge().over != TextEdgeType::Leading;
+    auto shouldTrimBlockEndOfLineBox = isLastLine() && (rootStyle.leadingTrim() == LeadingTrim::End || rootStyle.leadingTrim() == LeadingTrim::Both) && rootStyle.textEdge().under != TextEdgeType::Leading;
+
+    if (shouldTrimBlockEndOfLineBox) {
+        auto textEdgeUnderHeight = [&] {
+            auto& rootInlineBox = lineBox.rootInlineBox();
+            switch (rootStyle.textEdge().under) {
+            case TextEdgeType::Text:
+                return rootInlineBox.layoutBounds()->descent - *rootInlineBox.descent();
+            case TextEdgeType::Alphabetic:
+                return rootInlineBox.layoutBounds()->descent;
+            case TextEdgeType::CJKIdeographic:
+            case TextEdgeType::CJKIdeographicInk:
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return 0.f;
+            case TextEdgeType::Leading:
+            default:
+                ASSERT_NOT_REACHED();
+                return 0.f;
+            }
+        }();
+        lineBoxLogicalHeight -= std::max(0.f, textEdgeUnderHeight);
+    }
+    if (shouldTrimBlockStartOfLineBox) {
+        auto& rootInlineBox = lineBox.rootInlineBox();
+        auto textEdgeOverHeight = [&] {
+            switch (rootStyle.textEdge().over) {
+            case TextEdgeType::Text:
+                return rootInlineBox.layoutBounds()->ascent - rootInlineBox.ascent();
+            case TextEdgeType::CapHeight:
+                return rootInlineBox.layoutBounds()->ascent - rootInlineBox.primarymetricsOfPrimaryFont().floatCapHeight();
+            case TextEdgeType::ExHeight:
+                return rootInlineBox.layoutBounds()->ascent - rootInlineBox.primarymetricsOfPrimaryFont().xHeight();
+            case TextEdgeType::CJKIdeographic:
+            case TextEdgeType::CJKIdeographicInk:
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return 0.f;
+            case TextEdgeType::Leading:
+            default:
+                ASSERT_NOT_REACHED();
+                return 0.f;
+            }
+        }();
+        lineBoxLogicalHeight -= std::max(0.f, textEdgeOverHeight);
+
+        rootInlineBox.setLogicalTop(rootInlineBox.logicalTop() - textEdgeOverHeight);
+        for (auto& nonRootInlineLevelBox : lineBox.nonRootInlineLevelBoxes())
+            nonRootInlineLevelBox.setLogicalTop(nonRootInlineLevelBox.logicalTop() - textEdgeOverHeight);
+    }
+    return lineBox.setLogicalRect({ lineContent().lineLogicalTopLeft, lineContent().lineLogicalWidth, lineBoxLogicalHeight });
 }
 
 }

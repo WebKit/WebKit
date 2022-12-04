@@ -48,6 +48,7 @@ private:
     void setLayoutBoundsForInlineBox(InlineLevelBox&, FontBaseline) const;
     AscentAndDescent computedAsentAndDescentForInlineBox(const InlineLevelBox&, FontBaseline) const;
     void adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox&);
+    void computeLineBoxGeometry(LineBox&) const;
     InlineLevelBox::LayoutBounds adjustedLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
     TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
 
