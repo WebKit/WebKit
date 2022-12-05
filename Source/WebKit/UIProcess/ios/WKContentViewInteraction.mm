@@ -10390,7 +10390,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     [item registerDataRepresentationForTypeIdentifier:utiType visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[attachment](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
         attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
-            if (auto nsData = RetainPtr { fileWrapper.serializedRepresentation })
+            if (auto nsData = RetainPtr { fileWrapper.regularFileContents })
                 completionHandler(nsData.get(), nil);
             else
                 completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);

@@ -308,6 +308,7 @@ $(PROJECT_DIR)/WebProcess/Cache/WebCacheStorageConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in
 $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/CodeGeneratorExtensions.pm
 $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIEvent.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIExtension.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPINamespace.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime.idl

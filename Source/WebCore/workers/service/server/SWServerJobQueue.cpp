@@ -69,7 +69,7 @@ static bool doCertificatesMatch(const CertificateInfo& first, const CertificateI
 #endif
 }
 
-void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, WorkerFetchResult&& result)
+void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const std::optional<ProcessIdentifier>& requestingProcessIdentifier, WorkerFetchResult&& result)
 {
     if (!isCurrentlyProcessingJob(jobDataIdentifier))
         return;
@@ -105,7 +105,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
         auto scriptURLs = newestWorker->importedScriptURLs();
         if (!scriptURLs.isEmpty()) {
             m_workerFetchResult = WTFMove(result);
-            m_server.refreshImportedScripts(job, *registration, scriptURLs);
+            m_server.refreshImportedScripts(job, *registration, scriptURLs, requestingProcessIdentifier);
             return;
         }
 
@@ -116,10 +116,10 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
         return;
     }
 
-    m_server.updateWorker(job.identifier(), *registration, job.scriptURL, result.script, result.certificateInfo, result.contentSecurityPolicy, result.crossOriginEmbedderPolicy, result.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
+    m_server.updateWorker(job.identifier(), requestingProcessIdentifier, *registration, job.scriptURL, result.script, result.certificateInfo, result.contentSecurityPolicy, result.crossOriginEmbedderPolicy, result.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
 }
 
-void SWServerJobQueue::importedScriptsFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const Vector<std::pair<URL, ScriptBuffer>>& importedScripts)
+void SWServerJobQueue::importedScriptsFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const Vector<std::pair<URL, ScriptBuffer>>& importedScripts, const std::optional<ProcessIdentifier>& requestingProcessIdentifier)
 {
     if (!isCurrentlyProcessingJob(jobDataIdentifier))
         return;
@@ -137,7 +137,7 @@ void SWServerJobQueue::importedScriptsFetchFinished(const ServiceWorkerJobDataId
         return;
     }
 
-    m_server.updateWorker(job.identifier(), *registration, job.scriptURL, m_workerFetchResult.script, m_workerFetchResult.certificateInfo, m_workerFetchResult.contentSecurityPolicy, m_workerFetchResult.crossOriginEmbedderPolicy, m_workerFetchResult.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
+    m_server.updateWorker(job.identifier(), requestingProcessIdentifier, *registration, job.scriptURL, m_workerFetchResult.script, m_workerFetchResult.certificateInfo, m_workerFetchResult.contentSecurityPolicy, m_workerFetchResult.crossOriginEmbedderPolicy, m_workerFetchResult.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
 }
 
 void SWServerJobQueue::scriptAndImportedScriptsFetchFinished(const ServiceWorkerJobData& job, SWServerRegistration& registration)

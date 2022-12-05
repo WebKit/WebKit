@@ -51,9 +51,9 @@ ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String&
     return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
 }
 
-ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& origin)
+ResourceTiming::ResourceTiming(const URL& url, const String& initiatorType, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& origin)
     : m_url(url)
-    , m_initiator(initiator)
+    , m_initiatorType(initiatorType)
     , m_resourceLoadTiming(timing)
     , m_networkLoadMetrics(networkLoadMetrics)
     , m_serverTiming(ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming)))
@@ -83,7 +83,7 @@ ResourceTiming ResourceTiming::isolatedCopy() const &
 {
     return ResourceTiming {
         m_url.isolatedCopy(),
-        m_initiator.isolatedCopy(),
+        m_initiatorType.isolatedCopy(),
         m_resourceLoadTiming.isolatedCopy(),
         m_networkLoadMetrics.isolatedCopy(),
         crossThreadCopy(m_serverTiming)
@@ -94,7 +94,7 @@ ResourceTiming ResourceTiming::isolatedCopy() &&
 {
     return ResourceTiming {
         WTFMove(m_url).isolatedCopy(),
-        WTFMove(m_initiator).isolatedCopy(),
+        WTFMove(m_initiatorType).isolatedCopy(),
         WTFMove(m_resourceLoadTiming).isolatedCopy(),
         WTFMove(m_networkLoadMetrics).isolatedCopy(),
         crossThreadCopy(WTFMove(m_serverTiming))

@@ -64,8 +64,8 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     request.upgradeInsecureRequestIfNeeded(document);
     request.setCharset(m_charset);
     request.setPriority(WTFMove(resourceLoadPriority));
-    if (!m_initiatorName.isNull())
-        request.setInitiator(m_initiatorName);
+    if (!m_initiatorType.isNull())
+        request.setInitiatorType(m_initiatorType);
 
     return document.cachedResourceLoader().requestScript(WTFMove(request)).value_or(nullptr);
 }

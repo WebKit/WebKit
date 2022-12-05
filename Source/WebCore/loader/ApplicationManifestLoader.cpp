@@ -31,7 +31,7 @@
 #include "CachedApplicationManifest.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"

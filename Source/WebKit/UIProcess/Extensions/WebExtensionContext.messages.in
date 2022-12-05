@@ -32,6 +32,10 @@ messages -> WebExtensionContext {
     TestMessage(String message, String sourceURL, unsigned lineNumber);
     TestYielded(String message, String sourceURL, unsigned lineNumber);
     TestFinished(bool result, String message, String sourceURL, unsigned lineNumber);
+
+    // Event APIs
+    AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
+    RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

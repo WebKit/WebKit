@@ -38,7 +38,7 @@ class LoadableModuleScript final : public LoadableScript {
 public:
     virtual ~LoadableModuleScript();
 
-    static Ref<LoadableModuleScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree);
+    static Ref<LoadableModuleScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
 
     bool isLoaded() const final;
     bool hasError() const final;
@@ -58,7 +58,7 @@ public:
     ModuleFetchParameters& parameters() { return m_parameters.get(); }
 
 private:
-    LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree);
+    LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
 
     Ref<ModuleFetchParameters> m_parameters;
     RefPtr<UniquedStringImpl> m_moduleKey;

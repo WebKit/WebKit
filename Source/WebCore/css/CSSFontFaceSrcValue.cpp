@@ -31,7 +31,7 @@
 #include "CachedFontLoadRequest.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "FontCustomPlatformData.h"
 #include "SVGFontFaceElement.h"
 #include "ScriptExecutionContext.h"

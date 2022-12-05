@@ -58,13 +58,13 @@ namespace WebCore {
     struct ThreadableLoaderOptions : ResourceLoaderOptions {
         ThreadableLoaderOptions();
         explicit ThreadableLoaderOptions(FetchOptions&&);
-        ThreadableLoaderOptions(const ResourceLoaderOptions&, ContentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy);
+        ThreadableLoaderOptions(const ResourceLoaderOptions&, ContentSecurityPolicyEnforcement, String&& initiatorType, ResponseFilteringPolicy);
         ~ThreadableLoaderOptions();
 
         ThreadableLoaderOptions isolatedCopy() const;
 
         ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
-        String initiator; // This cannot be an AtomString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
+        String initiatorType; // This cannot be an AtomString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
         ResponseFilteringPolicy filteringPolicy { ResponseFilteringPolicy::Disable };
     };
 

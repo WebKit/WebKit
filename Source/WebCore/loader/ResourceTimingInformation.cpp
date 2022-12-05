@@ -68,7 +68,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     if (!initiatorWindow)
         return;
 
-    resourceTiming.overrideInitiatorName(info.name);
+    resourceTiming.overrideInitiatorType(info.type);
 
     initiatorWindow->performance().addResourceTiming(WTFMove(resourceTiming));
 
@@ -80,7 +80,7 @@ void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
     m_initiatorMap.remove(&resource);
 }
 
-void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorName, Frame* frame)
+void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorType, Frame* frame)
 {
     ASSERT(resource.get());
 
@@ -92,7 +92,7 @@ void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const Ca
             m_initiatorMap.add(resource.get(), info);
         }
     } else {
-        InitiatorInfo info = { initiatorName, NotYetAdded };
+        InitiatorInfo info = { initiatorType, NotYetAdded };
         m_initiatorMap.add(resource.get(), info);
     }
 }

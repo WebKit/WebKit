@@ -1161,6 +1161,23 @@ UseGPUProcessForMediaEnabled:
       "ENABLE(GPU_PROCESS_BY_DEFAULT)": true
       default: false
 
+UseGPUProcessForWebGLEnabled:
+  type: bool
+  humanReadableName: "GPU Process: WebGL"
+  humanReadableDescription: "Process all WebGL operations in GPU Process"
+  condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(GPU_PROCESS_BY_DEFAULT) && !HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(WIN)": true
+      default: false
+    WebCore:
+      "ENABLE(GPU_PROCESS_BY_DEFAULT) && !HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(WIN)": true
+      default: false
+
 UseGeneralDirectoryForStorage:
   type: bool
   humanReadableName: "Use General Directory For Storage"

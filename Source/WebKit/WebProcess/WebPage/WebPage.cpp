@@ -800,7 +800,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setPaginationBehavesLikeColumns(parameters.paginationBehavesLikeColumns);
     setPageLength(parameters.pageLength);
     setGapBetweenPages(parameters.gapBetweenPages);
-    setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
 
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
 
@@ -2582,11 +2581,6 @@ void WebPage::setGapBetweenPages(double gap)
     Pagination pagination = m_page->pagination();
     pagination.gap = gap;
     m_page->setPagination(pagination);
-}
-
-void WebPage::setPaginationLineGridEnabled(bool lineGridEnabled)
-{
-    m_page->setPaginationLineGridEnabled(lineGridEnabled);
 }
 
 void WebPage::postInjectedBundleMessage(const String& messageName, const UserData& userData)

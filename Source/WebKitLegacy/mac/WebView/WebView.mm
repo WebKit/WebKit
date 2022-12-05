@@ -4695,20 +4695,11 @@ IGNORE_WARNINGS_END
 
 - (void)_setPaginationLineGridEnabled:(BOOL)lineGridEnabled
 {
-    auto* page = core(self);
-    if (!page)
-        return;
-
-    page->setPaginationLineGridEnabled(lineGridEnabled);
 }
 
 - (BOOL)_paginationLineGridEnabled
 {
-    auto* page = core(self);
-    if (!page)
-        return NO;
-
-    return page->paginationLineGridEnabled();
+    return NO;
 }
 
 - (NSUInteger)_pageCount

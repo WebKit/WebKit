@@ -35,8 +35,11 @@
 #include "WebExtension.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionController.h"
+#include "WebExtensionEventListenerType.h"
 #include "WebExtensionMatchPattern.h"
+#include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -91,6 +94,8 @@ public:
     using MatchPatternSet = WebExtension::MatchPatternSet;
     using InjectedContentData = WebExtension::InjectedContentData;
     using InjectedContentVector = WebExtension::InjectedContentVector;
+
+    using EventListenterTypeCountedSet = HashCountedSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
 
     enum class EqualityOnly : bool { No, Yes };
 
@@ -258,6 +263,10 @@ private:
     void testYielded(String message, String sourceURL, unsigned lineNumber);
     void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
+    // Event APIs
+    void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
+    void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -293,6 +302,8 @@ private:
 #else
     bool m_testingMode { true };
 #endif
+
+    EventListenterTypeCountedSet m_backgroundPageListeners;
 
     RetainPtr<WKWebView> m_backgroundWebView;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;

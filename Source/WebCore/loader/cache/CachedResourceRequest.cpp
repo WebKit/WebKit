@@ -64,23 +64,23 @@ String CachedResourceRequest::splitFragmentIdentifierFromRequestURL(ResourceRequ
 void CachedResourceRequest::setInitiator(Element& element)
 {
     ASSERT(!m_initiatorElement);
-    ASSERT(m_initiatorName.isEmpty());
+    ASSERT(m_initiatorType.isEmpty());
     m_initiatorElement = &element;
 }
 
-void CachedResourceRequest::setInitiator(const AtomString& name)
+void CachedResourceRequest::setInitiatorType(const AtomString& type)
 {
     ASSERT(!m_initiatorElement);
-    ASSERT(m_initiatorName.isEmpty());
-    m_initiatorName = name;
+    ASSERT(m_initiatorType.isEmpty());
+    m_initiatorType = type;
 }
 
-const AtomString& CachedResourceRequest::initiatorName() const
+const AtomString& CachedResourceRequest::initiatorType() const
 {
     if (m_initiatorElement)
         return m_initiatorElement->localName();
-    if (!m_initiatorName.isEmpty())
-        return m_initiatorName;
+    if (!m_initiatorType.isEmpty())
+        return m_initiatorType;
 
     static MainThreadNeverDestroyed<const AtomString> defaultName("other"_s);
     return defaultName;

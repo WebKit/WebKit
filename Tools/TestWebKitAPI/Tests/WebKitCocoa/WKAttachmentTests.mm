@@ -2722,7 +2722,7 @@ TEST(WKAttachmentTestsIOS, CopyAttachmentUsingElementAction)
 
     __block bool done = false;
     [itemProvider loadDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePDF completionHandler:^(NSData *data, NSError *) {
-        EXPECT_TRUE([[document serializedRepresentation] isEqualToData:data]);
+        EXPECT_TRUE([[document regularFileContents] isEqualToData:data]);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

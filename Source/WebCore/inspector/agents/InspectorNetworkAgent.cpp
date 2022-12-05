@@ -36,7 +36,7 @@
 #include "CachedRawResource.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "CachedScript.h"
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
@@ -719,10 +719,10 @@ void InspectorNetworkAgent::didReceiveScriptResponse(ResourceLoaderIdentifier id
 
 void InspectorNetworkAgent::didReceiveThreadableLoaderResponse(ResourceLoaderIdentifier identifier, DocumentThreadableLoader& documentThreadableLoader)
 {
-    String initiator = documentThreadableLoader.options().initiator;
-    if (initiator == cachedResourceRequestInitiators().fetch)
+    String initiatorType = documentThreadableLoader.options().initiatorType;
+    if (initiatorType == cachedResourceRequestInitiatorTypes().fetch)
         m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier.toUInt64()), InspectorPageAgent::FetchResource);
-    else if (initiator == cachedResourceRequestInitiators().xmlhttprequest)
+    else if (initiatorType == cachedResourceRequestInitiatorTypes().xmlhttprequest)
         m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier.toUInt64()), InspectorPageAgent::XHRResource);
 }
 

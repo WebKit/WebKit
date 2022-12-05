@@ -62,7 +62,7 @@ void ArtworkImageLoader::requestImageResource()
     options.contentSecurityPolicyImposition = m_document.isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     CachedResourceRequest request(ResourceRequest(m_document.completeURL(m_src)), options);
-    request.setInitiator(AtomString { m_document.documentURI() });
+    request.setInitiatorType(AtomString { m_document.documentURI() });
     m_cachedImage = m_document.cachedResourceLoader().requestImage(WTFMove(request)).value_or(nullptr);
 
     if (m_cachedImage)

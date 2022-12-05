@@ -643,7 +643,6 @@ public:
     void setPaginationBehavesLikeColumns(bool);
     void setPageLength(double);
     void setGapBetweenPages(double);
-    void setPaginationLineGridEnabled(bool);
     
     void postInjectedBundleMessage(const String& messageName, const UserData&);
 

@@ -78,10 +78,6 @@ RenderStyle resolveForDocument(const Document& document)
         documentStyle.setColumnGap(GapLength(Length((int) pagination.gap, LengthType::Fixed)));
         if (renderView.multiColumnFlow())
             renderView.updateColumnProgressionFromStyle(documentStyle);
-        if (renderView.page().paginationLineGridEnabled()) {
-            documentStyle.setLineGrid("-webkit-default-pagination-grid"_s);
-            documentStyle.setLineSnap(LineSnap::Contain);
-        }
     }
 
     const Settings& settings = renderView.frame().settings();

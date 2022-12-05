@@ -3203,14 +3203,6 @@ class TestCheckOutSpecificRevision(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SKIPPED, state_string='Checked out required revision (skipped)')
         return self.runStep()
 
-    def test_skip_pr(self):
-        self.setupStep(CheckOutSpecificRevision())
-        self.setProperty('github.number', '1234')
-        self.setProperty('ews_revision', '1a3425cb92dbcbca12a10aa9514f1b77c76dc26')
-        self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='Checked out required revision (skipped)')
-        return self.runStep()
-
 
 class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

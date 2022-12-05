@@ -1149,13 +1149,13 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 // for this document because it may have been speculatively preloaded.
                 if (auto metricsFromResource = resource->takeNetworkLoadMetrics(); metricsFromResource && documentLoader && metricsFromResource->redirectStart >= documentLoader->timing().timeOrigin())
                     metrics = WTFMove(metricsFromResource);
-                auto resourceTiming = ResourceTiming::fromMemoryCache(url, request.initiatorName(), loadTiming, resource->response(), metrics ? *metrics : NetworkLoadMetrics::emptyMetrics(), *request.origin());
+                auto resourceTiming = ResourceTiming::fromMemoryCache(url, request.initiatorType(), loadTiming, resource->response(), metrics ? *metrics : NetworkLoadMetrics::emptyMetrics(), *request.origin());
                 if (initiatorContext == InitiatorContext::Worker) {
                     ASSERT(is<CachedRawResource>(resource.get()));
                     downcast<CachedRawResource>(resource.get())->finishedTimingForWorkerLoad(WTFMove(resourceTiming));
                 } else {
                     ASSERT(initiatorContext == InitiatorContext::Document);
-                    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorName(), &frame);
+                    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorType(), &frame);
                     m_resourceTimingInfo.addResourceTiming(*resource.get(), *document(), WTFMove(resourceTiming));
                 }
             }
@@ -1233,7 +1233,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     memoryCache.remove(resource);
     memoryCache.add(*newResource);
 
-    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, newResource->initiatorName(), frame());
+    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, newResource->initiatorType(), frame());
 
     return newResource;
 }
@@ -1251,7 +1251,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
     if (resource->allowsCaching())
         memoryCache.add(*resource);
 
-    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorName(), frame());
+    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorType(), frame());
 
     return resource;
 }

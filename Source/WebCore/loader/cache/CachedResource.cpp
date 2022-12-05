@@ -92,7 +92,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     , m_responseTimestamp(WallTime::now())
     , m_fragmentIdentifierForRequest(request.releaseFragmentIdentifier())
     , m_origin(request.releaseOrigin())
-    , m_initiatorName(request.initiatorName())
+    , m_initiatorType(request.initiatorType())
     , m_type(type)
     , m_preloadResult(PreloadResult::PreloadNotReferenced)
     , m_responseTainting(ResourceResponse::Tainting::Basic)

@@ -24,7 +24,7 @@
 #include "XMLHttpRequest.h"
 
 #include "Blob.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
@@ -624,7 +624,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     options.credentials = m_includeCredentials ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.mode = FetchOptions::Mode::Cors;
     options.contentSecurityPolicyEnforcement = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
-    options.initiator = cachedResourceRequestInitiators().xmlhttprequest;
+    options.initiatorType = cachedResourceRequestInitiatorTypes().xmlhttprequest;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.filteringPolicy = ResponseFilteringPolicy::Enable;
     options.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Disable;

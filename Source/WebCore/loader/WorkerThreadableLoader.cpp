@@ -56,7 +56,7 @@
 namespace WebCore {
 
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
-    : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client, options.initiator))
+    : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client, options.initiatorType))
     , m_bridge(*new MainThreadBridge(m_workerClientWrapper.get(), workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy(), workerOrWorkletGlobalScope.identifier(), taskMode, WTFMove(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer() : referrer, workerOrWorkletGlobalScope))
 {
 }
@@ -285,7 +285,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishTiming(const ResourceTim
     m_networkLoadMetrics = resourceTiming.networkLoadMetrics();
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, resourceTiming = resourceTiming.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        ASSERT(!resourceTiming.initiator().isEmpty());
+        ASSERT(!resourceTiming.initiatorType().isEmpty());
 
         // No need to notify clients, just add the performance timing entry.
         if (is<WorkerGlobalScope>(context))

@@ -44,8 +44,8 @@ public:
     const String& crossOriginMode() const { return m_crossOriginMode; }
 
 protected:
-    ScriptElementCachedScriptFetcher(const AtomString& nonce, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
-        : CachedScriptFetcher(nonce, policy, charset, initiatorName, isInUserAgentShadowTree)
+    ScriptElementCachedScriptFetcher(const AtomString& nonce, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+        : CachedScriptFetcher(nonce, policy, charset, initiatorType, isInUserAgentShadowTree)
         , m_crossOriginMode(crossOriginMode)
     {
     }

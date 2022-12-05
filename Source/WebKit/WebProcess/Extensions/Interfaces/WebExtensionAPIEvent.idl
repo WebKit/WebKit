@@ -25,11 +25,10 @@
 
 [
     Conditional=WK_WEB_EXTENSIONS,
-    NeedsPageWithCallbackHandler,
 ] interface WebExtensionAPIEvent {
 
-    void addListener([CallbackHandler] function listener);
-    void removeListener([CallbackHandler] function listener);
+    [NeedsPage] void addListener([CallbackHandler] function listener);
+    [NeedsPage] void removeListener([CallbackHandler] function listener);
     boolean hasListener([CallbackHandler] function listener);
 
 };

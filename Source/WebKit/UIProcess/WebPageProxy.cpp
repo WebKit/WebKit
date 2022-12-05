@@ -4441,18 +4441,6 @@ void WebPageProxy::setGapBetweenPages(double gap)
     send(Messages::WebPage::SetGapBetweenPages(gap));
 }
 
-void WebPageProxy::setPaginationLineGridEnabled(bool lineGridEnabled)
-{
-    if (lineGridEnabled == m_paginationLineGridEnabled)
-        return;
-    
-    m_paginationLineGridEnabled = lineGridEnabled;
-    
-    if (!hasRunningProcess())
-        return;
-    send(Messages::WebPage::SetPaginationLineGridEnabled(lineGridEnabled));
-}
-
 void WebPageProxy::pageScaleFactorDidChange(double scaleFactor)
 {
     m_pageScaleFactor = scaleFactor;
@@ -8617,7 +8605,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.paginationBehavesLikeColumns = m_paginationBehavesLikeColumns;
     parameters.pageLength = m_pageLength;
     parameters.gapBetweenPages = m_gapBetweenPages;
-    parameters.paginationLineGridEnabled = m_paginationLineGridEnabled;
     parameters.userAgent = userAgent();
     parameters.itemStatesWereRestoredByAPIRequest = m_sessionStateWasRestoredByAPIRequest;
     parameters.itemStates = m_backForwardList->itemStates();

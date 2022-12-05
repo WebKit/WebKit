@@ -545,8 +545,6 @@ public:
     // FrameView.
     const Pagination& pagination() const { return m_pagination; }
     WEBCORE_EXPORT void setPagination(const Pagination&);
-    bool paginationLineGridEnabled() const { return m_paginationLineGridEnabled; }
-    WEBCORE_EXPORT void setPaginationLineGridEnabled(bool flag);
 
     WEBCORE_EXPORT unsigned pageCount() const;
 
@@ -1141,7 +1139,6 @@ private:
     ScrollElasticity m_horizontalScrollElasticity { ScrollElasticity::Allowed };
 
     Pagination m_pagination;
-    bool m_paginationLineGridEnabled { false };
 
     String m_userStyleSheetPath;
     mutable String m_userStyleSheet;

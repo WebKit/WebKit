@@ -1,19 +1,10 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 766x39
-          text run at (0,0) width 766: "Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: \"world hello\"."
-          text run at (0,20) width 463: "To test manually double click on the \"hello\" and drag it to after \"world\"."
-      RenderBlock {DIV} at (0,56) size 784x20
-        RenderInline {SPAN} at (0,0) size 32x19
-          RenderText {#text} at (0,0) size 32x19
-            text run at (0,0) width 32: "hello"
-        RenderText {#text} at (31,0) size 43x19
-          text run at (31,0) width 43: " world"
-caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 3 {DIV} of body
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: "world hello".<br>
+To test manually double click on the "hello" and drag it to after "world".
+| <span>
+|   id="dragme"
+|   "<#selection-caret>hello"
+| " world"

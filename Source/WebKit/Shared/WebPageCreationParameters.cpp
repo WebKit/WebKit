@@ -54,7 +54,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << paginationBehavesLikeColumns;
     encoder << pageLength;
     encoder << gapBetweenPages;
-    encoder << paginationLineGridEnabled;
     encoder << userAgent;
     encoder << itemStatesWereRestoredByAPIRequest;
     encoder << itemStates;
@@ -255,8 +254,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.pageLength))
         return std::nullopt;
     if (!decoder.decode(parameters.gapBetweenPages))
-        return std::nullopt;
-    if (!decoder.decode(parameters.paginationLineGridEnabled))
         return std::nullopt;
 
     std::optional<String> userAgent;

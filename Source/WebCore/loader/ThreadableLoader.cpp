@@ -32,7 +32,7 @@
 #include "config.h"
 #include "ThreadableLoader.h"
 
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -57,10 +57,10 @@ ThreadableLoaderOptions::ThreadableLoaderOptions(FetchOptions&& baseOptions)
 {
 }
 
-ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy filteringPolicy)
+ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiatorType, ResponseFilteringPolicy filteringPolicy)
     : ResourceLoaderOptions(baseOptions)
     , contentSecurityPolicyEnforcement(contentSecurityPolicyEnforcement)
-    , initiator(WTFMove(initiator))
+    , initiatorType(WTFMove(initiatorType))
     , filteringPolicy(filteringPolicy)
 {
 }
@@ -100,7 +100,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
 
     // ThreadableLoaderOptions
     copy.contentSecurityPolicyEnforcement = this->contentSecurityPolicyEnforcement;
-    copy.initiator = this->initiator.isolatedCopy();
+    copy.initiatorType = this->initiatorType.isolatedCopy();
     copy.filteringPolicy = this->filteringPolicy;
 
     return copy;
@@ -134,7 +134,7 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext& context
     context.didLoadResourceSynchronously(resourceURL);
 }
 
-void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceError& error, const String& initiator)
+void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceError& error, const String& initiatorType)
 {
     if (error.isCancellation())
         return;
@@ -149,11 +149,11 @@ void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceE
         return;
 
     const char* messageStart;
-    if (initiator == cachedResourceRequestInitiators().eventsource)
+    if (initiatorType == cachedResourceRequestInitiatorTypes().eventsource)
         messageStart = "EventSource cannot load ";
-    else if (initiator == cachedResourceRequestInitiators().fetch)
+    else if (initiatorType == cachedResourceRequestInitiatorTypes().fetch)
         messageStart = "Fetch API cannot load ";
-    else if (initiator == cachedResourceRequestInitiators().xmlhttprequest)
+    else if (initiatorType == cachedResourceRequestInitiatorTypes().xmlhttprequest)
         messageStart = "XMLHttpRequest cannot load ";
     else
         messageStart = "Cannot load ";
