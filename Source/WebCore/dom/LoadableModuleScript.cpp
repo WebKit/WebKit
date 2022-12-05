@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-Ref<LoadableModuleScript> LoadableModuleScript::create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
+Ref<LoadableModuleScript> LoadableModuleScript::create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
 {
-    return adoptRef(*new LoadableModuleScript(nonce, integrity, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree));
+    return adoptRef(*new LoadableModuleScript(nonce, integrity, policy, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree));
 }
 
-LoadableModuleScript::LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
-    : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
+LoadableModuleScript::LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+    : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
     , m_parameters(ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, integrity, /* isTopLevelModule */ true))
 {
 }

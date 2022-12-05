@@ -30,7 +30,7 @@
 #include "FetchLoader.h"
 
 #include "BlobURL.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "ContentSecurityPolicy.h"
 #include "FetchBody.h"
 #include "FetchBodyConsumer.h"

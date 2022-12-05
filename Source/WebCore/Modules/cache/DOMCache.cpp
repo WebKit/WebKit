@@ -27,7 +27,7 @@
 #include "DOMCache.h"
 
 #include "CacheQueryOptions.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
 #include "HTTPParsers.h"
@@ -322,7 +322,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 else
                     taskHandler->addResponseBody(recordPosition, response, data.takeAsContiguous());
             });
-        }, cachedResourceRequestInitiators().fetch);
+        }, cachedResourceRequestInitiatorTypes().fetch);
     }
 }
 

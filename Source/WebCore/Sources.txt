@@ -1742,7 +1742,7 @@ loader/cache/CachedResource.cpp
 loader/cache/CachedResourceHandle.cpp
 loader/cache/CachedResourceLoader.cpp
 loader/cache/CachedResourceRequest.cpp
-loader/cache/CachedResourceRequestInitiators.cpp
+loader/cache/CachedResourceRequestInitiatorTypes.cpp
 loader/cache/CachedSVGDocument.cpp
 loader/cache/CachedSVGDocumentReference.cpp
 loader/cache/CachedSVGFont.cpp

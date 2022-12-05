@@ -72,7 +72,7 @@ private:
 
     ResolvedURL m_location;
     std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
-    AtomString m_initiatorName;
+    AtomString m_initiatorType;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
     RefPtr<CSSImageValue> m_unresolvedValue;
 };

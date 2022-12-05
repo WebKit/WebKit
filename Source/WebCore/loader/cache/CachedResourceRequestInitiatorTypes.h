@@ -23,19 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CachedResourceRequestInitiators.h"
+#pragma once
+
+#include "ThreadGlobalData.h"
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-CachedResourceRequestInitiators::CachedResourceRequestInitiators()
-    : css("css"_s)
-    , eventsource("eventsource"_s)
-    , fetch("fetch"_s)
-    , icon("icon"_s)
-    , navigation("navigation"_s)
-    , xmlhttprequest("xmlhttprequest"_s)
+struct CachedResourceRequestInitiatorTypes {
+    CachedResourceRequestInitiatorTypes();
+
+    const AtomString css;
+    const AtomString eventsource;
+    const AtomString fetch;
+    const AtomString icon;
+    const AtomString navigation;
+    const AtomString xmlhttprequest;
+    WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiatorTypes); WTF_MAKE_FAST_ALLOCATED;
+private:
+    friend class ThreadGlobalData;
+};
+
+inline const CachedResourceRequestInitiatorTypes& cachedResourceRequestInitiatorTypes()
 {
+    return threadGlobalData().cachedResourceRequestInitiatorTypes();
 }
 
 } // namespace WebCore

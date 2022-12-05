@@ -123,7 +123,7 @@ void CrossOriginPreflightChecker::startPreflight()
     options.initiatorContext = m_loader.options().initiatorContext;
 
     CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin(), m_loader.referrer()), options);
-    preflightRequest.setInitiator(AtomString { m_loader.options().initiator });
+    preflightRequest.setInitiatorType(AtomString { m_loader.options().initiatorType });
 
     ASSERT(!m_resource);
     m_resource = m_loader.document().cachedResourceLoader().requestRawResource(WTFMove(preflightRequest)).value_or(nullptr);

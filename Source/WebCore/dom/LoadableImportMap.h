@@ -40,14 +40,14 @@ namespace WebCore {
 // destroyed in order to guarantee that the data buffer will not be purged.
 class LoadableImportMap final : public LoadableNonModuleScriptBase {
 public:
-    static Ref<LoadableImportMap> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
+    static Ref<LoadableImportMap> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 
     ScriptType scriptType() const final { return ScriptType::ImportMap; }
 
     void execute(ScriptElement&) final;
 
 private:
-    LoadableImportMap(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
+    LoadableImportMap(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 };
 
 }

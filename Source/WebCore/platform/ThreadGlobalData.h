@@ -41,7 +41,7 @@ class FontCache;
 class QualifiedNameCache;
 class ThreadTimers;
 
-struct CachedResourceRequestInitiators;
+struct CachedResourceRequestInitiatorTypes;
 struct EventNames;
 struct MIMETypeRegistryThreadGlobalData;
 
@@ -53,12 +53,12 @@ public:
     WEBCORE_EXPORT ~ThreadGlobalData();
     void destroy(); // called on workers to clean up the ThreadGlobalData before the thread exits.
 
-    const CachedResourceRequestInitiators& cachedResourceRequestInitiators()
+    const CachedResourceRequestInitiatorTypes& cachedResourceRequestInitiatorTypes()
     {
         ASSERT(!m_destroyed);
-        if (UNLIKELY(!m_cachedResourceRequestInitiators))
-            initializeCachedResourceRequestInitiators();
-        return *m_cachedResourceRequestInitiators;
+        if (UNLIKELY(!m_cachedResourceRequestInitiatorTypes))
+            initializeCachedResourceRequestInitiatorTypes();
+        return *m_cachedResourceRequestInitiatorTypes;
     }
     EventNames& eventNames()
     {
@@ -108,13 +108,13 @@ public:
 private:
     bool m_destroyed { false };
 
-    WEBCORE_EXPORT void initializeCachedResourceRequestInitiators();
+    WEBCORE_EXPORT void initializeCachedResourceRequestInitiatorTypes();
     WEBCORE_EXPORT void initializeEventNames();
     WEBCORE_EXPORT void initializeQualifiedNameCache();
     WEBCORE_EXPORT void initializeMimeTypeRegistryThreadGlobalData();
     WEBCORE_EXPORT void initializeFontCache();
 
-    std::unique_ptr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
+    std::unique_ptr<CachedResourceRequestInitiatorTypes> m_cachedResourceRequestInitiatorTypes;
     std::unique_ptr<EventNames> m_eventNames;
     std::unique_ptr<ThreadTimers> m_threadTimers;
     std::unique_ptr<QualifiedNameCache> m_qualifiedNameCache;

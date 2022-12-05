@@ -47,7 +47,7 @@ public:
 private:
     enum AlreadyAdded { NotYetAdded, Added };
     struct InitiatorInfo {
-        AtomString name;
+        AtomString type;
         AlreadyAdded added;
     };
     // FIXME: This shoudn't use raw pointer as identifier (though it is not dereferenced).

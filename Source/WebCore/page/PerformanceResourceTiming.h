@@ -46,7 +46,7 @@ class PerformanceResourceTiming : public PerformanceEntry {
 public:
     static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 
-    const String& initiatorType() const { return m_resourceTiming.initiator(); }
+    const String& initiatorType() const { return m_resourceTiming.initiatorType(); }
     const String& nextHopProtocol() const;
 
     double workerStart() const;

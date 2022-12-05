@@ -29,7 +29,7 @@
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -86,7 +86,7 @@ void IconLoader::startLoading()
         DefersLoadingPolicy::AllowDefersLoading,
         CachingPolicy::AllowCaching));
 
-    request.setInitiator(cachedResourceRequestInitiators().icon);
+    request.setInitiatorType(cachedResourceRequestInitiatorTypes().icon);
 
     auto cachedResource = frame->document()->cachedResourceLoader().requestIcon(WTFMove(request));
     m_resource = cachedResource.value_or(nullptr);

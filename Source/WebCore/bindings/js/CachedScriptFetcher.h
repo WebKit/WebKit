@@ -43,10 +43,10 @@ public:
     static Ref<CachedScriptFetcher> create(const String& charset);
 
 protected:
-    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
+    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
         : m_nonce(nonce)
         , m_charset(charset)
-        , m_initiatorName(initiatorName)
+        , m_initiatorType(initiatorType)
         , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
         , m_referrerPolicy(referrerPolicy)
     {
@@ -62,7 +62,7 @@ protected:
 private:
     String m_nonce;
     String m_charset;
-    AtomString m_initiatorName;
+    AtomString m_initiatorType;
     bool m_isInUserAgentShadowTree { false };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
 };

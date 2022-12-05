@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-LoadableNonModuleScriptBase::LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
-    : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
+LoadableNonModuleScriptBase::LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+    : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
     , m_integrity(integrity)
     , m_isAsync(isAsync)
 {
@@ -157,13 +157,13 @@ bool LoadableNonModuleScriptBase::load(Document& document, const URL& sourceURL)
     return true;
 }
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const AtomString& nonce, const AtomString& integrityMetadata, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const AtomString& nonce, const AtomString& integrityMetadata, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
 {
-    return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree, isAsync));
+    return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync));
 }
 
-LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
-    : LoadableNonModuleScriptBase(nonce, integrity, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree, isAsync)
+LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+    : LoadableNonModuleScriptBase(nonce, integrity, policy, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync)
 {
 }
 

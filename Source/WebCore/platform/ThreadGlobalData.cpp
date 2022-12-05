@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ThreadGlobalData.h"
 
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "EventNames.h"
 #include "FontCache.h"
 #include "MIMETypeRegistry.h"
@@ -106,10 +106,10 @@ ThreadGlobalData& threadGlobalData()
 
 #endif
 
-void ThreadGlobalData::initializeCachedResourceRequestInitiators()
+void ThreadGlobalData::initializeCachedResourceRequestInitiatorTypes()
 {
-    ASSERT(!m_cachedResourceRequestInitiators);
-    m_cachedResourceRequestInitiators = makeUnique<CachedResourceRequestInitiators>();
+    ASSERT(!m_cachedResourceRequestInitiatorTypes);
+    m_cachedResourceRequestInitiatorTypes = makeUnique<CachedResourceRequestInitiatorTypes>();
 }
 
 void ThreadGlobalData::initializeEventNames()

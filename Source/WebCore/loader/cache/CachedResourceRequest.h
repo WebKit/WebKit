@@ -64,8 +64,8 @@ public:
     void setPriority(std::optional<ResourceLoadPriority>&& priority) { m_priority = WTFMove(priority); }
 
     void setInitiator(Element&);
-    void setInitiator(const AtomString& name);
-    const AtomString& initiatorName() const;
+    void setInitiatorType(const AtomString&);
+    const AtomString& initiatorType() const;
 
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
     void setCachingPolicy(CachingPolicy policy) { m_options.cachingPolicy = policy;  }
@@ -118,7 +118,7 @@ private:
     ResourceLoaderOptions m_options;
     std::optional<ResourceLoadPriority> m_priority;
     RefPtr<Element> m_initiatorElement;
-    AtomString m_initiatorName;
+    AtomString m_initiatorType;
     RefPtr<SecurityOrigin> m_origin;
     String m_fragmentIdentifier;
     bool m_isLinkPreload { false };

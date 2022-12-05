@@ -65,7 +65,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::ImageResource)
         options.referrerPolicy = m_referrerPolicy;
     auto request = createPotentialAccessControlRequest(completeURL(document), WTFMove(options), document, crossOriginMode);
-    request.setInitiator(m_initiator);
+    request.setInitiatorType(m_initiatorType);
 
     if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_scriptType == ScriptType::Classic)
         request.setPriority(DefaultResourceLoadPriority::asyncScript);

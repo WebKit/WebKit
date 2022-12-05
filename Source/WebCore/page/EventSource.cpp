@@ -33,7 +33,7 @@
 #include "config.h"
 #include "EventSource.h"
 
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "ContentSecurityPolicy.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
@@ -110,7 +110,7 @@ void EventSource::connect()
     options.cache = FetchOptions::Cache::NoStore;
     options.dataBufferingPolicy = DataBufferingPolicy::DoNotBufferData;
     options.contentSecurityPolicyEnforcement = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
-    options.initiator = cachedResourceRequestInitiators().eventsource;
+    options.initiatorType = cachedResourceRequestInitiatorTypes().eventsource;
 
     ASSERT(scriptExecutionContext());
     m_loader = ThreadableLoader::create(*scriptExecutionContext(), *this, WTFMove(request), options);

@@ -27,7 +27,7 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
-#include "CachedResourceRequestInitiators.h"
+#include "CachedResourceRequestInitiatorTypes.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
@@ -36,22 +36,22 @@
 
 namespace WebCore {
 
-CSSImageValue::CSSImageValue(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString&& initiatorName)
+CSSImageValue::CSSImageValue(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString&& initiatorType)
     : CSSValue(ImageClass)
     , m_location(WTFMove(location))
-    , m_initiatorName(WTFMove(initiatorName))
+    , m_initiatorType(WTFMove(initiatorType))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
 }
 
-Ref<CSSImageValue> CSSImageValue::create(ResolvedURL location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorName)
+Ref<CSSImageValue> CSSImageValue::create(ResolvedURL location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorType)
 {
-    return adoptRef(*new CSSImageValue(WTFMove(location), loadedFromOpaqueSource, WTFMove(initiatorName)));
+    return adoptRef(*new CSSImageValue(WTFMove(location), loadedFromOpaqueSource, WTFMove(initiatorType)));
 }
 
-Ref<CSSImageValue> CSSImageValue::create(URL imageURL, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorName)
+Ref<CSSImageValue> CSSImageValue::create(URL imageURL, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorType)
 {
-    return create(makeResolvedURL(WTFMove(imageURL)), loadedFromOpaqueSource, WTFMove(initiatorName));
+    return create(makeResolvedURL(WTFMove(imageURL)), loadedFromOpaqueSource, WTFMove(initiatorType));
 }
 
 CSSImageValue::~CSSImageValue() = default;
@@ -81,7 +81,7 @@ RefPtr<StyleImage> CSSImageValue::createStyleImage(Style::BuilderState& state) c
         return StyleCachedImage::create(const_cast<CSSImageValue&>(*this));
     auto result = create(WTFMove(location), m_loadedFromOpaqueSource);
     result->m_cachedImage = m_cachedImage;
-    result->m_initiatorName = m_initiatorName;
+    result->m_initiatorType = m_initiatorType;
     result->m_unresolvedValue = const_cast<CSSImageValue*>(this);
     return StyleCachedImage::create(WTFMove(result));
 }
@@ -92,10 +92,10 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
         ResourceLoaderOptions loadOptions = options;
         loadOptions.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
         CachedResourceRequest request(ResourceRequest(reresolvedURL(*loader.document())), loadOptions);
-        if (m_initiatorName.isEmpty())
-            request.setInitiator(cachedResourceRequestInitiators().css);
+        if (m_initiatorType.isEmpty())
+            request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
         else
-            request.setInitiator(m_initiatorName);
+            request.setInitiatorType(m_initiatorType);
         if (options.mode == FetchOptions::Mode::Cors) {
             ASSERT(loader.document());
             request.updateForAccessControl(*loader.document());

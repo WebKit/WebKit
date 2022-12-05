@@ -34,8 +34,8 @@ namespace WebCore {
 class PreloadRequest {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PreloadRequest(ASCIILiteral initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ScriptType scriptType, const ReferrerPolicy& referrerPolicy)
-        : m_initiator(initiator)
+    PreloadRequest(ASCIILiteral initiatorType, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ScriptType scriptType, const ReferrerPolicy& referrerPolicy)
+        : m_initiatorType(initiatorType)
         , m_resourceURL(resourceURL)
         , m_baseURL(baseURL.isolatedCopy())
         , m_resourceType(resourceType)
@@ -58,7 +58,7 @@ public:
 private:
     URL completeURL(Document&);
 
-    ASCIILiteral m_initiator;
+    ASCIILiteral m_initiatorType;
     String m_resourceURL;
     URL m_baseURL;
     String m_charset;
