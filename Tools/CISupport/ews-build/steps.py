@@ -721,7 +721,7 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         super(CheckOutSpecificRevision, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
-        return self.getProperty('ews_revision', False) and not self.getProperty('github.number', False)
+        return self.getProperty('ews_revision', False)
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
