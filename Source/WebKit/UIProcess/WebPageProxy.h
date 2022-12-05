@@ -1199,8 +1199,6 @@ public:
     double pageLength() const { return m_pageLength; }
     void setGapBetweenPages(double);
     double gapBetweenPages() const { return m_gapBetweenPages; }
-    void setPaginationLineGridEnabled(bool);
-    bool paginationLineGridEnabled() const { return m_paginationLineGridEnabled; }
     unsigned pageCount() const { return m_pageCount; }
 
     void isJITEnabled(CompletionHandler<void(bool)>&&);
@@ -2961,7 +2959,6 @@ private:
     bool m_paginationBehavesLikeColumns { false };
     double m_pageLength { 0 };
     double m_gapBetweenPages { 0 };
-    bool m_paginationLineGridEnabled { false };
         
     // If the process backing the web page is alive and kicking.
     bool m_hasRunningProcess { false };

@@ -544,7 +544,6 @@ void Internals::resetToConsistentState(Page& page)
 {
     page.setPageScaleFactor(1, IntPoint(0, 0));
     page.setPagination(Pagination());
-    page.setPaginationLineGridEnabled(false);
 
     page.setDefersLoading(false);
 
@@ -2090,15 +2089,6 @@ ExceptionOr<void> Internals::setPagination(const String& mode, int gap, int page
     pagination.pageLength = pageLength;
     document->page()->setPagination(pagination);
 
-    return { };
-}
-
-ExceptionOr<void> Internals::setPaginationLineGridEnabled(bool enabled)
-{
-    Document* document = contextDocument();
-    if (!document || !document->page())
-        return Exception { InvalidAccessError };
-    document->page()->setPaginationLineGridEnabled(enabled);
     return { };
 }
 

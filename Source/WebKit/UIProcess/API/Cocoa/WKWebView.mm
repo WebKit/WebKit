@@ -3308,13 +3308,11 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (BOOL)_paginationLineGridEnabled
 {
-    return _page->paginationLineGridEnabled();
+    return NO;
 }
 
 - (void)_setPaginationLineGridEnabled:(BOOL)lineGridEnabled
 {
-    THROW_IF_SUSPENDED;
-    _page->setPaginationLineGridEnabled(lineGridEnabled);
 }
 
 - (NSUInteger)_pageCount

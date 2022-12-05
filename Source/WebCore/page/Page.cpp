@@ -1548,16 +1548,6 @@ void Page::setPagination(const Pagination& pagination)
     setNeedsRecalcStyleInAllFrames();
 }
 
-void Page::setPaginationLineGridEnabled(bool enabled)
-{
-    if (m_paginationLineGridEnabled == enabled)
-        return;
-    
-    m_paginationLineGridEnabled = enabled;
-    
-    setNeedsRecalcStyleInAllFrames();
-}
-
 unsigned Page::pageCount() const
 {
     if (m_pagination.mode == Pagination::Unpaginated)

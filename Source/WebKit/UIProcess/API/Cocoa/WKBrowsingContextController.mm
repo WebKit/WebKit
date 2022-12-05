@@ -722,12 +722,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setPaginationLineGridEnabled:(BOOL)lineGridEnabled
 {
-    _page->setPaginationLineGridEnabled(lineGridEnabled);
 }
 
 - (BOOL)paginationLineGridEnabled
 {
-    return _page->paginationLineGridEnabled();
+    return NO;
 }
 
 - (NSUInteger)pageCount

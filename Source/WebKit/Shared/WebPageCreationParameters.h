@@ -104,7 +104,6 @@ struct WebPageCreationParameters {
     bool paginationBehavesLikeColumns;
     double pageLength;
     double gapBetweenPages;
-    bool paginationLineGridEnabled;
     
     String userAgent;
 

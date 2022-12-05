@@ -364,16 +364,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
         view().frameView().recalculateScrollbarOverlayStyle();
         
-        const Pagination& pagination = view().frameView().pagination();
-        if (isBodyRenderer && pagination.mode != Pagination::Unpaginated && page().paginationLineGridEnabled()) {
-            // Propagate the body font back up to the RenderView and use it as
-            // the basis of the grid.
-            if (newStyle.fontDescription() != view().style().fontDescription()) {
-                view().mutableStyle().setFontDescription(FontCascadeDescription { newStyle.fontDescription() });
-                view().mutableStyle().fontCascade().update(&document().fontSelector());
-            }
-        }
-
         if (diff != StyleDifference::Equal)
             view().compositor().rootOrBodyStyleChanged(*this, oldStyle);
     }
