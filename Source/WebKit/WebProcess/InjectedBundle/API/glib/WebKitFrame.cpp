@@ -23,6 +23,7 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitFramePrivate.h"
 #include "WebKitScriptWorldPrivate.h"
+#include "WebKitWebFormManagerPrivate.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
@@ -69,6 +70,28 @@ WebKitFrame* webkitFrameCreate(WebFrame* webFrame)
 WebFrame* webkitFrameGetWebFrame(WebKitFrame* frame)
 {
     return frame->priv->webFrame.get();
+}
+
+GRefPtr<JSCValue> webkitFrameGetJSCValueForElementInWorld(WebKitFrame* frame, Element& element, WebKitScriptWorld* world)
+{
+    Vector<RefPtr<Element>> elements = { RefPtr<Element>(&element) };
+    auto values = webkitFrameGetJSCValuesForElementsInWorld(frame, elements, world);
+    return values.takeLast();
+}
+
+Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame* frame, const Vector<RefPtr<Element>>& elements, WebKitScriptWorld* world)
+{
+    auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
+    auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld));
+    JSDOMWindow* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
+    return elements.map([frame, &jsContext, globalObject](auto& element) -> GRefPtr<JSCValue> {
+        JSValueRef jsValue = nullptr;
+        {
+            JSC::JSLockHolder lock(globalObject);
+            jsValue = toRef(globalObject, toJS(globalObject, globalObject, element.get()));
+        }
+        return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue) : nullptr;
+    });
 }
 
 /**

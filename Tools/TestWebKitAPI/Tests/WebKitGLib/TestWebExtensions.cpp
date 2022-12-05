@@ -256,17 +256,14 @@ static void testInstallMissingPluginsPermissionRequest(WebViewTest* test, gconst
 }
 #endif // PLATFORM(GTK)
 
-static void didAssociateFormControlsCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant* result, WebViewTest* test)
+static void didAssociateFormControlsCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant* result, GUniqueOutPtr<char>* formIds)
 {
-    const char* formIds;
-    g_variant_get(result, "(&s)", &formIds);
-    g_assert_true(!g_strcmp0(formIds, FORM_ID FORM2_ID) || !g_strcmp0(formIds, FORM2_ID FORM_ID) || !g_strcmp0(formIds, INPUT_ID));
-
-    test->quitMainLoop();
+    g_variant_get(result, "(s)", &formIds->outPtr());
 }
 
 static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpointer)
 {
+    GUniqueOutPtr<char> formIds;
     auto proxy = test->extensionProxy();
     GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
     guint id = g_dbus_connection_signal_subscribe(connection,
@@ -277,7 +274,7 @@ static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpoin
         nullptr,
         G_DBUS_SIGNAL_FLAGS_NONE,
         reinterpret_cast<GDBusSignalCallback>(didAssociateFormControlsCallback),
-        test,
+        &formIds,
         nullptr);
     g_assert_cmpuint(id, !=, 0);
 
@@ -297,8 +294,13 @@ static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpoin
         "placeholder.appendChild(form);"
         "placeholder.appendChild(form2);";
 
-    webkit_web_view_run_javascript(test->m_webView, addFormScript, nullptr, nullptr, nullptr);
-    g_main_loop_run(test->m_mainLoop);
+    test->runJavaScriptAndWaitUntilFinished(addFormScript, nullptr);
+    while (!formIds)
+        g_main_context_iteration(nullptr, TRUE);
+    g_assert_true(!g_strcmp0(formIds.get(), FORM_ID FORM2_ID) || !g_strcmp0(formIds.get(), FORM2_ID FORM_ID));
+
+    // GUniqueOutPtr doesn't have a clear().
+    GUniquePtr<char> deleter(formIds.release());
 
     static const char* moveFormElementScript =
         "var form = document.getElementById(\"" FORM_ID "\");"
@@ -307,8 +309,10 @@ static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpoin
         "form.removeChild(input);"
         "form2.appendChild(input);";
 
-    webkit_web_view_run_javascript(test->m_webView, moveFormElementScript, nullptr, nullptr, nullptr);
-    g_main_loop_run(test->m_mainLoop);
+    test->runJavaScriptAndWaitUntilFinished(moveFormElementScript, nullptr);
+    while (!formIds)
+        g_main_context_iteration(nullptr, TRUE);
+    g_assert_cmpstr(formIds.get(), ==, INPUT_ID);
 
     g_dbus_connection_signal_unsubscribe(connection, id);
 }

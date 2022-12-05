@@ -48,19 +48,19 @@ struct _WebKitDOMElementClass {
     WebKitDOMNodeClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_element_get_type                             (void);
 
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED_FOR(webkit_web_form_manager_input_element_is_user_edited) gboolean
 webkit_dom_element_html_input_element_is_user_edited    (WebKitDOMElement *element);
 
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED_FOR(webkit_web_form_manager_input_element_is_auto_filled) gboolean
 webkit_dom_element_html_input_element_get_auto_filled   (WebKitDOMElement *element);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_form_manager_input_element_auto_fill) void
 webkit_dom_element_html_input_element_set_auto_filled   (WebKitDOMElement *element,
                                                          gboolean          auto_filled);
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_form_manager_input_element_auto_fill) void
 webkit_dom_element_html_input_element_set_editing_value (WebKitDOMElement *element,
                                                          const char       *value);
 

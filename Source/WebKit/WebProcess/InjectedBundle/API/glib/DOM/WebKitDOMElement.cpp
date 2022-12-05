@@ -31,6 +31,8 @@
 #include "WebKitDOMEventTarget.h"
 #endif
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMElement* kit(WebCore::Element* obj)
@@ -58,9 +60,7 @@ WebKitDOMElement* wrapElement(WebCore::Element* coreObject)
 } // namespace WebKit
 
 #if PLATFORM(GTK)
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMElement, webkit_dom_element, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkitDOMElementDOMEventTargetInit))
-G_GNUC_END_IGNORE_DEPRECATIONS;
 #else
 G_DEFINE_TYPE(WebKitDOMElement, webkit_dom_element, WEBKIT_DOM_TYPE_NODE)
 #endif
@@ -86,6 +86,8 @@ static void webkit_dom_element_init(WebKitDOMElement*)
  * Returns: whether @element has been edited by a user action.
  *
  * Since: 2.22
+ *
+ * Deprecated: 2.40: Use webkit_web_form_manager_input_element_is_user_edited() instead.
  */
 gboolean webkit_dom_element_html_input_element_is_user_edited(WebKitDOMElement* element)
 {
@@ -102,7 +104,7 @@ gboolean webkit_dom_element_html_input_element_is_user_edited(WebKitDOMElement* 
 }
 
 /**
- * webkit_dom_element_is_html_input_element_auto_filled:
+ * webkit_dom_element_html_input_element_get_auto_filled:
  * @element: a #WebKitDOMElement
  *
  * Get whether the element is an HTML input element that has been filled automatically.
@@ -110,6 +112,8 @@ gboolean webkit_dom_element_html_input_element_is_user_edited(WebKitDOMElement* 
  * Returns: whether @element has been filled automatically.
  *
  * Since: 2.22
+ *
+ * Deprecated: 2.40: Use webkit_web_form_manager_input_element_is_auto_filled() instead.
  */
 gboolean webkit_dom_element_html_input_element_get_auto_filled(WebKitDOMElement* element)
 {
@@ -131,6 +135,8 @@ gboolean webkit_dom_element_html_input_element_get_auto_filled(WebKitDOMElement*
  * If @element is not an HTML input element this function does nothing.
  *
  * Since: 2.22
+ *
+ * Deprecated: 2.40: Use webkit_web_form_manager_input_element_auto_fill() instead.
  */
 void webkit_dom_element_html_input_element_set_auto_filled(WebKitDOMElement* element, gboolean autoFilled)
 {
@@ -153,6 +159,8 @@ void webkit_dom_element_html_input_element_set_auto_filled(WebKitDOMElement* ele
  * element this function does nothing.
  *
  * Since: 2.22
+ *
+ * Deprecated: 2.40: Use webkit_web_form_manager_input_element_auto_fill() instead.
  */
 void webkit_dom_element_html_input_element_set_editing_value(WebKitDOMElement* element, const char* value)
 {
@@ -164,3 +172,5 @@ void webkit_dom_element_html_input_element_set_editing_value(WebKitDOMElement* e
 
     downcast<WebCore::HTMLInputElement>(*node).setValueForUser(String::fromUTF8(value));
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS;

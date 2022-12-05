@@ -89,8 +89,8 @@ private:
 #if PLATFORM(GTK)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         WebKitDOMElement* p = webkit_dom_document_get_element_by_id(document, "paragraph");
-        G_GNUC_END_IGNORE_DEPRECATIONS;
         g_assert_true(WEBKIT_DOM_IS_ELEMENT(p));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(p));
 
         GRefPtr<JSCValue> jsP = adoptGRef(webkit_frame_get_js_value_for_dom_object(frame, WEBKIT_DOM_OBJECT(p)));
@@ -122,7 +122,9 @@ private:
         g_assert_true(jsc_value_is_object(jsImage.get()));
 
         WebKitDOMNode* image = webkit_dom_node_for_js_value(jsImage.get());
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_assert_true(WEBKIT_DOM_IS_ELEMENT(image));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(image));
 #if PLATFORM(GTK)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
@@ -133,11 +135,10 @@ private:
         return true;
     }
 
-    static void willSubmitFormCallback(WebKitWebPage* page, WebKitDOMElement*, WebKitFormSubmissionStep, WebKitFrame* sourceFrame, WebKitFrame*, GPtrArray*, GPtrArray*, gpointer userData)
+    static void willSubmitFormCallback(WebKitWebFormManager*, JSCValue*, WebKitFrame* sourceFrame, WebKitFrame*, gpointer userData)
     {
-        // The form is submitted from a subframe. It should have a different ID than the main frame.
-        WebKitFrame* mainFrame = webkit_web_page_get_main_frame(page);
-        g_assert_cmpuint(webkit_frame_get_id(mainFrame), !=, webkit_frame_get_id(sourceFrame));
+        // The form is submitted from a subframe.
+        g_assert_false(webkit_frame_is_main_frame(sourceFrame));
 
         auto* test = static_cast<WebKitFrameTest*>(userData);
         g_main_loop_quit(test->m_mainLoop.get());
@@ -168,7 +169,8 @@ private:
         g_assert_true(JSC_IS_VALUE(undefined.get()));
         g_assert_true(jsc_value_is_undefined(undefined.get()));
 
-        g_signal_connect(page, "will-submit-form", reinterpret_cast<GCallback>(willSubmitFormCallback), this);
+        auto* formManager = webkit_web_page_get_form_manager(page, nullptr);
+        g_signal_connect(formManager, "will-submit-form", reinterpret_cast<GCallback>(willSubmitFormCallback), this);
 
         m_mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
         g_main_loop_run(m_mainLoop.get());

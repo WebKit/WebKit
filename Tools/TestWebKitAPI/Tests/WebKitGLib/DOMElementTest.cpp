@@ -42,27 +42,21 @@ private:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsInputElement.get()));
         g_assert_true(jsc_value_is_object(jsInputElement.get()));
         g_assert_true(jsc_value_object_is_instance_of(jsInputElement.get(), "HTMLInputElement"));
+        g_assert_false(webkit_web_form_manager_input_element_is_auto_filled(jsInputElement.get()));
 
-        auto* node = webkit_dom_node_for_js_value(jsInputElement.get());
-        g_assert_true(WEBKIT_DOM_IS_NODE(node));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(node));
-
-        auto* element = WEBKIT_DOM_ELEMENT(node);
-        g_assert_false(webkit_dom_element_html_input_element_get_auto_filled(element));
         GRefPtr<JSCValue> value = adoptGRef(jsc_value_object_get_property(jsInputElement.get(), "value"));
         g_assert_true(JSC_IS_VALUE(value.get()));
         g_assert_true(jsc_value_is_string(value.get()));
         GUniquePtr<char> valueString(jsc_value_to_string(value.get()));
         g_assert_cmpstr(valueString.get(), ==, "");
 
-        webkit_dom_element_html_input_element_set_editing_value(element, "auto filled value");
-        webkit_dom_element_html_input_element_set_auto_filled(element, TRUE);
+        webkit_web_form_manager_input_element_auto_fill(jsInputElement.get(), "auto filled value");
         value = adoptGRef(jsc_value_object_get_property(jsInputElement.get(), "value"));
         g_assert_true(JSC_IS_VALUE(value.get()));
         g_assert_true(jsc_value_is_string(value.get()));
         valueString.reset(jsc_value_to_string(value.get()));
         g_assert_cmpstr(valueString.get(), ==, "auto filled value");
-        g_assert_true(webkit_dom_element_html_input_element_get_auto_filled(element));
+        g_assert_true(webkit_web_form_manager_input_element_is_auto_filled(jsInputElement.get()));
 
         return true;
     }
