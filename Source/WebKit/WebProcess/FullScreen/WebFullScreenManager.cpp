@@ -290,7 +290,6 @@ void WebFullScreenManager::updateMainVideoElement()
 void WebFullScreenManager::willExitFullScreen()
 {
     LOG(Fullscreen, "WebFullScreenManager %p willExitFullScreen() - element %p", this, m_element.get());
-    ASSERT(m_element);
     if (!m_element)
         return;
 
