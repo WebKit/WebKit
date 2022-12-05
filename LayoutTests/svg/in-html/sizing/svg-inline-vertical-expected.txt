@@ -1,0 +1,8 @@
+This is a testharness.js-based test.
+PASS Test size calculation in vertical writing mode 
+FAIL Test size calculation in vertical writing mode assert_equals: Height expected 200 but got 100
+PASS Test size calculation in vertical writing mode 
+FAIL Test size calculation in vertical writing mode assert_equals: Height expected 200 but got 100
+FAIL Test size calculation in vertical writing mode assert_equals: Width expected 100 but got 200
+Harness: the test ran to completion.
+

@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) 2009-2015 Google, Inc.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  *
@@ -105,6 +105,10 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
     }
 
     std::optional<double> intrinsicRatioValue;
+
+    if (!isHorizontalWritingMode())
+        intrinsicSize = intrinsicSize.transposedSize();
+
     if (!intrinsicSize.isEmpty())
         intrinsicRatioValue = intrinsicSize.width() / static_cast<double>(intrinsicSize.height());
     else {
@@ -116,6 +120,8 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
         if (!viewBoxSize.isEmpty()) {
             // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
             intrinsicRatioValue = viewBoxSize.width() / static_cast<double>(viewBoxSize.height());
+            if (!isHorizontalWritingMode())
+                intrinsicRatio = 1 / intrinsicRatio;
         }
     }
 
