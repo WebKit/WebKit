@@ -242,7 +242,6 @@ private:
 
     enum SizingState {
         ColumnSizingFirstIteration,
-        ColumnSizingExtraIterationForSizeContainment,
         RowSizingFirstIteration,
         RowSizingExtraIterationForSizeContainment,
         ColumnSizingSecondIteration,
