@@ -57,6 +57,10 @@ ALLOW_COMMA_END
 namespace WebKit {
 using namespace WebCore;
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/LibWebRTCCodecsAdditions.mm>
+#else
+
 static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoFormat& format)
 {
     auto& codecs = WebProcess::singleton().libWebRTCCodecs();
@@ -91,6 +95,8 @@ std::optional<VideoCodecType> LibWebRTCCodecs::videoCodecTypeFromWebCodec(const 
     // FIXME: Expose H265 if available.
     return { };
 }
+
+#endif
 
 static int32_t releaseVideoDecoder(webrtc::WebKitVideoDecoder::Value decoder)
 {

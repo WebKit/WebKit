@@ -37,6 +37,7 @@
 #include "VideoCodecType.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/WebRTCVideoDecoder.h>
 #include <atomic>
 #include <wtf/ThreadAssertions.h>
 
@@ -47,7 +48,6 @@ class Semaphore;
 }
 
 namespace webrtc {
-using LocalDecoder = void*;
 using LocalEncoder = void*;
 }
 
@@ -70,11 +70,21 @@ public:
     void stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFromConnection);
     bool allowsExitUnderMemoryPressure() const;
 
+    class Decoder {
+    public:
+        virtual ~Decoder() = default;
+
+        virtual void flush() = 0;
+        virtual void setFormat(const uint8_t*, size_t, uint16_t width, uint16_t height) = 0;
+        virtual int32_t decodeFrame(int64_t timeStamp, const uint8_t*, size_t) = 0;
+        virtual void setFrameSize(uint16_t width, uint16_t height) = 0;
+    };
+
 private:
     explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
     void initialize();
     auto createDecoderCallback(VideoDecoderIdentifier, bool useRemoteFrames);
-    void* createLocalDecoder(VideoDecoderIdentifier, VideoCodecType, bool useRemoteFrames);
+    std::unique_ptr<WebCore::WebRTCVideoDecoder> createLocalDecoder(VideoDecoderIdentifier, VideoCodecType, bool useRemoteFrames);
     WorkQueue& workQueue() const { return m_queue; }
 
     // IPC::WorkQueueMessageReceiver overrides.
@@ -107,7 +117,7 @@ private:
     Ref<WorkQueue> m_queue;
     Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
     WebCore::ProcessIdentity m_resourceOwner;
-    HashMap<VideoDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
+    HashMap<VideoDecoderIdentifier, UniqueRef<WebCore::WebRTCVideoDecoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     HashMap<VideoEncoderIdentifier, Encoder> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     std::atomic<bool> m_hasEncodersOrDecoders { false };
 
