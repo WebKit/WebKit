@@ -2158,18 +2158,37 @@ public:
 
     void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
-        switch (simdLane) {
-        case SIMDLane::f32x4:
-            ASSERT(lane.m_value < 4);
+        // For lane 0, we just move since we do not ensure the upper bits.
+        if (!lane.m_value) {
             if (src != dest)
                 m_assembler.movaps_rr(src, dest);
-            m_assembler.shufps(lane.m_value, dest, dest);
             return;
-        case SIMDLane::f64x2:
-            ASSERT(lane.m_value < 2);
+        }
+
+        switch (simdLane) {
+        case SIMDLane::f32x4: {
+            ASSERT(lane.m_value < 4);
+            if (lane.m_value == 1 && supportsSSE3()) {
+                m_assembler.movshdup_rr(src, dest);
+                return;
+            }
+
+            if (lane.m_value == 2) {
+                m_assembler.movhlps_rr(src, dest);
+                return;
+            }
+
             if (src != dest)
-                m_assembler.movapd_rr(src, dest);
-            m_assembler.shufpd(lane.m_value, dest, dest);
+                m_assembler.pshufd_rr(lane.m_value, src, dest);
+            else {
+                ASSERT(src == dest);
+                m_assembler.shufps_rr(lane.m_value, dest, dest);
+            }
+            return;
+        }
+        case SIMDLane::f64x2:
+            ASSERT(lane.m_value == 1);
+            m_assembler.movhlps_rr(src, dest);
             return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2475,19 +2494,22 @@ public:
         m_assembler.movq_rr(src, dest);
         switch (lane) {
         case SIMDLane::i64x2:
-            m_assembler.movddup(dest, dest);
+            if (supportsSSE3())
+                m_assembler.movddup_rr(dest, dest);
+            else
+                m_assembler.shufpd_rr(0, dest, dest);
             return;
         case SIMDLane::i32x4:
-            m_assembler.shufps(0, dest, dest);
+            m_assembler.shufps_rr(0, dest, dest);
             return;
         case SIMDLane::i16x8:
-            m_assembler.pshuflw(0, dest, dest);
-            m_assembler.punpcklqdq(dest, dest);
+            m_assembler.pshuflw_rr(0, dest, dest);
+            m_assembler.punpcklqdq_rr(dest, dest);
             return;
         case SIMDLane::i8x16:
             vectorReplaceLane(SIMDLane::i8x16, TrustedImm32(1), src, dest);
-            m_assembler.pshuflw(0, dest, dest);
-            m_assembler.punpcklqdq(dest, dest);
+            m_assembler.pshuflw_rr(0, dest, dest);
+            m_assembler.punpcklqdq_rr(dest, dest);
             return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2499,12 +2521,20 @@ public:
         switch (lane) {
         case SIMDLane::f32x4:
             if (src != dest)
-                m_assembler.pshufd(0, src, dest);
-            else
-                m_assembler.shufps(0, dest, dest);
+                m_assembler.pshufd_rr(0, src, dest);
+            else {
+                ASSERT(src == dest);
+                m_assembler.shufps_rr(0, dest, dest);
+            }
             return;
         case SIMDLane::f64x2:
-            m_assembler.movddup(src, dest);
+            if (supportsSSE3())
+                m_assembler.movddup_rr(src, dest);
+            else {
+                if (src != dest)
+                    m_assembler.movapd_rr(src, dest);
+                m_assembler.shufpd_rr(0, dest, dest);
+            }
             return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
