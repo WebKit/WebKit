@@ -214,11 +214,11 @@ static RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, 
         RefPtr<ScaleTransformOperation> normalizedFrom;
         RefPtr<ScaleTransformOperation> normalizedTo;
         if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::SCALE_3D);
-            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::SCALE_3D);
+            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::Type::Scale3D);
+            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::Type::Scale3D);
         } else {
-            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), TransformOperation::SCALE);
-            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), TransformOperation::SCALE);
+            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), TransformOperation::Type::Scale);
+            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), TransformOperation::Type::Scale);
         }
         return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
     }
@@ -250,11 +250,11 @@ static RefPtr<RotateTransformOperation> blendFunc(RotateTransformOperation* from
         RefPtr<RotateTransformOperation> normalizedFrom;
         RefPtr<RotateTransformOperation> normalizedTo;
         if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = RotateTransformOperation::create(from->x(), from->y(), from->z(), from->angle(), TransformOperation::ROTATE_3D);
-            normalizedTo = RotateTransformOperation::create(to->x(), to->y(), to->z(), to->angle(), TransformOperation::ROTATE_3D);
+            normalizedFrom = RotateTransformOperation::create(from->x(), from->y(), from->z(), from->angle(), TransformOperation::Type::Rotate3D);
+            normalizedTo = RotateTransformOperation::create(to->x(), to->y(), to->z(), to->angle(), TransformOperation::Type::Rotate3D);
         } else {
-            normalizedFrom = RotateTransformOperation::create(from->angle(), TransformOperation::ROTATE);
-            normalizedTo = RotateTransformOperation::create(to->angle(), TransformOperation::ROTATE);
+            normalizedFrom = RotateTransformOperation::create(from->angle(), TransformOperation::Type::Rotate);
+            normalizedTo = RotateTransformOperation::create(to->angle(), TransformOperation::Type::Rotate);
         }
         return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
     }
@@ -286,11 +286,11 @@ static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation
         RefPtr<TranslateTransformOperation> normalizedFrom;
         RefPtr<TranslateTransformOperation> normalizedTo;
         if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::TRANSLATE_3D);
-            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::TRANSLATE_3D);
+            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::Type::Translate3D);
+            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::Type::Translate3D);
         } else {
-            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), TransformOperation::TRANSLATE);
-            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), TransformOperation::TRANSLATE);
+            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), TransformOperation::Type::Translate);
+            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), TransformOperation::Type::Translate);
         }
         return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
     }

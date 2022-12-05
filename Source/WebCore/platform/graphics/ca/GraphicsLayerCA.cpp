@@ -108,66 +108,66 @@ static const unsigned cMaxScaledTiledLayerMemorySize = 1024 * 1024 * 156;
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
 
-static bool isTransformTypeTransformationMatrix(TransformOperation::OperationType transformType)
+static bool isTransformTypeTransformationMatrix(TransformOperation::Type transformType)
 {
     switch (transformType) {
-    case TransformOperation::SKEW_X:
-    case TransformOperation::SKEW_Y:
-    case TransformOperation::SKEW:
-    case TransformOperation::MATRIX:
-    case TransformOperation::ROTATE_3D:
-    case TransformOperation::MATRIX_3D:
-    case TransformOperation::PERSPECTIVE:
-    case TransformOperation::IDENTITY:
-    case TransformOperation::NONE:
+    case TransformOperation::Type::SkewX:
+    case TransformOperation::Type::SkewY:
+    case TransformOperation::Type::Skew:
+    case TransformOperation::Type::Matrix:
+    case TransformOperation::Type::Rotate3D:
+    case TransformOperation::Type::Matrix3D:
+    case TransformOperation::Type::Perspective:
+    case TransformOperation::Type::Identity:
+    case TransformOperation::Type::None:
         return true;
     default:
         return false;
     }
 }
 
-static bool isTransformTypeFloatPoint3D(TransformOperation::OperationType transformType)
+static bool isTransformTypeFloatPoint3D(TransformOperation::Type transformType)
 {
     switch (transformType) {
-    case TransformOperation::SCALE:
-    case TransformOperation::SCALE_3D:
-    case TransformOperation::TRANSLATE:
-    case TransformOperation::TRANSLATE_3D:
+    case TransformOperation::Type::Scale:
+    case TransformOperation::Type::Scale3D:
+    case TransformOperation::Type::Translate:
+    case TransformOperation::Type::Translate3D:
         return true;
     default:
         return false;
     }
 }
 
-static bool isTransformTypeNumber(TransformOperation::OperationType transformType)
+static bool isTransformTypeNumber(TransformOperation::Type transformType)
 {
     return !isTransformTypeTransformationMatrix(transformType) && !isTransformTypeFloatPoint3D(transformType);
 }
 
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::OperationType transformType, const FloatSize& size, float& value)
+static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, const FloatSize& size, float& value)
 {
     switch (transformType) {
-    case TransformOperation::ROTATE:
-    case TransformOperation::ROTATE_X:
-    case TransformOperation::ROTATE_Y:
+    case TransformOperation::Type::Rotate:
+    case TransformOperation::Type::RotateX:
+    case TransformOperation::Type::RotateY:
         value = transformOp ? narrowPrecisionToFloat(deg2rad(downcast<RotateTransformOperation>(*transformOp).angle())) : 0;
         break;
-    case TransformOperation::SCALE_X:
+    case TransformOperation::Type::ScaleX:
         value = transformOp ? narrowPrecisionToFloat(downcast<ScaleTransformOperation>(*transformOp).x()) : 1;
         break;
-    case TransformOperation::SCALE_Y:
+    case TransformOperation::Type::ScaleY:
         value = transformOp ? narrowPrecisionToFloat(downcast<ScaleTransformOperation>(*transformOp).y()) : 1;
         break;
-    case TransformOperation::SCALE_Z:
+    case TransformOperation::Type::ScaleZ:
         value = transformOp ? narrowPrecisionToFloat(downcast<ScaleTransformOperation>(*transformOp).z()) : 1;
         break;
-    case TransformOperation::TRANSLATE_X:
+    case TransformOperation::Type::TranslateX:
         value = transformOp ? downcast<TranslateTransformOperation>(*transformOp).xAsFloat(size) : 0;
         break;
-    case TransformOperation::TRANSLATE_Y:
+    case TransformOperation::Type::TranslateY:
         value = transformOp ? downcast<TranslateTransformOperation>(*transformOp).yAsFloat(size) : 0;
         break;
-    case TransformOperation::TRANSLATE_Z:
+    case TransformOperation::Type::TranslateZ:
         value = transformOp ? downcast<TranslateTransformOperation>(*transformOp).zAsFloat() : 0;
         break;
     default:
@@ -175,19 +175,19 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     }
 }
 
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::OperationType transformType, const FloatSize& size, FloatPoint3D& value)
+static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, const FloatSize& size, FloatPoint3D& value)
 {
     switch (transformType) {
-    case TransformOperation::SCALE:
-    case TransformOperation::SCALE_3D: {
+    case TransformOperation::Type::Scale:
+    case TransformOperation::Type::Scale3D: {
         const auto* scaleTransformOp = downcast<ScaleTransformOperation>(transformOp);
         value.setX(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->x()) : 1);
         value.setY(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->y()) : 1);
         value.setZ(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->z()) : 1);
         break;
     }
-    case TransformOperation::TRANSLATE:
-    case TransformOperation::TRANSLATE_3D: {
+    case TransformOperation::Type::Translate:
+    case TransformOperation::Type::Translate3D: {
         const auto* translateTransformOp = downcast<TranslateTransformOperation>(transformOp);
         value.setX(translateTransformOp ? translateTransformOp->xAsFloat(size) : 0);
         value.setY(translateTransformOp ? translateTransformOp->yAsFloat(size) : 0);
@@ -199,18 +199,18 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     }
 }
 
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::OperationType transformType, const FloatSize& size, TransformationMatrix& value)
+static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, const FloatSize& size, TransformationMatrix& value)
 {
     switch (transformType) {
-    case TransformOperation::SKEW_X:
-    case TransformOperation::SKEW_Y:
-    case TransformOperation::SKEW:
-    case TransformOperation::MATRIX:
-    case TransformOperation::ROTATE_3D:
-    case TransformOperation::MATRIX_3D:
-    case TransformOperation::PERSPECTIVE:
-    case TransformOperation::IDENTITY:
-    case TransformOperation::NONE:
+    case TransformOperation::Type::SkewX:
+    case TransformOperation::Type::SkewY:
+    case TransformOperation::Type::Skew:
+    case TransformOperation::Type::Matrix:
+    case TransformOperation::Type::Rotate3D:
+    case TransformOperation::Type::Matrix3D:
+    case TransformOperation::Type::Perspective:
+    case TransformOperation::Type::Identity:
+    case TransformOperation::Type::None:
         if (transformOp)
             transformOp->apply(value, size);
         else
@@ -221,33 +221,33 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     }
 }
 
-static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOperation(TransformOperation::OperationType transformType)
+static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOperation(TransformOperation::Type transformType)
 {
     // Use literal strings to avoid link-time dependency on those symbols.
     switch (transformType) {
-    case TransformOperation::ROTATE_X:
+    case TransformOperation::Type::RotateX:
         return PlatformCAAnimation::RotateX;
-    case TransformOperation::ROTATE_Y:
+    case TransformOperation::Type::RotateY:
         return PlatformCAAnimation::RotateY;
-    case TransformOperation::ROTATE:
+    case TransformOperation::Type::Rotate:
         return PlatformCAAnimation::RotateZ;
-    case TransformOperation::SCALE_X:
+    case TransformOperation::Type::ScaleX:
         return PlatformCAAnimation::ScaleX;
-    case TransformOperation::SCALE_Y:
+    case TransformOperation::Type::ScaleY:
         return PlatformCAAnimation::ScaleY;
-    case TransformOperation::SCALE_Z:
+    case TransformOperation::Type::ScaleZ:
         return PlatformCAAnimation::ScaleZ;
-    case TransformOperation::TRANSLATE_X:
+    case TransformOperation::Type::TranslateX:
         return PlatformCAAnimation::TranslateX;
-    case TransformOperation::TRANSLATE_Y:
+    case TransformOperation::Type::TranslateY:
         return PlatformCAAnimation::TranslateY;
-    case TransformOperation::TRANSLATE_Z:
+    case TransformOperation::Type::TranslateZ:
         return PlatformCAAnimation::TranslateZ;
-    case TransformOperation::SCALE:
-    case TransformOperation::SCALE_3D:
+    case TransformOperation::Type::Scale:
+    case TransformOperation::Type::Scale3D:
         return PlatformCAAnimation::Scale;
-    case TransformOperation::TRANSLATE:
-    case TransformOperation::TRANSLATE_3D:
+    case TransformOperation::Type::Translate:
+    case TransformOperation::Type::Translate3D:
         return PlatformCAAnimation::Translate;
     default:
         return PlatformCAAnimation::NoValueFunction;
@@ -3436,7 +3436,7 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     return true;
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, TransformOperation::OperationType operationType, const Animation* animation, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, TransformOperation::Type operationType, const Animation* animation, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     RefPtr<PlatformCAAnimation> caAnimation;
     bool validMatrices = true;
@@ -3473,7 +3473,7 @@ static bool hasBig3DRotation(const KeyframeValueList& valueList, const SharedPri
     const auto& primitives = prefix.primitives();
     for (unsigned animationIndex = 0; animationIndex < primitives.size(); ++animationIndex) {
         auto type = primitives[animationIndex];
-        if (type != TransformOperation::ROTATE_3D)
+        if (type != TransformOperation::Type::Rotate3D)
             continue;
         for (size_t i = 1; i < valueList.size(); ++i) {
             // Since the shared primitive at this index is a rotation, both of these transform
@@ -3496,7 +3496,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     // https://www.w3.org/TR/css-transforms-1/#interpolation-of-transforms
     // In the CSS Transform Level 1 and 2 Specification some transform functions can share a compatible transform
     // function primitive. For instance, the shared primitive of a translateX and translate3D operation is
-    // TransformOperation::TRANSLATE_3D. When the transform function list of every keyframe in an animation
+    // TransformOperation::Type::Translate3D. When the transform function list of every keyframe in an animation
     // shares the same transform function primitive, we should interpolate between them without resorting
     // to matrix decomposition. The remaining parts of the transform function list should be interpolated
     // using matrix decomposition. The code below finds the shared primitives in this prefix.
@@ -3525,7 +3525,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 
     // If there were any incompatible transform functions, they will be appended to the animation list
     // as a single combined transformation matrix animation.
-    return appendToUncommittedAnimations(valueList, TransformOperation::MATRIX_3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
+    return appendToUncommittedAnimations(valueList, TransformOperation::Type::Matrix3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
 }
 
 bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
@@ -3731,7 +3731,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const FloatSize& boxSize)
+bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, TransformOperation::Type transformOpType, bool isMatrixAnimation, const FloatSize& boxSize)
 {
     ASSERT(valueList.size() == 2);
 
@@ -3789,7 +3789,7 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, TransformOperation::Type transformOpType, bool isMatrixAnimation, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
     Vector<float> floatValues;

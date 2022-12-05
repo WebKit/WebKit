@@ -66,7 +66,7 @@ public:
     bool hasMatrixOperation() const
     {
         return std::any_of(m_operations.begin(), m_operations.end(), [](auto operation) {
-            return operation->type() == WebCore::TransformOperation::MATRIX;
+            return operation->type() == WebCore::TransformOperation::Type::Matrix;
         });
     }
 
@@ -118,11 +118,11 @@ public:
     virtual ~SharedPrimitivesPrefix() = default;
     void update(const TransformOperations&);
     bool hadIncompatibleTransformFunctions() { return m_indexOfFirstMismatch.has_value(); }
-    const Vector<TransformOperation::OperationType>& primitives() const { return m_primitives; }
+    const Vector<TransformOperation::Type>& primitives() const { return m_primitives; }
 
 private:
     std::optional<size_t> m_indexOfFirstMismatch;
-    Vector<TransformOperation::OperationType> m_primitives;
+    Vector<TransformOperation::Type> m_primitives;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TransformOperations&);

@@ -81,7 +81,7 @@ private:
     void dump(WTF::TextStream&) const final;
 
     PerspectiveTransformOperation(const std::optional<Length>& p)
-        : TransformOperation(PERSPECTIVE)
+        : TransformOperation(TransformOperation::Type::Perspective)
         , m_p(p)
     {
         ASSERT(!p || (*p).isFixed());
@@ -92,4 +92,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::PerspectiveTransformOperation, type() == WebCore::TransformOperation::PERSPECTIVE)
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::PerspectiveTransformOperation, type() == WebCore::TransformOperation::Type::Perspective)

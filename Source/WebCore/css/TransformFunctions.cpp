@@ -46,55 +46,55 @@
 
 namespace WebCore {
 
-static TransformOperation::OperationType transformOperationType(CSSValueID type)
+static TransformOperation::Type transformOperationType(CSSValueID type)
 {
     switch (type) {
     case CSSValueScale:
-        return TransformOperation::SCALE;
+        return TransformOperation::Type::Scale;
     case CSSValueScaleX:
-        return TransformOperation::SCALE_X;
+        return TransformOperation::Type::ScaleX;
     case CSSValueScaleY:
-        return TransformOperation::SCALE_Y;
+        return TransformOperation::Type::ScaleY;
     case CSSValueScaleZ:
-        return TransformOperation::SCALE_Z;
+        return TransformOperation::Type::ScaleZ;
     case CSSValueScale3d:
-        return TransformOperation::SCALE_3D;
+        return TransformOperation::Type::Scale3D;
     case CSSValueTranslate:
-        return TransformOperation::TRANSLATE;
+        return TransformOperation::Type::Translate;
     case CSSValueTranslateX:
-        return TransformOperation::TRANSLATE_X;
+        return TransformOperation::Type::TranslateX;
     case CSSValueTranslateY:
-        return TransformOperation::TRANSLATE_Y;
+        return TransformOperation::Type::TranslateY;
     case CSSValueTranslateZ:
-        return TransformOperation::TRANSLATE_Z;
+        return TransformOperation::Type::TranslateZ;
     case CSSValueTranslate3d:
-        return TransformOperation::TRANSLATE_3D;
+        return TransformOperation::Type::Translate3D;
     case CSSValueRotate:
-        return TransformOperation::ROTATE;
+        return TransformOperation::Type::Rotate;
     case CSSValueRotateX:
-        return TransformOperation::ROTATE_X;
+        return TransformOperation::Type::RotateX;
     case CSSValueRotateY:
-        return TransformOperation::ROTATE_Y;
+        return TransformOperation::Type::RotateY;
     case CSSValueRotateZ:
-        return TransformOperation::ROTATE_Z;
+        return TransformOperation::Type::RotateZ;
     case CSSValueRotate3d:
-        return TransformOperation::ROTATE_3D;
+        return TransformOperation::Type::Rotate3D;
     case CSSValueSkew:
-        return TransformOperation::SKEW;
+        return TransformOperation::Type::Skew;
     case CSSValueSkewX:
-        return TransformOperation::SKEW_X;
+        return TransformOperation::Type::SkewX;
     case CSSValueSkewY:
-        return TransformOperation::SKEW_Y;
+        return TransformOperation::Type::SkewY;
     case CSSValueMatrix:
-        return TransformOperation::MATRIX;
+        return TransformOperation::Type::Matrix;
     case CSSValueMatrix3d:
-        return TransformOperation::MATRIX_3D;
+        return TransformOperation::Type::Matrix3D;
     case CSSValuePerspective:
-        return TransformOperation::PERSPECTIVE;
+        return TransformOperation::Type::Perspective;
     default:
         break;
     }
-    return TransformOperation::NONE;
+    return TransformOperation::Type::None;
 }
 
 Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
@@ -363,7 +363,7 @@ RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, con
     if (!valueList.length())
         return nullptr;
 
-    auto type = TransformOperation::TRANSLATE;
+    auto type = TransformOperation::Type::Translate;
     Length tx = Length(0, LengthType::Fixed);
     Length ty = Length(0, LengthType::Fixed);
     Length tz = Length(0, LengthType::Fixed);
@@ -376,7 +376,7 @@ RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, con
         else if (i == 1)
             ty = convertToFloatLength(downcast<CSSPrimitiveValue>(valueItem), conversionData);
         else if (i == 2) {
-            type = TransformOperation::TRANSLATE_3D;
+            type = TransformOperation::Type::Translate3D;
             tz = convertToFloatLength(downcast<CSSPrimitiveValue>(valueItem), conversionData);
         }
     }
@@ -393,7 +393,7 @@ RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
     if (!valueList.length())
         return nullptr;
 
-    auto type = TransformOperation::SCALE;
+    auto type = TransformOperation::Type::Scale;
     double sx = 1.0;
     double sy = 1.0;
     double sz = 1.0;
@@ -407,7 +407,7 @@ RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
         } else if (i == 1)
             sy = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
         else if (i == 2) {
-            type = TransformOperation::SCALE_3D;
+            type = TransformOperation::Type::Scale3D;
             sz = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
         }
     }
@@ -437,12 +437,12 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
     auto angle = downcast<CSSPrimitiveValue>(*lastValue).computeDegrees();
 
     if (numberOfItems == 1)
-        return RotateTransformOperation::create(angle, TransformOperation::ROTATE);
+        return RotateTransformOperation::create(angle, TransformOperation::Type::Rotate);
 
     double x = 0.0;
     double y = 0.0;
     double z = 0.0;
-    auto type = TransformOperation::ROTATE;
+    auto type = TransformOperation::Type::Rotate;
 
     if (numberOfItems == 2) {
         // An axis identifier was specified.
@@ -451,19 +451,19 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
             return nullptr;
         auto axisIdentifier = downcast<CSSPrimitiveValue>(*axisIdentifierItem).valueID();
         if (axisIdentifier == CSSValueX) {
-            type = TransformOperation::ROTATE_X;
+            type = TransformOperation::Type::RotateX;
             x = 1.0;
         } else if (axisIdentifier == CSSValueY) {
-            type = TransformOperation::ROTATE_Y;
+            type = TransformOperation::Type::RotateY;
             y = 1.0;
         } else if (axisIdentifier == CSSValueZ) {
-            type = TransformOperation::ROTATE_3D;
+            type = TransformOperation::Type::Rotate3D;
             z = 1.0;
         } else
             return nullptr;
     } else if (numberOfItems == 4) {
         // The axis was specified using a vector.
-        type = TransformOperation::ROTATE;
+        type = TransformOperation::Type::Rotate;
         for (unsigned i = 0; i < 3; ++i) {
             auto* valueItem = valueList.itemWithoutBoundsCheck(i);
             if (!is<CSSPrimitiveValue>(valueItem))
@@ -473,7 +473,7 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
             else if (i == 1)
                 y = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
             else if (i == 2) {
-                type = TransformOperation::ROTATE_3D;
+                type = TransformOperation::Type::Rotate3D;
                 z = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
             }
         }

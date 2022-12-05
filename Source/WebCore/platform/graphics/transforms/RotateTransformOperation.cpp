@@ -112,7 +112,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         y = 0;
         z = 1;
     }
-    return RotateTransformOperation::create(x, y, z, angle, ROTATE_3D);
+    return RotateTransformOperation::create(x, y, z, angle, Type::Rotate3D);
 }
 
 void RotateTransformOperation::dump(TextStream& ts) const

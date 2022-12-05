@@ -37,21 +37,33 @@ struct BlendingContext;
 
 class TransformOperation : public RefCounted<TransformOperation> {
 public:
-    enum OperationType {
-        SCALE_X, SCALE_Y, SCALE, 
-        TRANSLATE_X, TRANSLATE_Y, TRANSLATE, 
-        ROTATE_X, ROTATE_Y, ROTATE,
-        SKEW_X, SKEW_Y, SKEW,
-        MATRIX,
-        SCALE_Z, SCALE_3D,
-        TRANSLATE_Z, TRANSLATE_3D,
-        ROTATE_Z, ROTATE_3D,
-        MATRIX_3D,
-        PERSPECTIVE,
-        IDENTITY, NONE
+    enum class Type : uint8_t {
+        ScaleX,
+        ScaleY,
+        Scale,
+        TranslateX,
+        TranslateY,
+        Translate,
+        RotateX,
+        RotateY,
+        Rotate,
+        SkewX,
+        SkewY,
+        Skew,
+        Matrix,
+        ScaleZ,
+        Scale3D,
+        TranslateZ,
+        Translate3D,
+        RotateZ,
+        Rotate3D,
+        Matrix3D,
+        Perspective,
+        Identity,
+        None
     };
 
-    TransformOperation(OperationType type)
+    TransformOperation(Type type)
         : m_type(type)
     {
     }
@@ -69,58 +81,58 @@ public:
 
     virtual Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) = 0;
 
-    OperationType type() const { return m_type; }
+    Type type() const { return m_type; }
     bool isSameType(const TransformOperation& other) const { return type() == other.type(); }
 
-    virtual OperationType primitiveType() const { return m_type; }
-    std::optional<OperationType> sharedPrimitiveType(OperationType other) const;
-    std::optional<OperationType> sharedPrimitiveType(const TransformOperation* other) const;
+    virtual Type primitiveType() const { return m_type; }
+    std::optional<Type> sharedPrimitiveType(Type other) const;
+    std::optional<Type> sharedPrimitiveType(const TransformOperation* other) const;
 
     virtual bool isAffectedByTransformOrigin() const { return false; }
     
     bool is3DOperation() const
     {
-        OperationType opType = type();
-        return opType == SCALE_Z ||
-               opType == SCALE_3D ||
-               opType == TRANSLATE_Z ||
-               opType == TRANSLATE_3D ||
-               opType == ROTATE_X ||
-               opType == ROTATE_Y ||
-               opType == ROTATE_3D ||
-               opType == MATRIX_3D ||
-               opType == PERSPECTIVE;
+        Type opType = type();
+        return opType == Type::ScaleZ
+            || opType == Type::Scale3D
+            || opType == Type::TranslateZ
+            || opType == Type::Translate3D
+            || opType == Type::RotateX
+            || opType == Type::RotateY
+            || opType == Type::Rotate3D
+            || opType == Type::Matrix3D
+            || opType == Type::Perspective;
     }
     
     virtual bool isRepresentableIn2D() const { return true; }
 
     bool isRotateTransformOperationType() const
     {
-        return type() == ROTATE_X || type() == ROTATE_Y || type() == ROTATE_Z || type() == ROTATE || type() == ROTATE_3D;
+        return type() == Type::RotateX || type() == Type::RotateY || type() == Type::RotateZ || type() == Type::Rotate || type() == Type::Rotate3D;
     }
 
     bool isScaleTransformOperationType() const
     {
-        return type() == SCALE_X || type() == SCALE_Y || type() == SCALE_Z || type() == SCALE || type() == SCALE_3D;
+        return type() == Type::ScaleX || type() == Type::ScaleY || type() == Type::ScaleZ || type() == Type::Scale || type() == Type::Scale3D;
     }
 
     bool isSkewTransformOperationType() const
     {
-        return type() == SKEW_X || type() == SKEW_Y || type() == SKEW;
+        return type() == Type::SkewX || type() == Type::SkewY || type() == Type::Skew;
     }
 
     bool isTranslateTransformOperationType() const
     {
-        return type() == TRANSLATE_X || type() == TRANSLATE_Y || type() == TRANSLATE_Z || type() == TRANSLATE || type() == TRANSLATE_3D;
+        return type() == Type::TranslateX || type() == Type::TranslateY || type() == Type::TranslateZ || type() == Type::Translate || type() == Type::Translate3D;
     }
     
     virtual void dump(WTF::TextStream&) const = 0;
 
 private:
-    OperationType m_type;
+    Type m_type;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, TransformOperation::OperationType);
+WTF::TextStream& operator<<(WTF::TextStream&, TransformOperation::Type);
 WTF::TextStream& operator<<(WTF::TextStream&, const TransformOperation&);
 
 } // namespace WebCore

@@ -33,12 +33,12 @@ struct BlendingContext;
 
 class ScaleTransformOperation final : public TransformOperation {
 public:
-    static Ref<ScaleTransformOperation> create(double sx, double sy, OperationType type)
+    static Ref<ScaleTransformOperation> create(double sx, double sy, TransformOperation::Type type)
     {
         return adoptRef(*new ScaleTransformOperation(sx, sy, 1, type));
     }
 
-    static Ref<ScaleTransformOperation> create(double sx, double sy, double sz, OperationType type)
+    static Ref<ScaleTransformOperation> create(double sx, double sy, double sz, TransformOperation::Type type)
     {
         return adoptRef(*new ScaleTransformOperation(sx, sy, sz, type));
     }
@@ -52,7 +52,7 @@ public:
     double y() const { return m_y; }
     double z() const { return m_z; }
 
-    OperationType primitiveType() const final { return (type() == SCALE_Z || type() == SCALE_3D) ? SCALE_3D : SCALE; }
+    TransformOperation::Type primitiveType() const final { return (type() == Type::ScaleZ || type() == Type::Scale3D) ? Type::Scale3D : Type::Scale; }
 
     bool operator==(const ScaleTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const final;
@@ -74,7 +74,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    ScaleTransformOperation(double sx, double sy, double sz, OperationType type)
+    ScaleTransformOperation(double sx, double sy, double sz, TransformOperation::Type type)
         : TransformOperation(type)
         , m_x(sx)
         , m_y(sy)

@@ -35,12 +35,12 @@ struct BlendingContext;
 
 class TranslateTransformOperation final : public TransformOperation {
 public:
-    static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, OperationType type)
+    static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, TransformOperation::Type type)
     {
         return adoptRef(*new TranslateTransformOperation(tx, ty, Length(0, LengthType::Fixed), type));
     }
 
-    static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, const Length& tz, OperationType type)
+    static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, const Length& tz, TransformOperation::Type type)
     {
         return adoptRef(*new TranslateTransformOperation(tx, ty, tz, type));
     }
@@ -62,7 +62,7 @@ public:
     void setY(Length newY) { m_y = newY; }
     void setZ(Length newZ) { m_z = newZ; }
 
-    OperationType primitiveType() const final { return isRepresentableIn2D() ? TRANSLATE : TRANSLATE_3D; }
+    TransformOperation::Type primitiveType() const final { return isRepresentableIn2D() ? Type::Translate : Type::Translate3D; }
 
     bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const final
     {
@@ -83,7 +83,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    TranslateTransformOperation(const Length& tx, const Length& ty, const Length& tz, OperationType type)
+    TranslateTransformOperation(const Length& tx, const Length& ty, const Length& tz, TransformOperation::Type type)
         : TransformOperation(type)
         , m_x(tx)
         , m_y(ty)
