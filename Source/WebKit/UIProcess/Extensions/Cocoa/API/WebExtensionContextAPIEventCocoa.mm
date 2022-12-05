@@ -23,12 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-] interface WebExtensionAPIEvent {
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
 
-    [NeedsPage] void addListener([CallbackHandler] function listener);
-    [NeedsPage] void removeListener([CallbackHandler] function listener);
-    boolean hasListener([CallbackHandler] function listener);
+#import "config.h"
+#import "WebExtensionContext.h"
 
-};
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+#import "WebExtensionController.h"
+#import "_WKWebExtensionControllerDelegatePrivate.h"
+#import "_WKWebExtensionControllerInternal.h"
+
+namespace WebKit {
+
+void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=248684.
+}
+
+void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=248684
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

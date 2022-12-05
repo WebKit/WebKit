@@ -349,6 +349,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::TransactionID',
         'WebKit::WCLayerTreeHostIdentifier',
         'WebKit::WCContentBufferIdentifier',
+        'WebKit::WebExtensionEventListenerType',
         'WebKit::XRDeviceIdentifier',
     ] + serialized_identifiers())
 

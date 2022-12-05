@@ -23,12 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-] interface WebExtensionAPIEvent {
+#pragma once
 
-    [NeedsPage] void addListener([CallbackHandler] function listener);
-    [NeedsPage] void removeListener([CallbackHandler] function listener);
-    boolean hasListener([CallbackHandler] function listener);
+#if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "JSWebExtensionAPIEvent.h"
+#include "JSWebExtensionWrappable.h"
+#include "WebExtensionAPIObject.h"
+#include "WebExtensionEventListenerType.h"
+#include "WebPage.h"
+
+OBJC_CLASS JSValue;
+
+namespace WebKit {
+
+class WebExtensionAPIEvent : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIEvent, event);
+
+public:
+    using ListenerVector = Vector<RefPtr<WebExtensionCallbackHandler>>;
+
+    void invokeListeners();
+    void invokeListenersWithArgument(id argument);
+    void invokeListenersWithArgument(id argument1, id argument2);
+    void invokeListenersWithArgument(id argument1, id argument2, id argument3);
+
+    const ListenerVector& listeners() const { return m_listeners; }
+
+    void addListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
+    void removeListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
+    bool hasListener(RefPtr<WebExtensionCallbackHandler>);
+
+private:
+    WebExtensionEventListenerType m_type;
+    ListenerVector m_listeners;
 };
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

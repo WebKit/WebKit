@@ -593,6 +593,7 @@ BINDINGS_SCRIPTS = \
 #
 
 EXTENSION_INTERFACES = \
+    WebExtensionAPIEvent \
     WebExtensionAPIExtension \
     WebExtensionAPINamespace \
     WebExtensionAPIRuntime \

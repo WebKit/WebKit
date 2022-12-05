@@ -1252,7 +1252,6 @@ sub _platformTypeVariableDeclaration
 
     return "$platformType$variableName = $condition && $constructor;" if $condition && $platformType eq "bool ";
     return "$platformType$variableName = $condition ? $constructor : $nullValue;" if $condition;
-    return "$platformType$variableName;" if $platformType =~ /^RefPtr</;
     return "$platformType$variableName = $constructor;" if $constructor;
     return "$platformType$variableName = $nullValue;";
 }
