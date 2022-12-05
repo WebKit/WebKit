@@ -1926,6 +1926,11 @@ bool GraphicsLayerCA::platformCALayerUseGiantTiles() const
     return client().useGiantTiles();
 }
 
+bool GraphicsLayerCA::platformCALayerUseCSS3DTransformInteroperability() const
+{
+    return client().useCSS3DTransformInteroperability();
+}
+
 void GraphicsLayerCA::platformCALayerLogFilledVisibleFreshTile(unsigned blankPixelCount)
 {
     client().logFilledVisibleFreshTile(blankPixelCount);

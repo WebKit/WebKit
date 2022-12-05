@@ -225,6 +225,7 @@ private:
     WEBCORE_EXPORT bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const override;
     WEBCORE_EXPORT bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
     WEBCORE_EXPORT bool platformCALayerUseGiantTiles() const override;
+    WEBCORE_EXPORT bool platformCALayerUseCSS3DTransformInteroperability() const override;
     WEBCORE_EXPORT void platformCALayerLogFilledVisibleFreshTile(unsigned) override;
 
     bool isCommittingChanges() const override { return m_isCommittingChanges; }
