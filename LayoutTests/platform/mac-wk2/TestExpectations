@@ -1776,3 +1776,5 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 [ Monterey+ ] http/tests/media/video-webm-stall.html  [ Failure ]
 [ BigSur+ ] fast/images/animated-heics-draw.html [ Timeout Crash ]
 [ BigSur+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
+
+webkit.org/b/247982 [ Ventura+ ] fast/images/animated-heics-draw.html [ Timeout ]
