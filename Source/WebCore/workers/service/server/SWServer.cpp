@@ -351,7 +351,7 @@ void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)
 {
-    m_server.scriptFetchFinished(jobDataIdentifier, registrationKey, WTFMove(result));
+    m_server.scriptFetchFinished(jobDataIdentifier, registrationKey, m_identifier, WTFMove(result));
 }
 
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
@@ -554,8 +554,9 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
         auto request = createScriptRequest(jobData.scriptURL, jobData, registration);
         request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
         m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto&& result) {
+            std::optional<ProcessIdentifier> requestingProcessIdentifier;
             if (weakThis)
-                weakThis->scriptFetchFinished(jobDataIdentifier, registrationKey, WTFMove(result));
+                weakThis->scriptFetchFinished(jobDataIdentifier, registrationKey, requestingProcessIdentifier, WTFMove(result));
         });
         return;
     }
@@ -588,7 +589,7 @@ private:
     Vector<std::pair<URL, ScriptBuffer>> m_scripts;
 };
 
-void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)
+void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const std::optional<ProcessIdentifier>& requestingProcessIdentifier, WorkerFetchResult&& result)
 {
     LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s in client", jobDataIdentifier.loggingString().utf8().data());
 
@@ -598,14 +599,14 @@ void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobData
     if (!jobQueue)
         return;
 
-    jobQueue->scriptFetchFinished(jobDataIdentifier, WTFMove(result));
+    jobQueue->scriptFetchFinished(jobDataIdentifier, requestingProcessIdentifier, WTFMove(result));
 }
 
-void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWServerRegistration& registration, const Vector<URL>& urls)
+void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWServerRegistration& registration, const Vector<URL>& urls, const std::optional<ProcessIdentifier>& requestingProcessIdentifier)
 {
-    RefreshImportedScriptsHandler::Callback callback = [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto&& scripts) {
+    RefreshImportedScriptsHandler::Callback callback = [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey(), rpi = requestingProcessIdentifier](auto&& scripts) {
         if (weakThis)
-            weakThis->refreshImportedScriptsFinished(jobDataIdentifier, registrationKey, scripts);
+            weakThis->refreshImportedScriptsFinished(jobDataIdentifier, registrationKey, scripts, rpi);
     };
     bool shouldRefreshCache = registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || (registration.getNewestWorker() && registration.isStale());
     auto handler = RefreshImportedScriptsHandler::create(urls.size(), WTFMove(callback));
@@ -616,13 +617,13 @@ void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWSer
     }
 }
 
-void SWServer::refreshImportedScriptsFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const Vector<std::pair<URL, ScriptBuffer>>& scripts)
+void SWServer::refreshImportedScriptsFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const Vector<std::pair<URL, ScriptBuffer>>& scripts, const std::optional<ProcessIdentifier>& requestingProcessIdentifier)
 {
     auto jobQueue = m_jobQueues.get(registrationKey);
     if (!jobQueue)
         return;
 
-    jobQueue->importedScriptsFetchFinished(jobDataIdentifier, scripts);
+    jobQueue->importedScriptsFetchFinished(jobDataIdentifier, scripts, requestingProcessIdentifier);
 }
 
 void SWServer::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, SWServerWorker& worker, const String& message)
@@ -785,9 +786,9 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
         registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& coep, const String& referrerPolicy, WorkerType type, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
+void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const std::optional<ProcessIdentifier>& requestingProcessIdentifier, SWServerRegistration& registration, const URL& url, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& coep, const String& referrerPolicy, WorkerType type, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
 {
-    tryInstallContextData(ServiceWorkerContextData { jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, certificateInfo, contentSecurityPolicy, coep, referrerPolicy, url, type, false, clientIsAppInitiatedForRegistrableDomain(RegistrableDomain(url)), WTFMove(scriptResourceMap), serviceWorkerPageIdentifier, { } });
+    tryInstallContextData(requestingProcessIdentifier, ServiceWorkerContextData { jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, certificateInfo, contentSecurityPolicy, coep, referrerPolicy, url, type, false, clientIsAppInitiatedForRegistrableDomain(RegistrableDomain(url)), WTFMove(scriptResourceMap), serviceWorkerPageIdentifier, { } });
 }
 
 LastNavigationWasAppInitiated SWServer::clientIsAppInitiatedForRegistrableDomain(const RegistrableDomain& domain)
@@ -807,7 +808,7 @@ LastNavigationWasAppInitiated SWServer::clientIsAppInitiatedForRegistrableDomain
     return LastNavigationWasAppInitiated::No;
 }
 
-void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
+void SWServer::tryInstallContextData(const std::optional<ProcessIdentifier>& requestingProcessIdentifier, ServiceWorkerContextData&& data)
 {
     RegistrableDomain registrableDomain(data.scriptURL);
     auto* connection = contextConnectionForRegistrableDomain(registrableDomain);
@@ -821,15 +822,14 @@ void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
         return;
     }
 
-    // FIXME: Add a check that the process this firstPartyForCookies came from was allowed to use it as a firstPartyForCookies.
-    m_addAllowedFirstPartyForCookiesCallback(connection->webProcessIdentifier(), data.registration.key.firstPartyForCookies());
+    m_addAllowedFirstPartyForCookiesCallback(connection->webProcessIdentifier(), requestingProcessIdentifier, data.registration.key.firstPartyForCookies());
     installContextData(data);
 }
 
 void SWServer::contextConnectionCreated(SWServerToContextConnection& contextConnection)
 {
-    // FIXME: Add a check that the process this firstPartyForCookies came from was allowed to use it as a firstPartyForCookies.
-    m_addAllowedFirstPartyForCookiesCallback(contextConnection.webProcessIdentifier(), RegistrableDomain(contextConnection.registrableDomain()));
+    auto requestingProcessIdentifier = contextConnection.webProcessIdentifier();
+    m_addAllowedFirstPartyForCookiesCallback(contextConnection.webProcessIdentifier(), requestingProcessIdentifier, RegistrableDomain(contextConnection.registrableDomain()));
 
     for (auto& connection : m_connections.values())
         connection->contextConnectionCreated(contextConnection);
@@ -837,7 +837,7 @@ void SWServer::contextConnectionCreated(SWServerToContextConnection& contextConn
     auto pendingContextDatas = m_pendingContextDatas.take(contextConnection.registrableDomain());
     for (auto& data : pendingContextDatas) {
         // FIXME: Add a check that the process this firstPartyForCookies came from was allowed to use it as a firstPartyForCookies.
-        m_addAllowedFirstPartyForCookiesCallback(contextConnection.webProcessIdentifier(), data.registration.key.firstPartyForCookies());
+        m_addAllowedFirstPartyForCookiesCallback(contextConnection.webProcessIdentifier(), requestingProcessIdentifier, data.registration.key.firstPartyForCookies());
         installContextData(data);
     }
 
