@@ -6186,3 +6186,9 @@ fast/text/text-edge-no-half-leading-with-line-height-simple.html [ Skip ]
 
 # This test isn't working as expected, it will be fixed in webkit.org/b/248148.
 webkit.org/b/248148 fullscreen/full-screen-layer-dump.html [ Failure ]
+
+# CSS Nesting
+imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-nesting/implicit-nesting.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]

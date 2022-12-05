@@ -127,6 +127,7 @@
     "web-platform-tests/css/css-masking": "import",
     "web-platform-tests/css/css-masking/mask-image": "import",
     "web-platform-tests/css/css-multicol": "import",
+    "web-platform-tests/css/css-nesting": "import",
     "web-platform-tests/css/css-overflow": "import",
     "web-platform-tests/css/css-overscroll-behavior": "import",
     "web-platform-tests/css/css-position": "import",

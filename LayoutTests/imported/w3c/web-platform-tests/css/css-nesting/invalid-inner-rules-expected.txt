@@ -1,0 +1,4 @@
+
+FAIL Simple CSSOM manipulation of subrules assert_equals: expected "div {\n  @media screen {\n  &.a { color: red; }\n}\n}" but got "div { }"
+FAIL Simple CSSOM manipulation of subrules 1 assert_throws_dom: function "() => { ss.cssRules[0].cssRules[0].insertRule('@layer {}', 0); }" threw object "TypeError: undefined is not an object (evaluating 'ss.cssRules[0].cssRules[0]')" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+

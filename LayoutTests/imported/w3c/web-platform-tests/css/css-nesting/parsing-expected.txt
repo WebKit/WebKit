@@ -1,0 +1,45 @@
+
+FAIL .foo {
+  & { color: green; }
+} assert_equals: expected ".foo {\n  & { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  &.bar { color: green; }
+} assert_equals: expected ".foo {\n  &.bar { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  & .bar { color: green; }
+} assert_equals: expected ".foo {\n  & .bar { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  & > .bar { color: green; }
+} assert_equals: expected ".foo {\n  & > .bar { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  &:is(.bar, &.baz) { color: green; }
+} assert_equals: expected ".foo {\n  &:is(.bar, &.baz) { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  .bar& { color: green; }
+} assert_equals: expected ".foo {\n  .bar& { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  .bar & { color: green; }
+} assert_equals: expected ".foo {\n  .bar & { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  .bar > & { color: green; }
+} assert_equals: expected ".foo {\n  .bar > & { color: green; }\n}" but got ".foo { }"
+FAIL .foo, .bar {
+  & + .baz, &.qux { color: green; }
+} assert_equals: expected ".foo, .bar {\n  & + .baz, &.qux { color: green; }\n}" but got ".foo, .bar { }"
+FAIL .foo {
+  & .bar & .baz & .qux { color: green; }
+} assert_equals: expected ".foo {\n  & .bar & .baz & .qux { color: green; }\n}" but got ".foo { }"
+FAIL .foo {
+  @media (min-width: 50px) {
+  & { color: green; }
+}
+} assert_equals: expected ".foo {\n  @media (min-width: 50px) {\n  & { color: green; }\n}\n}" but got ".foo { }"
+FAIL .foo {
+  @media (min-width: 50px) { color: green; }
+} assert_equals: expected ".foo {\n  @media (min-width: 50px) { color: green; }\n}" but got ".foo { }"
+FAIL main {
+  & > section, & > article {
+  & > header { color: green; }
+}
+} assert_equals: expected "main {\n  & > section, & > article {\n  & > header { color: green; }\n}\n}" but got "main { }"
+

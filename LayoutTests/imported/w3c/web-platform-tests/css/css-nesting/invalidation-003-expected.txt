@@ -1,0 +1,4 @@
+Test passes if color is green.
+
+FAIL CSS Selectors nested invalidation with :has() assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+
