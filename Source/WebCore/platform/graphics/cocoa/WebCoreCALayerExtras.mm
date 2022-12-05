@@ -80,13 +80,14 @@
     [self setPosition:newPosition];
 }
 
-+ (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID
++ (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID shouldPreserveFlip:(BOOL)preservesFlip
 {
     CALayerHost *layerHost = [CALayerHost layer];
 #ifndef NDEBUG
     [layerHost setName:@"Hosting layer"];
 #endif
     layerHost.contextId = contextID;
+    layerHost.preservesFlip = preservesFlip;
     return layerHost;
 }
 

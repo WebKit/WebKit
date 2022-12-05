@@ -48,6 +48,7 @@ RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
     , type(WebCore::PlatformCALayer::LayerTypeLayer)
     , hostingContextID(0)
     , hostingDeviceScaleFactor(1)
+    , preservesFlip(false)
 {
 }
 
@@ -59,6 +60,7 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
     // PlatformCALayerRemoteCustom
     encoder << hostingContextID;
     encoder << hostingDeviceScaleFactor;
+    encoder << preservesFlip;
     
 #if ENABLE(MODEL_ELEMENT)
     // PlatformCALayerRemoteModelHosting
@@ -82,6 +84,9 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
         return std::nullopt;
 
     if (!decoder.decode(result.hostingDeviceScaleFactor))
+        return std::nullopt;
+    
+    if (!decoder.decode(result.preservesFlip))
         return std::nullopt;
     
 #if ENABLE(MODEL_ELEMENT)

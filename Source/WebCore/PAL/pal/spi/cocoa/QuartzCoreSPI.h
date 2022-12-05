@@ -183,6 +183,7 @@ typedef enum {
 @interface CALayerHost : CALayer
 @property uint32_t contextId;
 @property BOOL inheritsSecurity;
+@property BOOL preservesFlip;
 @end
 
 @interface CASpringAnimation (Private)

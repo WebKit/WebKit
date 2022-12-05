@@ -32,7 +32,7 @@
 
 @interface CALayer (WebCoreCALayerExtras)
 
-+ (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID;
++ (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID shouldPreserveFlip:(BOOL)preservesFlip;
 
 - (void)web_disableAllActions;
 - (void)_web_setLayerBoundsOrigin:(CGPoint)origin;

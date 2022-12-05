@@ -93,7 +93,7 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalPlugi
 
 RetainPtr<CALayer> LayerHostingContext::createPlatformLayerForHostingContext(LayerHostingContextID contextID)
 {
-    return [CALayer _web_renderLayerWithContextID:contextID];
+    return [CALayer _web_renderLayerWithContextID:contextID shouldPreserveFlip:NO];
 }
 
 #endif // HAVE(OUT_OF_PROCESS_LAYER_HOSTING)

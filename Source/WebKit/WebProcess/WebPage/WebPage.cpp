@@ -8342,6 +8342,15 @@ void WebPage::updateImageAnimationEnabled()
 }
 #endif
 
+bool WebPage::isUsingUISideCompositing() const
+{
+#if PLATFORM(COCOA)
+    return m_drawingAreaType == DrawingAreaType::RemoteLayerTree;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG
