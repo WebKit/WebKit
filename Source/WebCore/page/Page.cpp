@@ -3392,6 +3392,8 @@ void Page::accessibilitySettingsDidChange()
         document.updateElementsAffectedByMediaQueries();
         document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
     });
+
+    InspectorInstrumentation::accessibilitySettingsDidChange(*this);
 }
 
 void Page::appearanceDidChange()

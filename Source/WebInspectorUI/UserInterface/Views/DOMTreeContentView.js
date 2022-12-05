@@ -58,6 +58,12 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._forceAppearanceButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._forceAppearanceButtonNavigationItem.enabled = WI.cssManager.canForceAppearance();
 
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `Page.overrideUserPreference` did not exist yet.
+        this._overrideUserPreferencesNavigationItem = new WI.ActivateButtonNavigationItem("toggle-user-preferences", WI.UIString("Override user preferences"), WI.UIString("User preferences overriden"), "Images/AppearanceOverride.svg", 16, 16);
+        this._overrideUserPreferencesNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleOverrideUserPreferencesButtonClicked, this);
+        this._overrideUserPreferencesNavigationItem.enabled = InspectorBackend.hasCommand("Page.overrideUserPreference");
+        this._overrideUserPreferencesNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+
         this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
         this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCompositingBordersButtonClicked, this);
         this._compositingBordersButtonNavigationItem.enabled = WI.LayerTreeManager.supportsVisibleCompositingBorders();
@@ -86,6 +92,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._domNodeChanged, this);
 
         WI.cssManager.addEventListener(WI.CSSManager.Event.DefaultAppearanceDidChange, this._defaultAppearanceDidChange, this);
+        WI.cssManager.addEventListener(WI.CSSManager.Event.OverridenUserPreferencesDidChange, this._overridenUserPreferencesDidChange, this);
 
         this._lastSelectedNodePathSetting = new WI.Setting("last-selected-node-path", null);
         this._lastKnownDefaultAppearance = null;
@@ -123,6 +130,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             this._showRulersButtonNavigationItem,
             this._showPrintStylesButtonNavigationItem,
             this._forceAppearanceButtonNavigationItem,
+            this._overrideUserPreferencesNavigationItem,
             this._compositingBordersButtonNavigationItem,
             this._paintFlashingButtonNavigationItem,
         ];
@@ -694,6 +702,20 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showPrintStylesChanged();
     }
 
+    _handleOverrideUserPreferencesButtonClicked()
+    {
+        if (this._userPreferencesOverridesPopover)
+            return; // Clicking the button while the popover is shown will automatically dismiss the popover.
+
+        this._userPreferencesOverridesPopover = new WI.OverrideUserPreferencesPopover(this);
+        this._userPreferencesOverridesPopover.show(this._overrideUserPreferencesNavigationItem.element);
+    }
+
+    _overridenUserPreferencesDidChange()
+    {
+        this._overrideUserPreferencesNavigationItem.activated = WI.cssManager.overridenUserPreferences.size > 0;
+    }
+
     _defaultAppearanceDidChange()
     {
         // Don't update the navigation item if there is currently a forced appearance.
@@ -886,4 +908,12 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         this._updateDOMTreeDeemphasizesNodesThatAreNotRendered()
     }
+
+    // Popover delegate
+
+    didDismissPopover(popover)
+    {
+        if (popover === this._userPreferencesOverridesPopover)
+            this._userPreferencesOverridesPopover = null;
+    };
 };

@@ -99,6 +99,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> navigate(const String& url);
     Inspector::Protocol::ErrorStringOr<void> overrideUserAgent(const String&);
     Inspector::Protocol::ErrorStringOr<void> overrideSetting(Inspector::Protocol::Page::Setting, std::optional<bool>&& value);
+    Inspector::Protocol::ErrorStringOr<void> overrideUserPreference(Inspector::Protocol::Page::UserPreferenceName, std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>> getCookies();
     Inspector::Protocol::ErrorStringOr<void> setCookie(Ref<JSON::Object>&&);
     Inspector::Protocol::ErrorStringOr<void> deleteCookie(const String& cookieName, const String& url);
@@ -134,6 +135,8 @@ public:
     void frameStoppedLoading(Frame&);
     void frameScheduledNavigation(Frame&, Seconds delay);
     void frameClearedScheduledNavigation(Frame&);
+    void accessibilitySettingsDidChange();
+    void defaultUserPreferencesDidChange();
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     void defaultAppearanceDidChange(bool useDarkAppearance);
 #endif
@@ -155,6 +158,9 @@ private:
 
     static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
     static bool dataContent(const uint8_t* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
+
+    void overridePrefersReducedMotion(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
+    void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
 
     Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
     Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);

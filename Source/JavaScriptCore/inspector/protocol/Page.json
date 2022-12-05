@@ -25,6 +25,27 @@
             ]
         },
         {
+            "id": "UserPreference",
+            "type": "object",
+            "description": "A user preference that can be overriden by Web Inspector, like an accessibility preference.",
+            "properties": [
+                { "name": "name", "$ref": "UserPreferenceName", "description": "Preference name." },
+                { "name": "value", "$ref": "UserPreferenceValue", "description": "Preference value." }
+            ]
+        },
+        {
+            "id": "UserPreferenceName",
+            "type": "string",
+            "enum": ["PrefersReducedMotion", "PrefersContrast"],
+            "description": "User preference name."
+        },
+        {
+            "id": "UserPreferenceValue",
+            "type": "string",
+            "enum": ["NoPreference", "Reduce", "More"],
+            "description": "User preference value."
+        },
+        {
             "id": "ResourceType",
             "type": "string",
             "enum": ["Document", "StyleSheet", "Image", "Font", "Script", "XHR", "Fetch", "Ping", "Beacon", "WebSocket", "EventSource", "Other"],
@@ -154,6 +175,15 @@
             "parameters": [
                 { "name": "setting", "$ref": "Setting" },
                 { "name": "value", "type": "boolean", "optional": true, "description": "Value to override the setting with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
+            ]
+        },
+        {
+            "name": "overrideUserPreference",
+            "description": "Allows the frontend to override the user's preferences on the inspected page.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "name", "$ref": "UserPreferenceName" },
+                { "name": "value", "$ref": "UserPreferenceValue", "optional": true, "description": "Value to override the user preference with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
             ]
         },
         {
@@ -384,6 +414,14 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "appearance", "$ref": "Appearance", "description": "Name of the appearance that is active (not considering any forced appearance.)" }
+            ]
+        },
+        {
+            "name": "defaultUserPreferencesDidChange",
+            "description": "Fired when the default value of a user preference changes at the system level.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "preferences", "type": "array", "items": { "$ref": "UserPreference" }, "description": "List of user preferences that can be overriden and their new system (default) values." }
             ]
         }
     ]

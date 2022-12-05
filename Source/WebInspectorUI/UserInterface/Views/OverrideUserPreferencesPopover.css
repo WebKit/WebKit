@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.PageObserver = class PageObserver extends InspectorBackend.Dispatcher
-{
-    // Events defined by the "Page" domain.
+.popover .user-preferences-content {
+    display: grid;
+    padding: 5px;
+    gap: 4px 8px;
+    grid-template-columns: auto auto;
+}
 
-    domContentEventFired(timestamp)
-    {
-        WI.timelineManager.pageDOMContentLoadedEventFired(timestamp);
-    }
+.popover .user-preferences-content > h1 {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    margin-block-start: 0;
+    margin-block-end: 4px;
+}
 
-    loadEventFired(timestamp)
-    {
-        WI.timelineManager.pageLoadEventFired(timestamp);
-    }
+.popover .user-preferences-content > label {
+    grid-column: 1;
+    align-self: center;
+}
 
-    frameNavigated(frame, loaderId)
-    {
-        WI.networkManager.frameDidNavigate(frame, loaderId);
-    }
-
-    frameDetached(frameId)
-    {
-        WI.networkManager.frameDidDetach(frameId);
-    }
-
-    defaultAppearanceDidChange(appearance)
-    {
-        WI.cssManager.defaultAppearanceDidChange(appearance);
-    }
-
-    defaultUserPreferencesDidChange(userPreferences)
-    {
-        WI.cssManager.defaultUserPreferencesDidChange(userPreferences);
-    }
-
-    frameStartedLoading(frameId)
-    {
-        // Not handled yet.
-    }
-
-    frameStoppedLoading(frameId)
-    {
-        // Not handled yet.
-    }
-
-    frameScheduledNavigation(frameId, delay)
-    {
-        // Not handled yet.
-    }
-
-    frameClearedScheduledNavigation(frameId)
-    {
-        // Not handled yet.
-    }
-};
+.popover .user-preferences-content > select {
+    grid-column: 2;
+}
