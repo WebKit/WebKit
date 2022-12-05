@@ -7,17 +7,7 @@ EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range fr
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x34
-        RenderText {#text} at (0,0) size 773x34
-          text run at (0,0) width 773: "Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: \"world hello\". To"
-          text run at (0,17) width 434: "test manually double click on the \"hello\" and drag it to after \"world\"."
-      RenderBlock {DIV} at (0,50) size 784x17
-        RenderText {#text} at (0,0) size 68x17
-          text run at (0,0) width 68: "worldhello"
-selection start: position 5 of child 0 {#text} of child 3 {DIV} of body
-selection end:   position 10 of child 0 {#text} of child 3 {DIV} of body
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: "world hello".<br>
+To test manually double click on the "hello" and drag it to after "world".
+| "world<#selection-anchor>hello<#selection-focus>"
