@@ -30,6 +30,7 @@ namespace WebKit {
 
 enum ImageOptions {
     ImageOptionsShareable = 1 << 0,
+    ImageOptionsLocalPDFSnapshot = 1 << 1,
 };
 
 enum {

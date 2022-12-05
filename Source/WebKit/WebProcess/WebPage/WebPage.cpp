@@ -5796,8 +5796,9 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
 #else
         ASSERT(coreFrame->document()->printing());
 #endif
-
-        image = WebImage::create(imageSize, ImageOptionsShareable, DestinationColorSpace::SRGB(), &m_page->chrome().client());
+        RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame);
+        
+        image = WebImage::create(imageSize, pdfDocument ? ImageOptionsLocalPDFSnapshot : ImageOptionsShareable, DestinationColorSpace::SRGB(), &m_page->chrome().client());
         if (!image) {
             ASSERT_NOT_REACHED();
             return completionHandler({ });
@@ -5808,7 +5809,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
         graphicsContext.scale(printingScale);
 
 #if PLATFORM(MAC)
-        if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
+        if (pdfDocument) {
             ASSERT(!m_printContext);
             graphicsContext.scale(FloatSize(1, -1));
             graphicsContext.translate(0, -rect.height());

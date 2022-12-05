@@ -34,7 +34,8 @@ enum class RenderingPurpose : uint8_t {
     LayerBacking,
     Snapshot,
     ShareableSnapshot,
-    MediaPainting
+    MediaPainting,
+    LocalPDFSnapshot
 };
 
 enum class RenderingMode : bool { Unaccelerated, Accelerated };
