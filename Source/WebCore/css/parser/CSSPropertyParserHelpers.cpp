@@ -5627,16 +5627,15 @@ RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, CSSParserMode cssParser
 
 RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
 {
-    CSSValueID id = range.peek().id();
-    if (id == CSSValueNone || id == CSSValueAuto || id == CSSValueManipulation)
-        return consumeIdent(range);
+    if (auto ident = consumeIdent<CSSValueNone, CSSValueAuto, CSSValueManipulation>(range))
+        return ident;
 
     auto list = CSSValueList::createSpaceSeparated();
     while (true) {
         auto ident = consumeIdent<CSSValuePanX, CSSValuePanY, CSSValuePinchZoom>(range);
         if (!ident)
             break;
-        if (list->hasValue(ident.get()))
+        if (list->hasValue(*ident))
             return nullptr;
         list->append(ident.releaseNonNull());
     }
@@ -5892,12 +5891,12 @@ RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)
     if (id == CSSValueNone)
         return consumeIdent(range);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     while (true) {
-        RefPtr<CSSPrimitiveValue> ident = consumeIdent<CSSValueBlink, CSSValueUnderline, CSSValueOverline, CSSValueLineThrough>(range);
+        auto ident = consumeIdent<CSSValueBlink, CSSValueUnderline, CSSValueOverline, CSSValueLineThrough>(range);
         if (!ident)
             break;
-        if (list->hasValue(ident.get()))
+        if (list->hasValue(*ident))
             return nullptr;
         list->append(ident.releaseNonNull());
     }

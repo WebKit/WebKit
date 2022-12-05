@@ -2375,19 +2375,17 @@ public:
     }
 #endif
     
-    // FIXME: All destinations should be on the right side.
-    // https://bugs.webkit.org/show_bug.cgi?id=248703
-    void pinsr(XMMRegisterID vd, RegisterID rn, SIMDLane lane, uint8_t laneIndex)
+    void pinsr(SIMDLane lane, uint8_t laneIndex, RegisterID rn, XMMRegisterID vd)
     {
-        m_formatter.pinsr((RegisterID) vd, rn, lane, laneIndex);
+        m_formatter.pinsr(lane, laneIndex, rn, (RegisterID) vd);
     }
 
-    void pextr(RegisterID rd, XMMRegisterID vn, SIMDLane lane, uint8_t laneIndex)
+    void pextr(SIMDLane lane, uint8_t laneIndex, XMMRegisterID vn, RegisterID rd)
     {
-        m_formatter.pextr(rd, (RegisterID) vn, lane, laneIndex);
+        m_formatter.pextr(lane, laneIndex, (RegisterID) vn, rd);
     }
 
-    void vextractps(FPRegisterID rd, XMMRegisterID vn, SIMDLane lane, uint8_t laneIndex)
+    void vextractps(SIMDLane lane, uint8_t laneIndex, XMMRegisterID vn, FPRegisterID rd)
     {
         m_formatter.prefix(PRE_OPERAND_SIZE);
 
@@ -2400,7 +2398,7 @@ public:
         m_formatter.immediate8((uint8_t) laneIndex);
     }
 
-    void pshufd(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    void pshufd(uint8_t controlBits, XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pshufd
         // 66 0F 70 /r ib PSHUFD xmm1, xmm2/m128, imm8
@@ -2409,7 +2407,7 @@ public:
         m_formatter.immediate8((uint8_t) controlBits);
     }
 
-    void pshufb(XMMRegisterID vd, XMMRegisterID vn)
+    void pshufb(XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pshufb
         // 66 0F 38 00 /r PSHUFB xmm1, xmm2/m128
@@ -2417,7 +2415,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PSHUFB, (RegisterID) vd, (RegisterID) vn);
     }
 
-    void pshuflw(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    void pshuflw(uint8_t controlBits, XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pshuflw
         // F2 0F 70 /r ib PSHUFLW xmm1, xmm2/m128, imm8
@@ -2426,7 +2424,7 @@ public:
         m_formatter.immediate8((uint8_t) controlBits);
     }
 
-    void pshufhw(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    void pshufhw(uint8_t controlBits, XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pshufhw
         // F3 0F 70 /r ib PSHUFHW xmm1, xmm2/m128, imm8
@@ -2435,7 +2433,7 @@ public:
         m_formatter.immediate8((uint8_t) controlBits);
     }   
 
-    void punpcklqdq(XMMRegisterID vd, XMMRegisterID vn)
+    void punpcklqdq(XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/punpcklbw:punpcklwd:punpckldq:punpcklqdq
         // 66 0F 6C /r PUNPCKLQDQ xmm1, xmm2/m128
@@ -2443,7 +2441,7 @@ public:
         m_formatter.twoByteOp(OP2_PUNPCKLQDQ, (RegisterID) vd, (RegisterID) vn);
     }
 
-    void shufps(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    void shufps(uint8_t controlBits, XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/shufps
         // NP 0F C6 /r ib SHUFPS xmm1, xmm3/m128, imm8
@@ -2451,7 +2449,7 @@ public:
         m_formatter.immediate8((uint8_t) controlBits);
     }
 
-    void shufpd(XMMRegisterID vd, XMMRegisterID vn, uint8_t controlBits)
+    void shufpd(uint8_t controlBits, XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/shufpd
         // 66 0F C6 /r ib SHUFPD xmm1, xmm2/m128, imm8
@@ -4662,7 +4660,7 @@ private:
             writer.memoryModRM(dest, base, index, scale, offset);
         }
 
-        void pinsr(RegisterID reg, RegisterID rm, SIMDLane lane, uint8_t laneIndex)
+        void pinsr(SIMDLane lane, uint8_t laneIndex, RegisterID rm, RegisterID reg)
         {
             SingleInstructionBufferWriter writer(m_buffer);
 
@@ -4702,7 +4700,7 @@ private:
             writer.putByteUnchecked((uint8_t) laneIndex);
         }
 
-        void pextr(RegisterID rm, RegisterID reg, SIMDLane lane, uint8_t laneIndex)
+        void pextr(SIMDLane lane, uint8_t laneIndex, RegisterID reg, RegisterID rm)
         {
             SingleInstructionBufferWriter writer(m_buffer);
 

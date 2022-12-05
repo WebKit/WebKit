@@ -48,6 +48,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitVersion.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebEditor.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebExtension.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebFormManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebHitTestResult.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebPage.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebProcessEnumTypes.h>

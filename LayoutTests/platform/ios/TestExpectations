@@ -3113,8 +3113,6 @@ webkit.org/b/213516 imported/w3c/web-platform-tests/websockets/Close-reason-unpa
 
 webkit.org/b/207762 http/wpt/service-workers/check-service-worker-header.https.html [ Pass Failure ]
 
-webkit.org/b/207763 http/wpt/service-workers/file-upload.html [ Pass Failure ]
-
 webkit.org/b/207766 http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
 
 webkit.org/b/207767 http/wpt/service-workers/online.https.html [ Pass Failure ]

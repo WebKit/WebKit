@@ -970,7 +970,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif // HAVE(SANDBOX_STATE_FLAGS)
 
     updateThrottleState();
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     updateImageAnimationEnabled();
+#endif
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -8339,11 +8341,12 @@ void WebPage::generateTestReport(String&& message, String&& group)
         document->reportingScope().generateTestReport(WTFMove(message), WTFMove(group));
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void WebPage::updateImageAnimationEnabled()
 {
-    bool enabled = !m_page->settings().imageAnimationControlEnabled() || WebProcess::singleton().imageAnimationEnabled();
-    corePage()->setImageAnimationEnabled(enabled);
+    corePage()->setImageAnimationEnabled(WebProcess::singleton().imageAnimationEnabled());
 }
+#endif
 
 } // namespace WebKit
 

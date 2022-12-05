@@ -1461,6 +1461,7 @@ webgl/webgl-draft-extensions-flag-on.html [ Skip ]
 
 webgl/conformance/extensions/s3tc-and-rgtc.html [ Pass Failure ]
 
+webgl/tex-2d-video-no-change-wrap.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs

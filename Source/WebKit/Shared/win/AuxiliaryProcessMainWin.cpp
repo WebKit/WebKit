@@ -44,7 +44,7 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
         else if (!strcmp(argv[i], "-configure-jsc-for-testing"))
             JSC::Config::configureForTesting();
         else if (!strcmp(argv[i], "-disable-jit"))
-            JSC::ExecutableAllocator::setJITEnabled(false);
+            JSC::ExecutableAllocator::disableJIT();
     }
     return true;
 }

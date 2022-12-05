@@ -35,6 +35,7 @@
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebEditorPrivate.h"
+#include "WebKitWebFormManagerPrivate.h"
 #include "WebKitWebHitTestResultPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebKitWebProcessEnumTypes.h"
@@ -49,6 +50,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -89,6 +91,7 @@ struct _WebKitWebPagePrivate {
     CString uri;
 
     GRefPtr<WebKitWebEditor> webEditor;
+    HashMap<WebKitScriptWorld*, GRefPtr<WebKitWebFormManager>> formManagerMap;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -295,22 +298,47 @@ public:
 
     void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values, RefPtr<API::Object>&) override
     {
-        fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_COMPLETE, formElement, frame, sourceFrame, values);
+        if (!formElement)
+            return;
+
+        if (!m_webPage->priv->formManagerMap.isEmpty()) {
+            auto* wkFrame = webkitFrameGetOrCreate(sourceFrame);
+            auto* wkTargetFrame = webkitFrameGetOrCreate(frame);
+            for (const auto& it : m_webPage->priv->formManagerMap)
+                webkitWebFormManagerWillSubmitForm(it.value.get(), webkitFrameGetJSCValueForElementInWorld(wkFrame, *formElement, it.key), wkFrame, wkTargetFrame);
+        } else
+            fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_COMPLETE, formElement, frame, sourceFrame, values);
     }
 
     void willSendSubmitEvent(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) override
     {
-        fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT, formElement, frame, sourceFrame, values);
+        if (!formElement)
+            return;
+
+        if (!m_webPage->priv->formManagerMap.isEmpty()) {
+            auto* wkFrame = webkitFrameGetOrCreate(sourceFrame);
+            auto* wkTargetFrame = webkitFrameGetOrCreate(frame);
+            for (const auto& it : m_webPage->priv->formManagerMap)
+                webkitWebFormManagerWillSendSubmitEvent(it.value.get(), webkitFrameGetJSCValueForElementInWorld(wkFrame, *formElement, it.key), wkFrame, wkTargetFrame);
+        } else
+            fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT, formElement, frame, sourceFrame, values);
     }
 
     void didAssociateFormControls(WebPage*, const Vector<RefPtr<Element>>& elements, WebFrame* frame) override
     {
+        auto* wkFrame = webkitFrameGetOrCreate(frame);
+        if (!m_webPage->priv->formManagerMap.isEmpty()) {
+            for (const auto& it : m_webPage->priv->formManagerMap)
+                webkitWebFormManagerDidAssociateFormControls(it.value.get(), wkFrame, webkitFrameGetJSCValuesForElementsInWorld(wkFrame, elements, it.key));
+            return;
+        }
+
         GRefPtr<GPtrArray> formElements = adoptGRef(g_ptr_array_sized_new(elements.size()));
         for (size_t i = 0; i < elements.size(); ++i)
             g_ptr_array_add(formElements.get(), WebKit::kit(elements[i].get()));
 
         g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED], 0, formElements.get());
-        g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED_FOR_FRAME], 0, formElements.get(), webkitFrameGetOrCreate(frame));
+        g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED_FOR_FRAME], 0, formElements.get(), wkFrame);
     }
 
     bool shouldNotifyOnFormChanges(WebPage*) override { return true; }
@@ -328,11 +356,28 @@ private:
             g_ptr_array_add(textFieldValues.get(), g_strdup(pair.second.utf8().data()));
         }
 
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         g_signal_emit(m_webPage, signals[WILL_SUBMIT_FORM], 0, WEBKIT_DOM_ELEMENT(WebKit::kit(static_cast<Node*>(formElement))), step, webkitSourceFrame, webkitTargetFrame, textFieldNames.get(), textFieldValues.get());
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     WebKitWebPage* m_webPage;
 };
+
+static void worldDestroyed(WebKitWebPage* webPage, WebKitScriptWorld* world)
+{
+    webPage->priv->formManagerMap.remove(world);
+}
+
+static void webkitWebPageDispose(GObject* object)
+{
+    auto* priv = WEBKIT_WEB_PAGE(object)->priv;
+    for (auto* world : priv->formManagerMap.keys())
+        g_object_weak_unref(G_OBJECT(world), reinterpret_cast<GWeakNotify>(worldDestroyed), object);
+    priv->formManagerMap.clear();
+
+    G_OBJECT_CLASS(webkit_web_page_parent_class)->dispose(object);
+}
 
 static void webkitWebPageGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -350,7 +395,7 @@ static void webkitWebPageGetProperty(GObject* object, guint propId, GValue* valu
 static void webkit_web_page_class_init(WebKitWebPageClass* klass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
-
+    gObjectClass->dispose = webkitWebPageDispose;
     gObjectClass->get_property = webkitWebPageGetProperty;
 
     /**
@@ -478,6 +523,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WEBKIT_TYPE_CONSOLE_MESSAGE | G_SIGNAL_TYPE_STATIC_SCOPE);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     /**
      * WebKitWebPage::form-controls-associated:
      * @web_page: the #WebKitWebPage on which the signal is emitted
@@ -525,6 +571,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
      * keep them alive after the signal handler returns.
      *
      * Since: 2.26
+     *
+     * Deprecated: 2.40: Use #WebKitWebFormManager::form-controls-associated instead.
      */
     signals[FORM_CONTROLS_ASSOCIATED_FOR_FRAME] = g_signal_new(
         "form-controls-associated-for-frame",
@@ -580,6 +628,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
      * emitted.
      *
      * Since: 2.20
+     *
+     * Deprecated: 2.40: Use #WebKitWebFormManager::will-send-submit-event and #WebKitWebFormManager::will-submit-form instead.
      */
     signals[WILL_SUBMIT_FORM] = g_signal_new(
         "will-submit-form",
@@ -594,6 +644,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         WEBKIT_TYPE_FRAME,
         G_TYPE_PTR_ARRAY,
         G_TYPE_PTR_ARRAY);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     /**
      * WebKitWebPage::user-message-received:
@@ -805,4 +856,32 @@ WebKitUserMessage* webkit_web_page_send_message_to_view_finish(WebKitWebPage* we
     g_return_val_if_fail(g_task_is_valid(result, webPage), nullptr);
 
     return WEBKIT_USER_MESSAGE(g_task_propagate_pointer(G_TASK(result), error));
+}
+
+/**
+ * webkit_web_page_get_form_manager:
+ * @web_page: a #WebKitWebPage
+ * @world: (nullable): a #WebKitScriptWorld
+ *
+ * Get the #WebKitWebFormManager of @web_page in @world.
+ *
+ * Returns: (transfer none): a #WebKitWebFormManager
+ *
+ * Since: 2.40
+ */
+WebKitWebFormManager* webkit_web_page_get_form_manager(WebKitWebPage* webPage, WebKitScriptWorld* world)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), nullptr);
+    g_return_val_if_fail(!world || WEBKIT_IS_SCRIPT_WORLD(world), nullptr);
+
+    if (!world)
+        world = webkit_script_world_get_default();
+
+    auto addResult = webPage->priv->formManagerMap.ensure(world, [] {
+        return adoptGRef(webkitWebFormManagerCreate());
+    });
+    if (addResult.isNewEntry)
+        g_object_weak_ref(G_OBJECT(world), reinterpret_cast<GWeakNotify>(worldDestroyed), webPage);
+
+    return addResult.iterator->value.get();
 }

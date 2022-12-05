@@ -77,7 +77,10 @@ public:
     const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
 
+    // FIXME: Maybe it's time to subclass inline box types.
     TextEdge textEdge() const { return m_style.textEdge; }
+    LeadingTrim leadingTrim() const { return m_style.leadingTrim; }
+    InlineLayoutUnit inlineBoxContentOffsetForLeadingTrim() const { return m_inlineBoxContentOffsetForLeadingTrim; }
 
     bool hasAnnotation() const { return hasContent() && m_annotation.has_value(); };
     std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() && m_annotation->type == Annotation::Type::Above ? std::make_optional(m_annotation->size) : std::nullopt; }
@@ -132,6 +135,7 @@ private:
     void setAscent(InlineLayoutUnit ascent) { m_ascent = roundToInt(ascent); }
     void setDescent(InlineLayoutUnit descent) { m_descent = roundToInt(descent); }
     void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
+    void setInlineBoxContentOffsetForLeadingTrim(InlineLayoutUnit offset) { m_inlineBoxContentOffsetForLeadingTrim = offset; }
 
     void setIsFirstBox() { m_isFirstWithinLayoutBox = true; }
     void setIsLastBox() { m_isLastWithinLayoutBox = true; }
@@ -141,6 +145,7 @@ private:
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
     std::optional<LayoutBounds> m_layoutBounds { };
+    InlineLayoutUnit m_inlineBoxContentOffsetForLeadingTrim { 0.f };
     InlineLayoutUnit m_ascent { 0 };
     std::optional<InlineLayoutUnit> m_descent;
     bool m_hasContent { false };
@@ -154,6 +159,7 @@ private:
         const FontMetrics& primaryFontMetrics;
         const Length& lineHeight;
         TextEdge textEdge;
+        LeadingTrim leadingTrim;
         WTF::OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
@@ -174,7 +180,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textEdge(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textEdge(), style.leadingTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)

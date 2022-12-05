@@ -94,7 +94,6 @@ public:
     static GridSpan resolveGridPositionsFromStyle(const RenderGrid& gridContainer, const RenderBox&, GridTrackSizingDirection);
     static unsigned explicitGridColumnCount(const RenderGrid&);
     static unsigned explicitGridRowCount(const RenderGrid&);
-    static inline GridTrackSizingDirection gridAxisDirection(GridTrackSizingDirection masonryAxisDirection) { return masonryAxisDirection == ForRows ? ForColumns: ForRows; }
 };
 
 } // namespace WebCore

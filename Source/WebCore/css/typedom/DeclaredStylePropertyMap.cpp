@@ -63,14 +63,9 @@ auto DeclaredStylePropertyMap::entries(ScriptExecutionContext* context) const ->
         return { };
 
     auto& document = downcast<Document>(*context);
-    Vector<StylePropertyMapEntry> result;
-    auto& declaredStyleSet = styleRule->properties();
-    result.reserveInitialCapacity(declaredStyleSet.propertyCount());
-    for (unsigned i = 0; i < declaredStyleSet.propertyCount(); ++i) {
-        auto propertyReference = declaredStyleSet.propertyAt(i);
-        result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(RefPtr<CSSValue> { propertyReference.value() }, document)));
-    }
-    return result;
+    return map(styleRule->properties(), [&] (auto propertyReference) {
+        return StylePropertyMapEntry { propertyReference.cssName(), reifyValueToVector(RefPtr<CSSValue> { propertyReference.value() }, document) };
+    });
 }
 
 RefPtr<CSSValue> DeclaredStylePropertyMap::propertyValue(CSSPropertyID propertyID) const

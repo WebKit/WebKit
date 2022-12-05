@@ -1786,7 +1786,7 @@ struct Mapper {
         Vector<DestinationItemType> result;
         // FIXME: Use std::size when available on all compilers.
         result.reserveInitialCapacity(source.size());
-        for (auto& item : source)
+        for (auto&& item : source)
             result.uncheckedAppend(mapFunction(item));
         return result;
     }
@@ -1844,7 +1844,7 @@ struct CompactMapper {
     static Vector<DestinationItemType> compactMap(const SourceType& source, const MapFunction& mapFunction)
     {
         Vector<DestinationItemType> result;
-        for (auto& item : source) {
+        for (auto&& item : source) {
             auto itemResult = mapFunction(item);
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
                 result.append(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
@@ -1885,7 +1885,7 @@ inline auto copyToVectorSpecialization(const Collection& collection) -> Destinat
     DestinationVector result;
     // FIXME: Use std::size when available on all compilers.
     result.reserveInitialCapacity(collection.size());
-    for (auto& item : collection)
+    for (auto&& item : collection)
         result.uncheckedAppend(item);
     return result;
 }

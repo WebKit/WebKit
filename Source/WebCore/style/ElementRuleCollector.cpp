@@ -655,14 +655,12 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
         if (matchedProperties.styleScopeOrdinal != ScopeOrdinal::Element)
             return false;
 
-        auto& properties = *matchedProperties.properties;
-        for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
+        for (auto current : *matchedProperties.properties) {
             // Currently the property cache only copy the non-inherited values and resolve
             // the inherited ones.
             // Here we define some exception were we have to resolve some properties that are not inherited
             // by default. If those exceptions become too common on the web, it should be possible
             // to build a list of exception to resolve instead of completely disabling the cache.
-            StyleProperties::PropertyReference current = properties.propertyAt(i);
             if (current.isInherited())
                 continue;
 

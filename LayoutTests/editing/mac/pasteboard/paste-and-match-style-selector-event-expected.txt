@@ -1,2 +1,3 @@
-This tests that sending the pasteAsPlainText selector, which is what happens when you paste and match style, fires the onpaste event.
+This tests pasting as plain text, which is what happens when you paste and match style, fires the onpaste event.
+To manually test, select & cut "FAILURE" below and "paste and match style" from menu.
 SUCCESS

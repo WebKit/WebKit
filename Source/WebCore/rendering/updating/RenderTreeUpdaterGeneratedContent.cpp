@@ -175,9 +175,6 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
 
 void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer)
 {
-    if (!renderer.canHaveGeneratedChildren())
-        return;
-
     auto destroyBackdropIfNeeded = [&renderer, this]() {
         if (WeakPtr backdropRenderer = renderer.backdropRenderer())
             m_updater.m_builder.destroy(*backdropRenderer);
@@ -203,7 +200,7 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
         auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
         newBackdropRenderer->initializeStyle();
         renderer.setBackdropRenderer(*newBackdropRenderer.get());
-        m_updater.m_builder.attach(renderer, WTFMove(newBackdropRenderer), renderer.firstChild());
+        m_updater.m_builder.attach(renderer.view(), WTFMove(newBackdropRenderer));
     }
 }
 

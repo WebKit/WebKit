@@ -1,0 +1,4 @@
+Test passes if color is green.
+
+FAIL CSS Selectors nested invalidation through @media by selectorText undefined is not an object (evaluating 'document.styleSheets[0].rules[1].selectorText = '.a'')
+

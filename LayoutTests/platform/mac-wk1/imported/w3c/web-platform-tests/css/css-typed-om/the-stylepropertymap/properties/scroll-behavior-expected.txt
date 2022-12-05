@@ -1,0 +1,14 @@
+
+FAIL Can set 'scroll-behavior' to CSS-wide keywords Invalid property scroll-behavior
+FAIL Can set 'scroll-behavior' to var() references Invalid property scroll-behavior
+FAIL Can set 'scroll-behavior' to the 'auto' keyword Invalid property scroll-behavior
+FAIL Can set 'scroll-behavior' to the 'smooth' keyword Invalid property scroll-behavior
+PASS Setting 'scroll-behavior' to a length throws TypeError
+PASS Setting 'scroll-behavior' to a percent throws TypeError
+PASS Setting 'scroll-behavior' to a time throws TypeError
+PASS Setting 'scroll-behavior' to an angle throws TypeError
+PASS Setting 'scroll-behavior' to a flexible length throws TypeError
+PASS Setting 'scroll-behavior' to a number throws TypeError
+PASS Setting 'scroll-behavior' to a URL throws TypeError
+PASS Setting 'scroll-behavior' to a transform throws TypeError
+

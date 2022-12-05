@@ -2060,7 +2060,7 @@ inline SlowPathReturnType varargsSetup(CallFrame* callFrame, const JSInstruction
     calleeFrame->uncheckedR(VirtualRegister(CallFrameSlot::callee)) = calleeAsValue;
     callFrame->setCurrentVPC(pc);
 
-    metadata.m_callLinkInfo.updateMaxArgumentCountIncludingThis(argumentCountIncludingThis);
+    metadata.m_callLinkInfo.updateMaxArgumentCountIncludingThisForVarargs(argumentCountIncludingThis);
 
     auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
     LLINT_RETURN_TWO(pc, callerSP);

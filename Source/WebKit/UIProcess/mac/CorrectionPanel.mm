@@ -35,18 +35,16 @@
 static inline NSCorrectionIndicatorType correctionIndicatorType(WebCore::AlternativeTextType alternativeTextType)
 {
     switch (alternativeTextType) {
-    case WebCore::AlternativeTextTypeCorrection:
+    case WebCore::AlternativeTextType::Correction:
         return NSCorrectionIndicatorTypeDefault;
-    case WebCore::AlternativeTextTypeReversion:
+    case WebCore::AlternativeTextType::Reversion:
         return NSCorrectionIndicatorTypeReversion;
-    case WebCore::AlternativeTextTypeSpellingSuggestions:
+    case WebCore::AlternativeTextType::SpellingSuggestions:
         return NSCorrectionIndicatorTypeGuesses;
-    case WebCore::AlternativeTextTypeDictationAlternatives:
+    case WebCore::AlternativeTextType::DictationAlternatives:
         ASSERT_NOT_REACHED();
-        break;
+        return NSCorrectionIndicatorTypeDefault;
     }
-    ASSERT_NOT_REACHED();
-    return NSCorrectionIndicatorTypeDefault;
 }
 
 namespace WebKit {
@@ -78,7 +76,7 @@ void CorrectionPanel::show(NSView *view, WebViewImpl& webViewImpl, AlternativeTe
     m_view = view;
     m_spellCheckerDocumentTag = spellCheckerDocumentTag;
     NSCorrectionIndicatorType indicatorType = correctionIndicatorType(type);
-    
+
     RetainPtr<NSArray> alternativeStrings;
     if (!alternativeReplacementStrings.isEmpty())
         alternativeStrings = createNSArray(alternativeReplacementStrings);

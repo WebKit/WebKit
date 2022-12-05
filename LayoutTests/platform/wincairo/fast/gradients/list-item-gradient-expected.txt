@@ -5,14 +5,14 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {UL} at (0,0) size 784x60
         RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-15,7) size 8x8
+          RenderListMarker at (-15,8) size 8x8
           RenderText {#text} at (0,0) size 57x19
             text run at (0,0) width 57: "Item One"
         RenderListItem {LI} at (40,20) size 744x20
-          RenderListMarker at (-15,7) size 8x8
+          RenderListMarker at (-15,8) size 8x8
           RenderText {#text} at (0,0) size 59x19
             text run at (0,0) width 59: "Item Two"
         RenderListItem {LI} at (40,40) size 744x20
-          RenderListMarker at (-15,7) size 8x8
+          RenderListMarker at (-15,8) size 8x8
           RenderText {#text} at (0,0) size 66x19
             text run at (0,0) width 66: "Item Three"

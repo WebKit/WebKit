@@ -149,6 +149,16 @@ void MockGamepadProvider::gamepadInputActivity()
     });
 }
 
+void MockGamepadProvider::clearMockGamepads()
+{
+    // Disconnect any remaining connected gamepads.
+    for (size_t i = 0; i < m_connectedGamepadVector.size(); ++i) {
+        if (m_connectedGamepadVector[i])
+            disconnectMockGamepad(i);
+    }
+    m_mockGamepadVector.clear();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)

@@ -49,6 +49,7 @@ public:
     bool setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value);
     bool connectMockGamepad(unsigned index);
     bool disconnectMockGamepad(unsigned index);
+    void clearMockGamepads();
 
 private:
     MockGamepadProvider();

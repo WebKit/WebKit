@@ -31,19 +31,52 @@
 
 namespace WebCore {
 
-void GridMasonryLayout::performMasonryPlacement(const HashMap<RenderBox*, GridArea>& firstTrackItems, const Vector<RenderBox*> itemsWithDefiniteGridAxisPosition, const Vector<RenderBox*> itemsWithIndefinitePosition, GridTrackSizingDirection masonryAxisDirection)
+void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection)
 {
     m_masonryAxisDirection = masonryAxisDirection;
-    m_gridAxisDirection = GridPositionsResolver::gridAxisDirection(m_masonryAxisDirection);
     m_masonryAxisGridGap = m_renderGrid.gridGap(m_masonryAxisDirection);
-    m_gridAxisTracksCount = m_renderGrid.numTracks(m_gridAxisDirection);
+    m_gridAxisTracksCount = gridAxisTracks;
+
+    allocateCapacityForMasonryVectors();
+    collectMasonryItems();
+    m_renderGrid.currentGrid().setupGridForMasonryLayout();
+    m_renderGrid.populateExplicitGridAndOrderIterator();
+
     resizeAndResetRunningPositions(); 
 
-
     // 2.4 Masonry Layout Algorithm
-    addItemsToFirstTrack(firstTrackItems);
-    placeItemsWithDefiniteGridAxisPosition(itemsWithDefiniteGridAxisPosition);
-    placeItemsWithIndefiniteGridAxisPosition(itemsWithIndefinitePosition);
+    addItemsToFirstTrack(m_firstTrackItems);
+    placeItemsWithDefiniteGridAxisPosition(m_itemsWithDefiniteGridAxisPosition);
+    placeItemsWithIndefiniteGridAxisPosition(m_itemsWithIndefiniteGridAxisPosition);
+}
+
+void GridMasonryLayout::collectMasonryItems()
+{
+    ASSERT(m_gridAxisTracksCount);
+    m_firstTrackItems.clear();
+    m_itemsWithDefiniteGridAxisPosition.resize(0);
+    m_itemsWithIndefiniteGridAxisPosition.resize(0);
+
+    auto& grid = m_renderGrid.currentGrid();
+    for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {
+        if (grid.orderIterator().shouldSkipChild(*child))
+            continue;
+
+        auto gridArea = grid.gridItemArea(*child);
+        if (m_firstTrackItems.size() != m_gridAxisTracksCount && itemGridAreaStartsAtFirstLine(gridArea, m_masonryAxisDirection) && m_renderGrid.itemGridAreaIsWithinImplicitGrid(gridArea, m_gridAxisTracksCount + 1, gridAxisDirection()))
+            m_firstTrackItems.add(child, gridArea);
+        else if (hasDefiniteGridAxisPosition(child, gridAxisDirection()))
+            m_itemsWithDefiniteGridAxisPosition.append(child);
+        else 
+            m_itemsWithIndefiniteGridAxisPosition.append(child);
+    }
+}
+
+void GridMasonryLayout::allocateCapacityForMasonryVectors()
+{
+    auto gridCapacity = m_renderGrid.currentGrid().numTracks(ForRows) * m_renderGrid.currentGrid().numTracks(ForColumns);
+    m_itemsWithDefiniteGridAxisPosition.reserveCapacity(gridCapacity / m_masonryDefiniteItemsQuarterCapacity);
+    m_itemsWithIndefiniteGridAxisPosition.reserveCapacity(gridCapacity / m_masonryIndefiniteItemsHalfCapacity);
 }
 
 void GridMasonryLayout::resizeAndResetRunningPositions()
@@ -61,11 +94,11 @@ void GridMasonryLayout::addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>
 void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition)
 {
     for (auto* item : itemsWithDefiniteGridAxisPosition) {
-        auto itemSpan = m_renderGrid.currentGrid().gridItemSpan(*item, m_gridAxisDirection);
+        auto itemSpan = m_renderGrid.currentGrid().gridItemSpan(*item, gridAxisDirection());
 
         ASSERT(!itemSpan.isIndefinite());
 
-        itemSpan.translate(m_renderGrid.currentGrid().explicitGridStart(m_gridAxisDirection));
+        itemSpan.translate(m_renderGrid.currentGrid().explicitGridStart(gridAxisDirection()));
 
         GridArea area = m_masonryAxisDirection == ForRows ? GridArea(m_masonryAxisSpan, itemSpan) : GridArea(itemSpan, m_masonryAxisSpan);
         insertIntoGridAndLayoutItem(item, area);
@@ -80,7 +113,7 @@ void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition(const Vector<Re
 
 void GridMasonryLayout::setItemGridAxisContainingBlockToGridArea(RenderBox* child)
 {
-    if (m_gridAxisDirection == ForColumns)
+    if (gridAxisDirection() == ForColumns)
         child->setOverridingContainingBlockContentLogicalWidth(m_renderGrid.m_trackSizingAlgorithm.estimatedGridAreaBreadthForChild(*child, ForColumns));
     else
         child->setOverridingContainingBlockContentLogicalHeight(m_renderGrid.m_trackSizingAlgorithm.estimatedGridAreaBreadthForChild(*child, ForRows));
@@ -138,7 +171,7 @@ void GridMasonryLayout::updateItemOffset(const RenderBox* child, LayoutUnit offs
 
 GridArea GridMasonryLayout::nextMasonryPositionForItem(const RenderBox* item)
 {
-    auto itemSpanLength = GridPositionsResolver::spanSizeForAutoPlacedItem(*item, m_gridAxisDirection);
+    auto itemSpanLength = GridPositionsResolver::spanSizeForAutoPlacedItem(*item, gridAxisDirection());
     auto gridAxisLines = m_gridAxisTracksCount + 1;
 
     LayoutUnit smallestMaxPos = LayoutUnit::max();
@@ -166,4 +199,16 @@ LayoutUnit GridMasonryLayout::offsetForChild(const RenderBox& child) const
     return offsetIter->value;
 }
 
+inline GridTrackSizingDirection GridMasonryLayout::gridAxisDirection() const
+{
+    // The masonry axis and grid axis can never be the same. 
+    // They are always perpendicular to each other.
+    return m_masonryAxisDirection == ForRows ? ForColumns : ForRows;
+}
+
+bool GridMasonryLayout::hasDefiniteGridAxisPosition(const RenderBox* child, GridTrackSizingDirection gridAxisDirection) const 
+{
+    auto itemSpan = GridPositionsResolver::resolveGridPositionsFromStyle(m_renderGrid, *child, gridAxisDirection);
+    return !itemSpan.isIndefinite();
+}
 } // end namespace WebCore

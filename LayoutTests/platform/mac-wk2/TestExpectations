@@ -654,7 +654,6 @@ editing/mac/input/text-input-controller.html
 editing/mac/input/text-input-controller-no-editable-no-crash.html
 editing/mac/input/wrapped-line-char-rect.html
 editing/mac/input/NSBackgroundColor-transparent.html
-editing/mac/pasteboard/paste-and-match-style-selector-event.html
 editing/mac/selection/25228.html
 
 # WebKitTestRunner needs testRunner.setCallCloseOnWebViews
@@ -1737,6 +1736,8 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
 
+webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
+
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]
 [ Ventura+ ] webrtc/canvas-to-peer-connection.html [ Pass Failure Timeout ]
@@ -1773,5 +1774,6 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
 [ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
 [ Monterey+ ] http/tests/media/video-webm-stall.html  [ Failure ]
-[ BigSur+ ] fast/images/animated-heics-draw.html [ Timeout Crash ]
 [ BigSur+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
+
+webkit.org/b/247982 [ Ventura+ ] fast/images/animated-heics-draw.html [ Timeout ]

@@ -83,11 +83,38 @@ public:
         const CSSValue* m_value;
     };
 
+    template<typename T>
+    struct Iterator {
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = PropertyReference;
+        using difference_type = ptrdiff_t;
+        using pointer = PropertyReference;
+        using reference = PropertyReference;
+
+        Iterator(const T& properties)
+            : properties { properties }
+        {
+        }
+
+        PropertyReference operator*() const { return properties.propertyAt(index); }
+        Iterator& operator++() { ++index; return *this; }
+        bool operator==(std::nullptr_t) const { return index >= properties.propertyCount(); }
+        bool operator!=(std::nullptr_t) const { return index < properties.propertyCount(); }
+
+    private:
+        const T& properties;
+        unsigned index { 0 };
+    };
+
     StylePropertiesType type() const { return static_cast<StylePropertiesType>(m_type); }
 
     unsigned propertyCount() const;
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned) const;
+
+    Iterator<StyleProperties> begin() const { return { *this }; }
+    static constexpr std::nullptr_t end() { return nullptr; }
+    unsigned size() const { return propertyCount(); }
 
     WEBCORE_EXPORT RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
@@ -188,6 +215,10 @@ public:
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned index) const;
 
+    Iterator<ImmutableStyleProperties> begin() const { return { *this }; }
+    static constexpr std::nullptr_t end() { return nullptr; }
+    unsigned size() const { return propertyCount(); }
+
     int findPropertyIndex(CSSPropertyID) const;
     int findCustomPropertyIndex(const String& propertyName) const;
     
@@ -221,6 +252,10 @@ public:
     unsigned propertyCount() const { return m_propertyVector.size(); }
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned index) const;
+
+    Iterator<MutableStyleProperties> begin() const { return { *this }; }
+    static constexpr std::nullptr_t end() { return nullptr; }
+    unsigned size() const { return propertyCount(); }
 
     PropertySetCSSStyleDeclaration* cssStyleDeclaration();
 

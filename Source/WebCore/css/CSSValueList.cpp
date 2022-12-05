@@ -37,25 +37,33 @@ CSSValueList::CSSValueList(ValueSeparator listSeparator)
     m_valueSeparator = listSeparator;
 }
 
-bool CSSValueList::removeAll(CSSValue* value)
+bool CSSValueList::removeAll(CSSValue& value)
 {
-    // FIXME: Why even take a pointer?
-    if (!value)
-        return false;
-
-    return m_values.removeAllMatching([value](auto& current) {
-        return current->equals(*value);
+    return m_values.removeAllMatching([&value](auto& current) {
+        return current->equals(value);
     }) > 0;
 }
 
-bool CSSValueList::hasValue(CSSValue* val) const
+bool CSSValueList::removeAll(CSSValueID value)
 {
-    // FIXME: Why even take a pointer?
-    if (!val)
-        return false;
+    return m_values.removeAllMatching([value](auto& current) {
+        return isValueID(current, value);
+    }) > 0;
+}
 
-    for (unsigned i = 0, size = m_values.size(); i < size; ++i) {
-        if (m_values[i].get().equals(*val))
+bool CSSValueList::hasValue(CSSValue& otherValue) const
+{
+    for (auto& value : m_values) {
+        if (value->equals(otherValue))
+            return true;
+    }
+    return false;
+}
+
+bool CSSValueList::hasValue(CSSValueID otherValue) const
+{
+    for (auto& value : m_values) {
+        if (isValueID(value, otherValue))
             return true;
     }
     return false;

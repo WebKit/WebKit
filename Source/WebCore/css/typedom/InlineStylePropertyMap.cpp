@@ -72,18 +72,14 @@ auto InlineStylePropertyMap::entries(ScriptExecutionContext* context) const -> V
     if (!m_element || !context)
         return { };
 
-    auto& document = downcast<Document>(*context);
-    Vector<StylePropertyMapEntry> result;
     auto* inlineStyle = m_element->inlineStyle();
     if (!inlineStyle)
         return { };
 
-    result.reserveInitialCapacity(inlineStyle->propertyCount());
-    for (unsigned i = 0; i < inlineStyle->propertyCount(); ++i) {
-        auto propertyReference = inlineStyle->propertyAt(i);
-        result.uncheckedAppend(makeKeyValuePair(propertyReference.cssName(), reifyValueToVector(RefPtr<CSSValue> { propertyReference.value() }, document)));
-    }
-    return result;
+    auto& document = downcast<Document>(*context);
+    return map(*inlineStyle, [&document] (auto property) {
+        return StylePropertyMapEntry(property.cssName(), reifyValueToVector(RefPtr<CSSValue> { property.value() }, document));
+    });
 }
 
 void InlineStylePropertyMap::removeProperty(CSSPropertyID propertyID)

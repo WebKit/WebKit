@@ -1315,8 +1315,6 @@ public:
     void didConcludeDrop();
 #endif
 
-    void updateImageAnimationEnabled();
-
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&);
 
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(StringView);
@@ -1589,6 +1587,10 @@ public:
 #endif
 
     void generateTestReport(String&& message, String&& group);
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void updateImageAnimationEnabled();
+#endif
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);

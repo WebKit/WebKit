@@ -207,13 +207,6 @@ ExecutableBase* CallLinkInfo::executable()
     return jsCast<ExecutableBase*>(m_lastSeenCalleeOrExecutable.get());
 }
 
-void CallLinkInfo::setMaxArgumentCountIncludingThis(unsigned value)
-{
-    RELEASE_ASSERT(isDirect());
-    RELEASE_ASSERT(value);
-    m_maxArgumentCountIncludingThis = value;
-}
-
 void CallLinkInfo::visitWeak(VM& vm)
 {
     auto handleSpecificCallee = [&] (JSFunction* callee) {
@@ -229,7 +222,7 @@ void CallLinkInfo::visitWeak(VM& vm)
             if (!stub()->visitWeak(vm)) {
                 if (UNLIKELY(Options::verboseOSR())) {
                     dataLog(
-                        "At ", m_codeOrigin, ", ", RawPointer(this), ": clearing call stub to ",
+                        "At ", codeOrigin(), ", ", RawPointer(this), ": clearing call stub to ",
                         listDump(stub()->variants()), ", stub routine ", RawPointer(stub()),
                         ".\n");
                 }
@@ -322,7 +315,7 @@ void BaselineCallLinkInfo::initialize(VM& vm, CallType callType, BytecodeIndex b
     ASSERT(Type::Baseline == type());
     m_useDataIC = static_cast<unsigned>(UseDataIC::Yes);
     ASSERT(UseDataIC::Yes == useDataIC());
-    m_codeOrigin = CodeOrigin(bytecodeIndex);
+    m_bytecodeIndex = bytecodeIndex;
     m_callType = callType;
     if (LIKELY(Options::useLLIntICs()))
         setSlowPathCallDestination(vm.getCTILinkCall().code());
@@ -590,6 +583,13 @@ void OptimizingCallLinkInfo::setDirectCallTarget(CodeBlock* codeBlock, CodeLocat
 
     MacroAssembler::repatchNearCall(m_callLocation, target);
     MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, codeBlock);
+}
+
+void OptimizingCallLinkInfo::setDirectCallMaxArgumentCountIncludingThis(unsigned value)
+{
+    RELEASE_ASSERT(isDirect());
+    RELEASE_ASSERT(value);
+    m_maxArgumentCountIncludingThisForDirectCall = value;
 }
 
 #if ENABLE(DFG_JIT)

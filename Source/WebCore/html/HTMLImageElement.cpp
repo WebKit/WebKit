@@ -798,11 +798,16 @@ bool HTMLImageElement::allowsAnimation() const
     return false;
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void HTMLImageElement::setAllowsAnimation(bool allowsAnimation)
 {
+    if (!document().settings().imageAnimationControlEnabled())
+        return;
+
     if (auto* image = this->image())
-        return image->setAllowsAnimation(allowsAnimation);
+        image->setAllowsAnimation(allowsAnimation);
 }
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

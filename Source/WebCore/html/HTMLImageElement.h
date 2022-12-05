@@ -161,7 +161,9 @@ public:
     bool allowsOrientationOverride() const;
 
     bool allowsAnimation() const;
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     WEBCORE_EXPORT void setAllowsAnimation(bool);
+#endif
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);

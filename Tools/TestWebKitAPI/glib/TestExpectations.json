@@ -101,9 +101,6 @@
             "/webkit/WebKitWebExtension/form-submission-steps": {
                 "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205333"}}
             },
-            "/webkit/WebKitWebExtension/form-controls-associated-signal": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205380"}}
-            },
             "/webkit/WebKitWebExtension/user-messages": {
                 "expected": {
                     "gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"},

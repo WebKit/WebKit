@@ -552,3 +552,11 @@ http/tests/misc/policy-delegate-called-twice.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Failure ]
 
 css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
+
+accessibility/aria-liveregions-attributes.html [ Timeout ]
+
+transforms/3d/hit-testing/overlapping-layers-hit-test.html [ Failure ]
+transforms/3d/hit-testing/rotated-hit-test-2.html [ Failure ]
+fast/css/css-typed-om/style-property-map-set-CSSMathSum-value.html [ Failure ]
+fast/text/text-edge-property-parsing.html [ Failure ]
+fast/text/text-edge-with-margin-padding-border-simple.html [ ImageOnlyFailure ]

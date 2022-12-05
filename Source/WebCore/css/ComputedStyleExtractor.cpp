@@ -2283,10 +2283,9 @@ static Ref<CSSValue> fontStyle(const RenderStyle& style)
 Ref<CSSValue> ComputedStyleExtractor::fontVariantShorthandValue()
 {
     auto list = CSSValueList::createSpaceSeparated();
-    auto shorthand = fontVariantShorthand();
-    for (size_t i = 0; i < shorthand.length(); ++i) {
-        auto value = propertyValue(shorthand.properties()[i], UpdateLayout::No);
-        if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(*value).valueID() == CSSValueNormal)
+    for (auto longhand : fontVariantShorthand()) {
+        auto value = propertyValue(longhand, UpdateLayout::No);
+        if (isValueID(value, CSSValueNormal))
             continue;
         list->append(value.releaseNonNull());
     }
@@ -4318,8 +4317,8 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
 Ref<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand& shorthand)
 {
     auto list = CSSValueList::createSpaceSeparated();
-    for (size_t i = 0; i < shorthand.length(); ++i)
-        list->append(propertyValue(shorthand.properties()[i], UpdateLayout::No).releaseNonNull());
+    for (auto longhand : shorthand)
+        list->append(propertyValue(longhand, UpdateLayout::No).releaseNonNull());
     return list;
 }
 
@@ -4376,8 +4375,8 @@ RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesFor4SidesShorth
 Ref<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand& shorthand)
 {
     auto list = CSSValueList::createSlashSeparated();
-    for (size_t i = 0; i < shorthand.length(); ++i)
-        list->append(propertyValue(shorthand.properties()[i], UpdateLayout::No).releaseNonNull());
+    for (auto longhand : shorthand)
+        list->append(propertyValue(longhand, UpdateLayout::No).releaseNonNull());
     return list;
 }
 

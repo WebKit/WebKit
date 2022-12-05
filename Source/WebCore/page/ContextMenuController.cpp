@@ -315,6 +315,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             openNewWindow(loader->url(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
         break;
     }
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagPlayAllAnimations: {
         if (auto* page = frame->page())
             page->setImageAnimationEnabled(true);
@@ -325,6 +326,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             page->setImageAnimationEnabled(false);
         break;
     }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagCopy:
         frame->editor().copy();
         break;
@@ -1003,12 +1005,14 @@ void ContextMenuController::populate()
 #endif
         }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
         if (frame->page() && frame->page()->settings().imageAnimationControlEnabled()) {
             if (frame->page()->imageAnimationEnabled())
                 appendItem(PauseAllAnimations, m_contextMenu.get());
             else
                 appendItem(PlayAllAnimations, m_contextMenu.get());
         }
+#endif
 
         URL mediaURL = m_context.hitTestResult().absoluteMediaURL();
         if (!mediaURL.isEmpty()) {

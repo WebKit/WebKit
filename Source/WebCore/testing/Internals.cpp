@@ -387,6 +387,10 @@
 #include "ImageControlsMac.h"
 #endif
 
+#if ENABLE(GAMEPAD)
+#include "MockGamepadProvider.h"
+#endif
+
 using JSC::CallData;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
@@ -713,6 +717,10 @@ Internals::Internals(Document& document)
     VP9TestingOverrides::singleton().setHardwareDecoderDisabled(std::nullopt);
     VP9TestingOverrides::singleton().setVP9DecoderDisabled(std::nullopt);
     VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(std::nullopt);
+#endif
+
+#if ENABLE(GAMEPAD)
+    MockGamepadProvider::singleton().clearMockGamepads();
 #endif
 }
 
@@ -1065,6 +1073,7 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
     return image && (image->isAnimating() || image->animationPending());
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Internals::setImageAnimationEnabled(bool enabled)
 {
     if (auto* page = contextDocument() ? contextDocument()->page() : nullptr)
@@ -1080,6 +1089,7 @@ void Internals::pauseImageAnimation(HTMLImageElement& element)
 {
     element.setAllowsAnimation(false);
 }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 unsigned Internals::imagePendingDecodePromisesCountForTesting(HTMLImageElement& element)
 {

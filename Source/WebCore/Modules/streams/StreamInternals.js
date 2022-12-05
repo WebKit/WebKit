@@ -170,7 +170,11 @@ function extractSizeAlgorithm(strategy)
 {
     if (!("size" in strategy))
         return () => 1;
+
     const sizeAlgorithm = strategy["size"];
+    if (sizeAlgorithm === @undefined)
+        return () => 1;
+
     if (typeof sizeAlgorithm !== "function")
         @throwTypeError("strategy.size must be a function");
 
@@ -181,7 +185,11 @@ function extractHighWaterMark(strategy, defaultHWM)
 {
     if (!("highWaterMark" in strategy))
         return defaultHWM;
+
     const highWaterMark = strategy["highWaterMark"];
+    if (highWaterMark === @undefined)
+        return defaultHWM;
+
     if (@isNaN(highWaterMark) || highWaterMark < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
 

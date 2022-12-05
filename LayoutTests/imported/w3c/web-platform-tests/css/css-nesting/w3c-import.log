@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-properties-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-properties-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-rules-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-rules-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/implicit-nesting-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/implicit-nesting-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/implicit-nesting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/implicit-parent-insertion-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalid-inner-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalidation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalidation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalidation-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalidation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/pseudo-part-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.tentative.html

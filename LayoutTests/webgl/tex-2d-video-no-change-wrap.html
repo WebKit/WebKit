@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL test for texture upload should not change texture wrap parameters</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="256" height="256"> </canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+
+var wtu = WebGLTestUtils;
+var gl;
+// Video with:
+// ffmpeg -f lavfi -i color=c=red@0.2:d=1:s=512x512:r=25 -pix_fmt yuv420p -filter_complex "drawbox=t=fill:x=0:y=0:w=256:h=256:color=0x102030, drawbox=t=fill:x=255:y=0:w=256:h=256:color=0x405060, drawbox=t=fill:x=0:y=255:w=256:h=256:color=0x708090, drawbox=t=fill:x=255:y=255:w=256:h=256:color=0xA0B0C0" -colorspace bt709 -color_primaries bt709 -color_trc iec61966_2_1 pot-video.mp4  -y
+
+async function testVideoTextureUploadDoesNotChangeWrap() {
+    var program = wtu.setupSimpleTextureProgram(gl, 0, 1, `precision mediump float;
+uniform sampler2D tex;
+varying vec2 texCoord;
+void main() {
+    gl_FragData[0] = texture2D(tex, 2. * texCoord);
+}`);
+    wtu.setupUnitQuad(gl);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+    debug("");
+
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    let video = document.createElement("video");
+    video.loop = true;
+    video.playsInline = true;
+    video.src = "resources/pot-video.mp4";
+    await video.play();
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    wtu.clearAndDrawUnitQuad(gl, [0, 0, 0, 255]);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR);
+    let allRects = [];
+    let color0 = [ 0x10, 0x20, 0x30 ];
+    let color1 = [ 0x40, 0x50, 0x60 ];
+    let color2 = [ 0x70, 0x80, 0x90 ];
+    let color3 = [ 0xA0, 0xB0, 0xC0 ];
+    var w  = gl.drawingBufferWidth / 4;
+    var h = gl.drawingBufferHeight / 4;
+    for (let qy = 0; qy < 2; ++qy) {
+        for (let qx = 0; qx < 2; ++qx) {
+            var x = qx * w*2;
+            var y = qy * h*2;
+            var rects = [
+                wtu.makeCheckRect(x, y, w, h, color0, "bottom left should be " + color0, 5),
+                wtu.makeCheckRect(x + w, y, w, h, color1, "bottom right pixels should be " + color1, 5),
+                wtu.makeCheckRect(x, y + h, w, h, color2, "top left pixels should be " + color2, 5),
+                wtu.makeCheckRect(x + w, y + h, w, h, color3, "top right pixels should be " + color3, 5),
+            ];
+            allRects = allRects.concat(rects);
+        }
+    }
+    wtu.checkCanvasRects(gl, allRects);
+    gl.deleteTexture(texture);
+    finishTest();
+}
+
+description("Texture upload should not change texture wrap parameters");
+
+var canvas = document.getElementById("canvas");
+shouldBeNonNull("gl = wtu.create3DContext(canvas, undefined, 2)");
+
+testVideoTextureUploadDoesNotChangeWrap();
+
+debug("");
+var successfullyParsed = true;
+
+</script>
+
+</body>
+</html>
