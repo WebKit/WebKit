@@ -29,41 +29,7 @@
 
 namespace JSC {
 
-ALWAYS_INLINE bool canPerformFastPropertyEnumerationForObjectAssign(Structure* structure)
-{
-    if (structure->typeInfo().overridesGetOwnPropertySlot())
-        return false;
-    if (structure->typeInfo().overridesAnyFormOfGetOwnPropertyNames())
-        return false;
-    // FIXME: Indexed properties can be handled.
-    // https://bugs.webkit.org/show_bug.cgi?id=185358
-    if (hasIndexedProperties(structure->indexingType()))
-        return false;
-    if (structure->hasGetterSetterProperties())
-        return false;
-    if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto())
-        return false;
-    if (structure->hasCustomGetterSetterProperties())
-        return false;
-    if (structure->isUncacheableDictionary())
-        return false;
-    // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
-    if (structure->hasUnderscoreProtoPropertyExcludingOriginalProto())
-        return false;
-    return true;
-}
-
-ALWAYS_INLINE bool canPerformFastPropertyEnumerationForJSONStringify(Structure* structure)
-{
-    return canPerformFastPropertyEnumerationForObjectAssign(structure);
-}
-
-ALWAYS_INLINE bool canPerformFastPropertyEnumerationForObjectEntries(Structure* structure)
-{
-    return canPerformFastPropertyEnumerationForObjectAssign(structure);
-}
-
-ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
+ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
 {
     // |source| Structure does not have any getters. And target can perform fast put.
     // So enumerating properties and putting properties are non observable.
@@ -81,7 +47,7 @@ ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
     // Do not clear since Vector::clear shrinks the backing store.
     properties.resize(0);
     values.clear();
-    source->structure()->forEachProperty(vm, [&] (const PropertyTableEntry& entry) -> bool {
+    bool canUseFastPath = source->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
         if (entry.attributes() & PropertyAttribute::DontEnum)
             return true;
 
@@ -94,6 +60,8 @@ ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
 
         return true;
     });
+    if (!canUseFastPath)
+        return false;
 
     for (size_t i = 0; i < properties.size(); ++i) {
         // FIXME: We could put properties in a batching manner to accelerate Object.assign more.
@@ -101,6 +69,7 @@ ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
         PutPropertySlot putPropertySlot(target, true);
         target->putOwnDataProperty(vm, properties[i].get(), values.at(i), putPropertySlot);
     }
+    return true;
 }
 
 

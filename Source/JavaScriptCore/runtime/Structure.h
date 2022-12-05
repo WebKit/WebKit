@@ -572,6 +572,8 @@ public:
     PropertyOffset get(VM&, PropertyName);
     PropertyOffset get(VM&, PropertyName, unsigned& attributes);
 
+    bool canPerformFastPropertyEnumeration() const;
+
     // This is a somewhat internalish method. It will call your functor while possibly holding the
     // Structure's lock. There is no guarantee whether the lock is held or not in any particular
     // call. So, you have to assume the worst. Also, the functor returns true if it wishes for you
