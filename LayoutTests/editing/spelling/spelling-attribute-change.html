@@ -27,7 +27,7 @@ function testSpellCheckingEnabled(target, enabled)
 
     if (target.tagName == "SPAN") {
         target.appendChild(document.createTextNode("Hello,"));
-        sel.setBaseAndExtent(target, 6, target, 6);
+        sel.setBaseAndExtent(target, target.childNodes.length, target, target.childNodes.length);
     } else if (target.tagName == "INPUT" || target.tagName == "TEXTAREA") {
         target.focus();
         document.execCommand("InsertText", false, "Hello,");
