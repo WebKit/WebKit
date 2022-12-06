@@ -1474,6 +1474,22 @@ bool Quirks::shouldExposeShowModalDialog() const
     return *m_shouldExposeShowModalDialog;
 }
 
+bool Quirks::shouldNavigatorPluginsBeEmpty() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+    if (!m_shouldNavigatorPluginsBeEmpty) {
+        auto domain = RegistrableDomain(m_document->url()).string();
+        // Marcus login issue: <rdar://103011164>.
+        m_shouldNavigatorPluginsBeEmpty = domain == "marcus.com"_s;
+    }
+    return *m_shouldNavigatorPluginsBeEmpty;
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldDisableLazyImageLoadingQuirk() const
 {
     // Images are displaying as fully grey when loaded lazily in significant percentage of page loads.
