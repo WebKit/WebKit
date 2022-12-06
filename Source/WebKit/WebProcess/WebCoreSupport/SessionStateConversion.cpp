@@ -108,9 +108,11 @@ static FrameState toFrameState(const HistoryItem& historyItem)
 
 BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem& historyItem)
 {
+    static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
+
     BackForwardListItemState state;
     state.identifier = historyItem.identifier();
-    state.pageState.title = historyItem.title();
+    state.pageState.title = historyItem.title().left(maxTitleLength);
     state.pageState.mainFrameState = toFrameState(historyItem);
     state.pageState.shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
     state.pageState.sessionStateObject = historyItem.stateObject();
