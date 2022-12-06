@@ -101,6 +101,7 @@ private:
 
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, FloatSize& intrinsicRatio) const;
+    void computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(RenderBox* contentRenderer, FloatSize& constrainedSize, FloatSize& intrinsicRatio) const;
 
     virtual bool shouldDrawSelectionTint() const;
     
@@ -108,6 +109,7 @@ private:
     bool isHighlighted(HighlightState, const HighlightData&) const;
 
     mutable LayoutSize m_intrinsicSize;
+    mutable FloatSize m_intrinsicRatio;
 };
 
 } // namespace WebCore

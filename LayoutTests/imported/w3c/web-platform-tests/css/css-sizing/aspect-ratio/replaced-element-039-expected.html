@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<title>Replaced element honors transferred max-height</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://www.w3.org/TR/CSS22/visudet.html#min-max-widths">
+<link rel="help" href="https://www.w3.org/TR/CSS22/visudet.html#min-max-heights">
+<link rel="match" href="../../reference/ref-filled-green-100px-square.xht" />
+<meta name="assert" content="SVG item with aspect ratio + intrinsic width + no intrinsic height honors transferred max-height." />
+
+<style>
+    div {
+        width: 100px;
+        height:100px;
+        background-color: green;
+    }
+</style>
+
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+
+<div></div>

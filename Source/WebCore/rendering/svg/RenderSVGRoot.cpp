@@ -73,6 +73,11 @@ SVGSVGElement& RenderSVGRoot::svgSVGElement() const
     return downcast<SVGSVGElement>(nodeForNonAnonymous());
 }
 
+bool RenderSVGRoot::hasIntrinsicAspectRatio() const
+{
+    return computeIntrinsicAspectRatio();
+}
+
 void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment());
