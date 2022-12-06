@@ -1,0 +1,6 @@
+
+
+PASS Permissions-Policy header geolocation=(self) allows the top-level document.
+PASS Permissions-Policy header geolocation=(self) allows same-origin iframes.
+FAIL Permissions-Policy header geolocation=(self) disallows cross-origin iframes. assert_false: geolocation expected false got true
+

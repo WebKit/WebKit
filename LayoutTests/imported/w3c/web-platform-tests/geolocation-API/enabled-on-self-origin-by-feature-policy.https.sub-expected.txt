@@ -1,6 +1,0 @@
-
-
-PASS Feature-Policy header geolocation "self" allows the top-level document.
-PASS Feature-Policy header geolocation "self" allows same-origin iframes.
-FAIL Feature-Policy header geolocation "self" disallows cross-origin iframes. assert_false: geolocation expected false got true
-

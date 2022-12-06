@@ -1,0 +1,4 @@
+
+PASS Permissions policy "geolocation" can be enabled in same-origin iframe using allow="geolocation" attribute
+PASS Permissions policy "geolocation" can be enabled in cross-origin iframe using allow="geolocation" attribute
+

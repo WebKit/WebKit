@@ -1,7 +1,4 @@
-Clear all Geolocation permissions before running this test. If prompted for permission, please allow.
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT User allows access, check that success callback is called or error callback is called with correct code. Test timed out
+PASS User allows access, check that success callback is called.
+PASS Error callback is nullable for getCurrentPosition().
 
