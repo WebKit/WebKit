@@ -473,6 +473,17 @@ static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const
     return { };
 }
 
+static inline Layout::BlockLayoutState::LeadingTrim leadingTrim(const RenderBlockFlow& rootRenderer)
+{
+    auto leadingTrimSides = rootRenderer.view().frameView().layoutContext().layoutState()->leadingTrim();
+    auto leadingTrimForIFC = Layout::BlockLayoutState::LeadingTrim { };
+    if (leadingTrimSides.contains(RenderLayoutState::LeadingTrimSide::Start))
+        leadingTrimForIFC.add(Layout::BlockLayoutState::LeadingTrimSide::Start);
+    if (leadingTrimSides.contains(RenderLayoutState::LeadingTrimSide::End))
+        leadingTrimForIFC.add(Layout::BlockLayoutState::LeadingTrimSide::End);
+    return leadingTrimForIFC;
+}
+
 void LineLayout::layout()
 {
     auto& rootLayoutBox = this->rootLayoutBox();
@@ -485,7 +496,7 @@ void LineLayout::layout()
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
     clearInlineContent();
     ASSERT(m_inlineContentConstraints);
-    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()) };
+    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()) };
     Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints, blockLayoutState);
 
     constructContent();

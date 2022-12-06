@@ -72,7 +72,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect createDisplayContentForLine(const LineBuilder::LineContent&, const ConstraintsForInlineContent&);
+    InlineRect createDisplayContentForLine(const LineBuilder::LineContent&, const ConstraintsForInlineContent&, const BlockLayoutState&);
     void resetGeometryForClampedContent(const LineBuilder::InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft);
 
     void invalidateFormattingState();

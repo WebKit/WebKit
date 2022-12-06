@@ -40,19 +40,27 @@ public:
         size_t numberOfVisibleLines { 0 };
         bool isLineClampRootOverflowHidden { true };
     };
-    BlockLayoutState(FloatingState&, std::optional<LineClamp>);
+    enum class LeadingTrimSide : uint8_t {
+        Start = 1 << 0,
+        End   = 1 << 1
+    };
+    using LeadingTrim = OptionSet<LeadingTrimSide>;
+    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, LeadingTrim = { });
 
     FloatingState& floatingState() { return m_floatingState; }
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
+    LeadingTrim leadingTrim() const { return m_leadingTrim; }
 
 private:
     FloatingState& m_floatingState;
     std::optional<LineClamp> m_lineClamp;
+    LeadingTrim m_leadingTrim;
 };
 
-inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp)
+inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, LeadingTrim leadingTrim)
     : m_floatingState(floatingState)
     , m_lineClamp(lineClamp)
+    , m_leadingTrim(leadingTrim)
 {
 }
 

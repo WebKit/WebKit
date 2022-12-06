@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BlockLayoutState.h"
 #include "InlineFormattingContext.h"
 #include "InlineLineBuilder.h"
 #include "TextUtil.h"
@@ -39,7 +40,7 @@ struct AscentAndDescent;
 
 class LineBoxBuilder {
 public:
-    LineBoxBuilder(const InlineFormattingContext&, const LineBuilder::LineContent&);
+    LineBoxBuilder(const InlineFormattingContext&, const LineBuilder::LineContent&, BlockLayoutState::LeadingTrim);
 
     LineBox build(size_t lineIndex);
 
@@ -66,6 +67,7 @@ private:
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
     const LineBuilder::LineContent& m_lineContent;
+    BlockLayoutState::LeadingTrim m_leadingTrim;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
 };
