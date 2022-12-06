@@ -554,7 +554,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
 
     auto containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
 
-    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
+    bool preserve3D = mode & UseTransforms && participatesInPreserve3D(container);
     if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
         getTransformFromContainer(container, containerOffset, t);
@@ -599,7 +599,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     // For getCTM/getScreenCTM computations the result must be independent of the page zoom factor.
     // To compute these matrices within a non-SVG context (e.g. SVG embedded in HTML -- inline SVG)
     // the scaling needs to be removed from the CSS transform state.
-    TransformState transformStateAboveSVGFragment(transformState.direction(), transformState.mappedPoint());
+    TransformState transformStateAboveSVGFragment(settings().css3DTransformInteroperabilityEnabled(), transformState.direction(), transformState.mappedPoint());
     transformStateAboveSVGFragment.setTransformMatrixTracking(transformState.transformMatrixTracking());
     container->mapLocalToContainer(repaintContainer, transformStateAboveSVGFragment, mode, wasFixed);
 

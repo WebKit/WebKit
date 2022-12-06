@@ -784,6 +784,8 @@ public:
     void pushOntoTransformState(TransformState&, OptionSet<MapCoordinatesMode>, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const;
     void pushOntoGeometryMap(RenderGeometryMap&, const RenderLayerModelObject* repaintContainer, RenderElement* container, bool containerSkipped) const;
 
+    bool participatesInPreserve3D(const RenderElement* container) const;
+
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = nullptr) const { };
 
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }

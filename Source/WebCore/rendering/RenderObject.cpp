@@ -1382,7 +1382,7 @@ void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderOb
 
 FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
-    TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
+    TransformState transformState(settings().css3DTransformInteroperabilityEnabled(), TransformState::ApplyTransformDirection, localPoint);
     mapLocalToContainer(nullptr, transformState, mode | ApplyContainerFlip, wasFixed);
     transformState.flatten();
     
@@ -1391,7 +1391,7 @@ FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, OptionSet
 
 FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, OptionSet<MapCoordinatesMode> mode) const
 {
-    TransformState transformState(TransformState::UnapplyInverseTransformDirection, containerPoint);
+    TransformState transformState(settings().css3DTransformInteroperabilityEnabled(), TransformState::UnapplyInverseTransformDirection, containerPoint);
     mapAbsoluteToLocalPoint(mode, transformState);
     transformState.flatten();
     
@@ -1400,7 +1400,7 @@ FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, Optio
 
 FloatQuad RenderObject::absoluteToLocalQuad(const FloatQuad& quad, OptionSet<MapCoordinatesMode> mode) const
 {
-    TransformState transformState(TransformState::UnapplyInverseTransformDirection, quad.boundingBox().center(), quad);
+    TransformState transformState(settings().css3DTransformInteroperabilityEnabled(), TransformState::UnapplyInverseTransformDirection, quad.boundingBox().center(), quad);
     mapAbsoluteToLocalPoint(mode, transformState);
     transformState.flatten();
     return transformState.lastPlanarQuad();
@@ -1505,7 +1505,7 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
 
 void RenderObject::pushOntoTransformState(TransformState& transformState, OptionSet<MapCoordinatesMode> mode, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const
 {
-    bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
+    bool preserve3D = mode.contains(UseTransforms) && participatesInPreserve3D(container);
     if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
         TransformationMatrix matrix;
         getTransformFromContainer(container, offsetInContainer, matrix);
@@ -1534,7 +1534,7 @@ void RenderObject::pushOntoGeometryMap(RenderGeometryMap& geometryMap, const Ren
     bool offsetDependsOnPoint = false;
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(), &offsetDependsOnPoint);
 
-    bool preserve3D = container->style().preserves3D() || style().preserves3D();
+    bool preserve3D = participatesInPreserve3D(container);
     if (shouldUseTransformFromContainer(container) && (geometryMap.mapCoordinatesFlags() & UseTransforms)) {
         TransformationMatrix t;
         getTransformFromContainer(container, containerOffset, t);
@@ -1551,7 +1551,7 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, const R
 {
     // Track the point at the center of the quad's bounding box. As mapLocalToContainer() calls offsetFromContainer(),
     // it will use that point as the reference point to decide which column's transform to apply in multiple-column blocks.
-    TransformState transformState(TransformState::ApplyTransformDirection, localQuad.boundingBox().center(), localQuad);
+    TransformState transformState(settings().css3DTransformInteroperabilityEnabled(), TransformState::ApplyTransformDirection, localQuad.boundingBox().center(), localQuad);
     mapLocalToContainer(container, transformState, mode | ApplyContainerFlip, wasFixed);
     transformState.flatten();
     
@@ -1560,7 +1560,7 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, const R
 
 FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, const RenderLayerModelObject* container, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
-    TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
+    TransformState transformState(settings().css3DTransformInteroperabilityEnabled(), TransformState::ApplyTransformDirection, localPoint);
     mapLocalToContainer(container, transformState, mode | ApplyContainerFlip, wasFixed);
     transformState.flatten();
 
@@ -1599,6 +1599,13 @@ LayoutSize RenderObject::offsetFromAncestorContainer(const RenderElement& contai
     } while (currContainer != &container);
 
     return offset;
+}
+
+bool RenderObject::participatesInPreserve3D(const RenderElement* container) const
+{
+    if (settings().css3DTransformInteroperabilityEnabled())
+        return hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->participatesInPreserve3D();
+    return container->style().preserves3D() || style().preserves3D();
 }
 
 HostWindow* RenderObject::hostWindow() const

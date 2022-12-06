@@ -1412,7 +1412,7 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 
 void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
 {
-    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
+    TransformState state(client().useCSS3DTransformInteroperability(), TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
     state.setSecondaryQuad(FloatQuad { visibleRect });
 
     CommitState commitState;
@@ -1496,7 +1496,7 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState&
 
 bool GraphicsLayerCA::visibleRectChangeRequiresFlush(const FloatRect& clipRect) const
 {
-    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
+    TransformState state(client().useCSS3DTransformInteroperability(), TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
     CommitState commitState;
     return recursiveVisibleRectChangeRequiresFlush(commitState, state);
 }

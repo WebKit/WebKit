@@ -1,4 +1,4 @@
-FAIL child.getBoundingClientRect().width should be 100. Was 0.
+PASS child.getBoundingClientRect().width is 100
 PASS successfullyParsed is true
 
 TEST COMPLETE

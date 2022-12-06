@@ -1,0 +1,53 @@
+layer at (0,0) size 852x660
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (30,500) size 345x160
+  RenderBlock (positioned) {DIV} at (30,500) size 345x160
+    RenderInline {SPAN} at (0,0) size 313x19 [color=#008000]
+      RenderText {#text} at (0,0) size 313x19
+        text run at (0,0) width 313: "PASS: event at (170, 112) hit card at offset (2, 2)"
+    RenderBR {BR} at (312,0) size 1x19
+    RenderInline {SPAN} at (0,0) size 329x19 [color=#008000]
+      RenderText {#text} at (0,20) size 329x19
+        text run at (0,20) width 329: "PASS: event at (309, 112) hit card at offset (199, 2)"
+    RenderBR {BR} at (328,20) size 1x19
+    RenderInline {SPAN} at (0,0) size 329x19 [color=#008000]
+      RenderText {#text} at (0,40) size 329x19
+        text run at (0,40) width 329: "PASS: event at (170, 308) hit card at offset (2, 198)"
+    RenderBR {BR} at (328,40) size 1x19
+    RenderInline {SPAN} at (0,0) size 345x19 [color=#008000]
+      RenderText {#text} at (0,60) size 345x19
+        text run at (0,60) width 345: "PASS: event at (309, 308) hit card at offset (199, 198)"
+    RenderBR {BR} at (344,60) size 1x19
+    RenderInline {SPAN} at (0,0) size 313x19 [color=#008000]
+      RenderText {#text} at (0,80) size 313x19
+        text run at (0,80) width 313: "PASS: event at (612, 112) hit card at offset (2, 2)"
+    RenderBR {BR} at (312,80) size 1x19
+    RenderInline {SPAN} at (0,0) size 329x19 [color=#008000]
+      RenderText {#text} at (0,100) size 329x19
+        text run at (0,100) width 329: "PASS: event at (751, 112) hit card at offset (199, 2)"
+    RenderBR {BR} at (328,100) size 1x19
+    RenderInline {SPAN} at (0,0) size 329x19 [color=#008000]
+      RenderText {#text} at (0,120) size 329x19
+        text run at (0,120) width 329: "PASS: event at (612, 308) hit card at offset (2, 198)"
+    RenderBR {BR} at (328,120) size 1x19
+    RenderInline {SPAN} at (0,0) size 345x19 [color=#008000]
+      RenderText {#text} at (0,140) size 345x19
+        text run at (0,140) width 345: "PASS: event at (751, 308) hit card at offset (199, 198)"
+    RenderBR {BR} at (344,140) size 1x19
+layer at (8,8) size 402x402
+  RenderBlock (positioned) {DIV} at (8,8) size 402x402 [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 400x0
+layer at (59,59) size 302x302
+  RenderBlock (positioned) {DIV} at (51,51) size 302x302 [border: (1px solid #0000FF)]
+layer at (110,110) size 200x200
+  RenderBlock (positioned) {DIV} at (51,51) size 200x200 [bgcolor=#81AA8A]
+layer at (450,8) size 402x402
+  RenderBlock (positioned) {DIV} at (450,8) size 402x402 [border: (1px solid #000000)]
+layer at (501,59) size 302x302
+  RenderBlock (positioned) {DIV} at (51,51) size 302x302 [border: (1px solid #0000FF)]
+    RenderBlock {DIV} at (1,1) size 300x0
+layer at (552,110) size 200x200
+  RenderBlock (positioned) {DIV} at (51,51) size 200x200 [bgcolor=#81AA8A]

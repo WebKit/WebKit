@@ -43,6 +43,7 @@ TransformState& TransformState::operator=(const TransformState& other)
         m_lastPlanarSecondaryQuad = other.m_lastPlanarSecondaryQuad;
     }
     m_accumulatingTransform = other.m_accumulatingTransform;
+    m_useCSS3DTransformInterop = other.m_useCSS3DTransformInterop;
     m_direction = other.m_direction;
     
     m_accumulatedTransform = nullptr;
@@ -87,6 +88,9 @@ void TransformState::translateMappedCoordinates(const LayoutSize& offset)
 
 void TransformState::move(const LayoutSize& offset, TransformAccumulation accumulate)
 {
+    if (shouldFlattenBefore(accumulate))
+        flatten();
+
     if (accumulate == FlattenTransform && !m_accumulatedTransform && m_tracking == DoNotTrackTransformMatrix)
         m_accumulatedOffset += offset;
     else {
@@ -96,13 +100,12 @@ void TransformState::move(const LayoutSize& offset, TransformAccumulation accumu
             translateTransform(offset);
 
             // Then flatten if necessary.
-            if (accumulate == FlattenTransform)
+            if (shouldFlattenAfter(accumulate))
                 flatten();
         } else
             // Just move the point and/or quad.
             translateMappedCoordinates(offset);
     }
-    m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
 void TransformState::applyAccumulatedOffset()
@@ -116,6 +119,20 @@ void TransformState::applyAccumulatedOffset()
         } else
             translateMappedCoordinates(offset);
     }
+}
+
+bool TransformState::shouldFlattenBefore(TransformAccumulation accumulate)
+{
+    if (m_useCSS3DTransformInterop)
+        return accumulate == FlattenTransform && m_direction != ApplyTransformDirection;
+    return false;
+}
+
+bool TransformState::shouldFlattenAfter(TransformAccumulation accumulate)
+{
+    if (m_useCSS3DTransformInterop)
+        return accumulate == FlattenTransform && m_direction == ApplyTransformDirection;
+    return accumulate == FlattenTransform;
 }
 
 // FIXME: We transform AffineTransform to TransformationMatrix. This is rather inefficient.
@@ -136,22 +153,24 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
 
     applyAccumulatedOffset();
 
+    if (shouldFlattenBefore(accumulate))
+        flatten();
+
     // If we have an accumulated transform from last time, multiply in this transform
     if (m_accumulatedTransform) {
         if (m_direction == ApplyTransformDirection)
             m_accumulatedTransform = makeUnique<TransformationMatrix>(transformFromContainer * *m_accumulatedTransform);
         else
             m_accumulatedTransform->multiply(transformFromContainer);
-    } else if (accumulate == AccumulateTransform) {
-        // Make one if we started to accumulate
-        m_accumulatedTransform = makeUnique<TransformationMatrix>(transformFromContainer);
     }
-    
-    if (accumulate == FlattenTransform) {
+
+    if (shouldFlattenAfter(accumulate)) {
         const TransformationMatrix* finalTransform = m_accumulatedTransform ? m_accumulatedTransform.get() : &transformFromContainer;
         flattenWithTransform(*finalTransform, wasClamped);
+    } else if (!m_accumulatedTransform) {
+        m_accumulatedTransform = makeUnique<TransformationMatrix>(transformFromContainer);
+        m_accumulatingTransform = true;
     }
-    m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
 void TransformState::flatten(bool* wasClamped)

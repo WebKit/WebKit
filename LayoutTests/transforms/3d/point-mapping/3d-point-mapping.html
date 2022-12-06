@@ -84,7 +84,13 @@
       -webkit-box-sizing: border-box;
       -webkit-transform: translateZ(100px) rotateY(-40deg);
     }
-    
+
+    .behind {
+      position: absolute;
+      -webkit-transform: translateZ(110px) rotateY(-40deg);
+      background-color: red;
+    }
+
     .layer {
       padding: 20px;
       background-color: #C0D69E;
@@ -116,6 +122,7 @@
 <div class="test one">
   <!-- Simple transformed div in perpsective -->
   <div class="container box" id="box1">
+    <div class="transformed box behind"></div>
     <div class="transformed box" id="box2">
     </div>
   </div>

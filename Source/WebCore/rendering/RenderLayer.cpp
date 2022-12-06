@@ -945,7 +945,7 @@ void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, boo
     LOG(Compositing, "RenderLayer %p updateLayerPositionsAfterLayout", this);
     willUpdateLayerPositions();
 
-    RenderGeometryMap geometryMap(UseTransforms);
+    RenderGeometryMap geometryMap(UseTransforms, renderer().settings().css3DTransformInteroperabilityEnabled());
     if (!isRenderViewLayer())
         geometryMap.pushMappingsToAncestor(parent(), nullptr);
 
@@ -1168,7 +1168,7 @@ void RenderLayer::clearRepaintRects()
 
 void RenderLayer::updateLayerPositionsAfterOverflowScroll()
 {
-    RenderGeometryMap geometryMap(UseTransforms);
+    RenderGeometryMap geometryMap(UseTransforms, renderer().settings().css3DTransformInteroperabilityEnabled());
     if (!isRenderViewLayer())
         geometryMap.pushMappingsToAncestor(parent(), nullptr);
 
@@ -1186,7 +1186,7 @@ void RenderLayer::updateLayerPositionsAfterDocumentScroll()
 
     willUpdateLayerPositions();
 
-    RenderGeometryMap geometryMap(UseTransforms);
+    RenderGeometryMap geometryMap(UseTransforms, renderer().settings().css3DTransformInteroperabilityEnabled());
     recursiveUpdateLayerPositionsAfterScroll(&geometryMap);
 }
 

@@ -34,8 +34,9 @@
 
 namespace WebCore {
 
-RenderGeometryMap::RenderGeometryMap(OptionSet<MapCoordinatesMode> flags)
+RenderGeometryMap::RenderGeometryMap(OptionSet<MapCoordinatesMode> flags, bool useCSS3DTransformInterop)
     : m_mapCoordinatesFlags(flags)
+    , m_useCSS3DTransformInterop(useCSS3DTransformInterop)
 {
 }
 
@@ -107,7 +108,7 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
         result.move(m_accumulatedOffset);
         ASSERT(m_accumulatedOffsetMightBeSaturated || areEssentiallyEqual(rendererMappedResult, result));
     } else {
-        TransformState transformState(TransformState::ApplyTransformDirection, p);
+        TransformState transformState(m_useCSS3DTransformInterop, TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);
         result = transformState.lastPlanarPoint();
         ASSERT(areEssentiallyEqual(rendererMappedResult, result));
@@ -124,7 +125,7 @@ FloatQuad RenderGeometryMap::mapToContainer(const FloatRect& rect, const RenderL
         result = rect;
         result.move(m_accumulatedOffset);
     } else {
-        TransformState transformState(TransformState::ApplyTransformDirection, rect.center(), rect);
+        TransformState transformState(m_useCSS3DTransformInterop, TransformState::ApplyTransformDirection, rect.center(), rect);
         mapToContainer(transformState, container);
         result = transformState.lastPlanarQuad();
     }
