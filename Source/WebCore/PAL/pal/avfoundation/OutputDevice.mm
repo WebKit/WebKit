@@ -46,7 +46,9 @@ OutputDevice::OutputDevice(RetainPtr<AVOutputDevice>&& device)
 
 String OutputDevice::name() const
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [m_device name];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 uint8_t OutputDevice::deviceFeatures() const

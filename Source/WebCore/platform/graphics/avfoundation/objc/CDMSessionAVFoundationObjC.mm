@@ -92,7 +92,9 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     NSString* assetStr = keyID;
     RetainPtr<NSData> assetID = [NSData dataWithBytes: [assetStr cStringUsingEncoding:NSUTF8StringEncoding] length:[assetStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
     NSError* nsError = 0;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<NSData> keyRequest = [m_request streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:assetID.get() options:nil error:&nsError];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!keyRequest) {
         ERROR_LOG(LOGIDENTIFIER, "failed to generate key request with error: ", String(nsError.localizedDescription));
