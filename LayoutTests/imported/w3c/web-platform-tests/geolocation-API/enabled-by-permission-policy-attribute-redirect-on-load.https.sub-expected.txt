@@ -1,0 +1,4 @@
+
+PASS Permissions-Policy allow="geolocation" allows same-origin relocation
+PASS Permissions-Policy allow="geolocation" allows cross-origin relocation
+
