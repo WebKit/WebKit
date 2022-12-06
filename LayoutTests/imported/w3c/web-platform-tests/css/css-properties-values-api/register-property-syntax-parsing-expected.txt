@@ -112,6 +112,7 @@ PASS syntax:'initial', initialValue:'initial' is invalid
 PASS syntax:'inherit', initialValue:'inherit' is invalid
 PASS syntax:'unset', initialValue:'unset' is invalid
 PASS syntax:'revert', initialValue:'revert' is invalid
+PASS syntax:'revert-layer', initialValue:'revert-layer' is invalid
 PASS syntax:'default', initialValue:'default' is invalid
 FAIL syntax:'<length>|initial', initialValue:'10px' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'<length>|INHERIT', initialValue:'10px' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
@@ -122,16 +123,19 @@ FAIL syntax:'*', initialValue:'initial' is invalid assert_throws_dom: function "
 FAIL syntax:'*', initialValue:'inherit' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'*', initialValue:'unset' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'*', initialValue:'revert' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+FAIL syntax:'*', initialValue:'revert-layer' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'*', initialValue:'default' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 PASS syntax:'<custom-ident>', initialValue:'initial' is invalid
 PASS syntax:'<custom-ident>', initialValue:'inherit' is invalid
 PASS syntax:'<custom-ident>', initialValue:'unset' is invalid
 PASS syntax:'<custom-ident>', initialValue:'revert' is invalid
+PASS syntax:'<custom-ident>', initialValue:'revert-layer' is invalid
 PASS syntax:'<custom-ident>', initialValue:'default' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo initial bar' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo inherit bar' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo unset bar' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo revert bar' is invalid
+PASS syntax:'<custom-ident>+', initialValue:'foo revert-layer bar' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo default bar' is invalid
 FAIL syntax:'*', initialValue:')' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 FAIL syntax:'*', initialValue:'([)]' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw

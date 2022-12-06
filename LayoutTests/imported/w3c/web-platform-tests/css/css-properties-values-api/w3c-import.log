@@ -15,12 +15,15 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animate-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-non-matching-media-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-stylesheets.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-typedom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-viewport-units-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property-viewport-units.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/at-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/conditional-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/determine-registration.html
@@ -32,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-properties-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-change-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-computation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-crosstalk.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-initial.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-revert.html

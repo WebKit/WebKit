@@ -1,7 +1,7 @@
 
-PASS A var() cycle between two registered properties is handled correctly.
-PASS A var() cycle between a registered properties and an unregistered property is handled correctly.
+FAIL A var() cycle between two registered properties is handled correctly. assert_equals: expected "1px" but got ""
+FAIL A var() cycle between a registered properties and an unregistered property is handled correctly. assert_equals: expected "1px" but got ""
 PASS A var() cycle between a two unregistered properties is handled correctly.
-PASS A var() cycle between a syntax:'*' property and an unregistered property is handled correctly.
-PASS Invalid at computed-value time triggers 'unset' behavior
+FAIL A var() cycle between a syntax:'*' property and an unregistered property is handled correctly. assert_equals: expected "" but got "circle"
+FAIL Custom properties with universal syntax become guaranteed-invalid when invalid at computed-value time assert_equals: expected "" but got "foo"
 
