@@ -524,7 +524,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         // -loadValuesAsynchronouslyForKeys:completionHandler: has invoked its handler; test status of keys and determine state.
         AssetStatus assetStatus = this->assetStatus();
         ItemStatus itemStatus = playerItemStatus();
-        
+
         m_assetIsPlayable = (assetStatus == MediaPlayerAVAssetStatusPlayable);
         if (m_readyState < MediaPlayer::ReadyState::HaveMetadata && assetStatus > MediaPlayerAVAssetStatusLoading) {
             if (m_assetIsPlayable) {

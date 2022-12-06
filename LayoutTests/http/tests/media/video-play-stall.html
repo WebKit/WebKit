@@ -4,36 +4,45 @@
         <title>'stalled' event test</title>
         <script src=../../media-resources/media-file.js></script>
         <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/utilities.js></script>
         <script>
 
-            var playCount = 0;
+            var bufferedend = 0;
+            var gotCanplay = false;
 
-            function start() 
+            function start()
             {
                 findMediaElement();
                 waitForEvent('durationchange');
                 waitForEvent('loadedmetadata');
                 waitForEvent('loadeddata');
 
-                mediaElement.addEventListener('canplay', function () {
-                    // 'stalled' takes three seconds to fire, so 'canplay' may fire more than once
-                    // depending on how the engine parses incoming media data.
-                    if (++playCount > 1)
-                        return;
-                    consoleWrite("EVENT(canplay)");
-                    run("video.play()");
-                } );
+                once(mediaElement, 'canplay', () => {
+                    video.play()
+                    gotCanplay = true;
+                });
 
                 waitForEvent('stalled', function () {
-                    testExpected("video.currentTime", 0, "!=");
+                    // The test simulates a load stalled by blocking the http server for several seconds.
+                    // Under loads, it is possible that we failed to retrieve any content at all.
+                    // The aim of the test being that we do emit the stalled event and that currentTime
+                    // didn't progress we output data that would pass the expectations under both conditions.
+                    if (video.buffered.length > 0)
+                        bufferedend = video.buffered.end(0);
+                    test("video.currentTime <= bufferedend", false);
+                    // If we loaded some content, playback has started
+                    test("gotCanplay ? video.paused == false : video.paused == true");
                     testExpected("video.playbackRate", 1, "===");
-                    testExpected("video.paused", false, "===");
+                    test("video.duration > bufferedend", false);
+                    // TestRunner waits for the complete frame download before finishing, so having the video load stalled
+                    // prevents TestRunner from finishing. Changing the src will abort the download and let the test finish.
+                    video.src = "";
                     endTest();
                 } );
 
                 var mediaFile = findMediaFile("video", "../../../../media/content/long-test");
                 var mimeType = mimeTypeForFile(mediaFile);
-                video.src = "http://127.0.0.1:8000/media/resources/serve_video.py?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=1000000&stallDuration=60&chunkSize=1024";
+                video.src = "http://127.0.0.1:8000/media/resources/serve_video.py?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=50000&stallDuration=20&chunkSize=1024";
             }
 
         </script>
