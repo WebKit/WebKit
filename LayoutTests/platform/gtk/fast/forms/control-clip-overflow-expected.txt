@@ -16,18 +16,20 @@ layer at (0,0) size 800x600
             text run at (0,18) width 226: "scroll bars to accommodate content"
         RenderText {#text} at (225,18) size 5x17
           text run at (225,18) width 5: "."
-      RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 402x17
-          text run at (0,0) width 402: "There should not be scroll bars below the popup and the button."
-layer at (8,94) size 100x50
-  RenderBlock {DIV} at (0,86) size 100x50
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 617x35
+          text run at (0,0) width 312: "There should not be scroll bars below the popup. "
+          text run at (312,0) width 305: "There should be scrollbars below the button (see"
+          text run at (0,18) width 322: "https://bugs.webkit.org/show_bug.cgi?id=173872)."
+layer at (8,112) size 100x50
+  RenderBlock {DIV} at (0,104) size 100x50
     RenderMenuList {SELECT} at (0,0) size 80x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderBlock (anonymous) at (1,1) size 78x28
         RenderText at (5,5) size 191x17
           text run at (5,5) width 191: "Lorem ipsum dolor sit amet"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,164) size 100x50
-  RenderBlock {DIV} at (0,156) size 100x50
+layer at (8,182) size 100x50 clip at (8,182) size 100x35 scrollWidth 199
+  RenderBlock {DIV} at (0,174) size 100x50
     RenderButton {BUTTON} at (0,0) size 80x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
       RenderBlock (anonymous) at (8,4) size 64x18
         RenderText {#text} at (0,0) size 191x17

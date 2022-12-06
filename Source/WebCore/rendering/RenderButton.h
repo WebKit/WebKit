@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2005 Apple Inc.
- *
+ * Copyright (C) 2005-2022 Apple Inc.
+ * Copyright (C) 2022 Google Inc. All rights reserved.
+ * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -46,7 +47,7 @@ public:
     void updateFromElement() override;
 
     bool canHaveGeneratedChildren() const override;
-    bool hasControlClip() const override { return true; }
+    bool hasControlClip() const override;
     LayoutRect controlClipRect(const LayoutPoint&) const override;
 
     void updateAnonymousChildStyle(RenderStyle&) const override;

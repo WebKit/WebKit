@@ -1,5 +1,6 @@
 /**
- * Copyright (C) 2005 Apple Inc.
+ * Copyright (C) 2005-2022 Apple Inc.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -168,5 +169,11 @@ void RenderButton::layout()
     RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
 }
 #endif
+
+// Only clip overflow on input elements, to match other browsers.
+bool RenderButton::hasControlClip() const
+{
+    return is<HTMLInputElement>(formControlElement());
+}
 
 } // namespace WebCore
