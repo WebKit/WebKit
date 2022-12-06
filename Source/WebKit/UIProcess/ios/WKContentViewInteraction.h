@@ -582,6 +582,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) UITextInputAssistantItem *inputAssistantItemForWebView;
 @property (nonatomic, readonly) UIView *inputViewForWebView;
 @property (nonatomic, readonly) UIView *inputAccessoryViewForWebView;
+@property (nonatomic, readonly) UITextInputTraits *textInputTraitsForWebView;
 @property (nonatomic, readonly) BOOL preventsPanningInXAxis;
 @property (nonatomic, readonly) BOOL preventsPanningInYAxis;
 @property (nonatomic, readonly) UIWebTouchEventsGestureRecognizer *touchEventGestureRecognizer;

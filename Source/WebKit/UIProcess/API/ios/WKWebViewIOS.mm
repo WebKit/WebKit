@@ -4118,6 +4118,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // HAVE(UIFINDINTERACTION)
 
+- (UITextInputTraits *)_textInputTraits
+{
+    if (self.usesStandardContentView)
+        return [_contentView textInputTraitsForWebView];
+
+    return nil;
+}
+
 @end // WKWebView (WKPrivateIOS)
 
 #if ENABLE(FULLSCREEN_API)

@@ -5921,6 +5921,12 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 // Direct access to the (private) UITextInputTraits object.
 - (UITextInputTraits *)textInputTraits
 {
+    _traits = [_webView _textInputTraits];
+    return _traits.get();
+}
+
+- (UITextInputTraits *)textInputTraitsForWebView
+{
     if (!_traits)
         _traits = adoptNS([[UITextInputTraits alloc] init]);
 
