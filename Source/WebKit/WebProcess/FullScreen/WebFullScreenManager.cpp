@@ -311,7 +311,6 @@ void WebFullScreenManager::willExitFullScreen()
 void WebFullScreenManager::didExitFullScreen()
 {
     LOG(Fullscreen, "WebFullScreenManager %p didExitFullScreen() - element %p", this, m_element.get());
-    ASSERT(m_element);
     if (!m_element)
         return;
 
@@ -341,7 +340,6 @@ void WebFullScreenManager::requestEnterFullScreen()
 
 void WebFullScreenManager::requestExitFullScreen()
 {
-    ASSERT(m_element);
     if (!m_element) {
         close();
         return;
