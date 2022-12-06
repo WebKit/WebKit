@@ -45,6 +45,17 @@ function initializeWritableStreamDefaultController()
     return this;
 }
 
+@getter
+function signal()
+{
+    "use strict";
+
+    if (@getByIdDirectPrivate(this, "abortSteps") === @undefined)
+        throw @makeThisTypeError("WritableStreamDefaultController", "signal");
+
+    return @getByIdDirectPrivate(this, "signal");
+}
+
 function error(e)
 {
     "use strict";
