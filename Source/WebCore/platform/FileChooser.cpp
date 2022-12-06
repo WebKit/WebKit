@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-FileChooser::FileChooser(FileChooserClient* client, const FileChooserSettings& settings)
-    : m_client(client)
+FileChooser::FileChooser(FileChooserClient& client, const FileChooserSettings& settings)
+    : m_client(&client)
     , m_settings(settings)
 {
 }
 
-Ref<FileChooser> FileChooser::create(FileChooserClient* client, const FileChooserSettings& settings)
+Ref<FileChooser> FileChooser::create(FileChooserClient& client, const FileChooserSettings& settings)
 {
     return adoptRef(*new FileChooser(client, settings));
 }
@@ -74,8 +74,6 @@ void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<Stri
 
 #if PLATFORM(IOS_FAMILY)
 
-// FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this function
-// with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS_FAMILY)-guard.
 void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String& displayString, Icon* icon)
 {
     // FIXME: This is inelegant. We should not be looking at settings here.

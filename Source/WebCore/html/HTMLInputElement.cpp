@@ -44,6 +44,7 @@
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
+#include "FileChooser.h"
 #include "FileInputType.h"
 #include "FileList.h"
 #include "FormController.h"
@@ -182,11 +183,6 @@ HTMLElement* HTMLInputElement::innerBlockElement() const
 HTMLElement* HTMLInputElement::innerSpinButtonElement() const
 {
     return m_inputType->innerSpinButtonElement();
-}
-
-HTMLElement* HTMLInputElement::capsLockIndicatorElement() const
-{
-    return m_inputType->capsLockIndicatorElement();
 }
 
 HTMLElement* HTMLInputElement::autoFillButtonElement() const
@@ -1340,11 +1336,6 @@ Vector<String> HTMLInputElement::acceptFileExtensions() const
     return parseAcceptAttribute(attributeWithoutSynchronization(acceptAttr), isValidFileExtension);
 }
 
-String HTMLInputElement::accept() const
-{
-    return attributeWithoutSynchronization(acceptAttr);
-}
-
 String HTMLInputElement::alt() const
 {
     return attributeWithoutSynchronization(altAttr);
@@ -1935,26 +1926,18 @@ bool HTMLInputElement::shouldAppearIndeterminate() const
 MediaCaptureType HTMLInputElement::mediaCaptureType() const
 {
     if (!isFileUpload())
-        return MediaCaptureTypeNone;
+        return MediaCaptureType::MediaCaptureTypeNone;
     
     auto& captureAttribute = attributeWithoutSynchronization(captureAttr);
     if (captureAttribute.isNull())
-        return MediaCaptureTypeNone;
+        return MediaCaptureType::MediaCaptureTypeNone;
     
     if (equalLettersIgnoringASCIICase(captureAttribute, "user"_s))
-        return MediaCaptureTypeUser;
+        return MediaCaptureType::MediaCaptureTypeUser;
     
-    return MediaCaptureTypeEnvironment;
+    return MediaCaptureType::MediaCaptureTypeEnvironment;
 }
 #endif
-
-bool HTMLInputElement::isInRequiredRadioButtonGroup()
-{
-    ASSERT(isRadioButton());
-    if (auto* buttons = radioButtonGroups())
-        return buttons->isInRequiredGroup(*this);
-    return false;
-}
 
 Vector<Ref<HTMLInputElement>> HTMLInputElement::radioButtonGroup() const
 {
@@ -2048,15 +2031,7 @@ void ListAttributeTargetObserver::idTargetChanged()
 }
 #endif
 
-ExceptionOr<void> HTMLInputElement::setRangeText(const String& replacement)
-{
-    if (!m_inputType->supportsSelectionAPI())
-        return Exception { InvalidStateError };
-
-    return HTMLTextFormControlElement::setRangeText(replacement);
-}
-
-ExceptionOr<void> HTMLInputElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode)
+ExceptionOr<void> HTMLInputElement::setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode)
 {
     if (!m_inputType->supportsSelectionAPI())
         return Exception { InvalidStateError };

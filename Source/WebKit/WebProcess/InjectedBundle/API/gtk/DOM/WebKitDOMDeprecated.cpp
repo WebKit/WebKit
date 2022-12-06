@@ -23,6 +23,7 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
+#include <WebCore/FileChooser.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/HTMLCollection.h>
 #include "WebKitDOMDocumentPrivate.h"
@@ -167,7 +168,7 @@ gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* se
 #if ENABLE(MEDIA_CAPTURE)
     WebCore::JSMainThreadNullState state;
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    return item->mediaCaptureType() != WebCore::MediaCaptureTypeNone;
+    return item->mediaCaptureType() != WebCore::MediaCaptureType::MediaCaptureTypeNone;
 #else
     UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Media Capture")
