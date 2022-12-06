@@ -35,6 +35,7 @@
 #import "NSScrollerImpDetails.h"
 #import "PlatformMouseEvent.h"
 #import "ScrollView.h"
+#import "ScrollbarTrackCornerSystemImageMac.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
@@ -568,13 +569,7 @@ void ScrollbarThemeMac::paintScrollCorner(ScrollableArea&, GraphicsContext& cont
     if (context.paintingDisabled())
         return;
 
-    LocalCurrentGraphicsContext localContext(context);
-
-    auto cornerDrawingOptions = @{ (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetScrollBarTrackCorner,
-        (__bridge NSString *)kCUIIsFlippedKey: (__bridge NSNumber *)kCFBooleanTrue };
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSAppearance currentAppearance] _drawInRect:cornerRect context:localContext.cgContext() options:cornerDrawingOptions];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    context.drawSystemImage(ScrollbarTrackCornerSystemImageMac::create(), cornerRect);
 }
 
 #if HAVE(RUBBER_BANDING)

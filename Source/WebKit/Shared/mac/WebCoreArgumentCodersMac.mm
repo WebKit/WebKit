@@ -30,6 +30,8 @@
 #import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
 #import "DataReference.h"
+#import "StreamConnectionEncoder.h"
+#import <WebCore/AppKitControlSystemImage.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/ContentFilterUnblockHandler.h>
 #import <WebCore/Credential.h>
@@ -37,6 +39,7 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 #import <WebCore/SerializedPlatformDataCueMac.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MachSendRight.h>
@@ -270,5 +273,61 @@ std::optional<WebCore::SerializedPlatformDataCueValue>  ArgumentCoder<WebCore::S
     return WebCore::SerializedPlatformDataCueValue { platformType, object.value().get() };
 }
 #endif
+
+#if USE(APPKIT)
+
+template<typename Encoder>
+void ArgumentCoder<WebCore::AppKitControlSystemImage>::encode(Encoder& encoder, const WebCore::AppKitControlSystemImage& systemImage)
+{
+    encoder << systemImage.controlType();
+    encoder << systemImage.useDarkAppearance();
+    encoder << systemImage.tintColor();
+
+    switch (systemImage.controlType()) {
+    case WebCore::AppKitControlSystemImageType::ScrollbarTrackCorner:
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+template
+void ArgumentCoder<WebCore::AppKitControlSystemImage>::encode<Encoder>(Encoder&, const WebCore::AppKitControlSystemImage&);
+template
+void ArgumentCoder<WebCore::AppKitControlSystemImage>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const WebCore::AppKitControlSystemImage&);
+
+std::optional<Ref<WebCore::AppKitControlSystemImage>> ArgumentCoder<WebCore::AppKitControlSystemImage>::decode(Decoder& decoder)
+{
+    std::optional<WebCore::AppKitControlSystemImageType> controlType;
+    decoder >> controlType;
+    if (!controlType)
+        return std::nullopt;
+
+    std::optional<bool> useDarkAppearance;
+    decoder >> useDarkAppearance;
+    if (!useDarkAppearance)
+        return std::nullopt;
+
+    std::optional<WebCore::Color> tintColor;
+    decoder >> tintColor;
+    if (!tintColor)
+        return std::nullopt;
+
+    std::optional<Ref<WebCore::AppKitControlSystemImage>> control;
+    switch (*controlType) {
+    case WebCore::AppKitControlSystemImageType::ScrollbarTrackCorner:
+        control = WebCore::ScrollbarTrackCornerSystemImageMac::create();
+    }
+
+    if (!control)
+        return std::nullopt;
+
+    (*control)->setTintColor(*tintColor);
+    (*control)->setUseDarkAppearance(*useDarkAppearance);
+
+    return control;
+}
+
+#endif // USE(APPKIT)
 
 } // namespace IPC

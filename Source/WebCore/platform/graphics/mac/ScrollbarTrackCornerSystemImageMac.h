@@ -25,63 +25,35 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#if USE(APPKIT)
+
+#include "AppKitControlSystemImage.h"
+#include <optional>
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-class FloatRect;
-class GraphicsContext;
-
-enum class SystemImageType : uint8_t {
-#if ENABLE(APPLE_PAY)
-    ApplePayButton,
-    ApplePayLogo,
-#endif
-#if USE(SYSTEM_PREVIEW)
-    ARKitBadge,
-#endif
-#if USE(APPKIT)
-    AppKitControl,
-#endif
-};
-
-class WEBCORE_EXPORT SystemImage : public RefCounted<SystemImage> {
-    WTF_MAKE_FAST_ALLOCATED;
+class WEBCORE_EXPORT ScrollbarTrackCornerSystemImageMac final : public AppKitControlSystemImage {
 public:
-    virtual ~SystemImage() = default;
-
-    virtual void draw(GraphicsContext&, const FloatRect&) const { }
-
-    SystemImageType systemImageType() const { return m_systemImageType; }
-
-protected:
-    SystemImage(SystemImageType systemImageType)
-        : m_systemImageType(systemImageType)
+    static Ref<ScrollbarTrackCornerSystemImageMac> create()
     {
+        return adoptRef(*new ScrollbarTrackCornerSystemImageMac());
     }
 
+    virtual ~ScrollbarTrackCornerSystemImageMac() = default;
+
+    void drawControl(GraphicsContext&, const FloatRect&) const final;
+
 private:
-    SystemImageType m_systemImageType;
+    ScrollbarTrackCornerSystemImageMac();
+
 };
 
 } // namespace WebCore
 
-namespace WTF {
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ScrollbarTrackCornerSystemImageMac)
+    static bool isType(const WebCore::AppKitControlSystemImage& systemImage) { return systemImage.controlType() == WebCore::AppKitControlSystemImageType::ScrollbarTrackCorner; }
+SPECIALIZE_TYPE_TRAITS_END()
 
-template<> struct EnumTraits<WebCore::SystemImageType> {
-    using values = EnumValues<
-        WebCore::SystemImageType
-#if ENABLE(APPLE_PAY)
-        , WebCore::SystemImageType::ApplePayButton,
-        WebCore::SystemImageType::ApplePayLogo
-#endif
-#if USE(SYSTEM_PREVIEW)
-        , WebCore::SystemImageType::ARKitBadge
-#endif
-#if USE(APPKIT)
-        , WebCore::SystemImageType::AppKitControl
-#endif
-    >;
-};
-
-} // namespace WTF
+#endif // USE(APPKIT)

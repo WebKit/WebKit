@@ -23,65 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ScrollbarTrackCornerSystemImageMac.h"
 
-#include <wtf/RefCounted.h>
+#if USE(APPKIT)
+
+#import "FloatRect.h"
+#import "GraphicsContext.h"
+#import "LocalCurrentGraphicsContext.h"
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 
-class FloatRect;
-class GraphicsContext;
+ScrollbarTrackCornerSystemImageMac::ScrollbarTrackCornerSystemImageMac()
+    : AppKitControlSystemImage(AppKitControlSystemImageType::ScrollbarTrackCorner)
+{
+}
 
-enum class SystemImageType : uint8_t {
-#if ENABLE(APPLE_PAY)
-    ApplePayButton,
-    ApplePayLogo,
-#endif
-#if USE(SYSTEM_PREVIEW)
-    ARKitBadge,
-#endif
-#if USE(APPKIT)
-    AppKitControl,
-#endif
-};
+void ScrollbarTrackCornerSystemImageMac::drawControl(GraphicsContext& graphicsContext, const FloatRect& rect) const
+{
+    LocalCurrentGraphicsContext localContext(graphicsContext);
 
-class WEBCORE_EXPORT SystemImage : public RefCounted<SystemImage> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~SystemImage() = default;
-
-    virtual void draw(GraphicsContext&, const FloatRect&) const { }
-
-    SystemImageType systemImageType() const { return m_systemImageType; }
-
-protected:
-    SystemImage(SystemImageType systemImageType)
-        : m_systemImageType(systemImageType)
-    {
-    }
-
-private:
-    SystemImageType m_systemImageType;
-};
+    auto cornerDrawingOptions = @{ (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetScrollBarTrackCorner,
+        (__bridge NSString *)kCUIIsFlippedKey: (__bridge NSNumber *)kCFBooleanTrue };
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [[NSAppearance currentAppearance] _drawInRect:rect context:localContext.cgContext() options:cornerDrawingOptions];
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SystemImageType> {
-    using values = EnumValues<
-        WebCore::SystemImageType
-#if ENABLE(APPLE_PAY)
-        , WebCore::SystemImageType::ApplePayButton,
-        WebCore::SystemImageType::ApplePayLogo
-#endif
-#if USE(SYSTEM_PREVIEW)
-        , WebCore::SystemImageType::ARKitBadge
-#endif
-#if USE(APPKIT)
-        , WebCore::SystemImageType::AppKitControl
-#endif
-    >;
-};
-
-} // namespace WTF
+#endif // USE(APPKIT)

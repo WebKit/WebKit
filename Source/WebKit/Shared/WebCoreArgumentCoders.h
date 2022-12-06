@@ -181,6 +181,10 @@ struct PasteboardImage;
 struct PasteboardWebContent;
 #endif
 
+#if USE(APPKIT)
+class AppKitControlSystemImage;
+#endif
+
 #if ENABLE(META_VIEWPORT)
 struct ViewportArguments;
 #endif
@@ -325,6 +329,16 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {
     static void encode(Encoder&, const WebCore::InspectorOverlay::Highlight&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::InspectorOverlay::Highlight&);
+};
+
+#endif
+
+#if USE(APPKIT)
+
+template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::AppKitControlSystemImage&);
+    static std::optional<Ref<WebCore::AppKitControlSystemImage>> decode(Decoder&);
 };
 
 #endif

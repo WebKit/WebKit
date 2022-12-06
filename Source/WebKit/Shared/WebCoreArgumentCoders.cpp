@@ -131,6 +131,10 @@
 #include <WebCore/TextRecognitionResult.h>
 #endif
 
+#if USE(APPKIT)
+#include <WebCore/AppKitControlSystemImage.h>
+#endif
+
 // FIXME: Seems like we could use std::tuple to cut down the code below a lot!
 
 namespace IPC {
@@ -1738,6 +1742,11 @@ void ArgumentCoder<SystemImage>::encode(Encoder& encoder, const SystemImage& sys
         downcast<ARKitBadgeSystemImage>(systemImage).encode(encoder);
         return;
 #endif
+#if USE(APPKIT)
+    case SystemImageType::AppKitControl:
+        encoder << downcast<AppKitControlSystemImage>(systemImage);
+        return;
+#endif
     }
 
     ASSERT_NOT_REACHED();
@@ -1776,6 +1785,15 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
 #if USE(SYSTEM_PREVIEW)
     case SystemImageType::ARKitBadge:
         return ARKitBadgeSystemImage::decode(decoder);
+#endif
+#if USE(APPKIT)
+    case SystemImageType::AppKitControl: {
+        std::optional<Ref<AppKitControlSystemImage>> image;
+        decoder >> image;
+        if (!image)
+            return std::nullopt;
+        return WTFMove(*image);
+    }
 #endif
     }
 

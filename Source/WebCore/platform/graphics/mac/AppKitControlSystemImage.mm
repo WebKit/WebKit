@@ -23,65 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "AppKitControlSystemImage.h"
 
-#include <wtf/RefCounted.h>
+#if USE(APPKIT)
+
+#import "ColorMac.h"
+#import "FloatRect.h"
+#import "GraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 
-class FloatRect;
-class GraphicsContext;
+AppKitControlSystemImage::AppKitControlSystemImage(AppKitControlSystemImageType controlType)
+    : SystemImage(SystemImageType::AppKitControl)
+    , m_controlType(controlType)
+{
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    NSAppearance *appearance = [NSAppearance currentAppearance];
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    m_tintColor = colorFromCocoaColor(appearance.tintColor);
+    m_useDarkAppearance = [appearance.name isEqualToString:NSAppearanceNameDarkAqua];
+}
 
-enum class SystemImageType : uint8_t {
-#if ENABLE(APPLE_PAY)
-    ApplePayButton,
-    ApplePayLogo,
-#endif
-#if USE(SYSTEM_PREVIEW)
-    ARKitBadge,
-#endif
-#if USE(APPKIT)
-    AppKitControl,
-#endif
-};
-
-class WEBCORE_EXPORT SystemImage : public RefCounted<SystemImage> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~SystemImage() = default;
-
-    virtual void draw(GraphicsContext&, const FloatRect&) const { }
-
-    SystemImageType systemImageType() const { return m_systemImageType; }
-
-protected:
-    SystemImage(SystemImageType systemImageType)
-        : m_systemImageType(systemImageType)
-    {
-    }
-
-private:
-    SystemImageType m_systemImageType;
-};
+void AppKitControlSystemImage::draw(GraphicsContext& graphicsContext, const FloatRect& rect) const
+{
+    LocalDefaultSystemAppearance localAppearance(m_useDarkAppearance, m_tintColor);
+    drawControl(graphicsContext, rect);
+}
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SystemImageType> {
-    using values = EnumValues<
-        WebCore::SystemImageType
-#if ENABLE(APPLE_PAY)
-        , WebCore::SystemImageType::ApplePayButton,
-        WebCore::SystemImageType::ApplePayLogo
-#endif
-#if USE(SYSTEM_PREVIEW)
-        , WebCore::SystemImageType::ARKitBadge
-#endif
-#if USE(APPKIT)
-        , WebCore::SystemImageType::AppKitControl
-#endif
-    >;
-};
-
-} // namespace WTF
+#endif // USE(APPKIT)

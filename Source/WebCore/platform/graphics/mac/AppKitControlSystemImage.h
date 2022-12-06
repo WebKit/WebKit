@@ -25,63 +25,62 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#if USE(APPKIT)
+
+#include "SystemImage.h"
+#include <optional>
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-class FloatRect;
-class GraphicsContext;
+class Color;
 
-enum class SystemImageType : uint8_t {
-#if ENABLE(APPLE_PAY)
-    ApplePayButton,
-    ApplePayLogo,
-#endif
-#if USE(SYSTEM_PREVIEW)
-    ARKitBadge,
-#endif
-#if USE(APPKIT)
-    AppKitControl,
-#endif
+enum class AppKitControlSystemImageType : uint8_t {
+    ScrollbarTrackCorner,
 };
 
-class WEBCORE_EXPORT SystemImage : public RefCounted<SystemImage> {
-    WTF_MAKE_FAST_ALLOCATED;
+class WEBCORE_EXPORT AppKitControlSystemImage : public SystemImage {
 public:
-    virtual ~SystemImage() = default;
+    virtual ~AppKitControlSystemImage() = default;
 
-    virtual void draw(GraphicsContext&, const FloatRect&) const { }
+    void draw(GraphicsContext&, const FloatRect&) const final;
 
-    SystemImageType systemImageType() const { return m_systemImageType; }
+    virtual void drawControl(GraphicsContext&, const FloatRect&) const { }
+
+    AppKitControlSystemImageType controlType() const { return m_controlType; }
+
+    Color tintColor() const { return m_tintColor; }
+    void setTintColor(const Color& tintColor) { m_tintColor = tintColor; }
+
+    bool useDarkAppearance() const { return m_useDarkAppearance; }
+    void setUseDarkAppearance(bool useDarkAppearance) { m_useDarkAppearance = useDarkAppearance; }
 
 protected:
-    SystemImage(SystemImageType systemImageType)
-        : m_systemImageType(systemImageType)
-    {
-    }
+    AppKitControlSystemImage(AppKitControlSystemImageType);
 
 private:
-    SystemImageType m_systemImageType;
+    AppKitControlSystemImageType m_controlType;
+
+    Color m_tintColor;
+    bool m_useDarkAppearance { false };
 };
 
 } // namespace WebCore
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::SystemImageType> {
+template<> struct EnumTraits<WebCore::AppKitControlSystemImageType> {
     using values = EnumValues<
-        WebCore::SystemImageType
-#if ENABLE(APPLE_PAY)
-        , WebCore::SystemImageType::ApplePayButton,
-        WebCore::SystemImageType::ApplePayLogo
-#endif
-#if USE(SYSTEM_PREVIEW)
-        , WebCore::SystemImageType::ARKitBadge
-#endif
-#if USE(APPKIT)
-        , WebCore::SystemImageType::AppKitControl
-#endif
+        WebCore::AppKitControlSystemImageType,
+        WebCore::AppKitControlSystemImageType::ScrollbarTrackCorner
     >;
 };
 
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AppKitControlSystemImage)
+    static bool isType(const WebCore::SystemImage& systemImage) { return systemImage.systemImageType() == WebCore::SystemImageType::AppKitControl; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // USE(APPKIT)
