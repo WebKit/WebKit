@@ -354,7 +354,7 @@ void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
 void MediaPlayerPrivateGStreamerMSE::updateStates()
 {
     bool shouldBePlaying = !m_isPaused && readyState() >= MediaPlayer::ReadyState::HaveFutureData;
-    GST_DEBUG_OBJECT(pipeline(), "shouldBePlaying = %d, m_isPipelinePlaying = %d", static_cast<int>(shouldBePlaying), static_cast<int>(m_isPipelinePlaying));
+    GST_DEBUG_OBJECT(pipeline(), "shouldBePlaying = %s, m_isPipelinePlaying = %s", boolForPrinting(shouldBePlaying), boolForPrinting(m_isPipelinePlaying));
     if (shouldBePlaying && !m_isPipelinePlaying) {
         if (!changePipelineState(GST_STATE_PLAYING))
             GST_ERROR_OBJECT(pipeline(), "Setting the pipeline to PLAYING failed");

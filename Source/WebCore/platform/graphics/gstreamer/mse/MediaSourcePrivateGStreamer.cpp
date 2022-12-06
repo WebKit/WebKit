@@ -49,6 +49,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/glib/GRefPtr.h>
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
+#define GST_CAT_DEFAULT webkit_mse_debug
+
 namespace WebCore {
 
 Ref<MediaSourcePrivateGStreamer> MediaSourcePrivateGStreamer::open(MediaSourcePrivateClient& mediaSource, MediaPlayerPrivateGStreamerMSE& playerPrivate)
@@ -108,7 +111,7 @@ void MediaSourcePrivateGStreamer::durationChanged(const MediaTime&)
     ASSERT(isMainThread());
 
     MediaTime duration = m_mediaSource ? m_mediaSource->duration() : MediaTime::invalidTime();
-    GST_TRACE("duration: %f", duration.toFloat());
+    GST_TRACE_OBJECT(m_playerPrivate.pipeline(), "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(toGstClockTime(duration)));
     if (!duration.isValid() || duration.isNegativeInfinite())
         return;
 
@@ -118,6 +121,21 @@ void MediaSourcePrivateGStreamer::durationChanged(const MediaTime&)
 void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamStatus)
 {
     ASSERT(isMainThread());
+#ifndef GST_DISABLE_GST_DEBUG
+    const char* statusString = nullptr;
+    switch (endOfStreamStatus) {
+    case EndOfStreamStatus::EosNoError:
+        statusString = "no-error";
+        break;
+    case EndOfStreamStatus::EosDecodeError:
+        statusString = "decode-error";
+        break;
+    case EndOfStreamStatus::EosNetworkError:
+        statusString = "network-error";
+        break;
+    }
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Marking EOS, status is %s", statusString);
+#endif
     if (endOfStreamStatus == EosNoError)
         m_playerPrivate.setNetworkState(MediaPlayer::NetworkState::Loaded);
     m_isEnded = true;
@@ -126,6 +144,7 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamS
 void MediaSourcePrivateGStreamer::unmarkEndOfStream()
 {
     ASSERT(isMainThread());
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Un-marking EOS");
     m_isEnded = false;
 }
 
@@ -174,12 +193,12 @@ void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()
 
     for (auto& sourceBuffer : m_sourceBuffers) {
         if (!sourceBuffer->hasReceivedInitializationSegment()) {
-            GST_DEBUG("MediaSourcePrivateGStreamer(%p) - There are still SourceBuffers without an initialization segment, not starting source yet.", this);
+            GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "There are still SourceBuffers without an initialization segment, not starting source yet.");
             return;
         }
     }
 
-    GST_DEBUG("MediaSourcePrivateGStreamer(%p) - All SourceBuffers have an initialization segment, starting source.", this);
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "All SourceBuffers have an initialization segment, starting source.");
     m_hasAllTracks = true;
 
     Vector<RefPtr<MediaSourceTrackGStreamer>> tracks;
