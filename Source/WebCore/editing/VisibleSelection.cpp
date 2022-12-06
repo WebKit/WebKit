@@ -239,6 +239,10 @@ void VisibleSelection::appendTrailingWhitespace()
         if ((!isSpaceOrNewline(c) && c != noBreakSpace) || c == '\n')
             break;
         m_end = makeDeprecatedLegacyPosition(charIt.range().end);
+        if (m_anchorIsFirst)
+            m_focus = m_end;
+        else
+            m_anchor = m_end;
     }
 }
 
