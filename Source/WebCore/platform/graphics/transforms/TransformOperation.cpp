@@ -36,32 +36,32 @@ void IdentityTransformOperation::dump(TextStream& ts) const
     ts << type();
 }
 
-TextStream& operator<<(TextStream& ts, TransformOperation::OperationType type)
+TextStream& operator<<(TextStream& ts, TransformOperation::Type type)
 {
     switch (type) {
-    case TransformOperation::SCALE_X: ts << "scaleX"; break;
-    case TransformOperation::SCALE_Y: ts << "scaleY"; break;
-    case TransformOperation::SCALE: ts << "scale"; break;
-    case TransformOperation::TRANSLATE_X: ts << "translateX"; break;
-    case TransformOperation::TRANSLATE_Y: ts << "translateY"; break;
-    case TransformOperation::TRANSLATE: ts << "translate"; break;
-    case TransformOperation::ROTATE: ts << "rotate"; break;
-    case TransformOperation::SKEW_X: ts << "skewX"; break;
-    case TransformOperation::SKEW_Y: ts << "skewY"; break;
-    case TransformOperation::SKEW: ts << "skew"; break;
-    case TransformOperation::MATRIX: ts << "matrix"; break;
-    case TransformOperation::SCALE_Z: ts << "scaleX"; break;
-    case TransformOperation::SCALE_3D: ts << "scale3d"; break;
-    case TransformOperation::TRANSLATE_Z: ts << "translateZ"; break;
-    case TransformOperation::TRANSLATE_3D: ts << "translate3d"; break;
-    case TransformOperation::ROTATE_X: ts << "rotateX"; break;
-    case TransformOperation::ROTATE_Y: ts << "rotateY"; break;
-    case TransformOperation::ROTATE_Z: ts << "rotateZ"; break;
-    case TransformOperation::ROTATE_3D: ts << "rotate3d"; break;
-    case TransformOperation::MATRIX_3D: ts << "matrix3d"; break;
-    case TransformOperation::PERSPECTIVE: ts << "perspective"; break;
-    case TransformOperation::IDENTITY: ts << "identity"; break;
-    case TransformOperation::NONE: ts << "none"; break;
+    case TransformOperation::Type::ScaleX: ts << "scaleX"; break;
+    case TransformOperation::Type::ScaleY: ts << "scaleY"; break;
+    case TransformOperation::Type::Scale: ts << "scale"; break;
+    case TransformOperation::Type::TranslateX: ts << "translateX"; break;
+    case TransformOperation::Type::TranslateY: ts << "translateY"; break;
+    case TransformOperation::Type::Translate: ts << "translate"; break;
+    case TransformOperation::Type::Rotate: ts << "rotate"; break;
+    case TransformOperation::Type::SkewX: ts << "skewX"; break;
+    case TransformOperation::Type::SkewY: ts << "skewY"; break;
+    case TransformOperation::Type::Skew: ts << "skew"; break;
+    case TransformOperation::Type::Matrix: ts << "matrix"; break;
+    case TransformOperation::Type::ScaleZ: ts << "scaleX"; break;
+    case TransformOperation::Type::Scale3D: ts << "scale3d"; break;
+    case TransformOperation::Type::TranslateZ: ts << "translateZ"; break;
+    case TransformOperation::Type::Translate3D: ts << "translate3d"; break;
+    case TransformOperation::Type::RotateX: ts << "rotateX"; break;
+    case TransformOperation::Type::RotateY: ts << "rotateY"; break;
+    case TransformOperation::Type::RotateZ: ts << "rotateZ"; break;
+    case TransformOperation::Type::Rotate3D: ts << "rotate3d"; break;
+    case TransformOperation::Type::Matrix3D: ts << "matrix3d"; break;
+    case TransformOperation::Type::Perspective: ts << "perspective"; break;
+    case TransformOperation::Type::Identity: ts << "identity"; break;
+    case TransformOperation::Type::None: ts << "none"; break;
     }
     
     return ts;
@@ -73,7 +73,7 @@ TextStream& operator<<(TextStream& ts, const TransformOperation& operation)
     return ts;
 }
 
-std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimitiveType(OperationType other) const
+std::optional<TransformOperation::Type> TransformOperation::sharedPrimitiveType(Type other) const
 {
     // https://drafts.csswg.org/css-transforms-2/#interpolation-of-transform-functions
     // "If both transform functions share a primitive in the two-dimensional space, both transform
@@ -82,10 +82,10 @@ std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimi
     auto type = primitiveType();
     if (type == other)
         return type;
-    static constexpr OperationType sharedPrimitives[][2] = {
-        { ROTATE, ROTATE_3D },
-        { SCALE, SCALE_3D },
-        { TRANSLATE, TRANSLATE_3D }
+    static constexpr Type sharedPrimitives[][2] = {
+        { Type::Rotate, Type::Rotate3D },
+        { Type::Scale, Type::Scale3D },
+        { Type::Translate, Type::Translate3D }
     };
     for (auto typePair : sharedPrimitives) {
         if ((type == typePair[0] || type == typePair[1]) && (other == typePair[0] || other == typePair[1]))
@@ -94,7 +94,7 @@ std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimi
     return std::nullopt;
 }
 
-std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimitiveType(const TransformOperation* other) const
+std::optional<TransformOperation::Type> TransformOperation::sharedPrimitiveType(const TransformOperation* other) const
 {
     // Blending with a null operation is always supported via blending with identity.
     if (!other)

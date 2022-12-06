@@ -186,6 +186,9 @@ function writableStreamAbort(stream, reason)
     if (state === "closed" || state === "errored")
         return @Promise.@resolve();
 
+    const controller = @getByIdDirectPrivate(stream, "controller");
+    @signalAbort(@getByIdDirectPrivate(controller, "signal"), reason);
+
     const pendingAbortRequest = @getByIdDirectPrivate(stream, "pendingAbortRequest");
     if (pendingAbortRequest !== @undefined)
         return pendingAbortRequest.promise.@promise;
@@ -579,6 +582,7 @@ function setUpWritableStreamDefaultController(stream, controller, startAlgorithm
 
     @resetQueue(@getByIdDirectPrivate(controller, "queue"));
 
+    @putByIdDirectPrivate(controller, "signal", @createAbortSignal());
     @putByIdDirectPrivate(controller, "started", false);
     @putByIdDirectPrivate(controller, "strategySizeAlgorithm", sizeAlgorithm);
     @putByIdDirectPrivate(controller, "strategyHWM", highWaterMark);

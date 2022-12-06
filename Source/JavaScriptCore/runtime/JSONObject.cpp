@@ -520,7 +520,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             if (stringifier.m_usingArrayReplacer) {
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
                 m_size = m_propertyNames->propertyNameVector().size();
-            } else if (m_structure && m_object->structureID() == m_structure->id() && canPerformFastPropertyEnumerationForJSONStringify(m_structure)) {
+            } else if (m_structure && m_object->structureID() == m_structure->id() && m_structure->canPerformFastPropertyEnumeration()) {
                 m_structure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
                     if (entry.attributes() & PropertyAttribute::DontEnum)
                         return true;
@@ -1046,7 +1046,7 @@ void FastStringifier::append(JSValue value)
             return;
         }
         m_buffer[m_length++] = '{';
-        if (UNLIKELY(!canPerformFastPropertyEnumerationForJSONStringify(&structure))) {
+        if (UNLIKELY(!structure.canPerformFastPropertyEnumeration())) {
             recordFastPropertyEnumerationFailure(object);
             return;
         }

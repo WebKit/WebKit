@@ -37,7 +37,7 @@
     readonly attribute unsigned long decodeQueueSize;
     attribute EventHandler ondequeue;
 
-    undefined configure(WebCodecsVideoDecoderConfig config);
+    [CallWith=CurrentScriptExecutionContext] undefined configure(WebCodecsVideoDecoderConfig config);
     undefined decode(WebCodecsEncodedVideoChunk chunk);
     Promise<undefined> flush();
     undefined reset();

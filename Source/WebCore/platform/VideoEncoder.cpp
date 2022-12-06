@@ -61,6 +61,10 @@ void VideoEncoder::createLocalEncoder(const String& codecName, const Config& con
         LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
+    if (codecName.startsWith("av01."_s)) {
+        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::AV1, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+        return;
+    }
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(outputCallback);

@@ -1,6 +1,7 @@
-//@ skip if $hostOS != "darwin" or $architecture != "x86-64"
+//@ skip
 //@ runDefault("--disableOptionsFreezingForTesting")
 //@ slow!
+// FIXME: we should make it work.
 
 function foo() {
     class C {

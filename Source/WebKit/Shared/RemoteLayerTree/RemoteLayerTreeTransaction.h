@@ -120,6 +120,7 @@ public:
 
         uint32_t hostingContextID;
         float hostingDeviceScaleFactor;
+        bool preservesFlip;
         
 #if ENABLE(MODEL_ELEMENT)
         RefPtr<WebCore::Model> model;

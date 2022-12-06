@@ -359,7 +359,9 @@ bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 
 AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSArray<AVAssetTrack *> *videoTracks = [m_asset tracksWithMediaCharacteristic:AVMediaCharacteristicVisual];
+ALLOW_DEPRECATED_DECLARATIONS_END
     NSUInteger firstEnabledIndex = [videoTracks indexOfObjectPassingTest:^(AVAssetTrack *track, NSUInteger, BOOL*) {
         return track.enabled;
     }];

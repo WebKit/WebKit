@@ -733,6 +733,15 @@ Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const 
     return createVideoInfoFromVPCodecConfigurationRecord(record, header.width, header.height);
 }
 
+bool hasVP9ExtensionSupport()
+{
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/VP9UtilitiesCocoaAdditions.mm>
+#endif
+
+    return false;
+}
+
 }
 
 #endif // PLATFORM(COCOA)

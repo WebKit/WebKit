@@ -66,7 +66,7 @@ private:
     void dump(WTF::TextStream&) const final;
 
     Matrix3DTransformOperation(const TransformationMatrix& mat)
-        : TransformOperation(MATRIX_3D)
+        : TransformOperation(TransformOperation::Type::Matrix3D)
         , m_matrix(mat)
     {
     }
@@ -76,4 +76,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::Matrix3DTransformOperation, type() == WebCore::TransformOperation::MATRIX_3D)
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::Matrix3DTransformOperation, type() == WebCore::TransformOperation::Type::Matrix3D)

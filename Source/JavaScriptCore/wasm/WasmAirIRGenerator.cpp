@@ -506,10 +506,7 @@ public:
         auto airOp = airOpForSIMDReplaceLane(info);
         result = tmpForType(Types::V128);
         append(MoveVector, v, result);
-        if (isValidForm(airOp, Arg::Imm, Arg::Tmp, Arg::Tmp, Arg::Tmp))
-            append(airOp, Arg::imm(imm), s, result, airOp == VectorReplaceLaneFloat64 ? tmpForType(Types::I64) : tmpForType(Types::I32));
-        else
-            append(airOp, Arg::imm(imm), s, result);
+        append(airOp, Arg::imm(imm), s, result);
         return { };
     }
 
@@ -592,6 +589,20 @@ public:
         return { };
     }
 
+    void addSIMDSwizzle(ExpressionType& a, ExpressionType& b, ExpressionType& result)
+    {
+        ASSERT(result.type() == Types::V128);
+        // Let each byte mask be 112 (0x70) then after VectorAddSat
+        // each index > 15 would set the saturated index's bit 7 to 1, 
+        // whose corresponding byte will be zero cleared in VectorSwizzle.
+        v128_t mask;
+        mask.u64x2[0] = 0x7070707070707070;
+        mask.u64x2[1] = 0x7070707070707070;
+        auto saturatedIndexes = addConstant(mask);
+        append(VectorAddSat, Arg::simdInfo(SIMDInfo { SIMDLane::i16x8, SIMDSignMode::Unsigned }), saturatedIndexes, b, saturatedIndexes);
+        append(B3::Air::VectorSwizzle, a, saturatedIndexes, result);
+    }
+
     auto addSIMDV_VV(SIMDLaneOperation op, SIMDInfo info, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
     {
         AIR_OP_CASES()
@@ -615,6 +626,11 @@ public:
         AIR_OP_CASE(Max)
         AIR_OP_CASE(Min)
         result = tmpForType(Types::V128);
+
+        if (isX86() && airOp == B3::Air::VectorSwizzle) {
+            addSIMDSwizzle(a, b, result);
+            return { };
+        }
 
         if (isValidForm(airOp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
             append(airOp, a, b, result);
@@ -3885,6 +3901,26 @@ auto AirIRGenerator::addSIMDExtmul(SIMDLaneOperation op, SIMDInfo info, Expressi
 auto AirIRGenerator::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
 {
     result = v128();
+
+    if (isX86()) {
+        // Store each byte (w/ index < 16) of `a` to result
+        // and zero clear each byte (w/ index > 15) in result.
+        auto indexes = addConstant(imm);
+        addSIMDSwizzle(a, indexes, result);
+
+        // Store each byte (w/ index - 16 >= 0) of `b` to result2
+        // and zero clear each byte (w/ index - 16 < 0) in result2.
+        auto result2 = v128();
+        v128_t mask;
+        mask.u64x2[0] = 0x1010101010101010;
+        mask.u64x2[1] = 0x1010101010101010;
+        append(VectorSub, Arg::simdInfo(SIMDInfo { SIMDLane::i16x8, SIMDSignMode::None }), addConstant(mask), indexes, indexes); // indexes = indexes VectorSub mask
+        append(B3::Air::VectorSwizzle, b, indexes, result2);
+
+        // Since each index in [0, 31], we can return result2 VectorOr result.
+        append(VectorOr, result, result2, result);
+        return { };
+    }
 
     append(VectorShuffle, Arg::bigImm(imm.u64x2[0]), Arg::bigImm(imm.u64x2[1]), a, b, result);
 

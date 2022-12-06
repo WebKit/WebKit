@@ -771,20 +771,20 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
 
         switch (type) {
         // translate
-        case TransformOperation::TRANSLATE_X:
+        case TransformOperation::Type::TranslateX:
             functionValue = CSSFunctionValue::create(CSSValueTranslateX);
             functionValue->append(translateLengthAsCSSValue(downcast<TranslateTransformOperation>(*operation).x()));
             break;
-        case TransformOperation::TRANSLATE_Y:
+        case TransformOperation::Type::TranslateY:
             functionValue = CSSFunctionValue::create(CSSValueTranslateY);
             functionValue->append(translateLengthAsCSSValue(downcast<TranslateTransformOperation>(*operation).y()));
             break;
-        case TransformOperation::TRANSLATE_Z:
+        case TransformOperation::Type::TranslateZ:
             functionValue = CSSFunctionValue::create(CSSValueTranslateZ);
             functionValue->append(translateLengthAsCSSValue(downcast<TranslateTransformOperation>(*operation).z()));
             break;
-        case TransformOperation::TRANSLATE:
-        case TransformOperation::TRANSLATE_3D: {
+        case TransformOperation::Type::Translate:
+        case TransformOperation::Type::Translate3D: {
             auto& translate = downcast<TranslateTransformOperation>(*operation);
             auto is3D = translate.is3DOperation();
             functionValue = CSSFunctionValue::create(is3D ? CSSValueTranslate3d : CSSValueTranslate);
@@ -796,20 +796,20 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
             break;
         }
         // scale
-        case TransformOperation::SCALE_X:
+        case TransformOperation::Type::ScaleX:
             functionValue = CSSFunctionValue::create(CSSValueScaleX);
             functionValue->append(cssValuePool.createValue(downcast<ScaleTransformOperation>(*operation).x(), CSSUnitType::CSS_NUMBER));
             break;
-        case TransformOperation::SCALE_Y:
+        case TransformOperation::Type::ScaleY:
             functionValue = CSSFunctionValue::create(CSSValueScaleY);
             functionValue->append(cssValuePool.createValue(downcast<ScaleTransformOperation>(*operation).y(), CSSUnitType::CSS_NUMBER));
             break;
-        case TransformOperation::SCALE_Z:
+        case TransformOperation::Type::ScaleZ:
             functionValue = CSSFunctionValue::create(CSSValueScaleZ);
             functionValue->append(cssValuePool.createValue(downcast<ScaleTransformOperation>(*operation).z(), CSSUnitType::CSS_NUMBER));
             break;
-        case TransformOperation::SCALE:
-        case TransformOperation::SCALE_3D: {
+        case TransformOperation::Type::Scale:
+        case TransformOperation::Type::Scale3D: {
             auto& scale = downcast<ScaleTransformOperation>(*operation);
             auto is3D = scale.is3DOperation();
             functionValue = CSSFunctionValue::create(is3D ? CSSValueScale3d : CSSValueScale);
@@ -821,25 +821,25 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
             break;
         }
         // rotate
-        case TransformOperation::ROTATE_X:
+        case TransformOperation::Type::RotateX:
             functionValue = CSSFunctionValue::create(CSSValueRotateX);
             functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
             break;
-        case TransformOperation::ROTATE_Y:
+        case TransformOperation::Type::RotateY:
             functionValue = CSSFunctionValue::create(CSSValueRotateX);
             functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
             break;
-        case TransformOperation::ROTATE_Z:
+        case TransformOperation::Type::RotateZ:
             functionValue = CSSFunctionValue::create(CSSValueRotateZ);
             functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
             break;
-        case TransformOperation::ROTATE: {
+        case TransformOperation::Type::Rotate: {
             auto& rotate = downcast<RotateTransformOperation>(*operation);
             functionValue = CSSFunctionValue::create(CSSValueRotate);
             functionValue->append(cssValuePool.createValue(rotate.angle(), CSSUnitType::CSS_DEG));
             break;
         }
-        case TransformOperation::ROTATE_3D: {
+        case TransformOperation::Type::Rotate3D: {
             auto& rotate = downcast<RotateTransformOperation>(*operation);
             functionValue = CSSFunctionValue::create(CSSValueRotate3d);
             functionValue->append(cssValuePool.createValue(rotate.x(), CSSUnitType::CSS_NUMBER));
@@ -849,15 +849,15 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
             break;
         }
         // skew
-        case TransformOperation::SKEW_X:
+        case TransformOperation::Type::SkewX:
             functionValue = CSSFunctionValue::create(CSSValueSkewX);
             functionValue->append(cssValuePool.createValue(downcast<SkewTransformOperation>(*operation).angleX(), CSSUnitType::CSS_DEG));
             break;
-        case TransformOperation::SKEW_Y:
+        case TransformOperation::Type::SkewY:
             functionValue = CSSFunctionValue::create(CSSValueSkewX);
             functionValue->append(cssValuePool.createValue(downcast<SkewTransformOperation>(*operation).angleY(), CSSUnitType::CSS_DEG));
             break;
-        case TransformOperation::SKEW: {
+        case TransformOperation::Type::Skew: {
             auto& skew = downcast<SkewTransformOperation>(*operation);
             functionValue = CSSFunctionValue::create(CSSValueSkew);
             functionValue->append(cssValuePool.createValue(skew.angleX(), CSSUnitType::CSS_DEG));
@@ -866,7 +866,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
             break;
         }
         // perspective
-        case TransformOperation::PERSPECTIVE:
+        case TransformOperation::Type::Perspective:
             functionValue = CSSFunctionValue::create(CSSValuePerspective);
             if (auto perspective = downcast<PerspectiveTransformOperation>(*operation).perspective())
                 functionValue->append(zoomAdjustedPixelValueForLength(*perspective, style));
@@ -874,15 +874,15 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
                 functionValue->append(cssValuePool.createIdentifierValue(CSSValueNone));
             break;
         // matrix
-        case TransformOperation::MATRIX:
-        case TransformOperation::MATRIX_3D: {
+        case TransformOperation::Type::Matrix:
+        case TransformOperation::Type::Matrix3D: {
             TransformationMatrix transform;
             operation->apply(transform, { });
             functionValue = matrixTransformValue(transform, style);
             break;
         }
-        case TransformOperation::IDENTITY:
-        case TransformOperation::NONE:
+        case TransformOperation::Type::Identity:
+        case TransformOperation::Type::None:
             continue;
         }
 

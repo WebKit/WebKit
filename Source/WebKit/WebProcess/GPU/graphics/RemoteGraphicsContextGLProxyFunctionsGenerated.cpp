@@ -2861,11 +2861,11 @@ void RemoteGraphicsContextGLProxy::drawElementsInstancedBaseVertexBaseInstanceAN
     }
 }
 
-void RemoteGraphicsContextGLProxy::provokingVertexANGLE(GCGLenum mode)
+void RemoteGraphicsContextGLProxy::provokingVertexANGLE(GCGLenum provokeMode)
 {
     if (isContextLost())
         return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::ProvokingVertexANGLE(mode));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::ProvokingVertexANGLE(provokeMode));
     if (!sendResult) {
         markContextLost();
         return;

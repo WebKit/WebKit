@@ -97,7 +97,7 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
 bool WebCookieJar::isEligibleForCache(WebFrame& frame, const URL& firstPartyForCookies, const URL& resourceURL) const
 {
     auto* page = frame.page() ? frame.page()->corePage() : nullptr;
-    if (!page || !page->settings().inProcessCookieCacheEnabled())
+    if (!page)
         return false;
 
     if (!m_cache.isSupported())

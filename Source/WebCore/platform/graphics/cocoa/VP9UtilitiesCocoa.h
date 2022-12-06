@@ -52,6 +52,7 @@ std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguratio
 bool isVPSoftwareDecoderSmooth(const VideoConfiguration&);
 
 Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Element<webm::Colour>&);
+WEBCORE_EXPORT bool hasVP9ExtensionSupport();
 
 struct VP8FrameHeader {
     bool keyframe { false };

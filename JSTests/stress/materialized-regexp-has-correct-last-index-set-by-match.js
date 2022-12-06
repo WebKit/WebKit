@@ -1,4 +1,4 @@
-//@ skip if $architecture != "arm64" and $architecture != "x86-64" and $architecture != "arm" and $architecture != "mips"
+//@ skip if $architecture != "arm64" and $architecture != "x86_64" and $architecture != "arm" and $architecture != "mips"
 
 function shouldBe(actual, expected)
 {

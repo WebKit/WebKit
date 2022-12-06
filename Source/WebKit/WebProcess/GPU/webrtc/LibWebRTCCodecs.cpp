@@ -248,6 +248,7 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess, bool useRemoteFrames)
 
 #if ENABLE(VP9)
     WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(WebProcess::singleton().ensureGPUProcessConnection().hasVP9HardwareDecoder());
+    WebProcess::singleton().libWebRTCCodecs().setHasVP9ExtensionSupport(WebProcess::singleton().ensureGPUProcessConnection().hasVP9ExtensionSupport());
 #endif
 
     webrtc::setVideoDecoderCallbacks(createVideoDecoder, releaseVideoDecoder, decodeVideoFrame, registerDecodeCompleteCallback);

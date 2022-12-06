@@ -995,6 +995,9 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    template<typename Functor>
+    bool fastForEachPropertyWithSideEffectFreeFunctor(VM&, const Functor&);
+
 protected:
     void finishCreation(VM& vm)
     {

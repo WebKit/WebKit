@@ -38,7 +38,11 @@ class LibWebRTCVPXInternalVideoDecoder;
 class LibWebRTCVPXVideoDecoder : public VideoDecoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Type { VP8, VP9 };
+    enum class Type {
+        VP8,
+        VP9,
+        AV1
+    };
     static void create(Type, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
 
     LibWebRTCVPXVideoDecoder(Type, OutputCallback&&, PostTaskCallback&&);

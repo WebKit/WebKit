@@ -798,6 +798,11 @@ CGFloat PluginView::contentScaleFactor() const
     return m_plugin->scaleFactor();
 }
 
+bool PluginView::isUsingUISideCompositing() const
+{
+    return m_webPage->isUsingUISideCompositing();
+}
+
 } // namespace WebKit
 
 #endif

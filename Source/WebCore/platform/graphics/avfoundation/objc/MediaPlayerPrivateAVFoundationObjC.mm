@@ -1687,7 +1687,7 @@ double MediaPlayerPrivateAVFoundationObjC::effectiveRate() const
     if (!metaDataAvailable())
         return 0;
 
-    return m_cachedRate;
+    return m_cachedTimeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate ? 0.0 : m_cachedRate;
 }
 
 double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() const

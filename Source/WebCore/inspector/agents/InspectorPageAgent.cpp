@@ -40,6 +40,7 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "ElementInlines.h"
+#include "ForcedAccessibilityValue.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -63,6 +64,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleScope.h"
+#include "Theme.h"
 #include <pal/text/TextEncoding.h>
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
@@ -359,6 +361,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     defaultAppearanceDidChange(m_inspectedPage.defaultUseDarkAppearance());
 #endif
+    defaultUserPreferencesDidChange();
 
     return { };
 }
@@ -389,6 +392,8 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     inspectedPageSettings.setShowRepaintCounterInspectorOverride(std::nullopt);
     inspectedPageSettings.setWebRTCEncryptionEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setWebSecurityEnabledInspectorOverride(std::nullopt);
+    inspectedPageSettings.setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue::System);
+    inspectedPageSettings.setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue::System);
 
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::ITPDebugModeEnabled, std::nullopt);
@@ -496,6 +501,48 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserPreference(Protocol::Page::UserPreferenceName preference, std::optional<Protocol::Page::UserPreferenceValue>&& value)
+{
+    switch (preference) {
+    case Protocol::Page::UserPreferenceName::PrefersReducedMotion:
+        overridePrefersReducedMotion(WTFMove(value));
+        return { };
+
+    case Protocol::Page::UserPreferenceName::PrefersContrast:
+        overridePrefersContrast(WTFMove(value));
+        return { };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+void InspectorPageAgent::overridePrefersReducedMotion(std::optional<Protocol::Page::UserPreferenceValue>&& value)
+{
+    ForcedAccessibilityValue forcedValue = ForcedAccessibilityValue::System;
+
+    if (value == Protocol::Page::UserPreferenceValue::Reduce)
+        forcedValue = ForcedAccessibilityValue::On;
+    else if (value == Protocol::Page::UserPreferenceValue::NoPreference)
+        forcedValue = ForcedAccessibilityValue::Off;
+
+    m_inspectedPage.settings().setForcedPrefersReducedMotionAccessibilityValue(forcedValue);
+    m_inspectedPage.accessibilitySettingsDidChange();
+}
+
+void InspectorPageAgent::overridePrefersContrast(std::optional<Protocol::Page::UserPreferenceValue>&& value)
+{
+    ForcedAccessibilityValue forcedValue = ForcedAccessibilityValue::System;
+
+    if (value == Protocol::Page::UserPreferenceValue::More)
+        forcedValue = ForcedAccessibilityValue::On;
+    else if (value == Protocol::Page::UserPreferenceValue::NoPreference)
+        forcedValue = ForcedAccessibilityValue::Off;
+
+    m_inspectedPage.settings().setForcedPrefersContrastAccessibilityValue(forcedValue);
+    m_inspectedPage.accessibilitySettingsDidChange();
 }
 
 static Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
@@ -909,6 +956,44 @@ void InspectorPageAgent::frameScheduledNavigation(Frame& frame, Seconds delay)
 void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
 {
     m_frontendDispatcher->frameClearedScheduledNavigation(frameId(&frame));
+}
+
+void InspectorPageAgent::accessibilitySettingsDidChange()
+{
+    defaultUserPreferencesDidChange();
+}
+
+void InspectorPageAgent::defaultUserPreferencesDidChange()
+{
+    auto defaultUserPreferences = JSON::ArrayOf<Protocol::Page::UserPreference>::create();
+
+#if USE(NEW_THEME)
+    bool prefersReducedMotion = Theme::singleton().userPrefersReducedMotion();
+#else
+    bool prefersReducedMotion = false;
+#endif
+
+    auto prefersReducedMotionUserPreference = Protocol::Page::UserPreference::create()
+        .setName(Protocol::Page::UserPreferenceName::PrefersReducedMotion)
+        .setValue(prefersReducedMotion ? Protocol::Page::UserPreferenceValue::Reduce : Protocol::Page::UserPreferenceValue::NoPreference)
+        .release();
+
+    defaultUserPreferences->addItem(prefersReducedMotionUserPreference);
+
+#if USE(NEW_THEME)
+    bool prefersContrast = Theme::singleton().userPrefersContrast();
+#else
+    bool prefersContrast = false;
+#endif
+
+    auto prefersContrastUserPreference = Protocol::Page::UserPreference::create()
+        .setName(Protocol::Page::UserPreferenceName::PrefersContrast)
+        .setValue(prefersContrast ? Protocol::Page::UserPreferenceValue::More : Protocol::Page::UserPreferenceValue::NoPreference)
+        .release();
+
+    defaultUserPreferences->addItem(prefersContrastUserPreference);
+
+    m_frontendDispatcher->defaultUserPreferencesDidChange(WTFMove(defaultUserPreferences));
 }
 
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)

@@ -1643,7 +1643,7 @@ void RenderStyle::setPageScaleTransform(float scale)
     if (scale == 1)
         return;
     TransformOperations transform;
-    transform.operations().append(ScaleTransformOperation::create(scale, scale, ScaleTransformOperation::SCALE));
+    transform.operations().append(ScaleTransformOperation::create(scale, scale, TransformOperation::Type::Scale));
     setTransform(transform);
     setTransformOriginX(Length(0, LengthType::Fixed));
     setTransformOriginY(Length(0, LengthType::Fixed));

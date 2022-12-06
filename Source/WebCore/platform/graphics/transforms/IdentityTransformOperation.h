@@ -64,11 +64,11 @@ private:
     void dump(WTF::TextStream&) const final;
 
     IdentityTransformOperation()
-        : TransformOperation(IDENTITY)
+        : TransformOperation(TransformOperation::Type::Identity)
     {
     }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::IdentityTransformOperation, type() == WebCore::TransformOperation::IDENTITY)
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::IdentityTransformOperation, type() == WebCore::TransformOperation::Type::Identity)

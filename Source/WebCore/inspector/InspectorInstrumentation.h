@@ -235,6 +235,7 @@ public:
     static void frameStoppedLoading(Frame&);
     static void frameScheduledNavigation(Frame&, Seconds delay);
     static void frameClearedScheduledNavigation(Frame&);
+    static void accessibilitySettingsDidChange(Page&);
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     static void defaultAppearanceDidChange(Page&, bool useDarkAppearance);
 #endif
@@ -445,6 +446,7 @@ private:
     static void frameStoppedLoadingImpl(InstrumentingAgents&, Frame&);
     static void frameScheduledNavigationImpl(InstrumentingAgents&, Frame&, Seconds delay);
     static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, Frame&);
+    static void accessibilitySettingsDidChangeImpl(InstrumentingAgents&);
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     static void defaultAppearanceDidChangeImpl(InstrumentingAgents&, bool useDarkAppearance);
 #endif
@@ -1283,6 +1285,12 @@ inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame& fra
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
         frameClearedScheduledNavigationImpl(*agents, frame);
+}
+
+inline void InspectorInstrumentation::accessibilitySettingsDidChange(Page& page)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    accessibilitySettingsDidChangeImpl(instrumentingAgents(page));
 }
 
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)

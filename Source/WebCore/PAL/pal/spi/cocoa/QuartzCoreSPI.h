@@ -137,6 +137,9 @@ typedef struct _CARenderContext CARenderContext;
 @property (getter=isSeparated) BOOL separated;
 #endif
 @property BOOL toneMapToStandardDynamicRange;
+#if HAVE(CALAYER_ALLOWS_SORTS_SUBLAYERS)
+@property BOOL allowsSortsSublayers;
+#endif
 @end
 
 #if ENABLE(FILTERS_LEVEL_2)
@@ -183,6 +186,7 @@ typedef enum {
 @interface CALayerHost : CALayer
 @property uint32_t contextId;
 @property BOOL inheritsSecurity;
+@property BOOL preservesFlip;
 @end
 
 @interface CASpringAnimation (Private)

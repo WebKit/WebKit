@@ -1586,6 +1586,8 @@ public:
 #endif
 
     void generateTestReport(String&& message, String&& group);
+    
+    bool isUsingUISideCompositing() const;
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updateImageAnimationEnabled();

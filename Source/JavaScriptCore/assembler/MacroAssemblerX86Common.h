@@ -3986,6 +3986,20 @@ public:
         return s_popcntCheckState == CPUIDCheckState::Set;
     }
 
+    static bool supportsSSE3()
+    {
+        if (s_sse3CheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_sse3CheckState == CPUIDCheckState::Set;
+    }
+
+    static bool supportsSupplementalSSE3()
+    {
+        if (s_supplementalSSE3CheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_supplementalSSE3CheckState == CPUIDCheckState::Set;
+    }
+
     static bool supportsAVX()
     {
         // AVX still causes mysterious regressions and those regressions can be massive.
@@ -4274,6 +4288,8 @@ private:
     static CPUID getCPUIDEx(unsigned level, unsigned count);
     JS_EXPORT_PRIVATE static void collectCPUFeatures();
 
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_sse3CheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_supplementalSSE3CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_1CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_2CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_avxCheckState;

@@ -341,10 +341,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
-            if (canPerformFastPropertyEnumerationForObjectAssign(source->structure())) {
-                objectAssignFast(vm, target, source, properties, values);
+            if (objectAssignFast(vm, target, source, properties, values))
                 continue;
-            }
         }
 
         targetCanPerformFastPut = false;
@@ -370,10 +368,10 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (canPerformFastPropertyEnumerationForObjectEntries(target->structure())) {
+    {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
-        target->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+        bool canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
             if (entry.attributes() & PropertyAttribute::DontEnum)
                 return true;
 
@@ -386,68 +384,70 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
             return true;
         });
 
-        Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
-        JSArray* entries = JSArray::tryCreate(vm, arrayStructure, properties.size());
-        if (UNLIKELY(!entries)) {
-            throwOutOfMemoryError(globalObject, scope);
-            return { };
-        }
-
-        Structure* targetStructure = target->structure();
-        JSImmutableButterfly* cachedButterfly = nullptr;
-        if (LIKELY(!globalObject->isHavingABadTime())) {
-            auto* butterfly = targetStructure->cachedPropertyNames(CachedPropertyNamesKind::Keys);
-            if (butterfly) {
-                ASSERT(butterfly->length() == properties.size());
-                if (butterfly->length() == properties.size())
-                    cachedButterfly = butterfly;
-            }
-        }
-
-        if (!cachedButterfly && properties.size() < MIN_SPARSE_ARRAY_INDEX && !globalObject->isHavingABadTime() && targetStructure->canCacheOwnPropertyNames()) {
-            auto* canSentinel = targetStructure->cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind::Keys);
-            if (canSentinel == StructureRareData::cachedPropertyNamesSentinel()) {
-                size_t numProperties = properties.size();
-                auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
-                for (size_t i = 0; i < numProperties; i++) {
-                    const auto& identifier = properties[i];
-                    newButterfly->setIndex(vm, i, jsOwnedString(vm, identifier.get()));
-                }
-
-                targetStructure->setCachedPropertyNames(vm, CachedPropertyNamesKind::Keys, newButterfly);
-                cachedButterfly = newButterfly;
-            } else
-                targetStructure->setCachedPropertyNames(vm, CachedPropertyNamesKind::Keys, StructureRareData::cachedPropertyNamesSentinel());
-        }
-
-        for (size_t i = 0; i < properties.size(); ++i) {
-            JSString* key = nullptr;
-            if (cachedButterfly) {
-                auto* cachedKey = asString(cachedButterfly->get(i));
-                if (cachedKey->tryGetValueImpl() == properties[i].get())
-                    key = cachedKey;
-            }
-
-            if (!key)
-                key = jsOwnedString(vm, properties[i].get());
-
-            JSArray* entry = nullptr;
-            {
-                ObjectInitializationScope initializationScope(vm);
-                if (LIKELY(entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) {
-                    entry->initializeIndex(initializationScope, 0, key);
-                    entry->initializeIndex(initializationScope, 1, values.at(i));
-                }
-            }
-            if (UNLIKELY(!entry)) {
+        if (canUseFastPath) {
+            Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+            JSArray* entries = JSArray::tryCreate(vm, arrayStructure, properties.size());
+            if (UNLIKELY(!entries)) {
                 throwOutOfMemoryError(globalObject, scope);
                 return { };
             }
-            entries->putDirectIndex(globalObject, i, entry);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
 
-        return JSValue::encode(entries);
+            Structure* targetStructure = target->structure();
+            JSImmutableButterfly* cachedButterfly = nullptr;
+            if (LIKELY(!globalObject->isHavingABadTime())) {
+                auto* butterfly = targetStructure->cachedPropertyNames(CachedPropertyNamesKind::Keys);
+                if (butterfly) {
+                    ASSERT(butterfly->length() == properties.size());
+                    if (butterfly->length() == properties.size())
+                        cachedButterfly = butterfly;
+                }
+            }
+
+            if (!cachedButterfly && properties.size() < MIN_SPARSE_ARRAY_INDEX && !globalObject->isHavingABadTime() && targetStructure->canCacheOwnPropertyNames()) {
+                auto* canSentinel = targetStructure->cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind::Keys);
+                if (canSentinel == StructureRareData::cachedPropertyNamesSentinel()) {
+                    size_t numProperties = properties.size();
+                    auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                    for (size_t i = 0; i < numProperties; i++) {
+                        const auto& identifier = properties[i];
+                        newButterfly->setIndex(vm, i, jsOwnedString(vm, identifier.get()));
+                    }
+
+                    targetStructure->setCachedPropertyNames(vm, CachedPropertyNamesKind::Keys, newButterfly);
+                    cachedButterfly = newButterfly;
+                } else
+                    targetStructure->setCachedPropertyNames(vm, CachedPropertyNamesKind::Keys, StructureRareData::cachedPropertyNamesSentinel());
+            }
+
+            for (size_t i = 0; i < properties.size(); ++i) {
+                JSString* key = nullptr;
+                if (cachedButterfly) {
+                    auto* cachedKey = asString(cachedButterfly->get(i));
+                    if (cachedKey->tryGetValueImpl() == properties[i].get())
+                        key = cachedKey;
+                }
+
+                if (!key)
+                    key = jsOwnedString(vm, properties[i].get());
+
+                JSArray* entry = nullptr;
+                {
+                    ObjectInitializationScope initializationScope(vm);
+                    if (LIKELY(entry = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 2))) {
+                        entry->initializeIndex(initializationScope, 0, key);
+                        entry->initializeIndex(initializationScope, 1, values.at(i));
+                    }
+                }
+                if (UNLIKELY(!entry)) {
+                    throwOutOfMemoryError(globalObject, scope);
+                    return { };
+                }
+                entries->putDirectIndex(globalObject, i, entry);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
+
+            return JSValue::encode(entries);
+        }
     }
 
     JSArray* entries = constructEmptyArray(globalObject, nullptr);
@@ -509,6 +509,40 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     JSObject* target = targetValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+    if (!target->staticPropertiesReified()) {
+        target->reifyAllStaticProperties(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    {
+        MarkedArgumentBuffer values;
+        bool canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
+            if (entry.attributes() & PropertyAttribute::DontEnum)
+                return true;
+
+            if (entry.key()->isSymbol())
+                return true;
+
+            values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+            return true;
+        });
+
+        if (canUseFastPath) {
+            Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+            {
+                ObjectInitializationScope initializationScope(vm);
+                JSArray* result = nullptr;
+                if (LIKELY(result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, arrayStructure, values.size()))) {
+                    for (unsigned i = 0; i < values.size(); ++i)
+                        result->initializeIndex(initializationScope, i, values.at(i));
+                    return JSValue::encode(result);
+                }
+            }
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
+    }
+
     JSArray* values = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -551,74 +585,51 @@ bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDesc
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!in.isObject()) {
+    if (UNLIKELY(!in.isObject())) {
         throwTypeError(globalObject, scope, "Property description must be an object."_s);
         return false;
     }
     JSObject* description = asObject(in);
 
-    bool hasProperty = description->hasProperty(globalObject, vm.propertyNames->enumerable);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue value = description->get(globalObject, vm.propertyNames->enumerable);
-        RETURN_IF_EXCEPTION(scope, false);
-        desc.setEnumerable(value.toBoolean(globalObject));
-    } else
-        RETURN_IF_EXCEPTION(scope, false);
+    JSValue enumerable = description->getIfPropertyExists(globalObject, vm.propertyNames->enumerable);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (enumerable)
+        desc.setEnumerable(enumerable.toBoolean(globalObject));
 
-    hasProperty = description->hasProperty(globalObject, vm.propertyNames->configurable);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue value = description->get(globalObject, vm.propertyNames->configurable);
-        RETURN_IF_EXCEPTION(scope, false);
-        desc.setConfigurable(value.toBoolean(globalObject));
-    } else
-        RETURN_IF_EXCEPTION(scope, false);
+    JSValue configurable = description->getIfPropertyExists(globalObject, vm.propertyNames->configurable);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (configurable)
+        desc.setConfigurable(configurable.toBoolean(globalObject));
 
-    JSValue value;
-    hasProperty = description->hasProperty(globalObject, vm.propertyNames->value);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue value = description->get(globalObject, vm.propertyNames->value);
-        RETURN_IF_EXCEPTION(scope, false);
+    JSValue value = description->getIfPropertyExists(globalObject, vm.propertyNames->value);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (value)
         desc.setValue(value);
-    } else
-        RETURN_IF_EXCEPTION(scope, false);
 
-    hasProperty = description->hasProperty(globalObject, vm.propertyNames->writable);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue value = description->get(globalObject, vm.propertyNames->writable);
-        RETURN_IF_EXCEPTION(scope, false);
-        desc.setWritable(value.toBoolean(globalObject));
-    } else
-        RETURN_IF_EXCEPTION(scope, false);
+    JSValue writable = description->getIfPropertyExists(globalObject, vm.propertyNames->writable);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (writable)
+        desc.setWritable(writable.toBoolean(globalObject));
 
-    hasProperty = description->hasProperty(globalObject, vm.propertyNames->get);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue get = description->get(globalObject, vm.propertyNames->get);
-        RETURN_IF_EXCEPTION(scope, false);
+    JSValue get = description->getIfPropertyExists(globalObject, vm.propertyNames->get);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (get) {
         if (!get.isUndefined() && !get.isCallable()) {
             throwTypeError(globalObject, scope, "Getter must be a function."_s);
             return false;
         }
         desc.setGetter(get);
-    } else
-        RETURN_IF_EXCEPTION(scope, false);
+    }
 
-    hasProperty = description->hasProperty(globalObject, vm.propertyNames->set);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue set = description->get(globalObject, vm.propertyNames->set);
-        RETURN_IF_EXCEPTION(scope, false);
+    JSValue set = description->getIfPropertyExists(globalObject, vm.propertyNames->set);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (set) {
         if (!set.isUndefined() && !set.isCallable()) {
             throwTypeError(globalObject, scope, "Setter must be a function."_s);
             return false;
         }
         desc.setSetter(set);
-    } else
-        RETURN_IF_EXCEPTION(scope, false);
+    }
 
     if (!desc.isAccessorDescriptor())
         return true;
@@ -632,6 +643,7 @@ bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDesc
         throwTypeError(globalObject, scope, "Invalid property.  'writable' present on property with getter or setter."_s);
         return false;
     }
+
     return true;
 }
 

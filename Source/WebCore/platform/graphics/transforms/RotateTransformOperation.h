@@ -33,12 +33,12 @@ struct BlendingContext;
 
 class RotateTransformOperation final : public TransformOperation {
 public:
-    static Ref<RotateTransformOperation> create(double angle, OperationType type)
+    static Ref<RotateTransformOperation> create(double angle, TransformOperation::Type type)
     {
         return adoptRef(*new RotateTransformOperation(0, 0, 1, angle, type));
     }
 
-    static Ref<RotateTransformOperation> create(double x, double y, double z, double angle, OperationType type)
+    static Ref<RotateTransformOperation> create(double x, double y, double z, double angle, TransformOperation::Type type)
     {
         return adoptRef(*new RotateTransformOperation(x, y, z, angle, type));
     }
@@ -53,7 +53,7 @@ public:
     double z() const { return m_z; }
     double angle() const { return m_angle; }
 
-    OperationType primitiveType() const final { return type() == ROTATE ? ROTATE : ROTATE_3D; }
+    TransformOperation::Type primitiveType() const final { return type() == Type::Rotate ? Type::Rotate : Type::Rotate3D; }
 
     bool operator==(const RotateTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const override;
@@ -69,7 +69,7 @@ private:
 
     bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
     {
-        if (type() == TransformOperation::ROTATE)
+        if (type() == TransformOperation::Type::Rotate)
             transform.rotate(m_angle);
         else
             transform.rotate3d(m_x, m_y, m_z, m_angle);
@@ -78,7 +78,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    RotateTransformOperation(double x, double y, double z, double angle, OperationType type)
+    RotateTransformOperation(double x, double y, double z, double angle, TransformOperation::Type type)
         : TransformOperation(type)
         , m_x(x)
         , m_y(y)

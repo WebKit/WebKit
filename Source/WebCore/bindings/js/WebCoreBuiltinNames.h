@@ -493,6 +493,7 @@ namespace WebCore {
     macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(createAbortSignal) \
     macro(createImageBitmap) \
     macro(createReadableStream) \
     macro(createWritableStreamFromInternal) \
@@ -600,6 +601,8 @@ namespace WebCore {
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
     macro(showModalDialog) \
+    macro(signal) \
+    macro(signalAbort) \
     macro(SpeechSynthesis) \
     macro(SpeechSynthesisErrorEvent) \
     macro(SpeechSynthesisEvent) \

@@ -104,6 +104,7 @@ void PlatformCALayerRemoteCustom::populateCreationProperties(RemoteLayerTreeTran
     PlatformCALayerRemote::populateCreationProperties(properties, context, type);
     properties.hostingContextID = hostingContextID();
     properties.hostingDeviceScaleFactor = context.deviceScaleFactor();
+    properties.preservesFlip = YES;
 }
 
 Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayerClient* owner) const

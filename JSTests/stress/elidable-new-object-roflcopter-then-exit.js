@@ -1,4 +1,4 @@
-//@ skip if $architecture != "arm64" and $architecture != "x86-64" and $architecture != "mips" and $architecture != "arm"
+//@ skip if $architecture != "arm64" and $architecture != "x86_64" and $architecture != "mips" and $architecture != "arm"
 
 function sumOfArithSeries(limit) {
     return limit * (limit + 1) / 2;

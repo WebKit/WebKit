@@ -807,4 +807,19 @@ inline void JSObject::setPrivateBrand(JSGlobalObject* globalObject, JSValue bran
     this->setStructure(vm, newStructure);
 }
 
+template<typename Functor>
+bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functor& functor)
+{
+    if (!staticPropertiesReified())
+        return false;
+
+    Structure* structure = this->structure();
+
+    if (!structure->canPerformFastPropertyEnumeration())
+        return false;
+
+    structure->forEachProperty(vm, functor);
+    return true;
+}
+
 } // namespace JSC

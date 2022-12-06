@@ -70,7 +70,7 @@ private:
     void dump(WTF::TextStream&) const final;
 
     MatrixTransformOperation(double a, double b, double c, double d, double e, double f)
-        : TransformOperation(MATRIX)
+        : TransformOperation(TransformOperation::Type::Matrix)
         , m_a(a)
         , m_b(b)
         , m_c(c)
@@ -81,7 +81,7 @@ private:
     }
 
     MatrixTransformOperation(const TransformationMatrix& t)
-        : TransformOperation(MATRIX)
+        : TransformOperation(TransformOperation::Type::Matrix)
         , m_a(t.a())
         , m_b(t.b())
         , m_c(t.c())
@@ -101,4 +101,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::MatrixTransformOperation, type() == WebCore::TransformOperation::MATRIX)
+SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::MatrixTransformOperation, type() == WebCore::TransformOperation::Type::Matrix)

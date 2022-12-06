@@ -305,6 +305,7 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
     m_hasInitialized = true;
 #if ENABLE(VP9)
     m_hasVP9HardwareDecoder = info->hasVP9HardwareDecoder;
+    m_hasVP9ExtensionSupport = info->hasVP9ExtensionSupport;
 #endif
 }
 
@@ -384,6 +385,12 @@ bool GPUProcessConnection::hasVP9HardwareDecoder()
     return m_hasVP9HardwareDecoder;
 }
 
+bool GPUProcessConnection::hasVP9ExtensionSupport()
+{
+    if (!waitForDidInitialize())
+        return false;
+    return m_hasVP9ExtensionSupport;
+}
 #endif
 
 void GPUProcessConnection::updateMediaConfiguration()

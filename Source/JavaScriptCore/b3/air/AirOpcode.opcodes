@@ -1639,13 +1639,9 @@ VectorReplaceLaneInt16 U:G:8, U:G:16, UD:F:128
     Imm, Tmp, Tmp
 VectorReplaceLaneInt8 U:G:8, U:G:8, UD:F:128
     Imm, Tmp, Tmp
-x86_64: VectorReplaceLaneFloat64 U:G:8, U:F:64, UD:F:128, S:G:64
-    Imm, Tmp, Tmp, Tmp
-arm64: VectorReplaceLaneFloat64 U:G:8, U:F:64, UD:F:128
+VectorReplaceLaneFloat64 U:G:8, U:F:64, UD:F:128
     Imm, Tmp, Tmp
-x86_64: VectorReplaceLaneFloat32 U:G:8, U:F:32, UD:F:128, S:G:32
-    Imm, Tmp, Tmp, Tmp
-arm64: VectorReplaceLaneFloat32 U:G:8, U:F:32, UD:F:128
+VectorReplaceLaneFloat32 U:G:8, U:F:32, UD:F:128
     Imm, Tmp, Tmp
 
 VectorExtractLaneInt64 U:G:8, U:F:128, D:G:64

@@ -1,0 +1,30 @@
+Tests for the Page.overrideUserPreference command.
+
+
+== Running test suite: Page.overrideUserPreference
+-- Running test case: Page.overrideUserPreference.PrefersReducedMotion
+PASS: (prefers-reduced-motion) media query does not match.
+PASS: --test-prefers-reduced-motion: no-preference
+Overriding PrefersReducedMotion value to Reduce
+PASS: (prefers-reduced-motion) media query matches.
+PASS: --test-prefers-reduced-motion: reduce
+Overriding PrefersReducedMotion value to NoPreference
+PASS: (prefers-reduced-motion) media query does not match.
+PASS: --test-prefers-reduced-motion: no-preference
+Removing PrefersReducedMotion override
+PASS: (prefers-reduced-motion) media query does not match.
+PASS: --test-prefers-reduced-motion: no-preference
+
+-- Running test case: Page.overrideUserPreference.PrefersContrast
+PASS: (prefers-contrast) media query does not match.
+PASS: --test-prefers-contrast: no-preference
+Overriding PrefersContrast value to More
+PASS: (prefers-contrast) media query matches.
+PASS: --test-prefers-contrast: more
+Overriding PrefersContrast value to NoPreference
+PASS: (prefers-contrast) media query does not match.
+PASS: --test-prefers-contrast: no-preference
+Removing PrefersContrast override
+PASS: (prefers-contrast) media query does not match.
+PASS: --test-prefers-contrast: no-preference
+

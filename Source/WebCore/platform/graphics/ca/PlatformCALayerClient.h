@@ -63,6 +63,7 @@ public:
     virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const { return true; }
 
     virtual bool platformCALayerUseGiantTiles() const { return false; }
+    virtual bool platformCALayerUseCSS3DTransformInteroperability() const { return false; }
 
     virtual bool isCommittingChanges() const { return false; }
 

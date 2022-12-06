@@ -20,7 +20,7 @@ function runTest() {
     if (window.testRunner)
         testRunner.waitUntilDone();
     e = document.getElementById("dragme");
-    setSelectionCommand(e, 0, e, 1);
+    setSelectionCommand(e.parentNode, e.nodeIndex, e.parentNode, e.nodeIndex + 1);
 
     if (!window.testRunner) {
         log("This test uses the eventSender.  To run it manually, drag the selected image into the editable div and drop it.  It should appear inside the editable div.");
