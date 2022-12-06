@@ -27,4 +27,5 @@
 
 constexpr auto LDMEnabledKey = "LDMGlobalEnabled";
 constexpr auto WKLockdownModeEnabledKey = "WKLockdownModeEnabled"_s;
-constexpr auto WKLockdownModeContainerConfigurationChangedNotification = @"WKLockdownModeContainerConfigurationChanged";
+// This string must remain consistent with the lockdown mode notification name in privacy settings.
+constexpr auto WKLockdownModeContainerConfigurationChangedNotification = @"WKCaptivePortalModeContainerConfigurationChanged";
