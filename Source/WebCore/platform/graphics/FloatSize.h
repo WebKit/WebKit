@@ -78,6 +78,7 @@ public:
     bool isExpressibleAsIntSize() const;
 
     float aspectRatio() const { return m_width / m_height; }
+    double aspectRatioDouble() const { return m_width / static_cast<double>(m_height); }
 
     void expand(float width, float height)
     {
