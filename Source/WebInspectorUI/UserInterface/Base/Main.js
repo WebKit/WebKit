@@ -408,17 +408,17 @@ WI.contentLoaded = function()
     WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode, WI);
     inspectedPageControlNavigationItems.push(WI._inspectModeTabBarButton);
 
+    // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
+    if (InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
+        const deviceSettingsTooltip = WI.UIString("Device Settings");
+        WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, InspectorFrontendHost.isRemote ? "Images/Device.svg" : "Images/Computer.svg");
+        WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked, WI);
+        inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
+
+        WI._deviceSettingsPopover = null;
+    }
+
     if (InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) {
-        // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-        if (InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
-            const deviceSettingsTooltip = WI.UIString("Device Settings");
-            WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
-            WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked, WI);
-            inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
-
-            WI._deviceSettingsPopover = null;
-        }
-
         let reloadToolTip;
         if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ITML)
             reloadToolTip = WI.UIString("Restart (%s)").format(WI._reloadPageKeyboardShortcut.displayName);
@@ -2200,103 +2200,106 @@ WI._handleDeviceSettingsTabBarButtonClicked = function(event)
 
     let table = contentElement.appendChild(document.createElement("table"));
 
-    let userAgentRow = table.appendChild(document.createElement("tr"));
+    // FIXME: webkit.org/b/247809 Enable user agent UI once the UI tracks engine-level changes to the current UA (e.g. via API)
+    if (InspectorFrontendHost.isRemote) {
+        let userAgentRow = table.appendChild(document.createElement("tr"));
 
-    let userAgentTitle = userAgentRow.appendChild(document.createElement("td"));
-    userAgentTitle.textContent = WI.UIString("User Agent:");
+        let userAgentTitle = userAgentRow.appendChild(document.createElement("td"));
+        userAgentTitle.textContent = WI.UIString("User Agent:");
 
-    let userAgentValue = userAgentRow.appendChild(document.createElement("td"));
-    userAgentValue.classList.add("user-agent");
+        let userAgentValue = userAgentRow.appendChild(document.createElement("td"));
+        userAgentValue.classList.add("user-agent");
 
-    let userAgentValueSelect = userAgentValue.appendChild(document.createElement("select"));
+        let userAgentValueSelect = userAgentValue.appendChild(document.createElement("select"));
 
-    let userAgentValueInput = null;
+        let userAgentValueInput = null;
 
-    const userAgents = [
-        [
-            { name: WI.UIString("Default"), value: "default" },
-        ],
-        [
-            { name: "Safari 16.0", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
-        ],
-        [
-            { name: `Safari ${emDash} iOS 16.0 ${emDash} iPhone`, value: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
-            { name: `Safari ${emDash} iPadOS 16.0 ${emDash} iPad mini`, value: "Mozilla/5.0 (iPad; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
-            { name: `Safari ${emDash} iPadOS 16.0 ${emDash} iPad`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
-        ],
-        [
-            { name: `Microsoft Edge ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36 Edg/103.0.1264.37" },
-            { name: `Microsoft Edge ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36 Edg/103.0.1264.37" },
-        ],
-        [
-            { name: `Google Chrome ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36" },
-            { name: `Google Chrome ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" },
-        ],
-        [
-            { name: `Firefox ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0" },
-            { name: `Firefox ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0" },
-        ],
-        [
-            { name: WI.UIString("Other\u2026"), value: "other" },
-        ],
-    ];
+        const userAgents = [
+            [
+             { name: WI.UIString("Default"), value: "default" },
+             ],
+            [
+             { name: "Safari 16.0", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
+             ],
+            [
+                { name: `Safari ${emDash} iOS 16.0 ${emDash} iPhone`, value: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
+                { name: `Safari ${emDash} iPadOS 16.0 ${emDash} iPad mini`, value: "Mozilla/5.0 (iPad; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
+                { name: `Safari ${emDash} iPadOS 16.0 ${emDash} iPad`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
+            ],
+            [
+                { name: `Microsoft Edge ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36 Edg/103.0.1264.37" },
+                { name: `Microsoft Edge ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36 Edg/103.0.1264.37" },
+            ],
+            [
+                { name: `Google Chrome ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36" },
+                { name: `Google Chrome ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" },
+            ],
+            [
+                { name: `Firefox ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0" },
+                { name: `Firefox ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0" },
+            ],
+            [
+             { name: WI.UIString("Other\u2026"), value: "other" },
+             ],
+        ];
 
-    let selectedOptionElement = null;
+        let selectedOptionElement = null;
 
-    for (let group of userAgents) {
-        for (let {name, value} of group) {
-            let optionElement = userAgentValueSelect.appendChild(document.createElement("option"));
-            optionElement.value = value;
-            optionElement.textContent = name;
+        for (let group of userAgents) {
+            for (let {name, value} of group) {
+                let optionElement = userAgentValueSelect.appendChild(document.createElement("option"));
+                optionElement.value = value;
+                optionElement.textContent = name;
 
-            if (value === WI._overridenDeviceUserAgent)
-                selectedOptionElement = optionElement;
-        }
-
-        if (group !== userAgents.lastValue)
-            userAgentValueSelect.appendChild(document.createElement("hr"));
-    }
-
-    function showUserAgentInput() {
-        if (userAgentValueInput)
-            return;
-
-        userAgentValueInput = userAgentValue.appendChild(document.createElement("input"));
-        userAgentValueInput.spellcheck = false;
-        userAgentValueInput.value = userAgentValueInput.placeholder = WI._overridenDeviceUserAgent || navigator.userAgent;
-        userAgentValueInput.addEventListener("click", (clickEvent) => {
-            clickEvent.preventDefault();
-        });
-        userAgentValueInput.addEventListener("change", (inputEvent) => {
-            applyOverriddenUserAgent(userAgentValueInput.value, true);
-        });
-
-        WI._deviceSettingsPopover.update();
-    }
-
-    if (selectedOptionElement)
-        userAgentValueSelect.value = selectedOptionElement.value;
-    else if (WI._overridenDeviceUserAgent) {
-        userAgentValueSelect.value = "other";
-        showUserAgentInput();
-    }
-
-    userAgentValueSelect.addEventListener("change", () => {
-        let value = userAgentValueSelect.value;
-        if (value === "other") {
-            showUserAgentInput();
-            userAgentValueInput.select();
-        } else {
-            if (userAgentValueInput) {
-                userAgentValueInput.remove();
-                userAgentValueInput = null;
-
-                WI._deviceSettingsPopover.update();
+                if (value === WI._overridenDeviceUserAgent)
+                    selectedOptionElement = optionElement;
             }
 
-            applyOverriddenUserAgent(value);
+            if (group !== userAgents.lastValue)
+                userAgentValueSelect.appendChild(document.createElement("hr"));
         }
-    });
+
+        function showUserAgentInput() {
+            if (userAgentValueInput)
+                return;
+
+            userAgentValueInput = userAgentValue.appendChild(document.createElement("input"));
+            userAgentValueInput.spellcheck = false;
+            userAgentValueInput.value = userAgentValueInput.placeholder = WI._overridenDeviceUserAgent || navigator.userAgent;
+            userAgentValueInput.addEventListener("click", (clickEvent) => {
+                clickEvent.preventDefault();
+            });
+            userAgentValueInput.addEventListener("change", (inputEvent) => {
+                applyOverriddenUserAgent(userAgentValueInput.value, true);
+            });
+
+            WI._deviceSettingsPopover.update();
+        }
+
+        if (selectedOptionElement)
+            userAgentValueSelect.value = selectedOptionElement.value;
+        else if (WI._overridenDeviceUserAgent) {
+            userAgentValueSelect.value = "other";
+            showUserAgentInput();
+        }
+
+        userAgentValueSelect.addEventListener("change", () => {
+            let value = userAgentValueSelect.value;
+            if (value === "other") {
+                showUserAgentInput();
+                userAgentValueInput.select();
+            } else {
+                if (userAgentValueInput) {
+                    userAgentValueInput.remove();
+                    userAgentValueInput = null;
+
+                    WI._deviceSettingsPopover.update();
+                }
+
+                applyOverriddenUserAgent(value);
+            }
+        });
+    }
 
     if (InspectorBackend.hasCommand("Page.setScreenSizeOverride")) {
         function applyOverriddenScreenSize(value, force) {
