@@ -4517,6 +4517,8 @@
 		31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebMouseEvent.h; sourceTree = "<group>"; };
 		31F060DD1654317500F3281C /* NetworkSocketChannelMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSocketChannelMessageReceiver.cpp; path = DerivedSources/WebKit/NetworkSocketChannelMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Prefix.h; sourceTree = "<group>"; };
+		3302293F2938263E001F00FA /* WebExtensionAPIWebNavigationEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIWebNavigationEvent.idl; sourceTree = "<group>"; };
+		33066F09293A90DC008C5749 /* WebExtensionAPIWebNavigation.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIWebNavigation.idl; sourceTree = "<group>"; };
 		330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebCookieManagerMessageReceiver.cpp; path = DerivedSources/WebKit/WebCookieManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		330934441315B9220097A7BC /* WebCookieManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCookieManagerMessages.h; path = DerivedSources/WebKit/WebCookieManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		3309344C1315B94D0097A7BC /* WebCookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManager.cpp; sourceTree = "<group>"; };
@@ -8963,6 +8965,8 @@
 				B6544F76293560B000034EB0 /* WebExtensionAPIPermissions.idl */,
 				1C9DD99C28FA19A30093BDB0 /* WebExtensionAPIRuntime.idl */,
 				1CDA62A02925DA3700D90390 /* WebExtensionAPITest.idl */,
+				33066F09293A90DC008C5749 /* WebExtensionAPIWebNavigation.idl */,
+				3302293F2938263E001F00FA /* WebExtensionAPIWebNavigationEvent.idl */,
 			);
 			path = Interfaces;
 			sourceTree = "<group>";
