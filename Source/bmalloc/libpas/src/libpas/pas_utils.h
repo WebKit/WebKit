@@ -318,6 +318,8 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
     pas_crash_with_info_impl6((uint64_t)line, misc1, misc2, misc3, misc4, misc5, misc6);
 }
 
+PAS_IGNORE_WARNINGS_END
+
 /* The count argument will always be computed with PAS_VA_NUM_ARGS in the client.
    Hence, it is always a constant, and the following cascade of if statements will
    reduce to a single statement for the appropriate number of __VA_ARGS__.
@@ -380,8 +382,6 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
         pas_assertion_failed_noreturn_silencer6(file, line, function, exp, (uint64_t)misc1, (uint64_t)misc2, (uint64_t)misc3, (uint64_t)misc4, (uint64_t)misc5, (uint64_t)misc6)
 
 #endif /* PAS_OS(DARWIN) && PAS_VA_OPT_SUPPORTED */
-
-PAS_IGNORE_WARNINGS_END
 
 #define PAS_LIKELY(x) __PAS_LIKELY(x)
 #define PAS_UNLIKELY(x) __PAS_UNLIKELY(x)
