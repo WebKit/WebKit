@@ -260,6 +260,17 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
     return true;
 }
 
+void MediaPlayerPrivateGStreamerMSE::setNetworkState(MediaPlayer::NetworkState networkState)
+{
+    if (networkState == m_mediaSourceNetworkState)
+        return;
+
+    m_mediaSourceNetworkState = networkState;
+    m_networkState = networkState;
+    updateStates();
+    m_player->networkStateChanged();
+}
+
 void MediaPlayerPrivateGStreamerMSE::setReadyState(MediaPlayer::ReadyState mediaSourceReadyState)
 {
     // Something important to bear in mind is that the readyState we get here comes from MediaSource.

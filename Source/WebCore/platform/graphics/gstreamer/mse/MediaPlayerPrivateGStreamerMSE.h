@@ -73,6 +73,7 @@ public:
     // see: https://w3c.github.io/media-source/#h-note-19
     bool supportsProgressMonitoring() const override { return false; }
 
+    void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
     MediaSourcePrivateClient* mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
@@ -116,6 +117,7 @@ private:
 
     bool m_isWaitingForPreroll = true;
     MediaPlayer::ReadyState m_mediaSourceReadyState = MediaPlayer::ReadyState::HaveNothing;
+    MediaPlayer::NetworkState m_mediaSourceNetworkState = MediaPlayer::NetworkState::Empty;
 };
 
 } // namespace WebCore
