@@ -36,14 +36,22 @@ SET_AND_EXPOSE_TO_BUILD(USE_CFURLCONNECTION ON)
 
 set(SQLite3_NAMES SQLite3${DEBUG_SUFFIX})
 
+find_package(Apple REQUIRED COMPONENTS
+    AVFoundationCF
+    ApplicationServices
+    CFNetwork
+    CoreFoundation
+    CoreGraphics
+    CoreText
+    QuartzCore
+    libdispatch
+)
+
 find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
 find_package(LibXml2 REQUIRED)
 find_package(LibXslt REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(ZLIB REQUIRED)
-
-# Libraries where find_package does not work
-set(COREFOUNDATION_LIBRARY CoreFoundation${DEBUG_SUFFIX})
 
 SET_AND_EXPOSE_TO_BUILD(USE_CA ON)
 SET_AND_EXPOSE_TO_BUILD(USE_CG ON)

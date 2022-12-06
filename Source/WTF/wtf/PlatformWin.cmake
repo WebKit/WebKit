@@ -54,7 +54,7 @@ if (USE_CF)
         text/cf/StringViewCF.cpp
     )
 
-    list(APPEND WTF_LIBRARIES ${COREFOUNDATION_LIBRARY})
+    list(APPEND WTF_LIBRARIES Apple::CoreFoundation)
 endif ()
 
 set(WTF_OUTPUT_NAME WTF${DEBUG_SUFFIX})

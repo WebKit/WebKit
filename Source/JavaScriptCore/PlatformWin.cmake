@@ -21,7 +21,7 @@ if (USE_CF)
     )
 
     list(APPEND JavaScriptCore_LIBRARIES
-        ${COREFOUNDATION_LIBRARY}
+        Apple::CoreFoundation
     )
 endif ()
 

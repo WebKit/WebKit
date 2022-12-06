@@ -51,11 +51,11 @@ include_directories(
 add_library(WebKitQuartzCoreAdditions SHARED ${WebKitQuartzCoreAdditions_SOURCES})
 set_target_properties(WebKitQuartzCoreAdditions PROPERTIES OUTPUT_NAME WebKitQuartzCoreAdditions${DEBUG_SUFFIX})
 target_link_libraries(WebKitQuartzCoreAdditions
+    Apple::CoreFoundation
+    Apple::CoreGraphics
+    Apple::QuartzCore
     D3d9
     WebKit::WTF
-    CoreFoundation${DEBUG_SUFFIX}
-    CoreGraphics${DEBUG_SUFFIX}
-    QuartzCore${DEBUG_SUFFIX}
 )
 
 target_precompile_headers(WebKitQuartzCoreAdditions PRIVATE WebKitQuartzCoreAdditionsPrefix.h)
