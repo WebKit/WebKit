@@ -6192,7 +6192,3 @@ imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html [ Im
 imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-nesting/implicit-nesting.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]
-
-# Skip all cache-storage tests until https://bugs.webkit.org/show_bug.cgi?id=248824 is resolved
-http/wpt/cache-storage [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
