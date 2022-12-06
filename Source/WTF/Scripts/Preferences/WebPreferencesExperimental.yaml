@@ -868,19 +868,6 @@ ImperativeSlotAPIEnabled:
     WebCore:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-InProcessCookieCacheEnabled:
-  type: bool
-  humanReadableName: "In-Process Cookie Cache"
-  humanReadableDescription: "In-Process DOM Cookie Cache"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 InertAttributeEnabled:
   type: bool
   humanReadableName: "inert attribute"
