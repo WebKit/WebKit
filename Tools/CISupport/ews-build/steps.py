@@ -3187,10 +3187,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         patch_author = self.getProperty('patch_author')
         if patch_author in ['webkit-wpt-import-bot@igalia.com']:
             self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
-        else:
-            if self.EXIT_AFTER_FAILURES is not None:
-                self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
-            self.setCommand(self.command + ['--skip-failing-tests'])
+        elif self.EXIT_AFTER_FAILURES is not None:
+            self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
@@ -3531,7 +3529,7 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
             second_results_failing_tests = set(self.getProperty('second_run_failures', set()))
             list_failed_tests_with_change = sorted(first_results_failing_tests.union(second_results_failing_tests))
             if list_failed_tests_with_change:
-                self.setCommand(self.command + ['--skipped=always'] + list_failed_tests_with_change)
+                self.setCommand(self.command + ['--skip-failing-tests', '--skipped=always'] + list_failed_tests_with_change)
 
 
 class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
@@ -3927,7 +3925,7 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
         # is skipped anyways if is marked as such on the Expectation files or if is marked
         # as failure (since we are passing also '--skip-failing-tests'). That way we ensure
         # to report the case of a change removing an expectation that still fails with it.
-        self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST, '--skipped=always'] + sorted(failures_to_repeat))
+        self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST, '--skip-failing-tests', '--skipped=always'] + sorted(failures_to_repeat))
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
