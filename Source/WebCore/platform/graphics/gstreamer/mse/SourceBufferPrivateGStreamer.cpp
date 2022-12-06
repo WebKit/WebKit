@@ -60,6 +60,12 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 
 namespace WebCore {
 
+bool SourceBufferPrivateGStreamer::isContentTypeSupported(const ContentType& type)
+{
+    const auto& containerType = type.containerType();
+    return containerType == "audio/mpeg"_s || containerType.endsWith("mp4"_s) || containerType.endsWith("aac"_s) || containerType.endsWith("webm"_s);
+}
+
 Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
 {
     return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, contentType, playerPrivate));

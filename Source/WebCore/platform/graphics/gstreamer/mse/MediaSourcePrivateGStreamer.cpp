@@ -84,6 +84,9 @@ MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuf
     if (m_playerPrivate.hasAllTracks())
         return MediaSourcePrivateGStreamer::AddStatus::ReachedIdLimit;
 
+    if (!SourceBufferPrivateGStreamer::isContentTypeSupported(contentType))
+        return MediaSourcePrivateGStreamer::AddStatus::NotSupported;
+
     sourceBufferPrivate = SourceBufferPrivateGStreamer::create(this, contentType, m_playerPrivate);
     RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivateGStreamer = static_cast<SourceBufferPrivateGStreamer*>(sourceBufferPrivate.get());
     m_sourceBuffers.add(sourceBufferPrivateGStreamer);
@@ -112,9 +115,11 @@ void MediaSourcePrivateGStreamer::durationChanged(const MediaTime&)
     m_playerPrivate.durationChanged();
 }
 
-void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus)
+void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamStatus)
 {
     ASSERT(isMainThread());
+    if (endOfStreamStatus == EosNoError)
+        m_playerPrivate.setNetworkState(MediaPlayer::NetworkState::Loaded);
     m_isEnded = true;
 }
 
