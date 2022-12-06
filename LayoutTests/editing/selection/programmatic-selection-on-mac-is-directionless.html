@@ -49,8 +49,8 @@ function selectLine(node) {
     }
 }
 
-function runTestsAndVerify(name, selectionModifier, expectedDirection, expectedText) {
-    var currentTest = makeTest(name, selectionModifier, expectedDirection, expectedText);
+function runTestsAndVerify(node, selectionModifier, expectedDirection, expectedText) {
+    var currentTest = makeTest(node, selectionModifier, expectedDirection, expectedText);
 
     currentTest('no action');
     currentTest('delete');
@@ -60,9 +60,9 @@ function runTestsAndVerify(name, selectionModifier, expectedDirection, expectedT
     currentTest('insertText');
 }
 
-function makeTest(name, selectionModifier, expectedDirection, expectedText) {
+function makeTest(node, selectionModifier, expectedDirection, expectedText) {
     return function (action) {
-        selectLine(name);
+        selectLine(node);
         var actionString = '';
 
         if (action != 'no action') {
@@ -71,12 +71,16 @@ function makeTest(name, selectionModifier, expectedDirection, expectedText) {
             actionString = ', after undoing ' + action;
         }
 
-        var description = selectionModifier() + ' in ' + name.id + actionString;
+        var description = selectionModifier() + ' in ' + node.id + actionString;
         var selection = window.getSelection();
         var actualDirection = selection.baseOffset < selection.extentOffset ? 'forward' : (selection.baseOffset > selection.extentOffset ? 'backward' : 'none');
-
-        if (selection.toString() != expectedText)
-            testFailed(description + ', expected "' + expectedText + '" but got "' + selection.toString() + '"');
+        var actualText = selection.toString();
+        if (node.localName != 'div') {
+            actualDirection = node.selectionDirection;
+            actualText = node.value.substring(node.selectionStart, node.selectionEnd);
+        }
+        if (actualText != expectedText)
+            testFailed(description + ', expected "' + expectedText + '" but got "' + actualText + '"');
         else if (description.split(' ')[4] == 'div' && expectedDirection != actualDirection)
             testFailed(description + ', expected ' + expectedDirection + ' direction but got ' + actualDirection);
         else
