@@ -348,9 +348,9 @@ JSC::GCClient::IsoSubspace* JSTestSerializedScriptValueInterface::subspaceForImp
 {
     return WebCore::subspaceForImpl<JSTestSerializedScriptValueInterface, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestSerializedScriptValueInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestSerializedScriptValueInterface = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestSerializedScriptValueInterface = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestSerializedScriptValueInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestSerializedScriptValueInterface = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestSerializedScriptValueInterface = std::forward<decltype(space)>(space); }
     );
 }
 

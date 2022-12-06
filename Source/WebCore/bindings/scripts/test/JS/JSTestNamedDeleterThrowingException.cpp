@@ -243,9 +243,9 @@ JSC::GCClient::IsoSubspace* JSTestNamedDeleterThrowingException::subspaceForImpl
 {
     return WebCore::subspaceForImpl<JSTestNamedDeleterThrowingException, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedDeleterThrowingException.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedDeleterThrowingException = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedDeleterThrowingException = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedDeleterThrowingException.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedDeleterThrowingException = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedDeleterThrowingException = std::forward<decltype(space)>(space); }
     );
 }
 

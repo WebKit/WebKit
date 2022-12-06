@@ -168,9 +168,9 @@ JSC::GCClient::IsoSubspace* JSTestReportExtraMemoryCost::subspaceForImpl(JSC::VM
 {
     return WebCore::subspaceForImpl<JSTestReportExtraMemoryCost, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestReportExtraMemoryCost.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestReportExtraMemoryCost = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestReportExtraMemoryCost = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestReportExtraMemoryCost.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestReportExtraMemoryCost = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestReportExtraMemoryCost = std::forward<decltype(space)>(space); }
     );
 }
 

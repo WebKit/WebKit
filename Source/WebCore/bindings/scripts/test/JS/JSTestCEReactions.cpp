@@ -441,9 +441,9 @@ JSC::GCClient::IsoSubspace* JSTestCEReactions::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestCEReactions, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestCEReactions.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCEReactions = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCEReactions = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestCEReactions.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestCEReactions = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestCEReactions = std::forward<decltype(space)>(space); }
     );
 }
 

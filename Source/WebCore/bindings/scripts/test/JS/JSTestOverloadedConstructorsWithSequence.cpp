@@ -239,9 +239,9 @@ JSC::GCClient::IsoSubspace* JSTestOverloadedConstructorsWithSequence::subspaceFo
 {
     return WebCore::subspaceForImpl<JSTestOverloadedConstructorsWithSequence, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestOverloadedConstructorsWithSequence.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOverloadedConstructorsWithSequence = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOverloadedConstructorsWithSequence = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestOverloadedConstructorsWithSequence.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestOverloadedConstructorsWithSequence = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestOverloadedConstructorsWithSequence = std::forward<decltype(space)>(space); }
     );
 }
 

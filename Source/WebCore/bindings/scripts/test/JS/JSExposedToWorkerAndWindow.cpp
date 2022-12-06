@@ -251,9 +251,9 @@ JSC::GCClient::IsoSubspace* JSExposedToWorkerAndWindow::subspaceForImpl(JSC::VM&
 {
     return WebCore::subspaceForImpl<JSExposedToWorkerAndWindow, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForExposedToWorkerAndWindow.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForExposedToWorkerAndWindow = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForExposedToWorkerAndWindow = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForExposedToWorkerAndWindow.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForExposedToWorkerAndWindow = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForExposedToWorkerAndWindow = std::forward<decltype(space)>(space); }
     );
 }
 

@@ -341,9 +341,9 @@ JSC::GCClient::IsoSubspace* JSTestNamedAndIndexedSetterThrowingException::subspa
 {
     return WebCore::subspaceForImpl<JSTestNamedAndIndexedSetterThrowingException, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedAndIndexedSetterThrowingException.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedAndIndexedSetterThrowingException = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedAndIndexedSetterThrowingException = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedAndIndexedSetterThrowingException = std::forward<decltype(space)>(space); }
     );
 }
 

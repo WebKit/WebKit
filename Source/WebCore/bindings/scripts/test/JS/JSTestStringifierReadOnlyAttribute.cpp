@@ -205,9 +205,9 @@ JSC::GCClient::IsoSubspace* JSTestStringifierReadOnlyAttribute::subspaceForImpl(
 {
     return WebCore::subspaceForImpl<JSTestStringifierReadOnlyAttribute, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestStringifierReadOnlyAttribute.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestStringifierReadOnlyAttribute = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestStringifierReadOnlyAttribute = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestStringifierReadOnlyAttribute.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestStringifierReadOnlyAttribute = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestStringifierReadOnlyAttribute = std::forward<decltype(space)>(space); }
     );
 }
 

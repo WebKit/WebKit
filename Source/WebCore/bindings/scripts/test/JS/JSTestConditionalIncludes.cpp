@@ -789,9 +789,9 @@ JSC::GCClient::IsoSubspace* JSTestConditionalIncludes::subspaceForImpl(JSC::VM& 
 {
     return WebCore::subspaceForImpl<JSTestConditionalIncludes, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestConditionalIncludes.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionalIncludes = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionalIncludes = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestConditionalIncludes.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestConditionalIncludes = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestConditionalIncludes = std::forward<decltype(space)>(space); }
     );
 }
 

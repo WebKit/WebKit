@@ -281,9 +281,9 @@ JSC::GCClient::IsoSubspace* JSTestReadOnlySetLike::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestReadOnlySetLike, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestReadOnlySetLike.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestReadOnlySetLike = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestReadOnlySetLike = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestReadOnlySetLike.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestReadOnlySetLike = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestReadOnlySetLike = std::forward<decltype(space)>(space); }
     );
 }
 

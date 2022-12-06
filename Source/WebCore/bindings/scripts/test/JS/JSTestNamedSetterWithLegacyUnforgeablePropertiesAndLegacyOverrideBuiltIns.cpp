@@ -335,9 +335,9 @@ JSC::GCClient::IsoSubspace* JSTestNamedSetterWithLegacyUnforgeablePropertiesAndL
 {
     return WebCore::subspaceForImpl<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = std::forward<decltype(space)>(space); }
     );
 }
 

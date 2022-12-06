@@ -358,9 +358,9 @@ JSC::GCClient::IsoSubspace* JSTestNamedSetterWithLegacyUnforgeableProperties::su
 {
     return WebCore::subspaceForImpl<JSTestNamedSetterWithLegacyUnforgeableProperties, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeableProperties.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeableProperties = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithLegacyUnforgeableProperties = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithLegacyUnforgeableProperties = std::forward<decltype(space)>(space); }
     );
 }
 

@@ -378,9 +378,9 @@ JSC::GCClient::IsoSubspace* JSTestMapLikeWithOverriddenOperations::subspaceForIm
 {
     return WebCore::subspaceForImpl<JSTestMapLikeWithOverriddenOperations, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestMapLikeWithOverriddenOperations.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestMapLikeWithOverriddenOperations = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestMapLikeWithOverriddenOperations = std::forward<decltype(space)>(space); }
     );
 }
 

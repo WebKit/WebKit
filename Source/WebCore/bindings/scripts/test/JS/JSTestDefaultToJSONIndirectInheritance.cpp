@@ -159,9 +159,9 @@ JSC::GCClient::IsoSubspace* JSTestDefaultToJSONIndirectInheritance::subspaceForI
 {
     return WebCore::subspaceForImpl<JSTestDefaultToJSONIndirectInheritance, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSONIndirectInheritance.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONIndirectInheritance = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONIndirectInheritance = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSONIndirectInheritance.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSONIndirectInheritance = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSONIndirectInheritance = std::forward<decltype(space)>(space); }
     );
 }
 

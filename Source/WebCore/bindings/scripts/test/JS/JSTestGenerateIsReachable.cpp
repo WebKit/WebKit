@@ -195,9 +195,9 @@ JSC::GCClient::IsoSubspace* JSTestGenerateIsReachable::subspaceForImpl(JSC::VM& 
 {
     return WebCore::subspaceForImpl<JSTestGenerateIsReachable, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestGenerateIsReachable.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGenerateIsReachable = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGenerateIsReachable = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestGenerateIsReachable.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestGenerateIsReachable = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestGenerateIsReachable = std::forward<decltype(space)>(space); }
     );
 }
 

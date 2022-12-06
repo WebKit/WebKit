@@ -168,9 +168,9 @@ JSC::GCClient::IsoSubspace* JSPaintWorkletGlobalScope::subspaceForImpl(JSC::VM& 
 {
     return WebCore::subspaceForImpl<JSPaintWorkletGlobalScope, UseCustomHeapCellType::Yes>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForPaintWorkletGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForPaintWorkletGlobalScope = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForPaintWorkletGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForPaintWorkletGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForPaintWorkletGlobalScope = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForPaintWorkletGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeForJSPaintWorkletGlobalScope; }
     );
 }

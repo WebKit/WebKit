@@ -231,9 +231,9 @@ JSC::GCClient::IsoSubspace* JSTestOperationConditional::subspaceForImpl(JSC::VM&
 {
     return WebCore::subspaceForImpl<JSTestOperationConditional, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestOperationConditional.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOperationConditional = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestOperationConditional = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestOperationConditional.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestOperationConditional = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestOperationConditional = std::forward<decltype(space)>(space); }
     );
 }
 

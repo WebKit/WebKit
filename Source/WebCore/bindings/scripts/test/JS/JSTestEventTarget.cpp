@@ -259,9 +259,9 @@ JSC::GCClient::IsoSubspace* JSTestEventTarget::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestEventTarget, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEventTarget.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEventTarget = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEventTarget = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEventTarget.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestEventTarget = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestEventTarget = std::forward<decltype(space)>(space); }
     );
 }
 

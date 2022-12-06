@@ -167,9 +167,9 @@ JSC::GCClient::IsoSubspace* JSTestTaggedWrapper::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestTaggedWrapper, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestTaggedWrapper.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestTaggedWrapper = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestTaggedWrapper = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestTaggedWrapper.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestTaggedWrapper = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestTaggedWrapper = std::forward<decltype(space)>(space); }
     );
 }
 

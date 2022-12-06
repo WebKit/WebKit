@@ -513,9 +513,9 @@ JSC::GCClient::IsoSubspace* JSTestCallTracer::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestCallTracer, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestCallTracer.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCallTracer = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestCallTracer = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestCallTracer.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestCallTracer = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestCallTracer = std::forward<decltype(space)>(space); }
     );
 }
 
