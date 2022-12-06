@@ -66,10 +66,10 @@ WebCodecsVideoEncoder::~WebCodecsVideoEncoder()
 {
 }
 
-static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
+static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config, const Settings::Values& settings)
 {
     // FIXME: Check codec more accurately.
-    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09."_s) && !config.codec.startsWith("avc1."_s) && !config.codec.startsWith("hev1."_s))
+    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09."_s) && !config.codec.startsWith("avc1."_s) && !config.codec.startsWith("hev1."_s) && (!config.codec.startsWith("av01."_s) || !settings.webCodecsAV1Enabled))
         return false;
 
     if (!config.width || !config.height)
@@ -86,9 +86,9 @@ static VideoEncoder::Config createVideoEncoderConfig(const WebCodecsVideoEncoder
     return { config.width, config.height, useAnnexB, config.bitrate.value_or(0), config.framerate.value_or(0), config.latencyMode == LatencyMode::Realtime };
 }
 
-ExceptionOr<void> WebCodecsVideoEncoder::configure(WebCodecsVideoEncoderConfig&& config)
+ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& context, WebCodecsVideoEncoderConfig&& config)
 {
-    if (!isValidEncoderConfig(config))
+    if (!isValidEncoderConfig(config, context.settingsValues()))
         return Exception { TypeError, "Config is invalid"_s };
 
     if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
@@ -264,7 +264,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::close()
 
 void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoEncoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
-    if (!isValidEncoderConfig(config)) {
+    if (!isValidEncoderConfig(config, context.settingsValues())) {
         promise->reject(Exception { TypeError, "Config is not valid"_s });
         return;
     }

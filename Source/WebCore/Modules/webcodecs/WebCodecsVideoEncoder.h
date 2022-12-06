@@ -62,7 +62,7 @@ public:
     WebCodecsCodecState state() const { return m_state; }
     size_t encodeQueueSize() const { return m_encodeQueueSize; }
 
-    ExceptionOr<void> configure(WebCodecsVideoEncoderConfig&&);
+    ExceptionOr<void> configure(ScriptExecutionContext&, WebCodecsVideoEncoderConfig&&);
     ExceptionOr<void> encode(Ref<WebCodecsVideoFrame>&&, WebCodecsVideoEncoderEncodeOptions&&);
     void flush(Ref<DeferredPromise>&&);
     ExceptionOr<void> reset();

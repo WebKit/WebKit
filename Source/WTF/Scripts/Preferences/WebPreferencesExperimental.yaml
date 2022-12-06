@@ -1892,6 +1892,19 @@ WebAuthenticationEnabled:
     WebCore:
       default: true
 
+WebCodecsAV1Enabled:
+  type: bool
+  humanReadableName: "WebCodecs AV1 codec"
+  humanReadableDescription: WebCodecs
+  condition: ENABLE(WEB_CODECS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebCodecsEnabled:
   type: bool
   humanReadableName: "Web Codecs"

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
 
+#include "LibWebRTCDav1dDecoder.h"
 #include "Logging.h"
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/FastMalloc.h>
@@ -145,9 +146,14 @@ void LibWebRTCVPXInternalVideoDecoder::decode(Span<const uint8_t> data, bool isK
 
 static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDecoder::Type type)
 {
-    if (type == LibWebRTCVPXVideoDecoder::Type::VP8)
+    switch (type) {
+    case LibWebRTCVPXVideoDecoder::Type::VP8:
         return makeUniqueRefFromNonNullUniquePtr(webrtc::VP8Decoder::Create());
-    return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Decoder::Create());
+    case LibWebRTCVPXVideoDecoder::Type::VP9:
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Decoder::Create());
+    case LibWebRTCVPXVideoDecoder::Type::AV1:
+        return createLibWebRTCDav1dDecoder();
+    }
 }
 
 LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type type, VideoDecoder::OutputCallback&& outputCallback, VideoDecoder::PostTaskCallback&& postTaskCallback)

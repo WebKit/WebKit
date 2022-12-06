@@ -61,10 +61,10 @@ WebCodecsVideoDecoder::~WebCodecsVideoDecoder()
 {
 }
 
-static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
+static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config, const Settings::Values& settings)
 {
     // FIXME: Check codec more accurately.
-    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09."_s) && !config.codec.startsWith("avc1."_s))
+    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09."_s) && !config.codec.startsWith("avc1."_s) && (!config.codec.startsWith("av01."_s) || !settings.webCodecsAV1Enabled))
         return false;
 
     if (!!config.codedWidth != !!config.codedHeight)
@@ -105,9 +105,9 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
     };
 }
 
-ExceptionOr<void> WebCodecsVideoDecoder::configure(WebCodecsVideoDecoderConfig&& config)
+ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& context, WebCodecsVideoDecoderConfig&& config)
 {
-    if (!isValidDecoderConfig(config))
+    if (!isValidDecoderConfig(config, context.settingsValues()))
         return Exception { TypeError, "Config is not valid"_s };
 
     if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
@@ -229,7 +229,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::close()
 
 void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoDecoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
-    if (!isValidDecoderConfig(config)) {
+    if (!isValidDecoderConfig(config, context.settingsValues())) {
         promise->reject(Exception { TypeError, "Config is not valid"_s });
         return;
     }
