@@ -145,6 +145,8 @@
     
                 log("Test " + (i + 1) + ", LTR:\n  Moving right: ");
                 sel.setPosition(tests[i], 0);
+                positionsMovingInDirection(sel, "forward");
+                positionsMovingInDirection(sel, "backward");
                 positionsMovingRight = positionsMovingInDirection(sel, "right");
                 logPositions(positionsMovingRight);
                 log("\n");
@@ -162,6 +164,8 @@
 
                 log("Test " + (i + 1) + ", RTL:\n  Moving left: ");
                 sel.setPosition(tests[i], 0);
+                positionsMovingInDirection(sel, "forward");
+                positionsMovingInDirection(sel, "backward");
                 positionsMovingLeft = positionsMovingInDirection(sel, "left");
                 logPositions(positionsMovingLeft);
                 log("\n");
