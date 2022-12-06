@@ -16,7 +16,7 @@ PASS normalizeCssText(element.style.cssText) is "border: dotted"
 PASS normalizeCssText(element.style.cssText) is "border-width: 1px"
 PASS normalizeCssText(element.style.cssText) is "border-spacing: 1px 2px"
 PASS normalizeCssText(element.style.cssText) is "font-family: sans-serif; font-size: 3em; font-style: italic; font-weight: bold; line-height: 2em"
-PASS normalizeCssText(element.style.cssText) is "list-style: inside circle"
+FAIL normalizeCssText(element.style.cssText) should be list-style: inside circle. Was list-style-image: initial; list-style-position: inside; list-style-type: circle.
 PASS normalizeCssText(element.style.cssText) is "margin: 1px 2px 3px 4px"
 PASS normalizeCssText(element.style.cssText) is "outline: blue dotted 2px"
 PASS normalizeCssText(element.style.cssText) is "overflow: scroll hidden"

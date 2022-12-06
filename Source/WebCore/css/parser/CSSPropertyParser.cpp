@@ -178,6 +178,9 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
     // execCommand('FontSizeDelta')).
     ASSERT(isExposed(property, &m_context.propertySettings) || setFromShorthand || isInternal(property));
 
+    if (!implicit && value->isImplicitInitialValue())
+        implicit = true;
+
     m_parsedProperties->append(CSSProperty(property, WTFMove(value), important, setFromShorthand, shorthandIndex, implicit));
 }
 
