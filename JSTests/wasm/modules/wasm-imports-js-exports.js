@@ -1,4 +1,4 @@
-//@ skip if $architecture != "arm64" && $architecture != "x86-64"
+//@ skip if $architecture != "arm64" && $architecture != "x86_64"
 import { addOne } from "./wasm-imports-js-exports/imports.wasm"
 import * as assert from '../assert.js';
 

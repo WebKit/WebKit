@@ -1,4 +1,4 @@
-//@ skip if ($hostOS != "" || $architecture != "x86-64")
+//@ skip if ($hostOS != "" || $architecture != "x86_64")
 
 var a = [];
 for (var i=0; i<0x04001000; i++) a.push(i+0.1);

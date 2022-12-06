@@ -1,4 +1,4 @@
-//@ skip if $memoryLimited or ($architecture != "arm64" && $architecture != "x86-64")
+//@ skip if $memoryLimited or ($architecture != "arm64" && $architecture != "x86_64")
 
 let giga = 1024 * 1024 * 1024;
 

@@ -467,7 +467,7 @@ def determineArchitectureFromMachOBinary
     when 7
         "x86"
     when 7 | is64BitFlag
-        "x86-64"
+        "x86_64"
     when 12
         "arm"
     when 12 | is64BitFlag
@@ -512,7 +512,7 @@ def determineArchitectureFromELFBinary
     when "\x28\0"
         "arm"
     when "\x3E\0"
-        "x86-64"
+        "x86_64"
     when "\xB7\0"
         "arm64"
     when [243, 0].pack("cc")
@@ -545,7 +545,7 @@ def determineArchitectureFromPEBinary
     when 0x014c
         "x86"
     when 0x8664
-        "x86-64"
+        "x86_64"
     else
         $stderr.puts "Warning: unsupported machine type: #{machine}"
         nil
@@ -561,7 +561,7 @@ def determineArchitecture
     when "windows"
         determineArchitectureFromPEBinary
     when "playstation"
-        "x86-64"
+        "x86_64"
     else
         $stderr.puts "Warning: unable to determine architecture on this platform."
         nil
