@@ -2564,8 +2564,6 @@ webkit.org/b/248493 http/tests/security/contentSecurityPolicy/script-src-parsing
 [ Ventura+ ] media/track/track-long-captions-file.html  [ Crash ]
 [ Ventura+ ] media/track/track-mode-disabled-crash.html  [ Crash ]
 [ BigSur+ ] imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.html [ Pass Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/geolocation-API/PositionOptions.https.html [ Failure ]
 [ Ventura+ ] http/wpt/webaudio/audioworklet-addModule-cors.sub.https.html
 [ Monterey+ ] http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
 [ BigSur+ ] http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html [ Pass Failure ]
