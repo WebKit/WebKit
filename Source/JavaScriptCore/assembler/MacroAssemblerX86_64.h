@@ -2123,6 +2123,7 @@ public:
     }
 
     // SIMD
+    // FIXME: We should use AVX or SSE only due to performance concerns.
 
     void signExtendForSIMDLane(RegisterID reg, SIMDLane simdLane)
     {
@@ -2137,21 +2138,75 @@ public:
 
     void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
     {
-        m_assembler.pinsr(simdLane, lane.m_value, src, dest);
+        switch (simdLane) {
+        case SIMDLane::i8x16:
+            m_assembler.pinsrb_rr(lane.m_value, src, dest);
+            return;
+        case SIMDLane::i16x8:
+            m_assembler.pinsrw_rr(lane.m_value, src, dest);
+            return;
+        case SIMDLane::i32x4:
+            m_assembler.pinsrd_rr(lane.m_value, src, dest);
+            return;
+        case SIMDLane::i64x2:
+            m_assembler.pinsrq_rr(lane.m_value, src, dest);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
-    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest, RegisterID scratch)
+    void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
-        // FIXME: Maybe we can use INSERTPS instead to get rid of the scratch register.
-        moveDoubleTo64(src, scratch);
-        m_assembler.pinsr(simdLane, lane.m_value, scratch, dest);
+        switch (simdLane) {
+        case SIMDLane::f32x4:
+            m_assembler.insertps_rr(lane.m_value, src, dest);
+            return;
+        case SIMDLane::f64x2:
+            ASSERT(lane.m_value < 2);
+            if (lane.m_value)
+                m_assembler.unpcklpd_rr(src, dest);
+            else
+                m_assembler.movsd_rr(src, dest);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     DEFINE_SIMD_FUNCS(vectorReplaceLane);
     
     void vectorExtractLane(SIMDLane simdLane, SIMDSignMode signMode, TrustedImm32 lane, FPRegisterID src, RegisterID dest)
     {
-        m_assembler.pextr(simdLane, lane.m_value, src, dest);
+        switch (simdLane) {
+        case SIMDLane::i8x16:
+            if (supportsAVX())
+                m_assembler.vpextrb_rr(lane.m_value, src, dest);
+            else
+                m_assembler.pextrb_rr(lane.m_value, src, dest);
+            break;
+        case SIMDLane::i16x8:
+            if (supportsAVX())
+                m_assembler.vpextrw_rr(lane.m_value, src, dest);
+            else
+                m_assembler.pextrw_rr(lane.m_value, src, dest);
+            break;
+        case SIMDLane::i32x4:
+            if (supportsAVX())
+                m_assembler.vpextrd_rr(lane.m_value, src, dest);
+            else
+                m_assembler.pextrd_rr(lane.m_value, src, dest);
+            break;
+        case SIMDLane::i64x2:
+            if (supportsAVX())
+                m_assembler.vpextrq_rr(lane.m_value, src, dest);
+            else
+                m_assembler.pextrq_rr(lane.m_value, src, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
         if (signMode == SIMDSignMode::Signed)
             signExtendForSIMDLane(dest, simdLane);
     }
@@ -2585,7 +2640,18 @@ public:
     void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
     void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
     void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID) { UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
-    void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
+
+    void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
+    {
+        if (supportsAVX())
+            m_assembler.vpshufb_rr(b, a, dest);
+        else {
+            if (a != dest)
+                m_assembler.movapd_rr(a, dest);
+            m_assembler.pshufb_rr(b, dest);
+        }
+    }
+
     void vectorShuffle(TrustedImm64 immLow, TrustedImm64 immHigh, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(immLow); UNUSED_PARAM(immHigh); UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
 
     // Misc helper functions.
