@@ -105,6 +105,11 @@ void RemoteScrollingTree::reportExposedUnfilledArea(MonotonicTime time, unsigned
     m_scrollingCoordinatorProxy.reportExposedUnfilledArea(time, unfilledArea);
 }
 
+void RemoteScrollingTree::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, OptionSet<SynchronousScrollingReason> reasons)
+{
+    m_scrollingCoordinatorProxy.reportSynchronousScrollingReasonsChanged(timestamp, reasons);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

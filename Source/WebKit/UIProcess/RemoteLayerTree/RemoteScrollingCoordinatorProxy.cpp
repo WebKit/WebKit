@@ -281,6 +281,11 @@ void RemoteScrollingCoordinatorProxy::reportExposedUnfilledArea(MonotonicTime ti
     m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea), timestamp, unfilledArea);
 }
 
+void RemoteScrollingCoordinatorProxy::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, OptionSet<SynchronousScrollingReason> reasons)
+{
+    m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode), timestamp, reasons.toRaw());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)
