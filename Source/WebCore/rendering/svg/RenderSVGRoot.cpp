@@ -82,6 +82,11 @@ RenderSVGViewportContainer* RenderSVGRoot::viewportContainer() const
     return dynamicDowncast<RenderSVGViewportContainer>(child);
 }
 
+bool RenderSVGRoot::hasIntrinsicAspectRatio() const
+{
+    return computeIntrinsicAspectRatio();
+}
+
 void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment());

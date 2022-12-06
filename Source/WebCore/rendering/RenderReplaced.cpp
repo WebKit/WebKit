@@ -428,25 +428,37 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         if (!intrinsicRatio.isEmpty() && !intrinsicSize.isZero())
             m_intrinsicSize = LayoutSize(isHorizontalWritingMode() ? intrinsicSize : intrinsicSize.transposedSize());
     }
+    constrainedSize = intrinsicSize;
+}
+
+void RenderReplaced::computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(RenderBox* contentRenderer, FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
+{
+    computeAspectRatioInformationForRenderBox(contentRenderer, intrinsicSize, intrinsicRatio);
 
     // Now constrain the intrinsic size along each axis according to minimum and maximum width/heights along the
     // opposite axis. So for example a maximum width that shrinks our width will result in the height we compute here
     // having to shrink in order to preserve the aspect ratio. Because we compute these values independently along
     // each axis, the final returned size may in fact not preserve the aspect ratio.
-    // FIXME: In the long term, it might be better to just return this code more to the way it used to be before this
-    // function was added, since all it has done is make the code more unclear.
-    constrainedSize = intrinsicSize;
-    if (!intrinsicRatio.isEmpty() && !intrinsicSize.isEmpty() && style().logicalWidth().isAuto() && style().logicalHeight().isAuto()) {
+    if (!intrinsicRatio.isZero() && style().logicalWidth().isAuto() && style().logicalHeight().isAuto()) {
         if (isVideoWithDefaultObjectSize(this)) {
             LayoutUnit width = RenderBox::computeReplacedLogicalWidth();
-            constrainedSize.setWidth(width);
-            LayoutUnit height = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), intrinsicRatio.width() / intrinsicRatio.height(), BoxSizing::ContentBox, adjustBorderBoxLogicalWidthForBoxSizing(width, LengthType::Fixed));
-            constrainedSize.setHeight(height.round() - verticalBorderAndPaddingExtent());
+            intrinsicSize.setWidth(width);
+            LayoutUnit height = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), intrinsicRatio.aspectRatioDouble(), BoxSizing::ContentBox, adjustBorderBoxLogicalWidthForBoxSizing(width, LengthType::Fixed), style().aspectRatioType(), true);
+            intrinsicSize.setHeight(height.round() - verticalBorderAndPaddingExtent());
         } else {
-            // We can't multiply or divide by 'intrinsicRatio' here, it breaks tests, like fast/images/zoomed-img-size.html, which
-            // can only be fixed once subpixel precision is available for things like intrinsicWidth/Height - which include zoom!
-            constrainedSize.setWidth(RenderBox::computeReplacedLogicalHeight() * intrinsicSize.width() / intrinsicSize.height());
-            constrainedSize.setHeight(RenderBox::computeReplacedLogicalWidth() * intrinsicSize.height() / intrinsicSize.width());
+            auto removeBorderAndPaddingFromMinMaxSizes = [](LayoutUnit& minSize, LayoutUnit &maxSize, LayoutUnit borderAndPadding) {
+                minSize = std::max(0_lu, minSize - borderAndPadding);
+                maxSize = std::max(0_lu, maxSize - borderAndPadding);
+            };
+
+            auto [minLogicalWidth, maxLogicalWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+            removeBorderAndPaddingFromMinMaxSizes(minLogicalWidth, maxLogicalWidth, borderAndPaddingLogicalWidth());
+
+            auto [minLogicalHeight, maxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            removeBorderAndPaddingFromMinMaxSizes(minLogicalHeight, maxLogicalHeight, borderAndPaddingLogicalHeight());
+
+            intrinsicSize.setWidth(std::clamp(LayoutUnit { intrinsicSize.width() }, minLogicalWidth, maxLogicalWidth));
+            intrinsicSize.setHeight(std::clamp(LayoutUnit { intrinsicSize.height() }, minLogicalHeight, maxLogicalHeight));
         }
     }
 }
@@ -512,7 +524,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
             return;
     }
     // Figure out if we need to compute an intrinsic ratio.
-    if (!hasIntrinsicAspectRatio())
+    if (!RenderObject::hasIntrinsicAspectRatio() && !isSVGRootOrLegacySVGRoot())
         return;
 
     // After supporting contain-intrinsic-size, the intrinsicSize of size containment is not always empty.
@@ -573,7 +585,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
     // 10.3.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width
     FloatSize intrinsicRatio;
     FloatSize constrainedSize;
-    computeAspectRatioInformationForRenderBox(contentRenderer, constrainedSize, intrinsicRatio);
+    computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(contentRenderer, constrainedSize, intrinsicRatio);
 
     if (style().logicalWidth().isAuto()) {
         bool computedHeightIsAuto = style().logicalHeight().isAuto();
@@ -644,7 +656,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
     // 10.6.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height
     FloatSize intrinsicRatio;
     FloatSize constrainedSize;
-    computeAspectRatioInformationForRenderBox(contentRenderer, constrainedSize, intrinsicRatio);
+    computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(contentRenderer, constrainedSize, intrinsicRatio);
 
     bool widthIsAuto = style().logicalWidth().isAuto();
     bool hasIntrinsicHeight = constrainedSize.height() > 0;
