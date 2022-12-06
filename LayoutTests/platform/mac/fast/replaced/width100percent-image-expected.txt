@@ -28,10 +28,10 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,1) size 784x277
             RenderTableCell {TD} at (1,1) size 216x277 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
-            RenderTableCell {TD} at (217,1) size 217x277 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (218,1) size 216x277 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
-            RenderTableCell {TD} at (434,1) size 217x277 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (435,1) size 216x277 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
-            RenderTableCell {TD} at (651,129) size 132x21 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (652,129) size 131x21 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,0) size 4x20
                 text run at (1,1) width 4: " "
