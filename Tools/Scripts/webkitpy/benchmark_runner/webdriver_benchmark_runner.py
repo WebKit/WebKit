@@ -14,10 +14,18 @@ class WebDriverBenchmarkRunner(BenchmarkRunner):
         result = driver.execute_script("return window.webdriver_results")
         return result
 
+    def _construct_subtest_url(self, subtests):
+        if not subtests or type(subtests) != list or 'subtest_url_format' not in self._plan:
+            return ''
+        subtest_url = ''
+        for subtest in subtests:
+            subtest_url = subtest_url + '&' + self._plan['subtest_url_format'].replace('${SUITE}', subtest['suite']).replace('${TEST}', subtest['test'])
+        return subtest_url
+
     def _run_one_test(self, web_root, test_file, iteration):
         from selenium.webdriver.support.ui import WebDriverWait
         try:
-            url = 'file://{root}/{plan_name}/{test_file}'.format(root=web_root, plan_name=self._plan_name, test_file=test_file)
+            url = 'file://{root}/{plan_name}/{test_file}{subtest_url}'.format(root=web_root, plan_name=self._plan_name, test_file=test_file, subtest_url=self._construct_subtest_url(self.subtests))
             driver = self._browser_driver.launch_driver(url, self._plan['options'], self._build_dir, self._browser_path)
             _log.info('Waiting on results from web browser')
             result = WebDriverWait(driver, self._plan['timeout'], poll_frequency=1.0).until(self._get_result)
