@@ -545,7 +545,7 @@ inline bool RenderElement::shouldApplySizeContainment() const
 
 inline bool RenderElement::shouldApplyInlineSizeContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsInlineSize() || style().contentVisibility() == ContentVisibility::Hidden);
+    return shouldApplySizeOrStyleContainment(style().containsInlineSize());
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
