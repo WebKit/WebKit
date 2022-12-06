@@ -37,6 +37,10 @@
 #include <glib/gi18n-lib.h>
 #endif
 
+#if USE(CF) && PLATFORM(WIN)
+#include <wtf/text/cf/StringConcatenateCF.h>
+#endif
+
 namespace WebCore {
 
     class IntSize;
