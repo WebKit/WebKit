@@ -95,6 +95,7 @@ namespace WebKit {
 class AudioSessionRoutingArbitratorProxy;
 class ObjCObjectGraph;
 class PageClient;
+class ProvisionalFrameProxy;
 class ProvisionalPageProxy;
 class UserMediaCaptureManagerProxy;
 class VisitedLinkStore;
@@ -138,6 +139,7 @@ class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerCl
 public:
     // FIXME: This should be a WeakPtr<WebPageProxy> as the key.
     typedef HashMap<WebPageProxyIdentifier, WebPageProxy*> WebPageProxyMap;
+    typedef HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
     enum class IsPrewarmed {
@@ -201,7 +203,11 @@ public:
 
     void addProvisionalPageProxy(ProvisionalPageProxy&);
     void removeProvisionalPageProxy(ProvisionalPageProxy&);
-    
+    void addProvisionalFrameProxy(ProvisionalFrameProxy&);
+    void removeProvisionalFrameProxy(ProvisionalFrameProxy&);
+    void provisionalFrameCommitted(WebFrameProxy&);
+    void removeFrameWithRemoteFrameProcess(WebFrameProxy&);
+
     typename WebPageProxyMap::ValuesConstIteratorRange pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned provisionalPageCount() const { return m_provisionalPages.computeSize(); }
@@ -617,7 +623,9 @@ private:
     HashSet<String> m_previouslyApprovedFilePaths;
 
     WebPageProxyMap m_pageMap;
+    WebFrameProxyMap m_frameMap;
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
+    WeakHashSet<ProvisionalFrameProxy> m_provisionalFrames;
     UserInitiatedActionMap m_userInitiatedActionMap;
 
     HashMap<VisitedLinkStore*, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;

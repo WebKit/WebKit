@@ -108,14 +108,15 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
-void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
+void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
 {
     ASSERT(!m_frameID);
     m_frameID = coreFrame.frameID();
     WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object(), *this);
     WebProcess::singleton().addWebFrame(frameID(), this);
 
-    page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
+    if (!receivedMainFrameIdentifierFromUIProcess)
+        page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
     m_coreFrame = coreFrame;
     m_coreFrame->tree().setName(nullAtom());
@@ -125,7 +126,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto frame = create(page);
-    auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()));
+    auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate());
     frame->m_coreFrame = coreFrame.get();
 
     ASSERT(!frame->m_frameID);
@@ -251,6 +252,18 @@ void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
     Ref<WebFrame> protectedThis(*this);
     if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))
         completionHandler();
+}
+
+void WebFrame::didCommitLoadInAnotherProcess()
+{
+    // FIXME: Replace m_coreFrame with a RemoteFrame.
+}
+
+void WebFrame::didFinishLoadInAnotherProcess()
+{
+    // FIXME: m_coreFrame should be a RemoteFrame by now, and this should be a function on RemoteFrame.
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get()))
+        localFrame->didFinishLoadInAnotherProcess();
 }
 
 void WebFrame::invalidatePolicyListeners()

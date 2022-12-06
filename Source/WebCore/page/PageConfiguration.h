@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ContentSecurityPolicy.h"
+#include "FrameIdentifier.h"
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
@@ -159,6 +160,7 @@ public:
 #endif
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+    std::optional<FrameIdentifier> mainFrameIdentifier;
 };
 
 }

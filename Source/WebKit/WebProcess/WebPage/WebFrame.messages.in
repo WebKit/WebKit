@@ -22,4 +22,6 @@
 
 messages -> WebFrame {
     ContinueWillSubmitForm(WebKit::FormSubmitListenerIdentifier listenerID)
+    DidCommitLoadInAnotherProcess()
+    DidFinishLoadInAnotherProcess()
 }

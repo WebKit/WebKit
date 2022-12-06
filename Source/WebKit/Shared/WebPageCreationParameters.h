@@ -277,6 +277,8 @@ struct WebPageCreationParameters {
     bool hasResizableWindows { false };
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+
+    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 };
 
 } // namespace WebKit

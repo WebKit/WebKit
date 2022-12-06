@@ -37,9 +37,27 @@ namespace TestWebKitAPI {
 
 TEST(SiteIsolation, ProcessIdentifiers)
 {
-    HTTPServer server({
-        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
-        { "/webkit"_s, { "hi"_s } }
+    bool finishedLoading { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/webkit'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/webkit"_s) {
+                co_await connection.awaitableSend("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n"_s);
+                EXPECT_FALSE(finishedLoading);
+                Util::runFor(Seconds(0.1));
+                EXPECT_FALSE(finishedLoading);
+                // FIXME: Test that _webView:didCommitLoadWithRequest:inFrame: is called after beginning to receive the response body
+                // but didFinishNavigation does not get called until the entirety of the response body is received.
+                co_await connection.awaitableSend("hi"_s);
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
     }, HTTPServer::Protocol::HttpsProxy);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
@@ -55,13 +73,14 @@ TEST(SiteIsolation, ProcessIdentifiers)
     webView.get().navigationDelegate = delegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [delegate waitForDidFinishNavigation];
+    finishedLoading = true;
 
     __block bool done { false };
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {
         pid_t mainFramePid = mainFrame._processIdentifier;
         pid_t childFramePid = mainFrame.childFrames.firstObject._processIdentifier;
         EXPECT_NE(mainFramePid, 0);
-        EXPECT_EQ(childFramePid, 0); // FIXME: The child frame should actually start its process.
+        EXPECT_NE(childFramePid, 0);
         EXPECT_NE(mainFramePid, childFramePid);
         done = true;
     }];

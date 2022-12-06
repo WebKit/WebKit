@@ -150,8 +150,8 @@ static inline float parentTextZoomFactor(Frame* frame)
     return parent->textZoomFactor();
 }
 
-Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient)
-    : AbstractFrame(page, FrameIdentifier::generate(), ownerElement ? ownerElement->document().frame() : nullptr)
+Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier)
+    : AbstractFrame(page, identifier, ownerElement ? ownerElement->document().frame() : nullptr)
     , m_mainFrame(ownerElement ? page.mainFrame() : *this)
     , m_settings(&page.settings())
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
@@ -183,10 +183,10 @@ void Frame::init()
     m_loader->init();
 }
 
-Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& client)
+Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier)
 {
     ASSERT(page);
-    return adoptRef(*new Frame(*page, ownerElement, WTFMove(client)));
+    return adoptRef(*new Frame(*page, ownerElement, WTFMove(client), identifier));
 }
 
 Frame::~Frame()
@@ -1109,6 +1109,11 @@ TextStream& operator<<(TextStream& ts, const Frame& frame)
 bool Frame::arePluginsEnabled()
 {
     return settings().arePluginsEnabled();
+}
+
+void Frame::didFinishLoadInAnotherProcess()
+{
+    m_loader->checkCompleted();
 }
 
 void Frame::resetScript()

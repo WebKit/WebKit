@@ -119,7 +119,8 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
             m_process->processPool().pageEndUsingWebsiteDataStore(m_page.identifier(), *dataStore);
 
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
-        send(Messages::WebPage::Close());
+        if (m_process->hasConnection())
+            send(Messages::WebPage::Close());
         m_process->removeVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
     }
 
