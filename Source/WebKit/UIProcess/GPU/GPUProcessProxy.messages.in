@@ -30,6 +30,7 @@ messages -> GPUProcessProxy {
 
 #if ENABLE(VP9)
     SetHasVP9HardwareDecoder(bool hasVP9HardwareDecoder)
+    SetHasVP9ExtensionSupport(bool hasVP9ExtensionSupport)
 #endif
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
     StatusBarWasTapped() -> () Async

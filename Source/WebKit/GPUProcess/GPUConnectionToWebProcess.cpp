@@ -288,6 +288,13 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
         hasVP9HardwareDecoder = WebCore::vp9HardwareDecoderAvailable();
         gpuProcess.send(Messages::GPUProcessProxy::SetHasVP9HardwareDecoder(hasVP9HardwareDecoder));
     }
+    bool hasVP9ExtensionSupport;
+    if (parameters.hasVP9ExtensionSupport)
+        hasVP9ExtensionSupport = *parameters.hasVP9ExtensionSupport;
+    else {
+        hasVP9ExtensionSupport = WebCore::hasVP9ExtensionSupport();
+        gpuProcess.send(Messages::GPUProcessProxy::SetHasVP9ExtensionSupport(hasVP9ExtensionSupport));
+    }
 #endif
 
     WebKit::GPUProcessConnectionInfo info {
@@ -295,7 +302,8 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
         gpuProcess.parentProcessConnection()->getAuditToken(),
 #endif
 #if ENABLE(VP9)
-        hasVP9HardwareDecoder
+        hasVP9HardwareDecoder,
+        hasVP9ExtensionSupport
 #endif
     };
     m_connection->send(Messages::GPUProcessConnection::DidInitialize(info), 0);

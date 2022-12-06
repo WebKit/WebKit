@@ -45,6 +45,7 @@ struct GPUProcessConnectionParameters {
 #endif
 #if ENABLE(VP9)
     std::optional<bool> hasVP9HardwareDecoder;
+    std::optional<bool> hasVP9ExtensionSupport;
 #endif
 
     void encode(IPC::Encoder& encoder) const
@@ -60,6 +61,7 @@ struct GPUProcessConnectionParameters {
 #endif
 #if ENABLE(VP9)
         encoder << hasVP9HardwareDecoder;
+        encoder << hasVP9ExtensionSupport;
 #endif
     }
 
@@ -76,6 +78,7 @@ struct GPUProcessConnectionParameters {
 #endif
 #if ENABLE(VP9)
         auto hasVP9HardwareDecoder = decoder.decode<std::optional<bool>>();
+        auto hasVP9ExtensionSupport = decoder.decode<std::optional<bool>>();
 #endif
         if (!decoder.isValid())
             return std::nullopt;
@@ -92,6 +95,7 @@ struct GPUProcessConnectionParameters {
 #endif
 #if ENABLE(VP9)
             WTFMove(*hasVP9HardwareDecoder),
+            WTFMove(*hasVP9ExtensionSupport),
 #endif
         };
     }

@@ -146,6 +146,9 @@ public:
     bool supportVP9VTB() const { return m_supportVP9VTB; }
     void setLoggingLevel(WTFLogLevel);
 
+    void setHasVP9ExtensionSupport(bool hasVP9ExtensionSupport) { m_hasVP9ExtensionSupport = hasVP9ExtensionSupport; }
+    bool hasVP9ExtensionSupport() const { return m_hasVP9ExtensionSupport; }
+
 private:
     LibWebRTCCodecs();
     void ensureGPUProcessConnectionAndDispatchToThread(Function<void()>&&);
@@ -197,6 +200,7 @@ private:
     bool m_supportVP9VTB { false };
     std::optional<WTFLogLevel> m_loggingLevel;
     bool m_useRemoteFrames { false };
+    bool m_hasVP9ExtensionSupport { false };
 };
 
 } // namespace WebKit
