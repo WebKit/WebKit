@@ -265,10 +265,15 @@ static bool virtualKeyHasStickyModifier(VirtualKey key)
     // Returns whether the key's modifier flags should affect other events while pressed down.
     switch (key) {
     case VirtualKey::Shift:
+    case VirtualKey::ShiftRight:
     case VirtualKey::Control:
+    case VirtualKey::ControlRight:
     case VirtualKey::Alternate:
+    case VirtualKey::AlternateRight:
     case VirtualKey::Meta:
+    case VirtualKey::MetaRight:
     case VirtualKey::Command:
+    case VirtualKey::CommandRight:
         return true;
 
     default:
@@ -432,11 +437,12 @@ static int keyCodeForVirtualKey(VirtualKey key)
     case VirtualKey::AlternateRight:
         return kVK_RightOption;
     case VirtualKey::Meta:
-        // The 'meta' key does not exist on Apple keyboards and is usually
-        // mapped to the Command key when using third-party keyboards.
+        // The 'meta' keys (left and right) do not exist on Apple keyboards and are usually
+        // mapped to the Command keys when using third-party keyboards.
     case VirtualKey::Command:
         return kVK_Command;
     case VirtualKey::MetaRight:
+    case VirtualKey::CommandRight:
         return kVK_RightCommand;
     case VirtualKey::Help:
         return kVK_Help;
@@ -565,18 +571,23 @@ static NSEventModifierFlags eventModifierFlagsForVirtualKey(VirtualKey key)
     // The mapping from keys to modifiers is specified in the documentation for NSEvent.
     switch (key) {
     case VirtualKey::Shift:
+    case VirtualKey::ShiftRight:
         return NSEventModifierFlagShift;
 
     case VirtualKey::Control:
+    case VirtualKey::ControlRight:
         return NSEventModifierFlagControl;
 
     case VirtualKey::Alternate:
+    case VirtualKey::AlternateRight:
         return NSEventModifierFlagOption;
 
     case VirtualKey::Meta:
-        // The 'meta' key does not exist on Apple keyboards and is usually
-        // mapped to the Command key when using third-party keyboards.
+    case VirtualKey::MetaRight:
+        // The 'meta' keys (left and right) do not exist on Apple keyboards and are usually
+        // mapped to the Command keys when using third-party keyboards.
     case VirtualKey::Command:
+    case VirtualKey::CommandRight:
         return NSEventModifierFlagCommand;
 
     case VirtualKey::Help:

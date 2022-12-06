@@ -2079,6 +2079,8 @@ static VirtualKey normalizedVirtualKey(VirtualKey key)
         return Inspector::Protocol::Automation::VirtualKey::Alternate;
     case Inspector::Protocol::Automation::VirtualKey::MetaRight:
         return Inspector::Protocol::Automation::VirtualKey::Meta;
+    case Inspector::Protocol::Automation::VirtualKey::CommandRight:
+        return Inspector::Protocol::Automation::VirtualKey::Command;
     case Inspector::Protocol::Automation::VirtualKey::DownArrowRight:
         return Inspector::Protocol::Automation::VirtualKey::DownArrow;
     case Inspector::Protocol::Automation::VirtualKey::UpArrowRight:

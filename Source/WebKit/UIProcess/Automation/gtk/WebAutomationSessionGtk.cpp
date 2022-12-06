@@ -139,6 +139,7 @@ static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key)
     case Inspector::Protocol::Automation::VirtualKey::MetaRight:
         return GDK_KEY_Meta_R;
     case Inspector::Protocol::Automation::VirtualKey::Command:
+    case Inspector::Protocol::Automation::VirtualKey::CommandRight:
         return GDK_KEY_Execute;
     case Inspector::Protocol::Automation::VirtualKey::Help:
         return GDK_KEY_Help;
