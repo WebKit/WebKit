@@ -66,7 +66,6 @@ protected:
     HTMLElement* innerBlockElement() const final;
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
     HTMLElement* innerSpinButtonElement() const final;
-    HTMLElement* capsLockIndicatorElement() const final;
     HTMLElement* autoFillButtonElement() const final;
 #if ENABLE(DATALIST_ELEMENT)
     HTMLElement* dataListButtonElement() const final;

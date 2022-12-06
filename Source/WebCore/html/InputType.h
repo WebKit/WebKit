@@ -320,7 +320,6 @@ public:
     virtual HTMLElement* innerBlockElement() const { return nullptr; }
     virtual RefPtr<TextControlInnerTextElement> innerTextElement() const;
     virtual HTMLElement* innerSpinButtonElement() const { return nullptr; }
-    virtual HTMLElement* capsLockIndicatorElement() const { return nullptr; }
     virtual HTMLElement* autoFillButtonElement() const { return nullptr; }
     virtual HTMLElement* resultsButtonElement() const { return nullptr; }
     virtual HTMLElement* cancelButtonElement() const { return nullptr; }

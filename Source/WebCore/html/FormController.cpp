@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FormController.h"
 
+#include "FileChooser.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "ScriptDisallowedScope.h"
@@ -92,8 +93,6 @@ static std::optional<FormControlState> consumeSerializedFormControlState(AtomStr
         return std::nullopt;
     return reader.consumeSubvector(parseInteger<size_t>(sizeString).value_or(0));
 }
-
-// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
 

@@ -29,8 +29,6 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentType.h"
-#include "FileChooser.h"
-#include "FileIconLoader.h"
 #include "FileList.h"
 #include "FloatRect.h"
 #include "Frame.h"

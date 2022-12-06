@@ -31,6 +31,7 @@
 #include "ElementRareData.h"
 #include "Event.h"
 #include "File.h"
+#include "FileChooser.h"
 #include "FileList.h"
 #include "FormController.h"
 #include "Frame.h"
@@ -343,7 +344,7 @@ void FileInputType::applyFileChooserSettings()
     if (m_fileChooser)
         m_fileChooser->invalidate();
 
-    m_fileChooser = FileChooser::create(this, fileChooserSettings());
+    m_fileChooser = FileChooser::create(*this, fileChooserSettings());
 }
 
 bool FileInputType::allowsDirectories() const
