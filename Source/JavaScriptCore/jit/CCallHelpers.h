@@ -198,12 +198,16 @@ private:
 #if CPU(MIPS)
     template<unsigned NumCrossSources, unsigned NumberOfRegisters>
     ALWAYS_INLINE void setupStubCrossArgs(std::array<GPRReg, NumberOfRegisters> destinations, std::array<FPRReg, NumberOfRegisters> sources) {
-        for (unsigned i = 0; i < NumCrossSources; i++) {
-            GPRReg dest = destinations[i];
-            FPRReg source = sources[i];
+        if constexpr (NumCrossSources) {
+            for (unsigned i = 0; i < NumCrossSources; i++) {
+                GPRReg dest = destinations[i];
+                FPRReg source = sources[i];
 
-            moveDouble(source, dest);
+                moveDouble(source, dest);
+            }
         }
+        UNUSED_PARAM(destinations);
+        UNUSED_PARAM(sources);
     }
 #endif
 
