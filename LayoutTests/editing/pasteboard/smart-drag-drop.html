@@ -4,7 +4,9 @@
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
 function editingTest() {
-  
+    test.focus();
+    getSelection().setPosition(dragme.firstChild, 0);
+
     if (!window.eventSender)
         return;
     doubleClickAtSelectionStart();
