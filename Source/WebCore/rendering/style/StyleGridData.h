@@ -86,7 +86,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return columns() == o.columns() && rows() == o.rows() && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns;
+        return columns() == o.columns() && rows() == o.rows() && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && ;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -136,6 +136,8 @@ public:
 
     Vector<GridTrackSize> gridAutoRows;
     Vector<GridTrackSize> gridAutoColumns;
+    
+    
 
     NamedGridAreaMap namedGridArea;
     // Because namedGridArea doesn't store the unnamed grid areas, we need to keep track

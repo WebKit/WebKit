@@ -297,6 +297,20 @@
                 "url": "https://www.w3.org/TR/css-ui-4/#widget-accent"
             }
         },
+        "align-tracks": {
+            "codegen-properties": {
+                "converter": "AlignTracks",
+                "settings-flag": "masonryEnabled",
+                "custom-parser": true
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-grid",
+                "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
+            }
+        },
         "caret-color": {
             "inherited": true,
             "codegen-properties": {

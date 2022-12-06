@@ -1095,6 +1095,14 @@ enum InternalGridAutoFlow {
     InternalAutoFlowDirectionColumn = 1 << 3
 };
 
+enum AlignTracks {
+    Normal,
+    BaselinePosition,
+    ContentDistribution,
+    OverflowPosition,
+    ContentPosition
+}
+
 enum GridAutoFlow {
     AutoFlowRow = InternalAutoFlowAlgorithmSparse | InternalAutoFlowDirectionRow,
     AutoFlowColumn = InternalAutoFlowAlgorithmSparse | InternalAutoFlowDirectionColumn,

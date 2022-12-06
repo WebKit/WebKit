@@ -287,6 +287,7 @@ bool consumeBorderImageComponents(CSSPropertyID, CSSParserTokenRange&, const CSS
 RefPtr<CSSValue> consumeWebkitBorderImage(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeReflect(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeBackgroundSize(CSSPropertyID, CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSValue> consumeAlignTracks(CSSParserTokenRange& range);
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCommaSeparatedBackgroundComponent(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);

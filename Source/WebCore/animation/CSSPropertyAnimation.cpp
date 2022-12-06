@@ -3688,6 +3688,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitTextZoom:
         case CSSPropertyAdditiveSymbols:
         case CSSPropertyAlignmentBaseline:
+        case CSSPropertyAlignTracks:
         case CSSPropertyAlt:
         case CSSPropertyAnimation:
         case CSSPropertyAnimationComposition:

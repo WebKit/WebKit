@@ -7268,6 +7268,12 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
     return createPrimitiveValuePair(horizontal.releaseNonNull(), vertical.releaseNonNull(), identicalValueEncoding);
 }
 
+RefPtr<CSSValue> consumeAlignTracks(CSSParserTokenRange& range)
+{
+    return nullptr;
+}
+
+
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range)
 {
     RefPtr<CSSPrimitiveValue> rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);

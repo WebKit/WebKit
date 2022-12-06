@@ -609,6 +609,7 @@ public:
     const NamedGridAreaMap& namedGridArea() const { return m_rareNonInheritedData->grid->namedGridArea; }
     size_t namedGridAreaRowCount() const { return m_rareNonInheritedData->grid->namedGridAreaRowCount; }
     size_t namedGridAreaColumnCount() const { return m_rareNonInheritedData->grid->namedGridAreaColumnCount; }
+    OptionSet<AlignTracks> alignTracks() const { return m_rareNonInheritedData->grid->alignTracks; }
     GridAutoFlow gridAutoFlow() const { return static_cast<GridAutoFlow>(m_rareNonInheritedData->grid->gridAutoFlow); }
     bool gridSubgridRows() const { return m_rareNonInheritedData->grid->subgridRows(); }
     bool gridSubgridColumns() const { return m_rareNonInheritedData->grid->subgridColumns(); }

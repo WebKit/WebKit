@@ -2878,6 +2878,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createIdentifierValue(CSSValueAuto);
         return currentColorOrValidColor(style, style.accentColor());
     }
+    case CSSPropertyAlignTracks: {
+        // TODO: FIXME
+        return nullptr;
+    }
     case CSSPropertyBackgroundColor:
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(style, style.backgroundColor());
     case CSSPropertyBackgroundImage:
