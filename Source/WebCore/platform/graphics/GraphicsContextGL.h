@@ -1465,7 +1465,7 @@ public:
     virtual void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) = 0;
 
     // GL_ANGLE_provoking_vertex
-    virtual void provokingVertexANGLE(GCGLenum mode) = 0;
+    virtual void provokingVertexANGLE(GCGLenum provokeMode) = 0;
 
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);

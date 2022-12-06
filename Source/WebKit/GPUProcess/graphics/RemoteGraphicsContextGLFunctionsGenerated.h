@@ -1385,10 +1385,10 @@
         assertIsCurrent(workQueue());
         m_context->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, static_cast<GCGLintptr>(offset), instanceCount, baseVertex, baseInstance);
     }
-    void provokingVertexANGLE(uint32_t mode)
+    void provokingVertexANGLE(uint32_t provokeMode)
     {
         assertIsCurrent(workQueue());
-        m_context->provokingVertexANGLE(mode);
+        m_context->provokingVertexANGLE(provokeMode);
     }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
     {

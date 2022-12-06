@@ -32,5 +32,5 @@
     const unsigned long LAST_VERTEX_CONVENTION_WEBGL  = 0x8E4E;
     const unsigned long PROVOKING_VERTEX_WEBGL        = 0x8E4F;
 
-    undefined provokingVertexWEBGL(unsigned long mode);
+    undefined provokingVertexWEBGL(unsigned long provokeMode);
 };

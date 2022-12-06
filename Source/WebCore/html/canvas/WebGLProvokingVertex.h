@@ -39,7 +39,7 @@ public:
 
     static bool supported(GraphicsContextGL&);
 
-    void provokingVertexWEBGL(GCGLenum mode);
+    void provokingVertexWEBGL(GCGLenum provokeMode);
 };
 
 } // namespace WebCore

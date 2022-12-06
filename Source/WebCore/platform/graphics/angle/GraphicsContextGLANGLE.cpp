@@ -3049,12 +3049,12 @@ void GraphicsContextGLANGLE::multiDrawElementsInstancedBaseVertexBaseInstanceANG
     checkGPUStatus();
 }
 
-void GraphicsContextGLANGLE::provokingVertexANGLE(GCGLenum mode)
+void GraphicsContextGLANGLE::provokingVertexANGLE(GCGLenum provokeMode)
 {
     if (!makeContextCurrent())
         return;
 
-    GL_ProvokingVertexANGLE(mode);
+    GL_ProvokingVertexANGLE(provokeMode);
 }
 
 bool GraphicsContextGLANGLE::waitAndUpdateOldestFrame()
