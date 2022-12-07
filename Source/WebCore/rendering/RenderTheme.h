@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+struct AttachmentLayout;
 class BorderData;
 class Element;
 class FileList;
@@ -329,6 +330,7 @@ protected:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual void paintAttachmentText(GraphicsContext&, AttachmentLayout*) { }
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
