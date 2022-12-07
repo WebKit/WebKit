@@ -1098,7 +1098,17 @@ void RenderLayerScrollableArea::computeScrollOrigin()
 
 void RenderLayerScrollableArea::computeHasCompositedScrollableOverflow()
 {
-    m_hasCompositedScrollableOverflow = canUseCompositedScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
+    bool hasCompositedScrollableOverflow = canUseCompositedScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
+    if (hasCompositedScrollableOverflow == m_hasCompositedScrollableOverflow)
+        return;
+
+    // Whether this layer does composited scrolling affects the configuration of descendant sticky layers. We have to
+    // dirty from the enclosing stacking context because overflow scroll doesn't create stacking context so those
+    // containing block descendants may not be paint-order descendants, and the compositing dirty bits on RenderLayer act in paint order.
+    if (auto* paintParent = m_layer.stackingContext())
+        paintParent->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+
+    m_hasCompositedScrollableOverflow = hasCompositedScrollableOverflow;
 }
 
 bool RenderLayerScrollableArea::hasScrollableHorizontalOverflow() const
