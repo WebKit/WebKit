@@ -51,10 +51,11 @@ public:
     Page* page() const { return m_document.page(); }
     Frame* frame() const { return m_document.frame(); }
     Element* documentElement() const { return m_document.documentElement(); }
+    bool isSimpleFullscreenDocument() const;
     Document::BackForwardCacheState backForwardCacheState() const { return m_document.backForwardCacheState(); }
 
-    // W3C Fullscreen API
-    Element* fullscreenElement() const { return !m_fullscreenElementStack.isEmpty() ? m_fullscreenElementStack.last().get() : nullptr; }
+    // WHATWG Fullscreen API
+    WEBCORE_EXPORT Element* fullscreenElement() const;
     WEBCORE_EXPORT bool isFullscreenEnabled() const;
     WEBCORE_EXPORT void exitFullscreen();
 
@@ -77,7 +78,10 @@ public:
 
     void dispatchFullscreenChangeEvents();
 
-    void adjustFullscreenElementOnNodeRemoval(Node&, Document::NodeRemoval = Document::NodeRemoval::Node);
+    enum class ExitMode : bool { Resize, NoResize };
+    void finishExitFullscreen(Document&, ExitMode);
+
+    void exitRemovedFullscreenElementIfNeeded(Element&);
 
     WEBCORE_EXPORT bool isAnimatingFullscreen() const;
     WEBCORE_EXPORT void setAnimatingFullscreen(bool);
@@ -94,9 +98,6 @@ protected:
     enum class EventType : bool { Change, Error };
     void dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRef<Node>>&, EventType, bool shouldNotifyMediaElement);
     void dispatchEventForNode(Node&, EventType);
-    void clearFullscreenElementStack();
-    void popFullscreenElementStack();
-    void pushFullscreenElementStack(Element&);
     void addDocumentToFullscreenChangeEventQueue(Document&);
 
 private:
@@ -114,7 +115,6 @@ private:
     bool m_pendingExitFullscreen { false };
     RefPtr<Element> m_pendingFullscreenElement;
     RefPtr<Element> m_fullscreenElement;
-    Vector<RefPtr<Element>> m_fullscreenElementStack;
     Deque<GCReachableRef<Node>> m_fullscreenChangeEventTargetQueue;
     Deque<GCReachableRef<Node>> m_fullscreenErrorEventTargetQueue;
 

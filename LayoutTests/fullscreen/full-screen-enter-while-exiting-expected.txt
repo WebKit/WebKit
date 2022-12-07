@@ -8,8 +8,8 @@ RUN(document.webkitExitFullscreen())
 RUN(internals.webkitWillExitFullScreenForElement(target1))
 Attempt to enter fullscreen with target2
 RUN(target2.webkitRequestFullScreen())
-EVENT(webkitfullscreenchange)
 EVENT(webkitfullscreenerror)
 RUN(internals.webkitDidExitFullScreenForElement(target1))
+EVENT(webkitfullscreenchange)
 END OF TEST
 

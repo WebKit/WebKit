@@ -475,9 +475,6 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClassFullScreenControlsHidden:
                 builder.append(":-webkit-full-screen-controls-hidden");
                 break;
-            case CSSSelector::PseudoClassFullScreenParent:
-                builder.append(":-webkit-full-screen-parent");
-                break;
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
             case CSSSelector::PseudoClassPictureInPicture:

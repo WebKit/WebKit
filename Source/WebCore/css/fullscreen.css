@@ -24,6 +24,8 @@
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
 
+/* https://fullscreen.spec.whatwg.org/#user-agent-level-style-sheet-defaults */
+
 :not(:root):-webkit-full-screen {
   position: fixed !important;
   inset: 0 !important;
@@ -41,41 +43,8 @@
   object-fit:contain;
 }
 
-:-webkit-full-screen {
-    z-index: 2147483647 !important;
-    width: 100%;
-    height: 100%;
-}
-
-:root:-webkit-full-screen-document:not(:-webkit-full-screen), :root:-webkit-full-screen-ancestor {
+:root:-webkit-full-screen-document:not(:-webkit-full-screen) {
     overflow: hidden !important;
-}
-
-:-webkit-full-screen-ancestor:not(iframe) {
-    z-index: auto !important;
-    position: static !important;
-    opacity: 1 !important;
-    transform: none !important;
-    mask: none !important;
-    clip: none !important;
-    filter: none !important;
-    transition: none !important;
-    -webkit-box-reflect: none !important;
-    perspective: none !important;
-    transform-style: flat !important;
-    overflow: visible !important;
-    contain: none !important;
-}
-
-video:-webkit-full-screen, audio:-webkit-full-screen {
-    background-color: transparent !important;
-    position: static !important;
-    margin: 0 !important;
-    height: 100% !important;
-    width: 100% !important;
-    flex: 1 !important;
-    display: block !important;
-    transition: none !important;
 }
 
 :-webkit-full-screen video,
@@ -90,29 +59,12 @@ img:-webkit-full-screen {
 }
 
 iframe:-webkit-full-screen {
-    margin: 0 !important;
+    border: none !important;
     padding: 0 !important;
-    border: 0 !important;
-    position: fixed !important;
-    height: 100% !important;
-    width: 100% !important;
-    left: 0 !important;
-    top: 0 !important;
-    max-width: none !important;
-    max-height: none !important;
 }
 
-/* FIXME: Use top layer backdrop (webkit.org/b/84798). */
-:-webkit-full-screen-parent::before {
-    content: "" !important;
-    position: fixed !important;
-    background: black !important;
-    z-index: 2147483647 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    margin: 0 !important;
-    inset: 0 !important;
-    box-sizing: border-box !important;
+:not(:root):-webkit-full-screen::backdrop {
+    background: black;
 }
 
 #endif

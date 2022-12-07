@@ -2503,11 +2503,6 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 {
     ContainerNode::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
-#if ENABLE(FULLSCREEN_API)
-    if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
-        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
-#endif
-
     if (parentOfInsertedTree.isInTreeScope()) {
         bool becomeConnected = insertionType.connectedToDocument;
         auto* newScope = &parentOfInsertedTree.treeScope();
@@ -2558,11 +2553,6 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 
 void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-#if ENABLE(FULLSCREEN_API)
-    if (containsFullScreenElement())
-        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
-#endif
-
     if (auto* page = document().page()) {
 #if ENABLE(POINTER_LOCK)
         page->pointerLockController().elementWasRemoved(*this);
@@ -2613,6 +2603,10 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     clearAfterPseudoElement();
 
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+#if ENABLE(FULLSCREEN_API)
+    document().fullscreenManager().exitRemovedFullscreenElementIfNeeded(*this);
+#endif
 
     if (UNLIKELY(hasRareData()) && !elementRareData()->effectiveLang().isNull()) {
         if (auto* parent = parentOrShadowHostElement(); langFromAttribute().isNull()
@@ -4162,14 +4156,6 @@ bool Element::childShouldCreateRenderer(const Node& child) const
 
 #if ENABLE(FULLSCREEN_API)
 
-static Element* parentCrossingFrameBoundaries(const Element* element)
-{
-    ASSERT(element);
-    if (auto* parent = element->parentElementInComposedTree())
-        return parent;
-    return element->document().ownerElement();
-}
-
 void Element::webkitRequestFullscreen()
 {
     requestFullscreen({ }, nullptr);
@@ -4181,20 +4167,22 @@ void Element::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& p
     document().fullscreenManager().requestFullscreenForElement(*this, WTFMove(promise), FullscreenManager::EnforceIFrameAllowFullscreenRequirement);
 }
 
-void Element::setContainsFullScreenElement(bool flag)
+void Element::setFullscreenFlag(bool flag)
 {
     if (flag)
-        setNodeFlag(NodeFlag::ContainsFullScreenElement);
+        setNodeFlag(NodeFlag::IsFullscreen);
     else
-        clearNodeFlag(NodeFlag::ContainsFullScreenElement);
-    invalidateStyleAndLayerComposition();
+        clearNodeFlag(NodeFlag::IsFullscreen);
+
+    clearNodeFlag(NodeFlag::IsIFrameFullscreen);
 }
 
-void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool flag)
+void Element::setIFrameFullscreenFlag(bool flag)
 {
-    Element* element = this;
-    while ((element = parentCrossingFrameBoundaries(element)))
-        element->setContainsFullScreenElement(flag);
+    if (flag)
+        setNodeFlag(NodeFlag::IsIFrameFullscreen);
+    else
+        clearNodeFlag(NodeFlag::IsIFrameFullscreen);
 }
 
 #endif
