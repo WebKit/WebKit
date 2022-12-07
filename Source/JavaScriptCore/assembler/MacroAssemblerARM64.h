@@ -5174,10 +5174,18 @@ public:
         m_assembler.dupGeneral(dest, src, lane);
     }
 
+    void vectorSplat(SIMDLane lane, FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(lane));
+        m_assembler.dupElement(dest, src, lane, 0);
+    }
+
     void vectorSplat8(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i8x16, src, dest); }
     void vectorSplat16(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i16x8, src, dest); }
     void vectorSplat32(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i32x4, src, dest); }
     void vectorSplat64(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i64x2, src, dest); }
+    void vectorSplatFloat32(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f32x4, src, dest); }
+    void vectorSplatFloat64(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f64x2, src, dest); }
 
     void vectorAddSat(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
