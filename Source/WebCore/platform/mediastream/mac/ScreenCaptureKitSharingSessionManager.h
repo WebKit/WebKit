@@ -32,6 +32,7 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS SCContentFilter;
+OBJC_CLASS SCContentPicker;
 OBJC_CLASS SCContentSharingSession;
 OBJC_CLASS WebDisplayMediaPromptHelper;
 
@@ -43,16 +44,19 @@ class ScreenCaptureKitSharingSessionManager : public CanMakeWeakPtr<ScreenCaptur
 public:
     WEBCORE_EXPORT static ScreenCaptureKitSharingSessionManager& singleton();
     WEBCORE_EXPORT static bool isAvailable();
+    WEBCORE_EXPORT static bool useSCContentPicker();
     WEBCORE_EXPORT static bool shouldUseSystemPicker();
 
     ScreenCaptureKitSharingSessionManager();
     ~ScreenCaptureKitSharingSessionManager();
 
-    RetainPtr<SCContentSharingSession> takeSharingSessionForFilter(SCContentFilter*);
+    RetainPtr<SCContentSharingSession> takeSharingSessionForCaptureDevice(const CaptureDevice&);
+    RetainPtr<SCContentFilter> takeContentFilterForCaptureDevice(const CaptureDevice&);
 
     void sessionDidChangeContent(RetainPtr<SCContentSharingSession>);
     void pickerCanceledForSession(RetainPtr<SCContentSharingSession>);
     void sessionDidEnd(RetainPtr<SCContentSharingSession>);
+    void contentPickerDidFinish(RetainPtr<SCContentPicker>, RetainPtr<SCContentFilter>);
 
     WEBCORE_EXPORT void showWindowPicker(CompletionHandler<void(std::optional<CaptureDevice>)>&&);
     WEBCORE_EXPORT void showScreenPicker(CompletionHandler<void(std::optional<CaptureDevice>)>&&);
@@ -60,10 +64,21 @@ public:
 private:
     void cleanupAllSessions();
 
+    void cancelSharingSession(RetainPtr<SCContentSharingSession>);
+
     enum class PromptType { Window, Screen };
     void promptForGetDisplayMedia(PromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
+    void completeDeviceSelection(SCContentFilter*);
 
-    Vector<RetainPtr<SCContentSharingSession>> m_pendingCaptureSessions;
+    using ContentPicker = std::variant<RetainPtr<SCContentSharingSession>, RetainPtr<SCContentPicker>>;
+    std::optional<ContentPicker> promptWithSCContentSharingSession(PromptType);
+    std::optional<ContentPicker> promptWithSCContentPicker(PromptType);
+
+#if HAVE(SC_CONTENT_PICKER)
+    RetainPtr<SCContentPicker> m_contentPicker;
+    RetainPtr<SCContentFilter> m_contentFilter;
+#endif
+    RetainPtr<SCContentSharingSession> m_pendingCaptureSession;
     RetainPtr<WebDisplayMediaPromptHelper> m_promptHelper;
     CompletionHandler<void(std::optional<CaptureDevice>)> m_completionHandler;
     std::unique_ptr<RunLoop::Timer<ScreenCaptureKitSharingSessionManager>> m_promptWatchdogTimer;

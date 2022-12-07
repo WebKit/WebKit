@@ -30,7 +30,6 @@
 
 #import "Logging.h"
 #import "ScreenCaptureKitCaptureSource.h"
-#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/mac/ScreenCaptureKitSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 
@@ -38,7 +37,11 @@
 
 using namespace WebCore;
 
-@interface WebDisplayMediaPromptHelper : NSObject <SCContentSharingSessionProtocol> {
+@interface WebDisplayMediaPromptHelper : NSObject <SCContentSharingSessionProtocol
+#if HAVE(SC_CONTENT_PICKER)
+    , SCContentPickerDelegate
+#endif
+    > {
     WeakPtr<ScreenCaptureKitSharingSessionManager> _callback;
     Vector<RetainPtr<SCContentSharingSession>> _sessions;
 }
@@ -50,6 +53,9 @@ using namespace WebCore;
 - (void)sessionDidEnd:(SCContentSharingSession *)session;
 - (void)sessionDidChangeContent:(SCContentSharingSession *)session;
 - (void)pickerCanceledForSession:(SCContentSharingSession *)session;
+#if HAVE(SC_CONTENT_PICKER)
+- (void)contentPicker:(SCContentPicker *)contentPicker didFinishWithContentFilter:(SCContentFilter *)filter;
+#endif
 @end
 
 @implementation WebDisplayMediaPromptHelper
@@ -115,24 +121,33 @@ using namespace WebCore;
             _callback->pickerCanceledForSession(session);
     });
 }
+
+#if HAVE(SC_CONTENT_PICKER)
+- (void)contentPicker:(SCContentPicker *)contentPicker didFinishWithContentFilter:(SCContentFilter *)filter
+{
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }, contentPicker = RetainPtr { contentPicker }, filter = RetainPtr { filter }]() mutable {
+        if (_callback)
+            _callback->contentPickerDidFinish(contentPicker, filter);
+    });
+}
+#endif
+
 @end
 
 namespace WebCore {
 
-static bool screenCaptureKitPickerFeatureEnabled()
-{
-    static bool enabled;
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        enabled = os_feature_enabled(ScreenCaptureKit, expanseAdoption);
-    });
-    return enabled;
-}
-
 bool ScreenCaptureKitSharingSessionManager::isAvailable()
 {
-    return screenCaptureKitPickerFeatureEnabled()
-        && PAL::getSCContentSharingSessionClass();
+    return PAL::getSCContentSharingSessionClass();
+}
+
+bool ScreenCaptureKitSharingSessionManager::useSCContentPicker()
+{
+#if HAVE(SC_CONTENT_PICKER)
+    return PAL::getSCContentPickerClass();
+#else
+    return false;
+#endif
 }
 
 ScreenCaptureKitSharingSessionManager& ScreenCaptureKitSharingSessionManager::singleton()
@@ -148,40 +163,48 @@ ScreenCaptureKitSharingSessionManager::ScreenCaptureKitSharingSessionManager()
 
 ScreenCaptureKitSharingSessionManager::~ScreenCaptureKitSharingSessionManager()
 {
+    cancelSharingSession(m_pendingCaptureSession);
+
+#if HAVE(SC_CONTENT_PICKER)
+    m_contentPicker = nullptr;
+#endif
+
     if (m_promptHelper) {
         [m_promptHelper disconnect];
         m_promptHelper = nullptr;
     }
+}
 
-    for (auto session : m_pendingCaptureSessions) {
+void ScreenCaptureKitSharingSessionManager::cancelSharingSession(RetainPtr<SCContentSharingSession> session)
+{
+    ASSERT(isMainThread());
+
+    m_promptWatchdogTimer = nullptr;
+
+    if (session) {
         [m_promptHelper stopObservingSession:session.get()];
         [session end];
+        if (m_pendingCaptureSession == session)
+            m_pendingCaptureSession = nullptr;
     }
-    m_pendingCaptureSessions.clear();
+
+    if (!m_completionHandler)
+        return;
+
+    auto completionHandler = std::exchange(m_completionHandler, nullptr);
+    completionHandler(std::nullopt);
 }
+
 
 void ScreenCaptureKitSharingSessionManager::pickerCanceledForSession(RetainPtr<SCContentSharingSession> session)
 {
     ASSERT(isMainThread());
     ASSERT(m_completionHandler);
+    ASSERT(m_pendingCaptureSession == session);
 
     RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::pickerCanceledForSession");
 
-    m_promptWatchdogTimer = nullptr;
-    if (!m_completionHandler)
-        return;
-
-    auto index = m_pendingCaptureSessions.findIf([session](auto pendingSession) {
-        return [pendingSession isEqual:session.get()];
-    });
-    if (index != notFound)
-        m_pendingCaptureSessions.remove(index);
-
-    [m_promptHelper stopObservingSession:session.get()];
-    [session end];
-
-    auto completionHandler = std::exchange(m_completionHandler, { });
-    completionHandler(std::nullopt);
+    cancelSharingSession(session);
 }
 
 void ScreenCaptureKitSharingSessionManager::sessionDidEnd(RetainPtr<SCContentSharingSession> session)
@@ -192,13 +215,36 @@ void ScreenCaptureKitSharingSessionManager::sessionDidEnd(RetainPtr<SCContentSha
 
     [m_promptHelper stopObservingSession:session.get()];
 
-    auto index = m_pendingCaptureSessions.findIf([session](auto pendingSession) {
-        return [pendingSession isEqual:session.get()];
-    });
-    if (index == notFound)
+    if (m_pendingCaptureSession == session)
+        m_pendingCaptureSession = nullptr;
+}
+
+void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFilter* contentFilter)
+{
+    ASSERT(m_completionHandler);
+    ASSERT(contentFilter);
+    if (!m_completionHandler || !contentFilter)
         return;
 
-    m_pendingCaptureSessions.remove(index);
+    std::optional<CaptureDevice> device;
+    switch (contentFilter.type) {
+    case SCContentFilterTypeDesktopIndependentWindow: {
+        auto *window = contentFilter.desktopIndependentWindowInfo.window;
+        device = CaptureDevice(String::number(window.windowID), CaptureDevice::DeviceType::Window, window.title, emptyString(), true);
+        break;
+    }
+    case SCContentFilterTypeDisplay:
+        device = CaptureDevice(String::number(contentFilter.displayInfo.display.displayID), CaptureDevice::DeviceType::Screen, makeString("Screen "), emptyString(), true);
+        break;
+    case SCContentFilterTypeNothing:
+    case SCContentFilterTypeAppsAndWindowsPinnedToDisplay:
+    case SCContentFilterTypeClientShouldImplementDefault:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto completionHandler = std::exchange(m_completionHandler, nullptr);
+    completionHandler(device);
 }
 
 void ScreenCaptureKitSharingSessionManager::sessionDidChangeContent(RetainPtr<SCContentSharingSession> session)
@@ -214,36 +260,8 @@ void ScreenCaptureKitSharingSessionManager::sessionDidChangeContent(RetainPtr<SC
 
     RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::sessionDidChangeContent");
 
-    auto index = m_pendingCaptureSessions.findIf([session](auto pendingSession) {
-        return [pendingSession isEqual:session.get()];
-    });
-    if (index == notFound)
-        return;
-
-    ASSERT(m_completionHandler);
-    if (!m_completionHandler)
-        return;
-
-    std::optional<CaptureDevice> device;
-    SCContentFilter* content = [session content];
-    switch (content.type) {
-    case SCContentFilterTypeDesktopIndependentWindow: {
-        auto *window = content.desktopIndependentWindowInfo.window;
-        device = CaptureDevice(String::number(window.windowID), CaptureDevice::DeviceType::Window, window.title, emptyString(), true);
-        break;
-    }
-    case SCContentFilterTypeDisplay:
-        device = CaptureDevice(String::number(content.displayInfo.display.displayID), CaptureDevice::DeviceType::Screen, makeString("Screen "), emptyString(), true);
-        break;
-    case SCContentFilterTypeNothing:
-    case SCContentFilterTypeAppsAndWindowsPinnedToDisplay:
-    case SCContentFilterTypeClientShouldImplementDefault:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto completionHandler = std::exchange(m_completionHandler, { });
-    completionHandler(device);
+    if (m_pendingCaptureSession == session)
+        completeDeviceSelection([session content]);
 }
 
 void ScreenCaptureKitSharingSessionManager::showWindowPicker(CompletionHandler<void(std::optional<CaptureDevice>)>&& completionHandler)
@@ -268,55 +286,183 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(PromptType 
         return;
     }
 
-    SCContentSharingSession* session = [[PAL::getSCContentSharingSessionClass() alloc] initWithTitle:@"WebKit getDisplayMedia Prompt"];
-    if (!session) {
-        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia unable to create sharing session");
-        completionHandler(std::nullopt);
-        return;
-    }
-
     if (!m_promptHelper)
         m_promptHelper = adoptNS([[WebDisplayMediaPromptHelper alloc] initWithCallback:this]);
 
-    [m_promptHelper startObservingSession:session];
-    m_pendingCaptureSessions.append(session);
     m_completionHandler = WTFMove(completionHandler);
 
-    [session showPickerForType:promptType == PromptType::Window ? SCContentFilterTypeDesktopIndependentWindow : SCContentFilterTypeDisplay];
+    std::optional<ContentPicker> picker;
+    if (useSCContentPicker())
+        picker = promptWithSCContentPicker(promptType);
+    else
+        picker = promptWithSCContentSharingSession(promptType);
+
+    if (!picker) {
+        m_completionHandler(std::nullopt);
+        m_completionHandler = { };
+        return;
+    }
 
     constexpr Seconds userPromptWatchdogInterval = 60_s;
-    m_promptWatchdogTimer = makeUnique<RunLoop::Timer<ScreenCaptureKitSharingSessionManager>>(RunLoop::main(), [this, weakThis = WeakPtr { *this }, session = RetainPtr { session }, interval = userPromptWatchdogInterval]() mutable {
+    m_promptWatchdogTimer = makeUnique<RunLoop::Timer<ScreenCaptureKitSharingSessionManager>>(RunLoop::main(), [this, weakThis = WeakPtr { *this }, picker = WTFMove(picker), interval = userPromptWatchdogInterval]() mutable {
         if (!weakThis)
             return;
 
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia nothing picked after %f seconds, cancelling.", interval.value());
-        pickerCanceledForSession(session);
+
+        switchOn(picker.value(),
+            [this] (const RetainPtr<SCContentPicker> contentPicker) {
+                contentPickerDidFinish(contentPicker, nullptr);
+            },
+            [this] (const RetainPtr<SCContentSharingSession> session) {
+                pickerCanceledForSession(session);
+            }
+        );
     });
     m_promptWatchdogTimer->startOneShot(userPromptWatchdogInterval);
 }
 
-RetainPtr<SCContentSharingSession> ScreenCaptureKitSharingSessionManager::takeSharingSessionForFilter(SCContentFilter* filter)
+std::optional<ScreenCaptureKitSharingSessionManager::ContentPicker> ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingSession(PromptType promptType)
+{
+    SCContentSharingSession* session = [[PAL::getSCContentSharingSessionClass() alloc] initWithTitle:@"WebKit getDisplayMedia Prompt"];
+    if (!session) {
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingSession unable to create sharing session");
+        return std::nullopt;
+    }
+
+    m_pendingCaptureSession = session;
+    [m_promptHelper startObservingSession:session];
+
+    [session showPickerForType:promptType == PromptType::Window ? SCContentFilterTypeDesktopIndependentWindow : SCContentFilterTypeDisplay];
+
+    return session;
+}
+
+std::optional<ScreenCaptureKitSharingSessionManager::ContentPicker> ScreenCaptureKitSharingSessionManager::promptWithSCContentPicker(PromptType promptType)
+{
+#if HAVE(SC_CONTENT_PICKER)
+    ASSERT(useSCContentPicker());
+
+    auto contentPickerType = promptType == PromptType::Window ? SCContentPickerTypeDesktopIndependentWindow : SCContentPickerTypeDisplay;
+    SCContentPicker* picker = [[PAL::getSCContentPickerClass() alloc] initWithType:contentPickerType delegate:m_promptHelper.get()];
+    if (!picker) {
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::promptWithSCContentPicker unable to create content picker");
+        return { };
+    }
+
+    m_contentPicker = picker;
+
+    [picker showContentPicker];
+
+    return picker;
+#else
+    UNUSED_PARAM(promptType);
+    return { };
+#endif
+}
+
+void ScreenCaptureKitSharingSessionManager::contentPickerDidFinish(RetainPtr<SCContentPicker> picker, RetainPtr<SCContentFilter> contentFilter)
+{
+#if HAVE(SC_CONTENT_PICKER)
+    ASSERT(isMainThread());
+    ASSERT([m_contentPicker isEqual:picker.get()]);
+
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::contentPickerDidFinish");
+
+    m_promptWatchdogTimer = nullptr;
+    if (![m_contentPicker isEqual:picker.get()])
+        return;
+
+    m_contentFilter = contentFilter;
+
+    if (!contentFilter) {
+        if (m_completionHandler)
+            m_completionHandler(std::nullopt);
+        m_completionHandler = { };
+
+        return;
+    }
+
+    completeDeviceSelection(contentFilter.get());
+#else
+    UNUSED_PARAM(picker);
+    UNUSED_PARAM(contentFilter);
+#endif
+}
+
+static bool operator==(const SCContentFilter* filter, const CaptureDevice& device)
+{
+    auto deviceID = parseInteger<uint32_t>(device.persistentId());
+    if (!deviceID)
+        return false;
+
+    if (device.type() == CaptureDevice::DeviceType::Screen) {
+        if (filter.type != SCContentFilterTypeDisplay)
+            return false;
+
+        if (filter.displayInfo.display.displayID != deviceID)
+            return false;
+
+        return true;
+    }
+
+    if (device.type() == CaptureDevice::DeviceType::Window) {
+        if (filter.type != SCContentFilterTypeDesktopIndependentWindow)
+            return false;
+
+        if (filter.desktopIndependentWindowInfo.window.windowID != deviceID)
+            return false;
+
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+RetainPtr<SCContentFilter> ScreenCaptureKitSharingSessionManager::takeContentFilterForCaptureDevice(const CaptureDevice& device)
+{
+#if HAVE(SC_CONTENT_PICKER)
+    if (!useSCContentPicker())
+        return nullptr;
+
+    ASSERT(isMainThread());
+    ASSERT(m_contentFilter);
+
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::takeContentFilterForCaptureDevice");
+
+    if (!m_contentFilter)
+        return nullptr;
+
+    if (m_contentFilter.get() != device)
+        return nullptr;
+
+    auto contentFilter = std::exchange(m_contentFilter, nullptr);
+    return contentFilter;
+
+#else
+    UNUSED_PARAM(device);
+    return nullptr;
+#endif
+}
+
+RetainPtr<SCContentSharingSession> ScreenCaptureKitSharingSessionManager::takeSharingSessionForCaptureDevice(const CaptureDevice& device)
 {
     ASSERT(isMainThread());
 
     RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::takeSharingSessionForFilter");
 
-    auto index = m_pendingCaptureSessions.findIf([filter](auto pendingSession) {
-        return [filter isEqual:[pendingSession content]];
-    });
-    ASSERT(index != notFound);
-    if (index == notFound) {
+    ASSERT(device == [m_pendingCaptureSession content]);
+    if (device != [m_pendingCaptureSession content]) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::takeSharingSessionForFilter sharing session not found");
         return nullptr;
     }
 
-    RetainPtr<SCContentSharingSession> session = m_pendingCaptureSessions[index];
-    m_pendingCaptureSessions.remove(index);
+    auto session = std::exchange(m_pendingCaptureSession, nullptr);
     [m_promptHelper stopObservingSession:session.get()];
 
     return session;
 }
-
 
 } // namespace WebCore
 
