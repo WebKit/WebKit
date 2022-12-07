@@ -531,11 +531,12 @@ void UDPPort::OnStunBindingRequestSucceeded(
   }
   bind_request_succeeded_servers_.insert(stun_server_addr);
   // If socket is shared and `stun_reflected_addr` is equal to local socket
-  // address, or if the same address has been added by another STUN server,
-  // then discarding the stun address.
+  // address and mDNS obfuscation is not enabled, or if the same address has
+  // been added by another STUN server, then discarding the stun address.
   // For STUN, related address is the local socket address.
-  if ((!SharedSocket() || stun_reflected_addr != socket_->GetLocalAddress()) &&
-      !HasCandidateWithAddress(stun_reflected_addr)) {
+  if ((!SharedSocket() || stun_reflected_addr != socket_->GetLocalAddress() ||
+       Network()->GetMdnsResponder() != nullptr) &&
+      !HasStunCandidateWithAddress(stun_reflected_addr)) {
     rtc::SocketAddress related_address = socket_->GetLocalAddress();
     // If we can't stamp the related address correctly, empty it to avoid leak.
     if (!MaybeSetDefaultLocalAddress(&related_address)) {
@@ -618,11 +619,12 @@ void UDPPort::OnSendPacket(const void* data, size_t size, StunRequest* req) {
   stats_.stun_binding_requests_sent++;
 }
 
-bool UDPPort::HasCandidateWithAddress(const rtc::SocketAddress& addr) const {
+bool UDPPort::HasStunCandidateWithAddress(
+    const rtc::SocketAddress& addr) const {
   const std::vector<Candidate>& existing_candidates = Candidates();
   std::vector<Candidate>::const_iterator it = existing_candidates.begin();
   for (; it != existing_candidates.end(); ++it) {
-    if (it->address() == addr)
+    if (it->type() == STUN_PORT_TYPE && it->address() == addr)
       return true;
   }
   return false;
