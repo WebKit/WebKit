@@ -9,4 +9,16 @@ PASS Removing the <source> changes the currentSrc property.
 PASS currentSrc returns the src value for the first <source> element.
 PASS Removing a <source> element updates currentSrc.
 PASS Adding a <source> before the current <source> updates currentSrc.
+PASS The HTMLModelElement interface has a src property.
+PASS HTMLModelElement src property reflects src attribute value as a resolved URL.
+PASS <model> src attribute reflects HTMLModelElement src property.
+PASS Changing the src attribute of a <model> changes the currentSrc property.
+PASS A non-empty src attribute takes precedence over a <source> child.
+PASS An empty src attribute does not take precedence over a <source> child.
+PASS Removing a src attribute selects the first matching <source> child.
+PASS The first <source> with a supported type is selected.
+PASS Changing a <source type> to a supported type causes it to be selected.
+PASS Changing a <source type> to an unsupported type causes it not to be selected.
+PASS An inserted <source> with an unsupported type is not selected.
+PASS An inserted <source> with a supported type is selected.
 

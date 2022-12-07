@@ -48,6 +48,7 @@
 #include "JSHTMLModelElementCamera.h"
 #include "LayoutRect.h"
 #include "LayoutSize.h"
+#include "MIMETypeRegistry.h"
 #include "Model.h"
 #include "ModelPlayer.h"
 #include "ModelPlayerProvider.h"
@@ -100,23 +101,37 @@ RefPtr<Model> HTMLModelElement::model() const
     return m_model;
 }
 
-void HTMLModelElement::sourcesChanged()
+static bool isSupportedModelType(const AtomString& type)
 {
-    if (!document().hasBrowsingContext()) {
-        setSourceURL(URL { });
-        return;
-    }
+    return type.isEmpty() || MIMETypeRegistry::isSupportedModelMIMEType(type);
+}
+
+URL HTMLModelElement::selectModelSource() const
+{
+    // FIXME: This should probably work more like media element resource
+    // selection, where if a <source> element fails to load, an error event
+    // is dispatched to it, and we continue to try subsequent <source>s.
+
+    if (!document().hasBrowsingContext())
+        return { };
+
+    if (auto src = getNonEmptyURLAttribute(srcAttr); src.isValid())
+        return src;
 
     for (auto& element : childrenOfType<HTMLSourceElement>(*this)) {
-        // FIXME: for now we use the first valid URL without looking at the mime-type.
-        auto url = element.getNonEmptyURLAttribute(HTMLNames::srcAttr);
-        if (url.isValid()) {
-            setSourceURL(url);
-            return;
-        }
+        if (!isSupportedModelType(element.attributeWithoutSynchronization(typeAttr)))
+            continue;
+
+        if (auto src = element.getNonEmptyURLAttribute(srcAttr); src.isValid())
+            return src;
     }
 
-    setSourceURL(URL { });
+    return { };
+}
+
+void HTMLModelElement::sourcesChanged()
+{
+    setSourceURL(selectModelSource());
 }
 
 void HTMLModelElement::setSourceURL(const URL& url)
@@ -366,11 +381,15 @@ bool HTMLModelElement::isInteractive() const
     return hasAttributeWithoutSynchronization(HTMLNames::interactiveAttr);
 }
 
-void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void HTMLModelElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
-    if (m_modelPlayer && name == HTMLNames::interactiveAttr)
-        m_modelPlayer->setInteractionEnabled(isInteractive());
+    if (name == srcAttr)
+        sourcesChanged();
+    else if (name == interactiveAttr) {
+        if (m_modelPlayer)
+            m_modelPlayer->setInteractionEnabled(isInteractive());
+    } else
+        HTMLElement::parseAttribute(name, value);
 }
 
 void HTMLModelElement::defaultEventHandler(Event& event)
@@ -697,6 +716,11 @@ bool HTMLModelElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     if (name == widthAttr || name == heightAttr)
         return true;
     return HTMLElement::hasPresentationalHintsForAttribute(name);
+}
+
+bool HTMLModelElement::isURLAttribute(const Attribute& attribute) const
+{
+    return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 }
