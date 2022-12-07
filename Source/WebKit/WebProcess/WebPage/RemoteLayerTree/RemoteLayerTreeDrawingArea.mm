@@ -150,7 +150,6 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLaye
 
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&)
 {
-    m_viewSize = viewSize;
     m_webPage.setSize(viewSize);
 
     triggerRenderingUpdate();
@@ -323,7 +322,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     SetForScope change(m_inUpdateRendering, true);
     m_webPage.updateRendering();
 
-    FloatRect visibleRect(FloatPoint(), m_viewSize);
+    auto size = m_webPage.size();
+    FloatRect visibleRect(FloatPoint(), size);
     if (auto exposedRect = m_webPage.mainFrameView()->viewExposedRect())
         visibleRect.intersect(*exposedRect);
 

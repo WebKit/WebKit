@@ -143,8 +143,6 @@ private:
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
     Ref<WebCore::GraphicsLayer> m_rootLayer;
 
-    WebCore::IntSize m_viewSize;
-
     std::optional<WebCore::FloatRect> m_viewExposedRect;
 
     WebCore::Timer m_updateRenderingTimer;
