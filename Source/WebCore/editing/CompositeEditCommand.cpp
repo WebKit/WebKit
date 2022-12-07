@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -608,7 +609,10 @@ void CompositeEditCommand::insertNodeAt(Ref<Node>&& insertChild, const Position&
 
 void CompositeEditCommand::appendNode(Ref<Node>&& node, Ref<ContainerNode>&& parent)
 {
-    ASSERT(canHaveChildrenForEditing(parent));
+    // When cloneParagraphUnderNewElement() clones the fallback content of an OBJECT element,
+    // the ASSERT below may fire since the return value of canHaveChildrenForEditing is not reliable
+    // until the render object of the OBJECT is created. Hence we ignore this check for OBJECTs.
+    ASSERT(canHaveChildrenForEditing(parent) || parent->hasTagName(objectTag));
     applyCommandToComposite(AppendNodeCommand::create(WTFMove(parent), WTFMove(node), editingAction()));
 }
 
