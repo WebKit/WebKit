@@ -3738,7 +3738,7 @@ void CommandLine::parseArguments(int argc, char** argv)
 
         // See if the -- option is a JSC VM option.
         if (strstr(arg, "--") == arg) {
-            if (!JSC::Options::setOption(&arg[2])) {
+            if (!JSC::Options::setOption(&arg[2], /* verify = */ false)) {
                 hasBadJSCOptions = true;
                 dataLog("ERROR: invalid option: ", arg, "\n");
             }
@@ -3753,6 +3753,8 @@ void CommandLine::parseArguments(int argc, char** argv)
 
     if (hasBadJSCOptions && JSC::Options::validateOptions())
         CRASH();
+
+    JSC::Options::notifyOptionsChanged();
 
     if (m_scripts.isEmpty())
         m_interactive = true;
