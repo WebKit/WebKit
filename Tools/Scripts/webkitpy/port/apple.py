@@ -113,6 +113,28 @@ class ApplePort(Port):
                             configurations.append(TestConfiguration(version=version_name, architecture=architecture, build_type=build_type))
         return configurations
 
+    def all_baseline_search_paths(self, device_type=None):
+        paths = (
+            set(self.get_option("additional_platform_directory", []))
+            | set(self._compare_baseline())
+            | (
+                set(self._filesystem.glob(self._apple_baseline_path("*")))
+                if apple_additions()
+                else set()
+            )
+            | set(self._filesystem.glob(self._webkit_baseline_path("*")))
+        )
+
+        assert {p for p in paths if self._filesystem.isdir(p)}.issuperset(
+            {
+                p
+                for p in self.baseline_search_path(device_type=device_type)
+                if self._filesystem.isdir(p)
+            }
+        )
+
+        return paths
+
     def _apple_baseline_path(self, platform):
         return self._filesystem.join(apple_additions().layout_tests_path(), platform)
 

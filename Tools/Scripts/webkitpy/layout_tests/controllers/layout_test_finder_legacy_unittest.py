@@ -103,6 +103,26 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         self.assertEqual(self.port.name(), 'test-mac-leopard')
         self.assertIn('platform/test-snow-leopard/websocket/test.html', tests)
 
+    def test_includes_other_platforms_fallback(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path([]) if t.test_path.endswith("/http/test.html")]
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+        self.assertEqual(
+            self.port.baseline_search_path(),
+            [
+                "/test.checkout/LayoutTests/platform/test-mac-leopard",
+                "/test.checkout/LayoutTests/platform/test-mac-snowleopard",
+            ],
+        )
+        self.assertEqual(
+            tests,
+            [
+                "platform/test-mac-leopard/http/test.html",
+                "platform/test-snow-leopard/http/test.html",
+                "platform/test-win-7sp0/http/test.html",
+            ],
+        )
+
     def test_find_one_test(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/image.html'])]
