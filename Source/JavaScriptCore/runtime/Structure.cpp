@@ -349,7 +349,7 @@ void Structure::destroy(JSCell* cell)
 
 Structure* Structure::create(PolyProtoTag, VM& vm, JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
 {
-    Structure* result = create(vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
+    Structure* result = Structure::create(vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
 
     unsigned oldOutOfLineCapacity = result->outOfLineCapacity();
     result->addPropertyWithoutTransition(
@@ -502,8 +502,7 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
     if (newStructure)
         return newStructure;
 
-    return addNewPropertyTransition(
-        vm, structure, propertyName, attributes, offset, PutPropertySlot::UnknownContext);
+    return addNewPropertyTransition(vm, structure, propertyName, attributes, offset, PutPropertySlot::UnknownContext);
 }
 
 Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset, PutPropertySlot::Context context, DeferredStructureTransitionWatchpointFire* deferred)
@@ -525,7 +524,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
         return transition;
     }
     
-    Structure* transition = create(vm, structure, deferred);
+    Structure* transition = Structure::create(vm, structure, deferred);
 
     transition->m_cachedPrototypeChain.setMayBeNull(vm, transition, structure->m_cachedPrototypeChain.get());
     
@@ -631,7 +630,7 @@ Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, 
         return transition;
     }
 
-    Structure* transition = create(vm, structure, deferred);
+    Structure* transition = Structure::create(vm, structure, deferred);
     transition->m_cachedPrototypeChain.setMayBeNull(vm, transition, structure->m_cachedPrototypeChain.get());
 
     // While we are deleting the property, we need to make sure the table is not cleared.
@@ -670,7 +669,7 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
     ASSERT(isValidPrototype(prototype));
 
     DeferGC deferGC(vm);
-    Structure* transition = create(vm, structure, &deferred);
+    Structure* transition = Structure::create(vm, structure, &deferred);
 
     transition->m_prototype.set(vm, transition, prototype);
 
@@ -726,7 +725,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
 
     // Even if the current structure is dictionary, we should perform transition since this changes attributes of existing properties to keep
     // structure still cacheable.
-    Structure* transition = create(vm, structure);
+    Structure* transition = Structure::create(vm, structure, deferred);
     transition->m_cachedPrototypeChain.setMayBeNull(vm, transition, structure->m_cachedPrototypeChain.get());
 
     {
@@ -764,7 +763,7 @@ Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, Dicti
     ASSERT(!structure->isUncacheableDictionary());
     DeferGC deferGC(vm);
     
-    Structure* transition = create(vm, structure, deferred);
+    Structure* transition = Structure::create(vm, structure, deferred);
 
     PropertyTable* table = structure->copyPropertyTableForPinning(vm);
     transition->pin(Locker { transition->m_lock }, vm, table);
@@ -786,19 +785,19 @@ Structure* Structure::toUncacheableDictionaryTransition(VM& vm, Structure* struc
     return toDictionaryTransition(vm, structure, UncachedDictionaryKind, deferred);
 }
 
-Structure* Structure::sealTransition(VM& vm, Structure* structure)
+Structure* Structure::sealTransition(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
 {
-    return nonPropertyTransition(vm, structure, TransitionKind::Seal);
+    return nonPropertyTransition(vm, structure, TransitionKind::Seal, deferred);
 }
 
-Structure* Structure::freezeTransition(VM& vm, Structure* structure)
+Structure* Structure::freezeTransition(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
 {
-    return nonPropertyTransition(vm, structure, TransitionKind::Freeze);
+    return nonPropertyTransition(vm, structure, TransitionKind::Freeze, deferred);
 }
 
-Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure)
+Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
 {
-    return nonPropertyTransition(vm, structure, TransitionKind::PreventExtensions);
+    return nonPropertyTransition(vm, structure, TransitionKind::PreventExtensions, deferred);
 }
 
 PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm)
@@ -816,7 +815,7 @@ PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm)
     return materializePropertyTable(vm, setPropertyTable);
 }
 
-Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, TransitionKind transitionKind)
+Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, TransitionKind transitionKind, DeferredStructureTransitionWatchpointFire* deferred)
 {
     IndexingType indexingModeIncludingHistory = newIndexingType(structure->indexingModeIncludingHistory(), transitionKind);
     
@@ -830,7 +829,7 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
     
     DeferGC deferGC(vm);
     
-    Structure* transition = create(vm, structure);
+    Structure* transition = Structure::create(vm, structure, deferred);
     transition->setTransitionKind(transitionKind);
     transition->m_blob.setIndexingModeIncludingHistory(indexingModeIncludingHistory);
     
@@ -1222,22 +1221,6 @@ void StructureFireDetail::dump(PrintStream& out) const
     out.print("Structure transition from ", *m_structure);
 }
 
-DeferredStructureTransitionWatchpointFire::DeferredStructureTransitionWatchpointFire(VM& vm, Structure* structure)
-    : DeferredWatchpointFire(vm)
-    , m_structure(structure)
-{
-}
-
-DeferredStructureTransitionWatchpointFire::~DeferredStructureTransitionWatchpointFire()
-{
-    fireAll();
-}
-
-void DeferredStructureTransitionWatchpointFire::dump(PrintStream& out) const
-{
-    out.print("Structure transition from ", *m_structure);
-}
-
 void Structure::didTransitionFromThisStructureWithoutFiringWatchpoint() const
 {
     // If the structure is being watched, and this is the kind of structure that the DFG would
@@ -1566,6 +1549,12 @@ Structure* Structure::setBrandTransition(VM& vm, Structure* structure, Symbol* b
 
     transition->checkOffsetConsistency();
     return transition;
+}
+
+void DeferredStructureTransitionWatchpointFire::fireAllSlow()
+{
+    StructureFireDetail detail(m_structure);
+    watchpointsToFire().fireAll(m_vm, detail);
 }
 
 } // namespace JSC

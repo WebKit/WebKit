@@ -33,6 +33,7 @@
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
+#include "Watchpoint.h"
 #include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -41,14 +42,26 @@ namespace JSC {
 class DeferredStructureTransitionWatchpointFire final : public DeferredWatchpointFire {
     WTF_MAKE_NONCOPYABLE(DeferredStructureTransitionWatchpointFire);
 public:
-    JS_EXPORT_PRIVATE DeferredStructureTransitionWatchpointFire(VM&, Structure*);
-    JS_EXPORT_PRIVATE ~DeferredStructureTransitionWatchpointFire() final;
+    DeferredStructureTransitionWatchpointFire(VM& vm, Structure* structure)
+        : DeferredWatchpointFire()
+        , m_vm(vm)
+        , m_structure(structure)
+    {
+    }
 
-    void dump(PrintStream&) const final;
+    ~DeferredStructureTransitionWatchpointFire()
+    {
+        if (watchpointsToFire().state() == IsWatched)
+            fireAllSlow();
+    }
 
     const Structure* structure() const { return m_structure; }
 
+
 private:
+    JS_EXPORT_PRIVATE void fireAllSlow();
+
+    VM& m_vm;
     const Structure* m_structure;
 };
 
@@ -668,7 +681,7 @@ ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const
     return !aObj && !bObj;
 }
 
-inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, TransitionKind transitionKind)
+inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, TransitionKind transitionKind, DeferredStructureTransitionWatchpointFire* deferred)
 {
     IndexingType indexingModeIncludingHistory = newIndexingType(structure->indexingModeIncludingHistory(), transitionKind);
 
@@ -677,14 +690,14 @@ inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure,
             if (globalObject->isOriginalArrayStructure(structure)) {
                 Structure* result = globalObject->originalArrayStructureForIndexingType(indexingModeIncludingHistory);
                 if (result->indexingModeIncludingHistory() == indexingModeIncludingHistory) {
-                    structure->didTransitionFromThisStructure();
+                    structure->didTransitionFromThisStructure(deferred);
                     return result;
                 }
             }
         }
     }
 
-    return nonPropertyTransitionSlow(vm, structure, transitionKind);
+    return nonPropertyTransitionSlow(vm, structure, transitionKind, deferred);
 }
 
 inline Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)

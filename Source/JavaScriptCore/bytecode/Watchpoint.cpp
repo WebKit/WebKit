@@ -213,11 +213,6 @@ void InlineWatchpointSet::freeFat()
     fat()->deref();
 }
 
-void DeferredWatchpointFire::fireAllSlow()
-{
-    m_watchpointsToFire.fireAll(m_vm, *this);
-}
-
 void DeferredWatchpointFire::takeWatchpointsToFire(WatchpointSet* watchpointsToFire)
 {
     ASSERT(m_watchpointsToFire.state() == ClearWatchpoint);
