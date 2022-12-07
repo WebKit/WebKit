@@ -481,7 +481,6 @@ public:
     bool willRespondToMouseClickEvents() const;
     Editability computeEditabilityForMouseClickEvents(const RenderStyle* = nullptr) const;
     virtual bool willRespondToMouseClickEventsWithEditability(Editability) const;
-    virtual bool willRespondToMouseWheelEvents() const;
     virtual bool willRespondToTouchEvents() const;
 
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
