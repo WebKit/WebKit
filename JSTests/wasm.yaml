@@ -50,7 +50,7 @@
 - path: wasm/v8/
   cmd: runV8WebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
 - path: wasm/v8/regress/
-  cmd: if 'arm' == $architecture; skip; else runV8WebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands; end
+  cmd: runV8WebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
 - path: wasm/branch-hints
   cmd: runWebAssemblySuite unless parseRunCommands
 
