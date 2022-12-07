@@ -54,7 +54,6 @@ struct MediaUsageInfo {
     bool isMediaDocumentAndNotOwnerElement { false };
     bool pageExplicitlyAllowsElementToAutoplayInline { false };
     bool requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted { false };
-    bool hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture { false };
     bool isVideoAndRequiresUserGestureForVideoRateChange { false };
     bool isAudioAndRequiresUserGestureForAudioRateChange { false };
     bool isVideoAndRequiresUserGestureForVideoDueToLowPowerMode { false };
@@ -91,7 +90,6 @@ struct MediaUsageInfo {
             && isMediaDocumentAndNotOwnerElement == other.isMediaDocumentAndNotOwnerElement
             && pageExplicitlyAllowsElementToAutoplayInline == other.pageExplicitlyAllowsElementToAutoplayInline
             && requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted == other.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted
-            && hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture == other.hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture
             && isVideoAndRequiresUserGestureForVideoRateChange == other.isVideoAndRequiresUserGestureForVideoRateChange
             && isAudioAndRequiresUserGestureForAudioRateChange == other.isAudioAndRequiresUserGestureForAudioRateChange
             && isVideoAndRequiresUserGestureForVideoDueToLowPowerMode == other.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode
@@ -139,7 +137,6 @@ template<class Encoder> inline void MediaUsageInfo::encode(Encoder& encoder) con
     encoder << isMediaDocumentAndNotOwnerElement;
     encoder << pageExplicitlyAllowsElementToAutoplayInline;
     encoder << requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
-    encoder << hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture;
     encoder << isVideoAndRequiresUserGestureForVideoRateChange;
     encoder << isAudioAndRequiresUserGestureForAudioRateChange;
     encoder << isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;
@@ -221,9 +218,6 @@ template<class Decoder> inline std::optional<MediaUsageInfo> MediaUsageInfo::dec
         return { };
 
     if (!decoder.decode(info.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted))
-        return { };
-
-    if (!decoder.decode(info.hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture))
         return { };
 
     if (!decoder.decode(info.isVideoAndRequiresUserGestureForVideoRateChange))

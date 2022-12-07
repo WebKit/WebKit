@@ -1058,7 +1058,6 @@ public:
         bool isMediaDocumentAndNotOwnerElement;
         bool pageExplicitlyAllowsElementToAutoplayInline;
         bool requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
-        bool hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture;
         bool isVideoAndRequiresUserGestureForVideoRateChange;
         bool isAudioAndRequiresUserGestureForAudioRateChange;
         bool isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;

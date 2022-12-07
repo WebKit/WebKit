@@ -177,7 +177,6 @@ enum AutoplayPolicy {
     boolean isMediaDocumentAndNotOwnerElement;
     boolean pageExplicitlyAllowsElementToAutoplayInline;
     boolean requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
-    boolean hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture;
     boolean isVideoAndRequiresUserGestureForVideoRateChange;
     boolean isAudioAndRequiresUserGestureForAudioRateChange;
     boolean isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;
