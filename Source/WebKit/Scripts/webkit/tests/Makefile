@@ -13,5 +13,5 @@ TESTS = \
 #
 
 all:
-	python3 ../../generate-serializers.py ./ TestSerializedType.serialization.in
+	python3 ../../generate-serializers.py cpp ./ TestSerializedType.serialization.in
 	python3 ../../generate-message-receiver.py . $(TESTS)
