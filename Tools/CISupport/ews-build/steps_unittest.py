@@ -1858,7 +1858,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 0,
         )
@@ -1873,7 +1873,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 0
             + ExpectShell.log('stdio', stdout='''Unexpected flakiness: timeouts (2)
@@ -1920,7 +1920,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 2
             + ExpectShell.log('json', stdout=self.results_json_regressions),
@@ -1949,7 +1949,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 0
             + ExpectShell.log('json', stdout=self.results_json_flakes),
@@ -1968,7 +1968,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 2
             + ExpectShell.log('json', stdout=self.results_json_mix_flakes_and_regression),
@@ -1987,7 +1987,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 2
             + ExpectShell.log('json', stdout=self.results_json_with_newlines),
@@ -2006,7 +2006,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 2
             + ExpectShell.log('json', stdout=self.results_with_missing_results),
@@ -2027,7 +2027,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--debug', '--results-directory', 'layout-test-results', '--debug-rwt-logging',  '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--debug', '--results-directory', 'layout-test-results', '--debug-rwt-logging',  '--exit-after-n-failures', '30'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 254,
@@ -2043,7 +2043,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',  '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',  '--exit-after-n-failures', '30'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
@@ -2108,7 +2108,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 0,
         )
@@ -2126,7 +2126,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 0,
         )
@@ -2145,7 +2145,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 2,
         )
@@ -2180,7 +2180,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2201,7 +2201,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--exit-after-n-failures', '10',
                                  '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -2240,7 +2240,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
+                                 '--exit-after-n-failures', '10', '--guard-malloc',
                                  '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
@@ -2261,7 +2261,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
+                                 '--exit-after-n-failures', '10', '--guard-malloc',
                                  '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -2307,8 +2307,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--release',
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '30',
-                                 '--skip-failing-tests'],
+                                 '--exit-after-n-failures', '30'],
                         )
             + 0,
         )
@@ -2423,8 +2422,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--release',
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '30',
-                                 '--skip-failing-tests'],
+                                 '--exit-after-n-failures', '30'],
                         )
             + 0,
         )
@@ -2448,8 +2446,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--release',
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '30',
-                                 '--skip-failing-tests'],
+                                 '--exit-after-n-failures', '30'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
@@ -2475,7 +2472,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--debug', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--debug', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + 0,
         )
@@ -2490,7 +2487,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
@@ -2750,7 +2747,7 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '500', '--skip-failing-tests']
+                                 '--exit-after-n-failures', '500']
                         )
             + 0,
         )
@@ -2787,7 +2784,7 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--skip-failing-tests', '--fully-parallel', '--repeat-each=10'] + sorted(first_run_failures)
+                                 '--fully-parallel', '--repeat-each=10'] + sorted(first_run_failures)
                         )
             + 0,
         )
@@ -2828,7 +2825,7 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(with_change_repeat_failures_results_nonflaky_failures)
+                                 '--fully-parallel', '--repeat-each=10', '--skip-failing-tests', '--skipped=always'] + sorted(with_change_repeat_failures_results_nonflaky_failures)
                         )
             + 0,
         )
@@ -2857,7 +2854,7 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(first_run_failures)
+                                 '--fully-parallel', '--repeat-each=10', '--skip-failing-tests', '--skipped=always'] + sorted(first_run_failures)
                         )
             + 0,
         )
