@@ -3,6 +3,7 @@
     "count": 4,
     "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/Speedometer/@r226694",
     "webserver_benchmark_patch": "data/patches/webserver/Speedometer2.patch",
+    "signpost_patch": "data/patches/signposts/Speedometer2.patch",
     "entry_point": "index.html",
     "output_file": "speedometer2.result"
 }

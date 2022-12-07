@@ -1,0 +1,33 @@
+
+diff --git a/PerformanceTests/Speedometer/resources/benchmark-runner.js b/PerformanceTests/Speedometer/resources/benchmark-runner.js
+index 47cedfc09a4c..82a34562bfc2 100644
+--- a/resources/benchmark-runner.js
++++ b/resources/benchmark-runner.js
+@@ -125,21 +125,27 @@ BenchmarkRunner.prototype._runTest = function(suite, test, prepareReturnValue, c
+ 
+     var contentWindow = self._frame.contentWindow;
+     var contentDocument = self._frame.contentDocument;
++    let syncName = suite.name + '.' + test.name + '-sync';
++    let asyncName = suite.name + '.' + test.name + '-async';
+ 
+     self._writeMark(suite.name + '.' + test.name + '-start');
++    __signpostStart(syncName);
+     var startTime = now();
+     test.run(prepareReturnValue, contentWindow, contentDocument);
+     var endTime = now();
++    __signpostStop(syncName);
+     self._writeMark(suite.name + '.' + test.name + '-sync-end');
+ 
+     var syncTime = endTime - startTime;
+ 
++    __signpostStart(asyncName);
+     var startTime = now();
+     setTimeout(function () {
+         // Some browsers don't immediately update the layout for paint.
+         // Force the layout here to ensure we're measuring the layout time.
+         var height = self._frame.contentDocument.body.getBoundingClientRect().height;
+         var endTime = now();
++        __signpostStop(asyncName);
+         self._frame.contentWindow._unusedHeightValue = height; // Prevent dead code elimination.
+         self._writeMark(suite.name + '.' + test.name + '-async-end');
+         callback(syncTime, endTime - startTime, height);
