@@ -41,7 +41,6 @@ layer at (0,0) size 785x1533
           text run at (0,240) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
           text run at (488,240) width 0: " "
           text run at (0,256) width 0: " "
-      RenderBlock {HR} at (0,321) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,339) size 769x20
         RenderText {#text} at (0,0) size 472x19
           text run at (0,0) width 472: "This document should have a single, small green image in its upper right corner."
@@ -144,3 +143,5 @@ layer at (0,0) size 785x1533
                   text run at (0,40) width 76: "the element. "
                   text run at (76,40) width 624: "The background color will make it easier to determine the edges of the paragraph, which should assist in"
                   text run at (0,60) width 112: "evaluating this test."
+layer at (8,329) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,321) size 769x2 [border: (1px inset #000000)]

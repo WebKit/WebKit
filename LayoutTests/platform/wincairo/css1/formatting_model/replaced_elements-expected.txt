@@ -24,7 +24,6 @@ layer at (0,0) size 785x2377
           text run at (200,96) width 0: " "
           text run at (0,112) width 464: "          margin-right: 0; margin-left: auto; width: 50%;}"
           text run at (464,112) width 0: " "
-      RenderBlock {HR} at (0,177) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,195) size 769x20
         RenderImage {IMG} at (0,0) size 15x15
         RenderText {#text} at (15,0) size 411x19
@@ -85,3 +84,5 @@ layer at (0,0) size 785x2377
                   text run at (0,0) width 723: "The above image should be a square resized so its width is 50% of its parent element, and aligned at the right edge of the"
                   text run at (0,20) width 95: "parent element: "
                   text run at (95,20) width 375: "the document body in the first half, and the table in the second."
+layer at (8,185) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,177) size 769x2 [border: (1px inset #000000)]

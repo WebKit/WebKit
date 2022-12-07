@@ -14,7 +14,6 @@ layer at (0,0) size 785x1391
           text run at (144,16) width 0: " "
           text run at (0,32) width 152: "TABLE {width: 50%;}"
           text run at (152,32) width 0: " "
-      RenderBlock {HR} at (0,97) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,107) size 769x50
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {#text} at (0,0) size 0x0
@@ -83,3 +82,5 @@ layer at (0,0) size 785x1391
                   text run at (0,160) width 176: "property without the need for"
                   text run at (0,180) width 172: "the user to resize the viewing"
                   text run at (0,200) width 52: "window."
+layer at (8,105) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,97) size 769x2 [border: (1px inset #000000)]

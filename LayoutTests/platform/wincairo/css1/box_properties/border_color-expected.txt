@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
           text run at (568,16) width 0: " "
           text run at (0,32) width 728: ".three {border-color: purple green blue yellow; border-width: medium; border-style: solid;}"
           text run at (728,32) width 0: " "
-      RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,115) size 784x26 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 337x19
           text run at (3,3) width 337: "This element should have a purple border surrounding it."
@@ -47,3 +46,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (3,3) size 723x39
                   text run at (3,3) width 723: "This element should be surrounded by a medium width border which is purple on top, green on the right side, blue on the"
                   text run at (3,23) width 211: "bottom, and yellow on the left side."
+layer at (8,105) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]

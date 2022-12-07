@@ -1,3 +1,5 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 7 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of #text > P > BODY > HTML > #document to 6 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -17,7 +19,6 @@ layer at (0,0) size 800x600
           text run at (457,0) width 288: "Adding visible candidates after tables, at [table, "
           text run at (0,20) width 751: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside an "
           text run at (0,40) width 78: "atomic node."
-      RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,86) size 154x56 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 152x54
           RenderTableRow {TR} at (0,2) size 152x24
@@ -28,5 +29,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,28) size 148x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 144x19
                 text run at (2,2) width 144: "This should be selected."
+layer at (8,84) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
 selection start: position 0 of child 0 {#text} of child 1 {P} of body
 selection end:   position 1 of child 5 {TABLE} of body

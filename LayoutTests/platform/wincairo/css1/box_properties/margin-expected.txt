@@ -22,7 +22,6 @@ layer at (0,0) size 785x2675
           text run at (168,80) width 0: " "
           text run at (0,96) width 360: ".six {margin: -10px; background-color: aqua;}"
           text run at (360,96) width 0: " "
-      RenderBlock {HR} at (0,161) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,179) size 769x40
         RenderText {#text} at (0,0) size 755x39
           text run at (0,0) width 755: "NOTE: The following tests are separated by class-zero paragraphs, so as to prevent margin-collapsing as described in section"
@@ -162,3 +161,5 @@ layer at (0,0) size 785x2675
               RenderBlock {P} at (4,1199) size 747x21 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 193x19
                   text run at (0,0) width 193: "This element has a class of zero."
+layer at (8,169) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,161) size 769x2 [border: (1px inset #000000)]

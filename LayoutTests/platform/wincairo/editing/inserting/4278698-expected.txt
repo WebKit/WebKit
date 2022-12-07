@@ -1,5 +1,3 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
-EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -18,9 +16,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 424x19
           text run at (0,0) width 424: "If successful, you should see 'a' followed by 10 spaces followed by 'b'."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,102) size 784x24 [border: (2px solid #FFAAAA)]
         RenderBlock {PRE} at (2,2) size 780x20 [border: (2px solid #AAAAFF)]
           RenderText {#text} at (2,2) size 96x16
             text run at (2,2) width 96: "a          b"
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
 caret: position 3 of child 0 {#text} of child 1 {PRE} of child 7 {DIV} of body

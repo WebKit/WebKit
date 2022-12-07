@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
           text run at (0,16) width 240: ".one {background-image: none;}"
           text run at (240,16) width 0: " "
           text run at (0,32) width 0: " "
-      RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,115) size 784x40
         RenderText {#text} at (0,0) size 779x39
           text run at (0,0) width 482: "This sentence should be backed by an image-- a green grid pattern, in this case. "
@@ -89,3 +88,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 727x39
                   text run at (0,0) width 727: "This sentence should NOT be backed by a repeated green-grid image, allowing the page's background to \"shine through\""
                   text run at (0,20) width 46: "instead."
+layer at (8,105) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]

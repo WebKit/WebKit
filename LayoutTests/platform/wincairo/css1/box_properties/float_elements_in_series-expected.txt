@@ -32,7 +32,6 @@ layer at (0,0) size 785x732
           text run at (0,176) width 200: "TABLE {margin: 20px 0px;}"
           text run at (200,176) width 0: " "
           text run at (0,192) width 0: " "
-      RenderBlock {HR} at (0,254) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,264) size 769x40
         RenderText {#text} at (0,0) size 769x39
           text run at (0,0) width 769: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this page"
@@ -157,3 +156,5 @@ layer at (0,0) size 785x732
                         RenderImage {IMG} at (0,0) size 100x1
                       RenderTableCell {TD} at (600,10) size 20x1 [bgcolor=#000000] [r=0 c=14 rs=1 cs=1]
                         RenderImage {IMG} at (0,0) size 20x1
+layer at (8,262) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,254) size 769x2 [border: (1px inset #000000)]

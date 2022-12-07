@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 344x19
           text run at (0,0) width 344: "All four question marks below should be \x{201C}big\x{201D}, like this: ?"
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,110) size 784x20
         RenderText {#text} at (0,0) size 52x19
           text run at (0,0) width 52: "ATSUI: "
@@ -31,3 +30,5 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 39x19
           RenderText {#text} at (29,0) size 39x19
             text run at (29,0) width 39: "A?b?e"
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]

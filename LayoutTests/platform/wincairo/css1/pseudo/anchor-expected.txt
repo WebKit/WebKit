@@ -19,7 +19,6 @@ layer at (0,0) size 785x737
           text run at (0,64) width 176: "#one {color: #006600;}"
           text run at (176,64) width 0: " "
           text run at (0,80) width 0: " "
-      RenderBlock {HR} at (0,145) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,163) size 769x20
         RenderText {#text} at (0,0) size 477x19
           text run at (0,0) width 477: "The following anchors should appear as described; none of them should be red."
@@ -160,3 +159,5 @@ layer at (0,0) size 785x737
                   text run at (515,0) width 185: "It's a named anchor, and styles"
                   text run at (0,20) width 339: "declared for the A tag are applied to them under CSS1. "
                   text run at (339,20) width 310: "It also should NOT turn orange when clicked upon."
+layer at (8,153) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,145) size 769x2 [border: (1px inset #000000)]

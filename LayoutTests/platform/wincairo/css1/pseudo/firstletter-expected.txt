@@ -18,7 +18,6 @@ layer at (0,0) size 785x751
           text run at (0,32) width 312: "P.three:first-letter {font-size: 350%;}"
           text run at (312,32) width 0: " "
           text run at (0,48) width 0: " "
-      RenderBlock {HR} at (0,113) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,131) size 769x60
         RenderInline (generated) at (0,0) size 9x19 [color=#800000]
           RenderText at (0,0) size 9x19
@@ -91,3 +90,5 @@ layer at (0,0) size 785x751
                   text run at (0,66) width 560: "mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon. "
                   text run at (560,66) width 171: "Note that this is not required"
                   text run at (0,86) width 220: "under CSS1, but it is recommended."
+layer at (8,121) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,113) size 769x2 [border: (1px inset #000000)]

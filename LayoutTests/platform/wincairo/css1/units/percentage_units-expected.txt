@@ -17,7 +17,6 @@ layer at (0,0) size 800x600
           text run at (0,48) width 208: ".three {margin-left: 25%;}"
           text run at (208,48) width 0: " "
           text run at (0,64) width 0: " "
-      RenderBlock {HR} at (0,129) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,147) size 784x116 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (196,0) size 392x40 [bgcolor=#FFFFFF]
           RenderBlock {P} at (0,0) size 392x40
@@ -62,3 +61,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 561x39
                   text run at (0,0) width 561: "This paragraph should have a left margin of 25% the width of its parent element, which should"
                   text run at (0,20) width 298: "require some extra text in order to test effectively."
+layer at (8,137) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,129) size 784x2 [border: (1px inset #000000)]
