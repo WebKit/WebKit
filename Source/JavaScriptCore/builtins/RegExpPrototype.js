@@ -88,8 +88,28 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
     if (regexpExec !== @regExpBuiltinExec)
         return true;
 
+    var regexpFlags = @tryGetById(regexp, "flags");
+    if (regexpFlags !== @regExpProtoFlagsGetter)
+        return true;
+
+    // These are accessed by the builtin flags getter.
+    var regexpDotAll = @tryGetById(regexp, "dotAll");
+    if (regexpDotAll !== @regExpProtoDotAllGetter)
+        return true;
     var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
+        return true;
+    var regexpHasIndices = @tryGetById(regexp, "hasIndices");
+    if (regexpHasIndices !== @regExpProtoHasIndicesGetter)
+        return true;
+    var regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
+    if (regexpIgnoreCase !== @regExpProtoIgnoreCaseGetter)
+        return true;
+    var regexpMultiline = @tryGetById(regexp, "multiline");
+    if (regexpMultiline !== @regExpProtoMultilineGetter)
+        return true;
+    var regexpSticky = @tryGetById(regexp, "sticky");
+    if (regexpSticky !== @regExpProtoStickyGetter)
         return true;
     var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
@@ -103,10 +123,13 @@ function matchSlow(regexp, str)
 {
     "use strict";
 
-    if (!regexp.global)
+    var flags = @toString(regexp.flags);
+    var global = @stringIncludesInternal.@call(flags, "g");
+
+    if (!global)
         return @regExpExec(regexp, str);
     
-    var unicode = regexp.unicode;
+    var unicode = @stringIncludesInternal.@call(flags, "u");
     regexp.lastIndex = 0;
     var resultList = [];
 
@@ -291,11 +314,13 @@ function replace(strArg, replace)
     if (!functionalReplace)
         replace = @toString(replace);
 
-    var global = regexp.global;
+    var flags = @toString(regexp.flags);
+
+    var global = @stringIncludesInternal.@call(flags, "g");
     var unicode = false;
 
     if (global) {
-        unicode = regexp.unicode;
+        unicode = @stringIncludesInternal.@call(flags, "u");
         regexp.lastIndex = 0;
     }
 
@@ -445,8 +470,14 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
         return true;
     
     // These are accessed by the builtin flags getter.
+    var regexpDotAll = @tryGetById(regexp, "dotAll");
+    if (regexpDotAll !== @regExpProtoDotAllGetter)
+        return true;
     var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
+        return true;
+    var regexpHasIndices = @tryGetById(regexp, "hasIndices");
+    if (regexpHasIndices !== @regExpProtoHasIndicesGetter)
         return true;
     var regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
     if (regexpIgnoreCase !== @regExpProtoIgnoreCaseGetter)
