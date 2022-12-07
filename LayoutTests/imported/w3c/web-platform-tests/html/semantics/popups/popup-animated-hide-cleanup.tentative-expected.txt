@@ -1,7 +1,0 @@
-This is a pop-up
-This is a pop-up
-
-FAIL Ensure no crashes if running animations are immediately cancelled (document removal) promise_test: Unhandled rejection with value: object "TypeError: popUp.showPopUp is not a function. (In 'popUp.showPopUp()', 'popUp.showPopUp' is undefined)"
-FAIL Ensure no crashes if running animations are immediately cancelled (dialog showModal) promise_test: Unhandled rejection with value: object "TypeError: popUp.showPopUp is not a function. (In 'popUp.showPopUp()', 'popUp.showPopUp' is undefined)"
-FAIL Ensure no crashes if running transitions are immediately cancelled (button click) promise_test: Unhandled rejection with value: object "TypeError: popUp.showPopUp is not a function. (In 'popUp.showPopUp()', 'popUp.showPopUp' is undefined)"
-

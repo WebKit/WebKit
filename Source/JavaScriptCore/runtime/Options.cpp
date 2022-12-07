@@ -951,7 +951,7 @@ bool Options::setOptions(const char* optionsStr)
 
 // Parses a single command line option in the format "<optionName>=<value>"
 // (no spaces allowed) and set the specified option if appropriate.
-bool Options::setOptionWithoutAlias(const char* arg)
+bool Options::setOptionWithoutAlias(const char* arg, bool verify)
 {
     // arg should look like this:
     //   <jscOptionName>=<appropriate value>
@@ -973,7 +973,7 @@ bool Options::setOptionWithoutAlias(const char* arg)
         value = parse<OptionsStorage::type_>(valueStr);            \
         if (value) {                                               \
             name_() = value.value();                               \
-            notifyOptionsChanged();                                \
+            if (verify) notifyOptionsChanged();                    \
             return true;                                           \
         }                                                          \
         return false;                                              \
@@ -994,7 +994,7 @@ static const char* invertBoolOptionValue(const char* valueStr)
 }
 
 
-bool Options::setAliasedOption(const char* arg)
+bool Options::setAliasedOption(const char* arg, bool verify)
 {
     // arg should look like this:
     //   <jscOptionName>=<appropriate value>
@@ -1019,7 +1019,7 @@ bool Options::setAliasedOption(const char* arg)
                 return false;                                           \
             unaliasedOption = unaliasedOption + "=" + invertedValueStr; \
         }                                                               \
-        return setOptionWithoutAlias(unaliasedOption.utf8().data());    \
+        return setOptionWithoutAlias(unaliasedOption.utf8().data(), verify);    \
     }
 
     FOR_EACH_JSC_ALIASED_OPTION(FOR_EACH_OPTION)
@@ -1030,13 +1030,13 @@ bool Options::setAliasedOption(const char* arg)
     return false; // No option matched.
 }
 
-bool Options::setOption(const char* arg)
+bool Options::setOption(const char* arg, bool verify)
 {
     AllowUnfinalizedAccessScope scope;
-    bool success = setOptionWithoutAlias(arg);
+    bool success = setOptionWithoutAlias(arg, verify);
     if (success)
         return true;
-    return setAliasedOption(arg);
+    return setAliasedOption(arg, verify);
 }
 
 

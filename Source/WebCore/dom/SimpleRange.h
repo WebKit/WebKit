@@ -70,6 +70,8 @@ template<TreeType = Tree> bool contains(const SimpleRange&, const std::optional<
 template<TreeType = Tree> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 template<TreeType = Tree> bool contains(const SimpleRange&, const Node&);
 
+template<> WEBCORE_EXPORT bool contains<ComposedTree>(const SimpleRange&, const std::optional<BoundaryPoint>&);
+
 WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
 WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const Node&);
 WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const BoundaryPoint&);

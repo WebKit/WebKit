@@ -1005,7 +1005,8 @@
       "name" : "Asumu Takikawa",
       "nicks" : [
          "asumu"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -5144,7 +5145,8 @@
          "miguel_salinas@apple.com"
       ],
       "github" : "salinas-miguel",
-      "name" : "Miguel Salinas"
+      "name" : "Miguel Salinas",
+      "status" : "committer"
    },
    {
       "emails" : [

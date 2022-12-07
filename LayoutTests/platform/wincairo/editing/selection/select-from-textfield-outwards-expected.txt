@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange: toDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -26,7 +26,6 @@ layer at (0,0) size 800x600
             text run at (0,20) width 217: "when selecting past the first letter"
         RenderText {#text} at (217,20) size 4x19
           text run at (217,20) width 4: "."
-      RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,74) size 784x60
         RenderText {#text} at (0,0) size 782x59
           text run at (0,0) width 782: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed neque. Quisque eu nulla non nisi"
@@ -40,6 +39,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 781: "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris viverra augue vitae purus. Morbi sed"
           text run at (0,20) width 713: "sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros pharetra rutrum."
           text run at (0,40) width 649: "Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a, tellus."
+layer at (8,64) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
 layer at (40,190) size 271x29
   RenderBlock {DIV} at (12,12) size 271x29
     RenderText {#text} at (0,0) size 202x29

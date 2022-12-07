@@ -37,7 +37,6 @@ layer at (0,0) size 785x1993
           text run at (0,208) width 240: "       background-color: red;}"
           text run at (240,208) width 0: " "
           text run at (0,224) width 0: " "
-      RenderBlock {HR} at (0,289) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,307) size 769x60
         RenderText {#text} at (0,0) size 744x19
           text run at (0,0) width 744: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the default for"
@@ -305,3 +304,5 @@ layer at (0,0) size 785x1993
                   text run at (110,80) width 226: "This ought to be enough text, though. "
                   text run at (336,80) width 411: "A background color is present, although if it is visible, then the image"
                   text run at (0,100) width 203: "may not have been tiled correctly."
+layer at (8,297) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,289) size 769x2 [border: (1px inset #000000)]

@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-orientation
 
 
 FAIL Test without 'allow-orientation-lock' sandboxing directive assert_equals: screen.lockOrientation() throws a SecurityError expected "SecurityError" but got "portrait-primary"
-FAIL Test with 'allow-orientation-lock' sandboxing directive assert_equals: screen.orientation lock to portrait-primary expected "portrait-primary" but got "fullscreen exit failed"
+FAIL Test with 'allow-orientation-lock' sandboxing directive assert_equals: screen.orientation lock to portrait-primary expected "portrait-primary" but got "TypeError"
 

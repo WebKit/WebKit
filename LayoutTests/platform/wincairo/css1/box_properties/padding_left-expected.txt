@@ -20,7 +20,6 @@ layer at (0,0) size 785x1045
           text run at (400,64) width 0: " "
           text run at (0,80) width 416: ".five {padding-left: -20px; background-color: aqua;}"
           text run at (416,80) width 0: " "
-      RenderBlock {HR} at (0,145) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,163) size 769x20 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 193x19
           text run at (0,0) width 193: "This element has a class of zero."
@@ -113,3 +112,5 @@ layer at (0,0) size 785x1045
                   text run at (0,0) width 532: "This element should have no left padding, since negative padding values are not allowed. "
                   text run at (532,0) width 201: "Both the content background and"
                   text run at (0,20) width 281: "the normal padding should be aqua (light blue)."
+layer at (8,153) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,145) size 769x2 [border: (1px inset #000000)]

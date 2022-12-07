@@ -29,7 +29,6 @@ layer at (0,0) size 785x849
           text run at (0,144) width 296: ".one {text-decoration: line-through;}"
           text run at (296,144) width 0: " "
           text run at (0,160) width 0: " "
-      RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,243) size 769x160
         RenderListItem {LI} at (40,0) size 729x20 [color=#0000FF]
           RenderListMarker at (-18,0) size 7x19: bullet
@@ -140,3 +139,5 @@ layer at (0,0) size 785x849
               RenderBlock {P} at (4,252) size 652x20
                 RenderText {#text} at (0,0) size 652x19
                   text run at (0,0) width 652: "This text should be stricken (overriding the imported underline; only works if LINKed sheets are supported)."
+layer at (8,233) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]

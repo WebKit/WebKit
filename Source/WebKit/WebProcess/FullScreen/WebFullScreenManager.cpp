@@ -159,6 +159,7 @@ void WebFullScreenManager::setElement(WebCore::Element& element)
     clearElement();
 
     m_element = &element;
+    m_elementToRestore = element;
 
     for (auto& eventName : eventsToObserve())
         m_element->addEventListener(eventName, *this, { true });
@@ -328,14 +329,18 @@ void WebFullScreenManager::setAnimatingFullScreen(bool animating)
     m_element->document().fullscreenManager().setAnimatingFullscreen(animating);
 }
 
-void WebFullScreenManager::requestEnterFullScreen()
+void WebFullScreenManager::requestRestoreFullScreen()
 {
-    ASSERT(m_element);
-    if (!m_element)
+    ASSERT(!m_element);
+    if (m_element)
         return;
 
-    WebCore::UserGestureIndicator gestureIndicator(WebCore::ProcessingUserGesture);
-    m_element->document().fullscreenManager().requestFullscreenForElement(*m_element, nullptr, WebCore::FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
+    auto element = RefPtr { m_elementToRestore.get() };
+    if (!element)
+        return;
+
+    WebCore::UserGestureIndicator gestureIndicator(WebCore::ProcessingUserGesture, &element->document());
+    element->document().fullscreenManager().requestFullscreenForElement(*element, nullptr, WebCore::FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
 }
 
 void WebFullScreenManager::requestExitFullScreen()

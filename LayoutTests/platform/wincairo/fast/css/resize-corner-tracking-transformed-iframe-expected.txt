@@ -3,7 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,18) size 784x20
         RenderText {#text} at (0,0) size 51x19
           text run at (0,0) width 51: "Test for "
@@ -16,9 +15,12 @@ layer at (0,0) size 800x600
             text run at (358,0) width 253: "resize property doesn't work on iframes"
         RenderText {#text} at (611,0) size 4x19
           text run at (611,0) width 4: "."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,64) size 784x230
         RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+layer at (8,62) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
 layer at (58,122) size 163x130
   RenderIFrame {IFRAME} at (50,50) size 163x130 [border: (2px solid #0000FF)]
     layer at (0,0) size 159x126

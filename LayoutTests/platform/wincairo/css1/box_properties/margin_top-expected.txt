@@ -24,7 +24,6 @@ layer at (0,0) size 785x1703
           text run at (392,96) width 0: " "
           text run at (0,112) width 200: "P, UL {margin-bottom: 0;}"
           text run at (200,112) width 0: " "
-      RenderBlock {HR} at (0,174) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,184) size 769x20 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 193x19
           text run at (0,0) width 193: "This element has a class of zero."
@@ -135,3 +134,5 @@ layer at (0,0) size 785x1703
                   text run at (0,20) width 468: "No other styles have been applied to it besides a light blue background color. "
                   text run at (468,20) width 256: "In all other respects, the element should be"
                   text run at (0,40) width 45: "normal."
+layer at (8,182) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,174) size 769x2 [border: (1px inset #000000)]

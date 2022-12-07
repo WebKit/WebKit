@@ -195,8 +195,8 @@ public:
     WEBCORE_EXPORT bool canEdit() const;
     WEBCORE_EXPORT bool canEditRichly() const;
 
-    bool canDHTMLCut();
-    bool canDHTMLCopy();
+    WEBCORE_EXPORT bool canDHTMLCut();
+    WEBCORE_EXPORT bool canDHTMLCopy();
     WEBCORE_EXPORT bool canDHTMLPaste();
     bool tryDHTMLCopy();
     bool tryDHTMLCut();
@@ -370,7 +370,7 @@ public:
     bool shouldBeginEditing(const SimpleRange&);
     bool shouldEndEditing(const SimpleRange&);
 
-    void clearUndoRedoOperations();
+    WEBCORE_EXPORT void clearUndoRedoOperations();
     bool canUndo() const;
     void undo();
     bool canRedo() const;
@@ -401,7 +401,7 @@ public:
     WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
     void confirmOrCancelCompositionAndNotifyClient();
     WEBCORE_EXPORT void cancelComposition();
-    bool cancelCompositionIfSelectionIsInvalid();
+    WEBCORE_EXPORT bool cancelCompositionIfSelectionIsInvalid();
     WEBCORE_EXPORT std::optional<SimpleRange> compositionRange() const;
     WEBCORE_EXPORT bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
 
@@ -433,7 +433,7 @@ public:
 
     EditingBehavior behavior() const;
 
-    std::optional<SimpleRange> selectedRange();
+    WEBCORE_EXPORT std::optional<SimpleRange> selectedRange();
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void confirmMarkedText();

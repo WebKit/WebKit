@@ -159,6 +159,9 @@ bool EventRegion::operator==(const EventRegion& other) const
 
 void EventRegion::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
+    if (style.effectivePointerEvents() == PointerEvents::None)
+        return;
+
     m_region.unite(region);
 
 #if ENABLE(TOUCH_ACTION_REGIONS)

@@ -24,7 +24,7 @@ test_driver.bless("request full screen", async () => {
     await document.exitFullscreen();
   } catch (error) {
     data.result = "errored";
-    data.name = "fullscreen exit failed";
+    data.name = error.name;
   }
 
   parent.window.postMessage(data, "*");

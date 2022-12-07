@@ -22,8 +22,6 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-file_extension: mm
-
 struct WebKit::WebExtensionContextParameters {
     WebKit::WebExtensionContextIdentifier identifier;
 

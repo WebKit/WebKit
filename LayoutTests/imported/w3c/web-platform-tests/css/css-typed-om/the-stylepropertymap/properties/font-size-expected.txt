@@ -10,8 +10,8 @@ PASS Can set 'font-size' to the 'x-large' keyword
 PASS Can set 'font-size' to the 'xx-large' keyword
 PASS Can set 'font-size' to the 'larger' keyword
 PASS Can set 'font-size' to the 'smaller' keyword
-FAIL Can set 'font-size' to a length Invalid values
-FAIL Can set 'font-size' to a percent Invalid values
+FAIL Can set 'font-size' to a length assert_equals: expected "px" but got "em"
+FAIL Can set 'font-size' to a percent assert_equals: expected 2 but got 1
 PASS Setting 'font-size' to a time throws TypeError
 PASS Setting 'font-size' to an angle throws TypeError
 PASS Setting 'font-size' to a flexible length throws TypeError

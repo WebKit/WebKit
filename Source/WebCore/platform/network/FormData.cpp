@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -34,25 +34,21 @@
 #include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
 #include <wtf/FileSystem.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/LineEnding.h>
 
 namespace WebCore {
 
-inline FormData::FormData()
-{
-}
+WTF_MAKE_ISO_ALLOCATED_IMPL(FormData);
 
 inline FormData::FormData(const FormData& data)
     : RefCounted<FormData>()
     , m_elements(data.m_elements)
     , m_identifier(data.m_identifier)
-    , m_alwaysStream(false)
 {
 }
 
-FormData::~FormData()
-{
-}
+FormData::~FormData() = default;
 
 Ref<FormData> FormData::create()
 {

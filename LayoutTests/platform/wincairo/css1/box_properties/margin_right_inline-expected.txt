@@ -12,7 +12,6 @@ layer at (0,0) size 800x600
           text run at (552,0) width 0: " "
           text run at (0,16) width 408: ".two {margin-right: -10px; background-color: aqua;}"
           text run at (408,16) width 0: " "
-      RenderBlock {HR} at (0,81) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,99) size 784x40 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 515x19
           text run at (0,0) width 369: "This element is unstyled save for a background color of gray. "
@@ -97,3 +96,5 @@ layer at (0,0) size 800x600
                     text run at (230,20) width 24: "last"
                 RenderText {#text} at (254,20) size 216x19
                   text run at (254,20) width 216: " line in which the inline box appears."
+layer at (8,89) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,81) size 784x2 [border: (1px inset #000000)]

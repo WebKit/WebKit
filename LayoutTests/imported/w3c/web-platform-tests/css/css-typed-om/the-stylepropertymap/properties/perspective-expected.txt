@@ -2,7 +2,7 @@
 PASS Can set 'perspective' to CSS-wide keywords
 FAIL Can set 'perspective' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'perspective' to the 'none' keyword
-FAIL Can set 'perspective' to a length Invalid values
+FAIL Can set 'perspective' to a length assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSKeywordValue]"
 PASS Setting 'perspective' to a percent throws TypeError
 PASS Setting 'perspective' to a time throws TypeError
 PASS Setting 'perspective' to an angle throws TypeError

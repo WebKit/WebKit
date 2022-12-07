@@ -503,6 +503,8 @@ TypeInformation::TypeInformation()
             RefPtr<TypeDefinition> sig = TypeDefinition::tryCreateFunctionSignature(1, 0); \
             sig->ref();                                                                    \
             sig->as<FunctionSignature>()->getReturnType(0) = Types::type;                  \
+            if (Types::type.isV128())                                                      \
+                sig->as<FunctionSignature>()->setArgumentsOrResultsIncludeV128(true);      \
             thunkTypes[linearizeType(TypeKind::type)] = sig.get();                         \
             m_typeSet.add(TypeHash { sig.releaseNonNull() });                              \
         }                                                                                  \
@@ -559,18 +561,22 @@ struct FunctionParameterTypes {
         RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateFunctionSignature(params.returnTypes.size(), params.argumentTypes.size());
         RELEASE_ASSERT(signature);
         bool hasRecursiveReference = false;
+        bool argumentsOrResultsIncludeV128 = false;
 
         for (unsigned i = 0; i < params.returnTypes.size(); ++i) {
             signature->as<FunctionSignature>()->getReturnType(i) = params.returnTypes[i];
             hasRecursiveReference |= isRefWithRecursiveReference(params.returnTypes[i]);
+            argumentsOrResultsIncludeV128 |= params.returnTypes[i].isV128();
         }
 
         for (unsigned i = 0; i < params.argumentTypes.size(); ++i) {
             signature->as<FunctionSignature>()->getArgumentType(i) = params.argumentTypes[i];
             hasRecursiveReference |= isRefWithRecursiveReference(params.argumentTypes[i]);
+            argumentsOrResultsIncludeV128 |= params.argumentTypes[i].isV128();
         }
 
         signature->as<FunctionSignature>()->setHasRecursiveReference(hasRecursiveReference);
+        signature->as<FunctionSignature>()->setArgumentsOrResultsIncludeV128(argumentsOrResultsIncludeV128);
 
         entry.key = WTFMove(signature);
     }

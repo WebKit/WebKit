@@ -65,7 +65,7 @@ public:
 
     void didChangeAlignmentInterval();
 
-    static void fireTimersInNestedEventLoop();
+    WEBCORE_EXPORT static void fireTimersInNestedEventLoop();
 
 private:
     virtual void fired() = 0;

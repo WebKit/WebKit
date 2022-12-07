@@ -27,7 +27,6 @@ layer at (0,0) size 785x1649
           text run at (0,128) width 240: ".nine {list-style-type: none;}"
           text run at (240,128) width 0: " "
           text run at (0,144) width 0: " "
-      RenderBlock {HR} at (0,209) size 769x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,227) size 769x60
         RenderListItem {LI} at (40,0) size 729x20
           RenderListMarker at (-18,0) size 7x19: bullet
@@ -268,3 +267,5 @@ layer at (0,0) size 785x1649
                 RenderListItem {LI} at (40,40) size 264x20
                   RenderText {#text} at (0,0) size 141x19
                     text run at (0,0) width 141: "...nothing for each item."
+layer at (8,217) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,209) size 769x2 [border: (1px inset #000000)]

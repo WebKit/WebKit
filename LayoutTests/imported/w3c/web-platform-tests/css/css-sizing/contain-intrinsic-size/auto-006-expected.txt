@@ -1,18 +1,18 @@
 
-FAIL Basic usage assert_equals: Sizing normally - clientWidth expected 100 but got 1
+FAIL Basic usage assert_equals: Using last remembered size - clientWidth expected 100 but got 1
 FAIL Last remembered size can be 0 assert_equals: Using last remembered size - clientWidth expected 0 but got 1
-FAIL Last remembered size can be set to 0 after losing display:none assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Last remembered size is logical assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Last remembered size survives box destruction assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Last remembered size survives display type changes assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Losing cis:auto removes last remembered size assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Losing cis:auto removes last remembered size even if size doesn't change assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Losing cis:auto removes last remembered size immediately assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Losing cis:auto during display:none doesn't remove last remembered size assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Lack of cis:auto during box creation removes last remembered size assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Last remembered size can be removed synchronously assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Disconnected element can briefly keep last remembered size assert_equals: Sizing normally - clientWidth expected 100 but got 1
-FAIL Disconnected element ends up losing last remembered size assert_equals: Sizing normally - clientWidth expected 100 but got 1
+FAIL Last remembered size can be set to 0 after losing display:none assert_equals: Using the new last remembered size - clientWidth expected 0 but got 1
+FAIL Last remembered size is logical assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Last remembered size survives box destruction assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Last remembered size survives display type changes assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Losing cis:auto removes last remembered size assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+PASS Losing cis:auto removes last remembered size even if size doesn't change
+FAIL Losing cis:auto removes last remembered size immediately assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Losing cis:auto during display:none doesn't remove last remembered size assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Lack of cis:auto during box creation removes last remembered size assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Last remembered size can be removed synchronously assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Disconnected element can briefly keep last remembered size assert_equals: Using last remembered size - clientWidth expected 100 but got 1
+FAIL Disconnected element ends up losing last remembered size assert_equals: Using last remembered size - clientWidth expected 100 but got 1
 PASS Disconnected element ends up losing last remembered size even if size was 0x0
 FAIL Last remembered size survives becoming inline assert_equals: Still using previous last remembered size - clientWidth expected 100 but got 1
 FAIL Last remembered size can be set to 0x0 after losing display:inline assert_equals: Last remembered size is now 0x0 - clientWidth expected 0 but got 1

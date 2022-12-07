@@ -42,7 +42,7 @@ namespace WebCore {
 class AbstractDOMWindow;
 class AbstractFrame;
 
-class JSWindowProxy final : public JSC::JSProxy {
+class WEBCORE_EXPORT JSWindowProxy final : public JSC::JSProxy {
 public:
     using Base = JSC::JSProxy;
     static constexpr bool needsDestruction = true;
@@ -62,7 +62,7 @@ public:
     WindowProxy* windowProxy() const;
 
     AbstractDOMWindow& wrapped() const;
-    static WEBCORE_EXPORT WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
+    static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
 

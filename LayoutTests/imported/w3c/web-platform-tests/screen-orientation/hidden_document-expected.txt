@@ -1,3 +1,8 @@
 
-PASS test locking the orientation when document is hidden
+Harness Error (FAIL), message = Test named 'hidden documents must not unlock the screen orientation' specified 3 'cleanup' functions, and 2 failed.
+
+PASS hidden documents must reject went trying to call lock or unlock
+PASS hidden documents must reject went trying to call unlock
+FAIL hidden documents must not unlock the screen orientation promise_test: Unhandled rejection with value: object "SecurityError: Locking the screen orientation is only allowed when in fullscreen"
+NOTRUN Once maximized, a minimized window can lock or unlock the screen orientation again
 

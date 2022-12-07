@@ -69,7 +69,8 @@ layer at (0,0) size 785x966
       RenderImage {IMG} at (95,910) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
       RenderBlock (anonymous) at (0,900) size 769x41
         RenderBR {BR} at (120,0) size 0x19
-      RenderBlock {HR} at (0,948) size 769x3 [border: (1px inset #000000)]
+layer at (8,956) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,948) size 769x3 [border: (1px inset #000000)]
 layer at (13,479) size 20x20
   RenderBlock (positioned) {DIV} at (13,478) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
 layer at (43,479) size 20x20

@@ -189,7 +189,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isMouseHWheel);
+    WEBCORE_EXPORT PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isMouseHWheel);
 #endif
 
 protected:

@@ -1,5 +1,0 @@
-
-PASS Feature-Policy header geolocation: * allows the top-level document.
-PASS Feature-Policy header geolocation: * allows same-origin iframes.
-PASS Feature-Policy header geolocation: * allows cross-origin iframes.
-

@@ -44,8 +44,8 @@ namespace WebCore {
 class TemporaryOpenGLSetting {
     WTF_MAKE_NONCOPYABLE(TemporaryOpenGLSetting);
 public:
-    TemporaryOpenGLSetting(GCGLenum capability, GCGLenum scopedState);
-    ~TemporaryOpenGLSetting();
+    WEBCORE_EXPORT TemporaryOpenGLSetting(GCGLenum capability, GCGLenum scopedState);
+    WEBCORE_EXPORT ~TemporaryOpenGLSetting();
 
 private:
     const GCGLenum m_capability;

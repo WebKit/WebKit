@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
           text run at (0,16) width 424: ".two {padding-bottom: -10px; background-color: aqua;}"
           text run at (424,16) width 0: " "
           text run at (0,32) width 0: " "
-      RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,115) size 784x80 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 453x19
           text run at (0,0) width 369: "This element is unstyled save for a background color of gray. "
@@ -98,3 +97,5 @@ layer at (0,0) size 800x600
                   text run at (497,20) width 8: ". "
                   text run at (505,20) width 251: "Padding on inline elements does not affect"
                   text run at (0,40) width 492: "line-height calculations, so all lines in this element should have the same line-height."
+layer at (8,105) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]

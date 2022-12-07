@@ -38,7 +38,7 @@ public:
     virtual ~AccessibilityListBox();
 
     bool canSetSelectedChildren() const override;
-    void setSelectedChildren(const AccessibilityChildrenVector&) override;
+    WEBCORE_EXPORT void setSelectedChildren(const AccessibilityChildrenVector&) override;
     AccessibilityRole roleValue() const override { return AccessibilityRole::ListBox; }
         
     void selectedChildren(AccessibilityChildrenVector&) override;

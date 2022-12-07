@@ -2,8 +2,8 @@
 PASS Can set 'width' to CSS-wide keywords
 FAIL Can set 'width' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'width' to the 'auto' keyword
-FAIL Can set 'width' to a percent Invalid values
-FAIL Can set 'width' to a length Invalid values
+FAIL Can set 'width' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'width' to a time throws TypeError
 PASS Setting 'width' to an angle throws TypeError
 PASS Setting 'width' to a flexible length throws TypeError
@@ -12,8 +12,8 @@ PASS Setting 'width' to a URL throws TypeError
 PASS Setting 'width' to a transform throws TypeError
 PASS Can set 'min-width' to CSS-wide keywords
 FAIL Can set 'min-width' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'min-width' to a percent Invalid values
-FAIL Can set 'min-width' to a length Invalid values
+FAIL Can set 'min-width' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'min-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'min-width' to a time throws TypeError
 PASS Setting 'min-width' to an angle throws TypeError
 PASS Setting 'min-width' to a flexible length throws TypeError

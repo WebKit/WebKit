@@ -18,8 +18,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 656x19
           text run at (0,0) width 656: "Both boxes should not have scroll bars. The selection should not spill out of the blue box to the right of \x{201C}text\x{201D}."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,208) size 784x2 [border: (1px inset #000000)]
       RenderBlock {PRE} at (0,223) size 108x88 [border: (4px solid #0000FF)]
         RenderText {#text} at (4,4) size 128x80
           text run at (4,4) width 128: "This   text     "
@@ -30,6 +28,8 @@ layer at (0,0) size 800x600
           text run at (84,52) width 0: " "
           text run at (4,68) width 32: "box."
           text run at (36,68) width 0: " "
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
 layer at (8,115) size 108x88 clip at (12,119) size 100x80
   RenderBlock {PRE} at (0,107) size 108x88 [border: (4px solid #A52A2A)]
     RenderText {#text} at (4,4) size 128x80
@@ -41,5 +41,7 @@ layer at (8,115) size 108x88 clip at (12,119) size 100x80
       text run at (84,52) width 0: " "
       text run at (4,68) width 32: "box."
       text run at (36,68) width 0: " "
+layer at (8,216) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,208) size 784x2 [border: (1px inset #000000)]
 selection start: position 7 of child 0 {#text} of child 7 {PRE} of body
 selection end:   position 15 of child 0 {#text} of child 11 {PRE} of body

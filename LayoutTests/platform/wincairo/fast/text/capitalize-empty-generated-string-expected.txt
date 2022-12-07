@@ -16,7 +16,6 @@ layer at (0,0) size 800x600
             text run at (0,20) width 279: "code due to empty-string generated content"
         RenderText {#text} at (279,20) size 4x19
           text run at (279,20) width 4: "."
-      RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,74) size 784x20
         RenderInline {SPAN} at (0,0) size 81x19
           RenderText {#text} at (0,0) size 44x19
@@ -49,3 +48,5 @@ layer at (0,0) size 800x600
             text run at (85,0) width 61: "should be"
         RenderText {#text} at (146,0) size 85x19
           text run at (146,0) width 85: " Lorem Ipsum"
+layer at (8,64) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]

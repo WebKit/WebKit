@@ -36,7 +36,7 @@
 - (id)initWithWebView:(WKWebView *)webView;
 - (void)enterFullScreen:(CGSize)videoDimensions;
 - (void)beganEnterFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
-- (void)requestEnterFullScreen;
+- (void)requestRestoreFullScreen;
 - (void)requestExitFullScreen;
 - (void)exitFullScreen;
 - (void)beganExitFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;

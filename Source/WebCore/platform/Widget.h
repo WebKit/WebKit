@@ -116,7 +116,7 @@ public:
 
     WEBCORE_EXPORT virtual void setFocus(bool);
 
-    void setCursor(const Cursor&);
+    WEBCORE_EXPORT void setCursor(const Cursor&);
 
     WEBCORE_EXPORT virtual void show();
     WEBCORE_EXPORT virtual void hide();

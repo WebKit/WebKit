@@ -1,4 +1,3 @@
-//@ skip
 //@ skip if $architecture != "arm64"
 //@ requireOptions("--useWebAssemblySIMD=1")
 // Copyright 2019 the V8 project authors. All rights reserved.
@@ -38,6 +37,6 @@ var fun2 = (function GenerateFun2() {
 
 // Both exported functions should throw, no matter how often they get wrapped.
 assertThrows(fun1, TypeError,
-             /type incompatibility when transforming from\/to JS/);
+             /an exported wasm function cannot contain a v128 parameter or return value/);
 assertThrows(fun2, TypeError,
-             /type incompatibility when transforming from\/to JS/);
+             /an exported wasm function cannot contain a v128 parameter or return value/);

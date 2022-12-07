@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
           text run at (0,16) width 224: ".two {font-variant: normal;}"
           text run at (224,16) width 0: " "
           text run at (0,32) width 0: " "
-      RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,115) size 784x20
         RenderText {#text} at (0,0) size 265x19
           text run at (0,0) width 265: "This Paragraph should be in Small Caps."
@@ -48,3 +47,5 @@ layer at (0,0) size 800x600
                     text run at (573,0) width 46: "Normal"
                 RenderText {#text} at (619,0) size 4x19
                   text run at (619,0) width 4: "."
+layer at (8,105) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]

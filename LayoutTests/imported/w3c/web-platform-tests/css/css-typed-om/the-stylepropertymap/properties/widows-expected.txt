@@ -1,7 +1,7 @@
 
 PASS Can set 'widows' to CSS-wide keywords
 FAIL Can set 'widows' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'widows' to a number Invalid values
+FAIL Can set 'widows' to a number assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
 PASS Setting 'widows' to a length throws TypeError
 PASS Setting 'widows' to a percent throws TypeError
 PASS Setting 'widows' to a time throws TypeError

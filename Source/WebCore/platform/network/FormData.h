@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 #include "BlobData.h"
 #include <variant>
 #include <wtf/Forward.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -125,7 +126,8 @@ private:
     Vector<String> m_temporaryZipFiles;
 };
 
-class FormData : public RefCounted<FormData> {
+class FormData final : public RefCounted<FormData> {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(FormData, WEBCORE_EXPORT);
 public:
     enum class EncodingType : uint8_t {
         FormURLEncoded, // for application/x-www-form-urlencoded
@@ -136,7 +138,7 @@ public:
     WEBCORE_EXPORT static Ref<FormData> create();
     WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
     WEBCORE_EXPORT static Ref<FormData> create(const CString&);
-    static Ref<FormData> create(Vector<uint8_t>&&);
+    WEBCORE_EXPORT static Ref<FormData> create(Vector<uint8_t>&&);
     static Ref<FormData> create(const Vector<char>&);
     static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = EncodingType::FormURLEncoded);
@@ -198,7 +200,7 @@ public:
     WEBCORE_EXPORT URL asBlobURL() const;
 
 private:
-    FormData();
+    FormData() = default;
     FormData(const FormData&);
 
     void appendMultiPartFileValue(const File&, Vector<char>& header, PAL::TextEncoding&);

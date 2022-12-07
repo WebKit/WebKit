@@ -4,7 +4,7 @@ FAIL Can set 'column-rule-width' to var() references assert_equals: expected 2 b
 PASS Can set 'column-rule-width' to the 'thin' keyword
 PASS Can set 'column-rule-width' to the 'medium' keyword
 PASS Can set 'column-rule-width' to the 'thick' keyword
-FAIL Can set 'column-rule-width' to a length Invalid values
+FAIL Can set 'column-rule-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'column-rule-width' to a percent throws TypeError
 PASS Setting 'column-rule-width' to a time throws TypeError
 PASS Setting 'column-rule-width' to an angle throws TypeError

@@ -809,6 +809,10 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
         || first.effectiveContainment().contains(Containment::InlineSize) != second.effectiveContainment().contains(Containment::InlineSize))
         return true;
 
+    // content-visibiliy:hidden turns on contain:size which requires relayout.
+    if ((static_cast<ContentVisibility>(first.contentVisibility) == ContentVisibility::Hidden) != (static_cast<ContentVisibility>(second.contentVisibility) == ContentVisibility::Hidden))
+        return true;
+
     if (first.scrollPadding != second.scrollPadding)
         return true;
 

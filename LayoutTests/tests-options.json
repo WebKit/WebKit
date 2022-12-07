@@ -3791,18 +3791,6 @@
     "imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/semantics/popups/popup-focus.tentative.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/semantics/popups/popup-hoverpopup-attribute.tentative.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/semantics/popups/popup-invoking-attribute.tentative.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/semantics/popups/popup-light-dismiss.tentative.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_003.htm": [
         "slow"
     ],
@@ -4995,6 +4983,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/resources/test/tests/unit/throwing-assertions.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/screen-orientation/hidden_document.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html": [

@@ -35,17 +35,17 @@ class FullScreenControllerClient;
 
 class FullScreenController {
 public:
-    FullScreenController(FullScreenControllerClient*);
-    ~FullScreenController();
+    WEBCORE_EXPORT FullScreenController(FullScreenControllerClient*);
+    WEBCORE_EXPORT ~FullScreenController();
 
 public:
-    void enterFullScreen();
-    void exitFullScreen();
-    void repaintCompleted();
+    WEBCORE_EXPORT void enterFullScreen();
+    WEBCORE_EXPORT void exitFullScreen();
+    WEBCORE_EXPORT void repaintCompleted();
     
-    bool isFullScreen() const;
+    WEBCORE_EXPORT bool isFullScreen() const;
 
-    void close();
+    WEBCORE_EXPORT void close();
 
 protected:
     void enterFullScreenRepaintCompleted();

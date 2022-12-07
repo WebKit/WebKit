@@ -30,7 +30,6 @@ layer at (0,0) size 785x1461
           text run at (224,144) width 0: " "
           text run at (0,160) width 264: ".eleven {letter-spacing: -0.1em;}"
           text run at (264,160) width 0: " "
-      RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,243) size 769x80
         RenderText {#text} at (0,0) size 703x79
           text run at (0,0) width 680: "This letters in this"
@@ -136,3 +135,5 @@ layer at (0,0) size 785x1461
               RenderBlock {P} at (4,568) size 747x20
                 RenderText {#text} at (0,0) size 530x19
                   text run at (0,0) width 530: "This letters in this sentence should have reduced space between them, since negative values are allowed on this property."
+layer at (8,233) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]

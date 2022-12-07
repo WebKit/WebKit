@@ -35,7 +35,7 @@ typedef struct __CFBundle* CFBundleRef;
 namespace WebCore {
 
 #if USE(CF)
-CFBundleRef webKitBundle();
+WEBCORE_EXPORT CFBundleRef webKitBundle();
 #endif
 
 WEBCORE_EXPORT String webKitBundlePath();

@@ -34,7 +34,7 @@ namespace WebCore {
 class DeprecatedGlobalSettings {
 public:
 #if PLATFORM(WIN)
-    static void setShouldUseHighResolutionTimers(bool);
+    WEBCORE_EXPORT static void setShouldUseHighResolutionTimers(bool);
     static bool shouldUseHighResolutionTimers() { return shared().m_shouldUseHighResolutionTimers; }
 #endif
 

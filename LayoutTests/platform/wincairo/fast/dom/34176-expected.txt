@@ -9,7 +9,6 @@ layer at (0,0) size 785x1574
           text run at (437,0) width 332: "in which TextRun1 and TextRun2's bidi level are 2, and"
           text run at (26,20) width 743: "TextRun3's bidi level is 1. TextRun2 and TextRun3 are siblings. But their ancestor (not their parent) is a sibling of TextRun1."
           text run at (201,40) width 568: "The visual order should be TextRun3 TextRun1 TextRun2, not TextRun3 TextRun2 TextRun1."
-      RenderBlock {HR} at (0,76) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,94) size 769x20
         RenderText {#text} at (342,0) size 427x19
           text run at (342,0) width 317: "Pure text. The following 3 lines should all display as \""
@@ -48,7 +47,6 @@ layer at (0,0) size 785x1574
           RenderInline {SPAN} at (0,0) size 22x19
             RenderText {#text} at (664,0) size 22x19
               text run at (664,0) width 22 RTL: "\x{5E9}\x{5E0}\x{5D1}"
-      RenderBlock {HR} at (0,198) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,216) size 769x20
         RenderText {#text} at (348,0) size 421x19
           text run at (348,0) width 421: "Text in <em>. The English text should be displayed as \"This is a Test\"."
@@ -95,7 +93,6 @@ layer at (0,0) size 785x1574
           RenderInline {EM} at (0,0) size 27x19
             RenderText {#text} at (742,0) size 27x19
               text run at (742,0) width 27: "Test"
-      RenderBlock {HR} at (0,360) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,378) size 769x20
         RenderText {#text} at (330,0) size 439x19
           text run at (330,0) width 439: "Text in <strong>. The following lines should all display as \"This is a Test\"."
@@ -131,7 +128,6 @@ layer at (0,0) size 785x1574
           RenderInline {STRONG} at (0,0) size 30x19
             RenderText {#text} at (739,0) size 30x19
               text run at (739,0) width 30: "Test"
-      RenderBlock {HR} at (0,502) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,520) size 769x20
         RenderText {#text} at (364,0) size 405x19
           text run at (364,0) width 405: "Text in <i>. The following lines should all display as \"This is a Test\"."
@@ -167,7 +163,6 @@ layer at (0,0) size 785x1574
           RenderInline {I} at (0,0) size 27x19
             RenderText {#text} at (742,0) size 27x19
               text run at (742,0) width 27: "Test"
-      RenderBlock {HR} at (0,644) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,662) size 769x20
         RenderText {#text} at (359,0) size 410x19
           text run at (359,0) width 410: "Text in <b>. The following lines should all display as \"This is a Test\"."
@@ -207,7 +202,6 @@ layer at (0,0) size 785x1574
         RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,786) size 769x756
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,18) size 769x20
           RenderText {#text} at (107,0) size 662x19
             text run at (107,0) width 662: "Text in <img>, <href>, <em>, <tr>. The following English text should all display as \"This is a Test\"."
@@ -276,7 +270,6 @@ layer at (0,0) size 785x1574
           RenderBlock (anonymous) at (0,46) size 769x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {EM} at (0,0) size 0x0
-        RenderBlock {HR} at (0,218) size 769x2 [border: (1px inset #000000)]
         RenderBlock {UL} at (0,236) size 769x520
           RenderListItem {LI} at (40,0) size 729x20
             RenderListMarker at (-18,0) size 7x19: bullet
@@ -384,5 +377,19 @@ layer at (0,0) size 785x1574
               text run at (0,0) width 121: "Test 25: : Success"
       RenderBlock (anonymous) at (0,1558) size 769x0
         RenderInline {B} at (0,0) size 0x0
+layer at (8,92) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,76) size 769x2 [border: (1px inset #000000)]
+layer at (8,214) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,198) size 769x2 [border: (1px inset #000000)]
+layer at (8,376) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,360) size 769x2 [border: (1px inset #000000)]
+layer at (8,518) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,502) size 769x2 [border: (1px inset #000000)]
+layer at (8,660) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,644) size 769x2 [border: (1px inset #000000)]
+layer at (8,802) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+layer at (8,1020) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,218) size 769x2 [border: (1px inset #000000)]
 selection start: position 0 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body
 selection end:   position 4 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body

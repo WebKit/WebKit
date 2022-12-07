@@ -119,7 +119,7 @@ public:
     RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
 
     WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& unsafeListedElements() const;
-    Vector<Ref<FormListedElement>> copyListedElementsVector() const;
+    WEBCORE_EXPORT Vector<Ref<FormListedElement>> copyListedElementsVector() const;
     const Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>>& imageElements() const { return m_imageElements; }
 
     StringPairVector textFieldValues() const;

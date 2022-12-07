@@ -24,9 +24,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 696x19
           text run at (0,0) width 525: "To test interactively, click the left side of the W on the second line. The caret should be "
           text run at (525,0) width 171: "move to the start of that line."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,102) size 250x114
         RenderText {#text} at (0,1) size 232x112
           text run at (0,1) width 159: "Alice in "
           text run at (0,58) width 232: "Wonderland"
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
 caret: position 10 of child 0 {#text} of child 7 {DIV} of body

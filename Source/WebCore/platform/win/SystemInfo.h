@@ -63,7 +63,7 @@ enum WindowsVersion {
 // and dwMinorVersion field values, respectively.
 WindowsVersion windowsVersion(int* major = 0, int* minor = 0);
 
-String windowsVersionForUAString();
+WEBCORE_EXPORT String windowsVersionForUAString();
 
 } // namespace WebCore
 

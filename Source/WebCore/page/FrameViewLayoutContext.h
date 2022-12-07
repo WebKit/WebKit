@@ -52,7 +52,7 @@ public:
     FrameViewLayoutContext(FrameView&);
     ~FrameViewLayoutContext();
 
-    void layout();
+    WEBCORE_EXPORT void layout();
     bool needsLayout() const;
 
     // We rely on the side-effects of layout, like compositing updates, to update state in various subsystems

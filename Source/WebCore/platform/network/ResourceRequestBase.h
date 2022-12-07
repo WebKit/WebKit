@@ -132,7 +132,7 @@ public:
     WEBCORE_EXPORT void setCachePolicy(ResourceRequestCachePolicy cachePolicy);
     
     WEBCORE_EXPORT double timeoutInterval() const; // May return 0 when using platform default.
-    void setTimeoutInterval(double timeoutInterval);
+    WEBCORE_EXPORT void setTimeoutInterval(double);
     
     WEBCORE_EXPORT const URL& firstPartyForCookies() const;
     WEBCORE_EXPORT void setFirstPartyForCookies(const URL&);
@@ -212,7 +212,7 @@ public:
     bool platformRequestUpdated() const { return m_platformRequestUpdated; }
 
     WEBCORE_EXPORT bool allowCookies() const;
-    void setAllowCookies(bool allowCookies);
+    WEBCORE_EXPORT void setAllowCookies(bool);
 
     WEBCORE_EXPORT ResourceLoadPriority priority() const;
     WEBCORE_EXPORT void setPriority(ResourceLoadPriority);

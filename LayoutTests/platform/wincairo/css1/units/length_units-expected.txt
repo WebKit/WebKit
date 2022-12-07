@@ -30,7 +30,6 @@ layer at (0,0) size 785x1673
           text run at (208,144) width 0: " "
           text run at (0,160) width 624: ".ten {font-size: 40px; border-left: 1ex solid purple; background-color: aqua;}"
           text run at (624,160) width 0: " "
-      RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,243) size 769x40
         RenderText {#text} at (0,0) size 758x39
           text run at (0,0) width 758: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer) edges should"
@@ -170,3 +169,5 @@ layer at (0,0) size 785x1673
                   text run at (18,145) width 698: "the same number of pixels as the lower-case"
                   text run at (18,193) width 634: "'x' in this element's font, as well as solid"
                   text run at (18,241) width 111: "purple."
+layer at (8,233) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]

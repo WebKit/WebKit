@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,32) width 304: ".two {border-left: purple thin solid;}"
           text run at (304,32) width 0: " "
           text run at (0,48) width 0: " "
-      RenderBlock {HR} at (0,113) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (20,131) size 764x60 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 723x19
           text run at (0,0) width 723: "This paragraph has a background color of silver and a 20-pixel left margin, and it contains inline elements with classes of "
@@ -58,3 +57,5 @@ layer at (0,0) size 800x600
                   text run at (493,20) width 228: ", which should have a thin solid purple"
                   text run at (0,40) width 71: "left border. "
                   text run at (71,40) width 402: "The line-height of the parent element should not change on any line."
+layer at (8,121) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,113) size 784x2 [border: (1px inset #000000)]

@@ -111,7 +111,7 @@ public:
 
     // Parses a single command line option in the format "<optionName>=<value>"
     // (no spaces allowed) and set the specified option if appropriate.
-    JS_EXPORT_PRIVATE static bool setOption(const char* arg);
+    JS_EXPORT_PRIVATE static bool setOption(const char* arg, bool verify = true);
 
     JS_EXPORT_PRIVATE static void dumpAllOptions(DumpLevel, const char* title = nullptr);
     JS_EXPORT_PRIVATE static void dumpAllOptionsInALine(StringBuilder&);
@@ -156,8 +156,8 @@ private:
     static void dumpOption(StringBuilder&, DumpLevel, ID,
         const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
 
-    static bool setOptionWithoutAlias(const char* arg);
-    static bool setAliasedOption(const char* arg);
+    static bool setOptionWithoutAlias(const char* arg, bool verify = true);
+    static bool setAliasedOption(const char* arg, bool verify = true);
 #if !PLATFORM(COCOA)
     static bool overrideAliasedOptionWithHeuristic(const char* name);
 #endif

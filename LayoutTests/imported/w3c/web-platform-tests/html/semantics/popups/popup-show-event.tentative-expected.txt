@@ -1,3 +1,0 @@
-
-FAIL Ensure the `show` event can be used to populate content before the pop-up renders popUp.showPopUp is not a function. (In 'popUp.showPopUp()', 'popUp.showPopUp' is undefined)
-

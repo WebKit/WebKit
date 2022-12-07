@@ -1,7 +1,0 @@
-Button 1
-This is a popup without a focusable element
-
-Button 2
-
-FAIL Popup should not be keyboard focusable promise_test: Unhandled rejection with value: object "TypeError: popup.showPopUp is not a function. (In 'popup.showPopUp()', 'popup.showPopUp' is undefined)"
-

@@ -47,7 +47,6 @@ layer at (0,0) size 785x2821
           text run at (0,288) width 184: ".j {font-size: -0.5in;}"
           text run at (184,288) width 0: " "
           text run at (0,304) width 0: " "
-      RenderBlock {HR} at (0,369) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,387) size 769x20
         RenderText {#text} at (0,0) size 648x19
           text run at (0,0) width 648: "This paragraph element is unstyled, so the size of the font in this element is the default size for this user agent."
@@ -254,3 +253,5 @@ layer at (0,0) size 785x2821
               RenderBlock {P} at (4,1194) size 747x21
                 RenderText {#text} at (0,0) size 638x19
                   text run at (0,0) width 638: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
+layer at (8,377) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,369) size 769x2 [border: (1px inset #000000)]

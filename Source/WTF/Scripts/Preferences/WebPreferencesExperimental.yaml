@@ -196,11 +196,11 @@ CSS3DTransformInteroperabilityEnabled:
   humanReadableDescription: "Enable 3D transform behavior that is specification-compliant but backwards incompatible"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSCascadeLayersEnabled:
   type: bool

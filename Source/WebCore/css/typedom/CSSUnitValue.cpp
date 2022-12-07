@@ -31,8 +31,11 @@
 #include "CSSUnitValue.h"
 
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcValue.h"
+#include "CSSParserFastPaths.h"
 #include "CSSParserToken.h"
 #include "CSSPrimitiveValue.h"
+#include <cmath>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -184,6 +187,60 @@ bool CSSUnitValue::equals(const CSSNumericValue& other) const
 RefPtr<CSSValue> CSSUnitValue::toCSSValue() const
 {
     return CSSPrimitiveValue::create(m_value, m_unit);
+}
+
+static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value, CSSUnitType unit)
+{
+    bool acceptsNegativeNumbers = true;
+    if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, acceptsNegativeNumbers) && !acceptsNegativeNumbers && value < 0)
+        return true;
+
+    switch (propertyID) {
+    case CSSPropertyOrder:
+    case CSSPropertyZIndex:
+        return round(value) != value;
+    case CSSPropertyTabSize:
+        return value < 0 || (unit == CSSUnitType::CSS_NUMBER && round(value) != value);
+    case CSSPropertyOrphans:
+    case CSSPropertyWidows:
+    case CSSPropertyColumnCount:
+        return round(value) != value || value < 1;
+    case CSSPropertyBlockSize:
+    case CSSPropertyColumnRuleWidth:
+    case CSSPropertyFlexGrow:
+    case CSSPropertyFlexShrink:
+    case CSSPropertyFontSize:
+    case CSSPropertyFontSizeAdjust:
+    case CSSPropertyFontStretch:
+    case CSSPropertyInlineSize:
+    case CSSPropertyMaxBlockSize:
+    case CSSPropertyMaxInlineSize:
+    case CSSPropertyMinBlockSize:
+    case CSSPropertyMinInlineSize:
+    case CSSPropertyPerspective:
+    case CSSPropertyR:
+    case CSSPropertyRx:
+    case CSSPropertyRy:
+        return value < 0;
+    case CSSPropertyFontWeight:
+        return value < 0 || value > 1000;
+    default:
+        return false;
+    }
+}
+
+RefPtr<CSSValue> CSSUnitValue::toCSSValueWithProperty(CSSPropertyID propertyID) const
+{
+    if (isValueOutOfRangeForProperty(propertyID, m_value, m_unit)) {
+        // Wrap out of range values with a calc.
+        auto node = toCalcExpressionNode();
+        ASSERT(node);
+        // By default, cssText() will drop the enclosing `calc()` for simple expressions. However, it is important we
+        // keep it here or setting the value will fail.
+        node->setShouldForceEnclosingCalcInCSSText();
+        return CSSCalcValue::create(node.releaseNonNull(), true /* allowsNegativePercentage */);
+    }
+    return toCSSValue();
 }
 
 RefPtr<CSSCalcExpressionNode> CSSUnitValue::toCalcExpressionNode() const

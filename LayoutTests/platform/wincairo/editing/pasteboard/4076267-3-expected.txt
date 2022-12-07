@@ -479,7 +479,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 322x19
           text run at (0,0) width 322: "This tests to see if spaces are lost during a copy/paste"
-      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,46) size 784x220
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (0,0) size 18x19
@@ -563,4 +562,6 @@ layer at (0,0) size 800x600
             text run at (47,0) width 7: "x"
         RenderBlock {DIV} at (0,200) size 784x20
           RenderBR {BR} at (0,0) size 0x19
+layer at (8,44) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
 caret: position 0 of child 0 {BR} of child 10 {DIV} of child 5 {DIV} of body

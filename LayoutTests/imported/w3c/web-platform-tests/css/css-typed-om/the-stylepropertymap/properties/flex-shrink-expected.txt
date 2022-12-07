@@ -1,7 +1,7 @@
 
 PASS Can set 'flex-shrink' to CSS-wide keywords
 FAIL Can set 'flex-shrink' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'flex-shrink' to a number Invalid values
+FAIL Can set 'flex-shrink' to a number assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Setting 'flex-shrink' to a length throws TypeError
 PASS Setting 'flex-shrink' to a percent throws TypeError
 PASS Setting 'flex-shrink' to a time throws TypeError

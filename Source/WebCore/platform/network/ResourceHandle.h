@@ -144,7 +144,7 @@ public:
 #endif
 
 #if OS(WINDOWS) && USE(CURL)
-    static void setHostAllowsAnyHTTPSCertificate(const String&);
+    WEBCORE_EXPORT static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificateInfo(const String&, const String&, const String&);
 #endif
 

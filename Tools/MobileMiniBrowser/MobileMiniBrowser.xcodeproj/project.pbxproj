@@ -21,8 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		3F0B439B1D908D0C00D186B5 /* looping2s.html in Resources */ = {isa = PBXBuildFile; fileRef = 3F0B439A1D908D0C00D186B5 /* looping2s.html */; };
-		3F0B439D1D908DE700D186B5 /* test2s.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3F0B439C1D908DE700D186B5 /* test2s.mp4 */; };
 		457D0F7A29088D9000AE5914 /* SettingsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 457D0F7729088C9500AE5914 /* SettingsViewController.h */; };
 		45BE567C2908C74600FD7A95 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 457D0F7829088D4000AE5914 /* SettingsViewController.m */; };
 		CD1DAF971D709E3600017CF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF961D709E3600017CF0 /* main.m */; };
@@ -39,9 +37,11 @@
 		CD498B501D763D7600681FA7 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1DAF981D709E3600017CF0 /* AppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD498B511D763D7F00681FA7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAF9E1D709E3600017CF0 /* Main.storyboard */; };
 		CD498B521D763D8800681FA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA11D709E3600017CF0 /* Assets.xcassets */; };
-		CDA985191D76483400EBC399 /* test.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = CDA985151D76477900EBC399 /* test.mp4 */; };
-		CDA9851A1D76483400EBC399 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985131D76474100EBC399 /* index.html */; };
-		CDA9851B1D76483400EBC399 /* looping.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985171D7647CD00EBC399 /* looping.html */; };
+		CDC2792A2935418400151088 /* looping.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279272935417100151088 /* looping.html */; };
+		CDC2792B2935418400151088 /* test2s.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = CDC279252935417100151088 /* test2s.mp4 */; };
+		CDC2792C2935418400151088 /* test.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = CDC279282935417100151088 /* test.mp4 */; };
+		CDC2792D2935418400151088 /* looping2s.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279292935417100151088 /* looping2s.html */; };
+		CDC2792E2935418400151088 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279262935417100151088 /* index.html */; };
 		DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -84,8 +84,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3F0B439A1D908D0C00D186B5 /* looping2s.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = looping2s.html; path = Resources/looping2s.html; sourceTree = "<group>"; };
-		3F0B439C1D908DE700D186B5 /* test2s.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = test2s.mp4; path = Resources/test2s.mp4; sourceTree = "<group>"; };
 		457D0F7729088C9500AE5914 /* SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		457D0F7829088D4000AE5914 /* SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		CD1DAF921D709E3600017CF0 /* MobileMiniBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileMiniBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,9 +108,11 @@
 		CD4DEEE21D78C6FF00625986 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = Configurations/Base.xcconfig; sourceTree = "<group>"; };
 		CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
 		CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = MobileMiniBrowser.xcconfig; path = Configurations/MobileMiniBrowser.xcconfig; sourceTree = "<group>"; };
-		CDA985131D76474100EBC399 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = Resources/index.html; sourceTree = "<group>"; };
-		CDA985151D76477900EBC399 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = test.mp4; path = Resources/test.mp4; sourceTree = "<group>"; };
-		CDA985171D7647CD00EBC399 /* looping.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = looping.html; path = Resources/looping.html; sourceTree = "<group>"; };
+		CDC279252935417100151088 /* test2s.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test2s.mp4; sourceTree = "<group>"; };
+		CDC279262935417100151088 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		CDC279272935417100151088 /* looping.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = looping.html; sourceTree = "<group>"; };
+		CDC279282935417100151088 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
+		CDC279292935417100151088 /* looping2s.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = looping2s.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,6 +178,7 @@
 		CD1DAFAE1D709E3600017CF0 /* MobileMiniBrowserUITests */ = {
 			isa = PBXGroup;
 			children = (
+				CDC279242935417100151088 /* Resources */,
 				CD1DAFB11D709E3600017CF0 /* Info.plist */,
 				CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */,
 			);
@@ -195,7 +196,6 @@
 		CD498B3C1D76348000681FA7 /* MobileMiniBrowser Framework */ = {
 			isa = PBXGroup;
 			children = (
-				CDA985121D76471700EBC399 /* Resources */,
 				CD1DAF981D709E3600017CF0 /* AppDelegate.h */,
 				CD1DAF991D709E3600017CF0 /* AppDelegate.m */,
 				CD1DAFA11D709E3600017CF0 /* Assets.xcassets */,
@@ -223,16 +223,16 @@
 			name = Configurations;
 			sourceTree = "<group>";
 		};
-		CDA985121D76471700EBC399 /* Resources */ = {
+		CDC279242935417100151088 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CDA985131D76474100EBC399 /* index.html */,
-				CDA985171D7647CD00EBC399 /* looping.html */,
-				3F0B439A1D908D0C00D186B5 /* looping2s.html */,
-				CDA985151D76477900EBC399 /* test.mp4 */,
-				3F0B439C1D908DE700D186B5 /* test2s.mp4 */,
+				CDC279262935417100151088 /* index.html */,
+				CDC279272935417100151088 /* looping.html */,
+				CDC279292935417100151088 /* looping2s.html */,
+				CDC279282935417100151088 /* test.mp4 */,
+				CDC279252935417100151088 /* test2s.mp4 */,
 			);
-			name = Resources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,6 +367,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDC2792E2935418400151088 /* index.html in Resources */,
+				CDC2792A2935418400151088 /* looping.html in Resources */,
+				CDC2792D2935418400151088 /* looping2s.html in Resources */,
+				CDC2792C2935418400151088 /* test.mp4 in Resources */,
+				CDC2792B2935418400151088 /* test2s.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,12 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD498B521D763D8800681FA7 /* Assets.xcassets in Resources */,
-				CDA9851A1D76483400EBC399 /* index.html in Resources */,
-				CDA9851B1D76483400EBC399 /* looping.html in Resources */,
-				3F0B439B1D908D0C00D186B5 /* looping2s.html in Resources */,
 				CD498B511D763D7F00681FA7 /* Main.storyboard in Resources */,
-				CDA985191D76483400EBC399 /* test.mp4 in Resources */,
-				3F0B439D1D908DE700D186B5 /* test2s.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

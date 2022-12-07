@@ -70,7 +70,6 @@ layer at (0,0) size 785x915
         RenderInline {CODE} at (0,0) size 440x16
           RenderText {#text} at (0,0) size 440x16
             text run at (0,0) width 440: "div.box.one:after{ content:'generated content here!'; }"
-      RenderBlock {HR} at (0,392) size 769x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,414) size 769x28
         RenderText {#text} at (0,0) size 474x26
           text run at (0,0) width 474: "Example (view source to see CSS and HTML):"
@@ -104,3 +103,5 @@ layer at (0,0) size 785x915
           RenderBlock (generated) at (0,20) size 717x20 [color=#008000]
             RenderText at (0,0) size 107x19
               text run at (0,0) width 107: "generated content"
+layer at (8,414) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,392) size 769x3 [border: (1px inset #000000)]

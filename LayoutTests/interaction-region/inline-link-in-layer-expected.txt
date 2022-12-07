@@ -14,13 +14,13 @@ This is a link, inside the layer.
 
       (interaction regions [
         (region
-            (rect (-3,-3) width=35 height=24)
+            (rect (-3,-3) width=35 height=25)
 )
         (borderRadius 0.00)])
       )
       (children 1
         (GraphicsLayer
-          (position 0.00 18.00)
+          (position 0.00 20.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -28,7 +28,7 @@ This is a link, inside the layer.
 
           (interaction regions [
             (region
-                (rect (-3,-3) width=35 height=24)
+                (rect (-3,-3) width=35 height=25)
 )
             (borderRadius 0.00)])
           )
