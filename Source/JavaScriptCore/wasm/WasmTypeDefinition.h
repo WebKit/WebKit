@@ -149,7 +149,6 @@ public:
         : m_payload(payload)
         , m_argCount(argumentCount)
         , m_retCount(returnCount)
-        , m_hasRecursiveReference(false)
     {
     }
 
@@ -160,6 +159,8 @@ public:
     Type returnType(FunctionArgCount i) const { ASSERT(i < returnCount()); return const_cast<FunctionSignature*>(this)->getReturnType(i); }
     bool returnsVoid() const { return !returnCount(); }
     Type argumentType(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->getArgumentType(i); }
+    bool argumentsOrResultsIncludeV128() const { return m_argumentsOrResultsIncludeV128; }
+    void setArgumentsOrResultsIncludeV128(bool value) { m_argumentsOrResultsIncludeV128 = value; }
 
     size_t numVectors() const
     {
@@ -205,7 +206,8 @@ private:
     Type* m_payload;
     FunctionArgCount m_argCount;
     FunctionArgCount m_retCount;
-    bool m_hasRecursiveReference;
+    bool m_hasRecursiveReference { false };
+    bool m_argumentsOrResultsIncludeV128 { false };
 };
 
 // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
