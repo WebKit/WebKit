@@ -1023,7 +1023,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
     m_hasFixedContainingBlockAncestor = flags.contains(SeenFixedContainingBlockLayer);
     m_hasTransformedAncestor = flags.contains(SeenTransformedLayer);
     m_has3DTransformedAncestor = flags.contains(Seen3DTransformedLayer);
-    m_behavesAsFixed = flags.contains(SeenFixedLayer);
+    setBehavesAsFixed(flags.contains(SeenFixedLayer));
     setHasCompositedScrollingAncestor(flags.contains(SeenCompositedScrollingLayer));
 
     // Update the reflection's position and size.
@@ -1047,7 +1047,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
 
     // Fixed inside transform behaves like absolute (per spec).
     if (renderer().isFixedPositioned() && !m_hasFixedContainingBlockAncestor) {
-        m_behavesAsFixed = true;
+        setBehavesAsFixed(true);
         flags.add(SeenFixedLayer);
     }
 
@@ -1499,6 +1499,14 @@ void RenderLayer::updatePagination()
             return;
         }
     }
+}
+
+void RenderLayer::setBehavesAsFixed(bool behavesAsFixed)
+{
+    if (m_behavesAsFixed != behavesAsFixed && renderer().isFixedPositioned())
+        setNeedsCompositingConfigurationUpdate();
+
+    m_behavesAsFixed = behavesAsFixed;
 }
 
 void RenderLayer::setHasVisibleContent()
