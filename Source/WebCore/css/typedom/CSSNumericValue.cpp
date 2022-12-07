@@ -159,7 +159,6 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperat
     CSS_NUMERIC_RETURN_IF_EXCEPTION(reifiedCurrentNode, CSSNumericValue::reifyMathExpression(*currentNode));
     values.append(WTFMove(reifiedCurrentNode));
 
-    std::reverse(values.begin(), values.end());
     if (root.calcOperator() == CalcOperator::Add || root.calcOperator() == CalcOperator::Subtract)
         return convertToExceptionOrNumericValue(CSSMathSum::create(WTFMove(values)));
     return convertToExceptionOrNumericValue(CSSMathProduct::create(WTFMove(values)));

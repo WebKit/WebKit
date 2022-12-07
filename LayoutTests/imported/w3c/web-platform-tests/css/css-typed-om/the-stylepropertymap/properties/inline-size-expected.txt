@@ -3,7 +3,7 @@ PASS Can set 'inline-size' to CSS-wide keywords
 FAIL Can set 'inline-size' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'inline-size' to the 'auto' keyword
 FAIL Can set 'inline-size' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
-FAIL Can set 'inline-size' to a length assert_equals: expected "px" but got "em"
+PASS Can set 'inline-size' to a length
 PASS Setting 'inline-size' to a time throws TypeError
 PASS Setting 'inline-size' to an angle throws TypeError
 PASS Setting 'inline-size' to a flexible length throws TypeError
@@ -13,7 +13,7 @@ PASS Setting 'inline-size' to a transform throws TypeError
 PASS Can set 'min-inline-size' to CSS-wide keywords
 FAIL Can set 'min-inline-size' to var() references assert_equals: expected 2 but got 1
 FAIL Can set 'min-inline-size' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
-FAIL Can set 'min-inline-size' to a length assert_equals: expected "px" but got "em"
+PASS Can set 'min-inline-size' to a length
 PASS Setting 'min-inline-size' to a time throws TypeError
 PASS Setting 'min-inline-size' to an angle throws TypeError
 PASS Setting 'min-inline-size' to a flexible length throws TypeError
@@ -24,7 +24,7 @@ PASS Can set 'max-inline-size' to CSS-wide keywords
 FAIL Can set 'max-inline-size' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'max-inline-size' to the 'none' keyword
 FAIL Can set 'max-inline-size' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
-FAIL Can set 'max-inline-size' to a length assert_equals: expected "px" but got "em"
+PASS Can set 'max-inline-size' to a length
 PASS Setting 'max-inline-size' to a time throws TypeError
 PASS Setting 'max-inline-size' to an angle throws TypeError
 PASS Setting 'max-inline-size' to a flexible length throws TypeError
