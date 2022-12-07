@@ -40,7 +40,6 @@
 #include "HTMLTemplateElement.h"
 #include "ProcessingInstruction.h"
 #include "TemplateContentDocumentFragment.h"
-#include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include <memory>
@@ -509,8 +508,7 @@ static String htmlAttributeSerialization(const Attribute& attribute)
         if (prefixedName.localName() == xmlnsAtom())
             return xmlnsAtom();
         prefixedName.setPrefix(xmlnsAtom());
-    } else if (attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI)
-        prefixedName.setPrefix(AtomString("xlink"_s));
+    }
     return prefixedName.toString();
 }
 
