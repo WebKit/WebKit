@@ -487,11 +487,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 JSValueUnprotect(context, resolve);
                 JSGlobalContextRelease(JSContextGetGlobalContext(context));
             },
-            IPC::nextAsyncReplyHandlerID()
+            IPC::Connection::AsyncReplyID::generateThreadSafe()
         };
-        connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), { });
+        connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), IPC::SendOption::IPCTestingMessage);
     } else
-        connection.sendMessage(WTFMove(encoder), { });
+        connection.sendMessage(WTFMove(encoder), IPC::SendOption::IPCTestingMessage);
 
     // FIXME: Add the support for specifying IPC options.
 
@@ -1061,7 +1061,7 @@ JSValueRef JSIPCStreamClientConnection::sendMessage(JSContextRef context, JSObje
 
     auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
     if (prepareToSendOutOfStreamMessage(context, argumentCount, arguments, *jsStreamConnection->m_jsIPC, streamConnection, encoder.get(), destinationID, timeout, exception))
-        connection.sendMessage(WTFMove(encoder), { });
+        connection.sendMessage(WTFMove(encoder), IPC::SendOption::IPCTestingMessage);
 
     return returnValue;
 }
@@ -2906,8 +2906,8 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     }
 
     if (!decoder.isSyncMessage() && messageReplyArgumentDescriptions(decoder.messageName())) {
-        if (uint64_t asyncReplyID = 0; decoder.decode(asyncReplyID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID));
+        if (IPC::Connection::AsyncReplyID asyncReplyID; decoder.decode(asyncReplyID)) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID.toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }

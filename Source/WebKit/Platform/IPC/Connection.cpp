@@ -299,25 +299,6 @@ HashMap<IPC::Connection::UniqueID, Connection*>& Connection::connectionMap()
     return map;
 }
 
-static Lock asyncReplyHandlerMapLock;
-static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap() WTF_REQUIRES_LOCK(asyncReplyHandlerMapLock)
-{
-    ASSERT(asyncReplyHandlerMapLock.isHeld());
-    static NeverDestroyed<HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>> map;
-    return map.get();
-}
-
-static void addAsyncReplyHandler(Connection& connection, uint64_t identifier, CompletionHandler<void(Decoder*)> completionHandler)
-{
-    Locker locker { asyncReplyHandlerMapLock };
-    auto result = asyncReplyHandlerMap().ensure(reinterpret_cast<uintptr_t>(&connection), [] {
-        return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
-    }).iterator->value.add(identifier, WTFMove(completionHandler));
-    ASSERT_UNUSED(result, result.isNewEntry);
-}
-
-static void clearAsyncReplyHandlers(const Connection&);
-
 Connection::Connection(Identifier identifier, bool isServer)
     : m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
@@ -340,7 +321,7 @@ Connection::~Connection()
         connectionMap().remove(m_uniqueID);
     }
 
-    clearAsyncReplyHandlers(*this);
+    cancelAsyncReplyHandlers();
 }
 
 RefPtr<Connection> Connection::connection(UniqueID uniqueID)
@@ -492,7 +473,7 @@ void Connection::invalidate()
         return WTFMove(m_syncState);
     }();
 
-    clearAsyncReplyHandlers(*this);
+    cancelAsyncReplyHandlers();
 
     m_connectionQueue->dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->platformInvalidate();
@@ -545,6 +526,19 @@ bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption>
         return static_cast<bool>(sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), Timeout::infinity(), { }));
     }
 
+#if ENABLE(IPC_TESTING_API)
+    if (!sendOptions.contains(SendOption::IPCTestingMessage)) {
+#endif
+        if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForSyncReply))
+            ASSERT(encoder->isAllowedWhenWaitingForSyncReply());
+        else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
+            ASSERT(encoder->isAllowedWhenWaitingForUnboundedSyncReply());
+        else
+            ASSERT(!encoder->isAllowedWhenWaitingForSyncReply() && !encoder->isAllowedWhenWaitingForUnboundedSyncReply());
+#if ENABLE(IPC_TESTING_API)
+    }
+#endif
+
     if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForSyncReply)
         && (!m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
             || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
@@ -576,11 +570,11 @@ bool Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncRe
     ASSERT(replyHandler.completionHandler);
     auto replyID = replyHandler.replyID;
     encoder.get() << replyID;
-    addAsyncReplyHandler(*this, replyID, WTFMove(replyHandler.completionHandler));
+    addAsyncReplyHandler(WTFMove(replyHandler));
     if (sendMessage(WTFMove(encoder), sendOptions, qos))
         return true;
     // replyHandlerToCancel might be already cancelled if invalidate() happened in-between.
-    if (auto replyHandlerToCancel = takeAsyncReplyHandler(*this, replyID)) {
+    if (auto replyHandlerToCancel = takeAsyncReplyHandler(replyID)) {
         // FIXME: Current contract is that completionHandler is called on the connection run loop.
         // This does not make sense. However, this needs a change that is done later.
         RunLoop::main().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
@@ -911,6 +905,11 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
         }
     }
 
+    if ((message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC && !message->isAllowedWhenWaitingForUnboundedSyncReply()) || (message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::Yes && !message->isAllowedWhenWaitingForSyncReply())) {
+        dispatchDidReceiveInvalidMessage(message->messageName());
+        return;
+    }
+
     // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
     // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
     // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
@@ -1167,7 +1166,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     assertIsCurrent(dispatcher());
     RELEASE_ASSERT(m_client);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
-        auto handler = takeAsyncReplyHandler(*this, decoder.destinationID());
+        auto handler = takeAsyncReplyHandler(makeObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
         if (!handler) {
             markCurrentlyDispatchedMessageAsInvalid();
 #if ENABLE(IPC_TESTING_API)
@@ -1359,18 +1358,19 @@ void Connection::dispatchIncomingMessages()
     }
 }
 
-uint64_t nextAsyncReplyHandlerID()
+void Connection::addAsyncReplyHandler(AsyncReplyHandler&& handler)
 {
-    static std::atomic<uint64_t> identifier { 0 };
-    return ++identifier;
+    Locker locker { m_incomingMessagesLock };
+    auto result = m_asyncReplyHandlers.add(handler.replyID, WTFMove(handler.completionHandler));
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void clearAsyncReplyHandlers(const Connection& connection)
+void Connection::cancelAsyncReplyHandlers()
 {
-    HashMap<uint64_t, CompletionHandler<void(Decoder*)>> map;
+    AsyncReplyHandlerMap map;
     {
-        Locker locker { asyncReplyHandlerMapLock };
-        map = asyncReplyHandlerMap().take(reinterpret_cast<uintptr_t>(&connection));
+        Locker locker { m_incomingMessagesLock };
+        map.swap(m_asyncReplyHandlers);
     }
 
     for (auto& handler : map.values()) {
@@ -1379,16 +1379,12 @@ void clearAsyncReplyHandlers(const Connection& connection)
     }
 }
 
-CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, uint64_t identifier)
+CompletionHandler<void(Decoder*)> Connection::takeAsyncReplyHandler(AsyncReplyID replyID)
 {
-    Locker locker { asyncReplyHandlerMapLock };
-    auto& map = asyncReplyHandlerMap();
-    auto iterator = map.find(reinterpret_cast<uintptr_t>(&connection));
-    if (iterator == map.end())
+    Locker locker { m_incomingMessagesLock };
+    if (!m_asyncReplyHandlers.isValidKey(replyID))
         return nullptr;
-    if (!iterator->value.isValidKey(identifier))
-        return nullptr;
-    return iterator->value.take(identifier);
+    return m_asyncReplyHandlers.take(replyID);
 }
 
 void Connection::wakeUpRunLoop()

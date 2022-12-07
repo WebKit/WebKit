@@ -26,8 +26,6 @@
 #ifndef PAS_BITFIT_PAGE_INLINES_H
 #define PAS_BITFIT_PAGE_INLINES_H
 
-PAS_IGNORE_WARNINGS_BEGIN("cast-align")
-
 #include "pas_bitfit_allocation_result.h"
 #include "pas_bitfit_page.h"
 #include "pas_bitfit_view.h"
@@ -961,8 +959,6 @@ static PAS_ALWAYS_INLINE void pas_bitfit_page_shrink(
 }
 
 PAS_END_EXTERN_C;
-
-PAS_IGNORE_WARNINGS_END
 
 #endif /* PAS_BITFIT_PAGE_INLINES_H */
 

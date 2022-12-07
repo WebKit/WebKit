@@ -38,10 +38,8 @@ namespace WebCore {
 // https://fullscreen.spec.whatwg.org/#dom-document-fullscreenelement
 Element* DocumentOrShadowRootFullscreen::fullscreenElement(TreeScope& treeScope)
 {
-    if (auto* document = dynamicDowncast<Document>(treeScope.rootNode()))
-        return document->fullscreenManager().fullscreenElement();
-    // FIXME: Add a proper implementation for ShadowRoot.
-    return nullptr;
+    auto& document = treeScope.documentScope();
+    return treeScope.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement());
 }
 
 } // namespace WebCore

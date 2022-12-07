@@ -1046,8 +1046,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesFullScreenAnimatingFullScreenTransitionPseudoClass(element);
         case CSSSelector::PseudoClassFullScreenAncestor:
             return matchesFullScreenAncestorPseudoClass(element);
-        case CSSSelector::PseudoClassFullScreenParent:
-            return matchesFullScreenParentPseudoClass(element);
         case CSSSelector::PseudoClassFullScreenDocument:
             return matchesFullScreenDocumentPseudoClass(element);
         case CSSSelector::PseudoClassFullScreenControlsHidden:

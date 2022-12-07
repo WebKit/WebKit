@@ -3972,6 +3972,13 @@ public:
         return X86Assembler::patchableJumpSize();
     }
 
+    static bool supportsSSE4_1()
+    {
+        if (s_sse4_1CheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_sse4_1CheckState == CPUIDCheckState::Set;
+    }
+
     static bool supportsFloatingPointRounding()
     {
         if (s_sse4_1CheckState == CPUIDCheckState::NotChecked)

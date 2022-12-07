@@ -59,8 +59,11 @@ public:
     void setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply);
     ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
 
+    bool isFullySynchronousModeForTesting() const;
     void setFullySynchronousModeForTesting();
     void setShouldMaintainOrderingWithAsyncMessages();
+    bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || isFullySynchronousModeForTesting(); }
+    bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
 
     void wrapForTesting(UniqueRef<Encoder>&&);
 

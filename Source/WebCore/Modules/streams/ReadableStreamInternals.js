@@ -163,15 +163,13 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
     pipeState.pendingWritePromise = @Promise.@resolve();
 
     if (signal !== @undefined) {
-        const algorithm = () => {
-            const error = @makeDOMException("AbortError", "abort pipeTo from signal");
-
+        const algorithm = (reason) => {
             @pipeToShutdownWithAction(pipeState, () => {
                 const shouldAbortDestination = !pipeState.preventAbort && @getByIdDirectPrivate(pipeState.destination, "state") === "writable";
-                const promiseDestination = shouldAbortDestination ? @writableStreamAbort(pipeState.destination, error) : @Promise.@resolve();
+                const promiseDestination = shouldAbortDestination ? @writableStreamAbort(pipeState.destination, reason) : @Promise.@resolve();
 
                 const shouldAbortSource = !pipeState.preventCancel && @getByIdDirectPrivate(pipeState.source, "state") === @streamReadable;
-                const promiseSource = shouldAbortSource ? @readableStreamCancel(pipeState.source, error) : @Promise.@resolve();
+                const promiseSource = shouldAbortSource ? @readableStreamCancel(pipeState.source, reason) : @Promise.@resolve();
 
                 let promiseCapability = @newPromiseCapability(@Promise);
                 let shouldWait = true;
@@ -188,7 +186,7 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
                 promiseDestination.@then(handleResolvedPromise, handleRejectedPromise);
                 promiseSource.@then(handleResolvedPromise, handleRejectedPromise);
                 return promiseCapability.@promise;
-            }, error);
+            }, reason);
         };
         pipeState.abortAlgorithmIdentifier = @addAbortAlgorithmToSignal(signal, algorithm)
         if (!pipeState.abortAlgorithmIdentifier)

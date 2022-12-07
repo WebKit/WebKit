@@ -67,8 +67,11 @@ public:
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
     ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
+    bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || m_isAllowedWhenWaitingForSyncReplyOverride; }
+    bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
     bool shouldUseFullySynchronousModeForTesting() const;
     bool shouldMaintainOrderingWithAsyncMessages() const;
+    void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
 
 #if PLATFORM(MAC)
     void setImportanceAssertion(ImportanceAssertion&&);
@@ -168,6 +171,7 @@ private:
     MessageName m_messageName;
 
     uint64_t m_destinationID;
+    bool m_isAllowedWhenWaitingForSyncReplyOverride { false };
 
 #if PLATFORM(MAC)
     ImportanceAssertion m_importanceAssertion;

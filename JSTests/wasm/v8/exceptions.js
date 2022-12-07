@@ -141,7 +141,7 @@ load("exceptions-utils.js");
     caught = e;
   }
   assertSame(exception, caught);
-  assertThrows(instance.exports.call_import, WebAssembly.RuntimeError, kTrapMsgs[kTrapDivByZero]);
+  assertThrows(instance.exports.call_import, WebAssembly.RuntimeError, new RegExp(kTrapMsgs[kTrapDivByZero]));
 })();
 
 (function TestManuallyThrownRuntimeErrorCaught() {

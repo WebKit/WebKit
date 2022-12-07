@@ -160,7 +160,6 @@ struct PossiblyQuotedIdentifier {
             PseudoClassFullScreenAncestor,
             PseudoClassAnimatingFullScreenTransition,
             PseudoClassFullScreenControlsHidden,
-            PseudoClassFullScreenParent,
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
             PseudoClassPictureInPicture,

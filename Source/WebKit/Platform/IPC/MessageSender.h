@@ -80,14 +80,16 @@ public:
         return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions);
     }
 
+    using AsyncReplyID = Connection::AsyncReplyID;
+
     template<typename T, typename C>
-    uint64_t sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption> sendOptions = { })
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption> sendOptions = { })
     {
         return sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID(), sendOptions);
     }
 
     template<typename T, typename C>
-    uint64_t sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
     {
         static_assert(!T::isSync, "Async message expected");
 
@@ -97,7 +99,7 @@ public:
         auto replyID = asyncHandler.replyID;
         if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(asyncHandler), sendOptions))
             return replyID;
-        return 0;
+        return { };
     }
 
     virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);

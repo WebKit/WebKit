@@ -13,9 +13,9 @@ PASS new WebSocket(null) threw exception SyntaxError: The string did not match t
 PASS new WebSocket("ws://javascript:a") threw exception SyntaxError: The string did not match the expected pattern..
 PASS new WebSocket("/applet") threw exception SyntaxError: The string did not match the expected pattern..
 PASS new WebSocket("javascript:a") threw exception SyntaxError: The string did not match the expected pattern..
-PASS (new WebSocket("ws://127.0.0.1:8880/a/../websocket/tests/hybi/simple")).URL is "ws://127.0.0.1:8880/websocket/tests/hybi/simple"
-PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?")).URL is "ws://127.0.0.1:8880/websocket/tests/hybi/simple?"
-PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v")).URL is "ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v"
+PASS (new WebSocket("ws://127.0.0.1:8880/a/../websocket/tests/hybi/simple")).url is "ws://127.0.0.1:8880/websocket/tests/hybi/simple"
+PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?")).url is "ws://127.0.0.1:8880/websocket/tests/hybi/simple?"
+PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v")).url is "ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v"
 PASS new WebSocket("ws://127.0.0.1/path#") threw exception SyntaxError: The string did not match the expected pattern..
 PASS new WebSocket("ws://127.0.0.1/path#fragment") threw exception SyntaxError: The string did not match the expected pattern..
 PASS successfullyParsed is true

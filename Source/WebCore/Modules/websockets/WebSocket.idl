@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc.  All rights reserved.
- * Copyright (C) 2010, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/comms.html#the-websocket-interface
+
 [
     ActiveDOMObject,
     Exposed=(Window,Worker),
@@ -37,7 +39,6 @@
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional sequence<DOMString> protocols = []);
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, DOMString protocol);
 
-    readonly attribute USVString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute USVString url;
 
     const unsigned short CONNECTING = 0;

@@ -567,29 +567,27 @@ protected:
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
-        IsDocumentFragmentForInnerOuterHTML = 1 << 14, // DocumentFragment
-        IsEditingText = 1 << 15, // Text
-        IsLink = 1 << 16, // Element
-        IsUserActionElement = 1 << 17,
-        IsParsingChildrenFinished = 1 << 18,
-        HasSyntheticAttrChildNodes = 1 << 19,
-        SelfOrPrecedingNodesAffectDirAuto = 1 << 20,
+        IsDocumentFragmentForInnerOuterHTML = 1 << 13, // DocumentFragment
+        IsEditingText = 1 << 14, // Text
+        IsLink = 1 << 15, // Element
+        IsUserActionElement = 1 << 16,
+        IsParsingChildrenFinished = 1 << 17,
+        HasSyntheticAttrChildNodes = 1 << 18,
+        SelfOrPrecedingNodesAffectDirAuto = 1 << 19,
 
-        HasCustomStyleResolveCallbacks = 1 << 21,
-
-        HasPendingResources = 1 << 22,
-        IsInGCReachableRefMap = 1 << 23,
+        HasCustomStyleResolveCallbacks = 1 << 20,
+        HasPendingResources = 1 << 21,
+        IsInGCReachableRefMap = 1 << 22,
+        IsComputedStyleInvalidFlag = 1 << 23,
+        HasShadowRootContainingSlots = 1 << 24,
+        IsInTopLayer = 1 << 25,
+        NeedsSVGRendererUpdate = 1 << 26,
+        NeedsUpdateQueryContainerDependentStyle = 1 << 27,
+        HasBeenInUserAgentShadowTree = 1 << 28,
 #if ENABLE(FULLSCREEN_API)
-        ContainsFullScreenElement = 1 << 24,
+        IsFullscreen = 1 << 29,
+        IsIFrameFullscreen = 1 << 30,
 #endif
-        IsComputedStyleInvalidFlag = 1 << 25,
-        HasShadowRootContainingSlots = 1 << 26,
-        IsInTopLayer = 1 << 27,
-        NeedsSVGRendererUpdate = 1 << 28,
-        NeedsUpdateQueryContainerDependentStyle = 1 << 29,
-        HasBeenInUserAgentShadowTree = 1 << 30,
-
-        // Bit 31 is free.
     };
 
     enum class TabIndexState : uint8_t {

@@ -26,9 +26,9 @@ shouldThrow('new WebSocket("javascript:a")');
 
 // Resolve the url string using the resolve a Web address algorithm.
 // Use 127.0.0.1:8880 and existing ws handler to make sure we don't receive unexpected response (so no console message appears)
-shouldBe('(new WebSocket("ws://127.0.0.1:8880/a/../websocket/tests/hybi/simple")).URL', '"ws://127.0.0.1:8880/websocket/tests/hybi/simple"');
-shouldBe('(new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?")).URL', '"ws://127.0.0.1:8880/websocket/tests/hybi/simple?"');
-shouldBe('(new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v")).URL', '"ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v"');
+shouldBe('(new WebSocket("ws://127.0.0.1:8880/a/../websocket/tests/hybi/simple")).url', '"ws://127.0.0.1:8880/websocket/tests/hybi/simple"');
+shouldBe('(new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?")).url', '"ws://127.0.0.1:8880/websocket/tests/hybi/simple?"');
+shouldBe('(new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v")).url', '"ws://127.0.0.1:8880/websocket/tests/hybi/simple?k=v"');
 
 // draft-hixie-thewebsocketprotocol-60 says If /url/ has a <fragment>
 // component, then fail the parsing Web Socket URLs, so throw a SYNTAX_ERR

@@ -595,6 +595,7 @@ public:
         // Let each byte mask be 112 (0x70) then after VectorAddSat
         // each index > 15 would set the saturated index's bit 7 to 1, 
         // whose corresponding byte will be zero cleared in VectorSwizzle.
+        // https://github.com/WebAssembly/simd/issues/93
         v128_t mask;
         mask.u64x2[0] = 0x7070707070707070;
         mask.u64x2[1] = 0x7070707070707070;
@@ -626,6 +627,11 @@ public:
         AIR_OP_CASE(Max)
         AIR_OP_CASE(Min)
         result = tmpForType(Types::V128);
+
+        if (isX86() && airOp == B3::Air::VectorMulSat) {
+            append(airOp, a, b, result, tmpForType(Types::I64), tmpForType(Types::V128));
+            return { };
+        }
 
         if (isX86() && airOp == B3::Air::VectorSwizzle) {
             addSIMDSwizzle(a, b, result);

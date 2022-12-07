@@ -1855,8 +1855,6 @@
     (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
-        SYS___pthread_sigmask
-        SYS___semwait_signal
         SYS_access
         SYS_bsdthread_create
         SYS_bsdthread_ctl
@@ -1866,28 +1864,21 @@
         SYS_csops
         SYS_csops_audittoken
         SYS_csrctl
+        SYS_dup ;; Remove when <rdar://88210738> is fixed
         SYS_exit
-        SYS_faccessat ;; <rdar://problem/56690456>
         SYS_fcntl
-        SYS_fcntl_nocancel
-        SYS_fgetxattr
-        SYS_fileport_makefd
         SYS_flock
         SYS_fsetxattr ;; <rdar://problem/56332491>
         SYS_fsgetpath
         SYS_fstat64
-        SYS_fstatat64
         SYS_fstatfs64
         SYS_ftruncate
         SYS_getattrlist
-        SYS_getattrlistbulk
         SYS_getaudit_addr
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
         SYS_getfsstat64
-        SYS_getgid
-        SYS_gethostuuid
         SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
@@ -1900,16 +1891,12 @@
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
         SYS_kevent_id
         SYS_kevent_qos
-        SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
-        SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
-        SYS_listxattr
         SYS_lseek
         SYS_lstat64
         SYS_madvise
 #if !PLATFORM(MAC)
         SYS_memorystatus_control
 #endif
-        SYS_mincore
         SYS_mkdir
         SYS_mmap
         SYS_mprotect
@@ -1922,31 +1909,23 @@
         SYS_pread
         SYS_proc_info
         SYS_psynch_cvbroad
-        SYS_psynch_cvclrprepost
         SYS_psynch_cvsignal
         SYS_psynch_cvwait
         SYS_psynch_mutexdrop
         SYS_psynch_mutexwait
-        SYS_psynch_rw_unlock
-        SYS_psynch_rw_wrlock
         SYS_read
         SYS_read_nocancel
         SYS_readlink
         SYS_rename
-        SYS_sendto
-        SYS_sigaltstack
-        SYS_sigprocmask
         SYS_stat64
         SYS_statfs64
-        SYS_sysctlbyname
+        SYS_sysctl
         SYS_thread_selfid
 #if !PLATFORM(MAC)
         SYS_thread_selfusage
 #endif
         SYS_ulock_wait
         SYS_ulock_wake
-        SYS_umask
-        SYS_work_interval_ctl
         SYS_workq_kernreturn
         SYS_write_nocancel
         SYS_writev))
@@ -1962,7 +1941,6 @@
         SYS___semwait_signal_nocancel
         SYS_change_fdguard_np
         SYS_chmod
-        SYS_dup ;; Remove when <rdar://88210738> is fixed
         SYS_fchmod
         SYS_fsync
         SYS_getegid
@@ -1988,7 +1966,6 @@
         SYS_setsockopt ;; <rdar://90249455>
         SYS_shm_open
         SYS_sigaction
-        SYS_sysctl
         SYS_unlink
         SYS_write
 #if !PLATFORM(MAC)
@@ -2004,35 +1981,61 @@
 #endif
 ))
 
-(when (defined? 'syscall-unix)
-    (deny syscall-unix)
-    (allow syscall-unix
-        (syscall-unix-common))
+(define (syscall-unix-blocked-in-lockdown-mode) (syscall-number
+    SYS___pthread_sigmask
+    SYS___semwait_signal
+    SYS_faccessat
+    SYS_fcntl_nocancel
+    SYS_fgetxattr
+    SYS_fileport_makefd
+    SYS_fstatat64
+    SYS_getattrlistbulk
+    SYS_getgid
+    SYS_gethostuuid
+    SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
+    SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
+    SYS_listxattr
+    SYS_mincore
+    SYS_psynch_cvclrprepost
+    SYS_psynch_rw_unlock
+    SYS_psynch_rw_wrlock
+    SYS_sendto
+    SYS_sigaltstack
+    SYS_sigprocmask
+    SYS_sysctlbyname
+    SYS_umask
+    SYS_work_interval_ctl))
 
-    (if (equal? (param "CPU") "arm64")
-        (begin
-            (allow syscall-unix
-                (syscall-unix-apple-silicon))))
+(deny syscall-unix)
 
-    (allow syscall-unix
-        (syscalls-rarely-used))
+(allow syscall-unix (syscall-unix-common))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
-    (if (defined? 'SYS_objc_bp_assist_cfg_np)
-        (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
-#endif
-    (when (defined? 'SYS_map_with_linking_np)
-        (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
-)
+(with-filter (require-entitlement "com.apple.security.cs.allow-jit")
+    (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
+
+    (when (equal? (param "CPU") "arm64")
+        (allow syscall-unix (syscall-unix-apple-silicon)))
+
+    (allow syscall-unix (syscalls-rarely-used)))
+
+(when (defined? 'SYS_objc_bp_assist_cfg_np)
+    (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
 (with-filter (uid 0)
     (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-    (allow syscall-unix
-        (syscall-number SYS_quotactl)))
+    (allow syscall-unix (syscall-number SYS_quotactl)))
 #endif
+
+(with-filter (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
+    (allow syscall-unix (with report) (with telemetry) (syscall-unix-blocked-in-lockdown-mode))
+    (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used))
+    (when (equal? (param "CPU") "arm64")
+        (allow syscall-unix (with report) (with telemetry) (syscall-unix-apple-silicon))))
 
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
 (if (equal? (param "CPU") "arm64")
@@ -2066,7 +2069,7 @@
             (allow mach-bootstrap
                 (apply-message-filter
                     (deny mach-message-send)
-                    (allow mach-message-send 
+                    (allow mach-message-send
                         (mach-bootstrap-message-numbers-post-launch))))
         ;; else
             (allow-mach-bootstrap-with-filter))

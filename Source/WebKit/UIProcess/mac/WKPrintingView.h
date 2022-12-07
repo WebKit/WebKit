@@ -25,6 +25,7 @@
 
 #if PLATFORM(MAC)
 
+#import "Connection.h"
 #import <WebCore/IntRectHash.h>
 #import <condition_variable>
 #import <wtf/Condition.h>
@@ -57,10 +58,10 @@ class WebFrameProxy;
     RetainPtr<PDFDocument> _printedPagesPDFDocument;
     Vector<Vector<RetainPtr<PDFDestination>>> _linkDestinationsPerPage;
 
-    uint64_t _expectedComputedPagesCallback;
-    HashMap<uint64_t, WebCore::IntRect> _expectedPreviewCallbacks;
-    uint64_t _latestExpectedPreviewCallback;
-    uint64_t _expectedPrintCallback;
+    IPC::Connection::AsyncReplyID _expectedComputedPagesCallback;
+    HashMap<IPC::Connection::AsyncReplyID, WebCore::IntRect> _expectedPreviewCallbacks;
+    IPC::Connection::AsyncReplyID _latestExpectedPreviewCallback;
+    IPC::Connection::AsyncReplyID _expectedPrintCallback;
 
     BOOL _isPrintingFromSecondaryThread;
     Lock _printingCallbackMutex;

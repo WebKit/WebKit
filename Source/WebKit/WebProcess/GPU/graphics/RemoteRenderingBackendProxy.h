@@ -64,6 +64,8 @@ namespace WebKit {
 
 class WebPage;
 
+class RemoteImageBufferProxyFlushState;
+
 class RemoteRenderingBackendProxy
     : public IPC::Connection::Client {
 public:
@@ -148,6 +150,8 @@ public:
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
+    void addPendingFlush(RemoteImageBufferProxyFlushState&, DisplayListRecorderFlushIdentifier);
+
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
@@ -172,7 +176,7 @@ private:
 
     // Messages to be received.
     void didCreateImageBufferBackend(ImageBufferBackendHandle&&, WebCore::RenderingResourceIdentifier);
-    void didFlush(DisplayListRecorderFlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void didFlush(DisplayListRecorderFlushIdentifier);
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
 
@@ -187,6 +191,7 @@ private:
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
+    HashMap<DisplayListRecorderFlushIdentifier, Ref<RemoteImageBufferProxyFlushState>> m_pendingFlushes;
 };
 
 } // namespace WebKit

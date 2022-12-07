@@ -21,7 +21,7 @@ function endTest()
 }
 
 var ws = new WebSocket("wss://127.0.0.1:9323/websocket/tests/hybi/simple");
-debug("Created a socket to '" + ws.URL + "'; readyState " + ws.readyState + ".");
+debug("Created a socket to '" + ws.url + "'; readyState " + ws.readyState + ".");
 
 ws.onopen = function()
 {

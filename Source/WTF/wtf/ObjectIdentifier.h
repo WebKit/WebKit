@@ -92,7 +92,22 @@ public:
 
     bool operator>(const ObjectIdentifier& other) const
     {
-        return toUInt64() > other.toUInt64();
+        return m_identifier > other.m_identifier;
+    }
+
+    bool operator>=(const ObjectIdentifier& other) const
+    {
+        return m_identifier >= other.m_identifier;
+    }
+
+    bool operator<(const ObjectIdentifier& other) const
+    {
+        return m_identifier < other.m_identifier;
+    }
+
+    bool operator<=(const ObjectIdentifier& other) const
+    {
+        return m_identifier <= other.m_identifier;
     }
 
     uint64_t toUInt64() const { return m_identifier; }

@@ -26,6 +26,8 @@
 #ifndef PAS_HEAP_CONFIG_UTILS_H
 #define PAS_HEAP_CONFIG_UTILS_H
 
+PAS_IGNORE_WARNINGS_BEGIN("cast-align")
+
 #include "pas_basic_heap_config_root_data.h"
 #include "pas_basic_heap_page_caches.h"
 #include "pas_basic_heap_runtime_config.h"
@@ -453,5 +455,7 @@ typedef struct {
     PAS_BASIC_HEAP_CONFIG_SEGREGATED_HEAP_DECLARATIONS(name, upcase_name)
 
 PAS_END_EXTERN_C;
+
+PAS_IGNORE_WARNINGS_END
 
 #endif /* PAS_HEAP_CONFIG_UTILS_H */

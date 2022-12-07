@@ -292,7 +292,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
     auto arguments = decoder.decode<typename CodingType<typename MessageType::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return;
-    auto replyID = decoder.decode<uint64_t>();
+    auto replyID = decoder.decode<Connection::AsyncReplyID>();
     if (UNLIKELY(!replyID))
         return;
 
@@ -302,7 +302,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
     logMessage(connection, MessageType::name(), object, *arguments);
     callMemberFunction(object, function, WTFMove(*arguments),
         CompletionHandlerFromMF { [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
-            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID);
+            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID.toUInt64());
             logReply(connection, MessageType::name(), args...);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
             connection->sendSyncReply(WTFMove(encoder));
@@ -315,7 +315,7 @@ void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder,
     auto arguments = decoder.decode<typename CodingType<typename MessageType::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return;
-    auto replyID = decoder.decode<uint64_t>();
+    auto replyID = decoder.decode<Connection::AsyncReplyID>();
     if (UNLIKELY(!replyID))
         return;
 
@@ -325,7 +325,7 @@ void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder,
     logMessage(connection, MessageType::name(), object, *arguments);
     callMemberFunction(object, function, connection, WTFMove(*arguments),
         CompletionHandlerFromMF { [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
-            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID);
+            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID.toUInt64());
             logReply(connection, MessageType::name(), args...);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
             connection->sendSyncReply(WTFMove(encoder));

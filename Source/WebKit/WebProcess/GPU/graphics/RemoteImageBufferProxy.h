@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
+class RemoteImageBufferProxyFlushState;
 
 class RemoteImageBufferProxy : public WebCore::ImageBuffer {
 public:
@@ -53,20 +54,16 @@ public:
 
     DisplayListRecorderFlushIdentifier lastSentFlushIdentifier() const { return m_sentFlushIdentifier; }
 
-    void waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier);
-
     WebCore::ImageBufferBackend* ensureBackendCreated() const final;
-    void didFlush(DisplayListRecorderFlushIdentifier);
 
     void clearBackend();
     void backingStoreWillChange();
     void didCreateImageBufferBackend(ImageBufferBackendHandle&&);
+
 private:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&);
 
-    // It is safe to access m_receivedFlushIdentifier from the main thread without locking since it
-    // only gets modified on the main thread.
-    bool hasPendingFlush() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
+    bool hasPendingFlush() const;
 
     void waitForDidFlushWithTimeout();
 
@@ -101,12 +98,26 @@ private:
     void assertDispatcherIsCurrent() const;
 
     DisplayListRecorderFlushIdentifier m_sentFlushIdentifier;
-    Lock m_receivedFlushIdentifierLock;
-    Condition m_receivedFlushIdentifierChangedCondition;
-    DisplayListRecorderFlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
+    Ref<RemoteImageBufferProxyFlushState> m_flushState;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
     bool m_needsFlush { false };
+};
+
+class RemoteImageBufferProxyFlushState : public ThreadSafeRefCounted<RemoteImageBufferProxyFlushState> {
+    WTF_MAKE_NONCOPYABLE(RemoteImageBufferProxyFlushState);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    RemoteImageBufferProxyFlushState() = default;
+    void waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier);
+    void markCompletedFlush(DisplayListRecorderFlushIdentifier);
+    void cancel();
+    DisplayListRecorderFlushIdentifier identifierForCompletedFlush() const;
+
+private:
+    mutable Lock m_lock;
+    Condition m_condition;
+    DisplayListRecorderFlushIdentifier m_identifier WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebKit
