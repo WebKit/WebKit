@@ -1042,31 +1042,6 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
 }
 #endif
 
-void ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::encode(Encoder& encoder, const RefPtr<WebCore::SerializedScriptValue>& instance)
-{
-    encoder << !!instance;
-    if (instance)
-        encoder << instance->wireBytes();
-}
-
-std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::decode(Decoder& decoder)
-{
-    std::optional<bool> nonEmpty;
-    decoder >> nonEmpty;
-    if (!nonEmpty)
-        return std::nullopt;
-
-    if (!*nonEmpty)
-        return nullptr;
-
-    std::optional<Vector<uint8_t>> wireBytes;
-    decoder >> wireBytes;
-    if (!wireBytes)
-        return std::nullopt;
-
-    return SerializedScriptValue::createFromWireBytes(WTFMove(*wireBytes));
-}
-
 #if ENABLE(SERVICE_WORKER)
 void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)
 {

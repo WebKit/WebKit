@@ -275,11 +275,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::Image>> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, RefPtr<WebCore::Image>&);
 };
 
-template<> struct ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>> {
-    static void encode(Encoder&, const RefPtr<WebCore::SerializedScriptValue>&);
-    static std::optional<RefPtr<WebCore::SerializedScriptValue>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);
@@ -418,11 +413,6 @@ template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ContactF
 template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities> {
     static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::ApplePayError>> {
-    static void encode(Encoder&, const RefPtr<WebCore::ApplePayError>&);
-    static std::optional<RefPtr<WebCore::ApplePayError>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentSessionError> {

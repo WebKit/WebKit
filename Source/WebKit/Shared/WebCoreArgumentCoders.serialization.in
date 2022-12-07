@@ -1777,3 +1777,13 @@ header: <WebCore/ScrollingConstraints.h>
 [Return=Ref] class WebCore::NotificationResources {
     RefPtr<WebCore::Image> icon();
 };
+
+[Return=Ref, CreateUsing=createFromWireBytes] class WebCore::SerializedScriptValue {
+    Vector<uint8_t> wireBytes()
+}
+
+struct WebCore::SameSiteInfo {
+    bool isSameSite
+    bool isTopSite
+    bool isSafeHTTPMethod
+};
