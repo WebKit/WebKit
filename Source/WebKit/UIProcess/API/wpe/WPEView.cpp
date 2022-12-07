@@ -294,7 +294,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         [](void* data)
         {
             auto& view = *reinterpret_cast<View*>(data);
-            view.page().fullScreenManager()->requestEnterFullScreen();
+            view.page().fullScreenManager()->requestRestoreFullScreen();
         },
         // request_exit_fullscreen
         [](void* data)

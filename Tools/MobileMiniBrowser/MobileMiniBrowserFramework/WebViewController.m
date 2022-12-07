@@ -197,6 +197,7 @@ void* URLContext = &URLContext;
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
 
     configuration.preferences._mockCaptureDevicesEnabled = YES;
+    configuration.preferences.elementFullscreenEnabled = YES;
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.webViewContainer.bounds configuration:configuration];
     webView.inspectable = YES;
@@ -251,6 +252,9 @@ void* URLContext = &URLContext;
         if (url)
             return url;
     }
+
+    if (NSProcessInfo.processInfo.arguments.count >= 2)
+        return [NSURL URLWithString:NSProcessInfo.processInfo.arguments[1]];
 
     return [NSURL URLWithString:[self.settingsViewController defaultURL]];
 }

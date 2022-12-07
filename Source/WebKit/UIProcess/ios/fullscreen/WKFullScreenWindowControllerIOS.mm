@@ -774,7 +774,7 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
     }];
 }
 
-- (void)requestEnterFullScreen
+- (void)requestRestoreFullScreen
 {
     if (_fullScreenState != WebKit::NotInFullScreen)
         return;
@@ -784,7 +784,7 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
         page->fullscreenMayReturnToInline();
 
     if (auto* manager = self._manager) {
-        manager->requestEnterFullScreen();
+        manager->requestRestoreFullScreen();
         return;
     }
 
@@ -936,7 +936,7 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
         _exitingFullScreen = NO;
         if (_enterRequested) {
             _enterRequested = NO;
-            [self requestEnterFullScreen];
+            [self requestRestoreFullScreen];
         }
     });
 
@@ -997,7 +997,7 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
                 if (_fullScreenState == WebKit::InFullScreen)
                     videoFullscreenInterface->preparedToReturnToStandby();
                 else
-                    [self requestEnterFullScreen];
+                    [self requestRestoreFullScreen];
             } else
                 _enterRequested = YES;
 
