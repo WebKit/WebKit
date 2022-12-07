@@ -2578,3 +2578,4 @@ webkit.org/b/248493 http/tests/security/contentSecurityPolicy/script-src-parsing
 [ Ventura+ arm64 ] fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
 [ BigSur+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 [ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ ImageOnlyFailure ]
+[ BigSur+ Debug x86_64 ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]
