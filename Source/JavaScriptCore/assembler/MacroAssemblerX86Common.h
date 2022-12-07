@@ -4013,6 +4013,20 @@ public:
         return false;
     }
 
+    static bool supportsAVXForSIMD()
+    {
+        if (s_avxCheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_avxCheckState == CPUIDCheckState::Set;
+    }
+
+    static bool supportsAVX2()
+    {
+        if (s_avx2CheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_avx2CheckState == CPUIDCheckState::Set;
+    }
+
     void lfence()
     {
         m_assembler.lfence();
@@ -4300,6 +4314,7 @@ private:
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_1CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_2CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_avxCheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_avx2CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_lzcntCheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_bmi1CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_popcntCheckState;
