@@ -3978,9 +3978,6 @@ webkit.org/b/243819 webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html [ 
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
 
-# Legacy line layout (visually) partially trims trailing whitespace.
-webkit.org/b/245629 fast/text/pre-wrap-with-line-break-after-white-space.html [ ImageOnlyFailure ]
-
 # needs support in IFC
 webkit.org/b/230593 fast/inline/kerning-across-inline-boxes.html [ Skip ]
 webkit.org/b/230593 fast/block/positioning/056.html [ Failure ]
