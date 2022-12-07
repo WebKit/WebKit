@@ -259,6 +259,16 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
         }
     }
 
+#if HAVE(VPIO_DUCKING_LEVEL_API)
+    AUVoiceIOOtherAudioDuckingConfiguration configuration { true, kAUVoiceIOOtherAudioDuckingLevelMin };
+    if (auto err = m_ioUnit->set(kAUVoiceIOProperty_OtherAudioDuckingConfiguration, kAudioUnitScope_Global, inputBus, &configuration, sizeof(configuration))) {
+        if (err != kAudioUnitErr_InvalidProperty) {
+            RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set ducking level, error %d (%.4s)", this, (int)err, (char*)&err);
+            return err;
+        }
+    }
+#endif // HAVE(VPIO_DUCKING_LEVEL_API)
+
 #if PLATFORM(IOS_FAMILY)
     uint32_t param = 1;
     if (auto err = m_ioUnit->set(kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param))) {
