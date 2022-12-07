@@ -1,6 +1,4 @@
-
-inner
-button
+Link Child Disabled Link
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -15,9 +13,9 @@ button
 
       (interaction regions [
         (region
-            (rect (1,4) width=57 height=28)
+            (rect (-3,-3) width=76 height=25)
 )
-        (borderRadius 14.00)])
+        (borderRadius 0.00)])
       )
     )
   )

@@ -130,6 +130,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     auto& renderer = *element->renderer();
 
+    if (renderer.style().effectivePointerEvents() == PointerEvents::None)
+        return std::nullopt;
+
     // FIXME: Consider also allowing elements that only receive touch events.
     if (!renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick))
         return std::nullopt;

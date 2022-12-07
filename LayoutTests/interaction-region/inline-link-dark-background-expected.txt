@@ -13,7 +13,7 @@ This is a link.
 
       (interaction regions [
         (region
-            (rect (-3,-3) width=35 height=24)
+            (rect (-3,-3) width=35 height=25)
 )
         (borderRadius 0.00)])
       )

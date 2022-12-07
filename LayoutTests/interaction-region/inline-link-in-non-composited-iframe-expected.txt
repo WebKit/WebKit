@@ -14,11 +14,11 @@ This is a link, outside the frame.
 
       (interaction regions [
         (region
-            (rect (7,25) width=35 height=24)
+            (rect (-3,-3) width=35 height=25)
 )
         (borderRadius 0.00),
         (region
-            (rect (-3,-3) width=35 height=24)
+            (rect (7,27) width=35 height=25)
 )
         (borderRadius 0.00)])
       )
