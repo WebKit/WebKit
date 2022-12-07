@@ -159,6 +159,18 @@ DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition
 {
 }
 
+DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, const Vector<String>& fileNames, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, std::optional<PageIdentifier> pageID)
+    : m_clientPosition(clientPosition)
+    , m_globalPosition(globalPosition)
+    , m_draggingSourceOperationMask(sourceOperationMask)
+    , m_applicationFlags(flags)
+    , m_fileNames(fileNames)
+    , m_dragDestinationActionMask(destinationActionMask)
+    , m_pageID(pageID)
+    , m_pasteboardName(dragStorageName)
+{
+}
+
 bool DragData::containsURLTypeIdentifier() const
 {
     Vector<String> types;

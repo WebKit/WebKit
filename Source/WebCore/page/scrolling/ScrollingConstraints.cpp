@@ -30,6 +30,12 @@
 
 namespace WebCore {
 
+AbsolutePositionConstraints::AbsolutePositionConstraints(const FloatSize& alignmentOffset, const FloatPoint& layerPositionAtLastLayout)
+    : m_alignmentOffset(alignmentOffset)
+    , m_layerPositionAtLastLayout(layerPositionAtLastLayout)
+{
+}
+
 FloatPoint FixedPositionViewportConstraints::layerPositionForViewportRect(const FloatRect& viewportRect) const
 {
     FloatSize offset;

@@ -34,6 +34,7 @@ class AbsolutePositionConstraints {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AbsolutePositionConstraints() = default;
+    WEBCORE_EXPORT AbsolutePositionConstraints(const FloatSize&, const FloatPoint&);
 
     bool operator==(const AbsolutePositionConstraints& other) const
     {

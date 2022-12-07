@@ -36,11 +36,23 @@ public:
     {
         return adoptRef(*new NotificationResources());
     }
+    
+    static Ref<NotificationResources> create(RefPtr<Image>&& image)
+    {
+        return adoptRef(*new NotificationResources(WTFMove(image)));
+    }
 
     void setIcon(RefPtr<Image>&& icon) { m_icon = WTFMove(icon); }
     const RefPtr<Image>& icon() const { return m_icon; }
 
 private:
+    NotificationResources(RefPtr<Image>&& image)
+        : m_icon(WTFMove(image))
+    {
+    }
+
+    NotificationResources() = default;
+
     RefPtr<Image> m_icon;
 };
 

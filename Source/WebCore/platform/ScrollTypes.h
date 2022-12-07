@@ -387,25 +387,6 @@ template<> struct EnumTraits<WebCore::ScrollIsAnimated> {
     >;
 };
 
-template<> struct EnumTraits<WebCore::ScrollbarMode> {
-    using values = EnumValues<
-        WebCore::ScrollbarMode,
-        WebCore::ScrollbarMode::Auto,
-        WebCore::ScrollbarMode::AlwaysOff,
-        WebCore::ScrollbarMode::AlwaysOn
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ScrollElasticity> {
-    using values = EnumValues<
-        WebCore::ScrollElasticity,
-        WebCore::ScrollElasticity::Automatic,
-        WebCore::ScrollElasticity::None,
-        WebCore::ScrollElasticity::Allowed
-    >;
-};
-
-
 template<> struct EnumTraits<WebCore::ScrollPinningBehavior> {
     using values = EnumValues<
         WebCore::ScrollPinningBehavior,

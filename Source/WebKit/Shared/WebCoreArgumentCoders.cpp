@@ -345,100 +345,6 @@ bool ArgumentCoder<Length>::decode(Decoder& decoder, Length& length)
     return false;
 }
 
-void ArgumentCoder<VelocityData>::encode(Encoder& encoder, const VelocityData& velocityData)
-{
-    encoder << velocityData.horizontalVelocity << velocityData.verticalVelocity << velocityData.scaleChangeRate << velocityData.lastUpdateTime;
-}
-
-bool ArgumentCoder<VelocityData>::decode(Decoder& decoder, VelocityData& velocityData)
-{
-    float horizontalVelocity;
-    if (!decoder.decode(horizontalVelocity))
-        return false;
-
-    float verticalVelocity;
-    if (!decoder.decode(verticalVelocity))
-        return false;
-
-    float scaleChangeRate;
-    if (!decoder.decode(scaleChangeRate))
-        return false;
-
-    MonotonicTime lastUpdateTime;
-    if (!decoder.decode(lastUpdateTime))
-        return false;
-
-    velocityData.horizontalVelocity = horizontalVelocity;
-    velocityData.verticalVelocity = verticalVelocity;
-    velocityData.scaleChangeRate = scaleChangeRate;
-    velocityData.lastUpdateTime = lastUpdateTime;
-
-    return true;
-}
-
-void ArgumentCoder<MimeClassInfo>::encode(Encoder& encoder, const MimeClassInfo& mimeClassInfo)
-{
-    encoder << mimeClassInfo.type << mimeClassInfo.desc << mimeClassInfo.extensions;
-}
-
-std::optional<MimeClassInfo> ArgumentCoder<MimeClassInfo>::decode(Decoder& decoder)
-{
-    MimeClassInfo mimeClassInfo;
-    if (!decoder.decode(mimeClassInfo.type))
-        return std::nullopt;
-    if (!decoder.decode(mimeClassInfo.desc))
-        return std::nullopt;
-    if (!decoder.decode(mimeClassInfo.extensions))
-        return std::nullopt;
-
-    return mimeClassInfo;
-}
-
-void ArgumentCoder<AuthenticationChallenge>::encode(Encoder& encoder, const AuthenticationChallenge& challenge)
-{
-    encoder << challenge.protectionSpace() << challenge.proposedCredential() << challenge.previousFailureCount() << challenge.failureResponse() << challenge.error();
-#if USE(SOUP)
-    encoder << challenge.tlsPasswordFlags();
-#endif
-}
-
-bool ArgumentCoder<AuthenticationChallenge>::decode(Decoder& decoder, AuthenticationChallenge& challenge)
-{    
-    ProtectionSpace protectionSpace;
-    if (!decoder.decode(protectionSpace))
-        return false;
-
-    Credential proposedCredential;
-    if (!decoder.decode(proposedCredential))
-        return false;
-
-    unsigned previousFailureCount;    
-    if (!decoder.decode(previousFailureCount))
-        return false;
-
-    ResourceResponse failureResponse;
-    if (!decoder.decode(failureResponse))
-        return false;
-
-    ResourceError error;
-    if (!decoder.decode(error))
-        return false;
-
-#if USE(SOUP)
-    uint32_t tlsPasswordFlags;
-    if (!decoder.decode(tlsPasswordFlags))
-        return false;
-#endif
-
-    challenge = AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error);
-
-#if USE(SOUP)
-    challenge.setTLSPasswordFlags(tlsPasswordFlags);
-#endif
-    return true;
-}
-
-
 void ArgumentCoder<ProtectionSpace>::encode(Encoder& encoder, const ProtectionSpace& space)
 {
     if (space.encodingRequiresPlatformData()) {
@@ -719,64 +625,6 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
     return true;
 }
 
-#if ENABLE(DRAG_SUPPORT)
-void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
-{
-    encoder << dragData.clientPosition();
-    encoder << dragData.globalPosition();
-    encoder << dragData.draggingSourceOperationMask();
-    encoder << dragData.flags();
-#if PLATFORM(COCOA)
-    encoder << dragData.pasteboardName();
-    encoder << dragData.fileNames();
-#endif
-    encoder << dragData.dragDestinationActionMask();
-    encoder << dragData.pageID();
-}
-
-bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
-{
-    IntPoint clientPosition;
-    if (!decoder.decode(clientPosition))
-        return false;
-
-    IntPoint globalPosition;
-    if (!decoder.decode(globalPosition))
-        return false;
-
-    OptionSet<DragOperation> draggingSourceOperationMask;
-    if (!decoder.decode(draggingSourceOperationMask))
-        return false;
-
-    OptionSet<DragApplicationFlags> applicationFlags;
-    if (!decoder.decode(applicationFlags))
-        return false;
-
-    String pasteboardName;
-    Vector<String> fileNames;
-#if PLATFORM(COCOA)
-    if (!decoder.decode(pasteboardName))
-        return false;
-
-    if (!decoder.decode(fileNames))
-        return false;
-#endif
-
-    OptionSet<DragDestinationAction> dragDestinationActionMask;
-    if (!decoder.decode(dragDestinationActionMask))
-        return false;
-
-    std::optional<PageIdentifier> pageID;
-    if (!decoder.decode(pageID))
-        return false;
-
-    dragData = DragData(pasteboardName, clientPosition, globalPosition, draggingSourceOperationMask, applicationFlags, dragDestinationActionMask, pageID);
-    dragData.setFileNames(fileNames);
-
-    return true;
-}
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 
 void ArgumentCoder<InspectorOverlay::Highlight>::encode(Encoder& encoder, const InspectorOverlay::Highlight& highlight)
@@ -823,126 +671,6 @@ bool ArgumentCoder<InspectorOverlay::Highlight>::decode(Decoder& decoder, Inspec
 
 #endif
 
-
-void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const DictationAlternative& alternative)
-{
-    encoder << alternative.range << alternative.context;
-}
-
-std::optional<DictationAlternative> ArgumentCoder<DictationAlternative>::decode(Decoder& decoder)
-{
-    std::optional<CharacterRange> range;
-    decoder >> range;
-    if (!range)
-        return std::nullopt;
-
-    std::optional<DictationContext> context;
-    decoder >> context;
-    if (!context)
-        return std::nullopt;
-
-    return {{ *range, *context }};
-}
-
-void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleSheet& userStyleSheet)
-{
-    encoder << userStyleSheet.source();
-    encoder << userStyleSheet.url();
-    encoder << userStyleSheet.allowlist();
-    encoder << userStyleSheet.blocklist();
-    encoder << userStyleSheet.injectedFrames();
-    encoder << userStyleSheet.level();
-    encoder << userStyleSheet.pageID();
-}
-
-bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& userStyleSheet)
-{
-    String source;
-    if (!decoder.decode(source))
-        return false;
-
-    URL url;
-    if (!decoder.decode(url))
-        return false;
-
-    Vector<String> allowlist;
-    if (!decoder.decode(allowlist))
-        return false;
-
-    Vector<String> blocklist;
-    if (!decoder.decode(blocklist))
-        return false;
-
-    UserContentInjectedFrames injectedFrames;
-    if (!decoder.decode(injectedFrames))
-        return false;
-
-    UserStyleLevel level;
-    if (!decoder.decode(level))
-        return false;
-
-    std::optional<std::optional<PageIdentifier>> pageID;
-    decoder >> pageID;
-    if (!pageID)
-        return false;
-
-    userStyleSheet = UserStyleSheet(source, url, WTFMove(allowlist), WTFMove(blocklist), injectedFrames, level, WTFMove(*pageID));
-    return true;
-}
-
-void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const ScrollableAreaParameters& parameters)
-{
-    encoder << parameters.horizontalScrollElasticity;
-    encoder << parameters.verticalScrollElasticity;
-
-    encoder << parameters.horizontalScrollbarMode;
-    encoder << parameters.verticalScrollbarMode;
-    
-    encoder << parameters.horizontalOverscrollBehavior;
-    encoder << parameters.verticalOverscrollBehavior;
-
-    encoder << parameters.allowsHorizontalScrolling;
-    encoder << parameters.allowsVerticalScrolling;
-
-    encoder << parameters.horizontalScrollbarHiddenByStyle;
-    encoder << parameters.verticalScrollbarHiddenByStyle;
-
-    encoder << parameters.useDarkAppearanceForScrollbars;
-}
-
-bool ArgumentCoder<ScrollableAreaParameters>::decode(Decoder& decoder, ScrollableAreaParameters& params)
-{
-    if (!decoder.decode(params.horizontalScrollElasticity))
-        return false;
-    if (!decoder.decode(params.verticalScrollElasticity))
-        return false;
-
-    if (!decoder.decode(params.horizontalScrollbarMode))
-        return false;
-    if (!decoder.decode(params.verticalScrollbarMode))
-        return false;
-    
-    if (!decoder.decode(params.horizontalOverscrollBehavior))
-        return false;
-    if (!decoder.decode(params.verticalOverscrollBehavior))
-        return false;
-
-    if (!decoder.decode(params.allowsHorizontalScrolling))
-        return false;
-    if (!decoder.decode(params.allowsVerticalScrolling))
-        return false;
-
-    if (!decoder.decode(params.horizontalScrollbarHiddenByStyle))
-        return false;
-    if (!decoder.decode(params.verticalScrollbarHiddenByStyle))
-        return false;
-
-    if (!decoder.decode(params.useDarkAppearanceForScrollbars))
-        return false;
-
-    return true;
-}
-
 void ArgumentCoder<FixedPositionViewportConstraints>::encode(Encoder& encoder, const FixedPositionViewportConstraints& viewportConstraints)
 {
     encoder << viewportConstraints.alignmentOffset();
@@ -977,28 +705,6 @@ bool ArgumentCoder<FixedPositionViewportConstraints>::decode(Decoder& decoder, F
     viewportConstraints.setViewportRectAtLastLayout(viewportRectAtLastLayout);
     viewportConstraints.setLayerPositionAtLastLayout(layerPositionAtLastLayout);
     
-    return true;
-}
-
-void ArgumentCoder<AbsolutePositionConstraints>::encode(Encoder& encoder, const AbsolutePositionConstraints& layoutConstraints)
-{
-    encoder << layoutConstraints.alignmentOffset();
-    encoder << layoutConstraints.layerPositionAtLastLayout();
-}
-
-bool ArgumentCoder<AbsolutePositionConstraints>::decode(Decoder& decoder, AbsolutePositionConstraints& layoutConstraints)
-{
-    FloatSize alignmentOffset;
-    if (!decoder.decode(alignmentOffset))
-        return false;
-
-    FloatPoint layerPosition;
-    if (!decoder.decode(layerPosition))
-        return false;
-
-    layoutConstraints = { };
-    layoutConstraints.setAlignmentOffset(alignmentOffset);
-    layoutConstraints.setLayerPositionAtLastLayout(layerPosition);
     return true;
 }
 
@@ -1799,25 +1505,6 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
 
     ASSERT_NOT_REACHED();
     return std::nullopt;
-}
-
-void ArgumentCoder<WebCore::NotificationResources>::encode(Encoder& encoder, const WebCore::NotificationResources& resources)
-{
-    encoder << resources.icon();
-}
-
-std::optional<RefPtr<WebCore::NotificationResources>> ArgumentCoder<WebCore::NotificationResources>::decode(Decoder& decoder)
-{
-    RefPtr<Image> icon;
-    if (!decoder.decode(icon))
-        return std::nullopt;
-
-    if (!icon)
-        return nullptr;
-
-    auto resources = WebCore::NotificationResources::create();
-    resources->setIcon(WTFMove(icon));
-    return resources;
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
