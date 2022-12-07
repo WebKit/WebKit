@@ -730,6 +730,12 @@ class CheckOutSpecificRevision(shell.ShellCommand):
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
 
+    def buildCommandKwargs(self, warnings):
+        result = super(CheckOutSpecificRevision, self).buildCommandKwargs(warnings)
+        if self.getProperty('sensitive', False):
+            result['stdioLogName'] = None
+        return result
+
     def start(self):
         self.setCommand(['git', 'checkout', self.getProperty('ews_revision')])
         return shell.ShellCommand.start(self)
@@ -1023,6 +1029,14 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+    def makeRemoteShellCommand(self, collectStdout=False, collectStderr=False, stdioLogName='stdio', **overrides):
+        if self.getProperty('sensitive', False):
+            stdioLogName = None
+        return super(CheckOutPullRequest, self).makeRemoteShellCommand(
+            collectStdout=collectStdout, collectStderr=collectStderr,
+            stdioLogName=stdioLogName, **overrides
+        )
 
     def run(self):
         self.commands = []
