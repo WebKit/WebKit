@@ -8,14 +8,13 @@
 <div id="console"></div>
 <script type="text/javascript">
 
-description("Both .URL and .url attributes should work (for compatibility reasons).");
+description(".url attribute should work, previously supported .URL should not.");
 
 var url = "ws://127.0.0.1:8880/";
 var ws = new WebSocket(url);
 
 shouldBeEqualToString("ws.url", url);
-shouldBeEqualToString("ws.URL", url);
-shouldBeTrue("ws.URL === ws.url");
+shouldBeUndefined("ws.URL");
 
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
