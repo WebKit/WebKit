@@ -1,8 +1,8 @@
 
 PASS Can set 'r' to CSS-wide keywords
 FAIL Can set 'r' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'r' to a percent Invalid values
-FAIL Can set 'r' to a length Invalid values
+FAIL Can set 'r' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'r' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'r' to a time throws TypeError
 PASS Setting 'r' to an angle throws TypeError
 PASS Setting 'r' to a flexible length throws TypeError
@@ -12,8 +12,8 @@ PASS Setting 'r' to a transform throws TypeError
 PASS Can set 'rx' to CSS-wide keywords
 FAIL Can set 'rx' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'rx' to the 'auto' keyword
-FAIL Can set 'rx' to a percent Invalid values
-FAIL Can set 'rx' to a length Invalid values
+FAIL Can set 'rx' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'rx' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'rx' to a time throws TypeError
 PASS Setting 'rx' to an angle throws TypeError
 PASS Setting 'rx' to a flexible length throws TypeError
@@ -23,8 +23,8 @@ PASS Setting 'rx' to a transform throws TypeError
 PASS Can set 'ry' to CSS-wide keywords
 FAIL Can set 'ry' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'ry' to the 'auto' keyword
-FAIL Can set 'ry' to a percent Invalid values
-FAIL Can set 'ry' to a length Invalid values
+FAIL Can set 'ry' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'ry' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'ry' to a time throws TypeError
 PASS Setting 'ry' to an angle throws TypeError
 PASS Setting 'ry' to a flexible length throws TypeError

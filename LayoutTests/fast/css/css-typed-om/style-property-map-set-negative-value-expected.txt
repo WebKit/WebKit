@@ -1,0 +1,13 @@
+Checks that calling StylePropertyMap.set() with a negative value wraps it into a calc.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.attributeStyleMap.set('width', new CSSUnitValue(-3.14, 'percent')) did not throw exception.
+PASS target.style.width is "calc(-3.14%)"
+PASS target.attributeStyleMap.set('perspective', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.perspective is "calc(-32px)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

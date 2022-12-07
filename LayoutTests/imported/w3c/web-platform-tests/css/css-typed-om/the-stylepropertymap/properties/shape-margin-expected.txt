@@ -1,8 +1,8 @@
 
 PASS Can set 'shape-margin' to CSS-wide keywords
 FAIL Can set 'shape-margin' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'shape-margin' to a length Invalid values
-FAIL Can set 'shape-margin' to a percent Invalid values
+FAIL Can set 'shape-margin' to a length assert_equals: expected "px" but got "em"
+FAIL Can set 'shape-margin' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Setting 'shape-margin' to a time throws TypeError
 PASS Setting 'shape-margin' to an angle throws TypeError
 PASS Setting 'shape-margin' to a flexible length throws TypeError

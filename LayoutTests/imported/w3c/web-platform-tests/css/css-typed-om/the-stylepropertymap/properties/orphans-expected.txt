@@ -1,7 +1,7 @@
 
 PASS Can set 'orphans' to CSS-wide keywords
 FAIL Can set 'orphans' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'orphans' to a number Invalid values
+FAIL Can set 'orphans' to a number assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
 PASS Setting 'orphans' to a length throws TypeError
 PASS Setting 'orphans' to a percent throws TypeError
 PASS Setting 'orphans' to a time throws TypeError

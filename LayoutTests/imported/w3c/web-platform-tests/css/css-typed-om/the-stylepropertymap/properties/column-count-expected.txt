@@ -2,7 +2,7 @@
 PASS Can set 'column-count' to CSS-wide keywords
 FAIL Can set 'column-count' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'column-count' to the 'auto' keyword
-FAIL Can set 'column-count' to a number Invalid values
+FAIL Can set 'column-count' to a number assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
 PASS Setting 'column-count' to a length throws TypeError
 PASS Setting 'column-count' to a percent throws TypeError
 PASS Setting 'column-count' to a time throws TypeError

@@ -121,8 +121,8 @@ PASS Setting 'inset-inline' to a URL throws TypeError
 PASS Setting 'inset-inline' to a transform throws TypeError
 PASS Can set 'padding-block-start' to CSS-wide keywords
 FAIL Can set 'padding-block-start' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'padding-block-start' to a percent Invalid values
-FAIL Can set 'padding-block-start' to a length Invalid values
+FAIL Can set 'padding-block-start' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'padding-block-start' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'padding-block-start' to a time throws TypeError
 PASS Setting 'padding-block-start' to an angle throws TypeError
 PASS Setting 'padding-block-start' to a flexible length throws TypeError
@@ -131,8 +131,8 @@ PASS Setting 'padding-block-start' to a URL throws TypeError
 PASS Setting 'padding-block-start' to a transform throws TypeError
 PASS Can set 'padding-block-end' to CSS-wide keywords
 FAIL Can set 'padding-block-end' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'padding-block-end' to a percent Invalid values
-FAIL Can set 'padding-block-end' to a length Invalid values
+FAIL Can set 'padding-block-end' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'padding-block-end' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'padding-block-end' to a time throws TypeError
 PASS Setting 'padding-block-end' to an angle throws TypeError
 PASS Setting 'padding-block-end' to a flexible length throws TypeError
@@ -141,8 +141,8 @@ PASS Setting 'padding-block-end' to a URL throws TypeError
 PASS Setting 'padding-block-end' to a transform throws TypeError
 PASS Can set 'padding-inline-start' to CSS-wide keywords
 FAIL Can set 'padding-inline-start' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'padding-inline-start' to a percent Invalid values
-FAIL Can set 'padding-inline-start' to a length Invalid values
+FAIL Can set 'padding-inline-start' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'padding-inline-start' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'padding-inline-start' to a time throws TypeError
 PASS Setting 'padding-inline-start' to an angle throws TypeError
 PASS Setting 'padding-inline-start' to a flexible length throws TypeError
@@ -151,8 +151,8 @@ PASS Setting 'padding-inline-start' to a URL throws TypeError
 PASS Setting 'padding-inline-start' to a transform throws TypeError
 PASS Can set 'padding-inline-end' to CSS-wide keywords
 FAIL Can set 'padding-inline-end' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'padding-inline-end' to a percent Invalid values
-FAIL Can set 'padding-inline-end' to a length Invalid values
+FAIL Can set 'padding-inline-end' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'padding-inline-end' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'padding-inline-end' to a time throws TypeError
 PASS Setting 'padding-inline-end' to an angle throws TypeError
 PASS Setting 'padding-inline-end' to a flexible length throws TypeError

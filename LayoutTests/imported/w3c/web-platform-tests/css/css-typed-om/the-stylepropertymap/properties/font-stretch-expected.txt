@@ -10,7 +10,7 @@ FAIL Can set 'font-stretch' to the 'semi-expanded' keyword assert_equals: expect
 FAIL Can set 'font-stretch' to the 'expanded' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'font-stretch' to the 'extra-expanded' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'font-stretch' to the 'ultra-expanded' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'font-stretch' to a percent Invalid values
+FAIL Can set 'font-stretch' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Setting 'font-stretch' to a length throws TypeError
 PASS Setting 'font-stretch' to a time throws TypeError
 PASS Setting 'font-stretch' to an angle throws TypeError

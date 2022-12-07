@@ -42,11 +42,17 @@ static RefPtr<CSSValue> cssValueFromStyleValues(std::optional<CSSPropertyID> pro
 {
     if (values.isEmpty())
         return nullptr;
+
+    auto toCSSValue = [propertyID](CSSStyleValue& styleValue) {
+        if (propertyID)
+            return styleValue.toCSSValueWithProperty(*propertyID);
+        return styleValue.toCSSValue();
+    };
     if (values.size() == 1)
-        return values[0]->toCSSValue();
+        return toCSSValue(values[0]);
     auto list = propertyID ? CSSProperty::createListForProperty(*propertyID) : CSSValueList::createCommaSeparated();
     for (auto&& value : WTFMove(values)) {
-        if (auto cssValue = value->toCSSValue())
+        if (auto cssValue = toCSSValue(value))
             list->append(cssValue.releaseNonNull());
     }
     return list;

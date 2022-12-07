@@ -1,8 +1,8 @@
 
 PASS Can set 'tab-size' to CSS-wide keywords
 FAIL Can set 'tab-size' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'tab-size' to a number Invalid values
-FAIL Can set 'tab-size' to a length Invalid values
+FAIL Can set 'tab-size' to a number assert_equals: expected 2 but got 1
+FAIL Can set 'tab-size' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'tab-size' to a percent throws TypeError
 PASS Setting 'tab-size' to a time throws TypeError
 PASS Setting 'tab-size' to an angle throws TypeError

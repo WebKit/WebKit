@@ -2,8 +2,8 @@
 PASS Can set 'block-size' to CSS-wide keywords
 FAIL Can set 'block-size' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'block-size' to the 'auto' keyword
-FAIL Can set 'block-size' to a percent Invalid values
-FAIL Can set 'block-size' to a length Invalid values
+FAIL Can set 'block-size' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'block-size' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'block-size' to a time throws TypeError
 PASS Setting 'block-size' to an angle throws TypeError
 PASS Setting 'block-size' to a flexible length throws TypeError
@@ -12,8 +12,8 @@ PASS Setting 'block-size' to a URL throws TypeError
 PASS Setting 'block-size' to a transform throws TypeError
 PASS Can set 'min-block-size' to CSS-wide keywords
 FAIL Can set 'min-block-size' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'min-block-size' to a percent Invalid values
-FAIL Can set 'min-block-size' to a length Invalid values
+FAIL Can set 'min-block-size' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'min-block-size' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'min-block-size' to a time throws TypeError
 PASS Setting 'min-block-size' to an angle throws TypeError
 PASS Setting 'min-block-size' to a flexible length throws TypeError
@@ -23,8 +23,8 @@ PASS Setting 'min-block-size' to a transform throws TypeError
 PASS Can set 'max-block-size' to CSS-wide keywords
 FAIL Can set 'max-block-size' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'max-block-size' to the 'none' keyword
-FAIL Can set 'max-block-size' to a percent Invalid values
-FAIL Can set 'max-block-size' to a length Invalid values
+FAIL Can set 'max-block-size' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+FAIL Can set 'max-block-size' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'max-block-size' to a time throws TypeError
 PASS Setting 'max-block-size' to an angle throws TypeError
 PASS Setting 'max-block-size' to a flexible length throws TypeError

@@ -52,6 +52,7 @@ public:
     static CSSUnitType parseUnit(const String& unit);
 
     RefPtr<CSSValue> toCSSValue() const final;
+    RefPtr<CSSValue> toCSSValueWithProperty(CSSPropertyID) const final;
     RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
 
 private:

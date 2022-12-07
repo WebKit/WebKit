@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+description("Checks that calling StylePropertyMap.set() with a negative value wraps it into a calc.");
+
+target = document.getElementById("target");
+shouldNotThrow("target.attributeStyleMap.set('width', new CSSUnitValue(-3.14, 'percent'))");
+shouldBeEqualToString("target.style.width", "calc(-3.14%)");
+
+shouldNotThrow("target.attributeStyleMap.set('perspective', new CSSUnitValue(-32, 'px'))");
+shouldBeEqualToString("target.style.perspective", "calc(-32px)");
+</script>
+</body>
+</html>
