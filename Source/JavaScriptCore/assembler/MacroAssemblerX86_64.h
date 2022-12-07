@@ -2180,25 +2180,25 @@ public:
     {
         switch (simdLane) {
         case SIMDLane::i8x16:
-            if (supportsAVX())
+            if (supportsAVXForSIMD())
                 m_assembler.vpextrb_rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrb_rr(lane.m_value, src, dest);
             break;
         case SIMDLane::i16x8:
-            if (supportsAVX())
+            if (supportsAVXForSIMD())
                 m_assembler.vpextrw_rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrw_rr(lane.m_value, src, dest);
             break;
         case SIMDLane::i32x4:
-            if (supportsAVX())
+            if (supportsAVXForSIMD())
                 m_assembler.vpextrd_rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrd_rr(lane.m_value, src, dest);
             break;
         case SIMDLane::i64x2:
-            if (supportsAVX())
+            if (supportsAVXForSIMD())
                 m_assembler.vpextrq_rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrq_rr(lane.m_value, src, dest);
@@ -2320,35 +2320,99 @@ public:
 
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            UNUSED_PARAM(left);
-        else
-            UNUSED_PARAM(left);
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4:
+            m_assembler.vaddps_rrr(left, right, dest);
+            break;
+        case SIMDLane::f64x2:
+            m_assembler.vaddpd_rrr(left, right, dest);
+            break;
+        case SIMDLane::i8x16:
+            m_assembler.vpaddb_rrr(left, right, dest);
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpaddw_rrr(left, right, dest);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vpaddd_rrr(left, right, dest);
+            break;
+        case SIMDLane::i64x2:
+            m_assembler.vpaddq_rrr(left, right, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector add.");
+        }
     }
 
     void vectorSub(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            UNUSED_PARAM(left);
-        else
-            UNUSED_PARAM(left);
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4:
+            m_assembler.vsubps_rrr(left, right, dest);
+            break;
+        case SIMDLane::f64x2:
+            m_assembler.vsubpd_rrr(left, right, dest);
+            break;
+        case SIMDLane::i8x16:
+            m_assembler.vpsubb_rrr(left, right, dest);
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpsubw_rrr(left, right, dest);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vpsubd_rrr(left, right, dest);
+            break;
+        case SIMDLane::i64x2:
+            m_assembler.vpsubq_rrr(left, right, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector subtract.");
+        }
     }
 
     void vectorMul(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            UNUSED_PARAM(left);
-        else
-            UNUSED_PARAM(left);
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4:
+            m_assembler.vmulps_rrr(left, right, dest);
+            break;
+        case SIMDLane::f64x2:
+            m_assembler.vmulpd_rrr(left, right, dest);
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpmullw_rrr(left, right, dest);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vpmulld_rrr(left, right, dest);
+            break;
+        case SIMDLane::i64x2:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("i64x2 multiply is not supported on Intel without AVX-512. This instruction should have been lowered before reaching the assembler.");
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector multiply.");
+        }
     }
 
     void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
+        RELEASE_ASSERT(supportsAVXForSIMD());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4:
+            m_assembler.vdivps_rrr(left, right, dest);
+            break;
+        case SIMDLane::f64x2:
+            m_assembler.vdivpd_rrr(left, right, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector divide.");
+        }
     }
 
     void vectorMax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
@@ -2576,37 +2640,42 @@ public:
         }
     }
 
-    void vectorNeg(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
-    {
-        if (scalarTypeIsFloatingPoint(simdInfo.lane))
-            UNUSED_PARAM(dest);
-        else
-            UNUSED_PARAM(dest);
-        UNUSED_PARAM(input);
-    }
-
     void vectorPopcnt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT(simdInfo.lane == SIMDLane::i8x16);
         UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
+    using RoundingType = X86Assembler::RoundingType;
+
     void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
+        RELEASE_ASSERT(supportsAVXForSIMD());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
+        if (simdInfo.lane == SIMDLane::f32x4)
+            m_assembler.vroundps_rr(input, dest, RoundingType::TowardInfiniti);
+        else
+            m_assembler.vroundpd_rr(input, dest, RoundingType::TowardInfiniti);
     }
 
     void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
+        RELEASE_ASSERT(supportsAVXForSIMD());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
+        if (simdInfo.lane == SIMDLane::f32x4)
+            m_assembler.vroundps_rr(input, dest, RoundingType::TowardNegativeInfiniti);
+        else
+            m_assembler.vroundpd_rr(input, dest, RoundingType::TowardNegativeInfiniti);
     }
 
     void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
+        RELEASE_ASSERT(supportsAVXForSIMD());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
+        if (simdInfo.lane == SIMDLane::f32x4)
+            m_assembler.vroundps_rr(input, dest, RoundingType::TowardZero);
+        else
+            m_assembler.vroundpd_rr(input, dest, RoundingType::TowardZero);
     }
 
     void vectorTruncSat(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
@@ -2620,8 +2689,12 @@ public:
 
     void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
+        RELEASE_ASSERT(supportsAVXForSIMD());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
+        if (simdInfo.lane == SIMDLane::f32x4)
+            m_assembler.vroundps_rr(input, dest, RoundingType::ToNearestWithTiesToEven);
+        else
+            m_assembler.vroundpd_rr(input, dest, RoundingType::ToNearestWithTiesToEven);
     }
 
     void vectorSqrt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
@@ -2881,11 +2954,10 @@ public:
         }
 
     }
-    void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID) { UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
 
     void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
-        if (supportsAVX())
+        if (supportsAVXForSIMD())
             m_assembler.vpshufb_rr(b, a, dest);
         else {
             if (a != dest)
@@ -2894,7 +2966,13 @@ public:
         }
     }
 
-    void vectorShuffle(TrustedImm64 immLow, TrustedImm64 immHigh, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { UNUSED_PARAM(immLow); UNUSED_PARAM(immHigh); UNUSED_PARAM(a); UNUSED_PARAM(b); UNUSED_PARAM(dest); }
+    void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
+    {
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        m_assembler.vpmaddwd_rrr(a, b, dest);
+    }
+
+    void vectorShuffle(TrustedImm64 immLow, TrustedImm64 immHigh, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) immLow; (void) immHigh; (void) a; (void) b; (void) dest; }
 
     // Misc helper functions.
 

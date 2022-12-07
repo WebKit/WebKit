@@ -536,7 +536,6 @@ public:
         AIR_OP_CASE(Demote)
         AIR_OP_CASE(Promote)
         AIR_OP_CASE(Abs)
-        AIR_OP_CASE(Neg)
         AIR_OP_CASE(Popcnt)
         AIR_OP_CASE(Ceil)
         AIR_OP_CASE(Floor)
@@ -549,6 +548,19 @@ public:
         AIR_OP_CASE(ExtendHigh)
         AIR_OP_CASE(ExtendLow)
         AIR_OP_CASE(TruncSat)
+#if CPU(X86_64)
+        else if (op == SIMDLaneOperation::Neg) {
+            // x86_64 has no vector negate instruction, so we expand vxv.neg v into vxv.sub 0, v
+            // here to give B3/Air a chance to optimize out repeated vector zeroing.
+            TypedTmp zero = addConstant(v128_t());
+            result = tmpForType(Types::V128);
+            append(VectorSub, zero, v, result);
+            return { };
+        }
+#else
+        AIR_OP_CASE(Neg)
+#endif
+
         result = tmpForType(Types::V128);
         if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {
             append(airOp, v, result);

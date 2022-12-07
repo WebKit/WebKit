@@ -121,7 +121,7 @@ void lowerMacros(Code& code)
             };
 
             auto handleVectorMul = [&] {
-                if (!isARM64() || inst.args[0].simdInfo().lane != SIMDLane::i64x2)
+                if (inst.args[0].simdInfo().lane != SIMDLane::i64x2)
                     return;
 
                 Tmp lhs = inst.args[1].tmp();
