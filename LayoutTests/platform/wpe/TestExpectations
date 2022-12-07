@@ -1242,7 +1242,6 @@ webkit.org/b/168191 fast/text/system-font-weight-italic.html [ Failure ]
 webkit.org/b/212207 fast/text/offsetForPosition-complex-fallback.html [ Failure ]
 webkit.org/b/212208 fast/text/reset-drag-on-mouse-down.html [ Failure ]
 
-webkit.org/b/212209 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/212210 fast/text/space-width.html [ ImageOnlyFailure ]
 webkit.org/b/212211 fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
 
