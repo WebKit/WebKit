@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 300vh;
+        }
+        .container {
+            position: relative;
+            z-index: 0;
+            overflow: auto;
+            width: 400px;
+            height: 400px;
+            border: 1px solid black;
+        }
+        
+        .sticky {
+            position: sticky;
+            top: 10px;
+            width: 300px;
+            padding: 20px;
+            margin: 20px;
+            height: 20px;
+            background-color: silver;
+        }
+        
+        .composited {
+            will-change: transform
+        }
+
+        .spacer {
+            height: 100px;
+            width: 10px;
+            background-color: silver;
+        }
+
+        body.changed .spacer {
+            height: 400px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        window.addEventListener('load', async () => {
+            await UIHelper.delayFor(0);
+            document.body.classList.add('changed');
+            await UIHelper.renderingUpdate();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <p>Test passes if it doesn't crash.</p>
+    <div class="container">
+        <div class="composited sticky"></div>
+        <div class="spacer"></div>
+    </div>
+</body>
+</html>
