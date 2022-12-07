@@ -969,6 +969,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
     }
 #endif // USE(APPLE_INTERNAL_SDK)
+
+    if (WebProcess::singleton().isLockdownModeEnabled())
+        sandbox_enable_state_flag("LockdownModeEnabled", *auditToken);
 #endif // HAVE(SANDBOX_STATE_FLAGS)
 
     updateThrottleState();

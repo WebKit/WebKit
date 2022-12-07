@@ -168,10 +168,12 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.mutable-state-flags:1 string EnableExperimentalSandbox
     plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string EnableExperimentalSandboxWithProbability
     plistbuddy Add :com.apple.private.security.mutable-state-flags:3 string BlockIOKitInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:4 string LockdownModeEnabled
     plistbuddy Add :com.apple.private.security.enable-state-flags array
     plistbuddy Add :com.apple.private.security.enable-state-flags:0 string EnableExperimentalSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:1 string EnableExperimentalSandboxWithProbability
     plistbuddy Add :com.apple.private.security.enable-state-flags:2 string BlockIOKitInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:3 string LockdownModeEnabled
 }
 
 function mac_process_webcontent_shared_entitlements()
