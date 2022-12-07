@@ -3155,7 +3155,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     test_failures_log_name = 'test-failures'
     results_db_log_name = 'results-db'
     ENABLE_GUARD_MALLOC = False
-    EXIT_AFTER_FAILURES = '30'
+    EXIT_AFTER_FAILURES = '60'
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
                '--no-show-results',
