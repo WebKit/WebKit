@@ -717,11 +717,15 @@ class CheckOutSpecificRevision(shell.ShellCommand):
     flunkOnFailure = False
     haltOnFailure = False
 
+    @staticmethod
+    def doCheckOutSpecificRevision(obj):
+        return obj.getProperty('ews_revision', False)
+
     def __init__(self, **kwargs):
         super(CheckOutSpecificRevision, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
-        return self.getProperty('ews_revision', False)
+        return self.doCheckOutSpecificRevision(self)
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -802,8 +806,7 @@ class ShowIdentifier(shell.ShellCommand):
             if identifier:
                 identifier = identifier.replace('master', DEFAULT_BRANCH)
             self.setProperty('identifier', identifier)
-            if self.getProperty('ews_revision', False) and not self.getProperty('github.number', False):
-                # Note that this if condition matches with CheckOutSpecificRevision.doStepIf
+            if CheckOutSpecificRevision.doCheckOutSpecificRevision(self):
                 step = self.getLastBuildStepByName(CheckOutSpecificRevision.name)
             else:
                 step = self.getLastBuildStepByName(CheckOutSource.name)

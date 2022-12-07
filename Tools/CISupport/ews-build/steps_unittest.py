@@ -5807,6 +5807,16 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
         return rc
 
 class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
+    class MockPreviousStep(object):
+        def __init__(self):
+            self.text = None
+            self.url = None
+
+        def addURL(self, text, url):
+            self.text = text
+            self.url = url
+
+
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -5815,6 +5825,11 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
+        previous_steps = {
+            CheckOutSpecificRevision.name: self.MockPreviousStep(),
+            CheckOutSource.name: self.MockPreviousStep(),
+        }
+        ShowIdentifier.getLastBuildStepByName = lambda _, name: previous_steps.get(name, self.MockPreviousStep())
         self.setupStep(ShowIdentifier())
         self.setProperty('ews_revision', '51a6aec9f664')
         self.expectRemoteCommands(
@@ -5828,9 +5843,18 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
         rc = self.runStep()
         self.assertEqual(self.getProperty('identifier'), '233175@main')
+        self.assertEqual(previous_steps[CheckOutSpecificRevision.name].text, 'Updated to 233175@main')
+        self.assertEqual(previous_steps[CheckOutSpecificRevision.name].url, 'https://commits.webkit.org/233175@main')
+        self.assertEqual(previous_steps[CheckOutSource.name].text, None)
+        self.assertEqual(previous_steps[CheckOutSource.name].url, None)
         return rc
 
     def test_success_pull_request(self):
+        previous_steps = {
+            CheckOutSpecificRevision.name: self.MockPreviousStep(),
+            CheckOutSource.name: self.MockPreviousStep(),
+        }
+        ShowIdentifier.getLastBuildStepByName = lambda _, name: previous_steps.get(name, self.MockPreviousStep())
         self.setupStep(ShowIdentifier())
         self.setProperty('got_revision', '51a6aec9f664')
         self.expectRemoteCommands(
@@ -5844,6 +5868,10 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
         rc = self.runStep()
         self.assertEqual(self.getProperty('identifier'), '233175@main')
+        self.assertEqual(previous_steps[CheckOutSpecificRevision.name].text, None)
+        self.assertEqual(previous_steps[CheckOutSpecificRevision.name].url, None)
+        self.assertEqual(previous_steps[CheckOutSource.name].text, 'Updated to 233175@main')
+        self.assertEqual(previous_steps[CheckOutSource.name].url, 'https://commits.webkit.org/233175@main')
         return rc
 
     def test_prioritized(self):
