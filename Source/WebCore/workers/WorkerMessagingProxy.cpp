@@ -29,6 +29,7 @@
 #include "WorkerMessagingProxy.h"
 
 #include "CacheStorageProvider.h"
+#include "Chrome.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "DedicatedWorkerGlobalScope.h"
@@ -147,8 +148,17 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
     };
     auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, m_scriptExecutionContext->topOrigin(), proxy, socketProvider, runtimeFlags);
 
-    if (parentWorkerGlobalScope)
+    if (parentWorkerGlobalScope) {
         parentWorkerGlobalScope->thread().addChildThread(thread);
+        if (parentWorkerGlobalScope->thread().workerClient())
+            thread->setWorkerClient(parentWorkerGlobalScope->thread().workerClient()->clone(thread.get()));
+    } else if (is<Document>(m_scriptExecutionContext.get())) {
+        auto& document = downcast<Document>(*m_scriptExecutionContext);
+        if (auto* page = document.page()) {
+            if (auto workerClient = page->chrome().createWorkerClient(thread.get()))
+                thread->setWorkerClient(WTFMove(workerClient));
+        }
+    }
 
     workerThreadCreated(thread.get());
     thread->start();

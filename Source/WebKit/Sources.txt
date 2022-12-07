@@ -817,6 +817,7 @@ WebProcess/WebCoreSupport/WebUserMediaClient.cpp
 WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp
 WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
 WebProcess/WebCoreSupport/WebStorageConnection.cpp
+WebProcess/WebCoreSupport/WebWorkerClient.cpp
 
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp
