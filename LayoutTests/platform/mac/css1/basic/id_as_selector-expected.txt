@@ -23,7 +23,6 @@ layer at (0,0) size 785x627
           text run at (0,90) width 235: "P#five, P#five2 {color: blue;}"
           text run at (234,90) width 1: " "
           text run at (0,105) width 235: "P#six, P#six2 {color: purple;}"
-      RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,185) size 769x18 [color=#008000]
         RenderText {#text} at (0,0) size 197x18
           text run at (0,0) width 197: "This sentence should be green."
@@ -90,3 +89,5 @@ layer at (0,0) size 785x627
                   RenderListMarker at (-17,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 239x18
                     text run at (0,0) width 239: "This sentence should NOT be purple."
+layer at (8,175) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]

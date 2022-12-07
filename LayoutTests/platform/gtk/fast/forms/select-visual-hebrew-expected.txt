@@ -7,7 +7,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,1) size 731x36
           text run at (0,1) width 731: "This tests that native pop-ups are rendered in logical order even in visually-ordered Hebrew"
           text run at (0,20) width 53: "pages."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,72) size 784x19
         RenderText {#text} at (0,1) size 473x17
           text run at (0,1) width 473: "Text on the pop-up and in the list should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
@@ -17,3 +16,5 @@ layer at (0,0) size 800x600
             RenderText at (5,5) size 42x17
               text run at (5,5) width 42 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0
+layer at (8,62) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]

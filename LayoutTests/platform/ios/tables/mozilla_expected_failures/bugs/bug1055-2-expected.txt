@@ -16,7 +16,6 @@ layer at (0,0) size 800x923
         RenderTableSection {TBODY} at (0,0) size 588x48
           RenderTableRow {TR} at (0,2) size 588x20
             RenderTableCell {TD} at (2,2) size 584x20 [r=0 c=0 rs=1 cs=3]
-              RenderBlock {HR} at (1,9) size 584x2 [bgcolor=#808080] [border: (1px solid #808080)]
           RenderTableRow {TR} at (0,24) size 588x22
             RenderTableCell {TD} at (2,24) size 145x22 [r=1 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 89x19 [color=#0000EE]
@@ -140,7 +139,6 @@ layer at (0,0) size 800x923
         RenderTableSection {TBODY} at (0,0) size 588x48
           RenderTableRow {TR} at (0,2) size 588x20
             RenderTableCell {TD} at (2,2) size 584x20 [r=0 c=0 rs=1 cs=3]
-              RenderBlock {HR} at (1,9) size 584x2 [bgcolor=#808080] [border: (1px solid #808080)]
           RenderTableRow {TR} at (0,24) size 588x22
             RenderTableCell {TD} at (2,24) size 145x22 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 89x19
@@ -165,3 +163,7 @@ layer at (0,0) size 800x923
       RenderBlock {P} at (0,879) size 784x21
         RenderText {#text} at (0,0) size 166x19
           text run at (0,0) width 166: "Auteur : Daniel Glazman."
+layer at (207,165) size 584x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,9) size 584x2 [bgcolor=#808080] [border: (1px solid #808080)]
+layer at (207,790) size 584x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,9) size 584x2 [bgcolor=#808080] [border: (1px solid #808080)]

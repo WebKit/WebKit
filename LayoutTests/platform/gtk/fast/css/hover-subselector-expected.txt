@@ -8,7 +8,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 225x17
             text run at (0,0) width 225: "This should turn red when hovered."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,44) size 784x36
         RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "Test for "
@@ -26,3 +25,5 @@ layer at (0,0) size 800x600
             text run at (192,21) width 96: "span#t:hover"
         RenderText {#text} at (288,18) size 170x17
           text run at (288,18) width 170: " matches the hovered span."
+layer at (8,34) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]

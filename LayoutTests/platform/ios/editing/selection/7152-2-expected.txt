@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,28) size 158x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 154x19
                 text run at (2,2) width 154: "This should be selected."
-      RenderBlock {HR} at (0,64) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,82) size 784x80
         RenderText {#text} at (0,0) size 135x19
           text run at (0,0) width 135: "This is a testcase for "
@@ -32,5 +31,7 @@ layer at (0,0) size 800x600
           text run at (0,40) width 148: "inside an atomic node. "
           text run at (147,40) width 630: "It didn't make the same assumption about start of a selection, but for good measure, we also test a "
           text run at (0,60) width 300: "selection that starts at a position before a table."
+layer at (8,72) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,64) size 784x2 [border: (1px inset #000000)]
 selection start: position 0 of child 1 {TABLE} of body
 selection end:   position 341 of child 2 {#text} of child 5 {P} of body

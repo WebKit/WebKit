@@ -21,7 +21,6 @@ layer at (0,0) size 800x1294
               RenderText {#text} at (0,0) size 22x19
                 text run at (0,0) width 22: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,162) size 784x128
           RenderBlock {P} at (0,0) size 784x20
             RenderText {#text} at (0,0) size 154x19
@@ -37,7 +36,6 @@ layer at (0,0) size 800x1294
           RenderBlock (anonymous) at (0,108) size 784x20
             RenderInline {SPAN} at (0,0) size 22x23 [bgcolor=#008000] [border: (2px solid #FF0000)]
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,306) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,324) size 784x128
           RenderBlock {P} at (0,0) size 784x20
             RenderText {#text} at (0,0) size 167x19
@@ -53,7 +51,6 @@ layer at (0,0) size 800x1294
               RenderText {#text} at (0,0) size 22x19
                 text run at (0,0) width 22: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,468) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,486) size 784x128
           RenderBlock {P} at (0,0) size 784x20
             RenderText {#text} at (0,0) size 226x19
@@ -67,7 +64,6 @@ layer at (0,0) size 800x1294
           RenderBlock (anonymous) at (0,108) size 784x20
             RenderInline {SPAN} at (0,0) size 22x23 [bgcolor=#008000] [border: (2px solid #FF0000)]
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,630) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,648) size 784x614
         RenderBlock {DIV} at (0,0) size 784x128
           RenderBlock {P} at (0,0) size 784x20
@@ -86,7 +82,6 @@ layer at (0,0) size 800x1294
               RenderText {#text} at (762,0) size 22x19
                 text run at (762,0) width 22: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,162) size 784x128
           RenderBlock {P} at (0,0) size 784x20
             RenderText {#text} at (629,0) size 155x19
@@ -103,7 +98,6 @@ layer at (0,0) size 800x1294
           RenderBlock (anonymous) at (0,108) size 784x20
             RenderInline {SPAN} at (0,0) size 22x23 [bgcolor=#008000] [border: (2px solid #FF0000)]
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,306) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,324) size 784x128
           RenderBlock {P} at (0,0) size 784x20
             RenderText {#text} at (617,0) size 167x19
@@ -120,7 +114,6 @@ layer at (0,0) size 800x1294
               RenderText {#text} at (762,0) size 22x19
                 text run at (762,0) width 22: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,468) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,486) size 784x128
           RenderBlock {P} at (0,0) size 784x20
             RenderText {#text} at (557,0) size 227x19
@@ -135,3 +128,17 @@ layer at (0,0) size 800x1294
           RenderBlock (anonymous) at (0,108) size 784x20
             RenderInline {SPAN} at (0,0) size 22x23 [bgcolor=#008000] [border: (2px solid #FF0000)]
             RenderText {#text} at (0,0) size 0x0
+layer at (8,160) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
+layer at (8,322) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,306) size 784x2 [border: (1px inset #000000)]
+layer at (8,484) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,468) size 784x2 [border: (1px inset #000000)]
+layer at (8,646) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,630) size 784x2 [border: (1px inset #000000)]
+layer at (8,808) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
+layer at (8,970) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,306) size 784x2 [border: (1px inset #000000)]
+layer at (8,1132) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,468) size 784x2 [border: (1px inset #000000)]

@@ -41,7 +41,6 @@ layer at (0,0) size 785x2327
           text run at (0,240) width 320: "     border-width: 10px; margin: -10px;}"
           text run at (320,240) width 0: " "
           text run at (0,255) width 0: " "
-      RenderBlock {HR} at (0,317) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,333) size 769x465
         RenderText {#text} at (0,2) size 767x238
           text run at (0,2) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "
@@ -131,3 +130,5 @@ layer at (0,0) size 785x2327
                   text run at (474,426) width 9: ". "
                   text run at (482,426) width 242: "The last image in this paragraph has -10px"
                   text run at (0,467) width 714: "margins set on it, so that should pull the text in toward the image in the vertical direction, and also in the horizontal direction."
+layer at (8,325) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,317) size 769x2 [border: (1px inset #000000)]

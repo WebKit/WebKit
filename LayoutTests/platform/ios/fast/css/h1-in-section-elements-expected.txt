@@ -12,65 +12,49 @@ layer at (0,0) size 800x421
           RenderTableRow {TR} at (0,2) size 150x78
             RenderTableCell {TD} at (2,2) size 72x78 [r=0 c=0 rs=1 cs=1]
               RenderBlock {SECTION} at (1,1) size 70x76
-                RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
                 RenderBlock {H1} at (0,21) size 70x33 [border: (1px solid #00FF00)]
                   RenderText {#text} at (1,2) size 68x28
                     text run at (1,2) width 68: "MMM"
-                RenderBlock {HR} at (0,73) size 70x3 [border: (1px inset #000000)]
             RenderTableCell {TD} at (75,2) size 73x78 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
               RenderBlock {H2} at (1,22) size 70x33 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,2) size 68x28
                   text run at (1,2) width 68: "MMM"
-              RenderBlock {HR} at (1,74) size 70x3 [border: (1px inset #000000)]
           RenderTableRow {TR} at (0,81) size 150x70
             RenderTableCell {TD} at (2,81) size 72x70 [r=1 c=0 rs=1 cs=1]
               RenderBlock {ARTICLE} at (1,1) size 70x67
                 RenderBlock {SECTION} at (0,0) size 70x67
-                  RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
                   RenderBlock {H1} at (0,20) size 70x26 [border: (1px solid #00FF00)]
                     RenderText {#text} at (1,1) size 54x22
                       text run at (1,1) width 54: "MMM"
-                  RenderBlock {HR} at (0,64) size 70x3 [border: (1px inset #000000)]
             RenderTableCell {TD} at (75,81) size 73x70 [r=1 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
               RenderBlock {H3} at (1,21) size 70x26 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 54x22
                   text run at (1,1) width 54: "MMM"
-              RenderBlock {HR} at (1,65) size 70x3 [border: (1px inset #000000)]
           RenderTableRow {TR} at (0,152) size 150x71
             RenderTableCell {TD} at (2,152) size 72x71 [r=2 c=0 rs=1 cs=1]
               RenderBlock {NAV} at (1,1) size 70x69
                 RenderBlock {ARTICLE} at (0,0) size 70x69
                   RenderBlock {SECTION} at (0,0) size 70x69
-                    RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
                     RenderBlock {H1} at (0,23) size 70x23 [border: (1px solid #00FF00)]
                       RenderText {#text} at (1,1) size 46x19
                         text run at (1,1) width 46: "MMM"
-                    RenderBlock {HR} at (0,66) size 70x3 [border: (1px inset #000000)]
             RenderTableCell {TD} at (75,152) size 73x71 [r=2 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
               RenderBlock {H4} at (1,24) size 70x23 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 46x19
                   text run at (1,1) width 46: "MMM"
-              RenderBlock {HR} at (1,67) size 70x3 [border: (1px inset #000000)]
           RenderTableRow {TR} at (0,224) size 150x70
             RenderTableCell {TD} at (2,224) size 72x70 [r=3 c=0 rs=1 cs=1]
               RenderBlock {NAV} at (1,1) size 70x67
                 RenderBlock {ASIDE} at (0,0) size 70x67
                   RenderBlock {ARTICLE} at (0,0) size 70x67
                     RenderBlock {SECTION} at (0,0) size 70x67
-                      RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
                       RenderBlock {H1} at (0,24) size 70x19 [border: (1px solid #00FF00)]
                         RenderText {#text} at (1,1) size 37x15
                           text run at (1,1) width 37: "MMM"
-                      RenderBlock {HR} at (0,64) size 70x3 [border: (1px inset #000000)]
             RenderTableCell {TD} at (75,224) size 73x70 [r=3 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
               RenderBlock {H5} at (1,25) size 70x19 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 37x15
                   text run at (1,1) width 37: "MMM"
-              RenderBlock {HR} at (1,65) size 70x3 [border: (1px inset #000000)]
           RenderTableRow {TR} at (0,295) size 150x73
             RenderTableCell {TD} at (2,295) size 72x73 [r=4 c=0 rs=1 cs=1]
               RenderBlock {SECTION} at (1,1) size 70x70
@@ -79,82 +63,62 @@ layer at (0,0) size 800x421
                     RenderBlock {ASIDE} at (0,0) size 70x70
                       RenderBlock {ARTICLE} at (0,0) size 70x70
                         RenderBlock {SECTION} at (0,0) size 70x70
-                          RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
                           RenderBlock {H1} at (0,26) size 70x17 [border: (1px solid #00FF00)]
                             RenderText {#text} at (1,1) size 32x13
                               text run at (1,1) width 32: "MMM"
-                          RenderBlock {HR} at (0,67) size 70x3 [border: (1px inset #000000)]
                   RenderBlock {DIV} at (0,69) size 70x0
             RenderTableCell {TD} at (75,295) size 73x73 [r=4 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
               RenderBlock {H6} at (1,27) size 70x17 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 32x13
                   text run at (1,1) width 32: "MMM"
-              RenderBlock {HR} at (1,68) size 70x3 [border: (1px inset #000000)]
       RenderTable {TABLE} at (149,36) size 370x150
         RenderTableSection {TBODY} at (0,0) size 370x150
           RenderTableRow {TR} at (2,0) size 78x150
             RenderTableCell {TD} at (2,2) size 78x72 [r=0 c=0 rs=1 cs=1]
               RenderBlock {SECTION} at (1,1) size 76x70
-                RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
                 RenderBlock {H1} at (21,0) size 33x70 [border: (1px solid #00FF00)]
                   RenderText {#text} at (2,1) size 28x68
                     text run at (2,1) width 68: "MMM"
-                RenderBlock {HR} at (73,0) size 3x70 [border: (1px inset #000000)]
             RenderTableCell {TD} at (2,75) size 78x73 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
               RenderBlock {H2} at (22,1) size 33x70 [border: (1px solid #00FF00)]
                 RenderText {#text} at (2,1) size 28x68
                   text run at (2,1) width 68: "MMM"
-              RenderBlock {HR} at (74,1) size 3x70 [border: (1px inset #000000)]
           RenderTableRow {TR} at (81,0) size 70x150
             RenderTableCell {TD} at (81,2) size 70x72 [r=1 c=0 rs=1 cs=1]
               RenderBlock {ARTICLE} at (1,1) size 67x70
                 RenderBlock {SECTION} at (0,0) size 67x70
-                  RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
                   RenderBlock {H1} at (20,0) size 26x70 [border: (1px solid #00FF00)]
                     RenderText {#text} at (1,1) size 22x54
                       text run at (1,1) width 54: "MMM"
-                  RenderBlock {HR} at (64,0) size 3x70 [border: (1px inset #000000)]
             RenderTableCell {TD} at (81,75) size 70x73 [r=1 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
               RenderBlock {H3} at (21,1) size 26x70 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 22x54
                   text run at (1,1) width 54: "MMM"
-              RenderBlock {HR} at (65,1) size 3x70 [border: (1px inset #000000)]
           RenderTableRow {TR} at (152,0) size 71x150
             RenderTableCell {TD} at (152,2) size 71x72 [r=2 c=0 rs=1 cs=1]
               RenderBlock {NAV} at (1,1) size 69x70
                 RenderBlock {ARTICLE} at (0,0) size 69x70
                   RenderBlock {SECTION} at (0,0) size 69x70
-                    RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
                     RenderBlock {H1} at (23,0) size 23x70 [border: (1px solid #00FF00)]
                       RenderText {#text} at (1,1) size 19x46
                         text run at (1,1) width 46: "MMM"
-                    RenderBlock {HR} at (66,0) size 3x70 [border: (1px inset #000000)]
             RenderTableCell {TD} at (152,75) size 71x73 [r=2 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
               RenderBlock {H4} at (24,1) size 23x70 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 19x46
                   text run at (1,1) width 46: "MMM"
-              RenderBlock {HR} at (67,1) size 3x70 [border: (1px inset #000000)]
           RenderTableRow {TR} at (224,0) size 70x150
             RenderTableCell {TD} at (224,2) size 70x72 [r=3 c=0 rs=1 cs=1]
               RenderBlock {NAV} at (1,1) size 67x70
                 RenderBlock {ASIDE} at (0,0) size 67x70
                   RenderBlock {ARTICLE} at (0,0) size 67x70
                     RenderBlock {SECTION} at (0,0) size 67x70
-                      RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
                       RenderBlock {H1} at (24,0) size 19x70 [border: (1px solid #00FF00)]
                         RenderText {#text} at (1,1) size 15x37
                           text run at (1,1) width 37: "MMM"
-                      RenderBlock {HR} at (64,0) size 3x70 [border: (1px inset #000000)]
             RenderTableCell {TD} at (224,75) size 70x73 [r=3 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
               RenderBlock {H5} at (25,1) size 19x70 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 15x37
                   text run at (1,1) width 37: "MMM"
-              RenderBlock {HR} at (65,1) size 3x70 [border: (1px inset #000000)]
           RenderTableRow {TR} at (295,0) size 73x150
             RenderTableCell {TD} at (295,2) size 73x72 [r=4 c=0 rs=1 cs=1]
               RenderBlock {SECTION} at (1,1) size 70x70
@@ -163,15 +127,91 @@ layer at (0,0) size 800x421
                     RenderBlock {ASIDE} at (0,0) size 70x70
                       RenderBlock {ARTICLE} at (0,0) size 70x70
                         RenderBlock {SECTION} at (0,0) size 70x70
-                          RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
                           RenderBlock {H1} at (26,0) size 17x70 [border: (1px solid #00FF00)]
                             RenderText {#text} at (1,1) size 13x32
                               text run at (1,1) width 32: "MMM"
-                          RenderBlock {HR} at (67,0) size 3x70 [border: (1px inset #000000)]
                   RenderBlock {DIV} at (69,0) size 0x70
             RenderTableCell {TD} at (295,75) size 73x73 [r=4 c=1 rs=1 cs=1]
-              RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
               RenderBlock {H6} at (27,1) size 17x70 [border: (1px solid #00FF00)]
                 RenderText {#text} at (1,1) size 13x32
                   text run at (1,1) width 32: "MMM"
-              RenderBlock {HR} at (68,1) size 3x70 [border: (1px inset #000000)]
+layer at (11,55) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
+layer at (11,129) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,73) size 70x3 [border: (1px inset #000000)]
+layer at (85,55) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
+layer at (85,129) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,74) size 70x3 [border: (1px inset #000000)]
+layer at (11,135) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
+layer at (11,199) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,64) size 70x3 [border: (1px inset #000000)]
+layer at (85,135) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
+layer at (85,199) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,65) size 70x3 [border: (1px inset #000000)]
+layer at (11,205) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
+layer at (11,272) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,66) size 70x3 [border: (1px inset #000000)]
+layer at (85,205) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
+layer at (85,272) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,67) size 70x3 [border: (1px inset #000000)]
+layer at (11,278) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
+layer at (11,342) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,64) size 70x3 [border: (1px inset #000000)]
+layer at (85,278) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
+layer at (85,342) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,65) size 70x3 [border: (1px inset #000000)]
+layer at (11,348) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 70x2 [border: (1px inset #000000)]
+layer at (11,416) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,67) size 70x3 [border: (1px inset #000000)]
+layer at (85,348) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 70x2 [border: (1px inset #000000)]
+layer at (85,416) size 70x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,68) size 70x3 [border: (1px inset #000000)]
+layer at (522,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
+layer at (448,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (73,0) size 3x70 [border: (1px inset #000000)]
+layer at (522,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
+layer at (448,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (74,1) size 3x70 [border: (1px inset #000000)]
+layer at (442,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
+layer at (378,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (64,0) size 3x70 [border: (1px inset #000000)]
+layer at (442,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
+layer at (378,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (65,1) size 3x70 [border: (1px inset #000000)]
+layer at (372,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
+layer at (305,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (66,0) size 3x70 [border: (1px inset #000000)]
+layer at (372,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
+layer at (305,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (67,1) size 3x70 [border: (1px inset #000000)]
+layer at (299,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
+layer at (235,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (64,0) size 3x70 [border: (1px inset #000000)]
+layer at (299,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
+layer at (235,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (65,1) size 3x70 [border: (1px inset #000000)]
+layer at (229,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 2x70 [border: (1px inset #000000)]
+layer at (161,55) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (67,0) size 3x70 [border: (1px inset #000000)]
+layer at (229,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (1,1) size 2x70 [border: (1px inset #000000)]
+layer at (161,129) size 2x70 clip at (0,0) size 0x0
+  RenderBlock {HR} at (68,1) size 3x70 [border: (1px inset #000000)]

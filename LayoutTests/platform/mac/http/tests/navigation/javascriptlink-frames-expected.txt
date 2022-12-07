@@ -20,7 +20,6 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (111,148) size 1x37
                 RenderBR {BR} at (0,185) size 0x37
                 RenderBR {BR} at (0,222) size 0x37
-              RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
               RenderBlock {FORM} at (0,293) size 769x412
                 RenderButton {INPUT} at (0,0) size 111x18 [color=#000000D8] [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 95x13
@@ -62,7 +61,6 @@ layer at (0,0) size 800x600
                       text run at (8,2) width 61: "Initial Value"
                 RenderBR {BR} at (252,242) size 0x37
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {HR} at (0,737) size 769x2 [border: (1px inset #000000)]
               RenderBlock {P} at (0,771) size 769x37
                 RenderText {#text} at (0,0) size 63x37
                   text run at (0,0) width 63: "Now"
@@ -97,6 +95,8 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 532x37
                   RenderText {#text} at (0,0) size 532x37
                     text run at (0,0) width 532: "This is an anchor point named \"anchor1\"."
+        layer at (8,283) size 769x2 clip at (0,0) size 0x0
+          RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
         layer at (388,355) size 141x13 scrollWidth 145
           RenderBlock {DIV} at (3,3) size 141x13
             RenderText {#text} at (0,0) size 145x13
@@ -110,6 +110,8 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 178: "More initial text before user input."
                 text run at (177,0) width 1: " "
               RenderBR {BR} at (0,13) size 0x13
+        layer at (8,745) size 769x2 clip at (0,0) size 0x0
+          RenderBlock {HR} at (0,737) size 769x2 [border: (1px inset #000000)]
       RenderFrame {FRAME} at (0,540) size 800x60
         layer at (0,0) size 785x90
           RenderView at (0,0) size 785x60

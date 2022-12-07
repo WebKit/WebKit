@@ -3,7 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
-      RenderBlock {HR} at (0,43) size 800x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,61) size 800x60
         RenderText {#text} at (0,0) size 213x19
           text run at (0,0) width 213: "This tests for regressions against "
@@ -22,3 +21,5 @@ layer at (0,0) size 210x35 clip at (0,0) size 210x20 scrollX 39 scrollWidth 249
   RenderBlock {DIV} at (0,0) size 210x35
     RenderText {#text} at (0,0) size 249x19
       text run at (0,0) width 249: "Seals and caribou live in the arctic, too"
+layer at (0,43) size 800x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,43) size 800x2 [border: (1px inset #000000)]

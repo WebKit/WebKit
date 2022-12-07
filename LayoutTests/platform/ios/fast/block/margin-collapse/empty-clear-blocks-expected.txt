@@ -15,7 +15,6 @@ layer at (0,0) size 800x1142
       RenderBlock {SPAN} at (0,105) size 784x20
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,133) size 784x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,143) size 784x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 88x59
@@ -28,7 +27,6 @@ layer at (0,0) size 800x1142
       RenderBlock {SPAN} at (0,258) size 784x20
         RenderText {#text} at (0,0) size 260x19
           text run at (0,0) width 260: "This text should be 10px under the float."
-      RenderBlock {HR} at (0,286) size 784x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,296) size 784x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 88x59
@@ -41,7 +39,6 @@ layer at (0,0) size 800x1142
       RenderBlock {SPAN} at (0,366) size 784x20
         RenderText {#text} at (100,0) size 275x19
           text run at (100,0) width 275: "This text should be to the right of the float."
-      RenderBlock {HR} at (100,394) size 684x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,404) size 784x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 88x59
@@ -54,7 +51,6 @@ layer at (0,0) size 800x1142
       RenderBlock {SPAN} at (0,509) size 784x20
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,537) size 784x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,547) size 784x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 88x59
@@ -67,7 +63,6 @@ layer at (0,0) size 800x1142
       RenderBlock {SPAN} at (0,657) size 784x20
         RenderText {#text} at (0,0) size 260x19
           text run at (0,0) width 260: "This text should be 10px under the float."
-      RenderBlock {HR} at (0,685) size 784x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,695) size 784x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 88x59
@@ -80,7 +75,6 @@ layer at (0,0) size 800x1142
       RenderBlock {SPAN} at (0,825) size 784x20
         RenderText {#text} at (0,0) size 260x19
           text run at (0,0) width 260: "This text should be 20px under the float."
-      RenderBlock {HR} at (0,853) size 784x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,863) size 784x125 [border: (10px dotted #000000)]
         RenderBlock {SPAN} at (10,10) size 764x20
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
@@ -91,7 +85,6 @@ layer at (0,0) size 800x1142
           RenderText {#text} at (100,0) size 289x19
             text run at (100,0) width 289: "This paragraph has a bottom margin of 50px."
         RenderBlock {SPAN} at (10,110) size 764x0
-      RenderBlock {HR} at (0,996) size 784x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,1006) size 784x120 [border: (10px dotted #000000)]
         RenderBlock {SPAN} at (10,10) size 764x20
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
@@ -102,3 +95,17 @@ layer at (0,0) size 800x1142
           RenderText {#text} at (100,0) size 289x19
             text run at (100,0) width 289: "This paragraph has a bottom margin of 50px."
         RenderBlock {SPAN} at (10,110) size 764x0
+layer at (8,141) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,133) size 784x2 [border: (1px inset #000000)]
+layer at (8,294) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,286) size 784x2 [border: (1px inset #000000)]
+layer at (108,402) size 684x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (100,394) size 684x2 [border: (1px inset #000000)]
+layer at (8,545) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,537) size 784x2 [border: (1px inset #000000)]
+layer at (8,693) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,685) size 784x2 [border: (1px inset #000000)]
+layer at (8,861) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,853) size 784x2 [border: (1px inset #000000)]
+layer at (8,1004) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,996) size 784x2 [border: (1px inset #000000)]

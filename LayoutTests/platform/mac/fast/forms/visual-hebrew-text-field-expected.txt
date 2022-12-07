@@ -15,13 +15,14 @@ layer at (0,0) size 800x600
             text run at (0,18) width 251: "are reversed on \"visual Hebrew\" pages"
         RenderText {#text} at (250,18) size 5x18
           text run at (250,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x19
         RenderText {#text} at (0,1) size 286x18
           text run at (0,1) width 286: "Text in the field should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,105) size 784x19
         RenderTextControl {INPUT} at (0,0) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (11,116) size 141x13
   RenderBlock {DIV} at (3,3) size 141x13
     RenderText {#text} at (0,0) size 31x13

@@ -24,7 +24,6 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,27) size 188x17
                   text run at (0,27) width 188: "Enter City Name or Zip Code"
           RenderTableRow {TR} at (0,67) size 194x0
-      RenderBlock {HR} at (0,119) size 784x3 [border: (1px inset #000000)]
       RenderBlock {H3} at (0,140) size 784x23
         RenderText {#text} at (0,0) size 206x21
           text run at (0,0) width 206: "With short hidden values"
@@ -48,5 +47,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,67) size 194x0
 layer at (15,57) size 123x18
   RenderBlock {DIV} at (3,3) size 123x18
+layer at (8,128) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,119) size 784x3 [border: (1px inset #000000)]
 layer at (15,197) size 123x18
   RenderBlock {DIV} at (3,3) size 123x18

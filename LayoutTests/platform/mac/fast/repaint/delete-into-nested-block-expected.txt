@@ -11,9 +11,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 351: "The bug's symptom was that the visual result were two"
           text run at (0,18) width 375: "instances of the word \"three\", because the original was not"
           text run at (0,36) width 179: "erased. Resize cleared it up."
-      RenderBlock {HR} at (0,101) size 784x3 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,111) size 784x101
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 32x18
             text run at (0,0) width 32: "three"
+layer at (8,109) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,101) size 784x3 [border: (1px inset #000000)]
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 7 {DIV} of body

@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 727: "If successful, the first sentence would be backward, and the second sentence regular. There should then be an extra "
           text run at (726,0) width 36: "blank"
           text run at (0,18) width 697: "line, followed by a line reading only \"A,\" and finally, a sentence where only the word \"umbrella\" is backward."
-      RenderBlock {HR} at (0,120) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,130) size 784x108
         RenderBR {BR} at (0,0) size 0x17
         RenderInline {BDO} at (0,0) size 221x17
@@ -44,3 +43,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (81,90) size 209x17
             text run at (81,90) width 209: " sure would be useful in this rain."
         RenderText {#text} at (0,0) size 0x0
+layer at (8,128) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,120) size 784x2 [border: (1px inset #000000)]

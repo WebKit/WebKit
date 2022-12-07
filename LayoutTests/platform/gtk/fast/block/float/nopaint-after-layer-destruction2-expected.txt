@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 491x17
           text run at (0,0) width 491: "There should be a solid green square below mixed in with a paragraph of text."
-      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,106) size 784x132
         RenderBlock {DIV} at (0,0) size 784x131
           RenderBlock (floating) {DIV} at (3,3) size 75x75 [bgcolor=#008000]
@@ -33,3 +32,5 @@ layer at (0,0) size 800x600
               text run at (81,36) width 692: "Westminster in the case of an American naval invasion. Nevertheless, the federal government allowed logging"
               text run at (0,54) width 751: "operations there in the mid-nineteenth century. Large swathes of the park were also deforested by natural causes on two"
               text run at (0,72) width 186: "occasions in the 20th century."
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]

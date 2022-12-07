@@ -14,7 +14,6 @@ layer at (0,0) size 800x763
           text run at (343,14) width 1: " "
           text run at (0,28) width 352: ".two {margin: -10px; background-color: aqua;}"
           text run at (351,28) width 1: " "
-      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,101) size 784x20 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 208x19
           text run at (0,0) width 208: "This element has a class of zero."
@@ -123,3 +122,5 @@ layer at (0,0) size 800x763
               RenderBlock {P} at (4,308) size 762x20 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 208x19
                   text run at (0,0) width 208: "This element has a class of zero."
+layer at (8,99) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]

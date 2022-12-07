@@ -12,7 +12,6 @@ layer at (0,0) size 800x600
             text run at (0,18) width 251: "child is an inline container are ignored"
         RenderText {#text} at (250,18) size 5x18
           text run at (250,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 318x18
           text run at (0,0) width 318: "The following lines should read \x{201C}ABCDEFGHI\x{201D}:"
@@ -78,7 +77,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 92x18
             text run at (0,0) width 92 RTL: "IHGFEDCBA"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,342) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,352) size 784x18
         RenderText {#text} at (0,0) size 255x18
           text run at (0,0) width 255: "The following lines should be identical:"
@@ -105,3 +103,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,1) size 27x18
           text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,350) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,342) size 784x2 [border: (1px inset #000000)]

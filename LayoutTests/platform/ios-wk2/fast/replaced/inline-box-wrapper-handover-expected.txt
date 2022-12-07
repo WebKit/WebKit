@@ -16,34 +16,35 @@ layer at (0,0) size 800x600
             text run at (0,20) width 196: "misplaced on forum.2ostrov.ru"
         RenderText {#text} at (195,20) size 5x19
           text run at (195,20) width 5: "."
-      RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,74) size 784x20
         RenderText {#text} at (0,0) size 235x19
           text run at (0,0) width 235: "Box 1 and box 2 should be identical."
       RenderBlock (anonymous) at (0,110) size 784x20
         RenderText {#text} at (0,0) size 44x19
           text run at (0,0) width 44: "Box 1:"
-      RenderBlock {DIV} at (0,130) size 67x87 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,130) size 67x82 [border: (1px solid #000000)]
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
-        RenderText {#text} at (46,11) size 16x19
-          text run at (46,11) width 16: " A"
-        RenderBlock {DIV} at (6,31) size 35x20 [bgcolor=#FF0000]
-        RenderText {#text} at (41,36) size 15x19
-          text run at (41,36) width 15: " B"
-        RenderBlock {DIV} at (6,56) size 20x20 [bgcolor=#008000]
-        RenderText {#text} at (26,61) size 15x19
-          text run at (26,61) width 15: " C"
-      RenderBlock (anonymous) at (0,217) size 784x40
+        RenderText {#text} at (6,31) size 16x19
+          text run at (6,31) width 16: "A "
+        RenderBlock {DIV} at (21,26) size 36x20 [bgcolor=#FF0000]
+        RenderText {#text} at (6,56) size 15x19
+          text run at (6,56) width 15: "B "
+        RenderBlock {DIV} at (20,51) size 21x20 [bgcolor=#008000]
+        RenderText {#text} at (40,56) size 16x19
+          text run at (40,56) width 16: " C"
+      RenderBlock (anonymous) at (0,212) size 784x40
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 44x19
           text run at (0,20) width 44: "Box 2:"
-      RenderBlock {DIV} at (0,257) size 67x87 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,252) size 67x82 [border: (1px solid #000000)]
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
-        RenderText {#text} at (46,11) size 16x19
-          text run at (46,11) width 16: " A"
-        RenderBlock {DIV} at (6,31) size 35x20 [bgcolor=#FF0000]
-        RenderText {#text} at (41,36) size 15x19
-          text run at (41,36) width 15: " B"
-        RenderBlock {DIV} at (6,56) size 20x20 [bgcolor=#008000]
-        RenderText {#text} at (26,61) size 15x19
-          text run at (26,61) width 15: " C"
+        RenderText {#text} at (6,31) size 16x19
+          text run at (6,31) width 16: "A "
+        RenderBlock {DIV} at (21,26) size 36x20 [bgcolor=#FF0000]
+        RenderText {#text} at (6,56) size 15x19
+          text run at (6,56) width 15: "B "
+        RenderBlock {DIV} at (20,51) size 21x20 [bgcolor=#008000]
+        RenderText {#text} at (40,56) size 16x19
+          text run at (40,56) width 16: " C"
+layer at (8,64) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]

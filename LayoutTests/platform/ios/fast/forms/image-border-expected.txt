@@ -12,9 +12,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,35) size 55x19
           text run at (0,35) width 55: "border:0"
         RenderImage {IMG} at (54,0) size 339x50
-      RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,129) size 784x57
         RenderText {#text} at (0,37) size 55x19
           text run at (0,37) width 55: "border:1"
         RenderImage {IMG} at (54,0) size 341x52 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
+layer at (8,127) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]

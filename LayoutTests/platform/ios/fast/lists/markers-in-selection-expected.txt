@@ -21,7 +21,6 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,72) size 784x0
         RenderInline {A} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,72) size 784x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,90) size 784x20
         RenderListItem {LI} at (40,0) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
@@ -60,9 +59,12 @@ layer at (0,0) size 800x600
           RenderListMarker at (0,0) size 16x19: "2"
           RenderText {#text} at (16,0) size 103x19
             text run at (16,0) width 103: "and another one"
-      RenderBlock {HR} at (0,346) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,356) size 784x0
         RenderInline {A} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+layer at (8,80) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,72) size 784x2 [border: (1px inset #000000)]
+layer at (8,354) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,346) size 784x2 [border: (1px inset #000000)]
 selection start: position 0 of child 7 {HR} of body
 selection end:   position 1 of child 21 {HR} of body

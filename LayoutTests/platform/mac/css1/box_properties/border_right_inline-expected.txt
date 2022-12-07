@@ -22,7 +22,6 @@ layer at (0,0) size 785x1082
           text run at (327,75) width 1: " "
           text run at (0,90) width 274: "TD {border-right: green 2px solid;}"
           text run at (273,90) width 1: " "
-      RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,170) size 749x36
         RenderText {#text} at (0,0) size 732x36
           text run at (0,0) width 658: "Note that all table cells on this page should have a two-pixel solid green border along their right sides. "
@@ -165,3 +164,5 @@ layer at (0,0) size 785x1082
                     text run at (641,36) width 26: "The"
                     text run at (0,54) width 677: "borders should line up together at the right edge of the document's body, as each list element has a default"
                     text run at (0,72) width 100: "width of 100%."
+layer at (8,160) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]

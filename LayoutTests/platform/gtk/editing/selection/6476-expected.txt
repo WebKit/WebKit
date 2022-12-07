@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 0x17
         RenderText {#text} at (0,18) size 181x17
           text run at (0,18) width 181: "thisshouldbeonthesecondline"
-      RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,62) size 784x36
         RenderText {#text} at (0,0) size 131x17
           text run at (0,0) width 131: "This is a testcase for "
@@ -35,4 +34,6 @@ layer at (0,0) size 800x600
           text run at (318,0) width 446: "To run it manually, click in the space after all the text on the first line in"
           text run at (0,18) width 166: "the above editable region. "
           text run at (166,18) width 384: "Clicking should create a caret after the first space after the 'e'."
+layer at (8,52) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
 caret: position 1 of child 2 {#text} of child 1 {DIV} of body

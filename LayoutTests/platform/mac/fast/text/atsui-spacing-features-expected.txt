@@ -18,7 +18,6 @@ layer at (0,0) size 800x372
       RenderBlock (anonymous) at (0,52) size 784x18
         RenderText {#text} at (0,0) size 517x18
           text run at (0,0) width 517: "Each green box should be identical to the blue box it follows, except for accents."
-      RenderBlock {HR} at (0,78) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,88) size 620x260
         RenderTableSection {TBODY} at (0,0) size 620x260
           RenderTableRow {TR} at (0,2) size 620x20
@@ -106,3 +105,5 @@ layer at (0,0) size 800x372
                   RenderText {#text} at (1,1) size 200x36
                     text run at (1,1) width 200: "Lorem ipsum dolor sit amet,"
                     text run at (1,19) width 179: "consectetuer adipiscing elit."
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,78) size 784x2 [border: (1px inset #000000)]

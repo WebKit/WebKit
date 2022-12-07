@@ -16,7 +16,6 @@ layer at (0,0) size 785x959
           text run at (312,30) width 1: " "
           text run at (0,45) width 258: "TD {border-top: green 2px solid;}"
           text run at (257,45) width 1: " "
-      RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 769x36
         RenderText {#text} at (0,0) size 723x36
           text run at (0,0) width 648: "Note that all table cells on this page should have a two-pixel solid green border along their top sides. "
@@ -149,3 +148,5 @@ layer at (0,0) size 785x959
                   RenderListMarker at (-17,3) size 7x18: bullet
                   RenderText {#text} at (0,3) size 493x18
                     text run at (0,3) width 493: "Each list item in this list should have a medium-width black border at its top."
+layer at (8,115) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]

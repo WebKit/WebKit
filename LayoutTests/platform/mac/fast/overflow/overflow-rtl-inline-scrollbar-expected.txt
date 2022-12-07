@@ -16,7 +16,8 @@ layer at (0,0) size 800x600
             text run at (0,18) width 348: "overflow:auto and left border makes scroll bar appear"
         RenderText {#text} at (347,18) size 5x18
           text run at (347,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,70) size 784x18 clip at (18,70) size 774x18
   RenderBlock {DIV} at (0,62) size 784x18 [border: none (10px solid #0000FF)]
     RenderText {#text} at (462,0) size 322x18

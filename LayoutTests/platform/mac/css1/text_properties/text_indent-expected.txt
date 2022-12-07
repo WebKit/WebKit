@@ -29,7 +29,6 @@ layer at (0,0) size 785x1246
           text run at (0,135) width 375: "blockquote {text-indent: 50%; background: aqua;}"
           text run at (374,135) width 1: " "
           text run at (0,150) width 0: " "
-      RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,230) size 769x18 [bgcolor=#00FFFF]
         RenderText {#text} at (48,0) size 394x18
           text run at (48,0) width 394: "The first line of this sentence should be indented half an inch."
@@ -134,3 +133,5 @@ layer at (0,0) size 785x1246
                   text run at (333,0) width 228: "In the first half of the test page, this"
                   text run at (0,18) width 651: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
                   text run at (0,36) width 512: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
+layer at (8,220) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]

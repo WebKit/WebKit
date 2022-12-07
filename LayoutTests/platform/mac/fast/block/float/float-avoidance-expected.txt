@@ -8,7 +8,6 @@ layer at (0,0) size 785x2342
           text run at (0,0) width 546: "Test of objects that avoid floats to see what they do with percentage and auto widths. "
           text run at (545,0) width 208: "This test is designed to illustrate"
           text run at (0,18) width 482: "that we have removed the WinIE quirk and are behaving more like Firefox."
-      RenderBlock {HR} at (0,44) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,54) size 769x18
         RenderText {#text} at (0,0) size 517x18
           text run at (0,0) width 517: "The inline-level button should be below the select and fill the width of the block."
@@ -250,7 +249,6 @@ layer at (0,0) size 785x2342
             RenderText at (8,2) size 22x13
               text run at (8,2) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock (floating) {HR} at (112,30) size 82x2 [border: (1px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (196,28) size 0x18
       RenderBlock (anonymous) at (0,2040) size 769x36
@@ -266,7 +264,6 @@ layer at (0,0) size 785x2342
             RenderText at (8,2) size 22x13
               text run at (8,2) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock (floating) {HR} at (112,30) size 2x2 [border: (1px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (116,28) size 0x18
       RenderBlock (anonymous) at (0,2132) size 769x18
@@ -282,7 +279,6 @@ layer at (0,0) size 785x2342
               RenderText at (8,2) size 22x13
                 text run at (8,2) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (10,46) size 202x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (10,56) size 200x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,2234) size 769x18
@@ -299,9 +295,10 @@ layer at (0,0) size 785x2342
               RenderText at (8,2) size 22x13
                 text run at (8,2) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (110,36) size 100x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (10,46) size 200x18
           RenderBR {BR} at (0,0) size 0x18
+layer at (8,52) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,44) size 769x2 [border: (1px inset #000000)]
 layer at (118,1328) size 100x108
   RenderBlock (floating) {DIV} at (110,28) size 100x108
     RenderText {#text} at (0,0) size 100x108
@@ -335,3 +332,11 @@ layer at (118,1838) size 100x108
       text run at (0,54) width 92: "enough text to"
       text run at (0,72) width 100: "have to wrap to"
       text run at (0,90) width 92: "multiple lines."
+layer at (120,2022) size 82x2 clip at (0,0) size 0x0
+  RenderBlock (floating) {HR} at (112,30) size 82x2 [border: (1px inset #000000)]
+layer at (120,2114) size 2x2 clip at (0,0) size 0x0
+  RenderBlock (floating) {HR} at (112,30) size 2x2 [border: (1px inset #000000)]
+layer at (18,2204) size 202x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (10,46) size 202x2 [border: (1px inset #000000)]
+layer at (118,2296) size 100x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (110,36) size 100x2 [border: (1px inset #000000)]

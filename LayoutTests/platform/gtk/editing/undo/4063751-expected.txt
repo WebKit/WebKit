@@ -104,9 +104,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 327x17
           text run at (0,0) width 327: "You should see \"( this is a test. )\", minus the quotes."
-      RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,78) size 784x26 [border: (2px solid #FFAAAA)]
         RenderBlock {DIV} at (2,2) size 780x22 [border: (2px solid #AAAAFF)]
           RenderText {#text} at (2,2) size 94x17
             text run at (2,2) width 94: "( this is a test. )"
+layer at (8,76) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
 caret: position 18 of child 0 {#text} of child 1 {DIV} of child 7 {DIV} of body

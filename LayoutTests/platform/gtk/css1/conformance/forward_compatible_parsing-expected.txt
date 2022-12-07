@@ -113,7 +113,6 @@ layer at (0,0) size 785x4035
           text run at (0,780) width 208: "P.twentyfour {color: red;}"
           text run at (208,780) width 0: " "
           text run at (0,795) width 0: " "
-      RenderBlock {HR} at (0,857) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,875) size 769x18 [color=#008000]
         RenderText {#text} at (0,0) size 485x17
           text run at (0,0) width 485: "This paragraph should be green, because only the rotation should be ignored."
@@ -543,3 +542,5 @@ layer at (0,0) size 785x4035
                 RenderText {#text} at (0,0) size 728x35
                   text run at (0,0) width 728: "This paragraph should be black, because the color declaration after the previous ruleset should be considered part of"
                   text run at (0,18) width 639: "the selector for this ruleset, and this ruleset therefore has an invalid selector and should not be applied."
+layer at (8,865) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,857) size 769x2 [border: (1px inset #000000)]

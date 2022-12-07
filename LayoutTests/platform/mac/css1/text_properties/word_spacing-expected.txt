@@ -29,7 +29,6 @@ layer at (0,0) size 785x914
           text run at (0,135) width 219: ".ten {word-spacing: -0.2em;}"
           text run at (218,135) width 1: " "
           text run at (0,150) width 0: " "
-      RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,230) size 769x18
         RenderText {#text} at (0,0) size 716x18
           text run at (0,0) width 29: "This"
@@ -319,3 +318,5 @@ layer at (0,0) size 785x914
                   text run at (613,0) width 21: " on"
                   text run at (630,0) width 28: " this"
                   text run at (654,0) width 62: " property."
+layer at (8,220) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]

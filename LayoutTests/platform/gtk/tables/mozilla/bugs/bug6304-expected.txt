@@ -199,7 +199,6 @@ layer at (0,0) size 800x600
                       RenderTableCell {TD} at (32,85) size 22x20 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 20x17
                           text run at (1,1) width 20: "5,2"
-      RenderBlock {HR} at (0,210) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,228) size 784x18
         RenderInline {B} at (0,0) size 556x17
           RenderText {#text} at (114,0) size 556x17
@@ -238,3 +237,5 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,504) size 784x18
         RenderText {#text} at (0,0) size 479x17
           text run at (0,0) width 479: "Tested with Apr25, M4 and 1999051109 (win95, opt.) Dated: May 11 1999"
+layer at (8,218) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,210) size 784x2 [border: (1px inset #000000)]

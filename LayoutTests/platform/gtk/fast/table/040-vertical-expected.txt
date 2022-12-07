@@ -23,7 +23,6 @@ layer at (0,0) size 785x2350
         RenderBR {BR} at (133,18) size 0x17
         RenderText {#text} at (0,36) size 135x17
           text run at (0,36) width 135: "Column Two is: 67%"
-      RenderBlock {HR} at (0,244) size 769x3 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,254) size 40x601
         RenderTableSection {TBODY} at (0,0) size 40x600
           RenderTableRow {TR} at (0,0) size 20x600
@@ -41,7 +40,6 @@ layer at (0,0) size 785x2350
         RenderBR {BR} at (133,18) size 0x17
         RenderText {#text} at (0,36) size 135x17
           text run at (0,36) width 135: "Column Two is: 67%"
-      RenderBlock {HR} at (0,940) size 769x3 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,950) size 56x601
         RenderTableSection {TBODY} at (0,0) size 56x600
           RenderTableRow {TR} at (0,0) size 36x600
@@ -65,7 +63,6 @@ layer at (0,0) size 785x2350
         RenderBR {BR} at (133,18) size 0x17
         RenderText {#text} at (0,36) size 135x17
           text run at (0,36) width 135: "Column Two is: 67%"
-      RenderBlock {HR} at (0,1636) size 769x3 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,1646) size 40x601
         RenderTableSection {TBODY} at (0,0) size 40x600
           RenderTableRow {TR} at (0,0) size 20x600
@@ -85,4 +82,11 @@ layer at (0,0) size 785x2350
         RenderBR {BR} at (133,18) size 0x17
         RenderText {#text} at (0,36) size 135x17
           text run at (0,36) width 135: "Column Two is: 67%"
-      RenderBlock {HR} at (0,2332) size 769x3 [border: (1px inset #000000)]
+layer at (8,252) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,244) size 769x3 [border: (1px inset #000000)]
+layer at (8,948) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,940) size 769x3 [border: (1px inset #000000)]
+layer at (8,1644) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1636) size 769x3 [border: (1px inset #000000)]
+layer at (8,2340) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,2332) size 769x3 [border: (1px inset #000000)]

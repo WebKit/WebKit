@@ -20,7 +20,6 @@ layer at (0,0) size 800x907
           text run at (429,56) width 1: " "
           text run at (0,70) width 266: ".five {border-bottom-width: 25px;}"
           text run at (265,70) width 1: " "
-      RenderBlock {HR} at (0,133) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,151) size 784x20
         RenderText {#text} at (0,0) size 160x19
           text run at (0,0) width 160: "(These will only work if "
@@ -101,3 +100,5 @@ layer at (0,0) size 800x907
               RenderBlock {P} at (4,327) size 694x20 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 208x19
                   text run at (0,0) width 208: "This element has a class of zero."
+layer at (8,141) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,133) size 784x2 [border: (1px inset #000000)]

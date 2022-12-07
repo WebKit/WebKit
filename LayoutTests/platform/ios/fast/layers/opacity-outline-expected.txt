@@ -16,6 +16,7 @@ layer at (0,0) size 800x600
             text run at (0,20) width 321: "outline causes the outline to disappear completely"
         RenderText {#text} at (320,20) size 5x19
           text run at (320,20) width 5: "."
-      RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
+layer at (8,64) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
 layer at (8,74) size 100x100
   RenderBlock {DIV} at (0,66) size 100x100 [bgcolor=#C0C0C0]

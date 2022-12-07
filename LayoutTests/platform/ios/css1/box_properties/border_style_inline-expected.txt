@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
           text run at (530,14) width 1: " "
           text run at (0,28) width 554: ".three {border-style: none; border-color: purple; border-width: thick;}"
           text run at (553,28) width 1: " "
-      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,109) size 784x60 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 679x19
           text run at (0,0) width 679: "This is an unstyled element, save for the background color, and it contains inline elements with classes of "
@@ -68,3 +67,5 @@ layer at (0,0) size 800x600
                   text run at (67,40) width 260: ", which should result in no border at all. "
                   text run at (326,40) width 410: "The line-height of the parent element should not change, on any"
                   text run at (0,60) width 28: "line."
+layer at (8,99) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]

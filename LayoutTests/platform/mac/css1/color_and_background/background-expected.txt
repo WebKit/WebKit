@@ -16,7 +16,6 @@ layer at (0,0) size 785x721
           text run at (577,30) width 1: " "
           text run at (0,45) width 578: ".three {background: lime url(../resources/oransqr.gif) repeat-x left top;}"
           text run at (577,45) width 1: " "
-      RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 769x54
         RenderText {#text} at (0,0) size 741x18
           text run at (0,0) width 741: "This document should have a green background with an orange strip running across the entire top of the page, since"
@@ -90,3 +89,5 @@ layer at (0,0) size 785x721
                   text run at (38,18) width 701: "Therefore, extra text would be in order, so that we can intelligently evaluate the performance of your browser"
                   text run at (0,36) width 199: "in handling these declarations. "
                   text run at (198,36) width 311: "Hey, I didn't say the page would be pretty, did I?"
+layer at (8,115) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]

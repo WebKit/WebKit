@@ -25,7 +25,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 583: "This is a testcase for 8193, hitting an assert inside RemoveNodeCommand on Undo Paste. "
           text run at (582,0) width 181: "Both editable regions below"
           text run at (0,18) width 223: "should look the same after the test."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,62) size 784x38 [border: (1px solid #000000)]
         RenderBlock {DIV} at (1,1) size 782x18
           RenderText {#text} at (0,0) size 22x18
@@ -36,4 +35,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,100) size 784x20 [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 782x18
           RenderBR {BR} at (0,0) size 0x18
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 caret: position 0 of child 0 {BR} of child 6 {DIV} of body

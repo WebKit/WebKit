@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 171x17
+          text run at (0,0) width 171: "table width includes border"
+      RenderTable {TABLE} at (0,36) size 200x46 [border: (10px outset #808080)]
+        RenderTableSection {TBODY} at (10,10) size 180x26
+          RenderTableRow {TR} at (0,2) size 180x22
+            RenderTableCell {TD} at (2,2) size 176x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 58x17
+                text run at (2,2) width 58: "200 table"
+      RenderBlock (anonymous) at (0,82) size 784x36
+        RenderBR {BR} at (0,0) size 0x17
+        RenderText {#text} at (0,18) size 215x17
+          text run at (0,18) width 215: "nested table width includes border"
+      RenderTable {TABLE} at (0,118) size 204x50 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 202x48
+          RenderTableRow {TR} at (0,0) size 202x48
+            RenderTableCell {TD} at (0,0) size 202x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 200x46 [border: (10px outset #808080)]
+                RenderTableSection {TBODY} at (10,10) size 180x26
+                  RenderTableRow {TR} at (0,2) size 180x22
+                    RenderTableCell {TD} at (2,2) size 176x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 102x17
+                        text run at (2,2) width 102: "200 nested table"
+      RenderBlock (anonymous) at (0,168) size 784x18
+        RenderText {#text} at (0,0) size 215x17
+          text run at (0,0) width 215: "nested table width includes border"
+      RenderTable {TABLE} at (0,186) size 147x50 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 145x48
+          RenderTableRow {TR} at (0,0) size 145x48
+            RenderTableCell {TD} at (0,0) size 145x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 143x46 [border: (10px outset #808080)]
+                RenderTableSection {TBODY} at (10,10) size 123x26
+                  RenderTableRow {TR} at (0,2) size 123x22
+                    RenderTableCell {TD} at (2,2) size 119x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 115x17
+                        text run at (2,2) width 115: "100% nested table"
+layer at (8,34) size 202x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,26) size 202x2 [border: (1px inset #000000)]

@@ -34,7 +34,6 @@ layer at (0,0) size 785x1403
         RenderBlock (anonymous) at (14,23) size 737x25
           RenderTextControl {INPUT} at (0,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,280) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,298) size 769x19
         RenderText {#text} at (0,0) size 147x17
           text run at (0,0) width 147: "Legend align test, RTL"
@@ -73,7 +72,6 @@ layer at (0,0) size 785x1403
       RenderBlock (anonymous) at (0,570) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,578) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,596) size 769x19
         RenderText {#text} at (0,0) size 270x17
           text run at (0,0) width 270: "Legend align test with margin and padding"
@@ -105,7 +103,6 @@ layer at (0,0) size 785x1403
         RenderBlock (anonymous) at (17,33) size 705x24
           RenderTextControl {INPUT} at (0,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,986) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,1004) size 769x19
         RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "Legend align test with margin and padding, RTL"
@@ -152,6 +149,8 @@ layer at (27,188) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (27,247) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
+layer at (8,288) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,280) size 769x3 [border: (1px inset #000000)]
 layer at (573,367) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18
 layer at (573,427) size 185x18
@@ -160,6 +159,8 @@ layer at (573,486) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18
 layer at (573,546) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18
+layer at (8,587) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,578) size 769x3 [border: (1px inset #000000)]
 layer at (43,675) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (43,764) size 186x18
@@ -168,6 +169,8 @@ layer at (43,853) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (43,942) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
+layer at (8,995) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,986) size 769x3 [border: (1px inset #000000)]
 layer at (557,1083) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18
 layer at (557,1172) size 185x18

@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 263x17
           text run at (0,0) width 263: "The two boxes below should be identical."
-      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 200x60 [bgcolor=#C0C0C0]
         RenderTable {TABLE} at (0,0) size 200x60
           RenderTableSection {TBODY} at (0,0) size 200x60
@@ -40,3 +39,5 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 177: "Lorem ipsum dolor sit amet,"
                   text run at (1,19) width 173: "consectetuer adipiscing elit."
                   text run at (1,37) width 81: "Nunc neque."
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]

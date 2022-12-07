@@ -20,7 +20,6 @@ layer at (0,0) size 785x759
           text run at (405,60) width 1: " "
           text run at (0,75) width 242: ".five {border-top-width: 25px;}"
           text run at (241,75) width 1: " "
-      RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 769x18
         RenderText {#text} at (0,0) size 160x18
           text run at (0,0) width 160: "(These will only work if "
@@ -95,3 +94,5 @@ layer at (0,0) size 785x759
                     text run at (533,2) width 95: "border-style"
                 RenderText {#text} at (627,0) size 55x18
                   text run at (627,0) width 55: " was set."
+layer at (8,145) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]

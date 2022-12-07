@@ -21,7 +21,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 559: "In the render tree, the button should have only one child, an anonymous block wrapping "
           text run at (559,0) width 144: "all of the button's other"
           text run at (0,18) width 80: "descendants."
-      RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,114) size 784x9
         RenderButton {BUTTON} at (0,0) size 16x9 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 0x0
@@ -32,3 +31,5 @@ layer at (0,0) size 800x600
             RenderBlock (anonymous) at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+layer at (8,112) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]

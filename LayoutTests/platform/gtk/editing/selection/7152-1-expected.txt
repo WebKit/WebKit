@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
           text run at (481,0) width 302: "Adding visible candidates after tables, at [table, "
           text run at (0,18) width 771: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside "
           text run at (0,36) width 100: "an atomic node."
-      RenderBlock {HR} at (0,70) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,80) size 161x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 159x50
           RenderTableRow {TR} at (0,2) size 159x22
@@ -30,5 +29,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,26) size 155x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 151x17
                 text run at (2,2) width 151: "This should be selected."
+layer at (8,78) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,70) size 784x2 [border: (1px inset #000000)]
 selection start: position 0 of child 0 {#text} of child 1 {P} of body
 selection end:   position 1 of child 5 {TABLE} of body

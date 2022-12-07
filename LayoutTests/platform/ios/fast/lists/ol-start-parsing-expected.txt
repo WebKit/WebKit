@@ -15,7 +15,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 2"
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,102) size 784x20
         RenderText {#text} at (0,0) size 28x19
           text run at (0,0) width 28: "start"
@@ -28,7 +27,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 2"
-      RenderBlock {HR} at (0,194) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,204) size 784x20
         RenderText {#text} at (0,0) size 50x19
           text run at (0,0) width 50: "start=\"\""
@@ -41,7 +39,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 2"
-      RenderBlock {HR} at (0,296) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,306) size 784x20
         RenderText {#text} at (0,0) size 66x19
           text run at (0,0) width 66: "start=\" 2 \""
@@ -54,7 +51,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "3"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 3"
-      RenderBlock {HR} at (0,398) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,408) size 784x20
         RenderText {#text} at (0,0) size 67x19
           text run at (0,0) width 67: "start=\"+2\""
@@ -67,7 +63,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "3"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 3"
-      RenderBlock {HR} at (0,500) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,510) size 784x20
         RenderText {#text} at (0,0) size 70x19
           text run at (0,0) width 70: "start=\"A2\""
@@ -80,7 +75,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 2"
-      RenderBlock {HR} at (0,602) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,612) size 784x20
         RenderText {#text} at (0,0) size 62x19
           text run at (0,0) width 62: "start=\".2\""
@@ -93,7 +87,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 2"
-      RenderBlock {HR} at (0,704) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,714) size 784x20
         RenderText {#text} at (0,0) size 66x19
           text run at (0,0) width 66: "start=\"#2\""
@@ -118,7 +111,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 1"
-      RenderBlock {HR} at (0,898) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,908) size 784x20
         RenderText {#text} at (0,0) size 66x19
           text run at (0,0) width 66: "start=\" 0 \""
@@ -131,7 +123,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 1"
-      RenderBlock {HR} at (0,1000) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1010) size 784x20
         RenderText {#text} at (0,0) size 58x19
           text run at (0,0) width 58: "start=\"2\""
@@ -144,7 +135,6 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-21,0) size 16x19: "3"
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "Should be 3"
-      RenderBlock {HR} at (0,1102) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1112) size 784x20
         RenderText {#text} at (0,0) size 63x19
           text run at (0,0) width 63: "start=\"-2\""
@@ -157,4 +147,25 @@ layer at (0,0) size 800x1222
           RenderListMarker at (-27,0) size 22x19: "-1"
           RenderText {#text} at (0,0) size 82x19
             text run at (0,0) width 82: "Should be -1"
-      RenderBlock {HR} at (0,1204) size 784x2 [border: (1px inset #000000)]
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+layer at (8,202) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,194) size 784x2 [border: (1px inset #000000)]
+layer at (8,304) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,296) size 784x2 [border: (1px inset #000000)]
+layer at (8,406) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,398) size 784x2 [border: (1px inset #000000)]
+layer at (8,508) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,500) size 784x2 [border: (1px inset #000000)]
+layer at (8,610) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,602) size 784x2 [border: (1px inset #000000)]
+layer at (8,712) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,704) size 784x2 [border: (1px inset #000000)]
+layer at (8,906) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,898) size 784x2 [border: (1px inset #000000)]
+layer at (8,1008) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1000) size 784x2 [border: (1px inset #000000)]
+layer at (8,1110) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1102) size 784x2 [border: (1px inset #000000)]
+layer at (8,1212) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1204) size 784x2 [border: (1px inset #000000)]

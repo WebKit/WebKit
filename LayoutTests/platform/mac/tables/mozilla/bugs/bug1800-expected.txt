@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
                         text run at (2,2) width 121: "cell of nested table"
       RenderBlock (anonymous) at (0,70) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {HR} at (0,96) size 202x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,106) size 784x18
         RenderText {#text} at (0,0) size 220x18
           text run at (0,0) width 220: "nested table width includes border"
@@ -71,3 +70,5 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 122x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 118x18
                         text run at (2,2) width 118: "100% nested table"
+layer at (8,104) size 202x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,96) size 202x2 [border: (1px inset #000000)]

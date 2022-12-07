@@ -19,4 +19,5 @@ layer at (0,0) size 800x600
                 text run at (90,2) width 80: "Student Life"
           RenderTableRow {TR} at (0,53) size 782x21
             RenderTableCell {TD} at (2,53) size 778x21 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=2]
-              RenderBlock {HR} at (2,10) size 774x1 [border: (1px inset #000000) none (1px inset #000000)]
+layer at (13,72) size 774x1 clip at (0,0) size 0x0
+  RenderBlock {HR} at (2,10) size 774x1 [border: (1px inset #000000) none (1px inset #000000)]

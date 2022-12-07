@@ -15,7 +15,6 @@ layer at (0,0) size 800x693
           text run at (0,28) width 352: ".three:first-line {font-variant: small-caps;}"
           text run at (351,28) width 1: " "
           text run at (0,42) width 0: " "
-      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x60
         RenderText {#text} at (0,0) size 779x59
           text run at (0,0) width 431: "The first line of this paragraph, and only that one, should be green. "
@@ -80,3 +79,5 @@ layer at (0,0) size 800x693
                   text run at (312,40) width 230: " is not supported by your browser). "
                   text run at (541,40) width 213: "This is extra text included for the"
                   text run at (0,60) width 480: "purposes of making the paragraph long enough to have more than one line."
+layer at (8,113) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]

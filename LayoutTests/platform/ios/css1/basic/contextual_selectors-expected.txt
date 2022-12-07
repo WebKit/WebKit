@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,28) width 219: "EM, UL LI LI {color: green;}"
           text run at (218,28) width 1: " "
           text run at (0,42) width 0: " "
-      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x20 [color=#000080]
         RenderText {#text} at (0,0) size 640x19
           text run at (0,0) width 640: "This sentence should be navy serif in the first half of the page, but purple and sans-serif in the table."
@@ -80,3 +79,5 @@ layer at (0,0) size 800x600
                       RenderListMarker at (-18,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 138x19
                         text run at (0,0) width 138: "This should be green."
+layer at (8,113) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]

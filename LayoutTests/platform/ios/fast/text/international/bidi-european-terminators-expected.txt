@@ -20,7 +20,6 @@ layer at (0,0) size 800x612
           text run at (136,0) width 8 RTL: "\x{5D1}"
           text run at (143,0) width 625: " are of type R; ^ and @ are of type ON; $ and % are of type ET; a is of type L; 1 is of type EN. In"
           text run at (0,20) width 476: "each of the following pairs, the two lines should be identical to each other."
-      RenderBlock {HR} at (0,112) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,130) size 784x20
         RenderText {#text} at (0,0) size 75x19
           text run at (0,0) width 8 RTL: "\x{5D0}"
@@ -30,7 +29,6 @@ layer at (0,0) size 800x612
           RenderText {#text} at (0,0) size 75x19
             text run at (0,0) width 75: "\x{5D0} ^ @ $% a"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,194) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,212) size 784x20
         RenderText {#text} at (0,0) size 75x19
           text run at (0,0) width 75 RTL: "\x{5D0} ^ @ $% \x{5D1}"
@@ -39,7 +37,6 @@ layer at (0,0) size 800x612
           RenderText {#text} at (0,0) size 75x19
             text run at (0,0) width 75: "\x{5D1} %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,276) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,294) size 784x20
         RenderText {#text} at (0,0) size 72x19
           text run at (0,0) width 30: "$%1"
@@ -49,7 +46,6 @@ layer at (0,0) size 800x612
           RenderText {#text} at (0,0) size 72x19
             text run at (0,0) width 72: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,358) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,376) size 784x20
         RenderText {#text} at (0,0) size 75x19
           text run at (0,0) width 8: "a"
@@ -59,7 +55,6 @@ layer at (0,0) size 800x612
           RenderText {#text} at (0,0) size 75x19
             text run at (0,0) width 75: "a %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,440) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,458) size 784x20
         RenderText {#text} at (0,0) size 75x19
           text run at (0,0) width 75 RTL: "\x{5D0} ^ @ $% \x{5D1}"
@@ -68,7 +63,6 @@ layer at (0,0) size 800x612
           RenderText {#text} at (0,0) size 75x19
             text run at (0,0) width 75: "\x{5D1} %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,522) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,540) size 784x20
         RenderText {#text} at (0,0) size 72x19
           text run at (0,0) width 30: "$%1"
@@ -78,3 +72,15 @@ layer at (0,0) size 800x612
           RenderText {#text} at (0,0) size 72x19
             text run at (0,0) width 72: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
+layer at (8,120) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,112) size 784x2 [border: (1px inset #000000)]
+layer at (8,202) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,194) size 784x2 [border: (1px inset #000000)]
+layer at (8,284) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,276) size 784x2 [border: (1px inset #000000)]
+layer at (8,366) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,358) size 784x2 [border: (1px inset #000000)]
+layer at (8,448) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,440) size 784x2 [border: (1px inset #000000)]
+layer at (8,530) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,522) size 784x2 [border: (1px inset #000000)]

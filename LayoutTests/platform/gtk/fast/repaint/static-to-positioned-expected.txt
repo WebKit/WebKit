@@ -16,7 +16,8 @@ layer at (0,0) size 800x486
             text run at (0,18) width 150: "positioned to positioned"
         RenderText {#text} at (150,18) size 4x17
           text run at (150,18) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,68) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,78) size 784x200
   RenderBlock (relative positioned) {DIV} at (0,62) size 784x200
 layer at (8,128) size 100x100

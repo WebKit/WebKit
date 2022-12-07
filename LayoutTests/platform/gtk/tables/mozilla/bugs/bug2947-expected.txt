@@ -91,4 +91,5 @@ layer at (0,0) size 785x1092
             text run at (56,0) width 98: "tablewidth.html"
         RenderText {#text} at (154,0) size 4x17
           text run at (154,0) width 4: "."
-      RenderBlock {HR} at (0,1074) size 769x2 [border: (1px inset #000000)]
+layer at (8,1082) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1074) size 769x2 [border: (1px inset #000000)]

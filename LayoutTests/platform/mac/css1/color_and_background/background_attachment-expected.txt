@@ -11,7 +11,6 @@ layer at (0,0) size 785x1194
           text run at (0,0) width 851: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
           text run at (850,0) width 1: " "
           text run at (0,15) width 0: " "
-      RenderBlock {HR} at (0,77) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 769x90
         RenderText {#text} at (0,0) size 760x90
           text run at (0,0) width 745: "This document should have a green grid-pattern line across the top of the page (or at least a tiled background) which"
@@ -27,8 +26,6 @@ layer at (0,0) size 785x1194
         RenderText {#text} at (0,0) size 517x18
           text run at (0,0) width 425: "In fact, why not the relevant section from the CSS1 specification? "
           text run at (424,0) width 93: "A capital idea."
-      RenderBlock {HR} at (0,235) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,245) size 769x2 [border: (1px inset #000000)]
       RenderBlock {H4} at (0,268) size 769x19
         RenderInline {A} at (0,0) size 222x18
           RenderText {#text} at (0,0) size 222x18
@@ -116,8 +113,6 @@ layer at (0,0) size 785x1194
                 RenderText {#text} at (0,0) size 517x18
                   text run at (0,0) width 425: "In fact, why not the relevant section from the CSS1 specification? "
                   text run at (424,0) width 93: "A capital idea."
-              RenderBlock {HR} at (4,144) size 747x2 [border: (1px inset #000000)]
-              RenderBlock {HR} at (4,154) size 747x2 [border: (1px inset #000000)]
               RenderBlock {H4} at (4,177) size 747x19
                 RenderInline {A} at (0,0) size 222x18
                   RenderText {#text} at (0,0) size 222x18
@@ -178,3 +173,13 @@ layer at (0,0) size 785x1194
                   text run at (71,0) width 659: " UAs may treat 'fixed' as 'scroll'. However, it is recommended they interpret 'fixed' correctly, at least on"
                   text run at (0,18) width 720: "the HTML and BODY elements, since there is no way for an author to provide an image only for those browsers"
                   text run at (0,36) width 122: "that support 'fixed'."
+layer at (8,85) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,77) size 769x2 [border: (1px inset #000000)]
+layer at (8,243) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,235) size 769x2 [border: (1px inset #000000)]
+layer at (8,253) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,245) size 769x2 [border: (1px inset #000000)]
+layer at (25,806) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,144) size 747x2 [border: (1px inset #000000)]
+layer at (25,816) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,154) size 747x2 [border: (1px inset #000000)]

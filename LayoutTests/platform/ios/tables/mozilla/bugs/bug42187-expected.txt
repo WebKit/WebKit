@@ -24,8 +24,10 @@ layer at (0,0) size 800x600
                 text run at (1,21) width 112: "game of the year "
                 text run at (112,21) width 54: "at Game"
                 text run at (1,41) width 65: "Rankings."
-      RenderBlock {HR} at (0,135) size 204x3 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,145) size 385x3 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,155) size 784x21
         RenderText {#text} at (0,0) size 517x19
           text run at (0,0) width 517: "200*150 =3000twips 100*150=1500twips 180*150=1200twips sum: 5700 twips"
+layer at (8,143) size 204x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,135) size 204x3 [border: (1px inset #000000)]
+layer at (8,153) size 385x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,145) size 385x3 [border: (1px inset #000000)]

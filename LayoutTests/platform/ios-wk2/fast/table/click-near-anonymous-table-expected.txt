@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 624x19
           text run at (0,0) width 624: "If the browser does not crash as you click to the right of each of the lines below, it passes the test."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,102) size 784x80
         RenderTable at (0,0) size 182x80
           RenderTableSection (anonymous) at (0,20) size 182x40
@@ -39,3 +38,5 @@ layer at (0,0) size 800x600
               RenderTableCell (anonymous) at (0,0) size 182x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 182x19
                   text run at (0,0) width 182: "Click to the right of this text"
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]

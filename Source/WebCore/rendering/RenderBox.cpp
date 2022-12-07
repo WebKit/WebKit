@@ -4870,7 +4870,7 @@ bool RenderBox::establishesIndependentFormattingContext() const
 
 bool RenderBox::avoidsFloats() const
 {
-    return isReplacedOrInlineBlock() || isHR() || isLegend() || isFieldset() || createsNewFormattingContext();
+    return isReplacedOrInlineBlock() || isLegend() || isFieldset() || createsNewFormattingContext();
 }
 
 void RenderBox::addVisualEffectOverflow()

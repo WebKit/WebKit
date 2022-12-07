@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
           text run at (366,14) width 1: " "
           text run at (0,28) width 219: ".three {border-width: 25px;}"
           text run at (218,28) width 1: " "
-      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,109) size 784x110 [border: (25px solid #000000)]
         RenderText {#text} at (25,25) size 176x19
           text run at (25,25) width 176: "This element has a class of "
@@ -83,3 +82,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (726,45) size 706x39
                   text run at (726,45) width 5: ","
                   text run at (25,65) width 436: "which should have no border width because no border style was set."
+layer at (8,99) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]

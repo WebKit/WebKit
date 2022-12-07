@@ -141,7 +141,6 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,872) size 769x18
         RenderText {#text} at (0,0) size 669x18
           text run at (0,0) width 669: "For reference, the second table has its text all centered, the third table has the \"A table.\" line aligned left."
-      RenderBlock {HR} at (0,906) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,924) size 769x18
         RenderText {#text} at (0,0) size 62x18
           text run at (0,0) width 62: "See also: "
@@ -152,3 +151,5 @@ layer at (0,0) size 785x1000
       RenderBlock (anonymous) at (0,958) size 769x18
         RenderText {#text} at (0,0) size 20x18
           text run at (0,0) width 20: "-->"
+layer at (8,922) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,906) size 769x2 [border: (1px inset #000000)]

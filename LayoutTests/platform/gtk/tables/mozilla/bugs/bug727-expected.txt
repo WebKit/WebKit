@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,10) size 350x70 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 348x68
+          RenderTableRow {TR} at (0,2) size 348x22
+            RenderTableCell {TD} at (2,2) size 344x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 204x17
+                text run at (2,2) width 204: "MozillaZine.org Is Now Active!"
+          RenderTableRow {TR} at (0,26) size 348x40
+            RenderTableCell {TD} at (2,35) size 194x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 4x17
+                text run at (2,2) width 4: " "
+            RenderTableCell {TD} at (198,26) size 148x40 [bgcolor=#FF9900] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 131x35
+                text run at (2,2) width 131: "Thursday September"
+                text run at (2,20) width 77: "17th, 1998>"
+layer at (304,8) size 192x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (296,0) size 192x2 [border: (1px inset #000000)]

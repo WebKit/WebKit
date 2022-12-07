@@ -83,7 +83,6 @@ layer at (0,0) size 785x695
               RenderText at (0,0) size 50x17
                 text run at (0,0) width 50: "Submit"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,519) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,537) size 769x19
         RenderText {#text} at (0,0) size 63x17
           text run at (0,0) width 63: "Up to the "
@@ -118,3 +117,5 @@ layer at (0,0) size 785x695
           text run at (0,0) width 182: "Last updated in March 1999."
 layer at (11,502) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
+layer at (8,541) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,519) size 769x3 [border: (1px inset #000000)]

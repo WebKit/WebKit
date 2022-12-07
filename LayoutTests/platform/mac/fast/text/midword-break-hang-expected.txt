@@ -16,8 +16,9 @@ layer at (0,0) size 800x600
             text run at (0,18) width 144: "RenderBlock::layout()"
         RenderText {#text} at (143,18) size 5x18
           text run at (143,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,62) size 30x276
         RenderText {#text} at (0,0) size 87x276
           text run at (0,0) width 0: " "
           text run at (0,138) width 87: "A"
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]

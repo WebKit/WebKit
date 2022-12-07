@@ -28,7 +28,6 @@ layer at (0,0) size 800x388
         RenderText {#text} at (90,3) size 315x18
           text run at (90,3) width 5: " "
           text run at (94,3) width 311: "There will be a red square and a green rectangle."
-      RenderBlock {HR} at (0,114) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,124) size 60x240
         RenderTableSection {TBODY} at (0,0) size 60x240
           RenderTableRow {TR} at (0,0) size 60x60
@@ -41,3 +40,5 @@ layer at (0,0) size 800x388
           RenderTableRow {TR} at (0,240) size 60x0
             RenderTableCell {TD} at (0,240) size 60x0 [bgcolor=#FF0000] [r=2 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (60,240) size 0x0 [r=2 c=1 rs=1 cs=1]
+layer at (8,130) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,114) size 784x2 [border: (1px inset #000000)]
