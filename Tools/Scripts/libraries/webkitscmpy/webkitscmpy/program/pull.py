@@ -24,6 +24,7 @@ import sys
 
 from .branch import Branch
 from .command import Command
+from webkitcorepy import arguments
 from webkitscmpy import local
 
 
@@ -31,6 +32,15 @@ class Pull(Command):
     name = 'pull'
     aliases = ['up', 'update']
     help = 'Update the current checkout, synchronize git-svn if configured'
+
+    @classmethod
+    def parser(cls, parser, loggers=None):
+        parser.add_argument(
+            '--prune', '--no-prune',
+            dest='prune', default=None,
+            help='Prune deleted branches on the tracking remote when fetching',
+            action=arguments.NoAction,
+        )
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -49,5 +59,8 @@ class Pull(Command):
                 if rmt in bp_remotes:
                     remote = rmt
                     break
-            return repository.pull(rebase=True, branch=branch_point.branch, remote=remote)
+            return repository.pull(rebase=True, branch=branch_point.branch, remote=remote, prune=args.prune)
+        if args.prune is not None:
+            sys.stderr.write("'prune' arguments only valid for 'git' checkouts\n")
+            return 1
         return repository.pull()

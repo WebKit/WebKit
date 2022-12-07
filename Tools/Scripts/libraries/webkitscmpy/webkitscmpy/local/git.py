@@ -322,6 +322,7 @@ class Git(Scm):
         'webkitscmpy.update-fork': ['true', 'false'],
         'webkitscmpy.auto-check': ['true', 'false'],
         'webkitscmpy.auto-create-commit': ['true', 'false'],
+        'webkitscmpy.auto-prune': ['only-source', 'true', 'false'],
     }
     CONFIG_LOCATIONS = ['global', 'repository', 'project']
 
@@ -942,7 +943,7 @@ class Git(Scm):
             pass
         return argument
 
-    def checkout(self, argument):
+    def checkout(self, argument, prune=None):
         self._branch = None
 
         if log.level > logging.WARNING:
@@ -987,7 +988,13 @@ class Git(Scm):
             if not rc:
                 return self.commit()
             if rc == 128:
-                run([self.executable(), 'fetch', name], cwd=self.root_path)
+                command = [self.executable(), 'fetch', name]
+                if prune is None:
+                    if self.config()['webkitscmpy.auto-prune'] == 'true':
+                        command.append('--prune')
+                    elif name in self.source_remotes() and self.config()['webkitscmpy.auto-prune'] == 'only-source':
+                        command.append('--prune')
+                run(command, cwd=self.root_path)
             return None if run(
                 [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(name, branch)] + log_arg,
                 cwd=self.root_path,
@@ -1028,19 +1035,24 @@ class Git(Scm):
             ), 'refs/heads/{}...{}'.format(target, head),
         ], cwd=self.root_path, env={'FILTER_BRANCH_SQUELCH_WARNING': '1'}, capture_output=True).returncode
 
-    def fetch(self, branch, remote=None):
-        return run(
-            [self.executable(), 'fetch', remote or self.default_remote, '{}:{}'.format(branch, branch)],
-            cwd=self.root_path,
-        ).returncode
+    def fetch(self, branch, remote=None, prune=None):
+        remote = remote or self.default_remote
+        if prune is None and self.config()['webkitscmpy.auto-prune'] == 'true':
+            prune = True
+        elif prune is None and self.config()['webkitscmpy.auto-prune'] == 'only-source':
+            prune = remote in self.source_remotes()
+        command = [self.executable(), 'fetch', remote, '{}:{}'.format(branch, branch)]
+        if prune:
+            command.append('--prune')
+        return run(command, cwd=self.root_path).returncode
 
-    def pull(self, rebase=None, branch=None, remote=None):
+    def pull(self, rebase=None, branch=None, remote=None, prune=None):
         remote = remote or self.default_remote
         commit = self.commit() if self.is_svn or branch else None
 
         code = 0
         if branch and self.branch != branch:
-            code = self.fetch(branch=branch, remote=remote)
+            code = self.fetch(branch=branch, remote=remote, prune=prune)
         if not code:
             command = [self.executable(), 'pull'] + ([remote, branch] if branch else [])
             if rebase is True:
