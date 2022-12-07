@@ -53,7 +53,7 @@ inline const URL& Location::url() const
     if (!frame())
         return aboutBlankURL();
 
-    const URL& url = frame()->document()->url();
+    const URL& url = frame()->document()->urlForBindings();
     if (!url.isValid())
         return aboutBlankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 

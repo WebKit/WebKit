@@ -3530,8 +3530,41 @@ void Document::setURL(const URL& url)
     m_url = WTFMove(newURL);
 
     m_documentURI = m_url.url().string();
+    m_adjustedURL = adjustedURL();
     updateBaseURL();
 }
+
+const URL& Document::urlForBindings() const
+{
+    auto shouldAdjustURL = [this] {
+        if (m_url.url().isEmpty() || !loader() || !isTopDocument())
+            return false;
+
+        auto* topDocumentLoader = topDocument().loader();
+        if (!topDocumentLoader || !topDocumentLoader->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled))
+            return false;
+
+        auto preNavigationURL = loader()->originalRequest().httpReferrer();
+        if (preNavigationURL.isEmpty() || RegistrableDomain { URL { preNavigationURL } }.matches(securityOrigin().data()))
+            return false;
+
+        return true;
+    }();
+
+    if (shouldAdjustURL)
+        return m_adjustedURL;
+
+    return m_url.url().isEmpty() ? aboutBlankURL() : m_url.url();
+}
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/DocumentAdditions.cpp>)
+#include <WebKitAdditions/DocumentAdditions.cpp>
+#else
+URL Document::adjustedURL() const
+{
+    return m_url.url();
+}
+#endif
 
 // https://html.spec.whatwg.org/#fallback-base-url
 URL Document::fallbackBaseURL() const
