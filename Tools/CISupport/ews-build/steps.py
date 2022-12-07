@@ -4662,6 +4662,17 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
 
     def run(self):
         self.commands = []
+        if self.getProperty('platform', '*') == 'wincairo':
+            self.commands.append(util.ShellArg(
+                command=self.shell_command(r'del .git\gc.log || {}'.format(self.shell_exit_0())),
+                logname='stdio',
+            ))
+        else:
+            self.commands.append(util.ShellArg(
+                command=self.shell_command('rm -f .git/gc.log || {}'.format(self.shell_exit_0())),
+                logname='stdio',
+            ))
+
         for command in [
             self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),
             self.shell_command('git am --abort || {}'.format(self.shell_exit_0())),
@@ -4672,6 +4683,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
             ['git', 'checkout', '-b', '{}'.format(self.default_branch)],  # Checkout local instance of branch from remote
             self.shell_command('git branch | grep -v {} | xargs git branch -D || {}'.format(self.default_branch, self.shell_exit_0())),
             self.shell_command('git remote | grep -v {} | xargs -L 1 git remote rm || {}'.format(self.git_remote, self.shell_exit_0())),
+            ['git', 'prune'],
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
         return super(CleanGitRepo, self).run()
