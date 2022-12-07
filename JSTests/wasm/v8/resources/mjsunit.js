@@ -622,7 +622,9 @@ var prettyPrinted;
     var test_promise = promise.then(
         result => {
           try {
-            if (--promiseTestCount == 0) testRunner.notifyDone();
+            if (--promiseTestCount == 0) {
+              // testRunner.notifyDone();
+            }
             if (success !== undefined) success(result);
           } catch (e) {
             // Use setTimeout to throw the error again to get out of the promise
@@ -634,7 +636,9 @@ var prettyPrinted;
         },
         result => {
           try {
-            if (--promiseTestCount == 0) testRunner.notifyDone();
+            if (--promiseTestCount == 0) {
+              // testRunner.notifyDone();
+            }
             if (fail === undefined) throw result;
             fail(result);
           } catch (e) {
@@ -648,7 +652,7 @@ var prettyPrinted;
 
     if (!promiseTestChain) promiseTestChain = Promise.resolve();
     // waitUntilDone is idempotent.
-    testRunner.waitUntilDone();
+    // testRunner.waitUntilDone();
     ++promiseTestCount;
     return promiseTestChain.then(test_promise);
   };

@@ -1817,6 +1817,31 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
     end
 end
 
+def runV8WebAssemblySuite(*optionalTestSpecificOptions)
+    return if !$jitTests
+    return if !$isWasmPlatform
+    prepareExtraAbsoluteFiles(Pathname.new(WASMTESTS_PATH).join("v8", "resources"), ["mjsunit.js", "wasm-module-builder.js"])
+    if optionalTestSpecificOptions[0] == :no_module
+      optionalTestSpecificOptions.shift
+    else
+      optionalTestSpecificOptions.unshift "-m"
+    end
+    run("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    if $mode != "quick"
+        run("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        if $isFTLPlatform
+            run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-bbqb3", "--useWasmLLInt=true", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        end
+    end
+end
+
 def runHarnessTest(kind, *options)
     wasmFiles = allWasmFiles($collection)
     wasmFiles.each {
