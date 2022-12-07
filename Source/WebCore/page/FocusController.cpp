@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc.
  * Copyright (C) 2008 Nuanti Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -711,11 +712,12 @@ Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigation
                 if (isFocusableElementOrScopeOwner(element, event) && shadowAdjustedTabIndex(element, event) >= 0)
                     return &element;
             }
-        }
+        } else {
 
         // First try to find a node with the same tabindex as start that comes after start in the scope.
         if (Element* winner = findElementWithExactTabIndex(scope, scope.nextInScope(start), startTabIndex, event, FocusDirection::Forward))
             return winner;
+            }
 
         if (!startTabIndex)
             return nullptr; // We've reached the last node in the document with a tabindex of 0. This is the end of the tabbing order.
@@ -759,11 +761,12 @@ Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNaviga
             if (isFocusableElementOrScopeOwner(element, event) && shadowAdjustedTabIndex(element, event) >= 0)
                 return &element;
         }
-    }
+    } else {
 
     if (Element* winner = findElementWithExactTabIndex(scope, startingNode, startingTabIndex, event, FocusDirection::Backward))
         return winner;
-
+    }
+    
     // There are no nodes before start with the same tabindex as start, so look for a node that:
     // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
     // 2) comes last in the scope, if there's a tie.
