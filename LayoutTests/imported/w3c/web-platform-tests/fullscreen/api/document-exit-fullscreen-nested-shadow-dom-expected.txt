@@ -1,17 +1,11 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected Element node <div id="outer">
-      <slot></slot>
-    </div> but got null
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
 fullscreen
 
-Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected Element node <div id="outer">
-      <slot></slot>
-    </div> but got null
+Harness Error (FAIL), message = Unhandled rejection: Type error
 
 TIMEOUT Exiting fullscreen from a nested shadow root works correctly. Test timed out
 
-Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected Element node <div id="outer">
-      <slot></slot>
-    </div> but got null
+Harness Error (FAIL), message = Unhandled rejection: Type error
 
 TIMEOUT Exiting fullscreen from a nested shadow root works correctly. Test timed out
 
