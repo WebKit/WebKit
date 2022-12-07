@@ -25,7 +25,6 @@
 #include "MediaSessionManagerGLib.h"
 #include <gio/gio.h>
 #include <wtf/SortedArrayMap.h>
-#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 
