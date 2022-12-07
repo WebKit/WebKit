@@ -23,13 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    MainWorldOnly,
-] interface WebExtensionAPIWebNavigationEvent {
+#pragma once
 
-    [NeedsPage, RaisesException] void addListener([CallbackHandler] function listener, [NSDictionary, Optional] any filter);
-    [NeedsPage] void removeListener([CallbackHandler] function listener);
-    boolean hasListener([CallbackHandler] function listener);
+#if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "JSWebExtensionAPIWebNavigationEvent.h"
+#include "JSWebExtensionWrappable.h"
+#include "WebExtensionAPIObject.h"
+#include "WebExtensionEventListenerType.h"
+#include "WebPage.h"
+
+OBJC_CLASS JSValue;
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSString;
+OBJC_CLASS NSURL;
+
+namespace WebKit {
+
+class WebExtensionAPIWebNavigationEvent : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebNavigationEvent, webNavigationEvent);
+
+public:
+    using ListenerVector = Vector<RefPtr<WebExtensionCallbackHandler>>;
+
+    void invokeListenersWithArgument(id argument, NSURL *targetURL);
+
+    const ListenerVector& listeners() const { return m_listeners; }
+
+    void addListener(WebPage*, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSString **exceptionString);
+    void removeListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
+    bool hasListener(RefPtr<WebExtensionCallbackHandler>);
+
+private:
+    WebExtensionEventListenerType m_type;
+    ListenerVector m_listeners;
 };
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)
