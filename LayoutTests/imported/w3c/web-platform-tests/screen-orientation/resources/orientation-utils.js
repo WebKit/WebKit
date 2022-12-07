@@ -42,7 +42,7 @@ export function makeCleanup(
     }
     screen.orientation.unlock();
     requestAnimationFrame(async () => {
-      try{
+      try {
         await document.exitFullscreen();
       } catch {}
     });

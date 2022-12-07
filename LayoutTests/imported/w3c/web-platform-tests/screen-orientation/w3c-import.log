@@ -17,12 +17,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/active-lock.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/event-before-promise.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation/hidden_document.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/lock-bad-argument.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/lock-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation/nested-documents.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/non-fully-active.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/onchange-event.html
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation/unlock.html

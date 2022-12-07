@@ -4,7 +4,7 @@ Harness Error (FAIL), message = Test named 'Test the orientations and associated
 PASS Test screen.orientation properties
 FAIL Test screen.orientation default values. assert_true: expected true got false
 PASS Test the orientations and associated angles
-FAIL Test that screen.orientation properties are not writable Attempted to assign to readonly property.
+PASS Test that screen.orientation properties are not writable
 PASS Test that screen.orientation is always the same object
 NOTRUN Test that screen.orientation values change if the orientation changes
 
