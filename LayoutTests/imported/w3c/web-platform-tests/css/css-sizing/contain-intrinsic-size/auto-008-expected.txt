@@ -1,5 +1,5 @@
 
-FAIL requestAnimationFrame assert_equals: No last remembered size - clientWidth expected 40 but got 100
-PASS Early ResizeObserver
-PASS Late ResizeObserver
+PASS requestAnimationFrame
+FAIL Early ResizeObserver assert_equals: Using last remembered size - clientWidth expected 100 but got 40
+FAIL Late ResizeObserver assert_equals: Using last remembered size - clientWidth expected 100 but got 40
 
