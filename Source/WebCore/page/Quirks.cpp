@@ -149,19 +149,6 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
 #endif
 }
 
-bool Quirks::shouldAutoplayForArbitraryUserGesture() const
-{
-#if PLATFORM(MAC)
-    return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::ArbitraryUserGestures);
-#else
-    if (!needsQuirks())
-        return false;
-
-    auto domain = RegistrableDomain { m_document->topDocument().url() };
-    return domain == "twitter.com"_s || domain == "facebook.com"_s;
-#endif
-}
-
 bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
 {
     if (!needsQuirks())

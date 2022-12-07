@@ -27,7 +27,6 @@ EXPECTED (usage.pageMediaPlaybackSuspended == 'false') OK
 EXPECTED (usage.isMediaDocumentAndNotOwnerElement == 'false') OK
 EXPECTED (usage.pageExplicitlyAllowsElementToAutoplayInline == 'false') OK
 EXPECTED (usage.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted == 'false') OK
-EXPECTED (usage.hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture == 'false') OK
 EXPECTED (usage.isVideoAndRequiresUserGestureForVideoRateChange == 'true') OK
 EXPECTED (usage.isAudioAndRequiresUserGestureForAudioRateChange == 'false') OK
 EXPECTED (usage.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode == 'false') OK
