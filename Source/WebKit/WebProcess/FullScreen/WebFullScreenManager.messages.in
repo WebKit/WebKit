@@ -22,7 +22,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 messages -> WebFullScreenManager LegacyReceiver {
-    RequestEnterFullScreen()
+    RequestRestoreFullScreen()
     RequestExitFullScreen()
     WillEnterFullScreen()
     DidEnterFullScreen()

@@ -81,7 +81,7 @@ protected:
     void setPIPStandbyElement(WebCore::HTMLVideoElement*);
 
     void setAnimatingFullScreen(bool);
-    void requestEnterFullScreen();
+    void requestRestoreFullScreen();
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();
@@ -97,6 +97,7 @@ protected:
     float m_topContentInset { 0 };
     RefPtr<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
+    WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_elementToRestore;
 #if ENABLE(VIDEO)
     RefPtr<WebCore::HTMLVideoElement> m_pipStandbyElement;
 #endif

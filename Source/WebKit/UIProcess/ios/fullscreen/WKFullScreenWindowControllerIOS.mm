@@ -721,7 +721,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     }];
 }
 
-- (void)requestEnterFullScreen
+- (void)requestRestoreFullScreen
 {
     if (_fullScreenState != WebKit::NotInFullScreen)
         return;
@@ -731,7 +731,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         page->fullscreenMayReturnToInline();
 
     if (auto* manager = self._manager) {
-        manager->requestEnterFullScreen();
+        manager->requestRestoreFullScreen();
         return;
     }
 
@@ -869,7 +869,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         _exitingFullScreen = NO;
         if (_enterRequested) {
             _enterRequested = NO;
-            [self requestEnterFullScreen];
+            [self requestRestoreFullScreen];
         }
     });
 
@@ -930,7 +930,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
                 if (_fullScreenState == WebKit::InFullScreen)
                     videoFullscreenInterface->preparedToReturnToStandby();
                 else
-                    [self requestEnterFullScreen];
+                    [self requestRestoreFullScreen];
             } else
                 _enterRequested = YES;
 
