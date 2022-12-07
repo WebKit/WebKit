@@ -6,11 +6,15 @@
 // It has been modified slightly by Google to work as a standalone benchmark,
 // but all the computational code remains untouched.
 
-// For JetStream3, this code was rewritten using ES6 classes,
+// For JetStream3, this code was rewritten using ES6 classes and public fields,
 // dropping namespaces and Prototype.js class system, as well as slightly refactored.
 // All the computational code still remains untouched.
 
 class Color {
+    red = 0;
+    green = 0;
+    blue = 0;
+
     constructor(red, green, blue) {
         this.red = red;
         this.green = green;
@@ -66,6 +70,11 @@ class Color {
 }
 
 class Light {
+    static defaultColor = new Color(0, 0, 0);
+
+    position = null;
+    color = Light.defaultColor;
+
     constructor(position, color) {
         this.position = position;
         this.color = color;
@@ -77,6 +86,10 @@ class Light {
 }
 
 class Vector {
+    x = 0;
+    y = 0;
+    z = 0;
+
     static add(v, w) {
         return new Vector(w.x + v.x, w.y + v.y, w.z + v.z);
     }
@@ -127,6 +140,9 @@ class Vector {
 }
 
 class Ray {
+    position = null;
+    direction = null;
+
     constructor(position, direction) {
         this.position = position;
         this.direction = direction;
@@ -138,6 +154,11 @@ class Ray {
 }
 
 class Scene {
+    camera = null;
+    background = null;
+    shapes = [];
+    lights = [];
+
     constructor(camera, background, shapes, lights) {
         this.camera = camera;
         this.background = background;
@@ -147,6 +168,11 @@ class Scene {
 }
 
 class Material {
+    reflection = 0;
+    transparency = 0;
+    gloss = 0;
+    hasTexture = false;
+
     constructor(reflection, transparency, gloss, hasTexture) {
         this.reflection = reflection;
         this.transparency = transparency;
@@ -183,6 +209,13 @@ class SolidMaterial extends Material {
 }
 
 class ChessboardMaterial extends Material {
+    static defaultColorEven = new Color(0, 0, 0);
+    static defaultColorOdd = new Color(0, 0, 0);
+
+    colorEven = ChessboardMaterial.defaultColorEven;
+    colorOdd = ChessboardMaterial.defaultColorOdd;
+    density = 1;
+
     constructor(colorEven, colorOdd, reflection, transparency, gloss, density) {
         super(reflection, transparency, gloss, true);
         this.colorEven = colorEven;
@@ -208,6 +241,9 @@ class ChessboardMaterial extends Material {
 }
 
 class Shape {
+    position = null;
+    material = null;
+
     constructor(position, material) {
         this.position = position;
         this.material = material;
@@ -219,6 +255,8 @@ class Shape {
 }
 
 class Sphere extends Shape {
+    radius = 0;
+
     constructor(position, material, radius) {
         super(position, material);
         this.radius = radius;
@@ -253,6 +291,8 @@ class Sphere extends Shape {
 }
 
 class Plane extends Shape {
+    d = 0;
+
     constructor(position, material, d) {
         super(position, material);
         this.d = d;
@@ -292,24 +332,28 @@ class Plane extends Shape {
 }
 
 class IntersectionInfo {
-    constructor() {
-        this.isHit = false;
-        this.hitCount = 0;
-        this.shape = null;
-        this.position = null;
-        this.normal = null;
-        this.color = IntersectionInfo.defaultColor;
-        this.distance = null;
-    }
+    static defaultColor = new Color(0, 0, 0);
+
+    isHit = false;
+    hitCount = 0;
+    shape = null;
+    position = null;
+    normal = null;
+    color = IntersectionInfo.defaultColor;
+    distance = null;
 
     toString() {
         return `Intersection [${this.position}]`;
     }
 }
 
-IntersectionInfo.defaultColor = new Color(0, 0, 0);
-
 class Camera {
+    position = null;
+    lookAt = null;
+    up = null;
+    equator = null;
+    screen = null;
+
     constructor(position, lookAt, up) {
         this.position = position;
         this.lookAt = lookAt;
@@ -339,6 +383,11 @@ class Camera {
 }
 
 class Background {
+    static defaultColor = new Color(0, 0, 0);
+
+    color = Background.defaultColor;
+    ambience = 0;
+
     constructor(color, ambience) {
         this.color = color;
         this.ambience = ambience;
@@ -350,11 +399,12 @@ class Background {
 }
 
 class Engine {
-    constructor(options) {
-        // Variable used to hold a number that can be used to verify that
-        // the scene was ray traced correctly.
-        this.checkNumber = 0;
+    // Variable used to hold a number that can be used to verify that
+    // the scene was ray traced correctly.
+    checkNumber = 0;
+    options = {};
 
+    constructor(options) {
         this.options = {
             canvasHeight: 100,
             canvasWidth: 100,

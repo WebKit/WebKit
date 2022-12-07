@@ -1207,6 +1207,7 @@ const SunSpiderGroup = Symbol.for("SunSpider");
 const BigIntNobleGroup = Symbol.for("BigIntNoble");
 const BigIntMiscGroup = Symbol.for("BigIntMisc");
 const ProxyGroup = Symbol.for("ProxyGroup");
+const ClassFieldsGroup = Symbol.for("ClassFieldsGroup");
 const WasmGroup = Symbol.for("Wasm");
 const WorkerTestsGroup = Symbol.for("WorkerTests");
 const WSLGroup = Symbol.for("WSL");
@@ -1403,7 +1404,6 @@ let testPlans = [
         files: [
             "./Octane/raytrace.js"
         ],
-        deterministicRandom: true,
         testGroup: OctaneGroup
     },
     {
@@ -1654,6 +1654,21 @@ let testPlans = [
         iterations: 20,
         worstCaseCount: 2,
         testGroup: ProxyGroup,
+    },
+    // Class fields
+    {
+        name: "raytrace-public-class-fields",
+        files: [
+            "./class-fields/raytrace-public-class-fields.js",
+        ],
+        testGroup: ClassFieldsGroup,
+    },
+    {
+        name: "raytrace-private-class-fields",
+        files: [
+            "./class-fields/raytrace-private-class-fields.js",
+        ],
+        testGroup: ClassFieldsGroup,
     },
     // Wasm
     {
@@ -1915,6 +1930,7 @@ let runSunSpider = true;
 let runBigIntNoble = true;
 let runBigIntMisc = true;
 let runProxy = true;
+let runClassFields = true;
 let runSimple = true;
 let runCDJS = true;
 let runWorkerTests = !!isInBrowser;
@@ -1934,6 +1950,7 @@ if (false) {
     runBigIntNoble = false;
     runBigIntMisc = false;
     runProxy = false;
+    runClassFields = false;
     runSimple = false;
     runCDJS = false;
     runWorkerTests = false;
@@ -1979,6 +1996,9 @@ if (typeof testList !== "undefined") {
 
     if (runProxy)
         addTestsByGroup(ProxyGroup);
+
+    if (runClassFields)
+        addTestsByGroup(ClassFieldsGroup);
 
     if (runWasm)
         addTestsByGroup(WasmGroup);
