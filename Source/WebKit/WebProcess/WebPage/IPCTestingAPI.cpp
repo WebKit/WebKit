@@ -487,7 +487,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 JSValueUnprotect(context, resolve);
                 JSGlobalContextRelease(JSContextGetGlobalContext(context));
             },
-            IPC::nextAsyncReplyHandlerID()
+            IPC::Connection::AsyncReplyID::generateThreadSafe()
         };
         connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), { });
     } else
@@ -2906,8 +2906,8 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     }
 
     if (!decoder.isSyncMessage() && messageReplyArgumentDescriptions(decoder.messageName())) {
-        if (uint64_t asyncReplyID = 0; decoder.decode(asyncReplyID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID));
+        if (IPC::Connection::AsyncReplyID asyncReplyID; decoder.decode(asyncReplyID)) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID.toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }

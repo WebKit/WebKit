@@ -158,7 +158,7 @@ template<typename U> bool WebNotificationManager::sendNotificationMessage(U&& me
 template<typename U> bool WebNotificationManager::sendNotificationMessageWithAsyncReply(U&& message, WebPage* page, CompletionHandler<void()>&& callback)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
-        return connection.sendWithAsyncReply(WTFMove(message), WTFMove(callback), destinationIdentifier);
+        return !!connection.sendWithAsyncReply(WTFMove(message), WTFMove(callback), destinationIdentifier);
     });
 }
 #endif // ENABLE(NOTIFICATIONS)

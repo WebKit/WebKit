@@ -30,6 +30,7 @@
 
 #import "APIPageConfiguration.h"
 #import "AccessibilityIOS.h"
+#import "Connection.h"
 #import "FullscreenClient.h"
 #import "GPUProcessProxy.h"
 #import "InputViewUpdateDeferrer.h"
@@ -151,7 +152,7 @@
 
     Lock _pendingBackgroundPrintFormattersLock;
     RetainPtr<NSMutableSet> _pendingBackgroundPrintFormatters;
-    uint64_t _pdfPrintCallbackID;
+    IPC::Connection::AsyncReplyID _pdfPrintCallbackID;
 
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
 }
@@ -666,7 +667,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (void)_resetPrintingState
 {
-    _pdfPrintCallbackID = 0;
+    _pdfPrintCallbackID = { };
 
     Locker locker { _pendingBackgroundPrintFormattersLock };
     for (_WKWebViewPrintFormatter *printFormatter in _pendingBackgroundPrintFormatters.get())
@@ -966,7 +967,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
         auto callbackID = retainedSelf->_page->drawToPDFiOS(frameID, printInfo, pageCount, [isPrintingOnBackgroundThread, printFormatter, retainedSelf](RefPtr<WebCore::SharedBuffer>&& pdfData) mutable {
             if (!isPrintingOnBackgroundThread)
-                retainedSelf->_pdfPrintCallbackID = 0;
+                retainedSelf->_pdfPrintCallbackID = { };
             else {
                 Locker locker { retainedSelf->_pendingBackgroundPrintFormattersLock };
                 [retainedSelf->_pendingBackgroundPrintFormatters removeObject:printFormatter.get()];
@@ -991,8 +992,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_waitForDrawToPDFCallbackForPrintFormatterIfNeeded:(_WKWebViewPrintFormatter *)printFormatter
 {
     if (isMainRunLoop()) {
-        if (auto callbackID = std::exchange(_pdfPrintCallbackID, 0))
-            _page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity());
+        if (auto callbackID = std::exchange(_pdfPrintCallbackID, { }))
+            _page->process().connection()->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity());
         return;
     }
 

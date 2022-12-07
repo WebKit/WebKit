@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIData.h"
+#import "Connection.h"
 #import "Logging.h"
 #import "PrintInfo.h"
 #import "ShareableBitmap.h"
@@ -208,18 +209,18 @@ static BOOL isForcingPreviewUpdate;
     return lastPage;
 }
 
-- (uint64_t)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
+- (IPC::Connection::AsyncReplyID)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
 {
-    for (HashMap<uint64_t, WebCore::IntRect>::iterator iter = _expectedPreviewCallbacks.begin(); iter != _expectedPreviewCallbacks.end(); ++iter) {
+    for (auto iter = _expectedPreviewCallbacks.begin(); iter != _expectedPreviewCallbacks.end(); ++iter) {
         if (iter->value  == rect)
             return iter->key;
     }
-    return 0;
+    return { };
 }
 
 struct IPCCallbackContext {
     RetainPtr<WKPrintingView> view;
-    uint64_t callbackID;
+    IPC::Connection::AsyncReplyID callbackID;
 };
 
 static void pageDidDrawToImage(const WebKit::ShareableBitmapHandle& imageHandle, IPCCallbackContext* context)
@@ -230,7 +231,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmapHandle& imageHandle,
 
     // If the user has already changed print setup, then this response is obsolete. And if this callback is not in response to the latest request,
     // then the user has already moved to another page - we'll cache the response, but won't draw it.
-    HashMap<uint64_t, WebCore::IntRect>::iterator iter = view->_expectedPreviewCallbacks.find(context->callbackID);
+    auto iter = view->_expectedPreviewCallbacks.find(context->callbackID);
     if (iter != view->_expectedPreviewCallbacks.end()) {
         ASSERT([view _isPrintingPreview]);
 
@@ -244,7 +245,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmapHandle& imageHandle,
         view->_expectedPreviewCallbacks.remove(context->callbackID);
         bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
         if (receivedResponseToLatestRequest) {
-            view->_latestExpectedPreviewCallback = 0;
+            view->_latestExpectedPreviewCallback = { };
             [view _updatePreview];
         }
     }
@@ -290,7 +291,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmapHandle& imageHandle,
             ASSERT(!view->_printedPagesPDFDocument);
             if (data)
                 view->_printedPagesData.append(data->bytes(), data->size());
-            view->_expectedPrintCallback = 0;
+            view->_expectedPrintCallback = { };
             view->_printingCallbackCondition.notifyOne();
         }
     };
@@ -314,7 +315,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         ASSERT(!view->_latestExpectedPreviewCallback);
         ASSERT(!view->_expectedPrintCallback);
         ASSERT(view->_pagePreviews.isEmpty());
-        view->_expectedComputedPagesCallback = 0;
+        view->_expectedComputedPagesCallback = { };
 
         view->_printingPageRects = pageRects;
         view->_totalScaleFactorForPrinting = totalScaleFactorForPrinting;
@@ -524,7 +525,7 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
     if (pagePreviewIterator == _pagePreviews.end())  {
         // It's too early to ask for page preview if we don't even know page size and scale.
         if ([self _hasPageRects]) {
-            if (uint64_t existingCallback = [self _expectedPreviewCallbackForRect:scaledPrintingRect]) {
+            if (auto existingCallback = [self _expectedPreviewCallbackForRect:scaledPrintingRect]) {
                 // We've already asked for a preview of this page, and are waiting for response.
                 // There is no need to ask again.
                 _latestExpectedPreviewCallback = existingCallback;
@@ -760,10 +761,10 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
     _pagePreviews.clear();
     _printedPagesData.clear();
     _printedPagesPDFDocument = nullptr;
-    _expectedComputedPagesCallback = 0;
+    _expectedComputedPagesCallback = { };
     _expectedPreviewCallbacks.clear();
-    _latestExpectedPreviewCallback = 0;
-    _expectedPrintCallback = 0;
+    _latestExpectedPreviewCallback = { };
+    _expectedPrintCallback = { };
 
     [self _delayedResumeAutodisplay];
     
