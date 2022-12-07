@@ -108,6 +108,9 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_didRenderingUpdateID = { };
     m_streamConnection->invalidate();
     m_streamConnection = nullptr;
+    auto pendingFlushes = std::exchange(m_pendingFlushes, { });
+    for (auto& flushState : pendingFlushes.values())
+        flushState->cancel();
 }
 
 RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
@@ -398,10 +401,11 @@ void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackend
     imageBuffer->didCreateImageBufferBackend(WTFMove(handle));
 }
 
-void RemoteRenderingBackendProxy::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier)
 {
-    if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier))
-        imageBuffer->didFlush(flushIdentifier);
+    auto flush = m_pendingFlushes.take(flushIdentifier);
+    ASSERT(flush);
+    flush->markCompletedFlush(flushIdentifier);
 }
 
 void RemoteRenderingBackendProxy::didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID)
@@ -436,6 +440,12 @@ void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Se
         return;
     }
     m_streamConnection->setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
+}
+
+void RemoteRenderingBackendProxy::addPendingFlush(RemoteImageBufferProxyFlushState& flushState, DisplayListRecorderFlushIdentifier identifier)
+{
+    auto result = m_pendingFlushes.add(identifier, flushState);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const

@@ -556,7 +556,7 @@ void RemoteDisplayListRecorder::applyDeviceScaleFactor(float scaleFactor)
 void RemoteDisplayListRecorder::flushContext(DisplayListRecorderFlushIdentifier identifier)
 {
     m_imageBuffer->flushContext();
-    m_renderingBackend->didFlush(identifier, m_imageBufferIdentifier);
+    m_renderingBackend->didFlush(identifier);
 }
 
 } // namespace WebKit

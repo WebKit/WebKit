@@ -31,14 +31,37 @@
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"
-#include "ThreadSafeRemoteImageBufferFlusher.h"
 #include <wtf/SystemTracing.h>
 
 namespace WebKit {
 using namespace WebCore;
 
+namespace {
+
+class RemoteImageBufferProxyFlusher final : public ThreadSafeImageBufferFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    RemoteImageBufferProxyFlusher(RemoteImageBufferProxyFlushState& flushState, DisplayListRecorderFlushIdentifier identifier)
+        : m_flushState(flushState)
+        , m_targetFlushIdentifier(identifier)
+    {
+    }
+
+    void flush() final
+    {
+        m_flushState->waitForDidFlushOnSecondaryThread(m_targetFlushIdentifier);
+    }
+
+private:
+    Ref<RemoteImageBufferProxyFlushState> m_flushState;
+    DisplayListRecorderFlushIdentifier m_targetFlushIdentifier;
+};
+
+}
+
 RemoteImageBufferProxy::RemoteImageBufferProxy(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     : ImageBuffer(parameters, info)
+    , m_flushState(adoptRef(*new RemoteImageBufferProxyFlushState))
     , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
     , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ImageBuffer::logicalSize() }, ImageBuffer::baseTransform())
 {
@@ -57,42 +80,16 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(*this);
 }
 
-
 void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
 {
     if (m_remoteRenderingBackendProxy)
         assertIsCurrent(m_remoteRenderingBackendProxy->dispatcher());
 }
 
-
-void RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier targetFlushIdentifier)
-{
-    ASSERT(!isMainRunLoop());
-    Locker locker { m_receivedFlushIdentifierLock };
-    m_receivedFlushIdentifierChangedCondition.wait(m_receivedFlushIdentifierLock, [&] {
-        assertIsHeld(m_receivedFlushIdentifierLock);
-        return m_receivedFlushIdentifier == targetFlushIdentifier;
-    });
-
-    // Nothing should have sent more drawing commands to the GPU process
-    // while waiting for this ImageBuffer to be flushed.
-    ASSERT(m_sentFlushIdentifier == targetFlushIdentifier);
-}
-
 bool RemoteImageBufferProxy::hasPendingFlush() const
 {
-    // It is safe to access m_receivedFlushIdentifier from the main thread without locking since it
-    // only gets modified on the main thread.
     assertDispatcherIsCurrent();
-    return m_sentFlushIdentifier != m_receivedFlushIdentifier;
-}
-
-void RemoteImageBufferProxy::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier)
-{
-    assertDispatcherIsCurrent();
-    Locker locker { m_receivedFlushIdentifierLock };
-    m_receivedFlushIdentifier = flushIdentifier;
-    m_receivedFlushIdentifierChangedCondition.notifyAll();
+    return m_sentFlushIdentifier != m_flushState->identifierForCompletedFlush();
 }
 
 void RemoteImageBufferProxy::backingStoreWillChange()
@@ -246,7 +243,8 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
 void RemoteImageBufferProxy::clearBackend()
 {
     m_needsFlush = false;
-    didFlush(m_sentFlushIdentifier);
+    m_sentFlushIdentifier = { };
+    m_flushState->cancel();
     prepareForBackingStoreChange();
     m_backend = nullptr;
 }
@@ -309,13 +307,16 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
     m_sentFlushIdentifier = DisplayListRecorderFlushIdentifier::generate();
     LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync - flush " << m_sentFlushIdentifier);
     m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
+    m_remoteRenderingBackendProxy->addPendingFlush(m_flushState, m_sentFlushIdentifier);
     m_needsFlush = false;
     return true;
 }
 
 std::unique_ptr<ThreadSafeImageBufferFlusher> RemoteImageBufferProxy::createFlusher()
 {
-    return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher>(*this);
+    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+        return nullptr;
+    return makeUnique<RemoteImageBufferProxyFlusher>(m_flushState, lastSentFlushIdentifier());
 }
 
 void RemoteImageBufferProxy::prepareForBackingStoreChange()
@@ -327,6 +328,37 @@ void RemoteImageBufferProxy::prepareForBackingStoreChange()
         return;
     if (auto* backend = ensureBackendCreated())
         backend->ensureNativeImagesHaveCopiedBackingStore();
+}
+
+void RemoteImageBufferProxyFlushState::waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier targetFlushIdentifier)
+{
+    Locker locker { m_lock };
+    if (m_identifier >= targetFlushIdentifier)
+        return;
+    m_condition.wait(m_lock, [&] {
+        assertIsHeld(m_lock);
+        return m_identifier >= targetFlushIdentifier;
+    });
+}
+
+void RemoteImageBufferProxyFlushState::markCompletedFlush(DisplayListRecorderFlushIdentifier flushIdentifier)
+{
+    Locker locker { m_lock };
+    if (m_identifier >= flushIdentifier && flushIdentifier)
+        return;
+    m_identifier = flushIdentifier;
+    m_condition.notifyAll();
+}
+
+DisplayListRecorderFlushIdentifier RemoteImageBufferProxyFlushState::identifierForCompletedFlush() const
+{
+    Locker locker { m_lock };
+    return m_identifier;
+}
+
+void RemoteImageBufferProxyFlushState::cancel()
+{
+    markCompletedFlush({ });
 }
 
 } // namespace WebKit
