@@ -178,6 +178,7 @@ const asyncTestImpl = (promise, thenFunc, catchFunc) => {
 const printExn = (e) => {
     print("Failed: ", e);
     print(e.stack);
+    $vm.abort();
 };
 
 export const asyncTest = (promise) => asyncTestImpl(promise, harnessCall(() => asyncTestPassed()), printExn);
@@ -186,7 +187,7 @@ export const asyncTestEq = (promise, expected) => {
         if (value === expected)
             return harnessCall(() => asyncTestPassed());
         print("Failed: got ", value, " but expected ", expected);
-
+        $vm.abort();
     }
     asyncTestImpl(promise, thenCheck, printExn);
 };

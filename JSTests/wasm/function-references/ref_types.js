@@ -208,7 +208,7 @@ async function testRefGlobalCheck() {
       )
     },
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: set_global 0 with type Externref with a variable of type Externref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
+    `WebAssembly.Module doesn't validate: set_global 0 with type Ref with a variable of type RefNull, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')`
   );
 }
 
