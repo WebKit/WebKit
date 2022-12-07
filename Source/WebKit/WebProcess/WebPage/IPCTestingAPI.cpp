@@ -489,9 +489,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             },
             IPC::Connection::AsyncReplyID::generateThreadSafe()
         };
-        connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), { });
+        connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), IPC::SendOption::IPCTestingMessage);
     } else
-        connection.sendMessage(WTFMove(encoder), { });
+        connection.sendMessage(WTFMove(encoder), IPC::SendOption::IPCTestingMessage);
 
     // FIXME: Add the support for specifying IPC options.
 
@@ -1061,7 +1061,7 @@ JSValueRef JSIPCStreamClientConnection::sendMessage(JSContextRef context, JSObje
 
     auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
     if (prepareToSendOutOfStreamMessage(context, argumentCount, arguments, *jsStreamConnection->m_jsIPC, streamConnection, encoder.get(), destinationID, timeout, exception))
-        connection.sendMessage(WTFMove(encoder), { });
+        connection.sendMessage(WTFMove(encoder), IPC::SendOption::IPCTestingMessage);
 
     return returnValue;
 }
