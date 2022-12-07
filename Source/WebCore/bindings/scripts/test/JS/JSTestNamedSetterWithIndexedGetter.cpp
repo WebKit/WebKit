@@ -375,9 +375,9 @@ JSC::GCClient::IsoSubspace* JSTestNamedSetterWithIndexedGetter::subspaceForImpl(
 {
     return WebCore::subspaceForImpl<JSTestNamedSetterWithIndexedGetter, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterWithIndexedGetter.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithIndexedGetter = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithIndexedGetter = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterWithIndexedGetter.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithIndexedGetter = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithIndexedGetter = std::forward<decltype(space)>(space); }
     );
 }
 

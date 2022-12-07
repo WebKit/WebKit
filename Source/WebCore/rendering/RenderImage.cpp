@@ -858,7 +858,7 @@ void RenderImage::layoutShadowContent(const LayoutSize& oldSize)
     clearChildNeedsLayout();
 }
 
-void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
+void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment());
     RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
@@ -877,9 +877,9 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, dou
     if (shouldDisplayBrokenImageIcon()) {
         if (settings().aspectRatioOfImgFromWidthAndHeightEnabled()
             && style().aspectRatioType() == AspectRatioType::AutoAndRatio && !isShowingAltText())
-            intrinsicRatio = style().logicalAspectRatio();
+            intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
         else
-            intrinsicRatio = 1;
+            intrinsicRatio = { 1.0, 1.0 };
         return;
     }
 }

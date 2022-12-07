@@ -1,0 +1,3 @@
+
+FAIL Do not crash when animating to unresolved var() promise_test: Unhandled rejection with value: object "SyntaxError: The given initial value does not parse for the given syntax."
+

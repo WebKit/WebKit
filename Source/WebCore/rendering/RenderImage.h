@@ -89,7 +89,7 @@ protected:
 
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;
-    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const final;
+    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const final;
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;

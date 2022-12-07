@@ -24,7 +24,6 @@ layer at (0,0) size 785x1030
           text run at (0,75) width 368: "P.three:first-line {font-variant: small-caps;}"
           text run at (368,75) width 0: " "
           text run at (0,90) width 0: " "
-      RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,170) size 769x54
         RenderInline (generated) at (0,0) size 10x17 [color=#800000]
           RenderText at (0,0) size 10x17
@@ -102,3 +101,5 @@ layer at (0,0) size 785x1030
                   text run at (0,82) width 739: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under CSS1, but it"
                   text run at (0,100) width 111: "is recommended. "
                   text run at (111,100) width 450: "In addition, the entire first line should be in a small-caps font and green."
+layer at (8,160) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]

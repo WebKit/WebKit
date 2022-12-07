@@ -82,7 +82,12 @@ RenderSVGViewportContainer* RenderSVGRoot::viewportContainer() const
     return dynamicDowncast<RenderSVGViewportContainer>(child);
 }
 
-void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
+bool RenderSVGRoot::hasIntrinsicAspectRatio() const
+{
+    return computeIntrinsicAspectRatio();
+}
+
+void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment());
 
@@ -100,13 +105,13 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
     intrinsicSize.setHeight(floatValueForLength(svgSVGElement().intrinsicHeight(), 0));
 
     if (style().aspectRatioType() == AspectRatioType::Ratio) {
-        intrinsicRatio = style().logicalAspectRatio();
+        intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
         return;
     }
 
-    std::optional<double> intrinsicRatioValue;
+    std::optional<LayoutSize> intrinsicRatioValue;
     if (!intrinsicSize.isEmpty())
-        intrinsicRatioValue = intrinsicSize.width() / static_cast<double>(intrinsicSize.height());
+        intrinsicRatioValue = { intrinsicSize.width(), intrinsicSize.height() }; 
     else {
         // - If either/both of the ‘width’ and ‘height’ of the rootmost ‘svg’ element are in percentage units (or omitted), the
         //   aspect ratio is calculated from the width and height values of the ‘viewBox’ specified for the current SVG document
@@ -115,14 +120,14 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
         FloatSize viewBoxSize = svgSVGElement().viewBox().size();
         if (!viewBoxSize.isEmpty()) {
             // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
-            intrinsicRatioValue = viewBoxSize.width() / static_cast<double>(viewBoxSize.height());
+            intrinsicRatioValue = { viewBoxSize.width(), viewBoxSize.height() };
         }
     }
 
     if (intrinsicRatioValue)
         intrinsicRatio = *intrinsicRatioValue;
     else if (style().aspectRatioType() == AspectRatioType::AutoAndRatio)
-        intrinsicRatio = style().logicalAspectRatio();
+        intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
 }
 
 bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
@@ -554,7 +559,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
 
     auto containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
 
-    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
+    bool preserve3D = mode & UseTransforms && participatesInPreserve3D(container);
     if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
         getTransformFromContainer(container, containerOffset, t);
@@ -599,7 +604,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     // For getCTM/getScreenCTM computations the result must be independent of the page zoom factor.
     // To compute these matrices within a non-SVG context (e.g. SVG embedded in HTML -- inline SVG)
     // the scaling needs to be removed from the CSS transform state.
-    TransformState transformStateAboveSVGFragment(transformState.direction(), transformState.mappedPoint());
+    TransformState transformStateAboveSVGFragment(settings().css3DTransformInteroperabilityEnabled(), transformState.direction(), transformState.mappedPoint());
     transformStateAboveSVGFragment.setTransformMatrixTracking(transformState.transformMatrixTracking());
     container->mapLocalToContainer(repaintContainer, transformStateAboveSVGFragment, mode, wasFixed);
 

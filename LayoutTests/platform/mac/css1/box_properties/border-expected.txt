@@ -26,7 +26,6 @@ layer at (0,0) size 785x1432
           text run at (163,105) width 1: " "
           text run at (0,120) width 227: "TD {border: 2px solid green;}"
           text run at (226,120) width 1: " "
-      RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,200) size 769x36
         RenderText {#text} at (0,0) size 765x36
           text run at (0,0) width 641: "Note that all table cells on this page should have a two-pixel solid green border along all four sides. "
@@ -186,3 +185,5 @@ layer at (0,0) size 785x1432
               RenderBlock {P} at (5,567) size 743x18
                 RenderText {#text} at (0,0) size 180x18
                   text run at (0,0) width 180: "This is an unstyled element."
+layer at (8,190) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]

@@ -77,8 +77,8 @@ public:
     WEBCORE_EXPORT void setSelectionEnd(unsigned);
     WEBCORE_EXPORT void setSelectionDirection(const String&);
     WEBCORE_EXPORT void select(SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
-    WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(const String& replacement);
-    WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode);
+    WEBCORE_EXPORT ExceptionOr<void> setRangeText(StringView replacement);
+    WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode);
     void setSelectionRange(unsigned start, unsigned end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     WEBCORE_EXPORT bool setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection = SelectionHasNoDirection, SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
 

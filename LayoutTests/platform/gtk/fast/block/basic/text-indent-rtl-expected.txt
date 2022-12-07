@@ -15,9 +15,10 @@ layer at (0,0) size 800x600
             text run at (0,18) width 109: "does the opposite"
         RenderText {#text} at (109,18) size 4x17
           text run at (109,18) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x36 [bgcolor=#00FFFF]
         RenderText {#text} at (41,0) size 743x35
           text run at (41,0) width 693: "The first line of this sententce should be indented 50 pixels to the left, but the rest of it should be flush with the"
           text run at (581,18) width 5 RTL: "."
           text run at (585,18) width 199: "normal right margin of the page"
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]

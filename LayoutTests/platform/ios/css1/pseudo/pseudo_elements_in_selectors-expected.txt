@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,28) width 250: "P:first-line.three {color: red;}"
           text run at (249,28) width 1: " "
           text run at (0,42) width 0: " "
-      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x40
         RenderText {#text} at (0,0) size 731x39
           text run at (0,0) width 345: "The first line of this sentence should be boldfaced. "
@@ -75,3 +74,5 @@ layer at (0,0) size 800x600
                   text run at (455,20) width 284: "If neither is the case, then the user agent has"
                   text run at (0,40) width 703: "correctly ignored the incorrect selector, but has suppressed other styles which are valid, and therefore must be"
                   text run at (0,60) width 215: "considered to have failed the test."
+layer at (8,113) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]

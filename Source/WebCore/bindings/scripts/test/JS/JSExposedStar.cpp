@@ -235,9 +235,9 @@ JSC::GCClient::IsoSubspace* JSExposedStar::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSExposedStar, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForExposedStar.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForExposedStar = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForExposedStar = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForExposedStar.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForExposedStar = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForExposedStar = std::forward<decltype(space)>(space); }
     );
 }
 

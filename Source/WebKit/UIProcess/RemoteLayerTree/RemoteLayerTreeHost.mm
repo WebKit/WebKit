@@ -295,8 +295,13 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerTypeModelLayer:
 #endif
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
-        return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
+    case PlatformCALayer::LayerTypeContentsProvidedLayer: {
+        auto layer = RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
+        // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
+        if (properties.type == PlatformCALayer::LayerTypeTiledBackingTileLayer)
+            [layer->layer() setValue:@YES forKey:@"isTile"];
+        return layer;
+    }
 
     case PlatformCALayer::LayerTypeTransformLayer:
         return makeWithLayer(adoptNS([[CATransformLayer alloc] init]));

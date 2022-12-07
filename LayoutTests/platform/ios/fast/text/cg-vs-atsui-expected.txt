@@ -38,7 +38,6 @@ layer at (0,0) size 800x398
               text run at (0,0) width 444: "mmm mmm mmm mmm mmm mmm"
           RenderText {#text} at (443,0) size 151x29
             text run at (443,0) width 151: " mmm mmm"
-      RenderBlock {HR} at (0,202) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,212) size 784x170
         RenderBlock {P} at (4,0) size 776x25
           RenderInline {SPAN} at (0,0) size 219x27 [border: (1px solid #008000)]
@@ -74,3 +73,5 @@ layer at (0,0) size 800x398
               text run at (0,0) width 328: "mmm mmm mmm mmm mmm mmm"
           RenderText {#text} at (327,0) size 112x25
             text run at (327,0) width 112: " mmm mmm"
+layer at (8,210) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,202) size 784x2 [border: (1px inset #000000)]

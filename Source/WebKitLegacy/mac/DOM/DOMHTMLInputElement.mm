@@ -659,13 +659,13 @@
 - (void)setRangeText:(NSString *)replacement
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setRangeText(replacement));
+    raiseOnDOMError(IMPL->setRangeText(String { replacement }));
 }
 
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setRangeText(replacement, start, end, selectionMode));
+    raiseOnDOMError(IMPL->setRangeText(String { replacement }, start, end, selectionMode));
 }
 
 - (void)setSelectionRange:(int)start end:(int)end

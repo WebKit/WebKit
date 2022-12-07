@@ -6,7 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 175x19
           text run at (0,0) width 175: "table width includes border"
-      RenderBlock {HR} at (0,28) size 202x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,38) size 200x48 [border: (10px outset #808080)]
         RenderTableSection {TBODY} at (10,10) size 180x28
           RenderTableRow {TR} at (0,2) size 180x24
@@ -40,3 +39,5 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 122x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 118x19
                         text run at (2,2) width 118: "100% nested table"
+layer at (8,36) size 202x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,28) size 202x2 [border: (1px inset #000000)]

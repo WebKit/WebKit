@@ -548,14 +548,14 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case ApplePayButtonPart:
         return paintApplePayButton(box, paintInfo, integralSnappedRect);
 #endif
+#if ENABLE(DATALIST_ELEMENT)
+    case ListButtonPart:
+        return paintListButton(box, paintInfo, devicePixelSnappedRect);
+#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case AttachmentPart:
     case BorderlessAttachmentPart:
         return paintAttachment(box, paintInfo, integralSnappedRect);
-#endif
-#if ENABLE(DATALIST_ELEMENT)
-    case ListButtonPart:
-        return paintListButton(box, paintInfo, devicePixelSnappedRect);
 #endif
     default:
         break;

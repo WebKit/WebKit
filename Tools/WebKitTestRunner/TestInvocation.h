@@ -127,7 +127,7 @@ private:
     enum class SnapshotResultType { WebView, WebContents };
     void dumpPixelsAndCompareWithExpected(SnapshotResultType, WKArrayRef repaintRects, WKImageRef = nullptr);
     void dumpAudio(WKDataRef);
-    bool compareActualHashToExpectedAndDumpResults(const char[33]);
+    bool compareActualHashToExpectedAndDumpResults(const std::string&);
 
     static void forceRepaintDoneCallback(WKErrorRef, void* context);
     

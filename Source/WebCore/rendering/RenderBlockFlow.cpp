@@ -480,6 +480,40 @@ void RenderBlockFlow::setChildrenInline(bool value)
     RenderBlock::setChildrenInline(value);
 }
 
+void RenderBlockFlow::setLeadingTrimForSubtree()
+{
+    auto* layoutState = view().frameView().layoutContext().layoutState();
+    if (!layoutState)
+        return;
+    auto leadingTrim = style().leadingTrim();
+    if (leadingTrim == LeadingTrim::Normal) {
+        if (borderAndPaddingStart()) {
+            // For block containers: trim the block-start side of the first formatted line to the corresponding
+            // text-edge metric of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders,
+            // there is no effect.
+            layoutState->resetLeadingTrim();
+        }
+        return;
+    }
+    // FIXME: Add support for nested leading trims if applicable.
+    layoutState->resetLeadingTrim();
+    if (leadingTrim == LeadingTrim::Start || leadingTrim == LeadingTrim::Both)
+        layoutState->addLeadingTrim(RenderLayoutState::LeadingTrimSide::Start);
+    if (leadingTrim == LeadingTrim::End || leadingTrim == LeadingTrim::Both)
+        layoutState->addLeadingTrim(RenderLayoutState::LeadingTrimSide::End);
+}
+
+void RenderBlockFlow::resetLeadingTrim()
+{
+    auto* layoutState = view().frameView().layoutContext().layoutState();
+    if (!layoutState || !layoutState->leadingTrim())
+        return;
+    if (layoutState->leadingTrim().contains(RenderLayoutState::LeadingTrimSide::Start) && hasLines()) {
+        // Only the first formatted line is trimmed.
+        layoutState->removeLeadingTrim(RenderLayoutState::LeadingTrimSide::Start);
+    }
+}
+
 void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
@@ -532,6 +566,8 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         if (!firstChild() && !isAnonymousBlock())
             setChildrenInline(true);
         dirtyForLayoutFromPercentageHeightDescendants();
+        setLeadingTrimForSubtree();
+
         if (childrenInline())
             layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         else
@@ -544,6 +580,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
             setEverHadLayout(true);
             continue;
         }
+        resetLeadingTrim();
         break;
     } while (true);
 

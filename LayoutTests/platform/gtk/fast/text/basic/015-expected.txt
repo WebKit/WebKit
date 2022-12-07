@@ -17,7 +17,6 @@ layer at (0,0) size 800x600
             text run at (277,18) width 88: "in some cases"
         RenderText {#text} at (364,18) size 5x17
           text run at (364,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 261x17
           text run at (0,0) width 261: "The first line should break after \x{201C}Lorem\x{201D}."
@@ -29,7 +28,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (39,19) size 37x17
             text run at (39,19) width 37: " dolor"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,150) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,168) size 784x18
         RenderText {#text} at (0,0) size 659x17
           text run at (0,0) width 477: "The first line should break after the letter u, so that the gray border does not "
@@ -40,7 +38,6 @@ layer at (0,0) size 800x600
             text run at (1,1) width 68: "Loremipsu"
             text run at (1,19) width 12: "m"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,248) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,266) size 784x18
         RenderText {#text} at (0,0) size 609x17
           text run at (0,0) width 427: "The first line should break after the letter p, so that the text does not "
@@ -51,10 +48,17 @@ layer at (0,0) size 800x600
             text run at (31,1) width 54: "Loremip"
             text run at (1,19) width 26: "sum"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,346) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,364) size 784x18
         RenderText {#text} at (0,0) size 253x17
           text run at (0,0) width 253: "\x{201C}Dolor\x{201D} should not break into two lines."
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,158) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,150) size 784x2 [border: (1px inset #000000)]
+layer at (8,256) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,248) size 784x2 [border: (1px inset #000000)]
+layer at (8,354) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,346) size 784x2 [border: (1px inset #000000)]
 layer at (8,406) size 41x20
   RenderBlock (positioned) {DIV} at (8,406) size 41x20
     RenderBlock {DIV} at (0,0) size 41x20 [border: (1px solid #00FFFF)]

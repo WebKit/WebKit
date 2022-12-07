@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,28) width 289: ".two {background-color: transparent;}"
           text run at (288,28) width 1: " "
           text run at (0,42) width 0: " "
-      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x20 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 282x19
           text run at (0,0) width 282: "This element's background should be green."
@@ -81,3 +80,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 754x19
                   text run at (0,0) width 469: "This element should allow the document background to \"shine through.\" "
                   text run at (468,0) width 286: "There should be no green backgrounds here!"
+layer at (8,113) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]

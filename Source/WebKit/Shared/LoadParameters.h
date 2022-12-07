@@ -56,7 +56,7 @@ struct LoadParameters {
     void platformEncode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool platformDecode(IPC::Decoder&, LoadParameters&);
 
-    uint64_t navigationID;
+    uint64_t navigationID { 0 };
 
     WebCore::ResourceRequest request;
     SandboxExtension::Handle sandboxExtensionHandle;

@@ -368,9 +368,9 @@ JSC::GCClient::IsoSubspace* JSDOMWindow::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSDOMWindow, UseCustomHeapCellType::Yes>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForDOMWindow.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDOMWindow = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDOMWindow = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForDOMWindow.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForDOMWindow = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForDOMWindow = std::forward<decltype(space)>(space); },
         [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeForJSDOMWindow; }
     );
 }

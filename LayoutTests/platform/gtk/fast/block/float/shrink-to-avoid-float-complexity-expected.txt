@@ -6,23 +6,18 @@ layer at (0,0) size 785x2077
       RenderBlock {H2} at (0,0) size 769x27
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 1 (1 float)"
-      RenderBlock {HR} at (48,294) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,344) size 769x28
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 2 (1 float)"
-      RenderBlock {HR} at (48,639) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,689) size 769x28
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 3 (1 float)"
-      RenderBlock {HR} at (48,984) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1034) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 4 (2 floats)"
-      RenderBlock {HR} at (48,1329) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1379) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 5 (2 floats)"
-      RenderBlock {HR} at (48,1674) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1724) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 6 (2 floats)"
@@ -75,6 +70,8 @@ layer at (208,67) size 469x162
     RenderBR {BR} at (205,126) size 0x17
     RenderText {#text} at (0,144) size 327x17
       text run at (0,144) width 327: "\x{2013} has a 100px left margin and a 100px right margin;"
+layer at (56,315) size 673x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (48,294) size 673x3 [border: (1px inset #000000)]
 layer at (8,412) size 769x200
   RenderBlock {DIV} at (0,391) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
@@ -124,6 +121,8 @@ layer at (208,412) size 569x162
     RenderBR {BR} at (52,126) size 0x17
     RenderText {#text} at (0,144) size 164x17
       text run at (0,144) width 164: "\x{2013} has a 200px left margin;"
+layer at (56,660) size 673x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (48,639) size 673x3 [border: (1px inset #000000)]
 layer at (8,757) size 769x200
   RenderBlock {DIV} at (0,736) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
@@ -174,6 +173,8 @@ layer at (308,757) size 369x162
     RenderBR {BR} at (261,126) size 0x17
     RenderText {#text} at (0,144) size 311x17
       text run at (0,144) width 311: "\x{2013} has a 0px left margin and a 100px right margin;"
+layer at (56,1005) size 673x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (48,984) size 673x3 [border: (1px inset #000000)]
 layer at (8,1102) size 769x200
   RenderBlock {DIV} at (0,1081) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
@@ -228,6 +229,8 @@ layer at (208,1102) size 369x162
     RenderBR {BR} at (261,126) size 0x17
     RenderText {#text} at (0,144) size 327x17
       text run at (0,144) width 327: "\x{2013} has a 100px left margin and a 100px right margin;"
+layer at (56,1350) size 673x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (48,1329) size 673x3 [border: (1px inset #000000)]
 layer at (8,1446) size 769x200
   RenderBlock {DIV} at (0,1426) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
@@ -282,6 +285,8 @@ layer at (208,1446) size 369x162
     RenderBR {BR} at (261,126) size 0x17
     RenderText {#text} at (0,144) size 173x17
       text run at (0,144) width 173: "\x{2013} has a 200px right margin;"
+layer at (56,1694) size 673x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (48,1674) size 673x3 [border: (1px inset #000000)]
 layer at (8,1791) size 769x270
   RenderBlock {DIV} at (0,1771) size 769x271 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]

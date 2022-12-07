@@ -408,11 +408,6 @@ HTMLElement* TextFieldInputType::innerSpinButtonElement() const
     return m_innerSpinButton.get();
 }
 
-HTMLElement* TextFieldInputType::capsLockIndicatorElement() const
-{
-    return m_capsLockIndicator.get();
-}
-
 HTMLElement* TextFieldInputType::autoFillButtonElement() const
 {
     return m_autoFillButton.get();

@@ -38,7 +38,6 @@ layer at (0,0) size 800x965
             RenderTableCell {TH} at (118,227) size 478x25 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (207,1) size 64x21
                 text run at (207,2) width 64: "text links"
-      RenderBlock {HR} at (0,273) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,291) size 784x20
         RenderInline {B} at (0,0) size 475x19
           RenderText {#text} at (0,0) size 475x19
@@ -78,7 +77,6 @@ layer at (0,0) size 800x965
             RenderTableCell {TH} at (114,161) size 473x24 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (204,2) size 64x19
                 text run at (204,2) width 64: "text links"
-      RenderBlock {HR} at (0,524) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,542) size 784x20
         RenderInline {B} at (0,0) size 511x19
           RenderText {#text} at (0,0) size 511x19
@@ -107,7 +105,6 @@ layer at (0,0) size 800x965
               RenderBlock {P} at (2,74) size 455x20
                 RenderText {#text} at (0,0) size 70x19
                   text run at (0,0) width 70: "etc., etc. ..."
-      RenderBlock {HR} at (0,767) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,785) size 784x20
         RenderInline {B} at (0,0) size 527x19
           RenderText {#text} at (0,0) size 527x19
@@ -136,3 +133,9 @@ layer at (0,0) size 800x965
               RenderBlock {P} at (2,74) size 446x20
                 RenderText {#text} at (0,0) size 70x19
                   text run at (0,0) width 70: "etc., etc. ..."
+layer at (8,281) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,273) size 784x2 [border: (1px inset #000000)]
+layer at (8,532) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,524) size 784x2 [border: (1px inset #000000)]
+layer at (8,775) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,767) size 784x2 [border: (1px inset #000000)]

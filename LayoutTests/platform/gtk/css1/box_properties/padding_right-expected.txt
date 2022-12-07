@@ -20,7 +20,6 @@ layer at (0,0) size 785x1153
           text run at (560,60) width 0: " "
           text run at (0,75) width 576: ".five {padding-right: -20px; text-align: right; background-color: aqua;}"
           text run at (576,75) width 0: " "
-      RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 769x18 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17
           text run at (0,0) width 203: "This element has a class of zero."
@@ -132,3 +131,5 @@ layer at (0,0) size 785x1153
                   text run at (14,18) width 408: "background and the normal padding should be aqua (light blue). "
                   text run at (422,18) width 325: "The text has been right-aligned in order to make the"
                   text run at (532,36) width 215: "lack of right padding easier to see."
+layer at (8,145) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]

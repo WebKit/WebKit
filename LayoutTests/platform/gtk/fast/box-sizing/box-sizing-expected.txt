@@ -1,0 +1,92 @@
+layer at (0,0) size 785x953
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x953
+  RenderBlock {HTML} at (0,0) size 785x954
+    RenderBody {BODY} at (8,8) size 769x938
+      RenderBlock (anonymous) at (0,0) size 769x36
+        RenderText {#text} at (0,0) size 733x35
+          text run at (0,0) width 733: "All of the boxes below should be 20x20 and look identical, except for the rightmost box in the Inline Blocks section,"
+          text run at (0,18) width 491: "which should look the same but be raised above the other three in that section."
+      RenderBlock {H1} at (0,57) size 769x38
+        RenderText {#text} at (0,0) size 203x36
+          text run at (0,0) width 203: "Normal Blocks"
+      RenderBlock {DIV} at (5,115) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (5,145) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (5,175) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (5,205) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderBR {BR} at (6,6) size 0x17
+        RenderBR {BR} at (6,24) size 0x17
+        RenderBR {BR} at (6,42) size 0x17
+      RenderBlock {H1} at (0,247) size 769x38
+        RenderText {#text} at (0,0) size 178x36
+          text run at (0,0) width 178: "Inline Blocks"
+      RenderBlock (anonymous) at (0,305) size 769x67
+        RenderBlock {DIV} at (5,36) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderBlock {DIV} at (35,36) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderBlock {DIV} at (65,36) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderBlock {DIV} at (95,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+          RenderBR {BR} at (6,6) size 0x17
+          RenderBR {BR} at (6,24) size 0x17
+          RenderBR {BR} at (6,42) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H1} at (0,393) size 769x38
+        RenderText {#text} at (0,0) size 241x36
+          text run at (0,0) width 241: "Positioned Blocks"
+      RenderBlock (anonymous) at (0,451) size 769x19
+        RenderBR {BR} at (0,0) size 0x17
+      RenderBlock {H1} at (0,491) size 769x38
+        RenderText {#text} at (0,0) size 210x36
+          text run at (0,0) width 210: "Floating blocks"
+      RenderBlock (floating) {DIV} at (5,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (35,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (65,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (95,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderBR {BR} at (6,6) size 0x17
+        RenderBR {BR} at (6,24) size 0x17
+        RenderBR {BR} at (6,42) size 0x17
+      RenderBlock (anonymous) at (0,549) size 769x41
+        RenderBR {BR} at (120,0) size 0x17
+      RenderBlock {H1} at (0,610) size 769x38
+        RenderText {#text} at (0,0) size 210x36
+          text run at (0,0) width 210: "Normal Images"
+      RenderBlock (anonymous) at (0,669) size 769x41
+        RenderImage {IMG} at (5,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderImage {IMG} at (35,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderImage {IMG} at (65,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderImage {IMG} at (95,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H1} at (0,730) size 769x38
+        RenderText {#text} at (0,0) size 248x36
+          text run at (0,0) width 248: "Positioned Images"
+      RenderBlock (anonymous) at (0,789) size 769x19
+        RenderBR {BR} at (0,0) size 0x17
+      RenderBlock {H1} at (0,828) size 769x38
+        RenderText {#text} at (0,0) size 220x36
+          text run at (0,0) width 220: "Floating Images"
+      RenderImage {IMG} at (5,897) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderImage {IMG} at (35,897) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderImage {IMG} at (65,897) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderImage {IMG} at (95,897) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (anonymous) at (0,887) size 769x41
+        RenderBR {BR} at (120,0) size 0x17
+layer at (8,943) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,935) size 769x3 [border: (1px inset #000000)]
+layer at (13,470) size 20x20
+  RenderBlock (positioned) {DIV} at (13,469) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (43,470) size 20x20
+  RenderBlock (positioned) {DIV} at (43,469) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (73,470) size 20x20
+  RenderBlock (positioned) {DIV} at (73,469) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (103,470) size 20x20
+  RenderBlock (positioned) {DIV} at (103,469) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+    RenderBR {BR} at (6,6) size 0x17
+    RenderBR {BR} at (6,24) size 0x17
+    RenderBR {BR} at (6,42) size 0x17
+layer at (13,807) size 20x20
+  RenderImage {IMG} at (13,807) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (43,807) size 20x20
+  RenderImage {IMG} at (43,807) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (73,807) size 20x20
+  RenderImage {IMG} at (73,807) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (103,807) size 20x20
+  RenderImage {IMG} at (103,807) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]

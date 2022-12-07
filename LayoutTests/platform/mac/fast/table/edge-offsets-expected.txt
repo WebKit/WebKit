@@ -19,11 +19,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 660x18
           text run at (0,0) width 660: "The top two boxes should have horizontal scroll bars. The bottom box should have a vertical scroll bar."
-      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,198) size 784x18
         RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,318) size 784x18
         RenderBR {BR} at (0,0) size 0x18
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
 layer at (8,104) size 102x102 clip at (9,105) size 100x85 scrollWidth 133
   RenderBlock {DIV} at (0,96) size 102x102 [border: (1px solid #0000FF)]
     RenderTable {TABLE} at (1,1) size 6x6

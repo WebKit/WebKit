@@ -117,6 +117,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 #endif
 
 @class UIEventAttribution;
+@class UITextInputTraits;
 @class WKBrowsingContextHandle;
 @class WKDownload;
 @class WKFrameInfo;
@@ -632,6 +633,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (void)_isNavigatingToAppBoundDomain:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(ios(14.0));
 - (void)_isForcedIntoAppBoundMode:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(ios(14.0));
+
+- (UITextInputTraits *)_textInputTraits WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @end
 

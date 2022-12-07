@@ -15,11 +15,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 720x19
           text run at (0,0) width 720: "The word \x{201C}dolor\x{201D} below should be highlighted in its entirety. The highlight should not extend beyond that word."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,102) size 784x20
         RenderInline {SPAN} at (0,0) size 178x19
           RenderText {#text} at (0,0) size 178x19
             text run at (0,0) width 178: "Lo\x{308}re\x{300}m ipsum dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
 selection start: position 14 of child 0 {#text} of child 7 {SPAN} of body
 selection end:   position 19 of child 0 {#text} of child 7 {SPAN} of body

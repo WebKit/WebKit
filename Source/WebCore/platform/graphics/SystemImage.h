@@ -40,6 +40,9 @@ enum class SystemImageType : uint8_t {
 #if USE(SYSTEM_PREVIEW)
     ARKitBadge,
 #endif
+#if USE(APPKIT)
+    AppKitControl,
+#endif
 };
 
 class WEBCORE_EXPORT SystemImage : public RefCounted<SystemImage> {
@@ -74,6 +77,9 @@ template<> struct EnumTraits<WebCore::SystemImageType> {
 #endif
 #if USE(SYSTEM_PREVIEW)
         , WebCore::SystemImageType::ARKitBadge
+#endif
+#if USE(APPKIT)
+        , WebCore::SystemImageType::AppKitControl
 #endif
     >;
 };

@@ -100,10 +100,15 @@ std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Pr
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
+    case Inspector::Protocol::Automation::VirtualKey::ShiftRight:
     case Inspector::Protocol::Automation::VirtualKey::Control:
+    case Inspector::Protocol::Automation::VirtualKey::ControlRight:
     case Inspector::Protocol::Automation::VirtualKey::Alternate:
+    case Inspector::Protocol::Automation::VirtualKey::AlternateRight:
     case Inspector::Protocol::Automation::VirtualKey::Meta:
+    case Inspector::Protocol::Automation::VirtualKey::MetaRight:
     case Inspector::Protocol::Automation::VirtualKey::Command:
+    case Inspector::Protocol::Automation::VirtualKey::CommandRight:
         return std::nullopt;
     case Inspector::Protocol::Automation::VirtualKey::Help:
         return NSHelpFunctionKey;

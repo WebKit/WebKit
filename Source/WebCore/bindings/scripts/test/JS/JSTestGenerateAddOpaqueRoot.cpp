@@ -185,9 +185,9 @@ JSC::GCClient::IsoSubspace* JSTestGenerateAddOpaqueRoot::subspaceForImpl(JSC::VM
 {
     return WebCore::subspaceForImpl<JSTestGenerateAddOpaqueRoot, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestGenerateAddOpaqueRoot.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGenerateAddOpaqueRoot = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGenerateAddOpaqueRoot = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestGenerateAddOpaqueRoot.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestGenerateAddOpaqueRoot = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestGenerateAddOpaqueRoot = std::forward<decltype(space)>(space); }
     );
 }
 

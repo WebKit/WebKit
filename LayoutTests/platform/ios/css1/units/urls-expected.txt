@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,28) width 344: "BODY {background: url(../resources/bg.gif);}"
           text run at (343,28) width 1: " "
           text run at (0,42) width 0: " "
-      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x20
         RenderText {#text} at (0,0) size 393x19
           text run at (0,0) width 393: "This page should have a green grid pattern as its background."
@@ -58,3 +57,5 @@ layer at (0,0) size 800x600
                   text run at (626,0) width 122: "If an image, in this"
                   text run at (0,20) width 722: "case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in"
                   text run at (0,40) width 370: "relation to the document's URL, not the stylesheet's URL."
+layer at (8,113) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]

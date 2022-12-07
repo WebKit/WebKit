@@ -1504,7 +1504,7 @@ public:
 
     ALWAYS_INLINE void ins(FPRegisterID vd, RegisterID rn, SIMDLane lane, uint32_t laneIndex)
     {
-        insn(simdGeneral(1, encodeLaneAndIndex(lane, laneIndex), 0b0011, rn, vd));
+        insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, laneIndex), 0b0011, rn, vd));
     }
 
     ALWAYS_INLINE void ins(FPRegisterID vd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
@@ -1522,44 +1522,27 @@ public:
     ALWAYS_INLINE void umov(RegisterID rd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
     {
         ASSERT(scalarTypeIsIntegral(lane));
-        insn(simdGeneral(simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0111, vn, rd));
+        insn(simdGeneral(0, simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0111, vn, rd));
     }
 
     ALWAYS_INLINE void smov(RegisterID rd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
     {
         ASSERT(scalarTypeIsIntegral(lane));
-        insn(simdGeneral(simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0101, vn, rd));
+        insn(simdGeneral(0, simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0101, vn, rd));
     }
 
     ALWAYS_INLINE void dupElement(FPRegisterID vd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
     {
         // Take element from vector and put it in vd
         ASSERT(scalarTypeIsFloatingPoint(lane));
-        insn(0b01011110000000000000010000000000 | (encodeLaneAndIndex(lane, laneIndex) << 16) | (vn << 5) | vd);
+        insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, laneIndex), 0b0000, vn, vd));
     }
 
     ALWAYS_INLINE void dupGeneral(FPRegisterID vd, RegisterID rn, SIMDLane lane)
     {
         // Take element from gpr and put it in each lane in vd
         ASSERT(scalarTypeIsIntegral(lane));
-        int imm5;
-        switch (elementByteSize(lane)) {
-        case 1:
-            imm5 = 0b00001;
-            break;
-        case 2:
-            imm5 = 0b00010;
-            break;
-        case 4:
-            imm5 = 0b00100;
-            break;
-        case 8:
-            imm5 = 0b01000;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        insn(0b01001110000000000000110000000000 | (imm5 << 16) | (rn << 5) | vd);
+        insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, 0), 0b0001, rn, vd));
     }
 
     ALWAYS_INLINE void fcmeq(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
@@ -4498,9 +4481,9 @@ protected:
         return 0x1e7e0000 | (dn << 5) | rd;
     }
     
-    static int simdGeneral(bool Q, int imm5, int imm4, int rn, int rd)
+    static int simdGeneral(bool scalar, bool Q, int imm5, int imm4, int rn, int rd)
     {
-        return 0b0'0'0'01110000'00000'0'00'0'0'1'00000'00000 | (Q << 30) | (imm5 << 16) | (imm4 << 11) | (rn << 5) | rd;
+        return 0b0'0'0'01110000'00000'0'00'0'0'1'00000'00000 | (Q << 30) | (scalar << 28) | (imm5 << 16) | (imm4 << 11) | (rn << 5) | rd;
     }
 
     static int simdFloatingPointVectorCompare(bool U, bool E, bool ac, SIMDLane lane, FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)

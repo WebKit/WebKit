@@ -3,8 +3,6 @@ layer at (0,0) size 1992x1010
 layer at (0,0) size 800x1010
   RenderBlock {HTML} at (0,0) size 800x1010
     RenderBody {BODY} at (8,8) size 784x994
-      RenderBlock {HR} at (0,358) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,676) size 784x2 [border: (1px inset #000000)]
 layer at (8,8) size 784x350
   RenderBlock {DIV} at (0,0) size 784x350
     RenderMultiColumnSet at (0,0) size 784x350
@@ -139,6 +137,8 @@ layer at (8,8) size 384x1307 backgroundClip at (0,0) size 1992x1010 clip at (0,0
               RenderText {#text} at (11,12) size 146x147
                 text run at (11,12) width 146: "Other"
                 text run at (11,87) width 109: "cell."
+layer at (8,366) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,358) size 784x2 [border: (1px inset #000000)]
 layer at (8,376) size 784x300
   RenderBlock {DIV} at (0,368) size 784x300
     RenderMultiColumnSet at (0,0) size 784x300
@@ -273,6 +273,8 @@ layer at (8,376) size 384x1293 backgroundClip at (0,0) size 1992x1010 clip at (0
               RenderText {#text} at (11,70) size 146x148
                 text run at (11,71) width 146: "Other"
                 text run at (11,146) width 109: "cell."
+layer at (8,684) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,676) size 784x2 [border: (1px inset #000000)]
 layer at (8,702) size 784x300
   RenderBlock {DIV} at (0,694) size 784x300
     RenderMultiColumnSet at (0,0) size 784x300

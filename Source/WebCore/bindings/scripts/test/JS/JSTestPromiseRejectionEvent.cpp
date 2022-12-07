@@ -300,9 +300,9 @@ JSC::GCClient::IsoSubspace* JSTestPromiseRejectionEvent::subspaceForImpl(JSC::VM
 {
     return WebCore::subspaceForImpl<JSTestPromiseRejectionEvent, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestPromiseRejectionEvent.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestPromiseRejectionEvent = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestPromiseRejectionEvent = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestPromiseRejectionEvent.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestPromiseRejectionEvent = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestPromiseRejectionEvent = std::forward<decltype(space)>(space); }
     );
 }
 

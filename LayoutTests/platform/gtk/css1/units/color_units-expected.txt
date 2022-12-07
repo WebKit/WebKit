@@ -32,7 +32,6 @@ layer at (0,0) size 785x1699
           text run at (264,150) width 0: " "
           text run at (0,165) width 264: ".eleven {color: rgb(50%,0%,60%);}"
           text run at (264,165) width 0: " "
-      RenderBlock {HR} at (0,227) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,245) size 769x18
         RenderText {#text} at (0,0) size 193x17
           text run at (0,0) width 193: "This sentence should be black."
@@ -236,3 +235,5 @@ layer at (0,0) size 785x1699
                     text run at (281,3) width 40: "style"
                 RenderText {#text} at (321,0) size 59x17
                   text run at (321,0) width 59: " attribute."
+layer at (8,235) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,227) size 769x2 [border: (1px inset #000000)]

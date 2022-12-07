@@ -28,10 +28,13 @@
 
 #include "APINavigation.h"
 #include "Connection.h"
+#include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
+#include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxyMessages.h"
 #include "WebPageMessages.h"
+#include "WebPageProxyMessages.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
@@ -72,6 +75,7 @@ bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
 WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, FrameIdentifier frameID)
     : m_page(page)
     , m_process(process)
+    , m_webPageID(page.webPageID())
     , m_frameID(frameID)
 {
     ASSERT(!allFrames().contains(frameID));
@@ -94,6 +98,11 @@ WebFrameProxy::~WebFrameProxy()
 
     ASSERT(allFrames().get(m_frameID) == this);
     allFrames().remove(m_frameID);
+
+    if (m_parentFrameProcess) {
+        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+        m_process->removeFrameWithRemoteFrameProcess(*this);
+    }
 }
 
 void WebFrameProxy::webProcessWillShutDown()
@@ -241,6 +250,9 @@ void WebFrameProxy::didFinishLoad()
 
     if (m_navigateCallback)
         m_navigateCallback(pageIdentifier(), frameID());
+
+    if (m_parentFrameProcess)
+        m_parentFrameProcess->send(Messages::WebFrame::DidFinishLoadInAnotherProcess(), m_frameID.object());
 }
 
 void WebFrameProxy::didFailLoad()
@@ -249,6 +261,8 @@ void WebFrameProxy::didFailLoad()
 
     if (m_navigateCallback)
         m_navigateCallback({ }, { });
+
+    // FIXME: Should we send DidFinishLoadInAnotherProcess here too?
 }
 
 void WebFrameProxy::didSameDocumentNavigation(const URL& url)
@@ -363,16 +377,10 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
     m_childFrames.add(WTFMove(child));
 }
 
-void WebFrameProxy::swapToProcess(WebProcessProxy& process)
+void WebFrameProxy::swapToProcess(Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request)
 {
     ASSERT(!isMainFrame());
-    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object());
-    m_process = process;
-
-    // FIXME: This identifier may collide with identifiers generated in the new process.
-    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object(), *this);
-
-    // FIXME: Do more here.
+    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, WTFMove(process), request);
 }
 
 IPC::Connection* WebFrameProxy::messageSenderConnection() const
@@ -383,6 +391,22 @@ IPC::Connection* WebFrameProxy::messageSenderConnection() const
 uint64_t WebFrameProxy::messageSenderDestinationID() const
 {
     return m_frameID.object().toUInt64();
+}
+
+void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, std::optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
+{
+    // FIXME: Not only is this a race condition, but we still want to receive messages,
+    // such as if the parent frame navigates the remote frame.
+    m_provisionalFrame->process().provisionalFrameCommitted(*this);
+    send(Messages::WebFrame::DidCommitLoadInAnotherProcess());
+    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object());
+    m_parentFrameProcess = std::exchange(m_process, m_provisionalFrame->process());
+    m_provisionalFrame = nullptr;
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *page()); // FIXME: We might want another message relayer so we can tell if messages came from the remote frame process or m_process.
+    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object(), *this);
+
+    if (m_page)
+        m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, forcedHasInsecureContent, mouseEventPolicy, userData);
 }
 
 } // namespace WebKit

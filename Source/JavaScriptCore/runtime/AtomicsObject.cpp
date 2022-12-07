@@ -455,8 +455,7 @@ JSValue atomicsWaitImpl(JSGlobalObject* globalObject, JSArrayType* typedArray, u
         return { };
     }
 
-    AtomicsWaitValidation validation = WTF::atomicLoad(ptr) == expectedValue ? AtomicsWaitValidation::Pass : AtomicsWaitValidation::Fail;
-    return WaiterListManager::singleton().wait(globalObject, vm, ptr, validation, timeout, type);
+    return WaiterListManager::singleton().wait(globalObject, vm, ptr, expectedValue, timeout, type);
 }
 
 JSC_DEFINE_HOST_FUNCTION(atomicsFuncWait, (JSGlobalObject* globalObject, CallFrame* callFrame))

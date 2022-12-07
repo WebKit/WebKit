@@ -16,7 +16,6 @@ layer at (0,0) size 800x600
             text run at (0,18) width 238: "their top, left and children's overflows"
         RenderText {#text} at (237,18) size 5x17
           text run at (237,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,62) size 784x100
         RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
           RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
@@ -40,3 +39,5 @@ layer at (0,0) size 800x600
               text run at (1,91) width 31: "Nam"
               text run at (1,109) width 98: "consectetuer mi"
               text run at (1,127) width 61: "eget velit."
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]

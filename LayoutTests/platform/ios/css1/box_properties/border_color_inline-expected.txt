@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
           text run at (553,14) width 1: " "
           text run at (0,28) width 710: ".three {border-color: purple green blue yellow; border-width: medium; border-style: solid;}"
           text run at (709,28) width 1: " "
-      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,109) size 784x80 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 691x19
           text run at (0,0) width 691: "This is an unstyled element, save for the background color, and containing inline elements with a classes of "
@@ -71,3 +70,5 @@ layer at (0,0) size 800x600
                   text run at (0,40) width 651: "in the first and second cases, and a purple-green-blue-yellow medium-width solid border in the third. "
                   text run at (650,40) width 99: "The line-height"
                   text run at (0,60) width 375: "of the parent element should not change at all, on any line."
+layer at (8,99) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]

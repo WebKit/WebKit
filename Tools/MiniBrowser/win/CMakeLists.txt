@@ -22,7 +22,7 @@ set(MiniBrowser_PRIVATE_LIBRARIES
 
 if (USE_CF)
     list(APPEND MiniBrowser_PRIVATE_LIBRARIES
-        ${COREFOUNDATION_LIBRARY}
+        Apple::CoreFoundation
     )
 endif ()
 

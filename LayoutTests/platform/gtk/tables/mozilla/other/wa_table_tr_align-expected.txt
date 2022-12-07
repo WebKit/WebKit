@@ -20,7 +20,6 @@ layer at (0,0) size 785x1310
             RenderText {#text} at (0,0) size 216x26
               text run at (0,0) width 216: "Table: <TR> ALIGN"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,177) size 769x3 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,187) size 769x73
         RenderText {#text} at (0,0) size 270x17
           text run at (0,0) width 270: "This acceptance test case tests the optional "
@@ -128,7 +127,6 @@ layer at (0,0) size 785x1310
           RenderListMarker at (-20,0) size 16x17: "6"
           RenderText {#text} at (0,0) size 130x17
             text run at (0,0) width 130: "Verify reload works."
-      RenderBlock {HR} at (0,535) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,553) size 769x63
         RenderTable {TABLE} at (0,0) size 769x62 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 767x60
@@ -174,7 +172,6 @@ layer at (0,0) size 785x1310
               RenderTableCell {TD} at (230,26) size 113x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 67x17
                   text run at (2,2) width 67: "row data 3"
-      RenderBlock {HR} at (0,717) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,735) size 769x63
         RenderTable {TABLE} at (0,0) size 769x62 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 767x60
@@ -309,7 +306,6 @@ layer at (0,0) size 785x1310
                 RenderText {#text} at (43,2) size 68x17
                   text run at (43,2) width 68: "row data 3"
       RenderBlock {P} at (0,1223) size 769x0
-      RenderBlock {HR} at (0,1223) size 769x3 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1233) size 769x19
         RenderImage {IMG} at (0,1) size 13x13
         RenderText {#text} at (13,0) size 121x17
@@ -321,3 +317,11 @@ layer at (0,0) size 785x1310
       RenderBlock {P} at (0,1267) size 769x19
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,1301) size 769x0
+layer at (8,186) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,177) size 769x3 [border: (1px inset #000000)]
+layer at (8,544) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,535) size 769x3 [border: (1px inset #000000)]
+layer at (8,726) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,717) size 769x3 [border: (1px inset #000000)]
+layer at (8,1232) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1223) size 769x3 [border: (1px inset #000000)]

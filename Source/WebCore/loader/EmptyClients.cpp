@@ -51,7 +51,6 @@
 #include "EditorClient.h"
 #include "EmptyAttachmentElementClient.h"
 #include "EmptyFrameLoaderClient.h"
-#include "FileChooser.h"
 #include "FormState.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"

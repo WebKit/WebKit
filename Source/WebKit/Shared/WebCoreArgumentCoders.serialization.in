@@ -1680,3 +1680,100 @@ header: <WebCore/TextManipulationToken.h>
     URL documentURL;
     bool isVisible;
 };
+
+struct WebCore::VelocityData {
+    float horizontalVelocity;
+    float verticalVelocity;
+    float scaleChangeRate;
+    MonotonicTime lastUpdateTime;
+};
+
+header: <WebCore/PluginData.h>
+[CustomHeader] struct WebCore::MimeClassInfo {
+    AtomString type;
+    String desc;
+    Vector<String> extensions;
+};
+
+class WebCore::AuthenticationChallenge {
+    WebCore::ProtectionSpace protectionSpace();
+    WebCore::Credential proposedCredential();
+    unsigned previousFailureCount();
+    WebCore::ResourceResponse failureResponse();
+    WebCore::ResourceError error();
+    
+#if USE(SOUP)
+    uint32_t tlsPasswordFlags();
+#endif
+};
+
+#if ENABLE(DRAG_SUPPORT)
+class WebCore::DragData {
+#if PLATFORM(COCOA)
+    String pasteboardName();
+#endif
+    WebCore::IntPoint clientPosition();
+    WebCore::IntPoint globalPosition();
+#if PLATFORM(COCOA)
+    Vector<String> fileNames();
+#endif
+    OptionSet<WebCore::DragOperation> draggingSourceOperationMask();
+    OptionSet<WebCore::DragApplicationFlags> flags();
+    OptionSet<WebCore::DragDestinationAction> dragDestinationActionMask();
+    std::optional<WebCore::PageIdentifier> pageID();
+};
+#endif
+
+struct WebCore::DictationAlternative {
+    WebCore::CharacterRange range;
+    WebCore::DictationContext context;
+};
+
+class WebCore::UserStyleSheet {
+    String source();
+    URL url();
+    Vector<String> allowlist();
+    Vector<String> blocklist();
+    WebCore::UserContentInjectedFrames injectedFrames();
+    WebCore::UserStyleLevel level();
+    std::optional<WebCore::PageIdentifier> pageID();
+};
+
+header: <WebCore/ScrollTypes.h>
+[CustomHeader] enum class WebCore::ScrollElasticity : uint8_t {
+    Automatic,
+    None,
+    Allowed
+};
+
+header: <WebCore/ScrollTypes.h>
+[CustomHeader] enum class WebCore::ScrollbarMode : uint8_t {
+    Auto,
+    AlwaysOff,
+    AlwaysOn
+};
+
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[CustomHeader] struct WebCore::ScrollableAreaParameters {
+    WebCore::ScrollElasticity horizontalScrollElasticity;
+    WebCore::ScrollElasticity verticalScrollElasticity;
+    WebCore::ScrollbarMode horizontalScrollbarMode;
+    WebCore::ScrollbarMode verticalScrollbarMode;
+    WebCore::OverscrollBehavior horizontalOverscrollBehavior;
+    WebCore::OverscrollBehavior verticalOverscrollBehavior;
+    bool allowsHorizontalScrolling;
+    bool allowsVerticalScrolling;
+    bool horizontalScrollbarHiddenByStyle;
+    bool verticalScrollbarHiddenByStyle;
+    bool useDarkAppearanceForScrollbars;
+};
+
+header: <WebCore/ScrollingConstraints.h>
+[CustomHeader] class WebCore::AbsolutePositionConstraints {
+    WebCore::FloatSize alignmentOffset();
+    WebCore::FloatPoint layerPositionAtLastLayout();
+};
+
+[Return=Ref] class WebCore::NotificationResources {
+    RefPtr<WebCore::Image> icon();
+};

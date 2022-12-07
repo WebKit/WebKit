@@ -10,7 +10,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 725x18
           text run at (0,0) width 725: "Results that match Gecko are like WinIE, but with \"before\" for the attribute in the first two rows and the last row."
-      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {FORM} at (0,96) size 784x337
         RenderTable {TABLE} at (0,0) size 766x337
           RenderTableSection {THEAD} at (0,0) size 766x24
@@ -202,6 +201,8 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (701,291) size 63x20 [r=13 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 41x18
                   text run at (1,1) width 41: "before"
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
 layer at (407,132) size 141x13
   RenderBlock {DIV} at (3,3) size 141x13
     RenderText {#text} at (0,0) size 34x13

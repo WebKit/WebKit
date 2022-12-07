@@ -290,9 +290,9 @@ JSC::GCClient::IsoSubspace* JSTestDefaultToJSONInherit::subspaceForImpl(JSC::VM&
 {
     return WebCore::subspaceForImpl<JSTestDefaultToJSONInherit, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSONInherit.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONInherit = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONInherit = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSONInherit.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSONInherit = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSONInherit = std::forward<decltype(space)>(space); }
     );
 }
 

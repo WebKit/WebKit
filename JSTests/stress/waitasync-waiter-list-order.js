@@ -1,5 +1,3 @@
-//@ skip
-// Temporarily skip the test until https://github.com/WebKit/WebKit/pull/7048 fixes the race condition.
 const TOTAL_WAITER_COUNT = 10;
 const WAIT_INDEX = TOTAL_WAITER_COUNT * 2 - 1;
 

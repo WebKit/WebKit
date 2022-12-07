@@ -12,7 +12,6 @@ layer at (0,0) size 800x600
           text run at (234,0) width 1: " "
           text run at (0,15) width 539: "BODY {background-color: green; background-image: none; margin: 25px;}"
           text run at (538,15) width 1: " "
-      RenderBlock {HR} at (0,77) size 750x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 750x54
         RenderText {#text} at (0,0) size 746x54
           text run at (0,0) width 392: "The body of this document should have a green background. "
@@ -39,3 +38,5 @@ layer at (0,0) size 800x600
                   text run at (0,18) width 434: "background set for the HTML element should surround the BODY. "
                   text run at (433,18) width 281: "If the BODY content is significantly shorter"
                   text run at (0,36) width 559: "than the browser's window height, then the bottom border may be larger than 25 pixels."
+layer at (25,102) size 750x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,77) size 750x2 [border: (1px inset #000000)]

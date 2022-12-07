@@ -1,3 +1,8 @@
 
-FAIL CSSOM View - getBoxQuads() returns proper border and margin boxes for block and flex bb.getBoxQuads is not a function. (In 'bb.getBoxQuads({box: "border"})', 'bb.getBoxQuads' is undefined)
+FAIL Block layout border box is expected width. bb.getBoxQuads is not a function. (In 'bb.getBoxQuads({box: "border"})', 'bb.getBoxQuads' is undefined)
+FAIL Block layout margin box is expected width. bb.getBoxQuads is not a function. (In 'bb.getBoxQuads({box: "margin"})', 'bb.getBoxQuads' is undefined)
+FAIL Flex layout border box is expected width. fb.getBoxQuads is not a function. (In 'fb.getBoxQuads({box: "border"})', 'fb.getBoxQuads' is undefined)
+FAIL Flex layout margin box is expected width. fb.getBoxQuads is not a function. (In 'fb.getBoxQuads({box: "margin"})', 'fb.getBoxQuads' is undefined)
+FAIL Flex layout border box is expected height. fb.getBoxQuads is not a function. (In 'fb.getBoxQuads({box: "border"})', 'fb.getBoxQuads' is undefined)
+FAIL Flex layout margin box is expected height. fb.getBoxQuads is not a function. (In 'fb.getBoxQuads({box: "margin"})', 'fb.getBoxQuads' is undefined)
 

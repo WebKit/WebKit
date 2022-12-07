@@ -11,7 +11,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 160: ".one {color: green;}"
           text run at (160,0) width 0: " "
           text run at (0,15) width 0: " "
-      RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 784x18 [color=#008000]
         RenderText {#text} at (0,0) size 194x17
           text run at (0,0) width 194: "This sentence should be green."
@@ -36,3 +35,5 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,38) size 194x18 [color=#008000]
                 RenderText {#text} at (0,0) size 194x17
                   text run at (0,0) width 194: "This sentence should be green."
+layer at (8,85) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]

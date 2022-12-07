@@ -369,6 +369,8 @@ public:
     bool isGestureEventType(const AtomString& eventType) const;
     bool isTouchRelatedEventType(const AtomString& eventType, const EventTarget&) const;
     bool isTouchScrollBlockingEventType(const AtomString& eventType) const;
+    bool isMouseClickRelatedEventType(const AtomString& eventType) const;
+    bool isMouseMoveRelatedEventType(const AtomString& eventType) const;
 #if ENABLE(GAMEPAD)
     bool isGamepadEventType(const AtomString& eventType) const;
 #endif
@@ -430,6 +432,21 @@ inline bool EventNames::isWheelEventType(const AtomString& eventType) const
 {
     return eventType == wheelEvent
         || eventType == mousewheelEvent;
+}
+
+inline bool EventNames::isMouseClickRelatedEventType(const AtomString& eventType) const
+{
+    return eventType == mouseupEvent
+        || eventType == mousedownEvent
+        || eventType == clickEvent
+        || eventType == DOMActivateEvent;
+}
+
+inline bool EventNames::isMouseMoveRelatedEventType(const AtomString& eventType) const
+{
+    return eventType == mousemoveEvent
+        || eventType == mouseoverEvent
+        || eventType == mouseoutEvent;
 }
 
 inline std::array<std::reference_wrapper<const AtomString>, 13> EventNames::touchRelatedEventNames() const

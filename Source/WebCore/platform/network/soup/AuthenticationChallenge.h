@@ -46,6 +46,12 @@ public:
     {
     }
 
+    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error, uint32_t tlsPasswordFlags)
+        : AuthenticationChallengeBase(protectionSpace, proposedCredential, previousFailureCount, response, error)
+        , m_tlsPasswordFlags(tlsPasswordFlags)
+    {
+    }
+
     AuthenticationChallenge(SoupMessage*, SoupAuth*, bool retrying);
     AuthenticationChallenge(SoupMessage*, GTlsClientConnection*);
     AuthenticationChallenge(SoupMessage*, GTlsPassword*);

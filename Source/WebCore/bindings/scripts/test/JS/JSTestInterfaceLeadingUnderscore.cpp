@@ -184,9 +184,9 @@ JSC::GCClient::IsoSubspace* JSTestInterfaceLeadingUnderscore::subspaceForImpl(JS
 {
     return WebCore::subspaceForImpl<JSTestInterfaceLeadingUnderscore, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestInterfaceLeadingUnderscore.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterfaceLeadingUnderscore = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterfaceLeadingUnderscore = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestInterfaceLeadingUnderscore.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterfaceLeadingUnderscore = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterfaceLeadingUnderscore = std::forward<decltype(space)>(space); }
     );
 }
 

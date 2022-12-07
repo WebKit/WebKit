@@ -42,6 +42,11 @@ class RenderLayoutState {
     WTF_MAKE_NONCOPYABLE(RenderLayoutState); WTF_MAKE_FAST_ALLOCATED;
 
 public:
+    enum LeadingTrimSide : uint8_t {
+        Start = 1 << 0,
+        End   = 1 << 1
+    };
+
     RenderLayoutState()
         : m_clipped(false)
         , m_isPaginated(false)
@@ -52,7 +57,7 @@ public:
 #endif
     {
     }
-    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp);
+    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, OptionSet<LeadingTrimSide>);
     enum class IsPaginated { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
@@ -94,6 +99,13 @@ public:
     std::optional<size_t> maximumLineCountForLineClamp() { return m_maximumLineCountForLineClamp; }
     void setVisibleLineCountForLineClamp(size_t visibleLineCount) { m_visibleLineCountForLineClamp = visibleLineCount; }
     std::optional<size_t> visibleLineCountForLineClamp() const { return m_visibleLineCountForLineClamp; }
+
+    using LeadingTrim = OptionSet<LeadingTrimSide>;
+    bool hasLeadingTrim() const { return !leadingTrim().isEmpty(); }
+    LeadingTrim leadingTrim() const { return m_leadingTrim; }
+    void addLeadingTrim(LeadingTrimSide leadingTrim) { m_leadingTrim.add(leadingTrim); }
+    void removeLeadingTrim(LeadingTrimSide leadingTrim) { m_leadingTrim.remove(leadingTrim); }
+    void resetLeadingTrim() { m_leadingTrim = { }; }
 
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
@@ -137,6 +149,7 @@ private:
     LayoutSize m_lineGridPaginationOrigin;
     std::optional<size_t> m_maximumLineCountForLineClamp;
     std::optional<size_t> m_visibleLineCountForLineClamp;
+    LeadingTrim m_leadingTrim;
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif

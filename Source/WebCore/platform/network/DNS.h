@@ -67,6 +67,37 @@ public:
     const struct in_addr& ipv4Address() const { return std::get<struct in_addr>(m_address); }
     const struct in6_addr& ipv6Address() const { return std::get<struct in6_addr>(m_address); }
 
+    enum class ComparisonResult : uint8_t {
+        CannotCompare,
+        Less,
+        Equal,
+        Greater
+    };
+
+    ComparisonResult compare(const IPAddress& other) const
+    {
+        auto comparisonResult = [](int result) {
+            if (!result)
+                return ComparisonResult::Equal;
+            if (result < 0)
+                return ComparisonResult::Less;
+            return ComparisonResult::Greater;
+        };
+
+        if (isIPv4() && other.isIPv4())
+            return comparisonResult(memcmp(&ipv4Address(), &other.ipv4Address(), sizeof(struct in_addr)));
+
+        if (isIPv6() && other.isIPv6())
+            return comparisonResult(memcmp(&ipv6Address(), &other.ipv6Address(), sizeof(struct in6_addr)));
+
+        return ComparisonResult::CannotCompare;
+    }
+
+    bool operator<(const IPAddress& other) const { return compare(other) == ComparisonResult::Less; }
+    bool operator>(const IPAddress& other) const { return compare(other) == ComparisonResult::Greater; }
+    bool operator==(const IPAddress& other) const { return compare(other) == ComparisonResult::Equal; }
+    bool operator!=(const IPAddress& other) const { return !(*this == other); }
+
 private:
     std::variant<WTF::HashTableEmptyValueType, struct in_addr, struct in6_addr> m_address;
 };

@@ -66,23 +66,22 @@ layer at (0,0) size 785x678
         RenderBlock {P} at (0,0) size 769x38
           RenderText {#text} at (0,0) size 267x18
             text run at (0,0) width 267: "How does your browser fare on this test? "
-          RenderMenuList {SELECT} at (266,1) size 242x18 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (0,0) size 241x18
+          RenderMenuList {SELECT} at (266,1) size 243x18 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (0,0) size 242x18
               RenderText at (8,2) size 139x13
                 text run at (8,2) width 139: "The test renders correctly."
-          RenderText {#text} at (507,0) size 5x18
-            text run at (507,0) width 5: " "
+          RenderText {#text} at (508,0) size 5x18
+            text run at (508,0) width 5: " "
           RenderInline {LABEL} at (0,0) size 220x18
-            RenderText {#text} at (511,0) size 73x18
-              text run at (511,0) width 73: "Comment: "
-            RenderTextControl {INPUT} at (583,0) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderText {#text} at (512,0) size 73x18
+              text run at (512,0) width 73: "Comment: "
+            RenderTextControl {INPUT} at (584,0) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
           RenderButton {INPUT} at (0,20) size 53x18 [color=#000000D8] [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 37x13
               RenderText at (0,0) size 37x13
                 text run at (0,0) width 37: "Submit"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,502) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,520) size 769x19
         RenderText {#text} at (0,0) size 64x18
           text run at (0,0) width 64: "Up to the "
@@ -115,5 +114,7 @@ layer at (0,0) size 785x678
       RenderBlock {P} at (0,622) size 769x19
         RenderText {#text} at (0,0) size 185x18
           text run at (0,0) width 185: "Last updated in March 1999."
-layer at (594,473) size 141x13
+layer at (595,473) size 141x13
   RenderBlock {DIV} at (3,3) size 141x13
+layer at (8,524) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,502) size 769x3 [border: (1px inset #000000)]

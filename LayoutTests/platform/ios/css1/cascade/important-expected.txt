@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,28) width 172: "P#id1 {color: purple;}"
           text run at (171,28) width 1: " "
           text run at (0,42) width 0: " "
-      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x40 [color=#008000]
         RenderText {#text} at (0,0) size 784x39
           text run at (0,0) width 784: "This sentence should be green, because the declaration marked important should override any other normal declaration for"
@@ -66,3 +65,5 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 615: "This sentence should also be green, even though it has a STYLE attribute declaring it to be red. "
                   text run at (614,0) width 98: "This is because"
                   text run at (0,20) width 659: "declarations marked important have more weight than normal declarations given in a STYLE attribute."
+layer at (8,113) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]

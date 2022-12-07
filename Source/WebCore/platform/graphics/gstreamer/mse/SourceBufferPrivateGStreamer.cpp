@@ -60,6 +60,12 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 
 namespace WebCore {
 
+bool SourceBufferPrivateGStreamer::isContentTypeSupported(const ContentType& type)
+{
+    const auto& containerType = type.containerType();
+    return containerType == "audio/mpeg"_s || containerType.endsWith("mp4"_s) || containerType.endsWith("aac"_s) || containerType.endsWith("webm"_s);
+}
+
 Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer* mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
 {
     return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, contentType, playerPrivate));
@@ -84,7 +90,7 @@ void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
     ASSERT(m_mediaSource);
     ASSERT(m_client);
 
-    GST_DEBUG("Appending %zu bytes", data.size());
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data.size());
     // Wrap the whole Vector object in case the data is stored in the inlined buffer.
     auto* bufferData = data.data();
     auto bufferLength = data.size();
@@ -100,14 +106,14 @@ void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
 void SourceBufferPrivateGStreamer::abort()
 {
     ASSERT(isMainThread());
-    GST_DEBUG("aborting");
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "aborting");
     m_appendPipeline->resetParserState();
 }
 
 void SourceBufferPrivateGStreamer::resetParserState()
 {
     ASSERT(isMainThread());
-    GST_DEBUG("resetting parser state");
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "resetting parser state");
     m_appendPipeline->resetParserState();
 }
 
@@ -141,13 +147,13 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
 
     if (!m_playerPrivate.hasAllTracks()) {
-        GST_DEBUG("Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%s'", trackId.string().utf8().data());
+        GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%s'", trackId.string().utf8().data());
         MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
         track->clearQueue();
         return;
     }
 
-    GST_DEBUG("Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%s'", trackId.string().utf8().data());
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%s'", trackId.string().utf8().data());
     webKitMediaSrcFlush(m_playerPrivate.webKitMediaSrc(), trackId);
 }
 
@@ -155,15 +161,14 @@ void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, cons
 {
     ASSERT(isMainThread());
 
-    GST_TRACE("enqueing sample trackId=%s PTS=%s presentationSize=%.0fx%.0f at %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
-        trackId.string().utf8().data(), sample->presentationTime().toString().utf8().data(),
-        sample->presentationSize().width(), sample->presentationSize().height(),
-        GST_TIME_ARGS(WebCore::toGstClockTime(sample->presentationTime())),
-        GST_TIME_ARGS(WebCore::toGstClockTime(sample->duration())));
-
     GRefPtr<GstSample> gstSample = sample->platformSample().sample.gstSample;
     ASSERT(gstSample);
     ASSERT(gst_sample_get_buffer(gstSample.get()));
+
+    GST_TRACE_OBJECT(m_playerPrivate.pipeline(), "enqueing sample trackId=%s presentationSize=%.0fx%.0f at PTS %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
+        trackId.string().utf8().data(), sample->presentationSize().width(), sample->presentationSize().height(),
+        GST_TIME_ARGS(WebCore::toGstClockTime(sample->presentationTime())),
+        GST_TIME_ARGS(WebCore::toGstClockTime(sample->duration())));
 
     MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gstSample.leakRef())));
@@ -174,7 +179,7 @@ bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(const AtomString& track
     ASSERT(isMainThread());
     MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
     bool ret = track->isReadyForMoreSamples();
-    GST_TRACE("SourceBufferPrivate(%p) - isReadyForMoreSamples: %s", this, boolForPrinting(ret));
+    GST_TRACE_OBJECT(m_playerPrivate.pipeline(), "isReadyForMoreSamples: %s", boolForPrinting(ret));
     return ret;
 }
 
@@ -193,7 +198,7 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const Ato
 void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomString& trackId)
 {
     ASSERT(isMainThread());
-    GST_DEBUG("Enqueueing EOS for track '%s'", trackId.string().utf8().data());
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Enqueueing EOS for track '%s'", trackId.string().utf8().data());
     MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gst_event_new_eos())));
 }

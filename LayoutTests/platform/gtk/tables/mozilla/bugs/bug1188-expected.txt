@@ -4,7 +4,6 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x192
-        RenderBlock {HR} at (0,0) size 602x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,10) size 600x182
           RenderTableSection {TBODY} at (0,0) size 600x182
             RenderTableRow {TR} at (0,2) size 600x44
@@ -136,5 +135,7 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 0x1
                     RenderTableRow {TR} at (0,0) size 0x1
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
+layer at (8,8) size 602x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 602x2 [border: (1px inset #000000)]
 layer at (247,77) size 276x18
   RenderBlock {DIV} at (3,3) size 276x18

@@ -15,7 +15,8 @@ layer at (0,0) size 800x600
             text run at (403,0) width 375: "Drop shadow obscures \"add more stuff\" bubble at live.com"
         RenderText {#text} at (777,0) size 5x17
           text run at (777,0) width 5: "."
-      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+layer at (8,42) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
 layer at (8,52) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
 layer at (8,52) size 100x100

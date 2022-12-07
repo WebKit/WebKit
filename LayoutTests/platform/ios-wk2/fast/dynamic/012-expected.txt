@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 588: "Note that the second section is collapsed when the page opens and expanding it works fine. "
           text run at (587,0) width 173: "Just the collapse is broken."
       RenderBlock {DIV} at (0,157) size 784x158
-        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,10) size 784x21
           RenderImage {IMG} at (0,0) size 16x16
           RenderText {#text} at (16,1) size 76x19
@@ -55,7 +54,10 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (36,50) size 746x22 [r=2 c=1 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 76x19
                     text run at (1,1) width 76: "block three."
-        RenderBlock {HR} at (0,155) size 784x2 [border: (1px inset #000000)]
+layer at (8,166) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+layer at (8,321) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,155) size 784x2 [border: (1px inset #000000)]
 layer at (8,197) size 111x74
   RenderBlock (positioned) {DIV} at (8,196) size 111x75
     RenderTable {TABLE} at (0,0) size 111x74

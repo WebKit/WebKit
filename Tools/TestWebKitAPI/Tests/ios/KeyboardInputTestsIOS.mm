@@ -189,6 +189,31 @@ static CGRect rounded(CGRect rect)
 
 @end
 
+@interface CustomTextInputTraitsWebView : TestWKWebView
+- (instancetype)initWithFrame:(CGRect)frame keyboardType:(UIKeyboardType)keyboardType;
+@end
+
+@implementation CustomTextInputTraitsWebView {
+    UIKeyboardType _keyboardType;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame keyboardType:(UIKeyboardType)keyboardType
+{
+    if (self = [super initWithFrame:frame])
+        _keyboardType = keyboardType;
+
+    return self;
+}
+
+- (UITextInputTraits *)_textInputTraits
+{
+    UITextInputTraits *traits = [super _textInputTraits];
+    traits.keyboardType = _keyboardType;
+    return traits;
+}
+
+@end
+
 @interface CustomUndoManagerWebView : TestWKWebView
 @property (nonatomic, strong) NSUndoManager *customUndoManager;
 @end
@@ -622,6 +647,23 @@ TEST(KeyboardInputTests, OverrideInputViewAndInputAccessoryView)
 
     EXPECT_EQ(inputAccessoryView.get(), [contentView inputAccessoryView]);
     EXPECT_EQ(inputView.get(), [contentView inputView]);
+}
+
+TEST(KeyboardInputTests, OverrideTextInputTraits)
+{
+    UIKeyboardType keyboardType = UIKeyboardTypeNumberPad;
+
+    auto webView = adoptNS([[CustomTextInputTraitsWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) keyboardType:keyboardType]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<body><div id='editor' contenteditable='true'></div></body>"];
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('editor').focus()"];
+    EXPECT_EQ(keyboardType, [webView textInputContentView].textInputTraits.keyboardType);
 }
 
 TEST(KeyboardInputTests, DisableSpellChecking)

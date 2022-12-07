@@ -2201,6 +2201,8 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
         targetNode->document().didAddWheelEventHandler(*targetNode);
     else if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didAddTouchEventHandler(*targetNode);
+    else if (eventNames.isMouseClickRelatedEventType(eventType))
+        targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
     if (targetNode == &targetNode->document() && eventType == eventNames.scrollEvent) {
@@ -2239,6 +2241,8 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
         targetNode->document().didRemoveWheelEventHandler(*targetNode);
     else if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didRemoveTouchEventHandler(*targetNode);
+    else if (eventNames.isMouseClickRelatedEventType(eventType))
+        targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
     if (targetNode == &targetNode->document() && eventType == eventNames.scrollEvent) {
@@ -2506,7 +2510,9 @@ bool Node::willRespondToMouseMoveEvents() const
         return false;
 #endif
     auto& eventNames = WebCore::eventNames();
-    return hasEventListeners(eventNames.mousemoveEvent) || hasEventListeners(eventNames.mouseoverEvent) || hasEventListeners(eventNames.mouseoutEvent);
+    return eventTypes().containsIf([&](const auto& type) {
+        return eventNames.isMouseMoveRelatedEventType(type);
+    });
 }
 
 bool Node::willRespondToTouchEvents() const
@@ -2545,16 +2551,11 @@ bool Node::willRespondToMouseClickEventsWithEditability(Editability editability)
 #endif
     if (editability != Editability::ReadOnly)
         return true;
-    auto& eventNames = WebCore::eventNames();
-    return hasEventListeners(eventNames.mouseupEvent)
-        || hasEventListeners(eventNames.mousedownEvent)
-        || hasEventListeners(eventNames.clickEvent)
-        || hasEventListeners(eventNames.DOMActivateEvent);
-}
 
-bool Node::willRespondToMouseWheelEvents() const
-{
-    return hasEventListeners(eventNames().mousewheelEvent);
+    auto& eventNames = WebCore::eventNames();
+    return eventTypes().containsIf([&](const auto& type) {
+        return eventNames.isMouseClickRelatedEventType(type);
+    });
 }
 
 // It's important not to inline removedLastRef, because we don't want to inline the code to

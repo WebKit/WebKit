@@ -69,7 +69,12 @@ SVGSVGElement& LegacyRenderSVGRoot::svgSVGElement() const
     return downcast<SVGSVGElement>(nodeForNonAnonymous());
 }
 
-void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
+bool LegacyRenderSVGRoot::hasIntrinsicAspectRatio() const
+{
+    return computeIntrinsicAspectRatio();
+}
+
+void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment());
 
@@ -87,13 +92,13 @@ void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicS
     intrinsicSize.setHeight(floatValueForLength(svgSVGElement().intrinsicHeight(), 0));
 
     if (style().aspectRatioType() == AspectRatioType::Ratio) {
-        intrinsicRatio = style().logicalAspectRatio();
+        intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight()); 
         return;
     }
 
-    std::optional<double> intrinsicRatioValue;
+    std::optional<FloatSize> intrinsicRatioValue;
     if (!intrinsicSize.isEmpty())
-        intrinsicRatioValue = intrinsicSize.width() / static_cast<double>(intrinsicSize.height());
+        intrinsicRatio = { intrinsicSize.width(), intrinsicSize.height() };
     else {
         // - If either/both of the ‘width’ and ‘height’ of the rootmost ‘svg’ element are in percentage units (or omitted), the
         //   aspect ratio is calculated from the width and height values of the ‘viewBox’ specified for the current SVG document
@@ -102,14 +107,14 @@ void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicS
         FloatSize viewBoxSize = svgSVGElement().viewBox().size();
         if (!viewBoxSize.isEmpty()) {
             // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
-            intrinsicRatioValue = viewBoxSize.width() / static_cast<double>(viewBoxSize.height());
+            intrinsicRatioValue = { viewBoxSize.width(), viewBoxSize.height() };
         }
     }
 
     if (intrinsicRatioValue)
         intrinsicRatio = *intrinsicRatioValue;
     else if (style().aspectRatioType() == AspectRatioType::AutoAndRatio)
-        intrinsicRatio = style().logicalAspectRatio();
+        intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
 }
 
 bool LegacyRenderSVGRoot::isEmbeddedThroughSVGImage() const

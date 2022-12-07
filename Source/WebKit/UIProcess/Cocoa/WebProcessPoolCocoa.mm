@@ -667,7 +667,7 @@ void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, 
 #endif
 
 #if PLATFORM(COCOA)
-void WebProcessPool::lockdownModeConfigUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+void WebProcessPool::lockdownModeConfigurationUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     if (auto pool = extractWebProcessPool(observer))
         pool->lockdownModeStateChanged();
@@ -821,7 +821,7 @@ void WebProcessPool::registerNotificationObservers()
     });
 
 #if PLATFORM(COCOA)
-    addCFNotificationObserver(lockdownModeConfigUpdateCallback, (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
+    addCFNotificationObserver(lockdownModeConfigurationUpdateCallback, (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
 #endif
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)

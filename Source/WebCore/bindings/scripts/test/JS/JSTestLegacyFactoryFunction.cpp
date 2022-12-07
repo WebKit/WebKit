@@ -229,9 +229,9 @@ JSC::GCClient::IsoSubspace* JSTestLegacyFactoryFunction::subspaceForImpl(JSC::VM
 {
     return WebCore::subspaceForImpl<JSTestLegacyFactoryFunction, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestLegacyFactoryFunction.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyFactoryFunction = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyFactoryFunction = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestLegacyFactoryFunction.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestLegacyFactoryFunction = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestLegacyFactoryFunction = std::forward<decltype(space)>(space); }
     );
 }
 

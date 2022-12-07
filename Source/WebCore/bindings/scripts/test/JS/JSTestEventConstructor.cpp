@@ -320,9 +320,9 @@ JSC::GCClient::IsoSubspace* JSTestEventConstructor::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestEventConstructor, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEventConstructor.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEventConstructor = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEventConstructor = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEventConstructor.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestEventConstructor = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestEventConstructor = std::forward<decltype(space)>(space); }
     );
 }
 

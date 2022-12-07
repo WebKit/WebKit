@@ -162,9 +162,9 @@ JSC::GCClient::IsoSubspace* JSWorkletGlobalScope::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSWorkletGlobalScope, UseCustomHeapCellType::Yes>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForWorkletGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForWorkletGlobalScope = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForWorkletGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForWorkletGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForWorkletGlobalScope = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForWorkletGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeForJSWorkletGlobalScope; }
     );
 }

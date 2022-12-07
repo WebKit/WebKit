@@ -3,28 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 213x18
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 213x19
           text run at (0,0) width 213: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 784x36
-          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
-            RenderText {#text} at (212,0) size 354x18
+        RenderInline {I} at (0,0) size 784x39
+          RenderInline {A} at (0,0) size 354x19 [color=#0000EE]
+            RenderText {#text} at (212,0) size 354x19
               text run at (212,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8420"
-          RenderText {#text} at (565,0) size 784x36
+          RenderText {#text} at (565,0) size 784x39
             text run at (565,0) width 5: " "
             text run at (569,0) width 215: "iExploder(#12): Assertion failure"
-            text run at (0,18) width 255: "in RenderContainer::removeChildNode"
-        RenderText {#text} at (254,18) size 5x18
-          text run at (254,18) width 5: "."
-      RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 716x36
+            text run at (0,20) width 255: "in RenderContainer::removeChildNode"
+        RenderText {#text} at (254,20) size 5x19
+          text run at (254,20) width 5: "."
+      RenderBlock {P} at (0,56) size 784x40
+        RenderText {#text} at (0,0) size 716x39
           text run at (0,0) width 568: "In the render tree, the button should have only one child, an anonymous block wrapping "
           text run at (567,0) width 149: "all of the button's other"
-          text run at (0,18) width 82: "descendants."
-      RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,114) size 784x19
-        RenderButton {BUTTON} at (2,2) size 16x15 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,7) size 0x0
+          text run at (0,20) width 82: "descendants."
+      RenderBlock (anonymous) at (0,122) size 784x20
+        RenderButton {BUTTON} at (0,0) size 24x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,10) size 0x0
             RenderBlock (anonymous) at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
             RenderBlock (anonymous) at (0,0) size 0x0
@@ -32,3 +31,5 @@ layer at (0,0) size 800x600
             RenderBlock (anonymous) at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+layer at (8,120) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,112) size 784x2 [border: (1px inset #000000)]

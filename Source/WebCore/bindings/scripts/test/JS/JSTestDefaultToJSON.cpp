@@ -819,9 +819,9 @@ JSC::GCClient::IsoSubspace* JSTestDefaultToJSON::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestDefaultToJSON, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSON.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSON = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSON = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSON.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSON = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSON = std::forward<decltype(space)>(space); }
     );
 }
 

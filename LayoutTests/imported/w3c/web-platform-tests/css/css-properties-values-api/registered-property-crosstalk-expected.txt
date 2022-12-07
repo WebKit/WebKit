@@ -1,0 +1,3 @@
+
+FAIL Only #c should be affected by --x:42 assert_equals: expected "0" but got ""
+

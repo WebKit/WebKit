@@ -21,7 +21,6 @@ layer at (0,0) size 785x779
           text run at (0,75) width 192: "          padding: 2pt;}"
           text run at (192,75) width 0: " "
           text run at (0,90) width 0: " "
-      RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,170) size 769x192
         RenderText {#text} at (0,7) size 187x17
           text run at (0,7) width 187: "This is a paragraph that has a "
@@ -94,3 +93,5 @@ layer at (0,0) size 785x779
                 RenderText {#text} at (171,48) size 416x15
                   text run at (171,48) width 4: " "
                   text run at (174,48) width 413: "The line spacing in the whole paragraph should be 12pt, with font-size 10pt."
+layer at (8,160) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]

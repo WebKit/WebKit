@@ -188,6 +188,7 @@ static uint32_t keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey
     case Inspector::Protocol::Automation::VirtualKey::MetaRight:
         return WPE_KEY_Meta_R;
     case Inspector::Protocol::Automation::VirtualKey::Command:
+    case Inspector::Protocol::Automation::VirtualKey::CommandRight:
         return WPE_KEY_Execute;
     case Inspector::Protocol::Automation::VirtualKey::Help:
         return WPE_KEY_Help;

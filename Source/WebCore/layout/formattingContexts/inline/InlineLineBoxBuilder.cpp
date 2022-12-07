@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineLineBoxBuilder.h"
 
+#include "BlockLayoutState.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
 #include "LayoutBoxGeometry.h"
@@ -116,9 +117,10 @@ static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode t
     return { };
 }
 
-LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const LineBuilder::LineContent& lineContent)
+LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const LineBuilder::LineContent& lineContent, BlockLayoutState::LeadingTrim leadingTrim)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_lineContent(lineContent)
+    , m_leadingTrim(leadingTrim)
 {
 }
 
@@ -706,8 +708,8 @@ void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
     auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
 
     auto& rootStyle = this->rootStyle();
-    auto shouldTrimBlockStartOfLineBox = isFirstLine() && (rootStyle.leadingTrim() == LeadingTrim::Start || rootStyle.leadingTrim() == LeadingTrim::Both) && rootStyle.textEdge().over != TextEdgeType::Leading;
-    auto shouldTrimBlockEndOfLineBox = isLastLine() && (rootStyle.leadingTrim() == LeadingTrim::End || rootStyle.leadingTrim() == LeadingTrim::Both) && rootStyle.textEdge().under != TextEdgeType::Leading;
+    auto shouldTrimBlockStartOfLineBox = isFirstLine() && m_leadingTrim.contains(BlockLayoutState::LeadingTrimSide::Start) && rootStyle.textEdge().over != TextEdgeType::Leading;
+    auto shouldTrimBlockEndOfLineBox = isLastLine() && m_leadingTrim.contains(BlockLayoutState::LeadingTrimSide::End) && rootStyle.textEdge().under != TextEdgeType::Leading;
 
     if (shouldTrimBlockEndOfLineBox) {
         auto textEdgeUnderHeight = [&] {

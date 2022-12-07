@@ -582,8 +582,8 @@ bool WebContentReader::readHTML(const String& string)
     String markup;
     if (DeprecatedGlobalSettings::customPasteboardDataEnabled() && shouldSanitize()) {
         markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
-            removeSubresourceURLAttributes(fragment, [] (const URL& url) {
-                return shouldReplaceSubresourceURLWithBlobDuringSanitization(url);
+            removeSubresourceURLAttributes(fragment, [](auto& url) {
+                return url.isLocalFile();
             });
         } });
     } else
@@ -601,8 +601,8 @@ bool WebContentMarkupReader::readHTML(const String& string)
     String rawHTML = stripMicrosoftPrefix(string);
     if (shouldSanitize()) {
         markup = sanitizeMarkup(rawHTML, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
-            removeSubresourceURLAttributes(fragment, [] (const URL& url) {
-                return shouldReplaceSubresourceURLWithBlobDuringSanitization(url);
+            removeSubresourceURLAttributes(fragment, [](auto& url) {
+                return url.isLocalFile();
             });
         } });
     } else

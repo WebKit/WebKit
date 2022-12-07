@@ -22,9 +22,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 392x19
           text run at (0,0) width 392: "This tests to see if trailing spaces are lost during a copy/paste"
-      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,46) size 784x28 [border: (2px solid #FFAAAA)]
         RenderBlock {DIV} at (2,2) size 780x24 [border: (2px solid #AAAAFF)]
           RenderText {#text} at (2,2) size 586x19
             text run at (2,2) width 586: "there should be a single trailing space between the '.' and the last character in this sentence ."
+layer at (8,44) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
 caret: position 97 of child 0 {#text} of child 0 {DIV} of child 5 {DIV} of body

@@ -6,7 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {P} at (242,16) size 542x20
         RenderText {#text} at (0,0) size 542x19
           text run at (0,0) width 542: "The 'hr' below should span the width of the page, not just to the left edge of this text."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (230,78) size 554x20
         RenderText {#text} at (0,0) size 554x19
           text run at (0,0) width 554: "The table below should span the width of the page, not just to the left edge of this text."
@@ -21,6 +20,8 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {P} at (350,198) size 434x20
         RenderText {#text} at (0,0) size 434x19
           text run at (0,0) width 434: "The overflow auto section below should span the width of the page."
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,242) size 784x40
   RenderBlock {DIV} at (0,234) size 784x40
     RenderText {#text} at (0,0) size 779x39

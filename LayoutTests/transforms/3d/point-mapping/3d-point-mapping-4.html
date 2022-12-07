@@ -1,0 +1,100 @@
+<html>
+<head>
+  <title>Point mapping through 3D transform hierarchies</title>
+  <script src="point-mapping-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    function test()
+    {
+      // In non-test mode, show the mouse coords for testing
+      if (!window.testRunner)
+        document.body.addEventListener('mousemove', mousemoved, false);
+
+      dispatchEvent(170, 112, 'card', 2, 2);
+      dispatchEvent(309, 112, 'card', 199, 2);
+      dispatchEvent(170, 308, 'card', 2, 198);
+      dispatchEvent(309, 308, 'card', 199, 198);
+
+      dispatchEvent(612, 112, 'card', 2, 2);
+      dispatchEvent(751, 112, 'card', 199, 2);
+      dispatchEvent(612, 308, 'card', 2, 198);
+      dispatchEvent(751, 308, 'card', 199, 198);
+    }
+  </script>
+  <style type="text/css" media="screen">
+  #scene {
+    position: absolute;
+    border: 1px solid black;
+    height: 400px;
+    width: 400px;
+    -webkit-perspective: 600;
+    -webkit-transform-style: preserve-3d;
+  }
+
+  .two {
+    left: 450px;
+  }
+
+  #container {
+    position: absolute;
+    height: 300px;
+    width: 300px;
+    margin: 50px;
+    border: 1px solid blue;
+    -webkit-transform-style: preserve-3d;
+  }
+
+  #card {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    height: 200px;
+    width: 200px;
+    background-color: #81AA8A;
+    -webkit-transform-origin: right top;
+    -webkit-transform: rotateY(45deg);
+  }
+
+  #card:hover {
+    background-color: orange;
+  }
+
+  #results {
+    position: absolute;
+    left: 30px;
+    top: 500px;
+  }
+
+  #mousepos {
+    position: absolute;
+    left: 430px;
+    top: 420px;
+    color: gray;
+    font-size: smaller;
+  }
+  </style>
+</head>
+<body onclick="clicked(event)">
+
+<div id="results"></div>
+
+<div id="scene">
+  <div id="spacer">
+    <div id="container">
+      <div id="card"></div>
+    </div>
+  </div>
+</div>
+
+<div id="scene" class="two">
+  <div id="container">
+    <div id="spacer">
+      <div id="card"></div>
+    </div>
+  </div>
+</div>
+
+<div id="mousepos"></div>
+
+</body>
+</html>

@@ -18,7 +18,6 @@ layer at (0,0) size 785x711
           text run at (0,30) width 305: "P.three:first-letter {font-size: 350%;}"
           text run at (304,30) width 1: " "
           text run at (0,45) width 0: " "
-      RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 769x54
         RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText at (0,0) size 10x18
@@ -91,3 +90,5 @@ layer at (0,0) size 785x711
                   text run at (0,64) width 628: "quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon. "
                   text run at (627,64) width 102: "Note that this is"
                   text run at (0,82) width 314: "not required under CSS1, but it is recommended."
+layer at (8,115) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]

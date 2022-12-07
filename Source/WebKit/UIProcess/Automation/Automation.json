@@ -157,6 +157,7 @@
                 "Meta",
                 "MetaRight",
                 "Command",
+                "CommandRight",
                 "Cancel",
                 "Help",
                 "Backspace",

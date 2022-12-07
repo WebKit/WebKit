@@ -62,7 +62,6 @@ public:
     bool needsAutoplayPlayPauseEvents() const;
     bool needsSeekingSupportDisabled() const;
     bool needsPerDocumentAutoplayBehavior() const;
-    bool shouldAutoplayForArbitraryUserGesture() const;
     bool shouldAutoplayWebAudioForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
 #if ENABLE(TOUCH_EVENTS)
@@ -83,6 +82,7 @@ public:
     bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
     bool shouldHideSearchFieldResultsButton() const;
     bool shouldExposeShowModalDialog() const;
+    bool shouldNavigatorPluginsBeEmpty() const;
 
     bool needsMillisecondResolutionForHighResTimeStamp() const;
 
@@ -218,6 +218,9 @@ private:
     mutable std::optional<bool> m_shouldEnableFontLoadingAPIQuirk;
     mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
     mutable std::optional<bool> m_shouldExposeShowModalDialog;
+#if PLATFORM(IOS_FAMILY)
+    mutable std::optional<bool> m_shouldNavigatorPluginsBeEmpty;
+#endif
     mutable std::optional<bool> m_shouldDisableLazyImageLoadingQuirk;
 };
 

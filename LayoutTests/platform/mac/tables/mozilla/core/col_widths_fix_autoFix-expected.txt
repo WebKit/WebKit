@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 60: "auto auto"
       RenderBlock (anonymous) at (0,64) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {HR} at (0,90) size 102x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,100) size 784x18
         RenderText {#text} at (0,0) size 319x18
           text run at (0,0) width 319: "table fixed at 600, 1st 2 cells fixed at 100, 2nd not"
@@ -100,3 +99,5 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 22: "foo"
       RenderBlock (anonymous) at (0,402) size 784x18
         RenderBR {BR} at (0,0) size 0x18
+layer at (8,98) size 102x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,90) size 102x2 [border: (1px inset #000000)]

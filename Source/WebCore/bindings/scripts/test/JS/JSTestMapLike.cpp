@@ -363,9 +363,9 @@ JSC::GCClient::IsoSubspace* JSTestMapLike::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestMapLike, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestMapLike.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestMapLike = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestMapLike = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestMapLike.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestMapLike = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestMapLike = std::forward<decltype(space)>(space); }
     );
 }
 

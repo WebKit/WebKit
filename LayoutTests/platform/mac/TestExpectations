@@ -2382,6 +2382,12 @@ svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
 svg/transforms/transformed-child-in-container.svg [ ImageOnlyFailure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
+
+# Skip all cache-storage tests until https://bugs.webkit.org/show_bug.cgi?id=248824 is resolved
+[ BigSur ] http/wpt/cache-storage [ Skip ]
+[ BigSur ] imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
+
+
 # webkit.org/b/243681  Newly imported tests that fail on BigSur+
 [ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 [ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Pass Failure ]

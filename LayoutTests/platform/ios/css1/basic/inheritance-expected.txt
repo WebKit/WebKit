@@ -22,7 +22,6 @@ layer at (0,0) size 800x749
           text run at (148,70) width 1: " "
           text run at (0,84) width 180: ".three {color: purple;}"
           text run at (179,84) width 1: " "
-      RenderBlock {HR} at (0,147) size 784x2 [border: (1px inset #008000)]
       RenderBlock {H3} at (0,167) size 784x24 [color=#0000FF]
         RenderText {#text} at (0,0) size 219x22
           text run at (0,0) width 219: "This sentence should show "
@@ -187,3 +186,5 @@ layer at (0,0) size 800x749
                     text run at (359,0) width 178: "this part (which is spanned)"
                 RenderText {#text} at (536,0) size 5x19
                   text run at (536,0) width 5: "."
+layer at (8,155) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,147) size 784x2 [border: (1px inset #008000)]

@@ -15,7 +15,6 @@ layer at (0,0) size 785x1306
             RenderTableCell {TD} at (343,3) size 34x30 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 22x18
                 text run at (6,6) width 22: "foo"
-      RenderBlock {HR} at (0,82) size 402x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,92) size 769x36
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 351x18
@@ -309,3 +308,5 @@ layer at (0,0) size 785x1306
             RenderTableCell {TD} at (396,5) size 97x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x18
                 text run at (2,2) width 28: "auto"
+layer at (8,90) size 402x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,82) size 402x2 [border: (1px inset #000000)]

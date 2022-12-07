@@ -79,7 +79,6 @@ layer at (0,0) size 800x271
               RenderText {#text} at (0,0) size 13x20
                 text run at (0,0) width 13: "U"
             RenderTableCell {TD} at (263,70) size 48x0 [r=2 c=7 rs=1 cs=1]
-      RenderBlock {HR} at (0,95) size 648x1
       RenderBlock {P} at (0,108) size 648x38
         RenderInline {A} at (0,0) size 88x20 [color=#3333FF] [bgcolor=#FFFFF5]
           RenderImage {IMG} at (0,0) size 88x31
@@ -105,3 +104,5 @@ layer at (0,0) size 800x271
         RenderInline {A} at (0,0) size 212x20 [color=#3333FF] [bgcolor=#FFFFF5]
           RenderText {#text} at (47,2) size 212x20
             text run at (47,2) width 212: "dbaron@fas.harvard.edu"
+layer at (88,120) size 648x1
+  RenderBlock {HR} at (0,95) size 648x1

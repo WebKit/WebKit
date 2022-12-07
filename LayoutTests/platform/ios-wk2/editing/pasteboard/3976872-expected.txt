@@ -25,7 +25,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 770x39
           text run at (0,0) width 770: "The first line is copied (unstyled), then it's bolded, then a paragraph separator is inserted and the original unstyled line is"
           text run at (0,20) width 186: "pasted (with style matching)."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,102) size 784x44
         RenderBlock {DIV} at (0,0) size 784x22 [border: (1px solid #FF0000)]
           RenderInline {B} at (0,0) size 189x19
@@ -35,4 +34,6 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 189x19
             RenderText {#text} at (1,1) size 189x19
               text run at (1,1) width 189: "this text should end up bold"
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
 caret: position 28 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 7 {DIV} of body

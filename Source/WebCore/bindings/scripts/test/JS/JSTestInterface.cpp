@@ -1111,9 +1111,9 @@ public:
             return nullptr;
         return WebCore::subspaceForImpl<TestInterfaceIterator, UseCustomHeapCellType::No>(vm,
             [] (auto& spaces) { return spaces.m_clientSubspaceForTestInterfaceIterator.get(); },
-            [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterfaceIterator = WTFMove(space); },
+            [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterfaceIterator = std::forward<decltype(space)>(space); },
             [] (auto& spaces) { return spaces.m_subspaceForTestInterfaceIterator.get(); },
-            [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterfaceIterator = WTFMove(space); }
+            [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterfaceIterator = std::forward<decltype(space)>(space); }
         );
     }
 
@@ -1189,9 +1189,9 @@ JSC::GCClient::IsoSubspace* JSTestInterface::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestInterface, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterface = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterface = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterface = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterface = std::forward<decltype(space)>(space); }
     );
 }
 

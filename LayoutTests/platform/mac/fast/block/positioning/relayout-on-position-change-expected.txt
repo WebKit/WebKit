@@ -19,7 +19,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 380x18
           text run at (0,0) width 380: "The green square should be to the left of the yellow square."
-      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
 layer at (8,104) size 200x100
   RenderBlock (relative positioned) {DIV} at (0,96) size 200x100 [bgcolor=#FFFF00]
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

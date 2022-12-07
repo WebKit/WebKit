@@ -183,9 +183,9 @@ JSC::GCClient::IsoSubspace* JSTestEnabledForContext::subspaceForImpl(JSC::VM& vm
 {
     return WebCore::subspaceForImpl<JSTestEnabledForContext, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestEnabledForContext.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEnabledForContext = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestEnabledForContext = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestEnabledForContext.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestEnabledForContext = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestEnabledForContext = std::forward<decltype(space)>(space); }
     );
 }
 

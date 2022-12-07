@@ -46,6 +46,8 @@ layer at (21,21) size 202x202
 layer at (42,42) size 140x140
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
 layer at (63,63) size 100x100
+  RenderBlock (positioned) {DIV} at (21,21) size 100x100 [bgcolor=#FF0000] [border: (1px solid #000000)]
+layer at (63,63) size 100x100
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]
 layer at (267,21) size 202x202
   RenderBlock (positioned) {DIV} at (267,21) size 202x202 [border: (1px solid #000000)]

@@ -16,7 +16,6 @@ layer at (0,0) size 800x997
           text run at (163,28) width 1: " "
           text run at (0,42) width 157: ".four {clear: none;}"
           text run at (156,42) width 1: " "
-      RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderImage {IMG} at (0,115) size 15x50
       RenderBlock {P} at (0,123) size 784x20
         RenderText {#text} at (18,0) size 606x19
@@ -89,3 +88,5 @@ layer at (0,0) size 800x997
                   text run at (18,0) width 397: "This paragraph should be between both tall orange rectangles."
               RenderBlock (anonymous) at (4,394) size 671x20
                 RenderBR {BR} at (18,0) size 0x19
+layer at (8,113) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]

@@ -246,9 +246,9 @@ JSC::GCClient::IsoSubspace* JSTestLegacyOverrideBuiltIns::subspaceForImpl(JSC::V
 {
     return WebCore::subspaceForImpl<JSTestLegacyOverrideBuiltIns, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestLegacyOverrideBuiltIns.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyOverrideBuiltIns = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyOverrideBuiltIns = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestLegacyOverrideBuiltIns.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestLegacyOverrideBuiltIns = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestLegacyOverrideBuiltIns = std::forward<decltype(space)>(space); }
     );
 }
 

@@ -336,9 +336,9 @@ JSC::GCClient::IsoSubspace* JSTestLegacyNoInterfaceObject::subspaceForImpl(JSC::
 {
     return WebCore::subspaceForImpl<JSTestLegacyNoInterfaceObject, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestLegacyNoInterfaceObject.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyNoInterfaceObject = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestLegacyNoInterfaceObject = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestLegacyNoInterfaceObject.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestLegacyNoInterfaceObject = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestLegacyNoInterfaceObject = std::forward<decltype(space)>(space); }
     );
 }
 

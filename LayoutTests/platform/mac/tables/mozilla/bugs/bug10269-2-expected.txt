@@ -861,7 +861,6 @@ layer at (0,0) size 785x6848
       RenderBlock {P} at (0,6706) size 769x19
         RenderText {#text} at (0,0) size 199x18
           text run at (0,0) width 199: "This test is still being written..."
-      RenderBlock {HR} at (0,6740) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,6758) size 769x19
         RenderText {#text} at (0,0) size 59x18
           text run at (0,0) width 59: "(Back to "
@@ -884,3 +883,5 @@ layer at (0,0) size 785x6848
         RenderInline {A} at (0,0) size 158x18 [color=#0000EE]
           RenderText {#text} at (40,0) size 158x18
             text run at (40,0) width 158: "dbaron@fas.harvard.edu"
+layer at (8,6762) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,6740) size 769x3 [border: (1px inset #000000)]

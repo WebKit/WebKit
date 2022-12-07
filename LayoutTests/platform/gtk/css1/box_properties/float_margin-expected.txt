@@ -25,7 +25,6 @@ layer at (0,0) size 785x1902
           text run at (0,105) width 400: "#img5 {margin-right: -30px; margin-bottom: -30px;}"
           text run at (400,105) width 0: " "
           text run at (0,120) width 0: " "
-      RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (30,204) size 729x92 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 729x91
           text run at (0,0) width 663: "This paragraph should have a white background which extends to the edges of the"
@@ -163,3 +162,5 @@ layer at (0,0) size 785x1902
                   text run at (0,92) width 489: "first of all, which extends to the edges of the element's box. "
                   text run at (489,92) width 214: "There is no padding set on"
                   text run at (0,115) width 217: "this paragraph whatsoever."
+layer at (8,190) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]

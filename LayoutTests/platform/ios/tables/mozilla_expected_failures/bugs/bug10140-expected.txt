@@ -415,7 +415,6 @@ layer at (0,0) size 800x2991
             RenderTableCell {TD} at (36,26) size 33x22 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 31x19
                 text run at (1,1) width 31: "Data"
-      RenderBlock {HR} at (0,2827) size 784x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,2845) size 784x37
         RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
@@ -441,3 +440,5 @@ layer at (0,0) size 800x2991
         RenderInline {A} at (0,0) size 158x19 [color=#0000EE]
           RenderText {#text} at (40,0) size 158x19
             text run at (40,0) width 158: "dbaron@fas.harvard.edu"
+layer at (8,2849) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,2827) size 784x3 [border: (1px inset #000000)]

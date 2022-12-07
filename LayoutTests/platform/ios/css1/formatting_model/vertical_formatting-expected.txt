@@ -47,7 +47,6 @@ layer at (0,0) size 800x2559
           text run at (0,252) width 157: "TABLE {clear: both;}"
           text run at (156,252) width 1: " "
           text run at (0,266) width 0: " "
-      RenderBlock {HR} at (0,329) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,347) size 784x40
         RenderText {#text} at (0,0) size 769x39
           text run at (0,0) width 769: "There should be a two-centimeter margin between this paragraph and the next, because adjacent vertical margins should"
@@ -170,3 +169,5 @@ layer at (0,0) size 800x2559
               RenderBlock {P} at (4,1017) size 762x58
                 RenderText {#text} at (0,37) size 171x20
                   text run at (0,37) width 171: "This is the next paragraph."
+layer at (8,337) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,329) size 784x2 [border: (1px inset #000000)]

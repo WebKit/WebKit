@@ -235,7 +235,6 @@ layer at (0,0) size 800x5885
                 text run at (2,2) width 23: "zap"
       RenderBlock (anonymous) at (0,834) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,862) size 202x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,872) size 210x56 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 208x54
           RenderTableRow {TR} at (0,2) size 208x24
@@ -254,7 +253,6 @@ layer at (0,0) size 800x5885
                 text run at (2,2) width 52: "200CS3"
       RenderBlock (anonymous) at (0,928) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,956) size 202x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,966) size 210x56 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 208x54
           RenderTableRow {TR} at (0,2) size 208x24
@@ -328,7 +326,6 @@ layer at (0,0) size 800x5885
         RenderText {#text} at (0,0) size 293x19
           text run at (0,0) width 293: "fixed table - spanned cols based on fix widths"
         RenderBR {BR} at (292,0) size 1x19
-      RenderBlock {HR} at (0,1358) size 402x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,1368) size 534x65 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 532x63
           RenderTableRow {TR} at (0,5) size 532x24
@@ -939,7 +936,6 @@ layer at (0,0) size 800x5885
       RenderBlock (anonymous) at (0,4050) size 784x40
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-      RenderBlock {HR} at (0,4098) size 602x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,4108) size 647x145 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 645x143
           RenderTableRow {TR} at (0,5) size 645x104
@@ -1254,3 +1250,11 @@ layer at (0,0) size 800x5885
                 text run at (2,182) width 28: "auto"
                 text run at (2,202) width 28: "auto"
                 text run at (2,222) width 28: "auto"
+layer at (8,870) size 202x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,862) size 202x2 [border: (1px inset #000000)]
+layer at (8,964) size 202x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,956) size 202x2 [border: (1px inset #000000)]
+layer at (8,1366) size 402x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1358) size 402x2 [border: (1px inset #000000)]
+layer at (8,4106) size 602x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,4098) size 602x2 [border: (1px inset #000000)]

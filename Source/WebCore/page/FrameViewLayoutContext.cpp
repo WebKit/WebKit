@@ -611,7 +611,8 @@ bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSi
             , pageHeight
             , pageHeightChanged
             , layoutState ? layoutState->maximumLineCountForLineClamp() : std::nullopt
-            , layoutState ? layoutState->visibleLineCountForLineClamp() : std::nullopt));
+            , layoutState ? layoutState->visibleLineCountForLineClamp() : std::nullopt
+            , layoutState ? layoutState->leadingTrim() : RenderLayoutState::LeadingTrim()));
         return true;
     }
     return false;

@@ -18,7 +18,6 @@ layer at (0,0) size 785x816
           text run at (265,45) width 1: " "
           text run at (0,60) width 149: "I {display: block;}"
           text run at (148,60) width 1: " "
-      RenderBlock {HR} at (0,122) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,140) size 769x18
         RenderText {#text} at (0,0) size 300x18
           text run at (0,0) width 300: "This sentence should be a block-level element."
@@ -129,3 +128,5 @@ layer at (0,0) size 785x816
                 RenderBlock (anonymous) at (0,36) size 747x18
                   RenderText {#text} at (0,0) size 208x18
                     text run at (0,0) width 208: "should be a block-level element."
+layer at (8,130) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,122) size 769x2 [border: (1px inset #000000)]

@@ -24,7 +24,6 @@ layer at (0,0) size 800x810
           text run at (0,98) width 469: "             color: black; background: yellow; clear: none;}"
           text run at (468,98) width 1: " "
           text run at (0,112) width 0: " "
-      RenderBlock {HR} at (0,172) size 784x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,182) size 192x126 [color=#FFFFFF] [bgcolor=#008000]
         RenderBlock {H1} at (8,8) size 176x23
           RenderText {#text} at (0,0) size 82x22
@@ -158,3 +157,5 @@ layer at (0,0) size 800x810
                     text run at (0,0) width 298: "The top of the yellow rectangle (to which this"
                     text run at (0,20) width 298: "paragraph belongs) should be vertically"
                     text run at (0,40) width 275: "aligned with the top of the green rectangle."
+layer at (8,180) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,172) size 784x2 [border: (1px inset #000000)]

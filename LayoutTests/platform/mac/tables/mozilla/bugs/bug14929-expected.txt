@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (130,66) size 507x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x18
                   text run at (2,2) width 48: "SLmail"
-      RenderBlock {HR} at (0,142) size 130x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,152) size 784x18
         RenderText {#text} at (0,0) size 416x18
           text run at (0,0) width 416: "The simplified original testcase with image size reduced to190px"
@@ -36,7 +35,6 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (130,26) size 507x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x18
                   text run at (2,2) width 48: "SLmail"
-      RenderBlock {HR} at (0,254) size 130x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,264) size 784x18
         RenderText {#text} at (0,0) size 150x18
           text run at (0,0) width 150: "Testcase without image"
@@ -55,4 +53,9 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (130,44) size 507x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x18
                   text run at (2,2) width 48: "SLmail"
-      RenderBlock {HR} at (0,384) size 130x2 [border: (1px inset #000000)]
+layer at (8,150) size 130x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,142) size 130x2 [border: (1px inset #000000)]
+layer at (8,262) size 130x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,254) size 130x2 [border: (1px inset #000000)]
+layer at (8,392) size 130x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,384) size 130x2 [border: (1px inset #000000)]

@@ -23,7 +23,6 @@ layer at (0,0) size 785x1151
           text run at (0,90) width 453: ".seven {text-decoration: underline overline line-through;}"
           text run at (452,90) width 1: " "
           text run at (0,105) width 0: " "
-      RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,185) size 769x18
         RenderText {#text} at (0,0) size 230x18
           text run at (0,0) width 230: "This sentence should be underlined."
@@ -197,3 +196,5 @@ layer at (0,0) size 785x1151
                 RenderText {#text} at (573,0) size 732x36
                   text run at (573,0) width 159: " (that is, the first word in"
                   text run at (0,18) width 240: "the sentence, which should be black)."
+layer at (8,175) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]

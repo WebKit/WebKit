@@ -6,7 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (0,0) size 784x28
         RenderText {#text} at (0,0) size 362x28
           text run at (0,0) width 362: "SeaMonkey XPInstall Trigger Page"
-      RenderBlock {HR} at (0,47) size 784x3 [border: (1px inset #000000)]
       RenderBlock {FORM} at (0,57) size 784x48
         RenderTable {TABLE} at (0,0) size 661x47
           RenderTableSection {TBODY} at (0,0) size 661x47
@@ -38,6 +37,8 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (8,2) size 66x13
                     RenderText at (0,0) size 66x13
                       text run at (0,0) width 66: "Trigger case"
+layer at (8,56) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,47) size 784x3 [border: (1px inset #000000)]
 layer at (121,72) size 456x13
   RenderBlock {DIV} at (3,3) size 456x13
     RenderText {#text} at (0,0) size 93x13

@@ -169,9 +169,9 @@ JSC::GCClient::IsoSubspace* JSDedicatedWorkerGlobalScope::subspaceForImpl(JSC::V
 {
     return WebCore::subspaceForImpl<JSDedicatedWorkerGlobalScope, UseCustomHeapCellType::Yes>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForDedicatedWorkerGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDedicatedWorkerGlobalScope = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDedicatedWorkerGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForDedicatedWorkerGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForDedicatedWorkerGlobalScope = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForDedicatedWorkerGlobalScope = std::forward<decltype(space)>(space); },
         [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeForJSDedicatedWorkerGlobalScope; }
     );
 }

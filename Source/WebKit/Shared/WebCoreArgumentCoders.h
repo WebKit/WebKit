@@ -181,6 +181,10 @@ struct PasteboardImage;
 struct PasteboardWebContent;
 #endif
 
+#if USE(APPKIT)
+class AppKitControlSystemImage;
+#endif
+
 #if ENABLE(META_VIEWPORT)
 struct ViewportArguments;
 #endif
@@ -247,21 +251,6 @@ template<> struct ArgumentCoder<WebCore::Length> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Length&);
 };
 
-template<> struct ArgumentCoder<WebCore::VelocityData> {
-    static void encode(Encoder&, const WebCore::VelocityData&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::VelocityData&);
-};
-
-template<> struct ArgumentCoder<WebCore::MimeClassInfo> {
-    static void encode(Encoder&, const WebCore::MimeClassInfo&);
-    static std::optional<WebCore::MimeClassInfo> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::AuthenticationChallenge> {
-    static void encode(Encoder&, const WebCore::AuthenticationChallenge&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::AuthenticationChallenge&);
-};
-
 template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
     static void encode(Encoder&, const WebCore::ProtectionSpace&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ProtectionSpace&);
@@ -305,13 +294,6 @@ template<> struct ArgumentCoder<WebCore::ResourceError> {
     static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ResourceError&);
 };
 
-#if ENABLE(DRAG_SUPPORT)
-template<> struct ArgumentCoder<WebCore::DragData> {
-    static void encode(Encoder&, const WebCore::DragData&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::DragData&);
-};
-#endif
-
 #if PLATFORM(COCOA)
 
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
@@ -325,6 +307,16 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {
     static void encode(Encoder&, const WebCore::InspectorOverlay::Highlight&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::InspectorOverlay::Highlight&);
+};
+
+#endif
+
+#if USE(APPKIT)
+
+template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::AppKitControlSystemImage&);
+    static std::optional<Ref<WebCore::AppKitControlSystemImage>> decode(Decoder&);
 };
 
 #endif
@@ -343,20 +335,6 @@ template<> struct ArgumentCoder<WebCore::CurlProxySettings> {
 };
 #endif
 
-template<> struct ArgumentCoder<WebCore::DictationAlternative> {
-    static void encode(Encoder&, const WebCore::DictationAlternative&);
-    static std::optional<WebCore::DictationAlternative> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::UserStyleSheet> {
-    static void encode(Encoder&, const WebCore::UserStyleSheet&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::UserStyleSheet&);
-};
-
-template<> struct ArgumentCoder<WebCore::ScrollableAreaParameters> {
-    static void encode(Encoder&, const WebCore::ScrollableAreaParameters&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ScrollableAreaParameters&);
-};
 
 template<> struct ArgumentCoder<WebCore::FixedPositionViewportConstraints> {
     static void encode(Encoder&, const WebCore::FixedPositionViewportConstraints&);
@@ -366,11 +344,6 @@ template<> struct ArgumentCoder<WebCore::FixedPositionViewportConstraints> {
 template<> struct ArgumentCoder<WebCore::StickyPositionViewportConstraints> {
     static void encode(Encoder&, const WebCore::StickyPositionViewportConstraints&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::StickyPositionViewportConstraints&);
-};
-
-template<> struct ArgumentCoder<WebCore::AbsolutePositionConstraints> {
-    static void encode(Encoder&, const WebCore::AbsolutePositionConstraints&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::AbsolutePositionConstraints&);
 };
 
 #if !USE(COORDINATED_GRAPHICS)
@@ -525,11 +498,6 @@ template<> struct ArgumentCoder<WebCore::SystemImage> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::SystemImage&);
     static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::NotificationResources> {
-    static void encode(Encoder&, const WebCore::NotificationResources&);
-    static std::optional<RefPtr<WebCore::NotificationResources>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

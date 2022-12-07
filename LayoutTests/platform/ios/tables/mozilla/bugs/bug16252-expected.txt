@@ -489,7 +489,6 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "30.1"
-                            RenderBlock {HR} at (2,282) size 250x1 [border: (1px inset #000000) none (1px inset #000000)]
                     RenderText {#text} at (0,0) size 179x239
                       text run at (0,0) width 167: "Known as ``Wilt the Stilt''"
                       text run at (0,20) width 171: "and ``The Big Dipper,'' the"
@@ -519,3 +518,5 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 406: "One of his most famous records is the 100 points he scored in a"
                       text run at (0,20) width 439: "single game in the Philadelphia Warriors' 169-147 defeat of the New"
                       text run at (0,40) width 304: "York Knicks on March 2, 1962, in Hershey, Pa."
+layer at (276,331) size 250x1 clip at (0,0) size 0x0
+  RenderBlock {HR} at (2,282) size 250x1 [border: (1px inset #000000) none (1px inset #000000)]

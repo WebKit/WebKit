@@ -17,7 +17,6 @@ layer at (0,0) size 800x1432
         RenderBlock (floating) {DIV} at (584,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,408) size 784x200
         RenderBlock (floating) {DIV} at (584,0) size 200x200 [bgcolor=#FF0000]
-        RenderBlock {HR} at (0,0) size 584x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,608) size 784x200
         RenderBlock (floating) {DIV} at (584,0) size 200x200 [bgcolor=#FF0000]
         RenderTable {TABLE} at (192,0) size 392x50 [border: (2px solid #008000)]
@@ -32,7 +31,6 @@ layer at (0,0) size 800x1432
         RenderBlock (floating) {DIV} at (584,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,1016) size 784x200
         RenderBlock (floating) {DIV} at (584,0) size 200x200 [bgcolor=#FF0000]
-        RenderBlock {HR} at (190,0) size 394x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,1216) size 784x200
         RenderBlock (floating) {DIV} at (584,0) size 200x200 [bgcolor=#FF0000]
         RenderImage {IMG} at (192,0) size 392x50 [bgcolor=#008000]
@@ -42,6 +40,8 @@ layer at (8,208) size 584x59 clip at (10,210) size 565x40
       text run at (26,2) width 556: "This is an overflow:scroll region. It should sit on the same line as the float and wrap as"
       text run at (292,22) width 5 RTL: "."
       text run at (296,22) width 286: "needed to fit within the remaining line width"
+layer at (8,416) size 584x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 584x2 [border: (1px inset #000000)]
 layer at (196,816) size 396x79 clip at (198,818) size 377x60
   RenderBlock {DIV} at (188,0) size 396x79 [border: (2px solid #0000FF)]
     RenderText {#text} at (21,2) size 373x59
@@ -49,3 +49,5 @@ layer at (196,816) size 396x79 clip at (198,818) size 377x60
       text run at (62,22) width 332: "line as the float and wrap as needed to fit within the"
       text run at (256,42) width 5 RTL: "."
       text run at (260,42) width 134: "remaining line width"
+layer at (198,1024) size 394x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (190,0) size 394x2 [border: (1px inset #000000)]

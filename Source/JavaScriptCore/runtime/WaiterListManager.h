@@ -208,9 +208,8 @@ class WaiterListManager {
 public:
     static WaiterListManager& singleton();
 
-    JS_EXPORT_PRIVATE JSValue wait(JSGlobalObject*, VM&, void* ptr, AtomicsWaitValidation, Seconds timeout, AtomicsWaitType);
-
-    void addAsyncWaiter(void* ptr, JSPromise*, Seconds timeout);
+    JS_EXPORT_PRIVATE JSValue wait(JSGlobalObject*, VM&, int32_t* ptr, int32_t expected, Seconds timeout, AtomicsWaitType);
+    JS_EXPORT_PRIVATE JSValue wait(JSGlobalObject*, VM&, int64_t* ptr, int64_t expected, Seconds timeout, AtomicsWaitType);
 
     enum class ResolveResult : uint8_t { Ok, Timeout };
     unsigned notifyWaiter(void* ptr, unsigned count);
@@ -222,9 +221,12 @@ public:
     void unregisterSharedArrayBuffer(uint8_t* arrayPtr, size_t);
 
 private:
+    template <typename ValueType>
+    JSValue waitImpl(JSGlobalObject*, VM&, ValueType* ptr, ValueType expectedValue, Seconds timeout, AtomicsWaitType);
+
     void notifyWaiterImpl(const AbstractLocker&, Ref<Waiter>&&, const ResolveResult);
 
-    void timeoutAsyncWaiter(void* ptr, Waiter* target);
+    void timeoutAsyncWaiter(void* ptr, Ref<Waiter>&&);
 
     void cancelAsyncWaiter(const AbstractLocker&, Waiter*);
 

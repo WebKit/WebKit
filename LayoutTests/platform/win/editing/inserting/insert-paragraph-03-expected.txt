@@ -21,8 +21,9 @@ layer at (0,0) size 800x600
             text run at (0,0) width 21: "foo"
           RenderBR {BR} at (21,0) size 0x18
           RenderBR {BR} at (0,18) size 0x18
-        RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (0,54) size 784x18
           RenderText {#text} at (0,0) size 20x18
             text run at (0,0) width 20: "bar"
+layer at (8,104) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
 caret: position 0 of child 3 {HR} of child 2 {DIV} of body

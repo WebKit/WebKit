@@ -29,7 +29,6 @@ layer at (0,0) size 800x391
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (24,0) size 148x19 [r=0 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (0,0) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,53) size 784x36
           RenderText {#text} at (0,0) size 771x36
             text run at (0,0) width 771: "And here's more. There should not be a difference in distance between the labels, nor any difference in distance between"
@@ -83,6 +82,8 @@ layer at (0,0) size 800x391
                     text run at (0,18) width 212: "Bar (should be aligned with Foo)"
 layer at (36,123) size 141x13
   RenderBlock {DIV} at (3,3) size 141x13
+layer at (8,155) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
 layer at (36,228) size 141x13
   RenderBlock {DIV} at (3,3) size 141x13
 layer at (36,247) size 141x13

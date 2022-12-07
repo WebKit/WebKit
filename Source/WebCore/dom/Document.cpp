@@ -7121,6 +7121,15 @@ void Document::cancelIdleCallback(int id)
     m_idleCallbackController->removeIdleCallback(id);
 }
 
+HttpEquivPolicy Document::httpEquivPolicy() const
+{
+    if (shouldEnforceContentDispositionAttachmentSandbox())
+        return HttpEquivPolicy::DisabledByContentDispositionAttachmentSandbox;
+    if (page() && !page()->settings().httpEquivEnabled())
+        return HttpEquivPolicy::DisabledBySettings;
+    return HttpEquivPolicy::Enabled;
+}
+
 void Document::wheelEventHandlersChanged(Node* node)
 {
     Page* page = this->page();
@@ -7133,9 +7142,9 @@ void Document::wheelEventHandlersChanged(Node* node)
     }
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    if (is<Element>(node)) {
+    if (auto* element = dynamicDowncast<Element>(node)) {
         // Style is affected via eventListenerRegionTypes().
-        downcast<Element>(*node).invalidateStyle();
+        element->invalidateStyle();
     }
 
     m_frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::EventHandlerChange);
@@ -7157,15 +7166,6 @@ void Document::didAddWheelEventHandler(Node& node)
 
     if (RefPtr frame = this->frame())
         DebugPageOverlays::didChangeEventHandlers(*frame);
-}
-
-HttpEquivPolicy Document::httpEquivPolicy() const
-{
-    if (shouldEnforceContentDispositionAttachmentSandbox())
-        return HttpEquivPolicy::DisabledByContentDispositionAttachmentSandbox;
-    if (page() && !page()->settings().httpEquivEnabled())
-        return HttpEquivPolicy::DisabledBySettings;
-    return HttpEquivPolicy::Enabled;
 }
 
 static bool removeHandlerFromSet(EventTargetSet& handlerSet, Node& node, EventHandlerRemoval removal)
@@ -7269,6 +7269,23 @@ unsigned Document::touchEventHandlerCount() const
 #else
     return 0;
 #endif
+}
+
+void Document::didAddOrRemoveMouseEventHandler(Node& node)
+{
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (auto* element = dynamicDowncast<Element>(node)) {
+        // Style is affected via eventListenerRegionTypes().
+        element->invalidateStyle();
+    }
+
+    m_frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::EventHandlerChange);
+#else
+    UNUSED_PARAM(node);
+#endif
+
+    if (RefPtr frame = this->frame())
+        DebugPageOverlays::didChangeEventHandlers(*frame);
 }
 
 LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionElements)

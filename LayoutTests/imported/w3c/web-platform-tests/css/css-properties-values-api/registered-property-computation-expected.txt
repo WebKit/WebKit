@@ -13,6 +13,7 @@ PASS <length> values are computed correctly [2.54cm]
 PASS <length> values are computed correctly [25.4mm]
 PASS <length> values are computed correctly [6pc]
 PASS <length> values are computed correctly [72pt]
+PASS <length> values are computed correctly [10lh]
 PASS <length-percentage> values are computed correctly [17em]
 FAIL <length-percentage> values are computed correctly [18%] assert_equals: expected "18%" but got "0px"
 FAIL <length-percentage> values are computed correctly [calc(19em - 2%)] assert_equals: expected "calc(-2% + 190px)" but got "0px"
@@ -59,4 +60,5 @@ PASS * values are computed correctly [50dpi]
 FAIL <resolution> values are computed correctly [1dppx] The given initial value does not parse for the given syntax.
 FAIL <resolution> values are computed correctly [96dpi] The given initial value does not parse for the given syntax.
 FAIL <resolution> values are computed correctly [calc(1dppx + 96dpi)] The given initial value does not parse for the given syntax.
+PASS * values are computed correctly [url(why)]
 

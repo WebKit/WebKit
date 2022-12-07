@@ -175,8 +175,8 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, Function<b
             }
         }
     }
-    for (auto& item : attributesToRemove)
-        item.element->removeAttribute(item.attributeName);
+    for (auto& [element, attribute] : attributesToRemove)
+        element->removeAttribute(attribute);
 }
 
 std::unique_ptr<Page> createPageForSanitizingWebContent()

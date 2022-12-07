@@ -9372,9 +9372,9 @@ JSC::GCClient::IsoSubspace* JSTestObj::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestObj, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestObj.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestObj = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestObj = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestObj.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestObj = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestObj = std::forward<decltype(space)>(space); }
     );
 }
 

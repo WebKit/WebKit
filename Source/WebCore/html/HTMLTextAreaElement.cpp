@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -56,12 +56,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTextAreaElement);
 
 using namespace HTMLNames;
 
-static const int defaultRows = 2;
-static const int defaultCols = 20;
-
 // On submission, LF characters are converted into CRLF.
 // This function returns number of characters considering this.
-static inline unsigned computeLengthForSubmission(StringView text, unsigned numberOfLineBreaks)
+static unsigned computeLengthForSubmission(StringView text, unsigned numberOfLineBreaks)
 {
     return numGraphemeClusters(text) + numberOfLineBreaks;
 }
@@ -77,28 +74,26 @@ static unsigned numberOfLineBreaks(StringView text)
     return count;
 }
 
-static inline unsigned computeLengthForSubmission(StringView text)
+static unsigned computeLengthForSubmission(StringView text)
 {
     return numGraphemeClusters(text) + numberOfLineBreaks(text);
 }
 
-static inline unsigned upperBoundForLengthForSubmission(StringView text, unsigned numberOfLineBreaks)
+static unsigned upperBoundForLengthForSubmission(StringView text, unsigned numberOfLineBreaks)
 {
     return text.length() + numberOfLineBreaks;
 }
 
-HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLTextFormControlElement(tagName, document, form)
-    , m_rows(defaultRows)
-    , m_cols(defaultCols)
+HTMLTextAreaElement::HTMLTextAreaElement(Document& document, HTMLFormElement* form)
+    : HTMLTextFormControlElement(textareaTag, document, form)
 {
-    ASSERT(hasTagName(textareaTag));
     setFormControlValueMatchesRenderer(true);
 }
 
 Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-    auto textArea = adoptRef(*new HTMLTextAreaElement(tagName, document, form));
+    ASSERT_UNUSED(tagName, tagName == textareaTag);
+    auto textArea = adoptRef(*new HTMLTextAreaElement(document, form));
     textArea->ensureUserAgentShadowRoot();
     return textArea;
 }
@@ -115,8 +110,7 @@ void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
 const AtomString& HTMLTextAreaElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> textarea("textarea"_s);
-    return textarea;
+    return textareaTag->localName();
 }
 
 FormControlState HTMLTextAreaElement::saveFormControlState() const
@@ -146,7 +140,6 @@ bool HTMLTextAreaElement::hasPresentationalHintsForAttribute(const QualifiedName
         // See http://bugs.webkit.org/show_bug.cgi?id=7075
         return false;
     }
-
     if (name == wrapAttr)
         return true;
     return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
@@ -155,7 +148,7 @@ bool HTMLTextAreaElement::hasPresentationalHintsForAttribute(const QualifiedName
 void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == wrapAttr) {
-        if (shouldWrapText()) {
+        if (m_wrap != NoWrap) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
             addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueBreakWord);
         } else {
@@ -197,24 +190,14 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (name == maxlengthAttr)
-        maxLengthAttributeChanged(value);
-    else if (name == minlengthAttr)
-        minLengthAttributeChanged(value);
-    else
+    } else if (name == maxlengthAttr) {
+        internalSetMaxLength(parseHTMLNonNegativeInteger(value).value_or(-1));
+        updateValidity();
+    } else if (name == minlengthAttr) {
+        internalSetMinLength(parseHTMLNonNegativeInteger(value).value_or(-1));
+        updateValidity();
+    } else
         HTMLTextFormControlElement::parseAttribute(name, value);
-}
-
-void HTMLTextAreaElement::maxLengthAttributeChanged(const AtomString& newValue)
-{
-    internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
-    updateValidity();
-}
-
-void HTMLTextAreaElement::minLengthAttributeChanged(const AtomString& newValue)
-{
-    internalSetMinLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
-    updateValidity();
 }
 
 RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -227,42 +210,18 @@ bool HTMLTextAreaElement::appendFormData(DOMFormData& formData)
     if (name().isEmpty())
         return false;
 
-    Ref<HTMLTextAreaElement> protectedThis(*this);
+    Ref protectedThis(*this);
     document().updateLayout();
 
     formData.append(name(), m_wrap == HardWrap ? valueWithHardLineBreaks() : value());
-
-    auto& dirnameAttrValue = attributeWithoutSynchronization(dirnameAttr);
-    if (!dirnameAttrValue.isNull())
-        formData.append(dirnameAttrValue, directionForFormData());
-
+    if (auto& dirname = attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
+        formData.append(dirname, directionForFormData());
     return true;    
 }
 
 void HTMLTextAreaElement::reset()
 {
     setNonDirtyValue(defaultValue(), TextControlSetValueSelection::SetSelectionToEnd);
-}
-
-bool HTMLTextAreaElement::hasCustomFocusLogic() const
-{
-    return true;
-}
-
-int HTMLTextAreaElement::defaultTabIndex() const
-{
-    return 0;
-}
-
-bool HTMLTextAreaElement::isKeyboardFocusable(KeyboardEvent*) const
-{
-    // If a given text area can be focused at all, then it will always be keyboard focusable.
-    return isFocusable();
-}
-
-bool HTMLTextAreaElement::isMouseFocusable() const
-{
-    return isFocusable();
 }
 
 void HTMLTextAreaElement::updateFocusAppearance(SelectionRestorationMode restorationMode, SelectionRevealMode revealMode)
@@ -308,7 +267,7 @@ void HTMLTextAreaElement::subtreeHasChanged()
 void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& event) const
 {
     ASSERT(renderer());
-    int signedMaxLength = effectiveMaxLength();
+    int signedMaxLength = maxLength();
     if (signedMaxLength < 0)
         return;
     unsigned unsignedMaxLength = static_cast<unsigned>(signedMaxLength);
@@ -330,31 +289,21 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;
     unsigned appendableLength = unsignedMaxLength > baseLength ? unsignedMaxLength - baseLength : 0;
-    event.setText(sanitizeUserInputValue(event.text(), appendableLength));
-}
-
-String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, unsigned maxLength)
-{
-    return proposedValue.left(numCodeUnitsInGraphemeClusters(proposedValue, maxLength));
+    auto text = event.text();
+    event.setText(text.left(numCodeUnitsInGraphemeClusters(text, appendableLength)));
 }
 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() const
 {
-    RefPtr<ShadowRoot> root = userAgentShadowRoot();
+    RefPtr root = userAgentShadowRoot();
     if (!root)
         return nullptr;
-    
     return childrenOfType<TextControlInnerTextElement>(*root).first();
 }
 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElementCreatingShadowSubtreeIfNeeded()
 {
     return innerTextElement();
-}
-
-void HTMLTextAreaElement::rendererWillBeDestroyed()
-{
-    updateValue();
 }
 
 void HTMLTextAreaElement::updateValue() const
@@ -454,19 +403,38 @@ String HTMLTextAreaElement::validationMessage() const
         return validationMessageTooShortText(computeLengthForSubmission(value()), minLength());
 
     if (tooLong())
-        return validationMessageTooLongText(computeLengthForSubmission(value()), effectiveMaxLength());
+        return validationMessageTooLongText(computeLengthForSubmission(value()), maxLength());
 
     return String();
 }
 
 bool HTMLTextAreaElement::valueMissing() const
 {
-    return willValidate() && valueMissing(value());
+    return willValidate() && valueMissing({ });
 }
 
 bool HTMLTextAreaElement::tooShort() const
 {
-    return willValidate() && tooShort(value(), CheckDirtyFlag);
+    return willValidate() && tooShort({ }, CheckDirtyFlag);
+}
+
+bool HTMLTextAreaElement::tooLong() const
+{
+    return willValidate() && tooLong({ }, CheckDirtyFlag);
+}
+
+bool HTMLTextAreaElement::valueMissing(StringView value) const
+{
+    if (!(isRequired() && isMutable()))
+        return false;
+    if (value.isNull())
+        value = this->value();
+    return value.isEmpty();
+}
+
+bool HTMLTextAreaElement::isValidValue(StringView candidate) const
+{
+    return !valueMissing(candidate) && !tooShort(candidate, IgnoreDirtyFlag) && !tooLong(candidate, IgnoreDirtyFlag);
 }
 
 bool HTMLTextAreaElement::tooShort(StringView value, NeedsToCheckDirtyFlag check) const
@@ -480,6 +448,9 @@ bool HTMLTextAreaElement::tooShort(StringView value, NeedsToCheckDirtyFlag check
     if (min <= 0)
         return false;
 
+    if (value.isNull())
+        value = this->value();
+
     // The empty string is excluded from tooShort validation.
     if (value.isEmpty())
         return false;
@@ -492,11 +463,6 @@ bool HTMLTextAreaElement::tooShort(StringView value, NeedsToCheckDirtyFlag check
         && computeLengthForSubmission(value, numberOfLineBreaksInValue) < unsignedMin;
 }
 
-bool HTMLTextAreaElement::tooLong() const
-{
-    return willValidate() && tooLong(value(), CheckDirtyFlag);
-}
-
 bool HTMLTextAreaElement::tooLong(StringView value, NeedsToCheckDirtyFlag check) const
 {
     // Return false for the default value or value set by script even if it is
@@ -504,21 +470,19 @@ bool HTMLTextAreaElement::tooLong(StringView value, NeedsToCheckDirtyFlag check)
     if (check == CheckDirtyFlag && !m_wasModifiedByUser)
         return false;
 
-    int max = effectiveMaxLength();
+    int max = maxLength();
     if (max < 0)
         return false;
 
+    if (value.isNull())
+        value = this->value();
+
     // FIXME: The HTML specification says that the "number of characters" is measured using code-unit length and,
     // in the case of textarea elements, with all line breaks normalized to a single character (as opposed to CRLF pairs).
-    unsigned unsignedMax = static_cast<unsigned>(max);
+    unsigned unsignedMax = max;
     unsigned numberOfLineBreaksInValue = numberOfLineBreaks(value);
     return upperBoundForLengthForSubmission(value, numberOfLineBreaksInValue) > unsignedMax
         && computeLengthForSubmission(value, numberOfLineBreaksInValue) > unsignedMax;
-}
-
-bool HTMLTextAreaElement::isValidValue(const String& candidate) const
-{
-    return !valueMissing(candidate) && !tooShort(candidate, IgnoreDirtyFlag) && !tooLong(candidate, IgnoreDirtyFlag);
 }
 
 bool HTMLTextAreaElement::accessKeyAction(bool)
@@ -537,21 +501,6 @@ void HTMLTextAreaElement::setRows(unsigned rows)
     setUnsignedIntegralAttribute(rowsAttr, limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(rows, defaultRows));
 }
 
-bool HTMLTextAreaElement::shouldUseInputMethod()
-{
-    return true;
-}
-
-HTMLElement* HTMLTextAreaElement::placeholderElement() const
-{
-    return m_placeholder.get();
-}
-
-bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
-{
-    return isMutable();
-}
-
 void HTMLTextAreaElement::updatePlaceholderText()
 {
     auto& placeholderText = attributeWithoutSynchronization(placeholderAttr);
@@ -567,11 +516,6 @@ void HTMLTextAreaElement::updatePlaceholderText()
         userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->nextSibling());
     }
     m_placeholder->setInnerText(String { placeholderText });
-}
-
-bool HTMLTextAreaElement::willRespondToMouseClickEventsWithEditability(Editability) const
-{
-    return !isDisabledFormControl();
 }
 
 RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style)

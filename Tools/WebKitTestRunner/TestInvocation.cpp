@@ -292,10 +292,10 @@ void TestInvocation::dumpAudio(WKDataRef audioData)
     fprintf(stderr, "#EOF\n");
 }
 
-bool TestInvocation::compareActualHashToExpectedAndDumpResults(const char actualHash[33])
+bool TestInvocation::compareActualHashToExpectedAndDumpResults(const std::string& actualHash)
 {
     // Compute the hash of the bitmap context pixels
-    fprintf(stdout, "\nActualHash: %s\n", actualHash);
+    fprintf(stdout, "\nActualHash: %s\n", actualHash.c_str());
 
     if (!m_expectedPixelHash.length())
         return false;

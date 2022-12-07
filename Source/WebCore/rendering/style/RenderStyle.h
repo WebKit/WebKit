@@ -527,6 +527,18 @@ public:
     AspectRatioType aspectRatioType() const { return static_cast<AspectRatioType>(m_rareNonInheritedData->aspectRatioType); }
     double aspectRatioWidth() const { return m_rareNonInheritedData->aspectRatioWidth; }
     double aspectRatioHeight() const { return m_rareNonInheritedData->aspectRatioHeight; }
+    double aspectRatioLogicalWidth() const
+    {
+        if (isHorizontalWritingMode())
+            return aspectRatioWidth();
+        return aspectRatioHeight();
+    }
+    double aspectRatioLogicalHeight() const
+    {
+        if (isHorizontalWritingMode())
+            return aspectRatioHeight();
+        return aspectRatioWidth();
+    }
     double logicalAspectRatio() const
     {
         ASSERT(aspectRatioType() != AspectRatioType::Auto);

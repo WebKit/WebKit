@@ -16,7 +16,8 @@ layer at (0,0) size 800x600
             text run at (0,18) width 59: "keystroke"
         RenderText {#text} at (58,18) size 5x17
           text run at (58,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,70) size 784x0
   RenderBlock (relative positioned) {DIV} at (0,62) size 784x0
     RenderTextControl {INPUT} at (0,0) size 392x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]

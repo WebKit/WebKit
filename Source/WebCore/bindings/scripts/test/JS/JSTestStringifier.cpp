@@ -189,9 +189,9 @@ JSC::GCClient::IsoSubspace* JSTestStringifier::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestStringifier, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestStringifier.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestStringifier = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestStringifier = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestStringifier.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestStringifier = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestStringifier = std::forward<decltype(space)>(space); }
     );
 }
 

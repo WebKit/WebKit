@@ -3,7 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x542
-      RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,18) size 784x20
         RenderText {#text} at (0,0) size 54x19
           text run at (0,0) width 54: "Test for "
@@ -16,6 +15,9 @@ layer at (0,0) size 800x600
             text run at (366,0) width 342: "Resize corner does not track in transformed elements"
         RenderText {#text} at (707,0) size 5x19
           text run at (707,0) width 5: "."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
+layer at (8,8) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+layer at (8,62) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
 layer at (58,114) size 154x104 clip at (60,116) size 150x100
   RenderBlock {DIV} at (50,106) size 154x104 [border: (2px solid #0000FF)]

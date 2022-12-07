@@ -173,9 +173,9 @@ JSC::GCClient::IsoSubspace* JSTestClassWithJSBuiltinConstructor::subspaceForImpl
 {
     return WebCore::subspaceForImpl<JSTestClassWithJSBuiltinConstructor, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestClassWithJSBuiltinConstructor.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestClassWithJSBuiltinConstructor = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestClassWithJSBuiltinConstructor = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestClassWithJSBuiltinConstructor.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestClassWithJSBuiltinConstructor = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestClassWithJSBuiltinConstructor = std::forward<decltype(space)>(space); }
     );
 }
 

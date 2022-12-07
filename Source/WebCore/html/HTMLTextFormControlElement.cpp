@@ -234,12 +234,12 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
-ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replacement)
+ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacement)
 {
     return setRangeText(replacement, selectionStart(), selectionEnd(), String());
 }
 
-ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode)
+ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode)
 {
     if (start > end)
         return Exception { IndexSizeError };

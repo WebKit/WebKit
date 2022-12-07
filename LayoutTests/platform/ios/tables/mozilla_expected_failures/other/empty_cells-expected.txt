@@ -240,7 +240,6 @@ layer at (0,0) size 800x2678
       RenderBlock {P} at (0,564) size 784x20
         RenderText {#text} at (0,0) size 493x19
           text run at (0,0) width 493: "this table should be about 122 pixels wide (nested, width=10 without border)"
-      RenderBlock {HR} at (0,600) size 124x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,610) size 124x4 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 122x2
           RenderTableRow {TR} at (0,0) size 122x2
@@ -828,3 +827,5 @@ layer at (0,0) size 800x2678
                 RenderBR {BR} at (1,1) size 0x19
               RenderTableCell {TD} at (2,0) size 2x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=15 rs=1 cs=15]
                 RenderBR {BR} at (1,1) size 0x19
+layer at (8,608) size 124x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,600) size 124x2 [border: (1px inset #000000)]

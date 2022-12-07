@@ -328,9 +328,9 @@ JSC::GCClient::IsoSubspace* JSTestNamedSetterWithIdentifier::subspaceForImpl(JSC
 {
     return WebCore::subspaceForImpl<JSTestNamedSetterWithIdentifier, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterWithIdentifier.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithIdentifier = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithIdentifier = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterWithIdentifier.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithIdentifier = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithIdentifier = std::forward<decltype(space)>(space); }
     );
 }
 

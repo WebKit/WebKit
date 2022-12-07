@@ -3,7 +3,6 @@ layer at (0,0) size 785x862
 layer at (0,0) size 785x862
   RenderBlock {HTML} at (0,0) size 785x862
     RenderBody {BODY} at (8,8) size 769x846
-      RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
       RenderBlock {H3} at (0,20) size 769x23
         RenderText {#text} at (0,0) size 61x21
           text run at (0,0) width 61: "Table 1"
@@ -52,7 +51,6 @@ layer at (0,0) size 785x862
             RenderTableCell {TD} at (335,50) size 162x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
-      RenderBlock {HR} at (0,218) size 769x3 [border: (1px inset #000000)]
       RenderBlock {H3} at (0,239) size 769x23
         RenderText {#text} at (0,0) size 76x21
           text run at (0,0) width 76: "Table 2.1"
@@ -197,3 +195,7 @@ layer at (0,0) size 785x862
             RenderTableCell {TD} at (303,50) size 194x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
+layer at (8,8) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+layer at (8,226) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,218) size 769x3 [border: (1px inset #000000)]

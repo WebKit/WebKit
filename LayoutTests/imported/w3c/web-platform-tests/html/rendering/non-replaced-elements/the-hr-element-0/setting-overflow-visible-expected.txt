@@ -1,4 +1,4 @@
 
-FAIL control assert_equals: hr.clientHeight expected 50 but got 0
-FAIL overflow: visible assert_equals: hr.offsetLeft expected 0 but got 50
+PASS control
+PASS overflow: visible
 

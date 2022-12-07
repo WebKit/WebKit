@@ -16,7 +16,6 @@ layer at (0,0) size 800x600
             text run at (0,18) width 194: "RTL table cell to display:none"
         RenderText {#text} at (193,18) size 5x18
           text run at (193,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 258x18
           text run at (0,0) width 258: "No assertion failure means TEST PASS."
@@ -26,3 +25,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 45x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x18
                 text run at (1,1) width 43: "Lorem"
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]

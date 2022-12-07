@@ -7,13 +7,11 @@ layer at (0,0) size 785x1132
         RenderBlock {P} at (4,20) size 616x18
           RenderText {#text} at (0,0) size 596x18
             text run at (0,0) width 596: "Affected Browsers: Safari 2.0, Windows Internet Explorer 6 SP2"
-        RenderBlock {HR} at (4,54) size 616x2 [border: (1px inset #000000)]
         RenderBlock {P} at (4,72) size 616x54
           RenderText {#text} at (0,0) size 586x54
             text run at (0,0) width 586: "Bug Description: On the Affected Browsers, if a rule sets the"
             text run at (0,18) width 519: "'background-color' of an element, this color cannot be"
             text run at (0,36) width 461: "overridden by 'background:inherit' declarations."
-        RenderBlock {HR} at (4,142) size 616x2 [border: (1px inset #000000)]
         RenderBlock {P} at (4,160) size 616x90
           RenderText {#text} at (0,0) size 615x54
             text run at (0,0) width 577: "Example: With the following code, the background color of H1"
@@ -27,13 +25,11 @@ layer at (0,0) size 785x1132
           RenderText {#text} at (0,72) size 279x18
             text run at (0,72) width 49: "  H1 "
             text run at (48,72) width 231: "{ background: inherit; }"
-        RenderBlock {HR} at (4,266) size 616x2 [border: (1px inset #000000)]
         RenderBlock {P} at (4,284) size 616x54
           RenderText {#text} at (0,0) size 586x54
             text run at (0,0) width 586: "Work-around: The 'background-color' can only be overridden by"
             text run at (0,18) width 577: "another 'background-color' declaration, or by a 'background'"
             text run at (0,36) width 365: "declaration that does specify a color."
-        RenderBlock {HR} at (4,354) size 616x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (4,364) size 616x18
           RenderText {#text} at (0,0) size 409x18
             text run at (0,0) width 409: "This is in contradiction with the CSS2 specification which says:"
@@ -74,3 +70,11 @@ layer at (0,0) size 785x1132
           RenderText {#text} at (4,4) size 484x74
             text run at (4,4) width 484: "This header has a pink background"
             text run at (4,41) width 218: "and that's good."
+layer at (85,62) size 615x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,54) size 616x2 [border: (1px inset #000000)]
+layer at (85,150) size 615x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,142) size 616x2 [border: (1px inset #000000)]
+layer at (85,274) size 615x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,266) size 616x2 [border: (1px inset #000000)]
+layer at (85,362) size 615x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,354) size 616x2 [border: (1px inset #000000)]

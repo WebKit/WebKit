@@ -20,7 +20,6 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (111,148) size 0x36
                 RenderBR {BR} at (0,185) size 0x36
                 RenderBR {BR} at (0,222) size 0x36
-              RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
               RenderBlock {FORM} at (0,293) size 769x492
                 RenderButton {INPUT} at (0,0) size 147x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 131x18
@@ -62,7 +61,6 @@ layer at (0,0) size 800x600
                       text run at (5,5) width 83: "Initial Value"
                 RenderBR {BR} at (326,267) size 0x36
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {HR} at (0,817) size 769x2 [border: (1px inset #000000)]
               RenderBlock {P} at (0,851) size 769x37
                 RenderText {#text} at (0,0) size 62x36
                   text run at (0,0) width 62: "Now"
@@ -97,6 +95,8 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 531x36
                   RenderText {#text} at (0,0) size 531x36
                     text run at (0,0) width 531: "This is an anchor point named \"anchor1\"."
+        layer at (8,283) size 769x2 clip at (0,0) size 0x0
+          RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
         layer at (387,370) size 186x18 scrollWidth 191
           RenderBlock {DIV} at (3,3) size 186x18
             RenderText {#text} at (0,0) size 190x17
@@ -110,6 +110,8 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 234: "More initial text before user input."
                 text run at (234,0) width 0: " "
               RenderBR {BR} at (0,18) size 0x17
+        layer at (8,825) size 769x2 clip at (0,0) size 0x0
+          RenderBlock {HR} at (0,817) size 769x2 [border: (1px inset #000000)]
       RenderFrame {FRAME} at (0,540) size 800x60
         layer at (0,0) size 785x90
           RenderView at (0,0) size 785x60

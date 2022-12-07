@@ -245,9 +245,9 @@ JSC::GCClient::IsoSubspace* JSTestDelegateToSharedSyntheticAttribute::subspaceFo
 {
     return WebCore::subspaceForImpl<JSTestDelegateToSharedSyntheticAttribute, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDelegateToSharedSyntheticAttribute.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDelegateToSharedSyntheticAttribute = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDelegateToSharedSyntheticAttribute = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDelegateToSharedSyntheticAttribute = std::forward<decltype(space)>(space); }
     );
 }
 

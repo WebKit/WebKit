@@ -29,17 +29,18 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppKit/NSAppearance_Private.h>
-#endif
+#else
 
 @interface NSAppearance ()
 
 - (void)_drawInRect:(NSRect)rect context:(CGContextRef)context options:(NSDictionary *)options;
-#if !USE(APPLE_INTERNAL_SDK)
 - (BOOL)_usesMetricsAppearance;
-#endif
-
 - (NSAppearance *)appearanceByApplyingTintColor:(NSColor *)tintColor;
 
+@property (readonly) NSColor *tintColor;
+
 @end
+
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // USE(APPKIT)

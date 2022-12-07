@@ -3782,7 +3782,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     bool isServerSideRedirect = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision && navigation.currentRequestIsRedirect();
     bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
     if (!frame.isMainFrame() && preferences().siteIsolationEnabled()) {
-        frame.swapToProcess(WTFMove(newProcess));
+        frame.swapToProcess(WTFMove(newProcess), navigation.currentRequest());
         return;
     }
 

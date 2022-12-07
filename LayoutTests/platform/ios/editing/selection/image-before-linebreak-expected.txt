@@ -9,11 +9,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 349x19
           text run at (0,0) width 349: "Only the line break after the image should be selected."
-      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,46) size 784x123
         RenderImage {IMG} at (0,0) size 76x103
         RenderBR {BR} at (76,88) size 0x19
         RenderText {#text} at (0,103) size 22x19
           text run at (0,103) width 22: "foo"
+layer at (8,44) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
 selection start: position 0 of child 1 {BR} of child 4 {DIV} of body
 selection end:   position 1 of child 1 {BR} of child 4 {DIV} of body

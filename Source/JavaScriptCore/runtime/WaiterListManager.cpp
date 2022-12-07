@@ -50,22 +50,40 @@ WaiterListManager& WaiterListManager::singleton()
     return manager;
 }
 
-JSValue WaiterListManager::wait(JSGlobalObject* globalObject, VM& vm, void* ptr, AtomicsWaitValidation validation, Seconds timeout, AtomicsWaitType type)
+template <typename ValueType>
+JSValue WaiterListManager::waitImpl(JSGlobalObject* globalObject, VM& vm, ValueType* ptr, ValueType expectedValue, Seconds timeout, AtomicsWaitType type)
 {
     if (type == AtomicsWaitType::Async) {
         JSObject* object = constructEmptyObject(globalObject);
 
         bool isAsync = false;
         JSValue value;
-        if (validation == AtomicsWaitValidation::Fail)
-            value = vm.smallStrings.notEqualString();
-        else if (!timeout)
-            value = vm.smallStrings.timedOutString();
-        else {
-            isAsync = true;
-            JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
-            addAsyncWaiter(ptr, promise, timeout);
-            value = promise;
+
+        Ref<WaiterList> list = findOrCreateList(ptr);
+        JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+
+        {
+            Locker listLocker { list->lock };
+            if (WTF::atomicLoad(ptr) != expectedValue)
+                value = vm.smallStrings.notEqualString();
+            else if (!timeout)
+                value = vm.smallStrings.timedOutString();
+            else {
+                isAsync = true;
+
+                Ref<Waiter> waiter = adoptRef(*new Waiter(promise));
+                list->addLast(listLocker, waiter);
+
+                if (timeout != Seconds::infinity()) {
+                    Ref<RunLoop::DispatchTimer> timer = RunLoop::current().dispatchAfter(timeout, [this, ptr, waiter = waiter.copyRef()]() mutable {
+                        timeoutAsyncWaiter(ptr, WTFMove(waiter));
+                    });
+                    waiter->setTimer(listLocker, WTFMove(timer));
+                    dataLogLnIf(WaiterListsManagerInternal::verbose, "WaiterListManager added a new AsyncWaiter ", RawPointer(waiter.ptr()), " to a waiterList for ptr ", RawPointer(ptr));
+                }
+
+                value = promise;
+            }
         }
 
         object->putDirect(vm, vm.propertyNames->async, jsBoolean(isAsync));
@@ -73,15 +91,15 @@ JSValue WaiterListManager::wait(JSGlobalObject* globalObject, VM& vm, void* ptr,
         return object;
     }
 
-    if (validation == AtomicsWaitValidation::Fail)
-        return vm.smallStrings.notEqualString();
-
     Ref<Waiter> syncWaiter = vm.syncWaiter();
     Ref<WaiterList> list = findOrCreateList(ptr);
     MonotonicTime time = MonotonicTime::now() + timeout;
 
     {
         Locker listLocker { list->lock };
+        if (WTF::atomicLoad(ptr) != expectedValue)
+            return vm.smallStrings.notEqualString();
+
         list->addLast(listLocker, syncWaiter);
         dataLogLnIf(WaiterListsManagerInternal::verbose, "WaiterListManager added a new SyncWaiter ", RawPointer(&syncWaiter), " to a waiterList for ptr ", RawPointer(ptr));
 
@@ -101,49 +119,44 @@ JSValue WaiterListManager::wait(JSGlobalObject* globalObject, VM& vm, void* ptr,
     }
 }
 
-void WaiterListManager::addAsyncWaiter(void* ptr, JSPromise* promise, Seconds timeout)
+JSValue WaiterListManager::wait(JSGlobalObject* globalObject, VM& vm, int32_t* ptr, int32_t expected, Seconds timeout, AtomicsWaitType waitType)
 {
-    Ref<WaiterList> list = findOrCreateList(ptr);
-    Ref<Waiter> waiter = adoptRef(*new Waiter(promise));
+    return waitImpl(globalObject, vm, ptr, expected, timeout, waitType);
+}
 
-    {
+JSValue WaiterListManager::wait(JSGlobalObject* globalObject, VM& vm, int64_t* ptr, int64_t expected, Seconds timeout, AtomicsWaitType waitType)
+{
+    return waitImpl(globalObject, vm, ptr, expected, timeout, waitType);
+}
+
+void WaiterListManager::timeoutAsyncWaiter(void* ptr, Ref<Waiter>&& waiter)
+{
+    if (RefPtr<WaiterList> list = findList(ptr)) {
+        // All cases:
+        // 1. Find a list for ptr.
         Locker listLocker { list->lock };
-        list->addLast(listLocker, waiter);
-
-        if (timeout != Seconds::infinity()) {
-            Ref<RunLoop::DispatchTimer> timer = RunLoop::current().dispatchAfter(timeout, [this, ptr, waiter = waiter.copyRef()]() mutable {
-                if (RefPtr<WaiterList> list = findList(ptr)) {
-                    // All cases:
-                    // 1. Find a list for ptr.
-                    Locker listLocker { list->lock };
-                    if (waiter->ticket(listLocker)) {
-                        if (waiter->isOnList()) {
-                            // 1.1. The list contains the waiter which must be in the list and hasn't been notified.
-                            //      It should have a ticket, then notify it with timeout.
-                            bool didGetDequeued = list->findAndRemove(listLocker, waiter);
-                            ASSERT_UNUSED(didGetDequeued, didGetDequeued);
-                        }
-                        // 1.2. The list doesn't contain the waiter.
-                        //      1.2.1 It's a new list, then the waiter must be removed from a list which is destructed.
-                        //            Then, the waiter may (notify it if it does) or may not have a ticket.
-                        notifyWaiterImpl(listLocker,  WTFMove(waiter), ResolveResult::Timeout);
-                        return;
-                    }
-                    // 1.2.2 It's the list the waiter used to belong. Then it must be notified by other thread and ignore it.
-                }
-
-                // 2. Doesn't find a list for ptr, then the waiter must be removed from the list.
-                //      2.1. The waiter has a ticket, then notify it.
-                //      2.2. The waiter doesn't has a ticket, then it's notified and ignore it.
-                ASSERT(!waiter->isOnList());
-                if (waiter->ticket(NoLockingNecessary))
-                    notifyWaiterImpl(NoLockingNecessary, WTFMove(waiter), ResolveResult::Timeout);
-            });
-            waiter->setTimer(listLocker, WTFMove(timer));
+        if (waiter->ticket(listLocker)) {
+            if (waiter->isOnList()) {
+                // 1.1. The list contains the waiter which must be in the list and hasn't been notified.
+                //      It should have a ticket, then notify it with timeout.
+                bool didGetDequeued = list->findAndRemove(listLocker, waiter);
+                ASSERT_UNUSED(didGetDequeued, didGetDequeued);
+            }
+            // 1.2. The list doesn't contain the waiter.
+            //      1.2.1 It's a new list, then the waiter must be removed from a list which is destructed.
+            //            Then, the waiter may (notify it if it does) or may not have a ticket.
+            notifyWaiterImpl(listLocker,  WTFMove(waiter), ResolveResult::Timeout);
+            return;
         }
+        // 1.2.2 It's the list the waiter used to belong. Then it must be notified by other thread and ignore it.
     }
 
-    dataLogLnIf(WaiterListsManagerInternal::verbose, "WaiterListManager added a new AsyncWaiter ", RawPointer(waiter.ptr()), " to a waiterList for ptr ", RawPointer(ptr));
+    // 2. Doesn't find a list for ptr, then the waiter must be removed from the list.
+    //      2.1. The waiter has a ticket, then notify it.
+    //      2.2. The waiter doesn't has a ticket, then it's notified and ignore it.
+    ASSERT(!waiter->isOnList());
+    if (waiter->ticket(NoLockingNecessary))
+        notifyWaiterImpl(NoLockingNecessary, WTFMove(waiter), ResolveResult::Timeout);
 }
 
 unsigned WaiterListManager::notifyWaiter(void* ptr, unsigned count)

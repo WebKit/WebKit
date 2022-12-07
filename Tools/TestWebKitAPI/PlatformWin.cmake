@@ -56,20 +56,20 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 else ()
     list(APPEND TestWebCore_LIBRARIES
-        ASL${DEBUG_SUFFIX}
-        CFNetwork${DEBUG_SUFFIX}
-        CoreGraphics${DEBUG_SUFFIX}
-        CoreText${DEBUG_SUFFIX}
+        Apple::ApplicationServices
+        Apple::CFNetwork
+        Apple::CoreGraphics
+        Apple::CoreText
+        Apple::QuartzCore
+        Apple::libdispatch
         LibXslt::LibExslt
-        QuartzCore${DEBUG_SUFFIX}
         WebKitQuartzCoreAdditions${DEBUG_SUFFIX}
-        libdispatch${DEBUG_SUFFIX}
     )
 endif ()
 
 if (USE_CF)
     list(APPEND TestWebCore_LIBRARIES
-        ${COREFOUNDATION_LIBRARY}
+        Apple::CoreFoundation
     )
 endif ()
 

@@ -618,9 +618,9 @@ JSC::GCClient::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::V
 {
     return WebCore::subspaceForImpl<JSTestConditionallyReadWrite, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestConditionallyReadWrite.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionallyReadWrite = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionallyReadWrite = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestConditionallyReadWrite.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestConditionallyReadWrite = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestConditionallyReadWrite = std::forward<decltype(space)>(space); }
     );
 }
 

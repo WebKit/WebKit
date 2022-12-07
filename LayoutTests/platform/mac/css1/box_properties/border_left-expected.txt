@@ -22,7 +22,6 @@ layer at (0,0) size 785x1028
           text run at (319,75) width 1: " "
           text run at (0,90) width 266: "TD {border-left: green 2px solid;}"
           text run at (265,90) width 1: " "
-      RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (20,170) size 749x36
         RenderText {#text} at (0,0) size 723x36
           text run at (0,0) width 649: "Note that all table cells on this page should have a two-pixel solid green border along their left sides. "
@@ -160,3 +159,5 @@ layer at (0,0) size 785x1028
                     text run at (3,18) width 48: "colors. "
                     text run at (50,18) width 630: "The first item's border should travel the entire height the nested list (to end near the baseline of the"
                     text run at (3,36) width 638: "line \"...nested within the list item.\"), even though the nested list does not have any border styles set."
+layer at (8,160) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]

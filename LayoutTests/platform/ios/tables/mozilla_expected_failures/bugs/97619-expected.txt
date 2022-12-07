@@ -19,7 +19,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (79,53) size 701x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 12x19
                 text run at (2,2) width 12: "X"
-      RenderBlock {HR} at (0,140) size 77x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,150) size 784x167 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x165
           RenderTableRow {TR} at (0,2) size 782x161
@@ -37,7 +36,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (28,70) size 752x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,1) size 12x21
                 text run at (2,2) width 12: "X"
-      RenderBlock {HR} at (0,325) size 77x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,335) size 784x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x50
           RenderTableRow {TR} at (0,2) size 782x46
@@ -50,7 +48,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (220,13) size 560x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 12x19
                 text run at (2,2) width 12: "X"
-      RenderBlock {HR} at (0,395) size 77x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,405) size 784x32 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x30
           RenderTableRow {TR} at (0,2) size 782x26
@@ -63,3 +60,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (343,3) size 437x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 12x19
                 text run at (2,2) width 12: "X"
+layer at (8,148) size 77x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,140) size 77x2 [border: (1px inset #000000)]
+layer at (8,333) size 77x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,325) size 77x2 [border: (1px inset #000000)]
+layer at (8,403) size 77x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,395) size 77x2 [border: (1px inset #000000)]

@@ -16,7 +16,6 @@ layer at (0,0) size 800x286
             text run at (0,18) width 43: "border"
         RenderText {#text} at (42,18) size 5x18
           text run at (42,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,62) size 200x200
         RenderText {#text} at (0,0) size 198x54
           text run at (0,0) width 131: "Cras faucibus. Nunc"
@@ -32,3 +31,5 @@ layer at (0,0) size 800x286
           text run at (0,72) width 140: "pulvinar velit. Integer"
           text run at (0,90) width 197: "sollicitudin nisi ut urna blandit"
           text run at (0,108) width 62: "convallis."
+layer at (8,68) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]

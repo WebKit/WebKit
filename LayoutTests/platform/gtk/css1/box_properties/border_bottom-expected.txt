@@ -16,7 +16,6 @@ layer at (0,0) size 785x995
           text run at (344,30) width 0: " "
           text run at (0,45) width 288: "TD {border-bottom: green 2px solid;}"
           text run at (288,45) width 0: " "
-      RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 769x36
         RenderText {#text} at (0,0) size 731x35
           text run at (0,0) width 658: "Note that all table cells on this page should have a two-pixel solid green border along their bottom sides. "
@@ -161,3 +160,5 @@ layer at (0,0) size 785x995
                       text run at (131,18) width 50: "beneath"
                   RenderText {#text} at (181,18) size 390x17
                     text run at (181,18) width 390: " the nested list (below the line \"...nested within the list item.\")."
+layer at (8,115) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]

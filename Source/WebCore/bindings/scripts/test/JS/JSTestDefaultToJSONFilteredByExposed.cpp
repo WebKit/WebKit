@@ -269,9 +269,9 @@ JSC::GCClient::IsoSubspace* JSTestDefaultToJSONFilteredByExposed::subspaceForImp
 {
     return WebCore::subspaceForImpl<JSTestDefaultToJSONFilteredByExposed, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSONFilteredByExposed.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSONFilteredByExposed = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSONFilteredByExposed = std::forward<decltype(space)>(space); }
     );
 }
 

@@ -28,7 +28,6 @@ layer at (0,0) size 800x600
             text run at (0,18) width 216: "when selecting past the first letter"
         RenderText {#text} at (215,18) size 5x18
           text run at (215,18) width 5: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x54
         RenderText {#text} at (0,0) size 771x54
           text run at (0,0) width 761: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed neque. Quisque eu"
@@ -43,6 +42,8 @@ layer at (0,0) size 800x600
           text run at (0,18) width 728: "Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros"
           text run at (0,36) width 767: "pharetra rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a,"
           text run at (0,54) width 39: "tellus."
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (40,180) size 296x28
   RenderBlock {DIV} at (12,12) size 296x28
     RenderText {#text} at (0,0) size 192x28

@@ -718,6 +718,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(*parameters.fontMachExtensionHandle));
 #endif
 
+    pageConfiguration.mainFrameIdentifier = parameters.mainFrameIdentifier;
+    bool receivedMainFrameIdentifierFromUIProcess = !!pageConfiguration.mainFrameIdentifier;
+    
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
     WebStorageNamespaceProvider::incrementUseCount(*m_pageGroup, sessionStorageNamespaceIdentifier());
@@ -747,7 +750,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // in modern WebKit.
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
-    m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame());
+    m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame(), receivedMainFrameIdentifierFromUIProcess);
 
     m_drawingArea->updatePreferences(parameters.store);
 

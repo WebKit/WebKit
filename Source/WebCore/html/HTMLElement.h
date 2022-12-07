@@ -96,7 +96,6 @@ public:
     virtual bool isSearchFieldResultsButtonElement() const { return false; }
 
     bool willRespondToMouseMoveEvents() const override;
-    bool willRespondToMouseWheelEvents() const override;
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
     virtual bool isLabelable() const { return false; }

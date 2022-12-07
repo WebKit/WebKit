@@ -17,41 +17,21 @@ PASS .test 15
 PASS .test 16
 PASS .test 17
 PASS .test 18
-FAIL .test 19 assert_equals:
-<img src="resources/dice.png" class="test ci-width" data-expected-client-width="10" data-expected-client-height="0">
-clientWidth expected 10 but got 0
+PASS .test 19
 PASS .test 20
-FAIL .test 21 assert_equals:
-<img src="resources/dice.png" class="test ci-both" data-expected-client-width="10" data-expected-client-height="20">
-clientWidth expected 10 but got 0
-FAIL .test 22 assert_equals:
-<svg class="test ci-width" data-expected-client-width="10" data-expected-client-height="0"></svg>
-clientWidth expected 10 but got 0
+PASS .test 21
+PASS .test 22
 PASS .test 23
-FAIL .test 24 assert_equals:
-<svg class="test ci-both" data-expected-client-width="10" data-expected-client-height="20"></svg>
-clientWidth expected 10 but got 0
-FAIL .test 25 assert_equals:
-<canvas class="test ci-width" data-expected-client-width="10" data-expected-client-height="0"></canvas>
-clientWidth expected 10 but got 0
+PASS .test 24
+PASS .test 25
 PASS .test 26
-FAIL .test 27 assert_equals:
-<canvas class="test ci-both" data-expected-client-width="10" data-expected-client-height="20"></canvas>
-clientWidth expected 10 but got 0
-FAIL .test 28 assert_equals:
-<iframe class="test ci-width" data-expected-client-width="10" data-expected-client-height="0"></iframe>
-clientWidth expected 10 but got 0
+PASS .test 27
+PASS .test 28
 PASS .test 29
-FAIL .test 30 assert_equals:
-<iframe class="test ci-both" data-expected-client-width="10" data-expected-client-height="20"></iframe>
-clientWidth expected 10 but got 0
-FAIL .test 31 assert_equals:
-<video class="test ci-width" data-expected-client-width="10" data-expected-client-height="0"></video>
-clientWidth expected 10 but got 0
+PASS .test 30
+PASS .test 31
 PASS .test 32
-FAIL .test 33 assert_equals:
-<video class="test ci-both" data-expected-client-width="10" data-expected-client-height="20"></video>
-clientWidth expected 10 but got 0
+PASS .test 33
 PASS .test 34
 PASS .test 35
 PASS .test 36

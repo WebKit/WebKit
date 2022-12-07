@@ -12,7 +12,6 @@ layer at (0,0) size 800x600
           text run at (408,0) width 0: " "
           text run at (0,15) width 416: ".two {margin-bottom: -10px; background-color: aqua;}"
           text run at (416,15) width 0: " "
-      RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 784x54 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 480x17
           text run at (0,0) width 392: "This element is unstyled save for a background color of gray.. "
@@ -93,3 +92,5 @@ layer at (0,0) size 800x600
                   text run at (249,18) width 9: ". "
                   text run at (257,18) width 490: "Margins on inline elements does not affect line-height calculations, so all lines"
                   text run at (0,36) width 305: "in this element should have the same line-height."
+layer at (8,85) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]

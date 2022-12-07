@@ -149,19 +149,6 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
 #endif
 }
 
-bool Quirks::shouldAutoplayForArbitraryUserGesture() const
-{
-#if PLATFORM(MAC)
-    return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::ArbitraryUserGestures);
-#else
-    if (!needsQuirks())
-        return false;
-
-    auto domain = RegistrableDomain { m_document->topDocument().url() };
-    return domain == "twitter.com"_s || domain == "facebook.com"_s;
-#endif
-}
-
 bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
 {
     if (!needsQuirks())
@@ -1472,6 +1459,22 @@ bool Quirks::shouldExposeShowModalDialog() const
         m_shouldExposeShowModalDialog = domain == "pandora.com"_s || domain == "marcus.com"_s || domain == "soundcloud.com"_s;
     }
     return *m_shouldExposeShowModalDialog;
+}
+
+bool Quirks::shouldNavigatorPluginsBeEmpty() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+    if (!m_shouldNavigatorPluginsBeEmpty) {
+        auto domain = RegistrableDomain(m_document->url()).string();
+        // Marcus login issue: <rdar://103011164>.
+        m_shouldNavigatorPluginsBeEmpty = domain == "marcus.com"_s;
+    }
+    return *m_shouldNavigatorPluginsBeEmpty;
+#else
+    return false;
+#endif
 }
 
 bool Quirks::shouldDisableLazyImageLoadingQuirk() const

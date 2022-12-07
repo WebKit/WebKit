@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
           text run at (0,15) width 160: ".two {float: right;}"
           text run at (160,15) width 0: " "
           text run at (0,30) width 0: " "
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderImage {IMG} at (0,102) size 15x50
       RenderBlock {P} at (0,110) size 784x36
         RenderText {#text} at (15,0) size 763x35
@@ -22,7 +21,6 @@ layer at (0,0) size 800x600
           text run at (15,18) width 212: "which has been floated to the left."
       RenderBlock (anonymous) at (0,162) size 784x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {HR} at (0,188) size 784x2 [border: (1px inset #000000)]
       RenderImage {IMG} at (769,198) size 15x50
       RenderBlock {P} at (0,206) size 784x36
         RenderText {#text} at (0,0) size 730x35
@@ -49,10 +47,15 @@ layer at (0,0) size 800x600
                   text run at (15,18) width 254: "image which has been floated to the left."
               RenderBlock (anonymous) at (4,56) size 762x18
                 RenderBR {BR} at (0,0) size 0x17
-              RenderBlock {HR} at (4,82) size 762x2 [border: (1px inset #000000)]
               RenderImage {IMG} at (751,92) size 15x50
               RenderBlock {P} at (4,100) size 762x36
                 RenderText {#text} at (0,0) size 730x35
                   text run at (0,0) width 607: "This text should be flowing past a tall orange rectangle on the right side of the browser window. "
                   text run at (606,0) width 124: "In this case, it is the"
                   text run at (0,18) width 263: "image which has been floated to the right."
+layer at (8,100) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+layer at (8,196) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,188) size 784x2 [border: (1px inset #000000)]
+layer at (25,375) size 762x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,82) size 762x2 [border: (1px inset #000000)]

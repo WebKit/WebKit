@@ -58,7 +58,7 @@ public:
 
     double computeIntrinsicAspectRatio() const;
 
-    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
+    void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const override;
 
 protected:
     RenderReplaced(Element&, RenderStyle&&);
@@ -104,7 +104,8 @@ private:
     bool canBeSelectionLeaf() const override { return true; }
 
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
-    void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio) const;
+    void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, FloatSize& intrinsicRatio) const;
+    void computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(RenderBox* contentRenderer, FloatSize& constrainedSize, FloatSize& intrinsicRatio) const;
 
     virtual bool shouldDrawSelectionTint() const;
     
@@ -114,6 +115,7 @@ private:
     bool hasReplacedLogicalHeight() const;
 
     mutable LayoutSize m_intrinsicSize;
+    mutable FloatSize m_intrinsicRatio;
 };
 
 } // namespace WebCore

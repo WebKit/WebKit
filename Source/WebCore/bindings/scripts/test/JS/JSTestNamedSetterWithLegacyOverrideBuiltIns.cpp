@@ -274,9 +274,9 @@ JSC::GCClient::IsoSubspace* JSTestNamedSetterWithLegacyOverrideBuiltIns::subspac
 {
     return WebCore::subspaceForImpl<JSTestNamedSetterWithLegacyOverrideBuiltIns, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterWithLegacyOverrideBuiltIns.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithLegacyOverrideBuiltIns = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterWithLegacyOverrideBuiltIns = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterWithLegacyOverrideBuiltIns.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithLegacyOverrideBuiltIns = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterWithLegacyOverrideBuiltIns = std::forward<decltype(space)>(space); }
     );
 }
 

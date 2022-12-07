@@ -783,9 +783,9 @@ JSC::GCClient::IsoSubspace* JSTestTypedefs::subspaceForImpl(JSC::VM& vm)
 {
     return WebCore::subspaceForImpl<JSTestTypedefs, UseCustomHeapCellType::No>(vm,
         [] (auto& spaces) { return spaces.m_clientSubspaceForTestTypedefs.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestTypedefs = WTFMove(space); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestTypedefs = std::forward<decltype(space)>(space); },
         [] (auto& spaces) { return spaces.m_subspaceForTestTypedefs.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestTypedefs = WTFMove(space); }
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestTypedefs = std::forward<decltype(space)>(space); }
     );
 }
 

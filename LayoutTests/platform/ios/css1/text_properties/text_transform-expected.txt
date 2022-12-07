@@ -17,7 +17,6 @@ layer at (0,0) size 800x775
           text run at (0,42) width 258: ".low {text-transform: lowercase;}"
           text run at (257,42) width 1: " "
           text run at (0,56) width 0: " "
-      RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 784x40
         RenderText {#text} at (0,0) size 733x39
           text run at (0,0) width 733: "This page tests the 'text-transform' property of CSS1. This paragraph has no text transformation and should appear"
@@ -104,3 +103,5 @@ layer at (0,0) size 800x775
               RenderBlock {P} at (4,268) size 762x20
                 RenderText {#text} at (0,0) size 741x19
                   text run at (0,0) width 741: "this paragraph is lowercased and capital characters in the source (e.g. a and \x{E5}) should therefore appear in lowercase."
+layer at (8,127) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
