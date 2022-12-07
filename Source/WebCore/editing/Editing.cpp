@@ -906,7 +906,7 @@ int caretMaxOffset(const Node& node)
     // For rendered text nodes, return the last position that a caret could occupy.
     if (is<Text>(node)) {
         if (auto* renderer = downcast<Text>(node).renderer())
-            return renderer->caretMaxOffset();
+            return std::min<int>(renderer->caretMaxOffset(), downcast<Text>(node).length());
     }
     return lastOffsetForEditing(node);
 }

@@ -2464,8 +2464,8 @@ SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange range
 
         auto boundary = [&] (uint64_t targetLocation) -> BoundaryPoint {
             if (is<Text>(textRunRange.start.container)) {
-                ASSERT(targetLocation - location <= downcast<Text>(textRunRange.start.container.get()).length());
-                unsigned offset = textRunRange.start.offset + targetLocation - location;
+                auto& text = downcast<Text>(textRunRange.start.container.get());
+                unsigned offset = std::min<uint64_t>(text.length(), textRunRange.start.offset + targetLocation - location);
                 return { textRunRange.start.container.copyRef(), offset };
             }
             return targetLocation == location ? textRunRange.start : textRunRange.end;
