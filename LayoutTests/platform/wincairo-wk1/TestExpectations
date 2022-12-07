@@ -22,7 +22,6 @@ streams [ Skip ]
 
 accessibility/win [ Pass ]
 
-accessibility/aria-liveregions-attributes.html [ Failure ]
 accessibility/aria-liveregion-marquee-default.html [ Failure ]
 accessibility/meter-element.html [ Failure ]
 accessibility/set-selected-editable.html [ Failure ]
@@ -539,6 +538,7 @@ css3/filters/reference-filter-set-filter-regions.html [ ImageOnlyFailure ]
 [ Debug ] webgl/2.0.0/conformance2/textures/canvas [ Pass Timeout ]
 [ Debug ] webgl/2.0.0/conformance2/textures/webgl_canvas [ Pass Timeout ]
 [ Debug ] webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Pass Timeout ]
+[ Debug ] webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Pass Timeout ]
 
 editing/execCommand/insert-list-nested-with-orphaned-live-range.html [ Failure ]
 
