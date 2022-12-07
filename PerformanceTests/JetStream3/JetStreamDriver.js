@@ -1590,6 +1590,7 @@ let testPlans = [
         iterations: 4,
         worstCaseCount: 1,
         benchmarkClass: AsyncBenchmark,
+        deterministicRandom: true,
         testGroup: BigIntNobleGroup,
     },
     {
@@ -1600,6 +1601,7 @@ let testPlans = [
             "./bigint/noble-benchmark.js",
         ],
         benchmarkClass: AsyncBenchmark,
+        deterministicRandom: true,
         testGroup: BigIntNobleGroup,
     },
     {
@@ -1611,6 +1613,7 @@ let testPlans = [
         ],
         iterations: 30,
         benchmarkClass: AsyncBenchmark,
+        deterministicRandom: true,
         testGroup: BigIntNobleGroup,
     },
     {
@@ -1622,6 +1625,7 @@ let testPlans = [
         ],
         iterations: 10,
         worstCaseCount: 2,
+        deterministicRandom: true,
         testGroup: BigIntMiscGroup,
     },
     {
