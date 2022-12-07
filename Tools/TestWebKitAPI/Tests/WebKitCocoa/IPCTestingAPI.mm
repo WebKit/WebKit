@@ -550,7 +550,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 {
     auto webView = createWebViewWithIPCTestingAPI();
     NSDictionary *typeInfo = [webView objectByEvaluatingJavaScript:@"IPC.serializedTypeInfo"];
-    NSArray *expectedArray = @[@"bool", @"bool", @"bool", @"String"];
+    NSArray *expectedArray = @[@"bool", @"bool", @"bool"];
     EXPECT_TRUE([typeInfo[@"WebCore::CacheQueryOptions"] isEqualToArray:expectedArray]);
     NSDictionary *expectedDictionary = @{
         @"isOptionSet" : @1,
