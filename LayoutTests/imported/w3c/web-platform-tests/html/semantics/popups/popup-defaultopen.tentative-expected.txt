@@ -1,8 +1,0 @@
-This is a popup, which should be open upon load
-This is a second popup with defaultopen, which should NOT be open upon load
-Also not visible
-This is a manual popup with defaultopen, which should be open upon load
-This is a manual popup with defaultopen, which should be open upon load
-
-FAIL The defaultopen attribute should affect page load only The string did not match the expected pattern.
-

@@ -1,4 +1,0 @@
-Popup
-
-FAIL Removal from the document shouldn't cause issues promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-

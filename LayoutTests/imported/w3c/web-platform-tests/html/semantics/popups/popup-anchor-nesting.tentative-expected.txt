@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: popup2.showPopUp is not a function. (In 'popup2.showPopUp()', 'popup2.showPopUp' is undefined)
-Popup 1
-Inside popup 2
-This is popup 1
-Popup 2
-
-Harness Error (FAIL), message = Unhandled rejection: popup2.showPopUp is not a function. (In 'popup2.showPopUp()', 'popup2.showPopUp' is undefined)
-
-

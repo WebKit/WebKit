@@ -673,9 +673,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/srcdoc_change_hash.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/natural-size-orientation.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-animated-hide-display.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-animated-hide-finishes.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-animated-show-display.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-bom.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/referrer-policies.sub.html [ Skip ]
@@ -837,13 +834,6 @@ imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-tra
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-hidden-attribute.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-object.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-appearance.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-backdrop-appearance.tentative.html [ ImageOnlyFailure ] 
-imported/w3c/web-platform-tests/html/semantics/popups/popup-defaultopen-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-hidden-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-open-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-open-overflow-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/popups/popup-stacking-context.tentative.html [ ImageOnlyFailure ]
 
 # Cross-Origin-Embedder-Policy: credentialless is not supported.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless

@@ -1,6 +1,0 @@
-This is an anchor button
-This is a popup
-This button invokes the popup but isn't an anchor
-
-FAIL popup anchor IDL property returns the anchor element assert_equals: expected (object) Element node <button id="b1">This is an anchor button</button> but got (undefined) undefined
-

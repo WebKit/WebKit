@@ -1,4 +1,0 @@
-Click me
-
-PASS The `popup` attribute should be unscopable
-
