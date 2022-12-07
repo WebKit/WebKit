@@ -39,7 +39,7 @@ class AccessiblePopupMenu;
 
 class PopupMenuWin : public PopupMenu, private ScrollableArea {
 public:
-    PopupMenuWin(PopupMenuClient*);
+    WEBCORE_EXPORT PopupMenuWin(PopupMenuClient*);
     ~PopupMenuWin();
 
     void show(const IntRect&, FrameView*, int index) override;
@@ -47,7 +47,7 @@ public:
     void updateFromElement() override;
     void disconnectClient() override;
 
-    static LPCWSTR popupClassName();
+    WEBCORE_EXPORT static LPCWSTR popupClassName();
 
     String debugDescription() const final;
 

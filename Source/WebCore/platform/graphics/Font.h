@@ -206,7 +206,7 @@ public:
 #if PLATFORM(WIN)
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
-    static void setShouldApplyMacAscentHack(bool);
+    WEBCORE_EXPORT static void setShouldApplyMacAscentHack(bool);
     static bool shouldApplyMacAscentHack();
     static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
 #endif

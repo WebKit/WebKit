@@ -28,7 +28,7 @@ namespace WebCore {
 
 class SearchPopupMenuWin : public SearchPopupMenu {
 public:
-    SearchPopupMenuWin(PopupMenuClient*);
+    WEBCORE_EXPORT SearchPopupMenuWin(PopupMenuClient*);
 
     virtual PopupMenu* popupMenu();
     virtual void saveRecentSearches(const AtomString& name, const Vector<RecentSearch>&);

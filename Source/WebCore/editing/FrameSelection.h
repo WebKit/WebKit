@@ -205,7 +205,7 @@ public:
     WEBCORE_EXPORT void setCaretBlinkingSuspended(bool);
     WEBCORE_EXPORT bool isCaretBlinkingSuspended() const;
 
-    void setFocused(bool);
+    WEBCORE_EXPORT void setFocused(bool);
     bool isFocused() const { return m_focused; }
     WEBCORE_EXPORT bool isFocusedAndActive() const;
     void pageActivationChanged();

@@ -116,7 +116,7 @@ public:
     // Logs an access denied message to the console for the specified URL.
     void printAccessDeniedMessage(const URL& url) const;
 
-    CachedResource* cachedResource(const String& url) const;
+    WEBCORE_EXPORT CachedResource* cachedResource(const String& url) const;
     CachedResource* cachedResource(const URL& url) const;
 
     typedef HashMap<String, CachedResourceHandle<CachedResource>> DocumentResourceMap;

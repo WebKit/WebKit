@@ -272,8 +272,8 @@ namespace WebCore {
     String unknownFileSizeText();
 
 #if PLATFORM(WIN)
-    String uploadFileText();
-    String allFilesText();
+    WEBCORE_EXPORT String uploadFileText();
+    WEBCORE_EXPORT String allFilesText();
 #endif
 
 #if PLATFORM(COCOA)

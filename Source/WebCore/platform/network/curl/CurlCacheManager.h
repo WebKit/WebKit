@@ -38,11 +38,11 @@ namespace WebCore {
 class CurlCacheManager {
     friend NeverDestroyed<CurlCacheManager>;
 public:
-    static CurlCacheManager& singleton();
+    WEBCORE_EXPORT static CurlCacheManager& singleton();
 
-    void setCacheDirectory(const String&);
+    WEBCORE_EXPORT void setCacheDirectory(const String&);
     const String& cacheDirectory() { return m_cacheDir; }
-    void setStorageSizeLimit(size_t);
+    WEBCORE_EXPORT void setStorageSizeLimit(size_t);
 
     bool isCached(const String&) const;
     HTTPHeaderMap& requestHeaders(const String&); // Load headers

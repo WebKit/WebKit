@@ -155,7 +155,10 @@ template<TreeType treeType> bool contains(const SimpleRange& range, const std::o
     return point && contains<treeType>(range, *point);
 }
 
-template bool contains<ComposedTree>(const SimpleRange&, const std::optional<BoundaryPoint>&);
+template<> bool contains<ComposedTree>(const SimpleRange& range, const std::optional<BoundaryPoint>& point)
+{
+    return point && contains<ComposedTree>(range, *point);
+}
 
 bool containsForTesting(TreeType type, const SimpleRange& range, const BoundaryPoint& point)
 {

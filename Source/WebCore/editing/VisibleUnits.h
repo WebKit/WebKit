@@ -42,8 +42,8 @@ WEBCORE_EXPORT VisiblePosition startOfWord(const VisiblePosition&, EWordSide = R
 WEBCORE_EXPORT VisiblePosition endOfWord(const VisiblePosition&, EWordSide = RightWordIfOnBoundary);
 WEBCORE_EXPORT VisiblePosition previousWordPosition(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition nextWordPosition(const VisiblePosition&);
-VisiblePosition rightWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
-VisiblePosition leftWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
+WEBCORE_EXPORT VisiblePosition rightWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
+WEBCORE_EXPORT VisiblePosition leftWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
 bool isStartOfWord(const VisiblePosition&);
 
 // sentences

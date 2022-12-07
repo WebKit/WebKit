@@ -43,22 +43,22 @@ namespace WebCore {
     class BString {
     public:
         WEBCORE_EXPORT BString();
-        BString(const wchar_t*);
-        BString(const wchar_t*, size_t length);
-        BString(const String&);
-        BString(const AtomString&);
-        BString(const URL&);
+        WEBCORE_EXPORT BString(const wchar_t*);
+        WEBCORE_EXPORT BString(const wchar_t*, size_t length);
+        WEBCORE_EXPORT BString(const String&);
+        WEBCORE_EXPORT BString(const AtomString&);
+        WEBCORE_EXPORT BString(const URL&);
 #if USE(CF)
-        BString(CFStringRef);
+        WEBCORE_EXPORT BString(CFStringRef);
 #endif
         WEBCORE_EXPORT ~BString();
 
-        void adoptBSTR(BSTR);
-        void clear();
+        WEBCORE_EXPORT void adoptBSTR(BSTR);
+        WEBCORE_EXPORT void clear();
 
-        BString(const BString&);
+        WEBCORE_EXPORT BString(const BString&);
         BString& operator=(const BString&);
-        BString& operator=(const BSTR&);
+        WEBCORE_EXPORT BString& operator=(const BSTR&);
 
         BSTR* operator&() { ASSERT(!m_bstr); return &m_bstr; }
         operator BSTR() const { return m_bstr; }
@@ -69,10 +69,10 @@ namespace WebCore {
         BSTR m_bstr;
     };
 
-    bool operator ==(const BString&, const BString&);
+    WEBCORE_EXPORT bool operator ==(const BString&, const BString&);
     bool operator !=(const BString&, const BString&);
     bool operator ==(const BString&, BSTR);
-    bool operator !=(const BString&, BSTR);
+    WEBCORE_EXPORT bool operator !=(const BString&, BSTR);
     bool operator ==(BSTR, const BString&);
     bool operator !=(BSTR, const BString&);
 

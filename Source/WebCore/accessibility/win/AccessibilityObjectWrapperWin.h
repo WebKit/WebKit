@@ -43,7 +43,7 @@ namespace WebCore {
         bool attached() const { return m_object; }
         AccessibilityObject* accessibilityObject() const { return m_object; }
 
-        void accessibilityAttributeValue(const AtomString&, VARIANT*);
+        WEBCORE_EXPORT void accessibilityAttributeValue(const AtomString&, VARIANT*);
 
     protected:
         AccessibilityObjectWrapper(AccessibilityObject* obj) : m_object(obj) { }

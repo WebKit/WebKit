@@ -459,7 +459,7 @@ public:
 
     // Returns the nearest enclosing layer that is scrollable.
     // FIXME: This can return the RenderView's layer when callers probably want the FrameView as a ScrollableArea.
-    RenderLayer* enclosingScrollableLayer(IncludeSelfOrNot, CrossFrameBoundaries) const;
+    WEBCORE_EXPORT RenderLayer* enclosingScrollableLayer(IncludeSelfOrNot, CrossFrameBoundaries) const;
 
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
     bool canUseCompositedScrolling() const;
@@ -640,7 +640,7 @@ public:
     // layers that intersect the point from front to back.
     void paint(GraphicsContext&, const LayoutRect& damageRect, const LayoutSize& subpixelOffset = LayoutSize(), OptionSet<PaintBehavior> = PaintBehavior::Normal,
         RenderObject* subtreePaintRoot = nullptr, OptionSet<PaintLayerFlag> = { }, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin, EventRegionContext* = nullptr);
-    bool hitTest(const HitTestRequest&, HitTestResult&);
+    WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
 
     enum class ClipRectsOption : uint8_t {

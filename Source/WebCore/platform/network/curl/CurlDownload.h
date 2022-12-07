@@ -51,18 +51,18 @@ public:
 class CurlDownload final : public ThreadSafeRefCounted<CurlDownload>, public CurlRequestClient {
 public:
     CurlDownload() = default;
-    ~CurlDownload();
+    WEBCORE_EXPORT ~CurlDownload();
 
     void ref() override { ThreadSafeRefCounted<CurlDownload>::ref(); }
     void deref() override { ThreadSafeRefCounted<CurlDownload>::deref(); }
 
-    void init(CurlDownloadListener&, const URL&);
-    void init(CurlDownloadListener&, ResourceHandle*, const ResourceRequest&, const ResourceResponse&);
+    WEBCORE_EXPORT void init(CurlDownloadListener&, const URL&);
+    WEBCORE_EXPORT void init(CurlDownloadListener&, ResourceHandle*, const ResourceRequest&, const ResourceResponse&);
 
     void setListener(CurlDownloadListener* listener) { m_listener = listener; }
 
-    void start();
-    bool cancel();
+    WEBCORE_EXPORT void start();
+    WEBCORE_EXPORT bool cancel();
 
     bool deletesFileUponFailure() const { return m_deletesFileUponFailure; }
     void setDeletesFileUponFailure(bool deletesFileUponFailure) { m_deletesFileUponFailure = deletesFileUponFailure; }
@@ -72,10 +72,10 @@ public:
 private:
     Ref<CurlRequest> createCurlRequest(ResourceRequest&);
     void curlDidSendData(CurlRequest&, unsigned long long, unsigned long long) override { }
-    void curlDidReceiveResponse(CurlRequest&, CurlResponse&&) override;
-    void curlDidReceiveData(CurlRequest&, const SharedBuffer&) override;
-    void curlDidComplete(CurlRequest&, NetworkLoadMetrics&&) override;
-    void curlDidFailWithError(CurlRequest&, ResourceError&&, CertificateInfo&&) override;
+    WEBCORE_EXPORT void curlDidReceiveResponse(CurlRequest&, CurlResponse&&) override;
+    WEBCORE_EXPORT void curlDidReceiveData(CurlRequest&, const SharedBuffer&) override;
+    WEBCORE_EXPORT void curlDidComplete(CurlRequest&, NetworkLoadMetrics&&) override;
+    WEBCORE_EXPORT void curlDidFailWithError(CurlRequest&, ResourceError&&, CertificateInfo&&) override;
 
     bool shouldRedirectAsGET(const ResourceRequest&, bool crossOrigin);
     void willSendRequest();

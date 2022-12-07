@@ -138,7 +138,7 @@ public:
     WEBCORE_EXPORT static Ref<FormData> create();
     WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
     WEBCORE_EXPORT static Ref<FormData> create(const CString&);
-    static Ref<FormData> create(Vector<uint8_t>&&);
+    WEBCORE_EXPORT static Ref<FormData> create(Vector<uint8_t>&&);
     static Ref<FormData> create(const Vector<char>&);
     static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = EncodingType::FormURLEncoded);

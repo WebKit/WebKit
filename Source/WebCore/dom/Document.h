@@ -630,7 +630,7 @@ public:
     Ref<Text> createEditingTextNode(String&&);
 
     enum class ResolveStyleType { Normal, Rebuild };
-    void resolveStyle(ResolveStyleType = ResolveStyleType::Normal);
+    WEBCORE_EXPORT void resolveStyle(ResolveStyleType = ResolveStyleType::Normal);
     WEBCORE_EXPORT bool updateStyleIfNeeded();
     bool needsStyleRecalc() const;
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }

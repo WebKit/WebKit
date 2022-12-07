@@ -81,7 +81,7 @@ public:
     void panScrollFromPoint(const IntPoint&);
 
     // Scrolling methods for layers that can scroll their overflow.
-    void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
+    WEBCORE_EXPORT void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
 
     // Attempt to scroll the given ScrollOffset, returning the real target offset after it has
     // been adjusted by scroll snapping.
