@@ -147,7 +147,9 @@ PlatformImagePtr iconForVideoFile(NSURL *file)
     [generator setAppliesPreferredTrackTransform:YES];
 
     NSError *error = nil;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CGImageRef> imageRef = adoptCF([generator copyCGImageAtTime:PAL::kCMTimeZero actualTime:nil error:&error]);
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!imageRef) {
         LOG_ERROR("Error creating image for video '%@': %@", file, error);
         return fallbackIconForFile(file);
