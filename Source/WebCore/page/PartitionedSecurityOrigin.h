@@ -51,6 +51,8 @@ struct PartitionedSecurityOrigin {
     bool isHashTableDeletedValue() const { return topOrigin.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return topOrigin.isHashTableEmptyValue(); }
 
+    PartitionedSecurityOrigin isolatedCopy() const { return { topOrigin->isolatedCopy(), clientOrigin->isolatedCopy() }; }
+
     Ref<SecurityOrigin> topOrigin;
     Ref<SecurityOrigin> clientOrigin;
 };

@@ -68,7 +68,6 @@ private:
     BroadcastChannel(ScriptExecutionContext&, const String& name);
 
     void dispatchMessage(Ref<SerializedScriptValue>&&);
-    void ensureOnMainThread(Function<void(Document&)>&&);
 
     bool isEligibleForMessaging() const;
 

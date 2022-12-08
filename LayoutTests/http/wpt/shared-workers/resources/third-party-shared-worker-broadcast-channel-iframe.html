@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const channel = new BroadcastChannel('test');
+
+channel.onmessage = function (e) {
+    parent.postMessage(e.data, "*");
+}
+
+const worker = new SharedWorker("third-party-shared-worker-broadcast-channel-sharedworker.js");
+</script>
+</body>
+</html>
