@@ -129,7 +129,7 @@ public:
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
-    bool isPersistent() const { return hasCustomUniqueIdentifier(); }
+    bool storageIsPersistent() const { return hasCustomUniqueIdentifier(); }
 
     bool load(WebExtensionController&, String storageDirectory, NSError ** = nullptr);
     bool unload(NSError ** = nullptr);
@@ -243,6 +243,10 @@ private:
     void loadBackgroundWebView();
     void unloadBackgroundWebView();
 
+    uint64_t loadBackgroundPageListenersVersionNumberFromStorage();
+    void loadBackgroundPageListenersFromStorage();
+    void saveBackgroundPageListenersToStorage();
+
     void performTasksAfterBackgroundContentLoads();
 
     void addInjectedContent() { addInjectedContent(injectedContents()); }
@@ -304,6 +308,7 @@ private:
 #endif
 
     EventListenterTypeCountedSet m_backgroundPageListeners;
+    bool m_shouldFireStartupEvent { false };
 
     RetainPtr<WKWebView> m_backgroundWebView;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;

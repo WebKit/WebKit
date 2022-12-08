@@ -49,7 +49,7 @@ namespace WebKit {
 
 String WebExtensionController::storageDirectory(WebExtensionContext& extensionContext) const
 {
-    if (m_configuration->isPersistent() && extensionContext.isPersistent())
+    if (m_configuration->storageIsPersistent() && extensionContext.storageIsPersistent())
         return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), extensionContext.uniqueIdentifier());
     return nullString();
 }

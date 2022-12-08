@@ -129,7 +129,7 @@ static constexpr NSString *identifierCodingKey = @"identifier";
 
 - (BOOL)isPersistent
 {
-    return _webExtensionControllerConfiguration->isPersistent();
+    return _webExtensionControllerConfiguration->storageIsPersistent();
 }
 
 #pragma mark WKObject protocol implementation

@@ -45,7 +45,7 @@ Ref<WebExtensionControllerConfiguration> WebExtensionControllerConfiguration::co
 {
     if (m_identifier)
         return create(m_identifier.value());
-    if (isPersistent())
+    if (storageIsPersistent())
         return createDefault();
     return createNonPersistent();
 }

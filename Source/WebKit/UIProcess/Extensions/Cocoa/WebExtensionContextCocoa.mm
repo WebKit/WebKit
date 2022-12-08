@@ -57,8 +57,12 @@
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
 
+static constexpr NSString *backgroundPageListenersStateKey = @"BackgroundPageListenersState";
 static constexpr NSString *lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static constexpr NSString *lastSeenVersionStateKey = @"LastSeenVersion";
+
+// Update this value when any changes are made to the WebExtensionEventListenerType enum.
+static constexpr NSInteger currentBackgroundPageListenerStateVersion = 1;
 
 @interface _WKWebExtensionContextDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
     WeakPtr<WebKit::WebExtensionContext> _webExtensionContext;
@@ -195,6 +199,8 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     // FIXME: <https://webkit.org/b/248430> Move local storage (if base URL changed).
 
+    // FIXME: <https://webkit.org/b/248889> Check to see if extension is being loaded as part of startup.
+
     loadBackgroundWebViewDuringLoad();
 
     // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by loading them from storage here.
@@ -229,7 +235,7 @@ bool WebExtensionContext::unload(NSError **outError)
 
 String WebExtensionContext::stateFilePath() const
 {
-    if (!isPersistent())
+    if (!storageIsPersistent())
         return nullString();
     return FileSystem::pathByAppendingComponent(m_storageDirectory, "State.plist"_s);
 }
@@ -244,7 +250,7 @@ NSDictionary *WebExtensionContext::currentState() const
 
 NSDictionary *WebExtensionContext::readStateFromStorage()
 {
-    if (!isPersistent()) {
+    if (!storageIsPersistent()) {
         m_state = [NSMutableDictionary dictionary];
         return @{ };
     }
@@ -268,7 +274,7 @@ NSDictionary *WebExtensionContext::readStateFromStorage()
 
 void WebExtensionContext::writeStateToStorage() const
 {
-    if (!isPersistent())
+    if (!storageIsPersistent())
         return;
 
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
@@ -1136,8 +1142,21 @@ void WebExtensionContext::loadBackgroundWebViewDuringLoad()
     if (!extension().hasBackgroundContent())
         return;
 
-    // FIXME: <https://webkit.org/b/246483> Handle non-persistent background pages differently here.
-    loadBackgroundWebView();
+    if (!extension().backgroundContentIsPersistent()) {
+        uint64_t backgroundPageListenersVersionNumber = loadBackgroundPageListenersVersionNumberFromStorage();
+        bool savedVersionNumberDoesNotMatchCurrentVersionNumber = backgroundPageListenersVersionNumber != currentBackgroundPageListenerStateVersion;
+
+        // FIXME: <https://webkit.org/b/248889> Check to see if the background page listens to onStartup().
+        bool backgroundPageListensToOnStartup = false;
+        loadBackgroundPageListenersFromStorage();
+
+        // FIXME: <https://webkit.org/b/248889> Check to see if the extension is being loaded as part of startup.
+        if (m_backgroundPageListeners.isEmpty() || savedVersionNumberDoesNotMatchCurrentVersionNumber || backgroundPageListensToOnStartup)
+            loadBackgroundWebView();
+        else
+            m_shouldFireStartupEvent = false;
+    } else
+        loadBackgroundWebView();
 }
 
 void WebExtensionContext::loadBackgroundWebView()
@@ -1186,9 +1205,48 @@ void WebExtensionContext::unloadBackgroundWebView()
     m_backgroundWebView = nil;
 }
 
+void WebExtensionContext::loadBackgroundPageListenersFromStorage()
+{
+    NSData *listenersData = [m_state objectForKey:backgroundPageListenersStateKey];
+    NSCountedSet *savedListeners = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[ NSCountedSet.class, NSNumber.class ]] fromData:listenersData error:nil];
+
+    m_backgroundPageListeners.clear();
+    for (NSNumber *entry in savedListeners)
+        m_backgroundPageListeners.add(static_cast<WebExtensionEventListenerType>(entry.unsignedIntValue), [savedListeners countForObject:entry]);
+}
+
+void WebExtensionContext::saveBackgroundPageListenersToStorage()
+{
+    if (extension().backgroundContentIsPersistent())
+        return;
+
+    NSCountedSet *listeners = [NSCountedSet set];
+    for (auto& entry : m_backgroundPageListeners)
+        [listeners addObject:@(static_cast<uint8_t>(entry.key))];
+
+    NSData *newBackgroundPageListenersAsData = [NSKeyedArchiver archivedDataWithRootObject:listeners requiringSecureCoding:YES error:nil];
+    NSData *savedBackgroundPageListenersAsData = [m_state objectForKey:backgroundPageListenersStateKey];
+    [m_state setObject:newBackgroundPageListenersAsData forKey:backgroundPageListenersStateKey];
+
+    NSNumber *savedListenerVersionNumber = [m_state objectForKey:lastSeenVersionStateKey];
+    [m_state setObject:@(currentBackgroundPageListenerStateVersion) forKey:lastSeenVersionStateKey];
+
+    bool hasListenerStateChanged = ![newBackgroundPageListenersAsData isEqualToData:savedBackgroundPageListenersAsData];
+    bool hasVersionNumberChanged = savedListenerVersionNumber.integerValue != currentBackgroundPageListenerStateVersion;
+    if (hasListenerStateChanged || hasVersionNumberChanged)
+        writeStateToStorage();
+}
+
+uint64_t WebExtensionContext::loadBackgroundPageListenersVersionNumberFromStorage()
+{
+    return static_cast<uint64_t>([[m_state objectForKey:lastSeenVersionStateKey] integerValue]);
+}
+
 void WebExtensionContext::performTasksAfterBackgroundContentLoads()
 {
     // FIXME: <https://webkit.org/b/246483> Implement. Fire setup and install events (if needed), perform pending actions, schedule non-persistent page to unload (if needed), etc.
+
+    saveBackgroundPageListenersToStorage();
 }
 
 bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
