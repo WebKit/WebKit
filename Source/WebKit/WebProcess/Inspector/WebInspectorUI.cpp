@@ -35,6 +35,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
+#include <WebCore/ExceptionDetails.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendHost.h>
