@@ -329,9 +329,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
             for (auto* flexItem = ancestor->firstChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
                 if (!is<RenderBlockFlow>(*flexItem))
                     return false;
-                auto* firstInFlowChild = downcast<RenderBlockFlow>(*flexItem).firstChild();
-                if (!firstInFlowChild || !firstInFlowChild->isInline())
-                    return false;
                 // No anchor box support either (let's just disable content with links).
                 for (auto* inFlowChild = downcast<RenderBlockFlow>(*flexItem).lastChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
                     if (inFlowChild->style().isLink())
