@@ -37,47 +37,52 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+namespace AirLivenessAdapterInternal {
+static constexpr bool verbose = false;
+}
+
 template<typename Adapter>
 struct LivenessAdapter {
     typedef Air::CFG CFG;
-    
+
     typedef Vector<unsigned, 4> ActionsList;
-    
+
     struct Actions {
         Actions() { }
-        
+
         ActionsList use;
         ActionsList def;
     };
-    
+
     typedef Vector<Actions, 0, UnsafeVectorOverflow> ActionsForBoundary;
-    
+
     LivenessAdapter(Code& code)
         : code(code)
         , actions(code.size())
     {
     }
-    
+
     Adapter& adapter()
     {
         return *static_cast<Adapter*>(this);
     }
-    
+
     void prepareToCompute()
     {
+        dataLogLnIf(AirLivenessAdapterInternal::verbose, "Prepare to compute tmp or stack slot liveness for code: ", code);
         for (BasicBlock* block : code) {
             ActionsForBoundary& actionsForBoundary = actions[block];
             actionsForBoundary.resize(block->size() + 1);
-            
+
             for (size_t instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
                 inst.forEach<typename Adapter::Thing>(
                     [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
                         if (!Adapter::acceptsBank(bank) || !Adapter::acceptsRole(role))
                             return;
-                        
+
                         unsigned index = adapter().valueToIndex(thing);
-                        
+
                         if (Arg::isEarlyUse(role))
                             actionsForBoundary[instIndex].use.appendIfNotContains(index);
                         if (Arg::isEarlyDef(role))
@@ -89,25 +94,44 @@ struct LivenessAdapter {
                     });
             }
         }
+
+        if (AirLivenessAdapterInternal::verbose) {
+            for (size_t blockIndex = code.size(); blockIndex--;) {
+                BasicBlock* block = code[blockIndex];
+                if (!block)
+                    continue;
+                ActionsForBoundary& actionsForBoundary = actions[block];
+                dataLogLn("Block ", blockIndex);
+
+                dataLogLn("(null) | use: ", listDump(actionsForBoundary[block->size()].use),
+                        " def: ", listDump(actionsForBoundary[block->size()].def));
+                for (size_t instIndex = block->size(); instIndex--;) {
+                    dataLogLn(block->at(instIndex), " | use: ", listDump(actionsForBoundary[instIndex].use),
+                        " def: ", listDump(actionsForBoundary[instIndex].def));
+                }
+                dataLogLn(block->at(0), " | use: ", listDump(actionsForBoundary[0].use),
+                        " def: ", listDump(actionsForBoundary[0].def));
+            }
+        }
     }
-    
+
     Actions& actionsAt(BasicBlock* block, unsigned instBoundaryIndex)
     {
         return actions[block][instBoundaryIndex];
     }
-    
+
     unsigned blockSize(BasicBlock* block)
     {
         return block->size();
     }
-    
+
     template<typename Func>
     void forEachUse(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
     {
         for (unsigned index : actionsAt(block, instBoundaryIndex).use)
             func(index);
     }
-    
+
     template<typename Func>
     void forEachDef(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
     {
@@ -122,7 +146,7 @@ struct LivenessAdapter {
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
 struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> {
     typedef LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> Base;
-    
+
     static constexpr const char* name = "TmpLiveness";
     typedef Tmp Thing;
 
@@ -143,21 +167,21 @@ struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, mini
 
 struct UnifiedTmpLivenessAdapter : LivenessAdapter<UnifiedTmpLivenessAdapter> {
     typedef LivenessAdapter<UnifiedTmpLivenessAdapter> Base;
-    
+
     static constexpr const char* name = "UnifiedTmpLiveness";
 
     typedef Tmp Thing;
-    
+
     UnifiedTmpLivenessAdapter(Code& code)
         : Base(code)
     {
     }
-    
+
     unsigned numIndices()
     {
         return Tmp::linearIndexEnd(code);
     }
-    
+
     static bool acceptsBank(Bank) { return true; }
     static bool acceptsRole(Arg::Role) { return true; }
     unsigned valueToIndex(Tmp tmp) { return tmp.linearlyIndexed(code).index(); }

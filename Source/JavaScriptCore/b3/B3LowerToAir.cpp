@@ -2244,7 +2244,7 @@ private:
         Tmp result = op == UDiv ? m_eax : m_edx;
 
         append(Move, tmp(m_value->child(0)), m_eax);
-        append(Xor64, m_edx, m_edx);
+        append(Move, Arg::imm(0), m_edx);
         append(div, m_eax, m_edx, tmp(m_value->child(1)));
         append(Move, result, tmp(m_value));
     }

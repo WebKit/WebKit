@@ -503,6 +503,8 @@ public:
         return m_bits.count();
     }
 
+    void dump(PrintStream& out) const { toRegisterSet().dump(out); }
+
 private:
     RegisterBitmap m_bits;
 };

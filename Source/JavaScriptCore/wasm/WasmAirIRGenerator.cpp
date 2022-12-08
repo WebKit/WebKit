@@ -662,6 +662,10 @@ public:
             append(airOp, a, b, result, tmpForType(Types::V128));
             return { };
         }
+        if (isValidForm(airOp, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, Arg::simdInfo(info), a, b, result, tmpForType(Types::V128));
+            return { };
+        }
         ASSERT_NOT_REACHED();
         return { };
     }
@@ -1580,23 +1584,19 @@ auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
             break;
         case TypeKind::I32:
         case TypeKind::I64: {
-            append(Xor64, local, local);
+            append(Move, Arg::imm(0), local);
             break;
         }
         case TypeKind::F32:
         case TypeKind::F64: {
             auto temp = g64();
             // IEEE 754 "0" is just int32/64 zero.
-            append(Xor64, temp, temp);
+            append(Move, Arg::imm(0), temp);
             append(type.isF32() ? Move32ToFloat : Move64ToDouble, temp, local);
             break;
         }
         case TypeKind::V128: {
-            auto temp = g64();
-            append(Xor64, temp, temp);
-            // FIXME clear local
-            append(VectorReplaceLaneInt64, Arg::imm(0), temp, local);
-            append(VectorReplaceLaneInt64, Arg::imm(1), temp, local);
+            append(MoveZeroToVector, local);
             break;
         }
         default:
@@ -1644,6 +1644,7 @@ auto AirIRGenerator::addConstant(v128_t value) -> ExpressionType
     auto a = g64();
     auto result = tmpForType(Types::V128);
     append(Move, Arg::bigImm(value.u64x2[0]), a);
+    append(MoveZeroToVector, result);
     append(VectorReplaceLaneInt64, Arg::imm(0), a, result);
     append(Move, Arg::bigImm(value.u64x2[1]), a);
     append(VectorReplaceLaneInt64, Arg::imm(1), a, result);
@@ -3574,7 +3575,7 @@ auto AirIRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size,
         append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForValue);
     } else {
         tmpForValue = g64();
-        append(Xor64, tmpForValue, tmpForValue);
+        append(Move, Arg::imm(0), tmpForValue);
     }
 
     result = tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
@@ -4382,7 +4383,7 @@ auto AirIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDe
         Type type = signature.as<FunctionSignature>()->argumentType(i);
         TypedTmp tmp = tmpForType(type);
         if (type.isV128())
-            append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), tmp, tmp, tmp);
+            append(MoveZeroToVector, tmp);
         else
             emitLoad(buffer, i * sizeof(uint64_t), tmp);
         results.append(tmp);

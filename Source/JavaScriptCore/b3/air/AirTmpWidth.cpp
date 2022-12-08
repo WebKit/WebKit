@@ -171,7 +171,7 @@ void TmpWidth::recompute(Code& code)
     if (verbose) {
         dataLogLn("bank: ", bank, ", widthsVector: ");
         for (unsigned i = 0; i < bankWidthsVector.size(); ++i)
-            dataLogLn("\t", i, " : ", bankWidthsVector[i]);
+            dataLogLn("\t", AbsoluteTmpMapper<bank>::tmpFromAbsoluteIndex(i), " : ", bankWidthsVector[i]);
     }
 }
 

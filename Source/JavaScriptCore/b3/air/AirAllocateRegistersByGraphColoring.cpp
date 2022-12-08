@@ -65,6 +65,13 @@ public:
         , m_code(code)
     {
         initializeDegrees(tmpArraySize);
+
+        if (traceDebug) {
+            dataLog("Unspillable tmps: [");
+            for (size_t i = 0; i < unspillableTmps.size(); ++i)
+                dataLogIf(unspillableTmps.quickGet(i), TmpMapper::tmpFromAbsoluteIndex(i), ", ");
+            dataLogLn("]");
+        }
         
         m_adjacencyList.resize(tmpArraySize);
         m_moveList.resize(tmpArraySize);
@@ -330,7 +337,7 @@ protected:
         ASSERT(!m_unspillableTmps.get(victimIndex));
         ASSERT(!isPrecolored(victimIndex));
         if (traceDebug)
-            dataLogLn("Selecting spill ", victimIndex);
+            dataLogLn("Selecting spill ", victimIndex, "(", TmpMapper::tmpFromAbsoluteIndex(victimIndex), ")");
         return victimIndex;
     }
 
@@ -634,8 +641,10 @@ public:
             ASSERT(!m_simplifyWorklist.size());
             ASSERT(m_spillWorklist.isEmpty());
             IndexType firstNonRegIndex = m_lastPrecoloredRegisterIndex + 1;
-            for (IndexType i = firstNonRegIndex; i < m_degrees.size(); ++i)
+            for (IndexType i = firstNonRegIndex; i < m_degrees.size(); ++i) {
+                dataLogLnIf(!hasBeenSimplified(i), "Tmp ", TmpMapper::tmpFromAbsoluteIndex(i), " was not simplified. Maybe the graph is not colorable?");
                 ASSERT(hasBeenSimplified(i));
+            }
         }
 
         assignColors();
@@ -738,11 +747,11 @@ protected:
             unsigned degree = m_degrees[i];
             if (degree < registerCount) {
                 if (traceDebug)
-                    dataLogLn("Adding ", TmpMapper::tmpFromAbsoluteIndex(i), " to simplify worklist");
+                    dataLogLn("Adding ", i, "(", TmpMapper::tmpFromAbsoluteIndex(i), ") with degree ", degree, " to simplify worklist");
                 m_simplifyWorklist.append(i);
             } else {
                 if (traceDebug)
-                    dataLogLn("Adding ", TmpMapper::tmpFromAbsoluteIndex(i), " to spill worklist");
+                    dataLogLn("Adding ", i, "(", TmpMapper::tmpFromAbsoluteIndex(i), ") with degree ", degree, " to spill worklist");
                 addToSpill(i);
             }
         }
@@ -763,7 +772,7 @@ protected:
         m_isOnSelectStack.quickSet(lastIndex);
 
         if (traceDebug)
-            dataLogLn("Simplifying ", lastIndex, " by adding it to select stack");
+            dataLogLn("Simplifying ", lastIndex, "(", TmpMapper::tmpFromAbsoluteIndex(lastIndex), ") by adding it to select stack");
 
         forEachAdjacent(lastIndex, [this](IndexType adjacentTmpIndex) {
             decrementDegreeInSimplification(adjacentTmpIndex);
@@ -1367,6 +1376,10 @@ public:
                 m_regsInPriorityOrder.append(reg);
             }
         }
+        if (traceDebug) {
+            dataLogLn("Registers in priority order: ", listDump(m_regsInPriorityOrder));
+            dataLogLn("Pinned regs: ", listDump(m_pinnedRegs));
+        }
 
         m_interferenceEdges.setMaxIndex(AbsoluteTmpMapper<bank>::absoluteIndex(m_code.numTmps(bank)));
 
@@ -1563,8 +1576,13 @@ protected:
 
     void build(Inst* prevInst, Inst* nextInst, const typename TmpLiveness<bank>::LocalCalc& localCalc)
     {
-        if (traceDebug)
+        if (traceDebug) {
             dataLog("Building between ", pointerDump(prevInst), " and ", pointerDump(nextInst), ":\n");
+            dataLog("Live values: [");
+            for (Tmp liveTmp : localCalc.live())
+                dataLog(liveTmp, ", ");
+            dataLogLn("]");
+        }
 
         Inst::forEachDefWithExtraClobberedRegs<Tmp>(
             prevInst, nextInst,
@@ -1710,6 +1728,7 @@ protected:
             switch (inst.kind.opcode) {
             case MoveFloat:
             case MoveDouble:
+            case MoveVector:
                 break;
             default:
                 return false;
@@ -1739,7 +1758,7 @@ protected:
                 return false;
 
             if (tmpWidth->defWidth(inst.args[0].tmp()) > Width32
-                && tmpWidth->useWidth(inst.args[1].tmp()) > Width32)
+                || tmpWidth->useWidth(inst.args[1].tmp()) > Width32)
                 return false;
         }
         
@@ -1981,7 +2000,12 @@ private:
 
     static unsigned stackSlotMinimumWidth(Width width)
     {
-        return width <= Width32 ? 4 : 8;
+        if (width <= Width32)
+            return 4;
+        if (width <= Width64)
+            return 8;
+        ASSERT(width == Width128);
+        return 16;
     }
 
     template<Bank bank, typename AllocatorType>
@@ -2156,6 +2180,10 @@ private:
                     case 8:
                         move = bank == GP ? Move : MoveDouble;
                         break;
+                    case 16:
+                        ASSERT(bank == FP);
+                        move = MoveVector;
+                        break;
                     default:
                         RELEASE_ASSERT_NOT_REACHED();
                         break;
@@ -2193,7 +2221,6 @@ private:
 
 void allocateRegistersByGraphColoring(Code& code)
 {
-    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateRegistersByGraphColoring");
     
     if (traceDebug)

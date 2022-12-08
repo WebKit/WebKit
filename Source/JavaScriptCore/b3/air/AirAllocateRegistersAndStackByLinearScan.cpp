@@ -78,7 +78,7 @@ struct TmpData {
     
     Interval interval;
     StackSlot* spilled { nullptr };
-    RegisterSet possibleRegs;
+    ScalarRegisterSet possibleRegs;
     Reg assigned;
     bool isUnspillable { false };
     bool didBuildPossibleRegs { false };
@@ -151,10 +151,12 @@ private:
     {
         forEachBank(
             [&] (Bank bank) {
-                m_registers[bank] = m_code.regsInPriorityOrder(bank);
-                for (Reg r : m_registers[bank])
-                    m_registerSetBuilder[bank].add(r, IgnoreVectors);
-                m_unifiedRegisterSetBuilder.merge(m_registerSetBuilder[bank]);
+                m_allowedRegistersInPriorityOrder[bank] = m_code.regsInPriorityOrder(bank);
+                for (Reg r : m_allowedRegistersInPriorityOrder[bank])
+                    m_allowedRegisters[bank].add(r, IgnoreVectors);
+                m_allAllowedRegisters = m_allAllowedRegisters.toRegisterSet()
+                    .merge(m_allowedRegisters[bank].toRegisterSet())
+                    .buildScalarRegisterSet();
             });
     }
 
@@ -274,13 +276,12 @@ private:
                     RegisterSetBuilder prevRegs = regs;
                     prev->forEach<Reg>(
                         [&] (Reg& reg, Arg::Role role, Bank, Width width) {
-                            ASSERT(width <= Width64);
                             if (Arg::isLateDef(role))
                                 prevRegs.add(reg, width);
                         });
                     if (prev->kind.opcode == Patch)
                         prevRegs.merge(prev->extraClobberedRegs());
-                    prevRegs.filter(m_unifiedRegisterSetBuilder);
+                    prevRegs.filter(m_allAllowedRegisters.toRegisterSet().includeWholeRegisterWidth());
                     if (!prevRegs.isEmpty())
                         m_clobbers.append(Clobber(indexOfHead + instIndex * 2 - 1, prevRegs.buildAndValidate()));
                 }
@@ -288,7 +289,6 @@ private:
                     RegisterSetBuilder nextRegs = regs;
                     next->forEach<Reg>(
                         [&] (Reg& reg, Arg::Role role, Bank, Width width) {
-                            ASSERT(width <= Width64);
                             if (Arg::isEarlyDef(role))
                                 nextRegs.add(reg, width);
                         });
@@ -462,11 +462,11 @@ private:
                 while (clobberIndex < m_clobbers.size() && m_clobbers[clobberIndex].index < index)
                     clobberIndex++;
                 
-                RegisterSetBuilder possibleRegs = m_registerSetBuilder[bank];
+                RegisterSetBuilder possibleRegs = m_allowedRegisters[bank].toRegisterSet();
                 for (size_t i = clobberIndex; i < m_clobbers.size() && m_clobbers[i].index < entry.interval.end(); ++i)
-                    possibleRegs.exclude(m_clobbers[i].regs);
+                    possibleRegs.exclude(m_clobbers[i].regs.includeWholeRegisterWidth());
                 
-                entry.possibleRegs = possibleRegs.buildWithLowerBits();
+                entry.possibleRegs = possibleRegs.buildScalarRegisterSet();
                 entry.didBuildPossibleRegs = true;
             }
             
@@ -474,9 +474,9 @@ private:
                 dataLog("  Possible regs: ", entry.possibleRegs, "\n");
             
             // Find a free register that we are allowed to use.
-            if (m_active.size() != m_registers[bank].size()) {
+            if (m_active.size() != m_allowedRegistersInPriorityOrder[bank].size()) {
                 bool didAssign = false;
-                for (Reg reg : m_registers[bank]) {
+                for (Reg reg : m_allowedRegistersInPriorityOrder[bank]) {
                     // FIXME: Could do priority coloring here.
                     // https://bugs.webkit.org/show_bug.cgi?id=170304
                     if (!m_activeRegs.contains(reg, IgnoreVectors) && entry.possibleRegs.contains(reg, IgnoreVectors)) {
@@ -542,7 +542,7 @@ private:
     {
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.isUnspillable);
-        entry.spilled = m_code.addStackSlot(conservativeRegisterBytesWithoutVectors(tmp.bank()), StackSlotKind::Spill);
+        entry.spilled = m_code.addStackSlot(Options::useWebAssemblySIMD() ? conservativeRegisterBytes(tmp.bank()) : conservativeRegisterBytesWithoutVectors(tmp.bank()), StackSlotKind::Spill);
         entry.assigned = Reg();
         m_didSpill = true;
     }
@@ -578,7 +578,7 @@ private:
                         StackSlot* spilled = m_map[tmp].spilled;
                         if (!spilled)
                             return;
-                        Opcode move = bank == GP ? Move : MoveDouble;
+                        Opcode move = bank == GP ? Move : (Options::useWebAssemblySIMD() ? MoveVector : MoveDouble);
                         tmp = addSpillTmpWithInterval(bank, intervalForSpill(indexOfEarly, role));
                         if (role == Arg::Scratch)
                             return;
@@ -621,7 +621,9 @@ private:
             }
             
             entry.spillIndex = m_usedSpillSlots.findBit(0, false);
-            ptrdiff_t offset = -static_cast<ptrdiff_t>(m_code.frameSize()) - static_cast<ptrdiff_t>(entry.spillIndex) * 8 - 8;
+            size_t slotSize = Options::useWebAssemblySIMD() ? conservativeRegisterBytes(FP) : conservativeRegisterBytesWithoutVectors(FP);
+            ASSERT(entry.spilled->byteSize() <= slotSize);
+            ptrdiff_t offset = -static_cast<ptrdiff_t>(m_code.frameSize()) - static_cast<ptrdiff_t>(entry.spillIndex) * slotSize - slotSize;
             if (verbose())
                 dataLog("  Assigning offset = ", offset, " to spill ", pointerDump(entry.spilled), " for ", tmp, "\n");
             entry.spilled->setOffsetFromFP(offset);
@@ -669,9 +671,9 @@ private:
     }
     
     Code& m_code;
-    Vector<Reg> m_registers[numBanks];
-    RegisterSet m_registerSetBuilder[numBanks];
-    RegisterSet m_unifiedRegisterSetBuilder;
+    Vector<Reg> m_allowedRegistersInPriorityOrder[numBanks];
+    ScalarRegisterSet m_allowedRegisters[numBanks];
+    ScalarRegisterSet m_allAllowedRegisters;
     IndexMap<BasicBlock*, size_t> m_startIndex;
     TmpMap<TmpData> m_map;
     IndexMap<BasicBlock*, PhaseInsertionSet> m_insertionSets;
@@ -687,7 +689,6 @@ private:
 
 void allocateRegistersAndStackByLinearScan(Code& code)
 {
-    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateRegistersAndStackByLinearScan");
     if (verbose())
         dataLog("Air before linear scan:\n", code);

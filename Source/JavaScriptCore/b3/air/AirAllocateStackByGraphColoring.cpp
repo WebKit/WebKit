@@ -76,6 +76,9 @@ protected:
         case MoveDouble:
             width = Width64;
             break;
+        case MoveVector:
+            width = Width128;
+            break;
         default:
             return false;
         }
@@ -372,7 +375,6 @@ bool tryTrivialStackAllocation(Code& code)
 
 void allocateStackByGraphColoring(Code& code)
 {
-    RELEASE_ASSERT(!Options::useWebAssemblySIMD());
     PhaseScope phaseScope(code, "allocateStackByGraphColoring");
 
     handleCalleeSaves(code);

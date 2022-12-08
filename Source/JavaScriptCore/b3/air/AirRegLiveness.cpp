@@ -31,6 +31,10 @@
 #include "AirArgInlines.h"
 #include "AirInstInlines.h"
 
+namespace AirRegLivenessInternal {
+    static constexpr bool verbose = false;
+};
+
 namespace JSC { namespace B3 { namespace Air {
 
 RegLiveness::RegLiveness(Code& code)
@@ -38,6 +42,7 @@ RegLiveness::RegLiveness(Code& code)
     , m_liveAtTail(code.size())
     , m_actions(code.size())
 {
+    dataLogLnIf(AirRegLivenessInternal::verbose, "Compute reg liveness for code: ", code);
     // Compute constraints.
     for (BasicBlock* block : code) {
         ActionsForBoundary& actionsForBoundary = m_actions[block];
@@ -78,6 +83,23 @@ RegLiveness::RegLiveness(Code& code)
     bool changed;
     do {
         changed = false;
+
+        if (AirRegLivenessInternal::verbose) {
+            dataLogLn("Next iteration");
+            for (size_t blockIndex = code.size(); blockIndex--;) {
+                BasicBlock* block = code[blockIndex];
+                if (!block)
+                    continue;
+                ActionsForBoundary& actionsForBoundary = m_actions[block];
+                dataLogLn("Block ", blockIndex);
+                dataLogLn("Live at head: ", m_liveAtHead[block]);
+                dataLogLn("Live at tail: ", m_liveAtTail[block]);
+
+                for (size_t instIndex = block->size(); instIndex--;) {
+                    dataLogLn(block->at(instIndex), " | use: ", actionsForBoundary[instIndex].use, " def: ", actionsForBoundary[instIndex].def);
+                }
+            }
+        }
             
         for (size_t blockIndex = code.size(); blockIndex--;) {
             BasicBlock* block = code[blockIndex];
@@ -115,6 +137,23 @@ RegLiveness::RegLiveness(Code& code)
             }
         }
     } while (changed);
+
+    if (AirRegLivenessInternal::verbose) {
+        dataLogLn("Reg liveness result:");
+        for (size_t blockIndex = code.size(); blockIndex--;) {
+            BasicBlock* block = code[blockIndex];
+            if (!block)
+                continue;
+            ActionsForBoundary& actionsForBoundary = m_actions[block];
+            dataLogLn("Block ", blockIndex);
+            dataLogLn("Live at head: ", m_liveAtHead[block]);
+            dataLogLn("Live at tail: ", m_liveAtTail[block]);
+
+            for (size_t instIndex = block->size(); instIndex--;) {
+                dataLogLn(block->at(instIndex), " | use: ", actionsForBoundary[instIndex].use, " def: ", actionsForBoundary[instIndex].def);
+            }
+        }
+        }
 }
 
 RegLiveness::~RegLiveness()
