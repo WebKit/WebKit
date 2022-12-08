@@ -1,6 +1,8 @@
 This is some text.
 
 PASS :modal pseudo-class is not active with dialog.show()
-PASS :modal pseudo-class invalidation with showModal+close
-PASS :modal pseudo-class invalidation with showModal+remove
+PASS :modal pseudo-class invalidation with showModal + close
+PASS :modal pseudo-class invalidation with showModal + remove
+PASS :modal pseudo-class invalidation with requestFullscreen + exitFullscreen
+PASS :modal pseudo-class invalidation with requestFullscreen + remove
 

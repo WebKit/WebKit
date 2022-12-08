@@ -1,0 +1,5 @@
+
+
+PASS Test that :modal matches modal <dialog>
+FAIL Test that :modal matches the fullscreen element assert_true: :fullscreen should match :modal expected true got false
+
