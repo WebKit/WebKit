@@ -19,6 +19,11 @@
         "subtests": {
             "/webkit/BackForwardList/navigation": {
                 "expected": {
+                    "all": {"status": ["PASS"], "slow": true }
+                }
+            },
+            "/webkit/BackForwardList/navigation": {
+                "expected": {
                     "all": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/224175"}
                 }
             }
@@ -133,6 +138,9 @@
         "subtests": {
             "/webkit/WebKitWebView/is-playing-audio": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/210635"}}
+            },
+            "/webkit/WebKitWebView/is-web-process-responsive": {
+                "expected": {"gtk": {"status": ["PASS"], "slow": true}}
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {
@@ -308,6 +316,11 @@
             "/webkit/WebKitWebPage/context-menu-node": {
                 "expected": {
                     "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/227020"}
+                }
+            },
+            "/webkit/WebKitWebView/context-menu-key": {
+                "expected": {
+                    "gtk": {"status": ["PASS"] , "slow": true }
                 }
             },
             "/webkit/WebKitWebView/default-menu": {
