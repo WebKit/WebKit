@@ -268,6 +268,9 @@ RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& o
     if (!m_frame.page() || m_frame.page()->subframeCount() >= Page::maxNumberOfFrames)
         return nullptr;
 
+    if (m_frame.tree().depth() >= Page::maxFrameDepth)
+        return nullptr;
+
     // Prevent initial empty document load from triggering load events.
     document->incrementLoadEventDelayCount();
 
