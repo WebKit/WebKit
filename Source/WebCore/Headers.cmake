@@ -1793,8 +1793,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/opentype/OpenTypeVerticalData.h
 
     platform/graphics/transforms/AffineTransform.h
+    platform/graphics/transforms/IdentityTransformOperation.h
+    platform/graphics/transforms/Matrix3DTransformOperation.h
+    platform/graphics/transforms/MatrixTransformOperation.h
+    platform/graphics/transforms/PerspectiveTransformOperation.h
     platform/graphics/transforms/RotateTransformOperation.h
     platform/graphics/transforms/ScaleTransformOperation.h
+    platform/graphics/transforms/SkewTransformOperation.h
     platform/graphics/transforms/TransformOperation.h
     platform/graphics/transforms/TransformOperations.h
     platform/graphics/transforms/TransformState.h

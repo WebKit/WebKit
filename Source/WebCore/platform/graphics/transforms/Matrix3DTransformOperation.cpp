@@ -32,6 +32,17 @@
 
 namespace WebCore {
 
+Ref<Matrix3DTransformOperation> Matrix3DTransformOperation::create(const TransformationMatrix& matrix)
+{
+    return adoptRef(*new Matrix3DTransformOperation(matrix));
+}
+
+Matrix3DTransformOperation::Matrix3DTransformOperation(const TransformationMatrix& mat)
+    : TransformOperation(TransformOperation::Type::Matrix3D)
+    , m_matrix(mat)
+{
+}
+
 bool Matrix3DTransformOperation::operator==(const TransformOperation& other) const
 {
     return isSameType(other) && m_matrix == downcast<Matrix3DTransformOperation>(other).m_matrix;

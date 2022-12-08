@@ -33,10 +33,7 @@ struct BlendingContext;
 
 class SkewTransformOperation final : public TransformOperation {
 public:
-    static Ref<SkewTransformOperation> create(double angleX, double angleY, TransformOperation::Type type)
-    {
-        return adoptRef(*new SkewTransformOperation(angleX, angleY, type));
-    }
+    WEBCORE_EXPORT static Ref<SkewTransformOperation> create(double, double, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const override
     {
@@ -63,14 +60,8 @@ private:
 
     void dump(WTF::TextStream&) const final;
     
-    SkewTransformOperation(double angleX, double angleY, TransformOperation::Type type)
-        : TransformOperation(type)
-        , m_angleX(angleX)
-        , m_angleY(angleY)
-    {
-        ASSERT(isSkewTransformOperationType());
-    }
-    
+    SkewTransformOperation(double, double, TransformOperation::Type);
+
     double m_angleX;
     double m_angleY;
 };

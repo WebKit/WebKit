@@ -1777,3 +1777,50 @@ header: <WebCore/ScrollingConstraints.h>
 [Return=Ref] class WebCore::NotificationResources {
     RefPtr<WebCore::Image> icon();
 };
+
+[Return=Ref] class WebCore::IdentityTransformOperation {
+}
+
+[Return=Ref] class WebCore::TranslateTransformOperation {
+    WebCore::Length x();
+    WebCore::Length y();
+    WebCore::Length z();
+    WebCore::TransformOperation::Type type();
+}
+
+[Return=Ref] class WebCore::RotateTransformOperation {
+    double x();
+    double y();
+    double z();
+    double angle();
+    WebCore::TransformOperation::Type type();
+}
+
+[Return=Ref] class WebCore::ScaleTransformOperation {
+    double x();
+    double y();
+    double z();
+    WebCore::TransformOperation::Type type();
+}
+
+[Return=Ref] class WebCore::SkewTransformOperation {
+    double angleX();
+    double angleY();
+    WebCore::TransformOperation::Type type();
+}
+
+[Return=Ref] class WebCore::PerspectiveTransformOperation {
+    std::optional<WebCore::Length> perspective();
+}
+
+[Return=Ref] class WebCore::MatrixTransformOperation {
+    WebCore::TransformationMatrix matrix();
+}
+
+[Return=Ref] class WebCore::Matrix3DTransformOperation {
+    WebCore::TransformationMatrix matrix();
+}
+
+class WebCore::TransformOperations {
+    Vector<RefPtr<WebCore::TransformOperation>> operations();
+}

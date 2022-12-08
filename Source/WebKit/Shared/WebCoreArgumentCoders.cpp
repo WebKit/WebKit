@@ -66,13 +66,17 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBGetResult.h>
+#include <WebCore/IdentityTransformOperation.h>
 #include <WebCore/Image.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
+#include <WebCore/Matrix3DTransformOperation.h>
+#include <WebCore/MatrixTransformOperation.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/Pasteboard.h>
+#include <WebCore/PerspectiveTransformOperation.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PromisedAttachmentInfo.h>
 #include <WebCore/ProtectionSpace.h>
@@ -84,6 +88,8 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/RotateTransformOperation.h>
+#include <WebCore/ScaleTransformOperation.h>
 #include <WebCore/ScriptBuffer.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ScrollingConstraints.h>
@@ -97,12 +103,15 @@
 #include <WebCore/ServiceWorkerData.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SkewTransformOperation.h>
 #include <WebCore/SystemImage.h>
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
+#include <WebCore/TransformOperation.h>
 #include <WebCore/TransformationMatrix.h>
+#include <WebCore/TranslateTransformOperation.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/VelocityData.h>
 #include <WebCore/ViewportArguments.h>
@@ -1747,6 +1756,144 @@ std::optional<RefPtr<WebCore::TimingFunction>> ArgumentCoder<RefPtr<WebCore::Tim
     if (!timingFunction)
         return std::nullopt;
     return WTFMove(*timingFunction);
+}
+
+void ArgumentCoder<WebCore::TransformOperation>::encode(Encoder& encoder, const WebCore::TransformOperation& transformOperation)
+{
+    if (transformOperation.type() == TransformOperation::Type::None)
+        return;
+
+    encoder << transformOperation.type();
+
+    switch (transformOperation.type()) {
+    case TransformOperation::Type::TranslateX:
+    case TransformOperation::Type::TranslateY:
+    case TransformOperation::Type::TranslateZ:
+    case TransformOperation::Type::Translate:
+    case TransformOperation::Type::Translate3D:
+        encoder << downcast<TranslateTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::ScaleX:
+    case TransformOperation::Type::ScaleY:
+    case TransformOperation::Type::ScaleZ:
+    case TransformOperation::Type::Scale:
+    case TransformOperation::Type::Scale3D:
+        encoder << downcast<ScaleTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::RotateX:
+    case TransformOperation::Type::RotateY:
+    case TransformOperation::Type::RotateZ:
+    case TransformOperation::Type::Rotate:
+    case TransformOperation::Type::Rotate3D:
+        encoder << downcast<RotateTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::SkewX:
+    case TransformOperation::Type::SkewY:
+    case TransformOperation::Type::Skew:
+        encoder << downcast<SkewTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::Matrix:
+        encoder << downcast<MatrixTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::Matrix3D:
+        encoder << downcast<Matrix3DTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::Perspective:
+        encoder << downcast<PerspectiveTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::Identity:
+        encoder << downcast<IdentityTransformOperation>(transformOperation);
+        break;
+    case TransformOperation::Type::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+std::optional<Ref<WebCore::TransformOperation>> ArgumentCoder<WebCore::TransformOperation>::decode(Decoder& decoder)
+{
+    std::optional<TransformOperation::Type> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    switch (*type) {
+    case TransformOperation::Type::TranslateX:
+    case TransformOperation::Type::TranslateY:
+    case TransformOperation::Type::TranslateZ:
+    case TransformOperation::Type::Translate:
+    case TransformOperation::Type::Translate3D: {
+        std::optional<Ref<TranslateTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::ScaleX:
+    case TransformOperation::Type::ScaleY:
+    case TransformOperation::Type::ScaleZ:
+    case TransformOperation::Type::Scale:
+    case TransformOperation::Type::Scale3D: {
+        std::optional<Ref<ScaleTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::RotateX:
+    case TransformOperation::Type::RotateY:
+    case TransformOperation::Type::RotateZ:
+    case TransformOperation::Type::Rotate:
+    case TransformOperation::Type::Rotate3D: {
+        std::optional<Ref<RotateTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::SkewX:
+    case TransformOperation::Type::SkewY:
+    case TransformOperation::Type::Skew: {
+        std::optional<Ref<SkewTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::Matrix: {
+        std::optional<Ref<MatrixTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::Matrix3D: {
+        std::optional<Ref<Matrix3DTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::Perspective: {
+        std::optional<Ref<PerspectiveTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::Identity: {
+        std::optional<Ref<IdentityTransformOperation>> transformOperation;
+        decoder >> transformOperation;
+        if (!transformOperation)
+            return std::nullopt;
+        return WTFMove(*transformOperation);
+    }
+    case TransformOperation::Type::None:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
 }
 
 } // namespace IPC

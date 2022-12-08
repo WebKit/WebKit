@@ -34,10 +34,7 @@ struct BlendingContext;
 
 class Matrix3DTransformOperation final : public TransformOperation {
 public:
-    static Ref<Matrix3DTransformOperation> create(const TransformationMatrix& matrix)
-    {
-        return adoptRef(*new Matrix3DTransformOperation(matrix));
-    }
+    WEBCORE_EXPORT static Ref<Matrix3DTransformOperation> create(const TransformationMatrix&);
 
     Ref<TransformOperation> clone() const override
     {
@@ -65,11 +62,7 @@ private:
     
     void dump(WTF::TextStream&) const final;
 
-    Matrix3DTransformOperation(const TransformationMatrix& mat)
-        : TransformOperation(TransformOperation::Type::Matrix3D)
-        , m_matrix(mat)
-    {
-    }
+    Matrix3DTransformOperation(const TransformationMatrix&);
 
     TransformationMatrix m_matrix;
 };

@@ -145,6 +145,7 @@ class StickyPositionViewportConstraints;
 class SystemImage;
 class TextCheckingRequestData;
 class TimingFunction;
+class TransformOperation;
 class UserStyleSheet;
 
 struct AttributedString;
@@ -571,6 +572,11 @@ template<> struct ArgumentCoder<Ref<WebCore::TimingFunction>> {
 template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction>> {
     static void encode(Encoder&, const RefPtr<WebCore::TimingFunction>&);
     static std::optional<RefPtr<WebCore::TimingFunction>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::TransformOperation> {
+    static void encode(Encoder&, const WebCore::TransformOperation&);
+    static std::optional<Ref<WebCore::TransformOperation>> decode(Decoder&);
 };
 
 } // namespace IPC

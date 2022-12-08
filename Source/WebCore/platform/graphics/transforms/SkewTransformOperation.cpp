@@ -27,6 +27,19 @@
 
 namespace WebCore {
 
+Ref<SkewTransformOperation> SkewTransformOperation::create(double angleX, double angleY, TransformOperation::Type type)
+{
+    return adoptRef(*new SkewTransformOperation(angleX, angleY, type));
+}
+
+SkewTransformOperation::SkewTransformOperation(double angleX, double angleY, TransformOperation::Type type)
+    : TransformOperation(type)
+    , m_angleX(angleX)
+    , m_angleY(angleY)
+{
+    ASSERT(isSkewTransformOperationType());
+}
+
 bool SkewTransformOperation::operator==(const TransformOperation& other) const
 {
     if (!isSameType(other))

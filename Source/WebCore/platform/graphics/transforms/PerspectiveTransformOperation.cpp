@@ -32,6 +32,18 @@
 
 namespace WebCore {
 
+Ref<PerspectiveTransformOperation> PerspectiveTransformOperation::create(const std::optional<Length>& p)
+{
+    return adoptRef(*new PerspectiveTransformOperation(p));
+}
+
+PerspectiveTransformOperation::PerspectiveTransformOperation(const std::optional<Length>& p)
+    : TransformOperation(TransformOperation::Type::Perspective)
+    , m_p(p)
+{
+    ASSERT(!p || (*p).isFixed());
+}
+
 bool PerspectiveTransformOperation::operator==(const TransformOperation& other) const
 {
     if (!isSameType(other))

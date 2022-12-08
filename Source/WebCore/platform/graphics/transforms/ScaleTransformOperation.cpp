@@ -27,6 +27,20 @@
 
 namespace WebCore {
 
+Ref<ScaleTransformOperation> ScaleTransformOperation::create(double sx, double sy, double sz, TransformOperation::Type type)
+{
+    return adoptRef(*new ScaleTransformOperation(sx, sy, sz, type));
+}
+
+ScaleTransformOperation::ScaleTransformOperation(double sx, double sy, double sz, TransformOperation::Type type)
+    : TransformOperation(type)
+    , m_x(sx)
+    , m_y(sy)
+    , m_z(sz)
+{
+    ASSERT(isScaleTransformOperationType());
+}
+
 bool ScaleTransformOperation::operator==(const TransformOperation& other) const
 {
     if (!isSameType(other))

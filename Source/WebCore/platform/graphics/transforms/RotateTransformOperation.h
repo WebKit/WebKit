@@ -38,10 +38,7 @@ public:
         return adoptRef(*new RotateTransformOperation(0, 0, 1, angle, type));
     }
 
-    static Ref<RotateTransformOperation> create(double x, double y, double z, double angle, TransformOperation::Type type)
-    {
-        return adoptRef(*new RotateTransformOperation(x, y, z, angle, type));
-    }
+    WEBCORE_EXPORT static Ref<RotateTransformOperation> create(double, double, double, double, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const override
     {
@@ -78,15 +75,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    RotateTransformOperation(double x, double y, double z, double angle, TransformOperation::Type type)
-        : TransformOperation(type)
-        , m_x(x)
-        , m_y(y)
-        , m_z(z)
-        , m_angle(angle)
-    {
-        ASSERT(isRotateTransformOperationType());
-    }
+    RotateTransformOperation(double, double, double, double, TransformOperation::Type);
 
     double m_x;
     double m_y;

@@ -2264,6 +2264,7 @@ platform/graphics/iso/ISOTrackEncryptionBox.cpp
 platform/graphics/iso/ISOVTTCue.cpp
 platform/graphics/opentype/OpenTypeMathData.cpp
 platform/graphics/transforms/AffineTransform.cpp
+platform/graphics/transforms/IdentityTransformOperation.cpp
 platform/graphics/transforms/Matrix3DTransformOperation.cpp
 platform/graphics/transforms/MatrixTransformOperation.cpp
 platform/graphics/transforms/PerspectiveTransformOperation.cpp

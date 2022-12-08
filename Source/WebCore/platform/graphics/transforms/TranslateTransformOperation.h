@@ -40,10 +40,7 @@ public:
         return adoptRef(*new TranslateTransformOperation(tx, ty, Length(0, LengthType::Fixed), type));
     }
 
-    static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, const Length& tz, TransformOperation::Type type)
-    {
-        return adoptRef(*new TranslateTransformOperation(tx, ty, tz, type));
-    }
+    WEBCORE_EXPORT static Ref<TranslateTransformOperation> create(const Length&, const Length&, const Length&, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const override
     {
@@ -83,14 +80,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    TranslateTransformOperation(const Length& tx, const Length& ty, const Length& tz, TransformOperation::Type type)
-        : TransformOperation(type)
-        , m_x(tx)
-        , m_y(ty)
-        , m_z(tz)
-    {
-        ASSERT(isTranslateTransformOperationType());
-    }
+    TranslateTransformOperation(const Length&, const Length&, const Length&, TransformOperation::Type);
 
     Length m_x;
     Length m_y;
