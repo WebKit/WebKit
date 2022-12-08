@@ -3430,9 +3430,9 @@ void Editor::removeTextPlaceholder(TextPlaceholderElement& placeholder)
 static inline void collapseCaretWidth(IntRect& rect)
 {
     // FIXME: Width adjustment doesn't work for rotated text.
-    if (rect.width() == caretWidth)
+    if (rect.width() == caretWidth())
         rect.setWidth(0);
-    else if (rect.height() == caretWidth)
+    else if (rect.height() == caretWidth())
         rect.setHeight(0);
 }
 

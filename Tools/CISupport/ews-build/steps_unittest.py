@@ -5017,9 +5017,9 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5049,9 +5049,9 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['sh', '-c', 'git branch | grep -v main | xargs git branch -D || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || exit 0"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || exit 0"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5080,9 +5080,9 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
             ExpectShell(command=['git', 'checkout', '-b', 'master'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'master'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v master | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' master$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5111,9 +5111,9 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5143,9 +5143,9 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),

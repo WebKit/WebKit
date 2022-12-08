@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include <WebCore/WorkerClient.h>
 
@@ -47,7 +48,7 @@ public:
     // worker thread of the outer worker, and then transferred to the
     // nested worker.
 #if ENABLE(GPU_PROCESS)
-    WebWorkerClient(SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&);
+    WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&);
 #else
     WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID&);
 #endif
@@ -57,6 +58,9 @@ public:
     WebCore::PlatformDisplayID displayID() const final;
 
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, bool avoidBackendSizeCheck = false) const final;
+#if ENABLE(WEBGL)
+    RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&) const final;
+#endif
 
 private:
 #if ENABLE(GPU_PROCESS)
@@ -65,6 +69,7 @@ private:
 
     SerialFunctionDispatcher& m_dispatcher;
 #if ENABLE(GPU_PROCESS)
+    Ref<IPC::Connection> m_connection;
     mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteRenderingBackendCreationParameters m_creationParameters;
 #endif

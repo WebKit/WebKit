@@ -29,6 +29,21 @@
 
 namespace WebCore {
 
+Ref<RotateTransformOperation> RotateTransformOperation::create(double x, double y, double z, double angle, TransformOperation::Type type)
+{
+    return adoptRef(*new RotateTransformOperation(x, y, z, angle, type));
+}
+
+RotateTransformOperation::RotateTransformOperation(double x, double y, double z, double angle, TransformOperation::Type type)
+    : TransformOperation(type)
+    , m_x(x)
+    , m_y(y)
+    , m_z(z)
+    , m_angle(angle)
+{
+    ASSERT(isRotateTransformOperationType());
+}
+
 bool RotateTransformOperation::operator==(const TransformOperation& other) const
 {
     if (!isSameType(other))

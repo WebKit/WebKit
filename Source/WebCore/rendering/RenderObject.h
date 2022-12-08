@@ -84,12 +84,6 @@ struct InlineBoxAndOffset;
 struct PaintInfo;
 struct SimpleRange;
 
-#if PLATFORM(IOS_FAMILY)
-const int caretWidth = 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
-#else
-const int caretWidth = 1;
-#endif
-
 struct ScrollRectToVisibleOptions;
 
 namespace Layout {
@@ -262,10 +256,6 @@ public:
     virtual bool isCanvas() const { return false; }
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual bool isAttachment() const { return false; }
-#endif
-#if ENABLE(FULLSCREEN_API)
-    virtual bool isRenderFullScreen() const { return false; }
-    virtual bool isRenderFullScreenPlaceholder() const { return false; }
 #endif
     virtual bool isRenderGrid() const { return false; }
 
@@ -1159,10 +1149,6 @@ inline bool RenderObject::isAnonymousBlock() const
         && (style().display() == DisplayType::Block || style().display() == DisplayType::Box)
         && style().styleType() == PseudoId::None
         && isRenderBlock()
-#if ENABLE(FULLSCREEN_API)
-        && !isRenderFullScreen()
-        && !isRenderFullScreenPlaceholder()
-#endif
 #if ENABLE(MATHML)
         && !isRenderMathMLBlock()
 #endif

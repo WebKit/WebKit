@@ -59,6 +59,8 @@ css-dark-mode [ Skip ]
 model-element [ Skip ]
 http/tests/model [ Skip ]
 
+media/audioSession [ Skip ]
+
 # Media Stream API testing is not supported for WK1 yet.
 fast/mediastream
 imported/w3c/web-platform-tests/mediacapture-streams

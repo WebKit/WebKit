@@ -3,6 +3,7 @@ This tests that the navigator object of a deleted frame is disconnected properly
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
+navigator.audioSession is OK
 navigator.canShare() is OK
 navigator.clipboard is OK
 navigator.contacts is OK
@@ -43,6 +44,7 @@ navigator.xr is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
+navigator.audioSession is OK
 navigator.canShare() is OK
 navigator.clipboard is OK
 navigator.contacts is OK

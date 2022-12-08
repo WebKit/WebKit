@@ -11,6 +11,7 @@ BroadcastChannel
 Clipboard
 DedicatedWorkerGlobalScope
 DOMApplicationCache
+DOMAudioSession conditional=DOM_AUDIO_SESSION
 DOMWindow
 EventSource
 FileReader

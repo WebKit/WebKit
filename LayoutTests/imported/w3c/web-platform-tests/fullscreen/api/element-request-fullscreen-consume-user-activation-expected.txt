@@ -1,0 +1,3 @@
+
+PASS Element#requestFullscreen() consumes user activation
+

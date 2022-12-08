@@ -39,6 +39,19 @@
 
 namespace WebCore {
 
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(MAC)
+#import <WebKitAdditions/CaretRectComputationAdditions.cpp>
+#else
+int caretWidth()
+{
+#if PLATFORM(IOS_FAMILY)
+    return 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
+#else
+    return 1;
+#endif
+}
+#endif
+
 static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& renderer, LayoutUnit width, LayoutUnit textIndentOffset, CaretRectMode caretRectMode)
 {
     ASSERT(!renderer.firstChild() || renderer.firstChild()->isPseudoElement());
@@ -92,18 +105,18 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
             x -= textIndentOffset / 2;
         break;
     case AlignRight:
-        x = maxX - caretWidth;
+        x = maxX - caretWidth();
         if (!currentStyle.isLeftToRightDirection())
             x -= textIndentOffset;
         break;
     }
-    x = std::min(x, std::max<LayoutUnit>(maxX - caretWidth, 0));
+    x = std::min(x, std::max<LayoutUnit>(maxX - caretWidth(), 0));
 
     auto lineHeight = renderer.lineHeight(true, currentStyle.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     auto height = std::min(lineHeight, LayoutUnit { currentStyle.metricsOfPrimaryFont().height() });
     auto y = renderer.paddingTop() + renderer.borderTop() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
 
-    auto rect = LayoutRect(x, y, caretWidth, height);
+    auto rect = LayoutRect(x, y, caretWidth(), height);
 
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
         rect.shiftMaxXEdgeTo(width);
@@ -121,9 +134,9 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
 
     // Distribute the caret's width to either side of the offset.
     float left = logicalLeftPosition;
-    int caretWidthLeftOfOffset = caretWidth / 2;
+    int caretWidthLeftOfOffset = caretWidth() / 2;
     left -= caretWidthLeftOfOffset;
-    int caretWidthRightOfOffset = caretWidth - caretWidthLeftOfOffset;
+    int caretWidthRightOfOffset = caretWidth() - caretWidthLeftOfOffset;
     left = roundf(left);
 
     float lineLeft = lineSelectionRect.x();
@@ -154,13 +167,13 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
 
     if (rightAligned) {
         left = std::max(left, leftEdge);
-        left = std::min(left, lineRight - caretWidth);
+        left = std::min(left, lineRight - caretWidth());
     } else {
         left = std::min(left, rightEdge - caretWidthRightOfOffset);
         left = std::max(left, lineLeft);
     }
 
-    auto rect = IntRect(left, top, caretWidth, height);
+    auto rect = IntRect(left, top, caretWidth(), height);
 
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
         rect.shiftMaxXEdgeTo(lineRight);
@@ -207,12 +220,12 @@ static LayoutRect computeCaretRectForSVGInlineText(const InlineBoxAndOffset& box
     if (caretOffset < textBox.start() + textBox.len()) {
         LayoutRect rect = textBox.localSelectionRect(caretOffset, caretOffset + 1);
         LayoutUnit x = textBox.isLeftToRightDirection() ? rect.x() : rect.maxX();
-        return LayoutRect(x, rect.y(), caretWidth, rect.height());
+        return LayoutRect(x, rect.y(), caretWidth(), rect.height());
     }
 
     LayoutRect rect = textBox.localSelectionRect(caretOffset - 1, caretOffset);
     LayoutUnit x = textBox.isLeftToRightDirection() ? rect.maxX() : rect.x();
-    return { x, rect.y(), caretWidth, rect.height() };
+    return { x, rect.y(), caretWidth(), rect.height() };
 }
 
 static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const InlineBoxAndOffset& boxAndOffset, CaretRectMode caretRectMode)
@@ -222,11 +235,11 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
     // They never refer to children.
     // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
 
-    LayoutRect rect(renderer.location(), LayoutSize(caretWidth, renderer.height()));
+    LayoutRect rect(renderer.location(), LayoutSize(caretWidth(), renderer.height()));
     bool ltr = boxAndOffset.box ? boxAndOffset.box->isLeftToRightDirection() : renderer.style().isLeftToRightDirection();
 
     if ((!boxAndOffset.offset) ^ ltr)
-        rect.move(LayoutSize(renderer.width() - caretWidth, 0_lu));
+        rect.move(LayoutSize(renderer.width() - caretWidth(), 0_lu));
 
     if (boxAndOffset.box) {
         auto lineBox = boxAndOffset.box->lineBox();

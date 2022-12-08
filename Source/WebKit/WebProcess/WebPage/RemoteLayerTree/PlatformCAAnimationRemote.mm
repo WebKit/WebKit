@@ -105,71 +105,6 @@ template<typename T> static Vector<PlatformCAAnimationRemote::KeyframeValue> toK
     });
 }
 
-static void encodeTimingFunction(IPC::Encoder& encoder, const TimingFunction& timingFunction)
-{
-    encoder << timingFunction.type();
-
-    switch (timingFunction.type()) {
-    case TimingFunction::TimingFunctionType::LinearFunction:
-        encoder << static_cast<const LinearTimingFunction&>(timingFunction);
-        break;
-
-    case TimingFunction::TimingFunctionType::CubicBezierFunction:
-        encoder << static_cast<const CubicBezierTimingFunction&>(timingFunction);
-        break;
-
-    case TimingFunction::TimingFunctionType::StepsFunction:
-        encoder << static_cast<const StepsTimingFunction&>(timingFunction);
-        break;
-
-    case TimingFunction::TimingFunctionType::SpringFunction:
-        encoder << static_cast<const SpringTimingFunction&>(timingFunction);
-        break;
-    }
-}
-
-static std::optional<Ref<TimingFunction>> decodeTimingFunction(IPC::Decoder& decoder)
-{
-    std::optional<TimingFunction::TimingFunctionType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    switch (*type) {
-    case TimingFunction::TimingFunctionType::LinearFunction: {
-        std::optional<Ref<LinearTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
-
-    case TimingFunction::TimingFunctionType::CubicBezierFunction: {
-        std::optional<Ref<CubicBezierTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
-
-    case TimingFunction::TimingFunctionType::StepsFunction: {
-        std::optional<Ref<StepsTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
-
-    case TimingFunction::TimingFunctionType::SpringFunction: {
-        std::optional<Ref<SpringTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
-    }
-}
-
 void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
 {
     encoder << keyPath;
@@ -183,11 +118,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
 
     encoder << fillMode;
     encoder << valueFunction;
-    
-    bool hasTimingFunction = !!timingFunction;
-    encoder << hasTimingFunction;
-    if (hasTimingFunction)
-        encodeTimingFunction(encoder, *timingFunction);
+    encoder << timingFunction;
 
     encoder << autoReverses;
     encoder << removedOnCompletion;
@@ -198,9 +129,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     encoder << keyValues;
     encoder << keyTimes;
     
-    encoder << static_cast<uint64_t>(timingFunctions.size());
-    for (const auto& timingFunction : timingFunctions)
-        encodeTimingFunction(encoder, timingFunction);
+    encoder << timingFunctions;
 
     encoder << animations;
 }
@@ -235,16 +164,8 @@ std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::
     if (!decoder.decode(properties.valueFunction))
         return std::nullopt;
 
-    bool hasTimingFunction;
-    if (!decoder.decode(hasTimingFunction))
+    if (!decoder.decode(properties.timingFunction))
         return std::nullopt;
-
-    if (hasTimingFunction) {
-        if (auto timingFunction = decodeTimingFunction(decoder))
-            properties.timingFunction = WTFMove(*timingFunction);
-        else
-            return std::nullopt;
-    }
 
     if (!decoder.decode(properties.autoReverses))
         return std::nullopt;
@@ -267,20 +188,8 @@ std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::
     if (!decoder.decode(properties.keyTimes))
         return std::nullopt;
 
-    uint64_t numTimingFunctions;
-    if (!decoder.decode(numTimingFunctions))
+    if (!decoder.decode(properties.timingFunctions))
         return std::nullopt;
-    
-    if (numTimingFunctions) {
-        properties.timingFunctions.reserveInitialCapacity(numTimingFunctions);
-
-        for (size_t i = 0; i < numTimingFunctions; ++i) {
-            if (auto timingFunction = decodeTimingFunction(decoder))
-                properties.timingFunctions.uncheckedAppend(WTFMove(*timingFunction));
-            else
-                return std::nullopt;
-        }
-    }
 
     if (!decoder.decode(properties.animations))
         return std::nullopt;

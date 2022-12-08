@@ -2670,6 +2670,10 @@ static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& lay
     if (!fullScreenRenderer || !fullScreenLayer)
         return FullScreenDescendant::NotApplicable;
 
+    auto backdropRenderer = fullScreenRenderer->backdropRenderer();
+    if (backdropRenderer && backdropRenderer.get() == &layer.renderer())
+        return FullScreenDescendant::Yes;
+
     return layer.isDescendantOf(*fullScreenLayer) ? FullScreenDescendant::Yes : FullScreenDescendant::No;
 }
 #endif

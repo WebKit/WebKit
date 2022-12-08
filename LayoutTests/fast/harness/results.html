@@ -309,7 +309,7 @@ class Utils
                 prefix += '_' + remains.split('?')[1]
             else if (remains.includes('#'))
                 prefix += '_' + remains.split('#')[1]
-        } else if (Utils.splitExtension(parts[0])[1].length > 5) {
+        } else if (Utils.splitExtension(parts[0])[1].length - 1 > 5) {
             // Temporary fix, also in Tools/Scripts/webkitpy/layout_tests/constrollers/test_result_writer.py, line 115.
             // FIXME: Refactor to avoid confusing reference to both test and process names.
             return testName;

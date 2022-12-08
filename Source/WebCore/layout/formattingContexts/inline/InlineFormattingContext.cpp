@@ -266,7 +266,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
             break;
         }
 
-        if (!lineContent.runs.isEmpty() && !lineLogicalRect.isEmpty())
+        if (!lineContent.runs.isEmpty() && lineContent.contentLogicalWidth)
             ++numberOfLines;
         lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext);
         previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, WTFMove(lineContent.overflowingFloats), lineContent.trailingOverflowingContentWidth };

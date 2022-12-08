@@ -120,6 +120,7 @@ public:
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 
+    URL selectModelSource() const;
     void setSourceURL(const URL&);
     void modelDidChange();
     void createModelPlayer();
@@ -132,7 +133,8 @@ private:
 
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    bool isURLAttribute(const Attribute&) const final;
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     // StyledElement
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;

@@ -495,26 +495,22 @@ private:
     uintptr_t m_data;
 };
 
-class DeferredWatchpointFire : public FireDetail {
+class DeferredWatchpointFire {
     WTF_MAKE_NONCOPYABLE(DeferredWatchpointFire);
 public:
-    DeferredWatchpointFire(VM& vm)
-        : m_vm(vm)
-        , m_watchpointsToFire(ClearWatchpoint)
+    DeferredWatchpointFire()
+        : m_watchpointsToFire(ClearWatchpoint)
     {
     }
 
     JS_EXPORT_PRIVATE void takeWatchpointsToFire(WatchpointSet*);
-    void fireAll()
-    {
-        if (m_watchpointsToFire.state() == IsWatched)
-            fireAllSlow();
-    }
+
+protected:
+    WatchpointSet& watchpointsToFire() { return m_watchpointsToFire; }
 
 private:
     JS_EXPORT_PRIVATE void fireAllSlow();
 
-    VM& m_vm;
     WatchpointSet m_watchpointsToFire;
 };
 

@@ -28,6 +28,20 @@
 
 namespace WebCore {
 
+Ref<TranslateTransformOperation> TranslateTransformOperation::create(const Length& tx, const Length& ty, const Length& tz, TransformOperation::Type type)
+{
+    return adoptRef(*new TranslateTransformOperation(tx, ty, tz, type));
+}
+
+TranslateTransformOperation::TranslateTransformOperation(const Length& tx, const Length& ty, const Length& tz, TransformOperation::Type type)
+    : TransformOperation(type)
+    , m_x(tx)
+    , m_y(ty)
+    , m_z(tz)
+{
+    ASSERT(isTranslateTransformOperationType());
+}
+
 bool TranslateTransformOperation::operator==(const TransformOperation& other) const
 {
     if (!isSameType(other))

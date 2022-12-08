@@ -60,6 +60,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPU.idl \
     $(WebCore)/Modules/WebGPU/GPUAdapter.idl \
     $(WebCore)/Modules/WebGPU/GPUAddressMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUAutoLayoutMode.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroup.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroupDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroupEntry.idl \
@@ -250,6 +251,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/async-clipboard/Clipboard.idl \
     $(WebCore)/Modules/async-clipboard/ClipboardItem.idl \
     $(WebCore)/Modules/async-clipboard/Navigator+Clipboard.idl \
+    $(WebCore)/Modules/audiosession/DOMAudioSession.idl \
+    $(WebCore)/Modules/audiosession/Navigator+AudioSession.idl \
     $(WebCore)/Modules/beacon/Navigator+Beacon.idl \
     $(WebCore)/Modules/cache/CacheQueryOptions.idl \
     $(WebCore)/Modules/cache/DOMCache.idl \

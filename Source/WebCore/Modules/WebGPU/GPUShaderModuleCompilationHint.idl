@@ -29,5 +29,5 @@
     EnabledBySetting=WebGPU
 ]
 dictionary GPUShaderModuleCompilationHint {
-    required GPUPipelineLayout layout;
+    required (GPUPipelineLayout or GPUAutoLayoutMode) layout;
 };

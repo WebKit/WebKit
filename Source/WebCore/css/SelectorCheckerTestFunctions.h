@@ -29,7 +29,6 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
-#include "FullscreenManager.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
@@ -45,6 +44,11 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 #include "HTMLAttachmentElement.h"
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+#include "DocumentOrShadowRootFullscreen.h"
+#include "FullscreenManager.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -402,7 +406,16 @@ ALWAYS_INLINE bool scrollbarMatchesCornerPresentPseudoClass(const SelectorChecke
 
 #if ENABLE(FULLSCREEN_API)
 
-ALWAYS_INLINE bool matchesFullScreenPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesFullscreenPseudoClass(const Element& element)
+{
+    if (element.hasFullscreenFlag())
+        return true;
+    if (element.shadowRoot())
+        return DocumentOrShadowRootFullscreen::fullscreenElement(element.document()) == &element;
+    return false;
+}
+
+ALWAYS_INLINE bool matchesWebkitFullScreenPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, and the document's current fullscreen
     // element is an element in the document, the 'full-screen' pseudoclass applies to

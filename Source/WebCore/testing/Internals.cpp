@@ -667,6 +667,11 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     TextPainter::setForceUseGlyphDisplayListForTesting(false);
+
+#if USE(AUDIO_SESSION)
+    AudioSession::sharedSession().setCategoryOverride(AudioSessionCategory::None);
+    AudioSession::sharedSession().tryToSetActive(false);
+#endif
 }
 
 Internals::Internals(Document& document)

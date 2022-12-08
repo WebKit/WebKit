@@ -30,11 +30,22 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 
+#if ENABLE(WEBGL) && ENABLE(GPU_PROCESS)
+#include "RemoteGraphicsContextGLProxy.h"
+#endif
+
+#if ENABLE(WEBGL)
+#include <WebCore/GraphicsContextGL.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
 WebWorkerClient::WebWorkerClient(WebPage* page, SerialFunctionDispatcher& dispatcher)
     : m_dispatcher(dispatcher)
+#if ENABLE(GPU_PROCESS)
+    , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
+#endif
 {
     ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)
@@ -46,8 +57,9 @@ WebWorkerClient::WebWorkerClient(WebPage* page, SerialFunctionDispatcher& dispat
 }
 
 #if ENABLE(GPU_PROCESS)
-WebWorkerClient::WebWorkerClient(SerialFunctionDispatcher& dispatcher, RemoteRenderingBackendCreationParameters& creationParameters, WebCore::PlatformDisplayID& displayID)
+WebWorkerClient::WebWorkerClient(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, RemoteRenderingBackendCreationParameters& creationParameters, WebCore::PlatformDisplayID& displayID)
     : m_dispatcher(dispatcher)
+    , m_connection(connection)
     , m_creationParameters(creationParameters)
     , m_displayID(displayID)
 { }
@@ -72,7 +84,7 @@ std::unique_ptr<WorkerClient> WebWorkerClient::clone(SerialFunctionDispatcher& d
 {
     assertIsCurrent(m_dispatcher);
 #if ENABLE(GPU_PROCESS)
-    return makeUnique<WebWorkerClient>(dispatcher, m_creationParameters, m_displayID);
+    return makeUnique<WebWorkerClient>(m_connection, dispatcher, m_creationParameters, m_displayID);
 #else
     return makeUnique<WebWorkerClient>(dispatcher, m_displayID);
 #endif
@@ -93,6 +105,17 @@ RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, Re
 #endif
     return nullptr;
 }
+
+#if ENABLE(WEBGL)
+RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
+{
+#if ENABLE(GPU_PROCESS)
+    if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
+        return RemoteGraphicsContextGLProxy::create(m_connection, attributes, ensureRenderingBackend());
+#endif
+    return WebCore::createWebProcessGraphicsContextGL(attributes);
+}
+#endif
 
 }
 

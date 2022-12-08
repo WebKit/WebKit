@@ -83,6 +83,7 @@ namespace WebCore {
     macro(AudioParamMap) \
     macro(AudioProcessingEvent) \
     macro(AudioScheduledSourceNode) \
+    macro(AudioSession) \
     macro(AudioWorklet) \
     macro(AudioWorkletGlobalScope) \
     macro(AudioWorkletNode) \

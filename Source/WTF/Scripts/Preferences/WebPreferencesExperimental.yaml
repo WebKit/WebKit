@@ -618,6 +618,19 @@ CrossOriginOpenerPolicyEnabled:
     WebCore:
       default: false
 
+DOMAudioSessionEnabled:
+  condition: ENABLE(DOM_AUDIO_SESSION)
+  type: bool
+  humanReadableName: "AudioSession"
+  humanReadableDescription: "Enable AudioSession"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DeclarativeShadowDOMEnabled:
   type: bool
   humanReadableName: "Declarative Shadow DOM"

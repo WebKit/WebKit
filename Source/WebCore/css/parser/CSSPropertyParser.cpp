@@ -50,6 +50,7 @@
 #include "Counter.h"
 #include "FontFace.h"
 #include "Pair.h"
+#include "ParsingUtilities.h"
 #include "Rect.h"
 #include "StyleBuilder.h"
 #include "StyleBuilderConverter.h"
@@ -324,64 +325,105 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     return CSSPropertyParsing::parse(m_range, property, currentShorthand, m_context);
 }
 
+RefPtr<CSSValue> CSSPropertyParser::parseCustomPropertyValueWithSyntaxDefinition(const CSSPropertySyntax::Definition& syntaxDefinition)
+{
+    ASSERT(!CSSPropertySyntax::isUniversal(syntaxDefinition));
+
+    m_range.consumeWhitespace();
+
+    auto rangeCopy = m_range;
+
+    auto value = [&]() -> RefPtr<CSSValue>  {
+        for (auto& component : syntaxDefinition) {
+            switch (component.dataType) {
+            case CSSPropertySyntax::DataType::Universal:
+                ASSERT_NOT_REACHED();
+                break;
+            case CSSPropertySyntax::DataType::Length:
+                if (auto value = consumeLength(m_range, m_context.mode, ValueRange::All))
+                    return value;
+                break;
+            case CSSPropertySyntax::DataType::LengthPercentage:
+                if (auto value = consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All))
+                    return value;
+                break;
+            case CSSPropertySyntax::DataType::CustomIdent:
+                if (auto value = consumeCustomIdent(m_range)) {
+                    if (component.ident.isNull() || value->stringValue() == component.ident)
+                        return value;
+                    m_range = rangeCopy;
+                }
+                break;
+            case CSSPropertySyntax::DataType::Unknown:
+                break;
+            }
+        }
+        return nullptr;
+    }();
+
+    if (!m_range.atEnd())
+        return nullptr;
+
+    return value;
+}
+
 bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
 {
-    if (syntax != "*"_s) {
-        m_range.consumeWhitespace();
-
-        // First check for keywords
-        if (isCSSWideKeyword(m_range.peek().id()))
-            return true;
-
-        auto localRange = m_range;
-        while (!localRange.atEnd()) {
-            auto id = localRange.consume().functionId();
-            if (id == CSSValueVar || id == CSSValueEnv)
-                return true; // For variables, we just permit everything
-        }
-
-        auto primitiveVal = CSSPropertyParsing::consumeWidthOrHeight(m_range, m_context);
-        if (primitiveVal && primitiveVal->isPrimitiveValue() && m_range.atEnd())
-            return true;
+    auto syntaxDefinition = CSSPropertySyntax::parse(syntax);
+    if (syntaxDefinition.isEmpty())
         return false;
-    }
 
-    return true;
+    if (CSSPropertySyntax::isUniversal(syntaxDefinition))
+        return true;
+
+    auto value = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    return value && m_range.atEnd();
 }
 
 void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const String& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies)
 {
-    if (syntax != "*"_s) {
-        m_range.consumeWhitespace();
-        auto primitiveVal = CSSPropertyParsing::consumeWidthOrHeight(m_range, m_context);
-        if (!m_range.atEnd())
-            return;
-        if (primitiveVal && primitiveVal->isPrimitiveValue()) {
-            primitiveVal->collectDirectComputationalDependencies(dependencies);
-            if (isRoot)
-                primitiveVal->collectDirectRootComputationalDependencies(dependencies);
-        }
+    auto syntaxDefinition = CSSPropertySyntax::parse(syntax);
+    if (syntaxDefinition.isEmpty())
+        return;
+
+    if (CSSPropertySyntax::isUniversal(syntaxDefinition))
+        return;
+
+    auto value = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
+        primitiveValue->collectDirectComputationalDependencies(dependencies);
+        if (isRoot)
+            primitiveValue->collectDirectRootComputationalDependencies(dependencies);
     }
 }
 
 RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const Style::BuilderState& builderState)
 {
-    if (syntax != "*"_s) {
-        m_range.consumeWhitespace();
-        auto primitiveVal = CSSPropertyParsing::consumeWidthOrHeight(m_range, m_context);
-        if (primitiveVal && primitiveVal->isPrimitiveValue() && downcast<CSSPrimitiveValue>(*primitiveVal).isLength()) {
-            auto length = Style::BuilderConverter::convertLength(builderState, *primitiveVal);
-            if (!length.isCalculated() && !length.isUndefined())
-                return CSSCustomPropertyValue::createSyntaxLength(name, WTFMove(length));
-        }
-    } else {
+    auto syntaxDefinition = CSSPropertySyntax::parse(syntax);
+    if (syntaxDefinition.isEmpty())
+        return nullptr;
+
+    if (CSSPropertySyntax::isUniversal(syntaxDefinition)) {
         auto propertyValue = CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(m_range));
         while (!m_range.atEnd())
             m_range.consume();
-        return { WTFMove(propertyValue) };
+        return propertyValue;
     }
 
-    return nullptr;
+    auto originalRange = m_range;
+
+    auto value = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    if (!value)
+        return nullptr;
+
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
+    if (primitiveValue && primitiveValue->isLength()) {
+        auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
+        return CSSCustomPropertyValue::createSyntaxLength(name, WTFMove(length));
+    }
+    // FIXME: Handle other types that need resolving.
+    return CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(originalRange));
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system

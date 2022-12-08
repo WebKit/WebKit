@@ -1137,7 +1137,11 @@ void JSObject::notifyPresenceOfIndexedAccessors(VM& vm)
     if (mayInterceptIndexedAccesses())
         return;
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AddIndexedAccessors));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AddIndexedAccessors, &deferred));
+    }
     
     if (!mayBePrototype())
         return;
@@ -1169,9 +1173,12 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateUndecided);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateUndecided, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+        setStructure(vm, newStructure);
+    }
     return newButterfly;
 }
 
@@ -1183,9 +1190,12 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
         newButterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateInt32);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateInt32, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+        setStructure(vm, newStructure);
+    }
     return newButterfly->contiguousInt32();
 }
 
@@ -1197,9 +1207,12 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
         newButterfly->contiguousDouble().at(this, i) = PNaN;
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateDouble);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateDouble, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+        setStructure(vm, newStructure);
+    }
     return newButterfly->contiguousDouble();
 }
 
@@ -1211,9 +1224,12 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
         newButterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+        setStructure(vm, newStructure);
+    }
     return newButterfly->contiguous();
 }
 
@@ -1246,9 +1262,12 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
 
     Butterfly* newButterfly = createArrayStorageButterfly(vm, this, oldStructure, length, vectorLength, butterfly());
     ArrayStorage* result = newButterfly->arrayStorage();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, suggestedArrayStorageTransition());
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, suggestedArrayStorageTransition(), &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+        setStructure(vm, newStructure);
+    }
     return result;
 }
 
@@ -1266,7 +1285,11 @@ ContiguousJSValues JSObject::convertUndecidedToInt32(VM& vm)
     for (unsigned i = butterfly->vectorLength(); i--;)
         butterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
 
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateInt32));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateInt32, &deferred));
+    }
     return m_butterfly->contiguousInt32();
 }
 
@@ -1279,7 +1302,11 @@ ContiguousDoubles JSObject::convertUndecidedToDouble(VM& vm)
     for (unsigned i = butterfly->vectorLength(); i--;)
         butterfly->contiguousDouble().at(this, i) = PNaN;
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateDouble));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateDouble, &deferred));
+    }
     return m_butterfly->contiguousDouble();
 }
 
@@ -1292,7 +1319,11 @@ ContiguousJSValues JSObject::convertUndecidedToContiguous(VM& vm)
         butterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
 
     WTF::storeStoreFence();
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateContiguous));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous, &deferred));
+    }
     return m_butterfly->contiguous();
 }
 
@@ -1332,9 +1363,12 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, TransitionKind tr
     
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
-    nukeStructureAndSetButterfly(vm, oldStructureID, storage->butterfly());
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, storage->butterfly());
+        setStructure(vm, newStructure);
+    }
     return storage;
 }
 
@@ -1362,7 +1396,11 @@ ContiguousDoubles JSObject::convertInt32ToDouble(VM& vm)
         *currentAsDouble = v.asInt32();
     }
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateDouble));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateDouble, &deferred));
+    }
     return m_butterfly->contiguousDouble();
 }
 
@@ -1370,7 +1408,11 @@ ContiguousJSValues JSObject::convertInt32ToContiguous(VM& vm)
 {
     ASSERT(hasInt32(indexingType()));
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateContiguous));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous, &deferred));
+    }
     return m_butterfly->contiguous();
 }
 
@@ -1391,9 +1433,12 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, TransitionKind transi
     
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
+        setStructure(vm, newStructure);
+    }
     return newStorage;
 }
 
@@ -1421,7 +1466,11 @@ ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
     }
     
     WTF::storeStoreFence();
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateContiguous));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous, &deferred));
+    }
     return m_butterfly->contiguous();
 }
 
@@ -1445,9 +1494,12 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, TransitionKind trans
     
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
-    setStructure(vm, newStructure);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
+        setStructure(vm, newStructure);
+    }
     return newStorage;
 }
 
@@ -1523,13 +1575,16 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, TransitionKind t
     ASSERT(newStorage->butterfly() != butterfly);
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = oldStructureID.decode();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition, &deferred);
 
-    // Ensure new Butterfly initialization is correctly done before exposing it to the concurrent threads.
-    if (isX86() || vm.heap.mutatorShouldBeFenced())
-        WTF::storeStoreFence();
-    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
-    setStructure(vm, newStructure);
+        // Ensure new Butterfly initialization is correctly done before exposing it to the concurrent threads.
+        if (isX86() || vm.heap.mutatorShouldBeFenced())
+            WTF::storeStoreFence();
+        nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
+        setStructure(vm, newStructure);
+    }
     
     return newStorage;
 }
@@ -1615,9 +1670,13 @@ void JSObject::convertFromCopyOnWrite(VM& vm)
         }
     })();
     StructureID oldStructureID = structureID();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), transition);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
-    setStructure(vm, newStructure);
+    Structure* oldStructure = oldStructureID.decode();
+    {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition, &deferred);
+        nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+        setStructure(vm, newStructure);
+    }
 }
 
 void JSObject::setIndexQuicklyToUndecided(VM& vm, unsigned index, JSValue value)
@@ -1864,7 +1923,9 @@ void JSObject::switchToSlowPutArrayStorage(VM& vm)
         
     case NonArrayWithArrayStorage:
     case ArrayWithArrayStorage: {
-        Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), TransitionKind::SwitchToSlowPutArrayStorage);
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::SwitchToSlowPutArrayStorage, &deferred);
         setStructure(vm, newStructure);
         break;
     }
@@ -2613,7 +2674,11 @@ void JSObject::seal(VM& vm)
     if (isSealed(vm))
         return;
     enterDictionaryIndexingMode(vm);
-    setStructure(vm, Structure::sealTransition(vm, structure()));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::sealTransition(vm, oldStructure, &deferred));
+    }
 }
 
 void JSObject::freeze(VM& vm)
@@ -2621,7 +2686,11 @@ void JSObject::freeze(VM& vm)
     if (isFrozen(vm))
         return;
     enterDictionaryIndexingMode(vm);
-    setStructure(vm, Structure::freezeTransition(vm, structure()));
+    {
+        Structure* oldStructure = structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::freezeTransition(vm, oldStructure, &deferred));
+    }
 }
 
 bool JSObject::preventExtensions(JSObject* object, JSGlobalObject* globalObject)
@@ -2635,7 +2704,11 @@ bool JSObject::preventExtensions(JSObject* object, JSGlobalObject* globalObject)
     }
 
     object->enterDictionaryIndexingMode(vm);
-    object->setStructure(vm, Structure::preventExtensionsTransition(vm, object->structure()));
+    {
+        Structure* oldStructure = object->structure();
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        object->setStructure(vm, Structure::preventExtensionsTransition(vm, oldStructure, &deferred));
+    }
     return true;
 }
 
@@ -2662,7 +2735,7 @@ void JSObject::reifyAllStaticProperties(JSGlobalObject* globalObject)
     }
 
     if (!structure()->isDictionary())
-        setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure()));
+        convertToDictionary(vm);
 
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         const HashTable* hashTable = info->staticPropHashTable;
@@ -3844,18 +3917,18 @@ bool JSObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject,
 
 void JSObject::convertToDictionary(VM& vm)
 {
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure());
-    setStructure(
-        vm, Structure::toCacheableDictionaryTransition(vm, structure(), &deferredWatchpointFire));
+    Structure* oldStructure = structure();
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, oldStructure);
+    setStructure(vm, Structure::toCacheableDictionaryTransition(vm, oldStructure, &deferredWatchpointFire));
 }
 
 void JSObject::convertToUncacheableDictionary(VM& vm)
 {
-    if (structure()->isUncacheableDictionary())
+    Structure* oldStructure = structure();
+    if (oldStructure->isUncacheableDictionary())
         return;
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure());
-    setStructure(
-        vm, Structure::toUncacheableDictionaryTransition(vm, structure(), &deferredWatchpointFire));
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, oldStructure);
+    setStructure(vm, Structure::toUncacheableDictionaryTransition(vm, oldStructure, &deferredWatchpointFire));
 }
 
 

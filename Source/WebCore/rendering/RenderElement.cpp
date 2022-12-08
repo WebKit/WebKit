@@ -757,11 +757,6 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (propagationType == PropagateToBlockChildrenOnly && !is<RenderBlock>(elementChild))
             continue;
 
-#if ENABLE(FULLSCREEN_API)
-        if (elementChild.isRenderFullScreen() || elementChild.isRenderFullScreenPlaceholder())
-            continue;
-#endif
-
         // RenderFragmentedFlows are updated through the RenderView::styleDidChange function.
         if (is<RenderFragmentedFlow>(elementChild))
             continue;

@@ -66,15 +66,14 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 
 }
 
-RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection& gpuProcessConnection, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
     : GraphicsContextGL(attributes)
-    , m_gpuProcessConnection(&gpuProcessConnection)
 {
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize);
     m_streamConnection = WTFMove(clientConnection);
-    m_gpuProcessConnection->addClient(*this);
-    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_streamConnection->open(*this);
+    m_connection = &connection;
+    m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_streamConnection->open(*this, dispatcher);
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
@@ -193,6 +192,7 @@ void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer& b
 #if ENABLE(MEDIA_STREAM)
 RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::paintCompositedResultsToVideoFrame()
 {
+    ASSERT(isMainRunLoop());
     if (isContextLost())
         return nullptr;
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToVideoFrame());
@@ -203,7 +203,7 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::paintCompositedResults
     auto [result] = sendResult.takeReply();
     if (!result)
         return nullptr;
-    return RemoteVideoFrameProxy::create(m_gpuProcessConnection->connection(), m_gpuProcessConnection->videoFrameObjectHeapProxy(), WTFMove(*result));
+    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy(), WTFMove(*result));
 }
 #endif
 
@@ -394,7 +394,7 @@ void RemoteGraphicsContextGLProxy::waitUntilInitialized()
     markContextLost();
 }
 
-void RemoteGraphicsContextGLProxy::gpuProcessConnectionDidClose(GPUProcessConnection&)
+void RemoteGraphicsContextGLProxy::didClose(IPC::Connection&)
 {
     ASSERT(!isContextLost());
     abandonGpuProcess();
@@ -403,17 +403,15 @@ void RemoteGraphicsContextGLProxy::gpuProcessConnectionDidClose(GPUProcessConnec
 
 void RemoteGraphicsContextGLProxy::abandonGpuProcess()
 {
-    auto gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr);
-    gpuProcessConnection->removeClient(*this);
-    m_gpuProcessConnection = nullptr;
+    m_connection = nullptr;
 }
 
 void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
 {
-    if (auto gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr)) {
+    if (m_connection) {
         m_streamConnection->invalidate();
-        gpuProcessConnection->removeClient(*this);
-        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(m_graphicsContextGLIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(m_graphicsContextGLIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_connection = nullptr;
     }
     ASSERT(isContextLost());
 }

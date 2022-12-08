@@ -4828,7 +4828,6 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-hide-after-addition.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/dynamic-change-paint-fully-obscuring-child-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-001.html [ ImageOnlyFailure ]
@@ -6167,9 +6166,6 @@ imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Ski
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
 fast/text/text-edge-no-half-leading-with-line-height-simple.html [ Skip ]
-
-# This test isn't working as expected, it will be fixed in webkit.org/b/248148.
-webkit.org/b/248148 fullscreen/full-screen-layer-dump.html [ Failure ]
 
 # CSS Nesting
 imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html [ ImageOnlyFailure ]

@@ -39,10 +39,7 @@ public:
         return adoptRef(*new MatrixTransformOperation(a, b, c, d, e, f));
     }
 
-    static Ref<MatrixTransformOperation> create(const TransformationMatrix& t)
-    {
-        return adoptRef(*new MatrixTransformOperation(t));
-    }
+    WEBCORE_EXPORT static Ref<MatrixTransformOperation> create(const TransformationMatrix&);
 
     Ref<TransformOperation> clone() const override
     {
@@ -80,17 +77,8 @@ private:
     {
     }
 
-    MatrixTransformOperation(const TransformationMatrix& t)
-        : TransformOperation(TransformOperation::Type::Matrix)
-        , m_a(t.a())
-        , m_b(t.b())
-        , m_c(t.c())
-        , m_d(t.d())
-        , m_e(t.e())
-        , m_f(t.f())
-    {
-    }
-    
+    MatrixTransformOperation(const TransformationMatrix&);
+
     double m_a;
     double m_b;
     double m_c;

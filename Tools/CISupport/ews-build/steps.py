@@ -4681,8 +4681,8 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
             ['git', 'checkout', '{}/{}'.format(self.git_remote, self.default_branch), '-f'],  # Checkout branch from specific remote
             ['git', 'branch', '-D', '{}'.format(self.default_branch)],  # Delete any local cache of the specified branch
             ['git', 'checkout', '-b', '{}'.format(self.default_branch)],  # Checkout local instance of branch from remote
-            self.shell_command('git branch | grep -v {} | xargs git branch -D || {}'.format(self.default_branch, self.shell_exit_0())),
-            self.shell_command('git remote | grep -v {} | xargs -L 1 git remote rm || {}'.format(self.git_remote, self.shell_exit_0())),
+            self.shell_command("git branch | grep -v ' {}$' | xargs git branch -D || {}".format(self.default_branch, self.shell_exit_0())),
+            self.shell_command("git remote | grep -v '{}$' | xargs -L 1 git remote rm || {}".format(self.git_remote, self.shell_exit_0())),
             ['git', 'prune'],
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))

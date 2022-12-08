@@ -309,6 +309,7 @@ public:
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return { }; }
 
     virtual bool establishesIndependentFormattingContext() const;
+    bool createsNewFormattingContext() const;
 
 protected:
     enum BaseTypeFlag {
@@ -362,8 +363,6 @@ protected:
     void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle);
 
     bool isVisibleInViewport() const;
-
-    bool createsNewFormattingContext() const;
 
     bool shouldApplyLayoutOrPaintContainment(bool) const;
     bool shouldApplySizeOrStyleContainment(bool) const;

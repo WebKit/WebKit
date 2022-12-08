@@ -91,6 +91,13 @@ void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
         existingManager->scheduleSessionStatusUpdate();
 }
 
+void PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary()
+{
+    fprintf(stderr, "PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary %p\n", PlatformMediaSessionManager::sharedManagerIfExists());
+    if (auto existingManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        existingManager->scheduleUpdateSessionState();
+}
+
 PlatformMediaSessionManager::PlatformMediaSessionManager()
 #if !RELEASE_LOG_DISABLED
     : m_logger(AggregateLogger::create(this))

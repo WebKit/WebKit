@@ -37,12 +37,12 @@
 namespace WebCore {
 
 struct GPURenderPipelineDescriptor : public GPUPipelineDescriptorBase {
-    PAL::WebGPU::RenderPipelineDescriptor convertToBacking() const
+    PAL::WebGPU::RenderPipelineDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             {
                 { label },
-                layout ? &layout->backing() : nullptr,
+                &convertPipelineLayoutToBacking(layout, autoLayout),
             },
             vertex.convertToBacking(),
             primitive ? std::optional { primitive->convertToBacking() } : std::nullopt,

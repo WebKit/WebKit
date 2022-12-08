@@ -1,0 +1,27 @@
+<html><!-- webkit-test-runner [ BroadcastChannelOriginPartitioningEnabled=true ] -->
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+ <script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+<script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async (t) => {
+    const frame = await with_iframe(get_host_info().HTTP_REMOTE_ORIGIN +  "/WebKit/shared-workers/resources/third-party-shared-worker-broadcast-channel-iframe.html");
+    const data = await new Promise(resolve => window.onmessage = (e) => resolve(e.data));
+    assert_equals(data, "hello");
+    frame.remove();
+}, "BroadcastChannel between third-party iframe and shared worker should work properly");
+</script>
+</body>
+</html>

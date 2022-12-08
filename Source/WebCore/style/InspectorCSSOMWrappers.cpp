@@ -123,7 +123,9 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
         collectFromStyleSheetContents(UserAgentStyle::mathMLStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mediaControlsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::horizontalFormControlsStyleSheet);
+#if ENABLE(FULLSCREEN_API)
         collectFromStyleSheetContents(UserAgentStyle::fullscreenStyleSheet);
+#endif
 #if ENABLE(DATALIST_ELEMENT)
         collectFromStyleSheetContents(UserAgentStyle::dataListStyleSheet);
 #endif

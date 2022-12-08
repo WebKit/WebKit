@@ -36,6 +36,11 @@ TransformOperations::TransformOperations(bool makeIdentity)
         m_operations.append(IdentityTransformOperation::create());
 }
 
+TransformOperations::TransformOperations(Vector<RefPtr<TransformOperation>>&& operations)
+    : m_operations(WTFMove(operations))
+{
+}
+
 bool TransformOperations::operator==(const TransformOperations& o) const
 {
     if (m_operations.size() != o.m_operations.size())

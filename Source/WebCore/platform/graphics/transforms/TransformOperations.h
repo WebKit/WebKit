@@ -36,7 +36,8 @@ struct BlendingContext;
 class TransformOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TransformOperations(bool makeIdentity = false);
+    WEBCORE_EXPORT explicit TransformOperations(bool makeIdentity = false);
+    WEBCORE_EXPORT explicit TransformOperations(Vector<RefPtr<TransformOperation>>&&);
     
     bool operator==(const TransformOperations& o) const;
     bool operator!=(const TransformOperations& o) const

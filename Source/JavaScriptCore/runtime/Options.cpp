@@ -664,8 +664,6 @@ void Options::notifyOptionsChanged()
             Options::useBBQJIT() = true;
             Options::useOMGJIT() = false;
             Options::webAssemblyBBQAirModeThreshold() = 0;
-            Options::webAssemblyBBQAirOptimizationLevel() = 0;
-            Options::defaultB3OptLevel() = 0;
             Options::wasmBBQUsesAir() = true;
             Options::useWasmLLInt() = true;
             Options::wasmLLIntTiersUpToBBQ() = true;

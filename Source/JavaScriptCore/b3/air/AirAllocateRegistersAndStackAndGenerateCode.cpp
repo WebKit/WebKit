@@ -634,9 +634,10 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 if (!source.isTmp() || !dest.isTmp())
                     return true;
 
-                // FIXME: We don't track where the last use of a reg is globally so we don't know where we can elide them.
                 ASSERT(source.isReg() || m_liveRangeEnd[source.tmp()] >= m_globalInstIndex);
-                if (source.isReg() || m_liveRangeEnd[source.tmp()] != m_globalInstIndex)
+                const auto sourceIsAtEndOfLifetime = m_liveRangeEnd[source.tmp()] == m_globalInstIndex;
+                // FIXME: We don't track where the last use of a reg is globally so we don't know where we can elide them.
+                if (source.isReg())
                     return true;
 
                 // If we are doing a self move at the end of the temps liveness we can trivially elide the move.
@@ -649,8 +650,29 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     return true;
 
                 ASSERT(m_currentAllocation->at(sourceReg) == source.tmp());
+                if (dest.isReg()) {
+                    const auto destReg = dest.reg();
+                    if (destReg != sourceReg)
+                        return true;
 
-                if (dest.isReg() && dest.reg() != sourceReg)
+                    // In this situation, we are moving a source tmp into the
+                    // dest reg where it is currently available--so we just need
+                    // to do a small amount of bookkeeping to elide the move:
+                    //
+                    // If the source tmp isn't dead after here, we need to
+                    // spill it to the stack, but we don't want to generate
+                    // the move as that will generate a redundant load and
+                    // store and use an unnecessary register
+                    if (!sourceIsAtEndOfLifetime)
+                        spill(source.tmp(), sourceReg);
+                    else
+                        release(source.tmp(), sourceReg);
+
+                    alloc(dest.tmp(), destReg, Arg::Def);
+                    return false;
+                }
+
+                if (!sourceIsAtEndOfLifetime)
                     return true;
 
                 if (Reg oldReg = m_map[dest.tmp()].reg)

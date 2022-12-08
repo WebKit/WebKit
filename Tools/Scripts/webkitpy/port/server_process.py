@@ -184,7 +184,7 @@ class ServerProcess(object):
         try:
             self._proc.stdin.write(string_utils.encode(bytes))
             self._proc.stdin.flush()
-        except (IOError, ValueError, BrokenPipeError):
+        except (IOError, ValueError, OSError):
             self.stop(0.0)
             # stop() calls _reset(), so we have to set crashed to True after calling stop()
             # unless we already know that this is a timeout.
@@ -401,7 +401,7 @@ class ServerProcess(object):
         try:
             if self._proc.stdin:
                 self._proc.stdin.close()
-        except (IOError, ValueError, BrokenPipeError):
+        except (IOError, ValueError, OSError):
             pass
         finally:
             self._proc.stdin = None

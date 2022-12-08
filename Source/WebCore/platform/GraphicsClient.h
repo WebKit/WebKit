@@ -30,7 +30,10 @@
 namespace WebCore {
 
 class DestinationColorSpace;
+class GraphicsContextGL;
 class ImageBuffer;
+
+struct GraphicsContextGLAttributes;
 
 enum class PixelFormat : uint8_t;
 enum class RenderingMode : bool;
@@ -45,6 +48,10 @@ public:
     virtual PlatformDisplayID displayID() const = 0;
 
     virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, bool avoidBackendSizeCheck = false) const = 0;
+#if ENABLE(WEBGL)
+    virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const = 0;
+#endif
+
 };
 
 } // namespace WebCore

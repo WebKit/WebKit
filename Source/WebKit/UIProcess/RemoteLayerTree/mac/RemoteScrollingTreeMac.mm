@@ -130,17 +130,25 @@ static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNod
     return false;
 }
 
-static bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
+static const EventRegion* eventRegionForLayer(CALayer *layer)
 {
     auto* layerTreeNode = RemoteLayerTreeNode::forCALayer(layer);
     if (!layerTreeNode)
+        return nullptr;
+
+    return &layerTreeNode->eventRegion();
+}
+
+static bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
+{
+    auto* eventRegion = eventRegionForLayer(layer);
+    if (!eventRegion)
         return false;
 
     // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
     FloatPoint boundsOrigin = layer.bounds.origin;
     FloatPoint originRelativePoint = localPoint - toFloatSize(boundsOrigin);
-    auto& eventRegion = layerTreeNode->eventRegion();
-    return eventRegion.contains(roundedIntPoint(originRelativePoint));
+    return eventRegion->contains(roundedIntPoint(originRelativePoint));
 }
 
 RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoint point)
@@ -182,6 +190,33 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
     LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found no scrollable layers; using root node");
     return rootScrollingNode;
 }
+
+#if ENABLE(WHEEL_EVENT_REGIONS)
+OptionSet<EventListenerRegionType> RemoteScrollingTreeMac::eventListenerRegionTypesForPoint(FloatPoint point) const
+{
+    auto* rootScrollingNode = rootNode();
+    if (!rootScrollingNode)
+        return { };
+
+    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
+
+    Vector<LayerAndPoint, 16> layersAtPoint;
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point, layerEventRegionContainsPoint);
+
+    if (layersAtPoint.isEmpty())
+        return { };
+
+    auto [hitLayer, localPoint] = layersAtPoint.last();
+    if (!hitLayer)
+        return { };
+
+    auto* eventRegion = eventRegionForLayer(hitLayer);
+    if (!eventRegion)
+        return { };
+
+    return eventRegion->eventListenerRegionTypesForPoint(roundedIntPoint(localPoint));
+}
+#endif
 
 } // namespace WebKit
 

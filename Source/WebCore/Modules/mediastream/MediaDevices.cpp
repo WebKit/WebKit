@@ -34,6 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AudioSession.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -133,6 +134,16 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         promise.reject(Exception { InvalidStateError, "Document is not fully active"_s });
         return;
     }
+
+#if USE(AUDIO_SESSION)
+    if (audioConstraints.isValid) {
+        auto categoryOverride = AudioSession::sharedSession().categoryOverride();
+        if (categoryOverride != AudioSessionCategory::None && categoryOverride != AudioSessionCategory::PlayAndRecord)  {
+            promise.reject(Exception { InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
+            return;
+        }
+    }
+#endif
 
     bool isUserGesturePriviledged = false;
 

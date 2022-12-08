@@ -144,6 +144,8 @@ class FragmentedSharedBuffer;
 class StickyPositionViewportConstraints;
 class SystemImage;
 class TextCheckingRequestData;
+class TimingFunction;
+class TransformOperation;
 class UserStyleSheet;
 
 struct AttributedString;
@@ -351,7 +353,7 @@ template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(Encoder&, const WebCore::FilterOperations&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FilterOperations&);
 };
-    
+
 template<> struct ArgumentCoder<WebCore::FilterOperation> {
     static void encode(Encoder&, const WebCore::FilterOperation&);
 };
@@ -560,6 +562,21 @@ template<> struct ArgumentCoder<WebCore::PixelBuffer> {
 template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
     static void encode(Encoder&, const RefPtr<WebCore::ReportBody>&);
     static std::optional<RefPtr<WebCore::ReportBody>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Ref<WebCore::TimingFunction>> {
+    static void encode(Encoder&, const Ref<WebCore::TimingFunction>&);
+    static std::optional<Ref<WebCore::TimingFunction>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction>> {
+    static void encode(Encoder&, const RefPtr<WebCore::TimingFunction>&);
+    static std::optional<RefPtr<WebCore::TimingFunction>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::TransformOperation> {
+    static void encode(Encoder&, const WebCore::TransformOperation&);
+    static std::optional<Ref<WebCore::TransformOperation>> decode(Decoder&);
 };
 
 } // namespace IPC

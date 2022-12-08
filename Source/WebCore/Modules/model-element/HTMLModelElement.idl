@@ -32,6 +32,7 @@
 ] interface HTMLModelElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
     [URL] readonly attribute USVString currentSrc;
 
     readonly attribute boolean complete;

@@ -463,7 +463,10 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 builder.append(":-webkit-full-page-media");
                 break;
 #if ENABLE(FULLSCREEN_API)
-            case CSSSelector::PseudoClassFullScreen:
+            case CSSSelector::PseudoClassFullscreen:
+                builder.append(":fullscreen");
+                break;
+            case CSSSelector::PseudoClassWebkitFullScreen:
                 builder.append(":-webkit-full-screen");
                 break;
             case CSSSelector::PseudoClassFullScreenAncestor:

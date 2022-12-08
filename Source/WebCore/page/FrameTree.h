@@ -75,6 +75,7 @@ public:
     WEBCORE_EXPORT unsigned childCount() const;
     unsigned descendantCount() const;
     WEBCORE_EXPORT AbstractFrame& top() const;
+    unsigned depth() const;
 
     WEBCORE_EXPORT AbstractFrame* scopedChild(unsigned index) const;
     WEBCORE_EXPORT AbstractFrame* scopedChild(const AtomString& name) const;

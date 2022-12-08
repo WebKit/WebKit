@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Ericsson AB. All rights reserved.
- * Copyright (C) 2010, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/server-sent-events.html#the-eventsource-interface
+
 [
     Exposed=(Window,Worker),
     ActiveDOMObject,
 ] interface EventSource : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional EventSourceInit eventSourceInitDict);
 
-    readonly attribute USVString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute USVString url;
     readonly attribute boolean withCredentials;
 

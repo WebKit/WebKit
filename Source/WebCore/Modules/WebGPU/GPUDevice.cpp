@@ -68,6 +68,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUDevice);
 
+GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::WebGPU::Device>&& backing)
+    : ActiveDOMObject { scriptExecutionContext }
+    , m_backing(WTFMove(backing))
+    , m_queue(GPUQueue::create(Ref { m_backing->queue() }))
+    , m_autoPipelineLayout(createPipelineLayout({ { "autoLayout"_s, }, { } }))
+{
+}
+
 GPUDevice::~GPUDevice() = default;
 
 String GPUDevice::label() const
@@ -173,29 +181,29 @@ Ref<GPUBindGroup> GPUDevice::createBindGroup(const GPUBindGroupDescriptor& bindG
 
 Ref<GPUShaderModule> GPUDevice::createShaderModule(const GPUShaderModuleDescriptor& shaderModuleDescriptor)
 {
-    return GPUShaderModule::create(m_backing->createShaderModule(shaderModuleDescriptor.convertToBacking()));
+    return GPUShaderModule::create(m_backing->createShaderModule(shaderModuleDescriptor.convertToBacking(m_autoPipelineLayout)));
 }
 
 Ref<GPUComputePipeline> GPUDevice::createComputePipeline(const GPUComputePipelineDescriptor& computePipelineDescriptor)
 {
-    return GPUComputePipeline::create(m_backing->createComputePipeline(computePipelineDescriptor.convertToBacking()));
+    return GPUComputePipeline::create(m_backing->createComputePipeline(computePipelineDescriptor.convertToBacking(m_autoPipelineLayout)));
 }
 
 Ref<GPURenderPipeline> GPUDevice::createRenderPipeline(const GPURenderPipelineDescriptor& renderPipelineDescriptor)
 {
-    return GPURenderPipeline::create(m_backing->createRenderPipeline(renderPipelineDescriptor.convertToBacking()));
+    return GPURenderPipeline::create(m_backing->createRenderPipeline(renderPipelineDescriptor.convertToBacking(m_autoPipelineLayout)));
 }
 
 void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor& computePipelineDescriptor, CreateComputePipelineAsyncPromise&& promise)
 {
-    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
+    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(m_autoPipelineLayout), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
         promise.resolve(GPUComputePipeline::create(WTFMove(computePipeline)));
     });
 }
 
 void GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor& renderPipelineDescriptor, CreateRenderPipelineAsyncPromise&& promise)
 {
-    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
+    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(m_autoPipelineLayout), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
         promise.resolve(GPURenderPipeline::create(WTFMove(renderPipeline)));
     });
 }

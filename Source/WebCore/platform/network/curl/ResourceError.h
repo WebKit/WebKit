@@ -31,8 +31,6 @@
 namespace WebCore {
 
 class ResourceError : public ResourceErrorBase {
-    friend class ResourceErrorBase;
-
 public:
     ResourceError(Type type = Type::Null)
         : ResourceErrorBase(type)
@@ -46,15 +44,14 @@ public:
 
     WEBCORE_EXPORT static ResourceError httpError(int errorCode, const URL& failingURL, Type = Type::General);
 
-    bool isSSLConnectError() const;
     WEBCORE_EXPORT bool isSSLCertVerificationError() const;
 
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
 private:
-    void doPlatformIsolatedCopy(const ResourceError&);
+    friend class ResourceErrorBase;
 
-    static ASCIILiteral curlErrorDomain;
+    void doPlatformIsolatedCopy(const ResourceError&);
 };
 
 } // namespace WebCore

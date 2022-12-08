@@ -26,6 +26,8 @@
 #import "config.h"
 #import "RemoteGraphicsContextGLProxy.h"
 
+#import "RemoteRenderingBackendProxy.h"
+
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 #import "GPUConnectionToWebProcess.h"
 #import "GPUProcessConnection.h"
@@ -99,8 +101,8 @@ public:
     WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
 #endif
 private:
-    RemoteGraphicsContextGLProxyCocoa(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
-        : RemoteGraphicsContextGLProxy(gpuProcessConnection, attributes, renderingBackend)
+    RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+        : RemoteGraphicsContextGLProxy(connection, dispatcher, attributes, renderingBackend)
         , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
     {
     }
@@ -129,9 +131,9 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 
 }
 
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)
 {
-    return adoptRef(new RemoteGraphicsContextGLProxyCocoa(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
+    return adoptRef(new RemoteGraphicsContextGLProxyCocoa(connection, renderingBackend.dispatcher(), attributes, renderingBackend.ensureBackendCreated()));
 }
 
 }

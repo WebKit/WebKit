@@ -38,10 +38,7 @@ public:
         return adoptRef(*new ScaleTransformOperation(sx, sy, 1, type));
     }
 
-    static Ref<ScaleTransformOperation> create(double sx, double sy, double sz, TransformOperation::Type type)
-    {
-        return adoptRef(*new ScaleTransformOperation(sx, sy, sz, type));
-    }
+    WEBCORE_EXPORT static Ref<ScaleTransformOperation> create(double, double, double, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const override
     {
@@ -74,15 +71,8 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    ScaleTransformOperation(double sx, double sy, double sz, TransformOperation::Type type)
-        : TransformOperation(type)
-        , m_x(sx)
-        , m_y(sy)
-        , m_z(sz)
-    {
-        ASSERT(isScaleTransformOperationType());
-    }
-        
+    ScaleTransformOperation(double, double, double, TransformOperation::Type);
+
     double m_x;
     double m_y;
     double m_z;

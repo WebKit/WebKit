@@ -60,6 +60,8 @@ Modules/async-clipboard/ClipboardItem.cpp
 Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp
 Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp
 Modules/async-clipboard/NavigatorClipboard.cpp
+Modules/audiosession/DOMAudioSession.cpp
+Modules/audiosession/NavigatorAudioSession.cpp
 Modules/beacon/NavigatorBeacon.cpp
 Modules/cache/CacheStorageConnection.cpp
 Modules/cache/DOMCache.cpp
@@ -865,6 +867,7 @@ css/parser/CSSPropertyParserHelpers.cpp
 css/parser/CSSPropertyParserWorkerSafe.cpp
 css/parser/CSSSelectorParser.cpp
 css/parser/CSSSupportsParser.cpp
+css/parser/CSSPropertySyntax.cpp
 css/parser/CSSTokenizer.cpp
 css/parser/CSSTokenizerInputStream.cpp
 css/parser/CSSVariableParser.cpp
@@ -2264,6 +2267,7 @@ platform/graphics/iso/ISOTrackEncryptionBox.cpp
 platform/graphics/iso/ISOVTTCue.cpp
 platform/graphics/opentype/OpenTypeMathData.cpp
 platform/graphics/transforms/AffineTransform.cpp
+platform/graphics/transforms/IdentityTransformOperation.cpp
 platform/graphics/transforms/Matrix3DTransformOperation.cpp
 platform/graphics/transforms/MatrixTransformOperation.cpp
 platform/graphics/transforms/PerspectiveTransformOperation.cpp
@@ -3166,6 +3170,7 @@ JSCustomEffectCallback.cpp
 JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
 JSDOMApplicationCache.cpp
+JSDOMAudioSession.cpp
 JSDOMCSSCustomPropertyDescriptor.cpp
 JSDOMCSSNamespace.cpp
 JSDOMCache.cpp
@@ -3298,6 +3303,7 @@ JSFormDataEvent.cpp
 JSGPU.cpp
 JSGPUAdapter.cpp
 JSGPUAddressMode.cpp
+JSGPUAutoLayoutMode.cpp
 JSGPUBindGroup.cpp
 JSGPUBindGroupDescriptor.cpp
 JSGPUBindGroupEntry.cpp

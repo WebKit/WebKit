@@ -1707,6 +1707,15 @@ bool CaretBase::updateCaretRect(Document& document, const VisiblePosition& caret
     return !m_caretLocalRect.isEmpty();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/FrameSelectionAdditions.cpp>
+#else
+void CaretBase::fillCaretRect(const Node&, GraphicsContext& context, const FloatRect& caret, const Color& color) const
+{
+    context.fillRect(caret, color);
+}
+#endif
+
 RenderBlock* FrameSelection::caretRendererWithoutUpdatingLayout() const
 {
     return rendererForCaretPainting(m_selection.start().deprecatedNode());
@@ -1886,7 +1895,7 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
         caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
-    context.fillRect(pixelSnappedCaretRect, caretColor);
+    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor);
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);

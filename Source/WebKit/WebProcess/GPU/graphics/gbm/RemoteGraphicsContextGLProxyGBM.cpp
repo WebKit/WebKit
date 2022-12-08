@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "RemoteGraphicsContextGLProxy.h"
+#include "RemoteRenderingBackendProxy.h"
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(LIBGBM)
 
@@ -99,7 +100,7 @@ void NicosiaDisplayDelegate::swapBuffersIfNeeded()
 
 class RemoteGraphicsContextGLProxyGBM final : public RemoteGraphicsContextGLProxy {
 public:
-    RemoteGraphicsContextGLProxyGBM(GPUProcessConnection&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
+    RemoteGraphicsContextGLProxyGBM(IPC::Connection&, SerialFunctionDispatcher&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
     virtual ~RemoteGraphicsContextGLProxyGBM() = default;
 
 private:
@@ -110,8 +111,8 @@ private:
     Ref<NicosiaDisplayDelegate> m_layerContentsDisplayDelegate;
 };
 
-RemoteGraphicsContextGLProxyGBM::RemoteGraphicsContextGLProxyGBM(GPUProcessConnection& processConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
-    : RemoteGraphicsContextGLProxy(processConnection, attributes, renderingBackend)
+RemoteGraphicsContextGLProxyGBM::RemoteGraphicsContextGLProxyGBM(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+    : RemoteGraphicsContextGLProxy(connection, dispatcher, attributes, renderingBackend)
     , m_layerContentsDisplayDelegate(adoptRef(*new NicosiaDisplayDelegate(!attributes.alpha)))
 { }
 
@@ -136,9 +137,9 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
     markLayerComposited();
 }
 
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)
 {
-    return adoptRef(new RemoteGraphicsContextGLProxyGBM(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
+    return adoptRef(new RemoteGraphicsContextGLProxyGBM(connection, renderingBackend.dispatcher(), attributes, renderingBackend.ensureBackendCreated()));
 }
 
 } // namespace WebKit

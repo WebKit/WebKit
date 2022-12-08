@@ -205,10 +205,24 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         m_isMainFrameRenderViewLayer = renderer().frame().isMainFrame();
         m_isFrameLayerWithTiledBacking = renderer().page().chrome().client().shouldUseTiledBackingForFrameView(renderer().view().frameView());
     }
-    
+
     createPrimaryGraphicsLayer();
 #if ENABLE(FULLSCREEN_API)
-    setRequiresBackgroundLayer(layer.renderer().isRenderFullScreen());
+    auto isFullsizeBackdrop = [](const RenderElement& renderer) -> bool {
+        auto& style = renderer.style();
+        if (style.styleType() != PseudoId::Backdrop || style.position() != PositionType::Fixed)
+            return false;
+
+        if (style.hasTransform() || style.hasClip() || style.hasMask())
+            return false;
+
+        if (!is<RenderBox>(renderer))
+            return false;
+
+        auto rendererRect = downcast<RenderBox>(renderer).frameRect();
+        return rendererRect == renderer.view().frameRect();
+    };
+    setRequiresBackgroundLayer(isFullsizeBackdrop(layer.renderer()));
 #endif
 
     if (auto* tiledBacking = this->tiledBacking()) {

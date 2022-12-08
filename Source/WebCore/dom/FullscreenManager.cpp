@@ -100,7 +100,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         return;
     }
 
-    if (!document().domWindow() || !document().domWindow()->hasTransientActivation()) {
+    if (!document().domWindow() || !document().domWindow()->consumeTransientActivation()) {
         ERROR_LOG(LOGIDENTIFIER, "!hasTransientActivation; failing.");
         failedPreflights(WTFMove(element), WTFMove(promise));
         return;
@@ -443,11 +443,12 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     m_pendingFullscreenElement = nullptr;
     m_fullscreenElement = &element;
 
-    document().resolveStyle(Document::ResolveStyleType::Rebuild);
-
-    Element* ancestor = m_fullscreenElement.get();
+    Element* ancestor = &element;
     do {
         ancestor->setFullscreenFlag(true);
+
+        if (ancestor == &element)
+            document().resolveStyle(Document::ResolveStyleType::Rebuild);
 
         if (!ancestor->isInTopLayer())
             ancestor->addToTopLayer();
