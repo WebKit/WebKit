@@ -55,8 +55,6 @@ public:
             , repeatY(repeatY)
         {
         }
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<Parameters> decode(Decoder&);
         AffineTransform patternSpaceTransform;
         bool repeatX;
         bool repeatY;
@@ -80,66 +78,11 @@ public:
     bool repeatX() const { return m_parameters.repeatX; }
     bool repeatY() const { return m_parameters.repeatY; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<Pattern>> decode(Decoder&);
-
 private:
     Pattern(SourceImage&&, const Parameters&);
 
     SourceImage m_tileImage;
     Parameters m_parameters;
 };
-
-template<class Encoder>
-void Pattern::Parameters::encode(Encoder& encoder) const
-{
-    encoder << patternSpaceTransform;
-    encoder << repeatX;
-    encoder << repeatY;
-}
-
-template<class Decoder>
-std::optional<Pattern::Parameters> Pattern::Parameters::decode(Decoder& decoder)
-{
-    std::optional<AffineTransform> patternSpaceTransform;
-    decoder >> patternSpaceTransform;
-    if (!patternSpaceTransform)
-        return std::nullopt;
-
-    std::optional<bool> repeatX;
-    decoder >> repeatX;
-    if (!repeatX)
-        return std::nullopt;
-
-    std::optional<bool> repeatY;
-    decoder >> repeatY;
-    if (!repeatY)
-        return std::nullopt;
-
-    return {{ *repeatX, *repeatY, *patternSpaceTransform }};
-}
-
-template<class Encoder>
-void Pattern::encode(Encoder& encoder) const
-{
-    encoder << m_tileImage;
-    encoder << m_parameters;
-}
-
-template<class Decoder>
-std::optional<Ref<Pattern>> Pattern::decode(Decoder& decoder)
-{
-    std::optional<SourceImage> tileImage;
-    decoder >> tileImage;
-    if (!tileImage)
-        return std::nullopt;
-
-    std::optional<Parameters> parameters;
-    decoder >> parameters;
-    if (!parameters)
-        return std::nullopt;
-
-    return Pattern::create(WTFMove(*tileImage), *parameters);
-}
 
 } //namespace

@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-enum class GraphicsContextGLPowerPreference {
+enum class GraphicsContextGLPowerPreference : uint8_t {
     Default,
     LowPower,
     HighPerformance
 };
 
-enum class GraphicsContextGLWebGLVersion {
+enum class GraphicsContextGLWebGLVersion : uint8_t {
     WebGL1,
 #if ENABLE(WEBGL2)
     WebGL2
@@ -84,126 +84,8 @@ struct GraphicsContextGLAttributes {
             return PowerPreference::HighPerformance;
         return powerPreference;
     }
-
-#if ENABLE(GPU_PROCESS)
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<GraphicsContextGLAttributes> decode(Decoder&);
-#endif
-};
-
-#if ENABLE(GPU_PROCESS)
-
-template<typename Encoder>
-void GraphicsContextGLAttributes::encode(Encoder& encoder) const
-{
-    encoder << alpha
-        << depth
-        << stencil
-        << antialias
-        << premultipliedAlpha
-        << preserveDrawingBuffer
-        << failIfMajorPerformanceCaveat
-        << powerPreference
-        << shareResources
-        << noExtensions
-        << devicePixelRatio
-        << initialPowerPreference
-        << webGLVersion
-        << forceRequestForHighPerformanceGPU;
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    encoder << windowGPUID;
-#endif
-#if PLATFORM(COCOA)
-    encoder << useMetal;
-#endif
-#if ENABLE(WEBXR)
-    encoder << xrCompatible;
-#endif
-}
-
-template<typename Decoder>
-std::optional<WebCore::GraphicsContextGLAttributes> GraphicsContextGLAttributes::decode(Decoder& decoder)
-{
-    auto alpha = decoder.template decode<bool>();
-    auto depth = decoder.template decode<bool>();
-    auto stencil = decoder.template decode<bool>();
-    auto antialias = decoder.template decode<bool>();
-    auto premultipliedAlpha = decoder.template decode<bool>();
-    auto preserveDrawingBuffer = decoder.template decode<bool>();
-    auto failIfMajorPerformanceCaveat = decoder.template decode<bool>();
-    auto powerPreference = decoder.template decode<PowerPreference>();
-    auto shareResources = decoder.template decode<bool>();
-    auto noExtensions = decoder.template decode<bool>();
-    auto devicePixelRatio = decoder.template decode<float>();
-    auto initialPowerPreference = decoder.template decode<PowerPreference>();
-    auto webGLVersion = decoder.template decode<WebGLVersion>();
-    auto forceRequestForHighPerformanceGPU = decoder.template decode<bool>();
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    auto windowGPUID = decoder.template decode<PlatformGPUID>();
-#endif
-#if PLATFORM(COCOA)
-    auto useMetal = decoder.template decode<bool>();
-#endif
-#if ENABLE(WEBXR)
-    auto xrCompatible = decoder.template decode<bool>();
-#endif
-    if (!decoder.isValid())
-        return std::nullopt;
-    return GraphicsContextGLAttributes {
-        *alpha,
-        *depth,
-        *stencil,
-        *antialias,
-        *premultipliedAlpha,
-        *preserveDrawingBuffer,
-        *failIfMajorPerformanceCaveat,
-        *powerPreference,
-        *shareResources,
-        *noExtensions,
-        *devicePixelRatio,
-        *initialPowerPreference,
-        *webGLVersion,
-        *forceRequestForHighPerformanceGPU,
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        *windowGPUID,
-#endif
-#if PLATFORM(COCOA)
-        *useMetal,
-#endif
-#if ENABLE(WEBXR)
-        *xrCompatible
-#endif
-    };
-}
-
-#endif
-
-}
-
-#if ENABLE(GPU_PROCESS)
-namespace WTF {
-
-template <> struct EnumTraits<WebCore::GraphicsContextGLPowerPreference> {
-    using values = EnumValues<
-    WebCore::GraphicsContextGLPowerPreference,
-    WebCore::GraphicsContextGLPowerPreference::Default,
-    WebCore::GraphicsContextGLPowerPreference::LowPower,
-    WebCore::GraphicsContextGLPowerPreference::HighPerformance
-    >;
-};
-
-template <> struct EnumTraits<WebCore::GraphicsContextGLWebGLVersion> {
-    using values = EnumValues<
-    WebCore::GraphicsContextGLWebGLVersion,
-    WebCore::GraphicsContextGLWebGLVersion::WebGL1
-#if ENABLE(WEBGL2)
-    , WebCore::GraphicsContextGLWebGLVersion::WebGL2
-#endif
-    >;
 };
 
 }
-
-#endif
 
 #endif // ENABLE(WEBGL)
