@@ -4411,6 +4411,22 @@ static inline UIWKGestureType toUIWKGestureType(WebKit::GestureType gestureType)
     }
 }
 
+static TextStream& operator<<(TextStream& stream, WebKit::GestureType gestureType)
+{
+    switch (gestureType) {
+    case WebKit::GestureType::Loupe: stream << "Loupe"; break;
+    case WebKit::GestureType::OneFingerTap: stream << "OneFingerTap"; break;
+    case WebKit::GestureType::TapAndAHalf: stream << "TapAndAHalf"; break;
+    case WebKit::GestureType::DoubleTap: stream << "DoubleTap"; break;
+    case WebKit::GestureType::OneFingerDoubleTap: stream << "OneFingerDoubleTap"; break;
+    case WebKit::GestureType::OneFingerTripleTap: stream << "OneFingerTripleTap"; break;
+    case WebKit::GestureType::TwoFingerSingleTap: stream << "TwoFingerSingleTap"; break;
+    case WebKit::GestureType::PhraseBoundary: stream << "PhraseBoundary"; break;
+    }
+
+    return stream;
+}
+
 static inline WebKit::SelectionTouch toSelectionTouch(UIWKSelectionTouch touch)
 {
     switch (touch) {
@@ -4449,6 +4465,20 @@ static inline UIWKSelectionTouch toUIWKSelectionTouch(WebKit::SelectionTouch tou
     }
 }
 
+static TextStream& operator<<(TextStream& stream, WebKit::SelectionTouch touch)
+{
+    switch (touch) {
+    case WebKit::SelectionTouch::Started: stream << "Started"; break;
+    case WebKit::SelectionTouch::Moved: stream << "Moved"; break;
+    case WebKit::SelectionTouch::Ended: stream << "Ended"; break;
+    case WebKit::SelectionTouch::EndedMovingForward: stream << "EndedMovingForward"; break;
+    case WebKit::SelectionTouch::EndedMovingBackward: stream << "EndedMovingBackward"; break;
+    case WebKit::SelectionTouch::EndedNotMoving: stream << "EndedNotMoving"; break;
+    }
+
+    return stream;
+}
+
 static inline WebKit::GestureRecognizerState toGestureRecognizerState(UIGestureRecognizerState state)
 {
     switch (state) {
@@ -4485,6 +4515,20 @@ static inline UIGestureRecognizerState toUIGestureRecognizerState(WebKit::Gestur
     }
 }
 
+static TextStream& operator<<(TextStream& stream, WebKit::GestureRecognizerState state)
+{
+    switch (state) {
+    case WebKit::GestureRecognizerState::Possible: stream << "Possible"; break;
+    case WebKit::GestureRecognizerState::Began: stream << "Began"; break;
+    case WebKit::GestureRecognizerState::Changed: stream << "Changed"; break;
+    case WebKit::GestureRecognizerState::Cancelled: stream << "Cancelled"; break;
+    case WebKit::GestureRecognizerState::Ended: stream << "Ended"; break;
+    case WebKit::GestureRecognizerState::Failed: stream << "Failed"; break;
+    }
+
+    return stream;
+}
+
 static inline UIWKSelectionFlags toUIWKSelectionFlags(OptionSet<WebKit::SelectionFlags> flags)
 {
     NSInteger uiFlags = UIWKNone;
@@ -4508,6 +4552,29 @@ static inline OptionSet<WebKit::SelectionFlags> toSelectionFlags(UIWKSelectionFl
     if (uiFlags & UIWKPhraseBoundaryChanged)
         flags.add(WebKit::PhraseBoundaryChanged);
     return flags;
+}
+
+static TextStream& operator<<(TextStream& stream, OptionSet<WebKit::SelectionFlags> flags)
+{
+    bool didAppend = false;
+
+    auto appendIf = [&](auto flag, auto message) {
+        if (!flags.contains(flag))
+            return;
+        if (didAppend)
+            stream << "|";
+        stream << message;
+        didAppend = true;
+    };
+
+    appendIf(WebKit::WordIsNearTap, "WordIsNearTap");
+    appendIf(WebKit::SelectionFlipped, "SelectionFlipped");
+    appendIf(WebKit::PhraseBoundaryChanged, "PhraseBoundaryChanged");
+
+    if (!didAppend)
+        stream << "None";
+
+    return stream;
 }
 
 static inline WebCore::TextGranularity toWKTextGranularity(UITextGranularity granularity)
@@ -4566,6 +4633,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), state, gestureType, std::nullopt, flags);
+
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
@@ -4577,6 +4646,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart withFlags:(UIWKSelectionFlags)flags
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), std::nullopt, std::nullopt, touch, flags);
+
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->updateSelectionWithTouches(WebCore::IntPoint(point), toSelectionTouch(touch), baseIsStart, [self, strongSelf = retainPtr(self), flags](const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> innerFlags) {
@@ -4588,6 +4659,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get(), gestureState, gestureType);
+
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toGestureType(gestureType), toGestureRecognizerState(gestureState), [self, strongSelf = retainPtr(self)](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags) {
@@ -4827,6 +4900,27 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
+static void logTextInteractionAssistantSelectionChange(const char* methodName, UIWKTextInteractionAssistant *textInteractionAssistant, std::optional<UIGestureRecognizerState> gestureState = std::nullopt, std::optional<UIWKGestureType> gestureType = std::nullopt, std::optional<UIWKSelectionTouch> selectionTouch = std::nullopt, std::optional<UIWKSelectionFlags> selectionFlags = std::nullopt)
+{
+    TextStream selectionChangeStream(TextStream::LineMode::SingleLine);
+    selectionChangeStream << "loupeGestureState=" << toGestureRecognizerState(textInteractionAssistant.loupeGesture.state);
+    selectionChangeStream << ", " << "forcePressGestureState=" << toGestureRecognizerState(textInteractionAssistant.forcePressGesture.state);
+
+    if (gestureState)
+        selectionChangeStream << ", " << "gestureState=" << toGestureRecognizerState(*gestureState);
+
+    if (gestureType)
+        selectionChangeStream << ", " << "gestureType=" << toGestureType(*gestureType);
+
+    if (selectionTouch)
+        selectionChangeStream << ", " << "selectionTouch=" << toSelectionTouch(*selectionTouch);
+
+    if (selectionFlags)
+        selectionChangeStream << ", " << "selectionFlags=" << toSelectionFlags(*selectionFlags);
+
+    RELEASE_LOG(TextInteraction, "Text interaction changing selection using '%s' (%s).", methodName, selectionChangeStream.release().utf8().data());
+}
+
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
     _autocorrectionContextNeedsUpdate = YES;
@@ -4835,6 +4929,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
 
@@ -4846,6 +4942,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
@@ -4856,6 +4954,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)moveSelectionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction completionHandler:(void (^)(void))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->moveSelectionAtBoundaryWithDirection(toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
@@ -4866,6 +4966,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     ++_suppressNonEditableSingleTapTextInteractionCount;
@@ -4878,6 +4980,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)beginSelectionInDirection:(UITextDirection)direction completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     _autocorrectionContextNeedsUpdate = YES;
     _page->beginSelectionInDirection(toWKSelectionDirection(direction), [selectionHandler = makeBlockPtr(completionHandler)] (bool endIsMoving) {
         selectionHandler(endIsMoving);
@@ -4886,6 +4990,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     _autocorrectionContextNeedsUpdate = YES;
     auto respectSelectionAnchor = self.interactionAssistant._wk_hasFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
     _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
@@ -4895,6 +5001,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     _autocorrectionContextNeedsUpdate = YES;
     ++_suppressNonEditableSingleTapTextInteractionCount;
     _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [completionHandler = makeBlockPtr(completionHandler), protectedSelf = retainPtr(self)] (bool endIsMoving) {
@@ -9268,6 +9376,8 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 
 - (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
 {
+    logTextInteractionAssistantSelectionChange(__PRETTY_FUNCTION__, _textInteractionAssistant.get());
+
     // FIXME: Reduce to 1 message.
     [self selectPositionAtPoint:point completionHandler:^{
         [self requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
