@@ -1,11 +1,10 @@
-Both .URL and .url should work (for compatibility reasons).
+Only .url should work, previously supported .URL should not.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS source.URL is "http://127.0.0.1:8000/eventsource/resources/event-stream.py"
 PASS source.url is "http://127.0.0.1:8000/eventsource/resources/event-stream.py"
-PASS source.URL === source.url is true
+PASS source.URL is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE
