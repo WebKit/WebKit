@@ -3791,3 +3791,7 @@ webkit.org/b/247831 fast/images/animated-avif.html [ Timeout ]
 
 # Screen Orientation API doesn't support nested frames yet
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]
+
+webkit.org/b/248919 editing/selection/doubleclick-whitespace-live-range.html [ Failure ]
+
+webkit.org/b/248921 fast/forms/ios/focus-button.html [ Pass Crash ]
