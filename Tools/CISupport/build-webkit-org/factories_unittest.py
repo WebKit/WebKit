@@ -1479,7 +1479,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-test-results',
             'set-permissions'
         ],
-        'WinCairo-64-bit-WKL-Release-Build': [
+        'WinCairo-64-bit-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1493,6 +1493,29 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'upload-built-product',
             'transfer-to-s3',
             'trigger'
+        ],
+        'WinCairo-64-bit-Release-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'download-built-product',
+            'extract-built-product',
+            'wincairo-requirements',
+            'layout-test',
+            'archive-test-results',
+            'upload',
+            'extract-test-results',
+            'set-permissions',
+            'run-api-tests',
+            'webkitpy-test',
+            'webkitperl-test',
+            'bindings-generation-tests',
+            'builtins-generator-tests'
         ],
         'WinCairo-64-bit-WKL-Release-Tests': [
             'configure-build',
@@ -1530,7 +1553,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'jscore-test'
         ],
-        'WinCairo-64-bit-WKL-Debug-Build': [
+        'WinCairo-64-bit-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1544,6 +1567,29 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'upload-built-product',
             'transfer-to-s3',
             'trigger'
+        ],
+        'WinCairo-64-bit-Debug-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'download-built-product',
+            'extract-built-product',
+            'wincairo-requirements',
+            'layout-test',
+            'archive-test-results',
+            'upload',
+            'extract-test-results',
+            'set-permissions',
+            'run-api-tests',
+            'webkitpy-test',
+            'webkitperl-test',
+            'bindings-generation-tests',
+            'builtins-generator-tests'
         ],
         'WinCairo-64-bit-WKL-Debug-Tests': [
             'configure-build',
