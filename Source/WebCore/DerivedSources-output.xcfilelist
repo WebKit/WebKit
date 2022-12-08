@@ -615,6 +615,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMApplicationCache.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMApplicationCache.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMAudioSession.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMAudioSession.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMBindingInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMBindingInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSCustomPropertyDescriptor.cpp
@@ -1747,6 +1749,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+AudioSession.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+AudioSession.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Clipboard.cpp

@@ -50,6 +50,7 @@ public:
     WEBCORE_EXPORT static PlatformMediaSessionManager& sharedManager();
 
     static void updateNowPlayingInfoIfNecessary();
+    static void updateAudioSessionCategoryIfNecessary();
 
     WEBCORE_EXPORT static void setShouldDeactivateAudioSession(bool);
     WEBCORE_EXPORT static bool shouldDeactivateAudioSession();

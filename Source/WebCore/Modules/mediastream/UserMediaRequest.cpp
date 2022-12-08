@@ -36,6 +36,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AudioSession.h"
 #include "DocumentInlines.h"
 #include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
@@ -181,6 +182,9 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             }
 
             if (auto* audioTrack = stream->getFirstAudioTrack()) {
+#if USE(AUDIO_SESSION)
+                AudioSession::sharedSession().tryToSetActive(true);
+#endif
                 if (std::holds_alternative<MediaTrackConstraints>(m_audioConstraints))
                     audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_audioConstraints)));
             }

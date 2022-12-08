@@ -60,6 +60,8 @@ Modules/async-clipboard/ClipboardItem.cpp
 Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp
 Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp
 Modules/async-clipboard/NavigatorClipboard.cpp
+Modules/audiosession/DOMAudioSession.cpp
+Modules/audiosession/NavigatorAudioSession.cpp
 Modules/beacon/NavigatorBeacon.cpp
 Modules/cache/CacheStorageConnection.cpp
 Modules/cache/DOMCache.cpp
@@ -3167,6 +3169,7 @@ JSCustomEffectCallback.cpp
 JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
 JSDOMApplicationCache.cpp
+JSDOMAudioSession.cpp
 JSDOMCSSCustomPropertyDescriptor.cpp
 JSDOMCSSNamespace.cpp
 JSDOMCache.cpp

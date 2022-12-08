@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+    </head>
+    <body>
+        <audio id="audio"></audio>
+        <script>
+function waitForStateChange()
+{
+    return new Promise((resolve, reject) => {
+        navigator.audioSession.onstatechange = () => resolve(navigator.audioSession.state);
+        setTimeout(() => reject("no audio session state change"), 3000);
+    });
+}
+
+promise_test(async (test) => {
+    assert_equals(navigator.audioSession.type, "auto");
+    assert_equals(navigator.audioSession.state, "inactive");
+
+    let statePromise = waitForStateChange();
+
+    audio.src = findMediaFile("audio", "../content/test");
+    await audio.play();
+
+    assert_equals(await statePromise, "active");
+
+    if (!window.internals)
+        return;
+
+    statePromise = waitForStateChange();
+    internals.beginAudioSessionInterruption();
+    assert_equals(await statePromise, "interrupted");
+
+    statePromise = waitForStateChange();
+    internals.endAudioSessionInterruption();
+    assert_equals(await statePromise, "active");
+}, "AudioSession and interruption");
+        </script>
+    </body>
+</html>
