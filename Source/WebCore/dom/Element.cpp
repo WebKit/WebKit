@@ -4169,6 +4169,7 @@ void Element::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& p
 
 void Element::setFullscreenFlag(bool flag)
 {
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFullscreen, flag);
     if (flag)
         setNodeFlag(NodeFlag::IsFullscreen);
     else

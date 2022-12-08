@@ -443,11 +443,12 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     m_pendingFullscreenElement = nullptr;
     m_fullscreenElement = &element;
 
-    document().resolveStyle(Document::ResolveStyleType::Rebuild);
-
-    Element* ancestor = m_fullscreenElement.get();
+    Element* ancestor = &element;
     do {
         ancestor->setFullscreenFlag(true);
+
+        if (ancestor == &element)
+            document().resolveStyle(Document::ResolveStyleType::Rebuild);
 
         if (!ancestor->isInTopLayer())
             ancestor->addToTopLayer();

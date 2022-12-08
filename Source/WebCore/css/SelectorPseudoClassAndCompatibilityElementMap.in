@@ -74,8 +74,9 @@ where
 window-inactive
 
 #if ENABLE(FULLSCREEN_API)
+fullscreen
 -webkit-animating-full-screen-transition
--webkit-full-screen
+-webkit-full-screen, PseudoClassWebkitFullScreen, PseudoElementUnknown
 -webkit-full-screen-ancestor
 -webkit-full-screen-document
 -webkit-full-screen-controls-hidden

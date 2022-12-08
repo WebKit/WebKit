@@ -1,4 +1,4 @@
 Should be green
 
-FAIL Invalidate :fullscreen based style assert_equals: Green when :root is fullscreened. expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Invalidate :fullscreen based style
 

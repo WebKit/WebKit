@@ -155,7 +155,8 @@ struct PossiblyQuotedIdentifier {
             PseudoClassSingleButton,
             PseudoClassNoButton,
 #if ENABLE(FULLSCREEN_API)
-            PseudoClassFullScreen,
+            PseudoClassFullscreen,
+            PseudoClassWebkitFullScreen,
             PseudoClassFullScreenDocument,
             PseudoClassFullScreenAncestor,
             PseudoClassAnimatingFullScreenTransition,

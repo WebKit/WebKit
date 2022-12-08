@@ -26,7 +26,7 @@
 
 /* https://fullscreen.spec.whatwg.org/#user-agent-level-style-sheet-defaults */
 
-:not(:root):-webkit-full-screen {
+:not(:root):fullscreen {
   position: fixed !important;
   inset: 0 !important;
   margin: 0 !important;
@@ -43,27 +43,27 @@
   object-fit:contain;
 }
 
-:root:-webkit-full-screen-document:not(:-webkit-full-screen) {
+:root:-webkit-full-screen-document:not(:fullscreen) {
     overflow: hidden !important;
 }
 
-:-webkit-full-screen video,
-video:-webkit-full-screen {
+:fullscreen video,
+video:fullscreen {
     -webkit-cursor-visibility: auto-hide;
 }
 
-img:-webkit-full-screen {
+img:fullscreen {
     width: auto;
     height: 100%;
     max-width: 100%;
 }
 
-iframe:-webkit-full-screen {
+iframe:fullscreen {
     border: none !important;
     padding: 0 !important;
 }
 
-:not(:root):-webkit-full-screen::backdrop {
+:not(:root):fullscreen::backdrop {
     background: black;
 }
 
