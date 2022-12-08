@@ -25,6 +25,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "CSSPropertySyntax.h"
 #include "StyleRuleType.h"
 #include <wtf/text/StringView.h>
 
@@ -63,6 +64,7 @@ private:
     bool parseValueStart(CSSPropertyID, bool important);
     bool consumeCSSWideKeyword(CSSPropertyID, bool important);
     RefPtr<CSSValue> parseSingleValue(CSSPropertyID, CSSPropertyID = CSSPropertyInvalid);
+    RefPtr<CSSValue> parseCustomPropertyValueWithSyntaxDefinition(const CSSPropertySyntax::Definition&);
     bool canParseTypedCustomPropertyValue(const String& syntax);
     RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const Style::BuilderState&);
     void collectParsedCustomPropertyValueDependencies(const String& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies);

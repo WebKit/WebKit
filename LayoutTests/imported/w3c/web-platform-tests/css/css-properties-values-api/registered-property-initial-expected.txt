@@ -6,7 +6,7 @@ PASS Initial value for <length> correctly computed [25.4mm]
 PASS Initial value for <length> correctly computed [6pc]
 PASS Initial value for <length> correctly computed [72pt]
 FAIL Initial value for <percentage> correctly computed [calc(10% + 20%)] The given initial value does not parse for the given syntax.
-FAIL Initial value for <length-percentage> correctly computed [calc(1in + 10% + 4px)] The given initial value does not parse for the given syntax.
+FAIL Initial value for <length-percentage> correctly computed [calc(1in + 10% + 4px)] assert_equals: expected "calc(10% + 100px)" but got "calc(1in + 10% + 4px)"
 FAIL Initial value for <color> correctly computed [pink, inherits] The given initial value does not parse for the given syntax.
 FAIL Initial value for <color> correctly computed [purple] The given initial value does not parse for the given syntax.
 FAIL Initial value for <transform-function> correctly computed [rotate(42deg)] The given initial value does not parse for the given syntax.
@@ -16,12 +16,12 @@ FAIL Initial value for <url> correctly computed [url(a)] The given initial value
 FAIL Initial value for <url>+ correctly computed [url(a) url(a)] The given initial value does not parse for the given syntax.
 FAIL Initial inherited value can be substituted [purple, color] The given initial value does not parse for the given syntax.
 FAIL Initial non-inherited value can be substituted [pink, background-color] The given initial value does not parse for the given syntax.
-FAIL Initial non-inherited value can be substituted [	foo	, --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [	foo	, --x] assert_equals: expected "foo" but got " foo "
 FAIL Initial non-inherited value can be substituted [	1turn, --x] The given initial value does not parse for the given syntax.
 FAIL Initial non-inherited value can be substituted [ pink , --x] The given initial value does not parse for the given syntax.
-FAIL Initial non-inherited value can be substituted [	test, --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [	test, --x] assert_equals: expected "test" but got " test"
 FAIL Initial non-inherited value can be substituted [calc(20 + 20 + 10), --x] The given initial value does not parse for the given syntax.
-FAIL Initial non-inherited value can be substituted [	calc(13% + 37px), --x] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [	calc(13% + 37px), --x] assert_equals: expected "calc(13% + 37px)" but got " calc(13% + 37px)"
 PASS Initial non-inherited value can be substituted [calc(10px + 15px), --x]
 FAIL Initial non-inherited value can be substituted [calc(13 + 37), --x] The given initial value does not parse for the given syntax.
 FAIL Initial non-inherited value can be substituted [calc(13% + 37%), --x] The given initial value does not parse for the given syntax.

@@ -1,4 +1,20 @@
 
-Harness Error (FAIL), message = SyntaxError: The given initial value does not parse for the given syntax.
-
+PASS Unregistered property resolves against document (URL token)
+PASS Unregistered property resolves against document (URL function)
+FAIL Registered non-inherited <url> resolves against sheet (URL token) Unknown url format: none
+FAIL Registered non-inherited <url> resolves against sheet (URL function) Unknown url format: none
+FAIL Registered inherited <url> resolves against sheet (URL token) Unknown url format: none
+FAIL Registered inherited <url> resolves against sheet (URL function) Unknown url format: none
+FAIL Registered inherited <url> resolves against sheet (Child node, URL token) Unknown url format: none
+FAIL Registered inherited <url> resolves against sheet (Child node, URL function) Unknown url format: none
+FAIL Registered property with unregistered var reference resolves against sheet (URL token) Unknown url format: none
+FAIL Registered property with unregistered var reference resolves against sheet. (URL function) Unknown url format: none
+FAIL Registered property with registered var reference resolves against sheet of referenced property (URL token) Unknown url format: none
+FAIL Registered property with registered var reference resolves against sheet of referenced property (URL function) Unknown url format: none
+FAIL Unregistered property with registered var reference resolves against sheet of referenced property (URL token) Unknown url format: none
+FAIL Unregistered property with registered var reference resolves against sheet of referenced property (URL function) Unknown url format: none
+FAIL Multiple (registered) var reference resolve against respective sheets (URL token) Unknown url format: none
+FAIL Multiple (registered) var reference resolve against respective sheets (URL function) Unknown url format: none
+FAIL Registered UTF16BE-encoded var reference resolve against sheet (URL token) Unknown url format: none
+FAIL Registered UTF16BE-encoded var reference resolve against sheet (URL function) Unknown url format: none
 
