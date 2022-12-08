@@ -100,7 +100,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         return;
     }
 
-    if (!document().domWindow() || !document().domWindow()->hasTransientActivation()) {
+    if (!document().domWindow() || !document().domWindow()->consumeTransientActivation()) {
         ERROR_LOG(LOGIDENTIFIER, "!hasTransientActivation; failing.");
         failedPreflights(WTFMove(element), WTFMove(promise));
         return;
