@@ -72,13 +72,15 @@ StyleSheetContents* UserAgentStyle::dialogStyleSheet;
 StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
-StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
+StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
 StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
+#if ENABLE(FULLSCREEN_API)
+StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
+#endif
 #if ENABLE(SERVICE_CONTROLS)
 StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
 #endif
-StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 #if ENABLE(ATTACHMENT_ELEMENT)
 StyleSheetContents* UserAgentStyle::attachmentStyleSheet;
 #endif

@@ -44,9 +44,12 @@ public:
     static StyleSheetContents* svgStyleSheet;
     static StyleSheetContents* mathMLStyleSheet;
     static StyleSheetContents* mediaControlsStyleSheet;
+    static StyleSheetContents* mediaQueryStyleSheet;
     static StyleSheetContents* horizontalFormControlsStyleSheet;
-    static StyleSheetContents* fullscreenStyleSheet;
     static StyleSheetContents* plugInsStyleSheet;
+#if ENABLE(FULLSCREEN_API)
+    static StyleSheetContents* fullscreenStyleSheet;
+#endif
 #if ENABLE(SERVICE_CONTROLS)
     static StyleSheetContents* imageControlsStyleSheet;
 #endif
@@ -65,8 +68,6 @@ public:
 #if ENABLE(ALTERNATE_FORM_CONTROL_DESIGN)
     static StyleSheetContents* alternateFormControlDesignStyleSheet;
 #endif
-
-    static StyleSheetContents* mediaQueryStyleSheet;
 
     static void initDefaultStyleSheet();
     static void ensureDefaultStyleSheetsForElement(const Element&);
