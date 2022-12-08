@@ -100,6 +100,10 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             "float"_s,
             "float"_s,
         } },
+        { "NullableSoftLinkedMember"_s, {
+            "RetainPtr<DDActionContext>"_s,
+            "RetainPtr<DDActionContext>"_s,
+        } },
     };
 }
 

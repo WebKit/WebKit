@@ -314,18 +314,7 @@ def decode_type(type):
         if member.condition is not None:
             result.append('#if ' + member.condition)
         result.append('    std::optional<' + member.type + '> ' + sanitize_string_for_variable_name(member.name) + ';')
-        if 'Nullable' in member.attributes:
-            result.append('    std::optional<bool> has' + member.name + ';')
-            result.append('    decoder >> has' + member.name + ';')
-            result.append('    if (!has' + member.name + ')')
-            result.append('        return std::nullopt;')
-            result.append('    if (*has' + member.name + ') {')
-            result.append('        decoder >> ' + member.name + ';')
-            result.append('        if (!' + member.name + ')')
-            result.append('            return std::nullopt;')
-            result.append('    } else')
-            result.append('        ' + member.name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
-        elif member.unique_ptr_type() is not None:
+        if member.unique_ptr_type() is not None:
             result.append('    std::optional<bool> has' + sanitize_string_for_variable_name(member.name) + ';')
             result.append('    decoder >> has' + sanitize_string_for_variable_name(member.name) + ';')
             result.append('    if (!has' + sanitize_string_for_variable_name(member.name) + ')')
@@ -357,12 +346,35 @@ def decode_type(type):
                 if len(soft_linked_classes) == 1:
                     match = re.search("RetainPtr<(.*)>", member.type)
                     assert match
-                    result.append('    ' + sanitize_string_for_variable_name(member.name) + ' = IPC::decode<' + match.groups()[0] + '>(decoder, ' + soft_linked_classes[0] + ');')
-                    result.append('    if (!' + sanitize_string_for_variable_name(member.name) + ')')
-                    result.append('        return std::nullopt;')
-                    if 'ReturnEarlyIfTrue' in member.attributes:
+                    indentation = 1
+                    if 'Nullable' in member.attributes:
+                        indentation = 2
+                        result.append('    std::optional<bool> has' + member.name + ';')
+                        result.append('    decoder >> has' + member.name + ';')
+                        result.append('    if (!has' + member.name + ')')
+                        result.append('        return std::nullopt;')
+                        result.append('    if (*has' + member.name + ') {')
+                    result.append(indent(indentation) + sanitize_string_for_variable_name(member.name) + ' = IPC::decode<' + match.groups()[0] + '>(decoder, ' + soft_linked_classes[0] + ');')
+                    result.append(indent(indentation) + 'if (!' + sanitize_string_for_variable_name(member.name) + ')')
+                    result.append(indent(indentation) + '    return std::nullopt;')
+                    if 'Nullable' in member.attributes:
+                        result.append('    } else')
+                        result.append('        ' + member.name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
+                    elif 'ReturnEarlyIfTrue' in member.attributes:
                         result.append('    if (*' + sanitize_string_for_variable_name(member.name) + ')')
                         result.append('        return { ' + type.namespace_and_name() + ' { } };')
+                elif 'Nullable' in member.attributes:
+                    result.append('    std::optional<bool> has' + member.name + ';')
+                    result.append('    decoder >> has' + member.name + ';')
+                    result.append('    if (!has' + member.name + ')')
+                    result.append('        return std::nullopt;')
+                    result.append('    if (*has' + member.name + ') {')
+                    # FIXME: This should be below
+                    result.append('        decoder >> ' + member.name + ';')
+                    result.append('        if (!' + member.name + ')')
+                    result.append('            return std::nullopt;')
+                    result.append('    } else')
+                    result.append('        ' + member.name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
                 else:
                     assert len(soft_linked_classes) == 0
                     result.append('    decoder >> ' + sanitize_string_for_variable_name(member.name) + ';')

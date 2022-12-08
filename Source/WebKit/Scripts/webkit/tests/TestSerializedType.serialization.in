@@ -96,3 +96,8 @@ class WTF::Seconds {
     float bottom()
     float left()
 };
+
+struct NullableSoftLinkedMember {
+    [Nullable, SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> firstMember;
+    [SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> secondMember;
+}
