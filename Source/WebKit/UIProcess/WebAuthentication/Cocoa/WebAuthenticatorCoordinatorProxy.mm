@@ -391,33 +391,32 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
 static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> credential, RetainPtr<NSError> error, RequestCompletionHandler&& handler)
 {
     AuthenticatorResponseData response = { };
-    AuthenticatorAttachment attachment;
     ExceptionData exceptionData = { };
+    NSString *rawAttachment = nil;
 
     if ([credential isKindOfClass:getASCPlatformPublicKeyCredentialRegistrationClass()]) {
-        attachment = AuthenticatorAttachment::Platform;
         response.isAuthenticatorAttestationResponse = true;
 
         ASCPlatformPublicKeyCredentialRegistration *registrationCredential = credential.get();
         response.rawId = toArrayBuffer(registrationCredential.credentialID);
         response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
+        rawAttachment = registrationCredential.attachment;
         if ([registrationCredential respondsToSelector:@selector(transports)])
             response.transports = toAuthenticatorTransports(registrationCredential.transports);
         if ([registrationCredential respondsToSelector:@selector(extensionOutputsCBOR)])
             response.extensionOutputs = toExtensionOutputs(registrationCredential.extensionOutputsCBOR);
     } else if ([credential isKindOfClass:getASCSecurityKeyPublicKeyCredentialRegistrationClass()]) {
-        attachment = AuthenticatorAttachment::CrossPlatform;
         response.isAuthenticatorAttestationResponse = true;
 
         ASCSecurityKeyPublicKeyCredentialRegistration *registrationCredential = credential.get();
         response.rawId = toArrayBuffer(registrationCredential.credentialID);
         response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
+        rawAttachment = registrationCredential.attachment;
         if ([registrationCredential respondsToSelector:@selector(transports)])
             response.transports = toAuthenticatorTransports(registrationCredential.transports);
         if ([registrationCredential respondsToSelector:@selector(extensionOutputsCBOR)])
             response.extensionOutputs = toExtensionOutputs(registrationCredential.extensionOutputsCBOR);
     } else if ([credential isKindOfClass:getASCPlatformPublicKeyCredentialAssertionClass()]) {
-        attachment = AuthenticatorAttachment::Platform;
         response.isAuthenticatorAttestationResponse = false;
 
         ASCPlatformPublicKeyCredentialAssertion *assertionCredential = credential.get();
@@ -425,10 +424,10 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
         response.signature = toArrayBuffer(assertionCredential.signature);
         response.userHandle = toArrayBuffer(assertionCredential.userHandle);
+        rawAttachment = assertionCredential.attachment;
         if ([assertionCredential respondsToSelector:@selector(extensionOutputsCBOR)])
             response.extensionOutputs = toExtensionOutputs(assertionCredential.extensionOutputsCBOR);
     } else if ([credential isKindOfClass:getASCSecurityKeyPublicKeyCredentialAssertionClass()]) {
-        attachment = AuthenticatorAttachment::CrossPlatform;
         response.isAuthenticatorAttestationResponse = false;
 
         ASCSecurityKeyPublicKeyCredentialAssertion *assertionCredential = credential.get();
@@ -436,10 +435,10 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
         response.signature = toArrayBuffer(assertionCredential.signature);
         response.userHandle = toArrayBuffer(assertionCredential.userHandle);
+        rawAttachment = assertionCredential.attachment;
         if ([assertionCredential respondsToSelector:@selector(extensionOutputsCBOR)])
             response.extensionOutputs = toExtensionOutputs(assertionCredential.extensionOutputsCBOR);
     } else {
-        attachment = (AuthenticatorAttachment) 0;
         ExceptionCode exceptionCode;
         NSString *errorMessage = nil;
         if ([error.get().domain isEqualToString:WKErrorDomain]) {
@@ -458,6 +457,14 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         }
 
         exceptionData = { exceptionCode, errorMessage };
+    }
+    
+    AuthenticatorAttachment attachment;
+    if ([rawAttachment isEqualToString:@"platform"])
+        attachment = AuthenticatorAttachment::Platform;
+    else {
+        ASSERT([rawAttachment isEqualToString:@"cross-platform"]);
+        attachment = AuthenticatorAttachment::CrossPlatform;
     }
 
     handler(response, attachment, exceptionData);
