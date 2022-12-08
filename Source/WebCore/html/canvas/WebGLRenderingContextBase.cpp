@@ -115,6 +115,8 @@
 #include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include "WebXRSystem.h"
+#include "WorkerClient.h"
+#include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -482,6 +484,22 @@ static void removeActiveContext(WebGLRenderingContextBase& context)
     ASSERT_UNUSED(didContain, didContain);
 }
 
+static GraphicsClient* getGraphicsClient(CanvasBase& canvas)
+{
+    if (auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas)) {
+        Document& document = canvasElement->document();
+        RefPtr<Frame> frame = document.frame();
+        if (!frame)
+            return nullptr;
+
+        return document.view()->root()->hostWindow();
+    }
+    if (is<WorkerGlobalScope>(canvas.scriptExecutionContext()))
+        return downcast<WorkerGlobalScope>(canvas.scriptExecutionContext())->workerClient();
+
+    return nullptr;
+}
+
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
     auto scriptExecutionContext = canvas.scriptExecutionContext();
@@ -496,9 +514,21 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     UNUSED_PARAM(type);
 #endif
 
-    HostWindow* hostWindow = nullptr;
+    GraphicsClient* graphicsClient = getGraphicsClient(canvas);
 
     auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
+
+    if (!scriptExecutionContext->settingsValues().webGLEnabled) {
+        canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
+            Event::CanBubble::No, Event::IsCancelable::Yes, "Web page was not allowed to create a WebGL context."_s));
+        return nullptr;
+    }
+
+    if (scriptExecutionContext->settingsValues().forceWebGLUsesLowPower) {
+        if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
+            LOG(WebGL, "Overriding powerPreference from high-performance to low-power.");
+        attributes.powerPreference = GraphicsContextGLPowerPreference::LowPower;
+    }
 
     if (canvasElement) {
         Document& document = canvasElement->document();
@@ -506,25 +536,14 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         if (!frame)
             return nullptr;
 
-        if (!frame->settings().webGLEnabled()) {
-            canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
-                Event::CanBubble::No, Event::IsCancelable::Yes, "Web page was not allowed to create a WebGL context."_s));
-            return nullptr;
-        }
-
         Document& topDocument = document.topDocument();
         Page* page = topDocument.page();
-        if (frame->settings().forceWebGLUsesLowPower()) {
-            if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
-                LOG(WebGL, "Overriding powerPreference from high-performance to low-power.");
-            attributes.powerPreference = GraphicsContextGLPowerPreference::LowPower;
-        }
-
         if (page)
             attributes.devicePixelRatio = page->deviceScaleFactor();
-
-        hostWindow = document.view()->root()->hostWindow();
     }
+
+    // FIXME: Should we try get the devicePixelRatio for workers for the page that created
+    // the worker? What if it's a shared worker, and there's multiple answers?
 
     attributes.noExtensions = true;
     attributes.shareResources = false;
@@ -532,18 +551,16 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     attributes.webGLVersion = type;
 #if PLATFORM(MAC)
     // FIXME: Add MACCATALYST support for gpuIDForDisplay.
-    if (hostWindow)
-        attributes.windowGPUID = gpuIDForDisplay(hostWindow->displayID());
+    if (graphicsClient)
+        attributes.windowGPUID = gpuIDForDisplay(graphicsClient->displayID());
 #endif
 #if PLATFORM(COCOA)
     attributes.useMetal = scriptExecutionContext->settingsValues().webGLUsingMetal;
 #endif
 
     RefPtr<GraphicsContextGL> context;
-    if (hostWindow)
-        context = hostWindow->createGraphicsContextGL(attributes);
-    // FIXME: OffscreenCanvas does not support GPU process and ANGLE does not support 
-    // multi-threaded access so offscreen canvas is disabled.
+    if (graphicsClient)
+        context = graphicsClient->createGraphicsContextGL(attributes);
     if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
@@ -5506,28 +5523,18 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         return;
     }
 
-    auto* canvas = htmlCanvas();
-    if (!canvas)
+    auto scriptExecutionContext = canvasBase().scriptExecutionContext();
+    if (!scriptExecutionContext)
         return;
 
-    RefPtr<Frame> frame = canvas->document().frame();
-    if (!frame)
+    if (!scriptExecutionContext->settingsValues().webGLEnabled)
         return;
 
-    if (!frame->settings().webGLEnabled())
+    GraphicsClient* graphicsClient = getGraphicsClient(canvasBase());
+    if (!graphicsClient)
         return;
 
-    RefPtr<FrameView> view = frame->view();
-    if (!view)
-        return;
-    RefPtr<ScrollView> root = view->root();
-    if (!root)
-        return;
-    HostWindow* hostWindow = root->hostWindow();
-    if (!hostWindow)
-        return;
-
-    RefPtr<GraphicsContextGL> context = hostWindow->createGraphicsContextGL(m_attributes);
+    RefPtr<GraphicsContextGL> context = graphicsClient->createGraphicsContextGL(m_attributes);
     if (!context) {
         if (m_contextLostState->mode == RealLostContext)
             m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);
@@ -5541,6 +5548,11 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     m_contextLostState = std::nullopt;
     setupFlags();
     initializeNewContext();
+
+    auto* canvas = htmlCanvas();
+    if (!canvas)
+        return;
+
     if (!isContextLost())
         canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
 }
