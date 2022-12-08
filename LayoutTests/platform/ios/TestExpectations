@@ -3795,3 +3795,5 @@ imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html 
 webkit.org/b/248919 editing/selection/doubleclick-whitespace-live-range.html [ Failure ]
 
 webkit.org/b/248921 fast/forms/ios/focus-button.html [ Pass Crash ]
+
+webkit.org/b/248923 fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
