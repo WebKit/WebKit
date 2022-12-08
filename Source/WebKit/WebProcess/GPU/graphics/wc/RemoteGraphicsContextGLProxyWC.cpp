@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
 #include "RemoteGraphicsContextGLMessages.h"
+#include "RemoteRenderingBackendProxy.h"
 #include "WCPlatformLayerGCGL.h"
 #include "WebProcess.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
@@ -70,8 +71,8 @@ public:
     RefPtr<WebCore::VideoFrame> paintCompositedResultsToVideoFrame() final { return nullptr; }
 #endif
 private:
-    RemoteGraphicsContextGLProxyWC(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
-        : RemoteGraphicsContextGLProxy(gpuProcessConnection, attributes, renderingBackend)
+    RemoteGraphicsContextGLProxyWC(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+        : RemoteGraphicsContextGLProxy(connection, dispatcher, attributes, renderingBackend)
         , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(makeUnique<WCPlatformLayerGCGL>()))
     {
     }
@@ -97,9 +98,9 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
 
 }
 
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)
 {
-    return adoptRef(new RemoteGraphicsContextGLProxyWC(WebProcess::singleton().ensureGPUProcessConnection(), attributes, renderingBackend));
+    return adoptRef(new RemoteGraphicsContextGLProxyWC(connection, renderingBackend.dispatcher(), attributes, renderingBackend.ensureBackendCreated()));
 }
 
 }
