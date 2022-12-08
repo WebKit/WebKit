@@ -635,7 +635,7 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
 
 static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::FrameView* frameView, WebCore::FloatRect clientRect)
 {
-    if (!frameView->delegatesScrolling())
+    if (!frameView->delegatesScrollingToNativeView())
         return frameView->contentsToRootView(frameView->clientToDocumentRect(clientRect));
 
     // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
@@ -647,7 +647,7 @@ static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::FrameVie
 
 static WebCore::FloatPoint convertPointFromFrameClientToRootView(WebCore::FrameView* frameView, WebCore::FloatPoint clientPoint)
 {
-    if (!frameView->delegatesScrolling())
+    if (!frameView->delegatesScrollingToNativeView())
         return frameView->contentsToRootView(frameView->clientToDocumentPoint(clientPoint));
 
     // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
