@@ -3947,6 +3947,17 @@
                 "url": "https://drafts.fxtf.org/css-masking-1/#propdef-mask-type"
             }
         },
+        "masonry-auto-flow": {
+            "codegen-properties": {
+                "converter": "MasonryAutoFlow",
+                "settings-flag": "masonryEnabled",
+                "custom-parser": true
+            },
+            "specification": {
+                "category": "css-grid",
+                "url": "https://drafts.csswg.org/css-grid-3/#masonry-auto-flow"
+            }
+        },
         "math-style": {
             "values": [
                 "normal",

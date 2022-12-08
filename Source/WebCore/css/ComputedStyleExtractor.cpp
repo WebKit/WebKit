@@ -3265,6 +3265,23 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         return list;
     }
+    case CSSPropertyMasonryAutoFlow: {
+        auto list = CSSValueList::createSpaceSeparated();
+        // MasonryAutoFlow information is stored in a struct that should always 
+        // hold 2 pieces of information. It should contain both Pack/Next inside
+        // the MasonryAutoFlowPlacementAlgorithm enum class and DefiniteFirst/Ordered
+        // inside the MasonryAutoFlowPlacementOrder enum class
+        ASSERT((style.masonryAutoFlow().placementAlgorithm == MasonryAutoFlowPlacementAlgorithm::Pack || style.masonryAutoFlow().placementAlgorithm == MasonryAutoFlowPlacementAlgorithm::Next) && (style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::DefiniteFirst || style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered));
+
+        if (style.masonryAutoFlow().placementAlgorithm == MasonryAutoFlowPlacementAlgorithm::Next)
+            list->append(cssValuePool.createIdentifierValue(CSSValueNext));
+        else if (style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::DefiniteFirst)
+            list->append(cssValuePool.createIdentifierValue(CSSValuePack));
+
+        if (style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered)
+            list->append(cssValuePool.createIdentifierValue(CSSValueOrdered));
+        return list;
+    }
 
     // Specs mention that getComputedStyle() should return the used value of the property instead of the computed
     // one for grid-template-{rows|columns} but not for the grid-auto-{rows|columns} as things like

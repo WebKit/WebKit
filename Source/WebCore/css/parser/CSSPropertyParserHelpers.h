@@ -288,6 +288,7 @@ RefPtr<CSSValue> consumeWebkitBorderImage(CSSPropertyID, CSSParserTokenRange&, c
 RefPtr<CSSValue> consumeReflect(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeBackgroundSize(CSSPropertyID, CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&);
+RefPtr<CSSValueList> consumeMasonryAutoFlow(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCommaSeparatedBackgroundComponent(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange&, const CSSParserContext&);

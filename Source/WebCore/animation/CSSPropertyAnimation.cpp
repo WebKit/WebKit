@@ -3745,6 +3745,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyMarginBlock: // logical shorthand
         case CSSPropertyMarginInline: // logical shorthand
         case CSSPropertyMarker:
+        case CSSPropertyMasonryAutoFlow:
         case CSSPropertyMathStyle:
         case CSSPropertyNegative:
         case CSSPropertyOverflow:

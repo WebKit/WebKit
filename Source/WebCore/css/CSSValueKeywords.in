@@ -1404,7 +1404,12 @@ span
 // grid-template-{columns|rows}
 minmax
 subgrid
+// grid masonry keywords
 masonry
+pack
+next
+definite-first
+ordered
 
 // grid-auto-flow
 auto-flow
