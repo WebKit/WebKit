@@ -101,6 +101,7 @@
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
+#include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/VelocityData.h>
@@ -1652,6 +1653,100 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
 
     ASSERT_NOT_REACHED();
     return std::nullopt;
+}
+
+void ArgumentCoder<Ref<WebCore::TimingFunction>>::encode(Encoder& encoder, const Ref<WebCore::TimingFunction>& timingFunction)
+{
+    encoder << timingFunction->type();
+
+    switch (timingFunction->type()) {
+    case TimingFunction::TimingFunctionType::LinearFunction:
+        encoder << downcast<LinearTimingFunction>(timingFunction.get());
+        break;
+
+    case TimingFunction::TimingFunctionType::CubicBezierFunction:
+        encoder << downcast<CubicBezierTimingFunction>(timingFunction.get());
+        break;
+
+    case TimingFunction::TimingFunctionType::StepsFunction:
+        encoder << downcast<StepsTimingFunction>(timingFunction.get());
+        break;
+
+    case TimingFunction::TimingFunctionType::SpringFunction:
+        encoder << downcast<SpringTimingFunction>(timingFunction.get());
+        break;
+    }
+}
+
+std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<Ref<WebCore::TimingFunction>>::decode(Decoder& decoder)
+{
+    std::optional<TimingFunction::TimingFunctionType> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    switch (*type) {
+    case TimingFunction::TimingFunctionType::LinearFunction: {
+        std::optional<Ref<LinearTimingFunction>> function;
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+        return WTFMove(*function);
+    }
+
+    case TimingFunction::TimingFunctionType::CubicBezierFunction: {
+        std::optional<Ref<CubicBezierTimingFunction>> function;
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+        return WTFMove(*function);
+    }
+
+    case TimingFunction::TimingFunctionType::StepsFunction: {
+        std::optional<Ref<StepsTimingFunction>> function;
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+        return WTFMove(*function);
+    }
+
+    case TimingFunction::TimingFunctionType::SpringFunction: {
+        std::optional<Ref<SpringTimingFunction>> function;
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+        return WTFMove(*function);
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+void ArgumentCoder<RefPtr<WebCore::TimingFunction>>::encode(Encoder& encoder, const RefPtr<WebCore::TimingFunction>& timingFunction)
+{
+    bool hasTimingFunction = !!timingFunction;
+    encoder << hasTimingFunction;
+    if (!hasTimingFunction)
+        return;
+
+    encoder << Ref { *timingFunction };
+}
+
+std::optional<RefPtr<WebCore::TimingFunction>> ArgumentCoder<RefPtr<WebCore::TimingFunction>>::decode(Decoder& decoder)
+{
+    bool hasTimingFunction;
+    if (!decoder.decode(hasTimingFunction))
+        return std::nullopt;
+
+    if (!hasTimingFunction)
+        return nullptr;
+
+    std::optional<Ref<TimingFunction>> timingFunction;
+    decoder >> timingFunction;
+    if (!timingFunction)
+        return std::nullopt;
+    return WTFMove(*timingFunction);
 }
 
 } // namespace IPC
