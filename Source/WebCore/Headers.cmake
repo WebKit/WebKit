@@ -1939,6 +1939,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     plugins/PluginViewBase.h
 
     rendering/BreakLines.h
+    rendering/CaretRectComputation.h
     rendering/CSSFilter.h
     rendering/ClipRect.h
     rendering/EventRegion.h

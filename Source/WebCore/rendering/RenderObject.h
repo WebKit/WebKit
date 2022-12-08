@@ -84,12 +84,6 @@ struct InlineBoxAndOffset;
 struct PaintInfo;
 struct SimpleRange;
 
-#if PLATFORM(IOS_FAMILY)
-const int caretWidth = 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
-#else
-const int caretWidth = 1;
-#endif
-
 struct ScrollRectToVisibleOptions;
 
 namespace Layout {

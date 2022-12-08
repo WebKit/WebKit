@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "CaretRectComputation.h"
 #include "FloatingObjects.h"
 #include "LegacyLineLayout.h"
 #include "LineWidth.h"
@@ -610,7 +611,7 @@ inline LayoutIntegration::LineLayout* RenderBlockFlow::modernLineLayout()
 inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
 {
     if (element() && element()->isRootEditableElement() && hasNonVisibleOverflow() && style().isLeftToRightDirection() && !paddingEnd())
-        return caretWidth;
+        return caretWidth();
     return { };
 }
 
