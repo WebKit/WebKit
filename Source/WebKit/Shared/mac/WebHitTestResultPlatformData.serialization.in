@@ -25,7 +25,7 @@ headers: <WebCore/TextIndicator.h>
 #if PLATFORM(MAC)
 header: "WebHitTestResultData.h" <pal/mac/DataDetectorsSoftLink.h>
 [CustomHeader] struct WebKit::WebHitTestResultPlatformData {
-    [SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> detectedDataActionContext;
+    [Nullable, SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> detectedDataActionContext;
     WebCore::FloatRect detectedDataBoundingBox;
     RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
     WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
