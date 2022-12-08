@@ -508,11 +508,6 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
         && shouldMerge(endOfInsertedContent, next);
 }
 
-static bool isMailPasteAsQuotationNode(const Node* node)
-{
-    return node && node->hasTagName(blockquoteTag) && downcast<Element>(node)->attributeWithoutSynchronization(classAttr) == ApplePasteAsQuotation;
-}
-
 static bool isHeaderElement(const Node* a)
 {
     if (!a)
@@ -540,9 +535,7 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
     RefPtr destinationNode { destination.deepEquivalent().deprecatedNode() };
     RefPtr sourceBlock { enclosingBlock(sourceNode.get()) };
     RefPtr destinationBlock { enclosingBlock(destinationNode.get()) };
-    return !enclosingNodeOfType(source.deepEquivalent(), &isMailPasteAsQuotationNode)
-        && sourceBlock
-        && (!sourceBlock->hasTagName(blockquoteTag) || isMailBlockquote(sourceBlock.get()))
+    return sourceBlock && (!sourceBlock->hasTagName(blockquoteTag) || isMailBlockquote(sourceBlock.get()))
         && enclosingListChild(sourceBlock.get()) == enclosingListChild(destinationNode.get())
         && enclosingTableCell(source.deepEquivalent()) == enclosingTableCell(destination.deepEquivalent())
         && (!isHeaderElement(sourceBlock.get()) || haveSameTagName(sourceBlock.get(), destinationBlock.get()))
@@ -669,8 +662,6 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             auto hasBlockquoteNode = [&]() -> bool {
                 if (!context)
                     return false;
-                if (isMailPasteAsQuotationNode(context.get()))
-                    return true;
                 return enclosingNodeOfType(firstPositionInNode(context.get()), isMailBlockquote, CanCrossEditingBoundary);
             };
             if (hasBlockquoteNode())
@@ -917,7 +908,7 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
 
     // Handling the case where we are doing Paste as Quotation or pasting into quoted content is more complicated (see handleStyleSpans)
     // and doesn't receive the optimization.
-    if (isMailPasteAsQuotationNode(topNode.get()) || enclosingNodeOfType(firstPositionInOrBeforeNode(topNode.get()), isMailBlockquote, CanCrossEditingBoundary))
+    if (enclosingNodeOfType(firstPositionInOrBeforeNode(topNode.get()), isMailBlockquote, CanCrossEditingBoundary))
         return false;
 
     // Either there are no style spans in the fragment or a WebKit client has added content to the fragment
@@ -970,10 +961,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
     // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
     RefPtr<Node> blockquoteNode;
-    if (isMailPasteAsQuotationNode(context.get()))
-        blockquoteNode = context;
-    else
-        blockquoteNode = enclosingNodeOfType(firstPositionInNode(context.get()), isMailBlockquote, CanCrossEditingBoundary);
+    blockquoteNode = enclosingNodeOfType(firstPositionInNode(context.get()), isMailBlockquote, CanCrossEditingBoundary);
 
     if (blockquoteNode)
         context = document().documentElement();
@@ -1073,8 +1061,7 @@ static bool isInlineNodeWithStyle(const Node* node)
     const HTMLElement* element = static_cast<const HTMLElement*>(node);
     const AtomString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
     if (classAttributeValue == AppleTabSpanClass
-        || classAttributeValue == AppleConvertedSpace ""_s
-        || classAttributeValue == ApplePasteAsQuotation)
+        || classAttributeValue == AppleConvertedSpace ""_s)
         return true;
 
     return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(*element);
@@ -1458,9 +1445,6 @@ void ReplaceSelectionCommand::doApply()
         
     } else
         mergeEndIfNeeded();
-
-    if (RefPtr mailBlockquote = enclosingNodeOfType(positionAtStartOfInsertedContent().deepEquivalent(), isMailPasteAsQuotationNode))
-        removeNodeAttribute(downcast<Element>(*mailBlockquote), classAttr);
 
     if (shouldPerformSmartReplace())
         addSpacesForSmartReplace();

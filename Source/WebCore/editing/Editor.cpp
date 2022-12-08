@@ -1589,7 +1589,6 @@ void Editor::quoteFragmentForPasting(DocumentFragment& fragment)
 {
     auto blockQuote = HTMLQuoteElement::create(blockquoteTag, document());
     blockQuote->setAttributeWithoutSynchronization(typeAttr, "cite"_s);
-    blockQuote->setAttributeWithoutSynchronization(classAttr, ApplePasteAsQuotation);
 
     auto childNode = fragment.firstChild();
 
