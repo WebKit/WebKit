@@ -3327,18 +3327,18 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
-        if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
-            # This means all the tests which failed in this run were also failing or flaky in results database
-            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
-            self.descriptionDone = message
-            self.finished(WARNINGS)
-            self.build.buildFinished([message], SUCCESS)
-
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
             self.build.results = SUCCESS
             self.setProperty('build_summary', message)
+        elif (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+            # This means all the tests which failed in this run were also failing or flaky in results database
+            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.setProperty('build_summary', message)
+            self.finished(WARNINGS)
         else:
             self.build.addStepsAfterCurrentStep([
                 ArchiveTestResults(),
