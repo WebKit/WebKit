@@ -686,7 +686,10 @@ public:
     // This seems like a reasonable upper bound, and otherwise mutually
     // recursive frameset pages can quickly bring the program to its knees
     // with exponential growth in the number of frames.
-    static const int maxNumberOfFrames = 1000;
+    static constexpr int maxNumberOfFrames = 1000;
+
+    // Don't allow more than a certain frame depth to avoid stack exhaustion.
+    static constexpr int maxFrameDepth = 32;
 
     void setEditable(bool isEditable) { m_isEditable = isEditable; }
     bool isEditable() const { return m_isEditable; }

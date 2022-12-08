@@ -459,6 +459,14 @@ Frame& FrameTree::top() const
     return *frame;
 }
 
+unsigned FrameTree::depth() const
+{
+    unsigned depth = 0;
+    for (auto* parent = &m_thisFrame; parent; parent = parent->tree().parent())
+        depth++;
+    return depth;
+}
+
 ASCIILiteral blankTargetFrameName()
 {
     return "_blank"_s;
