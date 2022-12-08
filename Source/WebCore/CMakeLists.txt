@@ -1571,6 +1571,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPU.idl
     Modules/WebGPU/GPUAdapter.idl
     Modules/WebGPU/GPUAddressMode.idl
+    Modules/WebGPU/GPUAutoLayoutMode.idl
     Modules/WebGPU/GPUBindGroup.idl
     Modules/WebGPU/GPUBindGroupDescriptor.idl
     Modules/WebGPU/GPUBindGroupEntry.idl

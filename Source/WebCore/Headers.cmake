@@ -2,6 +2,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPU.h
     Modules/WebGPU/GPUAdapter.h
     Modules/WebGPU/GPUAddressMode.h
+    Modules/WebGPU/GPUAutoLayoutMode.h
     Modules/WebGPU/GPUBindGroup.h
     Modules/WebGPU/GPUBindGroupDescriptor.h
     Modules/WebGPU/GPUBindGroupEntry.h

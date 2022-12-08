@@ -25,22 +25,39 @@
 
 #pragma once
 
+#include "GPUAutoLayoutMode.h"
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPipelineLayout.h"
 #include <pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h>
 
+#include <variant>
+
 namespace WebCore {
 
+using GPULayoutMode = std::variant<
+    RefPtr<GPUPipelineLayout>,
+    GPUAutoLayoutMode
+>;
+
+static PAL::WebGPU::PipelineLayout& convertPipelineLayoutToBacking(const GPULayoutMode& layout, const Ref<GPUPipelineLayout>& autoLayout)
+{
+    return *WTF::switchOn(layout, [] (auto pipelineLayout) {
+        return &pipelineLayout->backing();
+    }, [&autoLayout] (GPUAutoLayoutMode) {
+        return &autoLayout->backing();
+    });
+}
+
 struct GPUPipelineDescriptorBase : public GPUObjectDescriptorBase {
-    PAL::WebGPU::PipelineDescriptorBase convertToBacking() const
+    PAL::WebGPU::PipelineDescriptorBase convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             { label },
-            layout ? &layout->backing() : nullptr,
+            &convertPipelineLayoutToBacking(layout, autoLayout)
         };
     }
 
-    GPUPipelineLayout* layout { nullptr };
+    GPULayoutMode layout { nullptr };
 };
 
 }

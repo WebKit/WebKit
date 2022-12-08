@@ -3298,6 +3298,7 @@ JSFormDataEvent.cpp
 JSGPU.cpp
 JSGPUAdapter.cpp
 JSGPUAddressMode.cpp
+JSGPUAutoLayoutMode.cpp
 JSGPUBindGroup.cpp
 JSGPUBindGroupDescriptor.cpp
 JSGPUBindGroupEntry.cpp

@@ -32,12 +32,12 @@
 namespace WebCore {
 
 struct GPUComputePipelineDescriptor : public GPUPipelineDescriptorBase {
-    PAL::WebGPU::ComputePipelineDescriptor convertToBacking() const
+    PAL::WebGPU::ComputePipelineDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             {
                 { label },
-                layout ? &layout->backing() : nullptr,
+                &convertPipelineLayoutToBacking(layout, autoLayout),
             },
             compute.convertToBacking()
         };

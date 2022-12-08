@@ -138,12 +138,7 @@ public:
     using RefCounted::deref;
 
 private:
-    GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::WebGPU::Device>&& backing)
-        : ActiveDOMObject { scriptExecutionContext }
-        , m_backing(WTFMove(backing))
-        , m_queue(GPUQueue::create(Ref { m_backing->queue() }))
-    {
-    }
+    GPUDevice(ScriptExecutionContext*, Ref<PAL::WebGPU::Device>&&);
 
     // ActiveDOMObject.
     // FIXME: We probably need to override more methods to make this work properly.
@@ -158,6 +153,7 @@ private:
     LostPromise m_lostPromise;
     Ref<PAL::WebGPU::Device> m_backing;
     Ref<GPUQueue> m_queue;
+    Ref<GPUPipelineLayout> m_autoPipelineLayout;
 };
 
 }

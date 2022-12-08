@@ -25,21 +25,21 @@
 
 #pragma once
 
+#include "GPUPipelineDescriptorBase.h"
 #include "GPUPipelineLayout.h"
 #include <pal/graphics/WebGPU/WebGPUShaderModuleCompilationHint.h>
 
 namespace WebCore {
 
 struct GPUShaderModuleCompilationHint {
-    PAL::WebGPU::ShaderModuleCompilationHint convertToBacking() const
+    PAL::WebGPU::ShaderModuleCompilationHint convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
-        ASSERT(layout);
         return {
-            layout->backing(),
+            convertPipelineLayoutToBacking(layout, autoLayout)
         };
     }
 
-    GPUPipelineLayout* layout { nullptr };
+    GPULayoutMode layout { nullptr };
 };
 
 }

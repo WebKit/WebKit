@@ -37,6 +37,7 @@ $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/WebGPU/GPU.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUAdapter.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUAddressMode.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUAutoLayoutMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBindGroup.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBindGroupDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBindGroupEntry.idl

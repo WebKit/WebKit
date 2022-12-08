@@ -60,6 +60,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPU.idl \
     $(WebCore)/Modules/WebGPU/GPUAdapter.idl \
     $(WebCore)/Modules/WebGPU/GPUAddressMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUAutoLayoutMode.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroup.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroupDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroupEntry.idl \
