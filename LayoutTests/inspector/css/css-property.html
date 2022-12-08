@@ -66,6 +66,8 @@ function test() {
                 for (let property of rule.style.enabledProperties) {
                     switch (property.name) {
                     case "background-repeat":
+                    case "--foo":
+                    case "--bar":
                         InspectorTest.expectThat(property.valid, `"${property.name}" is a valid property.`);
                         break;
                     case "background-repeat-x":
