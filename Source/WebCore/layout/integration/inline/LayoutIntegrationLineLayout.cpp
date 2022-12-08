@@ -475,11 +475,13 @@ static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const
 
 static inline Layout::BlockLayoutState::LeadingTrim leadingTrim(const RenderBlockFlow& rootRenderer)
 {
-    auto leadingTrimSides = rootRenderer.view().frameView().layoutContext().layoutState()->leadingTrim();
+    auto* layoutState = rootRenderer.view().frameView().layoutContext().layoutState();
+    if (!layoutState)
+        return { };
     auto leadingTrimForIFC = Layout::BlockLayoutState::LeadingTrim { };
-    if (leadingTrimSides.contains(RenderLayoutState::LeadingTrimSide::Start))
+    if (layoutState->hasLeadingTrimStart())
         leadingTrimForIFC.add(Layout::BlockLayoutState::LeadingTrimSide::Start);
-    if (leadingTrimSides.contains(RenderLayoutState::LeadingTrimSide::End))
+    if (layoutState->hasLeadingTrimEnd(rootRenderer))
         leadingTrimForIFC.add(Layout::BlockLayoutState::LeadingTrimSide::End);
     return leadingTrimForIFC;
 }

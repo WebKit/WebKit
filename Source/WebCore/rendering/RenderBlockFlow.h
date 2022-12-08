@@ -66,6 +66,7 @@ protected:
 
     // RenderBlockFlow always contains either lines or paragraphs. When the children are all blocks (e.g. paragraphs), we call layoutBlockChildren.
     // When the children are all inline (e.g., lines), we call layoutInlineChildren.
+    void layoutInFlowChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
@@ -526,8 +527,8 @@ private:
     void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
     void adjustInitialLetterPosition(RenderBox& childBox, LayoutUnit& logicalTopOffset, LayoutUnit& marginBeforeOffset);
 
-    void setLeadingTrimForSubtree();
-    void resetLeadingTrim();
+    void setLeadingTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd = nullptr);
+    void adjustLeadingTrimAfterLayout();
 
 #if ENABLE(TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;

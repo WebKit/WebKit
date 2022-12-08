@@ -480,40 +480,6 @@ void RenderBlockFlow::setChildrenInline(bool value)
     RenderBlock::setChildrenInline(value);
 }
 
-void RenderBlockFlow::setLeadingTrimForSubtree()
-{
-    auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (!layoutState)
-        return;
-    auto leadingTrim = style().leadingTrim();
-    if (leadingTrim == LeadingTrim::Normal) {
-        if (borderAndPaddingStart()) {
-            // For block containers: trim the block-start side of the first formatted line to the corresponding
-            // text-edge metric of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders,
-            // there is no effect.
-            layoutState->resetLeadingTrim();
-        }
-        return;
-    }
-    // FIXME: Add support for nested leading trims if applicable.
-    layoutState->resetLeadingTrim();
-    if (leadingTrim == LeadingTrim::Start || leadingTrim == LeadingTrim::Both)
-        layoutState->addLeadingTrim(RenderLayoutState::LeadingTrimSide::Start);
-    if (leadingTrim == LeadingTrim::End || leadingTrim == LeadingTrim::Both)
-        layoutState->addLeadingTrim(RenderLayoutState::LeadingTrimSide::End);
-}
-
-void RenderBlockFlow::resetLeadingTrim()
-{
-    auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (!layoutState || !layoutState->leadingTrim())
-        return;
-    if (layoutState->leadingTrim().contains(RenderLayoutState::LeadingTrimSide::Start) && hasLines()) {
-        // Only the first formatted line is trimmed.
-        layoutState->removeLeadingTrim(RenderLayoutState::LeadingTrimSide::Start);
-    }
-}
-
 void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
@@ -566,12 +532,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         if (!firstChild() && !isAnonymousBlock())
             setChildrenInline(true);
         dirtyForLayoutFromPercentageHeightDescendants();
-        setLeadingTrimForSubtree();
-
-        if (childrenInline())
-            layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
-        else
-            layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+        layoutInFlowChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom, maxFloatLogicalBottom);
         // Expand our intrinsic height to encompass floats.
         LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
         if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && createsNewFormattingContext())
@@ -580,7 +541,6 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
             setEverHadLayout(true);
             continue;
         }
-        resetLeadingTrim();
         break;
     } while (true);
 
@@ -674,6 +634,132 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     }
 
     clearNeedsLayout();
+}
+
+static RenderBlockFlow* firstInlineFormattingContextRoot(const RenderBlockFlow& enclosingBlockContainer)
+{
+    // FIXME: Remove this after implementing "last line damage".
+    for (auto* child = enclosingBlockContainer.firstChild(); child; child = child->previousSibling()) {
+        if (!is<RenderBlockFlow>(child) || downcast<RenderBlockFlow>(*child).createsNewFormattingContext())
+            continue;
+        auto& blockContainer = downcast<RenderBlockFlow>(*child);
+        if (blockContainer.hasLines())
+            return &blockContainer;
+        if (auto* descendantRoot = firstInlineFormattingContextRoot(blockContainer))
+            return descendantRoot;
+    }
+    return nullptr;
+}
+
+static RenderBlockFlow* lastInlineFormattingContextRoot(const RenderBlockFlow& enclosingBlockContainer)
+{
+    for (auto* child = enclosingBlockContainer.lastChild(); child; child = child->previousSibling()) {
+        if (!is<RenderBlockFlow>(child) || downcast<RenderBlockFlow>(*child).createsNewFormattingContext())
+            continue;
+        auto& blockContainer = downcast<RenderBlockFlow>(*child);
+        if (blockContainer.hasLines())
+            return &blockContainer;
+        if (auto* descendantRoot = lastInlineFormattingContextRoot(blockContainer))
+            return descendantRoot;
+    }
+    return nullptr;
+}
+
+class LeadingTrimmer {
+public:
+    LeadingTrimmer(const RenderBlockFlow& flow, const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd = nullptr)
+        : m_flow(flow)
+    {
+        setLeadingTrimForSubtree(inlineFormattingContextRootForLeadingTrimEnd);
+    }
+
+    ~LeadingTrimmer()
+    {
+        adjustLeadingTrimAfterLayout();
+    }
+
+private:
+    void setLeadingTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd);
+    void adjustLeadingTrimAfterLayout();
+
+    const RenderBlockFlow& m_flow;
+};
+
+void LeadingTrimmer::setLeadingTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd)
+{
+    auto* layoutState = m_flow.view().frameView().layoutContext().layoutState();
+    if (!layoutState)
+        return;
+    auto leadingTrim = m_flow.style().leadingTrim();
+    if (leadingTrim == LeadingTrim::Normal) {
+        if (m_flow.borderAndPaddingStart()) {
+            // For block containers: trim the block-start side of the first formatted line to the corresponding
+            // text-edge metric of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders,
+            // there is no effect.
+            layoutState->resetLeadingTrim();
+        }
+        return;
+    }
+    // FIXME: Add support for nested leading trims if applicable.
+    layoutState->resetLeadingTrim();
+    auto applyLeadingTrimStart = leadingTrim == LeadingTrim::Start || leadingTrim == LeadingTrim::Both;
+    auto applyLeadingTrimEnd = (leadingTrim == LeadingTrim::End || leadingTrim == LeadingTrim::Both) && inlineFormattingContextRootForLeadingTrimEnd;
+    if (applyLeadingTrimEnd) {
+        layoutState->addLeadingTrimEnd(*inlineFormattingContextRootForLeadingTrimEnd);
+        // FIXME: Instead we should just damage the last line.
+        if (auto* firstFormattedLineRoot = firstInlineFormattingContextRoot(m_flow); firstFormattedLineRoot && firstFormattedLineRoot != inlineFormattingContextRootForLeadingTrimEnd) {
+            // When we run a "last line" layout on the last formatting context, we should not trim the first line ever (see FIXME).
+            applyLeadingTrimStart = false;
+        }
+    }
+    if (applyLeadingTrimStart)
+        layoutState->addLeadingTrimStart();
+}
+
+void LeadingTrimmer::adjustLeadingTrimAfterLayout()
+{
+    auto* layoutState = m_flow.view().frameView().layoutContext().layoutState();
+    if (!layoutState)
+        return;
+    if (m_flow.style().leadingTrim() != LeadingTrim::Normal)
+        return layoutState->resetLeadingTrim();
+    // This is propagated leading-trim.
+    if (layoutState->hasLeadingTrimStart() && m_flow.hasLines()) {
+        // Only the first formatted line is trimmed.
+        layoutState->removeLeadingTrimStart();
+    }
+}
+
+void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
+{
+    if (childrenInline()) {
+        auto leadingTrimmer = LeadingTrimmer { *this, this };
+        layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        return;
+    }
+
+    {
+        // With block children, there's no way to tell what the last formatted line is until after we finished laying out the subtree.
+        auto leadingTrimmer = LeadingTrimmer { *this };
+        layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+    }
+
+    auto handleLeadingTrimEnd = [&] {
+        auto hasLeadingTrimEnd = style().leadingTrim() == LeadingTrim::End || style().leadingTrim() == LeadingTrim::Both;
+        if (!hasLeadingTrimEnd)
+            return;
+        // Dirty the last formatted line (in the last IFC) and issue relayout with forcing trimming the last line.
+        if (auto* rootForLastFormattedLine = lastInlineFormattingContextRoot(*this)) {
+            for (RenderBlock* ancestor = rootForLastFormattedLine; ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
+                // FIXME: We should be able to damage the last line only.
+                ancestor->setNeedsLayout(MarkOnlyThis);
+            }
+
+            auto leadingTrimmer = LeadingTrimmer { *this, rootForLastFormattedLine };
+            layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+        }
+    };
+    handleLeadingTrimEnd();
 }
 
 void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom)
