@@ -106,14 +106,8 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
         return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
     if (inlineLevelBox.isListMarker())
         return inlineLevelBox.layoutBounds().height();
-    if (inlineLevelBox.isAtomicInlineLevelBox()) {
-        if (inlineLevelBox.layoutBounds().height())
-            return true;
-        // While in practice when the negative vertical margin makes the layout bounds empty (e.g: height: 100px; margin-top: -100px;), and this inline
-        // level box contributes 0px to the line box height, it still needs to be taken into account while computing line box geometries.
-        auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
-        return boxGeometry.marginBefore() || boxGeometry.marginAfter();
-    }
+    if (inlineLevelBox.isAtomicInlineLevelBox())
+        return true;
     return false;
 }
 
