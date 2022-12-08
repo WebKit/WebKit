@@ -82,19 +82,37 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle.
  @param bundle The bundle to use for the new web extension.
- @result An initialized web extension, or nil if the object could not be initialized.
- @discussion This is a designated initializer.
+ @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
+ @seealso initWithAppExtensionBundle:error:
  */
-- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle NS_DESIGNATED_INITIALIZER;
++ (nullable instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle;
 
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL.
  @param resourceBaseURL The directory URL to use for the new web extension.
- @result An initialized web extension, or nil if the object could not be initialized.
+ @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
+ @seealso initWithResourceBaseURL:error:
+ */
++ (nullable instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL;
+
+/*!
+ @abstract Returns a web extension initialized with a specified app extension bundle.
+ @param bundle The bundle to use for the new web extension.
+ @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
+ @discussion This is a designated initializer.
+ */
+- (nullable instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error NS_DESIGNATED_INITIALIZER;
+
+/*!
+ @abstract Returns a web extension initialized with a specified resource base URL.
+ @param resourceBaseURL The directory URL to use for the new web extension.
+ @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  @discussion This is a designated initializer. The URL must be a file URL that points
  to a directory containing a `manifest.json` file.
  */
-- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /*! @abstract The active errors for the extension. Returns `nil` if there are no errors. */
 @property (nonatomic, nullable, readonly, copy) NSArray<NSError *> *errors;

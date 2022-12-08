@@ -69,8 +69,8 @@ public:
         return adoptRef(*new WebExtension(std::forward<Args>(args)...));
     }
 
-    explicit WebExtension(NSBundle *appExtensionBundle);
-    explicit WebExtension(NSURL *resourceBaseURL);
+    explicit WebExtension(NSBundle *appExtensionBundle, NSError ** = nullptr);
+    explicit WebExtension(NSURL *resourceBaseURL, NSError ** = nullptr);
     explicit WebExtension(NSDictionary *manifest, NSDictionary *resources);
     explicit WebExtension(NSDictionary *resources);
 

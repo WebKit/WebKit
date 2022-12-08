@@ -108,19 +108,35 @@ static NSString * const optionalPermissionsManifestKey = @"optional_permissions"
 static NSString * const hostPermissionsManifestKey = @"host_permissions";
 static NSString * const optionalHostPermissionsManifestKey = @"optional_host_permissions";
 
-WebExtension::WebExtension(NSBundle *appExtensionBundle)
+WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
     : m_bundle(appExtensionBundle)
     , m_resourceBaseURL(appExtensionBundle.resourceURL.URLByStandardizingPath.absoluteURL)
 {
     ASSERT(appExtensionBundle);
+
+    if (outError)
+        *outError = nil;
+
+    if (!manifestParsedSuccessfully()) {
+        ASSERT(m_errors.get().count);
+        *outError = m_errors.get().lastObject;
+    }
 }
 
-WebExtension::WebExtension(NSURL *resourceBaseURL)
+WebExtension::WebExtension(NSURL *resourceBaseURL, NSError **outError)
     : m_resourceBaseURL(resourceBaseURL.URLByStandardizingPath.absoluteURL)
 {
     ASSERT(resourceBaseURL);
     ASSERT([resourceBaseURL isFileURL]);
     ASSERT([resourceBaseURL hasDirectoryPath]);
+
+    if (outError)
+        *outError = nil;
+
+    if (!manifestParsedSuccessfully()) {
+        ASSERT(m_errors.get().count);
+        *outError = m_errors.get().lastObject;
+    }
 }
 
 WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)

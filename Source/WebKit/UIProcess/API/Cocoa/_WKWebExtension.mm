@@ -42,34 +42,78 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle
++ (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
+{
+    NSError * __autoreleasing internalError;
+    auto result = WebKit::WebExtension::create(appExtensionBundle, &internalError);
+
+    if (internalError)
+        return nil;
+
+    return result->wrapper();
+}
+
++ (instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL
+{
+    NSError * __autoreleasing internalError;
+    auto result = WebKit::WebExtension::create(resourceBaseURL, &internalError);
+
+    if (internalError)
+        return nil;
+
+    return result->wrapper();
+}
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
     NSParameterAssert(appExtensionBundle);
+
+    if (error)
+        *error = nil;
 
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle);
+    NSError * __autoreleasing internalError;
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, &internalError);
+
+    if (internalError) {
+        if (error)
+            *error = internalError;
+        return nil;
+    }
 
     return self;
 }
 
-- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
     NSParameterAssert(resourceBaseURL);
     NSParameterAssert([resourceBaseURL isFileURL]);
     NSParameterAssert([resourceBaseURL hasDirectoryPath]);
 
+    if (error)
+        *error = nil;
+
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, resourceBaseURL);
+    NSError * __autoreleasing internalError;
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, resourceBaseURL, &internalError);
+
+    if (internalError) {
+        if (error)
+            *error = internalError;
+        return nil;
+    }
 
     return self;
 }
 
 - (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
 {
+    NSParameterAssert(manifest);
+
     return [self _initWithManifestDictionary:manifest resources:nil];
 }
 
@@ -226,12 +270,22 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle
++ (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
 {
     return nil;
 }
 
-- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL
++ (instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL
+{
+    return nil;
+}
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
+{
+    return nil;
+}
+
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
     return nil;
 }

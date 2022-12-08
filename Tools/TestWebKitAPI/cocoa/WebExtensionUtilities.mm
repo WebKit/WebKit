@@ -157,7 +157,7 @@ RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources)
 
 RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL)
 {
-    return loadAndRunExtension([[_WKWebExtension alloc] initWithResourceBaseURL:baseURL]);
+    return loadAndRunExtension([[_WKWebExtension alloc] initWithResourceBaseURL:baseURL error:nullptr]);
 }
 
 } // namespace Util
