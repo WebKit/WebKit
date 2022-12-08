@@ -43,6 +43,12 @@ using namespace WebCore;
 
 namespace WebPushD {
 
+// FIXME: this will be removed once we change PushService methods to accept PushSubscriptionSetIdentifier as input types. 
+static PushSubscriptionSetIdentifier makeSubscriptionSet(const String& bundleIdentifier)
+{
+    return { bundleIdentifier, emptyString(), std::nullopt };
+}
+
 static void updateTopicLists(PushServiceConnection& connection, PushDatabase& database, CompletionHandler<void()> completionHandler)
 {
     database.getTopics([&connection, completionHandler = WTFMove(completionHandler)](auto&& topics) mutable {
@@ -249,7 +255,7 @@ GetSubscriptionRequest::GetSubscriptionRequest(PushService& service, const Strin
 // Implements the webpushd side of PushManager.getSubscription.
 void GetSubscriptionRequest::startInternal()
 {
-    m_database.getRecordByBundleIdentifierAndScope(m_bundleIdentifier, m_scope, [this](auto&& result) mutable {
+    m_database.getRecordBySubscriptionSetAndScope(makeSubscriptionSet(m_bundleIdentifier), m_scope, [this](auto&& result) mutable {
         if (!result) {
             fulfill(std::optional<WebCore::PushSubscriptionData> { });
             return;
@@ -285,7 +291,7 @@ SubscribeRequest::SubscribeRequest(PushService& service, const String& bundleIde
 // Implements the webpushd side of PushManager.subscribe().
 void SubscribeRequest::startImpl(IsRetry isRetry)
 {
-    m_database.getRecordByBundleIdentifierAndScope(m_bundleIdentifier, m_scope, [this, isRetry](auto&& result) mutable {
+    m_database.getRecordBySubscriptionSetAndScope(makeSubscriptionSet(m_bundleIdentifier), m_scope, [this, isRetry](auto&& result) mutable {
         if (result) {
             if (m_vapidPublicKey != result->serverVAPIDPublicKey)
                 reject(WebCore::ExceptionData { WebCore::InvalidStateError, "Provided applicationServerKey does not match the key in the existing subscription."_s });
@@ -313,16 +319,21 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
             }
 
             auto clientKeys = m_service.connection().generateClientKeys();
-            PushRecord record;
-            record.bundleID = m_bundleIdentifier;
-            record.securityOrigin = SecurityOrigin::createFromString(m_scope)->data().toString();
-            record.scope = m_scope;
-            record.endpoint = endpoint;
-            record.topic = WTFMove(topic);
-            record.serverVAPIDPublicKey = m_vapidPublicKey;
-            record.clientPublicKey = WTFMove(clientKeys.clientP256DHKeyPair.publicKey);
-            record.clientPrivateKey = WTFMove(clientKeys.clientP256DHKeyPair.privateKey);
-            record.sharedAuthSecret = WTFMove(clientKeys.sharedAuthSecret);
+            PushRecord record {
+                .subscriptionSetIdentifier = {
+                    m_bundleIdentifier,
+                    String(),
+                    std::nullopt
+                },
+                .securityOrigin = SecurityOrigin::createFromString(m_scope)->data().toString(),
+                .scope = m_scope,
+                .endpoint = endpoint,
+                .topic = WTFMove(topic),
+                .serverVAPIDPublicKey = m_vapidPublicKey,
+                .clientPublicKey = WTFMove(clientKeys.clientP256DHKeyPair.publicKey),
+                .clientPrivateKey = WTFMove(clientKeys.clientP256DHKeyPair.privateKey),
+                .sharedAuthSecret = WTFMove(clientKeys.sharedAuthSecret)
+            };
 
             m_database.insertRecord(record, [this](auto&& result) mutable {
                 if (!result) {
@@ -384,7 +395,7 @@ UnsubscribeRequest::UnsubscribeRequest(PushService& service, const String& bundl
 // Implements the webpushd side of PushSubscription.unsubscribe.
 void UnsubscribeRequest::startInternal()
 {
-    m_database.getRecordByBundleIdentifierAndScope(m_bundleIdentifier, m_scope, [this](auto&& result) mutable {
+    m_database.getRecordBySubscriptionSetAndScope(makeSubscriptionSet(m_bundleIdentifier), m_scope, [this](auto&& result) mutable {
         if (!result || (m_subscriptionIdentifier && *m_subscriptionIdentifier != result->identifier)) {
             fulfill(false);
             return;
@@ -509,7 +520,7 @@ void PushService::incrementSilentPushCount(const String& bundleIdentifier, const
         return;
     }
 
-    m_database->incrementSilentPushCount(bundleIdentifier, securityOrigin, [this, bundleIdentifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
+    m_database->incrementSilentPushCount(makeSubscriptionSet(bundleIdentifier), securityOrigin, [this, bundleIdentifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
         if (silentPushCount < WebKit::WebPushD::maxSilentPushCount) {
             handler(silentPushCount);
             return;
@@ -530,7 +541,7 @@ void PushService::setPushesEnabledForBundleIdentifierAndOrigin(const String& bun
         return handler();
     }
 
-    m_database->setPushesEnabledForOrigin(bundleIdentifier, securityOrigin, enabled, [this, handler = WTFMove(handler)](bool recordsChanged) mutable {
+    m_database->setPushesEnabledForOrigin(makeSubscriptionSet(bundleIdentifier), securityOrigin, enabled, [this, handler = WTFMove(handler)](bool recordsChanged) mutable {
         if (!recordsChanged)
             return handler();
         updateTopicLists(m_connection, m_database, WTFMove(handler));
@@ -570,9 +581,9 @@ void PushService::removeRecordsImpl(const String& bundleIdentifier, const std::o
     };
 
     if (securityOrigin)
-        m_database->removeRecordsByBundleIdentifierAndSecurityOrigin(bundleIdentifier, *securityOrigin, WTFMove(removedRecordsHandler));
+        m_database->removeRecordsBySubscriptionSetAndSecurityOrigin(makeSubscriptionSet(bundleIdentifier), *securityOrigin, WTFMove(removedRecordsHandler));
     else
-        m_database->removeRecordsByBundleIdentifier(bundleIdentifier, WTFMove(removedRecordsHandler));
+        m_database->removeRecordsBySubscriptionSet(makeSubscriptionSet(bundleIdentifier), WTFMove(removedRecordsHandler));
 }
 
 enum class ContentEncoding {
@@ -591,7 +602,6 @@ struct RawPushMessage {
     // Only set if encoding is ContentEncoding::AESGCM.
     Vector<uint8_t> serverPublicKey;
     Vector<uint8_t> salt;
-
 };
 
 static std::optional<Vector<uint8_t>> base64URLDecode(NSString *string)
@@ -692,7 +702,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
         auto record = WTFMove(*recordResult);
 
         if (message.encoding == ContentEncoding::Empty) {
-            m_incomingPushMessageHandler(record.bundleID, WebKit::WebPushMessage { { }, URL { record.scope } });
+            m_incomingPushMessageHandler(record.subscriptionSetIdentifier.bundleIdentifier, WebKit::WebPushMessage { { }, URL { record.scope } });
             completionHandler();
             return;
         }
@@ -714,9 +724,9 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
             return;
         }
 
-        RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{private}s", record.bundleID.utf8().data(), record.scope.utf8().data());
+        RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{private}s", record.subscriptionSetIdentifier.bundleIdentifier.utf8().data(), record.scope.utf8().data());
 
-        m_incomingPushMessageHandler(record.bundleID, WebKit::WebPushMessage { WTFMove(*decryptedPayload), URL { record.scope } });
+        m_incomingPushMessageHandler(record.subscriptionSetIdentifier.bundleIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), URL { record.scope } });
 
         completionHandler();
     });

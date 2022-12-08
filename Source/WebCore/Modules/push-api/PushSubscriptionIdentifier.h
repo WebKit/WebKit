@@ -26,10 +26,33 @@
 #pragma once
 
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/UUID.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 enum PushSubscriptionIdentifierType { };
 using PushSubscriptionIdentifier = ObjectIdentifier<PushSubscriptionIdentifierType>;
+
+struct PushSubscriptionSetIdentifier {
+    String bundleIdentifier;
+    String pushPartition;
+    std::optional<UUID> dataStoreIdentifier;
+
+    bool operator==(const PushSubscriptionSetIdentifier&) const = default;
+
+    PushSubscriptionSetIdentifier isolatedCopy() const &;
+    PushSubscriptionSetIdentifier isolatedCopy() &&;
+};
+
+inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy() const &
+{
+    return { bundleIdentifier.isolatedCopy(), pushPartition.isolatedCopy(), dataStoreIdentifier };
+}
+
+inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy() &&
+{
+    return { WTFMove(bundleIdentifier).isolatedCopy(), WTFMove(pushPartition).isolatedCopy(), dataStoreIdentifier };
+}
 
 }
