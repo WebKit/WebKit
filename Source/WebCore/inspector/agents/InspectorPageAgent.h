@@ -36,6 +36,7 @@
 #include "LayoutRect.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
