@@ -43,10 +43,10 @@ public:
     ~MessageReceiverMap();
 
     void addMessageReceiver(ReceiverName, MessageReceiver&);
-    void addMessageReceiver(ReceiverName, uint64_t destinationID, MessageReceiver&);
+    void addMessageReceiver(ReceiverName, UInt128 destinationID, MessageReceiver&);
 
     void removeMessageReceiver(ReceiverName);
-    void removeMessageReceiver(ReceiverName, uint64_t destinationID);
+    void removeMessageReceiver(ReceiverName, UInt128 destinationID);
     void removeMessageReceiver(MessageReceiver&);
 
     void invalidate();
@@ -58,7 +58,7 @@ private:
     // Message receivers that don't require a destination ID.
     HashMap<ReceiverName, WeakPtr<MessageReceiver>, WTF::IntHash<ReceiverName>, WTF::StrongEnumHashTraits<ReceiverName>> m_globalMessageReceivers;
 
-    HashMap<std::pair<ReceiverName, uint64_t>, WeakPtr<MessageReceiver>, DefaultHash<std::pair<ReceiverName, uint64_t>>, PairHashTraits<WTF::StrongEnumHashTraits<ReceiverName>, HashTraits<uint64_t>>> m_messageReceivers;
+    HashMap<std::pair<ReceiverName, UInt128>, WeakPtr<MessageReceiver>, DefaultHash<std::pair<ReceiverName, UInt128>>, PairHashTraits<WTF::StrongEnumHashTraits<ReceiverName>, HashTraits<UInt128>>> m_messageReceivers;
 };
 
 };

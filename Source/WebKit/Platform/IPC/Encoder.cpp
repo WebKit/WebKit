@@ -63,7 +63,7 @@ static inline void freeBuffer(void* addr, size_t size)
 #endif
 }
 
-Encoder::Encoder(MessageName messageName, uint64_t destinationID)
+Encoder::Encoder(MessageName messageName, UInt128 destinationID)
     : m_messageName(messageName)
     , m_destinationID(destinationID)
 {

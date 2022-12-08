@@ -130,12 +130,12 @@ void AuxiliaryProcess::addMessageReceiver(IPC::ReceiverName messageReceiverName,
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void AuxiliaryProcess::addMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
+void AuxiliaryProcess::addMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
 
-void AuxiliaryProcess::removeMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID)
+void AuxiliaryProcess::removeMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }

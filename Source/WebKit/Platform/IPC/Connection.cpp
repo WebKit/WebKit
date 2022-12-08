@@ -62,7 +62,7 @@ std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount
 Lock Connection::s_connectionMapLock;
 
 struct Connection::WaitForMessageState {
-    WaitForMessageState(MessageName messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
+    WaitForMessageState(MessageName messageName, UInt128 destinationID, OptionSet<WaitForOption> waitForOptions)
         : messageName(messageName)
         , destinationID(destinationID)
         , waitForOptions(waitForOptions)
@@ -70,7 +70,7 @@ struct Connection::WaitForMessageState {
     }
 
     MessageName messageName;
-    uint64_t destinationID;
+    UInt128 destinationID;
     OptionSet<WaitForOption> waitForOptions;
     bool messageWaitingInterrupted = false;
     std::unique_ptr<Decoder> decoder;
@@ -96,7 +96,7 @@ public:
     bool processIncomingMessage(Connection& connection, std::unique_ptr<Decoder>&) WTF_REQUIRES_LOCK(connection.m_incomingMessagesLock);
 
     // Dispatch pending sync messages.
-    void dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage = { });
+    void dispatchMessages(Function<void(MessageName, UInt128)>&& willDispatchMessage = { });
 
     // Add matching pending messages to the provided MessageReceiveQueue.
     void enqueueMatchingMessages(Connection&, MessageReceiveQueue&, const ReceiverMatcher&);
@@ -221,7 +221,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     return true;
 }
 
-void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage)
+void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, UInt128)>&& willDispatchMessage)
 {
     assertIsCurrent(m_dispatcher);
     {
@@ -300,18 +300,18 @@ HashMap<IPC::Connection::UniqueID, Connection*>& Connection::connectionMap()
 }
 
 static Lock asyncReplyHandlerMapLock;
-static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap() WTF_REQUIRES_LOCK(asyncReplyHandlerMapLock)
+static HashMap<uintptr_t, HashMap<UInt128, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap() WTF_REQUIRES_LOCK(asyncReplyHandlerMapLock)
 {
     ASSERT(asyncReplyHandlerMapLock.isHeld());
-    static NeverDestroyed<HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>> map;
+    static NeverDestroyed<HashMap<uintptr_t, HashMap<UInt128, CompletionHandler<void(Decoder*)>>>> map;
     return map.get();
 }
 
-static void addAsyncReplyHandler(Connection& connection, uint64_t identifier, CompletionHandler<void(Decoder*)> completionHandler)
+static void addAsyncReplyHandler(Connection& connection, UInt128 identifier, CompletionHandler<void(Decoder*)> completionHandler)
 {
     Locker locker { asyncReplyHandlerMapLock };
     auto result = asyncReplyHandlerMap().ensure(reinterpret_cast<uintptr_t>(&connection), [] {
-        return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
+        return HashMap<UInt128, CompletionHandler<void(Decoder*)>>();
     }).iterator->value.add(identifier, WTFMove(completionHandler));
     ASSERT_UNUSED(result, result.isNewEntry);
 }
@@ -399,7 +399,7 @@ void Connection::removeMessageReceiveQueue(const ReceiverMatcher& receiverMatche
     m_receiveQueues.remove(receiverMatcher);
 }
 
-void Connection::addWorkQueueMessageReceiver(ReceiverName receiverName, WorkQueue& workQueue, WorkQueueMessageReceiver& receiver, uint64_t destinationID)
+void Connection::addWorkQueueMessageReceiver(ReceiverName receiverName, WorkQueue& workQueue, WorkQueueMessageReceiver& receiver, UInt128 destinationID)
 {
     auto receiverMatcher = ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID);
 
@@ -409,12 +409,12 @@ void Connection::addWorkQueueMessageReceiver(ReceiverName receiverName, WorkQueu
     m_receiveQueues.add(WTFMove(receiveQueue), receiverMatcher);
 }
 
-void Connection::removeWorkQueueMessageReceiver(ReceiverName receiverName, uint64_t destinationID)
+void Connection::removeWorkQueueMessageReceiver(ReceiverName receiverName, UInt128 destinationID)
 {
     removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
 }
 
-void Connection::addMessageReceiver(FunctionDispatcher& dispatcher, MessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
+void Connection::addMessageReceiver(FunctionDispatcher& dispatcher, MessageReceiver& receiver, ReceiverName receiverName, UInt128 destinationID)
 {
     auto receiverMatcher = ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID);
     auto receiveQueue = makeUnique<FunctionDispatcherQueue>(dispatcher, receiver);
@@ -423,7 +423,7 @@ void Connection::addMessageReceiver(FunctionDispatcher& dispatcher, MessageRecei
     m_receiveQueues.add(WTFMove(receiveQueue), receiverMatcher);
 }
 
-void Connection::removeMessageReceiver(ReceiverName receiverName, uint64_t destinationID)
+void Connection::removeMessageReceiver(ReceiverName receiverName, UInt128 destinationID)
 {
     removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
 }
@@ -507,7 +507,7 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
     m_didReceiveInvalidMessage = true;
 }
 
-UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName, uint64_t destinationID, SyncRequestID& syncRequestID)
+UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName, UInt128 destinationID, SyncRequestID& syncRequestID)
 {
     auto encoder = makeUniqueRef<Encoder>(messageName, destinationID);
 
@@ -600,7 +600,7 @@ Timeout Connection::timeoutRespectingIgnoreTimeoutsForTesting(Timeout timeout) c
     return m_ignoreTimeoutsForTesting ? Timeout::infinity() : timeout;
 }
 
-std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
+std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, UInt128 destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     if (!isValid())
         return nullptr;
@@ -660,7 +660,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
     while (true) {
         // Handle any messages that are blocked on a response from us.
         bool wasMessageToWaitForAlreadyDispatched = false;
-        m_syncState->dispatchMessages([&](auto nameOfMessageToDispatch, uint64_t destinationOfMessageToDispatch) {
+        m_syncState->dispatchMessages([&](auto nameOfMessageToDispatch, UInt128 destinationOfMessageToDispatch) {
             wasMessageToWaitForAlreadyDispatched |= messageName == nameOfMessageToDispatch && destinationID == destinationOfMessageToDispatch;
         });
 
@@ -1367,7 +1367,7 @@ uint64_t nextAsyncReplyHandlerID()
 
 void clearAsyncReplyHandlers(const Connection& connection)
 {
-    HashMap<uint64_t, CompletionHandler<void(Decoder*)>> map;
+    HashMap<UInt128, CompletionHandler<void(Decoder*)>> map;
     {
         Locker locker { asyncReplyHandlerMapLock };
         map = asyncReplyHandlerMap().take(reinterpret_cast<uintptr_t>(&connection));
@@ -1379,7 +1379,7 @@ void clearAsyncReplyHandlers(const Connection& connection)
     }
 }
 
-CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, uint64_t identifier)
+CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, UInt128 identifier)
 {
     Locker locker { asyncReplyHandlerMapLock };
     auto& map = asyncReplyHandlerMap();

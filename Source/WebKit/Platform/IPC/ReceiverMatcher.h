@@ -26,6 +26,7 @@
 #pragma once
 
 #include <optional>
+#include <wtf/Int128.h>
 
 namespace IPC {
 
@@ -41,27 +42,27 @@ struct ReceiverMatcher {
 
     // Matches message to specific receiver, specific destination ID.
     // Note: destinationID == 0 matches only 0 ids.
-    ReceiverMatcher(ReceiverName receiverName, uint64_t destinationID)
+    ReceiverMatcher(ReceiverName receiverName, UInt128 destinationID)
         : receiverName(receiverName)
         , destinationID(destinationID)
     {
     }
 
     // Creates a matcher from parameters where destinationID == 0 means any destintation ID. Deprecated.
-    static ReceiverMatcher createWithZeroAsAnyDestination(ReceiverName receiverName, uint64_t destinationID)
+    static ReceiverMatcher createWithZeroAsAnyDestination(ReceiverName receiverName, UInt128 destinationID)
     {
         if (destinationID)
             return ReceiverMatcher { receiverName, destinationID };
         return ReceiverMatcher { receiverName };
     }
 
-    bool matches(ReceiverName matchReceiverName, uint64_t matchDestinationID) const
+    bool matches(ReceiverName matchReceiverName, UInt128 matchDestinationID) const
     {
         return !receiverName || (*receiverName == matchReceiverName && (!destinationID || *destinationID == matchDestinationID));
     }
 
     std::optional<ReceiverName> receiverName;
-    std::optional<uint64_t> destinationID;
+    std::optional<UInt128> destinationID;
 };
 
 }

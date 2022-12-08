@@ -29,6 +29,7 @@
 #include "MessageReceiveQueue.h"
 #include <variant>
 #include <wtf/HashMap.h>
+#include <wtf/Int128.h>
 
 namespace IPC {
 
@@ -52,7 +53,7 @@ public:
 private:
     using StoreType = std::variant<MessageReceiveQueue*, std::unique_ptr<MessageReceiveQueue>>;
     void addImpl(StoreType&&, const ReceiverMatcher&);
-    using QueueMap = HashMap<std::pair<uint8_t, uint64_t>, StoreType>;
+    using QueueMap = HashMap<std::pair<uint8_t, UInt128>, StoreType>;
     // Key is ReceiverName. FIXME: make it possible to use ReceiverName.
     using AnyIDQueueMap = HashMap<uint8_t, StoreType>;
     QueueMap m_queues;

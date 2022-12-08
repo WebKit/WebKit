@@ -207,7 +207,7 @@ private:
     static void initialize(JSContextRef, JSObjectRef);
     static void finalize(JSObjectRef);
 
-    static bool prepareToSendOutOfStreamMessage(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSIPC&, IPC::StreamClientConnection&, IPC::Encoder&, uint64_t destinationID, IPC::Timeout, JSValueRef* exception);
+    static bool prepareToSendOutOfStreamMessage(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSIPC&, IPC::StreamClientConnection&, IPC::Encoder&, UInt128 destinationID, IPC::Timeout, JSValueRef* exception);
 
     static const JSStaticFunction* staticFunctions();
     static JSValueRef open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
@@ -501,7 +501,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 namespace {
 
 struct SyncIPCMessageInfo {
-    uint64_t destinationID;
+    UInt128 destinationID;
     IPC::MessageName messageName;
     IPC::Timeout timeout;
 };
@@ -986,7 +986,7 @@ JSValueRef JSIPCStreamClientConnection::setSemaphores(JSContextRef context, JSOb
 }
 
 struct IPCStreamMessageInfo {
-    uint64_t destinationID;
+    UInt128 destinationID;
     IPC::MessageName messageName;
     IPC::Timeout timeout;
 };
@@ -1020,7 +1020,7 @@ static std::optional<IPCStreamMessageInfo> extractIPCStreamMessageInfo(JSContext
     return { { *destinationID, static_cast<IPC::MessageName>(*messageID), { timeoutDuration } } };
 }
 
-bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSIPC& jsIPC, IPC::StreamClientConnection& streamConnection, IPC::Encoder& encoder, uint64_t destinationID, IPC::Timeout timeout, JSValueRef* exception)
+bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSIPC& jsIPC, IPC::StreamClientConnection& streamConnection, IPC::Encoder& encoder, UInt128 destinationID, IPC::Timeout timeout, JSValueRef* exception)
 {
     // FIXME: Add support for sending in-stream IPC messages when appropriate.
     if (argumentCount > 3) {
@@ -2881,7 +2881,13 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, String::fromLatin1(IPC::description(decoder.messageName()))));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(decoder.destinationID()));
+    JSC::JSObject* array = JSC::constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    array->putDirectIndex(globalObject, 0, JSC::JSValue(static_cast<uint64_t>(decoder.destinationID())));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    array->putDirectIndex(globalObject, 1, JSC::JSValue(static_cast<uint64_t>(decoder.destinationID() >> 64)));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(array));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (decoder.isSyncMessage()) {

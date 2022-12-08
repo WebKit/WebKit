@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 
 struct MessageInfo {
     IPC::MessageName messageName;
-    uint64_t destinationID;
+    UInt128 destinationID;
 };
 
 struct MockTestMessage1 {

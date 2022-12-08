@@ -47,7 +47,7 @@ void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, Me
     m_globalMessageReceivers.set(messageReceiverName, messageReceiver);
 }
 
-void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, uint64_t destinationID, MessageReceiver& messageReceiver)
+void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, UInt128 destinationID, MessageReceiver& messageReceiver)
 {
     ASSERT(destinationID);
     ASSERT(!m_messageReceivers.contains(std::make_pair(messageReceiverName, destinationID)));
@@ -70,7 +70,7 @@ void MessageReceiverMap::removeMessageReceiver(ReceiverName messageReceiverName)
     m_globalMessageReceivers.remove(it);
 }
 
-void MessageReceiverMap::removeMessageReceiver(ReceiverName messageReceiverName, uint64_t destinationID)
+void MessageReceiverMap::removeMessageReceiver(ReceiverName messageReceiverName, UInt128 destinationID)
 {
     auto it = m_messageReceivers.find(std::make_pair(messageReceiverName, destinationID));
     if (it == m_messageReceivers.end()) {

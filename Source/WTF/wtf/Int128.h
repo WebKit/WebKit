@@ -40,6 +40,9 @@
 #include <iosfwd>
 #include <limits>
 #include <utility>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/Platform.h>
 
 #if COMPILER(MSVC)
@@ -190,6 +193,8 @@ class alignas(16) UInt128Impl {
   //
   // Returns the highest value for a 128-bit unsigned integer.
   friend constexpr UInt128Impl UInt128Max();
+
+  bool isHashTableDeletedValue() const { return lo_ == std::numeric_limits<uint64_t>::max() && hi_ == std::numeric_limits<uint64_t>::max(); }
 
  private:
   constexpr UInt128Impl(uint64_t high, uint64_t low);
@@ -396,6 +401,8 @@ class alignas(16) Int128Impl {
   // Returns the minimum value for a 128-bit signed integer.
   friend constexpr Int128Impl Int128Min();
 
+  bool isHashTableDeletedValue() const { return lo_ == std::numeric_limits<uint64_t>::max() && hi_ == std::numeric_limits<int64_t>::max(); }
+    
  private:
   constexpr Int128Impl(int64_t high, uint64_t low);
 
@@ -1264,10 +1271,72 @@ using UInt128 = UInt128Impl;
 using Int128 = Int128Impl;
 #endif
 
+template<> struct DefaultHash<UInt128> {
+    static unsigned hash(const UInt128& i) { return pairIntHash(static_cast<uint64_t>(i >> 64), static_cast<uint64_t>(i)); }
+    static bool equal(const UInt128& a, const UInt128& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+template<> struct DefaultHash<Int128> {
+    static unsigned hash(const UInt128& i) { return pairIntHash(static_cast<uint64_t>(i >> 64), static_cast<uint64_t>(i)); }
+    static bool equal(const Int128& a, const Int128& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+#if !HAVE(INT128_T)
+template<> struct HashTraits<UInt128> : public SimpleClassHashTraits<UInt128> { };
+template<> struct HashTraits<Int128> : public SimpleClassHashTraits<Int128> { };
+#endif
+
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, UInt128);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, Int128);
 
 }  // namespace WTF
+
+#if !HAVE(INT128_T)
+namespace IPC {
+template<> struct ArgumentCoder<WTF::UInt128> {
+    template<typename Encoder> static void encode(Encoder& encoder, const WTF::UInt128& i)
+    {
+        encoder << WTF::UInt128High64(i);
+        encoder << WTF::UInt128Low64(i);
+    }
+    template<typename Decoder> static std::optional<WTF::UInt128> decode(Decoder& decoder)
+    {
+        std::optional<uint64_t> high;
+        decoder >> high;
+        if (!high)
+            return std::nullopt;
+
+        std::optional<uint64_t> low;
+        decoder >> low;
+        if (!low)
+            return std::nullopt;
+
+        return WTF::MakeUInt128(*high, *low);
+    }
+};
+template<> struct ArgumentCoder<WTF::Int128> {
+    template<typename Encoder> static void encode(Encoder& encoder, const WTF::Int128& i)
+    {
+        encoder << WTF::Int128High64(i);
+        encoder << WTF::Int128Low64(i);
+    }
+    template<typename Decoder> static std::optional<WTF::Int128> decode(Decoder& decoder)
+    {
+        std::optional<int64_t> high;
+        decoder >> high;
+        if (!high)
+            return std::nullopt;
+
+        std::optional<uint64_t> low;
+        decoder >> low;
+        if (!low)
+            return std::nullopt;
+
+        return WTF::MakeInt128(*high, *low);
+    }
+};
+}
+#endif
 
 using WTF::Int128;
 using WTF::UInt128;
