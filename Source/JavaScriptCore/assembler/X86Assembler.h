@@ -297,7 +297,6 @@ private:
         OP2_PSHUFHW_VdqWdqIb            = 0x70,
         OP2_PSLLQ_UdqIb                 = 0x73,
         OP2_PSRLQ_UdqIb                 = 0x73,
-        OP2_PCMPEQW_VdqWdq              = 0x75,
         OP2_MOVD_EdVd                   = 0x7E,
         OP2_JCC_rel32                   = 0x80,
         OP_SETCC                        = 0x90,
@@ -327,19 +326,15 @@ private:
         OP2_BSWAP                       = 0xC8,
         OP2_PSUBUSB_VdqWdq              = 0xD8,
         OP2_PSUBUSW_VdqWdq              = 0xD9,
-        OP2_PMINUB_VdqWdq               = 0xDA,
         OP2_PADDUSB_VdqWdq              = 0xDC,
         OP2_PADDUSW_VdqWdq              = 0xDD,
-        OP2_PMAXUB_VdqWdq               = 0xDE,
         OP2_PAVGB_VdqWdq                = 0xE0,
         OP2_PAVGW_VdqWdq                = 0xE3,
         OP2_PSUBSB_VdqWdq               = 0xE8,
         OP2_PSUBSW_VdqWdq               = 0xE9,
-        OP2_PMINSW_VdqWdq               = 0xEA,
         OP2_POR_VdqWdq                  = 0XEB,
         OP2_PADDSB_VdqWdq               = 0xEC,
         OP2_PADDSW_VdqWdq               = 0xED,
-        OP2_PMAXSW_VdqWdq               = 0xEE,
         OP2_PXOR_VdqWdq                 = 0xEF,
         OP2_PADDB_VdqWdq                = 0xFC,
         OP2_PADDW_VdqWdq                = 0xFD,
@@ -360,7 +355,19 @@ private:
         OP2_DIVPD_VpdWpd                = 0x5E,
         OP2_SQRTPS_VpsWps               = 0x51,
         OP2_SQRTPD_VpdWpd               = 0x51,
-        OP2_PMADDWD_VdqWdq              = 0xF5
+        OP2_PMADDWD_VdqWdq              = 0xF5,
+        OP2_PCMPEQB_VdqWdq              = 0x74,
+        OP2_PCMPEQW_VdqWdq              = 0x75,
+        OP2_PCMPEQD_VdqWdq              = 0x76,
+        OP2_PCMPGTB_VdqWdq              = 0x64,
+        OP2_PCMPGTW_VdqWdq              = 0x65,
+        OP2_PCMPGTD_VdqWdq              = 0x66,
+        OP2_CMPPS_VpsWpsIb              = 0xC2,
+        OP2_CMPPD_VpdWpdIb              = 0xC2,
+        OP2_PMAXSW_VdqWdq               = 0xEE,
+        OP2_PMAXUB_VdqWdq               = 0xDE,
+        OP2_PMINSW_VdqWdq               = 0xEA,
+        OP2_PMINUB_VdqWdq               = 0xDA
     } TwoByteOpcodeID;
     
     typedef enum {
@@ -377,21 +384,23 @@ private:
         OP3_INSERTPS_VpsUpsIb   = 0x21,
         OP3_PINSRB              = 0x20,
         OP3_PINSRD              = 0x22,
-        OP3_PMINSB_VdqWdq       = 0x38,
-        OP3_PMINSD_VdqWdq       = 0x39,
-        OP3_PMINUW_VdqWdq       = 0x3A,
-        OP3_PMINUD_VdqWdq       = 0x3B,
-        OP3_PMAXSB_VdqWdq       = 0x3C,
-        OP3_PMAXSD_VdqWdq       = 0x3D,
-        OP3_PMAXUW_VdqWdq       = 0x3E,
-        OP3_PMAXUD_VdqWdq       = 0x3F,
         OP3_BLENDVPD_VpdWpdXMM0 = 0x4B,
         OP3_LFENCE              = 0xE8,
         OP3_MFENCE              = 0xF0,
         OP3_SFENCE              = 0xF8,
         OP3_ROUNDPS_VpsWpsIb    = 0x08,
         OP3_ROUNDPD_VpdWpdIb    = 0x09,
-        OP3_PMULLD_VdqWdq       = 0x40
+        OP3_PMULLD_VdqWdq       = 0x40,
+        OP3_PCMPEQQ_VdqWdq      = 0x29,
+        OP3_PCMPGTQ_VdqWdq      = 0x37,
+        OP3_PMAXSB_VdqWdq       = 0x3C,
+        OP3_PMAXSD_VdqWdq       = 0x3D,
+        OP3_PMAXUW_VdqWdq       = 0x3E,
+        OP3_PMAXUD_VdqWdq       = 0x3F,
+        OP3_PMINSB_VdqWdq       = 0x38,
+        OP3_PMINSD_VdqWdq       = 0x39,
+        OP3_PMINUW_VdqWdq       = 0x3A,
+        OP3_PMINUD_VdqWdq       = 0x3B
     } ThreeByteOpcodeID;
 
     struct VexPrefix {
@@ -3221,6 +3230,70 @@ public:
     void vpmaddwd_rrr(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
         m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PMADDWD_VdqWdq, (RegisterID)dest, (RegisterID)a, (RegisterID)b);
+    }
+
+    void vpcmpeqb_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPEQB_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+    }
+
+    void vpcmpeqd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPEQD_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+    }
+
+    void vpcmpeqq_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_OPERAND_SIZE, VexImpliedBytes::ThreeBytesOp38, OP3_PCMPEQQ_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+    }
+
+    void vpcmpgtb_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPGTB_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+    }
+
+    void vpcmpgtw_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPGTW_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+    }
+
+    void vpcmpgtd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPGTD_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+    }
+
+    void vpcmpgtq_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_OPERAND_SIZE, VexImpliedBytes::ThreeBytesOp38, OP3_PCMPGTQ_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+    }
+
+    enum class PackedCompareCondition : uint8_t {
+        Equal = 0,
+        LessThan = 1,
+        LessThanOrEqual = 2,
+        Unordered = 3,
+        NotEqual = 4,
+        GreaterThanOrEqual = 5, // Also called "NotLessThan" in the Intel manual
+        GreaterThan = 6, // Also called "NotLessThanOrEqual" in the Intel manual
+        Ordered = 7
+    };
+
+    void vcmpps_rr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        if (condition == PackedCompareCondition::Equal || condition == PackedCompareCondition::NotEqual)
+            m_formatter.vexNdsLigWigCommutativeTwoByteOp((OneByteOpcodeID)0, OP2_CMPPS_VpsWpsIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        else
+            m_formatter.vexNdsLigWigTwoByteOp((OneByteOpcodeID)0, OP2_CMPPS_VpsWpsIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.immediate8(static_cast<uint8_t>(condition));
+    }
+
+    void vcmppd_rr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    {
+        if (condition == PackedCompareCondition::Equal || condition == PackedCompareCondition::NotEqual)
+            m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_CMPPD_VpdWpdIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        else
+            m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_CMPPD_VpdWpdIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.immediate8(static_cast<uint8_t>(condition));
     }
 
     void movl_rr(RegisterID src, RegisterID dst)

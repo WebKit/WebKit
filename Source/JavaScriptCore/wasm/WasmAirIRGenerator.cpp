@@ -593,8 +593,49 @@ public:
             append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
             return { };
         }
+
         if (isValidForm(airOp, Arg::RelCond, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-            append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+            if (isX86()) {
+                // On Intel, the best codegen for a bitwise-complement of an integer vector is to
+                // XOR with a vector of all ones. This is necessary here since Intel also doesn't
+                // directly implement most relational conditions between vectors: the cases below
+                // are best emitted as inversions of conditions that are supported.
+                v128_t allOnes;
+                allOnes.u64x2[0] = 0xffffffffffffffff;
+                allOnes.u64x2[1] = 0xffffffffffffffff;
+
+                switch (relOp.asRelationalCondition()) {
+                case MacroAssembler::NotEqual:
+                    append(airOp, Arg::relCond(MacroAssembler::Equal), Arg::simdInfo(info), lhs, rhs, result);
+                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    break;
+                case MacroAssembler::Above:
+                    append(airOp, Arg::relCond(MacroAssembler::BelowOrEqual), Arg::simdInfo(info), lhs, rhs, result);
+                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    break;
+                case MacroAssembler::Below:
+                    append(airOp, Arg::relCond(MacroAssembler::AboveOrEqual), Arg::simdInfo(info), lhs, rhs, result);
+                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    break;
+                case MacroAssembler::GreaterThanOrEqual:
+                    if (info.lane == SIMDLane::i64x2) {
+                        append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), rhs, lhs, result);
+                        append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    } else
+                        append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+                    break;
+                case MacroAssembler::LessThanOrEqual:
+                    if (info.lane == SIMDLane::i64x2) {
+                        append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), lhs, rhs, result);
+                        append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    } else
+                        append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+                    break;
+                default:
+                    append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+                }
+            } else
+                append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
             return { };
         }
         RELEASE_ASSERT_NOT_REACHED();

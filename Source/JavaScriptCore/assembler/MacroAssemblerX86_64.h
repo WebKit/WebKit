@@ -2254,23 +2254,47 @@ public:
 
     void compareFloatingPointVector(DoubleCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
+        RELEASE_ASSERT(supportsAVXForSIMD());
         RELEASE_ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+
+        using PackedCompareCondition = X86Assembler::PackedCompareCondition;
 
         switch (cond) {
         case DoubleEqualAndOrdered:
+            if (simdInfo.lane == SIMDLane::f32x4)
+                m_assembler.vcmpps_rr(PackedCompareCondition::Equal, left, right, dest);
+            else
+                m_assembler.vcmppd_rr(PackedCompareCondition::Equal, left, right, dest);
             break;
         case DoubleNotEqualOrUnordered:
+            if (simdInfo.lane == SIMDLane::f32x4)
+                m_assembler.vcmpps_rr(PackedCompareCondition::NotEqual, left, right, dest);
+            else
+                m_assembler.vcmppd_rr(PackedCompareCondition::NotEqual, left, right, dest);
             break;
         case DoubleGreaterThanAndOrdered:
+            if (simdInfo.lane == SIMDLane::f32x4)
+                m_assembler.vcmpps_rr(PackedCompareCondition::GreaterThan, left, right, dest);
+            else
+                m_assembler.vcmppd_rr(PackedCompareCondition::GreaterThan, left, right, dest);
             break;
         case DoubleGreaterThanOrEqualAndOrdered:
+            if (simdInfo.lane == SIMDLane::f32x4)
+                m_assembler.vcmpps_rr(PackedCompareCondition::GreaterThanOrEqual, left, right, dest);
+            else
+                m_assembler.vcmppd_rr(PackedCompareCondition::GreaterThanOrEqual, left, right, dest);
             break;
         case DoubleLessThanAndOrdered:
-            // a < b   =>   b > a
+            if (simdInfo.lane == SIMDLane::f32x4)
+                m_assembler.vcmpps_rr(PackedCompareCondition::LessThan, left, right, dest);
+            else
+                m_assembler.vcmppd_rr(PackedCompareCondition::LessThan, left, right, dest);
             break;
         case DoubleLessThanOrEqualAndOrdered:
-            // a <= b   =>   b >= a
+            if (simdInfo.lane == SIMDLane::f32x4)
+                m_assembler.vcmpps_rr(PackedCompareCondition::LessThanOrEqual, left, right, dest);
+            else
+                m_assembler.vcmppd_rr(PackedCompareCondition::LessThanOrEqual, left, right, dest);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2279,33 +2303,166 @@ public:
 
     void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
+        RELEASE_ASSERT(supportsAVXForSIMD());
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
 
         switch (cond) {
         case Equal:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpcmpeqb_rr(left, right, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpcmpeqw_rr(left, right, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpcmpeqd_rr(left, right, dest);
+                break;
+            case SIMDLane::i64x2:
+                m_assembler.vpcmpeqq_rr(left, right, dest);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
             break;
         case NotEqual:
+            // NotEqual comparisons are implemented by negating Equal on Intel, which should be
+            // handled before we ever reach this point.
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector NotEqual comparisons directly.");
             break;
         case Above:
+            // Above comparisons are implemented by negating BelowOrEqual on Intel, which should be
+            // handled before we ever reach this point.
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector Above comparisons directly.");
             break;
         case AboveOrEqual:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpmaxub_rr(left, right, dest);
+                m_assembler.vpcmpeqb_rr(left, dest, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpmaxuw_rr(left, right, dest);
+                m_assembler.vpcmpeqw_rr(left, dest, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpmaxud_rr(left, right, dest);
+                m_assembler.vpcmpeqd_rr(left, dest, dest);
+                break;
+            case SIMDLane::i64x2:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("i64x2 unsigned comparisons are not supported.");
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
             break;
         case Below:
-            // a < b  =>  b > a
+            // Below comparisons are implemented by negating AboveOrEqual on Intel, which should be
+            // handled before we ever reach this point.
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector Below comparisons directly.");
             break;
         case BelowOrEqual:
-            // a <= b  =>  b >= a
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpminub_rr(left, right, dest);
+                m_assembler.vpcmpeqb_rr(left, dest, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpminuw_rr(left, right, dest);
+                m_assembler.vpcmpeqw_rr(left, dest, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpminud_rr(left, right, dest);
+                m_assembler.vpcmpeqd_rr(left, dest, dest);
+                break;
+            case SIMDLane::i64x2:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("i64x2 unsigned comparisons are not supported.");
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
             break;
         case GreaterThan:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpcmpgtb_rr(left, right, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpcmpgtw_rr(left, right, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpcmpgtd_rr(left, right, dest);
+                break;
+            case SIMDLane::i64x2:
+                m_assembler.vpcmpgtq_rr(left, right, dest);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
             break;
         case GreaterThanOrEqual:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpmaxsb_rr(left, right, dest);
+                m_assembler.vpcmpeqb_rr(left, dest, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpmaxsw_rr(left, right, dest);
+                m_assembler.vpcmpeqw_rr(left, dest, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpmaxsd_rr(left, right, dest);
+                m_assembler.vpcmpeqd_rr(left, dest, dest);
+                break;
+            case SIMDLane::i64x2:
+                // Intel doesn't support 64-bit packed maximum/minimum without AVX512, so this condition should have been transformed
+                // into a negated LessThan prior to reaching the macro assembler.
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector GreaterThanOrEqual comparisons directly.");
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
             break;
         case LessThan:
-            // a < b  =>  b > a
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpcmpgtb_rr(right, left, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpcmpgtw_rr(right, left, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpcmpgtd_rr(right, left, dest);
+                break;
+            case SIMDLane::i64x2:
+                m_assembler.vpcmpgtq_rr(right, left, dest);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
             break;
         case LessThanOrEqual:
-            // a <= b  =>  b >= a
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpminsb_rr(left, right, dest);
+                m_assembler.vpcmpeqb_rr(left, dest, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpminsw_rr(left, right, dest);
+                m_assembler.vpcmpeqw_rr(left, dest, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpminsd_rr(left, right, dest);
+                m_assembler.vpcmpeqd_rr(left, dest, dest);
+                break;
+            case SIMDLane::i64x2:
+                // Intel doesn't support 64-bit packed maximum/minimum without AVX512, so this condition should have been transformed
+                // into a negated GreaterThan prior to reaching the macro assembler.
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector LessThanOrEqual comparisons directly.");
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
