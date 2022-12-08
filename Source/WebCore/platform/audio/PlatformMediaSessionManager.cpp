@@ -93,7 +93,6 @@ void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 
 void PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary()
 {
-    fprintf(stderr, "PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary %p\n", PlatformMediaSessionManager::sharedManagerIfExists());
     if (auto existingManager = PlatformMediaSessionManager::sharedManagerIfExists())
         existingManager->scheduleUpdateSessionState();
 }

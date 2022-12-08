@@ -42,13 +42,13 @@ public:
 
     virtual ~TimingFunction() = default;
 
-    enum class TimingFunctionType { LinearFunction, CubicBezierFunction, StepsFunction, SpringFunction };
-    virtual TimingFunctionType type() const = 0;
+    enum class Type { LinearFunction, CubicBezierFunction, StepsFunction, SpringFunction };
+    virtual Type type() const = 0;
 
-    bool isLinearTimingFunction() const { return type() == TimingFunctionType::LinearFunction; }
-    bool isCubicBezierTimingFunction() const { return type() == TimingFunctionType::CubicBezierFunction; }
-    bool isStepsTimingFunction() const { return type() == TimingFunctionType::StepsFunction; }
-    bool isSpringTimingFunction() const { return type() == TimingFunctionType::SpringFunction; }
+    bool isLinearTimingFunction() const { return type() == Type::LinearFunction; }
+    bool isCubicBezierTimingFunction() const { return type() == Type::CubicBezierFunction; }
+    bool isStepsTimingFunction() const { return type() == Type::StepsFunction; }
+    bool isSpringTimingFunction() const { return type() == Type::SpringFunction; }
 
     virtual bool operator==(const TimingFunction&) const = 0;
     bool operator!=(const TimingFunction& other) const { return !(*this == other); }
@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    TimingFunctionType type() const final { return TimingFunctionType::LinearFunction; }
+    Type type() const final { return Type::LinearFunction; }
     Ref<TimingFunction> clone() const final
     {
         return adoptRef(*new LinearTimingFunction);
@@ -163,7 +163,7 @@ private:
     {
     }
 
-    TimingFunctionType type() const final { return TimingFunctionType::CubicBezierFunction; }
+    Type type() const final { return Type::CubicBezierFunction; }
     Ref<TimingFunction> clone() const final
     {
         return adoptRef(*new CubicBezierTimingFunction(m_timingFunctionPreset, m_x1, m_y1, m_x2, m_y2));
@@ -228,7 +228,7 @@ private:
     {
     }
 
-    TimingFunctionType type() const final { return TimingFunctionType::StepsFunction; }
+    Type type() const final { return Type::StepsFunction; }
     Ref<TimingFunction> clone() const final
     {
         return adoptRef(*new StepsTimingFunction(m_steps, m_stepPosition));
@@ -274,7 +274,7 @@ private:
     {
     }
 
-    TimingFunctionType type() const final { return TimingFunctionType::SpringFunction; }
+    Type type() const final { return Type::SpringFunction; }
     Ref<TimingFunction> clone() const final
     {
         return adoptRef(*new SpringTimingFunction(m_mass, m_stiffness, m_damping, m_initialVelocity));
@@ -325,13 +325,13 @@ template<> struct EnumTraits<WebCore::StepsTimingFunction::StepPosition> {
     >;
 };
 
-template<> struct EnumTraits<WebCore::TimingFunction::TimingFunctionType> {
+template<> struct EnumTraits<WebCore::TimingFunction::Type> {
     using values = EnumValues<
-        WebCore::TimingFunction::TimingFunctionType,
-        WebCore::TimingFunction::TimingFunctionType::LinearFunction,
-        WebCore::TimingFunction::TimingFunctionType::CubicBezierFunction,
-        WebCore::TimingFunction::TimingFunctionType::StepsFunction,
-        WebCore::TimingFunction::TimingFunctionType::SpringFunction
+        WebCore::TimingFunction::Type,
+        WebCore::TimingFunction::Type::LinearFunction,
+        WebCore::TimingFunction::Type::CubicBezierFunction,
+        WebCore::TimingFunction::Type::StepsFunction,
+        WebCore::TimingFunction::Type::SpringFunction
     >;
 };
 

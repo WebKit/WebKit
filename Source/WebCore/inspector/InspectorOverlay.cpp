@@ -803,7 +803,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     IntPoint scrollOffset;
 
     FrameView* pageView = m_page.mainFrame().view();
-    if (!pageView->delegatesScrolling())
+    if (!pageView->delegatesScrollingToNativeView())
         scrollOffset = pageView->visibleContentRect().location();
 
     FloatSize viewportSize = pageView->sizeForVisibleContent();

@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+    </head>
+    <body>
+        <audio id="audio"></audio>
+        <script>
+promise_test(async (test) => {
+    assert_equals(navigator.audioSession.type, "auto");
+
+    if (!window.internals)
+        return;
+
+    navigator.audioSession.type = "play-and-record";
+    assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
+
+    const audioCtx = new AudioContext();
+    const oscillator = audioCtx.createOscillator();
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // value in hertz
+    oscillator.connect(audioCtx.destination);
+    oscillator.start();
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_equals(navigator.audioSession.type, "play-and-record");
+    assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
+}, "AudioSession type with web audio");
+        </script>
+    </body>
+</html>

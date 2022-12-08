@@ -37,15 +37,9 @@ public:
         struct LogicalGradient {
             Ref<Gradient> gradient;
             AffineTransform spaceTransform;
-
-            template<typename Encoder> void encode(Encoder&) const;
-            template<typename Decoder> static std::optional<LogicalGradient> decode(Decoder&);
         };
 
         std::variant<LogicalGradient, Ref<Pattern>> brush;
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<Brush> decode(Decoder&);
     };
 
     SourceBrush() = default;
@@ -65,9 +59,6 @@ public:
 
     bool isInlineColor() const { return !m_brush && m_color.tryGetAsSRGBABytes(); }
     bool isVisible() const { return m_brush || m_color.isVisible(); }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SourceBrush> decode(Decoder&);
 
 private:
     Color m_color { Color::black };
@@ -113,85 +104,6 @@ inline bool operator==(const SourceBrush& a, const SourceBrush& b)
 inline bool operator!=(const SourceBrush& a, const SourceBrush& b)
 {
     return !(a == b);
-}
-
-template<typename Encoder>
-void SourceBrush::Brush::LogicalGradient::encode(Encoder& encoder) const
-{
-    encoder << gradient.get();
-    encoder << spaceTransform;
-}
-
-template<typename Decoder>
-std::optional<SourceBrush::Brush::LogicalGradient> SourceBrush::Brush::LogicalGradient::decode(Decoder& decoder)
-{
-    auto gradient = Gradient::decode(decoder);
-    if (!gradient)
-        return std::nullopt;
-    
-    std::optional<AffineTransform> spaceTransform;
-    decoder >> spaceTransform;
-    if (!spaceTransform)
-        return std::nullopt;
-
-    return { { WTFMove(*gradient), *spaceTransform } };
-}
-
-template<typename Encoder>
-void SourceBrush::Brush::encode(Encoder& encoder) const
-{
-    WTF::switchOn(brush,
-        [&] (const LogicalGradient& gradient) {
-            encoder << true << gradient;
-        },
-        [&] (const Ref<Pattern>& pattern) {
-            encoder << false << pattern.get();
-        }
-    );
-}
-
-template<typename Decoder>
-std::optional<SourceBrush::Brush> SourceBrush::Brush::decode(Decoder& decoder)
-{
-    std::optional<bool> hasGradient;
-    decoder >> hasGradient;
-    if (!hasGradient)
-        return std::nullopt;
-
-    if (*hasGradient) {
-        auto gradient = LogicalGradient::decode(decoder);
-        if (!gradient)
-            return std::nullopt;
-        return { { WTFMove(*gradient) } };
-    }
-
-    auto pattern = Pattern::decode(decoder);
-    if (!pattern)
-        return std::nullopt;
-    return { { WTFMove(*pattern) } };
-}
-
-template<class Encoder>
-void SourceBrush::encode(Encoder& encoder) const
-{
-    encoder << m_color;
-    encoder << m_brush;
-}
-
-template<class Decoder>
-std::optional<SourceBrush> SourceBrush::decode(Decoder& decoder)
-{
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    std::optional<std::optional<Brush>> brush;
-    decoder >> brush;
-    if (!brush)
-        return std::nullopt;
-
-    return SourceBrush(*color, WTFMove(*brush));
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SourceBrush&);

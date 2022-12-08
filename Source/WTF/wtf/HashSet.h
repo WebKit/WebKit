@@ -132,6 +132,40 @@ public:
     TakeType take(iterator);
     TakeType takeAny();
 
+    // Returns a new set with the elements of both this and the given
+    // collection (a.k.a. OR).
+    template<typename OtherCollection>
+    HashSet unionWith(const OtherCollection&) const;
+
+    // Returns a new set with the elements that are common to both this
+    // set and the given collection (a.k.a. AND).
+    //
+    // NOTE: OtherCollection is required to implement `bool contains(Value)`.
+    template<typename OtherCollection>
+    HashSet intersectionWith(const OtherCollection&) const;
+
+    // Returns a new set with the elements that are either in this set or
+    // in the given collection, but not in both. (a.k.a. XOR).
+    template<typename OtherCollection>
+    HashSet symmetricDifferenceWith(const OtherCollection&) const;
+
+    // Adds the elements of the given collection to the set (a.k.a. OR).
+    template<typename OtherCollection>
+    void formUnion(const OtherCollection&);
+
+    // Removes the elements of this set that aren't also in the given
+    // collection (a.k.a. AND).
+    //
+    // NOTE: OtherCollection is required to implement `bool contains(Value)`.
+    template<typename OtherCollection>
+    void formIntersection(const OtherCollection&);
+
+    // Removes the elements of the set that are also in the given collection
+    // and adds the members of the given collection that are not already in
+    // the set (a.k.a. XOR).
+    template<typename OtherCollection>
+    void formSymmetricDifference(const OtherCollection&);
+
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
     template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
     template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
@@ -362,6 +396,60 @@ template<typename T, typename U, typename V, typename W>
 inline auto HashSet<T, U, V, W>::takeAny() -> TakeType
 {
     return take(begin());
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline auto HashSet<T, U, V, W>::unionWith(const OtherCollection& other) const -> HashSet<T, U, V, W>
+{
+    auto copy = *this;
+    copy.add(other.begin(), other.end());
+    return copy;
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline auto HashSet<T, U, V, W>::intersectionWith(const OtherCollection& other) const -> HashSet<T, U, V, W>
+{
+    HashSet result;
+    for (auto& value : *this) {
+        if (other.contains(value))
+            result.addVoid(value);
+    }
+    return result;
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline auto HashSet<T, U, V, W>::symmetricDifferenceWith(const OtherCollection& other) const -> HashSet<T, U, V, W>
+{
+    auto copy = *this;
+    copy.formSymmetricDifference(other);
+    return copy;
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline void HashSet<T, U, V, W>::formUnion(const OtherCollection& other)
+{
+    add(other.begin(), other.end());
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline void HashSet<T, U, V, W>::formIntersection(const OtherCollection& other)
+{
+    *this = intersectionWith(other);
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline void HashSet<T, U, V, W>::formSymmetricDifference(const OtherCollection& other)
+{
+    for (auto& value : other) {
+        if (!remove(value))
+            addVoid(value);
+    }
 }
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>

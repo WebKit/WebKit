@@ -670,7 +670,7 @@ void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) con
 
     m_page.drawingArea()->mainFrameContentSizeChanged(size);
 
-    if (frameView && !frameView->delegatesScrolling())  {
+    if (frameView && !frameView->delegatesScrollingToNativeView())  {
         bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
         bool hasVerticalScrollbar = frameView->verticalScrollbar();
 

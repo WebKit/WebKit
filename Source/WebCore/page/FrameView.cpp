@@ -2082,7 +2082,7 @@ void FrameView::viewportContentsChanged()
 IntRect FrameView::viewRectExpandedByContentInsets() const
 {
     FloatRect viewRect;
-    if (delegatesScrolling() && platformWidget())
+    if (delegatesScrollingToNativeView() && platformWidget())
         viewRect = unobscuredContentRect();
     else
         viewRect = visualViewportRect();
@@ -2722,7 +2722,7 @@ void FrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absoluteRect
 void FrameView::contentsResized()
 {
     // For non-delegated scrolling, updateTiledBackingAdaptiveSizing() is called via addedOrRemovedScrollbar() which occurs less often.
-    if (delegatesScrolling())
+    if (delegatesScrollingToNativeView())
         updateTiledBackingAdaptiveSizing();
 }
 
@@ -3196,7 +3196,7 @@ TiledBacking::Scrollability FrameView::computeScrollability() const
         clippedByAncestorView |= page->enclosedInScrollableAncestorView();
 #endif
 
-    if (delegatesScrolling()) {
+    if (delegatesScrollingToNativeView()) {
         IntSize documentSize = contentsSize();
         IntSize visibleSize = this->visibleSize();
 
@@ -5239,7 +5239,7 @@ IntPoint FrameView::convertFromContainingViewToRenderer(const RenderElement* ren
     IntPoint point = viewPoint;
 
     // Convert from FrameView coords into page ("absolute") coordinates.
-    if (!delegatesScrolling())
+    if (!delegatesScrollingToNativeView())
         point = viewToContents(point);
 
     return roundedIntPoint(renderer->absoluteToLocal(point, UseTransforms));
@@ -5595,7 +5595,7 @@ bool FrameView::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEven
         return false;
 #endif
 
-    if (delegatesScrolling()) {
+    if (delegatesScrollingToNativeView()) {
         ScrollPosition oldPosition = scrollPosition();
         ScrollPosition newPosition = oldPosition - IntSize(wheelEvent.deltaX(), wheelEvent.deltaY());
         if (oldPosition != newPosition) {

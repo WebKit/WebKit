@@ -622,6 +622,7 @@ public:
     size_t namedGridAreaRowCount() const { return m_rareNonInheritedData->grid->namedGridAreaRowCount; }
     size_t namedGridAreaColumnCount() const { return m_rareNonInheritedData->grid->namedGridAreaColumnCount; }
     GridAutoFlow gridAutoFlow() const { return static_cast<GridAutoFlow>(m_rareNonInheritedData->grid->gridAutoFlow); }
+    MasonryAutoFlow masonryAutoFlow() const { return m_rareNonInheritedData->grid->masonryAutoFlow; }
     bool gridSubgridRows() const { return m_rareNonInheritedData->grid->subgridRows(); }
     bool gridSubgridColumns() const { return m_rareNonInheritedData->grid->subgridColumns(); }
     bool gridMasonryRows() const { return m_rareNonInheritedData->grid->masonryRows(); }
@@ -1274,6 +1275,7 @@ public:
     void setGridItemColumnEnd(const GridPosition& columnEndPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridColumnEnd, columnEndPosition); }
     void setGridItemRowStart(const GridPosition& rowStartPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowStart, rowStartPosition); }
     void setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowEnd, rowEndPosition); }
+    void setMasonryAutoFlow(MasonryAutoFlow flow) { SET_NESTED_VAR(m_rareNonInheritedData, grid, masonryAutoFlow, flow); };
 
     void setMarqueeIncrement(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, increment, WTFMove(length)); }
     void setMarqueeSpeed(int f) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, speed, f); }
@@ -1845,6 +1847,7 @@ public:
     static AutoRepeatType initialGridAutoRepeatType() { return AutoRepeatType::None; }
 
     static GridAutoFlow initialGridAutoFlow() { return AutoFlowRow; }
+    static MasonryAutoFlow initialMasonryAutoFlow() { return { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::DefiniteFirst }; }
 
     static Vector<GridTrackSize> initialGridAutoColumns() { return { GridTrackSize(Length(LengthType::Auto)) }; }
     static Vector<GridTrackSize> initialGridAutoRows() { return { GridTrackSize(Length(LengthType::Auto)) }; }

@@ -104,6 +104,7 @@ extern "C" {
     M(Storage) \
     M(StorageAPI) \
     M(TextInput) \
+    M(TextInteraction) \
     M(Translation) \
     M(UIHitTesting) \
     M(ViewGestures) \

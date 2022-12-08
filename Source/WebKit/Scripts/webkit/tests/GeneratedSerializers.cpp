@@ -515,6 +515,44 @@ std::optional<WebCore::FloatBoxExtent> ArgumentCoder<WebCore::FloatBoxExtent>::d
     };
 }
 
+
+void ArgumentCoder<NullableSoftLinkedMember>::encode(Encoder& encoder, const NullableSoftLinkedMember& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.firstMember)>, RetainPtr<DDActionContext>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.secondMember)>, RetainPtr<DDActionContext>>);
+    encoder << !!instance.firstMember;
+    if (!!instance.firstMember)
+        encoder << instance.firstMember;
+    encoder << instance.secondMember;
+}
+
+std::optional<NullableSoftLinkedMember> ArgumentCoder<NullableSoftLinkedMember>::decode(Decoder& decoder)
+{
+    std::optional<RetainPtr<DDActionContext>> firstMember;
+    std::optional<bool> hasfirstMember;
+    decoder >> hasfirstMember;
+    if (!hasfirstMember)
+        return std::nullopt;
+    if (*hasfirstMember) {
+        firstMember = IPC::decode<DDActionContext>(decoder, PAL::getDDActionContextClass());
+        if (!firstMember)
+            return std::nullopt;
+    } else
+        firstMember = std::optional<RetainPtr<DDActionContext>> { RetainPtr<DDActionContext> { } };
+
+    std::optional<RetainPtr<DDActionContext>> secondMember;
+    secondMember = IPC::decode<DDActionContext>(decoder, PAL::getDDActionContextClass());
+    if (!secondMember)
+        return std::nullopt;
+
+    return {
+        NullableSoftLinkedMember {
+            WTFMove(*firstMember),
+            WTFMove(*secondMember)
+        }
+    };
+}
+
 } // namespace IPC
 
 namespace WTF {

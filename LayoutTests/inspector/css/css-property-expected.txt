@@ -37,6 +37,8 @@ Initially selected completion when ranked by `count % 3`: "Fake Property 200 See
 PASS: "background-repeat" is a valid property.
 PASS: "background-repeat-x" is an invalid property.
 PASS: "background-repeat-invalid" is an invalid property.
+PASS: "--foo" is a valid property.
+PASS: "--bar" is a valid property.
 
 -- Running test case: CSSProperty.prototype.get anonymous
 PASS: "background-repeat" is not an anonymous CSS property.

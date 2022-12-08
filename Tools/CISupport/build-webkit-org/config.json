@@ -87,14 +87,18 @@
                     { "name": "bot547", "platform": "win" },
                     { "name": "bot548", "platform": "win" },
 
-                    { "name": "wincairo-wkl-release-build-01", "platform": "wincairo" },
-                    { "name": "wincairo-wkl-release-tests-01", "platform": "wincairo" },
-                    { "name": "wincairo-wkl-release-tests-02", "platform": "wincairo" },
+                    { "name": "wincairo-debug-build-01", "platform": "wincairo" },
+                    { "name": "wincairo-debug-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-debug-tests-02", "platform": "wincairo" },
+                    { "name": "wincairo-jsc-debug-tests-01", "platform": "wincairo" },
                     { "name": "wincairo-jsc-release-tests-01", "platform": "wincairo" },
-                    { "name": "wincairo-wkl-debug-build-01", "platform": "wincairo" },
+                    { "name": "wincairo-release-build-01", "platform": "wincairo" },
+                    { "name": "wincairo-release-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-release-tests-02", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-tests-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-tests-02", "platform": "wincairo" },
-                    { "name": "wincairo-jsc-debug-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-release-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-release-tests-02", "platform": "wincairo" },
 
                     { "name": "playstation-release-build-01", "platform": "playstation" },
                     { "name": "playstation-debug-build-01", "platform": "playstation" },
@@ -539,10 +543,10 @@
                       "workernames": ["gtk-linux-bot-20"]
                     },
                     {
-                      "name": "WinCairo-64-bit-WKL-Release-Build", "factory": "BuildFactory",
+                      "name": "WinCairo-64-bit-Release-Build", "factory": "BuildFactory",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["wincairo-wkl-release-tests", "wincairo-jsc-release-tests"],
-                      "workernames": ["wincairo-wkl-release-build-01"]
+                      "triggers": ["wincairo-release-tests", "wincairo-jsc-release-tests", "wincairo-wkl-release-tests"],
+                      "workernames": ["wincairo-release-build-01"]
                     },
                     {
                       "name": "WinCairo-64-bit-WKL-Release-Tests", "factory": "TestWebKit1AllButJSCFactory",
@@ -550,20 +554,30 @@
                       "workernames": ["wincairo-wkl-release-tests-01", "wincairo-wkl-release-tests-02"]
                     },
                     {
+                      "name": "WinCairo-64-bit-Release-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wincairo-release-tests-01", "wincairo-release-tests-02"]
+                    },
+                    {
                       "name": "WinCairo-64-bit-JSC-Release-Tests", "factory": "TestJSCFactory",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
                       "workernames": ["wincairo-jsc-release-tests-01"]
                     },
                     {
-                      "name": "WinCairo-64-bit-WKL-Debug-Build", "factory": "BuildFactory",
+                      "name": "WinCairo-64-bit-Debug-Build", "factory": "BuildFactory",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["wincairo-wkl-debug-tests", "wincairo-jsc-debug-tests"],
-                      "workernames": ["wincairo-wkl-debug-build-01"]
+                      "triggers": ["wincairo-debug-tests", "wincairo-jsc-debug-tests", "wincairo-wkl-debug-tests"],
+                      "workernames": ["wincairo-debug-build-01"]
                     },
                     {
                       "name": "WinCairo-64-bit-WKL-Debug-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
                       "workernames": ["wincairo-wkl-debug-tests-01", "wincairo-wkl-debug-tests-02"]
+                    },
+                    {
+                      "name": "WinCairo-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["wincairo-debug-tests-01", "wincairo-debug-tests-02"]
                     },
                     {
                       "name": "WinCairo-64-bit-JSC-Debug-Tests", "factory": "TestJSCFactory",
@@ -680,7 +694,7 @@
                                        "JSCOnly-Linux-AArch64-Release",
                                        "JSCOnly-Linux-ARMv7-Thumb2-Release",
                                        "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
-                                       "WinCairo-64-bit-WKL-Release-Build", "WinCairo-64-bit-WKL-Debug-Build",
+                                       "WinCairo-64-bit-Release-Build", "WinCairo-64-bit-Debug-Build",
                                        "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                        "WPE-Linux-64-bit-Release-Clang-Build",
                                        "WPE-Linux-64-bit-Release-Non-Unified-Build"]
@@ -863,11 +877,17 @@
                     { "type": "Triggerable", "name": "wincairo-wkl-release-tests",
                       "builderNames": ["WinCairo-64-bit-WKL-Release-Tests"]
                     },
+                    { "type": "Triggerable", "name": "wincairo-release-tests",
+                      "builderNames": ["WinCairo-64-bit-Release-Tests"]
+                    },
                     { "type": "Triggerable", "name": "wincairo-jsc-release-tests",
                       "builderNames": ["WinCairo-64-bit-JSC-Release-Tests"]
                     },
                     { "type": "Triggerable", "name": "wincairo-wkl-debug-tests",
                       "builderNames": ["WinCairo-64-bit-WKL-Debug-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-debug-tests",
+                      "builderNames": ["WinCairo-64-bit-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "wincairo-jsc-debug-tests",
                       "builderNames": ["WinCairo-64-bit-JSC-Debug-Tests"]

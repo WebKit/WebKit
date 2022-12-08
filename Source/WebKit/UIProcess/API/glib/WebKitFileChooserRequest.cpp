@@ -43,8 +43,8 @@ using namespace WebCore;
  *
  * A request to open a file chooser.
  *
- * Whenever the user interacts with an <input type='file' />
- * HTML element, WebKit will need to show a dialog to choose one or
+ * Whenever the user interacts with an HTML input element with
+ * file type, WebKit will need to show a dialog to choose one or
  * more files to be uploaded to the server along with the rest of the
  * form data. For that to happen in a general way, instead of just
  * opening a #GtkFileChooserDialog (which might be not desirable in

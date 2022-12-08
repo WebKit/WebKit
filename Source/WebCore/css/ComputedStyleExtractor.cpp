@@ -1609,7 +1609,7 @@ static Ref<CSSPrimitiveValue> valueForAnimationName(const Animation::Name& name)
 static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timingFunction)
 {
     switch (timingFunction.type()) {
-    case TimingFunction::TimingFunctionType::CubicBezierFunction: {
+    case TimingFunction::Type::CubicBezierFunction: {
         auto& function = downcast<CubicBezierTimingFunction>(timingFunction);
         if (function.timingFunctionPreset() != CubicBezierTimingFunction::TimingFunctionPreset::Custom) {
             CSSValueID valueId = CSSValueInvalid;
@@ -1633,15 +1633,15 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
         }
         return CSSCubicBezierTimingFunctionValue::create(function.x1(), function.y1(), function.x2(), function.y2());
     }
-    case TimingFunction::TimingFunctionType::StepsFunction: {
+    case TimingFunction::Type::StepsFunction: {
         auto& function = downcast<StepsTimingFunction>(timingFunction);
         return CSSStepsTimingFunctionValue::create(function.numberOfSteps(), function.stepPosition());
     }
-    case TimingFunction::TimingFunctionType::SpringFunction: {
+    case TimingFunction::Type::SpringFunction: {
         auto& function = downcast<SpringTimingFunction>(timingFunction);
         return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
     }
-    case TimingFunction::TimingFunctionType::LinearFunction:
+    case TimingFunction::Type::LinearFunction:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueLinear);
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -3263,6 +3263,23 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.isGridAutoFlowAlgorithmDense())
             list->append(cssValuePool.createIdentifierValue(CSSValueDense));
 
+        return list;
+    }
+    case CSSPropertyMasonryAutoFlow: {
+        auto list = CSSValueList::createSpaceSeparated();
+        // MasonryAutoFlow information is stored in a struct that should always 
+        // hold 2 pieces of information. It should contain both Pack/Next inside
+        // the MasonryAutoFlowPlacementAlgorithm enum class and DefiniteFirst/Ordered
+        // inside the MasonryAutoFlowPlacementOrder enum class
+        ASSERT((style.masonryAutoFlow().placementAlgorithm == MasonryAutoFlowPlacementAlgorithm::Pack || style.masonryAutoFlow().placementAlgorithm == MasonryAutoFlowPlacementAlgorithm::Next) && (style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::DefiniteFirst || style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered));
+
+        if (style.masonryAutoFlow().placementAlgorithm == MasonryAutoFlowPlacementAlgorithm::Next)
+            list->append(cssValuePool.createIdentifierValue(CSSValueNext));
+        else if (style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::DefiniteFirst)
+            list->append(cssValuePool.createIdentifierValue(CSSValuePack));
+
+        if (style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered)
+            list->append(cssValuePool.createIdentifierValue(CSSValueOrdered));
         return list;
     }
 

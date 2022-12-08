@@ -1664,38 +1664,38 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
     return std::nullopt;
 }
 
-void ArgumentCoder<Ref<WebCore::TimingFunction>>::encode(Encoder& encoder, const Ref<WebCore::TimingFunction>& timingFunction)
+void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebCore::TimingFunction& timingFunction)
 {
-    encoder << timingFunction->type();
+    encoder << timingFunction.type();
 
-    switch (timingFunction->type()) {
-    case TimingFunction::TimingFunctionType::LinearFunction:
-        encoder << downcast<LinearTimingFunction>(timingFunction.get());
+    switch (timingFunction.type()) {
+    case TimingFunction::Type::LinearFunction:
+        encoder << downcast<LinearTimingFunction>(timingFunction);
         break;
 
-    case TimingFunction::TimingFunctionType::CubicBezierFunction:
-        encoder << downcast<CubicBezierTimingFunction>(timingFunction.get());
+    case TimingFunction::Type::CubicBezierFunction:
+        encoder << downcast<CubicBezierTimingFunction>(timingFunction);
         break;
 
-    case TimingFunction::TimingFunctionType::StepsFunction:
-        encoder << downcast<StepsTimingFunction>(timingFunction.get());
+    case TimingFunction::Type::StepsFunction:
+        encoder << downcast<StepsTimingFunction>(timingFunction);
         break;
 
-    case TimingFunction::TimingFunctionType::SpringFunction:
-        encoder << downcast<SpringTimingFunction>(timingFunction.get());
+    case TimingFunction::Type::SpringFunction:
+        encoder << downcast<SpringTimingFunction>(timingFunction);
         break;
     }
 }
 
-std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<Ref<WebCore::TimingFunction>>::decode(Decoder& decoder)
+std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
 {
-    std::optional<TimingFunction::TimingFunctionType> type;
+    std::optional<TimingFunction::Type> type;
     decoder >> type;
     if (!type)
         return std::nullopt;
 
     switch (*type) {
-    case TimingFunction::TimingFunctionType::LinearFunction: {
+    case TimingFunction::Type::LinearFunction: {
         std::optional<Ref<LinearTimingFunction>> function;
         decoder >> function;
         if (!function)
@@ -1703,7 +1703,7 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<Ref<WebCore::TimingFun
         return WTFMove(*function);
     }
 
-    case TimingFunction::TimingFunctionType::CubicBezierFunction: {
+    case TimingFunction::Type::CubicBezierFunction: {
         std::optional<Ref<CubicBezierTimingFunction>> function;
         decoder >> function;
         if (!function)
@@ -1711,7 +1711,7 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<Ref<WebCore::TimingFun
         return WTFMove(*function);
     }
 
-    case TimingFunction::TimingFunctionType::StepsFunction: {
+    case TimingFunction::Type::StepsFunction: {
         std::optional<Ref<StepsTimingFunction>> function;
         decoder >> function;
         if (!function)
@@ -1719,7 +1719,7 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<Ref<WebCore::TimingFun
         return WTFMove(*function);
     }
 
-    case TimingFunction::TimingFunctionType::SpringFunction: {
+    case TimingFunction::Type::SpringFunction: {
         std::optional<Ref<SpringTimingFunction>> function;
         decoder >> function;
         if (!function)
@@ -1730,32 +1730,6 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<Ref<WebCore::TimingFun
 
     ASSERT_NOT_REACHED();
     return std::nullopt;
-}
-
-void ArgumentCoder<RefPtr<WebCore::TimingFunction>>::encode(Encoder& encoder, const RefPtr<WebCore::TimingFunction>& timingFunction)
-{
-    bool hasTimingFunction = !!timingFunction;
-    encoder << hasTimingFunction;
-    if (!hasTimingFunction)
-        return;
-
-    encoder << Ref { *timingFunction };
-}
-
-std::optional<RefPtr<WebCore::TimingFunction>> ArgumentCoder<RefPtr<WebCore::TimingFunction>>::decode(Decoder& decoder)
-{
-    bool hasTimingFunction;
-    if (!decoder.decode(hasTimingFunction))
-        return std::nullopt;
-
-    if (!hasTimingFunction)
-        return nullptr;
-
-    std::optional<Ref<TimingFunction>> timingFunction;
-    decoder >> timingFunction;
-    if (!timingFunction)
-        return std::nullopt;
-    return WTFMove(*timingFunction);
 }
 
 void ArgumentCoder<WebCore::TransformOperation>::encode(Encoder& encoder, const WebCore::TransformOperation& transformOperation)

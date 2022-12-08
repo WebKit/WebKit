@@ -807,6 +807,9 @@ Ref<Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() const
 
         CSSPropertyID propertyId = cssPropertyID(name);
 
+        if (isCustomPropertyName(name))
+            propertyId = CSSPropertyID::CSSPropertyCustom;
+
         // Default "parsedOk" == true.
         if (!propertyEntry.parsedOk || !isExposed(propertyId, m_style->settings()))
             property->setParsedOk(false);
@@ -838,7 +841,7 @@ Ref<Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() const
                 bool shouldInactivate = false;
 
                 // Canonicalize property names to treat non-prefixed and vendor-prefixed property names the same (opacity vs. -webkit-opacity).
-                String canonicalPropertyName = propertyId ? nameString(propertyId) : name;
+                String canonicalPropertyName = propertyId != CSSPropertyID::CSSPropertyInvalid && propertyId != CSSPropertyID::CSSPropertyCustom ? nameString(propertyId) : name;
                 HashMap<String, RefPtr<Protocol::CSS::CSSProperty>>::iterator activeIt = propertyNameToPreviousActiveProperty.find(canonicalPropertyName);
                 if (activeIt != propertyNameToPreviousActiveProperty.end()) {
                     if (propertyEntry.parsedOk) {

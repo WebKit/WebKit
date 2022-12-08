@@ -63,9 +63,6 @@ public:
     struct LinearData {
         FloatPoint point0;
         FloatPoint point1;
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<LinearData> decode(Decoder&);
     };
 
     struct RadialData {
@@ -74,17 +71,11 @@ public:
         float startRadius;
         float endRadius;
         float aspectRatio; // For elliptical gradient, width / height.
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<RadialData> decode(Decoder&);
     };
 
     struct ConicData {
         FloatPoint point0;
         float angleRadians;
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<ConicData> decode(Decoder&);
     };
 
     using Data = std::variant<LinearData, RadialData, ConicData>;
@@ -99,6 +90,7 @@ public:
 
     const GradientColorStops& stops() const { return m_stops; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
+    ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
 
     void fill(GraphicsContext&, const FloatRect&);
     void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);
@@ -113,9 +105,6 @@ public:
     void paint(GraphicsContext&);
     void paint(CGContextRef);
 #endif
-
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<Ref<Gradient>> decode(Decoder&);
 
 private:
     explicit Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&);
@@ -132,119 +121,5 @@ private:
     std::optional<GradientRendererCG> m_platformRenderer;
 #endif
 };
-
-template<typename Encoder> void Gradient::LinearData::encode(Encoder& encoder) const
-{
-    encoder << point0;
-    encoder << point1;
-}
-
-template<typename Decoder> std::optional<Gradient::LinearData> Gradient::LinearData::decode(Decoder& decoder)
-{
-    std::optional<FloatPoint> point0;
-    decoder >> point0;
-    if (!point0)
-        return std::nullopt;
-
-    std::optional<FloatPoint> point1;
-    decoder >> point1;
-    if (!point1)
-        return std::nullopt;
-
-    return {{ *point0, *point1 }};
-}
-
-template<typename Encoder> void Gradient::RadialData::encode(Encoder& encoder) const
-{
-    encoder << point0;
-    encoder << point1;
-    encoder << startRadius;
-    encoder << endRadius;
-    encoder << aspectRatio;
-}
-
-template<typename Decoder> std::optional<Gradient::RadialData> Gradient::RadialData::decode(Decoder& decoder)
-{
-    std::optional<FloatPoint> point0;
-    decoder >> point0;
-    if (!point0)
-        return std::nullopt;
-
-    std::optional<FloatPoint> point1;
-    decoder >> point1;
-    if (!point1)
-        return std::nullopt;
-
-    std::optional<float> startRadius;
-    decoder >> startRadius;
-    if (!startRadius)
-        return std::nullopt;
-
-    std::optional<float> endRadius;
-    decoder >> endRadius;
-    if (!endRadius)
-        return std::nullopt;
-
-    std::optional<float> aspectRatio;
-    decoder >> aspectRatio;
-    if (!aspectRatio)
-        return std::nullopt;
-
-    return {{ *point0, *point1, *startRadius, *endRadius, *aspectRatio }};
-}
-
-template<typename Encoder> void Gradient::ConicData::encode(Encoder& encoder) const
-{
-    encoder << point0;
-    encoder << angleRadians;
-}
-
-template<typename Decoder> std::optional<Gradient::ConicData> Gradient::ConicData::decode(Decoder& decoder)
-{
-    std::optional<FloatPoint> point0;
-    decoder >> point0;
-    if (!point0)
-        return std::nullopt;
-
-    std::optional<float> angleRadians;
-    decoder >> angleRadians;
-    if (!angleRadians)
-        return std::nullopt;
-
-    return {{ *point0, *angleRadians }};
-}
-
-template<typename Encoder> void Gradient::encode(Encoder& encoder) const
-{
-    encoder << m_data;
-    encoder << m_colorInterpolationMethod;
-    encoder << m_spreadMethod;
-    encoder << m_stops;
-}
-
-template<typename Decoder> std::optional<Ref<Gradient>> Gradient::decode(Decoder& decoder)
-{
-    std::optional<Data> data;
-    decoder >> data;
-    if (!data)
-        return std::nullopt;
-
-    std::optional<ColorInterpolationMethod> colorInterpolationMethod;
-    decoder >> colorInterpolationMethod;
-    if (!colorInterpolationMethod)
-        return std::nullopt;
-
-    std::optional<GradientSpreadMethod> spreadMethod;
-    decoder >> spreadMethod;
-    if (!spreadMethod)
-        return std::nullopt;
-
-    std::optional<GradientColorStops> stops;
-    decoder >> stops;
-    if (!stops)
-        return std::nullopt;
-
-    return Gradient::create(WTFMove(*data), *colorInterpolationMethod, *spreadMethod, WTFMove(*stops));
-}
 
 } // namespace WebCore

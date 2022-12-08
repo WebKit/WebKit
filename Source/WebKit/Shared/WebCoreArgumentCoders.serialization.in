@@ -1824,3 +1824,97 @@ header: <WebCore/ScrollingConstraints.h>
 class WebCore::TransformOperations {
     Vector<RefPtr<WebCore::TransformOperation>> operations();
 }
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::LinearData {
+    WebCore::FloatPoint point0;
+    WebCore::FloatPoint point1;
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::RadialData {
+    WebCore::FloatPoint point0;
+    WebCore::FloatPoint point1;
+    float startRadius;
+    float endRadius;
+    float aspectRatio;
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::ConicData {
+    WebCore::FloatPoint point0;
+    float angleRadians;
+};
+
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
+    std::variant<WebCore::Gradient::LinearData, WebCore::Gradient::RadialData, WebCore::Gradient::ConicData> data();
+    WebCore::ColorInterpolationMethod colorInterpolationMethod();
+    WebCore::GradientSpreadMethod spreadMethod();
+    WebCore::GradientColorStops stops();
+}
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush::Brush::LogicalGradient {
+    Ref<WebCore::Gradient> gradient;
+    WebCore::AffineTransform spaceTransform;
+}
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Pattern::Parameters {
+    bool repeatX;
+    bool repeatY;
+    WebCore::AffineTransform patternSpaceTransform;
+}
+
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Pattern {
+    WebCore::SourceImage tileImage();
+    WebCore::Pattern::Parameters parameters();
+}
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush::Brush {
+    std::variant<WebCore::SourceBrush::Brush::LogicalGradient, Ref<WebCore::Pattern>> brush;
+}
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush {
+    WebCore::Color color();
+    std::optional<WebCore::SourceBrush::Brush> brush();
+}
+
+#if ENABLE(GPU_PROCESS)
+
+header: <WebCore/GraphicsContextGLAttributes.h>
+[CustomHeader] enum class WebCore::GraphicsContextGLPowerPreference : uint8_t {
+    Default,
+    LowPower,
+    HighPerformance
+};
+
+header: <WebCore/GraphicsContextGLAttributes.h>
+[CustomHeader] enum class WebCore::GraphicsContextGLWebGLVersion : uint8_t {
+    WebGL1,
+#if ENABLE(WEBGL2)
+    WebGL2
+#endif
+};
+
+struct WebCore::GraphicsContextGLAttributes {
+    bool alpha;
+    bool depth;
+    bool stencil;
+    bool antialias;
+    bool premultipliedAlpha;
+    bool preserveDrawingBuffer;
+    bool failIfMajorPerformanceCaveat;
+    WebCore::GraphicsContextGLPowerPreference powerPreference;
+    bool shareResources;
+    bool noExtensions;
+    float devicePixelRatio;
+    WebCore::GraphicsContextGLPowerPreference initialPowerPreference;
+    WebCore::GraphicsContextGLWebGLVersion webGLVersion;
+    bool forceRequestForHighPerformanceGPU;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    uint64_t windowGPUID;
+#endif
+#if PLATFORM(COCOA)
+    bool useMetal;
+#endif
+#if ENABLE(WEBXR)
+    bool xrCompatible;
+#endif
+};
+#endif

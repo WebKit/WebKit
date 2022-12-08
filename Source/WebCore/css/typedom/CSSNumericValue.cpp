@@ -148,6 +148,7 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperat
     const CSSCalcExpressionNode* currentNode = &root;
     do {
         auto* operationNode = downcast<CSSCalcOperationNode>(currentNode);
+        // FIXME: This is incorrect when there are more than 2 children.
         if (operationNode->children().size() == 2) {
             CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(operationNode->children()[1].get()));
             values.append(negateOrInvertIfRequired(operationNode->calcOperator(), WTFMove(value)));

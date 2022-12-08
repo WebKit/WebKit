@@ -1,6 +1,6 @@
 
 PASS e.style['list-style'] = "none" should set the property value
-FAIL e.style['list-style'] = "disc outside none" should set the property value assert_equals: serialization should be canonical expected "outside" but got "outside none disc"
+FAIL e.style['list-style'] = "disc outside none" should set the property value assert_equals: serialization should be canonical expected "outside" but got "outside disc"
 PASS e.style['list-style'] = "inside" should set the property value
 FAIL e.style['list-style'] = "inside disc" should set the property value assert_equals: serialization should be canonical expected "inside" but got "inside disc"
 PASS e.style['list-style'] = "inside none" should set the property value

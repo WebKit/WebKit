@@ -179,7 +179,9 @@ void MediaSessionManagerCocoa::updateSessionState()
         return;
 
     auto category = AudioSession::CategoryType::None;
-    if (captureCount || (isPlayingAudio && AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord))
+    if (AudioSession::sharedSession().categoryOverride() != AudioSession::CategoryType::None)
+        category = AudioSession::sharedSession().categoryOverride();
+    else if (captureCount || (isPlayingAudio && AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord))
         category = AudioSession::CategoryType::PlayAndRecord;
     else if (hasAudibleAudioOrVideoMediaType)
         category = AudioSession::CategoryType::MediaPlayback;

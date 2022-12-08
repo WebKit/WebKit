@@ -30,6 +30,7 @@
 #import "config.h"
 #import "_WKWebExtensionInternal.h"
 
+#import "CocoaImage.h"
 #import "WebExtension.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
@@ -41,28 +42,70 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle
++ (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
+{
+    NSError * __autoreleasing internalError;
+    auto result = WebKit::WebExtension::create(appExtensionBundle, &internalError);
+
+    if (internalError)
+        return nil;
+
+    return result->wrapper();
+}
+
++ (instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL
+{
+    NSError * __autoreleasing internalError;
+    auto result = WebKit::WebExtension::create(resourceBaseURL, &internalError);
+
+    if (internalError)
+        return nil;
+
+    return result->wrapper();
+}
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
     NSParameterAssert(appExtensionBundle);
+
+    if (error)
+        *error = nil;
 
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle);
+    NSError * __autoreleasing internalError;
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, &internalError);
+
+    if (internalError) {
+        if (error)
+            *error = internalError;
+        return nil;
+    }
 
     return self;
 }
 
-- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
     NSParameterAssert(resourceBaseURL);
     NSParameterAssert([resourceBaseURL isFileURL]);
     NSParameterAssert([resourceBaseURL hasDirectoryPath]);
 
+    if (error)
+        *error = nil;
+
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, resourceBaseURL);
+    NSError * __autoreleasing internalError;
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, resourceBaseURL, &internalError);
+
+    if (internalError) {
+        if (error)
+            *error = internalError;
+        return nil;
+    }
 
     return self;
 }
@@ -71,22 +114,29 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 {
     NSParameterAssert(manifest);
 
+    return [self _initWithManifestDictionary:manifest resources:nil];
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
+{
+    NSParameterAssert(manifest);
+
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest, resources);
 
     return self;
 }
 
-- (instancetype)_initWithManifestData:(NSData *)manifestData
+- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
 {
-    NSParameterAssert(manifestData);
+    NSParameterAssert(resources);
 
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifestData);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, resources);
 
     return self;
 }
@@ -134,9 +184,24 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->displayDescription();
 }
 
+- (NSString *)displayActionLabel
+{
+    return _webExtension->displayActionLabel();
+}
+
 - (NSString *)version
 {
     return _webExtension->version();
+}
+
+- (CocoaImage *)iconForSize:(CGSize)size
+{
+    return _webExtension->icon(size);
+}
+
+- (CocoaImage *)actionIconForSize:(CGSize)size
+{
+    return _webExtension->actionIcon(size);
 }
 
 - (NSSet<_WKWebExtensionPermission> *)requestedPermissions
@@ -205,22 +270,37 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle
++ (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
 {
     return nil;
 }
 
-- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL
++ (instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL
+{
+    return nil;
+}
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
+{
+    return nil;
+}
+
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
     return nil;
 }
 
 - (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
 {
+    return [self _initWithManifestDictionary:manifest resources:nil];
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
+{
     return nil;
 }
 
-- (instancetype)_initWithManifestData:(NSData *)manifestData
+- (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
 {
     return nil;
 }
@@ -260,7 +340,22 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return nil;
 }
 
+- (NSString *)displayActionLabel
+{
+    return nil;
+}
+
 - (NSString *)version
+{
+    return nil;
+}
+
+- (CocoaImage *)iconForSize:(CGSize)size
+{
+    return nil;
+}
+
+- (CocoaImage *)actionIconForSize:(CGSize)size
 {
     return nil;
 }

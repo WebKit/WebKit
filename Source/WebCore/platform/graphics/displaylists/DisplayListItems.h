@@ -1280,12 +1280,13 @@ std::optional<FillRectWithGradient> FillRectWithGradient::decode(Decoder& decode
     decoder >> rect;
     if (!rect)
         return std::nullopt;
-
-    auto gradient = Gradient::decode(decoder);
+    
+    std::optional<Ref<Gradient>> gradient;
+    decoder >> gradient;
     if (!gradient)
         return std::nullopt;
 
-    return {{ *rect, gradient->get() }};
+    return { { *rect, WTFMove(*gradient) } };
 }
 
 class FillCompositedRect {

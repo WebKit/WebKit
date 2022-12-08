@@ -128,6 +128,7 @@ public:
     static Vector<GridTrackSize> convertGridTrackSizeList(BuilderState&, const CSSValue&);
     static std::optional<GridPosition> convertGridPosition(BuilderState&, const CSSValue&);
     static GridAutoFlow convertGridAutoFlow(BuilderState&, const CSSValue&);
+    static MasonryAutoFlow convertMasonryAutoFlow(BuilderState&, const CSSValue&);
     static std::optional<Length> convertWordSpacing(BuilderState&, const CSSValue&);
     static std::optional<float> convertPerspective(BuilderState&, const CSSValue&);
     static std::optional<Length> convertMarqueeIncrement(BuilderState&, const CSSValue&);
@@ -1279,6 +1280,42 @@ inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState&, const C
     }
 
     return autoFlow;
+}
+
+inline MasonryAutoFlow BuilderConverter::convertMasonryAutoFlow(BuilderState&, const CSSValue& value)
+{
+    auto& valueList = downcast<CSSValueList>(value);
+    ASSERT(valueList.size() == 1 || valueList.size() == 2);
+    if (!(valueList.size() == 1 || valueList.size() == 2))
+        return RenderStyle::initialMasonryAutoFlow();
+
+    auto* firstValue = downcast<CSSPrimitiveValue>(valueList.item(0));
+    auto* secondValue = downcast<CSSPrimitiveValue>(valueList.length() == 2 ? valueList.item(1) : nullptr);
+    MasonryAutoFlow masonryAutoFlow;
+    if (valueList.size() == 2 && firstValue && secondValue) {
+        ASSERT(firstValue->valueID() == CSSValueID::CSSValuePack || firstValue->valueID() == CSSValueID::CSSValueNext);
+        ASSERT(secondValue->valueID() == CSSValueID::CSSValueOrdered);
+        if (firstValue->valueID() == CSSValueID::CSSValuePack)
+            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::Ordered };
+        else
+            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Next, MasonryAutoFlowPlacementOrder::Ordered };
+
+    } else if (valueList.size() == 1 && firstValue)  {
+        if (firstValue->valueID() == CSSValueID::CSSValuePack)
+            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::DefiniteFirst };
+        else if (firstValue->valueID() == CSSValueID::CSSValueNext)
+            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Next, MasonryAutoFlowPlacementOrder::DefiniteFirst };
+        else if (firstValue->valueID() == CSSValueID::CSSValueOrdered)
+            masonryAutoFlow = { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::Ordered };
+        else {
+            ASSERT_NOT_REACHED();
+            return RenderStyle::initialMasonryAutoFlow();
+        }
+    } else {
+        ASSERT_NOT_REACHED();
+        return RenderStyle::initialMasonryAutoFlow();
+    }
+    return masonryAutoFlow;
 }
 
 inline float zoomWithTextZoomFactor(BuilderState& builderState)

@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4484520429424D840059B0FE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
 		457D0F7A29088D9000AE5914 /* SettingsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 457D0F7729088C9500AE5914 /* SettingsViewController.h */; };
 		45BE567C2908C74600FD7A95 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 457D0F7829088D4000AE5914 /* SettingsViewController.m */; };
 		CD1DAF971D709E3600017CF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF961D709E3600017CF0 /* main.m */; };
@@ -121,6 +122,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD498B421D76348000681FA7 /* MobileMiniBrowser.framework in Frameworks */,
+				4484520429424D840059B0FE /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

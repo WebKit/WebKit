@@ -139,7 +139,7 @@ static RetainPtr<CACFTimingFunctionRef> toCACFTimingFunction(const TimingFunctio
         return adoptCF(CACFTimingFunctionCreate(x1, y1, x2, y2));
     }
 
-    ASSERT(timingFunction.type() == TimingFunction::TimingFunctionType::LinearFunction);
+    ASSERT(timingFunction.type() == TimingFunction::Type::LinearFunction);
     return CACFTimingFunctionGetFunctionWithName(kCACFTimingFunctionLinear);
 }
 

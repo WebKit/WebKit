@@ -36,6 +36,7 @@
 #include "CalcExpressionOperation.h"
 #include "Logging.h"
 #include <wtf/Algorithms.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -313,6 +314,25 @@ static std::optional<CalculationCategory> commonCategory(const Vector<Ref<CSSCal
     }
 
     return expectedCategory;
+}
+
+// https://drafts.csswg.org/css-values-4/#sort-a-calculations-children
+static void sortChildren(Vector<Ref<CSSCalcExpressionNode>>& children)
+{
+    std::stable_sort(children.begin(), children.end(), [](auto& first, auto& second) {
+        // Sort order: number, percentage, dimension, other.
+        SortingCategory firstCategory = sortingCategory(first.get());
+        SortingCategory secondCategory = sortingCategory(second.get());
+
+        if (firstCategory == SortingCategory::Dimension && secondCategory == SortingCategory::Dimension) {
+            // If nodes contains any dimensions, remove them from nodes, sort them by their units, and append them to ret.
+            auto firstUnitString = CSSPrimitiveValue::unitTypeString(first->primitiveType());
+            auto secondUnitString = CSSPrimitiveValue::unitTypeString(second->primitiveType());
+            return codePointCompareLessThan(firstUnitString, secondUnitString);
+        }
+
+        return static_cast<unsigned>(firstCategory) < static_cast<unsigned>(secondCategory);
+    });
 }
 
 RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::create(CalcOperator op, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide)
@@ -620,6 +640,7 @@ bool CSSCalcOperationNode::canCombineAllChildren() const
     return true;
 }
 
+// https://w3c.github.io/csswg-drafts/css-values/#calc-simplification
 void CSSCalcOperationNode::combineChildren()
 {
     if (isIdentity() || !m_children.size())
@@ -664,48 +685,31 @@ void CSSCalcOperationNode::combineChildren()
         return;
     }
 
-    if (shouldSortChildren()) {
-        // <https://drafts.csswg.org/css-values-4/#sort-a-calculations-children>
-        std::stable_sort(m_children.begin(), m_children.end(), [](const auto& first, const auto& second) {
-            // Sort order: number, percentage, dimension, other.
-            SortingCategory firstCategory = sortingCategory(first.get());
-            SortingCategory secondCategory = sortingCategory(second.get());
-            
-            if (firstCategory == SortingCategory::Dimension && secondCategory == SortingCategory::Dimension) {
-                // If nodes contains any dimensions, remove them from nodes, sort them by their units, and append them to ret.
-                auto firstUnitString = CSSPrimitiveValue::unitTypeString(first->primitiveType());
-                auto secondUnitString = CSSPrimitiveValue::unitTypeString(second->primitiveType());
-                return codePointCompareLessThan(firstUnitString, secondUnitString);
-            }
-
-            return static_cast<unsigned>(firstCategory) < static_cast<unsigned>(secondCategory);
-        });
-
-        LOG_WITH_STREAM(Calc, stream << "post-sort: " << *this);
-    }
-
     if (calcOperator() == CalcOperator::Add) {
         // For each set of root’s children that are numeric values with identical units,
         // remove those children and replace them with a single numeric value containing
         // the sum of the removed nodes, and with the same unit.
         Vector<Ref<CSSCalcExpressionNode>> newChildren;
         newChildren.reserveInitialCapacity(m_children.size());
-        newChildren.uncheckedAppend(m_children[0].copyRef());
 
-        CSSUnitType previousType = primitiveTypeForCombination(newChildren[0].get());
+        ListHashSet<CSSCalcExpressionNode*> remainingChildren;
+        for (auto& child : m_children)
+            remainingChildren.add(child.ptr());
 
-        for (unsigned i = 1; i < m_children.size(); ++i) {
-            auto& currentNode = m_children[i];
-            CSSUnitType currentType = primitiveTypeForCombination(currentNode.get());
-
-            auto conversionType = conversionToAddValuesWithTypes(previousType, currentType);
-            if (conversionType != CSSCalcPrimitiveValueNode::UnitConversion::Invalid) {
-                downcast<CSSCalcPrimitiveValueNode>(newChildren.last().get()).add(downcast<CSSCalcPrimitiveValueNode>(currentNode.get()), conversionType);
-                continue;
+        while (!remainingChildren.isEmpty()) {
+            newChildren.uncheckedAppend(Ref { *remainingChildren.takeFirst() });
+            CSSUnitType previousType = primitiveTypeForCombination(newChildren.last());
+            for (auto it = remainingChildren.begin(); it != remainingChildren.end();) {
+                auto currentIterator = it;
+                ++it;
+                auto& currentNode = **currentIterator;
+                CSSUnitType currentType = primitiveTypeForCombination(currentNode);
+                auto conversionType = conversionToAddValuesWithTypes(previousType, currentType);
+                if (conversionType == CSSCalcPrimitiveValueNode::UnitConversion::Invalid)
+                    continue;
+                downcast<CSSCalcPrimitiveValueNode>(newChildren.last().get()).add(downcast<CSSCalcPrimitiveValueNode>(currentNode), conversionType);
+                remainingChildren.remove(currentIterator);
             }
-
-            previousType = primitiveTypeForCombination(currentNode);
-            newChildren.uncheckedAppend(currentNode.copyRef());
         }
         
         newChildren.shrinkToFit();
@@ -717,16 +721,16 @@ void CSSCalcOperationNode::combineChildren()
         // If root has multiple children that are numbers (not percentages or dimensions),
         // remove them and replace them with a single number containing the product of the removed nodes.
         double multiplier = 1;
+        size_t numberNodeCount = 0;
 
-        // Sorting will have put the number nodes first.
-        unsigned leadingNumberNodeCount = 0;
-        for (auto& node : m_children) {
-            auto nodeType = primitiveTypeForCombination(node.get());
-            if (nodeType != CSSUnitType::CSS_NUMBER)
-                break;
-            
-            multiplier *= node->doubleValue(CSSUnitType::CSS_NUMBER);
-            ++leadingNumberNodeCount;
+        CSSCalcExpressionNode* lastNonNumberNode = nullptr;
+        for (auto& child : m_children) {
+            if (primitiveTypeForCombination(child) != CSSUnitType::CSS_NUMBER) {
+                lastNonNumberNode = child.ptr();
+                continue;
+            }
+            multiplier *= downcast<CSSCalcPrimitiveValueNode>(child.get()).doubleValue(CSSUnitType::CSS_NUMBER);
+            ++numberNodeCount;
         }
         
         Vector<Ref<CSSCalcExpressionNode>> newChildren;
@@ -737,18 +741,18 @@ void CSSCalcOperationNode::combineChildren()
         // return the Sum.
         // The Sum's children simplification will have happened already.
         bool didMultiply = false;
-        if (leadingNumberNodeCount && m_children.size() - leadingNumberNodeCount == 1) {
-            auto multiplicandCategory = calcUnitCategory(primitiveTypeForCombination(m_children.last().get()));
+        if (numberNodeCount && (m_children.size() - numberNodeCount) == 1) {
+            ASSERT(lastNonNumberNode);
+            auto multiplicandCategory = calcUnitCategory(primitiveTypeForCombination(*lastNonNumberNode));
             if (multiplicandCategory != CalculationCategory::Other) {
-                newChildren.uncheckedAppend(m_children.last().copyRef());
+                newChildren.uncheckedAppend(Ref { *lastNonNumberNode });
                 downcast<CSSCalcPrimitiveValueNode>(newChildren[0].get()).multiply(multiplier);
                 didMultiply = true;
-            } else if (is<CSSCalcOperationNode>(m_children.last()) && downcast<CSSCalcOperationNode>(m_children.last().get()).calcOperator() == CalcOperator::Add) {
+            } else if (auto* sumNode = dynamicDowncast<CSSCalcOperationNode>(*lastNonNumberNode); sumNode && sumNode->calcOperator() == CalcOperator::Add) {
                 // If we're multiplying with another operation that is an addition and all the added children
                 // are percentages or dimensions, we should multiply each child and make this expression an
                 // addition.
-                auto allChildrenArePrimitiveValues = [](const Vector<Ref<CSSCalcExpressionNode>>& children) -> bool
-                {
+                auto allChildrenArePrimitiveValues = [](const Vector<Ref<CSSCalcExpressionNode>>& children) -> bool {
                     for (auto& child : children) {
                         if (!is<CSSCalcPrimitiveValueNode>(child))
                             return false;
@@ -756,7 +760,7 @@ void CSSCalcOperationNode::combineChildren()
                     return true;
                 };
 
-                auto& children = downcast<CSSCalcOperationNode>(m_children.last().get()).children();
+                auto& children = sumNode->children();
                 if (allChildrenArePrimitiveValues(children)) {
                     for (auto& child : children) {
                         newChildren.append(child.copyRef());
@@ -769,13 +773,15 @@ void CSSCalcOperationNode::combineChildren()
         }
 
         if (!didMultiply) {
-            if (leadingNumberNodeCount) {
+            if (numberNodeCount) {
                 auto multiplierNode = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(multiplier, CSSUnitType::CSS_NUMBER));
                 newChildren.uncheckedAppend(WTFMove(multiplierNode));
             }
 
-            for (unsigned i = leadingNumberNodeCount; i < m_children.size(); ++i)
-                newChildren.uncheckedAppend(m_children[i].copyRef());
+            for (auto& child : m_children) {
+                if (primitiveTypeForCombination(child) != CSSUnitType::CSS_NUMBER)
+                    newChildren.uncheckedAppend(child.copyRef());
+            }
         }
 
         newChildren.shrinkToFit();
@@ -1160,8 +1166,8 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
             if (parens == GroupingParens::Include)
                 builder.append('(');
 
-            // Simplification already sorted children.
-            auto& children = operationNode.children();
+            auto children = operationNode.children();
+            sortChildren(children);
             ASSERT(children.size());
             // Serialize root’s first child, and append it to s.
             buildCSSTextRecursive(children.first(), builder);
@@ -1203,8 +1209,8 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
             if (parens == GroupingParens::Include)
                 builder.append('(');
 
-            // Simplification already sorted children.
-            auto& children = operationNode.children();
+            auto children = operationNode.children();
+            sortChildren(children);
             ASSERT(children.size());
             // Serialize root’s first child, and append it to s.
             buildCSSTextRecursive(children.first(), builder);

@@ -7288,6 +7288,29 @@ RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range)
     return parsedValues;
 }
 
+RefPtr<CSSValueList> consumeMasonryAutoFlow(CSSParserTokenRange& range)
+{
+    RefPtr<CSSPrimitiveValue> packOrNextValue = consumeIdent<CSSValuePack, CSSValueNext>(range);
+    RefPtr<CSSPrimitiveValue> definiteFirstOrOrderedValue = consumeIdent<CSSValueDefiniteFirst, CSSValueOrdered>(range);
+
+    if (!packOrNextValue) {
+        packOrNextValue = consumeIdent<CSSValuePack, CSSValueNext>(range);
+        if (!packOrNextValue)
+            packOrNextValue = CSSValuePool::singleton().createIdentifierValue(CSSValuePack);
+    }
+
+    RefPtr<CSSValueList> parsedValues = CSSValueList::createSpaceSeparated();
+    if (packOrNextValue) {
+        CSSValueID packOrNextValueID = packOrNextValue->valueID();
+        if (!definiteFirstOrOrderedValue || (definiteFirstOrOrderedValue && definiteFirstOrOrderedValue->valueID() == CSSValueID::CSSValueDefiniteFirst) || packOrNextValueID == CSSValueID::CSSValueNext)
+            parsedValues->append(packOrNextValue.releaseNonNull());
+    }
+    if (definiteFirstOrOrderedValue && definiteFirstOrOrderedValue->valueID() == CSSValueID::CSSValueOrdered)
+        parsedValues->append(definiteFirstOrOrderedValue.releaseNonNull());
+
+    return parsedValues;
+}
+
 static bool consumeRepeatStyleComponent(CSSParserTokenRange& range, RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2)
 {
     if (consumeIdent<CSSValueRepeatX>(range)) {

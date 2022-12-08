@@ -564,14 +564,9 @@ template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
     static std::optional<RefPtr<WebCore::ReportBody>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<Ref<WebCore::TimingFunction>> {
-    static void encode(Encoder&, const Ref<WebCore::TimingFunction>&);
+template<> struct ArgumentCoder<WebCore::TimingFunction> {
+    static void encode(Encoder&, const WebCore::TimingFunction&);
     static std::optional<Ref<WebCore::TimingFunction>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction>> {
-    static void encode(Encoder&, const RefPtr<WebCore::TimingFunction>&);
-    static std::optional<RefPtr<WebCore::TimingFunction>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::TransformOperation> {

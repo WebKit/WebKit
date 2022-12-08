@@ -565,4 +565,289 @@ TEST(WTF_HashSet, ReserveInitialCapacity)
     EXPECT_EQ(8u, set2.capacity());
 }
 
+TEST(WTF_HashSet, UnionWith)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    HashSet<int> set3 { 1, 2, 3, 4 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet.unionWith(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1.unionWith(emptySet);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = emptySet.unionWith(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.unionWith(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1.unionWith(set2);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set2.unionWith(set1);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set1.unionWith(sequence);
+        EXPECT_EQ(result, set3);
+    }
+}
+
+TEST(WTF_HashSet, FormUnion)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    HashSet<int> set3 { 1, 2, 3, 4 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet;
+        result.formUnion(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1;
+        result.formUnion(emptySet);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = emptySet;
+        result.formUnion(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formUnion(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1;
+        result.formUnion(set2);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set2;
+        result.formUnion(set1);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set1;
+        result.formUnion(sequence);
+        EXPECT_EQ(result, set3);
+    }
+}
+
+TEST(WTF_HashSet, IntersectionWith)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    HashSet<int> set3 { 2, 3 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet.intersectionWith(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.intersectionWith(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = emptySet.intersectionWith(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.intersectionWith(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1.intersectionWith(set2);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set2.intersectionWith(set1);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set1.intersectionWith(sequence);
+        EXPECT_EQ(result, set3);
+    }
+}
+
+TEST(WTF_HashSet, FormIntersection)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    HashSet<int> set3 { 2, 3 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet;
+        result.formIntersection(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formIntersection(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = emptySet;
+        result.formIntersection(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formIntersection(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1;
+        result.formIntersection(set2);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set2;
+        result.formIntersection(set1);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set1;
+        result.formIntersection(sequence);
+        EXPECT_EQ(result, set3);
+    }
+}
+
+TEST(WTF_HashSet, SymmetricDifferenceWith)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    HashSet<int> set3 { 1, 4 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet.symmetricDifferenceWith(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1.symmetricDifferenceWith(emptySet);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = emptySet.symmetricDifferenceWith(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.symmetricDifferenceWith(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.symmetricDifferenceWith(set2);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set2.symmetricDifferenceWith(set1);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set1.symmetricDifferenceWith(sequence);
+        EXPECT_EQ(result, set3);
+    }
+}
+
+TEST(WTF_HashSet, FormSymmetricDifference)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    HashSet<int> set3 { 1, 4 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet;
+        result.formSymmetricDifference(set1);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = set1;
+        result.formSymmetricDifference(emptySet);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = emptySet;
+        result.formSymmetricDifference(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formSymmetricDifference(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formSymmetricDifference(set2);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set2;
+        result.formSymmetricDifference(set1);
+        EXPECT_EQ(result, set3);
+    }
+
+    {
+        auto result = set1;
+        result.formSymmetricDifference(sequence);
+        EXPECT_EQ(result, set3);
+    }
+}
+
 } // namespace TestWebKitAPI

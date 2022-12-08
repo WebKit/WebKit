@@ -295,6 +295,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
 @property (nonatomic, copy) NSArray<NSNumber *> *transports;
 @property (nonatomic, copy, nullable) NSData *extensionOutputsCBOR;
+@property (nonatomic, copy, readonly) NSString *attachment;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -311,6 +312,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSData *attestationObject;
 @property (nonatomic, copy) NSArray<NSNumber *> *transports;
 @property (nonatomic, copy, readonly, nullable) NSData *extensionOutputsCBOR;
+@property (nonatomic, copy, readonly) NSString *attachment;
 
 @end
 
@@ -327,6 +329,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSData *signature;
 @property (nonatomic, copy, readonly, nullable) NSData *userHandle;
 @property (nonatomic, copy, readonly, nullable) NSData *extensionOutputsCBOR;
+@property (nonatomic, copy, readonly) NSString *attachment;
 
 @end
 
@@ -341,6 +344,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly, nullable) NSData *userHandle;
 @property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
 @property (nonatomic, copy, readonly, nullable) NSData *extensionOutputsCBOR;
+@property (nonatomic, copy, readonly) NSString *attachment;
 
 @end
 

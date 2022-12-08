@@ -566,7 +566,11 @@ ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 {
     if (is<HTMLDialogElement>(element))
         return downcast<HTMLDialogElement>(element).isModal();
+#if ENABLE(FULLSCREEN_API)
+    return element.hasFullscreenFlag();
+#else
     return false;
+#endif
 }
 
 } // namespace WebCore

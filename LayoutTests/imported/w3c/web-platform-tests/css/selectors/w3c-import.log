@@ -215,6 +215,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/last-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/last-of-type.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/missing-right-token.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/modal-pseudo-class.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/nesting-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/nesting-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/nesting-ref.html
