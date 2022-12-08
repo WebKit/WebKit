@@ -33,7 +33,7 @@ class ResultsDatabase(object):
     # TODO: Support more suites (Note, the API we're talking to already does)
     SUITE = 'layout-tests'
     PERCENT_THRESHOLD = 10
-    PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE = 50
+    PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE = 80
     CONFIGURATION_KEYS = [
         'architecture',
         'platform',
