@@ -824,6 +824,15 @@ void RenderFragmentedFlow::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
+void RenderFragmentedFlow::markFragmentsForOverflowLayoutIfNeeded()
+{
+    if (!hasFragments())
+        return;
+
+    for (auto& fragment : m_fragmentList)
+        fragment->setNeedsSimplifiedNormalFlowLayout();
+}
+
 void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
 {
     LayoutUnit logicalHeight;
