@@ -1574,7 +1574,6 @@ op :switch,
 # Wasm specific bytecodes
 
 op :unreachable
-op :crash
 op :ret_void
 
 op :drop_keep,

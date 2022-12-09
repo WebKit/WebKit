@@ -1533,7 +1533,7 @@ auto LLIntGenerator::addUnreachable() -> PartialResult
 
 auto LLIntGenerator::addCrash() -> PartialResult
 {
-    WasmCrash::emit(this);
+    WasmUnreachable::emit(this);
 
     return { };
 }

@@ -983,19 +983,6 @@ wasmOp(unreachable, WasmUnreachable, macro(ctx)
     throwException(Unreachable)
 end)
 
-unprefixedWasmOp(wasm_crash, WasmCrash, macro(ctx)
-if WEBASSEMBLY_B3JIT
-    probe(
-        macro()
-            move cfr, a0
-            move wasmInstance, a1
-            cCall2(_wasm_log_crash)
-        end
-    )
-end
-    break
-end)
-
 wasmOp(ret_void, WasmRetVoid, macro(ctx)
     checkSwitchToJITForEpilogue()
     doReturn()
