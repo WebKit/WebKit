@@ -84,7 +84,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
     {
         std::optional<uint64_t> size;
         if constexpr (Extent == WTF::dynamic_extent) {
-            decoder >> size;
+            size = decoder.template decode<uint64_t>();
             if (!size)
                 return std::nullopt;
             if (!*size)
@@ -171,8 +171,7 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
     template<typename Decoder>
     static std::optional<OptionSet<T>> decode(Decoder& decoder)
     {
-        std::optional<typename OptionSet<T>::StorageType> value;
-        decoder >> value;
+        auto value = decoder.template decode<typename OptionSet<T>::StorageType>();
         if (!value)
             return std::nullopt;
         auto optionSet = OptionSet<T>::fromRaw(*value);
@@ -200,13 +199,11 @@ template<typename T> struct ArgumentCoder<std::optional<T>> {
     template<typename Decoder>
     static std::optional<std::optional<T>> decode(Decoder& decoder)
     {
-        std::optional<bool> isEngaged;
-        decoder >> isEngaged;
+        auto isEngaged = decoder.template decode<bool>();
         if (!isEngaged)
             return std::nullopt;
         if (*isEngaged) {
-            std::optional<T> value;
-            decoder >> value;
+            auto value = decoder.template decode<T>();
             if (!value)
                 return std::nullopt;
             return std::optional<std::optional<T>>(WTFMove(*value));
@@ -231,13 +228,11 @@ template<typename T> struct ArgumentCoder<Box<T>> {
     template<typename Decoder>
     static std::optional<Box<T>> decode(Decoder& decoder)
     {
-        std::optional<bool> isEngaged;
-        decoder >> isEngaged;
+        auto isEngaged = decoder.template decode<bool>();
         if (!isEngaged)
             return std::nullopt;
         if (*isEngaged) {
-            std::optional<T> value;
-            decoder >> value;
+            auto value = decoder.template decode<T>();
             if (!value)
                 return std::nullopt;
             return std::optional<Box<T>>(Box<T>::create(WTFMove(*value)));
@@ -257,17 +252,15 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
     template<typename Decoder>
     static std::optional<std::pair<T, U>> decode(Decoder& decoder)
     {
-        std::optional<T> first;
-        decoder >> first;
+        auto first = decoder.template decode<T>();
         if (!first)
             return std::nullopt;
 
-        std::optional<U> second;
-        decoder >> second;
+        auto second = decoder.template decode<U>();
         if (!second)
             return std::nullopt;
 
-        return {{ WTFMove(*first), WTFMove(*second) }};
+        return std::make_optional<std::pair<T, U>>(WTFMove(*first), WTFMove(*second));
     }
 };
 
@@ -343,7 +336,7 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
             return decode(decoder, WTFMove(decodedObjects)..., WTFMove(optional));
         } else {
             static_assert((std::is_same_v<DecodedTypes, Elements> && ...));
-            return std::make_tuple(*WTFMove(decodedObjects)...);
+            return std::make_optional<std::tuple<Elements...>>(*WTFMove(decodedObjects)...);
         }
     }
 };
@@ -359,17 +352,15 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
     template<typename Decoder>
     static std::optional<WTF::KeyValuePair<KeyType, ValueType>> decode(Decoder& decoder)
     {
-        std::optional<KeyType> key;
-        decoder >> key;
+        auto key = decoder.template decode<KeyType>();
         if (!key)
             return std::nullopt;
 
-        std::optional<ValueType> value;
-        decoder >> value;
+        auto value = decoder.template decode<ValueType>();
         if (!value)
             return std::nullopt;
 
-        return { { WTFMove(*key), WTFMove(*value) } };
+        return std::make_optional<WTF::KeyValuePair<KeyType, ValueType>>(WTFMove(*key), WTFMove(*value));
     }
 };
 
@@ -413,12 +404,11 @@ template<typename Key, typename T, Key lastValue> struct ArgumentCoder<Enumerate
     template<typename Decoder>
     static std::optional<EnumeratedArray<Key, T, lastValue>> decode(Decoder& decoder)
     {
-        std::optional<typename EnumeratedArray<Key, T, lastValue>::UnderlyingType> array;
-        decoder >> array;
+        auto array = decoder.template decode<typename EnumeratedArray<Key, T, lastValue>::UnderlyingType>();
         if (!array)
             return std::nullopt;
 
-        return { WTFMove(*array) };
+        return std::make_optional<EnumeratedArray<Key, T, lastValue>>(WTFMove(*array));
     }
 };
 
@@ -438,15 +428,13 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Decoder>
     static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        std::optional<uint64_t> size;
-        decoder >> size;
+        auto size = decoder.template decode<uint64_t>();
         if (!size)
             return std::nullopt;
 
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> vector;
         for (size_t i = 0; i < *size; ++i) {
-            std::optional<T> element;
-            decoder >> element;
+            auto element = decoder.template decode<T>();
             if (!element)
                 return std::nullopt;
             vector.append(WTFMove(*element));
@@ -467,8 +455,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Decoder>
     static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        std::optional<uint64_t> decodedSize;
-        decoder >> decodedSize;
+        auto decodedSize = decoder.template decode<uint64_t>();
         if (!decodedSize)
             return std::nullopt;
 
@@ -517,13 +504,11 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 
         HashMapType hashMap;
         for (uint32_t i = 0; i < hashMapSize; ++i) {
-            std::optional<KeyArg> key;
-            decoder >> key;
+            auto key = decoder.template decode<KeyArg>();
             if (UNLIKELY(!key))
                 return std::nullopt;
 
-            std::optional<MappedArg> value;
-            decoder >> value;
+            auto value = decoder.template decode<MappedArg>();
             if (UNLIKELY(!value))
                 return std::nullopt;
 
@@ -560,8 +545,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
 
         HashSetType hashSet;
         for (uint64_t i = 0; i < hashSetSize; ++i) {
-            std::optional<KeyArg> key;
-            decoder >> key;
+            auto key = decoder.template decode<KeyArg>();
             if (!key)
                 return std::nullopt;
 
@@ -637,25 +621,22 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
     template<typename Decoder>
     static std::optional<Expected<ValueType, ErrorType>> decode(Decoder& decoder)
     {
-        std::optional<bool> hasValue;
-        decoder >> hasValue;
+        auto hasValue = decoder.template decode<bool>();
         if (!hasValue)
             return std::nullopt;
 
         if (*hasValue) {
-            std::optional<ValueType> value;
-            decoder >> value;
+            auto value = decoder.template decode<ValueType>();
             if (!value)
                 return std::nullopt;
 
-            Expected<ValueType, ErrorType> expected(WTFMove(*value));
-            return expected;
+            return std::make_optional<Expected<ValueType, ErrorType>>(WTFMove(*value));
         }
-        std::optional<ErrorType> error;
-        decoder >> error;
+
+        auto error = decoder.template decode<ErrorType>();
         if (!error)
             return std::nullopt;
-        return { makeUnexpected(WTFMove(*error)) };
+        return std::make_optional<Expected<ValueType, ErrorType>>(makeUnexpected(WTFMove(*error)));
     }
 };
 
@@ -673,19 +654,17 @@ template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
 
     template<typename Decoder> static std::optional<Expected<void, ErrorType>> decode(Decoder& decoder)
     {
-        std::optional<bool> hasValue;
-        decoder >> hasValue;
+        auto hasValue = decoder.template decode<bool>();
         if (!hasValue)
             return std::nullopt;
 
         if (*hasValue)
-            return {{ }};
+            return std::make_optional<Expected<void, ErrorType>>();
 
-        std::optional<ErrorType> error;
-        decoder >> error;
+        auto error = decoder.template decode<ErrorType>();
         if (!error)
             return std::nullopt;
-        return { makeUnexpected(WTFMove(*error)) };
+        return std::make_optional<Expected<void, ErrorType>>(makeUnexpected(WTFMove(*error)));
     }
 };
 
@@ -717,8 +696,7 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     template<typename Decoder>
     static std::optional<std::variant<Types...>> decode(Decoder& decoder)
     {
-        std::optional<unsigned> i;
-        decoder >> i;
+        auto i = decoder.template decode<unsigned>();
         if (!i || *i >= sizeof...(Types))
             return std::nullopt;
         return decode(decoder, std::index_sequence_for<Types...> { }, *i);
@@ -730,11 +708,10 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
         constexpr size_t Index = sizeof...(Types) - sizeof...(Indices);
         static_assert(Index < sizeof...(Types));
         if (Index == i) {
-            std::optional<typename std::variant_alternative_t<Index, std::variant<Types...>>> optional;
-            decoder >> optional;
+            auto optional = decoder.template decode<typename std::variant_alternative_t<Index, std::variant<Types...>>>();
             if (!optional)
                 return std::nullopt;
-            return { WTFMove(*optional) };
+            return std::make_optional<std::variant<Types...>>(WTFMove(*optional));
         }
 
         if constexpr (sizeof...(Indices) > 1)

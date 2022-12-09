@@ -54,8 +54,7 @@ template void ArgumentCoder<CString>::encode<Encoder>(Encoder&, const CString&);
 template<typename Decoder>
 std::optional<CString> ArgumentCoder<CString>::decode(Decoder& decoder)
 {
-    std::optional<uint32_t> length;
-    decoder >> length;
+    auto length = decoder.template decode<uint32_t>();
     if (!length)
         return std::nullopt;
 
@@ -120,8 +119,7 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t 
 template<typename Decoder>
 WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
-    std::optional<uint32_t> length;
-    decoder >> length;
+    auto length = decoder.template decode<uint32_t>();
     if (!length)
         return std::nullopt;
     
@@ -129,9 +127,8 @@ WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& 
         // This is the null string.
         return String();
     }
-    
-    std::optional<bool> is8Bit;
-    decoder >> is8Bit;
+
+    auto is8Bit = decoder.template decode<bool>();
     if (!is8Bit)
         return std::nullopt;
     
