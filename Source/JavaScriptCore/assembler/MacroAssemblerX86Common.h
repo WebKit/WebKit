@@ -1551,7 +1551,7 @@ public:
     void addDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vaddsd_rr(op1, op2, dest);
+            m_assembler.vaddsd_rrr(op1, op2, dest);
         else {
             if (op1 == dest)
                 m_assembler.addsd_rr(op2, dest);
@@ -1614,7 +1614,7 @@ public:
     void addFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vaddss_rr(op1, op2, dest);
+            m_assembler.vaddss_rrr(op1, op2, dest);
         else {
             if (op1 == dest)
                 m_assembler.addss_rr(op2, dest);
@@ -1696,7 +1696,7 @@ public:
     void subDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubsd_rr(op1, op2, dest);
+            m_assembler.vsubsd_rrr(op1, op2, dest);
         else {
             // B := A - B is invalid.
             ASSERT(op1 == dest || op2 != dest);
@@ -1738,7 +1738,7 @@ public:
     void subFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubss_rr(op1, op2, dest);
+            m_assembler.vsubss_rrr(op1, op2, dest);
         else {
             // B := A - B is invalid.
             ASSERT(op1 == dest || op2 != dest);
@@ -1780,7 +1780,7 @@ public:
     void mulDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vmulsd_rr(op1, op2, dest);
+            m_assembler.vmulsd_rrr(op1, op2, dest);
         else {
             if (op1 == dest)
                 m_assembler.mulsd_rr(op2, dest);
@@ -1842,7 +1842,7 @@ public:
     void mulFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vmulss_rr(op1, op2, dest);
+            m_assembler.vmulss_rrr(op1, op2, dest);
         else {
             if (op1 == dest)
                 m_assembler.mulss_rr(op2, dest);

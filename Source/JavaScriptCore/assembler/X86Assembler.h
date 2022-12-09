@@ -2521,7 +2521,7 @@ public:
         m_formatter.twoByteOp(OP2_UNPCKLPD_VpdWpd, (RegisterID)vd, (RegisterID)rn);
     }
 
-    void vunpcklps_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vunpcklps_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/unpcklps
         // VEX.128.0F.WIG 14 /r VUNPCKLPS xmm1,xmm2, xmm3/m128
@@ -2627,7 +2627,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PSHUFB_VdqWdq, (RegisterID)vd, (RegisterID)vn);
     }
 
-    void vpshufb_rr(XMMRegisterID vm, XMMRegisterID vn, XMMRegisterID vd)
+    void vpshufb_rrr(XMMRegisterID vm, XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pshufb
         // VEX.128.66.0F38.WIG 00 /r VPSHUFB xmm1, xmm2, xmm3/m128
@@ -2670,7 +2670,7 @@ public:
         m_formatter.immediate8((uint8_t)controlBits);
     }
 
-    void vshufps_rr(uint8_t controlBits, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vshufps_rrr(uint8_t controlBits, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/shufps
         // VEX.128.0F.WIG C6 /r ib VSHUFPS xmm1, xmm2, xmm3/m128, imm8
@@ -2696,7 +2696,7 @@ public:
         m_formatter.twoByteOp(OP2_PADDSB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpaddsb_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpaddsb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/paddsb:paddsw
         // VEX.128.66.0F.WIG EC /r VPADDSB xmm1, xmm2, xmm3/m128
@@ -2713,7 +2713,7 @@ public:
         m_formatter.twoByteOp(OP2_PADDUSB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpaddusb_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpaddusb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/paddusb:paddusw
         // VEX.128.66.0F.WIG DC /r VPADDUSB xmm1, xmm2, xmm3/m128
@@ -2730,7 +2730,7 @@ public:
         m_formatter.twoByteOp(OP2_PADDSW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpaddsw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpaddsw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/paddsb:paddsw
         // VEX.128.66.0F.WIG ED /r VPADDSW xmm1, xmm2, xmm3/m128
@@ -2747,7 +2747,7 @@ public:
         m_formatter.twoByteOp(OP2_PADDUSW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpaddusw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpaddusw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/paddusb:paddusw
         // VEX.128.66.0F.WIG DD /r VPADDUSW xmm1, xmm2, xmm3/m128
@@ -2764,7 +2764,7 @@ public:
         m_formatter.twoByteOp(OP2_PSUBSB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpsubsb_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpsubsb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/psubsb:psubsw
         // VEX.128.66.0F.WIG E8 /r VPSUBSB xmm1, xmm2, xmm3/m128
@@ -2781,7 +2781,7 @@ public:
         m_formatter.twoByteOp(OP2_PSUBUSB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpsubusb_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpsubusb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/psubusb:psubusw
         // VEX.128.66.0F.WIG D8 /r VPSUBUSB xmm1, xmm2, xmm3/m128
@@ -2798,7 +2798,7 @@ public:
         m_formatter.twoByteOp(OP2_PSUBSW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpsubsw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpsubsw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/psubsb:psubsw
         // VEX.128.66.0F.WIG E9 /r VPSUBSW xmm1, xmm2, xmm3/m128
@@ -2815,7 +2815,7 @@ public:
         m_formatter.twoByteOp(OP2_PSUBUSW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpsubusw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpsubusw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/psubusb:psubusw
         // VEX.128.66.0F.WIG D9 /r VPSUBUSW xmm1, xmm2, xmm3/m128
@@ -2832,7 +2832,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMAXSB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpmaxsb_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpmaxsb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pmaxsb:pmaxsw:pmaxsd:pmaxsq
         // VEX.128.66.0F38.WIG 3C /r VPMAXSB xmm1, xmm2, xmm3/m128
@@ -2849,7 +2849,7 @@ public:
         m_formatter.twoByteOp(OP2_PMAXSW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpmaxsw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpmaxsw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pmaxsb:pmaxsw:pmaxsd:pmaxsq
         // VEX.128.66.0F.WIG EE /r VPMAXSW xmm1, xmm2, xmm3/m128
@@ -2866,7 +2866,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMAXSD_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpmaxsd_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpmaxsd_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pmaxsb:pmaxsw:pmaxsd:pmaxsq
         // VEX.128.66.0F38.WIG 3D /r VPMAXSD xmm1, xmm2, xmm3/m128
@@ -2883,7 +2883,7 @@ public:
         m_formatter.twoByteOp(OP2_PMAXUB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpmaxub_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpmaxub_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pmaxub:pmaxuw
         // VEX.128.66.0F DE /r VPMAXUB xmm1, xmm2, xmm3/m128
@@ -2899,7 +2899,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMAXUW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpmaxuw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpmaxuw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pmaxub:pmaxuw
         // VEX.128.66.0F38 3E /r VPMAXUW xmm1, xmm2, xmm3/m128
@@ -2916,7 +2916,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMAXUD_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpmaxud_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpmaxud_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pmaxud:pmaxuq
         // VEX.128.66.0F38.WIG 3F /r VPMAXUD xmm1, xmm2, xmm3/m128
@@ -2933,7 +2933,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMINSB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpminsb_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpminsb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pminsb:pminsw
         // VEX.128.66.0F38 38 /r VPMINSB xmm1, xmm2, xmm3/m128
@@ -2950,7 +2950,7 @@ public:
         m_formatter.twoByteOp(OP2_PMINSW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpminsw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpminsw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pminsb:pminsw
         // VEX.128.66.0F EA /r VPMINSW xmm1, xmm2, xmm3/m128
@@ -2966,7 +2966,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMINSD_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpminsd_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpminsd_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pminsd:pminsq
         // VEX.128.66.0F38.WIG 39 /r VPMINSD xmm1, xmm2, xmm3/m128
@@ -2983,7 +2983,7 @@ public:
         m_formatter.twoByteOp(OP2_PMINUB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpminub_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpminub_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pminub:pminuw
         // VEX.128.66.0F DA /r VPMINUB xmm1, xmm2, xmm3/m128
@@ -2999,7 +2999,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMINUW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpminuw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpminuw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pminub:pminuw
         // VEX.128.66.0F38 3A /r VPMINUW xmm1, xmm2, xmm3/m128
@@ -3016,7 +3016,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PMINUD_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpminud_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpminud_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pminud:pminuq
         // VEX.128.66.0F38.WIG 3B /r VPMINUD xmm1, xmm2, xmm3/m128
@@ -3033,7 +3033,7 @@ public:
         m_formatter.twoByteOp(OP2_PAVGB_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpavgb_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpavgb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pavgb:pavgw
         // VEX.128.66.0F.WIG E0 /r VPAVGB xmm1, xmm2, xmm3/m128
@@ -3050,7 +3050,7 @@ public:
         m_formatter.twoByteOp(OP2_PAVGW_VdqWdq, (RegisterID)vd, (RegisterID)right);
     }
 
-    void vpavgw_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpavgw_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pavgb:pavgw
         // VEX.128.66.0F.WIG E3 /r VPAVGW xmm1, xmm2, xmm3/m128
@@ -3118,7 +3118,7 @@ public:
         m_formatter.twoByteOp(OP2_PXOR_VdqWdq, (RegisterID)vd, (RegisterID)vn);
     }
 
-    void vpxor_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpxor_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/pxor
         // VEX.128.66.0F.WIG EF /r VPXOR xmm1, xmm2, xmm3/m128
@@ -3127,21 +3127,19 @@ public:
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_PXOR_VdqWdq, (RegisterID)vd, (RegisterID)right, (RegisterID)left);
     }
 
-    void vpsubq_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
+    void vpsubq_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/psubq
         // VEX.128.66.0F.WIG FB /r VPSUBQ xmm1, xmm2, xmm3/m128
-        bool isVEX256 = false;
-        bool isW1 = false;
-        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_PSUBQ_VdqWdq, (RegisterID)vd, (RegisterID)right, (RegisterID)left);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSUBQ_VdqWdq, (RegisterID)vd, (RegisterID)left, (RegisterID)right);
     }
 
-    void vblendvpd_rr(XMMRegisterID xmm4, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vblendvpd_rrrr(XMMRegisterID xmm4, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/blendvpd
         // VEX.128.66.0F3A.W0 4B /r /is4 VBLENDVPD xmm1, xmm2, xmm3/m128, xmm4
         bool isVEX256 = false;
-        bool isW1 = false;    
+        bool isW1 = false;
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::ThreeBytesOp3A, isW1, OP3_BLENDVPD_VpdWpdXMM0, xmm4, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
     }
 
@@ -3154,7 +3152,7 @@ public:
         m_formatter.immediate8((uint8_t)imm8);
     }
 
-    void vpmulhrsw_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vpmulhrsw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/pmulhrsw
         // VEX.128.66.0F38.WIG 0B /r VPMULHRSW xmm1, xmm2, xmm3/m128
@@ -3163,7 +3161,7 @@ public:
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, isW1, OP3_ROUNDSD_VsdWsdIb, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
     }
 
-    void vpcmpeqw_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vpcmpeqw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/pcmpeqb:pcmpeqw:pcmpeqd
         // VEX.128.66.0F.WIG 75 /r VPCMPEQW xmm1, xmm2, xmm3/m128
@@ -3186,47 +3184,42 @@ public:
 
     void vaddpd_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_ADDPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_ADDPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpaddb_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PADDB_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PADDB_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpaddw_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PADDW_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PADDW_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpaddd_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PADDD_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PADDD_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpaddq_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PADDQ_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PADDQ_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vsubps_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp((OneByteOpcodeID)0, OP2_SUBPS_VpsWps, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
-    }
-
-    void vsubpd_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
-    {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_SUBPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigTwoByteOp((OneByteOpcodeID)0, OP2_SUBPS_VpsWps, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpsubb_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PSUBB_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSUBB_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpsubw_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PSUBW_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSUBW_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void psubd_rr(XMMRegisterID vn, XMMRegisterID vd)
@@ -3239,12 +3232,7 @@ public:
 
     void vpsubd_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PSUBD_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
-    }
-
-    void vpsubq_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
-    {
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PSUBQ_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSUBD_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vmulps_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
@@ -3254,17 +3242,17 @@ public:
 
     void vmulpd_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_MULPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_MULPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpmullw_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PMULLW_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PMULLW_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vpmulld_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigThreeByteOp(PRE_OPERAND_SIZE, VexImpliedBytes::ThreeBytesOp38, OP3_PMULLD_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_PMULLD_VdqWdq, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     void vdivps_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
@@ -3274,7 +3262,7 @@ public:
 
     void vdivpd_rrr(XMMRegisterID left, XMMRegisterID right, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_DIVPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_DIVPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
     enum class RoundingType : uint8_t {
@@ -3286,54 +3274,54 @@ public:
 
     void vroundps_rr(FPRegisterID src, FPRegisterID dest, RoundingType rounding)
     {
-        m_formatter.vexNdsLigWigThreeByteOp(PRE_OPERAND_SIZE, VexImpliedBytes::ThreeBytesOp3A, OP3_ROUNDPS_VpsWpsIb, (RegisterID)dest, (RegisterID)0, (RegisterID)src);
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp3A, OP3_ROUNDPS_VpsWpsIb, (RegisterID)dest, (RegisterID)0, (RegisterID)src);
         m_formatter.immediate8(static_cast<uint8_t>(rounding));
     }
 
     void vroundpd_rr(FPRegisterID src, FPRegisterID dest, RoundingType rounding)
     {
-        m_formatter.vexNdsLigWigThreeByteOp(PRE_OPERAND_SIZE, VexImpliedBytes::ThreeBytesOp3A, OP3_ROUNDPD_VpdWpdIb, (RegisterID)dest, (RegisterID)0, (RegisterID)src);
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp3A, OP3_ROUNDPD_VpdWpdIb, (RegisterID)dest, (RegisterID)0, (RegisterID)src);
         m_formatter.immediate8(static_cast<uint8_t>(rounding));
     }
 
     void vpmaddwd_rrr(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PMADDWD_VdqWdq, (RegisterID)dest, (RegisterID)a, (RegisterID)b);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PMADDWD_VdqWdq, (RegisterID)dest, (RegisterID)a, (RegisterID)b);
     }
 
-    void vpcmpeqb_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vpcmpeqb_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPEQB_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PCMPEQB_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
     }
 
-    void vpcmpeqd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vpcmpeqd_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPEQD_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_PCMPEQD_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
     }
 
-    void vpcmpeqq_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vpcmpeqq_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigThreeByteOp(PRE_OPERAND_SIZE, VexImpliedBytes::ThreeBytesOp38, OP3_PCMPEQQ_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_PCMPEQQ_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
     }
 
-    void vpcmpgtb_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vpcmpgtb_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPGTB_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PCMPGTB_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
     }
 
-    void vpcmpgtw_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vpcmpgtw_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPGTW_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PCMPGTW_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
     }
 
-    void vpcmpgtd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vpcmpgtd_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_PCMPGTD_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PCMPGTD_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
     }
 
-    void vpcmpgtq_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vpcmpgtq_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        m_formatter.vexNdsLigWigThreeByteOp(PRE_OPERAND_SIZE, VexImpliedBytes::ThreeBytesOp38, OP3_PCMPGTQ_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_PCMPGTQ_VdqWdq, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
     }
 
     enum class PackedCompareCondition : uint8_t {
@@ -3347,7 +3335,7 @@ public:
         Ordered = 7
     };
 
-    void vcmpps_rr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vcmpps_rrr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
         if (condition == PackedCompareCondition::Equal || condition == PackedCompareCondition::NotEqual)
             m_formatter.vexNdsLigWigCommutativeTwoByteOp((OneByteOpcodeID)0, OP2_CMPPS_VpsWpsIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
@@ -3356,12 +3344,12 @@ public:
         m_formatter.immediate8(static_cast<uint8_t>(condition));
     }
 
-    void vcmppd_rr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
+    void vcmppd_rrr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
         if (condition == PackedCompareCondition::Equal || condition == PackedCompareCondition::NotEqual)
-            m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_OPERAND_SIZE, OP2_CMPPD_VpdWpdIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+            m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_CMPPD_VpdWpdIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
         else
-            m_formatter.vexNdsLigWigTwoByteOp(PRE_OPERAND_SIZE, OP2_CMPPD_VpdWpdIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
+            m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_CMPPD_VpdWpdIb, (RegisterID)a, (RegisterID)b, (RegisterID)dest);
         m_formatter.immediate8(static_cast<uint8_t>(condition));
     }
 
@@ -3377,7 +3365,7 @@ public:
         // https://www.felixcloutier.com/x86/cvtdq2ps
         // VEX.128.0F.WIG 5B /r VCVTDQ2PS xmm1, xmm2/m128
         bool isVEX256 = false;
-        bool isW1 = false;    
+        bool isW1 = false;
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_00, VexImpliedBytes::TwoBytesOp, isW1, OP2_CVTDQ2PS_VsdWsd, (RegisterID)vd, (RegisterID)vn, (RegisterID)0);
     }
 
@@ -3394,43 +3382,42 @@ public:
         // https://www.felixcloutier.com/x86/cvtdq2pd
         // VEX.128.F3.0F.WIG E6 /r VCVTDQ2PD xmm1, xmm2/m64
         bool isVEX256 = false;
-        bool isW1 = false;    
+        bool isW1 = false;
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_F3, VexImpliedBytes::TwoBytesOp, isW1, OP2_CVTDQ2PD_VdqWdq, (RegisterID)vd, (RegisterID)vn, (RegisterID)0);
     }
 
-    void vsubpd_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID dest)
+    void vsubpd_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID dest)
     {
         // https://www.felixcloutier.com/x86/subpd
         // VEX.128.66.0F.WIG 5C /r VSUBPD xmm1,xmm2, xmm3/m128
-        bool isVEX256 = false;
-        bool isW1 = false;    
-        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_SUBSD_VsdWsd, (RegisterID)dest, (RegisterID)right, (RegisterID)left);
+        // Sub is xmm1 = xmm2 - xmm3
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_SUBPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
-    void vxorpd_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vxorpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/xorpd
         // VEX.128.66.0F.WIG 57 /r VXORPD xmm1, xmm2, xmm3/m128
         bool isVEX256 = false;
-        bool isW1 = false;    
+        bool isW1 = false;
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_XORPD_VpdWpd, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
     }
 
-    void vmaxpd_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vmaxpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/maxpd
         // VEX.128.66.0F.WIG 5F /r VMAXPD xmm1, xmm2, xmm3/m128
         bool isVEX256 = false;
-        bool isW1 = false;    
+        bool isW1 = false;
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_MAXPD_VsdWsd, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
     }
 
-    void vminpd_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vminpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/minpd
         // VEX.128.66.0F.WIG 5D /r VMINPD xmm1, xmm2, xmm3/m128
         bool isVEX256 = false;
-        bool isW1 = false;    
+        bool isW1 = false;
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_MINPD_VsdWsd, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
     }
 
@@ -3439,20 +3426,11 @@ public:
         // https://www.felixcloutier.com/x86/roundpd
         // VEX.128.66.0F3A.WIG 09 /r ib VROUNDPD xmm1, xmm2/m128, imm8
         bool isVEX256 = false;
-        bool isW1 = false;    
+        bool isW1 = false;
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::ThreeBytesOp3A, isW1, OP3_ROUNDPD_MbVdqIb, imm8, (RegisterID)xmm1, (RegisterID)xmm2);
     }
 
-    void vaddpd_rr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID dest)
-    {
-        // https://www.felixcloutier.com/x86/addpd
-        // VEX.128.66.0F.WIG 58 /r VADDPD xmm1, xmm2, xmm3/m128
-        bool isVEX256 = false;
-        bool isW1 = false;
-        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_ADDSD_VsdWsd, (RegisterID)dest, (RegisterID)right, (RegisterID)left);
-    }
-
-    void vcmppd_rr(uint8_t imm8, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vcmppd_rrr(uint8_t imm8, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/cmppd
         // VEX.128.66.0F.WIG C2 /r ib VCMPPD xmm1, xmm2, xmm3/m128, imm8
@@ -3461,10 +3439,10 @@ public:
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_CMPPD_VpdWpdIb, imm8, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
     }
 
-    void vcmpeqpd_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vcmpeqpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/cmppd
-        vcmppd_rr(0, xmm3, xmm2, xmm1);
+        vcmppd_rrr(0, xmm3, xmm2, xmm1);
     }
 
     void vcvttpd2dq_rr(XMMRegisterID xmm2, XMMRegisterID xmm1)
@@ -3476,7 +3454,7 @@ public:
         m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_CVTDQ2PD_VdqWdq, (RegisterID)xmm1, (RegisterID)xmm2, (RegisterID)0);
     }
 
-    void vandpd_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vandpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/andpd
         // VEX.128.66.0F 54 /r VANDPD xmm1, xmm2, xmm3/m128
@@ -3511,7 +3489,7 @@ public:
         m_formatter.twoByteOp(OP2_PACKSSWB_VdqWdq, (RegisterID)xmm1, (RegisterID)xmm2);
     }
 
-    void vpacksswb_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vpacksswb_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/packsswb:packssdw
         // VEX.128.66.0F.WIG 63 /r VPACKSSWB xmm1,xmm2, xmm3/m128
@@ -3528,7 +3506,7 @@ public:
         m_formatter.twoByteOp(OP2_PACKUSWB_VdqWdq, (RegisterID)dest, (RegisterID)upper);
     }
 
-    void vpackuswb_rr(XMMRegisterID upper, XMMRegisterID lower, XMMRegisterID dest)
+    void vpackuswb_rrr(XMMRegisterID upper, XMMRegisterID lower, XMMRegisterID dest)
     {
         // https://www.felixcloutier.com/x86/packuswb
         // VEX.128.66.0F.WIG 67 /r VPACKUSWB xmm1, xmm2, xmm3/m128
@@ -3545,7 +3523,7 @@ public:
         m_formatter.twoByteOp(OP2_PACKSSDW_VdqWdq, (RegisterID)xmm1, (RegisterID)xmm2);
     }
 
-    void vpackssdw_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vpackssdw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/packsswb:packssdw
         // VEX.128.66.0F.WIG 6B /r VPACKSSDW xmm1,xmm2, xmm3/m128
@@ -3562,7 +3540,7 @@ public:
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PACKUSDW, (RegisterID)xmm1, (RegisterID)xmm2);
     }
 
-    void vpackusdw_rr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    void vpackusdw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/packusdw
         // VEX.128.66.0F38 2B /r VPACKUSDW xmm1,xmm2, xmm3/m128
@@ -4282,7 +4260,7 @@ public:
         m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
-    void vaddsd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    void vaddsd_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
     {
         m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F2, OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
     }
@@ -4315,7 +4293,7 @@ public:
         m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
-    void vaddss_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    void vaddss_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
     {
         m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F3, OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
     }
@@ -4631,7 +4609,7 @@ public:
         m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
-    void vmulsd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    void vmulsd_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
     {
         m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F2, OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
     }
@@ -4664,7 +4642,7 @@ public:
         m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
-    void vmulss_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    void vmulss_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
     {
         m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_F3, OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
     }
@@ -4733,7 +4711,7 @@ public:
         m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
-    void vsubsd_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    void vsubsd_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
     {
         m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F2, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
     }
@@ -4766,7 +4744,7 @@ public:
         m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
-    void vsubss_rr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
+    void vsubss_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dst)
     {
         m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_F3, OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)a, (RegisterID)b);
     }
