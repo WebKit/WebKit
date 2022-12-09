@@ -101,3 +101,8 @@ struct NullableSoftLinkedMember {
     [Nullable, SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> firstMember;
     [SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> secondMember;
 }
+
+[EncodeLValue, EncodeRValue] class RValueEncodableClass {
+    uint64_t a;
+    MemberType b;
+};

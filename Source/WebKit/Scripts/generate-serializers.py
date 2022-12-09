@@ -42,6 +42,7 @@ class SerializedType(object):
         self.create_using = False
         self.populate_from_empty_constructor = False
         self.nested = False
+        self.encoding_value_categories = set()
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -59,6 +60,14 @@ class SerializedType(object):
                 else:
                     if attribute == 'Nested':
                         self.nested = True
+                    if attribute == 'EncodeLValue':
+                        self.encoding_value_categories.add('LValue')
+                    if attribute == 'EncodeRValue':
+                        self.encoding_value_categories.add('RValue')
+
+        # If none is specified, generate encoding functions for lvalues only.
+        if not self.encoding_value_categories:
+            self.encoding_value_categories.add('LValue')
 
     def namespace_and_name(self):
         if self.namespace is None:
@@ -175,7 +184,10 @@ def argument_coder_declarations(serialized_types, skip_nested):
             result.append('#if ' + type.condition)
         result.append('template<> struct ArgumentCoder<' + type.namespace_and_name() + '> {')
         for encoder in type.encoders:
-            result.append('    static void encode(' + encoder + '&, const ' + type.namespace_and_name() + '&);')
+            if 'LValue' in type.encoding_value_categories:
+                result.append('    static void encode(' + encoder + '&, const ' + type.namespace_and_name() + '&);')
+            if 'RValue' in type.encoding_value_categories:
+                result.append('    static void encode(' + encoder + '&, ' + type.namespace_and_name() + '&&);')
         if type.return_ref:
             result.append('    static std::optional<Ref<' + type.namespace_and_name() + '>> decode(Decoder&);')
         else:
@@ -291,16 +303,21 @@ def encode_type(type):
         if 'Nullable' in member.attributes:
             result.append('    encoder << !!instance.' + member.name + ';')
             result.append('    if (!!instance.' + member.name + ')')
-            result.append('        encoder << instance.' + member.name + ';')
+            result.append('        encoder << std::forward_like<decltype(instance)>(instance.' + member.name + ');')
         elif member.unique_ptr_type() is not None:
             result.append('    encoder << !!instance.' + member.name + ';')
             result.append('    if (!!instance.' + member.name + ')')
-            result.append('        encoder << *instance.' + member.name + ';')
+            result.append('        encoder << std::forward_like<decltype(instance)>(*instance.' + member.name + ');')
         else:
-            result.append('    encoder << instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ';')
-            if 'ReturnEarlyIfTrue' in member.attributes:
-                result.append('    if (instance.' + member.name + ')')
-                result.append('        return;')
+            if type.serialize_with_function_calls:
+                result.append('    encoder << std::forward<decltype(instance)>(instance).' + member.name + '();')
+            else:
+                if 'ReturnEarlyIfTrue' in member.attributes:
+                    result.append('    bool has' + sanitize_string_for_variable_name(member.name) + ' = !!instance.' + member.name + ';')
+                result.append('    encoder << std::forward_like<decltype(instance)>(instance.' + member.name + ');')
+                if 'ReturnEarlyIfTrue' in member.attributes:
+                    result.append('    if (has' + sanitize_string_for_variable_name(member.name) + ')')
+                    result.append('        return;')
         if member.condition is not None:
             result.append('#endif')
     return result
@@ -453,12 +470,14 @@ def generate_impl(serialized_types, serialized_enums, headers):
         if type.condition is not None:
             result.append('#if ' + type.condition)
         for encoder in type.encoders:
-            result.append('')
-            result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, const ' + type.namespace_and_name() + '& instance)')
-            result.append('{')
-            result = result + check_type_members(type)
-            result = result + encode_type(type)
-            result.append('}')
+            if 'LValue' in type.encoding_value_categories:
+                result.append('')
+                result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, const ' + type.namespace_and_name() + '& instance)')
+                result = result + ['{'] + check_type_members(type) + encode_type(type) + ['}']
+            if 'RValue' in type.encoding_value_categories:
+                result.append('')
+                result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, ' + type.namespace_and_name() + '&& instance)')
+                result = result + ['{'] + check_type_members(type) + encode_type(type) + ['}']
         result.append('')
         if type.return_ref:
             result.append('std::optional<Ref<' + type.namespace_and_name() + '>> ArgumentCoder<' + type.namespace_and_name() + '>::decode(Decoder& decoder)')
