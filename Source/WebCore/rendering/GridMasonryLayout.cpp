@@ -47,7 +47,6 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     // 2.4 Masonry Layout Algorithm
     addItemsToFirstTrack(m_firstTrackItems);
     placeItemsWithDefiniteGridAxisPosition(m_itemsWithDefiniteGridAxisPosition);
-    placeItemsWithIndefiniteGridAxisPosition(m_itemsWithIndefiniteGridAxisPosition);
 }
 
 void GridMasonryLayout::collectMasonryItems()
@@ -113,9 +112,9 @@ void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition(const Vector<Rend
     }
 }
 
-void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithIndefinitePosition)
+void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition()
 {
-    for (auto* item : itemsWithIndefinitePosition) {
+    for (auto* item : m_itemsWithIndefiniteGridAxisPosition) {
         ASSERT(item);
         if (!item)
             continue;

@@ -299,6 +299,11 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // 1.5- Compute Content Distribution offsets for column tracks
         computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
 
+        if (isMasonryRows() || isMasonryColumns()) {
+            placeItemsOnGrid(availableSpaceForColumns);
+            m_masonryLayout.placeItemsWithIndefiniteGridAxisPosition();
+        }
+
         // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
         bool shouldRecomputeHeight = false;
@@ -483,6 +488,9 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     // placeItemsOnGrid isn't const since it mutates our grid, but it's safe to do
     // so here since we've overriden m_currentGrid with a stack based temporary.
     const_cast<RenderGrid&>(*this).placeItemsOnGrid(std::nullopt);
+
+    if (isMasonryRows() || isMasonryColumns())
+        m_masonryLayout.placeItemsWithIndefiniteGridAxisPosition();
 
     performGridItemsPreLayout(algorithm);
 
@@ -684,6 +692,8 @@ void RenderGrid::placeItems()
 
     LayoutUnit availableSpaceForColumns = availableLogicalWidth();
     placeItemsOnGrid(availableSpaceForColumns);
+    if (isMasonryRows() || isMasonryColumns())
+        m_masonryLayout.placeItemsWithIndefiniteGridAxisPosition();
 }
 
 static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& area)
@@ -831,7 +841,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
             continue;
 
         GridArea area = currentGrid().gridItemArea(*child);
-        ASSERT(area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite());
+        ASSERT((area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite()) || (isMasonryRows() || isMasonryColumns()));
     }
 #endif
 }

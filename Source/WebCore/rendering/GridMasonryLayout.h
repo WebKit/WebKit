@@ -40,7 +40,9 @@ public:
 
     void performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
     LayoutUnit offsetForChild(const RenderBox&) const;
-    LayoutUnit gridContentSize() const { return m_gridContentSize; };
+    LayoutUnit gridContentSize() const { return m_gridContentSize; }
+    void placeItemsWithIndefiniteGridAxisPosition();
+
 private:
 
     GridArea nextMasonryPositionForItem(const RenderBox& item);
@@ -48,7 +50,6 @@ private:
     void collectMasonryItems();
     void addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>& firstTrackItems); 
     void placeItemsWithDefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithDefinitePosition);
-    void placeItemsWithIndefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithIndefinitePosition);
     void setItemGridAxisContainingBlockToGridArea(RenderBox&);
     void insertIntoGridAndLayoutItem(RenderBox&, const GridArea&);
 
