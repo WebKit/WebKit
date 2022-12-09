@@ -551,7 +551,7 @@ private:
 
 #if ENABLE(GAMEPAD)
     void startedUsingGamepads(IPC::Connection&);
-    void stoppedUsingGamepads(IPC::Connection&);
+    void stoppedUsingGamepads(IPC::Connection&, CompletionHandler<void()>&&);
 
     void processStoppedUsingGamepads(WebProcessProxy&);
 #endif

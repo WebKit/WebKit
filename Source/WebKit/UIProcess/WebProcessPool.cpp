@@ -1623,8 +1623,9 @@ void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
     proxy->send(Messages::WebProcess::SetInitialGamepads(UIGamepadProvider::singleton().snapshotGamepads()), 0);
 }
 
-void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection)
+void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection, CompletionHandler<void()>&& completionHandler)
 {
+    CompletionHandlerCallingScope callCompletionHandlerOnExit(WTFMove(completionHandler));
     auto* proxy = webProcessProxyFromConnection(connection, m_processes);
     if (!proxy)
         return;
