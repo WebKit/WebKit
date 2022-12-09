@@ -5137,7 +5137,7 @@ public:
         m_assembler.sshl(dest, input, shift, simdInfo.lane);
     }
 
-    void vectorSshr(SIMDInfo simdInfo, FPRegisterID input, TrustedImm32 shift, FPRegisterID dest)
+    void vectorSshr8(SIMDInfo simdInfo, FPRegisterID input, TrustedImm32 shift, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsIntegral(simdInfo.lane));
         m_assembler.sshr_vi(dest, input, shift.m_value, simdInfo.lane);

@@ -517,6 +517,10 @@ public:
         AIR_OP_CASE(AnyTrue)
         AIR_OP_CASE(AllTrue)
         result = tmpForType(Types::I32);
+        if (isX86() && (op == SIMDLaneOperation::AllTrue || op == SIMDLaneOperation::Bitmask)) {
+            append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::V128));
+            return { };
+        }
         if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {
             append(airOp, v, result);
             return { };
@@ -532,7 +536,6 @@ public:
     auto addSIMDV_V(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType& result) -> PartialResult
     {
         AIR_OP_CASES()
-        AIR_OP_CASE(Not)
         AIR_OP_CASE(Demote)
         AIR_OP_CASE(Promote)
         AIR_OP_CASE(Abs)
@@ -549,15 +552,27 @@ public:
         AIR_OP_CASE(ExtendLow)
         AIR_OP_CASE(TruncSat)
 #if CPU(X86_64)
+        else if (op == SIMDLaneOperation::Not) {
+            // x86_64 has no vector bitwise NOT instruction, so we expand vxv.not v into vxv.xor -1, v
+            // here to give B3/Air a chance to optimize out repeated usage of the mask.
+            v128_t mask;
+            mask.u64x2[0] = 0xffffffffffffffff;
+            mask.u64x2[1] = 0xffffffffffffffff;
+            TypedTmp ones = addConstant(mask);
+            result = tmpForType(Types::V128);
+            append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), ones, v, result);
+            return { };
+        }
         else if (op == SIMDLaneOperation::Neg) {
             // x86_64 has no vector negate instruction, so we expand vxv.neg v into vxv.sub 0, v
             // here to give B3/Air a chance to optimize out repeated vector zeroing.
             TypedTmp zero = addConstant(v128_t());
             result = tmpForType(Types::V128);
-            append(VectorSub, zero, v, result);
+            append(VectorSub, Arg::simdInfo(info), zero, v, result);
             return { };
         }
 #else
+        AIR_OP_CASE(Not)
         AIR_OP_CASE(Neg)
 #endif
 
@@ -1722,9 +1737,19 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
 
 auto AirIRGenerator::addConstant(v128_t value) -> ExpressionType
 {
+    auto result = tmpForType(Types::V128);
+
+    if (!value.u64x2[0] && !value.u64x2[1]) {
+        append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, result, result);
+        return result;
+    }
+    if (value.u64x2[0] == 0xffffffffffffffff && value.u64x2[1] == 0xffffffffffffffff) {
+        append(CompareIntegerVector, Arg::relCond(MacroAssembler::RelationalCondition::Equal), Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::None }), result, result, result);
+        return result;
+    }
+
     // FIXME: this is bad, we should load
     auto a = g64();
-    auto result = tmpForType(Types::V128);
     append(Move, Arg::bigImm(value.u64x2[0]), a);
     append(MoveZeroToVector, result);
     append(VectorReplaceLaneInt64, Arg::imm(0), a, result);
@@ -4034,9 +4059,19 @@ auto AirIRGenerator::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, Expressio
         append(info.signMode == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
 
         return { };
+    } else if (isX86()) {
+        Tmp shiftAmount = newTmp(B3::GP);
+        Tmp shiftVector = newTmp(B3::FP);
+        append(And32, Arg::bitImm(mask), shift.tmp(), shiftAmount);
+        append(VectorSplat8, shiftAmount, shiftVector);
+
+        if (op == SIMDLaneOperation::Shl)
+            append(VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
+        else
+            append(info.signMode == SIMDSignMode::Signed ? VectorSshr : VectorUshr, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
+        return { };
     }
 
-    // FIXME: implement x86
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }

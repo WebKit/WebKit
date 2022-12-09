@@ -120,6 +120,24 @@ void lowerMacros(Code& code)
                 }
             };
 
+            auto handleVectorBitwiseSelect = [&] {
+                if (!isX86())
+                    return;
+
+                Tmp lhs = inst.args[1].tmp();
+                Tmp rhs = inst.args[2].tmp();
+                Tmp dst = inst.args[3].tmp(); // Bitmask is passed via dst.
+                auto* origin = inst.origin;
+
+                Tmp scratch = code.newTmp(FP);
+
+                insertionSet.insert(instIndex, VectorAnd, origin, lhs, dst, scratch);
+                insertionSet.insert(instIndex, VectorAndnot, origin, rhs, dst, dst);
+                insertionSet.insert(instIndex, VectorOr, origin, scratch, dst, dst);
+
+                inst = Inst();
+            };
+
             auto handleVectorMul = [&] {
                 if (inst.args[0].simdInfo().lane != SIMDLane::i64x2)
                     return;
@@ -154,7 +172,6 @@ void lowerMacros(Code& code)
             auto handleVectorAllTrue = [&] {
                 if (!isARM64())
                     return;
-
                 SIMDInfo simdInfo = inst.args[0].simdInfo();
                 Tmp vec = inst.args[1].tmp();
                 Tmp dst = inst.args[2].tmp();
@@ -251,7 +268,7 @@ void lowerMacros(Code& code)
                     Tmp vectorTmp = code.newTmp(FP);
                     Tmp gpTmp = code.newTmp(GP);
                     // This might look bad, but remember: every bit of information we destroy contributes to the heat death of the universe.
-                    insertionSet.insert(instIndex, VectorSshr, origin, Arg::simdInfo({ SIMDLane::i64x2, SIMDSignMode::None }), vector, Arg::imm(63), vectorTmp);
+                    insertionSet.insert(instIndex, VectorSshr8, origin, Arg::simdInfo({ SIMDLane::i64x2, SIMDSignMode::None }), vector, Arg::imm(63), vectorTmp);
                     insertionSet.insert(instIndex, VectorUnzipEven, origin, Arg::simdInfo({ SIMDLane::i8x16, SIMDSignMode::None }), vectorTmp, vectorTmp, vectorTmp);
                     insertionSet.insert(instIndex, MoveDoubleTo64, origin, vectorTmp, gpTmp);
                     insertionSet.insert(instIndex, Rshift64, origin, gpTmp, Arg::imm(31), gpTmp);
@@ -294,7 +311,7 @@ void lowerMacros(Code& code)
 
                 Tmp vectorTmp = code.newTmp(FP);
 
-                insertionSet.insert(instIndex, VectorSshr, origin, Arg::simdInfo(simdInfo), vector, Arg::imm(elementByteSize(simdInfo.lane) * 8 - 1), vectorTmp);
+                insertionSet.insert(instIndex, VectorSshr8, origin, Arg::simdInfo(simdInfo), vector, Arg::imm(elementByteSize(simdInfo.lane) * 8 - 1), vectorTmp);
                 insertionSet.insert(instIndex, VectorAnd, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), vectorTmp, maskTmp, vectorTmp);
 
                 if (simdInfo.lane == SIMDLane::i8x16) {
@@ -331,6 +348,9 @@ void lowerMacros(Code& code)
                 break;
             case VectorShuffle:
                 handleVectorShuffle();
+                break;
+            case VectorBitwiseSelect:
+                handleVectorBitwiseSelect();
                 break;
             default:
                 break;
