@@ -385,7 +385,7 @@ class PullRequest(Command):
         if previous_target and previous_target != source_remote:
             if args.remote:
                 sys.stderr.write("'{}' was previously made against the '{}' remote\n".format(repository.branch, previous_target))
-                sys.stderr.write("User over-rode and is now making that PR against '{}'\n".format(specified_target_remote))
+                sys.stderr.write("User over-rode and is now making that PR against '{}'\n".format(args.remote))
             elif args.defaults:
                 sys.stderr.write("'{}' was previously made against the '{}' remote\n".format(repository.branch, previous_target))
                 sys.stderr.write("Prevailing issue indicates it should be made against '{}'\n".format(source_remote))
