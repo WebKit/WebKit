@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<style>
+blockquote {
+    border-left: 2px solid lightblue;
+    padding-left: 1em;
+}
+</style>
+</head>
+<body>
+<p id="description">
+    This tests that the writing direction is reset to its natural value after breaking out of a blockquote in the case
+    where the writing direction at the previous selection differs from the writing direction of the newly inserted
+    paragraph.
+</p>
+<div contenteditable id="editor" dir="rtl">
+    <p>Start of right to left content</p>
+    <blockquote type="cite">
+        <p dir="ltr" id="target">Some quoted content</p>
+        <p dir="ltr">End of quoted content</p>
+    </blockquote>
+</div>
+<script>
+getSelection().setPosition(document.getElementById("target"), 1);
+document.execCommand("InsertNewlineInQuotedContent", true);
+Markup.dump("editor");
+</script>
+</body>
+</html>
