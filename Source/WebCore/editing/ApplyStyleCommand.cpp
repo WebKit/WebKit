@@ -267,7 +267,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
                 if (newBlock)
                     block = newBlock;
             }
-            ASSERT(!block || is<HTMLElement>(*block));
+            ASSERT(!block || is<Element>(*block));
             if (is<HTMLElement>(block)) {
                 removeCSSStyle(style, downcast<HTMLElement>(*block));
                 if (!m_removeOnly)
