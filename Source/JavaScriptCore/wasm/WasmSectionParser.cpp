@@ -772,6 +772,36 @@ auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&
     return { };
 }
 
+auto SectionParser::parsePackedType(PackedType& packedType) -> PartialResult
+{
+    int8_t kind;
+    WASM_PARSER_FAIL_IF(!parseInt7(kind), "invalid type in struct field or array element");
+    if (isValidPackedType(kind)) {
+        packedType = static_cast<PackedType>(kind);
+        return { };
+    }
+    return fail("expected a packed type but got ", kind);
+}
+
+auto SectionParser::parseStorageType(StorageType& storageType) -> PartialResult
+{
+    ASSERT(Options::useWebAssemblyGC());
+
+    int8_t kind;
+    WASM_PARSER_FAIL_IF(!peekInt7(kind), "invalid type in struct field or array element");
+    if (isValidTypeKind(kind)) {
+        Type elementType;
+        WASM_PARSER_FAIL_IF(!parseValueType(m_info, elementType), "invalid type in struct field or array element");
+        storageType = StorageType { elementType };
+        return { };
+    }
+
+    PackedType elementType;
+    WASM_PARSER_FAIL_IF(!parsePackedType(elementType), "invalid type in struct field or array element");
+    storageType = StorageType { elementType };
+    return { };
+}
+
 auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& structType) -> PartialResult
 {
     ASSERT(Options::useWebAssemblyGC());
@@ -784,15 +814,18 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
 
     Checked<unsigned, RecordOverflow> structInstancePayloadSize { 0 };
     for (uint32_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
-        Type fieldType;
-        WASM_PARSER_FAIL_IF(!parseValueType(m_info, fieldType), "can't get ", fieldIndex, "th field Type");
+        StorageType fieldType;
+        WASM_PARSER_FAIL_IF(!parseStorageType(fieldType), "can't get ", fieldIndex, "th field Type");
+
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+        WASM_PARSER_FAIL_IF(fieldType.is<PackedType>(), "packed types in structs are not supported yet");
 
         uint8_t mutability;
         WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get ", fieldIndex, "th field mutability");
         WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Field's mutability: 0x", hex(mutability, 2, Lowercase));
 
         fields.uncheckedAppend(FieldType { fieldType, static_cast<Mutability>(mutability) });
-        structInstancePayloadSize += typeKindSizeInBytes(fieldType.kind);
+        structInstancePayloadSize += typeSizeInBytes(fieldType);
         WASM_PARSER_FAIL_IF(structInstancePayloadSize.hasOverflowed(), "struct layout is too big");
     }
 
@@ -804,8 +837,8 @@ auto SectionParser::parseArrayType(uint32_t position, RefPtr<TypeDefinition>& ar
 {
     ASSERT(Options::useWebAssemblyGC());
 
-    Type elementType;
-    WASM_PARSER_FAIL_IF(!parseValueType(m_info, elementType), "can't get array's element Type");
+    StorageType elementType;
+    WASM_PARSER_FAIL_IF(!parseStorageType(elementType), "can't get array's element Type");
 
     uint8_t mutability;
     WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get array's mutability");
