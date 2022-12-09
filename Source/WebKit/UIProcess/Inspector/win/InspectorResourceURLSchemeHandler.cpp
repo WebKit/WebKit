@@ -51,7 +51,7 @@ void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLS
     bool success;
     FileSystem::MappedFileData file(path, FileSystem::MappedFileMode::Private, success);
     if (!success) {
-        task.didComplete(WebCore::ResourceError::httpError(CURLE_READ_ERROR, requestURL));
+        task.didComplete(WebCore::ResourceError(CURLE_READ_ERROR, requestURL));
         return;
     }
     auto contentType = WebCore::File::contentTypeForFile(path);

@@ -449,7 +449,7 @@ void ResourceHandle::willSendRequest()
     static const int maxRedirects = 20;
 
     if (d->m_redirectCount++ > maxRedirects) {
-        client()->didFail(this, ResourceError::httpError(CURLE_TOO_MANY_REDIRECTS, delegate()->response().url()));
+        client()->didFail(this, ResourceError(CURLE_TOO_MANY_REDIRECTS, delegate()->response().url()));
         return;
     }
 
