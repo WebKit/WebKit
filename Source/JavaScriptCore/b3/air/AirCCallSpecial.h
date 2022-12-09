@@ -44,7 +44,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 class CCallSpecial final : public Special {
 public:
-    CCallSpecial();
+    CCallSpecial(bool isSIMDContext);
     ~CCallSpecial() final;
 
     // You cannot use this register to pass arguments. It just so happens that this register is not
@@ -77,6 +77,7 @@ private:
         numSpecialArgs + numCalleeArgs + numReturnGPArgs + numReturnFPArgs;
     
     RegisterSetBuilder m_clobberedRegs;
+    bool m_isSIMDContext { false };
 };
 
 } } } // namespace JSC::B3::Air

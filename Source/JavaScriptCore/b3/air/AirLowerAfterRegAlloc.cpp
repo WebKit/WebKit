@@ -135,7 +135,7 @@ void lowerAfterRegAlloc(Code& code)
             if (!found) {
                 StackSlot*& slot = slots[bank][i];
                 if (!slot)
-                    slot = code.addStackSlot(Options::useWebAssemblySIMD() ? conservativeRegisterBytes(bank) : conservativeRegisterBytesWithoutVectors(bank), StackSlotKind::Spill);
+                    slot = code.addStackSlot(code.usesSIMD() ? conservativeRegisterBytes(bank) : conservativeRegisterBytesWithoutVectors(bank), StackSlotKind::Spill);
                 result[i] = Arg::stack(slots[bank][i]);
             }
         }

@@ -73,7 +73,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
         if (!m_lockedRegisters.contains(reg, IgnoreVectors)
             && !m_usedRegisters.contains(reg, IgnoreVectors)
             && !m_scratchRegisters.contains(reg, IgnoreVectors)) {
-            m_scratchRegisters.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
+            m_scratchRegisters.add(reg, IgnoreVectors);
             return reg;
         }
     }
@@ -83,7 +83,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
         auto reg = BankInfo::toRegister(i);
         if (!m_lockedRegisters.contains(reg, IgnoreVectors) && !m_scratchRegisters.contains(reg, IgnoreVectors)) {
-            m_scratchRegisters.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
+            m_scratchRegisters.add(reg, IgnoreVectors);
             m_numberOfReusedRegisters++;
             return reg;
         }
@@ -109,14 +109,16 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
-        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToSpill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
+        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, conservativeWidth(reg)))
+            registersToSpill.add(reg, conservativeWidth(reg));
+        else if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
+            registersToSpill.add(reg, IgnoreVectors);
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg reg = GPRInfo::toRegister(i);
         ASSERT(reg != InvalidGPRReg);
         if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToSpill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
+            registersToSpill.add(reg, IgnoreVectors);
     }
 
     unsigned extraStackBytesAtTopOfStack = extraStackSpace == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
@@ -137,14 +139,16 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
         ASSERT(reg != InvalidGPRReg);
-        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToFill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
+        if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, conservativeWidth(reg)))
+            registersToFill.add(reg, conservativeWidth(reg));
+        else if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
+            registersToFill.add(reg, IgnoreVectors);
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
         if (m_scratchRegisters.contains(reg, IgnoreVectors) && m_usedRegisters.contains(reg, IgnoreVectors))
-            registersToFill.add(reg, Options::useWebAssemblySIMD() ? conservativeWidth(reg) : conservativeWidthWithoutVectors(reg));
+            registersToFill.add(reg, IgnoreVectors);
     }
 
     unsigned extraStackBytesAtTopOfStack =

@@ -661,12 +661,14 @@ void Options::notifyOptionsChanged()
 
         // FIXME: This should be removed when we add LLint/OMG support for WASM SIMD
         if (Options::useWebAssemblySIMD()) {
-            Options::useBBQJIT() = true;
-            Options::useOMGJIT() = false;
-            Options::webAssemblyBBQAirModeThreshold() = 0;
-            Options::wasmBBQUsesAir() = true;
-            Options::useWasmLLInt() = true;
-            Options::wasmLLIntTiersUpToBBQ() = true;
+            bool isValid = true;
+            isValid &= Options::useBBQJIT();
+            isValid &= !Options::webAssemblyBBQAirModeThreshold();
+            isValid &= Options::wasmBBQUsesAir();
+            isValid &= Options::useWasmLLInt();
+            isValid &= Options::wasmLLIntTiersUpToBBQ();
+            if (!isValid)
+                Options::useWebAssemblySIMD() = false;
         }
     }
 

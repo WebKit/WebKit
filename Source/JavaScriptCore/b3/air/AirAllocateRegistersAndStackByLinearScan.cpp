@@ -542,7 +542,7 @@ private:
     {
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.isUnspillable);
-        entry.spilled = m_code.addStackSlot(Options::useWebAssemblySIMD() ? conservativeRegisterBytes(tmp.bank()) : conservativeRegisterBytesWithoutVectors(tmp.bank()), StackSlotKind::Spill);
+        entry.spilled = m_code.addStackSlot(m_code.usesSIMD() ? conservativeRegisterBytes(tmp.bank()) : conservativeRegisterBytesWithoutVectors(tmp.bank()), StackSlotKind::Spill);
         entry.assigned = Reg();
         m_didSpill = true;
     }
@@ -578,7 +578,7 @@ private:
                         StackSlot* spilled = m_map[tmp].spilled;
                         if (!spilled)
                             return;
-                        Opcode move = bank == GP ? Move : (Options::useWebAssemblySIMD() ? MoveVector : MoveDouble);
+                        Opcode move = bank == GP ? Move : (m_code.usesSIMD() ? MoveVector : MoveDouble);
                         tmp = addSpillTmpWithInterval(bank, intervalForSpill(indexOfEarly, role));
                         if (role == Arg::Scratch)
                             return;
@@ -621,7 +621,7 @@ private:
             }
             
             entry.spillIndex = m_usedSpillSlots.findBit(0, false);
-            size_t slotSize = Options::useWebAssemblySIMD() ? conservativeRegisterBytes(FP) : conservativeRegisterBytesWithoutVectors(FP);
+            size_t slotSize = m_code.usesSIMD() ? conservativeRegisterBytes(FP) : conservativeRegisterBytesWithoutVectors(FP);
             ASSERT(entry.spilled->byteSize() <= slotSize);
             ptrdiff_t offset = -static_cast<ptrdiff_t>(m_code.frameSize()) - static_cast<ptrdiff_t>(entry.spillIndex) * slotSize - slotSize;
             if (verbose())
