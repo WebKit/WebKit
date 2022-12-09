@@ -413,7 +413,9 @@ def construct_type(type, indentation):
     else:
         result.append(indent(indentation) + type.namespace_and_name() + ' {')
     if type.parent_class is not None:
-        result = result + construct_type(type.parent_class, indentation + 1) + [indent(indentation + 1) + ',']
+        result = result + construct_type(type.parent_class, indentation + 1)
+        if len(type.members) != 0:
+            result[-1] += ','
     for i in range(len(type.members)):
         member = type.members[i]
         if type.members[i].condition is not None:
