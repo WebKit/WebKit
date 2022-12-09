@@ -3273,6 +3273,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             self.setProperty('first_run_flakies', sorted(first_results.flaky_tests))
             if first_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(first_results.failing_tests))
+
+            if first_results.failing_tests and not first_results.did_exceed_test_failure_limit:
                 self.filter_failures_using_results_db(first_results.failing_tests)
                 self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_first_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
@@ -3490,9 +3492,11 @@ class ReRunWebKitTests(RunWebKitTests):
             self.setProperty('second_run_flakies', sorted(second_results.flaky_tests))
             if second_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
+
+            if second_results.failing_tests and not second_results.did_exceed_test_failure_limit:
                 self.filter_failures_using_results_db(second_results.failing_tests)
                 self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
-                self.setProperty('results-db-second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
+                self.setProperty('results-db_second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
         self._parseRunWebKitTestsOutput(logText)
 
     def send_email_for_flaky_failure(self, test_name):
