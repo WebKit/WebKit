@@ -43,23 +43,23 @@ public:
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
 private:
 
-    GridArea nextMasonryPositionForItem(const RenderBox* item);
+    GridArea nextMasonryPositionForItem(const RenderBox& item);
 
     void collectMasonryItems();
     void addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>& firstTrackItems); 
     void placeItemsWithDefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithDefinitePosition);
     void placeItemsWithIndefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithIndefinitePosition);
-    void setItemGridAxisContainingBlockToGridArea(RenderBox*);
-    void insertIntoGridAndLayoutItem(RenderBox*, const GridArea&);
+    void setItemGridAxisContainingBlockToGridArea(RenderBox&);
+    void insertIntoGridAndLayoutItem(RenderBox&, const GridArea&);
 
     void resizeAndResetRunningPositions();
     void allocateCapacityForMasonryVectors();
-    LayoutUnit masonryAxisMarginBoxForItem(const RenderBox* child);
-    void updateRunningPositions(const RenderBox* child, const GridArea&);
-    void updateItemOffset(const RenderBox* child, LayoutUnit offset);
+    LayoutUnit masonryAxisMarginBoxForItem(const RenderBox& child);
+    void updateRunningPositions(const RenderBox& child, const GridArea&);
+    void updateItemOffset(const RenderBox& child, LayoutUnit offset);
     inline GridTrackSizingDirection gridAxisDirection() const;
 
-    bool hasDefiniteGridAxisPosition(const RenderBox* child, GridTrackSizingDirection masonryDirection) const;
+    bool hasDefiniteGridAxisPosition(const RenderBox& child, GridTrackSizingDirection masonryDirection) const;
     static bool itemGridAreaStartsAtFirstLine(const GridArea& area, GridTrackSizingDirection masonryDirection)
     {
         return !(masonryDirection == ForRows ? area.rows.startLine() : area.columns.startLine());
