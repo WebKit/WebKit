@@ -17,7 +17,7 @@
     },
     "TestBackForwardList": {
         "subtests": {
-            "/webkit/BackForwardList/navigation": {
+            "/webkit/BackForwardList/list-limit-and-cache": {
                 "expected": {
                     "all": {"status": ["PASS"], "slow": true }
                 }
