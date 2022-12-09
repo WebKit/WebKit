@@ -127,8 +127,7 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
 {
-    auto logicalSize = imageBuffer.logicalSize();
-    sendToStream(Messages::RemoteRenderingBackend::CreateImageBuffer(logicalSize, imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
+    send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.renderingPurpose(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
 }
 
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck)
@@ -159,13 +158,13 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, Span<uint8_t> result)
 {
     if (auto handle = updateSharedMemoryForGetPixelBuffer(result.size())) {
-        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, WTFMove(*handle), destinationFormat, srcRect));
+        auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, WTFMove(*handle), destinationFormat, srcRect));
         if (!sendResult)
             return false;
     } else {
         if (!m_getPixelBufferSharedMemory)
             return false;
-        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBuffer(imageBuffer, destinationFormat, srcRect));
+        auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetPixelBufferForImageBuffer(imageBuffer, destinationFormat, srcRect));
         if (!sendResult)
             return false;
     }
@@ -175,7 +174,7 @@ bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResource
 
 void RemoteRenderingBackendProxy::putPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    sendToStream(Messages::RemoteRenderingBackend::PutPixelBufferForImageBuffer(imageBuffer, Ref { const_cast<PixelBuffer&>(pixelBuffer) }, srcRect, destPoint, destFormat));
+    send(Messages::RemoteRenderingBackend::PutPixelBufferForImageBuffer(imageBuffer, Ref { const_cast<PixelBuffer&>(pixelBuffer) }, srcRect, destPoint, destFormat));
 }
 
 std::optional<SharedMemory::Handle> RemoteRenderingBackendProxy::updateSharedMemoryForGetPixelBuffer(size_t dataSize)
@@ -206,12 +205,12 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
     if (!m_getPixelBufferSharedMemory)
         return;
     m_getPixelBufferSharedMemory = nullptr;
-    sendToStream(Messages::RemoteRenderingBackend::DestroyGetPixelBufferSharedMemory());
+    send(Messages::RemoteRenderingBackend::DestroyGetPixelBufferSharedMemory());
 }
 
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
-    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution));
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution));
     auto [handle] = sendResult.takeReplyOr(ShareableBitmapHandle { });
     if (handle.isNull())
         return { };
@@ -221,7 +220,7 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
 
 RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
 {
-    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }));
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }));
     auto [handle] = sendResult.takeReplyOr(ShareableBitmapHandle { });
     if (handle.isNull())
         return { };
@@ -236,27 +235,27 @@ RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIde
 
 void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmapHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    sendToStream(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier));
+    send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier));
 }
 
 void RemoteRenderingBackendProxy::cacheFont(Ref<Font>&& font)
 {
-    sendToStream(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)));
+    send(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)));
 }
 
 void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
 {
-    sendToStream(Messages::RemoteRenderingBackend::CacheDecomposedGlyphs(WTFMove(decomposedGlyphs)));
+    send(Messages::RemoteRenderingBackend::CacheDecomposedGlyphs(WTFMove(decomposedGlyphs)));
 }
 
 void RemoteRenderingBackendProxy::releaseAllRemoteResources()
 {
-    sendToStream(Messages::RemoteRenderingBackend::ReleaseAllResources());
+    send(Messages::RemoteRenderingBackend::ReleaseAllResources());
 }
 
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    sendToStream(Messages::RemoteRenderingBackend::ReleaseResource(renderingResourceIdentifier));
+    send(Messages::RemoteRenderingBackend::ReleaseResource(renderingResourceIdentifier));
 }
 
 auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
@@ -303,7 +302,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
     }
 
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
-    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
     if (!sendResult) {
         // GPU Process crashed. Set the output data to all null buffers, requiring a full display.
         outputData.resize(inputData.size());
@@ -360,7 +359,7 @@ void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::Rendering
     auto requestIdentifier = MarkSurfacesAsVolatileRequestIdentifier::generate();
     m_markAsVolatileRequests.add(requestIdentifier, WTFMove(completionHandler));
 
-    sendToStream(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(requestIdentifier, identifiers));
+    send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(requestIdentifier, identifiers));
 }
 
 void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayersAsVolatile)
@@ -382,7 +381,7 @@ void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
 {
     if (!m_streamConnection)
         return;
-    sendToStream(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
+    send(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
     m_renderingUpdateID.increment();
 }
 

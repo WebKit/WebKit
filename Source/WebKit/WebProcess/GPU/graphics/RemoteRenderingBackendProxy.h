@@ -135,18 +135,7 @@ public:
 
     void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
-    template<typename T, typename U>
-    void sendToStream(T&& message, ObjectIdentifier<U> identifier)
-    {
-        // FIXME: We should consider making the send timeout finite.
-        streamConnection().send(WTFMove(message), identifier, Seconds::infinity());
-    }
-
-    template<typename T>
-    void sendToStream(T&& message)
-    {
-        sendToStream(WTFMove(message), renderingBackendIdentifier());
-    }
+    IPC::StreamClientConnection& streamConnection();
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
@@ -155,10 +144,15 @@ public:
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
-    IPC::StreamClientConnection& streamConnection();
+    template<typename T>
+    void send(T&& message)
+    {
+        streamConnection().send(WTFMove(message), renderingBackendIdentifier(), Seconds::infinity());
+
+    }
 
     template<typename T>
-    auto sendSyncToStream(T&& message, IPC::Timeout timeout = { Seconds::infinity() })
+    auto sendSync(T&& message, IPC::Timeout timeout = Seconds::infinity())
     {
         return streamConnection().sendSync(WTFMove(message), renderingBackendIdentifier(), timeout);
     }
@@ -181,7 +175,7 @@ private:
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
 
     RefPtr<IPC::Connection> m_connection;
-    std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
+    RefPtr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;

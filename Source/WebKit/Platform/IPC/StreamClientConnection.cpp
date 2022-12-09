@@ -66,7 +66,7 @@ StreamClientConnection::StreamConnectionPair StreamClientConnection::create(size
     // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
     // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
     auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server);
-    std::unique_ptr<StreamClientConnection> clientConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSize) };
+    RefPtr<StreamClientConnection> clientConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSize) };
     StreamServerConnection::Handle serverHandle {
         WTFMove(connectionIdentifiers->client),
         clientConnection->streamBuffer().createHandle()

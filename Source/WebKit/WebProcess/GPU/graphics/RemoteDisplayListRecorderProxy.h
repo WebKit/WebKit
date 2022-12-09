@@ -33,6 +33,10 @@
 #include <WebCore/GraphicsContext.h>
 #include <wtf/WeakPtr.h>
 
+namespace IPC {
+class StreamClientConnection;
+}
+
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
@@ -134,6 +138,7 @@ private:
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
 
+    static inline constexpr Seconds defaultSendTimeout = 3_s;
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     WeakPtr<RemoteImageBufferProxy> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;

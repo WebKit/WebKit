@@ -32,6 +32,7 @@
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListDrawingContext.h>
@@ -71,7 +72,7 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
         return;
 
     m_imageBuffer->backingStoreWillChange();
-    m_renderingBackend->sendToStream(WTFMove(message), m_destinationBufferIdentifier);
+    m_renderingBackend->streamConnection().send(WTFMove(message), m_destinationBufferIdentifier, defaultSendTimeout);
 }
 
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
