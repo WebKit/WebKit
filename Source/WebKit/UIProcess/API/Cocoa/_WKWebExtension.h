@@ -81,7 +81,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle.
- @param bundle The bundle to use for the new web extension.
+ @param appExtensionBundle The bundle to use for the new web extension.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  @seealso initWithAppExtensionBundle:error:
  */
@@ -97,7 +97,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle.
- @param bundle The bundle to use for the new web extension.
+ @param appExtensionBundle The bundle to use for the new web extension.
  @param error Set to \c nil or an \c NSError instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  @discussion This is a designated initializer.
@@ -109,63 +109,71 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
  @param resourceBaseURL The directory URL to use for the new web extension.
  @param error Set to \c nil or an \c NSError instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
- @discussion This is a designated initializer. The URL must be a file URL that points
- to a directory containing a `manifest.json` file.
+ @discussion This is a designated initializer. The URL must be a file URL that points to a directory containing a `manifest.json` file.
  */
 - (nullable instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
-/*! @abstract The active errors for the extension. Returns `nil` if there are no errors. */
+/*!
+ @abstract The active errors for the extension.
+ @discussion This property returns an array of NSError objects if there are any errors, or `nil` if there are no errors.
+ */
 @property (nonatomic, nullable, readonly, copy) NSArray<NSError *> *errors;
 
-/*! @abstract The parsed manifest as a dictionary. Returns `nil` if the manifest was unable to be parsed. */
-@property (nonatomic, nullable, readonly, copy) NSDictionary<NSString *, id> *manifest;
+/*! @abstract The parsed manifest as a dictionary. */
+@property (nonatomic, readonly, copy) NSDictionary<NSString *, id> *manifest;
 
-/*! @abstract The parsed manifest version. */
+/*!
+ @abstract The parsed manifest version, or `0` is if there is no version specified in the manifest.
+ @note An `WKWebExtensionErrorUnsupportedManifestVersion` error will be reported if the manifest version isn't specified.
+ */
 @property (nonatomic, readonly) double manifestVersion;
 
 /*!
- @abstract Checks if a maniferst version is supported by the extension.
+ @abstract Checks if a manifest version is supported by the extension.
  @param manifestVersion The version number to check.
  @result Returns `YES` if the extension specified a manifest version that is is greater than or equal to `manifestVersion`.
  */
 - (BOOL)usesManifestVersion:(double)manifestVersion;
 
-/*! @abstract The parsed and localized extension name. Returns `nil` if the manifest was unable to be parsed or there was no name specified. */
+/*! @abstract The default locale for the extension. Returns `nil` if there was no default locale specified. */
+@property (nonatomic, readonly, copy) NSLocale *defaultLocale;
+
+/*! @abstract The localized extension name. Returns `nil` if there was no name specified. */
 @property (nonatomic, nullable, readonly, copy) NSString *displayName;
 
-/*! @abstract The parsed and localized extension short name. Returns `nil` if the manifest was unable to be parsed or there was no short name specified. */
+/*! @abstract The localized extension short name. Returns `nil` if there was no short name specified. */
 @property (nonatomic, nullable, readonly, copy) NSString *displayShortName;
 
-/*! @abstract The parsed and localized extension display version. Returns `nil` if the manifest was unable to be parsed or there was no display version specified. */
+/*! @abstract The localized extension display version. Returns `nil` if there was no display version specified. */
 @property (nonatomic, nullable, readonly, copy) NSString *displayVersion;
 
-/*! @abstract The parsed and localized extension description. Returns `nil` if the manifest was unable to be parsed or there was no description specified. */
+/*! @abstract The localized extension description. Returns `nil` if there was no description specified. */
 @property (nonatomic, nullable, readonly, copy) NSString *displayDescription;
 
-/*! @abstract The parsed and localized extension action label. Returns `nil` if the manifest was unable to be parsed or there was no action label specified. */
+/*! @abstract The localized extension action label. Returns `nil` if there was no action label specified. */
 @property (nonatomic, nullable, readonly, copy) NSString *displayActionLabel;
 
-/*! @abstract The parsed extension version. Returns `nil` if the manifest was unable to be parsed or there was no version specified. */
+/*! @abstract The extension version. Returns `nil` if there was no version specified. */
 @property (nonatomic, nullable, readonly, copy) NSString *version;
 
 #if TARGET_OS_IPHONE
 
 /*!
- @abstract Returns an icon for the extension that is best for the specified size.
- @param size The size the image should be able to fill.
- @result An image that is best for the size. Returns `nil` if the manifest was unable to be parsed or no icons were specified.
- @discussion This icon should respesent the extension in Settings or other general user interface areas. If the extension does not specify an icon large enough
- for the size, then the largest icon specified will be returned. No image scaling is performed.
+ @abstract Returns the extension's icon image for the specified size.
+ @param size The size to use when looking up the icon.
+ @result The extension's icon image, or `nil` if the icon was unable to be loaded.
+ @discussion This icon should represent the extension in settings or other areas that show the extension. The returned image will be the best
+ match for the specified size that is available in the extension's icon set. If no matching icon can be found, the method will return `nil`.
  @seealso actionIconForSize:
  */
 - (nullable UIImage *)iconForSize:(CGSize)size;
 
 /*!
- @abstract Returns an action icon for the extension that is best for the specified size.
- @param size The size the image should be able to fill.
- @result An image that is best for the size. Returns `nil` if the manifest was unable to be parsed or no icons were specified.
- @discussion This icon should respesent the extension in action sheets or toolbars. If the extension does not specify an icon large enough
- for the size, then the largest icon specified will be returned. No image scaling is performed.
+ @abstract Returns the action icon for the specified size.
+ @param size The size to use when looking up the action icon.
+ @result The action icon, or `nil` if the icon was unable to be loaded.
+ @discussion This icon should represent the extension in action sheets or toolbars. The returned image will be the best match for the specified
+ size that is available in the extension's action icon set. If no matching icon is available, the method will fall back to the extension's icon.
  @seealso iconForSize:
  */
 - (nullable UIImage *)actionIconForSize:(CGSize)size;
@@ -173,46 +181,53 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 #else
 
 /*!
- @abstract Returns an icon for the extension that is best for the specified size.
- @param size The size the image should be able to fill.
- @result An image that is best for the size. Returns `nil` if the manifest was unable to be parsed or no icons were specified.
- @discussion This icon should respesent the extension in Settings or other general user interface areas. If the extension does not specify an icon large enough
- for the size, then the largest icon specified will be returned. No image scaling is performed.
+ @abstract Returns the extension's icon image for the specified size.
+ @param size The size to use when looking up the icon.
+ @result The extension's icon image, or `nil` if the icon was unable to be loaded.
+ @discussion This icon should represent the extension in settings or other areas that show the extension. The returned image will be the best
+ match for the specified size that is available in the extension's icon set. If no matching icon can be found, the method will return `nil`.
  @seealso actionIconForSize:
  */
 - (nullable NSImage *)iconForSize:(CGSize)size;
 
 /*!
- @abstract Returns an action icon for the extension that is best for the specified size.
- @param size The size the image should be able to fill.
- @result An image that is best for the size. Returns `nil` if the manifest was unable to be parsed or no icons were specified.
- @discussion This icon should respesent the extension in action sheets or toolbars. If the extension does not specify an icon large enough
- for the size, then the largest icon specified will be returned. No image scaling is performed.
+ @abstract Returns the action icon for the specified size.
+ @param size The size to use when looking up the action icon.
+ @result The action icon, or `nil` if the icon was unable to be loaded.
+ @discussion This icon should represent the extension in action sheets or toolbars. The returned image will be the best match for the specified
+ size that is available in the extension's action icon set. If no matching icon is available, the method will fall back to the extension's icon.
  @seealso iconForSize:
  */
 - (nullable NSImage *)actionIconForSize:(CGSize)size;
 
 #endif
 
-/*! @abstract The permissions that the extension needs for base functionality. */
+/*! @abstract The set of permissions that the extension requires for its base functionality. */
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtensionPermission> *requestedPermissions;
 
-/*! @abstract The permissions that the extension might need for optional functionality. These can be requested later by the extension when needed. */
+/*! @abstract The set of permissions that the extension may need for optional functionality. These permissions can be requested by the extension at a later time. */
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtensionPermission> *optionalPermissions;
 
-/*! @abstract The websites that the extension needs to access for base functionality. */
+/*! @abstract The set of websites that the extension requires access to for its base functionality. */
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtensionMatchPattern *> *requestedPermissionMatchPatterns;
 
-/*! @abstract The websites that the extension might need to access for optional functionality. */
+/*! @abstract The set of websites that the extension may need access to for optional functionality. These match patterns can be requested by the extension at a later time. */
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtensionMatchPattern *> *optionalPermissionMatchPatterns;
 
-/*! @abstract The websites that the extension needs to access for base functionality, including injected content and websites that can send messages to the extension. */
+/*! @abstract The set of websites that the extension requires access to for injected content and for receiving messages from websites. */
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtensionMatchPattern *> *allRequestedMatchPatterns;
 
-/*! @abstract A Boolean value indicating whether the extension has background content that can run when needed. */
+/*!
+ @abstract A Boolean value indicating whether the extension has background content that can run when needed.
+ @discussion If this property is `YES`, the extension can run in the background even when no web pages are open.
+ */
 @property (nonatomic, readonly) BOOL hasBackgroundContent;
 
-/*! @abstract A Boolean value indicating whether the extension has background content that stays in memory as long as the extension is loaded. */
+/*!
+ @abstract A Boolean value indicating whether the extension has background content that stays in memory as long as the extension is loaded.
+ @note Note that extensions are only allowed to have persistent background content on macOS. An `WKWebExtensionErrorInvalidBackgroundPersistence`
+ error will be reported on iOS if an attempt is made to load a persistent extension.
+ */
 @property (nonatomic, readonly) BOOL backgroundContentIsPersistent;
 
 @end

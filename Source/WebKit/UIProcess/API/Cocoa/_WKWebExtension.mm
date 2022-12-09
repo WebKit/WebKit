@@ -164,6 +164,12 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->usesManifestVersion(version);
 }
 
+- (NSLocale *)defaultLocale
+{
+    // FIXME: <https://webkit.org/b/246488> Handle manifest localization.
+    return nil;
+}
+
 - (NSString *)displayName
 {
     return _webExtension->displayName();
@@ -318,6 +324,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 - (BOOL)usesManifestVersion:(double)version
 {
     return NO;
+}
+
+- (NSLocale *)defaultLocale
+{
+    return nil;
 }
 
 - (NSString *)displayName

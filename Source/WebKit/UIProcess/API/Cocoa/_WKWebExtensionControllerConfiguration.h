@@ -63,9 +63,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 */
 + (instancetype)configurationWithIdentifier:(NSUUID *)identifier;
 
-@property (nonatomic, readonly, getter=isPersistent) BOOL persistent WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+/*! @abstract A Boolean value indicating if this context will write data to the the file system. */
+@property (nonatomic, readonly, getter=isPersistent) BOOL persistent;
 
-@property (nonatomic, nullable, readonly) NSUUID *identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+/*! @abstract A unique identifier used for persistent configuration storage, or `nil` when it is the default or not persistent. */
+@property (nonatomic, nullable, readonly) NSUUID *identifier;
 
 @end
 
