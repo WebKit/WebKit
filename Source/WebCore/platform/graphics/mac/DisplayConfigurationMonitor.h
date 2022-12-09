@@ -28,10 +28,16 @@
 #if PLATFORM(MAC)
 
 #include <CoreGraphics/CGDisplayConfiguration.h>
+#include <wtf/FunctionDispatcher.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+enum DisplayConfigurationClientIdentifierType { };
+using DisplayConfigurationClientIdentifier = ObjectIdentifier<DisplayConfigurationClientIdentifierType>;
 
 class DisplayConfigurationMonitor {
 public:
@@ -43,14 +49,29 @@ public:
         Client();
         virtual ~Client();
         virtual void displayWasReconfigured() = 0;
+
+        DisplayConfigurationClientIdentifier m_identifier;
     };
-    void addClient(Client&);
+    // If a SerialFunctionDispatcher is provided, then displayWasReconfigured will
+    // be dispatched there. The dispatcher's lifetime must be equal to or longer than
+    // the client, and both add/remove must be called while the dispatcher is current.
+    void addClient(Client&, SerialFunctionDispatcher* = nullptr);
     void removeClient(Client&);
 
     WEBCORE_EXPORT void dispatchDisplayWasReconfigured(CGDisplayChangeSummaryFlags);
 private:
     DisplayConfigurationMonitor();
-    Vector<Client*> m_clients;
+    Lock m_lock;
+    struct ClientEntry {
+        Client* m_client;
+        SerialFunctionDispatcher* m_dispatcher { nullptr };
+
+        bool operator==(const ClientEntry& other) const
+        {
+            return m_client == other.m_client;
+        }
+    };
+    Vector<ClientEntry> m_clients WTF_GUARDED_BY_LOCK(m_lock);
     friend NeverDestroyed<DisplayConfigurationMonitor>;
 };
 

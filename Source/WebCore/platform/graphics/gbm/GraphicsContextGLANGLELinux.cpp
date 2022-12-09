@@ -44,7 +44,7 @@ static inline bool isDMABufSupportedByNativePlatform(const PlatformDisplay::EGLE
 }
 #endif
 
-RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
+RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher*)
 {
 #if USE(TEXTURE_MAPPER_DMABUF) && USE(EGL)
     if (isDMABufSupportedByNativePlatform(PlatformDisplay::sharedDisplayForCompositing().eglExtensions())) {
