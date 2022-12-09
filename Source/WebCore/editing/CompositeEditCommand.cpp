@@ -959,9 +959,9 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
     String string = text.substring(upstream, length);
     // FIXME: Because of the problem mentioned at the top of this function, we must also use nbsps at the start/end of the string because
     // this function doesn't get all surrounding whitespace, just the whitespace in the current text node.
+    const bool nextSiblingIsTextNodeWithoutLeadingSpace = textNode.nextSibling() && textNode.nextSibling()->isTextNode() && downcast<Text>(textNode.nextSibling())->data().length() && !deprecatedIsEditingWhitespace(downcast<Text>(textNode.nextSibling())->data()[0]);
     String rebalancedString = stringWithRebalancedWhitespace(string, isStartOfParagraph(visibleUpstreamPos) || !upstream,
-        (isEndOfParagraph(visibleDownstreamPos) || downstream == text.length())
-        && !(textNode.nextSibling() && textNode.nextSibling()->isTextNode()));
+        (isEndOfParagraph(visibleDownstreamPos) || downstream == text.length()) && !nextSiblingIsTextNodeWithoutLeadingSpace);
 
     if (string != rebalancedString)
         replaceTextInNodePreservingMarkers(textNode, upstream, length, rebalancedString);

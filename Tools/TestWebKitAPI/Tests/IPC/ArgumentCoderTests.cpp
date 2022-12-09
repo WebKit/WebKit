@@ -315,7 +315,7 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeOptional)
 
         auto& counter = *optional;
         ASSERT_TRUE(!!counter);
-        ASSERT_EQ(counter->moveCounter, 3u);
+        ASSERT_EQ(counter->moveCounter, 2u);
     }
     {
         auto optional = decoder->decode<std::optional<DecodingMoveCounter>>();
@@ -323,7 +323,7 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeOptional)
 
         auto& counter = *optional;
         ASSERT_TRUE(!!counter);
-        ASSERT_EQ(counter->moveCounter, 2u);
+        ASSERT_EQ(counter->moveCounter, 1u);
     }
 }
 
@@ -337,12 +337,12 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodePair)
         std::optional<std::pair<uint64_t, DecodingMoveCounter>> pair;
         *decoder >> pair;
         ASSERT_TRUE(!!pair);
-        ASSERT_EQ(pair->second.moveCounter, 4u);
+        ASSERT_EQ(pair->second.moveCounter, 2u);
     }
     {
         auto pair = decoder->decode<std::pair<uint64_t, DecodingMoveCounter>>();
         ASSERT_TRUE(!!pair);
-        ASSERT_EQ(pair->second.moveCounter, 3u);
+        ASSERT_EQ(pair->second.moveCounter, 1u);
     }
 }
 
@@ -357,14 +357,14 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeTuple)
         std::optional<TupleType> tuple;
         *decoder >> tuple;
         ASSERT_TRUE(!!tuple);
-        ASSERT_EQ(std::get<0>(*tuple).moveCounter, 3u);
-        ASSERT_EQ(std::get<2>(*tuple).moveCounter, 3u);
+        ASSERT_EQ(std::get<0>(*tuple).moveCounter, 2u);
+        ASSERT_EQ(std::get<2>(*tuple).moveCounter, 2u);
     }
     {
         auto tuple = decoder->decode<TupleType>();
         ASSERT_TRUE(!!tuple);
-        ASSERT_EQ(std::get<0>(*tuple).moveCounter, 2u);
-        ASSERT_EQ(std::get<2>(*tuple).moveCounter, 2u);
+        ASSERT_EQ(std::get<0>(*tuple).moveCounter, 1u);
+        ASSERT_EQ(std::get<2>(*tuple).moveCounter, 1u);
     }
 }
 
@@ -401,14 +401,36 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVector)
         ASSERT_TRUE(!!vector);
         ASSERT_EQ(vector->size(), 2u);
         for (auto&& entry : *vector)
-            ASSERT_EQ(entry.moveCounter, 3u);
+            ASSERT_EQ(entry.moveCounter, 2u);
     }
     {
         auto vector = decoder->decode<Vector<DecodingMoveCounter>>();
         ASSERT_TRUE(!!vector);
         ASSERT_EQ(vector->size(), 2u);
         for (auto&& entry : *vector)
-            ASSERT_EQ(entry.moveCounter, 3u);
+            ASSERT_EQ(entry.moveCounter, 2u);
+    }
+}
+
+TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVariant)
+{
+    using VariantType = std::variant<DecodingMoveCounter, uint64_t>;
+    encoder() << VariantType { DecodingMoveCounter { } };
+    encoder() << VariantType { DecodingMoveCounter { } };
+
+    auto decoder = createDecoder();
+    {
+        std::optional<VariantType> variant;
+        *decoder >> variant;
+        ASSERT_TRUE(!!variant);
+        ASSERT_EQ(variant->index(), 0u);
+        ASSERT_EQ(std::get<0>(*variant).moveCounter, 2u);
+    }
+    {
+        auto variant = decoder->decode<VariantType>();
+        ASSERT_TRUE(!!variant);
+        ASSERT_EQ(variant->index(), 0u);
+        ASSERT_EQ(std::get<0>(*variant).moveCounter, 1u);
     }
 }
 

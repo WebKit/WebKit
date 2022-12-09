@@ -157,7 +157,7 @@ public:
 protected:
     MockMessageReceiver m_mockClientReceiver;
     RefPtr<IPC::StreamConnectionWorkQueue> m_workQueue;
-    std::unique_ptr<IPC::StreamClientConnection> m_clientConnection;
+    RefPtr<IPC::StreamClientConnection> m_clientConnection;
     RefPtr<IPC::StreamServerConnection> m_serverConnection;
 };
 

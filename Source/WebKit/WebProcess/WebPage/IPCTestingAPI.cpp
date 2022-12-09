@@ -181,7 +181,7 @@ private:
 
 class JSIPCStreamClientConnection : public RefCounted<JSIPCStreamClientConnection>, public CanMakeWeakPtr<JSIPCStreamClientConnection> {
 public:
-    static Ref<JSIPCStreamClientConnection> create(JSIPC& jsIPC, std::unique_ptr<IPC::StreamClientConnection> connection)
+    static Ref<JSIPCStreamClientConnection> create(JSIPC& jsIPC, RefPtr<IPC::StreamClientConnection> connection)
     {
         return adoptRef(*new JSIPCStreamClientConnection(jsIPC, WTFMove(connection)));
     }
@@ -194,7 +194,7 @@ public:
 private:
     friend class JSIPCStreamConnectionBuffer;
 
-    JSIPCStreamClientConnection(JSIPC& jsIPC, std::unique_ptr<IPC::StreamClientConnection> connection)
+    JSIPCStreamClientConnection(JSIPC& jsIPC, RefPtr<IPC::StreamClientConnection> connection)
         : m_jsIPC(jsIPC)
         , m_streamConnection { WTFMove(connection) }
     {
@@ -220,7 +220,7 @@ private:
     static JSValueRef waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     WeakPtr<JSIPC> m_jsIPC;
-    std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
+    RefPtr<IPC::StreamClientConnection> m_streamConnection;
 
     // Current tests expect that actions and their induced messages are waited on during same
     // run loop invocation (in JS). This means that messages of interest do not ever enter here.

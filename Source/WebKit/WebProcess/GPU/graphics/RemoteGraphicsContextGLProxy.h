@@ -377,7 +377,7 @@ private:
     HashSet<String> m_requestableExtensions;
 
     HashSet<String> m_enabledExtensions;
-    std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
+    RefPtr<IPC::StreamClientConnection> m_streamConnection;
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

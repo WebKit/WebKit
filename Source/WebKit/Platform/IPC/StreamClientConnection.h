@@ -54,12 +54,12 @@ namespace IPC {
 // The whole IPC::Connection message order is not preserved.
 //
 // The StreamClientConnection trusts the StreamServerConnection.
-class StreamClientConnection final {
+class StreamClientConnection final : public ThreadSafeRefCounted<StreamClientConnection> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
     struct StreamConnectionPair {
-        std::unique_ptr<StreamClientConnection> streamConnection;
+        RefPtr<StreamClientConnection> streamConnection;
         IPC::StreamServerConnection::Handle connectionHandle;
     };
 

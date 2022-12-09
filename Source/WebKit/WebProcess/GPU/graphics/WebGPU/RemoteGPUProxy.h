@@ -108,7 +108,7 @@ private:
     GPUProcessConnection* m_gpuProcessConnection;
     bool m_didInitialize { false };
     bool m_lost { false };
-    std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
+    RefPtr<IPC::StreamClientConnection> m_streamConnection;
 };
 
 } // namespace WebKit
