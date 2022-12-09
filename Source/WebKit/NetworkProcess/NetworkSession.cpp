@@ -222,6 +222,12 @@ void NetworkSession::invalidateAndCancel()
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
+
+    if (m_cache) {
+        auto networkCacheDirectory = m_cache->storageDirectory();
+        m_cache = nullptr;
+        FileSystem::markPurgeable(networkCacheDirectory);
+    }
 }
 
 void NetworkSession::destroyPrivateClickMeasurementStore(CompletionHandler<void()>&& completionHandler)

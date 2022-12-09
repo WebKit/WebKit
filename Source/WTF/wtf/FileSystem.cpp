@@ -428,6 +428,11 @@ bool setExcludedFromBackup(const String&, bool)
     return false;
 }
 
+bool markPurgeable(const String&)
+{
+    return false;
+}
+
 #endif
 
 MappedFileData createMappedFileData(const String& path, size_t bytesSize, PlatformFileHandle* outputHandle)
