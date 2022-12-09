@@ -30,6 +30,7 @@
 
 #include "ContentType.h"
 #include "HTMLParserIdioms.h"
+#include "MediaRecorderPrivate.h"
 
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
 #include "MediaRecorderPrivateAVFImpl.h"
