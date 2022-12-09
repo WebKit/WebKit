@@ -27,36 +27,35 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPINamespace.h"
-#include "WebExtensionAPIExtension.h"
+#include "JSWebExtensionAPIWebNavigation.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIRuntime.h"
-#include "WebExtensionAPITest.h"
-#include "WebExtensionAPIWebNavigation.h"
+#include "WebExtensionAPIWebNavigationEvent.h"
 
 namespace WebKit {
 
-class WebExtensionAPIExtension;
-class WebExtensionAPIRuntime;
+class WebPage;
 
-class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace);
+class WebExtensionAPIWebNavigation : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebNavigation, webNavigation);
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    WebExtensionAPIWebNavigationEvent& onBeforeNavigate();
+    WebExtensionAPIWebNavigationEvent& onCommitted();
+    WebExtensionAPIWebNavigationEvent& onDOMContentLoaded();
+    WebExtensionAPIWebNavigationEvent& onCompleted();
+    WebExtensionAPIWebNavigationEvent& onErrorOccurred();
 
-    WebExtensionAPIExtension& extension();
-    WebExtensionAPIRuntime& runtime() final;
-    WebExtensionAPITest& test();
-    WebExtensionAPIWebNavigation& webNavigation();
-#endif
+    void getAllFrames(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
+    void getFrame(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
 
 private:
-    RefPtr<WebExtensionAPIExtension> m_extension;
-    RefPtr<WebExtensionAPIRuntime> m_runtime;
-    RefPtr<WebExtensionAPITest> m_test;
-    RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
+    RefPtr<WebExtensionAPIWebNavigationEvent> m_onBeforeNavigateEvent;
+    RefPtr<WebExtensionAPIWebNavigationEvent> m_onCommittedEvent;
+    RefPtr<WebExtensionAPIWebNavigationEvent> m_onDOMContentLoadedEvent;
+    RefPtr<WebExtensionAPIWebNavigationEvent> m_onCompletedEvent;
+    RefPtr<WebExtensionAPIWebNavigationEvent> m_onErrorOccurredEvent;
+#endif
 };
 
 } // namespace WebKit

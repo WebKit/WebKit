@@ -598,6 +598,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPINamespace \
     WebExtensionAPIRuntime \
     WebExtensionAPITest \
+    WebExtensionAPIWebNavigation \
     WebExtensionAPIWebNavigationEvent \
 #
 
