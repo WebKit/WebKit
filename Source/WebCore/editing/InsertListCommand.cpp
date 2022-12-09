@@ -145,6 +145,9 @@ void InsertListCommand::doApply()
             VisiblePosition endOfSelection = selection.visibleEnd();
             VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection, CanSkipOverEditingBoundary);
 
+            RefPtr<ContainerNode> startScope;
+            int startIndex = indexForVisiblePosition(startOfSelection, startScope);
+
             if (startOfLastParagraph.isNotNull() && startOfParagraph(startOfSelection, CanSkipOverEditingBoundary) != startOfLastParagraph) {
                 bool forceCreateList = !selectionHasListOfType(selection, listTag);
 
@@ -193,6 +196,8 @@ void InsertListCommand::doApply()
                 doApplyForSingleParagraph(forceCreateList, listTag, currentSelection);
                 // Fetch the end of the selection, for the reason mentioned above.
                 endOfSelection = endingSelection().visibleEnd();
+                if (startOfSelection.isOrphan())
+                    startOfSelection = visiblePositionForIndex(startIndex, startScope.get());
                 setEndingSelection(VisibleSelection(startOfSelection, endOfSelection, endingSelection().isDirectional()));
                 return;
             }
@@ -268,7 +273,8 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             if (rangeEndIsInList && newList)
                 currentSelection.end = makeBoundaryPointAfterNodeContents(*newList);
 
-            setEndingSelection(VisiblePosition(firstPositionInNode(newList.get())));
+            setEndingSelection(VisibleSelection(makeContainerOffsetPosition(currentSelection.start),
+                makeContainerOffsetPosition(currentSelection.end)));
 
             return;
         }
