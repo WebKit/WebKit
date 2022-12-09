@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSUnitValue.h"
 
+#include "CSSCalcOperationNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
 #include "CSSCalcValue.h"
 #include "CSSParserFastPaths.h"
@@ -235,10 +236,10 @@ RefPtr<CSSValue> CSSUnitValue::toCSSValueWithProperty(CSSPropertyID propertyID) 
         // Wrap out of range values with a calc.
         auto node = toCalcExpressionNode();
         ASSERT(node);
-        // By default, cssText() will drop the enclosing `calc()` for simple expressions. However, it is important we
-        // keep it here or setting the value will fail.
-        node->setShouldForceEnclosingCalcInCSSText();
-        return CSSCalcValue::create(node.releaseNonNull(), true /* allowsNegativePercentage */);
+        auto sumNode = CSSCalcOperationNode::createSum(Vector { node.releaseNonNull() });
+        if (!sumNode)
+            return nullptr;
+        return CSSCalcValue::create(sumNode.releaseNonNull(), true /* allowsNegativePercentage */);
     }
     return toCSSValue();
 }

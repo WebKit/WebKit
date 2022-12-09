@@ -1091,8 +1091,6 @@ bool CSSCalcOperationNode::convertingToLengthRequiresNonNullStyle(int lengthConv
 void CSSCalcOperationNode::buildCSSText(const CSSCalcExpressionNode& node, StringBuilder& builder)
 {
     auto shouldOutputEnclosingCalc = [](const CSSCalcExpressionNode& rootNode) {
-        if (rootNode.shouldForceEnclosingCalcInCSSText())
-            return true;
         if (is<CSSCalcOperationNode>(rootNode)) {
             auto& operationNode = downcast<CSSCalcOperationNode>(rootNode);
             return operationNode.isCalcSumNode() || operationNode.isCalcProductNode();

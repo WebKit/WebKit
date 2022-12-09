@@ -61,9 +61,6 @@ public:
     virtual void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const = 0;
     virtual bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const = 0;
 
-    bool shouldForceEnclosingCalcInCSSText() const { return m_shouldForceEnclosingCalcInCSSText; }
-    void setShouldForceEnclosingCalcInCSSText() { m_shouldForceEnclosingCalcInCSSText = true; }
-
     CalculationCategory category() const { return m_category; }
 
     virtual void dump(TextStream&) const = 0;
@@ -76,7 +73,6 @@ protected:
 
 private:
     CalculationCategory m_category;
-    bool m_shouldForceEnclosingCalcInCSSText { false };
 };
 
 TextStream& operator<<(TextStream&, const CSSCalcExpressionNode&);
