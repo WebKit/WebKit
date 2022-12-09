@@ -32,11 +32,15 @@ set(WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${WebKitLegacy_DERIVED_SOURCES_DIR}"
 )
 
-set(WebKitLegacy_PRIVATE_LIBRARIES
-    WebKit::JavaScriptCore
-    WebKit::PAL
-    WebKit::WebCore
+set(WebKitLegacy_FRAMEWORKS
+    JavaScriptCore
+    PAL
+    WTF
+    WebCore
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebKit_FRAMEWORKS bmalloc)
+endif ()
 
 WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

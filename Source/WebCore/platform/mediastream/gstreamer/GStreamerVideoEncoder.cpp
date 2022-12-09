@@ -126,6 +126,7 @@ struct _WebKitWebrtcVideoEncoderPrivate {
     GRefPtr<GstElement> inputCapsFilter;
     GRefPtr<GstElement> outputCapsFilter;
     GRefPtr<GstElement> videoConvert;
+    GRefPtr<GstElement> videoRate;
     GRefPtr<GstCaps> encodedCaps;
     unsigned bitrate;
 };
@@ -245,6 +246,11 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, Encoder
         gst_bin_add(GST_BIN_CAST(self), priv->inputCapsFilter.get());
     }
 
+    if (!priv->videoRate) {
+        priv->videoRate = makeGStreamerElement("videorate", nullptr);
+        gst_bin_add(GST_BIN_CAST(self), priv->videoRate.get());
+    }
+
     if (!priv->videoConvert) {
         priv->videoConvert = makeGStreamerElement("videoconvert", nullptr);
         gst_bin_add(GST_BIN_CAST(self), priv->videoConvert.get());
@@ -269,7 +275,7 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, Encoder
 
     encoderDefinition->setupEncoder(self);
 
-    gst_element_link(priv->videoConvert.get(), priv->inputCapsFilter.get());
+    gst_element_link_many(priv->videoConvert.get(), priv->videoRate.get(), priv->inputCapsFilter.get(), nullptr);
     if (shouldLinkEncoder)
         gst_element_link(priv->inputCapsFilter.get(), priv->encoder.get());
 

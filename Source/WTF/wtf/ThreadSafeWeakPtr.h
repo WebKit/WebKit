@@ -34,7 +34,6 @@ namespace WTF {
 template<typename> class ThreadSafeWeakPtr;
 template<typename, DestructionThread> class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
 
-template<typename T>
 class ThreadSafeWeakPtrControlBlock {
     WTF_MAKE_NONCOPYABLE(ThreadSafeWeakPtrControlBlock);
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,7 +64,7 @@ public:
         ++m_strongReferenceCount;
     }
 
-    template<DestructionThread destructionThread>
+    template<typename T, DestructionThread destructionThread>
     void strongDeref() const
     {
         bool shouldDeleteControlBlock { false };
@@ -76,7 +75,7 @@ public:
             ASSERT_WITH_SECURITY_IMPLICATION(m_object);
             if (LIKELY(--m_strongReferenceCount))
                 return;
-            object = std::exchange(m_object, nullptr);
+            object = static_cast<T*>(std::exchange(m_object, nullptr));
             if (!m_weakReferenceCount)
                 shouldDeleteControlBlock = true;
         }
@@ -100,13 +99,14 @@ public:
             delete this;
     }
 
+    template<typename T>
     RefPtr<T> makeStrongReferenceIfPossible() const
     {
         Locker locker { m_lock };
         if (m_object) {
             // Calling the RefPtr constructor would call strongRef() and deadlock.
             ++m_strongReferenceCount;
-            return adoptRef(m_object);
+            return adoptRef(static_cast<T*>(m_object));
         }
         return nullptr;
     }
@@ -119,13 +119,13 @@ public:
 
 private:
     template<typename, DestructionThread> friend class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
-    explicit ThreadSafeWeakPtrControlBlock(T& object)
-        : m_object(&object) { }
+    explicit ThreadSafeWeakPtrControlBlock(void* object)
+        : m_object(object) { }
 
     mutable Lock m_lock;
     mutable size_t m_strongReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 1 };
     mutable size_t m_weakReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    mutable T* m_object WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
+    mutable void* m_object WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
 };
 
 template<typename T, DestructionThread destructionThread = DestructionThread::Any>
@@ -134,12 +134,12 @@ class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void ref() const { m_controlBlock.strongRef(); }
-    void deref() const { m_controlBlock.template strongDeref<destructionThread>(); }
+    void deref() const { m_controlBlock.template strongDeref<T, destructionThread>(); }
 protected:
     ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr() = default;
 private:
     template<typename> friend class ThreadSafeWeakPtr;
-    ThreadSafeWeakPtrControlBlock<T>& m_controlBlock { *new ThreadSafeWeakPtrControlBlock<T>(static_cast<T&>(*this)) };
+    ThreadSafeWeakPtrControlBlock& m_controlBlock { *new ThreadSafeWeakPtrControlBlock(this) };
 };
 
 template<typename T>
@@ -213,20 +213,20 @@ public:
         return *this;
     }
 
-    RefPtr<T> get() const { return m_controlBlock->makeStrongReferenceIfPossible(); }
+    RefPtr<T> get() const { return m_controlBlock ? m_controlBlock->makeStrongReferenceIfPossible<T>() : nullptr; }
 
 private:
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
-    ThreadSafeWeakPtrControlBlock<T>* controlBlock(const U& classOrChildClass)
+    ThreadSafeWeakPtrControlBlock* controlBlock(const U& classOrChildClass)
     {
-        return &reinterpret_cast<ThreadSafeWeakPtrControlBlock<T>&>(classOrChildClass.m_controlBlock);
+        return &classOrChildClass.m_controlBlock;
     }
 
     template<typename, DestructionThread> friend class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
-    explicit ThreadSafeWeakPtr(ThreadSafeWeakPtrControlBlock<T>& controlBlock)
+    explicit ThreadSafeWeakPtr(ThreadSafeWeakPtrControlBlock& controlBlock)
         : m_controlBlock(&controlBlock) { }
 
-    RefPtr<ThreadSafeWeakPtrControlBlock<T>> m_controlBlock;
+    RefPtr<ThreadSafeWeakPtrControlBlock> m_controlBlock;
 };
 
 template<class T> ThreadSafeWeakPtr(const T&) -> ThreadSafeWeakPtr<T>;

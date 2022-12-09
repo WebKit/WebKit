@@ -64,4 +64,9 @@
     // Asserts the function throws an exception.
     [NeedsScriptContext, ProcessArgumentsLeftToRight] void assertThrows(any function, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);
 
+    // Temporary webNavigation event for bring-up.
+    // FIXME: Remove this.
+    readonly attribute WebExtensionAPIWebNavigationEvent testWebNavigationEvent;
+    void fireTestWebNavigationEvent(DOMString targetUrl);
+
 };

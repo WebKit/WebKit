@@ -42,9 +42,9 @@ public:
     {
     }
 
-    WEBCORE_EXPORT static ResourceError httpError(int errorCode, const URL& failingURL, Type = Type::General);
+    WEBCORE_EXPORT ResourceError(int curlCode, const URL& failingURL, Type = Type::General);
 
-    WEBCORE_EXPORT bool isSSLCertVerificationError() const;
+    WEBCORE_EXPORT bool isCertificationVerificationError() const;
 
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 

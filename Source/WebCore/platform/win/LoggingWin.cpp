@@ -28,6 +28,7 @@
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
+#include "LogInitialization.h"
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>

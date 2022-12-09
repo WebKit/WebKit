@@ -113,7 +113,7 @@ RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const Graphic
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
         return RemoteGraphicsContextGLProxy::create(m_connection, attributes, ensureRenderingBackend());
 #endif
-    return WebCore::createWebProcessGraphicsContextGL(attributes);
+    return WebCore::createWebProcessGraphicsContextGL(attributes, &m_dispatcher);
 }
 #endif
 

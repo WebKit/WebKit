@@ -104,6 +104,14 @@ inline bool isRefType(Type type)
     return type.isFuncref() || type.isExternref();
 }
 
+// If this is a type, returns true iff it's a ref type; if it's a packed type, returns false
+inline bool isRefType(StorageType type)
+{
+    if (type.is<Type>())
+        return isRefType(*type.as<Type>());
+    return false;
+}
+
 inline bool isExternref(Type type)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
@@ -155,7 +163,7 @@ inline bool isRefWithTypeIndex(Type type)
 }
 
 // Determine if the ref type has a placeholder type index that is used
-// for an unresoled recursive reference in a recursion group.
+// for an unresolved recursive reference in a recursion group.
 inline bool isRefWithRecursiveReference(Type type)
 {
     if (!Options::useWebAssemblyGC())
@@ -168,6 +176,14 @@ inline bool isRefWithRecursiveReference(Type type)
     }
 
     return false;
+}
+
+inline bool isRefWithRecursiveReference(StorageType storageType)
+{
+    if (storageType.is<PackedType>())
+        return false;
+
+    return isRefWithRecursiveReference(*storageType.as<Type>());
 }
 
 inline bool isTypeIndexHeapType(int32_t heapType)
@@ -221,6 +237,15 @@ inline bool isSubtype(Type sub, Type parent)
     return sub == parent;
 }
 
+inline bool isSubtype(StorageType sub, StorageType parent)
+{
+    if (sub.is<PackedType>() || parent.is<PackedType>())
+        return sub == parent;
+
+    ASSERT(sub.is<Type>() && parent.is<Type>());
+    return isSubtype(*sub.as<Type>(), *parent.as<Type>());
+}
+
 inline bool isValidHeapTypeKind(TypeKind kind)
 {
     switch (kind) {
@@ -239,6 +264,14 @@ inline bool isValidHeapTypeKind(TypeKind kind)
 inline bool isDefaultableType(Type type)
 {
     return !type.isRef();
+}
+
+inline bool isDefaultableType(StorageType type)
+{
+    if (type.is<Type>())
+        return !type.as<Type>()->isRef();
+    // All packed types are defaultable.
+    return true;
 }
 
 enum class ExternalKind : uint8_t {

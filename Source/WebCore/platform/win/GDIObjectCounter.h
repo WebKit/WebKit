@@ -43,9 +43,9 @@ namespace WebCore {
 
     class GDIObjectCounter {
     public:
-        GDIObjectCounter(const char* identifier);
+        WEBCORE_EXPORT GDIObjectCounter(const char* identifier);
         GDIObjectCounter(const String& className, void* instance);
-        ~GDIObjectCounter();
+        WEBCORE_EXPORT ~GDIObjectCounter();
 
         static unsigned currentGDIObjectsInUse();
 

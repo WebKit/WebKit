@@ -204,7 +204,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, const SharedBuffer& b
         uint64_t bytesWritten = 0;
         for (auto& segment : buffer) {
             if (-1 == FileSystem::writeToFile(m_downloadDestinationFile, segment.segment->data(), segment.segment->size())) {
-                download->didFail(ResourceError::httpError(CURLE_WRITE_ERROR, m_response.url()), IPC::DataReference());
+                download->didFail(ResourceError(CURLE_WRITE_ERROR, m_response.url()), IPC::DataReference());
                 invalidateAndCancel();
                 return;
             }
@@ -251,7 +251,7 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
-    if (resourceError.isSSLCertVerificationError()) {
+    if (resourceError.isCertificationVerificationError()) {
         tryServerTrustEvaluation(AuthenticationChallenge(request.resourceRequest().url(), certificateInfo, resourceError));
         return;
     }
@@ -305,7 +305,7 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
             m_downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Write);
             if (!FileSystem::isHandleValid(m_downloadDestinationFile)) {
                 if (m_client)
-                    m_client->didCompleteWithError(ResourceError::httpError(CURLE_WRITE_ERROR, m_response.url()));
+                    m_client->didCompleteWithError(ResourceError(CURLE_WRITE_ERROR, m_response.url()));
                 invalidateAndCancel();
                 return;
             }
@@ -331,7 +331,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     static const int maxRedirects = 20;
 
     if (m_redirectCount++ > maxRedirects) {
-        m_client->didCompleteWithError(ResourceError::httpError(CURLE_TOO_MANY_REDIRECTS, m_response.url()));
+        m_client->didCompleteWithError(ResourceError(CURLE_TOO_MANY_REDIRECTS, m_response.url()));
         return;
     }
 

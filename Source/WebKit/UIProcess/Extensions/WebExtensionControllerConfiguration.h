@@ -52,7 +52,7 @@ public:
 
     std::optional<UUID> identifier() const { return m_identifier; }
 
-    bool isPersistent() const { return !m_storageDirectory.isEmpty(); }
+    bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
     String storageDirectory() const { return m_storageDirectory; }
 
     bool operator==(const WebExtensionControllerConfiguration&) const;

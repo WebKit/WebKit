@@ -184,6 +184,22 @@ void WebExtensionAPITest::assertThrows(JSContextRef context, JSValue *function, 
     assertTrue(context, [expectedError isEqualWithTypeCoercionToObject:exceptionMessageValue], [NSString stringWithFormat:@"Function throw an exception (%@) that didn't equal %@.", debugString(exceptionMessageValue), debugString(expectedError)]);
 }
 
+WebExtensionAPIWebNavigationEvent& WebExtensionAPITest::testWebNavigationEvent()
+{
+    if (!m_webNavigationEvent)
+        m_webNavigationEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnCompleted);
+
+    return *m_webNavigationEvent;
+}
+
+void WebExtensionAPITest::fireTestWebNavigationEvent(NSString *urlString)
+{
+    NSURL *targetURL = [NSURL URLWithString:urlString];
+
+    WebExtensionAPIWebNavigationEvent& testEvent = testWebNavigationEvent();
+    testEvent.invokeListenersWithArgument(@{ @"url": urlString }, targetURL);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

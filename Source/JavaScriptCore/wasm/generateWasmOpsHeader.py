@@ -50,11 +50,21 @@ def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
     extraArgsStr = ", " + ", ".join(extraArgs) if len(extraArgs) else ""
     return " \\\n    macro(" + wasm.toCpp(wasmOpcode) + ", " + hex(int(value)) + ", " + b3 + ", " + str(inc) + extraArgsStr + ")"
 
+
+def cppMacroPacked(wasmOpcode, value):
+    return " \\\n    macro(" + wasm.toCpp(wasmOpcode) + ", " + hex(int(value)) + ")"
+
+
 def typeMacroizer():
     inc = 0
     for ty in wasm.types:
         yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty, str(wasm.types[ty]["width"]))
         inc += 1
+
+
+def packedTypeMacroizer():
+    for ty in wasm.packed_types:
+        yield cppMacroPacked(ty, wasm.packed_types[ty]["value"])
 
 
 def typeMacroizerFiltered(filter):
@@ -64,6 +74,8 @@ def typeMacroizerFiltered(filter):
 
 type_definitions = ["#define FOR_EACH_WASM_TYPE(macro)"]
 type_definitions.extend([t for t in typeMacroizer()])
+type_definitions.extend(["\n\n#define FOR_EACH_WASM_PACKED_TYPE(macro)"])
+type_definitions.extend([t for t in packedTypeMacroizer()])
 type_definitions = "".join(type_definitions)
 
 type_definitions_except_funcref_externref = ["#define FOR_EACH_WASM_TYPE_EXCEPT_FUNCREF_AND_EXTERNREF(macro)"]
@@ -229,6 +241,12 @@ enum class TypeKind : int8_t {
 };
 #undef CREATE_ENUM_VALUE
 
+#define CREATE_ENUM_VALUE(name, id) name = id,
+enum class PackedType: int8_t {
+    FOR_EACH_WASM_PACKED_TYPE(CREATE_ENUM_VALUE)
+};
+#undef CREATE_ENUM_VALUE
+
 using TypeIndex = uintptr_t;
 
 inline bool typeIndexIsType(TypeIndex index)
@@ -286,11 +304,35 @@ inline bool isValidTypeKind(Int i)
 }
 #undef CREATE_CASE
 
+#define CREATE_CASE(name, id, ...) case id: return true;
+template <typename Int>
+inline bool isValidPackedType(Int i)
+{
+    switch (i) {
+    default: return false;
+    FOR_EACH_WASM_PACKED_TYPE(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+#undef CREATE_CASE
+
 #define CREATE_CASE(name, ...) case TypeKind::name: return #name;
 inline const char* makeString(TypeKind kind)
 {
     switch (kind) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+#undef CREATE_CASE
+
+#define CREATE_CASE(name, ...) case PackedType::name: return #name;
+inline const char* makeString(PackedType packedType)
+{
+    switch (packedType) {
+    FOR_EACH_WASM_PACKED_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

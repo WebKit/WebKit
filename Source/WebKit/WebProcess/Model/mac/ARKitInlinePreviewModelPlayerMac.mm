@@ -75,7 +75,7 @@ static String& sharedModelElementCacheDirectory()
     return sharedModelElementCacheDirectory;
 }
 
-static const String& modelElementCacheDirectory()
+const String& ARKitInlinePreviewModelPlayerMac::modelElementCacheDirectory()
 {
     return sharedModelElementCacheDirectory();
 }

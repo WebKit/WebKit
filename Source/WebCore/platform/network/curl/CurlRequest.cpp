@@ -490,7 +490,7 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         });
     } else {
         auto type = (result == CURLE_OPERATION_TIMEDOUT && timeoutInterval()) ? ResourceError::Type::Timeout : ResourceError::Type::General;
-        auto resourceError = ResourceError::httpError(result, m_request.url(), type);
+        auto resourceError = ResourceError(result, m_request.url(), type);
 
         CertificateInfo certificateInfo;
         if (auto info = m_curlHandle->certificateInfo())

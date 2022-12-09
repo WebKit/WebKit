@@ -32,7 +32,10 @@
 
 namespace WebCore {
 
-DisplayConfigurationMonitor::Client::Client() = default;
+DisplayConfigurationMonitor::Client::Client()
+{
+    m_identifier = DisplayConfigurationClientIdentifier::generateThreadSafe();
+}
 
 DisplayConfigurationMonitor::Client::~Client() = default;
 
@@ -42,29 +45,68 @@ DisplayConfigurationMonitor::~DisplayConfigurationMonitor() = default;
 
 DisplayConfigurationMonitor& DisplayConfigurationMonitor::singleton()
 {
-    assertIsMainThread();
     static NeverDestroyed<DisplayConfigurationMonitor> instance;
     return instance;
 }
 
-void DisplayConfigurationMonitor::addClient(Client& client)
+void DisplayConfigurationMonitor::addClient(Client& client, SerialFunctionDispatcher* dispatcher)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.append(&client);
+    Locker locker { m_lock };
+    if (dispatcher)
+        assertIsCurrent(*dispatcher);
+    else
+        assertIsMainThread();
+    ASSERT(!m_clients.contains(ClientEntry { &client }));
+    m_clients.append({ &client, dispatcher });
 }
 
 void DisplayConfigurationMonitor::removeClient(Client& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.removeFirst(&client);
+    Locker locker { m_lock };
+    size_t index = m_clients.find(ClientEntry { &client });
+    ASSERT(index != notFound);
+    if (m_clients.at(index).m_dispatcher)
+        assertIsCurrent(*m_clients.at(index).m_dispatcher);
+    else
+        assertIsMainThread();
+    m_clients.remove(index);
 }
 
 void DisplayConfigurationMonitor::dispatchDisplayWasReconfigured(CGDisplayChangeSummaryFlags flags)
 {
     if (!(flags & kCGDisplaySetModeFlag))
         return;
-    for (auto* client : copyToVector(m_clients))
-        client->displayWasReconfigured();
+
+    Vector<ClientEntry> copy;
+    {
+        Locker locker { m_lock };
+        copy = copyToVector(m_clients);
+
+        // Dispatch notifications for Clients on other threads while we hold the lock, to
+        // ensure the dispatcher is still alive. Once on the other dispatcher, we'll
+        // re-check the validity of the client and then notify without the lock hold.
+        for (auto& [client, dispatcher] : copy) {
+            if (dispatcher) {
+                dispatcher->dispatch([this, client = client, ident = client->m_identifier]() {
+                    {
+                        Locker locker { m_lock };
+                        size_t index = m_clients.find(ClientEntry { client });
+                        if (index == notFound)
+                            return;
+                        if (m_clients.at(index).m_client->m_identifier != ident)
+                            return;
+                    }
+                    client->displayWasReconfigured();
+                });
+            }
+        }
+    }
+
+    // Notify the main-thread Clients without the lock held.
+    for (auto& [client, dispatcher] : copy) {
+        if (!dispatcher)
+            client->displayWasReconfigured();
+    }
 }
 
 }

@@ -1782,14 +1782,26 @@ VectorFloor U:G:Ptr, U:F:128, D:F:128
 VectorTrunc U:G:Ptr, U:F:128, D:F:128
     SIMDInfo, Tmp, Tmp
 
-VectorTruncSat U:G:Ptr, U:F:128, D:F:128
+arm64: VectorTruncSat U:G:Ptr, U:F:128, D:F:128
     SIMDInfo, Tmp, Tmp
+
+x86_64: VectorSignedTruncSatF64 U:F:128, D:F:128, S:F:128, S:F:128
+    Tmp, Tmp, Tmp, Tmp
+
+x86_64: VectorUnsignedTruncSatF64 U:F:128, D:F:128, S:F:128, S:F:128, S:F:128
+    Tmp, Tmp, Tmp, Tmp, Tmp
 
 VectorConvert U:G:Ptr, U:F:128, D:F:128
     SIMDInfo, Tmp, Tmp
 
-VectorConvertLow U:G:Ptr, U:F:64, D:F:128
+x86_64: VectorConvertUnsigned U:F:128, D:F:128, S:F:128
+    Tmp, Tmp, Tmp
+
+arm64: VectorConvertLow U:G:Ptr, U:F:64, D:F:128
     SIMDInfo, Tmp, Tmp
+
+x86_64: VectorConvertLow U:G:Ptr, U:F:64, D:F:128, S:F:128, S:F:128
+    SIMDInfo, Tmp, Tmp, Tmp, Tmp
 
 VectorNearest U:G:Ptr, U:F:128, D:F:128
     SIMDInfo, Tmp, Tmp

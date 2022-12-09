@@ -38,12 +38,12 @@ static const String& curlErrorDomain()
     return errorDomain;
 }
 
-ResourceError ResourceError::httpError(int errorCode, const URL& failingURL, Type type)
+ResourceError::ResourceError(int curlCode, const URL& failingURL, Type type)
+    : ResourceErrorBase(curlErrorDomain(), curlCode, failingURL, CurlHandle::errorDescription(static_cast<CURLcode>(curlCode)), type, IsSanitized::No)
 {
-    return ResourceError(curlErrorDomain(), errorCode, failingURL, CurlHandle::errorDescription(static_cast<CURLcode>(errorCode)), type);
 }
 
-bool ResourceError::isSSLCertVerificationError() const
+bool ResourceError::isCertificationVerificationError() const
 {
     return domain() == curlErrorDomain() && errorCode() == CURLE_PEER_FAILED_VERIFICATION;
 }

@@ -34,7 +34,7 @@ function testArrayDeclaration() {
   assert.throws(
     () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x84\x80\x80\x80\x00\x01\x5e\xff\x02")),
     WebAssembly.CompileError,
-    "Module doesn't parse at byte 17: can't get array's element Type"
+    "Module doesn't parse at byte 16: can't get array's element Type"
   )
 
   /*

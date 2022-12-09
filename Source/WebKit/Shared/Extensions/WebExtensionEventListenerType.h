@@ -29,6 +29,8 @@
 
 namespace WebKit {
 
+// If you are adding a new event, you will also need to increase 'currentBackgroundPageListenerStateVersion'
+// so that your new event gets fired to non-persistent background pages.
 enum class WebExtensionEventListenerType : uint8_t {
     Unknown = 0,
     ActionOnClicked,

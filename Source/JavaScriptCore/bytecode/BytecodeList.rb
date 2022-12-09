@@ -1952,6 +1952,22 @@ op :array_get,
         typeIndex: unsigned,
     }
 
+op :array_get_s,
+    args: {
+        dst: VirtualRegister,
+        arrayref: VirtualRegister,
+        index: VirtualRegister,
+        typeIndex: unsigned,
+    }
+
+op :array_get_u,
+    args: {
+        dst: VirtualRegister,
+        arrayref: VirtualRegister,
+        index: VirtualRegister,
+        typeIndex: unsigned,
+    }
+
 op :array_set,
     args: {
         arrayref: VirtualRegister,

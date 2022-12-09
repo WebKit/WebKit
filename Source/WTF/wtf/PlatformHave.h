@@ -1368,3 +1368,7 @@
     || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 160000))
 #define HAVE_CGSTYLE_CREATE_SHADOW2 1
 #endif
+
+#if PLATFORM(COCOA) && !PLATFORM(IOS_SIMULATOR) && __has_include(<apfs/apfs_fsctl.h>)
+#define HAVE_APFS_CACHEDELETE_PURGEABLE 1
+#endif

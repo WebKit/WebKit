@@ -86,5 +86,6 @@ add_definitions(-DWTF_PLATFORM_WIN_CAIRO=1)
 add_definitions(-DNOCRYPT)
 
 # Override library types
-set(WebCore_LIBRARY_TYPE OBJECT)
+set(PAL_LIBRARY_TYPE OBJECT)
+set(WebCore_LIBRARY_TYPE SHARED)
 set(WebCoreTestSupport_LIBRARY_TYPE OBJECT)

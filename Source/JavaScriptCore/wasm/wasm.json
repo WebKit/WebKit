@@ -25,6 +25,10 @@
         "rec":       { "type": "varint7", "value":  -49, "b3type": "B3::Void",   "width": 0 },
         "void":      { "type": "varint7", "value":  -64, "b3type": "B3::Void",   "width": 0 }
     },
+    "packed_type": {
+        "i8":        { "type": "varint7", "value":  -6},
+        "i16":       { "type": "varint7", "value":  -7}
+    },
     "value_type": ["i32", "i64", "f32", "f64", "externref", "funcref", "v128"],
     "block_type": ["i32", "i64", "f32", "f64", "void", "externref", "funcref", "v128"],
     "ref_type": ["funcref", "externref", "ref", "ref_null"],
@@ -263,6 +267,8 @@
         "array.new":           { "category": "gc",         "value": 251, "return": ["arrayref"],                     "parameter": ["any", "i32", "rtt"],          "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 17 },
         "array.new_default":   { "category": "gc",         "value": 251, "return": ["arrayref"],                     "parameter": ["i32", "rtt"],                 "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 18 },
         "array.get":           { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["arrayref", "i32"],            "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 19 },
+        "array.get_s":         { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["arrayref", "i32"],            "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 20 },
+        "array.get_u":         { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["arrayref", "i32"],            "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 21 },
         "array.set":           { "category": "gc",         "value": 251, "return": [],                               "parameter": ["arrayref", "i32", "any"],     "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 22 },
         "array.len":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["arrayref"],                   "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 23 },
         "i31.new":             { "category": "gc",         "value": 251, "return": ["i31ref"],                       "parameter": ["i32"],                        "immediate": [], "extendedOp": 32 },

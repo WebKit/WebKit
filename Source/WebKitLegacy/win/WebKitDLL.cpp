@@ -169,6 +169,7 @@ void shutDownWebKit()
     WebKit::WebStorageNamespaceProvider::closeLocalStorage();
 }
 
+#if !PLATFORM(WIN_CAIRO)
 //FIXME: We should consider moving this to a new file for cross-project functionality
 WEBKIT_API RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char* name);
 RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char* name)
@@ -239,6 +240,7 @@ RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char* name)
 
     return WebCore::SharedBuffer::create(reinterpret_cast<const char*>(resource), size);
 }
+#endif // !PLATFORM(WIN_CAIRO)
 
 // Force symbols to be included so we can export them for legacy clients.
 // DEPRECATED! People should get these symbols from JavaScriptCore.dll, not WebKit.dll!

@@ -93,6 +93,8 @@ WASM_SLOW_PATH_HIDDEN_DECL(retrieve_and_clear_exception);
 WASM_SLOW_PATH_HIDDEN_DECL(array_new);
 WASM_SLOW_PATH_HIDDEN_DECL(array_new_default);
 WASM_SLOW_PATH_HIDDEN_DECL(array_get);
+WASM_SLOW_PATH_HIDDEN_DECL(array_get_s);
+WASM_SLOW_PATH_HIDDEN_DECL(array_get_u);
 WASM_SLOW_PATH_HIDDEN_DECL(array_set);
 WASM_SLOW_PATH_HIDDEN_DECL(struct_new);
 WASM_SLOW_PATH_HIDDEN_DECL(struct_get);

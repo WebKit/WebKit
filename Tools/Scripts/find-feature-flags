@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2022 Sony Interactive Entertainment
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import print_function
+
+import argparse
+import os
+import sys
+
+import webkitpy.featuredefines.search as search
+
+_DESCRIPTION = """
+Find feature flags within portions of the source code.
+"""
+
+_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+_CHOICES = [
+    "definitions",
+    "platform",
+    "perl",
+    "cmake",
+    "code",
+    "native-code",
+    "cmake-code",
+    "idl-code",
+]
+
+
+def _search_with(choice):
+    mapping = {
+        "platform": search.FeatureDefinesPlatform,
+        "perl": search.FeatureDefinesPerl,
+        "cmake": search.FeatureDefinesCMake,
+        "native-code": search.FeatureDefinesUsageNativeCode,
+        "cmake-code": search.FeatureDefinesUsageCMakeCode,
+        "idl-code": search.FeatureDefinesUsageIdlCode,
+    }
+
+    return mapping[choice]()
+
+
+def _parse_args(argv):
+    parser = argparse.ArgumentParser(description=_DESCRIPTION, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("find", help="the code to search", choices=_CHOICES, nargs="*")
+    parser.add_argument("--diff", choices=_CHOICES, action="append")
+    parser.add_argument("--macro", choices=["ENABLE", "USE", "HAVE"], default="ENABLE")
+    return parser.parse_args(argv)
+
+
+def _choice_set(choices):
+    choices_set = set(choices)
+
+    if "definitions" in choices_set:
+        choices_set.remove("definitions")
+
+        choices_set.update(["platform", "perl", "cmake"])
+
+    if "all-code" in choices_set:
+        choices_set.remove("all-code")
+
+        choices_set.update(["native-code", "cmake-code", "idl-code"])
+
+    return choices_set
+
+
+def _search_for(choices, macro):
+    found = set()
+
+    for choice in _choice_set(choices):
+        search_with = _search_with(choice)
+        search_with.search(_ROOT, macro)
+        found.update(search_with.definitions())
+
+    return found
+
+
+def main(argv):
+    args = _parse_args(argv)
+
+    find_defines = _search_for(args.find, args.macro)
+
+    if args.diff:
+        diff_defines = _search_for(args.diff, args.macro)
+
+        only_find = find_defines.difference(diff_defines)
+
+        print("Only in Source (" + ",".join(args.find) + ")")
+        for item in sorted(only_find):
+            print(item)
+
+        only_diff = diff_defines.difference(find_defines)
+
+        print("Only in Diff (" + ",".join(args.diff) + ")")
+        for item in sorted(only_diff):
+            print(item)
+    else:
+        for item in sorted(find_defines):
+            print(item)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

@@ -55,6 +55,12 @@ public:
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
 private:
+    explicit WebExtensionAPIWebNavigationEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
+        : WebExtensionAPIObject(forMainWorld, runtime, context)
+    {
+        m_type = type;
+    }
+
     WebExtensionEventListenerType m_type;
     ListenerVector m_listeners;
 };

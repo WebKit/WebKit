@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WKWebViewInternal.h"
 #import "WebExtensionController.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
@@ -40,12 +41,14 @@ namespace WebKit {
 
 void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=248684.
+    if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
+        m_backgroundPageListeners.add(type);
 }
 
 void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=248684
+    if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
+        m_backgroundPageListeners.remove(type);
 }
 
 } // namespace WebKit

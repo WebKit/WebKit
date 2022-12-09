@@ -56,6 +56,7 @@ public:
     }
 
 
+    const String& cacheDirectory() const { return m_cacheDirectory; }
     WEBCORE_EXPORT void setMaximumSize(int64_t size);
     WEBCORE_EXPORT int64_t maximumSize() const;
     bool isMaximumSizeReached() const;

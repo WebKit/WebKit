@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=false ] -->
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -44,9 +44,10 @@ function assertSelectionOrder(direction)
         expectedPosition = Node.DOCUMENT_POSITION_FOLLOWING;
     else if (direction == 'backward')
         expectedPosition = Node.DOCUMENT_POSITION_PRECEDING;
-    
+
     var sel = window.getSelection();
-    if (sel.anchorNode.compareDocumentPosition(sel.focusNode) == expectedPosition)
+    var offsetMatchesDirection = () => (direction == 'forward' && sel.anchorOffset < sel.focusOffset) || (direction == 'backward' && sel.anchorOffset > sel.focusOffset);
+    if ((sel.anchorNode == sel.focusNode && offsetMatchesDirection()) || (sel.anchorNode.compareDocumentPosition(sel.focusNode) == expectedPosition))
         testPassed("Selection direction is correct.");
     else
         testFailed("Selection direction is not correct. Expected a " + direction + " selection." + selectionAsString(sel));
@@ -81,13 +82,13 @@ function runShiftClickTest(editingBehavior)
     if (editingBehavior == "mac")
         shiftClick(first.offsetLeft, first.offsetTop, 'one two three\nfour five');
     else
-        shiftClick(first.offsetLeft, first.offsetTop, 'one two');
+        shiftClick(first.offsetLeft, first.offsetTop, 'one two ');
     assertSelectionOrder('backward');
 
     if (editingBehavior == "mac")
         shiftClick(start.offsetLeft, start.offsetTop, 'two three\nfour five');
     else
-        shiftClick(start.offsetLeft, start.offsetTop, 'two');
+        shiftClick(start.offsetLeft, start.offsetTop, 'two ');
 
     // FIXME: The selection direction is incorrect on Win/Linux here. It should be backward.
     assertSelectionOrder('backward');

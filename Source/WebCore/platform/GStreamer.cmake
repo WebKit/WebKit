@@ -4,6 +4,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         "${WEBCORE_DIR}/platform/graphics/gstreamer"
         "${WEBCORE_DIR}/platform/graphics/gstreamer/mse"
         "${WEBCORE_DIR}/platform/graphics/gstreamer/eme"
+        "${WEBCORE_DIR}/platform/gstreamer"
         "${WEBCORE_DIR}/platform/mediarecorder/gstreamer"
     )
 
@@ -64,6 +65,8 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
         platform/graphics/gstreamer/mse/TrackQueue.cpp
         platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
+
+        platform/gstreamer/GStreamerCodecUtilities.cpp
 
         platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp
 

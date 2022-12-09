@@ -55,7 +55,7 @@ private:
     void discardRealTimeKitProxyTimerFired();
 #endif
 
-    std::shared_ptr<ThreadGroup> m_threadGroup;
+    Ref<ThreadGroup> m_threadGroup;
     bool m_enabled { true };
 #if USE(GLIB)
     std::optional<GRefPtr<GDBusProxy>> m_realTimeKitProxy;

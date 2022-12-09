@@ -2016,4 +2016,15 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafety)
     EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 0u);
 }
 
+TEST(WTF_ThreadSafeWeakPtr, UseAfterMoveResistance)
+{
+    auto counter = adoptRef(*new ThreadSafeInstanceCounter());
+    auto weakPtr = ThreadSafeWeakPtr { counter.get() };
+    auto movedTo = WTFMove(weakPtr);
+    EXPECT_NULL(weakPtr.get());
+    EXPECT_NOT_NULL(movedTo.get());
+    ThreadSafeWeakPtr<ThreadSafeInstanceCounter> emptyConstructor;
+    EXPECT_NULL(emptyConstructor.get());
+}
+
 } // namespace TestWebKitAPI

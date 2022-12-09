@@ -79,7 +79,7 @@ public:
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
     bool operator!=(const WebExtensionController& other) const { return !(this == &other); }
 
-    bool isPersistent() const { return m_configuration->isPersistent(); }
+    bool storageIsPersistent() const { return m_configuration->storageIsPersistent(); }
     String storageDirectory(WebExtensionContext&) const;
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }

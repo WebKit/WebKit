@@ -366,7 +366,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
@@ -462,6 +462,7 @@ private:
     Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint32_t offset);
 
     void emitStructSet(Value*, uint32_t, const StructType&, ExpressionType&);
+    ExpressionType WARN_UNUSED_RETURN pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size);
 
     void unify(Value* phi, const ExpressionType source);
     void unifyValuesWithBlock(const Stack& resultStack, const ControlData& block);
@@ -2081,7 +2082,11 @@ void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const
 {
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), structValue, JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
-    const auto& fieldType = structType.field(fieldIndex).type;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(structType.field(fieldIndex).type.is<Type>());
+
+    Type fieldType = *structType.field(fieldIndex).type.as<Type>();
     switch (fieldType.kind) {
     case TypeKind::I32:
     case TypeKind::Funcref:
@@ -2390,13 +2395,23 @@ auto B3IRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> Pa
     return { };
 }
 
+Variable* B3IRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size)
+{
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    return push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        get(size), initValue));
+}
+
 auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
 #if ASSERT_ENABLED
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
-    ASSERT(toB3Type(elementType) == value->type());
+    const StorageType& elementType = arraySignature.as<ArrayType>()->elementType().type;
+    ASSERT(toB3Type(elementType.unpacked()) == value->type());
 #endif
 
     Value* initValue = get(value);
@@ -2409,44 +2424,33 @@ auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, Express
         initValue = patchpoint;
     }
 
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(size), initValue));
+    result = pushArrayNew(typeIndex, initValue, size);
 
     return { };
 }
 
 auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
 {
-    // FIXME: Abstract and generalize with addArrayNew.
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
 
     Value* initValue;
-    if (Wasm::isRefType(elementType))
+    if (Wasm::isRefType(arraySignature.as<ArrayType>()->elementType().type))
         initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()));
     else
         initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0);
 
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(size), initValue));
+    result = pushArrayNew(typeIndex, initValue, size);
 
     return { };
 }
 
-auto B3IRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+    Wasm::StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
+    Wasm::Type resultType = elementType.unpacked();
 
     // Ensure arrayref is non-null.
     {
@@ -2475,10 +2479,10 @@ auto B3IRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, Exp
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
         get(arrayref), get(index));
 
-    switch (toB3Type(elementType).kind()) {
+    switch (toB3Type(resultType).kind()) {
     case B3::Float:
     case B3::Double: {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(elementType), origin());
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(resultType), origin());
         patchpoint->appendSomeRegister(arrayResult);
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move64ToDouble(params[1].gpr(), params[0].fpr());
@@ -2487,12 +2491,28 @@ auto B3IRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, Exp
         break;
     }
     case B3::Int32: {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(elementType), origin());
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(resultType), origin());
         patchpoint->appendSomeRegister(arrayResult);
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move(params[1].gpr(), params[0].gpr());
         });
-        result = push(patchpoint);
+        Value* postProcess = patchpoint;
+        switch (arrayGetKind) {
+        case GCOpType::ArrayGet:
+        case GCOpType::ArrayGetU:
+            break;
+        case GCOpType::ArrayGetS: {
+            size_t elementSize = *elementType.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
+            uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+            Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), patchpoint, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
+            postProcess = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return { };
+        }
+        result = push(postProcess);
         break;
     }
     case B3::Int64:
@@ -2593,7 +2613,11 @@ auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructTyp
 {
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), get(structReference), JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
-    switch (structType.field(fieldIndex).type.kind) {
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(structType.field(fieldIndex).type.is<Type>());
+
+    switch (structType.field(fieldIndex).type.as<Type>()->kind) {
     case TypeKind::I32:
         result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin(), payloadBase, fieldOffset));
         break;

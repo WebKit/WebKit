@@ -3,7 +3,7 @@ This tests hang when listifying nested lists with an orphaned list child in betw
 | <ol>
 |   <ol>
 |     <li>
-|       "hello"
+|       "<#selection-anchor>hello"
 |   "\n    world\n    "
 |   <ol>
 |     <li>
@@ -13,6 +13,6 @@ This tests hang when listifying nested lists with an orphaned list child in betw
 |     "\n        "
 |     <ol>
 |       <li>
-|         "<#selection-caret>because of you"
+|         "because of you<#selection-focus>"
 |   "\n    "
 | "\n"
