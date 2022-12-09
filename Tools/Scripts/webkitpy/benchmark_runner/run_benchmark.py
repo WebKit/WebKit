@@ -38,7 +38,7 @@ def default_diagnose_dir():
 
 def config_argument_parser():
     diagnose_directory = default_diagnose_dir()
-    parser = argparse.ArgumentParser(description='Run browser based performance benchmarks. To run a single benchmark in the recommended way, use run-benchmark --plan. To see the vailable benchmarks, use run-benchmark --list-plans. This script passes through the __XPC variables in its environment to the Safari process.')
+    parser = argparse.ArgumentParser(description='Run browser based performance benchmarks. To run a single benchmark in the recommended way, use run-benchmark --plan. To see the available benchmarks, use run-benchmark --list-plans. This script passes through the __XPC variables in its environment to the Safari process.')
     mutual_group = parser.add_mutually_exclusive_group(required=True)
     mutual_group.add_argument('--plan', help='Run a specific benchmark plan (e.g. speedometer, jetstream).')
     mutual_group.add_argument('--list-plans', action='store_true', help='List all available benchmark plans.')
@@ -53,6 +53,8 @@ def config_argument_parser():
     parser.add_argument('--local-copy', help='Path to a local copy of the benchmark (e.g. PerformanceTests/SunSpider/).')
     parser.add_argument('--device-id', default=None, help='Undocumented option for mobile device testing.')
     parser.add_argument('--debug', action='store_true', help='Enable debug logging.')
+    parser.add_argument('--subtests', nargs='*', help='Specify subtests to run (if applicable to the current plan), case-sensitive and separated by spaces. To see available subtests, use --list-subtests with a --plan argument.')
+    parser.add_argument('--list-subtests', action='store_true', help='List valid subtests from the test plan.')
     parser.add_argument('--diagnose-directory', dest='diagnose_dir', default=diagnose_directory, help='Directory for storing diagnose information on test failure. Defaults to {}.'.format(diagnose_directory))
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
@@ -95,7 +97,7 @@ def run_benchmark_plan(args, plan):
     benchmark_runner_class = benchmark_runner_subclasses[args.driver]
     runner = benchmark_runner_class(plan,
                                     args.local_copy, args.count, args.timeout, args.build_dir, args.output_file,
-                                    args.platform, args.browser, args.browser_path, args.scale_unit,
+                                    args.platform, args.browser, args.browser_path, args.subtests, args.scale_unit,
                                     args.show_iteration_values, args.device_id, args.diagnose_dir,
                                     args.diagnose_dir if args.generate_pgo_profiles else None,
                                     args.diagnose_dir if args.profile else None)
@@ -106,6 +108,16 @@ def list_benchmark_plans():
     print("Available benchmark plans: ")
     for plan in BenchmarkRunner.available_plans():
         print("\t%s" % plan)
+
+
+def list_subtests(plan):
+    subtests = BenchmarkRunner.available_subtests(plan)
+    if subtests:
+        print('Available subtests for {}:'.format(plan))
+        for subtest in BenchmarkRunner.format_subtests(subtests):
+            print('\t{}'.format(subtest))
+    else:
+        print('No subtests are available for {}.'.format(plan))
 
 
 def start(args):
@@ -142,6 +154,9 @@ def start(args):
         return len(failed)
     if args.list_plans:
         list_benchmark_plans()
+        return
+    if args.list_subtests:
+        list_subtests(args.plan)
         return
 
     run_benchmark_plan(args, args.plan)

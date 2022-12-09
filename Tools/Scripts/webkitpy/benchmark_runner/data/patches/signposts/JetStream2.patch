@@ -1,0 +1,22 @@
+diff --git a/PerformanceTests/JetStream2/JetStreamDriver.js b/PerformanceTests/JetStream2/JetStreamDriver.js
+index 0bc36c9e62a1..ec4aaa0c2f1d 100644
+--- a/JetStreamDriver.js
++++ b/JetStreamDriver.js
+@@ -645,6 +645,8 @@ class Benchmark {
+         if (RAMification)
+             resetMemoryPeak();
+ 
++        __signpostStart(this.name)
++
+         let magicFrame;
+         try {
+             magicFrame = JetStream.runCode(code);
+@@ -654,6 +656,8 @@ class Benchmark {
+         }
+         let results = await promise;
+ 
++        __signpostStop(this.name)
++
+         this.endTime = new Date();
+ 
+         if (RAMification) {

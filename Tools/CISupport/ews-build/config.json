@@ -64,6 +64,11 @@
     { "name": "ews133", "platform": "*" },
     { "name": "ews134", "platform": "*" },
     { "name": "ews135", "platform": "*" },
+    { "name": "ews136", "platform": "*" },
+    { "name": "ews137", "platform": "*" },
+    { "name": "ews138", "platform": "*" },
+    { "name": "ews139", "platform": "*" },
+    { "name": "ews140", "platform": "*" },
     { "name": "ews150", "platform": "*" },
     { "name": "ews151", "platform": "*", "max_builds": 3 },
     { "name": "ews152", "platform": "*" },
@@ -168,7 +173,7 @@
       "factory": "macOSWK2Factory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["arm64"],
       "triggered_by": ["macos-applesilicon-big-sur-debug-build-ews"],
-      "workernames": ["ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
+      "workernames": ["ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
       "name": "macOS-BigSur-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",

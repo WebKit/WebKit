@@ -203,9 +203,10 @@ void BreakBlockquoteCommand::doApply()
     
     // Make sure the cloned block quote renders.
     addBlockPlaceholderIfNeeded(clonedBlockquote.ptr());
-    
-    // Put the selection right before the break.
-    setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
+
+    // Put the selection right before br or at the first position in div.
+    auto beforeBROrFirstPositionInDiv = isAtomicNode(breakNode.ptr()) ? positionBeforeNode(breakNode.ptr()) : firstPositionInNode(breakNode.ptr());
+    setEndingSelection(VisibleSelection(beforeBROrFirstPositionInDiv, Affinity::Downstream, endingSelection().isDirectional()));
     rebalanceWhitespace();
 }
 

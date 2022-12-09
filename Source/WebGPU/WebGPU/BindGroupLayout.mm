@@ -120,6 +120,38 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     if (descriptor.nextInChain)
         return BindGroupLayout::createInvalid(*this);
 
+#if HAVE(TIER2_ARGUMENT_BUFFERS)
+    if ([m_device argumentBuffersSupport] != MTLArgumentBuffersTier1) {
+        HashMap<uint32_t, uint32_t> shaderStageForBinding;
+
+        NSUInteger vertexArgumentSize = 0;
+        NSUInteger fragmentArgumentSize = 0;
+        NSUInteger computeArgumentSize = 0;
+        constexpr auto uniformBufferElementSize = sizeof(float*);
+        for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
+            const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
+            if (entry.nextInChain)
+                return BindGroupLayout::createInvalid(*this);
+
+            vertexArgumentSize += (entry.visibility & WGPUShaderStage_Vertex) ? uniformBufferElementSize : 0;
+            fragmentArgumentSize += (entry.visibility & WGPUShaderStage_Fragment) ? uniformBufferElementSize : 0;
+            computeArgumentSize += (entry.visibility & WGPUShaderStage_Compute) ? uniformBufferElementSize : 0;
+            shaderStageForBinding.add(entry.binding + 1, entry.visibility);
+        }
+
+        id<MTLBuffer> vertexArgumentBuffer = vertexArgumentSize ? safeCreateBuffer(vertexArgumentSize, MTLStorageModeShared) : nil;
+        id<MTLBuffer> fragmentArgumentBuffer = fragmentArgumentSize ? safeCreateBuffer(fragmentArgumentSize, MTLStorageModeShared) : nil;
+        id<MTLBuffer> computeArgumentBuffer = computeArgumentSize ? safeCreateBuffer(computeArgumentSize, MTLStorageModeShared) : nil;
+
+        auto label = fromAPI(descriptor.label);
+        vertexArgumentBuffer.label = label;
+        fragmentArgumentBuffer.label = label;
+        computeArgumentBuffer.label = label;
+
+        return BindGroupLayout::create(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(shaderStageForBinding), *this);
+    }
+#endif // HAVE(TIER2_ARGUMENT_BUFFERS)
+
     NSMutableArray<MTLArgumentDescriptor *> *vertexArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
     NSMutableArray<MTLArgumentDescriptor *> *fragmentArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
     NSMutableArray<MTLArgumentDescriptor *> *computeArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
@@ -224,12 +256,23 @@ BindGroupLayout::BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, i
 {
 }
 
+BindGroupLayout::BindGroupLayout(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, HashMap<uint32_t, uint32_t>&& shaderStageForBinding, Device& device)
+    : m_vertexArgumentBuffer(vertexArgumentBuffer)
+    , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
+    , m_computeArgumentBuffer(computeArgumentBuffer)
+    , m_device(device)
+    , m_shaderStageForBinding(WTFMove(shaderStageForBinding))
+{
+}
+
 BindGroupLayout::BindGroupLayout(Device& device)
     : m_device(device)
 {
 }
 
-BindGroupLayout::~BindGroupLayout() = default;
+BindGroupLayout::~BindGroupLayout()
+{
+}
 
 void BindGroupLayout::setLabel(String&& label)
 {
@@ -245,6 +288,12 @@ NSUInteger BindGroupLayout::encodedLength() const
     ASSERT(result == m_fragmentArgumentEncoder.encodedLength);
     ASSERT(result == m_computeArgumentEncoder.encodedLength);
     return result;
+}
+
+uint32_t BindGroupLayout::stageForBinding(uint32_t binding) const
+{
+    ASSERT(m_shaderStageForBinding.contains(binding + 1));
+    return m_shaderStageForBinding.find(binding + 1)->value;
 }
 
 } // namespace WebGPU

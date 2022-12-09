@@ -2,6 +2,7 @@ import json
 import logging
 import sys
 import os
+from collections import defaultdict, OrderedDict
 
 from webkitpy.benchmark_runner.benchmark_builder import BenchmarkBuilder
 from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
@@ -22,50 +23,42 @@ _log = logging.getLogger(__name__)
 class BenchmarkRunner(object):
     name = 'benchmark_runner'
 
-    def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform, browser, browser_path, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None, pgo_profile_output_dir=None, profile_output_dir=None):
-        try:
-            plan_file = self._find_plan_file(plan_file)
-            with open(plan_file, 'r') as fp:
-                self._plan_name = os.path.split(os.path.splitext(plan_file)[0])[1]
-                self._plan = json.load(fp)
-                if not 'options' in self._plan:
-                    self._plan['options'] = {}
-                if local_copy:
-                    self._plan['local_copy'] = local_copy
-                if count_override:
-                    self._plan['count'] = count_override
-                if timeout_override:
-                    self._plan['timeout'] = timeout_override
-                self._browser_driver = BrowserDriverFactory.create(platform, browser)
-                self._browser_path = browser_path
-                self._build_dir = os.path.abspath(build_dir) if build_dir else None
-                self._diagnose_dir = os.path.abspath(diagnose_dir) if diagnose_dir else None
-                if self._diagnose_dir:
-                    os.makedirs(self._diagnose_dir, exist_ok=True)
-                    _log.info('Collecting diagnostics to {}'.format(self._diagnose_dir))
-                self._pgo_profile_output_dir = os.path.abspath(pgo_profile_output_dir) if pgo_profile_output_dir else None
-                if self._pgo_profile_output_dir:
-                    os.makedirs(self._pgo_profile_output_dir, exist_ok=True)
-                    _log.info('Collecting PGO profiles to {}'.format(self._pgo_profile_output_dir))
-                self._profile_output_dir = os.path.abspath(profile_output_dir) if profile_output_dir else None
-                if self._profile_output_dir:
-                    os.makedirs(self._profile_output_dir, exist_ok=True)
-                    _log.info('Collecting profiles to {}'.format(self._profile_output_dir))
-                self._output_file = output_file
-                self._scale_unit = scale_unit
-                self._show_iteration_values = show_iteration_values
-                self._config = self._plan.get('config', {})
-                if device_id:
-                    self._config['device_id'] = device_id
-                self._config['enable_signposts'] = True if self._profile_output_dir else False
-        except IOError as error:
-            _log.error('Can not open plan file: {plan_file} - Error {error}'.format(plan_file=plan_file, error=error))
-            raise error
-        except ValueError as error:
-            _log.error('Plan file: {plan_file} may not follow JSON format - Error {error}'.format(plan_file=plan_file, error=error))
-            raise error
+    def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform, browser, browser_path, subtests=None, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None, pgo_profile_output_dir=None, profile_output_dir=None):
+        self._plan_name, self._plan = BenchmarkRunner._load_plan_data(plan_file)
+        if 'options' not in self._plan:
+            self._plan['options'] = {}
+        if local_copy:
+            self._plan['local_copy'] = local_copy
+        if count_override:
+            self._plan['count'] = count_override
+        if timeout_override:
+            self._plan['timeout'] = timeout_override
+        self._subtests = self.validate_subtests(subtests) if subtests else None
+        self._browser_driver = BrowserDriverFactory.create(platform, browser)
+        self._browser_path = browser_path
+        self._build_dir = os.path.abspath(build_dir) if build_dir else None
+        self._diagnose_dir = os.path.abspath(diagnose_dir) if diagnose_dir else None
+        if self._diagnose_dir:
+            os.makedirs(self._diagnose_dir, exist_ok=True)
+            _log.info('Collecting diagnostics to {}'.format(self._diagnose_dir))
+        self._pgo_profile_output_dir = os.path.abspath(pgo_profile_output_dir) if pgo_profile_output_dir else None
+        if self._pgo_profile_output_dir:
+            os.makedirs(self._pgo_profile_output_dir, exist_ok=True)
+            _log.info('Collecting PGO profiles to {}'.format(self._pgo_profile_output_dir))
+        self._profile_output_dir = os.path.abspath(profile_output_dir) if profile_output_dir else None
+        if self._profile_output_dir:
+            os.makedirs(self._profile_output_dir, exist_ok=True)
+            _log.info('Collecting profiles to {}'.format(self._profile_output_dir))
+        self._output_file = output_file
+        self._scale_unit = scale_unit
+        self._show_iteration_values = show_iteration_values
+        self._config = self._plan.get('config', {})
+        if device_id:
+            self._config['device_id'] = device_id
+        self._config['enable_signposts'] = True if self._profile_output_dir else False
 
-    def _find_plan_file(self, plan_file):
+    @staticmethod
+    def _find_plan_file(plan_file):
         if not os.path.exists(plan_file):
             abs_path = os.path.join(BenchmarkRunner.plan_directory(), plan_file)
             if os.path.exists(abs_path):
@@ -77,6 +70,21 @@ class BenchmarkRunner(object):
         return plan_file
 
     @staticmethod
+    def _load_plan_data(plan_file):
+        plan_file = BenchmarkRunner._find_plan_file(plan_file)
+        try:
+            with open(plan_file, 'r') as fp:
+                plan_name = os.path.split(os.path.splitext(plan_file)[0])[1]
+                plan = json.load(fp)
+                return plan_name, plan
+        except IOError as error:
+            _log.error('Can not open plan file: {plan_file} - Error {error}'.format(plan_file=plan_file, error=error))
+            raise error
+        except ValueError as error:
+            _log.error('Plan file: {plan_file} may not follow JSON format - Error {error}'.format(plan_file=plan_file, error=error))
+            raise error
+
+    @staticmethod
     def plan_directory():
         return os.path.join(os.path.dirname(__file__), 'data/plans')
 
@@ -84,6 +92,52 @@ class BenchmarkRunner(object):
     def available_plans():
         plans = [os.path.splitext(plan_file)[0] for plan_file in os.listdir(BenchmarkRunner.plan_directory()) if plan_file.endswith(".plan")]
         return plans
+
+    @staticmethod
+    def format_subtests(subtests):
+        # An ordered dictionary helps us prioritize listing subtests without a suite (denoted with key: "")
+        subtests = OrderedDict(subtests)
+        subtest_list = []
+        for suite, tests in subtests.items():
+            subtest_list += ['{suite}/{test}'.format(suite=suite, test=test) if suite else test for test in tests]
+        return subtest_list
+
+    @staticmethod
+    def available_subtests(plan_file):
+        plan = BenchmarkRunner._load_plan_data(plan_file)[1]
+        return plan.get('subtests', {})
+
+    def validate_subtests(self, subtests):
+        if 'subtests' not in self._plan:
+            raise Exception('Subtests are not available for the specified plan.')
+        valid_subtests = OrderedDict(self._plan['subtests'])
+        subtests_to_run = defaultdict(list)
+        for subtest in subtests:
+            if '/' in subtest:
+                subtest_suite, subtest_name = subtest.split('/')
+            else:
+                subtest_suite, subtest_name = None, subtest
+            did_append_subtest = False
+            if subtest_suite:
+                if subtest_suite not in valid_subtests:
+                    _log.warning('{} does not belong to a valid suite, skipping'.format(subtest))
+                    continue
+                if subtest_name in valid_subtests[subtest_suite]:
+                    subtests_to_run[subtest_suite].append(subtest_name)
+                    did_append_subtest = True
+            else:  # If no suite is provided, we should do our best to infer one.
+                for suite, tests in valid_subtests.items():
+                    if subtest_name in tests:
+                        subtests_to_run[suite].append(subtest_name)
+                        did_append_subtest = True
+                        break
+            if not did_append_subtest:
+                _log.warning('{} is not a valid subtest, skipping'.format(subtest))
+        if subtests_to_run:
+            _log.info('Running subtests: {}'.format(BenchmarkRunner.format_subtests(subtests_to_run)))
+            return subtests_to_run
+        else:
+            raise Exception('No valid subtests were specified')
 
     def _run_one_test(self, web_root, test_file, iteration):
         raise NotImplementedError('BenchmarkRunner is an abstract class and shouldn\'t be instantiated.')

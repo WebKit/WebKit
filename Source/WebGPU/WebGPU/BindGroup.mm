@@ -55,10 +55,16 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     if (descriptor.nextInChain)
         return BindGroup::createInvalid(*this);
 
+    Vector<BindGroupResource> resources;
 #if HAVE(TIER2_ARGUMENT_BUFFERS)
     if ([m_device argumentBuffersSupport] != MTLArgumentBuffersTier1) {
-        // FIXME: support more than 1 buffer in the bind group
-        auto vertexArgumentBuffer = safeCreateBuffer(sizeof(float*), MTLStorageModeShared);
+        const BindGroupLayout& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
+
+        auto vertexArgumentBuffer = bindGroupLayout.vertexArgumentBuffer();
+        auto fragmentArgumentBuffer = bindGroupLayout.fragmentArgumentBuffer();
+        auto computeArgumentBuffer = bindGroupLayout.computeArgumentBuffer();
+        char* argumentBufferContents[3] = { (char*)vertexArgumentBuffer.contents, (char*)fragmentArgumentBuffer.contents, (char*)vertexArgumentBuffer.contents };
+        size_t bindingForStage[] = { 0, 0, 0 };
         for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
             const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
@@ -68,18 +74,37 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             bool bufferIsPresent = WebGPU::bufferIsPresent(entry);
             bool samplerIsPresent = WebGPU::samplerIsPresent(entry);
             bool textureViewIsPresent = WebGPU::textureViewIsPresent(entry);
+            if (bufferIsPresent + samplerIsPresent + textureViewIsPresent != 1)
+                return BindGroup::createInvalid(*this);
+
+            auto stage = bindGroupLayout.stageForBinding(entry.binding) / 2;
+            auto renderStage = [] (uint32_t inputStage) {
+                return (MTLRenderStages)(inputStage * 2);
+            };
+            static_assert(!(WGPUShaderStage_Vertex / 2) && WGPUShaderStage_Fragment / 2 == 1 && WGPUShaderStage_Compute / 2 == 2, "Unexpected shader stage constants");
+            static_assert((int)WGPUShaderStage_Vertex == (int)MTLRenderStageVertex && (int)WGPUShaderStage_Fragment == (int)MTLRenderStageFragment, "Expect identical mapping of vertex and fragment stages");
+            const size_t offset = bindingForStage[stage] * sizeof(float*);
+            ++bindingForStage[stage];
+
             if (bufferIsPresent) {
                 id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
-                *(float**)vertexArgumentBuffer.contents = (float*)buffer.gpuAddress;
-                // FIXME: support more than 1 buffer in the bind group
-                break;
-            }
+                ASSERT(sizeof(float*) == sizeof(buffer.gpuAddress));
+                *(float**)(argumentBufferContents[stage] + offset) = (float*)buffer.gpuAddress;
 
-            UNUSED_PARAM(samplerIsPresent);
-            UNUSED_PARAM(textureViewIsPresent);
+            } else if (samplerIsPresent) {
+                id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
+                ASSERT(sizeof(float*) == sizeof(sampler.gpuResourceID));
+                *(MTLResourceID*)(argumentBufferContents[stage] + offset) = sampler.gpuResourceID;
+
+            } else if (textureViewIsPresent) {
+                id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
+                ASSERT(sizeof(float*) == sizeof(texture.gpuResourceID));
+                *(MTLResourceID*)(argumentBufferContents[stage] + offset) = texture.gpuResourceID;
+                resources.append({ texture, MTLResourceUsageRead, renderStage(stage) });
+            }
         }
 
-        return BindGroup::create(vertexArgumentBuffer, nil, nil, *this);
+        return BindGroup::create(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), *this);
     }
 #endif // HAVE(TIER2_ARGUMENT_BUFFERS)
 
@@ -140,14 +165,15 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         }
     }
 
-    return BindGroup::create(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, *this);
+    return BindGroup::create(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), *this);
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Device& device)
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindGroupResource>&& resources, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)
     , m_device(device)
+    , m_resources(WTFMove(resources))
 {
 }
 

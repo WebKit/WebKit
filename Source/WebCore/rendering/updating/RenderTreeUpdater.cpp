@@ -188,7 +188,12 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         storePreviousRenderer(element);
 
-        bool mayHaveRenderedDescendants = element.renderer() || (element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent()));
+        auto mayHaveRenderedDescendants = [&]() {
+            if (element.renderer())
+                return !(element.isInTopLayer() && element.renderer()->style().effectiveSkipsContent());
+            return element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent());
+        }();
+
         if (!mayHaveRenderedDescendants) {
             it.traverseNextSkippingChildren();
             continue;
@@ -313,7 +318,12 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
-    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.displayContentsChanged());
+    bool shouldTearDownRenderers = [&]() {
+        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->effectiveSkipsContent())
+            return true;
+        return elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.displayContentsChanged());
+    }();
+
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
@@ -335,7 +345,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     else
         element.resetComputedStyle();
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents;
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkipsContent());
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();

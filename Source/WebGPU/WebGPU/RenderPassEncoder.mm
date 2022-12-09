@@ -165,7 +165,12 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
 {
     UNUSED_PARAM(dynamicOffsetCount);
     UNUSED_PARAM(dynamicOffsets);
+
+    for (const auto& resource : group.resources())
+        [m_renderCommandEncoder useResource:resource.mtlResource usage:resource.usage stages:resource.renderStages];
+
     [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:groupIndex];
+    [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 
 void RenderPassEncoder::setBlendConstant(const WGPUColor& color)

@@ -3275,6 +3275,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         if (style.masonryAutoFlow().placementAlgorithm == MasonryAutoFlowPlacementAlgorithm::Next)
             list->append(cssValuePool.createIdentifierValue(CSSValueNext));
+        // Since we know that placementAlgorithm is not Next, it must be Packed. If the PlacementOrder
+        // is DefiniteFirst, then the canonical form of the computed style is just Pack (DefiniteFirst is implicit)
         else if (style.masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::DefiniteFirst)
             list->append(cssValuePool.createIdentifierValue(CSSValuePack));
 

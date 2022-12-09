@@ -26,6 +26,7 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
@@ -44,6 +45,10 @@ public:
     {
         return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, device));
     }
+    static Ref<BindGroupLayout> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, HashMap<uint32_t, uint32_t>&& stageMapTable, Device& device)
+    {
+        return adoptRef(*new BindGroupLayout(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(stageMapTable), device));
+    }
     static Ref<BindGroupLayout> createInvalid(Device& device)
     {
         return adoptRef(*new BindGroupLayout(device));
@@ -61,17 +66,36 @@ public:
     id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
+    id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
+    id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
+    id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
+
     Device& device() const { return m_device; }
+
+    uint32_t stageForBinding(uint32_t binding) const;
 
 private:
     BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device&);
+    BindGroupLayout(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, HashMap<uint32_t, uint32_t>&&, Device&);
     BindGroupLayout(Device&);
 
-    const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
-    const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
-    const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
+    union {
+        const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
+        const id<MTLBuffer> m_vertexArgumentBuffer;
+    };
+
+    union {
+        const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
+        const id<MTLBuffer> m_fragmentArgumentBuffer;
+    };
+
+    union {
+        const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
+        const id<MTLBuffer> m_computeArgumentBuffer;
+    };
 
     const Ref<Device> m_device;
+    const HashMap<uint32_t, uint32_t> m_shaderStageForBinding;
 };
 
 } // namespace WebGPU
