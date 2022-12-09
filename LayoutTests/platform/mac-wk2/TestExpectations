@@ -1808,3 +1808,6 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 webkit.org/b/247982 [ Ventura+ ] fast/images/animated-heics-draw.html [ Timeout ]
 
 webkit.org/b/248997 [ BigSur+ ] http/tests/navigation/fragment-navigation-policy-ignore.html [ Pass Failure ]
+
+webkit.org/b/249023 [ BigSur+ ] gamepad/gamepad-polling-access.html  [ Pass Failure Crash ]
+
