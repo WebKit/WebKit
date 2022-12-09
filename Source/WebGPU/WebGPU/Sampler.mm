@@ -148,6 +148,7 @@ Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
     samplerDescriptor.lodMinClamp = descriptor.lodMinClamp;
     samplerDescriptor.lodMaxClamp = descriptor.lodMaxClamp;
     samplerDescriptor.compareFunction = compareFunction(descriptor.compare);
+    samplerDescriptor.supportArgumentBuffers = YES;
 
     // https://developer.apple.com/documentation/metal/mtlsamplerdescriptor/1516164-maxanisotropy?language=objc
     // "Values must be between 1 and 16, inclusive."

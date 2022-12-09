@@ -2539,7 +2539,6 @@ bool Texture::refersToSingleAspect(WGPUTextureFormat format, WGPUTextureAspect a
 {
     switch (aspect) {
     case WGPUTextureAspect_All:
-        ASSERT(Texture::containsDepthAspect(format) || Texture::containsStencilAspect(format));
         if (Texture::containsDepthAspect(format) && Texture::containsStencilAspect(format))
             return false;
         break;
@@ -2678,6 +2677,7 @@ bool Texture::isValidImageCopyDestination(WGPUTextureFormat format, WGPUTextureA
 
     switch (format) {
     case WGPUTextureFormat_Undefined:
+        return false;
     case WGPUTextureFormat_R8Unorm:
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
@@ -2714,8 +2714,7 @@ bool Texture::isValidImageCopyDestination(WGPUTextureFormat format, WGPUTextureA
     case WGPUTextureFormat_RGBA32Float:
     case WGPUTextureFormat_RGBA32Uint:
     case WGPUTextureFormat_RGBA32Sint:
-        ASSERT_NOT_REACHED();
-        return false;
+        return true;
     case WGPUTextureFormat_Stencil8:
     case WGPUTextureFormat_Depth16Unorm:
         return true;
