@@ -581,6 +581,8 @@ private:
     bool messageSourceIsValidWebContentProcess();
 #endif
 
+    bool shouldTakeSuspendedAssertion() const;
+
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
