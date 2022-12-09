@@ -1010,31 +1010,20 @@
     (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
-        SYS_abort_with_payload ;; <rdar://problem/50967271>
         SYS_access
         SYS_bsdthread_create
         SYS_bsdthread_ctl
         SYS_bsdthread_terminate
-        SYS_change_fdguard_np
         SYS_close
         SYS_close_nocancel
         SYS_csops ;; used by Corefoundation initialization
         SYS_csops_audittoken ;; used by WK to get entitlments
         SYS_dup
         SYS_exit
-        SYS_faccessat ;; <rdar://problem/56998930>
         SYS_fcntl
-        SYS_fcntl_nocancel
-        SYS_fgetattrlist ;; <rdar://problem/50266257>
-        SYS_fileport_makefd
-        SYS_flock
-        SYS_fsetattrlist ;; MTLCompilerFSCache::openSync
-        SYS_fsetxattr ;; <rdar://problem/49795964>
         SYS_fstat64
-        SYS_fstat64_extended ;; <rdar://problem/61310019>
         SYS_fstatat64
         SYS_fstatfs64
-        SYS_ftruncate
         SYS_getattrlist ;; xpc_realpath and directory enumeration
         SYS_getdirentries64
         SYS_getegid
@@ -1046,27 +1035,16 @@
         SYS_gettid
         SYS_gettimeofday
         SYS_getuid
-        SYS_guarded_close_np
-        SYS_guarded_open_dprotected_np ; <rdar://problem/48166729>
-        SYS_guarded_open_np
-        SYS_guarded_pwrite_np
         SYS_ioctl ;; needed by tcgetattr (TIOCGETA - debugging
         SYS_issetugid
-        SYS_kdebug_trace64
-        SYS_kdebug_typefilter
         SYS_kevent_id
         SYS_kevent_qos
-        SYS_kqueue ;; <rdar://problem/49609201>
-        SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
-        SYS_listxattr
         SYS_lseek
         SYS_lstat64
         SYS_madvise
         SYS_memorystatus_control
-        SYS_mkdir
         SYS_mmap
         SYS_mprotect
-        SYS_msync
         SYS_munmap
         SYS_open
         SYS_open_nocancel
@@ -1081,26 +1059,50 @@
         SYS_psynch_cvwait
         SYS_psynch_mutexdrop
         SYS_psynch_mutexwait
-        SYS_psynch_rw_rdlock ;; <rdar://problem/51134351>
-        SYS_psynch_rw_unlock
         SYS_read
         SYS_read_nocancel
         SYS_readlink
-        SYS_rename
-        SYS_sem_close
-        SYS_sem_open
-        SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
         SYS_shm_open
         SYS_stat64
-        SYS_statfs64
         SYS_sysctl
-        SYS_sysctlbyname
         SYS_thread_selfid
         SYS_ulock_wait
-        SYS_ulock_wait2 ;; <rdar://problem/58743778>
         SYS_ulock_wake
         SYS_workq_kernreturn
         SYS_write_nocancel))
+
+(define (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode) (syscall-number
+    SYS_abort_with_payload ;; <rdar://problem/50967271>
+    SYS_change_fdguard_np
+    SYS_faccessat ;; <rdar://problem/56998930>
+    SYS_fcntl_nocancel
+    SYS_fgetattrlist ;; <rdar://problem/50266257>
+    SYS_fileport_makefd
+    SYS_flock
+    SYS_fsetattrlist ;; MTLCompilerFSCache::openSync
+    SYS_fsetxattr ;; <rdar://problem/49795964>
+    SYS_fstat64_extended ;; <rdar://problem/61310019>
+    SYS_ftruncate
+    SYS_guarded_close_np
+    SYS_guarded_open_dprotected_np ; <rdar://problem/48166729>
+    SYS_guarded_open_np
+    SYS_guarded_pwrite_np
+    SYS_kdebug_trace64
+    SYS_kdebug_typefilter
+    SYS_kqueue ;; <rdar://problem/49609201>
+    SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
+    SYS_listxattr
+    SYS_mkdir
+    SYS_msync
+    SYS_psynch_rw_rdlock ;; <rdar://problem/51134351>
+    SYS_psynch_rw_unlock
+    SYS_rename
+    SYS_sem_close
+    SYS_sem_open
+    SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
+    SYS_statfs64
+    SYS_sysctlbyname
+    SYS_ulock_wait2)) ;; <rdar://problem/58743778>
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
@@ -1140,29 +1142,23 @@
 #endif
         ))
 
-(when (defined? 'syscall-unix)
-    (deny syscall-unix (with telemetry) (with send-signal SIGKILL))
-    (allow syscall-unix
-        (syscall-unix-only-in-use-during-launch)
-        (syscall-unix-in-use-after-launch))
+(deny syscall-unix (with telemetry))
+(allow syscall-unix
+    (syscall-unix-in-use-after-launch)
+    (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-    (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-        (allow syscall-unix
-            (syscall-unix-only-in-use-during-launch)))
-    (with-filter (state-flag "WebContentProcessLaunched")
-        (deny syscall-unix
-            (with telemetry)
-            (with message "Unix syscall used after launch")
-            (syscall-unix-only-in-use-during-launch)))
+(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+    (allow syscall-unix (syscall-unix-only-in-use-during-launch)))
+#else
+(allow syscall-unix (syscall-unix-only-in-use-during-launch))
 #endif
 
-    (allow syscall-unix
-        (syscall-unix-rarely-in-use))
+(allow syscall-unix
+    (syscall-unix-rarely-in-use))
 
-    (allow syscall-unix (with report)
-        (syscall-unix-rarely-in-use-need-backtrace))
-)
+(allow syscall-unix (with report)
+    (syscall-unix-rarely-in-use-need-backtrace))
 
 (deny syscall-unix (with no-report) (syscall-number
     SYS_connect
@@ -1175,9 +1171,16 @@
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
 (with-filter (system-attribute apple-internal)
-    (when (defined? 'syscall-unix)
-        (allow syscall-unix
-            (syscall-number SYS_kdebug_trace_string)))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
+    (allow syscall-unix
+        (syscall-number SYS_kdebug_trace_string))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
+
+(with-filter (require-not (require-entitlement "com.apple.private.verified-jit"))
+    (allow syscall-unix (with report) (with telemetry)
+        (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
+    (allow syscall-unix (with report) (with telemetry)
+        (syscall-unix-rarely-in-use))
+    (allow syscall-unix (with report) (with telemetry)
+        (syscall-unix-rarely-in-use-need-backtrace)))
 
 (deny file-ioctl (with telemetry))
 
