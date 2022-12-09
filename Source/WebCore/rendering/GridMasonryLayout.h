@@ -42,11 +42,14 @@ public:
     LayoutUnit offsetForChild(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
 private:
-
-    GridArea nextMasonryPositionForItem(const RenderBox& item);
+    GridSpan gridAxisPositionUsingPackAutoFlow(const RenderBox& item) const;
+    GridSpan gridAxisPositionUsingNextAutoFlow(const RenderBox& item);
+    GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item);
+    GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void collectMasonryItems();
     void addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>& firstTrackItems); 
+    void placeItemsUsingOrderModifiedDocumentOrder(); 
     void placeItemsWithDefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithDefinitePosition);
     void placeItemsWithIndefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithIndefinitePosition);
     void setItemGridAxisContainingBlockToGridArea(RenderBox&);
@@ -64,6 +67,9 @@ private:
     {
         return !(masonryDirection == ForRows ? area.rows.startLine() : area.columns.startLine());
     }
+    GridArea masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
+    GridSpan gridAxisSpanFromArea(const GridArea&) const;
+    bool hasEnoughSpaceAtPosition(unsigned startingPosition, unsigned spanLength) const;
 
     unsigned m_gridAxisTracksCount;
 
@@ -81,6 +87,7 @@ private:
     const GridSpan m_masonryAxisSpan = GridSpan::masonryAxisTranslatedDefiniteGridSpan();
     const unsigned m_masonryDefiniteItemsQuarterCapacity = 4;
     const unsigned m_masonryIndefiniteItemsHalfCapacity = 2;
+    unsigned m_autoFlowNextCursor;
 };
 
 } // end namespace WebCore
