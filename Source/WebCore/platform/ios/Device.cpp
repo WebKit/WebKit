@@ -44,7 +44,7 @@ bool deviceClassIsSmallScreen()
 
 String deviceName()
 {
-#if TARGET_OS_IOS
+#if ENABLE(MOBILE_GESTALT_DEVICE_NAME)
     static NeverDestroyed<RetainPtr<CFStringRef>> deviceName;
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
