@@ -846,6 +846,13 @@ LayoutRect RenderObject::paintingRootRect(LayoutRect& topLevelRect)
     return result;
 }
 
+static inline bool canRelyOnAncestorLayerFullRepaint(const RenderObject& rendererToRepaint, const RenderLayer& ancestorLayer)
+{
+    if (!is<RenderElement>(rendererToRepaint) || !downcast<RenderElement>(rendererToRepaint).hasSelfPaintingLayer())
+        return true;
+    return ancestorLayer.renderer().hasNonVisibleOverflow();
+}
+
 RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
 {
     RenderLayerModelObject* repaintContainer = nullptr;
@@ -856,7 +863,7 @@ RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
             auto compLayerStatus = parentLayer->enclosingCompositingLayerForRepaint();
             if (compLayerStatus.layer) {
                 repaintContainer = &compLayerStatus.layer->renderer();
-                fullRepaintAlreadyScheduled = compLayerStatus.fullRepaintAlreadyScheduled;
+                fullRepaintAlreadyScheduled = compLayerStatus.fullRepaintAlreadyScheduled && canRelyOnAncestorLayerFullRepaint(*this, *compLayerStatus.layer);
             }
         }
     }
@@ -864,7 +871,7 @@ RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
         if (auto* parentLayer = enclosingLayer()) {
             auto* enclosingFilterLayer = parentLayer->enclosingFilterLayer();
             if (enclosingFilterLayer) {
-                fullRepaintAlreadyScheduled = parentLayer->needsFullRepaint();
+                fullRepaintAlreadyScheduled = parentLayer->needsFullRepaint() && canRelyOnAncestorLayerFullRepaint(*this, *parentLayer);
                 return { fullRepaintAlreadyScheduled, &enclosingFilterLayer->renderer() };
             }
         }
@@ -961,7 +968,7 @@ static inline bool fullRepaintIsScheduled(const RenderObject& renderer)
         return false;
     for (auto* ancestorLayer = renderer.enclosingLayer(); ancestorLayer; ancestorLayer = ancestorLayer->paintOrderParent()) {
         if (ancestorLayer->needsFullRepaint())
-            return true;
+            return canRelyOnAncestorLayerFullRepaint(renderer, *ancestorLayer);
     }
     return false;
 }
