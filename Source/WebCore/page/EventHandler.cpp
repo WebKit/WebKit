@@ -696,6 +696,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
                     baseNode = newSelection.base().containerNode();
                 if (baseNode) {
                     auto expandedBaseSelection = expandSelectionToRespectSelectOnMouseDown(*baseNode, VisibleSelection { newSelection.visibleBase() });
+                    expandedBaseSelection.expandUsingGranularity(m_frame.selection().granularity());
                     if (expandedBaseSelection.isRange()) {
                         if (newSelection.isBaseFirst() && pos < newSelection.start())
                             newSelection.setBase(expandedBaseSelection.end());

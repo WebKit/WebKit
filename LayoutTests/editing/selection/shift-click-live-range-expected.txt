@@ -9,12 +9,10 @@ PASS window.getSelection().toString() is correct
 PASS Selection direction is correct.
 PASS window.getSelection().toString() is correct
 PASS Selection direction is correct.
-FAIL window.getSelection().toString() is "one two three
-four five " and should be "one two three
-four five"
+PASS window.getSelection().toString() is correct
 PASS Selection direction is correct.
 FAIL window.getSelection().toString() is "two three
-four five six" and should be "two three
+four five " and should be "two three
 four five"
 PASS Selection direction is correct.
 PASS window.getSelection().toString() is correct
@@ -23,9 +21,9 @@ PASS window.getSelection().toString() is correct
 PASS Selection direction is correct.
 PASS window.getSelection().toString() is correct
 PASS Selection direction is correct.
-PASS window.getSelection().toString() is correct
+FAIL window.getSelection().toString() is "one two" and should be "one two "
 PASS Selection direction is correct.
-PASS window.getSelection().toString() is correct
+FAIL window.getSelection().toString() is "two" and should be "two "
 PASS Selection direction is correct.
 PASS successfullyParsed is true
 

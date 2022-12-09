@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=false ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -76,9 +76,8 @@ function runShiftClickTest(editingBehavior)
     shiftClick(end.offsetLeft, end.offsetTop, 'two three\nfour five');
     assertSelectionOrder('forward');
 
-    // These two fail on Mac due to https://bugs.webkit.org/show_bug.cgi?id=36256.
-    // In the first shiftClick call, the space after five is selected and shouldn't be.
-    // In the second shiftClick call, "six" is selected and shouldn't be.
+    // This test case fails on Mac due to https://bugs.webkit.org/show_bug.cgi?id=36256.
+    // The space after five is selected but it shouldn't be.
     if (editingBehavior == "mac")
         shiftClick(first.offsetLeft, first.offsetTop, 'one two three\nfour five');
     else
