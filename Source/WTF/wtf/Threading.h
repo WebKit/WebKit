@@ -46,6 +46,7 @@
 #include <wtf/StackStats.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/AtomStringTable.h>
@@ -367,7 +368,7 @@ protected:
     // Use WordLock since WordLock does not depend on ThreadSpecific and this "Thread".
     WordLock m_mutex;
     StackBounds m_stack { StackBounds::emptyBounds() };
-    HashMap<ThreadGroup*, std::weak_ptr<ThreadGroup>> m_threadGroupMap;
+    HashMap<ThreadGroup*, ThreadSafeWeakPtr<ThreadGroup>> m_threadGroupMap;
     PlatformThreadHandle m_handle;
     uint32_t m_uid { ++s_uid };
 #if OS(WINDOWS)

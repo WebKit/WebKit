@@ -28,6 +28,11 @@
 
 namespace WTF {
 
+Ref<ThreadGroup> ThreadGroup::create()
+{
+    return adoptRef(*new ThreadGroup);
+}
+
 ThreadGroup::~ThreadGroup()
 {
     Locker locker { m_lock };

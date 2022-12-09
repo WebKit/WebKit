@@ -315,14 +315,14 @@ void Thread::didExit()
 
     if (shouldRemoveThreadFromThreadGroup()) {
         {
-            Vector<std::shared_ptr<ThreadGroup>> threadGroups;
+            Vector<Ref<ThreadGroup>> threadGroups;
             {
                 Locker locker { m_mutex };
                 for (auto& threadGroupPointerPair : m_threadGroupMap) {
                     // If ThreadGroup is just being destroyed,
                     // we do not need to perform unregistering.
-                    if (auto retained = threadGroupPointerPair.value.lock())
-                        threadGroups.append(WTFMove(retained));
+                    if (auto retained = threadGroupPointerPair.value.get())
+                        threadGroups.append(retained.releaseNonNull());
                 }
                 m_isShuttingDown = true;
             }
@@ -347,7 +347,7 @@ ThreadGroupAddResult Thread::addToThreadGroup(const AbstractLocker& threadGroupL
     if (m_isShuttingDown)
         return ThreadGroupAddResult::NotAdded;
     if (threadGroup.m_threads.add(*this).isNewEntry) {
-        m_threadGroupMap.add(&threadGroup, threadGroup.weakFromThis());
+        m_threadGroupMap.add(&threadGroup, ThreadSafeWeakPtr { threadGroup });
         return ThreadGroupAddResult::NewlyAdded;
     }
     return ThreadGroupAddResult::AlreadyAdded;

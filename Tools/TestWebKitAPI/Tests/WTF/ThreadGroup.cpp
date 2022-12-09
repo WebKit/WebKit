@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 enum class Mode { Add, AddCurrentThread };
 static void testThreadGroup(Mode mode)
 {
-    std::shared_ptr<ThreadGroup> threadGroup = ThreadGroup::create();
+    auto threadGroup = ThreadGroup::create();
     unsigned numberOfThreads = 16;
     unsigned waitingThreads = 0;
     bool restarting = false;
@@ -101,7 +101,7 @@ TEST(WTF, ThreadGroupAddCurrentThread)
 
 TEST(WTF, ThreadGroupDoNotAddDeadThread)
 {
-    std::shared_ptr<ThreadGroup> threadGroup = ThreadGroup::create();
+    auto threadGroup = ThreadGroup::create();
     Ref<Thread> thread = Thread::create("ThreadGroupWorker", [&] { });
     thread->waitForCompletion();
     EXPECT_TRUE(threadGroup->add(thread.get()) == ThreadGroupAddResult::NotAdded);
@@ -115,7 +115,7 @@ TEST(WTF, ThreadGroupAddDuplicateThreads)
     bool restarting = false;
     Lock lock;
     Condition restartCondition;
-    std::shared_ptr<ThreadGroup> threadGroup = ThreadGroup::create();
+    auto threadGroup = ThreadGroup::create();
     Ref<Thread> thread = Thread::create("ThreadGroupWorker", [&] {
         Locker locker { lock };
         restartCondition.wait(lock, [&] {
@@ -163,7 +163,7 @@ TEST(WTF, ThreadGroupRemove)
 
     Vector<Ref<Thread>> threads;
 
-    auto threadGroup = ThreadGroup::create();
+    RefPtr<ThreadGroup> threadGroup = ThreadGroup::create();
     for (unsigned i = 0; i < NumberOfThreads; i++) {
         auto thread = Thread::create("ThreadGroupWorker", [&]() {
             Locker locker { lock };
