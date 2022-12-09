@@ -1,10 +1,8 @@
-This tests setting caret browsing preference via ax api.
+This tests setting caret browsing preference via AX API.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: caretBrowsingEnabled(webArea) === true
+PASS: caretBrowsingEnabled(webArea) === false
 
-
-PASS caretBrowsingEnabled(webArea) is true
-PASS caretBrowsingEnabled(webArea) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

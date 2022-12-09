@@ -78,7 +78,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
 }
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const AbstractLocker&)
+
+MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(const AbstractLocker&, bool isSIMDContext)
 {
     // We expect that the user has already put the function index into GPRInfo::argumentGPR1
     CCallHelpers jit;
@@ -87,7 +88,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
     jit.emitFunctionPrologue();
 
     const unsigned extraPaddingBytes = 0;
-    auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits();
+    auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(isSIMDContext ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits();
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
@@ -101,6 +102,17 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Trigger OMG entry tier up");
 }
+
+MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorSIMD(const AbstractLocker& locker)
+{
+    return triggerOMGEntryTierUpThunkGeneratorImpl(locker, true);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorNoSIMD(const AbstractLocker& locker)
+{
+    return triggerOMGEntryTierUpThunkGeneratorImpl(locker, false);
+}
+
 #endif
 
 static Thunks* thunks;

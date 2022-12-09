@@ -282,6 +282,13 @@ public:
     bool shouldDumpIR() const { return m_shouldDumpIR; }
     void setShouldDumpIR();
 
+    void setUsessSIMD()
+    { 
+        RELEASE_ASSERT(Options::useWebAssemblySIMD());
+        m_usesSIMD = true;
+    }
+    bool usesSIMD() const { return m_usesSIMD; }
+
 private:
     friend class BlockInsertionSet;
 
@@ -310,6 +317,7 @@ private:
     bool m_hasQuirks { false };
     bool m_needsPCToOriginMap { false };
     bool m_shouldDumpIR { false };
+    bool m_usesSIMD { false };
 };
     
 } } // namespace JSC::B3

@@ -517,6 +517,10 @@ public:
         AIR_OP_CASE(AnyTrue)
         AIR_OP_CASE(AllTrue)
         result = tmpForType(Types::I32);
+        if (isX86() && (op == SIMDLaneOperation::AllTrue || op == SIMDLaneOperation::Bitmask)) {
+            append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::V128));
+            return { };
+        }
         if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {
             append(airOp, v, result);
             return { };
@@ -532,7 +536,6 @@ public:
     auto addSIMDV_V(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType& result) -> PartialResult
     {
         AIR_OP_CASES()
-        AIR_OP_CASE(Not)
         AIR_OP_CASE(Demote)
         AIR_OP_CASE(Promote)
         AIR_OP_CASE(Abs)
@@ -549,15 +552,27 @@ public:
         AIR_OP_CASE(ExtendLow)
         AIR_OP_CASE(TruncSat)
 #if CPU(X86_64)
+        else if (op == SIMDLaneOperation::Not) {
+            // x86_64 has no vector bitwise NOT instruction, so we expand vxv.not v into vxv.xor -1, v
+            // here to give B3/Air a chance to optimize out repeated usage of the mask.
+            v128_t mask;
+            mask.u64x2[0] = 0xffffffffffffffff;
+            mask.u64x2[1] = 0xffffffffffffffff;
+            TypedTmp ones = addConstant(mask);
+            result = tmpForType(Types::V128);
+            append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), ones, v, result);
+            return { };
+        }
         else if (op == SIMDLaneOperation::Neg) {
             // x86_64 has no vector negate instruction, so we expand vxv.neg v into vxv.sub 0, v
             // here to give B3/Air a chance to optimize out repeated vector zeroing.
             TypedTmp zero = addConstant(v128_t());
             result = tmpForType(Types::V128);
-            append(VectorSub, zero, v, result);
+            append(VectorSub, Arg::simdInfo(info), zero, v, result);
             return { };
         }
 #else
+        AIR_OP_CASE(Not)
         AIR_OP_CASE(Neg)
 #endif
 
@@ -1722,9 +1737,19 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
 
 auto AirIRGenerator::addConstant(v128_t value) -> ExpressionType
 {
+    auto result = tmpForType(Types::V128);
+
+    if (!value.u64x2[0] && !value.u64x2[1]) {
+        append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, result, result);
+        return result;
+    }
+    if (value.u64x2[0] == 0xffffffffffffffff && value.u64x2[1] == 0xffffffffffffffff) {
+        append(CompareIntegerVector, Arg::relCond(MacroAssembler::RelationalCondition::Equal), Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::None }), result, result, result);
+        return result;
+    }
+
     // FIXME: this is bad, we should load
     auto a = g64();
-    auto result = tmpForType(Types::V128);
     append(Move, Arg::bigImm(value.u64x2[0]), a);
     append(MoveZeroToVector, result);
     append(VectorReplaceLaneInt64, Arg::imm(0), a, result);
@@ -4034,9 +4059,19 @@ auto AirIRGenerator::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, Expressio
         append(info.signMode == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
 
         return { };
+    } else if (isX86()) {
+        Tmp shiftAmount = newTmp(B3::GP);
+        Tmp shiftVector = newTmp(B3::FP);
+        append(And32, Arg::bitImm(mask), shift.tmp(), shiftAmount);
+        append(VectorSplat8, shiftAmount, shiftVector);
+
+        if (op == SIMDLaneOperation::Shl)
+            append(VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
+        else
+            append(info.signMode == SIMDSignMode::Signed ? VectorSshr : VectorUshr, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
+        return { };
     }
 
-    // FIXME: implement x86
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
@@ -4293,8 +4328,9 @@ void AirIRGenerator::emitEntryTierUpCheck()
             ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, { }, numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
             jit.jump(tierUpResume);
 
+            bool isSIMD = m_proc.usesSIMD();
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator).code()));
+                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator(isSIMD)).code()));
             });
         });
     });
@@ -4547,7 +4583,7 @@ Tmp AirIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned ex
     B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple({ B3::pointerType(), B3::pointerType() }));
     patch->effects.exitsSideways = true;
     patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
-    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
+    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     patch->clobberLate(clobberLate);
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
@@ -4588,7 +4624,7 @@ auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
 {
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
     patch->effects.terminal = true;
-    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
+    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
 
     Vector<ConstrainedTmp, 8> patchArgs;
     patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
@@ -4616,7 +4652,7 @@ auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
 auto AirIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
-    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
+    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
 
     Vector<ConstrainedTmp, 3> patchArgs;
@@ -4825,7 +4861,7 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitC
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
-    patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
+    patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
 
     CallInformation locations = wasmCallingConvention().callInformationFor(signature);
     m_code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), locations.headerAndArgumentStackSizeInBytes));
@@ -5202,6 +5238,10 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     compilationContext.procedure = makeUnique<B3::Procedure>();
     auto& procedure = *compilationContext.procedure;
     Code& code = procedure.code();
+
+    bool usesSIMD = info.isSIMDFunction(functionIndex);
+    if (usesSIMD)
+        procedure.setUsessSIMD();
 
     procedure.setOriginPrinter([] (PrintStream& out, B3::Origin origin) {
         if (origin.data())

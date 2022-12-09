@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblySIMD=1")
+//@ requireOptions("--useWebAssemblySIMD=1", "--useBBQJIT=1", "--webAssemblyBBQAirModeThreshold=0", "--wasmBBQUsesAir=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
 //@ skip if $architecture != "arm64"
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"

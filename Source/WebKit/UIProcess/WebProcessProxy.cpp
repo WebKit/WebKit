@@ -648,6 +648,19 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
     return webPage;
 }
 
+bool WebProcessProxy::shouldTakeSuspendedAssertion() const
+{
+#if USE(RUNNINGBOARD)
+    for (auto& page : m_pageMap.values()) {
+        bool processSuppressionEnabled = page->preferences().pageVisibilityBasedProcessSuppressionEnabled();
+        bool suspendedAssertionsEnabled = page->preferences().shouldTakeSuspendedAssertions();
+        if (suspendedAssertionsEnabled || !processSuppressionEnabled)
+            return true;
+    }
+#endif
+    return false;
+}
+
 void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataStore beginsUsingDataStore)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "addExistingWebPage: webPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &webPage, webPage.identifier().toUInt64(), webPage.webPageID().toUInt64());
@@ -666,12 +679,11 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())
         setRunningBoardThrottlingEnabled();
 #endif
-    if (!webPage.preferences().shouldTakeSuspendedAssertions())
-        m_throttler.setShouldTakeSuspendedAssertion(false);
-
     markProcessAsRecentlyUsed();
     m_pageMap.set(webPage.identifier(), &webPage);
     globalPageMap().set(webPage.identifier(), &webPage);
+
+    m_throttler.setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertion());
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
@@ -1139,15 +1151,15 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
             m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
     }
 
-    for (const auto& page : m_pageMap.values()) {
 #if PLATFORM(MAC)
+    for (const auto& page : m_pageMap.values()) {
         if (page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())
             setRunningBoardThrottlingEnabled();
-#endif
-        if (!page->preferences().shouldTakeSuspendedAssertions())
-            m_throttler.setShouldTakeSuspendedAssertion(false);
     }
-#endif
+#endif // PLATFORM(MAC)
+#endif // USE(RUNNINGBOARD)
+
+    m_throttler.setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertion());
 
 #if PLATFORM(COCOA)
     unblockAccessibilityServerIfNeeded();

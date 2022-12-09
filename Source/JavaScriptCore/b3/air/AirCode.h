@@ -344,6 +344,8 @@ public:
     bool shouldPreserveB3Origins() const { return m_preserveB3Origins; }
     void forcePreservationOfB3Origins() { m_preserveB3Origins = true; }
 
+    bool usesSIMD() const;
+
     void setDisassembler(std::unique_ptr<Disassembler>&& disassembler)
     {
         m_disassembler = WTFMove(disassembler);

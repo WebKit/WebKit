@@ -158,7 +158,7 @@ RegisterSetBuilder JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(C
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
             RELEASE_ASSERT(exit.isExceptionHandler());
             RELEASE_ASSERT(exit.isGenericUnwindHandler());
-            return ValueRep::usedRegisters(exit.m_valueReps);
+            return ValueRep::usedRegisters(/* isSIMDContext = */ false, exit.m_valueReps);
         }
     }
     return { };

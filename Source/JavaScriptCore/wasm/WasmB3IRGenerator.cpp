@@ -2695,8 +2695,9 @@ void B3IRGenerator::emitEntryTierUpCheck()
             ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, { }, numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
             jit.jump(tierUpResume);
 
+            bool isSIMD = m_proc.usesSIMD();
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator).code()));
+                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator(isSIMD)).code()));
             });
         });
     });
@@ -3574,6 +3575,10 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
     Procedure& procedure = *compilationContext.procedure;
     if (shouldDumpIRFor(functionIndex + info.importFunctionCount()))
         procedure.setShouldDumpIR();
+
+    bool usesSIMD = info.isSIMDFunction(functionIndex);
+    if (usesSIMD)
+        procedure.setUsessSIMD();
 
 
     if (Options::useSamplingProfiler()) {

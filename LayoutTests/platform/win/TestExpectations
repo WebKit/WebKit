@@ -4411,6 +4411,7 @@ css-custom-properties-api [ Skip ]
 fast/css-custom-paint [ Skip ]
 css-typedom [ Skip ]
 fast/css/css-typed-om [ Skip ]
+http/wpt/css/css-typed-om [ Skip ]
 
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 

@@ -167,7 +167,7 @@ RegLiveness::LocalCalcForUnifiedTmpLiveness::LocalCalcForUnifiedTmpLiveness(Unif
 {
     for (Tmp tmp : liveness.liveAtTail(block)) {
         if (tmp.isReg())
-            m_workset.add(tmp.reg(), Options::useWebAssemblySIMD() ? conservativeWidth(tmp.reg()) : conservativeWidthWithoutVectors(tmp.reg()));
+            m_workset.add(tmp.reg(), m_code.usesSIMD() ? conservativeWidth(tmp.reg()) : conservativeWidthWithoutVectors(tmp.reg()));
     }
 }
 
@@ -181,7 +181,7 @@ void RegLiveness::LocalCalcForUnifiedTmpLiveness::execute(unsigned instIndex)
     for (unsigned index : m_actions[instIndex].use) {
         Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
         if (tmp.isReg())
-            m_workset.add(tmp.reg(), Options::useWebAssemblySIMD() ? conservativeWidth(tmp.reg()) : conservativeWidthWithoutVectors(tmp.reg()));
+            m_workset.add(tmp.reg(), m_code.usesSIMD() ? conservativeWidth(tmp.reg()) : conservativeWidthWithoutVectors(tmp.reg()));
     }
 }
 

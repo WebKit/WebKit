@@ -67,19 +67,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericValue);
         return resultOrException.releaseException(); \
     auto resultVariable = resultOrException.releaseReturnValue()
 
-static CalcOperator canonicalOperator(CalcOperator calcOperator)
-{
-    if (calcOperator == CalcOperator::Add || calcOperator == CalcOperator::Subtract)
-        return CalcOperator::Add;
-    return CalcOperator::Multiply;
-}
-
-static bool canCombineNodes(const CSSCalcOperationNode& root, const CSSCalcExpressionNode& node)
-{
-    auto operationNode = dynamicDowncast<CSSCalcOperationNode>(node);
-    return operationNode && canonicalOperator(root.calcOperator()) == canonicalOperator(operationNode->calcOperator());
-}
-
 static Ref<CSSNumericValue> negateOrInvertIfRequired(CalcOperator parentOperator, Ref<CSSNumericValue>&& value)
 {
     if (parentOperator == CalcOperator::Subtract)
@@ -145,22 +132,11 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperat
     }
 
     Vector<Ref<CSSNumericValue>> values;
-    const CSSCalcExpressionNode* currentNode = &root;
-    do {
-        auto* operationNode = downcast<CSSCalcOperationNode>(currentNode);
-        // FIXME: This is incorrect when there are more than 2 children.
-        if (operationNode->children().size() == 2) {
-            CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(operationNode->children()[1].get()));
-            values.append(negateOrInvertIfRequired(operationNode->calcOperator(), WTFMove(value)));
-        }
-        currentNode = operationNode->children()[0].ptr();
-    } while (canCombineNodes(root, *currentNode));
-
-    ASSERT(currentNode);
-    CSS_NUMERIC_RETURN_IF_EXCEPTION(reifiedCurrentNode, CSSNumericValue::reifyMathExpression(*currentNode));
-    values.append(WTFMove(reifiedCurrentNode));
-
-    std::reverse(values.begin(), values.end());
+    values.reserveInitialCapacity(root.children().size());
+    for (auto& child : root.children()) {
+        CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(child.get()));
+        values.uncheckedAppend(negateOrInvertIfRequired(root.calcOperator(), WTFMove(value)));
+    }
     if (root.calcOperator() == CalcOperator::Add || root.calcOperator() == CalcOperator::Subtract)
         return convertToExceptionOrNumericValue(CSSMathSum::create(WTFMove(values)));
     return convertToExceptionOrNumericValue(CSSMathProduct::create(WTFMove(values)));

@@ -34,14 +34,15 @@
 
 namespace WebCore {
 
-void AXIsolatedObject::initializePlatformProperties(const Ref<const AXCoreObject>& object, IsRoot isRoot)
+void AXIsolatedObject::initializePlatformProperties(const Ref<const AXCoreObject>& object, IsRoot)
 {
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::SpeechHint, object->speechHintAttributeValue().isolatedCopy());
-    setProperty(AXPropertyName::CaretBrowsingEnabled, object->caretBrowsingEnabled());
 
-    if (isRoot == IsRoot::Yes)
+    if (object->isWebArea()) {
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object->preventKeyboardDOMEventDispatch());
+        setProperty(AXPropertyName::CaretBrowsingEnabled, object->caretBrowsingEnabled());
+    }
 
     if (object->isScrollView()) {
         m_platformWidget = object->platformWidget();
@@ -90,17 +91,25 @@ AXTextMarkerRangeRef AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& 
     });
 }
 
-bool AXIsolatedObject::preventKeyboardDOMEventDispatch() const
-{
-    if (auto root = tree()->rootNode())
-        return root->boolAttributeValue(AXPropertyName::PreventKeyboardDOMEventDispatch);
-    return false;
-}
-
 void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    ASSERT(!isMainThread());
+    ASSERT(isWebArea());
+
+    performFunctionOnMainThread([&value, this](AXCoreObject* object) {
         object->setPreventKeyboardDOMEventDispatch(value);
+        setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, value);
+    });
+}
+
+void AXIsolatedObject::setCaretBrowsingEnabled(bool value)
+{
+    ASSERT(!isMainThread());
+    ASSERT(isWebArea());
+
+    performFunctionOnMainThread([&value, this](AXCoreObject* object) {
+        object->setCaretBrowsingEnabled(value);
+        setProperty(AXPropertyName::CaretBrowsingEnabled, value);
     });
 }
 

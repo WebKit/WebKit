@@ -180,7 +180,7 @@ CCallSpecial* Code::cCallSpecial()
 {
     if (!m_cCallSpecial) {
         m_cCallSpecial = static_cast<CCallSpecial*>(
-            addSpecial(makeUnique<CCallSpecial>()));
+            addSpecial(makeUnique<CCallSpecial>(usesSIMD())));
     }
 
     return m_cCallSpecial;
@@ -325,6 +325,11 @@ unsigned Code::jsHash() const
 void Code::setNumEntrypoints(unsigned numEntryPoints)
 {
     m_prologueGenerators = { numEntryPoints, m_defaultPrologueGenerator.copyRef() };
+}
+
+bool Code::usesSIMD() const
+{
+    return m_proc.usesSIMD();
 }
 
 } } } // namespace JSC::B3::Air

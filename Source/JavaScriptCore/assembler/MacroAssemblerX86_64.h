@@ -2473,10 +2473,15 @@ public:
         }
     }
 
-    void compareIntegerVectorWithZero(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID vector, FPRegisterID dest) 
+    void compareIntegerVectorWithZero(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID vector, FPRegisterID dest, RegisterID scratch)
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        UNUSED_PARAM(cond); UNUSED_PARAM(vector); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(cond == RelationalCondition::Equal || cond == RelationalCondition::NotEqual);
+
+        m_assembler.vptest_rr(vector, vector);
+        m_assembler.setCC_r(x86Condition(cond), scratch);
+        vectorSplat8(scratch, dest);
     }
 
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
@@ -2725,34 +2730,32 @@ public:
         UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(inputBitsAndDest);
     }
 
-    void vectorNot(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
-    {
-        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        UNUSED_PARAM(input); UNUSED_PARAM(dest);
-    }
-
     void vectorAnd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
+        m_assembler.vandps_rrr(left, right, dest);
     }
 
     void vectorAndnot(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
+        m_assembler.vandnps_rrr(left, right, dest);
     }
 
     void vectorOr(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
+        m_assembler.vorps_rrr(left, right, dest);
     }
 
     void vectorXor(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::v128);
-        UNUSED_PARAM(left); UNUSED_PARAM(right); UNUSED_PARAM(dest);
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
+        m_assembler.vxorps_rrr(left, right, dest);
     }
 
     void moveZeroToVector(FPRegisterID dest)
@@ -3072,6 +3075,72 @@ public:
         }
     }
 
+    void vectorUshl(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            // FIXME: 8-bit shift is awful on intel.
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpsllw_rrr(shift, input, dest);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vpslld_rrr(shift, input, dest);
+            break;
+        case SIMDLane::i64x2:
+            m_assembler.vpsllq_rrr(shift, input, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid lane kind for unsigned vector left shift.");
+        }
+    }
+
+    void vectorUshr(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            // FIXME: 8-bit shift is awful on intel.
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpsrlw_rrr(shift, input, dest);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vpsrld_rrr(shift, input, dest);
+            break;
+        case SIMDLane::i64x2:
+            m_assembler.vpsrlq_rrr(shift, input, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid lane kind for unsigned vector right shift.");
+        }
+    }
+
+    void vectorSshr(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            // FIXME: 8-bit shift is awful on intel.
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpsraw_rrr(shift, input, dest);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vpsrad_rrr(shift, input, dest);
+            break;
+        case SIMDLane::i64x2:
+            m_assembler.vpsraq_rrr(shift, input, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid lane kind for unsigned vector right shift.");
+        }
+    }
+
     void vectorSplat(SIMDLane lane, RegisterID src, FPRegisterID dest)
     {
         m_assembler.movq_rr(src, dest);
@@ -3221,9 +3290,64 @@ public:
     void vectorLoad32Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
     void vectorLoad64Lane(Address address, TrustedImm32 imm, FPRegisterID dest) { UNUSED_PARAM(address); UNUSED_PARAM(imm); UNUSED_PARAM(dest); }
 
-    void vectorAnyTrue(FPRegisterID vec, RegisterID dest) { UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
-    void vectorAllTrue(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
-    void vectorBitmask(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
+    void vectorAnyTrue(FPRegisterID vec, RegisterID dest)
+    {
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        m_assembler.vptest_rr(vec, vec);
+        m_assembler.setCC_r(x86Condition(NonZero), dest);
+        m_assembler.movzbl_rr(dest, dest);
+    }
+
+    void vectorAllTrue(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest, FPRegisterID scratch)
+    {
+        RELEASE_ASSERT(supportsAVXForSIMD());
+
+        m_assembler.vpxor_rrr(scratch, scratch, scratch); // Zero scratch register.
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            m_assembler.vpcmpeqb_rrr(vec, scratch, scratch);
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpcmpeqw_rrr(vec, scratch, scratch);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vpcmpeqd_rrr(vec, scratch, scratch);
+            break;
+        case SIMDLane::i64x2:
+            m_assembler.vpcmpeqq_rrr(vec, scratch, scratch);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector all-true.");
+        }
+        m_assembler.vptest_rr(scratch, scratch);
+        m_assembler.setCC_r(x86Condition(RelationalCondition::Equal), dest);
+        m_assembler.movzbl_rr(dest, dest);
+    }
+
+    void vectorBitmask(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest, FPRegisterID tmp)
+    {
+        RELEASE_ASSERT(supportsAVXForSIMD());
+
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            m_assembler.vpmovmskb_rr(vec, dest);
+            break;
+        case SIMDLane::i16x8:
+            m_assembler.vpxor_rrr(tmp, tmp, tmp);
+            m_assembler.vpacksswb_rrr(vec, tmp, tmp);
+            m_assembler.vpmovmskb_rr(vec, dest);
+            break;
+        case SIMDLane::i32x4:
+            m_assembler.vmovmskps_rr(vec, dest);
+            break;
+        case SIMDLane::i64x2:
+            m_assembler.vmovmskpd_rr(vec, dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector bitmask.");
+        }
+    }
+
     void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
 
     void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest)

@@ -316,6 +316,7 @@ void ProcessThrottler::setAllowsActivities(bool allow)
 void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
 {
     m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
+    updateThrottleStateIfNeeded();
 }
 
 ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)

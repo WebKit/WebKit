@@ -1,84 +1,85 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
-    <script src="resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="resources/accessibility-helper.js"></script>
 </head>
 <body id="body" onkeydown="keydown(event)">
-    <script>
-        function keydown(event) {
-            var key = event.keyCode;
-            var currentId = parseInt(document.activeElement.id);
-            if (isNaN(currentId)) { currentId = 0; }
-            if (key == 39) { currentId++; }
-            if (currentId < 1) { currentId = 3; } 
-            else if (currentId > 3) { currentId = 1; }
-            document.getElementById(currentId).focus();
-        }
-    </script>
-    <div>
-        <ul>
-            <li><a id="1" href="">Foo</a></li>
-            <li><a id="2" href="">Bar</a></li>
-            <li><a id="3" href="">Baz</a></li>
-        </ul>
-    </div>
-    <div id="console"></div>
-    <script>
-    description("This tests caret browsing when a keydown handler moves focus.");
-    if (window.testRunner) {
 
-        testRunner.dumpAsText();
+<div>
+    <ul>
+        <li><a id="1" href="">Foo</a></li>
+        <li><a id="2" href="">Bar</a></li>
+        <li><a id="3" href="">Baz</a></li>
+    </ul>
+</div>
 
-        if (window.accessibilityController && window.eventSender) {
+<script>
+    function keydown(event) {
+        var key = event.keyCode;
+        var currentId = parseInt(document.activeElement.id);
+        if (isNaN(currentId))
+            currentId = 0;
+        if (key == 39)
+            currentId++;
+        if (currentId < 1)
+            currentId = 3;
+        else if (currentId > 3)
+            currentId = 1;
 
-            var webArea = clearSelectionAndFocusOnWebArea();
-
-            // Enable enhanced accessibility (necessary for accessibility specific selection handling).
-            accessibilityController.enableEnhancedAccessibility(true);
-            shouldBe("accessibilityController.enhancedAccessibilityEnabled", "true");
-
-            // Focus into first link
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
-
-            // Navigating with arrows, without caret browsing, will pull selection into the different links
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Bar'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Baz'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
-
-            // Do it again with caret browsing on
-            setCaretBrowsingEnabled(webArea, true);
-            shouldBe("caretBrowsingEnabled(webArea)", "true");
-
-            // Arrow to the start of Foo
-            eventSender.keyDown("leftArrow");
-            eventSender.keyDown("leftArrow");
-            eventSender.keyDown("leftArrow");
-
-            // Navigating with arrows, with caret browsing, will move the caret through the characters of the element before moving to the next element
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Bar'");
-
-            // Up & down arrows should move through the list items
-            eventSender.keyDown("upArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
-            eventSender.keyDown("downArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Bar'");
-
-            setCaretBrowsingEnabled(webArea, false);
-        }
+        document.getElementById(currentId).focus();
     }
-    </script>
-    <script src="../../resources/js-test-post.js"></script>
+
+    if (window.accessibilityController && window.eventSender) {
+        var output = "This tests caret browsing when a keydown handler moves focus.\n\n";
+        var webArea = clearSelectionAndFocusOnWebArea();
+
+        // Enable enhanced accessibility (necessary for accessibility specific selection handling).
+        accessibilityController.enableEnhancedAccessibility(true);
+        output += expect("accessibilityController.enhancedAccessibilityEnabled", "true");
+
+        // Focus into first link
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
+
+        // Navigating with arrows, without caret browsing, will pull selection into the different links
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Bar'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Baz'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
+
+        // Do it again with caret browsing on
+        setCaretBrowsingEnabled(webArea, true);
+        output += expect("caretBrowsingEnabled(webArea)", "true");
+
+        // Arrow to the start of Foo
+        eventSender.keyDown("leftArrow");
+        eventSender.keyDown("leftArrow");
+        eventSender.keyDown("leftArrow");
+
+        // Navigating with arrows, with caret browsing, will move the caret through the characters of the element before moving to the next element
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Bar'");
+
+        // Up & down arrows should move through the list items
+        eventSender.keyDown("upArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Foo'");
+        eventSender.keyDown("downArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: Bar'");
+
+        setCaretBrowsingEnabled(webArea, false);
+
+        debug(output);
+    }
+</script>
 </body>
 </html>

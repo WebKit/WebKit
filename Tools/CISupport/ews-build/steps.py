@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from buildbot.plugins import steps, util
-from buildbot.process import buildstep, logobserver, properties
+from buildbot.process import buildstep, logobserver, properties, remotecommand
 from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
@@ -35,6 +35,7 @@ from send_email import send_email_to_patch_author, send_email_to_bot_watchers, s
 from results_db import ResultsDatabase
 
 import json
+import mock
 import os
 import re
 import requests
@@ -663,6 +664,17 @@ class CheckOutSource(git.Git):
             return {'step': 'Failed to updated working directory'}
         else:
             return {'step': 'Cleaned and updated working directory'}
+
+    def _dovccmd(self, *args, **kwargs):
+        if kwargs.get('collectStdout') or not self.getProperty('sensitive', False):
+            return super(CheckOutSource, self)._dovccmd(*args, **kwargs)
+
+        class ScrubbedRemoteCommand(remotecommand.RemoteShellCommand):
+            def useLog(self, *args, **kwargs):
+                pass
+
+        with mock.patch('buildbot.process.remotecommand.RemoteShellCommand', ScrubbedRemoteCommand):
+            return super(CheckOutSource, self)._dovccmd(*args, **kwargs)
 
     def run(self):
         project = self.getProperty('project', '') or GITHUB_PROJECTS[0]
