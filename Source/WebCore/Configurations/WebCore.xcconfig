@@ -120,15 +120,7 @@ OUTPUT_ALTERNATE_ROOT_PATH_YES_YES[sdk=macosx*] = $(DSTROOT)$(ALTERNATE_ROOT_PAT
 
 WK_ANGLE_LDFLAGS = -weak-lANGLE-shared;
 
-WK_WEBGPU_LDFLAGS = $(WK_WEBGPU_LDFLAGS_$(PLATFORM_NAME));
-WK_WEBGPU_LDFLAGS_iphoneos = -weak_framework WebGPU;
-WK_WEBGPU_LDFLAGS_iphonesimulator = -weak_framework WebGPU;
-WK_WEBGPU_LDFLAGS_watchos = -weak_framework WebGPU;
-WK_WEBGPU_LDFLAGS_watchsimulator = -weak_framework WebGPU;
-WK_WEBGPU_LDFLAGS_appletvos = -weak_framework WebGPU;
-WK_WEBGPU_LDFLAGS_appletvsimulator = -weak_framework WebGPU;
-WK_WEBGPU_LDFLAGS_maccatalyst = -weak_framework WebGPU;
-WK_WEBGPU_LDFLAGS_macosx = -weak_framework WebGPU;
+WK_WEBGPU_LDFLAGS = -weak_framework WebGPU;
 
 WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
