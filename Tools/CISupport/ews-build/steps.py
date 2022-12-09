@@ -3338,6 +3338,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             self.descriptionDone = message
             self.build.results = SUCCESS
             self.setProperty('build_summary', message)
+            self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
+                                                UploadTestResults(),
+                                                ExtractTestResults()])
             self.finished(WARNINGS)
         else:
             self.build.addStepsAfterCurrentStep([
@@ -3428,14 +3431,6 @@ class ReRunWebKitTests(RunWebKitTests):
         flaky_failures = sorted(list(flaky_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
 
-        if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
-            # This means all the tests which failed in this run were also failing or flaky in results database
-            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
-            self.descriptionDone = message
-            self.build.results = SUCCESS
-            self.finished(WARNINGS)
-            self.build.buildFinished([message], SUCCESS)
-
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
@@ -3446,6 +3441,16 @@ class ReRunWebKitTests(RunWebKitTests):
                 for flaky_failure in flaky_failures:
                     self.send_email_for_flaky_failure(flaky_failure)
             self.setProperty('build_summary', message)
+        elif (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+            # This means all the tests which failed in this run were also failing or flaky in results database
+            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.setProperty('build_summary', message)
+            self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
+                                                UploadTestResults(identifier='rerun'),
+                                                ExtractTestResults(identifier='rerun')])
+            self.finished(WARNINGS)
         else:
             if (second_results_failing_tests and len(tests_that_consistently_failed) == 0 and num_flaky_failures <= 10
                     and not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit):
