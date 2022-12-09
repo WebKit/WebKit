@@ -353,7 +353,7 @@ private:
     String documentURI() const override;
     String documentEncoding() const override;
 #if PLATFORM(COCOA)
-    bool preventKeyboardDOMEventDispatch() const override;
+    bool preventKeyboardDOMEventDispatch() const override { return boolAttributeValue(AXPropertyName::PreventKeyboardDOMEventDispatch); }
 #endif
 
     // PlainTextRange support.

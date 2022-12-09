@@ -1,26 +1,23 @@
-Foo
-Bar
-Baz
 This tests caret browsing when a keydown handler moves focus.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: webArea.role === 'AXRole: AXWebArea'
+PASS: caretBrowsingEnabled(webArea) === false
+PASS: accessibilityController.enhancedAccessibilityEnabled === true
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Bar'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Baz'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: caretBrowsingEnabled(webArea) === true
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Bar'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Bar'
 
-
-PASS webArea.role is 'AXRole: AXWebArea'
-PASS caretBrowsingEnabled(webArea) is false
-PASS accessibilityController.enhancedAccessibilityEnabled is true
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Foo'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Bar'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Baz'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Foo'
-PASS caretBrowsingEnabled(webArea) is true
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Foo'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Foo'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Foo'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Bar'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Foo'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: Bar'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+Foo
+Bar
+Baz

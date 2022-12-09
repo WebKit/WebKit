@@ -687,15 +687,6 @@ void AXIsolatedObject::setSelectedTextRange(const PlainTextRange& value)
     });
 }
 
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
-void AXIsolatedObject::setCaretBrowsingEnabled(bool value)
-{
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
-        object->setCaretBrowsingEnabled(value);
-    });
-}
-#endif
-
 String AXIsolatedObject::computedLabel()
 {
     // This is only used by the web inspector that calls AccessibilityObject::computedLabel().

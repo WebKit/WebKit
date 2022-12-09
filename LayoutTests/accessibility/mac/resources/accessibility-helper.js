@@ -2,8 +2,8 @@ function clearSelectionAndFocusOnWebArea() {
     webArea = accessibilityController.rootElement.childAtIndex(0);
     webArea.resetSelectedTextMarkerRange();
     setCaretBrowsingEnabled(webArea, false);
-    shouldBe("webArea.role", "'AXRole: AXWebArea'");
-    shouldBe("caretBrowsingEnabled(webArea)", "false");
+    output += expect("webArea.role", "'AXRole: AXWebArea'");
+    output += expect("caretBrowsingEnabled(webArea)", "false");
     return webArea;
 }
 

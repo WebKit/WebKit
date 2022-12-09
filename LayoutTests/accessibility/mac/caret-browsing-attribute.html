@@ -1,28 +1,25 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
-    <script src="resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
+
 <script>
-description("This tests setting caret browsing preference via ax api.");
-if (window.testRunner) {
+    if (window.accessibilityController) {
+        let output = "This tests setting caret browsing preference via AX API.\n\n";
+        var webArea = accessibilityController.rootElement.childAtIndex(0);
 
-  testRunner.dumpAsText();
+        setCaretBrowsingEnabled(webArea, true);
+        output += expect("caretBrowsingEnabled(webArea)", "true");
 
-  if (window.accessibilityController) {
+        setCaretBrowsingEnabled(webArea, false);
+        output += expect("caretBrowsingEnabled(webArea)", "false");
 
-    var webArea = accessibilityController.rootElement.childAtIndex(0);
-
-    setCaretBrowsingEnabled(webArea, true);
-    shouldBe("caretBrowsingEnabled(webArea)", "true");
-
-    setCaretBrowsingEnabled(webArea, false);
-    shouldBe("caretBrowsingEnabled(webArea)", "false");
-  }
-}
+        debug(output);
+    }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,47 +1,46 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ TabsToLinks=true ] -->
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
-    <script src="resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
-    <a href="">foo</a>
-    <p id="par1">A paragraph with a single line</p>
-    <a href="">bar</a>
-    <div id="console"></div>
-    <script>
-    description("This tests caret browsing for html select elements.");
-    if (window.testRunner) {
-        testRunner.dumpAsText();
+<body>
 
-        if (window.accessibilityController && window.eventSender) {
+<a href="">foo</a>
+<p id="par1">A paragraph with a single line</p>
+<a href="">bar</a>
 
-            var webArea = clearSelectionAndFocusOnWebArea();
+<script>
+    if (window.accessibilityController && window.eventSender) {
+        var output = "This tests caret browsing for html select elements.\n\n";
 
-            accessibilityController.enableEnhancedAccessibility(false);
+        var webArea = clearSelectionAndFocusOnWebArea();
 
-            // Tab (should NOT move selection before enhanced accessibility is enabled).
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
-            eventSender.keyDown("\t");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+        accessibilityController.enableEnhancedAccessibility(false);
 
-            // Enable enhanced accessibility (necessary for accessibility specific selection handling).
-            accessibilityController.enableEnhancedAccessibility(true);
-            shouldBe("accessibilityController.enhancedAccessibilityEnabled", "true");
+        // Tab (should NOT move selection before enhanced accessibility is enabled).
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+        eventSender.keyDown("\t");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
 
-            // Enable caret browsing so that tabbing will modify selection
-            setCaretBrowsingEnabled(webArea, true);
-            shouldBe("caretBrowsingEnabled(webArea)", "true");
+        // Enable enhanced accessibility (necessary for accessibility specific selection handling).
+        accessibilityController.enableEnhancedAccessibility(true);
+        output += expect("accessibilityController.enhancedAccessibilityEnabled", "true");
 
-            // Tab to move focus to next link
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
-            eventSender.keyDown("\t");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: bar'");
+        // Enable caret browsing so that tabbing will modify selection
+        setCaretBrowsingEnabled(webArea, true);
+        output += expect("caretBrowsingEnabled(webArea)", "true");
 
-            setCaretBrowsingEnabled(webArea, false);
-        }
+        // Tab to move focus to next link
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+        eventSender.keyDown("\t");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: bar'");
+
+        setCaretBrowsingEnabled(webArea, false);
+
+        debug(output);
     }
-    </script>
-    <script src="../../resources/js-test-post.js"></script>
+</script>
 </body>
 </html>

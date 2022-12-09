@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
-    <script src="resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="resources/accessibility-helper.js"></script>
 </head>
 <body id="body" onkeydown="return keydown();">
-    <script>
+
+<div>
+    <p>1</p>
+    <p>2</p>
+    <p id="keydowncount">0<p>
+</div>
+
+<script>
     function preventKeyboardDOMEventDispatch(webArea) {
         return webArea.boolAttributeValue("AXPreventKeyboardDOMEventDispatch");
     }
@@ -20,58 +28,46 @@
     function keycount() {
         return document.getElementById("keydowncount").innerHTML;
     }
-    </script>
-    <div>
-        <p>1</p>
-        <p>2</p>
-        <p id="keydowncount">0<p>
-    </div>
-    <div id="console"></div>
-    <script>
-    description("This tests ignoring javascript key handlers that consume key events.");
-    if (window.testRunner) {
 
-        testRunner.dumpAsText();
+    if (window.accessibilityController && window.eventSender) {
+        var output = "This tests ignoring javascript key handlers that consume key events.\n\n";
+        var webArea = clearSelectionAndFocusOnWebArea();
+        accessibilityController.enableEnhancedAccessibility(false);
+        output += expect("accessibilityController.enhancedAccessibilityEnabled", "false");
+        setPreventKeyboardDOMEventDispatch(webArea, false);
+        output += expect("preventKeyboardDOMEventDispatch(webArea)", "false");
 
-        if (window.accessibilityController && window.eventSender) {
+        // Arrowing before enabling AX and ignore dom handlers won't move the caret
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
 
-            var webArea = clearSelectionAndFocusOnWebArea();
-            accessibilityController.enableEnhancedAccessibility(false);
-            shouldBe("accessibilityController.enhancedAccessibilityEnabled", "false");
-            setPreventKeyboardDOMEventDispatch(webArea, false);
-            shouldBe("preventKeyboardDOMEventDispatch(webArea)", "false");
+        // Validate that the handler received 2 keys events
+        output += expect("keycount()", "'2'");
 
-            // Arrowing before enabling AX and ignore dom handlers won't move the caret
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
+        // Enable enhanced accessibility (necessary for accessibility specific selection handling).
+        accessibilityController.enableEnhancedAccessibility(true);
+        output += expect("accessibilityController.enhancedAccessibilityEnabled", "true");
 
-            // Validate that the handler received 2 keys events
-            shouldBe("keycount()", "'2'");
+        // Enable IgnoreDOMKeyEventHandlers so that the javascript handler will be skipped
+        setPreventKeyboardDOMEventDispatch(webArea, true);
+        output += expect("preventKeyboardDOMEventDispatch(webArea)", "true");
 
-            // Enable enhanced accessibility (necessary for accessibility specific selection handling).
-            accessibilityController.enableEnhancedAccessibility(true);
-            shouldBe("accessibilityController.enhancedAccessibilityEnabled", "true");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
+        eventSender.keyDown("rightArrow");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 2'");
 
-            // Enable IgnoreDOMKeyEventHandlers so that the javascript handler will be skipped
-            setPreventKeyboardDOMEventDispatch(webArea, true);
-            shouldBe("preventKeyboardDOMEventDispatch(webArea)", "true");
+        // Validate that the handler didn't receive any more key events
+        output += expect("keycount()", "'2'");
 
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 1'");
-            eventSender.keyDown("rightArrow");
-            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: 2'");
+        setPreventKeyboardDOMEventDispatch(webArea, false);
 
-            // Validate that the handler didn't receive any more key events
-            shouldBe("keycount()", "'2'");
-
-            setPreventKeyboardDOMEventDispatch(webArea, false);
-        }
+        debug(output);
     }
-    </script>
-    <script src="../../resources/js-test-post.js"></script>
+</script>
 </body>
 </html>

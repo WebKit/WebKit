@@ -1,29 +1,27 @@
+This tests ignoring javascript key handlers that consume key events.
+
+PASS: webArea.role === 'AXRole: AXWebArea'
+PASS: caretBrowsingEnabled(webArea) === false
+PASS: accessibilityController.enhancedAccessibilityEnabled === false
+PASS: preventKeyboardDOMEventDispatch(webArea) === false
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: keycount() === '2'
+PASS: accessibilityController.enhancedAccessibilityEnabled === true
+PASS: preventKeyboardDOMEventDispatch(webArea) === true
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 2'
+PASS: keycount() === '2'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
 1
 
 2
 
 2
 
-This tests ignoring javascript key handlers that consume key events.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS webArea.role is 'AXRole: AXWebArea'
-PASS caretBrowsingEnabled(webArea) is false
-PASS accessibilityController.enhancedAccessibilityEnabled is false
-PASS preventKeyboardDOMEventDispatch(webArea) is false
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: 1'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: 1'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: 1'
-PASS keycount() is '2'
-PASS accessibilityController.enhancedAccessibilityEnabled is true
-PASS preventKeyboardDOMEventDispatch(webArea) is true
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: 1'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: 1'
-PASS elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue is 'AXValue: 2'
-PASS keycount() is '2'
-PASS successfullyParsed is true
-
-TEST COMPLETE
 
