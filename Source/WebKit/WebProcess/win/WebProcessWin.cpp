@@ -28,11 +28,6 @@
 
 #include <WebCore/SharedBuffer.h>
 
-RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char* name)
-{
-    return nullptr;
-}
-
 namespace WebKit {
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)

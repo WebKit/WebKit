@@ -25,12 +25,20 @@
 
 #include "config.h"
 #include "Image.h"
-#include "BitmapImage.h"
 
+#include "BitmapImage.h"
 #include "SharedBuffer.h"
 
+#if !PLATFORM(WIN_CAIRO)
 // This function loads resources from WebKit
 RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char*);
+#else
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=188175
+RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char*)
+{
+    return nullptr;
+}
+#endif
 
 namespace WebCore {
 

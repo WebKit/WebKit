@@ -7,9 +7,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         win/WebDownloadCURL.cpp
         win/WebURLAuthenticationChallengeSenderCURL.cpp
     )
-    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-        $<TARGET_OBJECTS:WebCore>
-    )
 else ()
     list(APPEND WebKitLegacy_SOURCES_Classes
         win/WebDownloadCFNet.cpp
@@ -486,9 +483,4 @@ endif ()
 
 set(WebKitLegacy_OUTPUT_NAME
     WebKit${DEBUG_SUFFIX}
-)
-
-list(APPEND WebKitLegacy_PRIVATE_DEFINITIONS
-    STATICALLY_LINKED_WITH_PAL
-    STATICALLY_LINKED_WITH_WebCore
 )
