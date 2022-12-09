@@ -66,3 +66,6 @@ __cmake_systeminformation/
 
 # Local overrides configuration files
 LocalOverrides.xcconfig
+
+# Ignore the external git repo of cog
+Tools/wpe/cog
