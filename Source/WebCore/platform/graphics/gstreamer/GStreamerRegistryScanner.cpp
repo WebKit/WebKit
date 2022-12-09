@@ -22,6 +22,7 @@
 
 #if USE(GSTREAMER)
 #include "ContentType.h"
+#include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
 #include "RuntimeApplicationChecks.h"
 #include <fnmatch.h>
@@ -659,31 +660,11 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1Code
         return checkH264Caps("video/x-h264");
     }
 
-    auto components = codec.split('.');
-    long int spsAsInteger = strtol(components[1].utf8().data(), nullptr, 16);
-    uint8_t sps[3];
-    sps[0] = spsAsInteger >> 16;
-    sps[1] = spsAsInteger >> 8;
-    sps[2] = spsAsInteger;
-
-    const char* profile = gst_codec_utils_h264_get_profile(sps, 3);
-    const char* level = gst_codec_utils_h264_get_level(sps, 3);
-
-    // To avoid going through a class hierarchy for such a simple
-    // string conversion, we use a little trick here: See
-    // https://bugs.webkit.org/show_bug.cgi?id=201870.
-    char levelAsStringFallback[2] = { '\0', '\0' };
-    if (!level && sps[2] > 0 && sps[2] <= 5) {
-        levelAsStringFallback[0] = static_cast<char>('0' + sps[2]);
-        level = levelAsStringFallback;
-    }
-
+    auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codec);
     if (!profile || !level) {
         GST_ERROR("H.264 profile / level was not recognised in codec %s", codec.utf8().data());
         return { false, nullptr };
     }
-
-    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8().data(), profile, level);
 
     if (const char* maxVideoResolution = g_getenv("WEBKIT_GST_MAX_AVC1_RESOLUTION")) {
         uint8_t levelAsInteger = gst_codec_utils_h264_get_level_idc(level);
