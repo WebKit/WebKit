@@ -35,6 +35,10 @@ public:
         Universal,
         Length,
         LengthPercentage,
+        Percentage,
+        Integer,
+        Number,
+        Angle,
         CustomIdent,
         Unknown
     };

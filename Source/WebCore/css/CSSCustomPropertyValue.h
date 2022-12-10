@@ -37,7 +37,13 @@ class CSSParserToken;
 
 class CSSCustomPropertyValue final : public CSSValue {
 public:
-    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length>;
+    struct NumericSyntaxValue {
+        double value;
+        CSSUnitType unitType;
+
+        bool operator==(const NumericSyntaxValue&) const = default;
+    };
+    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, NumericSyntaxValue>;
 
     static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
 
@@ -58,11 +64,16 @@ public:
         return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
     }
 
-    static Ref<CSSCustomPropertyValue> createSyntaxLength(const AtomString& name, Length value)
+    static Ref<CSSCustomPropertyValue> createForLengthSyntax(const AtomString& name, Length value)
     {
         ASSERT(!value.isUndefined());
         ASSERT(!value.isCalculated());
         return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
+    }
+
+    static Ref<CSSCustomPropertyValue> createForNumericSyntax(const AtomString& name, double value, CSSUnitType unitType)
+    {
+        return adoptRef(*new CSSCustomPropertyValue(name, { NumericSyntaxValue { value, unitType } }));
     }
 
     static Ref<CSSCustomPropertyValue> create(const CSSCustomPropertyValue& other)
