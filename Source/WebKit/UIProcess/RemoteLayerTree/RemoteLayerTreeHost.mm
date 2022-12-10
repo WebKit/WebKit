@@ -66,6 +66,10 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
 
 RemoteLayerBackingStore::LayerContentsType RemoteLayerTreeHost::layerContentsType() const
 {
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    // CAMachPort currently does not work on macOS (or macCatalyst): rdar://problem/31247730
+    return RemoteLayerBackingStore::LayerContentsType::IOSurface;
+#else
     // If a surface will be referenced by multiple layers (as in the tile debug indicator), CAMachPort cannot be used.
     if (m_drawingArea->hasDebugIndicator())
         return RemoteLayerBackingStore::LayerContentsType::IOSurface;
@@ -74,10 +78,7 @@ RemoteLayerBackingStore::LayerContentsType RemoteLayerTreeHost::layerContentsTyp
     if (m_drawingArea->page().windowKind() == WindowKind::InProcessSnapshotting)
         return RemoteLayerBackingStore::LayerContentsType::IOSurface;
 
-#if HAVE(MACH_PORT_CALAYER_CONTENTS)
     return RemoteLayerBackingStore::LayerContentsType::CAMachPort;
-#else
-    return RemoteLayerBackingStore::LayerContentsType::IOSurface;
 #endif
 }
 
