@@ -1,5 +1,0 @@
-
-FAIL Test that an ImageBitmapRenderingContext with alpha disabled makes the canvas opaque promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test that an ImageBitmapRenderingContext with alpha enabled preserves the alpha promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test that the 'alpha' context creation attribute is true by default promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-

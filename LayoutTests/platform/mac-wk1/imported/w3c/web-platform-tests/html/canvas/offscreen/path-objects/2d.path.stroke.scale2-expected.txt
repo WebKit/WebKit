@@ -1,0 +1,7 @@
+2d.path.stroke.scale2
+
+Stroke line widths are scaled by the current transformation matrix
+
+
+FAIL Stroke line widths are scaled by the current transformation matrix assert_equals: Red channel of the pixel at (0, 0) expected 0 but got 255
+

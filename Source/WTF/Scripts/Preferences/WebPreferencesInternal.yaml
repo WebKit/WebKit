@@ -796,8 +796,10 @@ OffscreenCanvasEnabled:
   condition: ENABLE(OFFSCREEN_CANVAS)
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(COCOA)": true
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
 
@@ -809,8 +811,10 @@ OffscreenCanvasInWorkersEnabled:
   condition: ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(COCOA)": true
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
 

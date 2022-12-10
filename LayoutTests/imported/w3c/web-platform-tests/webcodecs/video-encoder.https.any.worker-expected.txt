@@ -1,12 +1,14 @@
 
 PASS Test VideoEncoder construction
 PASS Test VideoEncoder.configure()
-FAIL Test successful configure(), encode(), and flush() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL encodeQueueSize test promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test successful reset() and re-confiugre() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test successful encode() after re-configure(). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Verify closed VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Verify unconfigured VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Verify encoding closed frames throws. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Encode video with negative timestamp promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+PASS Test successful configure(), encode(), and flush()
+PASS encodeQueueSize test
+PASS Test successful reset() and re-confiugre()
+PASS Test successful encode() after re-configure().
+PASS Verify closed VideoEncoder operations
+PASS Verify unconfigured VideoEncoder operations
+FAIL Verify encoding closed frames throws. assert_throws_dom: function "() => {
+    encoder.encode(frame);
+  }" threw object "TypeError: VideoFrame is detached" that is not a DOMException OperationError: property "code" is equal to undefined, expected 0
+PASS Encode video with negative timestamp
 

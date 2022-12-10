@@ -3,5 +3,5 @@
 Conic gradient with negative rotation
 
 
-FAIL Conic gradient with negative rotation assert_equals: Red channel of the pixel at (25, 15) expected 255 but got 196
+FAIL Conic gradient with negative rotation assert_equals: Green channel of the pixel at (75, 40) expected 255 but got 254
 

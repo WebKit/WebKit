@@ -3,5 +3,5 @@
 CSSHSL works as color input
 
 
-FAIL CSSHSL works as color input Can't find variable: CSSHSL
+FAIL CSSHSL works as color input assert_approx_equals: Red channel of the pixel at (50, 25) expected 64 +/- 3 but got 0
 

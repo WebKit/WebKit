@@ -1,5 +1,5 @@
 2d.path.rect.winding
 
 
-PASS OffscreenCanvas test: 2d.path.rect.winding
+FAIL OffscreenCanvas test: 2d.path.rect.winding assert_equals: Red channel of the pixel at (25, 12) expected 0 but got 255
 
