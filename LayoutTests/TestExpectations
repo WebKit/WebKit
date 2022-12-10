@@ -6167,6 +6167,8 @@ imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Ski
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
 fast/text/text-edge-no-half-leading-with-line-height-simple.html [ Skip ]
 
+webkit.org/b/249010 [ Debug ] fast/text/line-clamp-truncation-assert.html [ Skip ]
+
 # CSS Nesting
 imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html [ ImageOnlyFailure ]
