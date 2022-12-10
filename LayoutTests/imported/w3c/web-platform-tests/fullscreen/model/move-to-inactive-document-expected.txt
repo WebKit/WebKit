@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Move the fullscreen element to an inactive document Test timed out
+PASS Move the fullscreen element to an inactive document
 
