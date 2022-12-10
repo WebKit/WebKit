@@ -52,6 +52,7 @@ template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
 }
 struct NullableSoftLinkedMember;
+class RValueEncodableClass;
 
 namespace IPC {
 
@@ -121,6 +122,12 @@ template<> struct ArgumentCoder<WebCore::FloatBoxExtent> {
 template<> struct ArgumentCoder<NullableSoftLinkedMember> {
     static void encode(Encoder&, const NullableSoftLinkedMember&);
     static std::optional<NullableSoftLinkedMember> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<RValueEncodableClass> {
+    static void encode(Encoder&, const RValueEncodableClass&);
+    static void encode(Encoder&, RValueEncodableClass&&);
+    static std::optional<RValueEncodableClass> decode(Decoder&);
 };
 
 } // namespace IPC

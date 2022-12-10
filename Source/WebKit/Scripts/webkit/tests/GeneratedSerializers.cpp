@@ -62,13 +62,13 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.secondMemberName)>, SecondMemberType>);
 #endif
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.nullableTestMember)>, RetainPtr<CFTypeRef>>);
-    encoder << instance.firstMemberName;
+    encoder << std::forward_like<decltype(instance)>(instance.firstMemberName);
 #if ENABLE(SECOND_MEMBER)
-    encoder << instance.secondMemberName;
+    encoder << std::forward_like<decltype(instance)>(instance.secondMemberName);
 #endif
     encoder << !!instance.nullableTestMember;
     if (!!instance.nullableTestMember)
-        encoder << instance.nullableTestMember;
+        encoder << std::forward_like<decltype(instance)>(instance.nullableTestMember);
 }
 
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& encoder, const Namespace::Subnamespace::StructName& instance)
@@ -78,13 +78,13 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.secondMemberName)>, SecondMemberType>);
 #endif
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.nullableTestMember)>, RetainPtr<CFTypeRef>>);
-    encoder << instance.firstMemberName;
+    encoder << std::forward_like<decltype(instance)>(instance.firstMemberName);
 #if ENABLE(SECOND_MEMBER)
-    encoder << instance.secondMemberName;
+    encoder << std::forward_like<decltype(instance)>(instance.secondMemberName);
 #endif
     encoder << !!instance.nullableTestMember;
     if (!!instance.nullableTestMember)
-        encoder << instance.nullableTestMember;
+        encoder << std::forward_like<decltype(instance)>(instance.nullableTestMember);
 }
 
 std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subnamespace::StructName>::decode(Decoder& decoder)
@@ -133,12 +133,13 @@ void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namesp
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, bool>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.dataDetectorResults)>, RetainPtr<NSArray>>);
-    encoder << instance.isNull;
-    if (instance.isNull)
+    bool hasisNull = !!instance.isNull;
+    encoder << std::forward_like<decltype(instance)>(instance.isNull);
+    if (hasisNull)
         return;
-    encoder << instance.a;
-    encoder << instance.b;
-    encoder << instance.dataDetectorResults;
+    encoder << std::forward_like<decltype(instance)>(instance.a);
+    encoder << std::forward_like<decltype(instance)>(instance.b);
+    encoder << std::forward_like<decltype(instance)>(instance.dataDetectorResults);
 }
 
 std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decode(Decoder& decoder)
@@ -181,11 +182,11 @@ void ArgumentCoder<Namespace::ReturnRefClass>::encode(Encoder& encoder, const Na
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.functionCall().member1)>, double>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.functionCall().member2)>, double>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.uniqueMember)>, std::unique_ptr<int>>);
-    encoder << instance.functionCall().member1;
-    encoder << instance.functionCall().member2;
+    encoder << std::forward_like<decltype(instance)>(instance.functionCall().member1);
+    encoder << std::forward_like<decltype(instance)>(instance.functionCall().member2);
     encoder << !!instance.uniqueMember;
     if (!!instance.uniqueMember)
-        encoder << *instance.uniqueMember;
+        encoder << std::forward_like<decltype(instance)>(*instance.uniqueMember);
 }
 
 std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRefClass>::decode(Decoder& decoder)
@@ -228,8 +229,8 @@ void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, 
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_int)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_double)>, double>);
-    encoder << instance.m_int;
-    encoder << instance.m_double;
+    encoder << std::forward_like<decltype(instance)>(instance.m_int);
+    encoder << std::forward_like<decltype(instance)>(instance.m_double);
 }
 
 std::optional<Namespace::EmptyConstructorStruct> ArgumentCoder<Namespace::EmptyConstructorStruct>::decode(Decoder& decoder)
@@ -260,14 +261,15 @@ void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_value)>, OtherMemberType>);
 #endif
-    encoder << instance.m_isNull;
-    if (instance.m_isNull)
+    bool hasm_isNull = !!instance.m_isNull;
+    encoder << std::forward_like<decltype(instance)>(instance.m_isNull);
+    if (hasm_isNull)
         return;
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
-    encoder << instance.m_type;
+    encoder << std::forward_like<decltype(instance)>(instance.m_type);
 #endif
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
-    encoder << instance.m_value;
+    encoder << std::forward_like<decltype(instance)>(instance.m_value);
 #endif
 }
 
@@ -309,7 +311,7 @@ std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::Empt
 void ArgumentCoder<WithoutNamespace>::encode(Encoder& encoder, const WithoutNamespace& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
-    encoder << instance.a;
+    encoder << std::forward_like<decltype(instance)>(instance.a);
 }
 
 std::optional<WithoutNamespace> ArgumentCoder<WithoutNamespace>::decode(Decoder& decoder)
@@ -330,13 +332,13 @@ std::optional<WithoutNamespace> ArgumentCoder<WithoutNamespace>::decode(Decoder&
 void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(Encoder& encoder, const WithoutNamespaceWithAttributes& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
-    encoder << instance.a;
+    encoder << std::forward_like<decltype(instance)>(instance.a);
 }
 
 void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(OtherEncoder& encoder, const WithoutNamespaceWithAttributes& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
-    encoder << instance.a;
+    encoder << std::forward_like<decltype(instance)>(instance.a);
 }
 
 std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWithAttributes>::decode(Decoder& decoder)
@@ -358,8 +360,8 @@ void ArgumentCoder<WebCore::InheritsFrom>::encode(Encoder& encoder, const WebCor
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, float>);
-    encoder << instance.a;
-    encoder << instance.b;
+    encoder << std::forward_like<decltype(instance)>(instance.a);
+    encoder << std::forward_like<decltype(instance)>(instance.b);
 }
 
 std::optional<WebCore::InheritsFrom> ArgumentCoder<WebCore::InheritsFrom>::decode(Decoder& decoder)
@@ -390,9 +392,9 @@ void ArgumentCoder<WebCore::InheritanceGrandchild>::encode(Encoder& encoder, con
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, float>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.c)>, double>);
-    encoder << instance.a;
-    encoder << instance.b;
-    encoder << instance.c;
+    encoder << std::forward_like<decltype(instance)>(instance.a);
+    encoder << std::forward_like<decltype(instance)>(instance.b);
+    encoder << std::forward_like<decltype(instance)>(instance.c);
 }
 
 std::optional<WebCore::InheritanceGrandchild> ArgumentCoder<WebCore::InheritanceGrandchild>::decode(Decoder& decoder)
@@ -429,7 +431,7 @@ std::optional<WebCore::InheritanceGrandchild> ArgumentCoder<WebCore::Inheritance
 void ArgumentCoder<WTF::Seconds>::encode(Encoder& encoder, const WTF::Seconds& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value())>, double>);
-    encoder << instance.value();
+    encoder << std::forward_like<decltype(instance)>(instance.value());
 }
 
 std::optional<WTF::Seconds> ArgumentCoder<WTF::Seconds>::decode(Decoder& decoder)
@@ -450,7 +452,7 @@ std::optional<WTF::Seconds> ArgumentCoder<WTF::Seconds>::decode(Decoder& decoder
 void ArgumentCoder<WTF::CreateUsingClass>::encode(Encoder& encoder, const WTF::CreateUsingClass& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, double>);
-    encoder << instance.value;
+    encoder << std::forward_like<decltype(instance)>(instance.value);
 }
 
 std::optional<WTF::CreateUsingClass> ArgumentCoder<WTF::CreateUsingClass>::decode(Decoder& decoder)
@@ -474,10 +476,10 @@ void ArgumentCoder<WebCore::FloatBoxExtent>::encode(Encoder& encoder, const WebC
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.right())>, float>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.bottom())>, float>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.left())>, float>);
-    encoder << instance.top();
-    encoder << instance.right();
-    encoder << instance.bottom();
-    encoder << instance.left();
+    encoder << std::forward_like<decltype(instance)>(instance.top());
+    encoder << std::forward_like<decltype(instance)>(instance.right());
+    encoder << std::forward_like<decltype(instance)>(instance.bottom());
+    encoder << std::forward_like<decltype(instance)>(instance.left());
 }
 
 std::optional<WebCore::FloatBoxExtent> ArgumentCoder<WebCore::FloatBoxExtent>::decode(Decoder& decoder)
@@ -519,8 +521,8 @@ void ArgumentCoder<NullableSoftLinkedMember>::encode(Encoder& encoder, const Nul
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.secondMember)>, RetainPtr<DDActionContext>>);
     encoder << !!instance.firstMember;
     if (!!instance.firstMember)
-        encoder << instance.firstMember;
-    encoder << instance.secondMember;
+        encoder << std::forward_like<decltype(instance)>(instance.firstMember);
+    encoder << std::forward_like<decltype(instance)>(instance.secondMember);
 }
 
 std::optional<NullableSoftLinkedMember> ArgumentCoder<NullableSoftLinkedMember>::decode(Decoder& decoder)
@@ -546,6 +548,43 @@ std::optional<NullableSoftLinkedMember> ArgumentCoder<NullableSoftLinkedMember>:
         NullableSoftLinkedMember {
             WTFMove(*firstMember),
             WTFMove(*secondMember)
+        }
+    };
+}
+
+
+void ArgumentCoder<RValueEncodableClass>::encode(Encoder& encoder, const RValueEncodableClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, uint64_t>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, MemberType>);
+    encoder << std::forward_like<decltype(instance)>(instance.a);
+    encoder << std::forward_like<decltype(instance)>(instance.b);
+}
+
+void ArgumentCoder<RValueEncodableClass>::encode(Encoder& encoder, RValueEncodableClass&& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, uint64_t>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, MemberType>);
+    encoder << std::forward_like<decltype(instance)>(instance.a);
+    encoder << std::forward_like<decltype(instance)>(instance.b);
+}
+
+std::optional<RValueEncodableClass> ArgumentCoder<RValueEncodableClass>::decode(Decoder& decoder)
+{
+    std::optional<uint64_t> a;
+    decoder >> a;
+    if (!a)
+        return std::nullopt;
+
+    std::optional<MemberType> b;
+    decoder >> b;
+    if (!b)
+        return std::nullopt;
+
+    return {
+        RValueEncodableClass {
+            WTFMove(*a),
+            WTFMove(*b)
         }
     };
 }

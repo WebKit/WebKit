@@ -104,6 +104,10 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             "RetainPtr<DDActionContext>"_s,
             "RetainPtr<DDActionContext>"_s,
         } },
+        { "RValueEncodableClass"_s, {
+            "uint64_t"_s,
+            "MemberType"_s,
+        } },
     };
 }
 
