@@ -454,7 +454,7 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
             else if (positionValue.isLength() || positionValue.isViewportPercentageLength() || positionValue.isCalculatedPercentageWithLength()) {
                 float length;
                 if (positionValue.isLength())
-                    length = positionValue.computeLength<float>(conversionData);
+                    length = positionValue.computeLength<float>(conversionData) * style.effectiveZoom();
                 else {
                     Ref<CalculationValue> calculationValue { positionValue.cssCalcValue()->createCalculationValue(conversionData) };
                     length = calculationValue->evaluate(gradientLength);
@@ -718,7 +718,7 @@ static float positionFromValue(const CSSPrimitiveValue& initialValue, const CSST
         break;
     }
 
-    return origin + sign * value->computeLength<float>(conversionData);
+    return origin + sign * value->computeLength<float>(conversionData) * conversionData.style()->effectiveZoom();
 }
 
 // Resolve points/radii to front end values.
