@@ -402,7 +402,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
     }
 
     // Each of the non-null values is supported individually, see if they all can be applied at the same time.
-    if (!supportsSizeAndFrameRate(WTFMove(width), WTFMove(height), WTFMove(frameRate))) {
+    if (!supportsSizeAndFrameRate(width, height, WTFMove(frameRate))) {
         // Let's try without frame rate constraint if not mandatory.
         if (frameRateConstraint && !frameRateConstraint->isMandatory() && supportsSizeAndFrameRate(WTFMove(width), WTFMove(height), { }))
             return true;
