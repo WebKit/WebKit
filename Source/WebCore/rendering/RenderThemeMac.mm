@@ -2442,17 +2442,11 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
         attachment.attachmentElement().requestIconWithSize(layout.iconRect.size());
         return;
     }
-
-    auto image = icon->nsImage();
-    if (!image)
-        return;
     
     if (!shouldDrawIcon(attachment.attachmentElement().attachmentTitleForDisplay()))
         return;
 
-    LocalCurrentGraphicsContext localCurrentGC(context);
-
-    [image drawInRect:layout.iconRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
+    context.drawImage(*icon, layout.iconRect, { ImageOrientation::OriginBottomLeft });
 }
 
 static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)
