@@ -57,7 +57,7 @@ public:
     // WHATWG Fullscreen API
     WEBCORE_EXPORT Element* fullscreenElement() const;
     WEBCORE_EXPORT bool isFullscreenEnabled() const;
-    WEBCORE_EXPORT void exitFullscreen();
+    WEBCORE_EXPORT void exitFullscreen(RefPtr<DeferredPromise>&&);
 
     // Mozilla versions.
     bool isFullscreen() const { return m_fullscreenElement.get(); }
@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT bool willExitFullscreen();
     WEBCORE_EXPORT bool didExitFullscreen();
 
-    void dispatchFullscreenChangeEvents();
+    void notifyAboutFullscreenChangeOrError();
 
     enum class ExitMode : bool { Resize, NoResize };
     void finishExitFullscreen(Document&, ExitMode);
@@ -111,6 +111,8 @@ private:
     Document& m_document;
 
     RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
+
+    RefPtr<DeferredPromise> m_pendingPromise;
 
     bool m_pendingExitFullscreen { false };
     RefPtr<Element> m_pendingFullscreenElement;

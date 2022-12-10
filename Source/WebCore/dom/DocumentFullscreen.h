@@ -39,12 +39,12 @@ class Element;
 
 class DocumentFullscreen {
 public:
-    static void exitFullscreen(Document&, Ref<DeferredPromise>&&);
+    static void exitFullscreen(Document&, RefPtr<DeferredPromise>&&);
     static bool fullscreenEnabled(Document&);
 
     static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
     static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
-    static void webkitExitFullscreen(Document& document) { document.fullscreenManager().exitFullscreen(); }
+    WEBCORE_EXPORT static void webkitExitFullscreen(Document&);
     static bool webkitIsFullScreen(Document& document) { return document.fullscreenManager().isFullscreen(); }
     static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.fullscreenManager().isFullscreenKeyboardInputAllowed(); }
     static Element* webkitCurrentFullScreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().currentFullscreenElement()); }

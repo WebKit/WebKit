@@ -87,7 +87,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
             promise->reject(Exception { TypeError });
         m_document.eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
             if (weakThis)
-                weakThis->dispatchFullscreenChangeEvents();
+                weakThis->notifyAboutFullscreenChangeOrError();
         });
     };
 
@@ -237,10 +237,13 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
                 failedPreflights(WTFMove(element), WTFMove(promise));
                 return;
             }
+            if (m_pendingPromise)
+                m_pendingPromise->reject(Exception { TypeError, "Pending operation cancelled by requestFullscreen() call."_s });
+
+            m_pendingPromise = WTFMove(promise);
+
             INFO_LOG(identifier, "task - success");
             page->chrome().client().enterFullScreenForElement(element);
-            if (promise)
-                promise->resolve();
         });
 
         // 7. Optionally, display a message indicating how the user can exit displaying the context object fullscreen.
@@ -259,6 +262,10 @@ void FullscreenManager::cancelFullscreen()
         // there is a pending task in enterFullscreen(). Cause it to cancel and fire an error
         // by clearing the pending fullscreen element.
         m_pendingFullscreenElement = nullptr;
+        if (m_pendingPromise) {
+            m_pendingPromise->reject(Exception { TypeError, "Pending operation cancelled by webkitCancelFullScreen() call."_s });
+            m_pendingPromise = nullptr;
+        }
         INFO_LOG(LOGIDENTIFIER, "Cancelling pending fullscreen request.");
         return;
     }
@@ -301,7 +308,7 @@ static Vector<Ref<Document>> documentsToUnfullscreen(Document& firstDocument)
     return documents;
 }
 
-void FullscreenManager::exitFullscreen()
+void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -325,13 +332,16 @@ void FullscreenManager::exitFullscreen()
     m_pendingExitFullscreen = true;
 
     // Return promise, and run the remaining steps in parallel.
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER] {
-        if (!weakThis)
+    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, promise = WTFMove(promise), weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER] () mutable {
+        if (!weakThis) {
+            promise->resolve();
             return;
+        }
 
         auto* page = this->page();
         if (!page) {
             m_pendingExitFullscreen = false;
+            promise->resolve();
             ERROR_LOG(identifier, "task - Document not in page; bailing.");
             return;
         }
@@ -343,8 +353,14 @@ void FullscreenManager::exitFullscreen()
             INFO_LOG(identifier, "task - Cancelling pending fullscreen request.");
             m_pendingFullscreenElement = nullptr;
             m_pendingExitFullscreen = false;
+            promise->resolve();
             return;
         }
+
+        if (m_pendingPromise)
+            m_pendingPromise->reject(Exception { TypeError, "Pending operation cancelled by exitFullscreen() call."_s });
+
+        m_pendingPromise = WTFMove(promise);
 
         // Notify the chrome of the new full screen element.
         if (mode == ExitMode::Resize)
@@ -458,7 +474,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     if (is<HTMLIFrameElement>(element))
         element.setIFrameFullscreenFlag(true);
 
-    dispatchFullscreenChangeEvents();
+    notifyAboutFullscreenChangeOrError();
 
     return true;
 }
@@ -527,16 +543,11 @@ bool FullscreenManager::didExitFullscreen()
 
     document().scheduleFullStyleRebuild();
 
-    // When webkitCancelFullscreen is called, we call webkitExitFullscreen on the topDocument(). That
-    // means that the events will be queued there. So if we have no events here, start the timer on
-    // the exiting document.
-    bool eventTargetQueuesEmpty = m_fullscreenChangeEventTargetQueue.isEmpty() && m_fullscreenErrorEventTargetQueue.isEmpty();
-    Document& exitingDocument = eventTargetQueuesEmpty ? topDocument() : document();
-    exitingDocument.fullscreenManager().dispatchFullscreenChangeEvents();
+    notifyAboutFullscreenChangeOrError();
     return true;
 }
 
-void FullscreenManager::dispatchFullscreenChangeEvents()
+void FullscreenManager::notifyAboutFullscreenChangeOrError()
 {
     // Since we dispatch events in this function, it's possible that the
     // document will be detached and GC'd. We protect it here to make sure we
@@ -546,6 +557,16 @@ void FullscreenManager::dispatchFullscreenChangeEvents()
     m_fullscreenChangeEventTargetQueue.swap(changeQueue);
     Deque<GCReachableRef<Node>> errorQueue;
     m_fullscreenErrorEventTargetQueue.swap(errorQueue);
+
+    if (m_pendingPromise) {
+        ASSERT(!errorQueue.isEmpty() || !changeQueue.isEmpty());
+        if (!errorQueue.isEmpty())
+            m_pendingPromise->reject(Exception { TypeError });
+        else
+            m_pendingPromise->resolve();
+        m_pendingPromise = nullptr;
+    }
+
     dispatchFullscreenChangeOrErrorEvent(changeQueue, EventType::Change, /* shouldNotifyMediaElement */ true);
     dispatchFullscreenChangeOrErrorEvent(errorQueue, EventType::Error, /* shouldNotifyMediaElement */ false);
 }
@@ -598,7 +619,7 @@ void FullscreenManager::exitRemovedFullscreenElementIfNeeded(Element& element)
     auto fullscreenElement = fullscreenOrPendingElement();
     if (fullscreenElement == &element) {
         INFO_LOG(LOGIDENTIFIER, "Fullscreen element removed; exiting fullscreen");
-        exitFullscreen();
+        exitFullscreen(nullptr);
     } else
         element.setFullscreenFlag(false);
 }
@@ -643,6 +664,7 @@ void FullscreenManager::clear()
 {
     m_fullscreenElement = nullptr;
     m_pendingFullscreenElement = nullptr;
+    m_pendingPromise = nullptr;
 }
 
 void FullscreenManager::emptyEventQueue()
