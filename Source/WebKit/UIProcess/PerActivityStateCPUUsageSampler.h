@@ -44,7 +44,7 @@ public:
 
 private:
     void loggingTimerFired();
-    WebPageProxy* pageForLogging() const;
+    RefPtr<WebPageProxy> pageForLogging() const;
 
     WebProcessPool& m_processPool;
     RunLoop::Timer<PerActivityStateCPUUsageSampler> m_loggingTimer;

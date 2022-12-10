@@ -46,7 +46,7 @@ class SecurityOrigin;
 
 class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
 public:
-    static Ref<FrameInfo> create(WebKit::FrameInfoData&&, WebKit::WebPageProxy*);
+    static Ref<FrameInfo> create(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);
     virtual ~FrameInfo();
 
     bool isMainFrame() const { return m_data.isMainFrame; }
@@ -57,7 +57,7 @@ public:
     RefPtr<FrameHandle> parentFrameHandle() const;
 
 private:
-    FrameInfo(WebKit::FrameInfoData&&, WebKit::WebPageProxy*);
+    FrameInfo(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);
 
     WebKit::FrameInfoData m_data;
     RefPtr<WebKit::WebPageProxy> m_page;

@@ -93,7 +93,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
         m_request = request;
     }
 
-    auto* page = WebProcessProxy::webPage(m_pageProxyID);
+    auto page = WebProcessProxy::webPage(m_pageProxyID);
     if (!page)
         return ExceptionType::None;
 

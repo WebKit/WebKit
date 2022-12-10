@@ -57,7 +57,7 @@ private:
 void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplayID /* displayID */, WebCore::DisplayUpdate /* displayUpdate */, bool /* wantsFullSpeedUpdates */, bool /* anyObserverWantsCallback */)
 {
     RunLoop::main().dispatch([pageIdentifier = m_pageIdentifier]() {
-        auto* page = WebProcessProxy::webPage(pageIdentifier);
+        auto page = WebProcessProxy::webPage(pageIdentifier);
         if (!page)
             return;
 

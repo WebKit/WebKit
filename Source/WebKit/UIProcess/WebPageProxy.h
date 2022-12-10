@@ -1793,7 +1793,7 @@ public:
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
-    static WebPageProxy* nonEphemeralWebPageProxy();
+    static RefPtr<WebPageProxy> nonEphemeralWebPageProxy();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     RefPtr<API::Attachment> attachmentForIdentifier(const String& identifier) const;

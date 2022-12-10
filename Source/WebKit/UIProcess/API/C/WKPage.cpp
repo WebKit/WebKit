@@ -2880,7 +2880,7 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
     Vector<RefPtr<API::Object>> relatedPages;
 
     for (auto& page : toImpl(pageRef)->process().pages()) {
-        if (page != toImpl(pageRef))
+        if (page.get() != toImpl(pageRef))
             relatedPages.append(page);
     }
 

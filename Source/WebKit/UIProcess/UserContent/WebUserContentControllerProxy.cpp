@@ -35,6 +35,7 @@
 #include "NetworkContentRuleListManagerMessages.h"
 #include "NetworkProcessProxy.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerDataTypes.h"
@@ -328,7 +329,7 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
 
 void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference, CompletionHandler<void(IPC::DataReference&&, const String&)>&& reply)
 {
-    WebPageProxy* page = WebProcessProxy::webPage(pageProxyID);
+    auto page = WebProcessProxy::webPage(pageProxyID);
     if (!page)
         return;
 

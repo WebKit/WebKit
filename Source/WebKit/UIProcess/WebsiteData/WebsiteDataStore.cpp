@@ -1221,8 +1221,8 @@ void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, Comple
 
 void WebsiteDataStore::getAllStorageAccessEntries(WebPageProxyIdentifier pageID, CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
 {
-    auto* webPage = WebProcessProxy::webPage(pageID);
-    if (!webPage) {
+    auto page = WebProcessProxy::webPage(pageID);
+    if (!page) {
         completionHandler({ });
         return;
     }

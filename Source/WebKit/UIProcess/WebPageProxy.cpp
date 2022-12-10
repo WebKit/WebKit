@@ -453,7 +453,7 @@ private:
 void WebPageProxy::forMostVisibleWebPageIfAny(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
 {
     // FIXME: If not finding right away a visible page, we might want to try again for a given period of time when there is a change of visibility.
-    WebPageProxy* selectedPage = nullptr;
+    RefPtr<WebPageProxy> selectedPage;
     WebProcessProxy::forWebPagesWithOrigin(sessionID, origin, [&](auto& page) {
         if (!page.mainFrame())
             return;
@@ -466,7 +466,7 @@ void WebPageProxy::forMostVisibleWebPageIfAny(PAL::SessionID sessionID, const Se
             return;
         }
     });
-    completionHandler(selectedPage);
+    completionHandler(selectedPage.get());
 }
 
 Ref<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
@@ -613,8 +613,8 @@ WebPageProxy::~WebPageProxy()
 
     ASSERT(m_process->webPage(m_identifier) != this);
 #if ASSERT_ENABLED
-    for (WebPageProxy* page : m_process->pages())
-        ASSERT(page != this);
+    for (auto& page : m_process->pages())
+        ASSERT(page.get() != this);
 #endif
 
     setPageLoadStateObserver(nullptr);
@@ -5709,8 +5709,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (!fromAPI && originatingFrame == &frame)
         sourceFrameInfo = destinationFrameInfo.copyRef();
     else if (!fromAPI) {
-        auto* originatingPage = originatingPageID ? process->webPage(*originatingPageID) : nullptr;
-        sourceFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
+        auto originatingPage = originatingPageID ? process->webPage(*originatingPageID) : nullptr;
+        sourceFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), WTFMove(originatingPage));
     }
 
     bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision
@@ -5856,7 +5856,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #endif
 }
 
-WebPageProxy* WebPageProxy::nonEphemeralWebPageProxy()
+RefPtr<WebPageProxy> WebPageProxy::nonEphemeralWebPageProxy()
 {
     auto processPools = WebProcessPool::allProcessPools();
     if (processPools.isEmpty())
@@ -5864,7 +5864,7 @@ WebPageProxy* WebPageProxy::nonEphemeralWebPageProxy()
     
     for (auto& webProcess : processPools[0]->processes()) {
         for (auto& page : webProcess->pages()) {
-            if (page->sessionID().isEphemeral())
+            if (!page || page->sessionID().isEphemeral())
                 continue;
             return page;
         }
@@ -6174,13 +6174,13 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     MESSAGE_CHECK(m_process, originatingFrameInfoData.frameID);
     MESSAGE_CHECK(m_process, WebFrameProxy::webFrame(*originatingFrameInfoData.frameID));
 
-    auto* originatingPage = m_process->webPage(originatingPageID);
-    auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
+    auto originatingPage = m_process->webPage(originatingPageID);
+    auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), WTFMove(originatingPage));
     auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : URL();
 
     std::optional<bool> openerAppInitiatedState;
-    if (originatingPage)
-        openerAppInitiatedState = originatingPage->lastNavigationWasAppInitiated();
+    if (auto* page = originatingFrameInfo->page())
+        openerAppInitiatedState = page->lastNavigationWasAppInitiated();
 
     auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement, openerAppInitiatedState = WTFMove(openerAppInitiatedState)] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
