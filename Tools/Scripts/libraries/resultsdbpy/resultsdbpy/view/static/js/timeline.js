@@ -1061,6 +1061,10 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
             expected: plural ? 'Some tests unexpectedly failed' : 'Unexpectedly failed',
             unexpected: plural ? 'Some tests failed' : 'Test failed',
         },
+        image: {
+            expected: plural ? 'Some tests unexpectedly image failed' : 'Unexpectedly image failed',
+            unexpected: plural ? 'Some tests image failed' : 'Test image failed',
+        },
         timedout: {
             expected: plural ? 'Some tests unexpectedly timed out' : 'Unexpectedly timed out',
             unexpected: plural ? 'Some tests timed out' : 'Test timed out',

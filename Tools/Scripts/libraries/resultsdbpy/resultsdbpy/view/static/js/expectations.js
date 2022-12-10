@@ -29,6 +29,7 @@ class Expectations
             success: computedStyle.getPropertyValue('--greenLight').trim(),
             warning: computedStyle.getPropertyValue('--orangeDark').trim(),
             failed: computedStyle.getPropertyValue('--redLight').trim(),
+            image: computedStyle.getPropertyValue('--blueLight').trim(),
             timedout: computedStyle.getPropertyValue('--orangeLight').trim(),
             crashed: computedStyle.getPropertyValue('--purpleLight').trim(),
         };
@@ -88,10 +89,11 @@ Expectations.stateToIdMap = {
     WARNING: 0x38,
     PASS: 0x40,
 };
-Expectations.failureTypes = ['warning', 'failed', 'timedout', 'crashed'];
+Expectations.failureTypes = ['warning', 'failed', 'image', 'timedout', 'crashed'];
 Expectations.failureTypeMap = {
     warning: 'WARNING',
     failed: 'ERROR',
+    image: 'ERROR',
     timedout: 'TIMEOUT',
     crashed: 'CRASH',
 }
@@ -104,6 +106,7 @@ Expectations.symbolMap = {
     success: '✓',
     warning: '?',
     failed: '𝖷',
+    image: 'I',
     timedout: timeoutImage,
     crashed: '!',
 }
