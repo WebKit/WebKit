@@ -1967,6 +1967,22 @@ String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+String convertEnumerationToString(MediaPlayer::VideoFullscreenMode mode)
+{
+    if (mode == MediaPlayer::VideoFullscreenModeNone)
+        return "[None]"_s;
+
+    StringBuilder builder;
+    builder.append("[ ");
+    if (mode & MediaPlayer::VideoFullscreenModeStandard)
+        builder.append("Standard");
+    if (mode & MediaPlayer::VideoFullscreenModePictureInPicture)
+        builder.append("PictureInPicture");
+    builder.append(" ]");
+
+    return builder.toString();
+}
+
 String MediaPlayer::lastErrorMessage() const
 {
     return m_lastErrorMessage;

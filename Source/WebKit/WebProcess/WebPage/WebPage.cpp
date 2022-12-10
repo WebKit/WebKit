@@ -4615,7 +4615,7 @@ void WebPage::setAllowsMediaDocumentInlinePlayback(bool allows)
 WebFullScreenManager* WebPage::fullScreenManager()
 {
     if (!m_fullScreenManager)
-        m_fullScreenManager = WebFullScreenManager::create(this);
+        m_fullScreenManager = WebFullScreenManager::create(*this);
     return m_fullScreenManager.get();
 }
 #endif
@@ -8355,6 +8355,15 @@ bool WebPage::isUsingUISideCompositing() const
 #else
     return false;
 #endif
+}
+
+const Logger& WebPage::logger() const
+{
+    if (!m_logger) {
+        m_logger = Logger::create(this);
+        m_logger->setEnabled(this, m_page && m_page->sessionID().isAlwaysOnLoggingAllowed());
+    }
+    return *m_logger;
 }
 
 } // namespace WebKit

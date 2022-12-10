@@ -317,3 +317,16 @@ WEBCORE_EXPORT id makeNSArrayElement(const FloatRect&);
 #endif
 
 }
+
+namespace WTF {
+
+template<typename Type> struct LogArgument;
+template <>
+struct LogArgument<WebCore::FloatRect> {
+    static String toString(const WebCore::FloatRect& rect)
+    {
+        return makeString("location: (", rect.x(), ", ", rect.y(), "), size: (", rect.width(), " x ", rect.height(), ")");
+    }
+};
+
+}

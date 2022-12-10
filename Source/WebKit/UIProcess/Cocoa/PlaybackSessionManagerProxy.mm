@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#import "Logging.h"
 #import "PlaybackSessionManagerMessages.h"
 #import "PlaybackSessionManagerProxyMessages.h"
 #import "WebPageProxy.h"
@@ -318,6 +319,7 @@ Ref<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProx
 
 PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)
     : m_page(&page)
+    , m_logger(page.logger())
 {
     m_page->process().addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
 }
@@ -345,6 +347,8 @@ PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::cr
 {
     Ref<PlaybackSessionModelContext> model = PlaybackSessionModelContext::create(*this, contextId);
     Ref<PlatformPlaybackSessionInterface> interface = PlatformPlaybackSessionInterface::create(model);
+
+    interface->setLogger(logger(), reinterpret_cast<const void*>(contextId.toUInt64()));
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -653,6 +657,11 @@ bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier iden
 
     auto& model = *std::get<0>(iterator->value);
     return !model.isPlaying() && !model.isStalled();
+}
+
+WTFLogChannel& PlaybackSessionManagerProxy::logChannel() const
+{
+    return WebKit2LogMedia;
 }
 
 } // namespace WebKit

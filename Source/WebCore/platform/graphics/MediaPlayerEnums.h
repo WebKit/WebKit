@@ -119,6 +119,7 @@ String convertEnumerationToString(MediaPlayerEnums::NetworkState);
 String convertEnumerationToString(MediaPlayerEnums::Preload);
 String convertEnumerationToString(MediaPlayerEnums::SupportsType);
 String convertEnumerationToString(MediaPlayerEnums::BufferingPolicy);
+WEBCORE_EXPORT String convertEnumerationToString(MediaPlayerEnums::VideoFullscreenMode);
 
 } // namespace WebCore
 
@@ -149,6 +150,14 @@ struct LogArgument<WebCore::MediaPlayerEnums::BufferingPolicy> {
     static String toString(const WebCore::MediaPlayerEnums::BufferingPolicy policy)
     {
         return convertEnumerationToString(policy);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::MediaPlayerEnums::VideoFullscreenMode> {
+    static String toString(const WebCore::MediaPlayerEnums::VideoFullscreenMode mode)
+    {
+        return WebCore::convertEnumerationToString(mode);
     }
 };
 
