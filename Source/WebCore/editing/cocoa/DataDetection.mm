@@ -546,7 +546,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
     RefPtr<Text> lastTextNodeToUpdate;
     String lastNodeContent;
     unsigned contentOffset = 0;
-    DDQueryOffset lastModifiedQueryOffset = { -1, 0 };
+    DDQueryOffset lastModifiedQueryOffset = { .queryIndex = -1, .offset = 0 };
 
     // For each result add the link.
     // Since there could be multiple results in the same text node, the node is only modified when
