@@ -26,13 +26,56 @@
 #pragma once
 
 #include <optional>
+#include <wtf/UUID.h>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebPushD {
 
 struct WebPushDaemonConnectionConfiguration {
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<WebPushDaemonConnectionConfiguration> decode(Decoder&);
+
     bool useMockBundlesForTesting { false };
     std::optional<Vector<uint8_t>> hostAppAuditTokenData;
+    String pushPartitionString;
+    std::optional<UUID> dataStoreIdentifier;
 };
+
+template<class Encoder>
+void WebPushDaemonConnectionConfiguration::encode(Encoder& encoder) const
+{
+    encoder << useMockBundlesForTesting << hostAppAuditTokenData << pushPartitionString << dataStoreIdentifier;
+}
+
+template<class Decoder>
+std::optional<WebPushDaemonConnectionConfiguration> WebPushDaemonConnectionConfiguration::decode(Decoder& decoder)
+{
+    std::optional<bool> useMockBundlesForTesting;
+    decoder >> useMockBundlesForTesting;
+    if (!useMockBundlesForTesting)
+        return std::nullopt;
+
+    std::optional<std::optional<Vector<uint8_t>>> hostAppAuditTokenData;
+    decoder >> hostAppAuditTokenData;
+    if (!hostAppAuditTokenData)
+        return std::nullopt;
+
+    std::optional<String> pushPartitionString;
+    decoder >> pushPartitionString;
+    if (!pushPartitionString)
+        return std::nullopt;
+
+    std::optional<std::optional<UUID>> dataStoreIdentifier;
+    decoder >> dataStoreIdentifier;
+    if (!dataStoreIdentifier)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*useMockBundlesForTesting),
+        WTFMove(*hostAppAuditTokenData),
+        WTFMove(*pushPartitionString),
+        WTFMove(*dataStoreIdentifier)
+    } };
+}
 
 } // namespace WebKit::WebPushD

@@ -46,6 +46,7 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 
 using namespace WebKit::WebPushD;
+using WebCore::PushSubscriptionSetIdentifier;
 
 namespace WebPushD {
 
@@ -301,8 +302,8 @@ Daemon::Daemon()
 
 void Daemon::startMockPushService()
 {
-    auto messageHandler = [this](const String& bundleIdentifier, WebKit::WebPushMessage&& message) {
-        handleIncomingPush(bundleIdentifier, WTFMove(message));
+    auto messageHandler = [this](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
+        handleIncomingPush(identifier, WTFMove(message));
     };
     PushService::createMockService(WTFMove(messageHandler), [this](auto&& pushService) mutable {
         setPushService(WTFMove(pushService));
@@ -311,8 +312,8 @@ void Daemon::startMockPushService()
 
 void Daemon::startPushService(const String& incomingPushServiceName, const String& databasePath)
 {
-    auto messageHandler = [this](const String& bundleIdentifier, WebKit::WebPushMessage&& message) {
-        handleIncomingPush(bundleIdentifier, WTFMove(message));
+    auto messageHandler = [this](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
+        handleIncomingPush(identifier, WTFMove(message));
     };
     PushService::create(incomingPushServiceName, databasePath, WTFMove(messageHandler), [this](auto&& pushService) mutable {
         setPushService(WTFMove(pushService));
@@ -522,7 +523,7 @@ void Daemon::echoTwice(ClientConnection*, const String& message, CompletionHandl
 bool Daemon::canRegisterForNotifications(ClientConnection& connection)
 {
     if (connection.hostAppCodeSigningIdentifier().isEmpty()) {
-        NSLog(@"ClientConnection cannot interact with notifications: Unknown host application code signing identifier");
+        RELEASE_LOG_ERROR(Push, "ClientConnection cannot interact with notifications: Unknown host application code signing identifier");
         return false;
     }
 
@@ -558,15 +559,15 @@ void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* conn
 #endif
 }
 
-void Daemon::deletePushRegistration(const String& bundleIdentifier, const String& originString, CompletionHandler<void()>&& callback)
+void Daemon::deletePushRegistration(const PushSubscriptionSetIdentifier& identifier, const String& originString, CompletionHandler<void()>&& callback)
 {
-    runAfterStartingPushService([this, bundleIdentifier, originString, callback = WTFMove(callback)]() mutable {
+    runAfterStartingPushService([this, identifier, originString, callback = WTFMove(callback)]() mutable {
         if (!m_pushService) {
             callback();
             return;
         }
 
-        m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, originString, [callback = WTFMove(callback)](auto&&) mutable {
+        m_pushService->removeRecordsForSubscriptionSetAndOrigin(identifier, originString, [callback = WTFMove(callback)](auto&&) mutable {
             callback();
         });
     });
@@ -579,13 +580,13 @@ void Daemon::setPushAndNotificationsEnabledForOrigin(ClientConnection* connectio
         return;
     }
 
-    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), originString, enabled, replySender = WTFMove(replySender)]() mutable {
+    runAfterStartingPushService([this, identifier = connection->subscriptionSetIdentifier(), originString, enabled, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender();
             return;
         }
 
-        m_pushService->setPushesEnabledForBundleIdentifierAndOrigin(bundleIdentifier, originString, enabled, WTFMove(replySender));
+        m_pushService->setPushesEnabledForSubscriptionSetAndOrigin(identifier, originString, enabled, WTFMove(replySender));
     });
 }
 
@@ -597,13 +598,13 @@ void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection,
     }
 
 #if ENABLE(INSTALL_COORDINATION_BUNDLES)
-    connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, [this, originString = String { originString }, replySender = WTFMove(replySender), bundleIdentifier = connection->hostAppCodeSigningIdentifier()](auto result) mutable {
-        deletePushRegistration(bundleIdentifier, originString, [replySender = WTFMove(replySender), result]() mutable {
-            replySender(result);
+    connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, [this, subscriptionSetIdentifier = connection->subscriptionSetIdentifier(), originString = String { originString }, replySender = WTFMove(replySender)](auto result) mutable {
+        deletePushRegistration(subscriptionSetIdentifier, originString, [replySender = WTFMove(replySender)]() mutable {
+            replySender(emptyString());
         });
     }));
 #else
-    deletePushRegistration(connection->hostAppCodeSigningIdentifier(), originString, [replySender = WTFMove(replySender)]() mutable {
+    deletePushRegistration(connection->subscriptionSetIdentifier(), originString, [replySender = WTFMove(replySender)]() mutable {
         replySender(emptyString());
     });
 #endif
@@ -641,7 +642,8 @@ void Daemon::injectPushMessageForTesting(ClientConnection* connection, const Pus
     });
     addResult.iterator->value.append(message);
 
-    notifyClientPushMessageIsAvailable(message.targetAppCodeSigningIdentifier);
+    // FIXME: should PushMessageForTesting be able to inject messages for a specific pushPartition or dataStoreIdentifier?
+    notifyClientPushMessageIsAvailable(PushSubscriptionSetIdentifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier });
 
     replySender(true);
 }
@@ -675,25 +677,26 @@ void Daemon::injectEncryptedPushMessageForTesting(ClientConnection* connection, 
     });
 }
 
-void Daemon::handleIncomingPush(const String& bundleIdentifier, WebKit::WebPushMessage&& message)
+void Daemon::handleIncomingPush(const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message)
 {
     ensureIncomingPushTransaction();
 
-    auto addResult = m_pushMessages.ensure(bundleIdentifier, [] {
+    auto addResult = m_pushMessages.ensure(identifier, [] {
         return Vector<WebKit::WebPushMessage> { };
     });
     addResult.iterator->value.append(WTFMove(message));
 
-    notifyClientPushMessageIsAvailable(bundleIdentifier);
+    notifyClientPushMessageIsAvailable(identifier);
 }
 
-void Daemon::notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier)
+void Daemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier& subscriptionSetIdentifier)
 {
-    RELEASE_LOG(Push, "Launching %{public}s in response to push", clientCodeSigningIdentifier.utf8().data());
+    const auto& bundleIdentifier = subscriptionSetIdentifier.bundleIdentifier;
+    RELEASE_LOG(Push, "Launching %{public}s in response to push", bundleIdentifier.utf8().data());
 
 #if PLATFORM(MAC)
     CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"x-webkit-app-launch://1"] ];
-    CFStringRef identifier = (__bridge CFStringRef)((NSString *)clientCodeSigningIdentifier);
+    CFStringRef identifier = (__bridge CFStringRef)((NSString *)bundleIdentifier);
 
     CFDictionaryRef options = (__bridge CFDictionaryRef)@{
         (id)_kLSOpenOptionPreferRunningInstanceKey: @(kLSOpenRunningInstanceBehaviorUseRunningProcess),
@@ -708,7 +711,7 @@ void Daemon::notifyClientPushMessageIsAvailable(const String& clientCodeSigningI
     });
 #else
     // FIXME: Figure out equivalent iOS code here
-    UNUSED_PARAM(clientCodeSigningIdentifier);
+    UNUSED_PARAM(subscriptionSetIdentifier);
 #endif // PLATFORM(MAC)
 }
 
@@ -722,7 +725,7 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
 
     Vector<WebKit::WebPushMessage> resultMessages;
 
-    if (auto iterator = m_pushMessages.find(hostAppCodeSigningIdentifier); iterator != m_pushMessages.end()) {
+    if (auto iterator = m_pushMessages.find(connection->subscriptionSetIdentifier()); iterator != m_pushMessages.end()) {
         resultMessages = WTFMove(iterator->value);
         m_pushMessages.remove(iterator);
     }
@@ -736,7 +739,7 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
         m_testingPushMessages.remove(iterator);
     }
 
-    RELEASE_LOG(Push, "Fetched %zu pending push messages for %{public}s", resultMessages.size(), hostAppCodeSigningIdentifier.utf8().data());
+    RELEASE_LOG(Push, "Fetched %zu pending push messages for %{public}s", resultMessages.size(), connection->subscriptionSetIdentifier().debugDescription().utf8().data());
     connection->broadcastDebugMessage(makeString("Fetching ", String::number(resultMessages.size()), " pending push messages"));
 
     replySender(WTFMove(resultMessages));
@@ -774,37 +777,37 @@ void Daemon::getPushTopicsForTesting(OSObjectPtr<xpc_object_t>&& request)
 
 void Daemon::subscribeToPushService(ClientConnection* connection, const URL& scopeURL, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
 {
-    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), scope = scopeURL.string(), vapidPublicKey, replySender = WTFMove(replySender)]() mutable {
+    runAfterStartingPushService([this, identifier = connection->subscriptionSetIdentifier(), scope = scopeURL.string(), vapidPublicKey, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender(makeUnexpected(WebCore::ExceptionData { WebCore::InvalidStateError, "Push service initialization failed"_s }));
             return;
         }
 
-        m_pushService->subscribe(bundleIdentifier, scope, vapidPublicKey, WTFMove(replySender));
+        m_pushService->subscribe(identifier, scope, vapidPublicKey, WTFMove(replySender));
     });
 }
 
 void Daemon::unsubscribeFromPushService(ClientConnection* connection, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
 {
-    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), scope = scopeURL.string(), subscriptionIdentifier, replySender = WTFMove(replySender)]() mutable {
+    runAfterStartingPushService([this, identifier = connection->subscriptionSetIdentifier(), scope = scopeURL.string(), subscriptionIdentifier, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender(makeUnexpected(WebCore::ExceptionData { WebCore::InvalidStateError, "Push service initialization failed"_s }));
             return;
         }
 
-        m_pushService->unsubscribe(bundleIdentifier, scope, subscriptionIdentifier, WTFMove(replySender));
+        m_pushService->unsubscribe(identifier, scope, subscriptionIdentifier, WTFMove(replySender));
     });
 }
 
 void Daemon::getPushSubscription(ClientConnection* connection, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender)
 {
-    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), scope = scopeURL.string(), replySender = WTFMove(replySender)]() mutable {
+    runAfterStartingPushService([this, identifier = connection->subscriptionSetIdentifier(), scope = scopeURL.string(), replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender(makeUnexpected(WebCore::ExceptionData { WebCore::InvalidStateError, "Push service initialization failed"_s }));
             return;
         }
 
-        m_pushService->getSubscription(bundleIdentifier, scope, WTFMove(replySender));
+        m_pushService->getSubscription(identifier, scope, WTFMove(replySender));
     });
 }
 
@@ -818,37 +821,37 @@ void Daemon::getPushPermissionState(ClientConnection* connection, const URL& sco
 
 void Daemon::incrementSilentPushCount(ClientConnection* connection, const WebCore::SecurityOriginData& securityOrigin, CompletionHandler<void(unsigned)>&& replySender)
 {
-    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), securityOrigin = securityOrigin.toString(), replySender = WTFMove(replySender)]() mutable {
+    runAfterStartingPushService([this, identifier = connection->subscriptionSetIdentifier(), securityOrigin = securityOrigin.toString(), replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender(0);
             return;
         }
 
-        m_pushService->incrementSilentPushCount(bundleIdentifier, securityOrigin, WTFMove(replySender));
+        m_pushService->incrementSilentPushCount(identifier, securityOrigin, WTFMove(replySender));
     });
 }
 
 void Daemon::removeAllPushSubscriptions(ClientConnection* connection, CompletionHandler<void(unsigned)>&& replySender)
 {
-    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), replySender = WTFMove(replySender)]() mutable {
+    runAfterStartingPushService([this, identifier = connection->subscriptionSetIdentifier(), replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender(0);
             return;
         }
 
-        m_pushService->removeRecordsForBundleIdentifier(bundleIdentifier, WTFMove(replySender));
+        m_pushService->removeRecordsForSubscriptionSet(identifier, WTFMove(replySender));
     });
 }
 
 void Daemon::removePushSubscriptionsForOrigin(ClientConnection* connection, const WebCore::SecurityOriginData& securityOrigin, CompletionHandler<void(unsigned)>&& replySender)
 {
-    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), securityOrigin = securityOrigin.toString(), replySender = WTFMove(replySender)]() mutable {
+    runAfterStartingPushService([this, identifier = connection->subscriptionSetIdentifier(), securityOrigin = securityOrigin.toString(), replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender(0);
             return;
         }
 
-        m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, securityOrigin, WTFMove(replySender));
+        m_pushService->removeRecordsForSubscriptionSetAndOrigin(identifier, securityOrigin, WTFMove(replySender));
     });
 }
 

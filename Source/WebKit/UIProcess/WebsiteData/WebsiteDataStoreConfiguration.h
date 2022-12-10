@@ -153,6 +153,9 @@ public:
     bool shouldUseCustomStoragePaths() const { return m_shouldUseCustomStoragePaths; }
     void setShouldUseCustomStoragePaths(bool use) { m_shouldUseCustomStoragePaths = use; }
 
+    const String& webPushPartitionString() const { return m_webPushPartitionString; }
+    void setWebPushPartitionString(String&& string) { m_webPushPartitionString = WTFMove(string); }
+
     const String& applicationCacheFlatFileSubdirectoryName() const { return m_applicationCacheFlatFileSubdirectoryName; }
     void setApplicationCacheFlatFileSubdirectoryName(String&& directory) { m_applicationCacheFlatFileSubdirectoryName = WTFMove(directory); }
     
@@ -290,6 +293,7 @@ private:
     bool m_trackingPreventionDebugModeEnabled { false };
     String m_pcmMachServiceName;
     String m_webPushMachServiceName;
+    String m_webPushPartitionString;
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     bool m_shouldAcceptInsecureCertificatesForWebSockets { false };
 #endif

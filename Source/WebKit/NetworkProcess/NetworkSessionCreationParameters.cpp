@@ -41,6 +41,7 @@ namespace WebKit {
 void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << sessionID;
+    encoder << dataStoreIdentifier;
     encoder << boundInterfaceIdentifier;
     encoder << allowsCellularAccess;
 #if PLATFORM(COCOA)
@@ -91,6 +92,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << allowsHSTSWithUntrustedRootCertificate;
     encoder << pcmMachServiceName;
     encoder << webPushMachServiceName;
+    encoder << webPushPartitionString;
     encoder << enablePrivateClickMeasurementDebugMode;
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     encoder << shouldAcceptInsecureCertificatesForWebSockets;
@@ -115,6 +117,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!sessionID)
         return std::nullopt;
     
+    std::optional<std::optional<UUID>> dataStoreIdentifier;
+    decoder >> dataStoreIdentifier;
+    if (!dataStoreIdentifier)
+        return std::nullopt;
+
     std::optional<String> boundInterfaceIdentifier;
     decoder >> boundInterfaceIdentifier;
     if (!boundInterfaceIdentifier)
@@ -332,6 +339,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!webPushMachServiceName)
         return std::nullopt;
     
+    std::optional<String> webPushPartitionString;
+    decoder >> webPushPartitionString;
+    if (!webPushPartitionString)
+        return std::nullopt;
+
     std::optional<bool> enablePrivateClickMeasurementDebugMode;
     decoder >> enablePrivateClickMeasurementDebugMode;
     if (!enablePrivateClickMeasurementDebugMode)
@@ -423,6 +435,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
 
     return {{
         *sessionID
+        , WTFMove(*dataStoreIdentifier)
         , WTFMove(*boundInterfaceIdentifier)
         , WTFMove(*allowsCellularAccess)
 #if PLATFORM(COCOA)
@@ -473,6 +486,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*allowsHSTSWithUntrustedRootCertificate)
         , WTFMove(*pcmMachServiceName)
         , WTFMove(*webPushMachServiceName)
+        , WTFMove(*webPushPartitionString)
         , WTFMove(*enablePrivateClickMeasurementDebugMode)
 #if !HAVE(NSURLSESSION_WEBSOCKET)
         , WTFMove(*shouldAcceptInsecureCertificatesForWebSockets)

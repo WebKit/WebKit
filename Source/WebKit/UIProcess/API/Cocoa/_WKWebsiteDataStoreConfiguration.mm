@@ -423,6 +423,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setShouldUseCustomStoragePaths(use);
 }
 
+- (NSString *)webPushPartitionString
+{
+    return _configuration->webPushPartitionString();
+}
+
+- (void)setWebPushPartitionString:(NSString *)string
+{
+    _configuration->setWebPushPartitionString(string);
+}
+
 - (BOOL)deviceManagementRestrictionsEnabled
 {
     return _configuration->deviceManagementRestrictionsEnabled();

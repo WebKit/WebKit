@@ -24,4 +24,6 @@ header: "WebPushDaemonConnectionConfiguration.h"
 [CustomHeader] struct WebKit::WebPushD::WebPushDaemonConnectionConfiguration {
     bool useMockBundlesForTesting;
     std::optional<Vector<uint8_t>> hostAppAuditTokenData;
+    String pushPartitionString;
+    std::optional<UUID> dataStoreIdentifier;
 };

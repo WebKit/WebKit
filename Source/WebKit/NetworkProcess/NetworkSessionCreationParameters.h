@@ -31,6 +31,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Seconds.h>
 #include <wtf/URL.h>
+#include <wtf/UUID.h>
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"
@@ -56,6 +57,7 @@ struct NetworkSessionCreationParameters {
     static std::optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
     
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };
+    std::optional<UUID> dataStoreIdentifier;
     String boundInterfaceIdentifier;
     AllowsCellularAccess allowsCellularAccess { AllowsCellularAccess::Yes };
 #if PLATFORM(COCOA)
@@ -107,6 +109,7 @@ struct NetworkSessionCreationParameters {
     bool allowsHSTSWithUntrustedRootCertificate { false };
     String pcmMachServiceName;
     String webPushMachServiceName;
+    String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode { false };
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     bool shouldAcceptInsecureCertificatesForWebSockets { false };

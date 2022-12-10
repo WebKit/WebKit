@@ -355,25 +355,12 @@ std::optional<WebCore::PCM::AttributionTriggerData> Coder<WebCore::PCM::Attribut
 
 void Coder<WebPushD::WebPushDaemonConnectionConfiguration, void>::encode(Encoder& encoder, const WebPushD::WebPushDaemonConnectionConfiguration& instance)
 {
-    encoder << instance.useMockBundlesForTesting << instance.hostAppAuditTokenData;
+    instance.encode(encoder);
 }
 
 std::optional<WebPushD::WebPushDaemonConnectionConfiguration> Coder<WebPushD::WebPushDaemonConnectionConfiguration, void>::decode(Decoder& decoder)
 {
-    std::optional<bool> useMockBundlesForTesting;
-    decoder >> useMockBundlesForTesting;
-    if (!useMockBundlesForTesting)
-        return std::nullopt;
-
-    std::optional<std::optional<Vector<uint8_t>>> hostAppAuditTokenData;
-    decoder >> hostAppAuditTokenData;
-    if (!hostAppAuditTokenData)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*useMockBundlesForTesting),
-        WTFMove(*hostAppAuditTokenData)
-    } };
+    return WebPushD::WebPushDaemonConnectionConfiguration::decode(decoder);
 }
 
 void Coder<WebPushMessage, void>::encode(Encoder& encoder, const WebPushMessage& instance)
@@ -474,6 +461,17 @@ void Coder<WebCore::PushSubscriptionIdentifier>::encode(Encoder& encoder, const 
 std::optional<WebCore::PushSubscriptionIdentifier> Coder<WebCore::PushSubscriptionIdentifier>::decode(Decoder& decoder)
 {
     return WebCore::PushSubscriptionIdentifier::decode(decoder);
+}
+
+void Coder<WTF::UUID>::encode(Encoder& encoder, const WTF::UUID& instance)
+{
+    instance.encode(encoder);
+}
+
+std::optional<WTF::UUID>
+    Coder<WTF::UUID>::decode(Decoder& decoder)
+{
+    return UUID::decode(decoder);
 }
 
 }

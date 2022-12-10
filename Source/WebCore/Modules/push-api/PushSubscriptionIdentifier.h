@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/HashTraits.h>
+#include <wtf/Hasher.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
@@ -39,15 +41,46 @@ struct PushSubscriptionSetIdentifier {
     String pushPartition;
     std::optional<UUID> dataStoreIdentifier;
 
-    bool operator==(const PushSubscriptionSetIdentifier& other) const
-    {
-        return bundleIdentifier != other.bundleIdentifier && pushPartition != other.pushPartition
-            && dataStoreIdentifier != other.dataStoreIdentifier;
-    };
+    bool operator==(const PushSubscriptionSetIdentifier&) const;
+    void add(Hasher&, const PushSubscriptionSetIdentifier&);
+    bool isHashTableDeletedValue() const;
 
     PushSubscriptionSetIdentifier isolatedCopy() const &;
     PushSubscriptionSetIdentifier isolatedCopy() &&;
+
+    WEBCORE_EXPORT String debugDescription() const;
 };
+
+WEBCORE_EXPORT String makePushTopic(const PushSubscriptionSetIdentifier&, const String& scope);
+
+inline bool PushSubscriptionSetIdentifier::operator==(const PushSubscriptionSetIdentifier& other) const
+{
+    // Treat null and empty strings as empty strings for the purposes of hashing and comparison. The
+    // reason for this is that null and empty strings are stored as empty strings in PushDatabase
+    // (the columns are marked NOT NULL). We want to be able to compare instances that use null
+    // strings with instances deserialized from the database that use empty strings.
+    auto makeNotNull = [](const String& s) -> const String& {
+        return s.isNull() ? emptyString() : s;
+    };
+    return makeNotNull(bundleIdentifier) == makeNotNull(other.bundleIdentifier) && makeNotNull(pushPartition) == makeNotNull(other.pushPartition) && dataStoreIdentifier == other.dataStoreIdentifier;
+}
+
+inline void add(Hasher& hasher, const PushSubscriptionSetIdentifier& sub)
+{
+    // Treat null and empty strings as empty strings for the purposes of hashing and comparison. See
+    // the comment in operator== for more explanation.
+    auto makeNotNull = [](const String& s) -> const String& {
+        return s.isNull() ? emptyString() : s;
+    };
+    if (sub.dataStoreIdentifier)
+        return add(hasher, makeNotNull(sub.bundleIdentifier), makeNotNull(sub.pushPartition), sub.dataStoreIdentifier.value());
+    return add(hasher, makeNotNull(sub.bundleIdentifier), makeNotNull(sub.pushPartition));
+}
+
+inline bool PushSubscriptionSetIdentifier::isHashTableDeletedValue() const
+{
+    return dataStoreIdentifier && dataStoreIdentifier->isHashTableDeletedValue();
+}
 
 inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy() const &
 {
@@ -59,4 +92,24 @@ inline PushSubscriptionSetIdentifier PushSubscriptionSetIdentifier::isolatedCopy
     return { WTFMove(bundleIdentifier).isolatedCopy(), WTFMove(pushPartition).isolatedCopy(), dataStoreIdentifier };
 }
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+struct PushSubscriptionSetIdentifierHash {
+    static unsigned hash(const WebCore::PushSubscriptionSetIdentifier& key) { return computeHash(key); }
+    static bool equal(const WebCore::PushSubscriptionSetIdentifier& a, const WebCore::PushSubscriptionSetIdentifier& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<> struct DefaultHash<WebCore::PushSubscriptionSetIdentifier> : PushSubscriptionSetIdentifierHash { };
+
+template<> struct HashTraits<WebCore::PushSubscriptionSetIdentifier> : GenericHashTraits<WebCore::PushSubscriptionSetIdentifier> {
+    static const bool emptyValueIsZero = false;
+    static WebCore::PushSubscriptionSetIdentifier emptyValue() { return { emptyString(), emptyString(), std::nullopt }; }
+
+    static void constructDeletedValue(WebCore::PushSubscriptionSetIdentifier& slot) { new (NotNull, &slot) WebCore::PushSubscriptionSetIdentifier { emptyString(), emptyString(), UUID { HashTableDeletedValue } }; }
+    static bool isDeletedValue(const WebCore::PushSubscriptionSetIdentifier& value) { return value.isHashTableDeletedValue(); }
+};
+
+} // namespace WTF

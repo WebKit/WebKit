@@ -270,6 +270,7 @@ Modules/push-api/PushMessageData.cpp
 Modules/push-api/PushSubscription.cpp
 Modules/push-api/PushSubscriptionChangeEvent.cpp
 Modules/push-api/PushSubscriptionData.cpp
+Modules/push-api/PushSubscriptionIdentifier.cpp
 Modules/push-api/PushSubscriptionOptions.cpp
 Modules/push-api/PushManager.cpp
 Modules/push-api/ServiceWorkerRegistrationPushAPI.cpp
