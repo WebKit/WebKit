@@ -365,7 +365,7 @@ std::optional<WebPushD::WebPushDaemonConnectionConfiguration> Coder<WebPushD::We
 
 void Coder<WebPushMessage, void>::encode(Encoder& encoder, const WebPushMessage& instance)
 {
-    encoder << instance.pushData << instance.registrationURL;
+    encoder << instance.pushData << instance.registrationURL << instance.pushPartitionString;
 }
 
 std::optional<WebPushMessage> Coder<WebPushMessage, void>::decode(Decoder& decoder)
@@ -380,8 +380,14 @@ std::optional<WebPushMessage> Coder<WebPushMessage, void>::decode(Decoder& decod
     if (!registrationURL)
         return std::nullopt;
 
+    std::optional<String> pushPartitionString;
+    decoder >> pushPartitionString;
+    if (!pushPartitionString)
+        return std::nullopt;
+
     return { {
         WTFMove(*pushData),
+        WTFMove(*pushPartitionString),
         WTFMove(*registrationURL)
     } };
 }

@@ -30,6 +30,7 @@
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
+#import "FrontBoardServicesSPI.h"
 #import "HandleMessage.h"
 #import "ICAppBundle.h"
 #import "MockAppBundleRegistry.h"
@@ -44,6 +45,10 @@
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+
+#if PLATFORM(IOS)
+#import <UIKit/UIApplication.h>
+#endif
 
 using namespace WebKit::WebPushD;
 using WebCore::PushSubscriptionSetIdentifier;
@@ -642,8 +647,7 @@ void Daemon::injectPushMessageForTesting(ClientConnection* connection, const Pus
     });
     addResult.iterator->value.append(message);
 
-    // FIXME: should PushMessageForTesting be able to inject messages for a specific pushPartition or dataStoreIdentifier?
-    notifyClientPushMessageIsAvailable(PushSubscriptionSetIdentifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier });
+    notifyClientPushMessageIsAvailable(PushSubscriptionSetIdentifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString });
 
     replySender(true);
 }
@@ -709,10 +713,26 @@ void Daemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionS
     _LSOpenURLsUsingBundleIdentifierWithCompletionHandler(urls, identifier, options, ^(LSASNRef, Boolean, CFErrorRef cfError) {
         RELEASE_LOG_ERROR_IF(cfError, Push, "Failed to launch process in response to push: %{public}@", (__bridge NSError *)cfError);
     });
-#else
-    // FIXME: Figure out equivalent iOS code here
-    UNUSED_PARAM(subscriptionSetIdentifier);
-#endif // PLATFORM(MAC)
+#elif PLATFORM(IOS)
+    const NSString *URLPrefix = @"webapp://web-push/";
+    NSURL *launchURL = [NSURL URLWithString:[URLPrefix stringByAppendingFormat:@"%@", (NSString *)subscriptionSetIdentifier.pushPartition]];
+
+    NSDictionary *options = @{
+        FBSOpenApplicationOptionKeyActivateForEvent: @{ FBSActivateForEventOptionTypeBackgroundContentFetching: @{ } },
+        FBSOpenApplicationOptionKeyPayloadURL : launchURL,
+        FBSOpenApplicationOptionKeyPayloadOptions : @{ UIApplicationLaunchOptionsSourceApplicationKey : @"com.apple.WebKit.webpushd" },
+    };
+
+    _LSOpenConfiguration *configuration = [[_LSOpenConfiguration alloc] init];
+    configuration.sensitive = YES;
+    configuration.frontBoardOptions = options;
+    configuration.allowURLOverrides = NO;
+
+    [[LSApplicationWorkspace defaultWorkspace] openURL:launchURL configuration:configuration completionHandler:^(NSDictionary<NSString *, id> *result, NSError *error) {
+        if (error)
+            RELEASE_LOG_ERROR(Push, "Failed to open app to handle push");
+    }];
+#endif
 }
 
 void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
@@ -734,7 +754,7 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
     if (iterator != m_testingPushMessages.end()) {
         for (auto& message : iterator->value) {
             auto data = message.message.utf8();
-            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.registrationURL });
+            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL });
         }
         m_testingPushMessages.remove(iterator);
     }

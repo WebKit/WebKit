@@ -77,7 +77,7 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
     if (!message)
         return nullptr;
 
-    PushMessageForTesting pushMessage = { appIdentifier, registrationURL, message };
+    PushMessageForTesting pushMessage = { appIdentifier, registrationString, registrationURL, message };
     return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
 }
 

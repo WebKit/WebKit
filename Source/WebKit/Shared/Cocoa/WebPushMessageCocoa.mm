@@ -32,6 +32,7 @@ namespace WebKit {
 
 #define WebKitPushDataKey @"WebKitPushData"
 #define WebKitPushRegistrationURLKey @"WebKitPushRegistrationURL"
+#define WebKitPushPartitionKey @"WebKitPushPartition"
 
 std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dictionary)
 {
@@ -46,7 +47,12 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
     if (!isNull && !isData)
         return std::nullopt;
 
-    WebPushMessage message { { }, URL { url } };
+    NSString *pushPartition = [dictionary objectForKey:WebKitPushPartitionKey];
+    if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
+        return std::nullopt;
+
+    WebPushMessage message { { }, String { pushPartition }, URL { url } };
+
     if (isData) {
         NSData *data = (NSData *)pushData;
         message.pushData = Vector<uint8_t> { static_cast<const uint8_t*>(data.bytes), data.length };
@@ -63,7 +69,8 @@ NSDictionary *WebPushMessage::toDictionary() const
 
     return @{
         WebKitPushDataKey : nsData ? nsData.get() : [NSNull null],
-        WebKitPushRegistrationURLKey : (NSURL *)registrationURL
+        WebKitPushRegistrationURLKey : (NSURL *)registrationURL,
+        WebKitPushPartitionKey : (NSString *)pushPartitionString
     };
 }
 

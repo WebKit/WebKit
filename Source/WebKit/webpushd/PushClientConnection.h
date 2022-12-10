@@ -65,7 +65,7 @@ public:
     bool hostAppHasPushEntitlement();
     bool hostAppHasPushInjectEntitlement();
 
-    String pushPartitionString() const { return m_pushPartitionString; }
+    const String& pushPartitionString() const { return m_pushPartitionString; }
     std::optional<UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
 
     bool debugModeIsEnabled() const { return m_debugModeEnabled; }

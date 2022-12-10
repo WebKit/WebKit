@@ -687,7 +687,8 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
         auto record = WTFMove(*recordResult);
 
         if (message.encoding == ContentEncoding::Empty) {
-            m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { { }, URL { record.scope } });
+            m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { { }, record.subscriptionSetIdentifier.pushPartition, URL { record.scope } });
+
             completionHandler();
             return;
         }
@@ -711,7 +712,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
 
         RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{private}s", record.subscriptionSetIdentifier.debugDescription().utf8().data(), record.scope.utf8().data());
 
-        m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), URL { record.scope } });
+        m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), record.subscriptionSetIdentifier.pushPartition, URL { record.scope } });
 
         completionHandler();
     });

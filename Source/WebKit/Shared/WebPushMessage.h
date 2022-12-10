@@ -35,6 +35,7 @@ namespace WebKit {
 
 struct WebPushMessage {
     std::optional<Vector<uint8_t>> pushData;
+    String pushPartitionString;
     URL registrationURL;
 
 #if PLATFORM(COCOA)
