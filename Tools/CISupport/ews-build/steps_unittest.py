@@ -3740,6 +3740,24 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
             rc = self.runStep()
         return rc
 
+    def test_relevant_jsc_arm64_patch(self):
+        file_names = ['JSTests/', 'Source/JavaScriptCore/', 'Source/WTF/', 'Source/bmalloc/', 'Makefile', 'Makefile.shared',
+                      'Source/Makefile', 'Source/Makefile.shared', 'Tools/Scripts/build-webkit', 'Tools/Scripts/build-jsc',
+                      'Tools/Scripts/jsc-stress-test-helpers/', 'Tools/Scripts/run-jsc', 'Tools/Scripts/run-jsc-benchmarks',
+                      'Tools/Scripts/run-jsc-stress-tests', 'Tools/Scripts/run-javascriptcore-tests', 'Tools/Scripts/run-layout-jsc',
+                      'Tools/Scripts/update-javascriptcore-test-results', 'Tools/Scripts/webkitdirs.pm',
+                      'Source/cmake/OptionsJSCOnly.cmake']
+
+        self.setupStep(CheckChangeRelevance())
+        self.setProperty('buildername', 'JSC-Tests-arm64-EWS')
+        self.assertEqual(CheckChangeRelevance.haltOnFailure, True)
+        self.assertEqual(CheckChangeRelevance.flunkOnFailure, True)
+        for file_name in file_names:
+            CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
+            self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            rc = self.runStep()
+        return rc
+
     def test_relevant_wk1_patch(self):
         file_names = ['Source/WebKitLegacy', 'Source/WebCore', 'Source/WebInspectorUI', 'Source/WebDriver', 'Source/WTF',
                       'Source/bmalloc', 'Source/JavaScriptCore', 'Source/ThirdParty', 'LayoutTests', 'Tools']
