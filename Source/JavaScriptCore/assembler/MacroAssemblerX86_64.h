@@ -2858,30 +2858,43 @@ public:
         // i32x4.trunc_sat_f32x4_u(a: v128) -> v128
     }
 
-    void vectorSignedTruncSatF64(FPRegisterID x, FPRegisterID y, FPRegisterID f62x2, FPRegisterID tmp)
+    void vectorTruncSatSignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratch1FPR, FPRegisterID scratch2FPR)
     {
-        if (supportsAVXForSIMD()) {
-            // https://github.com/WebAssembly/simd/pull/383
-            m_assembler.vcmpeqpd_rrr(x, x, tmp);
-            m_assembler.vandpd_rrr(f62x2, tmp, tmp);
-            m_assembler.vminpd_rrr(tmp, x, y);
-            m_assembler.vcvttpd2dq_rr(y, y);
-        } else
-            RELEASE_ASSERT_NOT_REACHED();
+        // https://github.com/WebAssembly/simd/pull/383
+        ASSERT(supportsAVXForSIMD());
+        alignas(16) static constexpr double masks[] = {
+            2147483647.0,
+            2147483647.0,
+        };
+        m_assembler.vcmpeqpd_rrr(src, src, scratch2FPR);
+        move(TrustedImmPtr(masks), scratchGPR);
+        loadVector(Address(scratchGPR), scratch1FPR);
+        m_assembler.vandpd_rrr(scratch1FPR, scratch2FPR, scratch2FPR);
+        m_assembler.vminpd_rrr(scratch2FPR, src, dest);
+        m_assembler.vcvttpd2dq_rr(dest, dest);
     }
 
-    void vectorUnsignedTruncSatF64(FPRegisterID x, FPRegisterID y, FPRegisterID f62x2_1, FPRegisterID f62x2_2, FPRegisterID tmp)
+    void vectorTruncSatUnsignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratch1FPR, FPRegisterID scratch2FPR)
     {
-        if (supportsAVXForSIMD()) {
-            // https://github.com/WebAssembly/simd/pull/383
-            m_assembler.vxorpd_rrr(tmp, tmp, tmp);
-            m_assembler.vmaxpd_rrr(tmp, x, y);
-            m_assembler.vminpd_rrr(f62x2_1, y, y);
-            m_assembler.vroundpd_rr(0x0B, y, y);
-            m_assembler.vaddpd_rrr(f62x2_2, y, y);
-            m_assembler.vshufps_rrr(0x88, tmp, y, y);
-        } else
-            RELEASE_ASSERT_NOT_REACHED();
+        // https://github.com/WebAssembly/simd/pull/383
+        ASSERT(supportsAVXForSIMD());
+
+        alignas(16) static constexpr double masks[] = {
+            4294967295.0,
+            4294967295.0,
+            0x1.0p+52,
+            0x1.0p+52,
+        };
+        move(TrustedImmPtr(masks), scratchGPR);
+
+        m_assembler.vxorpd_rrr(scratch1FPR, scratch1FPR, scratch1FPR);
+        m_assembler.vmaxpd_rrr(scratch1FPR, src, dest);
+        loadVector(Address(scratchGPR), scratch2FPR);
+        m_assembler.vminpd_rrr(scratch2FPR, dest, dest);
+        m_assembler.vroundpd_rr(0x0B, dest, dest);
+        loadVector(Address(scratchGPR, sizeof(double) * 2), scratch2FPR);
+        m_assembler.vaddpd_rrr(scratch2FPR, dest, dest);
+        m_assembler.vshufps_rrr(0x88, scratch1FPR, dest, dest);
     }
 
     void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
@@ -3055,24 +3068,30 @@ public:
         UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(scratch);
     }
 
-    void vectorConvertLow(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID scratch1, FPRegisterID scratch2)
+    void vectorConvertLowUnsignedInt32(FPRegisterID input, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
-        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        ASSERT(elementByteSize(simdInfo.lane) == 4);
-        
-        if (simdInfo.signMode == SIMDSignMode::Signed) {
-            if (supportsAVXForSIMD())
-                m_assembler.vcvtdq2pd_rr(input, dest);
-            else
-                m_assembler.cvtdq2pd_rr(input, dest);
-        } else {
-            if (supportsAVXForSIMD()) {
-                // https://github.com/WebAssembly/simd/pull/383
-                m_assembler.vunpcklps_rrr(scratch1, input, dest);
-                m_assembler.vsubpd_rrr(scratch2, dest, dest);
-            } else
-                RELEASE_ASSERT_NOT_REACHED();
-        }
+        // https://github.com/WebAssembly/simd/pull/383
+        ASSERT(supportsAVXForSIMD());
+        ASSERT(scratchFPR != dest);
+        constexpr uint32_t high32Bits = 0x43300000;
+        alignas(16) static constexpr double masks[] = {
+            0x1.0p+52,
+            0x1.0p+52,
+        };
+        move(TrustedImm32(high32Bits), scratchGPR);
+        vectorSplat32(scratchGPR, scratchFPR);
+        m_assembler.vunpcklps_rrr(scratchFPR, input, dest);
+        move(TrustedImmPtr(masks), scratchGPR);
+        loadVector(Address(scratchGPR), scratchFPR);
+        m_assembler.vsubpd_rrr(scratchFPR, dest, dest);
+    }
+
+    void vectorConvertLowSignedInt32(FPRegisterID input, FPRegisterID dest)
+    {
+        if (supportsAVXForSIMD())
+            m_assembler.vcvtdq2pd_rr(input, dest);
+        else
+            m_assembler.cvtdq2pd_rr(input, dest);
     }
 
     void vectorUshl(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)

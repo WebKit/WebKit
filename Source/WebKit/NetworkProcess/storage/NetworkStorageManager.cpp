@@ -596,34 +596,45 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::getAllOrigins()
     return allOrigins;
 }
 
-Vector<WebsiteData::Entry> NetworkStorageManager::fetchDataFromDisk(OptionSet<WebsiteDataType> targetTypes)
+static void updateOriginData(HashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap>& originTypes, const WebCore::SecurityOriginData& origin, const OriginStorageManager::DataTypeSizeMap& newTypeSizeMap)
+{
+    auto& typeSizeMap = originTypes.add(origin, OriginStorageManager::DataTypeSizeMap { }).iterator->value;
+    for (auto [type, size] : newTypeSizeMap) {
+        auto& currentSize = typeSizeMap.add(type, 0).iterator->value;
+        currentSize += size;
+    }
+}
+
+Vector<WebsiteData::Entry> NetworkStorageManager::fetchDataFromDisk(OptionSet<WebsiteDataType> targetTypes, ShouldComputeSize shouldComputeSize)
 {
     ASSERT(!RunLoop::isMain());
 
-    HashMap<WebCore::SecurityOriginData, OptionSet<WebsiteDataType>> originTypes;
+    HashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap> originTypes;
     for (auto& origin : getAllOrigins()) {
-        auto types = originStorageManager(origin).fetchDataTypesInList(targetTypes);
-        originTypes.add(origin.clientOrigin, OptionSet<WebsiteDataType> { }).iterator->value.add(types);
-        originTypes.add(origin.topOrigin, OptionSet<WebsiteDataType> { }).iterator->value.add(types);
+        auto typeSizeMap = originStorageManager(origin).fetchDataTypesInList(targetTypes, shouldComputeSize == ShouldComputeSize::Yes);
+        updateOriginData(originTypes, origin.clientOrigin, typeSizeMap);
+        if (origin.clientOrigin != origin.topOrigin)
+            updateOriginData(originTypes, origin.topOrigin, typeSizeMap);
+
         removeOriginStorageManagerIfPossible(origin);
     }
 
     Vector<WebsiteData::Entry> entries;
     for (auto [origin, types] : originTypes) {
-        for (auto type : types)
-            entries.append({ WebsiteData::Entry { origin, type, 0 } });
+        for (auto [type, size] : types)
+            entries.append({ WebsiteData::Entry { origin, type, size } });
     }
 
     return entries;
 }
 
-void NetworkStorageManager::fetchData(OptionSet<WebsiteDataType> types, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&& completionHandler)
+void NetworkStorageManager::fetchData(OptionSet<WebsiteDataType> types, ShouldComputeSize shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_closed);
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, types, completionHandler = WTFMove(completionHandler)]() mutable {
-        auto entries = fetchDataFromDisk(types);
+    m_queue->dispatch([this, protectedThis = Ref { *this }, types, shouldComputeSize, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto entries = fetchDataFromDisk(types, shouldComputeSize);
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), entries = crossThreadCopy(WTFMove(entries))]() mutable {
             completionHandler(WTFMove(entries));
         });
@@ -639,7 +650,7 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet
         if (!filter(origin))
             continue;
 
-        auto existingDataTypes = originStorageManager(origin).fetchDataTypesInList(types);
+        auto existingDataTypes = originStorageManager(origin).fetchDataTypesInList(types, false);
         if (!existingDataTypes.isEmpty()) {
             deletedOrigins.add(origin);
             originStorageManager(origin).deleteData(types, modifiedSinceTime);

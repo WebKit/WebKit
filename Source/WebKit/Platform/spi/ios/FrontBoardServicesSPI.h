@@ -28,12 +28,18 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <FrontBoardServices/FBSDisplay.h>
+#import <FrontBoardServices/FBSOpenApplicationService.h>
 
 #else
 
 @interface FBSDisplayConfiguration : NSObject
 @property (nonatomic, copy, readonly) NSString *name;
 @end
+
+extern NSString *const FBSOpenApplicationOptionKeyActivateForEvent;
+extern NSString *const FBSActivateForEventOptionTypeBackgroundContentFetching;
+extern NSString *const FBSOpenApplicationOptionKeyPayloadURL;
+extern NSString *const FBSOpenApplicationOptionKeyPayloadOptions;
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

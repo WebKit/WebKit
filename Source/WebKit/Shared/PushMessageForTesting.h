@@ -35,6 +35,7 @@ struct PushMessageForTesting {
     template<class Decoder> static std::optional<PushMessageForTesting> decode(Decoder&);
 
     String targetAppCodeSigningIdentifier;
+    String pushPartitionString;
     URL registrationURL;
     String message;
 };
@@ -42,7 +43,7 @@ struct PushMessageForTesting {
 template<class Encoder>
 void PushMessageForTesting::encode(Encoder& encoder) const
 {
-    encoder << targetAppCodeSigningIdentifier << registrationURL << message;
+    encoder << targetAppCodeSigningIdentifier << pushPartitionString << registrationURL << message;
 }
 
 template<class Decoder>
@@ -51,6 +52,11 @@ std::optional<PushMessageForTesting> PushMessageForTesting::decode(Decoder& deco
     std::optional<String> targetAppCodeSigningIdentifier;
     decoder >> targetAppCodeSigningIdentifier;
     if (!targetAppCodeSigningIdentifier)
+        return std::nullopt;
+
+    std::optional<String> pushPartitionString;
+    decoder >> pushPartitionString;
+    if (!pushPartitionString)
         return std::nullopt;
 
     std::optional<URL> registrationURL;
@@ -65,6 +71,7 @@ std::optional<PushMessageForTesting> PushMessageForTesting::decode(Decoder& deco
 
     return { {
         WTFMove(*targetAppCodeSigningIdentifier),
+        WTFMove(*pushPartitionString),
         WTFMove(*registrationURL),
         WTFMove(*message),
     } };

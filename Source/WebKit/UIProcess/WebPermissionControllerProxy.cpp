@@ -54,7 +54,7 @@ WebPermissionControllerProxy::~WebPermissionControllerProxy()
 
 void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
-    RefPtr webPageProxy = identifier ? m_process.webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
+    auto webPageProxy = identifier ? m_process.webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
 
     if (!webPageProxy) {
         completionHandler(WebCore::PermissionState::Prompt);
@@ -64,23 +64,25 @@ void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrig
     webPageProxy->queryPermission(clientOrigin, descriptor, WTFMove(completionHandler));
 }
 
-WebPageProxy* WebPermissionControllerProxy::mostReasonableWebPageProxy(const WebCore::SecurityOriginData& topOrigin, WebCore::PermissionQuerySource source) const
+RefPtr<WebPageProxy> WebPermissionControllerProxy::mostReasonableWebPageProxy(const WebCore::SecurityOriginData& topOrigin, WebCore::PermissionQuerySource source) const
 {
     ASSERT(source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker);
     
-    WebPageProxy* webPageProxy = nullptr;
+    RefPtr<WebPageProxy> webPageProxy;
     auto findWebPageProxy = [&topOrigin, &webPageProxy] (auto* processes) {
         if (!processes)
             return; 
 
         for (auto& process : *processes) {
-            for (auto* potentialWebPageProxy : getPtr(process)->pages()) {
+            for (auto& potentialWebPageProxy : getPtr(process)->pages()) {
+                if (!potentialWebPageProxy)
+                    continue;
                 if (WebCore::SecurityOriginData::fromURL(URL { potentialWebPageProxy->currentURL() }) != topOrigin)
                     continue;
                 // The most reasonable webPageProxy is the newest one (the one with the greatest identifier).
                 if (webPageProxy && webPageProxy->identifier() > potentialWebPageProxy->identifier())
                     continue;
-                webPageProxy = potentialWebPageProxy;
+                webPageProxy = WTFMove(potentialWebPageProxy);
             }
         }
     };

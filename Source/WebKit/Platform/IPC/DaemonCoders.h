@@ -31,6 +31,7 @@
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
+#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -125,6 +126,7 @@ DECLARE_CODER(WebCore::SecurityOriginData);
 DECLARE_CODER(WebKit::WebPushMessage);
 DECLARE_CODER(WebPushD::WebPushDaemonConnectionConfiguration);
 DECLARE_CODER(WTF::WallTime);
+DECLARE_CODER(WTF::UUID);
 
 #undef DECLARE_CODER
 

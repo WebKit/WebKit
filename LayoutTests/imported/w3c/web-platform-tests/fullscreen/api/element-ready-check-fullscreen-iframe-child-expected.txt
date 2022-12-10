@@ -1,0 +1,3 @@
+
+PASS Element ready check for child of a fullscreen iframe
+

@@ -1,5 +1,0 @@
-
-FAIL Element#requestFullscreen() on the current fullscreen element assert_equals: fullscreen element after first request expected Element node <body><div id="log"></div>
-<script>
-promise_test(async (t... but got null
-

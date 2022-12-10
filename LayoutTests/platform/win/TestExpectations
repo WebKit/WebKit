@@ -5224,3 +5224,8 @@ fast/css/aspect-ratio-min-height-replaced.html [ ImageOnlyFailure ]
 
 # navigator.userActivation is not implemented on Windows.
 fast/frames/consume_transient_activation.html [ Skip ]
+
+# OffscreenCanvas isn't enabled on win by default
+fast/canvas/offscreen-enabled.html [ Skip ]
+http/wpt/offscreen-canvas [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen [ Skip ]

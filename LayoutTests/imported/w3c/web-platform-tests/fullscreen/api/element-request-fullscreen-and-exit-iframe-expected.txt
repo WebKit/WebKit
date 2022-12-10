@@ -1,0 +1,4 @@
+
+PASS Checks that the fullscreenchange events fire in right order when entering fullscreen
+PASS Checks that the fullscreenchange events fire in right order when exiting fullscreen
+

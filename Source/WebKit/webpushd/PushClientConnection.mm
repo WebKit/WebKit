@@ -57,6 +57,8 @@ void ClientConnection::updateConnectionConfiguration(const WebPushDaemonConnecti
     if (configuration.hostAppAuditTokenData)
         setHostAppAuditTokenData(*configuration.hostAppAuditTokenData);
 
+    m_pushPartitionString = configuration.pushPartitionString;
+    m_dataStoreIdentifier = configuration.dataStoreIdentifier;
     m_useMockBundlesForTesting = configuration.useMockBundlesForTesting;
 }
 
@@ -79,6 +81,15 @@ void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData
 
     m_hostAppAuditToken = WTFMove(token);
     Daemon::singleton().broadcastAllConnectionIdentities();
+}
+
+WebCore::PushSubscriptionSetIdentifier ClientConnection::subscriptionSetIdentifier()
+{
+    return {
+        hostAppCodeSigningIdentifier(),
+        pushPartitionString(),
+        dataStoreIdentifier()
+    };
 }
 
 const String& ClientConnection::hostAppCodeSigningIdentifier()

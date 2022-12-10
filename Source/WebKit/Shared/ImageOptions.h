@@ -30,6 +30,8 @@ namespace WebKit {
 
 enum ImageOptions {
     ImageOptionsShareable = 1 << 0,
+    // Makes local in process buffer
+    ImageOptionsLocal = 1 << 1,
 };
 
 enum {

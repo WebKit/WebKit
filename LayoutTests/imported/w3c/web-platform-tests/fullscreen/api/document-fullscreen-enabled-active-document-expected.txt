@@ -1,3 +1,5 @@
 
-PASS Document#fullscreenEnabled when the document is not the active document
+PASS
+    Document#fullscreenEnabled when the document is not the active document
+
 

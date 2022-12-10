@@ -13,7 +13,7 @@ PASS Serialize should make the ImageBitmap detached, so it cannot be transferred
 FAIL Serialize should throw before a detached ImageBitmap is found assert_throws_exactly: function "() => self.postMessage({ get whatever() { throw customError } }, "*", [transferable])" threw object "DataCloneError: The object can not be cloned." but we expected it to throw object "Error: hi"
 FAIL Cannot transfer ImageBitmap detached while the message was serialized assert_throws_dom: function "() => self.postMessage(message, "*", [transferable])" did not throw
 PASS Cannot transfer the same OffscreenCanvas twice
-FAIL Serialize should make the OffscreenCanvas detached, so it cannot be transferred again promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Serialize should throw before a detached OffscreenCanvas is found promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Cannot transfer OffscreenCanvas detached while the message was serialized assert_true: expected true got false
+FAIL Serialize should make the OffscreenCanvas detached, so it cannot be transferred again assert_throws_dom: function "() => self.postMessage(null, "*", [transferable])" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException DataCloneError: property "code" is equal to 11, expected 25
+FAIL Serialize should throw before a detached OffscreenCanvas is found assert_throws_exactly: function "() => self.postMessage({ get whatever() { throw customError } }, "*", [transferable])" threw object "InvalidStateError: The object is in an invalid state." but we expected it to throw object "Error: hi"
+FAIL Cannot transfer OffscreenCanvas detached while the message was serialized assert_throws_dom: function "() => self.postMessage(message, "*", [transferable])" did not throw
 

@@ -70,7 +70,7 @@ public:
     IDBStorageManager* existingIDBStorageManager() { return m_idbStorageManager.get(); }
     bool isActive() const;
     bool isEmpty();
-    OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
+    DataTypeSizeMap fetchDataTypesInList(OptionSet<WebsiteDataType>, bool shouldComputeSize);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
     void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
     void deleteEmptyDirectory();
@@ -80,7 +80,7 @@ public:
 
 private:
     OptionSet<WebsiteDataType> fetchDataTypesInListFromMemory(OptionSet<WebsiteDataType>);
-    OptionSet<WebsiteDataType> fetchDataTypesInListFromDisk(OptionSet<WebsiteDataType>);
+    DataTypeSizeMap fetchDataTypesInListFromDisk(OptionSet<WebsiteDataType>, bool shouldComputeSize);
     void deleteFileSystemStorageData(WallTime);
     void deleteLocalStorageData(WallTime);
     void deleteSessionStorageData();
@@ -228,10 +228,12 @@ bool OriginStorageManager::StorageBucket::isEmpty()
     return !FileSystem::fileExists(resolvedLocalStoragePath()) && idbStorageFiles.isEmpty();
 }
 
-OptionSet<WebsiteDataType> OriginStorageManager::StorageBucket::fetchDataTypesInList(OptionSet<WebsiteDataType> types)
+OriginStorageManager::DataTypeSizeMap OriginStorageManager::StorageBucket::fetchDataTypesInList(OptionSet<WebsiteDataType> types, bool shouldComputeSize)
 {
-    auto result = fetchDataTypesInListFromMemory(types);
-    result.add(fetchDataTypesInListFromDisk(types));
+    auto result = fetchDataTypesInListFromDisk(types, shouldComputeSize);
+    auto memoryResult = fetchDataTypesInListFromMemory(types);
+    for (auto type : memoryResult)
+        result.add(type, 0);
 
     return result;
 }
@@ -257,23 +259,37 @@ OptionSet<WebsiteDataType> OriginStorageManager::StorageBucket::fetchDataTypesIn
     return result;
 }
 
-OptionSet<WebsiteDataType> OriginStorageManager::StorageBucket::fetchDataTypesInListFromDisk(OptionSet<WebsiteDataType> types)
+OriginStorageManager::DataTypeSizeMap OriginStorageManager::StorageBucket::fetchDataTypesInListFromDisk(OptionSet<WebsiteDataType> types, bool shouldComputeSize)
 {
-    OptionSet<WebsiteDataType> result;
+    DataTypeSizeMap result;
     if (types.contains(WebsiteDataType::FileSystem)) {
         auto fileSystemStoragePath = typeStoragePath(StorageType::FileSystem);
-        if (auto files = FileSystem::listDirectory(fileSystemStoragePath); !files.isEmpty())
-            result.add(WebsiteDataType::FileSystem);
+        if (auto files = FileSystem::listDirectory(fileSystemStoragePath); !files.isEmpty()) {
+            uint64_t size = 0;
+            if (shouldComputeSize)
+                size = valueOrDefault(FileSystem::directorySize(fileSystemStoragePath));
+            result.add(WebsiteDataType::FileSystem, size);
+        }
     }
 
     if (types.contains(WebsiteDataType::LocalStorage)) {
-        if (FileSystem::fileExists(resolvedLocalStoragePath()))
-            result.add(WebsiteDataType::LocalStorage);
+        auto localStoragePath = resolvedLocalStoragePath();
+        if (FileSystem::fileExists(localStoragePath)) {
+            uint64_t size = 0;
+            if (shouldComputeSize)
+                size = WebCore::SQLiteFileSystem::databaseFileSize(localStoragePath);
+            result.add(WebsiteDataType::LocalStorage, size);
+        }
     }
 
     if (types.contains(WebsiteDataType::IndexedDBDatabases)) {
-        if (auto databases = FileSystem::listDirectory(resolvedIDBStoragePath()); !databases.isEmpty())
-            result.add(WebsiteDataType::IndexedDBDatabases);
+        auto idbStoragePath = resolvedIDBStoragePath();
+        if (auto databases = FileSystem::listDirectory(idbStoragePath); !databases.isEmpty()) {
+            uint64_t size = 0;
+            if (shouldComputeSize)
+                size = valueOrDefault(FileSystem::directorySize(idbStoragePath));
+            result.add(WebsiteDataType::IndexedDBDatabases, size);
+        }
     }
 
     return result;
@@ -565,11 +581,11 @@ void OriginStorageManager::setPersisted(bool value)
     defaultBucket().setMode(value ? StorageBucketMode::Persistent : StorageBucketMode::BestEffort);
 }
 
-OptionSet<WebsiteDataType> OriginStorageManager::fetchDataTypesInList(OptionSet<WebsiteDataType> types)
+OriginStorageManager::DataTypeSizeMap OriginStorageManager::fetchDataTypesInList(OptionSet<WebsiteDataType> types, bool shouldComputeSize)
 {
     ASSERT(!RunLoop::isMain());
 
-    return defaultBucket().fetchDataTypesInList(types);
+    return defaultBucket().fetchDataTypesInList(types, shouldComputeSize);
 }
 
 void OriginStorageManager::deleteData(OptionSet<WebsiteDataType> types, WallTime modifiedSince)

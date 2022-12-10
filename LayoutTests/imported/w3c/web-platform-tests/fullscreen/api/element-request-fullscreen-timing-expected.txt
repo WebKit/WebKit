@@ -1,0 +1,4 @@
+
+PASS Timing of fullscreenchange and resize events
+PASS Timing of fullscreenerror event
+

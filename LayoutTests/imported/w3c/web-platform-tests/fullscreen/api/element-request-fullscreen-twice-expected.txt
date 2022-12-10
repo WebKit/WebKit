@@ -1,0 +1,3 @@
+
+PASS requestFullscreen() multiple times after going fullscreen
+

@@ -22,6 +22,7 @@
 
 #include <array>
 #include <wtf/ASCIICType.h>
+#include <wtf/FastFloat.h>
 #include <wtf/dtoa/double-conversion.h>
 #include <wtf/text/StringView.h>
 
@@ -46,17 +47,11 @@ WTF_EXPORT_PRIVATE const char* numberToFixedWidthString(double, unsigned decimal
 // Fixed width with up to 6 decimal places, trailing zeros truncated.
 WTF_EXPORT_PRIVATE const char* numberToCSSString(double, NumberToCSSStringBuffer&);
 
-double parseDouble(const LChar* string, size_t length, size_t& parsedLength);
 double parseDouble(const UChar* string, size_t length, size_t& parsedLength);
 double parseDouble(StringView, size_t& parsedLength);
 
 namespace Internal {
     WTF_EXPORT_PRIVATE double parseDoubleFromLongString(const UChar* string, size_t length, size_t& parsedLength);
-}
-
-inline double parseDouble(const LChar* string, size_t length, size_t& parsedLength)
-{
-    return double_conversion::StringToDoubleConverter::StringToDouble(reinterpret_cast<const char*>(string), length, &parsedLength);
 }
 
 inline double parseDouble(const UChar* string, size_t length, size_t& parsedLength)

@@ -45,6 +45,7 @@
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParsing.h"
+#include "CSSTokenizer.h"
 #include "CSSVariableParser.h"
 #include "CSSVariableReferenceValue.h"
 #include "Counter.h"
@@ -354,6 +355,22 @@ RefPtr<CSSValue> CSSPropertyParser::parseCustomPropertyValueWithSyntaxDefinition
                     m_range = rangeCopy;
                 }
                 break;
+            case CSSPropertySyntax::DataType::Percentage:
+                if (auto value = consumePercent(m_range, ValueRange::All))
+                    return value;
+                break;
+            case CSSPropertySyntax::DataType::Integer:
+                if (auto value = consumeInteger(m_range))
+                    return value;
+                break;
+            case CSSPropertySyntax::DataType::Number:
+                if (auto value = consumeNumber(m_range, ValueRange::All))
+                    return value;
+                break;
+            case CSSPropertySyntax::DataType::Angle:
+                if (auto value = consumeAngle(m_range, m_context.mode))
+                    return value;
+                break;
             case CSSPropertySyntax::DataType::Unknown:
                 break;
             }
@@ -411,19 +428,30 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         return propertyValue;
     }
 
-    auto originalRange = m_range;
-
     auto value = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
     if (!value)
         return nullptr;
 
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
-    if (primitiveValue && primitiveValue->isLength()) {
-        auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
-        return CSSCustomPropertyValue::createSyntaxLength(name, WTFMove(length));
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
+        if (primitiveValue->isLength()) {
+            auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
+            return CSSCustomPropertyValue::createForLengthSyntax(name, WTFMove(length));
+        }
+        if (primitiveValue->isInteger())
+            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->intValue(), CSSUnitType::CSS_INTEGER);
+        if (primitiveValue->isNumber())
+            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_NUMBER);
+        if (primitiveValue->isAngle())
+            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->computeDegrees(), CSSUnitType::CSS_DEG);
+        if (primitiveValue->isPercentage())
+            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_PERCENTAGE);
     }
+
+    auto tokenizer = CSSTokenizer::tryCreate(value->cssText());
+    if (!tokenizer)
+        return nullptr;
     // FIXME: Handle other types that need resolving.
-    return CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(originalRange));
+    return CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(tokenizer->tokenRange()));
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system

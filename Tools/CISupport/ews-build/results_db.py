@@ -97,7 +97,7 @@ class ResultsDatabase(object):
                 data = yield finished
                 defer.returnValue(json.loads(data))
             else:
-                logger(f'Failed to query results summary with status code {response.status_code}\n')
+                logger(f'Failed to query results summary with status code {response.code}\n')
                 defer.returnValue({})
         except error.ConnectError as e:
             logger(f'Failed to connect to {cls.HOSTNAME}: {e}\n')

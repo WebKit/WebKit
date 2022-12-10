@@ -1,4 +1,6 @@
 
-FAIL SVC L1T2 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL SVC L1T3 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+Harness Error (FAIL), message = Error in remote https://localhost:9443/resources/testharness.js: Error: assert_own_property: expected property "svc" missing
+
+FAIL SVC L1T2 assert_equals: expected 12 but got 0
+FAIL SVC L1T3 assert_equals: expected 6 but got 0
 

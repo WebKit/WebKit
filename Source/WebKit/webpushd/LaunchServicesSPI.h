@@ -61,6 +61,17 @@ typedef NS_OPTIONS(uint64_t, LSApplicationEnumerationOptions) {
 + (LSEnumerator<LSApplicationRecord *> *)enumeratorWithOptions:(LSApplicationEnumerationOptions)options;
 @end
 
+@interface _LSOpenConfiguration : NSObject <NSCopying, NSSecureCoding>
+@property (readwrite) BOOL sensitive;
+@property (readwrite) BOOL allowURLOverrides;
+@property (readwrite, copy, nullable) NSDictionary<NSString *, id> *frontBoardOptions;
+@end
+
+@interface LSApplicationWorkspace : NSObject
++ (LSApplicationWorkspace *)defaultWorkspace;
+- (void)openURL:(NSURL *)url configuration:(_LSOpenConfiguration *)configuration completionHandler:(void (^)(NSDictionary<NSString *, id> *result, NSError *error))completionHandler;
+@end
+
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

@@ -56,6 +56,8 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
         return value.get() == std::get<Ref<CSSVariableData>>(other.m_value).get();
     }, [&](const Length& value) {
         return value == std::get<Length>(other.m_value);
+    }, [&](const NumericSyntaxValue& value) {
+        return value == std::get<NumericSyntaxValue>(other.m_value);
     });
 }
 
@@ -72,6 +74,8 @@ String CSSCustomPropertyValue::customCSSText() const
             m_stringValue = value->tokenRange().serialize();
         }, [&](const Length& value) {
             m_stringValue = CSSPrimitiveValue::create(value.value(), CSSUnitType::CSS_PX)->cssText();
+        }, [&](const NumericSyntaxValue& value) {
+            m_stringValue = CSSPrimitiveValue::create(value.value, value.unitType)->cssText();
         });
     }
     return m_stringValue;

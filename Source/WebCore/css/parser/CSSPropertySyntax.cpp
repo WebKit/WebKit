@@ -62,6 +62,14 @@ auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer
             return Component { DataType::LengthPercentage, multiplier };
         if (dataTypeName == "custom-ident"_s)
             return Component { DataType::CustomIdent, multiplier };
+        if (dataTypeName == "percentage"_s)
+            return Component { DataType::Percentage, multiplier };
+        if (dataTypeName == "integer"_s)
+            return Component { DataType::Integer, multiplier };
+        if (dataTypeName == "number"_s)
+            return Component { DataType::Number, multiplier };
+        if (dataTypeName == "angle"_s)
+            return Component { DataType::Angle, multiplier };
 
         return Component { DataType::Unknown, multiplier };
     }

@@ -1,0 +1,4 @@
+
+FAIL Timing of fullscreenchange and resize events promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Timing of fullscreenerror event
+

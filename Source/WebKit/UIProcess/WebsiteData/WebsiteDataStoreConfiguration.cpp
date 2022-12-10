@@ -165,6 +165,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_allowsHSTSWithUntrustedRootCertificate = this->m_allowsHSTSWithUntrustedRootCertificate;
     copy->m_pcmMachServiceName = this->m_pcmMachServiceName;
     copy->m_webPushMachServiceName = this->m_webPushMachServiceName;
+    copy->m_webPushPartitionString = this->m_webPushPartitionString;
     copy->m_trackingPreventionDebugModeEnabled = this->m_trackingPreventionDebugModeEnabled;
     copy->m_identifier = m_identifier;
 #if PLATFORM(COCOA)
@@ -183,7 +184,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 
 WebPushD::WebPushDaemonConnectionConfiguration WebsiteDataStoreConfiguration::webPushDaemonConnectionConfiguration() const
 {
-    return { m_webPushDaemonUsesMockBundlesForTesting, { } };
+    return { m_webPushDaemonUsesMockBundlesForTesting, { }, m_webPushPartitionString, m_identifier };
 }
 
 } // namespace WebKit

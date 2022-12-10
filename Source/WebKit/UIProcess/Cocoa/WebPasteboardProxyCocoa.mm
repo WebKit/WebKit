@@ -104,7 +104,9 @@ std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::acce
     auto* process = webProcessProxyForConnection(connection);
     MESSAGE_CHECK_WITH_RETURN_VALUE(process, std::nullopt);
 
-    for (auto* page : process->pages()) {
+    for (auto& page : process->pages()) {
+        if (!page)
+            continue;
         auto& preferences = page->preferences();
         if (!preferences.domPasteAllowed() || !preferences.javaScriptCanAccessClipboard())
             continue;
@@ -636,8 +638,8 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
         return DataOwnerType::Undefined;
 
     std::optional<DataOwnerType> result;
-    for (auto* page : process->pages()) {
-        if (page->webPageID() == *pageID) {
+    for (auto& page : process->pages()) {
+        if (page && page->webPageID() == *pageID) {
             result = page->dataOwnerForPasteboard(intent);
             break;
         }

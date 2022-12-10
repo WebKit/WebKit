@@ -1,3 +1,3 @@
 
-PASS 2d
+FAIL 2d assert_equals: Green channel of the pixel at (98, 25) expected 255 but got 254
 

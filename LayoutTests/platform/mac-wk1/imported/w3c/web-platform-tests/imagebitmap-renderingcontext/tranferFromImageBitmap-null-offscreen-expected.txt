@@ -1,3 +1,0 @@
-
-FAIL Test that transferFromImageBitmap(null) discards the previously transferred image promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-

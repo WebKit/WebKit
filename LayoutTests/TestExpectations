@@ -609,10 +609,6 @@ imported/w3c/web-platform-tests/feature-policy/policy-extends-to-sandbox.html [ 
 imported/w3c/web-platform-tests/feature-policy/reporting/fullscreen-reporting.html [ Skip ]
 imported/w3c/web-platform-tests/feature-policy/reporting/geolocation-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/feature-policy/reporting/screen-wake-lock-reporting.https.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/api/fullscreen-display-contents.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/crashtests/content-visibility-crash.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-iframe.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object.html [ Skip ]
 imported/w3c/web-platform-tests/geolocation-API/non-secure-contexts.http.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html [ Skip ]
@@ -821,7 +817,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/layers/layers-several
 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-animation-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-transition-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-hidden-attribute.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-object.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html [ Pass Failure ]
 
 # Cross-Origin-Embedder-Policy: credentialless is not supported.
@@ -1246,10 +1241,9 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.h
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Skip ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Skip ]
 
-# OffscreenCanvas is only enabled on GTK and WPE by default
-webkit.org/b/203146 fast/canvas/offscreen-enabled.html [ Skip ]
-webkit.org/b/203146 http/wpt/offscreen-canvas [ Skip ]
-webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Skip ]
+http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure Pass ]
 
 # Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
 media/video-supports-fullscreen.html [ Skip ]
@@ -6025,10 +6019,18 @@ imported/w3c/web-platform-tests/fetch/sec-metadata/redirect/same-origin-redirect
 imported/w3c/web-platform-tests/fetch/sec-metadata/track.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata/window-open.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-nested-shadow-dom.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-cross-origin.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-removing-allowfullscreen.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-setting-allowfullscreen-timing.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-setting-allowfullscreen.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-svg-rect.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/model/move-to-inactive-document.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/model/move-to-fullscreen-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/model/move-to-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/model/remove-last.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-size.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/rendering/ua-style-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/api/element-ready-check-not-allowed-cross-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-and-move-to-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-cross-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/geolocation-API/non-fully-active.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/pushstate.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-claim.https.html [ Skip ]
@@ -6158,6 +6160,8 @@ imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Ski
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
 fast/text/text-edge-no-half-leading-with-line-height-simple.html [ Skip ]
+
+webkit.org/b/249010 [ Debug ] fast/text/line-clamp-truncation-assert.html [ Skip ]
 
 # CSS Nesting
 imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html [ ImageOnlyFailure ]

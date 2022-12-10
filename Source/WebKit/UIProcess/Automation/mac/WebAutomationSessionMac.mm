@@ -49,7 +49,7 @@ using namespace WebCore;
 
 void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<bool>&& enableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
 {
-    WebPageProxy* page = webPageProxyForHandle(handle);
+    auto page = webPageProxyForHandle(handle);
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 

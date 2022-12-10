@@ -34,18 +34,19 @@
 
 namespace WebCore {
 
-// FIXME: Add proper support.
 // https://fullscreen.spec.whatwg.org/#exit-fullscreen
-void DocumentFullscreen::exitFullscreen(Document& document, Ref<DeferredPromise>&& promise)
+void DocumentFullscreen::exitFullscreen(Document& document, RefPtr<DeferredPromise>&& promise)
 {
     if (!document.isFullyActive() || !document.fullscreenManager().fullscreenElement()) {
         promise->reject(Exception { TypeError, "Not in fullscreen"_s });
         return;
     }
-    document.fullscreenManager().exitFullscreen();
-    document.eventLoop().queueTask(TaskSource::MediaElement, [promise = WTFMove(promise)] {
-        promise->resolve();
-    });
+    document.fullscreenManager().exitFullscreen(WTFMove(promise));
+}
+
+void DocumentFullscreen::webkitExitFullscreen(Document& document)
+{
+    document.fullscreenManager().exitFullscreen(nullptr);
 }
 
 // https://fullscreen.spec.whatwg.org/#dom-document-fullscreenenabled

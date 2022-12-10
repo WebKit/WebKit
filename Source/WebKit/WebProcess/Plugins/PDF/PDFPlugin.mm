@@ -1966,7 +1966,6 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
 
     context->scale(FloatSize(contentsScaleFactor, -contentsScaleFactor));
     context->translate(-m_scrollOffset.width(), -m_pdfDocumentSize.height() + m_scrollOffset.height());
-
     [m_pdfLayerController snapshotInContext:context->platformContext()];
 
     return bitmap;

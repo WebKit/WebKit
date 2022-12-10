@@ -578,48 +578,35 @@ public:
 
         result = tmpForType(Types::V128);
 
-        if (isX86() && airOp == B3::Air::VectorExtaddPairwise) {
-            if (info.lane == SIMDLane::i16x8 && info.signMode == SIMDSignMode::Unsigned)
-                append(VectorExtaddPairwiseUnsignedInt16, v, result, tmpForType(Types::V128), tmpForType(Types::V128));
-            else
-                append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128));
-            return { };
-        }
+        if (isX86()) {
+            if (airOp == B3::Air::VectorExtaddPairwise) {
+                if (info.lane == SIMDLane::i16x8 && info.signMode == SIMDSignMode::Unsigned)
+                    append(VectorExtaddPairwiseUnsignedInt16, v, result, tmpForType(Types::V128), tmpForType(Types::V128));
+                else
+                    append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128));
+                return { };
+            }
 
-        if (isX86() && airOp == B3::Air::VectorConvert && info.signMode == SIMDSignMode::Unsigned) {
-            append(VectorConvertUnsigned, v, result, tmpForType(Types::V128));
-            return { };
-        }
 
-        if (isX86() && airOp == B3::Air::VectorConvertLow) {
-            // https://github.com/WebAssembly/simd/pull/383
-            auto scratch1 = tmpForType(Types::V128);
-            uint64_t mask = bitwise_cast<uint64_t>(0x1.0p+52);
-            // Note: 0x43300000 is the high 32 bits of 0x1.0p+52.
-            uint64_t high32Bits = 0x43300000;
-            append(VectorSplat32, addConstant(Types::I32, high32Bits), scratch1);
-            auto scratch2 = tmpForType(Types::V128);
-            append(VectorSplatFloat64, addConstant(Types::F64, mask), scratch2);
-            append(airOp, Arg::simdInfo(info), v, result, scratch1, scratch2);
-            return { };
-        }
+            if (airOp == B3::Air::VectorConvert && info.signMode == SIMDSignMode::Unsigned) {
+                append(VectorConvertUnsigned, v, result, tmpForType(Types::V128));
+                return { };
+            }
 
-        if (isX86() && airOp == B3::Air::VectorTruncSat) {
-            if (info.lane == SIMDLane::f64x2) {
-                // https://github.com/WebAssembly/simd/pull/383
-                if (info.signMode == SIMDSignMode::Signed) {
-                    auto tmp = tmpForType(Types::V128);
-                    uint64_t mask = bitwise_cast<uint64_t>(2147483647.0);
-                    append(VectorSplatFloat64, addConstant(Types::F64, mask), tmp);
-                    append(VectorSignedTruncSatF64, v, result, tmp, tmpForType(Types::V128));
-                } else {
-                    auto tmp1 = tmpForType(Types::V128);
-                    uint64_t mask1 = bitwise_cast<uint64_t>(4294967295.0);
-                    append(VectorSplatFloat64, addConstant(Types::F64, mask1), tmp1);
-                    auto tmp2 = tmpForType(Types::V128);
-                    uint64_t mask2 = bitwise_cast<uint64_t>(0x1.0p+52);
-                    append(VectorSplatFloat64, addConstant(Types::F64, mask2), tmp2);
-                    append(VectorUnsignedTruncSatF64, v, result, tmp1, tmp2, tmpForType(Types::V128));
+            if (airOp == B3::Air::VectorConvertLow) {
+                if (info.signMode == SIMDSignMode::Signed)
+                    append(VectorConvertLowSignedInt32, v, result);
+                else
+                    append(VectorConvertLowUnsignedInt32, v, result, tmpForType(Types::I64), tmpForType(Types::V128));
+                return { };
+            }
+
+            if (airOp == B3::Air::VectorTruncSat) {
+                if (info.lane == SIMDLane::f64x2) {
+                    if (info.signMode == SIMDSignMode::Signed)
+                        append(VectorTruncSatSignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128), tmpForType(Types::V128));
+                    else
+                        append(VectorTruncSatUnsignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128), tmpForType(Types::V128));
                 }
                 return { };
             }

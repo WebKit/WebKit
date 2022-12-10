@@ -30,17 +30,18 @@
 #include "FrameInfoData.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
+#include <utility>
 
 namespace API {
 
-Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData, WebKit::WebPageProxy* page)
+Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData, RefPtr<WebKit::WebPageProxy>&& page)
 {
-    return adoptRef(*new FrameInfo(WTFMove(frameInfoData), page));
+    return adoptRef(*new FrameInfo(WTFMove(frameInfoData), std::forward<RefPtr<WebKit::WebPageProxy>&&>(page)));
 }
 
-FrameInfo::FrameInfo(WebKit::FrameInfoData&& data, WebKit::WebPageProxy* page)
+FrameInfo::FrameInfo(WebKit::FrameInfoData&& data, RefPtr<WebKit::WebPageProxy>&& page)
     : m_data(WTFMove(data))
-    , m_page(page) { }
+    , m_page(WTFMove(page)) { }
 
 FrameInfo::~FrameInfo() = default;
 

@@ -1,6 +1,3 @@
-Blocked access to external URL http://www1.localhost:8800/fullscreen/api/resources/echo-fullscreenEnabled.html?pipe=trickle(d1)
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Document#fullscreenEnabled setting allowfullscreen after document creation, before response Test timed out
+FAIL Document#fullscreenEnabled setting allowfullscreen after document creation, before response assert_false: document.fullscreenEnabled in the iframe expected false got true
 

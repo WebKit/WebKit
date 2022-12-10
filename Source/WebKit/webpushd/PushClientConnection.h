@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include <optional>
+#include <WebCore/PushSubscriptionIdentifier.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #include <wtf/text/WTFString.h>
@@ -58,9 +59,14 @@ public:
 
     bool hasHostAppAuditToken() const { return !!m_hostAppAuditToken; }
 
+    WebCore::PushSubscriptionSetIdentifier subscriptionSetIdentifier();
+
     const String& hostAppCodeSigningIdentifier();
     bool hostAppHasPushEntitlement();
     bool hostAppHasPushInjectEntitlement();
+
+    const String& pushPartitionString() const { return m_pushPartitionString; }
+    std::optional<UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
 
     bool debugModeIsEnabled() const { return m_debugModeEnabled; }
     void setDebugModeIsEnabled(bool);
@@ -91,6 +97,9 @@ private:
     std::optional<audit_token_t> m_hostAppAuditToken;
     std::optional<String> m_hostAppCodeSigningIdentifier;
     std::optional<bool> m_hostAppHasPushEntitlement;
+
+    String m_pushPartitionString;
+    std::optional<UUID> m_dataStoreIdentifier;
 
     Deque<std::unique_ptr<AppBundleRequest>> m_pendingBundleRequests;
     std::unique_ptr<AppBundleRequest> m_currentBundleRequest;

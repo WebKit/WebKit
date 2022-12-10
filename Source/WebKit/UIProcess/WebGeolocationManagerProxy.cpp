@@ -134,8 +134,8 @@ void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection, cons
 
 void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain, WebPageProxyIdentifier pageProxyID, const String& authorizationToken, bool enableHighAccuracy)
 {
-    auto* page = WebProcessProxy::webPage(pageProxyID);
-    MESSAGE_CHECK(proxy.connection(), page);
+    auto page = WebProcessProxy::webPage(pageProxyID);
+    MESSAGE_CHECK(proxy.connection(), !!page);
 
     auto isValidAuthorizationToken = page->geolocationPermissionRequestManager().isValidAuthorizationToken(authorizationToken);
     MESSAGE_CHECK(proxy.connection(), isValidAuthorizationToken);

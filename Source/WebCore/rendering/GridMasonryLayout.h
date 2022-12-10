@@ -41,6 +41,7 @@ public:
     void performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
     LayoutUnit offsetForChild(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
+
 private:
     GridSpan gridAxisPositionUsingPackAutoFlow(const RenderBox& item) const;
     GridSpan gridAxisPositionUsingNextAutoFlow(const RenderBox& item);
@@ -48,10 +49,10 @@ private:
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void collectMasonryItems();
-    void addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>& firstTrackItems); 
+    void addItemsToFirstTrack(); 
     void placeItemsUsingOrderModifiedDocumentOrder(); 
-    void placeItemsWithDefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithDefinitePosition);
-    void placeItemsWithIndefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithIndefinitePosition);
+    void placeItemsWithDefiniteGridAxisPosition();
+    void placeItemsWithIndefiniteGridAxisPosition();
     void setItemGridAxisContainingBlockToGridArea(RenderBox&);
     void insertIntoGridAndLayoutItem(RenderBox&, const GridArea&);
 
@@ -85,8 +86,12 @@ private:
 
     GridTrackSizingDirection m_masonryAxisDirection;
     const GridSpan m_masonryAxisSpan = GridSpan::masonryAxisTranslatedDefiniteGridSpan();
+
+    // These values are based on best estimate. They may need to be updated based
+    // on common behavior seen on websites.
     const unsigned m_masonryDefiniteItemsQuarterCapacity = 4;
     const unsigned m_masonryIndefiniteItemsHalfCapacity = 2;
+
     unsigned m_autoFlowNextCursor;
 };
 

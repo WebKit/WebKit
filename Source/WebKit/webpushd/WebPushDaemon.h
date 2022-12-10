@@ -69,14 +69,13 @@ public:
 
     void startMockPushService();
     void startPushService(const String& incomingPushServiceName, const String& pushDatabasePath);
-    void handleIncomingPush(const String& bundleIdentifier, WebKit::WebPushMessage&&);
+    void handleIncomingPush(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&);
 
     // Message handlers
     void echoTwice(ClientConnection*, const String&, CompletionHandler<void(const String&)>&& replySender);
     void requestSystemNotificationPermission(ClientConnection*, const String&, CompletionHandler<void(bool)>&& replySender);
     void getOriginsWithPushAndNotificationPermissions(ClientConnection*, CompletionHandler<void(const Vector<String>&)>&& replySender);
     void setPushAndNotificationsEnabledForOrigin(ClientConnection*, const String& originString, bool, CompletionHandler<void()>&& replySender);
-    void deletePushRegistration(const String&, const String&, CompletionHandler<void()>&&);
     void deletePushAndNotificationRegistration(ClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void setDebugModeIsEnabled(ClientConnection*, bool);
     void updateConnectionConfiguration(ClientConnection*, const WebPushDaemonConnectionConfiguration&);
@@ -105,7 +104,7 @@ private:
 
     bool canRegisterForNotifications(ClientConnection&);
 
-    void notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier);
+    void notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier&);
 
     void setPushService(std::unique_ptr<PushService>&&);
     void runAfterStartingPushService(Function<void()>&&);
@@ -114,6 +113,8 @@ private:
     void releaseIncomingPushTransaction();
     void incomingPushTransactionTimerFired();
 
+    void deletePushRegistration(const WebCore::PushSubscriptionSetIdentifier&, const String&, CompletionHandler<void()>&&);
+
     ClientConnection* toClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<ClientConnection>> m_connectionMap;
 
@@ -121,7 +122,7 @@ private:
     bool m_pushServiceStarted { false };
     Deque<Function<void()>> m_pendingPushServiceFunctions;
 
-    HashMap<String, Vector<WebKit::WebPushMessage>> m_pushMessages;
+    HashMap<WebCore::PushSubscriptionSetIdentifier, Vector<WebKit::WebPushMessage>> m_pushMessages;
     HashMap<String, Deque<PushMessageForTesting>> m_testingPushMessages;
     
     WebCore::Timer m_incomingPushTransactionTimer;

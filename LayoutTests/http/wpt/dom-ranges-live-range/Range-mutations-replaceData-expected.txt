@@ -1,0 +1,1148 @@
+
+PASS paras[0].firstChild.replaceData(376, 0, "foo"), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(376, 0, "foo"), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(0, 0, "foo"), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(0, 0, "foo"), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 0, "foo"), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 0, "foo"), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 0, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 0, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 0, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 0, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(376, 0, ""), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(376, 0, ""), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(0, 0, ""), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(0, 0, ""), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(1, 0, ""), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(1, 0, ""), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 0, ""), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 0, ""), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(1, 0, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(1, 0, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 0, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 0, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 0, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 0, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(376, 1, "foo"), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(376, 1, "foo"), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(0, 1, "foo"), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(0, 1, "foo"), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 1, "foo"), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 1, "foo"), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 1, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 1, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 1, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 1, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(376, 1, ""), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(376, 1, ""), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(0, 1, ""), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(0, 1, ""), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(1, 1, ""), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(1, 1, ""), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 1, ""), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 1, ""), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(1, 1, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(1, 1, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 1, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 1, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 1, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 1, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(376, 47, "foo"), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(376, 47, "foo"), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(0, 47, "foo"), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(0, 47, "foo"), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 47, "foo"), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 47, "foo"), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 47, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 47, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 47, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 47, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(376, 47, ""), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(376, 47, ""), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.replaceData(0, 47, ""), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(0, 47, ""), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.replaceData(1, 47, ""), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(1, 47, ""), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 47, ""), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(paras[0].firstChild.length, 47, ""), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.replaceData(1, 47, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(1, 47, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 47, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(2, 47, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 47, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.replaceData(3, 47, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(376, 0, "foo"), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(376, 0, "foo"), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(0, 0, "foo"), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(0, 0, "foo"), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(1, 0, "foo"), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(1, 0, "foo"), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 0, "foo"), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 0, "foo"), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(1, 0, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(1, 0, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 0, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 0, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 0, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 0, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(376, 0, ""), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(376, 0, ""), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(0, 0, ""), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(0, 0, ""), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(1, 0, ""), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(1, 0, ""), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 0, ""), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 0, ""), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(1, 0, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(1, 0, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 0, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 0, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 0, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 0, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(376, 1, "foo"), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(376, 1, "foo"), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(0, 1, "foo"), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(0, 1, "foo"), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(1, 1, "foo"), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(1, 1, "foo"), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 1, "foo"), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 1, "foo"), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(1, 1, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(1, 1, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 1, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 1, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 1, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 1, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(376, 1, ""), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(376, 1, ""), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(0, 1, ""), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(0, 1, ""), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(1, 1, ""), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(1, 1, ""), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 1, ""), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 1, ""), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(1, 1, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(1, 1, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 1, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 1, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 1, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 1, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(376, 47, "foo"), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(376, 47, "foo"), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(0, 47, "foo"), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(0, 47, "foo"), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(1, 47, "foo"), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(1, 47, "foo"), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 47, "foo"), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 47, "foo"), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(1, 47, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(1, 47, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 47, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 47, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 47, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 47, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(376, 47, ""), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(376, 47, ""), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.replaceData(0, 47, ""), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(0, 47, ""), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.replaceData(1, 47, ""), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(1, 47, ""), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 47, ""), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(paras[1].firstChild.length, 47, ""), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.replaceData(1, 47, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(1, 47, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 47, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(2, 47, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 47, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.replaceData(3, 47, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS foreignTextNode.replaceData(376, 0, "foo"), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(376, 0, "foo"), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(0, 0, "foo"), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(0, 0, "foo"), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(1, 0, "foo"), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(1, 0, "foo"), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 0, "foo"), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 0, "foo"), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(1, 0, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(1, 0, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 0, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 0, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 0, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 0, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(376, 0, ""), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(376, 0, ""), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(0, 0, ""), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(0, 0, ""), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(1, 0, ""), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(1, 0, ""), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 0, ""), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 0, ""), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(1, 0, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(1, 0, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 0, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 0, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 0, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 0, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(376, 1, "foo"), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(376, 1, "foo"), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(0, 1, "foo"), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(0, 1, "foo"), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(1, 1, "foo"), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(1, 1, "foo"), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 1, "foo"), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 1, "foo"), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(1, 1, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(1, 1, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 1, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 1, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 1, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 1, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(376, 1, ""), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(376, 1, ""), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(0, 1, ""), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(0, 1, ""), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(1, 1, ""), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(1, 1, ""), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 1, ""), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 1, ""), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(1, 1, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(1, 1, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 1, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 1, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 1, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 1, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(376, 47, "foo"), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(376, 47, "foo"), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(0, 47, "foo"), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(0, 47, "foo"), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(1, 47, "foo"), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(1, 47, "foo"), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 47, "foo"), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 47, "foo"), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(1, 47, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(1, 47, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 47, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 47, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 47, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 47, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(376, 47, ""), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(376, 47, ""), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.replaceData(0, 47, ""), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(0, 47, ""), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.replaceData(1, 47, ""), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(1, 47, ""), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 47, ""), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(foreignTextNode.length, 47, ""), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.replaceData(1, 47, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(1, 47, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 47, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(2, 47, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 47, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.replaceData(3, 47, ""), with selected range on foreignTextNode from 1 to 3
+PASS xmlTextNode.replaceData(376, 0, "foo"), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(376, 0, "foo"), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(0, 0, "foo"), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(0, 0, "foo"), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(1, 0, "foo"), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(1, 0, "foo"), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 0, "foo"), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 0, "foo"), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(1, 0, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(1, 0, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 0, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 0, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 0, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 0, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(376, 0, ""), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(376, 0, ""), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(0, 0, ""), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(0, 0, ""), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(1, 0, ""), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(1, 0, ""), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 0, ""), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 0, ""), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(1, 0, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(1, 0, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 0, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 0, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 0, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 0, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(376, 1, "foo"), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(376, 1, "foo"), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(0, 1, "foo"), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(0, 1, "foo"), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(1, 1, "foo"), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(1, 1, "foo"), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 1, "foo"), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 1, "foo"), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(1, 1, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(1, 1, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 1, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 1, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 1, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 1, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(376, 1, ""), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(376, 1, ""), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(0, 1, ""), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(0, 1, ""), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(1, 1, ""), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(1, 1, ""), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 1, ""), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 1, ""), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(1, 1, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(1, 1, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 1, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 1, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 1, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 1, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(376, 47, "foo"), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(376, 47, "foo"), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(0, 47, "foo"), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(0, 47, "foo"), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(1, 47, "foo"), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(1, 47, "foo"), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 47, "foo"), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 47, "foo"), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(1, 47, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(1, 47, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 47, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 47, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 47, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 47, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(376, 47, ""), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(376, 47, ""), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.replaceData(0, 47, ""), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(0, 47, ""), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.replaceData(1, 47, ""), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(1, 47, ""), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 47, ""), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(xmlTextNode.length, 47, ""), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.replaceData(1, 47, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(1, 47, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 47, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(2, 47, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 47, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.replaceData(3, 47, ""), with selected range on xmlTextNode from 1 to 3
+PASS detachedTextNode.replaceData(376, 0, "foo"), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(376, 0, "foo"), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(0, 0, "foo"), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(0, 0, "foo"), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(1, 0, "foo"), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(1, 0, "foo"), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 0, "foo"), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 0, "foo"), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(1, 0, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(1, 0, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 0, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 0, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 0, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 0, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(376, 0, ""), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(376, 0, ""), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(0, 0, ""), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(0, 0, ""), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(1, 0, ""), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(1, 0, ""), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 0, ""), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 0, ""), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(1, 0, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(1, 0, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 0, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 0, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 0, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 0, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(376, 1, "foo"), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(376, 1, "foo"), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(0, 1, "foo"), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(0, 1, "foo"), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(1, 1, "foo"), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(1, 1, "foo"), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 1, "foo"), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 1, "foo"), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(1, 1, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(1, 1, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 1, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 1, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 1, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 1, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(376, 1, ""), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(376, 1, ""), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(0, 1, ""), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(0, 1, ""), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(1, 1, ""), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(1, 1, ""), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 1, ""), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 1, ""), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(1, 1, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(1, 1, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 1, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 1, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 1, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 1, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(376, 47, "foo"), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(376, 47, "foo"), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(0, 47, "foo"), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(0, 47, "foo"), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(1, 47, "foo"), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(1, 47, "foo"), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 47, "foo"), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 47, "foo"), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(1, 47, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(1, 47, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 47, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 47, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 47, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 47, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(376, 47, ""), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(376, 47, ""), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.replaceData(0, 47, ""), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(0, 47, ""), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.replaceData(1, 47, ""), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(1, 47, ""), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 47, ""), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(detachedTextNode.length, 47, ""), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.replaceData(1, 47, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(1, 47, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 47, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(2, 47, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 47, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.replaceData(3, 47, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(376, 0, "foo"), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(376, 0, "foo"), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(0, 0, "foo"), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(0, 0, "foo"), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(1, 0, "foo"), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(1, 0, "foo"), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 0, "foo"), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 0, "foo"), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(1, 0, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(1, 0, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 0, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 0, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 0, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 0, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(376, 0, ""), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(376, 0, ""), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(0, 0, ""), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(0, 0, ""), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(1, 0, ""), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(1, 0, ""), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 0, ""), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 0, ""), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(1, 0, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(1, 0, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 0, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 0, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 0, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 0, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(376, 1, "foo"), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(376, 1, "foo"), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(0, 1, "foo"), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(0, 1, "foo"), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(1, 1, "foo"), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(1, 1, "foo"), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 1, "foo"), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 1, "foo"), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(1, 1, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(1, 1, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 1, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 1, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 1, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 1, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(376, 1, ""), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(376, 1, ""), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(0, 1, ""), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(0, 1, ""), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(1, 1, ""), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(1, 1, ""), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 1, ""), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 1, ""), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(1, 1, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(1, 1, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 1, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 1, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 1, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 1, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(376, 47, "foo"), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(376, 47, "foo"), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(0, 47, "foo"), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(0, 47, "foo"), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(1, 47, "foo"), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(1, 47, "foo"), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 47, "foo"), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 47, "foo"), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(1, 47, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(1, 47, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 47, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 47, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 47, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 47, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(376, 47, ""), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(376, 47, ""), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.replaceData(0, 47, ""), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(0, 47, ""), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.replaceData(1, 47, ""), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(1, 47, ""), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 47, ""), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(detachedForeignTextNode.length, 47, ""), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.replaceData(1, 47, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(1, 47, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 47, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(2, 47, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 47, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.replaceData(3, 47, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(376, 0, "foo"), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(376, 0, "foo"), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(0, 0, "foo"), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(0, 0, "foo"), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(1, 0, "foo"), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(1, 0, "foo"), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 0, "foo"), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 0, "foo"), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(1, 0, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(1, 0, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 0, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 0, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 0, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 0, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(376, 0, ""), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(376, 0, ""), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(0, 0, ""), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(0, 0, ""), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(1, 0, ""), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(1, 0, ""), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 0, ""), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 0, ""), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(1, 0, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(1, 0, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 0, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 0, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 0, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 0, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(376, 1, "foo"), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(376, 1, "foo"), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(0, 1, "foo"), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(0, 1, "foo"), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(1, 1, "foo"), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(1, 1, "foo"), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 1, "foo"), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 1, "foo"), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(1, 1, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(1, 1, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 1, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 1, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 1, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 1, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(376, 1, ""), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(376, 1, ""), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(0, 1, ""), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(0, 1, ""), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(1, 1, ""), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(1, 1, ""), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 1, ""), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 1, ""), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(1, 1, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(1, 1, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 1, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 1, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 1, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 1, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(376, 47, "foo"), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(376, 47, "foo"), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(0, 47, "foo"), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(0, 47, "foo"), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(1, 47, "foo"), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(1, 47, "foo"), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 47, "foo"), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 47, "foo"), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(1, 47, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(1, 47, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 47, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 47, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 47, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 47, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(376, 47, ""), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(376, 47, ""), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.replaceData(0, 47, ""), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(0, 47, ""), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.replaceData(1, 47, ""), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(1, 47, ""), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 47, ""), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(detachedXmlTextNode.length, 47, ""), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.replaceData(1, 47, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(1, 47, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 47, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(2, 47, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 47, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.replaceData(3, 47, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS comment.replaceData(376, 0, "foo"), with unselected range on comment from 0 to 1
+PASS comment.replaceData(376, 0, "foo"), with selected range on comment from 0 to 1
+PASS comment.replaceData(0, 0, "foo"), with unselected range collapsed at (comment, 0)
+PASS comment.replaceData(0, 0, "foo"), with selected range collapsed at (comment, 0)
+PASS comment.replaceData(1, 0, "foo"), with unselected range collapsed at (comment, 1)
+PASS comment.replaceData(1, 0, "foo"), with selected range collapsed at (comment, 1)
+PASS comment.replaceData(comment.length, 0, "foo"), with unselected range collapsed at (comment, comment.length)
+PASS comment.replaceData(comment.length, 0, "foo"), with selected range collapsed at (comment, comment.length)
+PASS comment.replaceData(1, 0, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(1, 0, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(2, 0, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(2, 0, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(3, 0, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(3, 0, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(376, 0, ""), with unselected range on comment from 0 to 1
+PASS comment.replaceData(376, 0, ""), with selected range on comment from 0 to 1
+PASS comment.replaceData(0, 0, ""), with unselected range collapsed at (comment, 0)
+PASS comment.replaceData(0, 0, ""), with selected range collapsed at (comment, 0)
+PASS comment.replaceData(1, 0, ""), with unselected range collapsed at (comment, 1)
+PASS comment.replaceData(1, 0, ""), with selected range collapsed at (comment, 1)
+PASS comment.replaceData(comment.length, 0, ""), with unselected range collapsed at (comment, comment.length)
+PASS comment.replaceData(comment.length, 0, ""), with selected range collapsed at (comment, comment.length)
+PASS comment.replaceData(1, 0, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(1, 0, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(2, 0, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(2, 0, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(3, 0, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(3, 0, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(376, 1, "foo"), with unselected range on comment from 0 to 1
+PASS comment.replaceData(376, 1, "foo"), with selected range on comment from 0 to 1
+PASS comment.replaceData(0, 1, "foo"), with unselected range collapsed at (comment, 0)
+PASS comment.replaceData(0, 1, "foo"), with selected range collapsed at (comment, 0)
+PASS comment.replaceData(1, 1, "foo"), with unselected range collapsed at (comment, 1)
+PASS comment.replaceData(1, 1, "foo"), with selected range collapsed at (comment, 1)
+PASS comment.replaceData(comment.length, 1, "foo"), with unselected range collapsed at (comment, comment.length)
+PASS comment.replaceData(comment.length, 1, "foo"), with selected range collapsed at (comment, comment.length)
+PASS comment.replaceData(1, 1, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(1, 1, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(2, 1, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(2, 1, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(3, 1, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(3, 1, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(376, 1, ""), with unselected range on comment from 0 to 1
+PASS comment.replaceData(376, 1, ""), with selected range on comment from 0 to 1
+PASS comment.replaceData(0, 1, ""), with unselected range collapsed at (comment, 0)
+PASS comment.replaceData(0, 1, ""), with selected range collapsed at (comment, 0)
+PASS comment.replaceData(1, 1, ""), with unselected range collapsed at (comment, 1)
+PASS comment.replaceData(1, 1, ""), with selected range collapsed at (comment, 1)
+PASS comment.replaceData(comment.length, 1, ""), with unselected range collapsed at (comment, comment.length)
+PASS comment.replaceData(comment.length, 1, ""), with selected range collapsed at (comment, comment.length)
+PASS comment.replaceData(1, 1, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(1, 1, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(2, 1, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(2, 1, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(3, 1, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(3, 1, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(376, 47, "foo"), with unselected range on comment from 0 to 1
+PASS comment.replaceData(376, 47, "foo"), with selected range on comment from 0 to 1
+PASS comment.replaceData(0, 47, "foo"), with unselected range collapsed at (comment, 0)
+PASS comment.replaceData(0, 47, "foo"), with selected range collapsed at (comment, 0)
+PASS comment.replaceData(1, 47, "foo"), with unselected range collapsed at (comment, 1)
+PASS comment.replaceData(1, 47, "foo"), with selected range collapsed at (comment, 1)
+PASS comment.replaceData(comment.length, 47, "foo"), with unselected range collapsed at (comment, comment.length)
+PASS comment.replaceData(comment.length, 47, "foo"), with selected range collapsed at (comment, comment.length)
+PASS comment.replaceData(1, 47, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(1, 47, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(2, 47, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(2, 47, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(3, 47, "foo"), with unselected range on comment from 1 to 3
+PASS comment.replaceData(3, 47, "foo"), with selected range on comment from 1 to 3
+PASS comment.replaceData(376, 47, ""), with unselected range on comment from 0 to 1
+PASS comment.replaceData(376, 47, ""), with selected range on comment from 0 to 1
+PASS comment.replaceData(0, 47, ""), with unselected range collapsed at (comment, 0)
+PASS comment.replaceData(0, 47, ""), with selected range collapsed at (comment, 0)
+PASS comment.replaceData(1, 47, ""), with unselected range collapsed at (comment, 1)
+PASS comment.replaceData(1, 47, ""), with selected range collapsed at (comment, 1)
+PASS comment.replaceData(comment.length, 47, ""), with unselected range collapsed at (comment, comment.length)
+PASS comment.replaceData(comment.length, 47, ""), with selected range collapsed at (comment, comment.length)
+PASS comment.replaceData(1, 47, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(1, 47, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(2, 47, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(2, 47, ""), with selected range on comment from 1 to 3
+PASS comment.replaceData(3, 47, ""), with unselected range on comment from 1 to 3
+PASS comment.replaceData(3, 47, ""), with selected range on comment from 1 to 3
+PASS foreignComment.replaceData(376, 0, "foo"), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(376, 0, "foo"), with selected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(0, 0, "foo"), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(0, 0, "foo"), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(1, 0, "foo"), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(1, 0, "foo"), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(foreignComment.length, 0, "foo"), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(foreignComment.length, 0, "foo"), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(1, 0, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(1, 0, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 0, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 0, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 0, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 0, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(376, 0, ""), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(376, 0, ""), with selected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(0, 0, ""), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(0, 0, ""), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(1, 0, ""), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(1, 0, ""), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(foreignComment.length, 0, ""), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(foreignComment.length, 0, ""), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(1, 0, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(1, 0, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 0, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 0, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 0, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 0, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(376, 1, "foo"), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(376, 1, "foo"), with selected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(0, 1, "foo"), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(0, 1, "foo"), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(1, 1, "foo"), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(1, 1, "foo"), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(foreignComment.length, 1, "foo"), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(foreignComment.length, 1, "foo"), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(1, 1, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(1, 1, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 1, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 1, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 1, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 1, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(376, 1, ""), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(376, 1, ""), with selected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(0, 1, ""), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(0, 1, ""), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(1, 1, ""), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(1, 1, ""), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(foreignComment.length, 1, ""), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(foreignComment.length, 1, ""), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(1, 1, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(1, 1, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 1, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 1, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 1, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 1, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(376, 47, "foo"), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(376, 47, "foo"), with selected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(0, 47, "foo"), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(0, 47, "foo"), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(1, 47, "foo"), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(1, 47, "foo"), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(foreignComment.length, 47, "foo"), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(foreignComment.length, 47, "foo"), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(1, 47, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(1, 47, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 47, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 47, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 47, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 47, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(376, 47, ""), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(376, 47, ""), with selected range on foreignComment from 0 to 1
+PASS foreignComment.replaceData(0, 47, ""), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(0, 47, ""), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.replaceData(1, 47, ""), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(1, 47, ""), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.replaceData(foreignComment.length, 47, ""), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(foreignComment.length, 47, ""), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.replaceData(1, 47, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(1, 47, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 47, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(2, 47, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 47, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.replaceData(3, 47, ""), with selected range on foreignComment from 1 to 3
+PASS xmlComment.replaceData(376, 0, "foo"), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(376, 0, "foo"), with selected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(0, 0, "foo"), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(0, 0, "foo"), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(1, 0, "foo"), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(1, 0, "foo"), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(xmlComment.length, 0, "foo"), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(xmlComment.length, 0, "foo"), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(1, 0, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(1, 0, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 0, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 0, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 0, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 0, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(376, 0, ""), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(376, 0, ""), with selected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(0, 0, ""), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(0, 0, ""), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(1, 0, ""), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(1, 0, ""), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(xmlComment.length, 0, ""), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(xmlComment.length, 0, ""), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(1, 0, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(1, 0, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 0, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 0, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 0, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 0, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(376, 1, "foo"), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(376, 1, "foo"), with selected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(0, 1, "foo"), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(0, 1, "foo"), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(1, 1, "foo"), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(1, 1, "foo"), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(xmlComment.length, 1, "foo"), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(xmlComment.length, 1, "foo"), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(1, 1, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(1, 1, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 1, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 1, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 1, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 1, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(376, 1, ""), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(376, 1, ""), with selected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(0, 1, ""), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(0, 1, ""), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(1, 1, ""), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(1, 1, ""), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(xmlComment.length, 1, ""), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(xmlComment.length, 1, ""), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(1, 1, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(1, 1, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 1, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 1, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 1, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 1, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(376, 47, "foo"), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(376, 47, "foo"), with selected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(0, 47, "foo"), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(0, 47, "foo"), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(1, 47, "foo"), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(1, 47, "foo"), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(xmlComment.length, 47, "foo"), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(xmlComment.length, 47, "foo"), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(1, 47, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(1, 47, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 47, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 47, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 47, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 47, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(376, 47, ""), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(376, 47, ""), with selected range on xmlComment from 0 to 1
+PASS xmlComment.replaceData(0, 47, ""), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(0, 47, ""), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.replaceData(1, 47, ""), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(1, 47, ""), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.replaceData(xmlComment.length, 47, ""), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(xmlComment.length, 47, ""), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.replaceData(1, 47, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(1, 47, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 47, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(2, 47, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 47, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.replaceData(3, 47, ""), with selected range on xmlComment from 1 to 3
+PASS detachedComment.replaceData(376, 0, "foo"), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(376, 0, "foo"), with selected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(0, 0, "foo"), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(0, 0, "foo"), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(1, 0, "foo"), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(1, 0, "foo"), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(detachedComment.length, 0, "foo"), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(detachedComment.length, 0, "foo"), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(1, 0, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(1, 0, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 0, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 0, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 0, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 0, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(376, 0, ""), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(376, 0, ""), with selected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(0, 0, ""), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(0, 0, ""), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(1, 0, ""), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(1, 0, ""), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(detachedComment.length, 0, ""), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(detachedComment.length, 0, ""), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(1, 0, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(1, 0, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 0, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 0, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 0, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 0, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(376, 1, "foo"), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(376, 1, "foo"), with selected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(0, 1, "foo"), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(0, 1, "foo"), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(1, 1, "foo"), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(1, 1, "foo"), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(detachedComment.length, 1, "foo"), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(detachedComment.length, 1, "foo"), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(1, 1, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(1, 1, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 1, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 1, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 1, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 1, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(376, 1, ""), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(376, 1, ""), with selected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(0, 1, ""), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(0, 1, ""), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(1, 1, ""), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(1, 1, ""), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(detachedComment.length, 1, ""), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(detachedComment.length, 1, ""), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(1, 1, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(1, 1, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 1, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 1, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 1, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 1, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(376, 47, "foo"), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(376, 47, "foo"), with selected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(0, 47, "foo"), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(0, 47, "foo"), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(1, 47, "foo"), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(1, 47, "foo"), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(detachedComment.length, 47, "foo"), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(detachedComment.length, 47, "foo"), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(1, 47, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(1, 47, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 47, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 47, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 47, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 47, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(376, 47, ""), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(376, 47, ""), with selected range on detachedComment from 0 to 1
+PASS detachedComment.replaceData(0, 47, ""), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(0, 47, ""), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.replaceData(1, 47, ""), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(1, 47, ""), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.replaceData(detachedComment.length, 47, ""), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(detachedComment.length, 47, ""), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.replaceData(1, 47, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(1, 47, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 47, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(2, 47, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 47, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.replaceData(3, 47, ""), with selected range on detachedComment from 1 to 3
+PASS detachedForeignComment.replaceData(376, 0, "foo"), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(376, 0, "foo"), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(0, 0, "foo"), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(0, 0, "foo"), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(1, 0, "foo"), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(1, 0, "foo"), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 0, "foo"), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 0, "foo"), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(1, 0, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(1, 0, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 0, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 0, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 0, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 0, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(376, 0, ""), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(376, 0, ""), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(0, 0, ""), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(0, 0, ""), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(1, 0, ""), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(1, 0, ""), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 0, ""), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 0, ""), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(1, 0, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(1, 0, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 0, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 0, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 0, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 0, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(376, 1, "foo"), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(376, 1, "foo"), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(0, 1, "foo"), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(0, 1, "foo"), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(1, 1, "foo"), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(1, 1, "foo"), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 1, "foo"), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 1, "foo"), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(1, 1, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(1, 1, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 1, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 1, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 1, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 1, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(376, 1, ""), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(376, 1, ""), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(0, 1, ""), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(0, 1, ""), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(1, 1, ""), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(1, 1, ""), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 1, ""), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 1, ""), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(1, 1, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(1, 1, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 1, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 1, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 1, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 1, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(376, 47, "foo"), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(376, 47, "foo"), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(0, 47, "foo"), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(0, 47, "foo"), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(1, 47, "foo"), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(1, 47, "foo"), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 47, "foo"), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 47, "foo"), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(1, 47, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(1, 47, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 47, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 47, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 47, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 47, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(376, 47, ""), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(376, 47, ""), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.replaceData(0, 47, ""), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(0, 47, ""), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.replaceData(1, 47, ""), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(1, 47, ""), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 47, ""), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(detachedForeignComment.length, 47, ""), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.replaceData(1, 47, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(1, 47, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 47, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(2, 47, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 47, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.replaceData(3, 47, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedXmlComment.replaceData(376, 0, "foo"), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(376, 0, "foo"), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(0, 0, "foo"), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(0, 0, "foo"), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(1, 0, "foo"), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(1, 0, "foo"), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 0, "foo"), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 0, "foo"), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(1, 0, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(1, 0, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 0, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 0, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 0, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 0, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(376, 0, ""), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(376, 0, ""), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(0, 0, ""), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(0, 0, ""), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(1, 0, ""), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(1, 0, ""), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 0, ""), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 0, ""), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(1, 0, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(1, 0, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 0, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 0, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 0, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 0, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(376, 1, "foo"), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(376, 1, "foo"), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(0, 1, "foo"), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(0, 1, "foo"), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(1, 1, "foo"), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(1, 1, "foo"), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 1, "foo"), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 1, "foo"), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(1, 1, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(1, 1, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 1, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 1, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 1, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 1, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(376, 1, ""), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(376, 1, ""), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(0, 1, ""), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(0, 1, ""), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(1, 1, ""), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(1, 1, ""), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 1, ""), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 1, ""), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(1, 1, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(1, 1, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 1, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 1, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 1, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 1, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(376, 47, "foo"), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(376, 47, "foo"), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(0, 47, "foo"), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(0, 47, "foo"), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(1, 47, "foo"), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(1, 47, "foo"), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 47, "foo"), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 47, "foo"), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(1, 47, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(1, 47, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 47, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 47, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 47, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 47, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(376, 47, ""), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(376, 47, ""), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.replaceData(0, 47, ""), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(0, 47, ""), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.replaceData(1, 47, ""), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(1, 47, ""), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 47, ""), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(detachedXmlComment.length, 47, ""), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.replaceData(1, 47, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(1, 47, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 47, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(2, 47, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 47, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.replaceData(3, 47, ""), with selected range on detachedXmlComment from 1 to 3
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with unselected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with selected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with unselected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with selected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with unselected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with selected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(2, 0, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(2, 0, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(3, 0, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(3, 0, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(1, 0, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(2, 0, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(2, 0, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(3, 0, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(3, 0, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with unselected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with selected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with unselected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with selected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with unselected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with selected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(2, 1, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(2, 1, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(3, 1, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(3, 1, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(1, 1, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(2, 1, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(2, 1, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(3, 1, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(3, 1, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with unselected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with selected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with unselected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with selected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with unselected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with selected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(2, 47, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(2, 47, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(3, 47, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(3, 47, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(1, 47, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(2, 47, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(2, 47, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(3, 47, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.replaceData(3, 47, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+

@@ -108,7 +108,13 @@ Position VisibleSelection::uncanonicalizedEnd() const
 
 std::optional<SimpleRange> VisibleSelection::range() const
 {
-    return makeSimpleRange(uncanonicalizedStart().parentAnchoredEquivalent(), uncanonicalizedEnd().parentAnchoredEquivalent());
+    auto start = uncanonicalizedStart();
+    auto end = uncanonicalizedEnd();
+    ASSERT(!start.document() || !end.document()
+        || start.document()->settings().liveRangeSelectionEnabled() == end.document()->settings().liveRangeSelectionEnabled());
+    if (start.document() && start.document()->settings().liveRangeSelectionEnabled())
+        return makeSimpleRange(start, end);
+    return makeSimpleRange(start.parentAnchoredEquivalent(), end.parentAnchoredEquivalent());
 }
 
 void VisibleSelection::setBase(const Position& position)

@@ -1,0 +1,4 @@
+
+
+FAIL Exit fullscreen for nested fullscreen inside an iframe assert_equals: expected null but got Element node <iframe allowfullscreen="" srcdoc="<div id='outer'><div i...
+

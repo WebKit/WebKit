@@ -47,9 +47,11 @@ void HighPerformanceGraphicsUsageSampler::timerFired()
     bool isUsingHighPerformanceWebGL = false;
     bool isUsingHighPerformanceWebGLInVisibleView = false;
 
-    WebPageProxy* firstPage = nullptr;
+    RefPtr<WebPageProxy> firstPage;
     for (auto& webProcess : m_webProcessPool.processes()) {
         for (auto& page : webProcess->pages()) {
+            if (!page)
+                continue;
             if (!firstPage)
                 firstPage = page;
 

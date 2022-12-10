@@ -70,7 +70,7 @@ static inline String loggingKeyForActivityState(ActivityStateForCPUSampling stat
 
 void PerActivityStateCPUUsageSampler::loggingTimerFired()
 {
-    auto* page = pageForLogging();
+    auto page = pageForLogging();
     if (!page) {
         m_cpuTimeInActivityState.clear();
         return;
@@ -90,12 +90,12 @@ void PerActivityStateCPUUsageSampler::loggingTimerFired()
     m_lastCPUTime = currentCPUTime;
 }
 
-WebPageProxy* PerActivityStateCPUUsageSampler::pageForLogging() const
+RefPtr<WebPageProxy> PerActivityStateCPUUsageSampler::pageForLogging() const
 {
     for (auto& webProcess : m_processPool.processes()) {
         if (!webProcess->pageCount())
             continue;
-        return *webProcess->pages().begin();
+        return webProcess->pages()[0]; // FIXME: Iterate to pick the first non-nullptr WebPageProxy?
     }
     return nullptr;
 }

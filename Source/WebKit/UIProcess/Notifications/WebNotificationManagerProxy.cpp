@@ -277,33 +277,22 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
     }
 }
 
-static RefPtr<WebsiteDataStore> persistentDataStoreIfExists()
-{
-    RefPtr<WebsiteDataStore> result;
-    WebsiteDataStore::forEachWebsiteDataStore([&result](WebsiteDataStore& dataStore) {
-        if (dataStore.isPersistent())
-            result = &dataStore;
-    });
-    return result;
-}
-
 static void setPushesAndNotificationsEnabledForOrigin(const WebCore::SecurityOriginData& origin, bool enabled)
 {
-    auto dataStore = persistentDataStoreIfExists();
-    if (!dataStore)
-        return;
-
-    dataStore->networkProcess().setPushAndNotificationsEnabledForOrigin(dataStore->sessionID(), origin, enabled, []() { });
+    WebsiteDataStore::forEachWebsiteDataStore([&origin, enabled](WebsiteDataStore& dataStore) {
+        if (dataStore.isPersistent())
+            dataStore.networkProcess().setPushAndNotificationsEnabledForOrigin(dataStore.sessionID(), origin, enabled, []() { });
+    });
 }
 
 static void removePushSubscriptionsForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
 {
-    auto dataStore = persistentDataStoreIfExists();
-    if (!dataStore)
-        return;
-
-    for (auto& origin : origins)
-        dataStore->networkProcess().deletePushAndNotificationRegistration(dataStore->sessionID(), origin, [originString = origin.toString()](auto&&) { });
+    WebsiteDataStore::forEachWebsiteDataStore([&origins](WebsiteDataStore& dataStore) {
+        if (dataStore.isPersistent()) {
+            for (auto& origin : origins)
+                dataStore.networkProcess().deletePushAndNotificationRegistration(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
+        }
+    });
 }
 
 static Vector<WebCore::SecurityOriginData> apiArrayToSecurityOrigins(API::Array* origins)

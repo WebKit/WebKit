@@ -301,7 +301,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     }
     // This content is not supposed to fit availableWidth.
     ASSERT_NOT_REACHED();
-    return { };
+    return leftSide;
 }
 
 unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, const RenderStyle& style)

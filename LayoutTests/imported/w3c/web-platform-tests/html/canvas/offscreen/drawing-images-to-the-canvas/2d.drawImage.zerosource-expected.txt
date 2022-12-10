@@ -1,7 +1,7 @@
 2d.drawImage.zerosource
 
-drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR
+drawImage with zero-sized source rectangle draws nothing without exception
 
 
-PASS drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR
+PASS drawImage with zero-sized source rectangle draws nothing without exception
 

@@ -3,5 +3,5 @@
 Testing actualBoundingBox for OffscreenCanvas
 
 
-FAIL Testing actualBoundingBox for OffscreenCanvas assert_equals: Math.abs(ctx.measureText('A').actualBoundingBoxDescent) === 0 (got 1[number], expected 0[number]) expected 0 but got 1
+PASS Testing actualBoundingBox for OffscreenCanvas
 

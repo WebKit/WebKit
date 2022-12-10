@@ -3944,6 +3944,7 @@
         "web-platform-tests/fetch/orb/tentative/img-png-unlabeled.sub-ref.html",
         "web-platform-tests/fetch/security/support/embedded-credential-window.sub.html",
         "web-platform-tests/fullscreen/api/fullscreen-display-contents-ref.html",
+        "web-platform-tests/fullscreen/crashtests/backdrop-list-item.html",
         "web-platform-tests/fullscreen/crashtests/chrome-1312699.html",
         "web-platform-tests/fullscreen/rendering/backdrop-iframe-ref.html",
         "web-platform-tests/fullscreen/rendering/backdrop-object-ref.html",
