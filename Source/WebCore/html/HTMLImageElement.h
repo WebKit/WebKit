@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2008, 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -60,8 +60,8 @@ public:
 
     void formOwnerRemovedFromTree(const Node& formRoot);
 
-    WEBCORE_EXPORT unsigned width(bool ignorePendingStylesheets = false);
-    WEBCORE_EXPORT unsigned height(bool ignorePendingStylesheets = false);
+    WEBCORE_EXPORT unsigned width();
+    WEBCORE_EXPORT unsigned height();
 
     WEBCORE_EXPORT int naturalWidth() const;
     WEBCORE_EXPORT int naturalHeight() const;
