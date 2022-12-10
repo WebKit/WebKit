@@ -80,6 +80,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
     _WKWebsiteNetworkConnectionIntegrityPolicyEnabled = 1 << 0,
     _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst = 1 << 1,
     _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly = 1 << 2,
+    _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain = 1 << 3,
+    _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed = 1 << 4,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @class _WKCustomHeaderFields;

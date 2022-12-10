@@ -612,6 +612,12 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::HTTPSOnly))
         policy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly;
 
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain;
+
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::FailClosed))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed;
+
     return policy;
 }
 
@@ -627,6 +633,12 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
     if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly)
         webCorePolicy.add(WebCore::NetworkConnectionIntegrity::HTTPSOnly);
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain);
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::FailClosed);
 
     _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
 }
