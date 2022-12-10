@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/crashtests/backdrop-list-item.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/crashtests/chrome-1312699.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/crashtests/content-visibility-crash.html

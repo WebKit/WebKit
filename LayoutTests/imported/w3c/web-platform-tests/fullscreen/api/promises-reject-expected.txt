@@ -1,4 +1,3 @@
 
-PASS Promises#reject
-PASS Promises#reject 1
+PASS Rejects if the element is not connected
 

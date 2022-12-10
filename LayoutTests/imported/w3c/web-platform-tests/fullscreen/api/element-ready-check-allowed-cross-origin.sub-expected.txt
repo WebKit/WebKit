@@ -1,0 +1,4 @@
+
+
+PASS Element ready check with allowfullscreen attribute
+

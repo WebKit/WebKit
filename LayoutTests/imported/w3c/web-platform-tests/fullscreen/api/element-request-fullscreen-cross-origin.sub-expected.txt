@@ -1,0 +1,6 @@
+
+
+Harness Error (FAIL), message = Timeout while running cleanup for test named "Element#requestFullscreen() works properly with a tree of cross-origin iframes".
+
+PASS Element#requestFullscreen() works properly with a tree of cross-origin iframes
+

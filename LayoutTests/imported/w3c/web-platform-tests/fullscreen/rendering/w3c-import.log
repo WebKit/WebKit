@@ -23,3 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-css-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-css-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class-support.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-size.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/rendering/ua-style-iframe.html

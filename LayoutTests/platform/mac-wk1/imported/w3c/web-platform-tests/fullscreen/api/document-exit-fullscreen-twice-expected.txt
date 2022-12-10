@@ -1,0 +1,3 @@
+
+FAIL Document#exitFullscreen() called twice promise_test: Unhandled rejection with value: object "TypeError: Pending operation cancelled by exitFullscreen() call."
+

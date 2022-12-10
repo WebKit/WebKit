@@ -1,0 +1,3 @@
+
+FAIL Element ready check for sibling of fullscreen element promise_test: Unhandled rejection with value: object "TypeError: Type error"
+
