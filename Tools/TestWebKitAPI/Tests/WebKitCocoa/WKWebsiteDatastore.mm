@@ -35,6 +35,7 @@
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKWebsiteDataSize.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
@@ -533,6 +534,47 @@ TEST(WKWebsiteDataStore, ListIdentifiers)
         EXPECT_NULL(error);
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WKWebsiteDataStorePrivate, FetchWithSize)
+{
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    auto handler = adoptNS([[TestMessageHandler alloc] init]);
+    [handler addMessage:@"continue" withHandler:^{
+        receivedScriptMessage = true;
+    }];
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSString *htmlString = @"<script> \
+        localStorage.setItem('key', 'value'); \
+        indexedDB.open('testDB').onsuccess = function(event) { \
+            window.webkit.messageHandlers.testHandler.postMessage('continue'); \
+        } \
+    </script>";
+    receivedScriptMessage = false;
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] _fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] withOptions:_WKWebsiteDataStoreFetchOptionComputeSizes completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        EXPECT_EQ([records count], 1u);
+        WKWebsiteDataRecord *record = [records firstObject];
+        EXPECT_TRUE([[record displayName] isEqualToString:@"webkit.org"]);
+        _WKWebsiteDataSize *dataSize = [record _dataSize];
+        EXPECT_GT([dataSize totalSize], 0u);
+        NSSet *localStorageType = [NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, nil];
+        EXPECT_GT([dataSize sizeOfDataTypes:localStorageType], 0u);
+        NSSet *indexedDBType = [NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil];
+        EXPECT_GT([dataSize sizeOfDataTypes:indexedDBType], 0u);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
 }
 
 } // namespace TestWebKitAPI

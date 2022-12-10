@@ -665,6 +665,32 @@ std::optional<uint64_t> fileSize(const String& path)
     return size;
 }
 
+std::optional<uint64_t> directorySize(const String& path)
+{
+    if (path.isEmpty())
+        return std::nullopt;
+
+    std::error_code ec;
+    auto stdPath = toStdFileSystemPath(path);
+    if (!std::filesystem::is_directory(stdPath, ec))
+        return std::nullopt;
+
+    CheckedUint64 size = 0;
+    for (auto& entry : std::filesystem::recursive_directory_iterator(stdPath, ec)) {
+        if (ec)
+            return std::nullopt;
+        auto filePath = fromStdFileSystemPath(entry.path());
+        if (entry.is_regular_file(ec) && !ec)
+            size += entry.file_size(ec);
+        if (ec)
+            return std::nullopt;
+        if (size.hasOverflowed())
+            return std::nullopt;
+    }
+
+    return size;
+}
+
 #if !PLATFORM(PLAYSTATION)
 std::optional<uint64_t> volumeFreeSpace(const String& path)
 {

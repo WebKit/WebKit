@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "QuotaManager.h"
+#include "WebsiteDataType.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -63,7 +64,8 @@ public:
     String resolvedPath(WebsiteDataType);
     bool isActive();
     bool isEmpty();
-    OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
+    using DataTypeSizeMap = HashMap<WebsiteDataType, uint64_t, IntHash<WebsiteDataType>, WTF::StrongEnumHashTraits<WebsiteDataType>>;
+    DataTypeSizeMap fetchDataTypesInList(OptionSet<WebsiteDataType>, bool shouldComputeSize);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
     void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
     void deleteEmptyDirectory();

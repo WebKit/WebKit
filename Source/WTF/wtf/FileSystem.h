@@ -122,6 +122,7 @@ WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
 WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
 WTF_EXPORT_PRIVATE std::optional<uint64_t> fileSize(const String&); // Follows symlinks.
 WTF_EXPORT_PRIVATE std::optional<uint64_t> fileSize(PlatformFileHandle);
+WTF_EXPORT_PRIVATE std::optional<uint64_t> directorySize(const String&);
 WTF_EXPORT_PRIVATE std::optional<WallTime> fileModificationTime(const String&);
 WTF_EXPORT_PRIVATE std::optional<PlatformFileID> fileID(PlatformFileHandle);
 WTF_EXPORT_PRIVATE bool fileIDsAreEqual(std::optional<PlatformFileID>, std::optional<PlatformFileID>);
