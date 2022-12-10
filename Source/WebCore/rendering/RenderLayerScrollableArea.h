@@ -104,6 +104,8 @@ public:
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
     
+    bool needsAnimatedScroll() const final { return m_isRegisteredForAnimatedScroll; }
+    
     OverscrollBehavior horizontalOverscrollBehavior() const final;
     OverscrollBehavior verticalOverscrollBehavior() const final;
 
@@ -241,6 +243,7 @@ public:
 
     std::optional<LayoutRect> updateScrollPosition(const ScrollPositionChangeOptions&, const LayoutRect& revealRect, const LayoutRect& localExposeRect);
     bool isVisibleToHitTesting() const final;
+    void animatedScrollDidEnd() final;
     LayoutRect scrollRectToVisible(const LayoutRect& absoluteRect, const ScrollRectToVisibleOptions&);
     std::optional<LayoutRect> updateScrollPositionForScrollIntoView(const ScrollPositionChangeOptions&, const LayoutRect& revealRect, const LayoutRect& localExposeRect);
 
@@ -269,7 +272,7 @@ private:
     void clearResizer();
 
     void updateScrollbarPresenceAndState(std::optional<bool> hasHorizontalOverflow = std::nullopt, std::optional<bool> hasVerticalOverflow = std::nullopt);
-    void registerScrollableArea();
+    void registerScrollableAreaForAnimatedScroll();
 
 private:
     bool m_scrollDimensionsDirty { true };
@@ -283,6 +286,8 @@ private:
     bool m_requiresScrollPositionReconciliation { false };
     bool m_containsDirtyOverlayScrollbars { false };
     bool m_updatingMarqueePosition { false };
+    
+    bool m_isRegisteredForAnimatedScroll { false };
 
     // The width/height of our scrolled area.
     int m_scrollWidth { 0 };
