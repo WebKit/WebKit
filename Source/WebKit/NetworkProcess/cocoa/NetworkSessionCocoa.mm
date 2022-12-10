@@ -163,6 +163,24 @@ static WebCore::PrivacyStance toPrivacyStance(nw_connection_privacy_stance_t sta
     ASSERT_NOT_REACHED();
     return WebCore::PrivacyStance::Unknown;
 }
+
+static NSString* privacyStanceToString(WebCore::PrivacyStance stance)
+{
+    switch (stance) {
+    case WebCore::PrivacyStance::Unknown:
+        return @"Unknown";
+    case WebCore::PrivacyStance::NotEligible:
+        return @"NotEligible";
+    case WebCore::PrivacyStance::Proxied:
+        return @"Proxied";
+    case WebCore::PrivacyStance::Failed:
+        return @"Failed";
+    case WebCore::PrivacyStance::Direct:
+        return @"Direct";
+    }
+    ASSERT_NOT_REACHED();
+    return @"Unknown";
+}
 #endif
 
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
@@ -788,6 +806,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         NSDictionary *oldUserInfo = [error userInfo];
         NSMutableDictionary *newUserInfo = oldUserInfo ? [NSMutableDictionary dictionaryWithDictionary:oldUserInfo] : [NSMutableDictionary dictionary];
         newUserInfo[@"networkTaskDescription"] = [task description];
+#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
+        if (auto* networkDataTask = [self existingTask:task])
+            newUserInfo[@"networkTaskMetricsPrivacyStance"] = privacyStanceToString(networkDataTask->networkLoadMetrics().privacyStance);
+#endif
         error = [NSError errorWithDomain:[error domain] code:[error code] userInfo:newUserInfo];
     }
 
