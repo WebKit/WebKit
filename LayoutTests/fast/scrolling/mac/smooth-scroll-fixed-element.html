@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+ <html>
+ <head>
+     <style>
+         :root {
+          overscroll-behavior: none;
+        }
+
+        body {
+          height: 4000px;
+        }
+
+        .fixed {
+          position: fixed;
+          overflow: hidden;
+          width: 400px;
+          height: 400px;
+          background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+          width: 100%;
+          height: 4000px;
+        }
+     </style>
+     <script src="../../../resources/ui-helper.js"></script>
+     <script src="../../../resources/js-test-pre.js"></script>
+     <script>
+         jsTestIsAsync = true;
+
+         async function runTest()
+         {
+            document.querySelector('.fixed').scrollTop = 0;            
+            eventSender.monitorWheelEvents();
+            await UIHelper.mouseWheelScrollAt(50, 50, 0, -10);
+            await UIHelper.waitForScrollCompletion();
+            shouldBe('window.pageYOffset', '200');
+            finishJSTest();
+         }
+         window.addEventListener('load', () => {
+             setTimeout(runTest, 0);
+         }, false);
+     </script>
+ </head>
+ <body>
+    <div class="fixed">
+    	<div class="content">
+            <p>Can't scroll from here after 1 second</p>
+    	</div>
+    </div>
+     <div id="console"></div>
+     <script src="../../../resources/js-test-post.js"></script>
+ </body>

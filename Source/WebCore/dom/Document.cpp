@@ -4487,11 +4487,14 @@ void Document::runScrollSteps()
     if (frameView) {
         MonotonicTime now = MonotonicTime::now();
         bool scrollAnimationsInProgress = serviceScrollAnimationForScrollableArea(frameView.get(), now);
-        if (auto* scrollableAreas = frameView->scrollableAreas()) {
-            for (auto* scrollableArea : *scrollableAreas) {
-                if (serviceScrollAnimationForScrollableArea(scrollableArea, now))
-                    scrollAnimationsInProgress = true;
-            }
+        HashSet<ScrollableArea*> scrollableAreasToUpdate;
+        if (auto userScrollableAreas = frameView->scrollableAreas())
+            scrollableAreasToUpdate.add(userScrollableAreas->begin(), userScrollableAreas->end());
+        if (auto nonUserScrollableAreas = frameView->scrollableAreasForAnimatedScroll())
+            scrollableAreasToUpdate.add(nonUserScrollableAreas->begin(), nonUserScrollableAreas->end());
+        for (auto* scrollableArea : scrollableAreasToUpdate) {
+            if (serviceScrollAnimationForScrollableArea(scrollableArea, now))
+                scrollAnimationsInProgress = true;
         }
         if (scrollAnimationsInProgress)
             page()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });

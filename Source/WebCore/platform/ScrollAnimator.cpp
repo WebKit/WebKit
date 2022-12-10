@@ -287,6 +287,7 @@ void ScrollAnimator::willStartAnimatedScroll()
 void ScrollAnimator::didStopAnimatedScroll()
 {
     m_scrollableArea.setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
+    m_scrollableArea.animatedScrollDidEnd();
 }
 
 #if HAVE(RUBBER_BANDING)

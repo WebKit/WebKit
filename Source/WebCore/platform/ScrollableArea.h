@@ -287,6 +287,7 @@ public:
     // This reflects animated scrolls triggered by CSS OM View "smooth" scrolls.
     ScrollAnimationStatus scrollAnimationStatus() { return m_scrollAnimationStatus; }
     void setScrollAnimationStatus(ScrollAnimationStatus status) { m_scrollAnimationStatus = status; }
+    virtual void animatedScrollDidEnd() { };
 
     bool scrollShouldClearLatchedState() const { return m_scrollShouldClearLatchedState; }
     void setScrollShouldClearLatchedState(bool shouldClear) { m_scrollShouldClearLatchedState = shouldClear; }
@@ -394,6 +395,7 @@ public:
     bool shouldBlockScrollPropagation(const FloatSize&) const;
     FloatSize deltaForPropagation(const FloatSize&) const;
     WEBCORE_EXPORT virtual float adjustVerticalPageScrollStepForFixedContent(float step);
+    virtual bool needsAnimatedScroll() const { return false; }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();
