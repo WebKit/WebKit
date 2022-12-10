@@ -33,6 +33,8 @@
 namespace TestWebKitAPI {
 
 struct EncodingCounter {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     struct CounterValues {
         CounterValues() = default;
         CounterValues(unsigned encodingLValue, unsigned encodingRValue)
@@ -206,6 +208,15 @@ TEST_P(ArgumentCoderEncodingCounterTest, EncodeVariant)
         });
 }
 
+TEST_P(ArgumentCoderEncodingCounterTest, EncodeUniquePtr)
+{
+    testEncoding(1,
+        [](auto& counterValues)
+        {
+            return makeUnique<EncodingCounter>(counterValues);
+        });
+}
+
 INSTANTIATE_TEST_SUITE_P(ArgumentCoderTest,
     ArgumentCoderEncodingCounterTest,
     testing::Values(EncodingCounterTestType::LValue, EncodingCounterTestType::RValue, EncodingCounterTestType::MovedRValue),
@@ -215,6 +226,8 @@ INSTANTIATE_TEST_SUITE_P(ArgumentCoderTest,
 // move assignment operator increase the moved-in object's move counter.
 
 struct DecodingMoveCounter {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     DecodingMoveCounter() = default;
 
     DecodingMoveCounter(const DecodingMoveCounter&) = delete;
@@ -431,6 +444,30 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVariant)
         ASSERT_TRUE(!!variant);
         ASSERT_EQ(variant->index(), 0u);
         ASSERT_EQ(std::get<0>(*variant).moveCounter, 1u);
+    }
+}
+
+TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeUniquePtr)
+{
+    encoder() << makeUnique<DecodingMoveCounter>() << makeUnique<DecodingMoveCounter>();
+
+    auto decoder = createDecoder();
+    {
+        std::optional<std::unique_ptr<DecodingMoveCounter>> pointer;
+        *decoder >> pointer;
+        ASSERT_TRUE(!!pointer);
+
+        auto& counter = *pointer;
+        ASSERT_TRUE(!!counter);
+        ASSERT_EQ(counter->moveCounter, 1u);
+    }
+    {
+        auto pointer = decoder->decode<std::unique_ptr<DecodingMoveCounter>>();
+        ASSERT_TRUE(!!pointer);
+
+        auto& counter = *pointer;
+        ASSERT_TRUE(!!counter);
+        ASSERT_EQ(counter->moveCounter, 1u);
     }
 }
 

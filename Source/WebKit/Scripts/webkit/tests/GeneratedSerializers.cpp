@@ -176,9 +176,7 @@ void ArgumentCoder<Namespace::ReturnRefClass>::encode(Encoder& encoder, const Na
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.uniqueMember)>, std::unique_ptr<int>>);
     encoder << instance.functionCall().member1;
     encoder << instance.functionCall().member2;
-    encoder << !!instance.uniqueMember;
-    if (!!instance.uniqueMember)
-        encoder << *instance.uniqueMember;
+    encoder << instance.uniqueMember;
 }
 
 std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRefClass>::decode(Decoder& decoder)
@@ -191,17 +189,9 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
     if (!functionCallmember2)
         return std::nullopt;
 
-    auto hasuniqueMember = decoder.decode<bool>();
-    if (!hasuniqueMember)
+    auto uniqueMember = decoder.decode<std::unique_ptr<int>>();
+    if (!uniqueMember)
         return std::nullopt;
-    std::optional<std::unique_ptr<int>> uniqueMember;
-    if (*hasuniqueMember) {
-        auto contents = decoder.decode<int>();
-        if (!contents)
-            return std::nullopt;
-        uniqueMember= makeUnique<int>(WTFMove(*contents));
-    } else
-        uniqueMember = std::optional<std::unique_ptr<int>> { std::unique_ptr<int> { } };
 
     return {
         Namespace::ReturnRefClass::create(
