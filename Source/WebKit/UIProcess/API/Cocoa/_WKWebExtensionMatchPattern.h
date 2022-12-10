@@ -78,28 +78,21 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 + (instancetype)allHostsAndSchemesMatchPattern;
 
 /*!
- @abstract Returns a pattern object for the speficied pattern string.
+ @abstract Returns a pattern object for the specified pattern string.
  @result Returns `nil` if the pattern string is invalid.
  @seealso initWithString:error:
  */
-+ (nullable instancetype)matchPatternWithString:(NSString *)string NS_SWIFT_UNAVAILABLE("Use error version");
++ (nullable instancetype)matchPatternWithString:(NSString *)string;
 
 /*!
- @abstract Returns a pattern object for the speficied scheme, host, and path strings.
+ @abstract Returns a pattern object for the specified scheme, host, and path strings.
  @result A pattern object, or `nil` if any of the strings are invalid.
  @seealso initWithScheme:host:path:error:
  */
-+ (nullable instancetype)matchPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path NS_SWIFT_UNAVAILABLE("Use error version");
++ (nullable instancetype)matchPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path;
 
 /*!
- @abstract Returns a pattern object for the speficied pattern string.
- @result A pattern object, or `nil` if the pattern string is invalid.
- @seealso initWithString:error:
- */
-- (nullable instancetype)initWithString:(NSString *)string NS_SWIFT_UNAVAILABLE("Use error version");
-
-/*!
- @abstract Returns a pattern object for the speficied pattern string.
+ @abstract Returns a pattern object for the specified pattern string.
  @param error Set to \c nil or an \c NSError instance if an error occurred.
  @result A pattern object, or `nil` if the pattern string is invalid and `error` will be set.
  @seealso initWithString:
@@ -107,14 +100,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (nullable instancetype)initWithString:(NSString *)string error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /*!
- @abstract Returns a pattern object for the speficied scheme, host, and path strings.
- @result A pattern object, or `nil` if any of the strings are invalid.
- @seealso initWithScheme:host:path:error:
- */
-- (nullable instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path NS_SWIFT_UNAVAILABLE("Use error version");
-
-/*!
- @abstract Returns a pattern object for the speficied scheme, host, and path strings.
+ @abstract Returns a pattern object for the specified scheme, host, and path strings.
  @param error Set to \c nil or an \c NSError instance if an error occurred.
  @result A pattern object, or `nil` if any of the strings are invalid and `error` will be set.
  @seealso initWithScheme:host:path:
@@ -142,7 +128,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*!
  @abstract Matches the reciever pattern against the specified URL.
  @param url The URL to match the against the reciever pattern.
- @result A Boolean value indicating if pattern matches the speficied URL.
+ @result A Boolean value indicating if pattern matches the specified URL.
  @seealso matchesURL:options:
  */
 - (BOOL)matchesURL:(NSURL *)url NS_SWIFT_NAME(matches(url:));
@@ -151,7 +137,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
  @abstract Matches the reciever pattern against the specified URL with options.
  @param url The URL to match the against the reciever pattern.
  @param options The options to use while matching.
- @result A Boolean value indicating if pattern matches the speficied URL.
+ @result A Boolean value indicating if pattern matches the specified URL.
  @seealso matchesURL:
  */
 - (BOOL)matchesURL:(NSURL *)url options:(_WKWebExtensionMatchPatternOptions)options NS_SWIFT_NAME(matches(url:options:));

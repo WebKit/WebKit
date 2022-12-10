@@ -357,6 +357,22 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jhbuild',
             'compile-webkit'
         ],
+        'JSC-Tests-arm64-EWS': [
+            'configure-build',
+            'check-change-relevance',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'compile-jsc',
+            'jscore-test'
+        ],
         'JSC-Tests-EWS': [
             'configure-build',
             'check-change-relevance',

@@ -134,13 +134,18 @@ void WebGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 
 void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
-    bool processHadGamepadClients = !m_clients.isEmpty();
-
     ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    if (m_clients.isEmpty())
+        return;
 
-    if (processHadGamepadClients && m_clients.isEmpty())
-        WebProcess::singleton().send(Messages::WebProcessPool::StoppedUsingGamepads(), 0);
+    m_clients.remove(&client);
+    if (!m_clients.isEmpty())
+        return;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::StoppedUsingGamepads(), [this] {
+        m_gamepads.clear();
+        m_rawGamepads.clear();
+    });
 }
 
 const Vector<PlatformGamepad*>& WebGamepadProvider::platformGamepads()

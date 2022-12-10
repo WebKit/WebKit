@@ -27,10 +27,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/_WKWebExtensionControllerDelegate.h>
+
 @class _WKWebExtension;
 @class _WKWebExtensionContext;
 @class _WKWebExtensionControllerConfiguration;
-@protocol _WKWebExtensionControllerDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -74,27 +75,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*!
  @abstract Loads the specified extension context.
  @discussion Causes the context to start, loading any background content, and injecting any content into relevant tabs.
- @result A Boolean value indicating if the context was successfully loaded.
- @seealso loadExtensionContext:error:
-*/
-- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_UNAVAILABLE("Use error version");
-
-/*!
- @abstract Loads the specified extension context.
- @discussion Causes the context to start, loading any background content, and injecting any content into relevant tabs.
  @param error Set to \c nil or an \c NSError instance if an error occurred.
  @result A Boolean value indicating if the context was successfully loaded.
  @seealso loadExtensionContext:
 */
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error;
-
-/*!
- @abstract Unloads the specified extension context.
- @discussion Causes the context to stop running.
- @result A Boolean value indicating if the context was successfully unloaded.
- @seealso unloadExtensionContext:error:
-*/
-- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_UNAVAILABLE("Use error version");
 
 /*!
  @abstract Unloads the specified extension context.

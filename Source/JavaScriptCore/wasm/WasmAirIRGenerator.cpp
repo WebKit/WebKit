@@ -578,6 +578,14 @@ public:
 
         result = tmpForType(Types::V128);
 
+        if (isX86() && airOp == B3::Air::VectorExtaddPairwise) {
+            if (info.lane == SIMDLane::i16x8 && info.signMode == SIMDSignMode::Unsigned)
+                append(VectorExtaddPairwiseUnsignedInt16, v, result, tmpForType(Types::V128), tmpForType(Types::V128));
+            else
+                append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128));
+            return { };
+        }
+
         if (isX86() && airOp == B3::Air::VectorConvert && info.signMode == SIMDSignMode::Unsigned) {
             append(VectorConvertUnsigned, v, result, tmpForType(Types::V128));
             return { };
@@ -615,7 +623,6 @@ public:
                 }
                 return { };
             }
-
         }
 
         if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {

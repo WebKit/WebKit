@@ -3334,8 +3334,8 @@ public:
             break;
         case SIMDLane::i16x8:
             m_assembler.vpxor_rrr(tmp, tmp, tmp);
-            m_assembler.vpacksswb_rrr(vec, tmp, tmp);
-            m_assembler.vpmovmskb_rr(vec, dest);
+            m_assembler.vpacksswb_rrr(tmp, vec, tmp);
+            m_assembler.vpmovmskb_rr(tmp, dest);
             break;
         case SIMDLane::i32x4:
             m_assembler.vmovmskps_rr(vec, dest);
@@ -3348,7 +3348,40 @@ public:
         }
     }
 
-    void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest) { UNUSED_PARAM(simdInfo); UNUSED_PARAM(vec); UNUSED_PARAM(dest); }
+    void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
+    {
+        RELEASE_ASSERT(supportsAVXForSIMD());
+
+        // https://github.com/WebAssembly/simd/pull/380
+        move(TrustedImm64(1), scratchGPR);
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            vectorSplat8(scratchGPR, scratchFPR);
+            if (simdInfo.signMode == SIMDSignMode::Signed) {
+                m_assembler.vmovdqa_rr(scratchFPR, scratchFPR);
+                m_assembler.vpmaddubsw_rrr(vec, scratchFPR, dest);
+            } else
+                m_assembler.vpmaddubsw_rrr(scratchFPR, vec, dest);
+            return;
+        case SIMDLane::i16x8:
+            vectorSplat16(scratchGPR, scratchFPR);
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vpmaddwd_rrr(vec, scratchFPR, dest);
+            else
+                RELEASE_ASSERT_NOT_REACHED();
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorExtaddPairwiseUnsignedInt16(FPRegisterID src, FPRegisterID dest, FPRegisterID scratch1, FPRegisterID scratch2)
+    {
+        RELEASE_ASSERT(supportsAVXForSIMD());
+        m_assembler.vpsrld_i8rr(16, src, scratch1);
+        m_assembler.vpblendw_i8rrr(0xAA, scratch1, src, scratch2);
+        m_assembler.vpaddd_rrr(scratch1, scratch2, dest);
+    }
 
     void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {

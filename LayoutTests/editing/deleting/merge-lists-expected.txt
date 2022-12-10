@@ -1,0 +1,17 @@
+Placing cursor at the end of first list and executing forward delete should merge the second list with the first one.
+| "\n"
+| <ol>
+|   <li>
+|     "one"
+|   <li>
+|     "two"
+|   <li>
+|     id="li"
+|     "three<#selection-caret>"
+|   <li>
+|     "four"
+|   <li>
+|     "five"
+|   <li>
+|     "six"
+| "\n"

@@ -93,6 +93,32 @@
            (global-name "com.apple.coremedia.visualcontext.xpc")
            (global-name "com.apple.coremedia.volumecontroller.xpc"))
 
+#if HAVE(MEDIAPLAYBACKD)
+    (allow mach-lookup
+        (global-name
+            "com.apple.coremedia.mediaplaybackd.asset.xpc"
+            "com.apple.coremedia.mediaplaybackd.assetimagegenerator.xpc"
+            "com.apple.coremedia.mediaplaybackd.audiodeviceclock.xpc"
+            "com.apple.coremedia.mediaplaybackd.audioprocessingtap.xpc"
+            "com.apple.coremedia.mediaplaybackd.cpe.xpc"
+            "com.apple.coremedia.mediaplaybackd.cpeprotector.xpc"
+            "com.apple.coremedia.mediaplaybackd.customurlloader.xpc"
+            "com.apple.coremedia.mediaplaybackd.figcontentkeysession.xpc"
+            "com.apple.coremedia.mediaplaybackd.figcpecryptor.xpc"
+            "com.apple.coremedia.mediaplaybackd.formatreader.xpc"
+            "com.apple.coremedia.mediaplaybackd.player.xpc"
+            "com.apple.coremedia.mediaplaybackd.remaker.xpc"
+            "com.apple.coremedia.mediaplaybackd.samplebufferaudiorenderer.xpc"
+            "com.apple.coremedia.mediaplaybackd.samplebufferrendersynchronizer.xpc"
+            "com.apple.coremedia.mediaplaybackd.sandboxserver.xpc"
+            "com.apple.coremedia.mediaplaybackd.visualcontext.xpc"
+            "com.apple.coremedia.mediaplaybackd.videoqueue"
+            "com.apple.coremedia.videocodecd.compressionsession"
+            "com.apple.coremedia.videocodecd.compressionsession.xpc"
+            "com.apple.coremedia.videocodecd.decompressionsession"
+            "com.apple.coremedia.videocodecd.decompressionsession.xpc"))
+#endif
+
     (allow mach-lookup (with report) (with telemetry)
         (global-name "com.apple.coremedia.cpeprotector.xpc")
         (global-name "com.apple.coremedia.endpoint.xpc")

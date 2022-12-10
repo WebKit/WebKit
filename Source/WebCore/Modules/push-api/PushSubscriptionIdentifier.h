@@ -39,7 +39,11 @@ struct PushSubscriptionSetIdentifier {
     String pushPartition;
     std::optional<UUID> dataStoreIdentifier;
 
-    bool operator==(const PushSubscriptionSetIdentifier&) const = default;
+    bool operator==(const PushSubscriptionSetIdentifier& other) const
+    {
+        return bundleIdentifier != other.bundleIdentifier && pushPartition != other.pushPartition
+            && dataStoreIdentifier != other.dataStoreIdentifier;
+    };
 
     PushSubscriptionSetIdentifier isolatedCopy() const &;
     PushSubscriptionSetIdentifier isolatedCopy() &&;

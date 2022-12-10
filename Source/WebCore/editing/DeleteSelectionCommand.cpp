@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -814,6 +815,16 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     if (mergeDestination == endOfParagraphToMove)
         return;
+    
+    // If the merge destination and source to be moved are both list items of different lists, merge them into single list.
+    auto* listItemInFirstParagraph = enclosingNodeOfType(m_upstreamStart, isListItem);
+    auto* listItemInSecondParagraph = enclosingNodeOfType(m_downstreamEnd, isListItem);
+    if (listItemInFirstParagraph && listItemInSecondParagraph && listItemInFirstParagraph->parentElement() != listItemInSecondParagraph->parentElement()
+    && canMergeLists(listItemInFirstParagraph->parentElement(), listItemInSecondParagraph->parentElement())) {
+        mergeIdenticalElements(*listItemInFirstParagraph->parentElement(), *listItemInSecondParagraph->parentElement());
+        m_endingPosition = mergeDestination.deepEquivalent();
+        return;
+    }
     
     // The rule for merging into an empty block is: only do so if its farther to the right.
     // FIXME: Consider RTL.

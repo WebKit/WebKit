@@ -118,8 +118,9 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns;
 
 /*!
- @abstract A `WKWebExtensionContext` object encapsulates a web extension’s runtime environment.
- @discussion This class handles the access permissions, content injection, storage, and background logic for the extension.
+ @abstract A `WKWebExtensionContext` object represents the runtime environment for a web extension.
+ @discussion This class provides methods for managing the extension's permissions, allowing it to inject content, run
+ background logic, show popovers, and display other web-based UI to the user.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebExtensionContext : NSObject
@@ -143,10 +144,10 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (instancetype)initWithExtension:(_WKWebExtension *)extension NS_DESIGNATED_INITIALIZER;
 
 /*! @abstract The extension this context represents. */
-@property (nonatomic, readonly, strong) _WKWebExtension *extension;
+@property (nonatomic, readonly, strong) _WKWebExtension *webExtension;
 
 /*! @abstract The extension controller this context is loaded in, otherwise `nil` if it isn't loaded. */
-@property (nonatomic, readonly, weak) _WKWebExtensionController *extensionController;
+@property (nonatomic, readonly, weak) _WKWebExtensionController *webExtensionController;
 
 /*! @abstract A Boolean value indicating if this context is loaded in an extension controller. */
 @property (nonatomic, readonly, getter=isLoaded) BOOL loaded;
@@ -164,8 +165,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
  @discussion The default value is a unique value that matches the host in the default base URL. The identifier can be any
  value that is unique. Setting is only allowed when the context is not loaded.
 
- This value is accessable by the extension via `browser.runtime.id` and is used for messaging the extension as the first
- argumet of `browser.runtime.sendMessage(extensionId, message, options)`.
+ This value is accessible by the extension via `browser.runtime.id` and is used for messaging the extension as the first
+ argument of `browser.runtime.sendMessage(extensionId, message, options)`.
  */
 @property (nonatomic, copy) NSString *uniqueIdentifier;
 
@@ -220,7 +221,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*!
  @abstract A Boolean value indicating if the extension has requested optional access to all hosts.
  @discussion When this value is `YES` the extension has asked for access to all hosts in a call to `browser.runtime.permissions.request()`
- and future permission checks will present discrete hosts for approval as being implicty requested. This value should be saved and restored as needed.
+ and future permission checks will present discrete hosts for approval as being implicitly requested. This value should be saved and restored as needed.
  */
 @property (nonatomic) BOOL requestedOptionalAccessToAllHosts;
 
@@ -281,7 +282,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*!
  @abstract Checks if the currently granted permission match patterns set contains the `<all_urls>` pattern.
  @discussion This does not check for any `*` host patterns. In most cases you should use the broader `hasAccessToAllHosts`.
- This check is primarily needed for APIs like `browser.tabs.captureVisibleTab()` that need to check specifically for `<all_urls>`.
  @seealso currentPermissionMatchPatterns
  @seealso hasAccessToAllHosts
  */
@@ -411,27 +411,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forMatchPattern:(_WKWebExtensionMatchPattern *)pattern expirationDate:(nullable NSDate *)expirationDate;
 
 /*!
- @abstract Notes that a user gesture has been performed in the specified tab (e.g. interacting with a toolbar button, menu item, etc.)
- @discussion This method might grant per-tab permissions and/or match patterns for the current website if the extension has the `activeTab` permission.
- This method can also propagate the user gesture state to the tab's page when the extension sends a message to the tab.
- @seealso hasActiveUserGestureInTab:
- @seealso cancelUserGestureForTab:
-*/
-- (void)userGesturePerformedInTab:(id <_WKWebExtensionTab>)tab;
-
-/*!
  @abstract Returns a Boolean value indicating if a user gesture has been noted for the specified tab.
  @seealso userGesturePerformedInTab:
  @seealso cancelUserGestureForTab:
 */
 - (BOOL)hasActiveUserGestureInTab:(id <_WKWebExtensionTab>)tab;
-
-/*!
- @abstract Clears the current user gesture state for the specified tab.
- @seealso userGesturePerformedInTab:
- @seealso hasActiveUserGestureInTab:
-*/
-- (void)cancelUserGestureForTab:(id <_WKWebExtensionTab>)tab;
 
 @end
 

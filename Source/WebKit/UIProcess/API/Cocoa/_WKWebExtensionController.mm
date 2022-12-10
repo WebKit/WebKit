@@ -75,25 +75,11 @@
     return _webExtensionController->configuration().copy()->wrapper();
 }
 
-- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext
-{
-    NSParameterAssert(extensionContext);
-
-    return [self loadExtensionContext:extensionContext error:nullptr];
-}
-
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
     NSParameterAssert(extensionContext);
 
     return _webExtensionController->load(extensionContext._webExtensionContext, outError);
-}
-
-- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext
-{
-    NSParameterAssert(extensionContext);
-
-    return [self unloadExtensionContext:extensionContext error:nullptr];
 }
 
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
@@ -166,17 +152,7 @@ static inline NSSet *toAPI(const T& inputSet)
     return nil;
 }
 
-- (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext
-{
-    return NO;
-}
-
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error
-{
-    return NO;
-}
-
-- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext
 {
     return NO;
 }

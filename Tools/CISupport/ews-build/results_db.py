@@ -24,8 +24,13 @@
 
 import argparse
 import json
-import requests
 import sys
+import twisted
+
+from twisted.internet import defer, error, protocol, reactor
+from twisted.web.client import Agent
+from twisted.web.http_headers import Headers
+from twisted.web._newclient import ResponseFailed
 
 
 class ResultsDatabase(object):
@@ -46,60 +51,96 @@ class ResultsDatabase(object):
         'sdk',
     ]
 
+    class JsonPrinter(protocol.Protocol):
+        def __init__(self, finished):
+            self.finished = finished
+            self.data = b''
+
+        def dataReceived(self, bytes):
+            self.data += bytes
+
+        def connectionLost(self, reason):
+            self.finished.callback(self.data)
+
     @classmethod
-    def get_results_summary(cls, test, commit=None, configuration=None):
+    @defer.inlineCallbacks
+    def get_results_summary(cls, test, commit=None, configuration=None, logger=None):
+        logger = logger or (lambda log: None)
         params = dict()
-        logs = ''
         if not test:
-            return ({}, 'Test name not provided')
+            logger('Test name not provided\n')
+            defer.returnValue({})
+            return
         if not configuration:
             configuration = {}
         for key, value in configuration.items():
             if key not in cls.CONFIGURATION_KEYS:
-                logs += f"'{key}' is not a valid configuration key\n"
+                logger(f"'{key}' is not a valid configuration key\n")
             params[key] = value
         if commit:
             params['ref'] = commit
-        response = requests.get(f'{cls.HOSTNAME}/api/results-summary/{cls.SUITE}/{test}', params=params)
-        if response.status_code != 200:
-            logs += f'Failed to query results summary with status code {response.status_code}\n'
-            return ({}, logs)
+
+        url = f'{cls.HOSTNAME}/api/results-summary/{cls.SUITE}/{test}'
+        if params:
+            url += '?{}'.format('&'.join([f'{key}={value}' for key, value in params.items()]))
+
         try:
-            return (response.json(), logs)
+            agent = Agent(reactor, connectTimeout=10)
+            response = yield agent.request(b'GET', url.encode('utf-8'), Headers({
+                'User-Agent': ['python-twisted/{}'.format(twisted.__version__)],
+                'Content-Type': ['application/json'],
+            }))
+
+            if response.code == 200:
+                finished = defer.Deferred()
+                response.deliverBody(cls.JsonPrinter(finished))
+                data = yield finished
+                defer.returnValue(json.loads(data))
+            else:
+                logger(f'Failed to query results summary with status code {response.status_code}\n')
+                defer.returnValue({})
+        except error.ConnectError as e:
+            logger(f'Failed to connect to {cls.HOSTNAME}: {e}\n')
+            defer.returnValue({})
+        except ResponseFailed:
+            logger(f'No response from {cls.HOSTNAME}\n')
+            defer.returnValue({})
         except json.decoder.JSONDecodeError:
-            logs += 'Non-json response from results summary query\n'
-            return ({}, logs)
+            logger('Non-json response from results summary query\n')
+            defer.returnValue({})
 
     @classmethod
+    @defer.inlineCallbacks
     def is_test_pre_existing_failure(cls, test, commit=None, configuration=None):
-        data, logs = cls.get_results_summary(test, commit, configuration)
+        logs = []
+        data = yield cls.get_results_summary(test, commit, configuration, logger=lambda log: logs.append(log))
         pass_rate = data.get('pass', 100) + data.get('warning', 0)
         is_existing_failure = (pass_rate <= cls.PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE)
         output = {
             'is_existing_failure': is_existing_failure,
             'pass_rate': data.get('pass', 'Unknown'),
             'raw_data': data,
-            'logs': logs,
+            'logs': ''.join(logs),
         }
-        return output
+        defer.returnValue(output)
 
     @classmethod
-    def is_test_expected_to(cls, test, result_type=None, commit=None, configuration=None, log=False):
-        data, logs = cls.get_results_summary(test, commit=commit, configuration=configuration)
-        print(logs)
-        if log:
-            print(test)
-            for key, value in (data or dict()).items():
-                if not value:
-                    continue
-                print(f'    {key}: {value}%')
-            if not data:
-                print('    No historic data found for query')
+    @defer.inlineCallbacks
+    def is_test_expected_to(cls, test, result_type=None, commit=None, configuration=None, logger=None):
+        logger = logger or (lambda log: None)
+        data = yield cls.get_results_summary(test, commit=commit, configuration=configuration, logger=logger)
+        logger(f'{test}\n')
+        for key, value in (data or dict()).items():
+            if not value:
+                continue
+            logger(f'    {key}: {value}%\n')
         if not data:
-            return -1
+            logger('    No historic data found for query\n')
+        if not data:
+            return defer.returnValue(-1)
         if result_type:
-            return data.get(result_type.lower(), 0) > cls.PERCENT_THRESHOLD
-        return 100 - (data.get('pass', 0) + data.get('warning', 0)) > cls.PERCENT_THRESHOLD
+            return defer.returnValue(data.get(result_type.lower(), 0) > cls.PERCENT_THRESHOLD)
+        return defer.returnValue(100 - (data.get('pass', 0) + data.get('warning', 0)) > cls.PERCENT_THRESHOLD)
 
     @classmethod
     def main(cls, args=None):
@@ -154,11 +195,18 @@ class ResultsDatabase(object):
             if attr:
                 configuration[key] = attr
 
-        if cls.is_test_expected_to(parsed.test, result_type=parsed.result, commit=parsed.commit, log=True, configuration=configuration):
-            print('EXPECTED')
-        else:
-            print('UNEXPECTED')
-        return 0
+        d = cls.is_test_expected_to(parsed.test, result_type=parsed.result, commit=parsed.commit, logger=sys.stdout.write, configuration=configuration)
+
+        def callback(result):
+            if result:
+                print('EXPECTED')
+            else:
+                print('UNEXPECTED')
+
+        d.addCallback(callback)
+        d.addBoth(lambda _: reactor.stop())
+
+        return reactor.run()
 
 
 if __name__ == '__main__':

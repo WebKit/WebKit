@@ -48,7 +48,7 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 {
     NSParameterAssert(coder);
 
-    return [self initWithString:[coder decodeObjectOfClass:[NSString class] forKey:stringCodingKey]];
+    return [self initWithString:[coder decodeObjectOfClass:[NSString class] forKey:stringCodingKey] error:nullptr];
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
@@ -92,11 +92,6 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
     return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path));
 }
 
-- (instancetype)initWithString:(NSString *)string
-{
-    return [self initWithString:string error:nullptr];
-}
-
 - (instancetype)initWithString:(NSString *)string error:(NSError **)error
 {
     NSParameterAssert(string);
@@ -112,11 +107,6 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
     API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, string, error);
 
     return _webExtensionMatchPattern->isValid() ? self : nil;
-}
-
-- (instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path
-{
-    return [self initWithScheme:scheme host:host path:path error:nullptr];
 }
 
 - (instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path error:(NSError **)error
@@ -277,19 +267,9 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
     return nil;
 }
 
-- (instancetype)initWithString:(NSString *)string
-{
-    return [self initWithString:string error:nullptr];
-}
-
 - (instancetype)initWithString:(NSString *)string error:(NSError **)error
 {
     return nil;
-}
-
-- (instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path
-{
-    return [self initWithScheme:scheme host:host path:path error:nullptr];
 }
 
 - (instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path error:(NSError **)error

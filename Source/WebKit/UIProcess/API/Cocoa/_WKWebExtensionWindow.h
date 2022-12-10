@@ -32,11 +32,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*!
+ @abstract Constants used by @link WKWebExtensionWindow @/link to indicate the type of a window.
+ @constant WKWebExtensionWindowTypeNormal  Indicates a normal window.
+ @constant WKWebExtensionWindowTypePopup  Indicates a popup window.
+ */
 typedef NS_ENUM(NSInteger, _WKWebExtensionWindowType) {
     _WKWebExtensionWindowTypeNormal,
     _WKWebExtensionWindowTypePopup,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+/*!
+ @abstract Constants used by @link WKWebExtensionWindow @/link to indicate possible states of a window.
+ @constant WKWebExtensionWindowStateNormal  Indicates a window is in its normal state.
+ @constant WKWebExtensionWindowStateMinimized  Indicates a window is minimized.
+ @constant WKWebExtensionWindowStateMaximized  Indicates a window is maximized.
+ @constant WKWebExtensionWindowStateFullscreen  Indicates a window is in fullscreen mode.
+ */
 typedef NS_ENUM(NSInteger, _WKWebExtensionWindowState) {
     _WKWebExtensionWindowStateNormal,
     _WKWebExtensionWindowStateMinimized,
@@ -44,21 +56,66 @@ typedef NS_ENUM(NSInteger, _WKWebExtensionWindowState) {
     _WKWebExtensionWindowStateFullscreen,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+/*! @abstract A class conforming to the `WKWebExtensionWindow` protocol represents a window to web extensions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @protocol _WKWebExtensionWindow <NSObject>
 @optional
 
+/*!
+ @abstract Called when an array of tabs is needed for the window.
+ @param context The context in which the web extension is running.
+ @return An array of tabs in the window.
+ @discussion Defaults to an empty array if not implemented.
+ */
 - (NSArray<id <_WKWebExtensionTab>> *)tabsForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called when the active tab is needed for the window.
+ @param context The context in which the web extension is running.
+ @return The active tab in the window.
+ @discussion Defaults to `nil` if not implemented.
+ */
 - (id <_WKWebExtensionTab>)activeTabForWebExtensionContext:(_WKWebExtensionContext *)context;
 
+/*!
+ @abstract Called when the type of the window is needed.
+ @param context The context in which the web extension is running.
+ @return The type of the window.
+ @discussion Defaults to`WKWebExtensionWindowTypeNormal` if not implemented.
+ */
 - (_WKWebExtensionWindowType)windowTypeForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called when the state of the window is needed.
+ @param context The context in which the web extension is running.
+ @return The state of the window.
+ @discussion Defaults to`WKWebExtensionWindowStateNormal` if not implemented.
+ */
 - (_WKWebExtensionWindowState)windowStateForWebExtensionContext:(_WKWebExtensionContext *)context;
 
+/*!
+ @abstract Called when the focused state of the window is needed.
+ @param context The context in which the web extension is running.
+ @return `YES` if the window is focused, `NO` otherwise.
+ @discussion Defaults to `NO` if not implemented.
+ */
 - (BOOL)isFocusedForWebExtensionContext:(_WKWebExtensionContext *)context;
-- (BOOL)isEphemeralForWebExtensionContext:(_WKWebExtensionContext *)context;
-- (BOOL)isPopupWindowForWebExtensionContext:(_WKWebExtensionContext *)context;
 
-- (NSRect)frameForWebExtensionContext:(_WKWebExtensionContext *)context;
+/*!
+ @abstract Called when the ephemeral state of the window is needed.
+ @param context The context in which the web extension is running.
+ @return `YES` if the window is ephemeral, `NO` otherwise.
+ @discussion Used to indicated "private browsing" windows. Defaults to `NO` if not implemented.
+ */
+- (BOOL)isEphemeralForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called when the frame of the window is needed.
+ @param context The context in which the web extension is running.
+ @return The frame of the window.
+ @discussion The frame is the bounding rectangle of the window, in screen coordinates. Defaults to `CGRectZero` if not implemented.
+ */
+- (CGRect)frameForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 @end
 

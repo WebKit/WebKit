@@ -87,12 +87,12 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
     _webExtensionContext->~WebExtensionContext();
 }
 
-- (_WKWebExtension *)extension
+- (_WKWebExtension *)webExtension
 {
     return wrapper(&_webExtensionContext->extension());
 }
 
-- (_WKWebExtensionController *)extensionController
+- (_WKWebExtensionController *)webExtensionController
 {
     return wrapper(_webExtensionContext->extensionController());
 }
@@ -439,25 +439,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return _webExtensionContext->hasInjectedContentForURL(url);
 }
 
-- (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab
-{
-    NSParameterAssert(tab);
-
-    _webExtensionContext->userGesturePerformed(tab);
-}
-
 - (BOOL)hasActiveUserGestureInTab:(id<_WKWebExtensionTab>)tab
 {
     NSParameterAssert(tab);
 
     return _webExtensionContext->hasActiveUserGesture(tab);
-}
-
-- (void)cancelUserGestureForTab:(id<_WKWebExtensionTab>)tab
-{
-    NSParameterAssert(tab);
-
-    _webExtensionContext->cancelUserGesture(tab);
 }
 
 - (BOOL)_inTestingMode
@@ -494,12 +480,12 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return nil;
 }
 
-- (_WKWebExtension *)extension
+- (_WKWebExtension *)webExtension
 {
     return nil;
 }
 
-- (_WKWebExtensionController *)extensionController
+- (_WKWebExtensionController *)webExtensionController
 {
     return nil;
 }
@@ -671,17 +657,9 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return NO;
 }
 
-- (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab
-{
-}
-
 - (BOOL)hasActiveUserGestureInTab:(id<_WKWebExtensionTab>)tab
 {
     return NO;
-}
-
-- (void)cancelUserGestureForTab:(id<_WKWebExtensionTab>)tab
-{
 }
 
 - (BOOL)_inTestingMode
