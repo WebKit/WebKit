@@ -957,7 +957,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     boxGeometry.setLogicalTopLeft(floatingPosition);
     auto floatBoxItem = floatingContext.toFloatItem(floatBox);
     auto isLogicalLeftPositionedInFloatingState = floatBoxItem.isLeftPositioned();
-    floatingState()->append(WTFMove(floatBoxItem));
+    floatingState()->append(floatBoxItem);
     m_placedFloats.append(&floatItem);
 
     auto intersects = [&] {
