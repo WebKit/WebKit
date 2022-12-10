@@ -304,6 +304,7 @@ private:
         OP2_PACKSSDW_VdqWdq             = 0x6B,
         OP2_PUNPCKLQDQ_VdqWdq           = 0x6C,
         OP2_MOVD_VdEd                   = 0x6E,
+        OP2_MOVDQA_VdqWdq               = 0x6F,
         OP2_PSHUFD_VdqWdqIb             = 0x70,
         OP2_PSHUFLW_VdqWdqIb            = 0x70,
         OP2_PSHUFHW_VdqWdqIb            = 0x70,
@@ -359,6 +360,7 @@ private:
         OP2_PSUBD_VdqWdq                = 0xFA,
         OP2_PSUBQ_VdqWdq                = 0xFB,
         OP2_PMULLW_VdqWdq               = 0xD5,
+        OP2_PMOVMSKB_GdqpUdq            = 0xD7,
         OP2_ADDPS_VpsWps                = 0x58,
         OP2_ADDPD_VpdWpd                = 0x58,
         OP2_SUBPS_VpsWps                = 0x5C,
@@ -398,6 +400,7 @@ private:
     
     typedef enum {
         OP3_PSHUFB_VdqWdq       = 0x00,
+        OP3_PMADDUBSW_VpdWpd    = 0x04,
         OP3_ROUNDPD_MbVdqIb     = 0x09,
         OP3_ROUNDSS_VssWssIb    = 0x0A,
         OP3_ROUNDSD_VsdWsdIb    = 0x0B,
@@ -2693,7 +2696,8 @@ public:
         // VEX.128.0F.WIG C6 /r ib VSHUFPS xmm1, xmm2, xmm3/m128, imm8
         bool isVEX256 = false;
         bool isW1 = false;
-        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_SHUFPS_VpdWpdIb, controlBits, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_SHUFPS_VpdWpdIb, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.immediate8(controlBits);
     }
 
     void shufpd_rr(uint8_t controlBits, XMMRegisterID vn, XMMRegisterID vd)
@@ -3157,7 +3161,8 @@ public:
         // VEX.128.66.0F3A.W0 4B /r /is4 VBLENDVPD xmm1, xmm2, xmm3/m128, xmm4
         bool isVEX256 = false;
         bool isW1 = false;
-        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::ThreeBytesOp3A, isW1, OP3_BLENDVPD_VpdWpdXMM0, xmm4, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::ThreeBytesOp3A, isW1, OP3_BLENDVPD_VpdWpdXMM0, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.immediate8(static_cast<uint8_t>(xmm4) << 4); // imm8[7:4]
     }
 
     void pblendw_rr(uint8_t imm8, XMMRegisterID vn, XMMRegisterID vd)
@@ -3444,7 +3449,8 @@ public:
         // VEX.128.66.0F.WIG C2 /r ib VCMPPD xmm1, xmm2, xmm3/m128, imm8
         bool isVEX256 = false;
         bool isW1 = false;
-        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_CMPPD_VpdWpdIb, imm8, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_CMPPD_VpdWpdIb, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.immediate8(imm8);
     }
 
     void vcmpeqpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
@@ -3762,6 +3768,44 @@ public:
     void vpsraq_rrr(XMMRegisterID shift, XMMRegisterID input, XMMRegisterID dest)
     {
         m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSRAQ_VdqWdq, (RegisterID)dest, (RegisterID)input, (RegisterID)shift);
+    }
+
+    void vmovdqa_rr(XMMRegisterID vn, XMMRegisterID vd)
+    {
+        // https://www.felixcloutier.com/x86/movdqa:vmovdqa32:vmovdqa64
+        // VEX.128.66.0F.WIG 6F /r VMOVDQA xmm1, xmm2/m128
+        bool isVEX256 = false;
+        bool isW1 = false;
+        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_MOVDQA_VdqWdq, (RegisterID)vd, (RegisterID)vn, (RegisterID)0);
+    }
+
+    void vpmaddubsw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    {
+        // https://www.felixcloutier.com/x86/pmaddubsw
+        // VEX.128.66.0F38.WIG 04 /r VPMADDUBSW xmm1, xmm2, xmm3/m128
+        bool isVEX256 = false;
+        bool isW1 = false;
+        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, isW1, OP3_PMADDUBSW_VpdWpd, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+    }
+
+    void vpsrld_i8rr(uint8_t imm8, XMMRegisterID vn, XMMRegisterID vd)
+    {
+        // https://www.felixcloutier.com/x86/psrlw:psrld:psrlq
+        // VEX.128.66.0F.WIG 72 /2 ib VPSRLD xmm1, xmm2, imm8
+        bool isVEX256 = false;
+        bool isW1 = false;
+        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::TwoBytesOp, isW1, OP2_PSRLD_UdqIb, (RegisterID)GROUP14_OP_PSRLQ, (RegisterID)vn, (RegisterID)vd);
+        m_formatter.immediate8(imm8);
+    }
+
+    void vpblendw_i8rrr(uint8_t imm8, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    {
+        // https://www.felixcloutier.com/x86/pblendw
+        // VEX.128.66.0F3A.WIG 0E /r ib VPBLENDW xmm1, xmm2, xmm3/m128, imm8
+        bool isVEX256 = false;
+        bool isW1 = false;
+        m_formatter.vexThreeByteOp(isVEX256, PRE_SSE_66, VexImpliedBytes::ThreeBytesOp3A, isW1, OP3_PBLENDW, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.immediate8(imm8);
     }
 
     void movl_rr(RegisterID src, RegisterID dst)
@@ -6017,24 +6061,6 @@ private:
             writer.putByteUnchecked(opcode);
             writer.registerModRM(reg, rm);
             writer.putByteUnchecked((uint8_t)laneIndex);
-        }
-
-        void vexThreeByteOp(bool isVEX256, OneByteOpcodeID simdPrefix, VexImpliedBytes impliedBytes, bool isW1, ThreeByteOpcodeID opcode, uint8_t imm8, RegisterID reg, RegisterID rm, RegisterID vvvv)
-        {
-            SingleInstructionBufferWriter writer(m_buffer);
-            writer.threeBytesVex(isVEX256, simdPrefix, impliedBytes, isW1, reg, (RegisterID)0, rm, vvvv);
-            writer.putByteUnchecked(opcode);
-            writer.registerModRM(reg, rm);
-            writer.putByteUnchecked((uint8_t)imm8 << 4);
-        }
-
-        void vexThreeByteOp(bool isVEX256, OneByteOpcodeID simdPrefix, VexImpliedBytes impliedBytes, bool isW1, TwoByteOpcodeID opcode, uint8_t imm8, RegisterID reg, RegisterID rm, RegisterID vvvv)
-        {
-            SingleInstructionBufferWriter writer(m_buffer);
-            writer.threeBytesVex(isVEX256, simdPrefix, impliedBytes, isW1, reg, (RegisterID)0, rm, vvvv);
-            writer.putByteUnchecked(opcode);
-            writer.registerModRM(reg, rm);
-            writer.putByteUnchecked((uint8_t)imm8 << 4);
         }
 
         void vexThreeByteOp(bool isVEX256, OneByteOpcodeID simdPrefix, VexImpliedBytes impliedBytes, bool isW1, ThreeByteOpcodeID opcode, RegisterID reg, RegisterID rm, RegisterID vvvv)
