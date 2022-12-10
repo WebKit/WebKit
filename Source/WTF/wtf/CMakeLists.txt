@@ -75,6 +75,7 @@ set(WTF_PUBLIC_HEADERS
     ExportMacros.h
     FailureAction.h
     FastBitVector.h
+    FastFloat.h
     FastMalloc.h
     FastTLS.h
     FilePrintStream.h
@@ -348,6 +349,16 @@ set(WTF_PUBLIC_HEADERS
     dtoa/strtod.h
     dtoa/utils.h
 
+    fast_float/ascii_number.h
+    fast_float/bigint.h
+    fast_float/decimal_to_binary.h
+    fast_float/digit_comparison.h
+    fast_float/fast_float.h
+    fast_float/fast_table.h
+    fast_float/float_common.h
+    fast_float/parse_number.h
+    fast_float/simple_decimal_conversion.h
+
     persistence/PersistentCoders.h
     persistence/PersistentDecoder.h
     persistence/PersistentEncoder.h
@@ -432,6 +443,7 @@ set(WTF_SOURCES
     DateMath.cpp
     DebugHeap.cpp
     FastBitVector.cpp
+    FastFloat.cpp
     FastMalloc.cpp
     FilePrintStream.cpp
     FileSystem.cpp
@@ -560,6 +572,7 @@ set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${WTF_DIR}"
     "${WTF_DIR}/wtf"
     "${WTF_DIR}/wtf/dtoa"
+    "${WTF_DIR}/wtf/fast_float"
     "${WTF_DIR}/wtf/persistence"
     "${WTF_DIR}/wtf/text"
     "${WTF_DIR}/wtf/text/icu"
