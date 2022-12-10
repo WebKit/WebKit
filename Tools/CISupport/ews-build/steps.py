@@ -3272,8 +3272,10 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
         self.incorrectLayoutLines = incorrectLayoutLines
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield shell.Test.runCommand(self, command)
+
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
 
@@ -3287,12 +3289,13 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                 self._addToLog(self.test_failures_log_name, '\n'.join(first_results.failing_tests))
 
             if first_results.failing_tests and not first_results.did_exceed_test_failure_limit:
-                self.filter_failures_using_results_db(first_results.failing_tests)
+                yield self.filter_failures_using_results_db(first_results.failing_tests)
                 self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_first_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
 
         self._parseRunWebKitTestsOutput(logText)
 
+    @defer.inlineCallbacks
     def filter_failures_using_results_db(self, failing_tests):
         self.failing_tests_filtered = failing_tests.copy()
         identifier = self.getProperty('identifier', None)
@@ -3311,7 +3314,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
         self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
         for test in failing_tests:
-            data = ResultsDatabase().is_test_pre_existing_failure(test, commit=identifier, configuration=configuration)
+            data = yield ResultsDatabase().is_test_pre_existing_failure(test, commit=identifier, configuration=configuration)
             self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
             if data['is_existing_failure']:
                 self.preexisting_failures_in_results_db.append(test)
@@ -3491,8 +3494,10 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 RunWebKitTestsWithoutChange()])
         return rc
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield shell.Test.runCommand(self, command)
+
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
 
@@ -3506,7 +3511,7 @@ class ReRunWebKitTests(RunWebKitTests):
                 self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
 
             if second_results.failing_tests and not second_results.did_exceed_test_failure_limit:
-                self.filter_failures_using_results_db(second_results.failing_tests)
+                yield self.filter_failures_using_results_db(second_results.failing_tests)
                 self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
         self._parseRunWebKitTestsOutput(logText)
@@ -3537,8 +3542,10 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
         self.setProperty('clean_tree_run_status', rc)
         return rc
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield shell.Test.runCommand(self, command)
+
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
 
