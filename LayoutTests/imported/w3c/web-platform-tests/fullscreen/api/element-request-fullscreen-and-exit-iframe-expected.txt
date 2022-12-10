@@ -1,4 +1,4 @@
 
-FAIL Checks that the fullscreenchange events fire in right order when entering fullscreen assert_equals: expected Element node <iframe allowfullscreen="" src="about:blank"></iframe> but got Element node <body></body>
+PASS Checks that the fullscreenchange events fire in right order when entering fullscreen
 PASS Checks that the fullscreenchange events fire in right order when exiting fullscreen
 

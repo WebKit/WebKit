@@ -459,17 +459,25 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     m_pendingFullscreenElement = nullptr;
     m_fullscreenElement = &element;
 
-    Element* ancestor = &element;
+    Deque<RefPtr<Element>> ancestorsInTreeOrder;
+    RefPtr ancestor = &element;
     do {
+        ancestorsInTreeOrder.prepend(ancestor);
+    } while ((ancestor = ancestor->document().ownerElement()));
+
+    for (auto ancestor : ancestorsInTreeOrder) {
         ancestor->setFullscreenFlag(true);
 
         if (ancestor == &element)
             document().resolveStyle(Document::ResolveStyleType::Rebuild);
 
-        if (!ancestor->isInTopLayer())
-            ancestor->addToTopLayer();
+        // Remove before adding, so we always add at the end of the top layer.
+        if (ancestor->isInTopLayer())
+            ancestor->removeFromTopLayer();
+        ancestor->addToTopLayer();
+
         addDocumentToFullscreenChangeEventQueue(ancestor->document());
-    } while ((ancestor = ancestor->document().ownerElement()));
+    }
 
     if (is<HTMLIFrameElement>(element))
         element.setIFrameFullscreenFlag(true);
