@@ -50,6 +50,7 @@ private:
     void computeRootInlineBoxVerticalPosition(LineBox&, const LineBoxAlignmentContent&) const;
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
     InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
+    InlineLevelBox::LayoutBounds layoutBoundsForInlineBoxSubtree(const LineBox&, const InlineLevelBox&) const;
 
     const InlineFormattingGeometry& formattingGeometry() const { return m_inlineFormattingGeometry; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
