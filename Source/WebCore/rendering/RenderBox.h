@@ -432,6 +432,8 @@ override;
     void updateLogicalHeight();
     virtual LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const;
 
+    void overrideLogicalHeightForSizeContainment();
+
     void cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit) const;
     
     // This function will compute the logical border-box height, without laying

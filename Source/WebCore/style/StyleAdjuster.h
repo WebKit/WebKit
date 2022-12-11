@@ -71,6 +71,9 @@ public:
 private:
     void adjustDisplayContentsStyle(RenderStyle&) const;
     void adjustForSiteSpecificQuirks(RenderStyle&) const;
+
+    void adjustThemeStyle(RenderStyle&, const RenderStyle* userAgentAppearanceStyle) const;
+
     static OptionSet<EventListenerRegionType> computeEventListenerRegionTypes(const Document&, const RenderStyle&, const EventTarget&, OptionSet<EventListenerRegionType>);
 
     const Document& m_document;

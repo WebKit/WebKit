@@ -519,7 +519,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
     // Let the theme also have a crack at adjusting the style.
     if (style.hasAppearance())
-        RenderTheme::singleton().adjustStyle(style, m_element, userAgentAppearanceStyle);
+        adjustThemeStyle(style, userAgentAppearanceStyle);
 
     // If we have first-letter pseudo style, do not share this style.
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
@@ -723,6 +723,32 @@ void Adjuster::adjustAnimatedStyle(RenderStyle& style, OptionSet<AnimationImpact
     
     if (style.hasAutoUsedZIndex() && impact.contains(AnimationImpact::ForcesStackingContext))
         style.setUsedZIndex(0);
+}
+
+void Adjuster::adjustThemeStyle(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
+{
+    ASSERT(style.hasAppearance());
+    auto isOldWidthAuto = style.width().isAuto();
+    auto isOldMinWidthAuto = style.minWidth().isAuto();
+    auto isOldHeightAuto = style.height().isAuto();
+    auto isOldMinHeightAuto = style.minHeight().isAuto();
+
+    RenderTheme::singleton().adjustStyle(style, m_element, userAgentAppearanceStyle);
+
+    if (style.containsSize()) {
+        if (style.containIntrinsicWidthType() != ContainIntrinsicSizeType::None) {
+            if (isOldWidthAuto)
+                style.setWidth(Length(LengthType::Auto));
+            if (isOldMinWidthAuto)
+                style.setMinWidth(Length(LengthType::Auto));
+        }
+        if (style.containIntrinsicHeightType() != ContainIntrinsicSizeType::None) {
+            if (isOldHeightAuto)
+                style.setHeight(Length(LengthType::Auto));
+            if (isOldMinHeightAuto)
+                style.setMinHeight(Length(LengthType::Auto));
+        }
+    }
 }
 
 void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const

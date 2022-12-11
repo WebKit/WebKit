@@ -2977,18 +2977,29 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
     downcast<RenderFlexibleBox>(parent())->setCachedChildIntrinsicContentLogicalHeight(*this, height);
 }
 
+void RenderBox::overrideLogicalHeightForSizeContainment()
+{
+    LayoutUnit intrinsicHeight;
+    if (auto height = explicitIntrinsicInnerLogicalHeight())
+        intrinsicHeight = height.value();
+    else if (isMenuList()) {
+        // RenderMenuList has its own theme, if there isn't explicitIntrinsicInnerLogicalHeight,
+        // as a size containment, it should be treated as if there is no content, and the height
+        // should the original logical height for theme.
+        return;
+    }
+
+    // We need the exact width of border and padding here, yet we can't use borderAndPadding* interfaces.
+    // Because these interfaces evetually call borderAfter/Before, and RenderBlock::borderBefore
+    // adds extra border to fieldset by adding intrinsicBorderForFieldset which is not needed here.
+    auto borderAndPadding = RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
+    setLogicalHeight(intrinsicHeight + borderAndPadding + scrollbarLogicalHeight());
+}
+
 void RenderBox::updateLogicalHeight()
 {
-    if (shouldApplySizeContainment() && !isRenderGrid()) {
-        // We need the exact width of border and padding here, yet we can't use borderAndPadding* interfaces.
-        // Because these interfaces evetually call borderAfter/Before, and RenderBlock::borderBefore
-        // adds extra border to fieldset by adding intrinsicBorderForFieldset which is not needed here.
-        LayoutUnit intrinsicHeight;
-        if (auto height = explicitIntrinsicInnerLogicalHeight())
-            intrinsicHeight = height.value();
-        auto borderAndPadding = RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
-        setLogicalHeight(intrinsicHeight + borderAndPadding + scrollbarLogicalHeight());
-    }
+    if (shouldApplySizeContainment() && !isRenderGrid())
+        overrideLogicalHeightForSizeContainment();
 
     cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
     auto computedValues = computeLogicalHeight(logicalHeight(), logicalTop());
