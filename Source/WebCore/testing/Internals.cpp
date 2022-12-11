@@ -4061,7 +4061,8 @@ String Internals::toolTipFromElement(Element& element) const
     HitTestResult result;
     result.setInnerNode(&element);
     TextDirection direction;
-    return result.title(direction);
+    auto title = result.title(direction);
+    return !title.isEmpty() ? title : result.innerTextIfTruncated(direction);
 }
 
 String Internals::getImageSourceURL(Element& element)
