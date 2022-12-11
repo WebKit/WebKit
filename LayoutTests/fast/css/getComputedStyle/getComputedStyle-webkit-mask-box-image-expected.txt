@@ -1,0 +1,12 @@
+
+PASS ""
+PASS "-webkit-mask-box-image: initial"
+PASS "-webkit-mask-box-image: none"
+PASS "-webkit-mask-box-image-source: initial; -webkit-mask-box-image-slice: initial; -webkit-mask-box-image-width: initial; -webkit-mask-box-image-outset: initial; -webkit-mask-box-image-repeat: initial;"
+PASS "-webkit-mask-box-image: url(#)"
+PASS "-webkit-mask-box-image: 1"
+PASS "-webkit-mask-box-image: 1% / 2"
+PASS "-webkit-mask-box-image: 1% // 2"
+PASS "-webkit-mask-box-image: 1% / 2px / 3"
+PASS "-webkit-mask-box-image: round"
+

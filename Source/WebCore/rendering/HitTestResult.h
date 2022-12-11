@@ -97,7 +97,7 @@ public:
     WEBCORE_EXPORT String spellingToolTip(TextDirection&) const;
     String replacedString() const;
     WEBCORE_EXPORT String title(TextDirection&) const;
-    String innerTextIfTruncated(TextDirection&) const;
+    WEBCORE_EXPORT String innerTextIfTruncated(TextDirection&) const;
     WEBCORE_EXPORT String altDisplayString() const;
     WEBCORE_EXPORT String titleDisplayString() const;
     WEBCORE_EXPORT Image* image() const;

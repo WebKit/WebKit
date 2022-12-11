@@ -7335,7 +7335,7 @@
         },
         "-webkit-mask-box-image": {
             "codegen-properties": {
-                "initial": "initialNinePieceImage",
+                "initial": "initialNinePieceImageForMask",
                 "converter": "BorderMask<CSSPropertyWebkitMaskBoxImage>",
                 "parser-function": "consumeWebkitBorderImage",
                 "parser-requires-current-property": true,

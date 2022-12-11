@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Test computed style on the -webkit-mask-box-image property</title>
+<link rel="author" title="Oriol Brufau" href="mailto:obrufau@igalia.com">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<div id="target"></div>
+<script>
+const target = document.getElementById('target');
+const computedStyle = getComputedStyle(target);
+
+const initialValues = {
+    '-webkit-mask-box-image': 'none',
+    '-webkit-mask-box-image-slice': '0 fill',
+    '-webkit-mask-box-image-width': 'auto',
+    '-webkit-mask-box-image-outset': '0',
+    '-webkit-mask-box-image-repeat': 'stretch',
+};
+
+const testCases = [
+    // value, expected
+    [ '', initialValues ],
+    [ '-webkit-mask-box-image: initial', initialValues ],
+    [ '-webkit-mask-box-image: none', initialValues ],
+    [
+        '-webkit-mask-box-image-source: initial; -webkit-mask-box-image-slice: initial; -webkit-mask-box-image-width: initial; -webkit-mask-box-image-outset: initial; -webkit-mask-box-image-repeat: initial;',
+        initialValues
+    ],
+    [ '-webkit-mask-box-image: url(#)', {
+        ...initialValues,
+        '-webkit-mask-box-image': 'url("#") 0 fill / auto / 0 stretch',
+        '-webkit-mask-box-image-source': 'url("#")',
+    }],
+    [ '-webkit-mask-box-image: 1', {
+        ...initialValues,
+        '-webkit-mask-box-image-slice': '1 fill',
+    }],
+    [ '-webkit-mask-box-image: 1% / 2', {
+        ...initialValues,
+        '-webkit-mask-box-image-slice': '1% fill',
+        '-webkit-mask-box-image-width': '2',
+    }],
+    [ '-webkit-mask-box-image: 1% // 2', {
+        ...initialValues,
+        '-webkit-mask-box-image-slice': '1% fill',
+    }],
+    [ '-webkit-mask-box-image: 1% / 2px / 3', {
+        ...initialValues,
+        '-webkit-mask-box-image-slice': '1% fill',
+        '-webkit-mask-box-image-width': '2px',
+        '-webkit-mask-box-image-outset': '3',
+    }],
+    [ '-webkit-mask-box-image: round', {
+        ...initialValues,
+        '-webkit-mask-box-image-repeat': 'round',
+    }],
+];
+
+for (let testCase of testCases) {
+    target.style.cssText = testCase[0];
+    test(function() {
+        for (let [prop, expected] of Object.entries(testCase[1])) {
+            assert_equals(computedStyle.getPropertyValue(prop), expected, prop);
+        }
+    }, JSON.stringify(testCase[0]));
+}
+</script>
+</body>
+</html>

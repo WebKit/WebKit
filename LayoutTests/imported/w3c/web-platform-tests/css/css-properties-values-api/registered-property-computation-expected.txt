@@ -53,12 +53,12 @@ PASS <angle> values are computed correctly [180deg]
 PASS <angle> values are computed correctly [400grad]
 PASS <angle> values are computed correctly [calc(360deg + 400grad)]
 PASS * values are computed correctly [50s]
-FAIL <time> values are computed correctly [1s] The given initial value does not parse for the given syntax.
-FAIL <time> values are computed correctly [1000ms] The given initial value does not parse for the given syntax.
-FAIL <time> values are computed correctly [calc(1000ms + 1s)] The given initial value does not parse for the given syntax.
+PASS <time> values are computed correctly [1s]
+PASS <time> values are computed correctly [1000ms]
+PASS <time> values are computed correctly [calc(1000ms + 1s)]
 PASS * values are computed correctly [50dpi]
-FAIL <resolution> values are computed correctly [1dppx] The given initial value does not parse for the given syntax.
-FAIL <resolution> values are computed correctly [96dpi] The given initial value does not parse for the given syntax.
-FAIL <resolution> values are computed correctly [calc(1dppx + 96dpi)] The given initial value does not parse for the given syntax.
+PASS <resolution> values are computed correctly [1dppx]
+PASS <resolution> values are computed correctly [96dpi]
+PASS <resolution> values are computed correctly [calc(1dppx + 96dpi)]
 PASS * values are computed correctly [url(why)]
 

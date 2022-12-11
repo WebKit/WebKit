@@ -284,23 +284,21 @@ String HitTestResult::title(TextDirection& dir) const
 
 String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
 {
-    for (Node* truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentInComposedTree()) {
+    for (auto* truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentInComposedTree()) {
         if (!is<Element>(*truncatedNode))
             continue;
 
-        if (auto renderer = downcast<Element>(*truncatedNode).renderer()) {
-            if (is<RenderBlockFlow>(*renderer)) {
-                RenderBlockFlow& block = downcast<RenderBlockFlow>(*renderer);
-                if (block.style().textOverflow() == TextOverflow::Ellipsis) {
-                    for (auto* line = block.firstRootBox(); line; line = line->nextRootBox()) {
-                        if (line->hasEllipsisBox()) {
-                            dir = block.style().direction();
-                            return downcast<Element>(*truncatedNode).innerText();
-                        }
+        if (auto* renderer = downcast<Element>(*truncatedNode).renderer(); renderer && is<RenderBlockFlow>(*renderer)) {
+            auto& block = downcast<RenderBlockFlow>(*renderer);
+            if (block.style().textOverflow() == TextOverflow::Ellipsis) {
+                for (auto lineBox = InlineIterator::firstLineBoxFor(block); lineBox; lineBox.traverseNext()) {
+                    if (lineBox->hasEllipsis()) {
+                        dir = block.style().direction();
+                        return downcast<Element>(*truncatedNode).innerText();
                     }
                 }
-                break;
             }
+            break;
         }
     }
 

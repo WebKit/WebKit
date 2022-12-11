@@ -158,6 +158,7 @@ std::unique_ptr<CalcExpressionNode> CSSCalcPrimitiveValueNode::createCalcExpress
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
+    case CalculationCategory::Resolution:
     case CalculationCategory::Other:
         ASSERT_NOT_REACHED();
     }
@@ -193,6 +194,7 @@ double CSSCalcPrimitiveValueNode::computeLengthPx(const CSSToLengthConversionDat
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
+    case CalculationCategory::Resolution:
     case CalculationCategory::Other:
         ASSERT_NOT_REACHED();
         break;
