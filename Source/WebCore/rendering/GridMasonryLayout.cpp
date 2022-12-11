@@ -36,7 +36,6 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     m_masonryAxisDirection = masonryAxisDirection;
     m_masonryAxisGridGap = m_renderGrid.gridGap(m_masonryAxisDirection);
     m_gridAxisTracksCount = gridAxisTracks;
-    m_autoFlowNextCursor = 0;
 
     allocateCapacityForMasonryVectors();
     collectMasonryItems();
@@ -46,13 +45,13 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     resizeAndResetRunningPositions(); 
 
     // 2.4 Masonry Layout Algorithm
-    addItemsToFirstTrack();
-
+    addItemsToFirstTrack(m_firstTrackItems);
+    m_autoFlowNextCursor = 0;
     if (m_renderGrid.style().masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered)
         placeItemsUsingOrderModifiedDocumentOrder();
     else {
-        placeItemsWithDefiniteGridAxisPosition();
-        placeItemsWithIndefiniteGridAxisPosition();
+        placeItemsWithDefiniteGridAxisPosition(m_itemsWithDefiniteGridAxisPosition);
+        placeItemsWithIndefiniteGridAxisPosition(m_itemsWithIndefiniteGridAxisPosition);
     }
 }
 
@@ -102,9 +101,9 @@ void GridMasonryLayout::resizeAndResetRunningPositions()
     m_runningPositions.fill(LayoutUnit());
 }
 
-void GridMasonryLayout::addItemsToFirstTrack()
+void GridMasonryLayout::addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>& firstTrackItems)
 {
-    for (auto& [item, gridArea] : m_firstTrackItems) {
+    for (auto& [item, gridArea] : firstTrackItems) {
         ASSERT(item);
         if (!item)
             continue;
@@ -126,9 +125,9 @@ void GridMasonryLayout::placeItemsUsingOrderModifiedDocumentOrder()
     }   
 }
 
-void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition()
+void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithDefiniteGridAxisPosition)
 {
-    for (auto* item : m_itemsWithDefiniteGridAxisPosition) {
+    for (auto* item : itemsWithDefiniteGridAxisPosition) {
         ASSERT(item);
         if (!item)
             continue;
@@ -151,9 +150,9 @@ GridArea GridMasonryLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& chi
     return masonryGridAreaFromGridAxisSpan(itemSpan);
 }
 
-void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition()
+void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition(const Vector<RenderBox*>& itemsWithIndefinitePosition)
 {
-    for (auto* item : m_itemsWithIndefiniteGridAxisPosition) {
+    for (auto* item : itemsWithIndefinitePosition) {
         ASSERT(item);
         if (!item)
             continue;
