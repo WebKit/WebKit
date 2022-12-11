@@ -11,8 +11,8 @@ FAIL Computed <length-percentage> [px + %] is reified as CSSMathSum assert_false
 FAIL Computed <length> is reified as CSSUnitValue assert_false: expected false got true
 FAIL Computed <number> is reified as CSSUnitValue assert_false: expected false got true
 FAIL Computed <percentage> is reified as CSSUnitValue assert_false: expected false got true
-FAIL Computed <resolution> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
-FAIL Computed <time> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
+FAIL Computed <resolution> is reified as CSSUnitValue assert_false: expected false got true
+FAIL Computed <time> is reified as CSSUnitValue assert_false: expected false got true
 FAIL Computed <url> is reified as CSSStyleValue assert_false: expected false got true
 FAIL Computed ident is reified as CSSKeywordValue assert_false: expected false got true
 FAIL First computed value correctly reified in space-separated list assert_false: expected false got true
@@ -41,10 +41,10 @@ PASS Specified <number> is reified as CSSUnparsedValue from get/getAll [attribut
 PASS Specified <number> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <percentage> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
 PASS Specified <percentage> is reified as CSSUnparsedValue from get/getAll [styleMap]
-FAIL Specified <resolution> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <resolution> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <time> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <time> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <resolution> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <resolution> is reified as CSSUnparsedValue from get/getAll [styleMap]
+PASS Specified <time> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <time> is reified as CSSUnparsedValue from get/getAll [styleMap]
 FAIL Specified <transform-function> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-function> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -77,10 +77,10 @@ PASS Specified string "1" accepted by set() for syntax <number> [attributeStyleM
 PASS Specified string "1" accepted by set() for syntax <number> [styleMap]
 PASS Specified string "10%" accepted by set() for syntax <percentage> [attributeStyleMap]
 PASS Specified string "10%" accepted by set() for syntax <percentage> [styleMap]
-FAIL Specified string "10dpi" accepted by set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "10dpi" accepted by set() for syntax <resolution> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "1s" accepted by set() for syntax <time> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "1s" accepted by set() for syntax <time> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "10dpi" accepted by set() for syntax <resolution> [attributeStyleMap]
+PASS Specified string "10dpi" accepted by set() for syntax <resolution> [styleMap]
+PASS Specified string "1s" accepted by set() for syntax <time> [attributeStyleMap]
+PASS Specified string "1s" accepted by set() for syntax <time> [styleMap]
 FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-function> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -111,10 +111,10 @@ PASS Specified string "red" accepted by set() for syntax <number> [attributeStyl
 PASS Specified string "red" accepted by set() for syntax <number> [styleMap]
 PASS Specified string "var(--x)" accepted by set() for syntax <percentage> [attributeStyleMap]
 PASS Specified string "var(--x)" accepted by set() for syntax <percentage> [styleMap]
-FAIL Specified string "blue" accepted by set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "blue" accepted by set() for syntax <resolution> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "1meter" accepted by set() for syntax <time> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "1meter" accepted by set() for syntax <time> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "blue" accepted by set() for syntax <resolution> [attributeStyleMap]
+PASS Specified string "blue" accepted by set() for syntax <resolution> [styleMap]
+PASS Specified string "1meter" accepted by set() for syntax <time> [attributeStyleMap]
+PASS Specified string "1meter" accepted by set() for syntax <time> [styleMap]
 FAIL Specified string "foo(0)" accepted by set() for syntax <transform-function> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "foo(0)" accepted by set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "bar(1)" accepted by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -147,10 +147,10 @@ PASS CSSUnparsedValue is accepted via set() for syntax <number> [attributeStyleM
 PASS CSSUnparsedValue is accepted via set() for syntax <number> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <percentage> [attributeStyleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <percentage> [styleMap]
-FAIL CSSUnparsedValue is accepted via set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <resolution> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <time> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <time> [styleMap] The given initial value does not parse for the given syntax.
+PASS CSSUnparsedValue is accepted via set() for syntax <resolution> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <resolution> [styleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <time> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <time> [styleMap]
 FAIL CSSUnparsedValue is accepted via set() for syntax <transform-function> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -181,10 +181,10 @@ PASS CSSUnitValue rejected by set() for syntax <number> [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <number> [styleMap]
 PASS CSSUnitValue rejected by set() for syntax <percentage> [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <percentage> [styleMap]
-FAIL CSSUnitValue rejected by set() for syntax <resolution> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnitValue rejected by set() for syntax <resolution> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnitValue rejected by set() for syntax <time> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnitValue rejected by set() for syntax <time> [styleMap] The given initial value does not parse for the given syntax.
+PASS CSSUnitValue rejected by set() for syntax <resolution> [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <resolution> [styleMap]
+PASS CSSUnitValue rejected by set() for syntax <time> [attributeStyleMap]
+PASS CSSUnitValue rejected by set() for syntax <time> [styleMap]
 FAIL CSSTransformValue rejected by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSTransformValue rejected by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
 PASS CSSUnitValue rejected by set() for syntax <length>+ [attributeStyleMap]
@@ -213,10 +213,10 @@ PASS Appending a string to <number>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <number>+ is not allowed [styleMap]
 PASS Appending a string to <percentage>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <percentage>+ is not allowed [styleMap]
-FAIL Appending a string to <resolution>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <resolution>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <time>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <time>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
+PASS Appending a string to <resolution>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <resolution>+ is not allowed [styleMap]
+PASS Appending a string to <time>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <time>+ is not allowed [styleMap]
 FAIL Appending a string to <transform-function>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <transform-function>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <transform-list> is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -245,10 +245,10 @@ PASS Appending a CSSUnitValue to <number>+ is not allowed [attributeStyleMap]
 PASS Appending a CSSUnitValue to <number>+ is not allowed [styleMap]
 PASS Appending a CSSUnitValue to <percentage>+ is not allowed [attributeStyleMap]
 PASS Appending a CSSUnitValue to <percentage>+ is not allowed [styleMap]
-FAIL Appending a CSSUnitValue to <resolution>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSUnitValue to <resolution>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSUnitValue to <time>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSUnitValue to <time>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
+PASS Appending a CSSUnitValue to <resolution>+ is not allowed [attributeStyleMap]
+PASS Appending a CSSUnitValue to <resolution>+ is not allowed [styleMap]
+PASS Appending a CSSUnitValue to <time>+ is not allowed [attributeStyleMap]
+PASS Appending a CSSUnitValue to <time>+ is not allowed [styleMap]
 FAIL Appending a CSSKeywordValue to <transform-list> is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a CSSKeywordValue to <transform-list> is not allowed [styleMap] The given initial value does not parse for the given syntax.
 PASS Appending a CSSUnitValue to <length># is not allowed [attributeStyleMap]
@@ -265,8 +265,8 @@ PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length-percen
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <number>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <percentage>
-FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <resolution> The given initial value does not parse for the given syntax.
-FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <time> The given initial value does not parse for the given syntax.
+PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <resolution>
+PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <time>
 FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-function> The given initial value does not parse for the given syntax.
 FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-list> The given initial value does not parse for the given syntax.
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <url>
@@ -297,10 +297,10 @@ PASS Specified <number> is reified CSSUnparsedValue by iterator [attributeStyleM
 PASS Specified <number> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <percentage> is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <percentage> is reified CSSUnparsedValue by iterator [styleMap]
-FAIL Specified <resolution> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <resolution> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <time> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <time> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <resolution> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <resolution> is reified CSSUnparsedValue by iterator [styleMap]
+PASS Specified <time> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <time> is reified CSSUnparsedValue by iterator [styleMap]
 FAIL Specified <transform-function> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-function> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-list> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
@@ -320,8 +320,8 @@ FAIL Computed <integer> is reified as CSSUnitValue by iterator undefined is not 
 FAIL Computed <length> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <number> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <percentage> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <resolution> is reified as CSSUnitValue by iterator The given initial value does not parse for the given syntax.
-FAIL Computed <time> is reified as CSSUnitValue by iterator The given initial value does not parse for the given syntax.
+FAIL Computed <resolution> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
+FAIL Computed <time> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed none | thing | THING is reified as CSSKeywordValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <angle> | <length> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 

@@ -42,11 +42,11 @@ PASS syntax:'<integer>', initialValue:'calc(3.1415 + 3.1415)' is valid
 PASS syntax:'<angle>', initialValue:'10deg' is valid
 PASS syntax:'<angle>', initialValue:'20.5rad' is valid
 PASS syntax:'<angle>', initialValue:'calc(50grad + 3.14159rad)' is valid
-FAIL syntax:'<time>', initialValue:'2s' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<time>', initialValue:'calc(2s - 9ms)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<resolution>', initialValue:'10dpi' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<resolution>', initialValue:'3dPpX' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<resolution>', initialValue:'-5.3dpcm' is valid The given initial value does not parse for the given syntax.
+PASS syntax:'<time>', initialValue:'2s' is valid
+PASS syntax:'<time>', initialValue:'calc(2s - 9ms)' is valid
+PASS syntax:'<resolution>', initialValue:'10dpi' is valid
+PASS syntax:'<resolution>', initialValue:'3dPpX' is valid
+PASS syntax:'<resolution>', initialValue:'-5.3dpcm' is valid
 FAIL syntax:'<transform-function>', initialValue:'translateX(2px)' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<transform-function>|<integer>', initialValue:'5' is valid
 FAIL syntax:'<transform-function>|<integer>', initialValue:'scale(2)' is valid The given initial value does not parse for the given syntax.

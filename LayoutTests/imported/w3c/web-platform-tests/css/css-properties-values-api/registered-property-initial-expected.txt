@@ -25,7 +25,7 @@ PASS Initial non-inherited value can be substituted [	calc(13% + 37px), --x]
 PASS Initial non-inherited value can be substituted [calc(10px + 15px), --x]
 PASS Initial non-inherited value can be substituted [calc(13 + 37), --x]
 PASS Initial non-inherited value can be substituted [calc(13% + 37%), --x]
-FAIL Initial non-inherited value can be substituted [2000ms, --x] The given initial value does not parse for the given syntax.
+PASS Initial non-inherited value can be substituted [2000ms, --x]
 FAIL Initial non-inherited value can be substituted [scale(calc(2 + 2)), --x] The given initial value does not parse for the given syntax.
 FAIL Initial non-inherited value can be substituted [scale(calc(2 + 2)) translateX(calc(3px + 1px)), --x] The given initial value does not parse for the given syntax.
 

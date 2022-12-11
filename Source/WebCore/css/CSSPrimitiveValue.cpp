@@ -280,6 +280,7 @@ CSSUnitType CSSPrimitiveValue::primitiveType() const
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
+    case CalculationCategory::Resolution:
         return m_value.calc->primitiveType();
     case CalculationCategory::Other:
         return CSSUnitType::CSS_UNKNOWN;

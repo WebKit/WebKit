@@ -95,6 +95,10 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_HZ:
     case CSSUnitType::CSS_KHZ:
         return CalculationCategory::Frequency;
+    case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_DPI:
+    case CSSUnitType::CSS_DPCM:
+        return CalculationCategory::Resolution;
     default:
         return CalculationCategory::Other;
     }
@@ -127,6 +131,10 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
     case CSSUnitType::CSS_HZ:
     case CSSUnitType::CSS_KHZ:
         return CalculationCategory::Frequency;
+    case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_DPI:
+    case CSSUnitType::CSS_DPCM:
+        return CalculationCategory::Resolution;
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_LHS:
@@ -178,6 +186,7 @@ CSSUnitType canonicalUnitTypeForCalculationCategory(CalculationCategory category
     case CalculationCategory::Angle: return CSSUnitType::CSS_DEG;
     case CalculationCategory::Time: return CSSUnitType::CSS_S;
     case CalculationCategory::Frequency: return CSSUnitType::CSS_HZ;
+    case CalculationCategory::Resolution: return CSSUnitType::CSS_DPPX;
     case CalculationCategory::Other:
     case CalculationCategory::PercentNumber:
     case CalculationCategory::PercentLength:

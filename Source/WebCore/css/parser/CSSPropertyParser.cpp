@@ -358,6 +358,10 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::parseCus
             return consumeNumber(m_range, ValueRange::All);
         case CSSPropertySyntax::Type::Angle:
             return consumeAngle(m_range, m_context.mode);
+        case CSSPropertySyntax::Type::Time:
+            return consumeTime(m_range, m_context.mode, ValueRange::All);
+        case CSSPropertySyntax::Type::Resolution:
+            return consumeResolution(m_range);
         case CSSPropertySyntax::Type::Color:
             return consumeColor(m_range, m_context);
         case CSSPropertySyntax::Type::Image:
@@ -448,6 +452,10 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_NUMBER);
     case CSSPropertySyntax::Type::Angle:
         return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->computeDegrees(), CSSUnitType::CSS_DEG);
+    case CSSPropertySyntax::Type::Time:
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(CSSUnitType::CSS_S), CSSUnitType::CSS_S);
+    case CSSPropertySyntax::Type::Resolution:
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(CSSUnitType::CSS_DPPX), CSSUnitType::CSS_DPPX);
     case CSSPropertySyntax::Type::Color: {
         auto color = builderState.colorFromPrimitiveValue(*primitiveValue, Style::ForVisitedLink::No);
         return CSSCustomPropertyValue::createForColorSyntax(name, color);

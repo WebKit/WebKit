@@ -785,9 +785,20 @@ struct TimeCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer {
     }
 };
 
-// MARK: Resolution (CSSPrimitiveValue - no calc)
+// MARK: Resolution (CSSPrimitiveValue - maintaining calc)
 
-struct ResolutionCSSPrimitiveValueWithKnownTokenTypeDimensionConsumer {
+struct ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer {
+    static constexpr CSSParserTokenType tokenType = FunctionToken;
+    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk, CSSValuePool& pool)
+    {
+        ASSERT(range.peek().type() == FunctionToken);
+
+        CalcParser parser(range, CalculationCategory::Resolution, valueRange, symbolTable, pool);
+        return parser.consumeValueIfCategory(CalculationCategory::Resolution);
+    }
+};
+
+struct ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
     static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk, CSSValuePool& pool)
     {
@@ -1204,8 +1215,8 @@ struct TimeConsumer {
 struct ResolutionConsumer {
     using Result = RefPtr<CSSPrimitiveValue>;
 
-    // NOTE: Unlike the other types, calc() does not work with <resolution>.
-    using DimensionToken = ResolutionCSSPrimitiveValueWithKnownTokenTypeDimensionConsumer;
+    using FunctionToken = ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer;
+    using DimensionToken = ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer;
 };
 
 // MARK: - Combination consumer definitions.
