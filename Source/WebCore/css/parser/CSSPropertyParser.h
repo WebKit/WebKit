@@ -64,7 +64,7 @@ private:
     bool parseValueStart(CSSPropertyID, bool important);
     bool consumeCSSWideKeyword(CSSPropertyID, bool important);
     RefPtr<CSSValue> parseSingleValue(CSSPropertyID, CSSPropertyID = CSSPropertyInvalid);
-    RefPtr<CSSValue> parseCustomPropertyValueWithSyntaxDefinition(const CSSPropertySyntax::Definition&);
+    std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> parseCustomPropertyValueWithSyntaxDefinition(const CSSPropertySyntax::Definition&);
     bool canParseTypedCustomPropertyValue(const String& syntax);
     RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const Style::BuilderState&);
     void collectParsedCustomPropertyValueDependencies(const String& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies);

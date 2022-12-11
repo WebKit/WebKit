@@ -16,7 +16,7 @@ PASS <length> values are computed correctly [72pt]
 PASS <length> values are computed correctly [10lh]
 PASS <length-percentage> values are computed correctly [17em]
 PASS <length-percentage> values are computed correctly [18%]
-FAIL <length-percentage> values are computed correctly [calc(19em - 2%)] assert_equals: expected "calc(-2% + 190px)" but got "calc(-2% + 19em)"
+PASS <length-percentage> values are computed correctly [calc(19em - 2%)]
 FAIL <length># values are computed correctly [10px, 3em] assert_equals: expected "10px, 30px" but got "0px"
 FAIL <length># values are computed correctly [4em ,9px] assert_equals: expected "40px, 9px" but got "0px"
 PASS <length># values are computed correctly [8em]
@@ -37,14 +37,14 @@ PASS <integer> values are computed correctly [calc(2.4)]
 PASS <integer> values are computed correctly [calc(2.6)]
 PASS <integer> values are computed correctly [calc(2.6 + 3.1)]
 FAIL <integer>+ values are computed correctly [15 calc(2.4) calc(2.6)] assert_equals: expected "15 2 3" but got "0"
-FAIL <color> values are computed correctly [#ff0000] The given initial value does not parse for the given syntax.
-FAIL <color> values are computed correctly [#000f00] The given initial value does not parse for the given syntax.
-FAIL <color> values are computed correctly [#00000a] The given initial value does not parse for the given syntax.
-FAIL <color> values are computed correctly [#badbee] The given initial value does not parse for the given syntax.
-FAIL <color> values are computed correctly [#badbee33] The given initial value does not parse for the given syntax.
-FAIL <color> values are computed correctly [tomato] The given initial value does not parse for the given syntax.
-FAIL <color> values are computed correctly [plum] The given initial value does not parse for the given syntax.
-FAIL <color> values are computed correctly [currentcolor] The given initial value does not parse for the given syntax.
+PASS <color> values are computed correctly [#ff0000]
+PASS <color> values are computed correctly [#000f00]
+PASS <color> values are computed correctly [#00000a]
+PASS <color> values are computed correctly [#badbee]
+PASS <color> values are computed correctly [#badbee33]
+PASS <color> values are computed correctly [tomato]
+PASS <color> values are computed correctly [plum]
+PASS <color> values are computed correctly [currentcolor]
 PASS * values are computed correctly [tomato]
 PASS tomato | plum values are computed correctly [plum]
 PASS tomato | plum | <color> values are computed correctly [plum]

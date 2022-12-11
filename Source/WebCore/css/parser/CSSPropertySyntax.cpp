@@ -57,21 +57,23 @@ auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer
             return { };
 
         if (dataTypeName == "length"_s)
-            return Component { DataType::Length, multiplier };
+            return Component { Type::Length, multiplier };
         if (dataTypeName == "length-percentage"_s)
-            return Component { DataType::LengthPercentage, multiplier };
+            return Component { Type::LengthPercentage, multiplier };
         if (dataTypeName == "custom-ident"_s)
-            return Component { DataType::CustomIdent, multiplier };
+            return Component { Type::CustomIdent, multiplier };
         if (dataTypeName == "percentage"_s)
-            return Component { DataType::Percentage, multiplier };
+            return Component { Type::Percentage, multiplier };
         if (dataTypeName == "integer"_s)
-            return Component { DataType::Integer, multiplier };
+            return Component { Type::Integer, multiplier };
         if (dataTypeName == "number"_s)
-            return Component { DataType::Number, multiplier };
+            return Component { Type::Number, multiplier };
         if (dataTypeName == "angle"_s)
-            return Component { DataType::Angle, multiplier };
+            return Component { Type::Angle, multiplier };
+        if (dataTypeName == "color"_s)
+            return Component { Type::Color, multiplier };
 
-        return Component { DataType::Unknown, multiplier };
+        return Component { Type::Unknown, multiplier };
     }
 
     auto tokenizer = CSSTokenizer::tryCreate(buffer.stringViewOfCharactersRemaining().toStringWithoutCopying());
@@ -87,7 +89,7 @@ auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer
     if (!range.atEnd())
         return { };
 
-    return Component { DataType::CustomIdent, Multiplier::Single, ident.toAtomString() };
+    return Component { Type::CustomIdent, Multiplier::Single, ident.toAtomString() };
 }
 
 auto CSSPropertySyntax::parse(StringView syntax) -> Definition
@@ -100,7 +102,7 @@ auto CSSPropertySyntax::parse(StringView syntax) -> Definition
             if (buffer.hasCharactersRemaining())
                 return { };
 
-            return { { DataType::Universal } };
+            return { { Type::Universal } };
         }
 
         Definition definition;

@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CSSPropertySyntax {
 public:
-    enum class DataType : uint8_t {
+    enum class Type : uint8_t {
         Universal,
         Length,
         LengthPercentage,
@@ -39,6 +39,7 @@ public:
         Integer,
         Number,
         Angle,
+        Color,
         CustomIdent,
         Unknown
     };
@@ -50,7 +51,7 @@ public:
     };
 
     struct Component {
-        DataType dataType;
+        Type type;
         Multiplier multiplier { Multiplier::Single };
         AtomString ident { };
     };
@@ -58,7 +59,7 @@ public:
     using Definition = Vector<Component>;
 
     static Definition parse(StringView);
-    static bool isUniversal(const Definition& definition) { return definition.size() == 1 && definition[0].dataType == DataType::Universal; }
+    static bool isUniversal(const Definition& definition) { return definition.size() == 1 && definition[0].type == Type::Universal; }
 
 private:
     template<typename CharacterType> static std::optional<Component> parseComponent(StringParsingBuffer<CharacterType>);
