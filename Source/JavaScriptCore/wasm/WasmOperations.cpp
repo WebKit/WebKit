@@ -842,11 +842,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* inst
     const StructType& structType = *structTypeDefinition->as<StructType>();
 
     JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
-    for (unsigned i = 0; i < structType.fieldCount(); ++i) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-        ASSERT(structType.field(i).type.is<Type>());
-        structValue->set(globalObject, i, toJSValue(globalObject, *structType.field(i).type.as<Type>(), arguments[i]));
-    }
+    for (unsigned i = 0; i < structType.fieldCount(); ++i)
+        structValue->set(globalObject, i, toJSValue(globalObject, structType.field(i).type, arguments[i]));
     return JSValue::encode(structValue);
 }
 
@@ -875,11 +872,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructSet, void, (Instance* instance, Enco
     JSObject* structureAsObject = jsCast<JSObject*>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
     JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-    ASSERT(structPointer->structType()->field(fieldIndex).type.is<Type>());
-
-    const auto fieldType = *structPointer->structType()->field(fieldIndex).type.as<Type>();
+    const auto fieldType = structPointer->structType()->field(fieldIndex).type;
     return structPointer->set(jsInstance->globalObject(), fieldIndex, toJSValue(jsInstance->globalObject(), fieldType, argument));
 }
 
@@ -1128,46 +1121,25 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* insta
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
-    size_t elementSize = fieldType.type.elementSize();
-
     JSWebAssemblyArray* array = nullptr;
-
-    switch (elementSize) {
-    case sizeof(uint8_t): {
-        // `encValue` must be an unboxed int32 (since the typechecker guarantees that its type is i32); so it's safe to truncate it in the cases below.
-        ASSERT(encValue <= UINT32_MAX);
-        FixedVector<uint8_t> values(size);
-        for (unsigned i = 0; i < size; i++)
-            values[i] = static_cast<uint8_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
-        break;
-    }
-    case sizeof(uint16_t): {
-        ASSERT(encValue <= UINT32_MAX);
-        FixedVector<uint16_t> values(size);
-        for (unsigned i = 0; i < size; i++)
-            values[i] = static_cast<uint16_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
-        break;
-    }
-    case sizeof(uint32_t): {
-        ASSERT(encValue <= UINT32_MAX);
+    switch (fieldType.type.kind) {
+    case Wasm::TypeKind::I32:
+    case Wasm::TypeKind::F32: {
         FixedVector<uint32_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint32_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType.type, size, WTFMove(values));
         break;
     }
-    case sizeof(uint64_t): {
+    default: {
         FixedVector<uint64_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint64_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType.type, size, WTFMove(values));
         break;
     }
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
     }
+
     return JSValue::encode(JSValue(array));
 }
 
