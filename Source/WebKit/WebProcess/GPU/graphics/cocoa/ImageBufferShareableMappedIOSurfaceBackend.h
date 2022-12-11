@@ -41,7 +41,7 @@ class ImageBufferShareableMappedIOSurfaceBackend final : public WebCore::ImageBu
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableMappedIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableMappedIOSurfaceBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> create(const Parameters&, const WebCore::ImageBuffer::CreationContext&);
+    static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);
     static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 
     using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;

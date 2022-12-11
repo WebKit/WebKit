@@ -35,7 +35,7 @@ namespace DisplayList {
 class ImageBuffer final : public WebCore::ImageBuffer {
 public:
     template<typename BackendType>
-    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const WebCore::ImageBuffer::CreationContext& creationContext)
+    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const WebCore::ImageBufferCreationContext& creationContext)
     {
         return WebCore::ImageBuffer::create<BackendType, ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }

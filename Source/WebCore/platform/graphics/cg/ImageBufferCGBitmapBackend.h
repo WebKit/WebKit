@@ -42,7 +42,7 @@ public:
     static IntSize calculateSafeBackendSize(const Parameters&);
     static size_t calculateMemoryCost(const Parameters&);
 
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const ImageBuffer::CreationContext&);
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const ImageBufferCreationContext&);
 
     // FIXME: Rename to createUsingColorSpaceOfGraphicsContext() (or something like that).
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
