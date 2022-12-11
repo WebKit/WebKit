@@ -67,7 +67,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         auto parentStyle = RenderStyle::clone(*style);
         Style::Builder dummyBuilder(*style, { document, parentStyle }, matchResult, { });
 
-        initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), dummyBuilder.state(), strictCSSParserContext());
+        initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), dummyBuilder.state(), { document });
 
         if (!initialValue || !initialValue->isResolved())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };

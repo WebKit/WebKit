@@ -3,7 +3,7 @@ PASS Computed * is reified as CSSUnparsedValue
 FAIL Computed <angle> is reified as CSSUnitValue assert_false: expected false got true
 FAIL Computed <color> is reified as CSSStyleValue assert_false: expected false got true
 FAIL Computed <custom-ident> is reified as CSSKeywordValue assert_false: expected false got true
-FAIL Computed <image> [url] is reified as CSSImageValue The given initial value does not parse for the given syntax.
+FAIL Computed <image> [url] is reified as CSSImageValue assert_false: expected false got true
 FAIL Computed <integer> is reified as CSSUnitValue assert_false: expected false got true
 FAIL Computed <length-percentage> [%] is reified as CSSUnitValue assert_false: expected false got true
 FAIL Computed <length-percentage> [px] is reified as CSSUnitValue assert_false: expected false got true
@@ -13,7 +13,7 @@ FAIL Computed <number> is reified as CSSUnitValue assert_false: expected false g
 FAIL Computed <percentage> is reified as CSSUnitValue assert_false: expected false got true
 FAIL Computed <resolution> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
 FAIL Computed <time> is reified as CSSUnitValue The given initial value does not parse for the given syntax.
-FAIL Computed <url> is reified as CSSStyleValue The given initial value does not parse for the given syntax.
+FAIL Computed <url> is reified as CSSStyleValue assert_false: expected false got true
 FAIL Computed ident is reified as CSSKeywordValue assert_false: expected false got true
 FAIL First computed value correctly reified in space-separated list assert_false: expected false got true
 FAIL First computed value correctly reified in comma-separated list assert_false: expected false got true
@@ -29,8 +29,8 @@ PASS Specified <color> is reified as CSSUnparsedValue from get/getAll [attribute
 PASS Specified <color> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <custom-ident> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
 PASS Specified <custom-ident> is reified as CSSUnparsedValue from get/getAll [styleMap]
-FAIL Specified <image> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <image> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <image> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <image> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <integer> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
 PASS Specified <integer> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <length-percentage> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
@@ -49,8 +49,8 @@ FAIL Specified <transform-function> is reified as CSSUnparsedValue from get/getA
 FAIL Specified <transform-function> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <url> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <url> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <url> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <url> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <length>+ is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
 PASS Specified <length>+ is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <length># is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
@@ -65,8 +65,8 @@ PASS Specified string "green" accepted by set() for syntax <color> [attributeSty
 PASS Specified string "green" accepted by set() for syntax <color> [styleMap]
 PASS Specified string "foo" accepted by set() for syntax <custom-ident> [attributeStyleMap]
 PASS Specified string "foo" accepted by set() for syntax <custom-ident> [styleMap]
-FAIL Specified string "url("a")" accepted by set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "url("a")" accepted by set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "url("a")" accepted by set() for syntax <image> [attributeStyleMap]
+PASS Specified string "url("a")" accepted by set() for syntax <image> [styleMap]
 PASS Specified string "1" accepted by set() for syntax <integer> [attributeStyleMap]
 PASS Specified string "1" accepted by set() for syntax <integer> [styleMap]
 PASS Specified string "calc(10% + 10px)" accepted by set() for syntax <length-percentage> [attributeStyleMap]
@@ -85,8 +85,8 @@ FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <t
 FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "url("a")" accepted by set() for syntax <url> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "url("a")" accepted by set() for syntax <url> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "url("a")" accepted by set() for syntax <url> [attributeStyleMap]
+PASS Specified string "url("a")" accepted by set() for syntax <url> [styleMap]
 PASS Specified string "10px 11px" accepted by set() for syntax <length>+ [attributeStyleMap]
 PASS Specified string "10px 11px" accepted by set() for syntax <length>+ [styleMap]
 PASS Specified string "10px, 11px" accepted by set() for syntax <length># [attributeStyleMap]
@@ -99,8 +99,8 @@ PASS Specified string "10px" accepted by set() for syntax <color> [attributeStyl
 PASS Specified string "10px" accepted by set() for syntax <color> [styleMap]
 PASS Specified string "10px" accepted by set() for syntax <custom-ident> [attributeStyleMap]
 PASS Specified string "10px" accepted by set() for syntax <custom-ident> [styleMap]
-FAIL Specified string "a" accepted by set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "a" accepted by set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "a" accepted by set() for syntax <image> [attributeStyleMap]
+PASS Specified string "a" accepted by set() for syntax <image> [styleMap]
 PASS Specified string "float" accepted by set() for syntax <integer> [attributeStyleMap]
 PASS Specified string "float" accepted by set() for syntax <integer> [styleMap]
 PASS Specified string "red" accepted by set() for syntax <length-percentage> [attributeStyleMap]
@@ -119,8 +119,8 @@ FAIL Specified string "foo(0)" accepted by set() for syntax <transform-function>
 FAIL Specified string "foo(0)" accepted by set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "bar(1)" accepted by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified string "bar(1)" accepted by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "a" accepted by set() for syntax <url> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "a" accepted by set() for syntax <url> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "a" accepted by set() for syntax <url> [attributeStyleMap]
+PASS Specified string "a" accepted by set() for syntax <url> [styleMap]
 PASS Specified string "a b" accepted by set() for syntax <length>+ [attributeStyleMap]
 PASS Specified string "a b" accepted by set() for syntax <length>+ [styleMap]
 PASS Specified string "a, b" accepted by set() for syntax <length># [attributeStyleMap]
@@ -135,8 +135,8 @@ PASS CSSUnparsedValue is accepted via set() for syntax <color> [attributeStyleMa
 PASS CSSUnparsedValue is accepted via set() for syntax <color> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <custom-ident> [attributeStyleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <custom-ident> [styleMap]
-FAIL CSSUnparsedValue is accepted via set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
+PASS CSSUnparsedValue is accepted via set() for syntax <image> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <image> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <integer> [attributeStyleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <integer> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <length-percentage> [attributeStyleMap]
@@ -155,8 +155,8 @@ FAIL CSSUnparsedValue is accepted via set() for syntax <transform-function> [att
 FAIL CSSUnparsedValue is accepted via set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL CSSUnparsedValue is accepted via set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <url> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <url> [styleMap] The given initial value does not parse for the given syntax.
+PASS CSSUnparsedValue is accepted via set() for syntax <url> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <url> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <length>+ [attributeStyleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <length>+ [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <length># [attributeStyleMap]
@@ -169,8 +169,8 @@ PASS CSSUnitValue rejected by set() for syntax <angle> [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <angle> [styleMap]
 PASS CSSKeywordValue rejected by set() for syntax <custom-ident> [attributeStyleMap]
 PASS CSSKeywordValue rejected by set() for syntax <custom-ident> [styleMap]
-FAIL CSSImageValue rejected by set() for syntax <image> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSImageValue rejected by set() for syntax <image> [styleMap] The given initial value does not parse for the given syntax.
+PASS CSSImageValue rejected by set() for syntax <image> [attributeStyleMap]
+PASS CSSImageValue rejected by set() for syntax <image> [styleMap]
 PASS CSSUnitValue rejected by set() for syntax <integer> [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <integer> [styleMap]
 PASS CSSUnitValue rejected by set() for syntax <length-percentage> [attributeStyleMap]
@@ -201,8 +201,8 @@ PASS Appending a string to <color>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <color>+ is not allowed [styleMap]
 PASS Appending a string to <custom-ident>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <custom-ident>+ is not allowed [styleMap]
-FAIL Appending a string to <image>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <image>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
+PASS Appending a string to <image>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <image>+ is not allowed [styleMap]
 PASS Appending a string to <integer>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <integer>+ is not allowed [styleMap]
 PASS Appending a string to <length-percentage>+ is not allowed [attributeStyleMap]
@@ -221,8 +221,8 @@ FAIL Appending a string to <transform-function>+ is not allowed [attributeStyleM
 FAIL Appending a string to <transform-function>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <transform-list> is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Appending a string to <transform-list> is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <url>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <url>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
+PASS Appending a string to <url>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <url>+ is not allowed [styleMap]
 PASS Appending a string to <length># is not allowed [attributeStyleMap]
 PASS Appending a string to <length># is not allowed [styleMap]
 PASS Appending a CSSKeywordValue to * is not allowed [attributeStyleMap]
@@ -233,8 +233,8 @@ PASS Appending a CSSUnitValue to <angle>+ is not allowed [attributeStyleMap]
 PASS Appending a CSSUnitValue to <angle>+ is not allowed [styleMap]
 PASS Appending a CSSKeywordValue to <custom-ident>+ is not allowed [attributeStyleMap]
 PASS Appending a CSSKeywordValue to <custom-ident>+ is not allowed [styleMap]
-FAIL Appending a CSSImageValue to <image>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSImageValue to <image>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
+PASS Appending a CSSImageValue to <image>+ is not allowed [attributeStyleMap]
+PASS Appending a CSSImageValue to <image>+ is not allowed [styleMap]
 PASS Appending a CSSUnitValue to <integer>+ is not allowed [attributeStyleMap]
 PASS Appending a CSSUnitValue to <integer>+ is not allowed [styleMap]
 PASS Appending a CSSUnitValue to <length-percentage>+ is not allowed [attributeStyleMap]
@@ -257,7 +257,7 @@ PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax *
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <angle>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <color>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <custom-ident> | <length>
-FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <image> The given initial value does not parse for the given syntax.
+PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <image>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <integer>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length-percentage> (10%)
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length-percentage> (10px)
@@ -269,7 +269,7 @@ FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <resolution> T
 FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <time> The given initial value does not parse for the given syntax.
 FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-function> The given initial value does not parse for the given syntax.
 FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-list> The given initial value does not parse for the given syntax.
-FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <url> The given initial value does not parse for the given syntax.
+PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <url>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax thing1 | THING2 | <url>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length>+
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length>#
@@ -285,8 +285,8 @@ PASS Specified <color> is reified CSSUnparsedValue by iterator [attributeStyleMa
 PASS Specified <color> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <custom-ident> is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <custom-ident> is reified CSSUnparsedValue by iterator [styleMap]
-FAIL Specified <image> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <image> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <image> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <image> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <integer> is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <integer> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <length-percentage> is reified CSSUnparsedValue by iterator [attributeStyleMap]
@@ -305,8 +305,8 @@ FAIL Specified <transform-function> is reified CSSUnparsedValue by iterator [att
 FAIL Specified <transform-function> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-list> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
 FAIL Specified <transform-list> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <url> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <url> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <url> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <url> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <length>+ is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <length>+ is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <length># is reified CSSUnparsedValue by iterator [attributeStyleMap]
@@ -315,7 +315,7 @@ FAIL Registered property with initial value show up on iteration of computedStyl
 FAIL Computed * is reified as CSSUnparsedValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <angle> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <custom-ident> is reified as CSSKeywordValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <image> is reified as CSSImageValue by iterator The given initial value does not parse for the given syntax.
+FAIL Computed <image> is reified as CSSImageValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <integer> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <length> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
 FAIL Computed <number> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')

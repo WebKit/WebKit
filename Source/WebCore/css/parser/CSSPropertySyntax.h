@@ -40,6 +40,8 @@ public:
         Number,
         Angle,
         Color,
+        Image,
+        URL,
         CustomIdent,
         Unknown
     };

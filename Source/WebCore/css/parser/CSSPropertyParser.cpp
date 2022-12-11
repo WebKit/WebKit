@@ -256,7 +256,7 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax, c
     return parser.canParseTypedCustomPropertyValue(syntax);
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const CSSParserTokenRange& tokens, const Style::BuilderState& builderState, const CSSParserContext& context)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const CSSParserTokenRange& tokens, Style::BuilderState& builderState, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr, false);
     RefPtr<CSSCustomPropertyValue> value = parser.parseTypedCustomPropertyValue(name, syntax, builderState);
@@ -360,6 +360,10 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::parseCus
             return consumeAngle(m_range, m_context.mode);
         case CSSPropertySyntax::Type::Color:
             return consumeColor(m_range, m_context);
+        case CSSPropertySyntax::Type::Image:
+            return consumeImage(m_range, m_context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
+        case CSSPropertySyntax::Type::URL:
+            return consumeURL(m_range);
         case CSSPropertySyntax::Type::Unknown:
             return nullptr;
         }
@@ -408,7 +412,7 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const Strin
     }
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const Style::BuilderState& builderState)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, Style::BuilderState& builderState)
 {
     auto syntaxDefinition = CSSPropertySyntax::parse(syntax);
     if (syntaxDefinition.isEmpty())
@@ -425,10 +429,7 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     if (!value)
         return nullptr;
 
-    if (!is<CSSPrimitiveValue>(*value))
-        return nullptr;
-
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
 
     switch (syntaxType) {
     case CSSPropertySyntax::Type::Universal:
@@ -436,20 +437,30 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         return nullptr;
     case CSSPropertySyntax::Type::LengthPercentage:
     case CSSPropertySyntax::Type::Length: {
-        auto length = Style::BuilderConverter::convertLength(builderState, primitiveValue);
+        auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
         return CSSCustomPropertyValue::createForLengthSyntax(name, WTFMove(length));
     }
     case CSSPropertySyntax::Type::Percentage:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.doubleValue(), CSSUnitType::CSS_PERCENTAGE);
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_PERCENTAGE);
     case CSSPropertySyntax::Type::Integer:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.intValue(), CSSUnitType::CSS_INTEGER);
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->intValue(), CSSUnitType::CSS_INTEGER);
     case CSSPropertySyntax::Type::Number:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.doubleValue(), CSSUnitType::CSS_NUMBER);
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_NUMBER);
     case CSSPropertySyntax::Type::Angle:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.computeDegrees(), CSSUnitType::CSS_DEG);
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->computeDegrees(), CSSUnitType::CSS_DEG);
     case CSSPropertySyntax::Type::Color: {
-        auto color = builderState.colorFromPrimitiveValue(primitiveValue, Style::ForVisitedLink::No);
+        auto color = builderState.colorFromPrimitiveValue(*primitiveValue, Style::ForVisitedLink::No);
         return CSSCustomPropertyValue::createForColorSyntax(name, color);
+    }
+    case CSSPropertySyntax::Type::Image: {
+        auto styleImage = builderState.createStyleImage(*value);
+        if (!styleImage)
+            return nullptr;
+        return CSSCustomPropertyValue::createForImageSyntax(name, WTFMove(styleImage));
+    }
+    case CSSPropertySyntax::Type::URL: {
+        auto url = m_context.completeURL(primitiveValue->stringValue());
+        return CSSCustomPropertyValue::createForURLSyntax(name, url.resolvedURL.string());
     }
     case CSSPropertySyntax::Type::CustomIdent: {
         auto tokenizer = CSSTokenizer::tryCreate(value->cssText());

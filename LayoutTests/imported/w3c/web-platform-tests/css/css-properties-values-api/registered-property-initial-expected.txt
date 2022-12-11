@@ -12,7 +12,7 @@ PASS Initial value for <color> correctly computed [purple]
 FAIL Initial value for <transform-function> correctly computed [rotate(42deg)] The given initial value does not parse for the given syntax.
 FAIL Initial value for <transform-list> correctly computed [scale(calc(2 + 2))] The given initial value does not parse for the given syntax.
 FAIL Initial value for <transform-list> correctly computed [scale(calc(2 + 1)) translateX(calc(3px + 1px))] The given initial value does not parse for the given syntax.
-FAIL Initial value for <url> correctly computed [url(a)] The given initial value does not parse for the given syntax.
+PASS Initial value for <url> correctly computed [url(a)]
 FAIL Initial value for <url>+ correctly computed [url(a) url(a)] The given initial value does not parse for the given syntax.
 PASS Initial inherited value can be substituted [purple, color]
 PASS Initial non-inherited value can be substituted [pink, background-color]

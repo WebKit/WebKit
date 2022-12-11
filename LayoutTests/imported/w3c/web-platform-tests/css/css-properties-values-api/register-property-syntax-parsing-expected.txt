@@ -55,9 +55,9 @@ FAIL syntax:'<transform-list>', initialValue:'scale(2)' is valid The given initi
 FAIL syntax:'<transform-list>', initialValue:'translateX(2px) rotate(20deg)' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'<color>', initialValue:'rgb(12, 34, 56)' is valid
 PASS syntax:'<color>', initialValue:'lightgoldenrodyellow' is valid
-FAIL syntax:'<image>', initialValue:'url(a)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<image>', initialValue:'linear-gradient(yellow, blue)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<url>', initialValue:'url(a)' is valid The given initial value does not parse for the given syntax.
+PASS syntax:'<image>', initialValue:'url(a)' is valid
+PASS syntax:'<image>', initialValue:'linear-gradient(yellow, blue)' is valid
+PASS syntax:'<url>', initialValue:'url(a)' is valid
 PASS syntax:'banana', initialValue:'banana' is valid
 PASS syntax:'bAnAnA', initialValue:'bAnAnA' is valid
 PASS syntax:'ba-na-nya', initialValue:'ba-na-nya' is valid
