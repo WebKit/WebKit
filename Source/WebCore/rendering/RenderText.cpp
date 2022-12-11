@@ -1,7 +1,8 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
@@ -487,6 +488,14 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     ASSERT(start <= INT_MAX);
     start = std::min(start, static_cast<unsigned>(INT_MAX));
     end = std::min(end, static_cast<unsigned>(INT_MAX));
+
+    const unsigned caretMinOffset = static_cast<unsigned>(this->caretMinOffset());
+    const unsigned caretMaxOffset = static_cast<unsigned>(this->caretMaxOffset());
+
+    // Narrows |start| and |end| into |caretMinOffset| and |caretMaxOffset| to ignore unrendered leading 
+    // and trailing whitespaces.
+    start = std::min(std::max(caretMinOffset, start), caretMaxOffset);
+    end = std::min(std::max(caretMinOffset, end), caretMaxOffset);
 
     Vector<FloatQuad> quads;
     for (auto& run : InlineIterator::textBoxesFor(*this)) {
