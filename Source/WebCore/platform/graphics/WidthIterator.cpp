@@ -541,8 +541,7 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
         break;
     }
 
-    if (character >= HiraganaLetterSmallA
-        || u_charType(character) == U_CONTROL_CHAR
+    if (u_charType(character) == U_CONTROL_CHAR
         || (character >= nullCharacter && character < space)
         || (character >= deleteCharacter && character < noBreakSpace))
         return false;
