@@ -1650,7 +1650,7 @@ public:
     static BorderCollapse initialBorderCollapse() { return BorderCollapse::Separate; }
     static BorderStyle initialBorderStyle() { return BorderStyle::None; }
     static OutlineIsAuto initialOutlineStyleIsAuto() { return OutlineIsAuto::Off; }
-    static NinePieceImage initialNinePieceImage() { return NinePieceImage(); }
+    static NinePieceImage initialNinePieceImageForMask() { return NinePieceImage(NinePieceImage::Type::Mask); }
     static LengthSize initialBorderRadius() { return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }; }
     static CaptionSide initialCaptionSide() { return CaptionSide::Top; }
     static ColumnAxis initialColumnAxis() { return ColumnAxis::Auto; }
