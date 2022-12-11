@@ -197,6 +197,8 @@ public:
 
     constexpr static CompositingCoordinatesOrientation defaultContentsOrientation = CompositingCoordinatesOrientation::TopDown;
 
+    WEBCORE_EXPORT RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate() override;
+
 private:
     bool isGraphicsLayerCA() const override { return true; }
 

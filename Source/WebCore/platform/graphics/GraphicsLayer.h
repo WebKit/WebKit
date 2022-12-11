@@ -59,6 +59,7 @@ class Animation;
 class GraphicsContext;
 class GraphicsLayerFactory;
 class GraphicsLayerContentsDisplayDelegate;
+class GraphicsLayerAsyncContentsDisplayDelegate;
 class Image;
 class Model;
 class TiledBacking;
@@ -518,6 +519,7 @@ public:
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
+    WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate();
 #if ENABLE(MODEL_ELEMENT)
     enum class ModelInteraction : uint8_t { Enabled, Disabled };
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }

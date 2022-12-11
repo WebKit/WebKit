@@ -80,6 +80,7 @@ public:
     virtual void prepareForDisplayWithPaint() { }
     virtual void paintRenderingResultsToCanvas() { }
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
+    virtual void setContentsToLayer(GraphicsLayer&);
 
     bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
     void setHasActiveInspectorCanvasCallTracer(bool hasActiveInspectorCanvasCallTracer) { m_hasActiveInspectorCanvasCallTracer = hasActiveInspectorCanvasCallTracer; }

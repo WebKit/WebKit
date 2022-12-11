@@ -113,7 +113,7 @@ StyleGradientImage::StyleGradientImage(Data&& data, CSSGradientColorInterpolatio
     , m_data { WTFMove(data) }
     , m_colorInterpolationMethod { colorInterpolationMethod }
     , m_stops { WTFMove(stops) }
-    , m_knownCacheableBarringFilter { stopsAreCacheable(stops) }
+    , m_knownCacheableBarringFilter { stopsAreCacheable(m_stops) }
 {
 }
 

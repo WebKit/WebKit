@@ -55,6 +55,8 @@ private:
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
     bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
     
+    RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate() final { return nullptr; }
+
     RemoteLayerTreeContext* m_context;
 };
 

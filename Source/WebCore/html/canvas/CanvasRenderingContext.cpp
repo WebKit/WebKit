@@ -89,6 +89,11 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerConten
     return nullptr;
 }
 
+void CanvasRenderingContext::setContentsToLayer(GraphicsLayer& layer)
+{
+    layer.setContentsDisplayDelegate(layerContentsDisplayDelegate(), GraphicsLayer::ContentsLayerPurpose::Canvas);
+}
+
 PixelFormat CanvasRenderingContext::pixelFormat() const
 {
     return PixelFormat::BGRA8;

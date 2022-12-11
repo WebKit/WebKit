@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "GraphicsLayerContentsDisplayDelegate.h"
+#include "GraphicsLayer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -42,7 +42,7 @@ public:
     public:
         virtual ~Source() = default;
 
-        virtual void handle(RefPtr<ImageBuffer>&&) = 0;
+        virtual void handle(ImageBuffer&) = 0;
     };
 
     static RefPtr<ImageBufferPipe> create();
@@ -50,7 +50,7 @@ public:
     virtual ~ImageBufferPipe() = default;
 
     virtual RefPtr<Source> source() const = 0;
-    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() =0;
+    virtual void setContentsToLayer(GraphicsLayer&) = 0;
 };
 
 } // namespace WebCore

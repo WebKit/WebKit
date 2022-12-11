@@ -29,6 +29,7 @@
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
 #include "Length.h"
+#include "StyleColor.h"
 #include <variant>
 
 namespace WebCore {
@@ -43,7 +44,9 @@ public:
 
         bool operator==(const NumericSyntaxValue&) const = default;
     };
-    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, NumericSyntaxValue>;
+    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor>;
+
+    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue>;
 
     static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
 
@@ -67,13 +70,17 @@ public:
     static Ref<CSSCustomPropertyValue> createForLengthSyntax(const AtomString& name, Length value)
     {
         ASSERT(!value.isUndefined());
-        ASSERT(!value.isCalculated());
-        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
+        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(value) } }));
     }
 
     static Ref<CSSCustomPropertyValue> createForNumericSyntax(const AtomString& name, double value, CSSUnitType unitType)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, { NumericSyntaxValue { value, unitType } }));
+        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { NumericSyntaxValue { value, unitType } } }));
+    }
+
+    static Ref<CSSCustomPropertyValue> createForColorSyntax(const AtomString& name, StyleColor color)
+    {
+        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(color) } }));
     }
 
     static Ref<CSSCustomPropertyValue> create(const CSSCustomPropertyValue& other)

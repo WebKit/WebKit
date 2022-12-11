@@ -334,14 +334,16 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
     // Return promise, and run the remaining steps in parallel.
     m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, promise = WTFMove(promise), weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER] () mutable {
         if (!weakThis) {
-            promise->resolve();
+            if (promise)
+                promise->resolve();
             return;
         }
 
         auto* page = this->page();
         if (!page) {
             m_pendingExitFullscreen = false;
-            promise->resolve();
+            if (promise)
+                promise->resolve();
             ERROR_LOG(identifier, "task - Document not in page; bailing.");
             return;
         }
@@ -353,7 +355,8 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
             INFO_LOG(identifier, "task - Cancelling pending fullscreen request.");
             m_pendingFullscreenElement = nullptr;
             m_pendingExitFullscreen = false;
-            promise->resolve();
+            if (promise)
+                promise->resolve();
             return;
         }
 

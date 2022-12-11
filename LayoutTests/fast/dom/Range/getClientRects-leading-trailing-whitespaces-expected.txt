@@ -1,0 +1,5 @@
+abc
+
+PASS leading whitespaces
+PASS trailing whitespaces
+

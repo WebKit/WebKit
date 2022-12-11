@@ -179,7 +179,7 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
 {
     ASSERT(!RunLoop::isMain());
 
-    RefPtr<ImageBuffer> imageBuffer;
+    RefPtr<WebCore::ImageBuffer> imageBuffer;
 
     if (renderingMode == RenderingMode::Accelerated) {
         if (auto acceleratedImageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier)) {

@@ -1,4 +1,4 @@
 
-FAIL Registering a property does not affect cascade The given initial value does not parse for the given syntax.
-FAIL Registering a property does not affect parsing The given initial value does not parse for the given syntax.
+PASS Registering a property does not affect cascade
+PASS Registering a property does not affect parsing
 

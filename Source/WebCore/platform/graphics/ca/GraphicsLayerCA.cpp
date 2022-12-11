@@ -68,6 +68,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "GraphicsLayerAsyncContentsDisplayDelegateCocoa.h"
 #include "PlatformCAAnimationCocoa.h"
 #include "PlatformCALayerCocoa.h"
 #endif
@@ -4909,6 +4910,15 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
     }
 
     return animations;
+}
+
+RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncContentsDisplayDelegate()
+{
+#if PLATFORM(COCOA)
+    return adoptRef(new GraphicsLayerAsyncContentsDisplayDelegateCocoa(*this));
+#else
+    return nullptr;
+#endif
 }
 
 } // namespace WebCore

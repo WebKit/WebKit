@@ -28,16 +28,17 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "QualifiedRenderingResourceIdentifier.h"
-#include <WebCore/DisplayListResourceHeap.h>
+#include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/Font.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/SourceImage.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
 
-class QualifiedResourceHeap : public WebCore::DisplayList::ResourceHeap {
+class QualifiedResourceHeap {
 public:
     QualifiedResourceHeap(WebCore::ProcessIdentifier webProcessIdentifier)
         : m_webProcessIdentifier(webProcessIdentifier)
@@ -62,31 +63,6 @@ public:
     void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::DecomposedGlyphs>&& decomposedGlyphs)
     {
         add(renderingResourceIdentifier, WTFMove(decomposedGlyphs), m_decomposedGlyphsCount);
-    }
-
-    WebCore::ImageBuffer* getImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<WebCore::ImageBuffer>({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    WebCore::NativeImage* getNativeImage(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<WebCore::NativeImage>({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    std::optional<WebCore::SourceImage> getSourceImage(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return getSourceImage({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    WebCore::Font* getFont(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<WebCore::Font>({ renderingResourceIdentifier, m_webProcessIdentifier });
-    }
-
-    WebCore::DecomposedGlyphs* getDecomposedGlyphs(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<WebCore::DecomposedGlyphs>({ renderingResourceIdentifier, m_webProcessIdentifier });
     }
 
     WebCore::ImageBuffer* getImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const

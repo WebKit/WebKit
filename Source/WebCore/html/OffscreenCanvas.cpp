@@ -486,8 +486,7 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
     }
 
     if (m_placeholderData->bufferPipeSource) {
-        if (auto bufferCopy = imageBuffer->clone())
-            m_placeholderData->bufferPipeSource->handle(WTFMove(bufferCopy));
+        m_placeholderData->bufferPipeSource->handle(*imageBuffer);
     }
 
     Locker locker { m_placeholderData->bufferLock };

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
- * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -991,12 +991,19 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
 
     VisiblePosition visiblePos(position);
     VisiblePosition previousVisiblePos(visiblePos.previous());
-    Position previous(previousVisiblePos.deepEquivalent());
+    replaceCollapsibleWhitespaceWithNonBreakingSpaceIfNeeded(previousVisiblePos);
+    replaceCollapsibleWhitespaceWithNonBreakingSpaceIfNeeded(visiblePos);
+}
+
+void CompositeEditCommand::replaceCollapsibleWhitespaceWithNonBreakingSpaceIfNeeded(const VisiblePosition& visiblePosition)
+{
+    if (!deprecatedIsCollapsibleWhitespace(visiblePosition.characterAfter()))
+        return;
     
-    if (deprecatedIsCollapsibleWhitespace(previousVisiblePos.characterAfter()) && is<Text>(*previous.deprecatedNode()) && !is<HTMLBRElement>(*previous.deprecatedNode()))
-        replaceTextInNodePreservingMarkers(downcast<Text>(*previous.deprecatedNode()), previous.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
-    if (deprecatedIsCollapsibleWhitespace(visiblePos.characterAfter()) && is<Text>(*position.deprecatedNode()) && !is<HTMLBRElement>(*position.deprecatedNode()))
-        replaceTextInNodePreservingMarkers(downcast<Text>(*position.deprecatedNode()), position.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+    Position pos = visiblePosition.deepEquivalent().downstream();
+    if (!pos.containerNode() || !is<Text>(*pos.containerNode()) || is<HTMLBRElement>(*pos.deprecatedNode()))
+        return;
+    replaceTextInNodePreservingMarkers(*pos.containerText(), pos.offsetInContainerNode(), 1, nonBreakingSpaceString());
 }
 
 void CompositeEditCommand::rebalanceWhitespace()

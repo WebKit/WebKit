@@ -52,12 +52,14 @@ HTMLCanvasElement* PlaceholderRenderingContext::canvas() const
     return &downcast<HTMLCanvasElement>(base);
 }
 
-RefPtr<GraphicsLayerContentsDisplayDelegate> PlaceholderRenderingContext::layerContentsDisplayDelegate()
+void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
-    if (m_imageBufferPipe)
-        return m_imageBufferPipe->layerContentsDisplayDelegate();
+    if (m_imageBufferPipe) {
+        m_imageBufferPipe->setContentsToLayer(layer);
+        return;
+    }
 
-    return nullptr;
+    return CanvasRenderingContext::setContentsToLayer(layer);
 }
 
 }

@@ -2531,6 +2531,8 @@ webkit.org/b/245008 fast/attachment/mac/attachment-keynote.html [ Skip ]
 webkit.org/b/245816 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url.html [ Failure Pass ]
 webkit.org/b/245816 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url-with-fragment.html [ Failure Pass ]
 
+imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object.html [ Pass ImageOnlyFailure ]
+
 # webkit.org/b/246973 This test renders incorrectly after enabling accelerated drawing
 compositing/geometry/css-clip-oversize.html [ Pass ImageOnlyFailure ]
 

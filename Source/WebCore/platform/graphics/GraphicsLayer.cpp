@@ -630,6 +630,11 @@ void GraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDispl
 {
 }
 
+RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayer::createAsyncContentsDisplayDelegate()
+{
+    return nullptr;
+}
+
 void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
 {
     width = 2;

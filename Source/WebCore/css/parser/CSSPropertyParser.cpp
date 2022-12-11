@@ -326,7 +326,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     return CSSPropertyParsing::parse(m_range, property, currentShorthand, m_context);
 }
 
-RefPtr<CSSValue> CSSPropertyParser::parseCustomPropertyValueWithSyntaxDefinition(const CSSPropertySyntax::Definition& syntaxDefinition)
+std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::parseCustomPropertyValueWithSyntaxDefinition(const CSSPropertySyntax::Definition& syntaxDefinition)
 {
     ASSERT(!CSSPropertySyntax::isUniversal(syntaxDefinition));
 
@@ -334,54 +334,47 @@ RefPtr<CSSValue> CSSPropertyParser::parseCustomPropertyValueWithSyntaxDefinition
 
     auto rangeCopy = m_range;
 
-    auto value = [&]() -> RefPtr<CSSValue>  {
-        for (auto& component : syntaxDefinition) {
-            switch (component.dataType) {
-            case CSSPropertySyntax::DataType::Universal:
-                ASSERT_NOT_REACHED();
-                break;
-            case CSSPropertySyntax::DataType::Length:
-                if (auto value = consumeLength(m_range, m_context.mode, ValueRange::All))
+    auto tryConsumeComponent = [&](const auto& component) -> RefPtr<CSSValue> {
+        switch (component.type) {
+        case CSSPropertySyntax::Type::Universal:
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        case CSSPropertySyntax::Type::Length:
+            return consumeLength(m_range, m_context.mode, ValueRange::All);
+        case CSSPropertySyntax::Type::LengthPercentage:
+            return consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All);
+        case CSSPropertySyntax::Type::CustomIdent:
+            if (auto value = consumeCustomIdent(m_range)) {
+                if (component.ident.isNull() || value->stringValue() == component.ident)
                     return value;
-                break;
-            case CSSPropertySyntax::DataType::LengthPercentage:
-                if (auto value = consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All))
-                    return value;
-                break;
-            case CSSPropertySyntax::DataType::CustomIdent:
-                if (auto value = consumeCustomIdent(m_range)) {
-                    if (component.ident.isNull() || value->stringValue() == component.ident)
-                        return value;
-                    m_range = rangeCopy;
-                }
-                break;
-            case CSSPropertySyntax::DataType::Percentage:
-                if (auto value = consumePercent(m_range, ValueRange::All))
-                    return value;
-                break;
-            case CSSPropertySyntax::DataType::Integer:
-                if (auto value = consumeInteger(m_range))
-                    return value;
-                break;
-            case CSSPropertySyntax::DataType::Number:
-                if (auto value = consumeNumber(m_range, ValueRange::All))
-                    return value;
-                break;
-            case CSSPropertySyntax::DataType::Angle:
-                if (auto value = consumeAngle(m_range, m_context.mode))
-                    return value;
-                break;
-            case CSSPropertySyntax::DataType::Unknown:
-                break;
+                m_range = rangeCopy;
             }
+            return nullptr;
+        case CSSPropertySyntax::Type::Percentage:
+            return consumePercent(m_range, ValueRange::All);
+        case CSSPropertySyntax::Type::Integer:
+            return consumeInteger(m_range);
+        case CSSPropertySyntax::Type::Number:
+            return consumeNumber(m_range, ValueRange::All);
+        case CSSPropertySyntax::Type::Angle:
+            return consumeAngle(m_range, m_context.mode);
+        case CSSPropertySyntax::Type::Color:
+            return consumeColor(m_range, m_context);
+        case CSSPropertySyntax::Type::Unknown:
+            return nullptr;
         }
+        ASSERT_NOT_REACHED();
         return nullptr;
-    }();
+    };
 
-    if (!m_range.atEnd())
-        return nullptr;
-
-    return value;
+    for (auto& component : syntaxDefinition) {
+        if (auto value = tryConsumeComponent(component)) {
+            if (!m_range.atEnd())
+                break;
+            return { value, component.type };
+        }
+    }
+    return { nullptr, CSSPropertySyntax::Type::Unknown };
 }
 
 bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
@@ -393,7 +386,7 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
     if (CSSPropertySyntax::isUniversal(syntaxDefinition))
         return true;
 
-    auto value = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    auto [value, syntaxType] = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
     return value && m_range.atEnd();
 }
 
@@ -406,7 +399,7 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const Strin
     if (CSSPropertySyntax::isUniversal(syntaxDefinition))
         return;
 
-    auto value = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    auto [value, syntaxType] = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
 
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
         primitiveValue->collectDirectComputationalDependencies(dependencies);
@@ -428,30 +421,49 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         return propertyValue;
     }
 
-    auto value = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    auto [value, syntaxType] = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
     if (!value)
         return nullptr;
 
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
-        if (primitiveValue->isLength()) {
-            auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
-            return CSSCustomPropertyValue::createForLengthSyntax(name, WTFMove(length));
-        }
-        if (primitiveValue->isInteger())
-            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->intValue(), CSSUnitType::CSS_INTEGER);
-        if (primitiveValue->isNumber())
-            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_NUMBER);
-        if (primitiveValue->isAngle())
-            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->computeDegrees(), CSSUnitType::CSS_DEG);
-        if (primitiveValue->isPercentage())
-            return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_PERCENTAGE);
+    if (!is<CSSPrimitiveValue>(*value))
+        return nullptr;
+
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+
+    switch (syntaxType) {
+    case CSSPropertySyntax::Type::Universal:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    case CSSPropertySyntax::Type::LengthPercentage:
+    case CSSPropertySyntax::Type::Length: {
+        auto length = Style::BuilderConverter::convertLength(builderState, primitiveValue);
+        return CSSCustomPropertyValue::createForLengthSyntax(name, WTFMove(length));
+    }
+    case CSSPropertySyntax::Type::Percentage:
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.doubleValue(), CSSUnitType::CSS_PERCENTAGE);
+    case CSSPropertySyntax::Type::Integer:
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.intValue(), CSSUnitType::CSS_INTEGER);
+    case CSSPropertySyntax::Type::Number:
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.doubleValue(), CSSUnitType::CSS_NUMBER);
+    case CSSPropertySyntax::Type::Angle:
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue.computeDegrees(), CSSUnitType::CSS_DEG);
+    case CSSPropertySyntax::Type::Color: {
+        auto color = builderState.colorFromPrimitiveValue(primitiveValue, Style::ForVisitedLink::No);
+        return CSSCustomPropertyValue::createForColorSyntax(name, color);
+    }
+    case CSSPropertySyntax::Type::CustomIdent: {
+        auto tokenizer = CSSTokenizer::tryCreate(value->cssText());
+        if (!tokenizer)
+            return nullptr;
+        // FIXME: Do this properly.
+        return CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(tokenizer->tokenRange()));
+    }
+    case CSSPropertySyntax::Type::Unknown:
+        return nullptr;
     }
 
-    auto tokenizer = CSSTokenizer::tryCreate(value->cssText());
-    if (!tokenizer)
-        return nullptr;
-    // FIXME: Handle other types that need resolving.
-    return CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(tokenizer->tokenRange()));
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
