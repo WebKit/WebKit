@@ -46,10 +46,9 @@ public:
 private:
     bool isPlaceholder() const final { return true; }
 
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
-
     bool isAccelerated() const final { return !!m_imageBufferPipe; }
     bool isGPUBased() const final { return !!m_imageBufferPipe; }
+    void setContentsToLayer(GraphicsLayer&);
 
     RefPtr<ImageBufferPipe> m_imageBufferPipe;
 };

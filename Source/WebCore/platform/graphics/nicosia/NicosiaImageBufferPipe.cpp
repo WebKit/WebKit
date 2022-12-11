@@ -53,9 +53,10 @@ NicosiaImageBufferPipeSource::~NicosiaImageBufferPipeSource()
     downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
 }
 
-void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
+void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
 {
-    if (!buffer)
+    auto clone = buffer.clone();
+    if (!clone)
         return;
 
     Locker locker { m_imageBufferLock };
@@ -101,7 +102,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
         proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
     }
 
-    m_imageBuffer = WTFMove(buffer);
+    m_imageBuffer = WTFMove(clone);
 }
 
 void NicosiaImageBufferPipeSource::swapBuffersIfNeeded()
@@ -119,9 +120,9 @@ RefPtr<ImageBufferPipe::Source> NicosiaImageBufferPipe::source() const
     return m_source.ptr();
 }
 
-RefPtr<GraphicsLayerContentsDisplayDelegate> NicosiaImageBufferPipe::layerContentsDisplayDelegate()
+void NicosiaImageBufferPipe::setContentsToLayer(GraphicsLayer& layer)
 {
-    return m_layerContentsDisplayDelegate.ptr();
+    layer.setContentsDisplayDelegate(m_layerContentsDisplayDelegate.ptr(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
 
 } // namespace Nicosia

@@ -1117,7 +1117,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     else if (shouldSetContentsDisplayDelegate()) {
         auto* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (auto* context = canvas->renderingContext())
-            m_graphicsLayer->setContentsDisplayDelegate(context->layerContentsDisplayDelegate(), GraphicsLayer::ContentsLayerPurpose::Canvas);
+            context->setContentsToLayer(*m_graphicsLayer);
 
         layerConfigChanged = true;
     }

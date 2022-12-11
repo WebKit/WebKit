@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GraphicsLayer.h"
+#include "ImageBuffer.h"
 #include <wtf/RefCounted.h>
 
 #if !USE(CA)
@@ -51,6 +52,13 @@ public:
 #else
     virtual PlatformLayer* platformLayer() const = 0;
 #endif
+};
+
+class WEBCORE_EXPORT GraphicsLayerAsyncContentsDisplayDelegate : public RefCounted<GraphicsLayerAsyncContentsDisplayDelegate> {
+public:
+    virtual ~GraphicsLayerAsyncContentsDisplayDelegate() = default;
+
+    virtual bool tryCopyToLayer(ImageBuffer&) = 0;
 };
 
 }

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "ImageBufferPipe.h"
 #include "NicosiaContentLayerTextureMapperImpl.h"
 
@@ -55,7 +56,7 @@ public:
     virtual ~NicosiaImageBufferPipeSource();
 
     // ImageBufferPipe::Source overrides.
-    void handle(RefPtr<WebCore::ImageBuffer>&&) final;
+    void handle(WebCore::ImageBuffer&) final;
 
     // ContentLayerTextureMapperImpl::Client overrides.
     void swapBuffersIfNeeded() override;
@@ -74,7 +75,7 @@ public:
 
     // ImageBufferPipe overrides.
     RefPtr<WebCore::ImageBufferPipe::Source> source() const final;
-    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
+    void setContentsToLayer(WebCore::GraphicsLayer&) final;
 private:
     Ref<NicosiaImageBufferPipeSource> m_source;
     Ref<NicosiaImageBufferPipeSourceDisplayDelegate> m_layerContentsDisplayDelegate;
