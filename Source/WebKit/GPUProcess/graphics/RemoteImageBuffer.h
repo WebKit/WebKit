@@ -30,6 +30,7 @@
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "ScopedActiveMessageReceiveQueue.h"
+#include "ScopedRenderingResourcesRequest.h"
 #include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
