@@ -1757,8 +1757,7 @@ protected:
             if (!tmpWidth)
                 return false;
 
-            if (tmpWidth->defWidth(inst.args[0].tmp()) > Width32
-                || tmpWidth->useWidth(inst.args[1].tmp()) > Width32)
+            if (tmpWidth->defWidth(inst.args[0].tmp()) > Width32)
                 return false;
         }
         
