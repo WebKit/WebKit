@@ -45,6 +45,7 @@ from .pull_request import PullRequest
 from .revert import Revert
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
+from .show import Show
 from .trace import Trace
 from .track import Track
 
@@ -86,7 +87,7 @@ def main(
         Clean, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
-        Pickable, CherryPick, Trace, Track,
+        Pickable, CherryPick, Trace, Track, Show,
     ]
     if subversion:
         programs.append(SetupGitSvn)

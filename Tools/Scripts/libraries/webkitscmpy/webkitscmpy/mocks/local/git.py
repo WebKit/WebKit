@@ -598,11 +598,11 @@ nothing to commit, working tree clean
                 self.executable, 'reset', 'HEAD',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
-            ),  mocks.Subprocess.Route(
+            ), mocks.Subprocess.Route(
                 self.executable, 'reset', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.reset_commit(args[2]),
-            ),  mocks.Subprocess.Route(
+            ), mocks.Subprocess.Route(
                 self.executable, 'show', re.compile(r'.+'), '--pretty=', '--name-only',
                 cwd=self.path,
                 # FIXME: All mock commits have the same set of files changed with this implementation
@@ -610,7 +610,43 @@ nothing to commit, working tree clean
                     returncode=0,
                     stdout='Source/main.cpp\nSource/main.h\n',
                 ),
-            ),  mocks.Subprocess.Route(
+            ), mocks.Subprocess.Route(
+                self.executable, 'show', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='commit {hash}\n'
+                        'Author: {author} <{email}>\n'
+                        'Date:   {date}\n'
+                        '\n{log}\n\n'
+                        'diff --git a/Source/main.cpp b/Source/main.cpp\n'
+                        'index 2deba859a126..7b85f5cecd66 100644\n'
+                        '--- a/Source/main.cpp\n'
+                        '--- b/Source/main.cpp\n'
+                        '@@ -2948,6 +2948,8 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c\n'
+                        '     auto backgroundClip = clippedLayer.backgroundClipRect(RenderLayer::ClipRectsContext(&clippingRoot, TemporaryClipRects, options));\n'
+                        '     ASSERT(!backgroundClip.affectedByRadius());\n'
+                        '     auto clipRect = backgroundClip.rect();\n'
+                        '+    if (clipRect.isInfinite())\n'
+                        '+        return;\n'
+                        '    auto offset = layer.convertToLayerCoords(&clippingRoot, {{ }}, RenderLayer::AdjustForColumns);\n'
+                        '    clipRect.moveBy(-offset);\n'.format(
+                            hash=self.find(args[2]).hash,
+                            author=self.find(args[2]).author.name,
+                            email=self.find(args[2]).author.email,
+                            date=self.find(args[2]).timestamp if '--date=unix' in args else datetime.utcfromtimestamp(self.find(args[2]).timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            log='\n'.join(
+                                [
+                                    ('    ' + line) if line else '' for line in self.find(args[2]).message.splitlines()
+                                ] + (['    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
+                                    self.remote.split('@')[-1].split(':')[0],
+                                    os.path.basename(path),
+                                    self.find(args[2]).revision,
+                                )] if git_svn else [])
+                            )
+                        )
+                ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128)
+            ), mocks.Subprocess.Route(
                 self.executable, 'branch', '--set-upstream-to', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
