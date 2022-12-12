@@ -42,7 +42,7 @@ public:
     template<typename BackendType>
     static RefPtr<RemoteImageBuffer> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
-        auto context = ImageBuffer::CreationContext { nullptr
+        auto context = WebCore::ImageBufferCreationContext { nullptr
 #if HAVE(IOSURFACE)
             , &remoteRenderingBackend.ioSurfacePool()
 #endif

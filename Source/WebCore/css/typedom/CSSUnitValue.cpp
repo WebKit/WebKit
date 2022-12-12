@@ -155,20 +155,10 @@ RefPtr<CSSUnitValue> CSSUnitValue::convertTo(CSSUnitType unit) const
 auto CSSUnitValue::toSumValue() const -> std::optional<SumValue>
 {
     // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
-    auto canonicalUnit = [] (CSSUnitType unit) {
-        // FIXME: We probably want to change the definition of canonicalUnitTypeForCategory so this lambda isn't necessary.
-        auto category = unitCategory(unit);
-        switch (category) {
-        case CSSUnitCategory::Percent:
-            return CSSUnitType::CSS_PERCENTAGE;
-        case CSSUnitCategory::Flex:
-            return CSSUnitType::CSS_FR;
-        default:
-            break;
-        }
-        auto result = canonicalUnitTypeForCategory(category);
-        return result == CSSUnitType::CSS_UNKNOWN ? unit : result;
-    } (m_unit);
+    auto canonicalUnit = canonicalUnitTypeForUnitType(m_unit);
+    if (canonicalUnit == CSSUnitType::CSS_UNKNOWN)
+        canonicalUnit = m_unit;
+    
     auto convertedValue = m_value * conversionToCanonicalUnitsScaleFactor(unitEnum()) / conversionToCanonicalUnitsScaleFactor(canonicalUnit);
 
     if (m_unit == CSSUnitType::CSS_NUMBER)

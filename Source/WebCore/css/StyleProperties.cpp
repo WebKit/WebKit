@@ -302,6 +302,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return borderPropertyValue(borderInlineWidthShorthand(), borderInlineStyleShorthand(), borderInlineColorShorthand());
     case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
+    case CSSPropertyWebkitMaskBoxImage:
         return borderImagePropertyValue(shorthand);
     case CSSPropertyBorderRadius:
     case CSSPropertyWebkitBorderRadius:
@@ -1106,13 +1107,13 @@ String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& s
 
         // FIXME: We should omit values based on them being equal to the initial value, not based on the implicit flag.
         if (isPropertyImplicit(longhand)) {
-            if (longhand == CSSPropertyBorderImageSlice)
+            if (longhand == CSSPropertyBorderImageSlice || longhand == CSSPropertyWebkitMaskBoxImageSlice)
                 omittedSlice = true;
-            else if (longhand == CSSPropertyBorderImageWidth)
+            else if (longhand == CSSPropertyBorderImageWidth || longhand == CSSPropertyWebkitMaskBoxImageWidth)
                 omittedWidth = true;
             continue;
         }
-        if (omittedSlice && (longhand == CSSPropertyBorderImageWidth || longhand == CSSPropertyBorderImageOutset))
+        if (omittedSlice && (longhand == CSSPropertyBorderImageWidth || longhand == CSSPropertyBorderImageOutset || longhand == CSSPropertyWebkitMaskBoxImageWidth || longhand == CSSPropertyWebkitMaskBoxImageOutset))
             return String();
 
         String valueText;
@@ -1129,9 +1130,9 @@ String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& s
             valueText = value->cssText();
 
         // Append separator and text.
-        if (longhand == CSSPropertyBorderImageWidth)
+        if (longhand == CSSPropertyBorderImageWidth || longhand == CSSPropertyWebkitMaskBoxImageWidth)
             separator = " / ";
-        else if (longhand == CSSPropertyBorderImageOutset)
+        else if (longhand == CSSPropertyBorderImageOutset || longhand == CSSPropertyWebkitMaskBoxImageOutset)
             separator = omittedWidth ? " / / " : " / ";
         result.append(separator, valueText);
         separator = " ";

@@ -30,6 +30,7 @@
 namespace WTF {
 
 template<typename> struct EnumTraits;
+template<typename> struct EnumTraitsForPersistence;
 
 template<typename E, E...> struct EnumValues;
 
@@ -62,6 +63,19 @@ constexpr bool isValidEnum(bool t)
 {
     return !t || t == 1;
 }
+
+template<typename E, typename = std::enable_if_t<!std::is_same_v<std::underlying_type_t<E>, bool>>>
+bool isValidEnumForPersistence(std::underlying_type_t<E> t)
+{
+    return EnumValueChecker<std::underlying_type_t<E>, typename EnumTraitsForPersistence<E>::values>::isValidEnum(t);
+}
+
+template<typename E, typename = std::enable_if_t<std::is_same_v<std::underlying_type_t<E>, bool>>>
+constexpr bool isValidEnumForPersistence(bool t)
+{
+    return !t || t == 1;
+}
+
 
 template<typename E>
 constexpr auto enumToUnderlyingType(E e)

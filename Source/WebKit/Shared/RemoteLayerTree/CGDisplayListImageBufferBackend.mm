@@ -109,7 +109,7 @@ size_t CGDisplayListImageBufferBackend::calculateMemoryCost(const Parameters& pa
     return WebCore::ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
 }
 
-std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBuffer::CreationContext& creationContext)
+std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
 {
     if (parameters.logicalSize.isEmpty())
         return nullptr;
@@ -117,7 +117,7 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
     return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, creationContext));
 }
 
-CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, const WebCore::ImageBuffer::CreationContext& creationContext)
+CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
     : ImageBufferCGBackend { parameters }
 {
     if (creationContext.useCGDisplayListImageCache == UseCGDisplayListImageCache::Yes)

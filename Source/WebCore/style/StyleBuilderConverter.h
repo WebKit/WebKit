@@ -89,7 +89,6 @@ public:
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumberOrAuto(BuilderState&, const CSSValue&);
     static short convertWebkitHyphenateLimitLines(BuilderState&, const CSSValue&);
-    template<CSSPropertyID> static NinePieceImage convertBorderMask(BuilderState&, CSSValue&);
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(BuilderState&, CSSValue&);
     static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
     static TransformOperations convertTransform(BuilderState&, const CSSValue&);
@@ -469,14 +468,6 @@ inline short BuilderConverter::convertWebkitHyphenateLimitLines(BuilderState&, c
     if (primitiveValue.valueID() == CSSValueNoLimit)
         return -1;
     return primitiveValue.value<short>(CSSUnitType::CSS_NUMBER);
-}
-
-template<CSSPropertyID property>
-inline NinePieceImage BuilderConverter::convertBorderMask(BuilderState& builderState, CSSValue& value)
-{
-    NinePieceImage image(NinePieceImage::Type::Mask);
-    builderState.styleMap().mapNinePieceImage(&value, image);
-    return image;
 }
 
 template<CSSPropertyID>

@@ -944,7 +944,7 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     LOG_ERROR("Unhandled web process message '%s' (destination: %" PRIu64 " pid: %d)", description(decoder.messageName()), decoder.destinationID(), static_cast<int>(getCurrentProcessID()));
 }
 
-void WebProcess::didClose(IPC::Connection&)
+void WebProcess::didClose(IPC::Connection& connection)
 {
     FileSystem::markPurgeable(WebCore::HTMLMediaElement::mediaCacheDirectory());
     if (m_applicationCacheStorage)
@@ -952,6 +952,7 @@ void WebProcess::didClose(IPC::Connection&)
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     FileSystem::markPurgeable(ARKitInlinePreviewModelPlayerMac::modelElementCacheDirectory());
 #endif
+    AuxiliaryProcess::didClose(connection);
 }
 
 WebFrame* WebProcess::webFrame(FrameIdentifier frameID) const

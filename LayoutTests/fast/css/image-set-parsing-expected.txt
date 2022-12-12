@@ -98,7 +98,7 @@ PASS subRule.cssText is '1x'
 PASS subRule is 'b'
 PASS subRule.cssText is '2x'
 
-Single value for -webkit-mask-box-image : url('#a') 1x
+Single value for -webkit-mask-box-image-source : url('#a') 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
@@ -106,7 +106,7 @@ PASS imageSetRule.length is 2
 PASS subRule is 'a'
 PASS subRule.cssText is '1x'
 
-Multiple values for -webkit-mask-box-image : url('#a') 1x, url('#b') 2x
+Multiple values for -webkit-mask-box-image-source : url('#a') 1x, url('#b') 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'

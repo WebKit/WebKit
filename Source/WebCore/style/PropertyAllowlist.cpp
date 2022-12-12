@@ -43,6 +43,7 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     switch (id) {
     case CSSPropertyColor:
     case CSSPropertyContent:
+    case CSSPropertyCustom:
     case CSSPropertyDirection:
     case CSSPropertyFont:
     case CSSPropertyFontFamily:
@@ -122,6 +123,7 @@ bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyBackgroundRepeat:
     case CSSPropertyBackgroundSize:
     case CSSPropertyColor:
+    case CSSPropertyCustom:
     case CSSPropertyFont:
     case CSSPropertyFontFamily:
     case CSSPropertyFontSize:

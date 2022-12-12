@@ -85,7 +85,7 @@ private:
 } // namespace WebCore
 
 namespace WTF {
-template<> struct EnumTraits<WebCore::KeyedEncoderGeneric::Type> {
+template<> struct EnumTraitsForPersistence<WebCore::KeyedEncoderGeneric::Type> {
     using values = EnumValues<
         WebCore::KeyedEncoderGeneric::Type,
         WebCore::KeyedEncoderGeneric::Type::Bytes,

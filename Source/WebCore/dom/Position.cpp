@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -245,7 +246,7 @@ Position Position::parentAnchoredEquivalent() const
         return { };
     
     // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
-    if (m_offset <= 0 && (m_anchorType != PositionIsAfterAnchor && m_anchorType != PositionIsAfterChildren)) {
+    if (!m_offset && (m_anchorType != PositionIsAfterAnchor && m_anchorType != PositionIsAfterChildren)) {
         if (m_anchorNode->parentNode() && (editingIgnoresContent(*m_anchorNode) || isRenderedTable(m_anchorNode.get())))
             return positionInParentBeforeNode(m_anchorNode.get());
         return Position(m_anchorNode.get(), 0, PositionIsOffsetInAnchor);
@@ -459,7 +460,7 @@ bool Position::atFirstEditingPositionForNode() const
     // since that position resides outside of the node.
     switch (m_anchorType) {
     case PositionIsOffsetInAnchor:
-        return m_offset <= 0;
+        return !m_offset;
     case PositionIsBeforeChildren:
     case PositionIsBeforeAnchor:
         return true;
@@ -528,7 +529,7 @@ bool Position::atStartOfTree() const
 
     switch (m_anchorType) {
     case PositionIsOffsetInAnchor:
-        return m_offset <= 0;
+        return !m_offset;
     case PositionIsBeforeAnchor:
         return !m_anchorNode->previousSibling();
     case PositionIsAfterAnchor:

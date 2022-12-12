@@ -73,7 +73,7 @@ size_t ImageBufferCairoImageSurfaceBackend::calculateMemoryCost(const Parameters
     return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
 }
 
-std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const ImageBuffer::CreationContext&)
+std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
     ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
 

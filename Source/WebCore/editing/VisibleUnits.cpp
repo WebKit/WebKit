@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
- *
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -570,7 +571,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& position, Boundar
         return it.atEnd() ? makeDeprecatedLegacyPosition(searchRange->start) : position;
 
     auto& node = (it.atEnd() ? *searchRange : it.range()).start.container.get();
-    if ((!suffixLength && is<Text>(node) && next <= downcast<Text>(node).length()) || (node.renderer() && node.renderer()->isBR() && !next)) {
+    if (!suffixLength && is<Text>(node) && next <= downcast<Text>(node).length()) {
         // The next variable contains a usable index into a text node.
         return makeDeprecatedLegacyPosition(&node, next);
     }

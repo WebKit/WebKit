@@ -48,7 +48,7 @@ class RemoteLayerBackingStoreCollection;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-using UseCGDisplayListImageCache = WebCore::ImageBuffer::CreationContext::UseCGDisplayListImageCache;
+using UseCGDisplayListImageCache = WebCore::ImageBufferCreationContext::UseCGDisplayListImageCache;
 #endif
 
 class RemoteLayerBackingStore {

@@ -414,14 +414,14 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVector)
         ASSERT_TRUE(!!vector);
         ASSERT_EQ(vector->size(), 2u);
         for (auto&& entry : *vector)
-            ASSERT_EQ(entry.moveCounter, 2u);
+            ASSERT_EQ(entry.moveCounter, 1u);
     }
     {
         auto vector = decoder->decode<Vector<DecodingMoveCounter>>();
         ASSERT_TRUE(!!vector);
         ASSERT_EQ(vector->size(), 2u);
         for (auto&& entry : *vector)
-            ASSERT_EQ(entry.moveCounter, 2u);
+            ASSERT_EQ(entry.moveCounter, 1u);
     }
 }
 

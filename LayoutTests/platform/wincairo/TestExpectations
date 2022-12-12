@@ -2460,3 +2460,6 @@ imported/w3c/web-platform-tests/cookies/path/default.html [ Failure ]
 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
 fast/css/focus-ring-continuations.html [ Failure ]
+
+editing/selection/shift-click-live-range.html [ Failure ]
+fast/canvas/offscreen-enabled.html [ Failure ]

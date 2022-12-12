@@ -75,7 +75,7 @@ public:
         *this >> value;
         if (!value)
             return *this;
-        if (!isValidEnum<E>(*value))
+        if (!isValidEnumForPersistence<E>(*value))
             return *this;
         result = static_cast<E>(*value);
         return *this;

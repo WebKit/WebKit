@@ -44,7 +44,7 @@ public:
     static unsigned calculateBytesPerRow(const IntSize& backendSize);
     static size_t calculateMemoryCost(const Parameters&);
 
-    static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const Parameters&, const ImageBuffer::CreationContext&);
+    static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const Parameters&, const ImageBufferCreationContext&);
     static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const Parameters&, const GraphicsContext&);
 
 private:

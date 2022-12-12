@@ -84,7 +84,7 @@ RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const 
     return ImageBufferCGBackend::contextColorSpace(context);
 }
 
-std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBuffer::CreationContext& creationContext)
+std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
