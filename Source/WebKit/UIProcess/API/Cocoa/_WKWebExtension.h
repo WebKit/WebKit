@@ -47,7 +47,7 @@ WK_EXTERN NSErrorDomain const _WKWebExtensionErrorDomain WK_API_AVAILABLE(macos(
  @constant WKWebExtensionErrorResourceNotFound  Indicates that a specified resource was not found on disk.
  @constant WKWebExtensionErrorInvalidResourceCodeSignature  Indicates that a resource failed the bundle's code signature checks.
  @constant WKWebExtensionErrorInvalidManifest  Indicates that an invalid `manifest.json` was encountered.
- @constant WKWebExtensionErrorUnsupportedManifestVersion  Indicates that a the manifest version is not supported.
+ @constant WKWebExtensionErrorUnsupportedManifestVersion  Indicates that the manifest version is not supported.
  @constant WKWebExtensionErrorInvalidManifestEntry  Indicates that an invalid manifest entry was encountered.
  @constant WKWebExtensionErrorInvalidDeclarativeNetRequestEntry  Indicates that an invalid declarative net request entry was encountered.
  @constant WKWebExtensionErrorInvalidBackgroundPersistence  Indicates that the extension specified background persistence that was not compatible with the platform or features requested.
@@ -123,7 +123,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly, copy) NSDictionary<NSString *, id> *manifest;
 
 /*!
- @abstract The parsed manifest version, or `0` is if there is no version specified in the manifest.
+ @abstract The parsed manifest version, or `0` if there is no version specified in the manifest.
  @note An `WKWebExtensionErrorUnsupportedManifestVersion` error will be reported if the manifest version isn't specified.
  */
 @property (nonatomic, readonly) double manifestVersion;
@@ -131,7 +131,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*!
  @abstract Checks if a manifest version is supported by the extension.
  @param manifestVersion The version number to check.
- @result Returns `YES` if the extension specified a manifest version that is is greater than or equal to `manifestVersion`.
+ @result Returns `YES` if the extension specified a manifest version that is greater than or equal to `manifestVersion`.
  */
 - (BOOL)usesManifestVersion:(double)manifestVersion;
 

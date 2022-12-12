@@ -171,6 +171,13 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, copy) NSString *uniqueIdentifier;
 
 /*!
+ @abstract Determines whether Web Inspector can inspect the @link WKWebView @/link instances for this context.
+ @discussion A context can control multiple `WKWebView` instances, from the background content, to the popover.
+ You should set this to `YES` when needed for debugging purposes. The default value is `NO`.
+*/
+@property (nonatomic, getter=isInspectable) BOOL inspectable;
+
+/*!
  @abstract The currently granted permissions and their expiration dates.
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission state in bulk.

@@ -321,6 +321,13 @@ void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
     m_uniqueIdentifier = uniqueIdentifier;
 }
 
+void WebExtensionContext::setInspectable(bool inspectable)
+{
+    m_inspectable = inspectable;
+
+    m_backgroundWebView.get().inspectable = inspectable;
+}
+
 const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
 {
     // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by including them here.
@@ -1171,6 +1178,7 @@ void WebExtensionContext::loadBackgroundWebView()
 
     m_backgroundWebView.get().UIDelegate = m_delegate.get();
     m_backgroundWebView.get().navigationDelegate = m_delegate.get();
+    m_backgroundWebView.get().inspectable = m_inspectable;
 
     if (extension().backgroundContentIsServiceWorker())
         m_backgroundWebView.get()._remoteInspectionNameOverride = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());

@@ -149,6 +149,9 @@ public:
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
     void setUniqueIdentifier(String&&);
 
+    bool isInspectable() const { return m_inspectable; }
+    void setInspectable(bool);
+
     const InjectedContentVector& injectedContents();
     bool hasInjectedContentForURL(NSURL *);
 
@@ -286,6 +289,8 @@ private:
     URL m_baseURL;
     String m_uniqueIdentifier = UUID::createVersion4().toString();
     bool m_customUniqueIdentifier { false };
+
+    bool m_inspectable { false };
 
     RefPtr<API::ContentWorld> m_contentScriptWorld;
 
