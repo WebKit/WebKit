@@ -3,7 +3,7 @@ PASS Can set 'background-clip' to CSS-wide keywords: initial
 PASS Can set 'background-clip' to CSS-wide keywords: inherit
 PASS Can set 'background-clip' to CSS-wide keywords: unset
 PASS Can set 'background-clip' to CSS-wide keywords: revert
-FAIL Can set 'background-clip' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'background-clip' to var() references:  var(--A)
 PASS Can set 'background-clip' to the 'border-box' keyword: border-box
 PASS Can set 'background-clip' to the 'padding-box' keyword: padding-box
 PASS Can set 'background-clip' to the 'content-box' keyword: content-box

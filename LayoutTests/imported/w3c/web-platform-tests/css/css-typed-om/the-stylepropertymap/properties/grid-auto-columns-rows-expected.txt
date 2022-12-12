@@ -5,7 +5,7 @@ PASS Can set 'grid-auto-columns' to CSS-wide keywords: initial
 PASS Can set 'grid-auto-columns' to CSS-wide keywords: inherit
 PASS Can set 'grid-auto-columns' to CSS-wide keywords: unset
 PASS Can set 'grid-auto-columns' to CSS-wide keywords: revert
-FAIL Can set 'grid-auto-columns' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-columns' to var() references:  var(--A)
 PASS Can set 'grid-auto-columns' to the 'min-content' keyword: min-content
 PASS Can set 'grid-auto-columns' to the 'max-content' keyword: max-content
 PASS Can set 'grid-auto-columns' to the 'auto' keyword: auto
@@ -31,7 +31,7 @@ PASS Can set 'grid-auto-rows' to CSS-wide keywords: initial
 PASS Can set 'grid-auto-rows' to CSS-wide keywords: inherit
 PASS Can set 'grid-auto-rows' to CSS-wide keywords: unset
 PASS Can set 'grid-auto-rows' to CSS-wide keywords: revert
-FAIL Can set 'grid-auto-rows' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-rows' to var() references:  var(--A)
 PASS Can set 'grid-auto-rows' to the 'min-content' keyword: min-content
 PASS Can set 'grid-auto-rows' to the 'max-content' keyword: max-content
 PASS Can set 'grid-auto-rows' to the 'auto' keyword: auto

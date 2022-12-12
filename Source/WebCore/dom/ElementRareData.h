@@ -26,6 +26,7 @@
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "ElementAnimationRareData.h"
+#include "InlineStylePropertyMap.h"
 #include "IntersectionObserver.h"
 #include "KeyframeEffectStack.h"
 #include "NamedNodeMap.h"
@@ -35,7 +36,6 @@
 #include "ResizeObserver.h"
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
-#include "StylePropertyMap.h"
 #include "StylePropertyMapReadOnly.h"
 
 namespace WebCore {
@@ -106,8 +106,8 @@ public:
     const AtomString& nonce() const { return m_nonce; }
     void setNonce(const AtomString& value) { m_nonce = value; }
 
-    StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
-    void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
+    InlineStylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
+    void setAttributeStyleMap(Ref<InlineStylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
 
     StylePropertyMapReadOnly* computedStyleMap() { return m_computedStyleMap.get(); }
     void setComputedStyleMap(Ref<StylePropertyMapReadOnly>&& map) { m_computedStyleMap = WTFMove(map); }
@@ -183,7 +183,7 @@ private:
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
 
-    RefPtr<StylePropertyMap> m_attributeStyleMap;
+    RefPtr<InlineStylePropertyMap> m_attributeStyleMap;
     RefPtr<StylePropertyMapReadOnly> m_computedStyleMap;
 
     std::unique_ptr<DOMTokenList> m_partList;

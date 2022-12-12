@@ -3,7 +3,7 @@ PASS Can set 'font-variant-ligatures' to CSS-wide keywords: initial
 PASS Can set 'font-variant-ligatures' to CSS-wide keywords: inherit
 PASS Can set 'font-variant-ligatures' to CSS-wide keywords: unset
 PASS Can set 'font-variant-ligatures' to CSS-wide keywords: revert
-FAIL Can set 'font-variant-ligatures' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-variant-ligatures' to var() references:  var(--A)
 PASS Can set 'font-variant-ligatures' to the 'normal' keyword: normal
 PASS Can set 'font-variant-ligatures' to the 'none' keyword: none
 PASS Can set 'font-variant-ligatures' to the 'common-ligatures' keyword: common-ligatures

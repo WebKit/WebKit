@@ -42,6 +42,8 @@ InlineStylePropertyMap::InlineStylePropertyMap(StyledElement& element)
 
 RefPtr<CSSValue> InlineStylePropertyMap::propertyValue(CSSPropertyID propertyID) const
 {
+    if (auto it = m_cachedProperties.find(propertyID); it != m_cachedProperties.end())
+        return it->value;
     if (auto* inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
         return inlineStyle->getPropertyCSSValue(propertyID);
     return nullptr;
@@ -105,6 +107,8 @@ bool InlineStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
     bool didFailParsing = false;
     bool important = false;
     m_element->setInlineStyleProperty(propertyID, value->cssText(), important, &didFailParsing);
+    if (!didFailParsing)
+        m_cachedProperties.set(propertyID, WTFMove(value));
     return !didFailParsing;
 }
 
@@ -132,7 +136,16 @@ void InlineStylePropertyMap::clear()
 
 void InlineStylePropertyMap::clearElement()
 {
+    m_cachedProperties.clear();
     m_element = nullptr;
+}
+
+void InlineStylePropertyMap::didChangePropertyValue(std::optional<CSSPropertyID> propertyID)
+{
+    if (propertyID)
+        m_cachedProperties.remove(*propertyID);
+    else
+        m_cachedProperties.clear();
 }
 
 } // namespace WebCore

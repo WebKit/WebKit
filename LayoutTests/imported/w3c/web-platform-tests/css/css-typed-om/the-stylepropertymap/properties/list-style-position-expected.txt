@@ -3,7 +3,7 @@ PASS Can set 'list-style-position' to CSS-wide keywords: initial
 PASS Can set 'list-style-position' to CSS-wide keywords: inherit
 PASS Can set 'list-style-position' to CSS-wide keywords: unset
 PASS Can set 'list-style-position' to CSS-wide keywords: revert
-FAIL Can set 'list-style-position' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'list-style-position' to var() references:  var(--A)
 PASS Can set 'list-style-position' to the 'inside' keyword: inside
 PASS Can set 'list-style-position' to the 'outside' keyword: outside
 PASS Setting 'list-style-position' to a length throws TypeError

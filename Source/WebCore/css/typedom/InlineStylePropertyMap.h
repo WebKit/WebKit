@@ -46,10 +46,13 @@ public:
     void clear() final;
     void clearElement() final;
 
+    void didChangePropertyValue(std::optional<CSSPropertyID> = std::nullopt);
+
 private:
     explicit InlineStylePropertyMap(StyledElement&);
 
     StyledElement* m_element;
+    HashMap<CSSPropertyID, RefPtr<CSSValue>> m_cachedProperties;
 };
 
 } // namespace WebCore

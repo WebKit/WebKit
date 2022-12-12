@@ -3,7 +3,7 @@ PASS Can set 'contain' to CSS-wide keywords: initial
 PASS Can set 'contain' to CSS-wide keywords: inherit
 PASS Can set 'contain' to CSS-wide keywords: unset
 PASS Can set 'contain' to CSS-wide keywords: revert
-FAIL Can set 'contain' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'contain' to var() references:  var(--A)
 PASS Can set 'contain' to the 'none' keyword: none
 PASS Can set 'contain' to the 'strict' keyword: strict
 PASS Can set 'contain' to the 'content' keyword: content

@@ -3,14 +3,14 @@ PASS Can set 'border-top-width' to CSS-wide keywords: initial
 PASS Can set 'border-top-width' to CSS-wide keywords: inherit
 PASS Can set 'border-top-width' to CSS-wide keywords: unset
 PASS Can set 'border-top-width' to CSS-wide keywords: revert
-FAIL Can set 'border-top-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-top-width' to var() references:  var(--A)
 PASS Can set 'border-top-width' to the 'thin' keyword: thin
 PASS Can set 'border-top-width' to the 'medium' keyword: medium
 PASS Can set 'border-top-width' to the 'thick' keyword: thick
 PASS Can set 'border-top-width' to a length: 0px
 PASS Can set 'border-top-width' to a length: -3.14em
 PASS Can set 'border-top-width' to a length: 3.14cm
-FAIL Can set 'border-top-width' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'border-top-width' to a length: calc(0px + 0em)
 PASS Setting 'border-top-width' to a percent throws TypeError
 PASS Setting 'border-top-width' to a time throws TypeError
 PASS Setting 'border-top-width' to an angle throws TypeError
@@ -22,14 +22,14 @@ PASS Can set 'border-left-width' to CSS-wide keywords: initial
 PASS Can set 'border-left-width' to CSS-wide keywords: inherit
 PASS Can set 'border-left-width' to CSS-wide keywords: unset
 PASS Can set 'border-left-width' to CSS-wide keywords: revert
-FAIL Can set 'border-left-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-left-width' to var() references:  var(--A)
 PASS Can set 'border-left-width' to the 'thin' keyword: thin
 PASS Can set 'border-left-width' to the 'medium' keyword: medium
 PASS Can set 'border-left-width' to the 'thick' keyword: thick
 PASS Can set 'border-left-width' to a length: 0px
 PASS Can set 'border-left-width' to a length: -3.14em
 PASS Can set 'border-left-width' to a length: 3.14cm
-FAIL Can set 'border-left-width' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'border-left-width' to a length: calc(0px + 0em)
 PASS Setting 'border-left-width' to a percent throws TypeError
 PASS Setting 'border-left-width' to a time throws TypeError
 PASS Setting 'border-left-width' to an angle throws TypeError
@@ -41,14 +41,14 @@ PASS Can set 'border-right-width' to CSS-wide keywords: initial
 PASS Can set 'border-right-width' to CSS-wide keywords: inherit
 PASS Can set 'border-right-width' to CSS-wide keywords: unset
 PASS Can set 'border-right-width' to CSS-wide keywords: revert
-FAIL Can set 'border-right-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-right-width' to var() references:  var(--A)
 PASS Can set 'border-right-width' to the 'thin' keyword: thin
 PASS Can set 'border-right-width' to the 'medium' keyword: medium
 PASS Can set 'border-right-width' to the 'thick' keyword: thick
 PASS Can set 'border-right-width' to a length: 0px
 PASS Can set 'border-right-width' to a length: -3.14em
 PASS Can set 'border-right-width' to a length: 3.14cm
-FAIL Can set 'border-right-width' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'border-right-width' to a length: calc(0px + 0em)
 PASS Setting 'border-right-width' to a percent throws TypeError
 PASS Setting 'border-right-width' to a time throws TypeError
 PASS Setting 'border-right-width' to an angle throws TypeError
@@ -60,14 +60,14 @@ PASS Can set 'border-bottom-width' to CSS-wide keywords: initial
 PASS Can set 'border-bottom-width' to CSS-wide keywords: inherit
 PASS Can set 'border-bottom-width' to CSS-wide keywords: unset
 PASS Can set 'border-bottom-width' to CSS-wide keywords: revert
-FAIL Can set 'border-bottom-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-bottom-width' to var() references:  var(--A)
 PASS Can set 'border-bottom-width' to the 'thin' keyword: thin
 PASS Can set 'border-bottom-width' to the 'medium' keyword: medium
 PASS Can set 'border-bottom-width' to the 'thick' keyword: thick
 PASS Can set 'border-bottom-width' to a length: 0px
 PASS Can set 'border-bottom-width' to a length: -3.14em
 PASS Can set 'border-bottom-width' to a length: 3.14cm
-FAIL Can set 'border-bottom-width' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'border-bottom-width' to a length: calc(0px + 0em)
 PASS Setting 'border-bottom-width' to a percent throws TypeError
 PASS Setting 'border-bottom-width' to a time throws TypeError
 PASS Setting 'border-bottom-width' to an angle throws TypeError

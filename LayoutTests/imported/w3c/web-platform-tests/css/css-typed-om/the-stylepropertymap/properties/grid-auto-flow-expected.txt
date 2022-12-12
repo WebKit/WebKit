@@ -3,7 +3,7 @@ PASS Can set 'grid-auto-flow' to CSS-wide keywords: initial
 PASS Can set 'grid-auto-flow' to CSS-wide keywords: inherit
 PASS Can set 'grid-auto-flow' to CSS-wide keywords: unset
 PASS Can set 'grid-auto-flow' to CSS-wide keywords: revert
-FAIL Can set 'grid-auto-flow' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-flow' to var() references:  var(--A)
 PASS Can set 'grid-auto-flow' to the 'row' keyword: row
 PASS Can set 'grid-auto-flow' to the 'column' keyword: column
 PASS Setting 'grid-auto-flow' to a length throws TypeError

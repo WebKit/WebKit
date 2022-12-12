@@ -3,7 +3,7 @@ PASS Can set 'overscroll-behavior-x' to CSS-wide keywords: initial
 PASS Can set 'overscroll-behavior-x' to CSS-wide keywords: inherit
 PASS Can set 'overscroll-behavior-x' to CSS-wide keywords: unset
 PASS Can set 'overscroll-behavior-x' to CSS-wide keywords: revert
-FAIL Can set 'overscroll-behavior-x' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overscroll-behavior-x' to var() references:  var(--A)
 PASS Can set 'overscroll-behavior-x' to the 'contain' keyword: contain
 PASS Can set 'overscroll-behavior-x' to the 'none' keyword: none
 PASS Can set 'overscroll-behavior-x' to the 'auto' keyword: auto
@@ -19,7 +19,7 @@ PASS Can set 'overscroll-behavior-y' to CSS-wide keywords: initial
 PASS Can set 'overscroll-behavior-y' to CSS-wide keywords: inherit
 PASS Can set 'overscroll-behavior-y' to CSS-wide keywords: unset
 PASS Can set 'overscroll-behavior-y' to CSS-wide keywords: revert
-FAIL Can set 'overscroll-behavior-y' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overscroll-behavior-y' to var() references:  var(--A)
 PASS Can set 'overscroll-behavior-y' to the 'contain' keyword: contain
 PASS Can set 'overscroll-behavior-y' to the 'none' keyword: none
 PASS Can set 'overscroll-behavior-y' to the 'auto' keyword: auto

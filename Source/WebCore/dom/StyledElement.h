@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Attribute;
+class InlineStylePropertyMap;
 class MutableStyleProperties;
 class PropertySetCSSStyleDeclaration;
 class StyleProperties;
@@ -61,7 +62,8 @@ public:
     void synchronizeStyleAttributeInternal() const { const_cast<StyledElement*>(this)->synchronizeStyleAttributeInternalImpl(); }
     
     WEBCORE_EXPORT CSSStyleDeclaration& cssomStyle();
-    StylePropertyMap& ensureAttributeStyleMap();
+    InlineStylePropertyMap& ensureAttributeStyleMap();
+    StylePropertyMap& attributeStyleMapForBindings();
 
     // https://html.spec.whatwg.org/#presentational-hints
     const StyleProperties* presentationalHintStyle() const;

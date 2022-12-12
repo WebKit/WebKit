@@ -3,7 +3,7 @@ PASS Can set 'empty-cells' to CSS-wide keywords: initial
 PASS Can set 'empty-cells' to CSS-wide keywords: inherit
 PASS Can set 'empty-cells' to CSS-wide keywords: unset
 PASS Can set 'empty-cells' to CSS-wide keywords: revert
-FAIL Can set 'empty-cells' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'empty-cells' to var() references:  var(--A)
 PASS Can set 'empty-cells' to the 'show' keyword: show
 PASS Can set 'empty-cells' to the 'hide' keyword: hide
 PASS Setting 'empty-cells' to a length throws TypeError

@@ -87,7 +87,7 @@ private:
     RefPtr<DeprecatedCSSOMValue> wrapForDeprecatedCSSOM(CSSValue*);
     
     virtual bool willMutate() WARN_UNUSED_RETURN { return true; }
-    virtual void didMutate(MutationType) { }
+    virtual void didMutate(MutationType, std::optional<CSSPropertyID> = std::nullopt) { }
 };
 
 class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
@@ -114,7 +114,7 @@ private:
     CSSRule* parentRule() const final { return m_parentRule; }
 
     bool willMutate() final WARN_UNUSED_RETURN;
-    void didMutate(MutationType) final;
+    void didMutate(MutationType, std::optional<CSSPropertyID> = std::nullopt) final;
     CSSParserContext cssParserContext() const final;
 
     unsigned m_refCount;
@@ -137,7 +137,7 @@ private:
     void clearParentElement() final { m_parentElement = nullptr; }
 
     bool willMutate() final WARN_UNUSED_RETURN;
-    void didMutate(MutationType) final;
+    void didMutate(MutationType, std::optional<CSSPropertyID> = std::nullopt) final;
     CSSParserContext cssParserContext() const final;
 
     StyledElement* m_parentElement;

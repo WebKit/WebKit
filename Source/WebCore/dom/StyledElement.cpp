@@ -80,11 +80,16 @@ CSSStyleDeclaration& StyledElement::cssomStyle()
     return ensureMutableInlineStyle().ensureInlineCSSStyleDeclaration(*this);
 }
 
-StylePropertyMap& StyledElement::ensureAttributeStyleMap()
+InlineStylePropertyMap& StyledElement::ensureAttributeStyleMap()
 {
     if (!attributeStyleMap())
         setAttributeStyleMap(InlineStylePropertyMap::create(*this));
     return *attributeStyleMap();
+}
+
+StylePropertyMap& StyledElement::attributeStyleMapForBindings()
+{
+    return ensureAttributeStyleMap();
 }
 
 MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
@@ -143,6 +148,9 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
     else
         downcast<MutableStyleProperties>(*inlineStyle).parseDeclaration(newStyleString, document());
 
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue();
+
     if (usesStyleBasedEditability(*inlineStyle))
         document().setHasElementUsingStyleBasedEditability();
 }
@@ -194,6 +202,8 @@ void StyledElement::inlineStyleChanged()
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important);
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue(propertyID);
     inlineStyleChanged();
     return true;
 }
@@ -201,6 +211,8 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSValueID 
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSPropertyID identifier, bool important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important);
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue(propertyID);
     inlineStyleChanged();
     return true;
 }
@@ -208,6 +220,8 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSProperty
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSUnitType unit, bool important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, CSSValuePool::singleton().createValue(value, unit), important);
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue(propertyID);
     inlineStyleChanged();
     return true;
 }
@@ -215,6 +229,8 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double valu
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, bool important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, WTFMove(value), important);
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue(propertyID);
     inlineStyleChanged();
     return true;
 }
@@ -222,9 +238,13 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValu
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, bool important, bool* didFailParsing)
 {
     bool changes = ensureMutableInlineStyle().setProperty(propertyID, value, important, CSSParserContext(document()), didFailParsing);
-    if (changes)
-        inlineStyleChanged();
-    return changes;
+    if (!changes)
+        return false;
+
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue(propertyID);
+    inlineStyleChanged();
+    return true;
 }
 
 bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, bool important)
@@ -247,9 +267,13 @@ bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
     if (!inlineStyle())
         return false;
     bool changes = ensureMutableInlineStyle().removeProperty(propertyID);
-    if (changes)
-        inlineStyleChanged();
-    return changes;
+    if (!changes)
+        return false;
+
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue(propertyID);
+    inlineStyleChanged();
+    return true;
 }
 
 bool StyledElement::removeInlineStyleCustomProperty(const AtomString& property)
@@ -267,6 +291,8 @@ void StyledElement::removeAllInlineStyleProperties()
     if (!inlineStyle() || inlineStyle()->isEmpty())
         return;
     ensureMutableInlineStyle().clear();
+    if (auto* inlineStyleMap = attributeStyleMap())
+        inlineStyleMap->didChangePropertyValue();
     inlineStyleChanged();
 }
 

@@ -28,6 +28,7 @@
 #include "CustomElementReactionQueue.h"
 #include "DOMWindow.h"
 #include "HTMLNames.h"
+#include "InlineStylePropertyMap.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWindowBase.h"
@@ -272,7 +273,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
     } else
         changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
 
-    didMutate(changed ? PropertyChanged : NoChanges);
+    didMutate(changed ? PropertyChanged : NoChanges, propertyID);
 
     if (changed) {
         // CSS DOM requires raising SyntaxError of parsing failed, but this is too dangerous for compatibility,
@@ -298,7 +299,7 @@ ExceptionOr<String> PropertySetCSSStyleDeclaration::removeProperty(const String&
     String result;
     bool changed = propertyID != CSSPropertyCustom ? m_propertySet->removeProperty(propertyID, &result) : m_propertySet->removeCustomProperty(propertyName, &result);
 
-    didMutate(changed ? PropertyChanged : NoChanges);
+    didMutate(changed ? PropertyChanged : NoChanges, propertyID);
 
     if (changed)
         mutationScope.enqueueMutationRecord();
@@ -342,10 +343,10 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropert
         return { };
 
     if (m_propertySet->setProperty(propertyID, value, important, cssParserContext())) {
-        didMutate(PropertyChanged);
+        didMutate(PropertyChanged, propertyID);
         mutationScope.enqueueMutationRecord();
     } else
-        didMutate(NoChanges);
+        didMutate(NoChanges, propertyID);
         
     return { };
 }
@@ -428,7 +429,7 @@ bool StyleRuleCSSStyleDeclaration::willMutate()
     return true;
 }
 
-void StyleRuleCSSStyleDeclaration::didMutate(MutationType type)
+void StyleRuleCSSStyleDeclaration::didMutate(MutationType type, std::optional<CSSPropertyID>)
 {
     ASSERT(m_parentRule);
     ASSERT(m_parentRule->parentStyleSheet());
@@ -471,7 +472,7 @@ bool InlineCSSStyleDeclaration::willMutate()
     return true;
 }
 
-void InlineCSSStyleDeclaration::didMutate(MutationType type)
+void InlineCSSStyleDeclaration::didMutate(MutationType type, std::optional<CSSPropertyID> propertyID)
 {
     if (type == NoChanges)
         return;
@@ -481,6 +482,8 @@ void InlineCSSStyleDeclaration::didMutate(MutationType type)
     if (!m_parentElement)
         return;
 
+    if (auto* inlineStylePropertyMap = m_parentElement->attributeStyleMap())
+        inlineStylePropertyMap->didChangePropertyValue(propertyID);
     m_parentElement->invalidateStyleAttribute();
     StyleAttributeMutationScope(this).didInvalidateStyleAttr();
 }

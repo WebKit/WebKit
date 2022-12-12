@@ -62,6 +62,7 @@ class ElementData;
 class ElementRareData;
 class Frame;
 class HTMLDocument;
+class InlineStylePropertyMap;
 class IntSize;
 class JSCustomElementInterface;
 class KeyframeEffectStack;
@@ -74,7 +75,6 @@ class PseudoElement;
 class RenderStyle;
 class RenderTreePosition;
 class SpaceSplitString;
-class StylePropertyMap;
 class StylePropertyMapReadOnly;
 class Text;
 class UniqueElementData;
@@ -705,6 +705,8 @@ public:
     bool displayContentsChanged() const { return m_displayContentsChanged; }
     void setDisplayContentsChanged(bool changed = true) { m_displayContentsChanged = changed; }
 
+    InlineStylePropertyMap* attributeStyleMap();
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
@@ -723,8 +725,7 @@ protected:
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 
-    StylePropertyMap* attributeStyleMap();
-    void setAttributeStyleMap(Ref<StylePropertyMap>&&);
+    void setAttributeStyleMap(Ref<InlineStylePropertyMap>&&);
 
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 

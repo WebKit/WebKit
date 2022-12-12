@@ -3,7 +3,7 @@ PASS Can set 'background-blend-mode' to CSS-wide keywords: initial
 PASS Can set 'background-blend-mode' to CSS-wide keywords: inherit
 PASS Can set 'background-blend-mode' to CSS-wide keywords: unset
 PASS Can set 'background-blend-mode' to CSS-wide keywords: revert
-FAIL Can set 'background-blend-mode' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'background-blend-mode' to var() references:  var(--A)
 PASS Can set 'background-blend-mode' to the 'normal' keyword: normal
 PASS Can set 'background-blend-mode' to the 'multiply' keyword: multiply
 PASS Can set 'background-blend-mode' to the 'screen' keyword: screen

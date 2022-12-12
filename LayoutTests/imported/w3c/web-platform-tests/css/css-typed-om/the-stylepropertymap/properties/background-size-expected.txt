@@ -3,16 +3,16 @@ PASS Can set 'background-size' to CSS-wide keywords: initial
 PASS Can set 'background-size' to CSS-wide keywords: inherit
 PASS Can set 'background-size' to CSS-wide keywords: unset
 PASS Can set 'background-size' to CSS-wide keywords: revert
-FAIL Can set 'background-size' to var() references:  var(--A) assert_equals: expected 2 but got 1
-FAIL Can set 'background-size' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL Can set 'background-size' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL Can set 'background-size' to the 'auto' keyword: auto assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Can set 'background-size' to var() references:  var(--A)
+PASS Can set 'background-size' to a length: 0px
+FAIL Can set 'background-size' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'background-size' to a length: 3.14cm
+PASS Can set 'background-size' to a length: calc(0px + 0em)
+PASS Can set 'background-size' to a percent: 0%
+FAIL Can set 'background-size' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'background-size' to a percent: 3.14%
+PASS Can set 'background-size' to a percent: calc(0% + 0%)
+PASS Can set 'background-size' to the 'auto' keyword: auto
 PASS Can set 'background-size' to the 'cover' keyword: cover
 PASS Can set 'background-size' to the 'contain' keyword: contain
 PASS Setting 'background-size' to a time throws TypeError

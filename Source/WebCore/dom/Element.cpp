@@ -81,6 +81,7 @@
 #include "HTMLTemplateElement.h"
 #include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
+#include "InlineStylePropertyMap.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
@@ -5076,14 +5077,14 @@ Element* Element::fromIdentifier(ElementIdentifier identifier)
     return nullptr;
 }
 
-StylePropertyMap* Element::attributeStyleMap()
+InlineStylePropertyMap* Element::attributeStyleMap()
 {
     if (!hasRareData())
         return nullptr;
     return elementRareData()->attributeStyleMap();
 }
 
-void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
+void Element::setAttributeStyleMap(Ref<InlineStylePropertyMap>&& map)
 {
     ensureElementRareData().setAttributeStyleMap(WTFMove(map));
 }
