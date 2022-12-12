@@ -284,6 +284,7 @@ Tests/WebKitCocoa/WKWebExtension.mm
 Tests/WebKitCocoa/WKWebExtensionAPIExtension.mm
 Tests/WebKitCocoa/WKWebExtensionAPINamespace.mm
 Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm
+Tests/WebKitCocoa/WKWebExtensionAPIWebNavigation.mm
 Tests/WebKitCocoa/WKWebExtensionContext.mm
 Tests/WebKitCocoa/WKWebExtensionController.mm
 Tests/WebKitCocoa/WKWebExtensionControllerConfiguration.mm

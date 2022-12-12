@@ -2170,6 +2170,7 @@
 		31F865E526701E73003BFC6D /* CoreCryptoSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreCryptoSPI.h; sourceTree = "<group>"; };
 		330E135E2943C92000367438 /* WKWebExtensionAPINamespace.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPINamespace.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
+		3378222C2947C095002106BB /* WKWebExtensionAPIWebNavigation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIWebNavigation.mm; sourceTree = "<group>"; };
 		33976D8224DC479B00812304 /* IndexSparseSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexSparseSet.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -4075,6 +4076,7 @@
 				1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */,
 				330E135E2943C92000367438 /* WKWebExtensionAPINamespace.mm */,
 				1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */,
+				3378222C2947C095002106BB /* WKWebExtensionAPIWebNavigation.mm */,
 				1CBEE26228F47FA9006D1A02 /* WKWebExtensionContext.mm */,
 				1CAB9B7128F5E08900E6C77E /* WKWebExtensionController.mm */,
 				1C1549DA293A6D7F001B9E5B /* WKWebExtensionControllerConfiguration.mm */,
