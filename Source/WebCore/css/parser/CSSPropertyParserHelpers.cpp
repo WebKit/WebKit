@@ -7196,18 +7196,6 @@ bool consumeBorderImageComponents(CSSPropertyID property, CSSParserTokenRange& r
     return true;
 }
 
-RefPtr<CSSValue> consumeWebkitBorderImage(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    RefPtr<CSSValue> source;
-    RefPtr<CSSValue> slice;
-    RefPtr<CSSValue> width;
-    RefPtr<CSSValue> outset;
-    RefPtr<CSSValue> repeat;
-    if (consumeBorderImageComponents(property, range, context, source, slice, width, outset, repeat))
-        return createBorderImageValue(WTFMove(source), WTFMove(slice), WTFMove(width), WTFMove(outset), WTFMove(repeat));
-    return nullptr;
-}
-
 RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)
@@ -7228,9 +7216,14 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserConte
 
     RefPtr<CSSValue> mask;
     if (!range.atEnd()) {
-        mask = consumeWebkitBorderImage(CSSPropertyWebkitBoxReflect, range, context);
-        if (!mask)
+        RefPtr<CSSValue> source;
+        RefPtr<CSSValue> slice;
+        RefPtr<CSSValue> width;
+        RefPtr<CSSValue> outset;
+        RefPtr<CSSValue> repeat;
+        if (!consumeBorderImageComponents(CSSPropertyWebkitBoxReflect, range, context, source, slice, width, outset, repeat))
             return nullptr;
+        mask = createBorderImageValue(WTFMove(source), WTFMove(slice), WTFMove(width), WTFMove(outset), WTFMove(repeat));
     }
     return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), WTFMove(mask));
 }

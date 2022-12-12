@@ -370,7 +370,6 @@ PASS -webkit-line-clamp
 PASS -webkit-line-grid
 PASS -webkit-line-snap
 PASS -webkit-locale
-PASS -webkit-mask-box-image
 PASS -webkit-mask-box-image-outset
 PASS -webkit-mask-box-image-repeat
 PASS -webkit-mask-box-image-slice

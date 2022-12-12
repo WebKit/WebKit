@@ -1317,19 +1317,27 @@ bool CSSPropertyParser::consumeBorderImage(CSSPropertyID property, bool importan
         return false;
 
     auto& valuePool = CSSValuePool::singleton();
-    auto createQuad = [&](double value, CSSUnitType type) {
+    auto createQuad = [&](Ref<CSSPrimitiveValue>&& value) {
         auto quad = Quad::create();
-        quad->setTop(valuePool.createValue(value, type));
-        quad->setRight(valuePool.createValue(value, type));
-        quad->setBottom(valuePool.createValue(value, type));
-        quad->setLeft(valuePool.createValue(value, type));
+        quad->setTop(value.copyRef());
+        quad->setRight(value.copyRef());
+        quad->setBottom(value.copyRef());
+        quad->setLeft(WTFMove(value));
         return quad;
     };
-    addPropertyWithImplicitDefault(CSSPropertyBorderImageSource, property, WTFMove(source), valuePool.createIdentifierValue(CSSValueNone), important);
-    addPropertyWithImplicitDefault(CSSPropertyBorderImageSlice, property, WTFMove(slice), CSSBorderImageSliceValue::create(createQuad(100, CSSUnitType::CSS_PERCENTAGE), false), important);
-    addPropertyWithImplicitDefault(CSSPropertyBorderImageWidth, property, WTFMove(width), CSSBorderImageWidthValue::create(createQuad(1, CSSUnitType::CSS_NUMBER), false), important);
-    addPropertyWithImplicitDefault(CSSPropertyBorderImageOutset, property, WTFMove(outset), valuePool.singleton().createValue(createQuad(0, CSSUnitType::CSS_NUMBER)), important);
-    addPropertyWithImplicitDefault(CSSPropertyBorderImageRepeat, property, WTFMove(repeat), valuePool.createIdentifierValue(CSSValueStretch), important);
+    if (property == CSSPropertyWebkitMaskBoxImage) {
+        addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSource, property, WTFMove(source), valuePool.createIdentifierValue(CSSValueNone), important);
+        addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSlice, property, WTFMove(slice), CSSBorderImageSliceValue::create(createQuad(valuePool.createValue(0, CSSUnitType::CSS_NUMBER)), true), important);
+        addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageWidth, property, WTFMove(width), valuePool.singleton().createValue(createQuad(valuePool.createIdentifierValue(CSSValueAuto))), important);
+        addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageOutset, property, WTFMove(outset), valuePool.singleton().createValue(createQuad(valuePool.createValue(0, CSSUnitType::CSS_NUMBER))), important);
+        addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageRepeat, property, WTFMove(repeat), valuePool.createIdentifierValue(CSSValueStretch), important);
+    } else {
+        addPropertyWithImplicitDefault(CSSPropertyBorderImageSource, property, WTFMove(source), valuePool.createIdentifierValue(CSSValueNone), important);
+        addPropertyWithImplicitDefault(CSSPropertyBorderImageSlice, property, WTFMove(slice), CSSBorderImageSliceValue::create(createQuad(valuePool.createValue(100, CSSUnitType::CSS_PERCENTAGE)), false), important);
+        addPropertyWithImplicitDefault(CSSPropertyBorderImageWidth, property, WTFMove(width), CSSBorderImageWidthValue::create(createQuad(valuePool.createValue(1, CSSUnitType::CSS_NUMBER)), false), important);
+        addPropertyWithImplicitDefault(CSSPropertyBorderImageOutset, property, WTFMove(outset), valuePool.singleton().createValue(createQuad(valuePool.createValue(0, CSSUnitType::CSS_NUMBER))), important);
+        addPropertyWithImplicitDefault(CSSPropertyBorderImageRepeat, property, WTFMove(repeat), valuePool.createIdentifierValue(CSSValueStretch), important);
+    }
     return true;
 }
 
@@ -2397,6 +2405,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     }
     case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
+    case CSSPropertyWebkitMaskBoxImage:
         return consumeBorderImage(property, important);
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:

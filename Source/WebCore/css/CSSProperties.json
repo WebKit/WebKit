@@ -7315,11 +7315,14 @@
         },
         "-webkit-mask-box-image": {
             "codegen-properties": {
-                "initial": "initialNinePieceImageForMask",
-                "converter": "BorderMask<CSSPropertyWebkitMaskBoxImage>",
-                "parser-function": "consumeWebkitBorderImage",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "longhands": [
+                    "-webkit-mask-box-image-source",
+                    "-webkit-mask-box-image-slice",
+                    "-webkit-mask-box-image-width",
+                    "-webkit-mask-box-image-outset",
+                    "-webkit-mask-box-image-repeat"
+                ],
+                "custom-parser": true
             },
             "status": "non-standard",
             "specification": {
