@@ -103,12 +103,8 @@ void GridMasonryLayout::resizeAndResetRunningPositions()
 
 void GridMasonryLayout::addItemsToFirstTrack(const HashMap<RenderBox*, GridArea>& firstTrackItems)
 {
-    for (auto& [item, gridArea] : firstTrackItems) {
-        ASSERT(item);
-        if (!item)
-            continue;
+    for (auto& [item, gridArea] : firstTrackItems)
         insertIntoGridAndLayoutItem(*item, gridArea);
-    }
 }
 
 void GridMasonryLayout::placeItemsUsingOrderModifiedDocumentOrder()
