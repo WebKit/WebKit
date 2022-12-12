@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSVariableReferenceValue.h"
 
+#include "CSSRegisteredCustomProperty.h"
 #include "CSSVariableData.h"
 #include "ConstantPropertyMap.h"
 #include "RenderStyle.h"
@@ -82,7 +83,7 @@ static bool resolveVariableReference(CSSParserTokenRange range, CSSValueID funct
 {
     ASSERT(functionId == CSSValueVar || functionId == CSSValueEnv);
 
-    auto& registeredProperties = builderState.document().getCSSRegisteredCustomPropertySet();
+    auto& registeredProperties = builderState.document().registeredCSSCustomProperties();
     auto& style = builderState.style();
 
     range.consumeWhitespace();

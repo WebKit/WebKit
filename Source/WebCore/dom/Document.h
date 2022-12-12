@@ -28,7 +28,6 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "CSSRegisteredCustomProperty.h"
 #include "CanvasBase.h"
 #include "ClientOrigin.h"
 #include "ContainerNode.h"
@@ -260,6 +259,7 @@ class GPUCanvasContext;
 
 struct ApplicationManifest;
 struct BoundaryPoint;
+struct CSSRegisteredCustomProperty;
 struct HighlightRangeData;
 struct IntersectionObserverData;
 struct SecurityPolicyViolationEventInit;
@@ -1624,8 +1624,8 @@ public:
     void updateMainArticleElementAfterLayout();
     bool hasMainArticleElement() const { return !!m_mainArticleElement; }
 
-    const CSSRegisteredCustomPropertySet& getCSSRegisteredCustomPropertySet() const { return m_CSSRegisteredPropertySet; }
-    bool registerCSSProperty(CSSRegisteredCustomProperty&&);
+    const auto& registeredCSSCustomProperties() const { return m_registeredCSSCustomProperties; }
+    bool registerCSSCustomProperty(CSSRegisteredCustomProperty&&);
 
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs();
 
@@ -2284,7 +2284,7 @@ private:
     String m_referrerOverride;
 #endif
     
-    CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;
+    HashMap<AtomString, std::unique_ptr<CSSRegisteredCustomProperty>> m_registeredCSSCustomProperties;
 
     std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
 

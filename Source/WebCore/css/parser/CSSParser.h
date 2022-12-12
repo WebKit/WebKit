@@ -23,7 +23,6 @@
 #pragma once
 
 #include "CSSParserContext.h"
-#include "CSSRegisteredCustomProperty.h"
 #include "CSSValue.h"
 #include "ColorTypes.h"
 #include "WritingMode.h"

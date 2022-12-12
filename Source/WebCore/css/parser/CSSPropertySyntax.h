@@ -29,10 +29,8 @@
 
 namespace WebCore {
 
-class CSSPropertySyntax {
-public:
+struct CSSPropertySyntax {
     enum class Type : uint8_t {
-        Universal,
         Length,
         LengthPercentage,
         Percentage,
@@ -62,8 +60,12 @@ public:
 
     using Definition = Vector<Component>;
 
-    static Definition parse(StringView);
-    static bool isUniversal(const Definition& definition) { return definition.size() == 1 && definition[0].type == Type::Universal; }
+    Definition definition;
+
+    bool isUniversal() const { return definition.isEmpty(); }
+
+    static std::optional<CSSPropertySyntax> parse(StringView);
+    static CSSPropertySyntax universal() { return { }; }
 
 private:
     template<typename CharacterType> static std::optional<Component> parseComponent(StringParsingBuffer<CharacterType>);

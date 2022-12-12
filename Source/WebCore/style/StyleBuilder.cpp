@@ -32,6 +32,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSPaintImageValue.h"
+#include "CSSRegisteredCustomProperty.h"
 #include "CSSValuePool.h"
 #include "Document.h"
 #include "HTMLElement.h"
@@ -283,7 +284,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         if (std::holds_alternative<CSSValueID>(customPropertyValue->value()))
             customPropertyValueID = std::get<CSSValueID>(customPropertyValue->value());
         auto& name = customPropertyValue->name();
-        customPropertyRegistered = m_state.document().getCSSRegisteredCustomPropertySet().get(name);
+        customPropertyRegistered = m_state.document().registeredCSSCustomProperties().get(name);
     }
 
     bool isInherit = valueToApply->isInheritValue() || customPropertyValueID == CSSValueInherit;

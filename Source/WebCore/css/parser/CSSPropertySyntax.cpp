@@ -100,9 +100,9 @@ auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer
     return Component { Type::CustomIdent, Multiplier::Single, ident.toAtomString() };
 }
 
-auto CSSPropertySyntax::parse(StringView syntax) -> Definition
+std::optional<CSSPropertySyntax> CSSPropertySyntax::parse(StringView syntax)
 {
-    return readCharactersForParsing(syntax, [&](auto buffer) -> Definition {
+    return readCharactersForParsing(syntax, [&](auto buffer) -> std::optional<CSSPropertySyntax> {
         skipWhile<isCSSSpace>(buffer);
 
         if (skipExactly(buffer, '*')) {
@@ -110,7 +110,7 @@ auto CSSPropertySyntax::parse(StringView syntax) -> Definition
             if (buffer.hasCharactersRemaining())
                 return { };
 
-            return { { Type::Universal } };
+            return universal();
         }
 
         Definition definition;
@@ -130,7 +130,10 @@ auto CSSPropertySyntax::parse(StringView syntax) -> Definition
             skipWhile<isCSSSpace>(buffer);
         }
 
-        return definition;
+        if (definition.isEmpty())
+            return { };
+
+        return CSSPropertySyntax { definition };
     });
 }
 

@@ -36,6 +36,7 @@
 #include "CSSAnimation.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
+#include "CSSRegisteredCustomProperty.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -9005,9 +9006,9 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
 }
 #endif
 
-bool Document::registerCSSProperty(CSSRegisteredCustomProperty&& prop)
+bool Document::registerCSSCustomProperty(CSSRegisteredCustomProperty&& property)
 {
-    return m_CSSRegisteredPropertySet.add(prop.name, makeUnique<CSSRegisteredCustomProperty>(WTFMove(prop))).isNewEntry;
+    return m_registeredCSSCustomProperties.add(property.name, makeUnique<CSSRegisteredCustomProperty>(WTFMove(property))).isNewEntry;
 }
 
 const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
