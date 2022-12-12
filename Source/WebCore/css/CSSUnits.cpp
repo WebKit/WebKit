@@ -141,7 +141,7 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
     case CSSUnitCategory::AbsoluteLength:
         return CSSUnitType::CSS_PX;
     case CSSUnitCategory::Percent:
-        return CSSUnitType::CSS_PERCENTAGE;
+        return CSSUnitType::CSS_UNKNOWN; // Cannot convert between numbers and percent.
     case CSSUnitCategory::Time:
         return CSSUnitType::CSS_S;
     case CSSUnitCategory::Angle:
@@ -159,11 +159,6 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
     }
     ASSERT_NOT_REACHED();
     return CSSUnitType::CSS_UNKNOWN;
-}
-
-CSSUnitType canonicalUnitTypeForUnitType(CSSUnitType unitType)
-{
-    return canonicalUnitTypeForCategory(unitCategory(unitType));
 }
 
 TextStream& operator<<(TextStream& ts, CSSUnitCategory category)

@@ -149,7 +149,6 @@ enum class CSSUnitCategory : uint8_t {
 
 CSSUnitCategory unitCategory(CSSUnitType);
 CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory);
-CSSUnitType canonicalUnitTypeForUnitType(CSSUnitType);
 
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitCategory);
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitType);

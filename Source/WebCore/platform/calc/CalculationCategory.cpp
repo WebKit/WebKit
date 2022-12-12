@@ -41,7 +41,6 @@ TextStream& operator<<(TextStream& ts, CalculationCategory category)
     case CalculationCategory::Angle: ts << "angle"; break;
     case CalculationCategory::Time: ts << "time"; break;
     case CalculationCategory::Frequency: ts << "frequency"; break;
-    case CalculationCategory::Resolution: ts << "resolution"; break;
     case CalculationCategory::Other: ts << "other"; break;
     }
 

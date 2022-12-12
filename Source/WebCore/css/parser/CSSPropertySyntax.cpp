@@ -70,16 +70,8 @@ auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer
             return Component { Type::Number, multiplier };
         if (dataTypeName == "angle"_s)
             return Component { Type::Angle, multiplier };
-        if (dataTypeName == "time"_s)
-            return Component { Type::Time, multiplier };
-        if (dataTypeName == "resolution"_s)
-            return Component { Type::Resolution, multiplier };
         if (dataTypeName == "color"_s)
             return Component { Type::Color, multiplier };
-        if (dataTypeName == "image"_s)
-            return Component { Type::Image, multiplier };
-        if (dataTypeName == "url"_s)
-            return Component { Type::URL, multiplier };
 
         return Component { Type::Unknown, multiplier };
     }

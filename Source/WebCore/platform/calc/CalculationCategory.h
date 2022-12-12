@@ -39,7 +39,6 @@ enum class CalculationCategory : uint8_t {
     Angle,
     Time,
     Frequency,
-    Resolution,
     Other
 };
 

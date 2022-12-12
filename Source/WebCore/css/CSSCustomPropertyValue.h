@@ -30,7 +30,7 @@
 #include "CSSVariableReferenceValue.h"
 #include "Length.h"
 #include "StyleColor.h"
-#include "StyleImage.h"
+#include <variant>
 
 namespace WebCore {
 
@@ -44,7 +44,7 @@ public:
 
         bool operator==(const NumericSyntaxValue&) const = default;
     };
-    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, String>;
+    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor>;
 
     using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue>;
 
@@ -81,16 +81,6 @@ public:
     static Ref<CSSCustomPropertyValue> createForColorSyntax(const AtomString& name, StyleColor color)
     {
         return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(color) } }));
-    }
-
-    static Ref<CSSCustomPropertyValue> createForImageSyntax(const AtomString& name, RefPtr<StyleImage> image)
-    {
-        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(image) } }));
-    }
-
-    static Ref<CSSCustomPropertyValue> createForURLSyntax(const AtomString& name, String url)
-    {
-        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(url) } }));
     }
 
     static Ref<CSSCustomPropertyValue> create(const CSSCustomPropertyValue& other)

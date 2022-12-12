@@ -101,7 +101,9 @@ void CSSCalcPrimitiveValueNode::add(const CSSCalcPrimitiveValueNode& node, UnitC
         m_value = CSSPrimitiveValue::create(m_value->doubleValue() + node.doubleValue(valueType), valueType);
         break;
     case UnitConversion::Canonicalize: {
-        auto canonicalType = canonicalUnitTypeForUnitType(valueType);
+        auto valueCategory = unitCategory(valueType);
+        // FIXME: It's awkward that canonicalUnitTypeForCategory() has special handling for CSSUnitCategory::Percent.
+        auto canonicalType = valueCategory == CSSUnitCategory::Percent ? CSSUnitType::CSS_PERCENTAGE : canonicalUnitTypeForCategory(valueCategory);
         ASSERT(canonicalType != CSSUnitType::CSS_UNKNOWN);
         double leftValue = m_value->doubleValue(canonicalType);
         double rightValue = node.doubleValue(canonicalType);
@@ -156,7 +158,6 @@ std::unique_ptr<CalcExpressionNode> CSSCalcPrimitiveValueNode::createCalcExpress
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
-    case CalculationCategory::Resolution:
     case CalculationCategory::Other:
         ASSERT_NOT_REACHED();
     }
@@ -192,7 +193,6 @@ double CSSCalcPrimitiveValueNode::computeLengthPx(const CSSToLengthConversionDat
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
-    case CalculationCategory::Resolution:
     case CalculationCategory::Other:
         ASSERT_NOT_REACHED();
         break;

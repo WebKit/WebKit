@@ -39,11 +39,7 @@ public:
         Integer,
         Number,
         Angle,
-        Time,
-        Resolution,
         Color,
-        Image,
-        URL,
         CustomIdent,
         Unknown
     };

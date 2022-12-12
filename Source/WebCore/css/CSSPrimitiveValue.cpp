@@ -280,7 +280,6 @@ CSSUnitType CSSPrimitiveValue::primitiveType() const
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
-    case CalculationCategory::Resolution:
         return m_value.calc->primitiveType();
     case CalculationCategory::Other:
         return CSSUnitType::CSS_UNKNOWN;
@@ -1147,9 +1146,6 @@ std::optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType request
         return std::nullopt;
 
     if (targetCategory == CSSUnitCategory::Number) {
-        // Cannot convert between numbers and percent.
-        if (sourceCategory == CSSUnitCategory::Percent)
-            return std::nullopt;
         // We interpret conversion to CSSUnitType::CSS_NUMBER as conversion to a canonical unit in this value's category.
         targetUnitType = canonicalUnitTypeForCategory(sourceCategory);
         if (targetUnitType == CSSUnitType::CSS_UNKNOWN)
@@ -1157,9 +1153,6 @@ std::optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType request
     }
 
     if (sourceUnitType == CSSUnitType::CSS_NUMBER || sourceUnitType == CSSUnitType::CSS_INTEGER) {
-        // Cannot convert between numbers and percent.
-        if (targetCategory == CSSUnitCategory::Percent)
-            return std::nullopt;
         // We interpret conversion from CSSUnitType::CSS_NUMBER in the same way as CSSParser::validUnit() while using non-strict mode.
         sourceUnitType = canonicalUnitTypeForCategory(targetCategory);
         if (sourceUnitType == CSSUnitType::CSS_UNKNOWN)
