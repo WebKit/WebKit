@@ -107,4 +107,42 @@ TextStream& operator<<(TextStream& ts, OverflowAnchor behavior)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollDirection direction)
+{
+    switch (direction) {
+    case ScrollDirection::ScrollUp:
+        ts << "up";
+        break;
+    case ScrollDirection::ScrollDown:
+        ts << "down";
+        break;
+    case ScrollDirection::ScrollLeft:
+        ts << "left";
+        break;
+    case ScrollDirection::ScrollRight:
+        ts << "right";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ScrollGranularity granularity)
+{
+    switch (granularity) {
+    case ScrollGranularity::Line:
+        ts << "line";
+        break;
+    case ScrollGranularity::Page:
+        ts << "page";
+        break;
+    case ScrollGranularity::Document:
+        ts << "document";
+        break;
+    case ScrollGranularity::Pixel:
+        ts << "pixel";
+        break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

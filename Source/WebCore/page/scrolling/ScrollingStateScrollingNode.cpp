@@ -201,9 +201,9 @@ void ScrollingStateScrollingNode::setSynchronousScrollingReasons(OptionSet<Synch
 #endif
 
 
-void ScrollingStateScrollingNode::setKeyboardScrollData(RequestedKeyboardScrollData&& scrollData)
+void ScrollingStateScrollingNode::setKeyboardScrollData(const RequestedKeyboardScrollData& scrollData)
 {
-    m_keyboardScrollData = WTFMove(scrollData);
+    m_keyboardScrollData = scrollData;
     setPropertyChanged(Property::KeyboardScrollData);
 }
 

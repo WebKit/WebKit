@@ -140,8 +140,13 @@ enum class KeyboardScrollAction : uint8_t {
 };
 
 struct RequestedKeyboardScrollData {
-    KeyboardScrollAction action;
+    KeyboardScrollAction action { KeyboardScrollAction::StartAnimation };
     std::optional<KeyboardScroll> keyboardScroll;
+
+    bool operator==(const RequestedKeyboardScrollData& other) const
+    {
+        return action == other.action && keyboardScroll == other.keyboardScroll;
+    }
 };
 
 enum class ScrollUpdateType : uint8_t {
@@ -191,6 +196,15 @@ template<> struct EnumTraits<WebCore::ScrollingNodeType> {
         WebCore::ScrollingNodeType::Fixed,
         WebCore::ScrollingNodeType::Sticky,
         WebCore::ScrollingNodeType::Positioned
+    >;
+};
+
+template<> struct EnumTraits<WebCore::KeyboardScrollAction> {
+    using values = EnumValues<
+        WebCore::KeyboardScrollAction,
+        WebCore::KeyboardScrollAction::StartAnimation,
+        WebCore::KeyboardScrollAction::StopWithAnimation,
+        WebCore::KeyboardScrollAction::StopImmediately
     >;
 };
 

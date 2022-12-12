@@ -1768,10 +1768,25 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
     bool useDarkAppearanceForScrollbars;
 };
 
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[CustomHeader] struct WebCore::RequestedKeyboardScrollData {
+    WebCore::KeyboardScrollAction action;
+    std::optional<WebCore::KeyboardScroll> keyboardScroll;
+};
+
 header: <WebCore/ScrollingConstraints.h>
 [CustomHeader] class WebCore::AbsolutePositionConstraints {
     WebCore::FloatSize alignmentOffset();
     WebCore::FloatPoint layerPositionAtLastLayout();
+};
+
+header: <WebCore/KeyboardScroll.h>
+[CustomHeader] struct WebCore::KeyboardScroll {
+    WebCore::FloatSize offset;
+    WebCore::FloatSize maximumVelocity;
+    WebCore::FloatSize force;
+    WebCore::ScrollGranularity granularity;
+    WebCore::ScrollDirection direction;
 };
 
 [Return=Ref] class WebCore::NotificationResources {
