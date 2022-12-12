@@ -445,17 +445,14 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         return CSSCustomPropertyValue::createForLengthSyntax(name, WTFMove(length));
     }
     case CSSPropertySyntax::Type::Percentage:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_PERCENTAGE);
     case CSSPropertySyntax::Type::Integer:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->intValue(), CSSUnitType::CSS_INTEGER);
     case CSSPropertySyntax::Type::Number:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(), CSSUnitType::CSS_NUMBER);
     case CSSPropertySyntax::Type::Angle:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->computeDegrees(), CSSUnitType::CSS_DEG);
     case CSSPropertySyntax::Type::Time:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(CSSUnitType::CSS_S), CSSUnitType::CSS_S);
-    case CSSPropertySyntax::Type::Resolution:
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(CSSUnitType::CSS_DPPX), CSSUnitType::CSS_DPPX);
+    case CSSPropertySyntax::Type::Resolution: {
+        auto canonicalUnit = canonicalUnitTypeForUnitType(primitiveValue->primitiveType());
+        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(canonicalUnit), canonicalUnit);
+    }
     case CSSPropertySyntax::Type::Color: {
         auto color = builderState.colorFromPrimitiveValue(*primitiveValue, Style::ForVisitedLink::No);
         return CSSCustomPropertyValue::createForColorSyntax(name, color);
