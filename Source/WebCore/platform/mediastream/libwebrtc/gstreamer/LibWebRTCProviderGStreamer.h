@@ -29,6 +29,7 @@
 
 #include "GStreamerVideoDecoderFactory.h"
 #include "GStreamerVideoEncoderFactory.h"
+#include "LibWebRTCProvider.h"
 
 namespace WebCore {
 
