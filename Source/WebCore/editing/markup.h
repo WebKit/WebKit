@@ -73,8 +73,10 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragme
 
 enum class ConvertBlocksToInlines : uint8_t { No, Yes };
 enum class SerializeComposedTree : uint8_t { No, Yes };
+enum class IgnoreUserSelectNone: uint8_t { No, Yes };
 WEBCORE_EXPORT String serializePreservingVisualAppearance(const SimpleRange&, Vector<Node*>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::No);
-String serializePreservingVisualAppearance(const VisibleSelection&, ResolveURLs = ResolveURLs::No, SerializeComposedTree = SerializeComposedTree::No, Vector<Node*>* = nullptr);
+String serializePreservingVisualAppearance(const VisibleSelection&, ResolveURLs = ResolveURLs::No, SerializeComposedTree = SerializeComposedTree::No,
+    IgnoreUserSelectNone = IgnoreUserSelectNone::Yes, Vector<Node*>* = nullptr);
 
 enum class SerializedNodes : uint8_t { SubtreeIncludingNode, SubtreesOfChildren };
 enum class SerializationSyntax : uint8_t { HTML, XML };

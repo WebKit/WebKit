@@ -1608,10 +1608,11 @@ void HTMLConverter::_processHeadElement(Element& element)
 BOOL HTMLConverter::_enterElement(Element& element, BOOL embedded)
 {
     String displayValue = _caches->propertyValueForNode(element, CSSPropertyDisplay);
+    bool hasUserSelectNone = element.renderer() && element.renderer()->style().effectiveUserSelect() == UserSelect::None;
 
     if (element.hasTagName(headTag) && !embedded)
         _processHeadElement(element);
-    else if (!displayValue.length() || !(displayValue == noneAtom() || displayValue == "table-column"_s || displayValue == "table-column-group"_s)) {
+    else if (!hasUserSelectNone && (!displayValue.length() || !(displayValue == noneAtom() || displayValue == "table-column"_s || displayValue == "table-column-group"_s))) {
         if (_caches->isBlockElement(element) && !element.hasTagName(brTag) && !(displayValue == "table-cell"_s && ![_textTables count])
             && !([_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)))
             _newParagraphForElement(element, element.tagName(), NO, YES);

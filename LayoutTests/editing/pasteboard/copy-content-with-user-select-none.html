@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="source">hello <span style="-webkit-user-select: none; user-select: none;">world </span><span inert>foo </span>bar</div>
+<div id="destination" contenteditable></div>
+<pre id="output"></pre>
+</body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests copying excludes content with user-select: none.<br>
+To manually test, copy "hello world foo bar" below then paste.`);
+
+jsTestIsAsync = true;
+getSelection().setBaseAndExtent(source, 0, source, source.childNodes.length);
+
+source.addEventListener("copy", () => {
+    shouldBeTrue('getSelection().toString().includes("hello")');
+    shouldBeFalse('getSelection().toString().includes("world")');
+    shouldBeFalse('getSelection().toString().includes("foo")');
+    shouldBeTrue('getSelection().toString().includes("bar")');
+});
+
+destination.addEventListener("paste", () => {
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("hello")');
+    shouldBeFalse('event.clipboardData.getData("text/plain").includes("world")');
+    shouldBeFalse('event.clipboardData.getData("text/plain").includes("foo")');
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("bar")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("hello")');
+    shouldBeFalse('event.clipboardData.getData("text/html").includes("world")');
+    shouldBeFalse('event.clipboardData.getData("text/html").includes("foo")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("bar")');
+    finishJSTest();
+});
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    testRunner.execCommand("Copy");
+    destination.focus();
+    testRunner.execCommand("Paste");
+} else {
+    source.addEventListener("copy", () => {
+        setTimeout(() => destination.focus(), 0);
+    });
+}
+
+</script>
+</html>
