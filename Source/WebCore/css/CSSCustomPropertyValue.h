@@ -42,7 +42,11 @@ public:
         double value;
         CSSUnitType unitType;
 
-        bool operator==(const NumericSyntaxValue&) const = default;
+        bool operator==(const NumericSyntaxValue& other) const
+        {
+            return value == other.value && unitType == other.unitType;
+        }
+
     };
     using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, String>;
 
