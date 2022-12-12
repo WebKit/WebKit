@@ -134,7 +134,7 @@ fast/forms/search/search-results-hidden-crash.html [ Skip ]
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
 fast/css/apple-system-control-colors.html [ Skip ]
-inspector/css/force-page-appearance.html [ Skip ]
+inspector/css/overrideUserPreferenceMatchedStyles.html [ Skip ]
 editing/pasteboard/paste-dark-mode-color-filtered.html [ Skip ]
 fast/forms/number/number-dark-appearance.html [ Skip ]
 fast/loader/plain-text-document-dark-mode.html [ Skip ]

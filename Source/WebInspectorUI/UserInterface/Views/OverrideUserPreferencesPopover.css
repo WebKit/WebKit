@@ -37,6 +37,10 @@
     margin-block-end: 4px;
 }
 
+.popover .user-preferences-content > h1:not(:first-child) {
+    margin-block-start: 12px;
+}
+
 .popover .user-preferences-content > label {
     grid-column: 1;
     align-self: center;

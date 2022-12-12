@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSSManager.overrideUserPreference");
+
+    function addTestCase({name, description, propertyName, expectedValue, preferenceName, preferenceValue})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector("body");
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                InspectorTest.log(`Override preference ${preferenceName} to ${preferenceValue}`);
+                WI.cssManager.overrideUserPreference(preferenceName, preferenceValue);
+                await WI.cssManager.awaitEvent(WI.CSSManager.Event.OverridenUserPreferencesDidChange);
+                await domNodeStyles.refreshIfNeeded();
+
+                let cssProperty = domNodeStyles.computedStyle.enabledProperties.find((cssProperty) => cssProperty.name === propertyName);
+                InspectorTest.assert(cssProperty, `Found CSS property with name '${propertyName}'.`);
+                InspectorTest.expectEqual(cssProperty.value, expectedValue, `${propertyName} value matches ${expectedValue}`);
+
+                InspectorTest.log(`Clear override for ${preferenceName}`);
+                WI.cssManager.overrideUserPreference(preferenceName);
+                await WI.cssManager.awaitEvent(WI.CSSManager.Event.OverridenUserPreferencesDidChange);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Override PrefersReducedMotion: Reduce",
+        description: "Check that matched styles respect prefers reduced motion override.",
+        preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersReducedMotion,
+        preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Reduce,
+        propertyName: "--test-prefers-reduced-motion",
+        expectedValue: "reduce",
+    });
+
+    addTestCase({
+        name: "Override PrefersContrast: More",
+        description: "Check that matched styles respect prefers contrast override.",
+        preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersContrast,
+        preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.More,
+        propertyName: "--test-prefers-contrast",
+        expectedValue: "more",
+    });
+
+    addTestCase({
+        name: "PrefersColorScheme.Dark",
+        description: "Check that matched styles respect color scheme overriden to dark.",
+        preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersColorScheme,
+        preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Dark,
+        propertyName: "--test-prefers-color-scheme",
+        expectedValue: "dark",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for matched styles when forcing media features with CSSManager.overrideUserPreference().</p>
+
+    <style>
+    body {
+        --test-prefers-reduced-motion: no-preference;
+        --test-prefers-contrast: no-preference;
+        --test-prefers-color-scheme: light;
+    }
+
+    @media (prefers-reduced-motion) {
+        body {
+            --test-prefers-reduced-motion: reduce;
+        }
+    }
+
+    @media (prefers-contrast) {
+        body {
+            --test-prefers-contrast: more;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        body {
+            --test-prefers-color-scheme: dark;
+        }
+    }
+    </style>
+</body>
+</html>

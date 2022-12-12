@@ -3444,7 +3444,7 @@ void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevated
     m_useDarkAppearance = useDarkAppearance;
     m_useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
 
-    InspectorInstrumentation::defaultAppearanceDidChange(*this, useDarkAppearance);
+    InspectorInstrumentation::defaultAppearanceDidChange(*this);
 
     appearanceDidChange();
 #else

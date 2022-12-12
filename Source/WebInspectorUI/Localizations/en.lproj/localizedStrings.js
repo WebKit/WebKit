@@ -114,7 +114,7 @@ localizedStrings["720p"] = "720p";
 localizedStrings["Access Control @ Local Override Type"] = "Access Control";
 localizedStrings["Accessibility"] = "Accessibility";
 /* Header for section with accessibility user preferences. */
-localizedStrings["Accessibility Preferences @ User Preferences Overrides"] = "Accessibility Preferences";
+localizedStrings["Accessibility @ User Preferences Overrides"] = "Accessibility";
 localizedStrings["Action"] = "Action";
 /* Tooltip for a time range bar that represents when a CSS animation/transition is running */
 localizedStrings["Active"] = "Active";
@@ -194,6 +194,8 @@ localizedStrings["Anonymous Script %d"] = "Anonymous Script %d";
 localizedStrings["Anonymous Scripts"] = "Anonymous Scripts";
 localizedStrings["Anonymous Style Sheet %d"] = "Anonymous Style Sheet %d";
 localizedStrings["Anonymous Style Sheets"] = "Anonymous Style Sheets";
+/* Header for section with appearance user preferences. */
+localizedStrings["Appearance @ User Preferences Overrides"] = "Appearance";
 localizedStrings["Appearance:"] = "Appearance:";
 localizedStrings["Application Cache"] = "Application Cache";
 /* Approximate count of events */
@@ -372,6 +374,8 @@ localizedStrings["Code"] = "Code";
 localizedStrings["Collapse All"] = "Collapse All";
 localizedStrings["Collapse columns"] = "Collapse columns";
 localizedStrings["Collect garbage"] = "Collect garbage";
+/* Label for input to override the preference for color scheme. */
+localizedStrings["Color scheme @ User Preferences Overrides"] = "Color scheme";
 /* Section header for the group of CSS variables with colors as values */
 localizedStrings["Colors @ Computed Style variables section"] = "Colors";
 localizedStrings["Comment"] = "Comment";
@@ -465,6 +469,8 @@ localizedStrings["DSL"] = "DSL";
 localizedStrings["Damping"] = "Damping";
 /* Label of dropdown item used for forcing Web Inspector to be shown using a dark theme */
 localizedStrings["Dark @ Settings General Appearance"] = "Dark";
+/* Label for the dark color scheme preference. */
+localizedStrings["Dark @ User Preferences Overrides"] = "Dark";
 localizedStrings["Data"] = "Data";
 localizedStrings["Data Bindings"] = "Data Bindings";
 localizedStrings["Data returned from the database is too large."] = "Data returned from the database is too large.";
@@ -732,8 +738,6 @@ localizedStrings["Font was synthesized to be bold because no bold font is availa
 /* A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style. */
 localizedStrings["Font was synthesized to be oblique because no oblique font is available."] = "Font was synthesized to be oblique because no oblique font is available.";
 localizedStrings["Fonts"] = "Fonts";
-localizedStrings["Force Dark Appearance"] = "Force Dark Appearance";
-localizedStrings["Force Light Appearance"] = "Force Light Appearance";
 localizedStrings["Force print media styles"] = "Force print media styles";
 /* Layout phase records that were imperative (forced) */
 localizedStrings["Forced Layout"] = "Forced Layout";
@@ -924,6 +928,8 @@ localizedStrings["Layout Invalidated"] = "Layout Invalidated";
 localizedStrings["Ligatures @ Font Details Sidebar Property"] = "Ligatures";
 /* Label of dropdown item used for forcing Web Inspector to be shown using a light theme */
 localizedStrings["Light @ Settings General Appearance"] = "Light";
+/* Label for the light color scheme preference. */
+localizedStrings["Light @ User Preferences Overrides"] = "Light";
 localizedStrings["Line %d"] = "Line %d";
 localizedStrings["Line %d:%d"] = "Line %d:%d";
 localizedStrings["Line Number"] = "Line Number";
@@ -1734,7 +1740,6 @@ localizedStrings["Update Font"] = "Update Font";
 localizedStrings["Update Image"] = "Update Image";
 localizedStrings["Update Local Override"] = "Update Local Override";
 localizedStrings["Usage: %s"] = "Usage: %s";
-localizedStrings["Use Default Appearance"] = "Use Default Appearance";
 localizedStrings["Use Mock Capture Devices"] = "Use Mock Capture Devices";
 localizedStrings["Use default media styles"] = "Use default media styles";
 localizedStrings["User Agent"] = "User Agent";

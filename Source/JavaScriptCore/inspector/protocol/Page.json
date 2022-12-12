@@ -36,13 +36,13 @@
         {
             "id": "UserPreferenceName",
             "type": "string",
-            "enum": ["PrefersReducedMotion", "PrefersContrast"],
+            "enum": ["PrefersReducedMotion", "PrefersContrast", "PrefersColorScheme"],
             "description": "User preference name."
         },
         {
             "id": "UserPreferenceValue",
             "type": "string",
-            "enum": ["NoPreference", "Reduce", "More"],
+            "enum": ["NoPreference", "Reduce", "More", "Light", "Dark"],
             "description": "User preference value."
         },
         {
@@ -62,13 +62,6 @@
             "type": "string",
             "enum": ["None", "Lax", "Strict"],
             "description": "Same-Site policy of a cookie."
-        },
-        {
-            "id": "Appearance",
-            "type": "string",
-            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
-            "enum": ["Light", "Dark"],
-            "description": "Page appearance name."
         },
         {
             "id": "Frame",
@@ -292,15 +285,6 @@
             ]
         },
         {
-            "name": "setForcedAppearance",
-            "description": "Forces the given appearance for the page.",
-            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
-            "targetTypes": ["page"],
-            "parameters": [
-                { "name": "appearance", "$ref": "Appearance", "optional": true }
-            ]
-        },
-        {
             "name": "snapshotNode",
             "description": "Capture a snapshot of the specified node that does not include unrelated layers.",
             "targetTypes": ["page"],
@@ -405,15 +389,6 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
-            ]
-        },
-        {
-            "name": "defaultAppearanceDidChange",
-            "description": "Fired when page's default appearance changes, even if there is a forced appearance.",
-            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
-            "targetTypes": ["page"],
-            "parameters": [
-                { "name": "appearance", "$ref": "Appearance", "description": "Name of the appearance that is active (not considering any forced appearance.)" }
             ]
         },
         {

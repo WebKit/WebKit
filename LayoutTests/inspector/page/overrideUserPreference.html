@@ -101,6 +101,41 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "Page.overrideUserPreference.PrefersColorScheme",
+        description: "",
+        async test() {
+            let cssPropertyName = "--test-prefers-color-scheme";
+            let mediaQuery = "(prefers-color-scheme: dark)";
+            let testCases = [
+                {
+                    expectedValue: "light",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersColorScheme,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Dark,
+                    expectedValue: "dark",
+                    expectedMatchMedia: true,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersColorScheme,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Light,
+                    expectedValue: "light",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersColorScheme,
+                    preferenceValue: null,
+                    expectedValue: "light",
+                    expectedMatchMedia: false,
+                },
+            ];
+
+            await testOverridePreference({cssPropertyName, mediaQuery, testCases});
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 
@@ -113,6 +148,7 @@ function test()
     body {
         --test-prefers-reduced-motion: no-preference;
         --test-prefers-contrast: no-preference;
+        --test-prefers-color-scheme: light;
     }
 
     @media (prefers-reduced-motion) {
@@ -124,6 +160,12 @@ function test()
     @media (prefers-contrast) {
         body {
             --test-prefers-contrast: more;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        body {
+            --test-prefers-color-scheme: dark;
         }
     }
     </style>

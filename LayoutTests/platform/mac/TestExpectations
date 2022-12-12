@@ -1441,7 +1441,7 @@ imported/blink/fast/text/international/vertical-positioning-with-combining-marks
 # Dark Mode is Mojave and later.
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
-inspector/css/force-page-appearance.html [ Pass ]
+inspector/css/overrideUserPreferenceMatchedStyles.html [ Pass ]
 editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass ]
 fast/forms/number/number-dark-appearance.html [ Pass ]
 fast/loader/plain-text-document-dark-mode.html [ Pass ]
