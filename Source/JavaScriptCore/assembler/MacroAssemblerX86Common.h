@@ -1570,7 +1570,7 @@ public:
     void addDouble(Address op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vaddsd_mr(op1.offset, op1.base, op2, dest);
+            m_assembler.vaddsd_mrr(op1.offset, op1.base, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.addsd_mr(op1.offset, op1.base, dest);
@@ -1590,7 +1590,7 @@ public:
     void addDouble(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vaddsd_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+            m_assembler.vaddsd_mrr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.addsd_mr(op1.offset, op1.base, op1.index, op1.scale, dest);
@@ -1628,7 +1628,7 @@ public:
     void addFloat(Address op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vaddss_mr(op1.offset, op1.base, op2, dest);
+            m_assembler.vaddss_mrr(op1.offset, op1.base, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.addss_mr(op1.offset, op1.base, dest);
@@ -1648,7 +1648,7 @@ public:
     void addFloat(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vaddss_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+            m_assembler.vaddss_mrr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.addss_mr(op1.offset, op1.base, op1.index, op1.scale, dest);
@@ -1696,7 +1696,7 @@ public:
     void subDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubsd_rrr(op1, op2, dest);
+            m_assembler.vsubsd_rrr(op2, op1, dest);
         else {
             // B := A - B is invalid.
             ASSERT(op1 == dest || op2 != dest);
@@ -1708,7 +1708,7 @@ public:
     void subDouble(FPRegisterID op1, Address op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubsd_mr(op1, op2.offset, op2.base, dest);
+            m_assembler.vsubsd_mrr(op2.offset, op2.base, op1, dest);
         else {
             moveDouble(op1, dest);
             m_assembler.subsd_mr(op2.offset, op2.base, dest);
@@ -1718,7 +1718,7 @@ public:
     void subDouble(FPRegisterID op1, BaseIndex op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubsd_mr(op1, op2.offset, op2.base, op2.index, op2.scale, dest);
+            m_assembler.vsubsd_mrr(op2.offset, op2.base, op2.index, op2.scale, op1, dest);
         else {
             moveDouble(op1, dest);
             m_assembler.subsd_mr(op2.offset, op2.base, op2.index, op2.scale, dest);
@@ -1738,7 +1738,7 @@ public:
     void subFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubss_rrr(op1, op2, dest);
+            m_assembler.vsubss_rrr(op2, op1, dest);
         else {
             // B := A - B is invalid.
             ASSERT(op1 == dest || op2 != dest);
@@ -1750,7 +1750,7 @@ public:
     void subFloat(FPRegisterID op1, Address op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubss_mr(op1, op2.offset, op2.base, dest);
+            m_assembler.vsubss_mrr(op2.offset, op2.base, op1, dest);
         else {
             moveDouble(op1, dest);
             m_assembler.subss_mr(op2.offset, op2.base, dest);
@@ -1760,7 +1760,7 @@ public:
     void subFloat(FPRegisterID op1, BaseIndex op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vsubss_mr(op1, op2.offset, op2.base, op2.index, op2.scale, dest);
+            m_assembler.vsubss_mrr(op2.offset, op2.base, op2.index, op2.scale, op1, dest);
         else {
             moveDouble(op1, dest);
             m_assembler.subss_mr(op2.offset, op2.base, op2.index, op2.scale, dest);
@@ -1799,7 +1799,7 @@ public:
     void mulDouble(Address op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vmulsd_mr(op1.offset, op1.base, op2, dest);
+            m_assembler.vmulsd_mrr(op1.offset, op1.base, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.mulsd_mr(op1.offset, op1.base, dest);
@@ -1818,7 +1818,7 @@ public:
     void mulDouble(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vmulsd_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+            m_assembler.vmulsd_mrr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.mulsd_mr(op1.offset, op1.base, op1.index, op1.scale, dest);
@@ -1856,7 +1856,7 @@ public:
     void mulFloat(Address op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vmulss_mr(op1.offset, op1.base, op2, dest);
+            m_assembler.vmulss_mrr(op1.offset, op1.base, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.mulss_mr(op1.offset, op1.base, dest);
@@ -1875,7 +1875,7 @@ public:
     void mulFloat(BaseIndex op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (supportsAVX())
-            m_assembler.vmulss_mr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
+            m_assembler.vmulss_mrr(op1.offset, op1.base, op1.index, op1.scale, op2, dest);
         else {
             if (op2 == dest) {
                 m_assembler.mulss_mr(op1.offset, op1.base, op1.index, op1.scale, dest);

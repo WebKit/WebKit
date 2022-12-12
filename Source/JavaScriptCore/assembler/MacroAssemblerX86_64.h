@@ -2891,7 +2891,7 @@ public:
         m_assembler.vmaxpd_rrr(scratch1FPR, src, dest);
         loadVector(Address(scratchGPR), scratch2FPR);
         m_assembler.vminpd_rrr(scratch2FPR, dest, dest);
-        m_assembler.vroundpd_rr(0x0B, dest, dest);
+        m_assembler.vroundpd_rr(dest, dest, RoundingType::TowardZero);
         loadVector(Address(scratchGPR, sizeof(double) * 2), scratch2FPR);
         m_assembler.vaddpd_rrr(scratch2FPR, dest, dest);
         m_assembler.vshufps_rrr(0x88, scratch1FPR, dest, dest);
@@ -3153,6 +3153,7 @@ public:
             m_assembler.vpsrad_rrr(shift, input, dest);
             break;
         case SIMDLane::i64x2:
+            // FIXME: This is AVX-512, and not implemented correctly right now.
             m_assembler.vpsraq_rrr(shift, input, dest);
             break;
         default:
