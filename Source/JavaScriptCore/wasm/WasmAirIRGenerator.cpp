@@ -581,7 +581,7 @@ public:
         if (isX86()) {
             if (airOp == B3::Air::VectorExtaddPairwise) {
                 if (info.lane == SIMDLane::i16x8 && info.signMode == SIMDSignMode::Unsigned)
-                    append(VectorExtaddPairwiseUnsignedInt16, v, result, tmpForType(Types::V128), tmpForType(Types::V128));
+                    append(VectorExtaddPairwiseUnsignedInt16, v, result, tmpForType(Types::V128));
                 else
                     append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128));
                 return { };
@@ -604,9 +604,9 @@ public:
             if (airOp == B3::Air::VectorTruncSat) {
                 if (info.lane == SIMDLane::f64x2) {
                     if (info.signMode == SIMDSignMode::Signed)
-                        append(VectorTruncSatSignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128), tmpForType(Types::V128));
+                        append(VectorTruncSatSignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128));
                     else
-                        append(VectorTruncSatUnsignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128), tmpForType(Types::V128));
+                        append(VectorTruncSatUnsignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128));
                 }
                 return { };
             }

@@ -2858,7 +2858,7 @@ public:
         // i32x4.trunc_sat_f32x4_u(a: v128) -> v128
     }
 
-    void vectorTruncSatSignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratch1FPR, FPRegisterID scratch2FPR)
+    void vectorTruncSatSignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
         // https://github.com/WebAssembly/simd/pull/383
         ASSERT(supportsAVXForSIMD());
@@ -2866,15 +2866,14 @@ public:
             2147483647.0,
             2147483647.0,
         };
-        m_assembler.vcmpeqpd_rrr(src, src, scratch2FPR);
+        m_assembler.vcmpeqpd_rrr(src, src, scratchFPR);
         move(TrustedImmPtr(masks), scratchGPR);
-        loadVector(Address(scratchGPR), scratch1FPR);
-        m_assembler.vandpd_rrr(scratch1FPR, scratch2FPR, scratch2FPR);
-        m_assembler.vminpd_rrr(scratch2FPR, src, dest);
+        m_assembler.vandpd_mrr(0, scratchGPR, scratchFPR, scratchFPR);
+        m_assembler.vminpd_rrr(scratchFPR, src, dest);
         m_assembler.vcvttpd2dq_rr(dest, dest);
     }
 
-    void vectorTruncSatUnsignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratch1FPR, FPRegisterID scratch2FPR)
+    void vectorTruncSatUnsignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
         // https://github.com/WebAssembly/simd/pull/383
         ASSERT(supportsAVXForSIMD());
@@ -2887,14 +2886,12 @@ public:
         };
         move(TrustedImmPtr(masks), scratchGPR);
 
-        m_assembler.vxorpd_rrr(scratch1FPR, scratch1FPR, scratch1FPR);
-        m_assembler.vmaxpd_rrr(scratch1FPR, src, dest);
-        loadVector(Address(scratchGPR), scratch2FPR);
-        m_assembler.vminpd_rrr(scratch2FPR, dest, dest);
+        m_assembler.vxorpd_rrr(scratchFPR, scratchFPR, scratchFPR);
+        m_assembler.vmaxpd_rrr(scratchFPR, src, dest);
+        m_assembler.vminpd_mrr(0, scratchGPR, dest, dest);
         m_assembler.vroundpd_rr(dest, dest, RoundingType::TowardZero);
-        loadVector(Address(scratchGPR, sizeof(double) * 2), scratch2FPR);
-        m_assembler.vaddpd_rrr(scratch2FPR, dest, dest);
-        m_assembler.vshufps_rrr(0x88, scratch1FPR, dest, dest);
+        m_assembler.vaddpd_mrr(sizeof(double) * 2, scratchGPR, dest, dest);
+        m_assembler.vshufps_rrr(0x88, scratchFPR, dest, dest);
     }
 
     void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
@@ -3377,10 +3374,9 @@ public:
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
             vectorSplat8(scratchGPR, scratchFPR);
-            if (simdInfo.signMode == SIMDSignMode::Signed) {
-                m_assembler.vmovdqa_rr(scratchFPR, scratchFPR);
+            if (simdInfo.signMode == SIMDSignMode::Signed)
                 m_assembler.vpmaddubsw_rrr(vec, scratchFPR, dest);
-            } else
+            else
                 m_assembler.vpmaddubsw_rrr(scratchFPR, vec, dest);
             return;
         case SIMDLane::i16x8:
@@ -3395,12 +3391,15 @@ public:
         }
     }
 
-    void vectorExtaddPairwiseUnsignedInt16(FPRegisterID src, FPRegisterID dest, FPRegisterID scratch1, FPRegisterID scratch2)
+    void vectorExtaddPairwiseUnsignedInt16(FPRegisterID src, FPRegisterID dest, FPRegisterID scratch)
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
-        m_assembler.vpsrld_i8rr(16, src, scratch1);
-        m_assembler.vpblendw_i8rrr(0xAA, scratch1, src, scratch2);
-        m_assembler.vpaddd_rrr(scratch1, scratch2, dest);
+        // It can be src == dest.
+        ASSERT(dest != scratch);
+        ASSERT(src != scratch);
+        m_assembler.vpsrld_i8rr(16, src, scratch);
+        m_assembler.vpblendw_i8rrr(0xAA, scratch, src, dest);
+        m_assembler.vpaddd_rrr(scratch, dest, dest);
     }
 
     void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest)

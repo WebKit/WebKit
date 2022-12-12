@@ -4644,6 +4644,14 @@ public:
         m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_ADDPD_VpdWpd, (RegisterID)dest, (RegisterID)left, (RegisterID)right);
     }
 
+    void vaddpd_mrr(int offset, RegisterID base, XMMRegisterID src2, XMMRegisterID dest)
+    {
+        // https://www.felixcloutier.com/x86/addpd
+        // VEX.128.66.0F.WIG 58 /r VADDPD xmm1,xmm2, xmm3/m128
+        // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_ADDPD_VpdWpd, (RegisterID)dest, (RegisterID)src2, base, offset);
+    }
+
     void vpaddb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID dest)
     {
         // https://www.felixcloutier.com/x86/paddb:paddw:paddd:paddq
@@ -4911,6 +4919,14 @@ public:
         m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_MINPD_VsdWsd, (RegisterID)xmm1, (RegisterID)xmm2, (RegisterID)xmm3);
     }
 
+    void vminpd_mrr(int offset, RegisterID base, XMMRegisterID src2, XMMRegisterID dest)
+    {
+        // https://www.felixcloutier.com/x86/minpd
+        // VEX.128.66.0F.WIG 5D /r VMINPD xmm1, xmm2, xmm3/m128
+        // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_MINPD_VsdWsd, (RegisterID)dest, (RegisterID)src2, base, offset);
+    }
+
     void vcmppd_rrr(uint8_t imm8, XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/cmppd
@@ -5052,6 +5068,14 @@ public:
         // VEX.128.66.0F 54 /r VANDPD xmm1, xmm2, xmm3/m128
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
         m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_ANDPD_VpdWpd, (RegisterID)dest, (RegisterID)b, (RegisterID)a);
+    }
+
+    void vandpd_mrr(int offset, RegisterID base, XMMRegisterID src2, XMMRegisterID dest)
+    {
+        // https://www.felixcloutier.com/x86/andpd
+        // VEX.128.66.0F 54 /r VANDPD xmm1, xmm2, xmm3/m128
+        // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_ANDPD_VpdWpd, (RegisterID)dest, (RegisterID)src2, base, offset);
     }
 
     void vorps_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
