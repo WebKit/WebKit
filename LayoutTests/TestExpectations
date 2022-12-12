@@ -2252,8 +2252,9 @@ fast/images/animated-webp.html [ Skip ]
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
 fast/images/eps-as-image.html [ Skip ]
 
-# libavif does not render resources/green-400x400.avif correctly.
+# libavif does not render resources/green-313x313.avif and resources/green-400x400.avif correctly.
 # See https://github.com/AOMediaCodec/av1-avif/issues/195
+fast/images/avif-as-image.html [ ImageOnlyFailure ]
 fast/images/avif-heif-container-as-image.html [ ImageOnlyFailure ]
 
 # Only applicable on platforms with JPEG XL support

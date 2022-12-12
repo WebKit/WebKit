@@ -108,6 +108,7 @@ fast/images/heic-as-background-image.html [ Pass ]
 fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Skip ]
 
 # AVIF tests
+[ Ventura+ ] fast/images/avif-as-image.html [ Pass ]
 [ Ventura+ ] fast/images/avif-heif-container-as-image.html [ Pass ]
 
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
@@ -2400,7 +2401,6 @@ svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 [ Ventura+ x86_64 ] http/tests/media/now-playing-info.html [ Pass Failure ]
 [ BigSur+ x86_64 ] animations/stop-animation-on-suspend.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
-[ Ventura+ ] fast/images/avif-as-image.html [ ImageOnlyFailure Crash ]
 [ BigSur+ ] fast/images/animated-avif.html [ Pass ImageOnlyFailure Timeout Crash ]
 [ Ventura+ ] animations/animation-events-not-cancelable.html [ Pass Failure ]
 [ Bigsur+ ] animations/remove-syncing-animation.html [ Pass Failure ]
