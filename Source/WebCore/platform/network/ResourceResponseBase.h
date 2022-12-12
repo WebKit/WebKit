@@ -466,6 +466,18 @@ template<> struct EnumTraits<WebCore::ResourceResponseBase::Type> {
     >;
 };
 
+template<> struct EnumTraitsForPersistence<WebCore::ResourceResponseBase::Type> {
+    using values = EnumValues<
+        WebCore::ResourceResponseBase::Type,
+        WebCore::ResourceResponseBase::Type::Basic,
+        WebCore::ResourceResponseBase::Type::Cors,
+        WebCore::ResourceResponseBase::Type::Default,
+        WebCore::ResourceResponseBase::Type::Error,
+        WebCore::ResourceResponseBase::Type::Opaque,
+        WebCore::ResourceResponseBase::Type::Opaqueredirect
+    >;
+};
+
 template<> struct EnumTraits<WebCore::ResourceResponseBase::Tainting> {
     using values = EnumValues<
         WebCore::ResourceResponseBase::Tainting,
@@ -476,8 +488,33 @@ template<> struct EnumTraits<WebCore::ResourceResponseBase::Tainting> {
     >;
 };
 
+template<> struct EnumTraitsForPersistence<WebCore::ResourceResponseBase::Tainting> {
+    using values = EnumValues<
+        WebCore::ResourceResponseBase::Tainting,
+        WebCore::ResourceResponseBase::Tainting::Basic,
+        WebCore::ResourceResponseBase::Tainting::Cors,
+        WebCore::ResourceResponseBase::Tainting::Opaque,
+        WebCore::ResourceResponseBase::Tainting::Opaqueredirect
+    >;
+};
 
 template<> struct EnumTraits<WebCore::ResourceResponseBase::Source> {
+    using values = EnumValues<
+        WebCore::ResourceResponseBase::Source,
+        WebCore::ResourceResponseBase::Source::Unknown,
+        WebCore::ResourceResponseBase::Source::Network,
+        WebCore::ResourceResponseBase::Source::DiskCache,
+        WebCore::ResourceResponseBase::Source::DiskCacheAfterValidation,
+        WebCore::ResourceResponseBase::Source::MemoryCache,
+        WebCore::ResourceResponseBase::Source::MemoryCacheAfterValidation,
+        WebCore::ResourceResponseBase::Source::ServiceWorker,
+        WebCore::ResourceResponseBase::Source::ApplicationCache,
+        WebCore::ResourceResponseBase::Source::DOMCache,
+        WebCore::ResourceResponseBase::Source::InspectorOverride
+    >;
+};
+
+template<> struct EnumTraitsForPersistence<WebCore::ResourceResponseBase::Source> {
     using values = EnumValues<
         WebCore::ResourceResponseBase::Source,
         WebCore::ResourceResponseBase::Source::Unknown,

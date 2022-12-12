@@ -334,6 +334,18 @@ template<> struct EnumTraits<WebCore::ResourceRequestCachePolicy> {
     >;
 };
 
+template<> struct EnumTraitsForPersistence<WebCore::ResourceRequestCachePolicy> {
+    using values = EnumValues<
+        WebCore::ResourceRequestCachePolicy,
+        WebCore::ResourceRequestCachePolicy::UseProtocolCachePolicy,
+        WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData,
+        WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad,
+        WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad,
+        WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache,
+        WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData
+    >;
+};
+
 template<> struct EnumTraits<WebCore::ResourceRequestBase::SameSiteDisposition> {
     using values = EnumValues<
         WebCore::ResourceRequestBase::SameSiteDisposition,
@@ -343,7 +355,31 @@ template<> struct EnumTraits<WebCore::ResourceRequestBase::SameSiteDisposition> 
     >;
 };
 
+template<> struct EnumTraitsForPersistence<WebCore::ResourceRequestBase::SameSiteDisposition> {
+    using values = EnumValues<
+        WebCore::ResourceRequestBase::SameSiteDisposition,
+        WebCore::ResourceRequestBase::SameSiteDisposition::Unspecified,
+        WebCore::ResourceRequestBase::SameSiteDisposition::SameSite,
+        WebCore::ResourceRequestBase::SameSiteDisposition::CrossSite
+    >;
+};
+
 template<> struct EnumTraits<WebCore::ResourceRequestRequester> {
+    using values = EnumValues<
+        WebCore::ResourceRequestRequester,
+        WebCore::ResourceRequestRequester::Unspecified,
+        WebCore::ResourceRequestRequester::Main,
+        WebCore::ResourceRequestRequester::XHR,
+        WebCore::ResourceRequestRequester::Fetch,
+        WebCore::ResourceRequestRequester::Media,
+        WebCore::ResourceRequestRequester::ImportScripts,
+        WebCore::ResourceRequestRequester::Ping,
+        WebCore::ResourceRequestRequester::Beacon,
+        WebCore::ResourceRequestRequester::EventSource
+    >;
+};
+
+template<> struct EnumTraitsForPersistence<WebCore::ResourceRequestRequester> {
     using values = EnumValues<
         WebCore::ResourceRequestRequester,
         WebCore::ResourceRequestRequester::Unspecified,

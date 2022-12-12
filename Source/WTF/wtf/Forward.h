@@ -100,6 +100,7 @@ template<typename T, size_t inlineCapacity> struct DefaultHash<Vector<T, inlineC
 
 template<typename> struct RawValueTraits;
 template<typename> struct EnumTraits;
+template<typename> struct EnumTraitsForPersistence;
 template<typename E, E...> struct EnumValues;
 template<typename> struct HashTraits;
 

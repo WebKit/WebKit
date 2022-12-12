@@ -294,7 +294,7 @@ enum class LegacyCertificateInfoType {
     Trust,
 };
 
-template<> struct EnumTraits<LegacyCertificateInfoType> {
+template<> struct EnumTraitsForPersistence<LegacyCertificateInfoType> {
     using values = EnumValues<
         LegacyCertificateInfoType,
         LegacyCertificateInfoType::None,

@@ -130,4 +130,15 @@ template<> struct EnumTraits<WebCore::FetchHeaders::Guard> {
     >;
 };
 
+template<> struct EnumTraitsForPersistence<WebCore::FetchHeaders::Guard> {
+    using values = EnumValues<
+    WebCore::FetchHeaders::Guard,
+    WebCore::FetchHeaders::Guard::None,
+    WebCore::FetchHeaders::Guard::Immutable,
+    WebCore::FetchHeaders::Guard::Request,
+    WebCore::FetchHeaders::Guard::RequestNoCors,
+    WebCore::FetchHeaders::Guard::Response
+    >;
+};
+
 }

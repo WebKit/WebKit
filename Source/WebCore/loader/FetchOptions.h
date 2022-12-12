@@ -117,6 +117,74 @@ inline bool isScriptLikeDestination(FetchOptions::Destination destination)
 
 namespace WTF {
 
+template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Destination> {
+    using values = EnumValues<
+        WebCore::FetchOptions::Destination,
+        WebCore::FetchOptions::Destination::EmptyString,
+        WebCore::FetchOptions::Destination::Audio,
+        WebCore::FetchOptions::Destination::Audioworklet,
+        WebCore::FetchOptions::Destination::Document,
+        WebCore::FetchOptions::Destination::Embed,
+        WebCore::FetchOptions::Destination::Font,
+        WebCore::FetchOptions::Destination::Image,
+        WebCore::FetchOptions::Destination::Iframe,
+        WebCore::FetchOptions::Destination::Manifest,
+        WebCore::FetchOptions::Destination::Model,
+        WebCore::FetchOptions::Destination::Object,
+        WebCore::FetchOptions::Destination::Paintworklet,
+        WebCore::FetchOptions::Destination::Report,
+        WebCore::FetchOptions::Destination::Script,
+        WebCore::FetchOptions::Destination::Serviceworker,
+        WebCore::FetchOptions::Destination::Sharedworker,
+        WebCore::FetchOptions::Destination::Style,
+        WebCore::FetchOptions::Destination::Track,
+        WebCore::FetchOptions::Destination::Video,
+        WebCore::FetchOptions::Destination::Worker,
+        WebCore::FetchOptions::Destination::Xslt
+    >;
+};
+
+template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Mode> {
+    using values = EnumValues<
+        WebCore::FetchOptions::Mode,
+        WebCore::FetchOptions::Mode::Navigate,
+        WebCore::FetchOptions::Mode::SameOrigin,
+        WebCore::FetchOptions::Mode::NoCors,
+        WebCore::FetchOptions::Mode::Cors
+    >;
+};
+
+
+template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Credentials> {
+    using values = EnumValues<
+        WebCore::FetchOptions::Credentials,
+        WebCore::FetchOptions::Credentials::Omit,
+        WebCore::FetchOptions::Credentials::SameOrigin,
+        WebCore::FetchOptions::Credentials::Include
+    >;
+};
+
+template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Cache> {
+    using values = EnumValues<
+        WebCore::FetchOptions::Cache,
+        WebCore::FetchOptions::Cache::Default,
+        WebCore::FetchOptions::Cache::NoStore,
+        WebCore::FetchOptions::Cache::Reload,
+        WebCore::FetchOptions::Cache::NoCache,
+        WebCore::FetchOptions::Cache::ForceCache,
+        WebCore::FetchOptions::Cache::OnlyIfCached
+    >;
+};
+
+template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Redirect> {
+    using values = EnumValues<
+        WebCore::FetchOptions::Redirect,
+        WebCore::FetchOptions::Redirect::Follow,
+        WebCore::FetchOptions::Redirect::Error,
+        WebCore::FetchOptions::Redirect::Manual
+    >;
+};
+
 template<> struct EnumTraits<WebCore::FetchOptions::Destination> {
     using values = EnumValues<
         WebCore::FetchOptions::Destination,
