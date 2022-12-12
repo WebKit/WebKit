@@ -135,7 +135,8 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
         // Make sure the engine can parse the provided `@` rule, even if it only uses unsupported features. As long as
         // the rule text is entirely consumed and it creates a rule of the expected type, we consider it valid because
         // we will be able to continue to edit the rule in the future.
-        CSSParserImpl parser(parserContextForDocument(document), atRuleIdentifier + ' ' + headerText + " {}");
+        CSSParserContext context(parserContextForDocument(document)); // CSSParserImpl holds a reference to this.
+        CSSParserImpl parser(context, atRuleIdentifier + ' ' + headerText + " {}");
         if (!parser.tokenizer())
             return false;
 
