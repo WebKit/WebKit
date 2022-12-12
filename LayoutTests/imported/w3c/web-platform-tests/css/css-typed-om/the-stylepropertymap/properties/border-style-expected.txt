@@ -1,8 +1,11 @@
 
-PASS Can set 'border-top-style' to CSS-wide keywords
-FAIL Can set 'border-top-style' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'border-top-style' to the 'none' keyword
-PASS Can set 'border-top-style' to the 'solid' keyword
+PASS Can set 'border-top-style' to CSS-wide keywords: initial
+PASS Can set 'border-top-style' to CSS-wide keywords: inherit
+PASS Can set 'border-top-style' to CSS-wide keywords: unset
+PASS Can set 'border-top-style' to CSS-wide keywords: revert
+FAIL Can set 'border-top-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-top-style' to the 'none' keyword: none
+PASS Can set 'border-top-style' to the 'solid' keyword: solid
 PASS Setting 'border-top-style' to a length throws TypeError
 PASS Setting 'border-top-style' to a percent throws TypeError
 PASS Setting 'border-top-style' to a time throws TypeError
@@ -11,10 +14,13 @@ PASS Setting 'border-top-style' to a flexible length throws TypeError
 PASS Setting 'border-top-style' to a number throws TypeError
 PASS Setting 'border-top-style' to a URL throws TypeError
 PASS Setting 'border-top-style' to a transform throws TypeError
-PASS Can set 'border-left-style' to CSS-wide keywords
-FAIL Can set 'border-left-style' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'border-left-style' to the 'none' keyword
-PASS Can set 'border-left-style' to the 'solid' keyword
+PASS Can set 'border-left-style' to CSS-wide keywords: initial
+PASS Can set 'border-left-style' to CSS-wide keywords: inherit
+PASS Can set 'border-left-style' to CSS-wide keywords: unset
+PASS Can set 'border-left-style' to CSS-wide keywords: revert
+FAIL Can set 'border-left-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-left-style' to the 'none' keyword: none
+PASS Can set 'border-left-style' to the 'solid' keyword: solid
 PASS Setting 'border-left-style' to a length throws TypeError
 PASS Setting 'border-left-style' to a percent throws TypeError
 PASS Setting 'border-left-style' to a time throws TypeError
@@ -23,10 +29,13 @@ PASS Setting 'border-left-style' to a flexible length throws TypeError
 PASS Setting 'border-left-style' to a number throws TypeError
 PASS Setting 'border-left-style' to a URL throws TypeError
 PASS Setting 'border-left-style' to a transform throws TypeError
-PASS Can set 'border-right-style' to CSS-wide keywords
-FAIL Can set 'border-right-style' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'border-right-style' to the 'none' keyword
-PASS Can set 'border-right-style' to the 'solid' keyword
+PASS Can set 'border-right-style' to CSS-wide keywords: initial
+PASS Can set 'border-right-style' to CSS-wide keywords: inherit
+PASS Can set 'border-right-style' to CSS-wide keywords: unset
+PASS Can set 'border-right-style' to CSS-wide keywords: revert
+FAIL Can set 'border-right-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-right-style' to the 'none' keyword: none
+PASS Can set 'border-right-style' to the 'solid' keyword: solid
 PASS Setting 'border-right-style' to a length throws TypeError
 PASS Setting 'border-right-style' to a percent throws TypeError
 PASS Setting 'border-right-style' to a time throws TypeError
@@ -35,10 +44,13 @@ PASS Setting 'border-right-style' to a flexible length throws TypeError
 PASS Setting 'border-right-style' to a number throws TypeError
 PASS Setting 'border-right-style' to a URL throws TypeError
 PASS Setting 'border-right-style' to a transform throws TypeError
-PASS Can set 'border-bottom-style' to CSS-wide keywords
-FAIL Can set 'border-bottom-style' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'border-bottom-style' to the 'none' keyword
-PASS Can set 'border-bottom-style' to the 'solid' keyword
+PASS Can set 'border-bottom-style' to CSS-wide keywords: initial
+PASS Can set 'border-bottom-style' to CSS-wide keywords: inherit
+PASS Can set 'border-bottom-style' to CSS-wide keywords: unset
+PASS Can set 'border-bottom-style' to CSS-wide keywords: revert
+FAIL Can set 'border-bottom-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-bottom-style' to the 'none' keyword: none
+PASS Can set 'border-bottom-style' to the 'solid' keyword: solid
 PASS Setting 'border-bottom-style' to a length throws TypeError
 PASS Setting 'border-bottom-style' to a percent throws TypeError
 PASS Setting 'border-bottom-style' to a time throws TypeError

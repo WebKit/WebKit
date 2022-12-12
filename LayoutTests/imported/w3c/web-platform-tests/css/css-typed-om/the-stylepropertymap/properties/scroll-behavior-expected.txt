@@ -1,8 +1,11 @@
 
-PASS Can set 'scroll-behavior' to CSS-wide keywords
-FAIL Can set 'scroll-behavior' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-behavior' to the 'auto' keyword
-PASS Can set 'scroll-behavior' to the 'smooth' keyword
+PASS Can set 'scroll-behavior' to CSS-wide keywords: initial
+PASS Can set 'scroll-behavior' to CSS-wide keywords: inherit
+PASS Can set 'scroll-behavior' to CSS-wide keywords: unset
+PASS Can set 'scroll-behavior' to CSS-wide keywords: revert
+FAIL Can set 'scroll-behavior' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-behavior' to the 'auto' keyword: auto
+PASS Can set 'scroll-behavior' to the 'smooth' keyword: smooth
 PASS Setting 'scroll-behavior' to a length throws TypeError
 PASS Setting 'scroll-behavior' to a percent throws TypeError
 PASS Setting 'scroll-behavior' to a time throws TypeError

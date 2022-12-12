@@ -1,9 +1,12 @@
 
-PASS Can set 'visibility' to CSS-wide keywords
-FAIL Can set 'visibility' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'visibility' to the 'visible' keyword
-PASS Can set 'visibility' to the 'hidden' keyword
-PASS Can set 'visibility' to the 'collapse' keyword
+PASS Can set 'visibility' to CSS-wide keywords: initial
+PASS Can set 'visibility' to CSS-wide keywords: inherit
+PASS Can set 'visibility' to CSS-wide keywords: unset
+PASS Can set 'visibility' to CSS-wide keywords: revert
+FAIL Can set 'visibility' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'visibility' to the 'visible' keyword: visible
+PASS Can set 'visibility' to the 'hidden' keyword: hidden
+PASS Can set 'visibility' to the 'collapse' keyword: collapse
 PASS Setting 'visibility' to a length throws TypeError
 PASS Setting 'visibility' to a percent throws TypeError
 PASS Setting 'visibility' to a time throws TypeError

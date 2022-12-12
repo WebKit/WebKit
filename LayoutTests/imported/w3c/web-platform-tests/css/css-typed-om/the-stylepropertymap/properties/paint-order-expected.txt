@@ -1,10 +1,13 @@
 
-PASS Can set 'paint-order' to CSS-wide keywords
-FAIL Can set 'paint-order' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'paint-order' to the 'normal' keyword
-PASS Can set 'paint-order' to the 'fill' keyword
-PASS Can set 'paint-order' to the 'stroke' keyword
-PASS Can set 'paint-order' to the 'markers' keyword
+PASS Can set 'paint-order' to CSS-wide keywords: initial
+PASS Can set 'paint-order' to CSS-wide keywords: inherit
+PASS Can set 'paint-order' to CSS-wide keywords: unset
+PASS Can set 'paint-order' to CSS-wide keywords: revert
+FAIL Can set 'paint-order' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'paint-order' to the 'normal' keyword: normal
+PASS Can set 'paint-order' to the 'fill' keyword: fill
+PASS Can set 'paint-order' to the 'stroke' keyword: stroke
+PASS Can set 'paint-order' to the 'markers' keyword: markers
 PASS Setting 'paint-order' to a length throws TypeError
 PASS Setting 'paint-order' to a percent throws TypeError
 PASS Setting 'paint-order' to a time throws TypeError

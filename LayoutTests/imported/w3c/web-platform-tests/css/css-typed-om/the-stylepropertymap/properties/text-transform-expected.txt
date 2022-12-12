@@ -1,11 +1,14 @@
 
-PASS Can set 'text-transform' to CSS-wide keywords
-FAIL Can set 'text-transform' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-transform' to the 'none' keyword
-PASS Can set 'text-transform' to the 'capitalize' keyword
-PASS Can set 'text-transform' to the 'uppercase' keyword
-PASS Can set 'text-transform' to the 'lowercase' keyword
-FAIL Can set 'text-transform' to the 'full-width' keyword Invalid values
+PASS Can set 'text-transform' to CSS-wide keywords: initial
+PASS Can set 'text-transform' to CSS-wide keywords: inherit
+PASS Can set 'text-transform' to CSS-wide keywords: unset
+PASS Can set 'text-transform' to CSS-wide keywords: revert
+FAIL Can set 'text-transform' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-transform' to the 'none' keyword: none
+PASS Can set 'text-transform' to the 'capitalize' keyword: capitalize
+PASS Can set 'text-transform' to the 'uppercase' keyword: uppercase
+PASS Can set 'text-transform' to the 'lowercase' keyword: lowercase
+FAIL Can set 'text-transform' to the 'full-width' keyword: full-width Invalid values
 PASS Setting 'text-transform' to a length throws TypeError
 PASS Setting 'text-transform' to a percent throws TypeError
 PASS Setting 'text-transform' to a time throws TypeError

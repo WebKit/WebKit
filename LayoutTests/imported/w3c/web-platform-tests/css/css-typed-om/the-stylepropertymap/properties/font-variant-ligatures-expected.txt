@@ -1,16 +1,19 @@
 
-PASS Can set 'font-variant-ligatures' to CSS-wide keywords
-FAIL Can set 'font-variant-ligatures' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'font-variant-ligatures' to the 'normal' keyword
-PASS Can set 'font-variant-ligatures' to the 'none' keyword
-PASS Can set 'font-variant-ligatures' to the 'common-ligatures' keyword
-PASS Can set 'font-variant-ligatures' to the 'no-common-ligatures' keyword
-PASS Can set 'font-variant-ligatures' to the 'discretionary-ligatures' keyword
-PASS Can set 'font-variant-ligatures' to the 'no-discretionary-ligatures' keyword
-PASS Can set 'font-variant-ligatures' to the 'historical-ligatures' keyword
-PASS Can set 'font-variant-ligatures' to the 'no-historical-ligatures' keyword
-PASS Can set 'font-variant-ligatures' to the 'contextual' keyword
-PASS Can set 'font-variant-ligatures' to the 'no-contextual' keyword
+PASS Can set 'font-variant-ligatures' to CSS-wide keywords: initial
+PASS Can set 'font-variant-ligatures' to CSS-wide keywords: inherit
+PASS Can set 'font-variant-ligatures' to CSS-wide keywords: unset
+PASS Can set 'font-variant-ligatures' to CSS-wide keywords: revert
+FAIL Can set 'font-variant-ligatures' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-variant-ligatures' to the 'normal' keyword: normal
+PASS Can set 'font-variant-ligatures' to the 'none' keyword: none
+PASS Can set 'font-variant-ligatures' to the 'common-ligatures' keyword: common-ligatures
+PASS Can set 'font-variant-ligatures' to the 'no-common-ligatures' keyword: no-common-ligatures
+PASS Can set 'font-variant-ligatures' to the 'discretionary-ligatures' keyword: discretionary-ligatures
+PASS Can set 'font-variant-ligatures' to the 'no-discretionary-ligatures' keyword: no-discretionary-ligatures
+PASS Can set 'font-variant-ligatures' to the 'historical-ligatures' keyword: historical-ligatures
+PASS Can set 'font-variant-ligatures' to the 'no-historical-ligatures' keyword: no-historical-ligatures
+PASS Can set 'font-variant-ligatures' to the 'contextual' keyword: contextual
+PASS Can set 'font-variant-ligatures' to the 'no-contextual' keyword: no-contextual
 PASS Setting 'font-variant-ligatures' to a length throws TypeError
 PASS Setting 'font-variant-ligatures' to a percent throws TypeError
 PASS Setting 'font-variant-ligatures' to a time throws TypeError

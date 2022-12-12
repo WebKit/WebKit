@@ -1,22 +1,25 @@
 
-PASS Can set 'background-blend-mode' to CSS-wide keywords
-FAIL Can set 'background-blend-mode' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'background-blend-mode' to the 'normal' keyword
-PASS Can set 'background-blend-mode' to the 'multiply' keyword
-PASS Can set 'background-blend-mode' to the 'screen' keyword
-PASS Can set 'background-blend-mode' to the 'overlay' keyword
-PASS Can set 'background-blend-mode' to the 'darken' keyword
-PASS Can set 'background-blend-mode' to the 'lighten' keyword
-PASS Can set 'background-blend-mode' to the 'color-dodge' keyword
-PASS Can set 'background-blend-mode' to the 'color-burn' keyword
-PASS Can set 'background-blend-mode' to the 'hard-light' keyword
-PASS Can set 'background-blend-mode' to the 'soft-light' keyword
-PASS Can set 'background-blend-mode' to the 'difference' keyword
-PASS Can set 'background-blend-mode' to the 'exclusion' keyword
-PASS Can set 'background-blend-mode' to the 'hue' keyword
-PASS Can set 'background-blend-mode' to the 'saturation' keyword
-PASS Can set 'background-blend-mode' to the 'color' keyword
-PASS Can set 'background-blend-mode' to the 'luminosity' keyword
+PASS Can set 'background-blend-mode' to CSS-wide keywords: initial
+PASS Can set 'background-blend-mode' to CSS-wide keywords: inherit
+PASS Can set 'background-blend-mode' to CSS-wide keywords: unset
+PASS Can set 'background-blend-mode' to CSS-wide keywords: revert
+FAIL Can set 'background-blend-mode' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'background-blend-mode' to the 'normal' keyword: normal
+PASS Can set 'background-blend-mode' to the 'multiply' keyword: multiply
+PASS Can set 'background-blend-mode' to the 'screen' keyword: screen
+PASS Can set 'background-blend-mode' to the 'overlay' keyword: overlay
+PASS Can set 'background-blend-mode' to the 'darken' keyword: darken
+PASS Can set 'background-blend-mode' to the 'lighten' keyword: lighten
+PASS Can set 'background-blend-mode' to the 'color-dodge' keyword: color-dodge
+PASS Can set 'background-blend-mode' to the 'color-burn' keyword: color-burn
+PASS Can set 'background-blend-mode' to the 'hard-light' keyword: hard-light
+PASS Can set 'background-blend-mode' to the 'soft-light' keyword: soft-light
+PASS Can set 'background-blend-mode' to the 'difference' keyword: difference
+PASS Can set 'background-blend-mode' to the 'exclusion' keyword: exclusion
+PASS Can set 'background-blend-mode' to the 'hue' keyword: hue
+PASS Can set 'background-blend-mode' to the 'saturation' keyword: saturation
+PASS Can set 'background-blend-mode' to the 'color' keyword: color
+PASS Can set 'background-blend-mode' to the 'luminosity' keyword: luminosity
 PASS Setting 'background-blend-mode' to a length throws TypeError
 PASS Setting 'background-blend-mode' to a percent throws TypeError
 PASS Setting 'background-blend-mode' to a time throws TypeError

@@ -1,17 +1,20 @@
 
-PASS Can set 'alignment-baseline' to CSS-wide keywords
-FAIL Can set 'alignment-baseline' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'alignment-baseline' to the 'baseline' keyword
-FAIL Can set 'alignment-baseline' to the 'text-bottom' keyword Invalid values
-PASS Can set 'alignment-baseline' to the 'alphabetic' keyword
-PASS Can set 'alignment-baseline' to the 'ideographic' keyword
-PASS Can set 'alignment-baseline' to the 'middle' keyword
-PASS Can set 'alignment-baseline' to the 'central' keyword
-PASS Can set 'alignment-baseline' to the 'mathematical' keyword
-FAIL Can set 'alignment-baseline' to the 'text-top' keyword Invalid values
-FAIL Can set 'alignment-baseline' to the 'bottom' keyword Invalid values
-FAIL Can set 'alignment-baseline' to the 'center' keyword Invalid values
-FAIL Can set 'alignment-baseline' to the 'top' keyword Invalid values
+PASS Can set 'alignment-baseline' to CSS-wide keywords: initial
+PASS Can set 'alignment-baseline' to CSS-wide keywords: inherit
+PASS Can set 'alignment-baseline' to CSS-wide keywords: unset
+PASS Can set 'alignment-baseline' to CSS-wide keywords: revert
+FAIL Can set 'alignment-baseline' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'alignment-baseline' to the 'baseline' keyword: baseline
+FAIL Can set 'alignment-baseline' to the 'text-bottom' keyword: text-bottom Invalid values
+PASS Can set 'alignment-baseline' to the 'alphabetic' keyword: alphabetic
+PASS Can set 'alignment-baseline' to the 'ideographic' keyword: ideographic
+PASS Can set 'alignment-baseline' to the 'middle' keyword: middle
+PASS Can set 'alignment-baseline' to the 'central' keyword: central
+PASS Can set 'alignment-baseline' to the 'mathematical' keyword: mathematical
+FAIL Can set 'alignment-baseline' to the 'text-top' keyword: text-top Invalid values
+FAIL Can set 'alignment-baseline' to the 'bottom' keyword: bottom Invalid values
+FAIL Can set 'alignment-baseline' to the 'center' keyword: center Invalid values
+FAIL Can set 'alignment-baseline' to the 'top' keyword: top Invalid values
 PASS Setting 'alignment-baseline' to a length throws TypeError
 PASS Setting 'alignment-baseline' to a percent throws TypeError
 PASS Setting 'alignment-baseline' to a time throws TypeError

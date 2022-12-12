@@ -1,7 +1,10 @@
 
-FAIL Can set 'fill-color' to CSS-wide keywords Invalid property fill-color
-FAIL Can set 'fill-color' to var() references Invalid property fill-color
-FAIL Can set 'fill-color' to the 'currentcolor' keyword Invalid property fill-color
+FAIL Can set 'fill-color' to CSS-wide keywords: initial Invalid property fill-color
+FAIL Can set 'fill-color' to CSS-wide keywords: inherit Invalid property fill-color
+FAIL Can set 'fill-color' to CSS-wide keywords: unset Invalid property fill-color
+FAIL Can set 'fill-color' to CSS-wide keywords: revert Invalid property fill-color
+FAIL Can set 'fill-color' to var() references:  var(--A) Invalid property fill-color
+FAIL Can set 'fill-color' to the 'currentcolor' keyword: currentcolor Invalid property fill-color
 PASS Setting 'fill-color' to a length throws TypeError
 PASS Setting 'fill-color' to a percent throws TypeError
 PASS Setting 'fill-color' to a time throws TypeError

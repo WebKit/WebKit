@@ -1,10 +1,13 @@
 
-PASS Can set 'text-justify' to CSS-wide keywords
-FAIL Can set 'text-justify' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-justify' to the 'auto' keyword
-PASS Can set 'text-justify' to the 'none' keyword
-PASS Can set 'text-justify' to the 'inter-word' keyword
-PASS Can set 'text-justify' to the 'inter-character' keyword
+PASS Can set 'text-justify' to CSS-wide keywords: initial
+PASS Can set 'text-justify' to CSS-wide keywords: inherit
+PASS Can set 'text-justify' to CSS-wide keywords: unset
+PASS Can set 'text-justify' to CSS-wide keywords: revert
+FAIL Can set 'text-justify' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-justify' to the 'auto' keyword: auto
+PASS Can set 'text-justify' to the 'none' keyword: none
+PASS Can set 'text-justify' to the 'inter-word' keyword: inter-word
+PASS Can set 'text-justify' to the 'inter-character' keyword: inter-character
 PASS Setting 'text-justify' to a length throws TypeError
 PASS Setting 'text-justify' to a percent throws TypeError
 PASS Setting 'text-justify' to a time throws TypeError

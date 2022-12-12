@@ -1,18 +1,36 @@
 
-PASS Can set 'cx' to CSS-wide keywords
-FAIL Can set 'cx' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'cx' to a percent
-PASS Can set 'cx' to a length
+PASS Can set 'cx' to CSS-wide keywords: initial
+PASS Can set 'cx' to CSS-wide keywords: inherit
+PASS Can set 'cx' to CSS-wide keywords: unset
+PASS Can set 'cx' to CSS-wide keywords: revert
+FAIL Can set 'cx' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'cx' to a percent: 0%
+PASS Can set 'cx' to a percent: -3.14%
+PASS Can set 'cx' to a percent: 3.14%
+PASS Can set 'cx' to a percent: calc(0% + 0%)
+PASS Can set 'cx' to a length: 0px
+PASS Can set 'cx' to a length: -3.14em
+PASS Can set 'cx' to a length: 3.14cm
+PASS Can set 'cx' to a length: calc(0px + 0em)
 PASS Setting 'cx' to a time throws TypeError
 PASS Setting 'cx' to an angle throws TypeError
 PASS Setting 'cx' to a flexible length throws TypeError
 FAIL Setting 'cx' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'cx' to a URL throws TypeError
 PASS Setting 'cx' to a transform throws TypeError
-PASS Can set 'cy' to CSS-wide keywords
-FAIL Can set 'cy' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'cy' to a percent
-PASS Can set 'cy' to a length
+PASS Can set 'cy' to CSS-wide keywords: initial
+PASS Can set 'cy' to CSS-wide keywords: inherit
+PASS Can set 'cy' to CSS-wide keywords: unset
+PASS Can set 'cy' to CSS-wide keywords: revert
+FAIL Can set 'cy' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'cy' to a percent: 0%
+PASS Can set 'cy' to a percent: -3.14%
+PASS Can set 'cy' to a percent: 3.14%
+PASS Can set 'cy' to a percent: calc(0% + 0%)
+PASS Can set 'cy' to a length: 0px
+PASS Can set 'cy' to a length: -3.14em
+PASS Can set 'cy' to a length: 3.14cm
+PASS Can set 'cy' to a length: calc(0px + 0em)
 PASS Setting 'cy' to a time throws TypeError
 PASS Setting 'cy' to an angle throws TypeError
 PASS Setting 'cy' to a flexible length throws TypeError

@@ -1,8 +1,17 @@
 
-PASS Can set 'border-image-slice' to CSS-wide keywords
-FAIL Can set 'border-image-slice' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'border-image-slice' to a number assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-slice' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-image-slice' to CSS-wide keywords: initial
+PASS Can set 'border-image-slice' to CSS-wide keywords: inherit
+PASS Can set 'border-image-slice' to CSS-wide keywords: unset
+PASS Can set 'border-image-slice' to CSS-wide keywords: revert
+FAIL Can set 'border-image-slice' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'border-image-slice' to a number: 0 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-slice' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-slice' to a number: 3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-slice' to a number: calc(2 + 3) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-image-slice' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-slice' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-slice' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-slice' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
 PASS Setting 'border-image-slice' to a length throws TypeError
 PASS Setting 'border-image-slice' to a time throws TypeError
 PASS Setting 'border-image-slice' to an angle throws TypeError

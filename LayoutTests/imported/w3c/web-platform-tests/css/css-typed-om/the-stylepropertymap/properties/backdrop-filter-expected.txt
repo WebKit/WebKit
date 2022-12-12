@@ -1,7 +1,10 @@
 
-FAIL Can set 'backdrop-filter' to CSS-wide keywords Invalid property backdrop-filter
-FAIL Can set 'backdrop-filter' to var() references Invalid property backdrop-filter
-FAIL Can set 'backdrop-filter' to the 'none' keyword Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to CSS-wide keywords: initial Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to CSS-wide keywords: inherit Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to CSS-wide keywords: unset Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to CSS-wide keywords: revert Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to var() references:  var(--A) Invalid property backdrop-filter
+FAIL Can set 'backdrop-filter' to the 'none' keyword: none Invalid property backdrop-filter
 PASS Setting 'backdrop-filter' to a length throws TypeError
 PASS Setting 'backdrop-filter' to a percent throws TypeError
 PASS Setting 'backdrop-filter' to a time throws TypeError

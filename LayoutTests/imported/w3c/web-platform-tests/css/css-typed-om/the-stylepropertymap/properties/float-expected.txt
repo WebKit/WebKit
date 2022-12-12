@@ -1,9 +1,12 @@
 
-PASS Can set 'float' to CSS-wide keywords
-FAIL Can set 'float' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'float' to the 'left' keyword
-PASS Can set 'float' to the 'right' keyword
-PASS Can set 'float' to the 'none' keyword
+PASS Can set 'float' to CSS-wide keywords: initial
+PASS Can set 'float' to CSS-wide keywords: inherit
+PASS Can set 'float' to CSS-wide keywords: unset
+PASS Can set 'float' to CSS-wide keywords: revert
+FAIL Can set 'float' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'float' to the 'left' keyword: left
+PASS Can set 'float' to the 'right' keyword: right
+PASS Can set 'float' to the 'none' keyword: none
 PASS Setting 'float' to a length throws TypeError
 PASS Setting 'float' to a percent throws TypeError
 PASS Setting 'float' to a time throws TypeError

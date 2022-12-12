@@ -1,11 +1,14 @@
 
-FAIL Can set 'text-decoration-skip' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'text-decoration-skip' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'text-decoration-skip' to the 'none' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'text-decoration-skip' to the 'objects' keyword Bad value for shorthand CSS property
-FAIL Can set 'text-decoration-skip' to the 'edges' keyword Bad value for shorthand CSS property
-FAIL Can set 'text-decoration-skip' to the 'box-decoration' keyword Bad value for shorthand CSS property
-FAIL Can set 'text-decoration-skip' to the 'spaces' keyword Bad value for shorthand CSS property
+FAIL Can set 'text-decoration-skip' to CSS-wide keywords: initial assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'text-decoration-skip' to CSS-wide keywords: inherit assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'text-decoration-skip' to CSS-wide keywords: unset assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'text-decoration-skip' to CSS-wide keywords: revert assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'text-decoration-skip' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'text-decoration-skip' to the 'none' keyword: none assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'text-decoration-skip' to the 'objects' keyword: objects Bad value for shorthand CSS property
+FAIL Can set 'text-decoration-skip' to the 'edges' keyword: edges Bad value for shorthand CSS property
+FAIL Can set 'text-decoration-skip' to the 'box-decoration' keyword: box-decoration Bad value for shorthand CSS property
+FAIL Can set 'text-decoration-skip' to the 'spaces' keyword: spaces Bad value for shorthand CSS property
 PASS Setting 'text-decoration-skip' to a length throws TypeError
 PASS Setting 'text-decoration-skip' to a percent throws TypeError
 PASS Setting 'text-decoration-skip' to a time throws TypeError

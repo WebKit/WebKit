@@ -1,9 +1,12 @@
 
-PASS Can set 'text-anchor' to CSS-wide keywords
-FAIL Can set 'text-anchor' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-anchor' to the 'start' keyword
-PASS Can set 'text-anchor' to the 'middle' keyword
-PASS Can set 'text-anchor' to the 'end' keyword
+PASS Can set 'text-anchor' to CSS-wide keywords: initial
+PASS Can set 'text-anchor' to CSS-wide keywords: inherit
+PASS Can set 'text-anchor' to CSS-wide keywords: unset
+PASS Can set 'text-anchor' to CSS-wide keywords: revert
+FAIL Can set 'text-anchor' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-anchor' to the 'start' keyword: start
+PASS Can set 'text-anchor' to the 'middle' keyword: middle
+PASS Can set 'text-anchor' to the 'end' keyword: end
 PASS Setting 'text-anchor' to a length throws TypeError
 PASS Setting 'text-anchor' to a percent throws TypeError
 PASS Setting 'text-anchor' to a time throws TypeError

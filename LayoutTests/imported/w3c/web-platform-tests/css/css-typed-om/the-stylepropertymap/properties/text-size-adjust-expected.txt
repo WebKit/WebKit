@@ -1,9 +1,15 @@
 
-FAIL Can set 'text-size-adjust' to CSS-wide keywords Invalid property text-size-adjust
-FAIL Can set 'text-size-adjust' to var() references Invalid property text-size-adjust
-FAIL Can set 'text-size-adjust' to the 'none' keyword Invalid property text-size-adjust
-FAIL Can set 'text-size-adjust' to the 'auto' keyword Invalid property text-size-adjust
-FAIL Can set 'text-size-adjust' to a percent Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to CSS-wide keywords: initial Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to CSS-wide keywords: inherit Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to CSS-wide keywords: unset Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to CSS-wide keywords: revert Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to var() references:  var(--A) Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to the 'none' keyword: none Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to the 'auto' keyword: auto Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to a percent: 0% Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to a percent: -3.14% Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to a percent: 3.14% Invalid property text-size-adjust
+FAIL Can set 'text-size-adjust' to a percent: calc(0% + 0%) Invalid property text-size-adjust
 PASS Setting 'text-size-adjust' to a length throws TypeError
 PASS Setting 'text-size-adjust' to a time throws TypeError
 PASS Setting 'text-size-adjust' to an angle throws TypeError

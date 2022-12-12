@@ -1,7 +1,13 @@
 
-PASS Can set 'animation-duration' to CSS-wide keywords
-FAIL Can set 'animation-duration' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'animation-duration' to a time assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'animation-duration' to CSS-wide keywords: initial
+PASS Can set 'animation-duration' to CSS-wide keywords: inherit
+PASS Can set 'animation-duration' to CSS-wide keywords: unset
+PASS Can set 'animation-duration' to CSS-wide keywords: revert
+FAIL Can set 'animation-duration' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'animation-duration' to a time: 0s
+FAIL Can set 'animation-duration' to a time: -3.14ms assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'animation-duration' to a time: 3.14s
+PASS Can set 'animation-duration' to a time: calc(0s + 0ms)
 PASS Setting 'animation-duration' to a length throws TypeError
 PASS Setting 'animation-duration' to a percent throws TypeError
 PASS Setting 'animation-duration' to an angle throws TypeError

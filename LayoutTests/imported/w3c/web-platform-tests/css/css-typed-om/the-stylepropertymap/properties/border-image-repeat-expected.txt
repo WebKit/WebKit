@@ -1,10 +1,13 @@
 
-PASS Can set 'border-image-repeat' to CSS-wide keywords
-FAIL Can set 'border-image-repeat' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'border-image-repeat' to the 'stretch' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-repeat' to the 'repeat' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-repeat' to the 'round' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-repeat' to the 'space' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Can set 'border-image-repeat' to CSS-wide keywords: initial
+PASS Can set 'border-image-repeat' to CSS-wide keywords: inherit
+PASS Can set 'border-image-repeat' to CSS-wide keywords: unset
+PASS Can set 'border-image-repeat' to CSS-wide keywords: revert
+FAIL Can set 'border-image-repeat' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'border-image-repeat' to the 'stretch' keyword: stretch assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-repeat' to the 'repeat' keyword: repeat assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-repeat' to the 'round' keyword: round assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'border-image-repeat' to the 'space' keyword: space assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 PASS Setting 'border-image-repeat' to a length throws TypeError
 PASS Setting 'border-image-repeat' to a percent throws TypeError
 PASS Setting 'border-image-repeat' to a time throws TypeError

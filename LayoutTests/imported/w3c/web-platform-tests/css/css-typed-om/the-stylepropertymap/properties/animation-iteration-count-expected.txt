@@ -1,8 +1,14 @@
 
-PASS Can set 'animation-iteration-count' to CSS-wide keywords
-FAIL Can set 'animation-iteration-count' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'animation-iteration-count' to the 'infinite' keyword
-FAIL Can set 'animation-iteration-count' to a number assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'animation-iteration-count' to CSS-wide keywords: initial
+PASS Can set 'animation-iteration-count' to CSS-wide keywords: inherit
+PASS Can set 'animation-iteration-count' to CSS-wide keywords: unset
+PASS Can set 'animation-iteration-count' to CSS-wide keywords: revert
+FAIL Can set 'animation-iteration-count' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'animation-iteration-count' to the 'infinite' keyword: infinite
+PASS Can set 'animation-iteration-count' to a number: 0
+FAIL Can set 'animation-iteration-count' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'animation-iteration-count' to a number: 3.14
+PASS Can set 'animation-iteration-count' to a number: calc(2 + 3)
 PASS Setting 'animation-iteration-count' to a length throws TypeError
 PASS Setting 'animation-iteration-count' to a percent throws TypeError
 PASS Setting 'animation-iteration-count' to a time throws TypeError

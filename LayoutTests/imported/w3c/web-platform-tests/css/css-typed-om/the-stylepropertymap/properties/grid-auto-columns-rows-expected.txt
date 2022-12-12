@@ -1,12 +1,25 @@
 
-PASS Can set 'grid-auto-columns' to CSS-wide keywords
-FAIL Can set 'grid-auto-columns' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'grid-auto-columns' to the 'min-content' keyword
-PASS Can set 'grid-auto-columns' to the 'max-content' keyword
-PASS Can set 'grid-auto-columns' to the 'auto' keyword
-FAIL Can set 'grid-auto-columns' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
-FAIL Can set 'grid-auto-columns' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
-FAIL Can set 'grid-auto-columns' to a flexible length Invalid values
+Harness Error (FAIL), message = 2 duplicate test names: "Can set 'grid-auto-columns' to a flexible length: 0fr", "Can set 'grid-auto-rows' to a flexible length: 0fr"
+
+PASS Can set 'grid-auto-columns' to CSS-wide keywords: initial
+PASS Can set 'grid-auto-columns' to CSS-wide keywords: inherit
+PASS Can set 'grid-auto-columns' to CSS-wide keywords: unset
+PASS Can set 'grid-auto-columns' to CSS-wide keywords: revert
+FAIL Can set 'grid-auto-columns' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-columns' to the 'min-content' keyword: min-content
+PASS Can set 'grid-auto-columns' to the 'max-content' keyword: max-content
+PASS Can set 'grid-auto-columns' to the 'auto' keyword: auto
+PASS Can set 'grid-auto-columns' to a length: 0px
+FAIL Can set 'grid-auto-columns' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'grid-auto-columns' to a length: 3.14cm
+PASS Can set 'grid-auto-columns' to a length: calc(0px + 0em)
+PASS Can set 'grid-auto-columns' to a percent: 0%
+FAIL Can set 'grid-auto-columns' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'grid-auto-columns' to a percent: 3.14%
+PASS Can set 'grid-auto-columns' to a percent: calc(0% + 0%)
+PASS Can set 'grid-auto-columns' to a flexible length: 0fr
+PASS Can set 'grid-auto-columns' to a flexible length: 0fr
+FAIL Can set 'grid-auto-columns' to a flexible length: -3.14fr Invalid values
 PASS Setting 'grid-auto-columns' to a time throws TypeError
 PASS Setting 'grid-auto-columns' to an angle throws TypeError
 FAIL Setting 'grid-auto-columns' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
@@ -14,14 +27,25 @@ PASS Setting 'grid-auto-columns' to a URL throws TypeError
 PASS Setting 'grid-auto-columns' to a transform throws TypeError
 PASS 'grid-auto-columns' does not supported 'minmax(100px, auto)'
 PASS 'grid-auto-columns' does not supported 'fit-content(400px)'
-PASS Can set 'grid-auto-rows' to CSS-wide keywords
-FAIL Can set 'grid-auto-rows' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'grid-auto-rows' to the 'min-content' keyword
-PASS Can set 'grid-auto-rows' to the 'max-content' keyword
-PASS Can set 'grid-auto-rows' to the 'auto' keyword
-FAIL Can set 'grid-auto-rows' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
-FAIL Can set 'grid-auto-rows' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
-FAIL Can set 'grid-auto-rows' to a flexible length Invalid values
+PASS Can set 'grid-auto-rows' to CSS-wide keywords: initial
+PASS Can set 'grid-auto-rows' to CSS-wide keywords: inherit
+PASS Can set 'grid-auto-rows' to CSS-wide keywords: unset
+PASS Can set 'grid-auto-rows' to CSS-wide keywords: revert
+FAIL Can set 'grid-auto-rows' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-rows' to the 'min-content' keyword: min-content
+PASS Can set 'grid-auto-rows' to the 'max-content' keyword: max-content
+PASS Can set 'grid-auto-rows' to the 'auto' keyword: auto
+PASS Can set 'grid-auto-rows' to a length: 0px
+FAIL Can set 'grid-auto-rows' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'grid-auto-rows' to a length: 3.14cm
+PASS Can set 'grid-auto-rows' to a length: calc(0px + 0em)
+PASS Can set 'grid-auto-rows' to a percent: 0%
+FAIL Can set 'grid-auto-rows' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'grid-auto-rows' to a percent: 3.14%
+PASS Can set 'grid-auto-rows' to a percent: calc(0% + 0%)
+PASS Can set 'grid-auto-rows' to a flexible length: 0fr
+PASS Can set 'grid-auto-rows' to a flexible length: 0fr
+FAIL Can set 'grid-auto-rows' to a flexible length: -3.14fr Invalid values
 PASS Setting 'grid-auto-rows' to a time throws TypeError
 PASS Setting 'grid-auto-rows' to an angle throws TypeError
 FAIL Setting 'grid-auto-rows' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw

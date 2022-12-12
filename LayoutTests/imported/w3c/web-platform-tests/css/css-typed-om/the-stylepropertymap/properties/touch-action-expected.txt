@@ -1,16 +1,19 @@
 
-PASS Can set 'touch-action' to CSS-wide keywords
-FAIL Can set 'touch-action' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'touch-action' to the 'auto' keyword
-PASS Can set 'touch-action' to the 'none' keyword
-PASS Can set 'touch-action' to the 'pan-x' keyword
-FAIL Can set 'touch-action' to the 'pan-left' keyword Invalid values
-FAIL Can set 'touch-action' to the 'pan-right' keyword Invalid values
-PASS Can set 'touch-action' to the 'pan-y' keyword
-FAIL Can set 'touch-action' to the 'pan-up' keyword Invalid values
-FAIL Can set 'touch-action' to the 'pan-down' keyword Invalid values
-PASS Can set 'touch-action' to the 'pinch-zoom' keyword
-PASS Can set 'touch-action' to the 'manipulation' keyword
+PASS Can set 'touch-action' to CSS-wide keywords: initial
+PASS Can set 'touch-action' to CSS-wide keywords: inherit
+PASS Can set 'touch-action' to CSS-wide keywords: unset
+PASS Can set 'touch-action' to CSS-wide keywords: revert
+FAIL Can set 'touch-action' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'touch-action' to the 'auto' keyword: auto
+PASS Can set 'touch-action' to the 'none' keyword: none
+PASS Can set 'touch-action' to the 'pan-x' keyword: pan-x
+FAIL Can set 'touch-action' to the 'pan-left' keyword: pan-left Invalid values
+FAIL Can set 'touch-action' to the 'pan-right' keyword: pan-right Invalid values
+PASS Can set 'touch-action' to the 'pan-y' keyword: pan-y
+FAIL Can set 'touch-action' to the 'pan-up' keyword: pan-up Invalid values
+FAIL Can set 'touch-action' to the 'pan-down' keyword: pan-down Invalid values
+PASS Can set 'touch-action' to the 'pinch-zoom' keyword: pinch-zoom
+PASS Can set 'touch-action' to the 'manipulation' keyword: manipulation
 PASS Setting 'touch-action' to a length throws TypeError
 PASS Setting 'touch-action' to a percent throws TypeError
 PASS Setting 'touch-action' to a time throws TypeError

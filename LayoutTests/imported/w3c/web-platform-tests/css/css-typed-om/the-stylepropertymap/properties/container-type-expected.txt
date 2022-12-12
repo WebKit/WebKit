@@ -1,9 +1,12 @@
 
-PASS Can set 'container-type' to CSS-wide keywords
-FAIL Can set 'container-type' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'container-type' to the 'normal' keyword
-PASS Can set 'container-type' to the 'size' keyword
-PASS Can set 'container-type' to the 'inline-size' keyword
+PASS Can set 'container-type' to CSS-wide keywords: initial
+PASS Can set 'container-type' to CSS-wide keywords: inherit
+PASS Can set 'container-type' to CSS-wide keywords: unset
+PASS Can set 'container-type' to CSS-wide keywords: revert
+FAIL Can set 'container-type' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'container-type' to the 'normal' keyword: normal
+PASS Can set 'container-type' to the 'size' keyword: size
+PASS Can set 'container-type' to the 'inline-size' keyword: inline-size
 PASS Setting 'container-type' to a length throws TypeError
 PASS Setting 'container-type' to a percent throws TypeError
 PASS Setting 'container-type' to a time throws TypeError

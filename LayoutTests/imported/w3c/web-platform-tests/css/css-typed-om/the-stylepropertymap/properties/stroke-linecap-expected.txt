@@ -1,9 +1,12 @@
 
-PASS Can set 'stroke-linecap' to CSS-wide keywords
-FAIL Can set 'stroke-linecap' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'stroke-linecap' to the 'butt' keyword
-PASS Can set 'stroke-linecap' to the 'round' keyword
-PASS Can set 'stroke-linecap' to the 'square' keyword
+PASS Can set 'stroke-linecap' to CSS-wide keywords: initial
+PASS Can set 'stroke-linecap' to CSS-wide keywords: inherit
+PASS Can set 'stroke-linecap' to CSS-wide keywords: unset
+PASS Can set 'stroke-linecap' to CSS-wide keywords: revert
+FAIL Can set 'stroke-linecap' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'stroke-linecap' to the 'butt' keyword: butt
+PASS Can set 'stroke-linecap' to the 'round' keyword: round
+PASS Can set 'stroke-linecap' to the 'square' keyword: square
 PASS Setting 'stroke-linecap' to a length throws TypeError
 PASS Setting 'stroke-linecap' to a percent throws TypeError
 PASS Setting 'stroke-linecap' to a time throws TypeError

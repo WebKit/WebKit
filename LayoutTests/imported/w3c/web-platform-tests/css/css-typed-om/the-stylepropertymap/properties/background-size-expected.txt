@@ -1,11 +1,20 @@
 
-PASS Can set 'background-size' to CSS-wide keywords
-FAIL Can set 'background-size' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'background-size' to a length assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to a percent assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'background-size' to the 'auto' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-PASS Can set 'background-size' to the 'cover' keyword
-PASS Can set 'background-size' to the 'contain' keyword
+PASS Can set 'background-size' to CSS-wide keywords: initial
+PASS Can set 'background-size' to CSS-wide keywords: inherit
+PASS Can set 'background-size' to CSS-wide keywords: unset
+PASS Can set 'background-size' to CSS-wide keywords: revert
+FAIL Can set 'background-size' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'background-size' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'background-size' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'background-size' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'background-size' to the 'auto' keyword: auto assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Can set 'background-size' to the 'cover' keyword: cover
+PASS Can set 'background-size' to the 'contain' keyword: contain
 PASS Setting 'background-size' to a time throws TypeError
 PASS Setting 'background-size' to an angle throws TypeError
 PASS Setting 'background-size' to a flexible length throws TypeError

@@ -1,8 +1,13 @@
 
-PASS Can set 'transform' to CSS-wide keywords
-FAIL Can set 'transform' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'transform' to the 'none' keyword
-FAIL Can set 'transform' to a transform assert_equals: expected "CSSSkewY" but got "CSSSkewX"
+PASS Can set 'transform' to CSS-wide keywords: initial
+PASS Can set 'transform' to CSS-wide keywords: inherit
+PASS Can set 'transform' to CSS-wide keywords: unset
+PASS Can set 'transform' to CSS-wide keywords: revert
+FAIL Can set 'transform' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'transform' to the 'none' keyword: none
+PASS Can set 'transform' to a transform: translate(50%, 50%)
+PASS Can set 'transform' to a transform: perspective(10em)
+FAIL Can set 'transform' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) assert_equals: expected "CSSSkewY" but got "CSSSkewX"
 PASS Setting 'transform' to a length throws TypeError
 PASS Setting 'transform' to a percent throws TypeError
 PASS Setting 'transform' to a time throws TypeError

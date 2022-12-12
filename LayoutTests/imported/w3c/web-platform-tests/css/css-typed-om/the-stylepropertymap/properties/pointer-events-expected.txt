@@ -1,16 +1,19 @@
 
-PASS Can set 'pointer-events' to CSS-wide keywords
-FAIL Can set 'pointer-events' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'pointer-events' to the 'bounding-box' keyword
-FAIL Can set 'pointer-events' to the 'visiblepainted' keyword assert_equals: expected "visiblepainted" but got "visiblePainted"
-FAIL Can set 'pointer-events' to the 'visiblefill' keyword assert_equals: expected "visiblefill" but got "visibleFill"
-FAIL Can set 'pointer-events' to the 'visiblestroke' keyword assert_equals: expected "visiblestroke" but got "visibleStroke"
-PASS Can set 'pointer-events' to the 'visible' keyword
-PASS Can set 'pointer-events' to the 'painted' keyword
-PASS Can set 'pointer-events' to the 'fill' keyword
-PASS Can set 'pointer-events' to the 'stroke' keyword
-PASS Can set 'pointer-events' to the 'all' keyword
-PASS Can set 'pointer-events' to the 'none' keyword
+PASS Can set 'pointer-events' to CSS-wide keywords: initial
+PASS Can set 'pointer-events' to CSS-wide keywords: inherit
+PASS Can set 'pointer-events' to CSS-wide keywords: unset
+PASS Can set 'pointer-events' to CSS-wide keywords: revert
+FAIL Can set 'pointer-events' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'pointer-events' to the 'bounding-box' keyword: bounding-box
+FAIL Can set 'pointer-events' to the 'visiblepainted' keyword: visiblepainted assert_equals: expected "visiblepainted" but got "visiblePainted"
+FAIL Can set 'pointer-events' to the 'visiblefill' keyword: visiblefill assert_equals: expected "visiblefill" but got "visibleFill"
+FAIL Can set 'pointer-events' to the 'visiblestroke' keyword: visiblestroke assert_equals: expected "visiblestroke" but got "visibleStroke"
+PASS Can set 'pointer-events' to the 'visible' keyword: visible
+PASS Can set 'pointer-events' to the 'painted' keyword: painted
+PASS Can set 'pointer-events' to the 'fill' keyword: fill
+PASS Can set 'pointer-events' to the 'stroke' keyword: stroke
+PASS Can set 'pointer-events' to the 'all' keyword: all
+PASS Can set 'pointer-events' to the 'none' keyword: none
 PASS Setting 'pointer-events' to a length throws TypeError
 PASS Setting 'pointer-events' to a percent throws TypeError
 PASS Setting 'pointer-events' to a time throws TypeError

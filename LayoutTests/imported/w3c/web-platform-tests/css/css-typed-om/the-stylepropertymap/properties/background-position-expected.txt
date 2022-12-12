@@ -2,6 +2,9 @@ CONSOLE MESSAGE: Error: '<position>' is not a valid CSS component
 
 Harness Error (FAIL), message = Error: '<position>' is not a valid CSS component
 
-FAIL Can set 'background-position' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'background-position' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'background-position' to CSS-wide keywords: initial assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to CSS-wide keywords: inherit assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to CSS-wide keywords: unset assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to CSS-wide keywords: revert assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to var() references:  var(--A) assert_equals: expected 2 but got 1
 

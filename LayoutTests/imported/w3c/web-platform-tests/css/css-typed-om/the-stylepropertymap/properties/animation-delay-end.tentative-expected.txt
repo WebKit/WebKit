@@ -1,7 +1,13 @@
 
-FAIL Can set 'animation-delay-end' to CSS-wide keywords Invalid property animation-delay-end
-FAIL Can set 'animation-delay-end' to var() references Invalid property animation-delay-end
-FAIL Can set 'animation-delay-end' to a time Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to CSS-wide keywords: initial Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to CSS-wide keywords: inherit Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to CSS-wide keywords: unset Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to CSS-wide keywords: revert Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to var() references:  var(--A) Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to a time: 0s Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to a time: -3.14ms Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to a time: 3.14s Invalid property animation-delay-end
+FAIL Can set 'animation-delay-end' to a time: calc(0s + 0ms) Invalid property animation-delay-end
 PASS Setting 'animation-delay-end' to a length throws TypeError
 PASS Setting 'animation-delay-end' to a percent throws TypeError
 PASS Setting 'animation-delay-end' to an angle throws TypeError

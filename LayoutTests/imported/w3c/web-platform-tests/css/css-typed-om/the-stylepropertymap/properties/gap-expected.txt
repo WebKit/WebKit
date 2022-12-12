@@ -1,20 +1,38 @@
 
-PASS Can set 'column-gap' to CSS-wide keywords
-FAIL Can set 'column-gap' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'column-gap' to the 'normal' keyword
-FAIL Can set 'column-gap' to a length assert_equals: expected "px" but got "em"
-FAIL Can set 'column-gap' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'column-gap' to CSS-wide keywords: initial
+PASS Can set 'column-gap' to CSS-wide keywords: inherit
+PASS Can set 'column-gap' to CSS-wide keywords: unset
+PASS Can set 'column-gap' to CSS-wide keywords: revert
+FAIL Can set 'column-gap' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'column-gap' to the 'normal' keyword: normal
+PASS Can set 'column-gap' to a length: 0px
+PASS Can set 'column-gap' to a length: -3.14em
+PASS Can set 'column-gap' to a length: 3.14cm
+FAIL Can set 'column-gap' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'column-gap' to a percent: 0%
+FAIL Can set 'column-gap' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'column-gap' to a percent: 3.14%
+FAIL Can set 'column-gap' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
 PASS Setting 'column-gap' to a time throws TypeError
 PASS Setting 'column-gap' to an angle throws TypeError
 PASS Setting 'column-gap' to a flexible length throws TypeError
 FAIL Setting 'column-gap' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'column-gap' to a URL throws TypeError
 PASS Setting 'column-gap' to a transform throws TypeError
-PASS Can set 'row-gap' to CSS-wide keywords
-FAIL Can set 'row-gap' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'row-gap' to the 'normal' keyword
-FAIL Can set 'row-gap' to a length assert_equals: expected "px" but got "em"
-FAIL Can set 'row-gap' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'row-gap' to CSS-wide keywords: initial
+PASS Can set 'row-gap' to CSS-wide keywords: inherit
+PASS Can set 'row-gap' to CSS-wide keywords: unset
+PASS Can set 'row-gap' to CSS-wide keywords: revert
+FAIL Can set 'row-gap' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'row-gap' to the 'normal' keyword: normal
+PASS Can set 'row-gap' to a length: 0px
+PASS Can set 'row-gap' to a length: -3.14em
+PASS Can set 'row-gap' to a length: 3.14cm
+FAIL Can set 'row-gap' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'row-gap' to a percent: 0%
+FAIL Can set 'row-gap' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'row-gap' to a percent: 3.14%
+FAIL Can set 'row-gap' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
 PASS Setting 'row-gap' to a time throws TypeError
 PASS Setting 'row-gap' to an angle throws TypeError
 PASS Setting 'row-gap' to a flexible length throws TypeError

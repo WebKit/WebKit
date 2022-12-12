@@ -1,11 +1,14 @@
 
-FAIL Can set 'user-select' to CSS-wide keywords Invalid property user-select
-FAIL Can set 'user-select' to var() references Invalid property user-select
-FAIL Can set 'user-select' to the 'auto' keyword Invalid property user-select
-FAIL Can set 'user-select' to the 'text' keyword Invalid property user-select
-FAIL Can set 'user-select' to the 'none' keyword Invalid property user-select
-FAIL Can set 'user-select' to the 'contain' keyword Invalid property user-select
-FAIL Can set 'user-select' to the 'all' keyword Invalid property user-select
+FAIL Can set 'user-select' to CSS-wide keywords: initial Invalid property user-select
+FAIL Can set 'user-select' to CSS-wide keywords: inherit Invalid property user-select
+FAIL Can set 'user-select' to CSS-wide keywords: unset Invalid property user-select
+FAIL Can set 'user-select' to CSS-wide keywords: revert Invalid property user-select
+FAIL Can set 'user-select' to var() references:  var(--A) Invalid property user-select
+FAIL Can set 'user-select' to the 'auto' keyword: auto Invalid property user-select
+FAIL Can set 'user-select' to the 'text' keyword: text Invalid property user-select
+FAIL Can set 'user-select' to the 'none' keyword: none Invalid property user-select
+FAIL Can set 'user-select' to the 'contain' keyword: contain Invalid property user-select
+FAIL Can set 'user-select' to the 'all' keyword: all Invalid property user-select
 PASS Setting 'user-select' to a length throws TypeError
 PASS Setting 'user-select' to a percent throws TypeError
 PASS Setting 'user-select' to a time throws TypeError

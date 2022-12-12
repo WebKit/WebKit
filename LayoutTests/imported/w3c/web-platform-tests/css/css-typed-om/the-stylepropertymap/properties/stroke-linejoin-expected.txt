@@ -1,12 +1,15 @@
 
-PASS Can set 'stroke-linejoin' to CSS-wide keywords
-FAIL Can set 'stroke-linejoin' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'stroke-linejoin' to the 'crop' keyword Invalid values
-FAIL Can set 'stroke-linejoin' to the 'arcs' keyword Invalid values
-PASS Can set 'stroke-linejoin' to the 'miter' keyword
-PASS Can set 'stroke-linejoin' to the 'bevel' keyword
-PASS Can set 'stroke-linejoin' to the 'round' keyword
-FAIL Can set 'stroke-linejoin' to the 'stupid' keyword Invalid values
+PASS Can set 'stroke-linejoin' to CSS-wide keywords: initial
+PASS Can set 'stroke-linejoin' to CSS-wide keywords: inherit
+PASS Can set 'stroke-linejoin' to CSS-wide keywords: unset
+PASS Can set 'stroke-linejoin' to CSS-wide keywords: revert
+FAIL Can set 'stroke-linejoin' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'stroke-linejoin' to the 'crop' keyword: crop Invalid values
+FAIL Can set 'stroke-linejoin' to the 'arcs' keyword: arcs Invalid values
+PASS Can set 'stroke-linejoin' to the 'miter' keyword: miter
+PASS Can set 'stroke-linejoin' to the 'bevel' keyword: bevel
+PASS Can set 'stroke-linejoin' to the 'round' keyword: round
+FAIL Can set 'stroke-linejoin' to the 'stupid' keyword: stupid Invalid values
 PASS Setting 'stroke-linejoin' to a length throws TypeError
 PASS Setting 'stroke-linejoin' to a percent throws TypeError
 PASS Setting 'stroke-linejoin' to a time throws TypeError

@@ -1,9 +1,12 @@
 
-FAIL Can set 'font-variant-emoji' to CSS-wide keywords Invalid property font-variant-emoji
-FAIL Can set 'font-variant-emoji' to var() references Invalid property font-variant-emoji
-FAIL Can set 'font-variant-emoji' to the 'auto' keyword Invalid property font-variant-emoji
-FAIL Can set 'font-variant-emoji' to the 'text' keyword Invalid property font-variant-emoji
-FAIL Can set 'font-variant-emoji' to the 'emoji' keyword Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to CSS-wide keywords: initial Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to CSS-wide keywords: inherit Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to CSS-wide keywords: unset Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to CSS-wide keywords: revert Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to var() references:  var(--A) Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to the 'auto' keyword: auto Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to the 'text' keyword: text Invalid property font-variant-emoji
+FAIL Can set 'font-variant-emoji' to the 'emoji' keyword: emoji Invalid property font-variant-emoji
 PASS Setting 'font-variant-emoji' to a length throws TypeError
 PASS Setting 'font-variant-emoji' to a percent throws TypeError
 PASS Setting 'font-variant-emoji' to a time throws TypeError

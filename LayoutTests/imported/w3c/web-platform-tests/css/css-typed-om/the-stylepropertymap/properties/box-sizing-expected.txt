@@ -1,8 +1,11 @@
 
-PASS Can set 'box-sizing' to CSS-wide keywords
-FAIL Can set 'box-sizing' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'box-sizing' to the 'content-box' keyword
-PASS Can set 'box-sizing' to the 'border-box' keyword
+PASS Can set 'box-sizing' to CSS-wide keywords: initial
+PASS Can set 'box-sizing' to CSS-wide keywords: inherit
+PASS Can set 'box-sizing' to CSS-wide keywords: unset
+PASS Can set 'box-sizing' to CSS-wide keywords: revert
+FAIL Can set 'box-sizing' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'box-sizing' to the 'content-box' keyword: content-box
+PASS Can set 'box-sizing' to the 'border-box' keyword: border-box
 PASS Setting 'box-sizing' to a length throws TypeError
 PASS Setting 'box-sizing' to a percent throws TypeError
 PASS Setting 'box-sizing' to a time throws TypeError

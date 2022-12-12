@@ -1,7 +1,13 @@
 
-PASS Can set 'scroll-margin-top' to CSS-wide keywords
-FAIL Can set 'scroll-margin-top' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-top' to a length
+PASS Can set 'scroll-margin-top' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-top' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-top' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-top' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-top' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-top' to a length: 0px
+PASS Can set 'scroll-margin-top' to a length: -3.14em
+PASS Can set 'scroll-margin-top' to a length: 3.14cm
+PASS Can set 'scroll-margin-top' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-top' to a percent throws TypeError
 PASS Setting 'scroll-margin-top' to a time throws TypeError
 PASS Setting 'scroll-margin-top' to an angle throws TypeError
@@ -9,9 +15,15 @@ PASS Setting 'scroll-margin-top' to a flexible length throws TypeError
 FAIL Setting 'scroll-margin-top' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'scroll-margin-top' to a URL throws TypeError
 PASS Setting 'scroll-margin-top' to a transform throws TypeError
-PASS Can set 'scroll-margin-left' to CSS-wide keywords
-FAIL Can set 'scroll-margin-left' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-left' to a length
+PASS Can set 'scroll-margin-left' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-left' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-left' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-left' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-left' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-left' to a length: 0px
+PASS Can set 'scroll-margin-left' to a length: -3.14em
+PASS Can set 'scroll-margin-left' to a length: 3.14cm
+PASS Can set 'scroll-margin-left' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-left' to a percent throws TypeError
 PASS Setting 'scroll-margin-left' to a time throws TypeError
 PASS Setting 'scroll-margin-left' to an angle throws TypeError
@@ -19,9 +31,15 @@ PASS Setting 'scroll-margin-left' to a flexible length throws TypeError
 FAIL Setting 'scroll-margin-left' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'scroll-margin-left' to a URL throws TypeError
 PASS Setting 'scroll-margin-left' to a transform throws TypeError
-PASS Can set 'scroll-margin-right' to CSS-wide keywords
-FAIL Can set 'scroll-margin-right' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-right' to a length
+PASS Can set 'scroll-margin-right' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-right' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-right' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-right' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-right' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-right' to a length: 0px
+PASS Can set 'scroll-margin-right' to a length: -3.14em
+PASS Can set 'scroll-margin-right' to a length: 3.14cm
+PASS Can set 'scroll-margin-right' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-right' to a percent throws TypeError
 PASS Setting 'scroll-margin-right' to a time throws TypeError
 PASS Setting 'scroll-margin-right' to an angle throws TypeError
@@ -29,9 +47,15 @@ PASS Setting 'scroll-margin-right' to a flexible length throws TypeError
 FAIL Setting 'scroll-margin-right' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'scroll-margin-right' to a URL throws TypeError
 PASS Setting 'scroll-margin-right' to a transform throws TypeError
-PASS Can set 'scroll-margin-bottom' to CSS-wide keywords
-FAIL Can set 'scroll-margin-bottom' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-bottom' to a length
+PASS Can set 'scroll-margin-bottom' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-bottom' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-bottom' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-bottom' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-bottom' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-bottom' to a length: 0px
+PASS Can set 'scroll-margin-bottom' to a length: -3.14em
+PASS Can set 'scroll-margin-bottom' to a length: 3.14cm
+PASS Can set 'scroll-margin-bottom' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-bottom' to a percent throws TypeError
 PASS Setting 'scroll-margin-bottom' to a time throws TypeError
 PASS Setting 'scroll-margin-bottom' to an angle throws TypeError
@@ -39,9 +63,15 @@ PASS Setting 'scroll-margin-bottom' to a flexible length throws TypeError
 FAIL Setting 'scroll-margin-bottom' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'scroll-margin-bottom' to a URL throws TypeError
 PASS Setting 'scroll-margin-bottom' to a transform throws TypeError
-PASS Can set 'scroll-margin-inline-start' to CSS-wide keywords
-FAIL Can set 'scroll-margin-inline-start' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-inline-start' to a length
+PASS Can set 'scroll-margin-inline-start' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-inline-start' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-inline-start' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-inline-start' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-inline-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-inline-start' to a length: 0px
+PASS Can set 'scroll-margin-inline-start' to a length: -3.14em
+PASS Can set 'scroll-margin-inline-start' to a length: 3.14cm
+PASS Can set 'scroll-margin-inline-start' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-inline-start' to a percent throws TypeError
 PASS Setting 'scroll-margin-inline-start' to a time throws TypeError
 PASS Setting 'scroll-margin-inline-start' to an angle throws TypeError
@@ -49,9 +79,15 @@ PASS Setting 'scroll-margin-inline-start' to a flexible length throws TypeError
 FAIL Setting 'scroll-margin-inline-start' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'scroll-margin-inline-start' to a URL throws TypeError
 PASS Setting 'scroll-margin-inline-start' to a transform throws TypeError
-PASS Can set 'scroll-margin-block-start' to CSS-wide keywords
-FAIL Can set 'scroll-margin-block-start' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-block-start' to a length
+PASS Can set 'scroll-margin-block-start' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-block-start' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-block-start' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-block-start' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-block-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-block-start' to a length: 0px
+PASS Can set 'scroll-margin-block-start' to a length: -3.14em
+PASS Can set 'scroll-margin-block-start' to a length: 3.14cm
+PASS Can set 'scroll-margin-block-start' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-block-start' to a percent throws TypeError
 PASS Setting 'scroll-margin-block-start' to a time throws TypeError
 PASS Setting 'scroll-margin-block-start' to an angle throws TypeError
@@ -59,9 +95,15 @@ PASS Setting 'scroll-margin-block-start' to a flexible length throws TypeError
 FAIL Setting 'scroll-margin-block-start' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'scroll-margin-block-start' to a URL throws TypeError
 PASS Setting 'scroll-margin-block-start' to a transform throws TypeError
-PASS Can set 'scroll-margin-inline-end' to CSS-wide keywords
-FAIL Can set 'scroll-margin-inline-end' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-inline-end' to a length
+PASS Can set 'scroll-margin-inline-end' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-inline-end' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-inline-end' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-inline-end' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-inline-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-inline-end' to a length: 0px
+PASS Can set 'scroll-margin-inline-end' to a length: -3.14em
+PASS Can set 'scroll-margin-inline-end' to a length: 3.14cm
+PASS Can set 'scroll-margin-inline-end' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-inline-end' to a percent throws TypeError
 PASS Setting 'scroll-margin-inline-end' to a time throws TypeError
 PASS Setting 'scroll-margin-inline-end' to an angle throws TypeError
@@ -69,9 +111,15 @@ PASS Setting 'scroll-margin-inline-end' to a flexible length throws TypeError
 FAIL Setting 'scroll-margin-inline-end' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'scroll-margin-inline-end' to a URL throws TypeError
 PASS Setting 'scroll-margin-inline-end' to a transform throws TypeError
-PASS Can set 'scroll-margin-block-end' to CSS-wide keywords
-FAIL Can set 'scroll-margin-block-end' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'scroll-margin-block-end' to a length
+PASS Can set 'scroll-margin-block-end' to CSS-wide keywords: initial
+PASS Can set 'scroll-margin-block-end' to CSS-wide keywords: inherit
+PASS Can set 'scroll-margin-block-end' to CSS-wide keywords: unset
+PASS Can set 'scroll-margin-block-end' to CSS-wide keywords: revert
+FAIL Can set 'scroll-margin-block-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-margin-block-end' to a length: 0px
+PASS Can set 'scroll-margin-block-end' to a length: -3.14em
+PASS Can set 'scroll-margin-block-end' to a length: 3.14cm
+PASS Can set 'scroll-margin-block-end' to a length: calc(0px + 0em)
 PASS Setting 'scroll-margin-block-end' to a percent throws TypeError
 PASS Setting 'scroll-margin-block-end' to a time throws TypeError
 PASS Setting 'scroll-margin-block-end' to an angle throws TypeError

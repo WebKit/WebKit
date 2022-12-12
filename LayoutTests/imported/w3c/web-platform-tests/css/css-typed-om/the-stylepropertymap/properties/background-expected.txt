@@ -1,6 +1,9 @@
 
-FAIL Can set 'background' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'background' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'background' to CSS-wide keywords: initial assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background' to CSS-wide keywords: inherit assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background' to CSS-wide keywords: unset assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background' to CSS-wide keywords: revert assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background' to var() references:  var(--A) assert_equals: expected 2 but got 1
 FAIL Setting 'background' to a length throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 FAIL Setting 'background' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'background' to a time throws TypeError

@@ -1,56 +1,83 @@
 
-PASS Can set 'font-size' to CSS-wide keywords
-FAIL Can set 'font-size' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'font-size' to the 'xx-small' keyword
-PASS Can set 'font-size' to the 'x-small' keyword
-PASS Can set 'font-size' to the 'small' keyword
-PASS Can set 'font-size' to the 'medium' keyword
-PASS Can set 'font-size' to the 'large' keyword
-PASS Can set 'font-size' to the 'x-large' keyword
-PASS Can set 'font-size' to the 'xx-large' keyword
-PASS Can set 'font-size' to the 'larger' keyword
-PASS Can set 'font-size' to the 'smaller' keyword
-FAIL Can set 'font-size' to a length assert_equals: expected "px" but got "em"
-FAIL Can set 'font-size' to a percent assert_equals: expected 2 but got 1
+PASS Can set 'font-size' to CSS-wide keywords: initial
+PASS Can set 'font-size' to CSS-wide keywords: inherit
+PASS Can set 'font-size' to CSS-wide keywords: unset
+PASS Can set 'font-size' to CSS-wide keywords: revert
+FAIL Can set 'font-size' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-size' to the 'xx-small' keyword: xx-small
+PASS Can set 'font-size' to the 'x-small' keyword: x-small
+PASS Can set 'font-size' to the 'small' keyword: small
+PASS Can set 'font-size' to the 'medium' keyword: medium
+PASS Can set 'font-size' to the 'large' keyword: large
+PASS Can set 'font-size' to the 'x-large' keyword: x-large
+PASS Can set 'font-size' to the 'xx-large' keyword: xx-large
+PASS Can set 'font-size' to the 'larger' keyword: larger
+PASS Can set 'font-size' to the 'smaller' keyword: smaller
+PASS Can set 'font-size' to a length: 0px
+PASS Can set 'font-size' to a length: -3.14em
+PASS Can set 'font-size' to a length: 3.14cm
+FAIL Can set 'font-size' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'font-size' to a percent: 0%
+PASS Can set 'font-size' to a percent: -3.14%
+PASS Can set 'font-size' to a percent: 3.14%
+FAIL Can set 'font-size' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
 PASS Setting 'font-size' to a time throws TypeError
 PASS Setting 'font-size' to an angle throws TypeError
 PASS Setting 'font-size' to a flexible length throws TypeError
 FAIL Setting 'font-size' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'font-size' to a URL throws TypeError
 PASS Setting 'font-size' to a transform throws TypeError
-FAIL Can set 'font-min-size' to CSS-wide keywords Invalid property font-min-size
-FAIL Can set 'font-min-size' to var() references Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'xx-small' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'x-small' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'small' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'medium' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'large' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'x-large' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'xx-large' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'larger' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to the 'smaller' keyword Invalid property font-min-size
-FAIL Can set 'font-min-size' to a length Invalid property font-min-size
-FAIL Can set 'font-min-size' to a percent Invalid property font-min-size
+FAIL Can set 'font-min-size' to CSS-wide keywords: initial Invalid property font-min-size
+FAIL Can set 'font-min-size' to CSS-wide keywords: inherit Invalid property font-min-size
+FAIL Can set 'font-min-size' to CSS-wide keywords: unset Invalid property font-min-size
+FAIL Can set 'font-min-size' to CSS-wide keywords: revert Invalid property font-min-size
+FAIL Can set 'font-min-size' to var() references:  var(--A) Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'xx-small' keyword: xx-small Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'x-small' keyword: x-small Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'small' keyword: small Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'medium' keyword: medium Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'large' keyword: large Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'x-large' keyword: x-large Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'xx-large' keyword: xx-large Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'larger' keyword: larger Invalid property font-min-size
+FAIL Can set 'font-min-size' to the 'smaller' keyword: smaller Invalid property font-min-size
+FAIL Can set 'font-min-size' to a length: 0px Invalid property font-min-size
+FAIL Can set 'font-min-size' to a length: -3.14em Invalid property font-min-size
+FAIL Can set 'font-min-size' to a length: 3.14cm Invalid property font-min-size
+FAIL Can set 'font-min-size' to a length: calc(0px + 0em) Invalid property font-min-size
+FAIL Can set 'font-min-size' to a percent: 0% Invalid property font-min-size
+FAIL Can set 'font-min-size' to a percent: -3.14% Invalid property font-min-size
+FAIL Can set 'font-min-size' to a percent: 3.14% Invalid property font-min-size
+FAIL Can set 'font-min-size' to a percent: calc(0% + 0%) Invalid property font-min-size
 PASS Setting 'font-min-size' to a time throws TypeError
 PASS Setting 'font-min-size' to an angle throws TypeError
 PASS Setting 'font-min-size' to a flexible length throws TypeError
 PASS Setting 'font-min-size' to a number throws TypeError
 PASS Setting 'font-min-size' to a URL throws TypeError
 PASS Setting 'font-min-size' to a transform throws TypeError
-FAIL Can set 'font-max-size' to CSS-wide keywords Invalid property font-max-size
-FAIL Can set 'font-max-size' to var() references Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'infinity' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'xx-small' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'x-small' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'small' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'medium' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'large' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'x-large' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'xx-large' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'larger' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to the 'smaller' keyword Invalid property font-max-size
-FAIL Can set 'font-max-size' to a length Invalid property font-max-size
-FAIL Can set 'font-max-size' to a percent Invalid property font-max-size
+FAIL Can set 'font-max-size' to CSS-wide keywords: initial Invalid property font-max-size
+FAIL Can set 'font-max-size' to CSS-wide keywords: inherit Invalid property font-max-size
+FAIL Can set 'font-max-size' to CSS-wide keywords: unset Invalid property font-max-size
+FAIL Can set 'font-max-size' to CSS-wide keywords: revert Invalid property font-max-size
+FAIL Can set 'font-max-size' to var() references:  var(--A) Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'infinity' keyword: infinity Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'xx-small' keyword: xx-small Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'x-small' keyword: x-small Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'small' keyword: small Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'medium' keyword: medium Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'large' keyword: large Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'x-large' keyword: x-large Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'xx-large' keyword: xx-large Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'larger' keyword: larger Invalid property font-max-size
+FAIL Can set 'font-max-size' to the 'smaller' keyword: smaller Invalid property font-max-size
+FAIL Can set 'font-max-size' to a length: 0px Invalid property font-max-size
+FAIL Can set 'font-max-size' to a length: -3.14em Invalid property font-max-size
+FAIL Can set 'font-max-size' to a length: 3.14cm Invalid property font-max-size
+FAIL Can set 'font-max-size' to a length: calc(0px + 0em) Invalid property font-max-size
+FAIL Can set 'font-max-size' to a percent: 0% Invalid property font-max-size
+FAIL Can set 'font-max-size' to a percent: -3.14% Invalid property font-max-size
+FAIL Can set 'font-max-size' to a percent: 3.14% Invalid property font-max-size
+FAIL Can set 'font-max-size' to a percent: calc(0% + 0%) Invalid property font-max-size
 PASS Setting 'font-max-size' to a time throws TypeError
 PASS Setting 'font-max-size' to an angle throws TypeError
 PASS Setting 'font-max-size' to a flexible length throws TypeError

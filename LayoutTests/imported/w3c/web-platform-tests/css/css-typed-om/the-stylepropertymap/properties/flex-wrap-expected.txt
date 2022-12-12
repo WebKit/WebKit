@@ -1,9 +1,12 @@
 
-PASS Can set 'flex-wrap' to CSS-wide keywords
-FAIL Can set 'flex-wrap' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'flex-wrap' to the 'nowrap' keyword
-PASS Can set 'flex-wrap' to the 'wrap' keyword
-PASS Can set 'flex-wrap' to the 'wrap-reverse' keyword
+PASS Can set 'flex-wrap' to CSS-wide keywords: initial
+PASS Can set 'flex-wrap' to CSS-wide keywords: inherit
+PASS Can set 'flex-wrap' to CSS-wide keywords: unset
+PASS Can set 'flex-wrap' to CSS-wide keywords: revert
+FAIL Can set 'flex-wrap' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'flex-wrap' to the 'nowrap' keyword: nowrap
+PASS Can set 'flex-wrap' to the 'wrap' keyword: wrap
+PASS Can set 'flex-wrap' to the 'wrap-reverse' keyword: wrap-reverse
 PASS Setting 'flex-wrap' to a length throws TypeError
 PASS Setting 'flex-wrap' to a percent throws TypeError
 PASS Setting 'flex-wrap' to a time throws TypeError

@@ -1,8 +1,11 @@
 
-PASS Can set 'caret-color' to CSS-wide keywords
-FAIL Can set 'caret-color' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'caret-color' to the 'currentcolor' keyword
-PASS Can set 'caret-color' to the 'auto' keyword
+PASS Can set 'caret-color' to CSS-wide keywords: initial
+PASS Can set 'caret-color' to CSS-wide keywords: inherit
+PASS Can set 'caret-color' to CSS-wide keywords: unset
+PASS Can set 'caret-color' to CSS-wide keywords: revert
+FAIL Can set 'caret-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'caret-color' to the 'currentcolor' keyword: currentcolor
+PASS Can set 'caret-color' to the 'auto' keyword: auto
 PASS Setting 'caret-color' to a length throws TypeError
 PASS Setting 'caret-color' to a percent throws TypeError
 PASS Setting 'caret-color' to a time throws TypeError

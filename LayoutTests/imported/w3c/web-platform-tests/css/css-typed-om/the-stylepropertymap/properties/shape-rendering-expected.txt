@@ -1,10 +1,13 @@
 
-PASS Can set 'shape-rendering' to CSS-wide keywords
-FAIL Can set 'shape-rendering' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'shape-rendering' to the 'auto' keyword
-FAIL Can set 'shape-rendering' to the 'optimizespeed' keyword assert_equals: expected "optimizespeed" but got "optimizeSpeed"
-PASS Can set 'shape-rendering' to the 'crispedges' keyword
-FAIL Can set 'shape-rendering' to the 'geometricprecision' keyword assert_equals: expected "geometricprecision" but got "geometricPrecision"
+PASS Can set 'shape-rendering' to CSS-wide keywords: initial
+PASS Can set 'shape-rendering' to CSS-wide keywords: inherit
+PASS Can set 'shape-rendering' to CSS-wide keywords: unset
+PASS Can set 'shape-rendering' to CSS-wide keywords: revert
+FAIL Can set 'shape-rendering' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'shape-rendering' to the 'auto' keyword: auto
+FAIL Can set 'shape-rendering' to the 'optimizespeed' keyword: optimizespeed assert_equals: expected "optimizespeed" but got "optimizeSpeed"
+PASS Can set 'shape-rendering' to the 'crispedges' keyword: crispedges
+FAIL Can set 'shape-rendering' to the 'geometricprecision' keyword: geometricprecision assert_equals: expected "geometricprecision" but got "geometricPrecision"
 PASS Setting 'shape-rendering' to a length throws TypeError
 PASS Setting 'shape-rendering' to a percent throws TypeError
 PASS Setting 'shape-rendering' to a time throws TypeError
