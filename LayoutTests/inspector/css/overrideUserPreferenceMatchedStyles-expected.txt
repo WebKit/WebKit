@@ -1,0 +1,19 @@
+Tests for matched styles when forcing media features with CSSManager.overrideUserPreference().
+
+
+== Running test suite: CSSManager.overrideUserPreference
+-- Running test case: Override PrefersReducedMotion: Reduce
+Override preference PrefersReducedMotion to Reduce
+PASS: --test-prefers-reduced-motion value matches reduce
+Clear override for PrefersReducedMotion
+
+-- Running test case: Override PrefersContrast: More
+Override preference PrefersContrast to More
+PASS: --test-prefers-contrast value matches more
+Clear override for PrefersContrast
+
+-- Running test case: PrefersColorScheme.Dark
+Override preference PrefersColorScheme to Dark
+PASS: --test-prefers-color-scheme value matches dark
+Clear override for PrefersColorScheme
+

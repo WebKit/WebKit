@@ -250,13 +250,13 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, con
     return value;
 }
 
-bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax, const CSSParserTokenRange& tokens, const CSSParserContext& context)
+bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSPropertySyntax& syntax, const CSSParserTokenRange& tokens, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr);
     return parser.canParseTypedCustomPropertyValue(syntax);
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const CSSParserTokenRange& tokens, Style::BuilderState& builderState, const CSSParserContext& context)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax& syntax, const CSSParserTokenRange& tokens, Style::BuilderState& builderState, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr, false);
     RefPtr<CSSCustomPropertyValue> value = parser.parseTypedCustomPropertyValue(name, syntax, builderState);
@@ -265,7 +265,7 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     return value;
 }
 
-void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const String& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange& tokens, const CSSParserContext& context)
+void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange& tokens, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr);
     parser.collectParsedCustomPropertyValueDependencies(syntax, isRoot, dependencies);
@@ -326,9 +326,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     return CSSPropertyParsing::parse(m_range, property, currentShorthand, m_context);
 }
 
-std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::parseCustomPropertyValueWithSyntaxDefinition(const CSSPropertySyntax::Definition& syntaxDefinition)
+std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::consumeCustomPropertyValueWithSyntax(const CSSPropertySyntax& syntax)
 {
-    ASSERT(!CSSPropertySyntax::isUniversal(syntaxDefinition));
+    ASSERT(!syntax.isUniversal());
 
     m_range.consumeWhitespace();
 
@@ -336,9 +336,6 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::parseCus
 
     auto tryConsumeComponent = [&](const auto& component) -> RefPtr<CSSValue> {
         switch (component.type) {
-        case CSSPropertySyntax::Type::Universal:
-            ASSERT_NOT_REACHED();
-            return nullptr;
         case CSSPropertySyntax::Type::Length:
             return consumeLength(m_range, m_context.mode, ValueRange::All);
         case CSSPropertySyntax::Type::LengthPercentage:
@@ -375,7 +372,7 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::parseCus
         return nullptr;
     };
 
-    for (auto& component : syntaxDefinition) {
+    for (auto& component : syntax.definition) {
         if (auto value = tryConsumeComponent(component)) {
             if (!m_range.atEnd())
                 break;
@@ -385,29 +382,21 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::parseCus
     return { nullptr, CSSPropertySyntax::Type::Unknown };
 }
 
-bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
+bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSPropertySyntax& syntax)
 {
-    auto syntaxDefinition = CSSPropertySyntax::parse(syntax);
-    if (syntaxDefinition.isEmpty())
-        return false;
-
-    if (CSSPropertySyntax::isUniversal(syntaxDefinition))
+    if (syntax.isUniversal())
         return true;
 
-    auto [value, syntaxType] = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
     return value && m_range.atEnd();
 }
 
-void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const String& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies)
+void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies)
 {
-    auto syntaxDefinition = CSSPropertySyntax::parse(syntax);
-    if (syntaxDefinition.isEmpty())
+    if (syntax.isUniversal())
         return;
 
-    if (CSSPropertySyntax::isUniversal(syntaxDefinition))
-        return;
-
-    auto [value, syntaxType] = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
 
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
         primitiveValue->collectDirectComputationalDependencies(dependencies);
@@ -416,29 +405,22 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const Strin
     }
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, Style::BuilderState& builderState)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax& syntax, Style::BuilderState& builderState)
 {
-    auto syntaxDefinition = CSSPropertySyntax::parse(syntax);
-    if (syntaxDefinition.isEmpty())
-        return nullptr;
-
-    if (CSSPropertySyntax::isUniversal(syntaxDefinition)) {
+    if (syntax.isUniversal()) {
         auto propertyValue = CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(m_range));
         while (!m_range.atEnd())
             m_range.consume();
         return propertyValue;
     }
 
-    auto [value, syntaxType] = parseCustomPropertyValueWithSyntaxDefinition(syntaxDefinition);
+    auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
     if (!value)
         return nullptr;
 
     auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
 
     switch (syntaxType) {
-    case CSSPropertySyntax::Type::Universal:
-        ASSERT_NOT_REACHED();
-        return nullptr;
     case CSSPropertySyntax::Type::LengthPercentage:
     case CSSPropertySyntax::Type::Length: {
         auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);

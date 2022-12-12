@@ -67,6 +67,12 @@
         _didCommitNavigation(webView, navigation);
 }
 
+- (void)_webView:(WKWebView *)webView didCommitLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
+{
+    if (_didCommitLoadWithRequestInFrame)
+        _didCommitLoadWithRequestInFrame(webView, request, frame);
+}
+
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     if (_didFailProvisionalNavigation)

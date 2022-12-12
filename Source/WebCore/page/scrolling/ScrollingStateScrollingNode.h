@@ -76,7 +76,7 @@ public:
 #endif
 
     const RequestedKeyboardScrollData& keyboardScrollData() const { return m_keyboardScrollData; }
-    WEBCORE_EXPORT void setKeyboardScrollData(RequestedKeyboardScrollData&&);
+    WEBCORE_EXPORT void setKeyboardScrollData(const RequestedKeyboardScrollData&);
 
     const RequestedScrollData& requestedScrollData() const { return m_requestedScrollData; }
     WEBCORE_EXPORT void setRequestedScrollData(const RequestedScrollData&);

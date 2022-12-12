@@ -46,6 +46,10 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
     if (!isCustomPropertyName(descriptor.name))
         return Exception { SyntaxError, "The name of this property is not a custom property name."_s };
 
+    auto syntax = CSSPropertySyntax::parse(descriptor.syntax);
+    if (!syntax)
+        return Exception { SyntaxError, "Invalid property syntax definition."_s };
+
     RefPtr<CSSCustomPropertyValue> initialValue;
     if (!descriptor.initialValue.isEmpty()) {
         CSSTokenizer tokenizer(descriptor.initialValue);
@@ -56,18 +60,17 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         auto style = styleResolver->defaultStyleForElement(nullptr);
 
         HashSet<CSSPropertyID> dependencies;
-        CSSPropertyParser::collectParsedCustomPropertyValueDependencies(descriptor.syntax, false, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
+        CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, false, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
 
         if (!dependencies.isEmpty())
             return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
-
 
         Style::MatchResult matchResult;
 
         auto parentStyle = RenderStyle::clone(*style);
         Style::Builder dummyBuilder(*style, { document, parentStyle }, matchResult, { });
 
-        initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), dummyBuilder.state(), { document });
+        initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, *syntax, tokenizer.tokenRange(), dummyBuilder.state(), { document });
 
         if (!initialValue || !initialValue->isResolved())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };
@@ -79,8 +82,8 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
             return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
     }
 
-    CSSRegisteredCustomProperty property { descriptor.name, descriptor.syntax, descriptor.inherits, WTFMove(initialValue) };
-    if (!document.registerCSSProperty(WTFMove(property)))
+    CSSRegisteredCustomProperty property { AtomString { descriptor.name }, *syntax, descriptor.inherits, WTFMove(initialValue) };
+    if (!document.registerCSSCustomProperty(WTFMove(property)))
         return Exception { InvalidModificationError, "This property has already been registered."_s };
 
     document.styleScope().didChangeStyleSheetEnvironment();

@@ -41,6 +41,7 @@
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
+#include <WebCore/TimingFunction.h>
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 
@@ -509,9 +510,92 @@ std::optional<NullableSoftLinkedMember> ArgumentCoder<NullableSoftLinkedMember>:
     };
 }
 
+enum class WebCore_TimingFunction_Subclass : uint8_t {
+    LinearTimingFunction,
+    CubicBezierTimingFunction,
+    StepsTimingFunction,
+    SpringTimingFunction
+};
+
+void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebCore::TimingFunction& instance)
+{
+    if (auto* subclass = dynamicDowncast<WebCore::LinearTimingFunction>(instance)) {
+        encoder << WebCore_TimingFunction_Subclass::LinearTimingFunction;
+        encoder << *subclass;
+    }
+    if (auto* subclass = dynamicDowncast<WebCore::CubicBezierTimingFunction>(instance)) {
+        encoder << WebCore_TimingFunction_Subclass::CubicBezierTimingFunction;
+        encoder << *subclass;
+    }
+    if (auto* subclass = dynamicDowncast<WebCore::StepsTimingFunction>(instance)) {
+        encoder << WebCore_TimingFunction_Subclass::StepsTimingFunction;
+        encoder << *subclass;
+    }
+    if (auto* subclass = dynamicDowncast<WebCore::SpringTimingFunction>(instance)) {
+        encoder << WebCore_TimingFunction_Subclass::SpringTimingFunction;
+        encoder << *subclass;
+    }
+}
+
+std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
+{
+    std::optional<WebCore_TimingFunction_Subclass> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    if (type == WebCore_TimingFunction_Subclass::LinearTimingFunction) {
+        std::optional<Ref<WebCore::LinearTimingFunction>> result;
+        decoder >> result;
+        if (!result)
+            return std::nullopt;
+        return WTFMove(*result);
+    }
+
+    if (type == WebCore_TimingFunction_Subclass::CubicBezierTimingFunction) {
+        std::optional<Ref<WebCore::CubicBezierTimingFunction>> result;
+        decoder >> result;
+        if (!result)
+            return std::nullopt;
+        return WTFMove(*result);
+    }
+
+    if (type == WebCore_TimingFunction_Subclass::StepsTimingFunction) {
+        std::optional<Ref<WebCore::StepsTimingFunction>> result;
+        decoder >> result;
+        if (!result)
+            return std::nullopt;
+        return WTFMove(*result);
+    }
+
+    if (type == WebCore_TimingFunction_Subclass::SpringTimingFunction) {
+        std::optional<Ref<WebCore::SpringTimingFunction>> result;
+        decoder >> result;
+        if (!result)
+            return std::nullopt;
+        return WTFMove(*result);
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
 } // namespace IPC
 
 namespace WTF {
+
+template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(uint8_t value)
+{
+    switch (static_cast<IPC::WebCore_TimingFunction_Subclass>(value)) {
+    case IPC::WebCore_TimingFunction_Subclass::LinearTimingFunction:
+    case IPC::WebCore_TimingFunction_Subclass::CubicBezierTimingFunction:
+    case IPC::WebCore_TimingFunction_Subclass::StepsTimingFunction:
+    case IPC::WebCore_TimingFunction_Subclass::SpringTimingFunction:
+        return true;
+    default:
+        return false;
+    }
+}
 
 template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t value)
 {

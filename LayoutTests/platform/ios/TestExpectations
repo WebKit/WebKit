@@ -3787,7 +3787,6 @@ imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOn
 
 # AVIF tests
 webkit.org/b/247831 fast/images/avif-image-decoding.html [ Failure ]
-webkit.org/b/247831 fast/images/avif-as-image.html [ ImageOnlyFailure ]
 webkit.org/b/247831 fast/images/animated-avif.html [ Timeout ]
 
 # Screen Orientation API doesn't support nested frames yet

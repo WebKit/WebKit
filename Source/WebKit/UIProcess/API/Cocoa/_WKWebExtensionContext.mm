@@ -129,6 +129,16 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
     _webExtensionContext->setUniqueIdentifier(uniqueIdentifier);
 }
 
+- (BOOL)isInspectable
+{
+    return _webExtensionContext->isInspectable();
+}
+
+- (void)setInspectable:(BOOL)inspectable
+{
+    _webExtensionContext->setInspectable(inspectable);
+}
+
 static inline WallTime toImpl(NSDate *date)
 {
     return date ? WebKit::toImpl(date) : WebKit::toImpl(NSDate.distantFuture);
@@ -510,6 +520,15 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 }
 
 - (void)setUniqueIdentifier:(NSString *)uniqueIdentifier
+{
+}
+
+- (BOOL)isInspectable
+{
+    return NO;
+}
+
+- (void)setInspectable:(BOOL)inspectable
 {
 }
 

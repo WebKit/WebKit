@@ -54,6 +54,7 @@ class StreamConnectionWorkQueue;
 class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
+    using AsyncReplyID = Connection::AsyncReplyID;
     struct Handle {
         Connection::Handle outOfStreamConnection;
         StreamConnectionBuffer::Handle buffer;
@@ -81,6 +82,9 @@ public:
 
     template<typename T, typename... Arguments>
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
+
+    template<typename T, typename... Arguments>
+    void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
@@ -157,6 +161,14 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
     }
     auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
 
+    (encoder.get() << ... << std::forward<Arguments>(arguments));
+    m_connection->sendSyncReply(WTFMove(encoder));
+}
+
+template<typename T, typename... Arguments>
+void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
+{
+    auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
     (encoder.get() << ... << std::forward<Arguments>(arguments));
     m_connection->sendSyncReply(WTFMove(encoder));
 }

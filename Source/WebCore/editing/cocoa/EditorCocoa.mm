@@ -80,7 +80,7 @@ String Editor::selectionInHTMLFormat()
 {
     if (ImageOverlay::isInsideOverlay(m_document.selection().selection()))
         return { };
-    return serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes);
+    return serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

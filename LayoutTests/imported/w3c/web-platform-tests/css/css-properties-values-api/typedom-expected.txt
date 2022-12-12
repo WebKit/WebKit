@@ -193,8 +193,8 @@ PASS CSSUnitValue rejected by set() for syntax <length># [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <length># [styleMap]
 PASS Appending a string to * is not allowed [attributeStyleMap]
 PASS Appending a string to * is not allowed [styleMap]
-FAIL Appending a string to foo+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to foo+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
+FAIL Appending a string to foo+ is not allowed [attributeStyleMap] Invalid property syntax definition.
+FAIL Appending a string to foo+ is not allowed [styleMap] Invalid property syntax definition.
 PASS Appending a string to <angle>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <angle>+ is not allowed [styleMap]
 PASS Appending a string to <color>+ is not allowed [attributeStyleMap]
@@ -227,8 +227,8 @@ PASS Appending a string to <length># is not allowed [attributeStyleMap]
 PASS Appending a string to <length># is not allowed [styleMap]
 PASS Appending a CSSKeywordValue to * is not allowed [attributeStyleMap]
 PASS Appending a CSSKeywordValue to * is not allowed [styleMap]
-FAIL Appending a CSSKeywordValue to foo+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSKeywordValue to foo+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
+FAIL Appending a CSSKeywordValue to foo+ is not allowed [attributeStyleMap] Invalid property syntax definition.
+FAIL Appending a CSSKeywordValue to foo+ is not allowed [styleMap] Invalid property syntax definition.
 PASS Appending a CSSUnitValue to <angle>+ is not allowed [attributeStyleMap]
 PASS Appending a CSSUnitValue to <angle>+ is not allowed [styleMap]
 PASS Appending a CSSKeywordValue to <custom-ident>+ is not allowed [attributeStyleMap]

@@ -28,3 +28,16 @@ Removing PrefersContrast override
 PASS: (prefers-contrast) media query does not match.
 PASS: --test-prefers-contrast: no-preference
 
+-- Running test case: Page.overrideUserPreference.PrefersColorScheme
+PASS: (prefers-color-scheme: dark) media query does not match.
+PASS: --test-prefers-color-scheme: light
+Overriding PrefersColorScheme value to Dark
+PASS: (prefers-color-scheme: dark) media query matches.
+PASS: --test-prefers-color-scheme: dark
+Overriding PrefersColorScheme value to Light
+PASS: (prefers-color-scheme: dark) media query does not match.
+PASS: --test-prefers-color-scheme: light
+Removing PrefersColorScheme override
+PASS: (prefers-color-scheme: dark) media query does not match.
+PASS: --test-prefers-color-scheme: light
+

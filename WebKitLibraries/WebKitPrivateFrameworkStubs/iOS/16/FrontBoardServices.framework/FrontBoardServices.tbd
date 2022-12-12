@@ -1,6 +1,6 @@
 --- !tapi-tbd-v3
 archs:           [ x86_64, arm64, arm64e ]
-install-name:    '/System/Library/PrivateFrameworks/FrontBoardServices.framework/BackBoardServices'
+install-name:    '/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices'
 objc-constraint: none
 platform: ios
 exports:

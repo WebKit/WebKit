@@ -101,3 +101,10 @@ struct NullableSoftLinkedMember {
     [Nullable, SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> firstMember;
     [SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> secondMember;
 }
+
+[RefCounted] class WebCore::TimingFunction subclasses {
+  WebCore::LinearTimingFunction,
+  WebCore::CubicBezierTimingFunction,
+  WebCore::StepsTimingFunction,
+  WebCore::SpringTimingFunction
+}

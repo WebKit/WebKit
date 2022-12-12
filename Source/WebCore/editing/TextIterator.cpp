@@ -425,6 +425,11 @@ static inline bool hasDisplayContents(Node& node)
     return is<Element>(node) && downcast<Element>(node).hasDisplayContents();
 }
 
+static bool isRendererVisible(const RenderObject* renderer, TextIteratorBehaviors behaviors)
+{
+    return renderer && !(renderer->style().effectiveUserSelect() == UserSelect::None && behaviors.contains(TextIteratorBehavior::IgnoresUserSelectNone));
+}
+
 void TextIterator::advance()
 {
     ASSERT(!atEnd());
@@ -470,7 +475,7 @@ void TextIterator::advance()
         
         auto* renderer = m_node->renderer();
         if (!m_handledNode) {
-            if (!renderer) {
+            if (!isRendererVisible(renderer, m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*m_node);
             } else {
@@ -498,7 +503,7 @@ void TextIterator::advance()
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || isDescendantOf(m_behaviors, *m_endContainer, *parentNode))
                         return;
-                    bool haveRenderer = m_node->renderer();
+                    bool haveRenderer = isRendererVisible(m_node->renderer(), m_behaviors);
                     Node* exitedNode = m_node;
                     m_node = parentNode;
                     m_fullyClippedStack.pop();
@@ -511,7 +516,7 @@ void TextIterator::advance()
                         return;
                     }
                     next = nextSibling(m_behaviors, *m_node);
-                    if (next && m_node->renderer())
+                    if (next && isRendererVisible(m_node->renderer(), m_behaviors))
                         exitNode(m_node);
                 }
             }

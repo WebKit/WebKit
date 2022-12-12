@@ -35,6 +35,7 @@ namespace JSC { namespace B3 {
 
 class Value;
 
+#if ENABLE(WEBASSEMBLY)
 struct ArgumentLocation {
     ArgumentLocation(Wasm::ValueLocation loc, Width width)
         : location(loc)
@@ -47,6 +48,7 @@ struct ArgumentLocation {
     Wasm::ValueLocation location;
     Width width;
 };
+#endif
 
 class ConstrainedValue {
 public:
@@ -66,11 +68,13 @@ public:
     {
     }
 
+#if ENABLE(WEBASSEMBLY)
     ConstrainedValue(Value* value, const Wasm::ArgumentLocation& loc)
         : m_value(value)
         , m_rep(loc.location)
     {
     }
+#endif
 
     explicit operator bool() const { return m_value || m_rep; }
 

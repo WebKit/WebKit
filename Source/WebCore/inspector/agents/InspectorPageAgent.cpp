@@ -358,9 +358,6 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
     stopwatch.reset();
     stopwatch.start();
 
-#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
-    defaultAppearanceDidChange(m_inspectedPage.defaultUseDarkAppearance());
-#endif
     defaultUserPreferencesDidChange();
 
     return { };
@@ -376,9 +373,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 #endif
     overrideUserAgent(nullString());
     setEmulatedMedia(emptyString());
-#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
-    setForcedAppearance(std::nullopt);
-#endif
+    overridePrefersColorScheme(std::nullopt);
 
     auto& inspectedPageSettings = m_inspectedPage.settings();
     inspectedPageSettings.setAuthorAndUserStylesEnabledInspectorOverride(std::nullopt);
@@ -513,6 +508,10 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserPreference(Protoco
     case Protocol::Page::UserPreferenceName::PrefersContrast:
         overridePrefersContrast(WTFMove(value));
         return { };
+
+    case Protocol::Page::UserPreferenceName::PrefersColorScheme:
+        overridePrefersColorScheme(WTFMove(value));
+        return { };
     }
 
     ASSERT_NOT_REACHED();
@@ -543,6 +542,20 @@ void InspectorPageAgent::overridePrefersContrast(std::optional<Protocol::Page::U
 
     m_inspectedPage.settings().setForcedPrefersContrastAccessibilityValue(forcedValue);
     m_inspectedPage.accessibilitySettingsDidChange();
+}
+
+void InspectorPageAgent::overridePrefersColorScheme(std::optional<Protocol::Page::UserPreferenceValue>&& value)
+{
+#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
+    if (!value)
+        m_inspectedPage.setUseDarkAppearanceOverride(std::nullopt);
+    else if (value == Protocol::Page::UserPreferenceValue::Light)
+        m_inspectedPage.setUseDarkAppearanceOverride(false);
+    else if (value == Protocol::Page::UserPreferenceValue::Dark)
+        m_inspectedPage.setUseDarkAppearanceOverride(true);
+#else
+    UNUSED_PARAM(value);
+#endif
 }
 
 static Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
@@ -978,7 +991,7 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
         .setValue(prefersReducedMotion ? Protocol::Page::UserPreferenceValue::Reduce : Protocol::Page::UserPreferenceValue::NoPreference)
         .release();
 
-    defaultUserPreferences->addItem(prefersReducedMotionUserPreference);
+    defaultUserPreferences->addItem(WTFMove(prefersReducedMotionUserPreference));
 
 #if USE(NEW_THEME)
     bool prefersContrast = Theme::singleton().userPrefersContrast();
@@ -991,15 +1004,24 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
         .setValue(prefersContrast ? Protocol::Page::UserPreferenceValue::More : Protocol::Page::UserPreferenceValue::NoPreference)
         .release();
 
-    defaultUserPreferences->addItem(prefersContrastUserPreference);
+    defaultUserPreferences->addItem(WTFMove(prefersContrastUserPreference));
+
+#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
+    auto prefersColorSchemeUserPreference = Protocol::Page::UserPreference::create()
+        .setName(Protocol::Page::UserPreferenceName::PrefersColorScheme)
+        .setValue(m_inspectedPage.defaultUseDarkAppearance() ? Protocol::Page::UserPreferenceValue::Dark : Protocol::Page::UserPreferenceValue::Light)
+        .release();
+
+    defaultUserPreferences->addItem(WTFMove(prefersColorSchemeUserPreference));
+#endif
 
     m_frontendDispatcher->defaultUserPreferencesDidChange(WTFMove(defaultUserPreferences));
 }
 
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
-void InspectorPageAgent::defaultAppearanceDidChange(bool useDarkAppearance)
+void InspectorPageAgent::defaultAppearanceDidChange()
 {
-    m_frontendDispatcher->defaultAppearanceDidChange(useDarkAppearance ? Protocol::Page::Appearance::Dark : Protocol::Page::Appearance::Light);
+    defaultUserPreferencesDidChange();
 }
 #endif
 
@@ -1141,29 +1163,6 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(const String&
 
     return { };
 }
-
-#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
-Protocol::ErrorStringOr<void> InspectorPageAgent::setForcedAppearance(std::optional<Protocol::Page::Appearance>&& appearance)
-{
-    if (!appearance) {
-        m_inspectedPage.setUseDarkAppearanceOverride(std::nullopt);
-        return { };
-    }
-
-    switch (*appearance) {
-    case Protocol::Page::Appearance::Light:
-        m_inspectedPage.setUseDarkAppearanceOverride(false);
-        return { };
-
-    case Protocol::Page::Appearance::Dark:
-        m_inspectedPage.setUseDarkAppearanceOverride(true);
-        return { };
-    }
-
-    ASSERT_NOT_REACHED();
-    return { };
-}
-#endif
 
 void InspectorPageAgent::applyUserAgentOverride(String& userAgent)
 {

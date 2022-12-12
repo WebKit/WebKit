@@ -37,8 +37,17 @@ struct KeyboardScroll {
     FloatSize maximumVelocity; // Points per second.
     FloatSize force;
 
-    ScrollGranularity granularity;
-    ScrollDirection direction;
+    ScrollGranularity granularity { ScrollGranularity::Line };
+    ScrollDirection direction { ScrollDirection::ScrollUp };
+
+    bool operator==(const KeyboardScroll& other) const
+    {
+        return offset == other.offset
+            && maximumVelocity == other.maximumVelocity
+            && force == other.force
+            && granularity == other.granularity
+            && direction == other.direction;
+    }
 };
 
 struct KeyboardScrollParameters {
