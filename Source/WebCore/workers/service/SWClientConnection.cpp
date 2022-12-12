@@ -130,17 +130,9 @@ void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContext
         return;
     }
 
-    bool wasDispatched = ScriptExecutionContext::postTaskTo(destinationContextIdentifier, [message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()](auto& context) mutable {
+    ScriptExecutionContext::postTaskTo(destinationContextIdentifier, [message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()](auto& context) mutable {
         postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
     });
-    if (wasDispatched)
-        return;
-
-    if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(destinationContextIdentifier)) {
-        sharedWorker->thread().runLoop().postTask([message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& context) mutable {
-            postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
-        });
-    }
 }
 
 static void forAllWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
