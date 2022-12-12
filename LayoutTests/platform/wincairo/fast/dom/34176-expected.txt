@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1574
+layer at (0,0) size 785x1564
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1574
-  RenderBlock {HTML} at (0,0) size 785x1574
-    RenderBody {BODY} at (8,16) size 769x1542
+layer at (0,0) size 785x1564
+  RenderBlock {HTML} at (0,0) size 785x1564
+    RenderBody {BODY} at (8,16) size 769x1532
       RenderBlock {P} at (0,0) size 769x60
         RenderText {#text} at (55,0) size 743x59
           text run at (55,0) width 382: "Test rendering of 3 text runs -- TextRun1 TextRun2 TextRun3, "
@@ -201,20 +201,20 @@ layer at (0,0) size 785x1574
       RenderBlock (anonymous) at (0,778) size 769x0
         RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,786) size 769x756
+      RenderBlock (anonymous) at (0,786) size 769x746
         RenderBlock {P} at (0,18) size 769x20
           RenderText {#text} at (107,0) size 662x19
             text run at (107,0) width 662: "Text in <img>, <href>, <em>, <tr>. The following English text should all display as \"This is a Test\"."
-        RenderBlock {DIV} at (0,54) size 769x25 [bgcolor=#FF0000]
-          RenderText {#text} at (679,5) size 60x19
-            text run at (679,5) width 60: "This is a "
-          RenderInline {SPAN} at (0,0) size 110x19
-            RenderInline {A} at (0,0) size 110x19 [color=#551A8B]
-              RenderText {#text} at (739,5) size 30x19
-                text run at (739,5) width 30: "Test"
-              RenderInline {SPAN} at (0,0) size 20x19
-                RenderImage {IMG} at (659,0) size 20x20
-        RenderBlock {DIV} at (0,79) size 769x20 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (0,54) size 769x20 [bgcolor=#FF0000]
+          RenderText {#text} at (679,0) size 60x19
+            text run at (679,0) width 60: "This is a "
+          RenderInline {SPAN} at (0,0) size 94x19
+            RenderInline {A} at (0,0) size 94x19 [color=#551A8B]
+              RenderText {#text} at (739,0) size 30x19
+                text run at (739,0) width 30: "Test"
+              RenderInline {SPAN} at (0,0) size 4x19
+                RenderImage {IMG} at (675,11) size 4x4
+        RenderBlock {DIV} at (0,74) size 769x20 [bgcolor=#FF0000]
           RenderText {#text} at (679,0) size 60x19
             text run at (679,0) width 60: "This is a "
           RenderInline {SPAN} at (0,0) size 117x19
@@ -225,7 +225,7 @@ layer at (0,0) size 785x1574
               RenderInline {SPAN} at (0,0) size 23x19
                 RenderText {#text} at (652,0) size 23x19
                   text run at (652,0) width 23 RTL: "\x{5E9}\x{5E0}\x{5D1}"
-        RenderBlock {DIV} at (0,99) size 769x20 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (0,94) size 769x20 [bgcolor=#FF0000]
           RenderText {#text} at (681,0) size 60x19
             text run at (681,0) width 60: "This is a "
           RenderInline {SPAN} at (0,0) size 28x19
@@ -233,16 +233,16 @@ layer at (0,0) size 785x1574
               RenderText {#text} at (741,0) size 28x19
                 text run at (741,0) width 28: "Test"
               RenderInline {A} at (0,0) size 0x19 [color=#551A8B]
-        RenderBlock {DIV} at (0,119) size 769x25 [bgcolor=#FF0000]
-          RenderText {#text} at (681,5) size 60x19
-            text run at (681,5) width 60: "This is a "
-          RenderInline {SPAN} at (0,0) size 108x19
-            RenderInline {EM} at (0,0) size 108x19
-              RenderText {#text} at (741,5) size 28x19
-                text run at (741,5) width 28: "Test"
-              RenderInline {SPAN} at (0,0) size 20x19
-                RenderImage {IMG} at (661,0) size 20x20
-        RenderBlock {DIV} at (0,144) size 769x20
+        RenderBlock {DIV} at (0,114) size 769x20 [bgcolor=#FF0000]
+          RenderText {#text} at (681,0) size 60x19
+            text run at (681,0) width 60: "This is a "
+          RenderInline {SPAN} at (0,0) size 92x19
+            RenderInline {EM} at (0,0) size 92x19
+              RenderText {#text} at (741,0) size 28x19
+                text run at (741,0) width 28: "Test"
+              RenderInline {SPAN} at (0,0) size 4x19
+                RenderImage {IMG} at (677,11) size 4x4
+        RenderBlock {DIV} at (0,134) size 769x20
           RenderText {#text} at (639,0) size 60x19
             text run at (639,0) width 60: "This is a "
           RenderInline {SPAN} at (0,0) size 70x19
@@ -252,7 +252,7 @@ layer at (0,0) size 785x1574
               RenderInline {SPAN} at (0,0) size 36x19
                 RenderText {#text} at (733,0) size 36x19
                   text run at (733,0) width 36: "again"
-        RenderBlock {DIV} at (0,164) size 769x46
+        RenderBlock {DIV} at (0,154) size 769x46
           RenderBlock (anonymous) at (0,0) size 769x20
             RenderText {#text} at (681,0) size 60x19
               text run at (681,0) width 60: "This is a "
@@ -270,7 +270,7 @@ layer at (0,0) size 785x1574
           RenderBlock (anonymous) at (0,46) size 769x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {EM} at (0,0) size 0x0
-        RenderBlock {UL} at (0,236) size 769x520
+        RenderBlock {UL} at (0,226) size 769x520
           RenderListItem {LI} at (40,0) size 729x20
             RenderListMarker at (-18,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 113x19
@@ -375,7 +375,7 @@ layer at (0,0) size 785x1574
             RenderListMarker at (-18,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 121x19
               text run at (0,0) width 121: "Test 25: : Success"
-      RenderBlock (anonymous) at (0,1558) size 769x0
+      RenderBlock (anonymous) at (0,1548) size 769x0
         RenderInline {B} at (0,0) size 0x0
 layer at (8,92) size 769x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,76) size 769x2 [border: (1px inset #000000)]
@@ -389,7 +389,7 @@ layer at (8,660) size 769x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,644) size 769x2 [border: (1px inset #000000)]
 layer at (8,802) size 769x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
-layer at (8,1020) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,218) size 769x2 [border: (1px inset #000000)]
+layer at (8,1010) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,208) size 769x2 [border: (1px inset #000000)]
 selection start: position 0 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body
 selection end:   position 4 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body

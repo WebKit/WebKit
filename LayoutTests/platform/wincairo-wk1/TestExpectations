@@ -560,3 +560,5 @@ transforms/3d/hit-testing/rotated-hit-test-2.html [ Failure ]
 fast/css/css-typed-om/style-property-map-set-CSSMathSum-value.html [ Failure ]
 fast/text/text-edge-property-parsing.html [ Failure ]
 fast/text/text-edge-with-margin-padding-border-simple.html [ ImageOnlyFailure ]
+
+fast/css/css-typed-om/style-property-map-set-negative-value.html [ Failure ]
