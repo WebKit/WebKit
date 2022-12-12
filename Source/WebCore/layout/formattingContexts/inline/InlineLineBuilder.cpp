@@ -606,7 +606,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         }
         case LineInput::LineEndingEllipsisPolicy::Always: {
             auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
-            if (m_line.contentLogicalWidth() + ellipsisWidth > horizontalAvailableSpace) {
+            if (m_line.contentLogicalWidth() && m_line.contentLogicalWidth() + ellipsisWidth > horizontalAvailableSpace) {
                 auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
                 m_line.truncate(logicalRightForContentWithoutEllipsis);
             }
