@@ -5,7 +5,7 @@ PASS Can set 'font-weight' to the 'normal' keyword
 PASS Can set 'font-weight' to the 'bold' keyword
 PASS Can set 'font-weight' to the 'bolder' keyword
 PASS Can set 'font-weight' to the 'lighter' keyword
-FAIL Can set 'font-weight' to a number Invalid values
+FAIL Can set 'font-weight' to a number assert_approx_equals: expected 0 +/- 0.000001 but got 1
 PASS Setting 'font-weight' to a length throws TypeError
 PASS Setting 'font-weight' to a percent throws TypeError
 PASS Setting 'font-weight' to a time throws TypeError

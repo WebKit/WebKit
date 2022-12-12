@@ -4,7 +4,7 @@ FAIL Can set 'outline-width' to var() references assert_equals: expected 2 but g
 PASS Can set 'outline-width' to the 'thin' keyword
 PASS Can set 'outline-width' to the 'medium' keyword
 PASS Can set 'outline-width' to the 'thick' keyword
-FAIL Can set 'outline-width' to a length Invalid values
+FAIL Can set 'outline-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'outline-width' to a percent throws TypeError
 PASS Setting 'outline-width' to a time throws TypeError
 PASS Setting 'outline-width' to an angle throws TypeError

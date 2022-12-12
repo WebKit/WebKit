@@ -4,8 +4,8 @@ FAIL Can set 'grid-auto-columns' to var() references assert_equals: expected 2 b
 PASS Can set 'grid-auto-columns' to the 'min-content' keyword
 PASS Can set 'grid-auto-columns' to the 'max-content' keyword
 PASS Can set 'grid-auto-columns' to the 'auto' keyword
-FAIL Can set 'grid-auto-columns' to a length Invalid values
-FAIL Can set 'grid-auto-columns' to a percent Invalid values
+FAIL Can set 'grid-auto-columns' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'grid-auto-columns' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 FAIL Can set 'grid-auto-columns' to a flexible length Invalid values
 PASS Setting 'grid-auto-columns' to a time throws TypeError
 PASS Setting 'grid-auto-columns' to an angle throws TypeError
@@ -19,8 +19,8 @@ FAIL Can set 'grid-auto-rows' to var() references assert_equals: expected 2 but 
 PASS Can set 'grid-auto-rows' to the 'min-content' keyword
 PASS Can set 'grid-auto-rows' to the 'max-content' keyword
 PASS Can set 'grid-auto-rows' to the 'auto' keyword
-FAIL Can set 'grid-auto-rows' to a length Invalid values
-FAIL Can set 'grid-auto-rows' to a percent Invalid values
+FAIL Can set 'grid-auto-rows' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'grid-auto-rows' to a percent assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 FAIL Can set 'grid-auto-rows' to a flexible length Invalid values
 PASS Setting 'grid-auto-rows' to a time throws TypeError
 PASS Setting 'grid-auto-rows' to an angle throws TypeError

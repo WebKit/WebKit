@@ -2,7 +2,7 @@
 PASS Can set 'column-width' to CSS-wide keywords
 FAIL Can set 'column-width' to var() references assert_equals: expected 2 but got 1
 PASS Can set 'column-width' to the 'auto' keyword
-FAIL Can set 'column-width' to a length Invalid values
+FAIL Can set 'column-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'column-width' to a percent throws TypeError
 PASS Setting 'column-width' to a time throws TypeError
 PASS Setting 'column-width' to an angle throws TypeError

@@ -6,8 +6,8 @@ PASS Can set 'flex-basis' to the 'content' keyword
 PASS Can set 'flex-basis' to the 'fit-content' keyword
 PASS Can set 'flex-basis' to the 'min-content' keyword
 PASS Can set 'flex-basis' to the 'max-content' keyword
-FAIL Can set 'flex-basis' to a length Invalid values
-FAIL Can set 'flex-basis' to a percent Invalid values
+FAIL Can set 'flex-basis' to a length assert_equals: expected "px" but got "em"
+FAIL Can set 'flex-basis' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Setting 'flex-basis' to a time throws TypeError
 PASS Setting 'flex-basis' to an angle throws TypeError
 PASS Setting 'flex-basis' to a flexible length throws TypeError
