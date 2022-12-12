@@ -1,0 +1,6 @@
+Item 1
+Item 2
+
+PASS getComputedStyle() for opacity defined by variable in ::marker
+PASS getComputedStyle() for color defined by variable in ::marker
+
