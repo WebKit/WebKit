@@ -8,7 +8,7 @@
     if (window.testRunner)
       testRunner.dumpAsText();
     console.log("This test passes if it does not crash.")
-    getSelection().setBaseAndExtent(document.querySelector('img'), 1, document.querySelector('#last'), 0);
+    getSelection().setBaseAndExtent(document.body, 1, document.querySelector('#last'), 0);
     document.execCommand('InsertParagraph');
   };
 </script>
