@@ -61,6 +61,7 @@ private:
     void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(SharedMemory::Handle)>&&);
     void syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);
     void checkAutoreleasePool(CompletionHandler<void(int32_t)>&&);
+    void asyncMessage(bool value, CompletionHandler<void(bool)>&&);
 
     const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     const Ref<IPC::StreamServerConnection> m_streamConnection;

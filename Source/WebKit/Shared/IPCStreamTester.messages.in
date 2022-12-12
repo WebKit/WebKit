@@ -27,6 +27,7 @@ messages -> IPCStreamTester NotRefCounted Stream {
     SyncCrashOnZero(int32_t value) -> (int32_t sameValue) Synchronous
 
     CheckAutoreleasePool() -> (int32_t previousUseCount) Synchronous
+    AsyncMessage(bool value) -> (bool reply)
 }
 
 #endif

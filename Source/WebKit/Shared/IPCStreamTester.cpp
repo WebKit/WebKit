@@ -103,6 +103,11 @@ void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int3
     completionHandler(value);
 }
 
+void IPCStreamTester::asyncMessage(bool value, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(!value);
+}
+
 #if USE(FOUNDATION)
 
 namespace {

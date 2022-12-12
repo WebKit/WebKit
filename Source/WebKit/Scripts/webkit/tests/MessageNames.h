@@ -74,11 +74,9 @@ enum class MessageName : uint16_t {
     , TestWithSemaphore_SendSemaphore
     , TestWithStreamBatched_SendString
     , TestWithStreamBuffer_SendStreamBuffer
-    , TestWithStream_ReceiveMachSendRight
-    , TestWithStream_SendAndReceiveMachSendRight
     , TestWithStream_SendMachSendRight
     , TestWithStream_SendString
-    , TestWithStream_SendStringSynchronized
+    , TestWithStream_SendStringAsync
     , TestWithSuperclass_LoadURL
     , TestWithSuperclass_TestAsyncMessage
     , TestWithSuperclass_TestAsyncMessageWithConnection
@@ -117,9 +115,7 @@ enum class MessageName : uint16_t {
     , TestWithLegacyReceiver_InterpretKeyEventReply
     , TestWithLegacyReceiver_RunJavaScriptAlertReply
     , TestWithSemaphore_ReceiveSemaphoreReply
-    , TestWithStream_ReceiveMachSendRightReply
-    , TestWithStream_SendAndReceiveMachSendRightReply
-    , TestWithStream_SendStringSynchronizedReply
+    , TestWithStream_SendStringAsyncReply
     , TestWithSuperclass_TestAsyncMessageReply
     , TestWithSuperclass_TestAsyncMessageWithConnectionReply
     , TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply
@@ -130,6 +126,9 @@ enum class MessageName : uint16_t {
     , TestWithoutAttributes_RunJavaScriptAlertReply
     , TestWithLegacyReceiver_GetPluginProcessConnection
     , TestWithLegacyReceiver_TestMultipleAttributes
+    , TestWithStream_ReceiveMachSendRight
+    , TestWithStream_SendAndReceiveMachSendRight
+    , TestWithStream_SendStringSync
     , TestWithSuperclass_TestSyncMessage
     , TestWithSuperclass_TestSynchronousMessage
     , TestWithoutAttributes_GetPluginProcessConnection

@@ -88,16 +88,12 @@ const char* description(MessageName name)
         return "TestWithStreamBatched_SendString";
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return "TestWithStreamBuffer_SendStreamBuffer";
-    case MessageName::TestWithStream_ReceiveMachSendRight:
-        return "TestWithStream_ReceiveMachSendRight";
-    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
-        return "TestWithStream_SendAndReceiveMachSendRight";
     case MessageName::TestWithStream_SendMachSendRight:
         return "TestWithStream_SendMachSendRight";
     case MessageName::TestWithStream_SendString:
         return "TestWithStream_SendString";
-    case MessageName::TestWithStream_SendStringSynchronized:
-        return "TestWithStream_SendStringSynchronized";
+    case MessageName::TestWithStream_SendStringAsync:
+        return "TestWithStream_SendStringAsync";
     case MessageName::TestWithSuperclass_LoadURL:
         return "TestWithSuperclass_LoadURL";
     case MessageName::TestWithSuperclass_TestAsyncMessage:
@@ -174,12 +170,8 @@ const char* description(MessageName name)
         return "TestWithLegacyReceiver_RunJavaScriptAlertReply";
     case MessageName::TestWithSemaphore_ReceiveSemaphoreReply:
         return "TestWithSemaphore_ReceiveSemaphoreReply";
-    case MessageName::TestWithStream_ReceiveMachSendRightReply:
-        return "TestWithStream_ReceiveMachSendRightReply";
-    case MessageName::TestWithStream_SendAndReceiveMachSendRightReply:
-        return "TestWithStream_SendAndReceiveMachSendRightReply";
-    case MessageName::TestWithStream_SendStringSynchronizedReply:
-        return "TestWithStream_SendStringSynchronizedReply";
+    case MessageName::TestWithStream_SendStringAsyncReply:
+        return "TestWithStream_SendStringAsyncReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
         return "TestWithSuperclass_TestAsyncMessageReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
@@ -200,6 +192,12 @@ const char* description(MessageName name)
         return "TestWithLegacyReceiver_GetPluginProcessConnection";
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
         return "TestWithLegacyReceiver_TestMultipleAttributes";
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+        return "TestWithStream_ReceiveMachSendRight";
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+        return "TestWithStream_SendAndReceiveMachSendRight";
+    case MessageName::TestWithStream_SendStringSync:
+        return "TestWithStream_SendStringSync";
     case MessageName::TestWithSuperclass_TestSyncMessage:
         return "TestWithSuperclass_TestSyncMessage";
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
@@ -254,11 +252,9 @@ ReceiverName receiverName(MessageName messageName)
         return ReceiverName::TestWithStreamBatched;
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return ReceiverName::TestWithStreamBuffer;
-    case MessageName::TestWithStream_ReceiveMachSendRight:
-    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
     case MessageName::TestWithStream_SendMachSendRight:
     case MessageName::TestWithStream_SendString:
-    case MessageName::TestWithStream_SendStringSynchronized:
+    case MessageName::TestWithStream_SendStringAsync:
         return ReceiverName::TestWithStream;
     case MessageName::TestWithSuperclass_LoadURL:
     case MessageName::TestWithSuperclass_TestAsyncMessage:
@@ -301,9 +297,7 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithLegacyReceiver_InterpretKeyEventReply:
     case MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply:
     case MessageName::TestWithSemaphore_ReceiveSemaphoreReply:
-    case MessageName::TestWithStream_ReceiveMachSendRightReply:
-    case MessageName::TestWithStream_SendAndReceiveMachSendRightReply:
-    case MessageName::TestWithStream_SendStringSynchronizedReply:
+    case MessageName::TestWithStream_SendStringAsyncReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply:
@@ -316,6 +310,10 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
         return ReceiverName::TestWithLegacyReceiver;
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+    case MessageName::TestWithStream_SendStringSync:
+        return ReceiverName::TestWithStream;
     case MessageName::TestWithSuperclass_TestSyncMessage:
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return ReceiverName::TestWithSuperclass;
@@ -332,13 +330,14 @@ bool messageAllowedWhenWaitingForSyncReply(MessageName name)
 {
     switch (name) {
     case MessageName::TestWithStreamBatched_SendString:
-    case MessageName::TestWithStream_ReceiveMachSendRight:
-    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
     case MessageName::TestWithStream_SendMachSendRight:
     case MessageName::TestWithStream_SendString:
-    case MessageName::TestWithStream_SendStringSynchronized:
+    case MessageName::TestWithStream_SendStringAsync:
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+    case MessageName::TestWithStream_SendStringSync:
     case MessageName::TestWithSuperclass_TestSyncMessage:
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
     case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
@@ -450,20 +449,12 @@ template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::
     if (messageName == IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer)
         return true;
 #if PLATFORM(COCOA)
-    if (messageName == IPC::MessageName::TestWithStream_ReceiveMachSendRight)
-        return true;
-#endif
-#if PLATFORM(COCOA)
-    if (messageName == IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight)
-        return true;
-#endif
-#if PLATFORM(COCOA)
     if (messageName == IPC::MessageName::TestWithStream_SendMachSendRight)
         return true;
 #endif
     if (messageName == IPC::MessageName::TestWithStream_SendString)
         return true;
-    if (messageName == IPC::MessageName::TestWithStream_SendStringSynchronized)
+    if (messageName == IPC::MessageName::TestWithStream_SendStringAsync)
         return true;
     if (messageName == IPC::MessageName::TestWithSuperclass_LoadURL)
         return true;
@@ -571,15 +562,7 @@ template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::
         return true;
     if (messageName == IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply)
         return true;
-#if PLATFORM(COCOA)
-    if (messageName == IPC::MessageName::TestWithStream_ReceiveMachSendRightReply)
-        return true;
-#endif
-#if PLATFORM(COCOA)
-    if (messageName == IPC::MessageName::TestWithStream_SendAndReceiveMachSendRightReply)
-        return true;
-#endif
-    if (messageName == IPC::MessageName::TestWithStream_SendStringSynchronizedReply)
+    if (messageName == IPC::MessageName::TestWithStream_SendStringAsyncReply)
         return true;
 #if ENABLE(TEST_FEATURE)
     if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply)
@@ -610,6 +593,16 @@ template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes)
+        return true;
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithStream_ReceiveMachSendRight)
+        return true;
+#endif
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithStream_SendStringSync)
         return true;
     if (messageName == IPC::MessageName::TestWithSuperclass_TestSyncMessage)
         return true;
