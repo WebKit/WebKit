@@ -1533,7 +1533,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
                 // Only do this for the 0 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
                 // for composition" which really means we don't want to do anything but rather just use the underlying style which
                 // is already set on startKeyframe.
-                if (!startKeyframe.key() && !hasImplicitZeroKeyframe) {
+                if (startKeyframe.key() || !hasImplicitZeroKeyframe) {
                     auto startKeyframeCompositeOperation = startKeyframe.compositeOperation().value_or(m_compositeOperation);
                     if (startKeyframeCompositeOperation != CompositeOperation::Replace)
                         CSSPropertyAnimation::blendProperties(this, cssPropertyId, startKeyframeStyle, targetStyle, *startKeyframe.style(), 1, startKeyframeCompositeOperation);
@@ -1542,7 +1542,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
                 // Only do this for the 1 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
                 // for composition" which really means we don't want to do anything but rather just use the underlying style which
                 // is already set on endKeyframe.
-                if (endKeyframe.key() == 1 && !hasImplicitOneKeyframe) {
+                if (endKeyframe.key() != 1 || !hasImplicitOneKeyframe) {
                     auto endKeyframeCompositeOperation = endKeyframe.compositeOperation().value_or(m_compositeOperation);
                     if (endKeyframeCompositeOperation != CompositeOperation::Replace)
                         CSSPropertyAnimation::blendProperties(this, cssPropertyId, endKeyframeStyle, targetStyle, *endKeyframe.style(), 1, endKeyframeCompositeOperation);
