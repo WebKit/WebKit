@@ -332,6 +332,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [self startObservingFontPanel];
 
+    if (objc_getAssociatedObject(window, _impl))
+        return;
+
+    objc_setAssociatedObject(window, _impl, @YES, OBJC_ASSOCIATION_COPY_NONATOMIC);
     [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
     [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
 }
@@ -362,6 +366,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
 
+    if (!objc_getAssociatedObject(window, _impl))
+        return;
+
+    objc_setAssociatedObject(window, _impl, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
 }

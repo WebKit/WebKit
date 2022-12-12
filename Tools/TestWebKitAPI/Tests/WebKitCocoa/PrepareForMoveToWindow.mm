@@ -70,6 +70,23 @@ TEST(WKWebView, PrepareToUnparentView)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WKWebView, PrepareForMoveToWindowShouldNotCrashWhenRemovingWindowObservers)
+{
+    auto window = adoptNS([NSWindow new]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    [[window contentView] addSubview:webView.get()];
+    [webView _prepareForMoveToWindow:nil completionHandler:^{ }];
+    [webView _prepareForMoveToWindow:window.get() completionHandler:^{ }];
+
+    __block bool done = false;
+    [webView _prepareForMoveToWindow:nil completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(WKWebView, PrepareForMoveToWindowThenClose)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
