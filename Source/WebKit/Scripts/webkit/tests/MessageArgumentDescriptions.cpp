@@ -56,12 +56,14 @@
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "RenderingBackendIdentifier.h"
+#include "RenderingUpdateID.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
 #include "StorageAreaMapIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
 #include "TrackPrivateRemoteIdentifier.h"
+#include "TransactionID.h"
 #include "UserContentControllerIdentifier.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
@@ -435,6 +437,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteVideoFrameIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteRemoteCommandListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingBackendIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingUpdateID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::SampleBufferDisplayLayerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaImplIdentifier));
@@ -442,6 +445,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageNamespaceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TapIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TrackPrivateRemoteIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::TransactionID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserContentControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoEncoderIdentifier));
@@ -510,6 +514,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteVideoFrameIdentifier"_s,
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
         "WebKit::RenderingBackendIdentifier"_s,
+        "WebKit::RenderingUpdateID"_s,
         "WebKit::SampleBufferDisplayLayerIdentifier"_s,
         "WebKit::StorageAreaIdentifier"_s,
         "WebKit::StorageAreaImplIdentifier"_s,
@@ -517,6 +522,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::StorageNamespaceIdentifier"_s,
         "WebKit::TapIdentifier"_s,
         "WebKit::TrackPrivateRemoteIdentifier"_s,
+        "WebKit::TransactionID"_s,
         "WebKit::UserContentControllerIdentifier"_s,
         "WebKit::VideoDecoderIdentifier"_s,
         "WebKit::VideoEncoderIdentifier"_s,
