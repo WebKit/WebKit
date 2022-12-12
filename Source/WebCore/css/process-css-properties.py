@@ -25,6 +25,7 @@
 
 import argparse
 import collections
+import enum
 import functools
 import itertools
 import json
@@ -1007,6 +1008,59 @@ class Term:
     )
 
     @staticmethod
+    def wrap_with_multiplier(multiplier, term):
+        if multiplier.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
+            raise Exception("Unsupported multiplier '?'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ZERO_OR_MORE:
+            raise Exception("Unsupported multiplier '*'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ONE_OR_MORE:
+            raise Exception("Unsupported multiplier '+'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_EXACT:
+            raise Exception("Unsupported multiplier '{A}'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST:
+            raise Exception("Unsupported multiplier '{A,}'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN:
+            raise Exception("Unsupported multiplier '{A,B}'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_ONE_OR_MORE:
+            return RepetitionTerm.wrapping_term(term)
+        elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT:
+            raise Exception("Unsupported multiplier '#{A}'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST:
+            raise Exception("Unsupported multiplier '#{A,}'")
+        elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN:
+            raise Exception("Unsupported multiplier '#{A,B}'")
+
+    @staticmethod
+    def from_node(node):
+        if isinstance(node, BNFGroupingNode):
+            if node.kind == BNFGroupingNode.Kind.MATCH_ALL_ORDERED:
+                if len(node.members) == 1:
+                    term = Term.from_node(node.members[0])
+                else:
+                    raise Exception("Unsupported grouping. 'orderer' (e.g. [<length> <length>])")
+            elif node.kind == BNFGroupingNode.Kind.MATCH_ONE:
+                term = MatchOneTerm.from_node(node)
+            elif node.kind == BNFGroupingNode.Kind.MATCH_ALL_ANY_ORDER:
+                raise Exception("Unsupported grouping. 'all unordered' (e.g. [<length> && <length>])")
+            elif node.kind == BNFGroupingNode.Kind.MATCH_ONE_OR_MORE_ANY_ORDER:
+                raise Exception("Unsupported grouping. 'one or more unordered' (e.g. [<length> || <length>])")
+            else:
+                raise Exception(f"Unknown grouping kind '{node.kind}' in BNF parse tree node '{node}'")
+        elif isinstance(node, BNFReferenceNode):
+            term = ReferenceTerm.from_node(node)
+        elif isinstance(node, BNFKeywordNode):
+            term = KeywordTerm.from_node(node)
+        else:
+            raise Exception(f"Unknown node '{node}' in BNF parse tree")
+
+        # If the node has an attached multiplier, wrap the node in
+        # a term created from that multiplier.
+        if node.multiplier.kind:
+            term = Term.wrap_with_multiplier(node.multiplier, term)
+
+        return term
+
+    @staticmethod
     def from_json(parsing_context, key_path, json_value):
         if type(json_value) is str:
             if RepetitionTerm.is_repetition_term(json_value):
@@ -1217,6 +1271,17 @@ class ReferenceTerm:
         return string.startswith('<') and string.endswith('>')
 
     @staticmethod
+    def from_node(node):
+        assert(type(node) is BNFReferenceNode)
+
+        # FIXME: Don't stringify and reparse. Refactor __init__ to allow passing in the structued attributes.
+        dictionary = {
+            "value": node.stringified_without_multipliers
+        }
+
+        return ReferenceTerm(**dictionary)
+
+    @staticmethod
     def from_json(parsing_context, key_path, json_value):
         assert(type(json_value) is dict)
         ReferenceTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"ReferenceTerm")
@@ -1269,6 +1334,16 @@ class KeywordTerm:
 
     def __repr__(self):
         return self.__str__()
+
+    @staticmethod
+    def from_node(node):
+        assert(type(node) is BNFKeywordNode)
+
+        dictionary = {
+            "value": ValueKeywordName(node.keyword)
+        }
+
+        return KeywordTerm(**dictionary)
 
     @staticmethod
     def from_json(parsing_context, key_path, json_value):
@@ -1340,6 +1415,17 @@ class MatchOneTerm:
     @terms.setter
     def terms(self, value):
         self.value = value
+
+    @staticmethod
+    def from_node(node):
+        assert(type(node) is BNFGroupingNode)
+        assert(node.kind is BNFGroupingNode.Kind.MATCH_ONE)
+
+        dictionary = {
+            "value": list(compact_map(lambda member: Term.from_node(member), node.members))
+        }
+
+        return MatchOneTerm(**dictionary)
 
     @staticmethod
     def from_json(parsing_context, key_path, json_value):
@@ -1429,6 +1515,10 @@ class RepetitionTerm:
         return string.strip()[:-1]
 
     @staticmethod
+    def wrapping_term(term):
+        return RepetitionTerm(term)
+
+    @staticmethod
     def from_json(parsing_context, key_path, json_value):
         assert(type(json_value) is dict)
         RepetitionTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"RepetitionTerm")
@@ -1471,6 +1561,8 @@ class Grammar:
 
     @staticmethod
     def from_json(parsing_context, key_path, name, json_value):
+        if type(json_value) is str:
+            return Grammar(name, Term.from_node(BNFParser(json_value).parse()))
         return Grammar(name, Term.from_json(parsing_context, key_path, json_value))
 
     def perform_fixups(self, all_rules):
@@ -1509,7 +1601,7 @@ class SharedGrammarRule:
     schema = Schema(
         Schema.Entry("comment", allowed_types=[str]),
         Schema.Entry("exported", allowed_types=[bool], default_value=False),
-        Schema.Entry("grammar", allowed_types=[list, dict], required=True),
+        Schema.Entry("grammar", allowed_types=[list, dict, str], required=True),
         Schema.Entry("specification", allowed_types=[dict], convert_to=Specification),
         Schema.Entry("status", allowed_types=[dict, str], convert_to=Status),
     )
@@ -4213,6 +4305,701 @@ class GeneratedPropertyConsumer(PropertyConsumer):
             self.term_generator.generate_unconditional(to=to, range_string='range', context_string='context')
         to.write(f"}}")
         to.newline()
+
+
+class StringEqualingEnum(enum.Enum):
+    def __eq__(self, b):
+        if isinstance(b, str):
+            return self.name == b
+        else:
+            return self.name == b.name
+
+    def __hash__(self):
+        return id(self.name)
+
+
+class BNFToken(StringEqualingEnum):
+    # Numbers.
+    FLOAT   = re.compile(r'\d+\.\d+')
+    INT     = re.compile(r'\d+')
+
+    # Brackets.
+    LPAREN  = re.compile(r'\(')
+    RPAREN  = re.compile(r'\)')
+    LBRACE  = re.compile(r'\{')
+    RBRACE  = re.compile(r'\}')
+    LSQUARE = re.compile(r'\[')
+    RSQUARE = re.compile(r'\]')
+    LTLT    = re.compile(r'<<')
+    GTGT    = re.compile(r'>>')
+    LT      = re.compile(r'<')
+    GT      = re.compile(r'>')
+
+    # Multipliers.
+    HASH    = re.compile(r'#')
+    PLUS    = re.compile(r'\+')
+    STAR    = re.compile(r'\*')
+    NOT     = re.compile(r'!')
+    QMARK   = re.compile(r'\?')
+
+    # Combinators.
+    OROR    = re.compile(r'\|\|')
+    OR      = re.compile(r'\|')
+    ANDAND  = re.compile(r'&&')
+    COMMA   = re.compile(r',')
+
+    # Identifiers.
+    ID      = re.compile(r'[_a-zA-Z\-][_a-zA-Z0-9\-]*')
+
+    # Whitespace.
+    WHITESPACE = re.compile(r'(\t|\n|\s|\r)+')
+
+
+BNF_ILLEGAL_TOKEN = 'ILLEGAL'
+BNF_EOF_TOKEN     = 'EOF'
+
+BNFTokenInfo = collections.namedtuple("BNFTokens", ["name", "value"])
+
+
+def BNFLexer(data):
+    position = 0
+    while position < len(data):
+        for token_id in BNFToken:
+            match = token_id.value.match(data, position)
+            if match:
+                position = match.end(0)
+                if token_id == BNFToken.WHITESPACE:
+                    # ignore whitespace
+                    break
+                yield BNFTokenInfo(token_id.name, match.group(0))
+                break
+        else:
+            # in case pattern doesn't match send the charector as illegal
+            yield BNFTokenInfo(BNF_ILLEGAL_TOKEN, data[position])
+            position += 1
+    yield BNFTokenInfo(BNF_EOF_TOKEN, '\x00')
+
+
+class BNFRepetitionModifier:
+    class Kind(enum.Enum):
+        EXACT       = '{A}'
+        AT_LEAST    = '{A,}'
+        BETWEEN     = '{A,B}'
+
+    def __init__(self):
+        self.kind = None
+        self.min = None
+        self.max = None
+
+    def __str__(self):
+        if self.kind == BNFRepetitionModifier.Kind.EXACT:
+            return '{' + self.min + '}'
+        elif self.kind == BNFRepetitionModifier.Kind.AT_LEAST:
+            return '{' + self.min + ',}'
+        elif self.kind == BNFRepetitionModifier.Kind.BETWEEN:
+            return '{' + self.min + ',' + self.max + '}'
+
+
+# Node multipliers are introduced by trailing symbols like '#', '+', '*', and '{1,4}'.
+# https://drafts.csswg.org/css-values-4/#component-multipliers
+class BNFNodeMultiplier:
+    class Kind(enum.Enum):
+        ZERO_OR_ONE                     = '?'
+        SPACE_SEPARATED_ZERO_OR_MORE    = '*'
+        SPACE_SEPARATED_ONE_OR_MORE     = '+'
+        SPACE_SEPARATED_EXACT           = '{A}'
+        SPACE_SEPARATED_AT_LEAST        = '{A,}'
+        SPACE_SEPARATED_BETWEEN         = '{A,B}'
+        COMMA_SEPARATED_ONE_OR_MORE     = '#'
+        COMMA_SEPARATED_EXACT           = '#{A}'
+        COMMA_SEPARATED_AT_LEAST        = '#{A,}'
+        COMMA_SEPARATED_BETWEEN         = '#{A,B}'
+
+    def __init__(self):
+        self.kind = None
+        self.range = None
+
+    def __str__(self):
+        if self.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
+            return '?'
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ZERO_OR_MORE:
+            return '*'
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ONE_OR_MORE:
+            return '+'
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_EXACT:
+            return '{' + self.range.min + '}'
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST:
+            return '{' + self.range.min + ',}'
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN:
+            return '{' + self.range.min + ',' + self.range.max + '}'
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_ONE_OR_MORE:
+            return '#'
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT:
+            return '#' + '{' + self.range.min + '}'
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST:
+            return '#' + '{' + self.range.min + ',}'
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN:
+            return '#' + '{' + self.range.min + ',' + self.range.max + '}'
+        return ''
+
+    def add(self, multiplier):
+        if self.kind is None:
+            if isinstance(multiplier, BNFRepetitionModifier):
+                if multiplier.kind == BNFRepetitionModifier.Kind.EXACT:
+                    self.kind = BNFNodeMultiplier.Kind.SPACE_SEPARATED_EXACT
+                    self.range = mulitplier
+                elif multiplier.kind == BNFRepetitionModifier.Kind.AT_LEAST:
+                    self.kind = BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST
+                    self.range = mulitplier
+                elif multiplier.kind == BNFRepetitionModifier.Kind.BETWEEN:
+                    self.kind = BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN
+                    self.range = mulitplier
+            else:
+                self.kind = BNFNodeMultiplier.Kind(multiplier)
+        elif self.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
+            raise Exception("Invalid to stack another multiplier on top of '?'")
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ZERO_OR_MORE:
+            raise Exception("Invalid to stack another multiplier on top of '*'")
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ONE_OR_MORE:
+            raise Exception("Invalid to stack another multiplier on top of '+'")
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_EXACT:
+            raise Exception("Invalid to stack another multiplier on top of a range.")
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST:
+            raise Exception("Invalid to stack another multiplier on top of a range.")
+        elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN:
+            raise Exception("Invalid to stack another multiplier on top of a range.")
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_ONE_OR_MORE:
+            if isinstance(multiplier, BNFRepetitionModifier):
+                if multiplier.kind == BNFRepetitionModifier.Kind.EXACT:
+                    self.kind = BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT
+                    self.range = mulitplier
+                elif multiplier.kind == BNFRepetitionModifier.Kind.AT_LEAST:
+                    self.kind = BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST
+                    self.range = mulitplier
+                elif multiplier.kind == BNFRepetitionModifier.Kind.BETWEEN:
+                    self.kind = BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN
+                    self.range = mulitplier
+            else:
+                raise Exception("Invalid to stack a non-range multiplier on top of '#'.")
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT:
+            raise Exception("Invalid to stack another multiplier on top of a comma modifier range multiplier.")
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST:
+            raise Exception("Invalid to stack another multiplier on top of a comma modifier range multiplier.")
+        elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN:
+            raise Exception("Invalid to stack another multiplier on top of a comma modifier range multiplier.")
+
+
+# https://drafts.csswg.org/css-values-4/#component-combinators
+class BNFGroupingNode:
+    class Kind(enum.Enum):
+        MATCH_ALL_ORDERED = ' '                # [ <length>    <integer>    <percentage> ]
+        MATCH_ONE = '|'                        # [ <length>  | <integer>  | <percentage> ]
+        MATCH_ALL_ANY_ORDER = '&&'             # [ <length> && <integer> && <percentage> ]
+        MATCH_ONE_OR_MORE_ANY_ORDER = '||'     # [ <length> || <integer> || <percentage> ]
+
+    def __init__(self, *, is_initial=False):
+        self.kind = BNFGroupingNode.Kind.MATCH_ALL_ORDERED
+        self.members = []
+        self.multiplier = BNFNodeMultiplier()
+        self.is_initial = is_initial
+
+    def __str__(self):
+        return self.stringified_without_multipliers + str(self.multiplier)
+
+    @property
+    def stringified_without_multipliers(self):
+        if self.kind != BNFGroupingNode.Kind.MATCH_ALL_ORDERED:
+            join_string = ' ' + self.kind.name + ' '
+        else:
+            join_string = ' '
+
+        members_string = join_string.join(str(member) for member in self.members)
+        if self.is_initial:
+            return members_string
+        return '[ ' + members_string + ' ]'
+
+    def add(self, member):
+        self.members.append(member)
+
+    @property
+    def last(self):
+        return self.members[-1]
+
+
+class BNFReferenceNode:
+    class RangeAttribute:
+        def __init__(self):
+            self.min = None
+            self.max = None
+
+        def __str__(self):
+            return f"[{self.min},{self.max}]"
+
+    def __init__(self, *, is_internal=False):
+        self.name = None
+        self.is_internal = is_internal
+        self.attributes = []
+        self.multiplier = BNFNodeMultiplier()
+
+    def __str__(self):
+        return self.stringified_without_multipliers + str(self.multiplier)
+
+    @property
+    def stringified_without_multipliers(self):
+        if self.is_internal:
+            prefix = '<<'
+            suffix = '>>'
+        else:
+            prefix = '<'
+            suffix = '>'
+
+        if self.attributes:
+            return prefix + str(self.name) + ' ' + ' '.join(str(attribute) for attribute in self.attributes) + suffix
+        return prefix + str(self.name) + suffix
+
+    def add_attribute(self, attribute):
+        self.attributes.append(attribute)
+
+
+class BNFKeywordNode:
+    def __init__(self, keyword):
+        self.keyword = keyword
+        self.multiplier = BNFNodeMultiplier()
+
+    def __str__(self):
+        return self.stringified_without_multipliers + str(self.multiplier)
+
+    @property
+    def stringified_without_multipliers(self):
+        return self.keyword
+
+
+class BNFParserState(enum.Enum):
+    UNKNOWN_GROUPING_INITIAL = enum.auto()
+    UNKNOWN_GROUPING_SEEN_TERM = enum.auto()
+    KNOWN_ORDERED_GROUPING = enum.auto()
+    KNOWN_COMBINATOR_GROUPING_TERM_REQUIRED = enum.auto()
+    KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED = enum.auto()
+    INTERNAL_REFERENCE_INITIAL = enum.auto()
+    INTERNAL_REFERENCE_SEEN_ID = enum.auto()
+    REFERENCE_INITIAL = enum.auto()
+    REFERENCE_SEEN_ID = enum.auto()
+    REFERENCE_RANGE_INITIAL = enum.auto()
+    REFERENCE_RANGE_SEEN_MIN = enum.auto()
+    REFERENCE_RANGE_SEEN_MIN_AND_COMMA = enum.auto()
+    REFERENCE_RANGE_SEEN_MAX = enum.auto()
+    REPETITION_MODIFIER_INITIAL = enum.auto()
+    REPETITION_MODIFIER_SEEN_MIN = enum.auto()
+    REPETITION_MODIFIER_SEEN_MIN_AND_COMMA = enum.auto()
+    REPETITION_MODIFIER_SEEN_MAX = enum.auto()
+    DONE = enum.auto()
+
+
+BNFParserStateInfo = collections.namedtuple("BNFParserStates", ["state", "node"])
+
+
+class BNFParser:
+    COMBINATOR_FOR_TOKEN = {
+        BNFToken.OR.name: BNFGroupingNode.Kind.MATCH_ONE,
+        BNFToken.OROR.name: BNFGroupingNode.Kind.MATCH_ONE_OR_MORE_ANY_ORDER,
+        BNFToken.ANDAND.name: BNFGroupingNode.Kind.MATCH_ALL_ANY_ORDER,
+    }
+
+    SIMPLE_MULTIPLIERS = {
+        BNFToken.HASH.name,
+        BNFToken.PLUS.name,
+        BNFToken.STAR.name,
+        BNFToken.NOT.name,
+        BNFToken.QMARK.name,
+    }
+
+    DEBUG_PRINT_STATE = 0
+    DEBUG_PRINT_TOKENS = 0
+
+    def __init__(self, data):
+        self.data = data
+        self.root = BNFGroupingNode(is_initial=True)
+        self.state_stack = []
+        self.enter_initial_grouping()
+
+    def parse(self):
+        PARSER_THUNKS = {
+            BNFParserState.UNKNOWN_GROUPING_INITIAL: BNFParser.parse_UNKNOWN_GROUPING_INITIAL,
+            BNFParserState.UNKNOWN_GROUPING_SEEN_TERM: BNFParser.parse_UNKNOWN_GROUPING_SEEN_TERM,
+            BNFParserState.KNOWN_ORDERED_GROUPING: BNFParser.parse_KNOWN_ORDERED_GROUPING,
+            BNFParserState.KNOWN_COMBINATOR_GROUPING_TERM_REQUIRED: BNFParser.parse_KNOWN_COMBINATOR_GROUPING_TERM_REQUIRED,
+            BNFParserState.KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED: BNFParser.parse_KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED,
+            BNFParserState.INTERNAL_REFERENCE_INITIAL: BNFParser.parse_INTERNAL_REFERENCE_INITIAL,
+            BNFParserState.INTERNAL_REFERENCE_SEEN_ID: BNFParser.parse_INTERNAL_REFERENCE_SEEN_ID,
+            BNFParserState.REFERENCE_INITIAL: BNFParser.parse_REFERENCE_INITIAL,
+            BNFParserState.REFERENCE_SEEN_ID: BNFParser.parse_REFERENCE_SEEN_ID,
+            BNFParserState.REFERENCE_RANGE_INITIAL: BNFParser.parse_REFERENCE_RANGE_INITIAL,
+            BNFParserState.REFERENCE_RANGE_SEEN_MIN: BNFParser.parse_REFERENCE_RANGE_SEEN_MIN,
+            BNFParserState.REFERENCE_RANGE_SEEN_MIN_AND_COMMA: BNFParser.parse_REFERENCE_RANGE_SEEN_MIN_AND_COMMA,
+            BNFParserState.REFERENCE_RANGE_SEEN_MAX: BNFParser.parse_REFERENCE_RANGE_SEEN_MAX,
+            BNFParserState.REPETITION_MODIFIER_INITIAL: BNFParser.parse_REPETITION_MODIFIER_INITIAL,
+            BNFParserState.REPETITION_MODIFIER_SEEN_MIN: BNFParser.parse_REPETITION_MODIFIER_SEEN_MIN,
+            BNFParserState.REPETITION_MODIFIER_SEEN_MIN_AND_COMMA: BNFParser.parse_REPETITION_MODIFIER_SEEN_MIN_AND_COMMA,
+            BNFParserState.REPETITION_MODIFIER_SEEN_MAX: BNFParser.parse_REPETITION_MODIFIER_SEEN_MAX,
+        }
+
+        for token in BNFLexer(self.data):
+            if token.name == BNF_ILLEGAL_TOKEN:
+                raise Exception(f"Illegal token found while parsing grammar definition: {token}")
+
+            state = self.state_stack[-1]
+
+            if BNFParser.DEBUG_PRINT_STATE:
+                print("STATE: " + state.state.name)
+            if BNFParser.DEBUG_PRINT_TOKENS:
+                print("TOKEN: " + str(token))
+            PARSER_THUNKS[state.state](self, token, state)
+
+        if self.state_stack[-1].state != BNFParserState.DONE:
+            raise Exception(f"Unexpected state '{state.state.name}' after processing all tokens")
+
+        return self.root
+
+    def transition_top(self, *, to):
+        self.state_stack[-1] = BNFParserStateInfo(to, self.state_stack[-1].node)
+
+    def push(self, new_state, new_node):
+        self.state_stack.append(BNFParserStateInfo(new_state, new_node))
+
+    def pop(self):
+        self.state_stack.pop()
+
+    def unexpected(self, token, state):
+        return Exception(f"Unexpected token '{token}' found while in state '{state.state.name}'")
+
+    # COMMON ACTIONS.
+
+    # Root BNFGroupingNode. Syntatically isn't surrounded by square brackets.
+    def enter_initial_grouping(self):
+        self.push(BNFParserState.UNKNOWN_GROUPING_INITIAL, self.root)
+
+    def exit_initial_grouping(self, token, state):
+        if state.node.is_initial:
+            self.transition_top(to=BNFParserState.DONE)
+            return
+        raise self.unexpected(token, state)
+
+    # Non-initial BNFGroupingNode. e.g. "[foo bar]", "[foo | bar]", etc.
+    def enter_new_grouping(self, token, state):
+        new_grouping = BNFGroupingNode()
+        state.node.add(new_grouping)
+        self.push(BNFParserState.UNKNOWN_GROUPING_INITIAL, new_grouping)
+
+    def exit_grouping(self, token, state):
+        if not state.node.is_initial:
+            self.pop()
+            return
+        raise self.unexpected(token, state)
+
+    # Internal BNFReferenceNodes. e.g. "<<values>>"
+    def enter_new_internal_reference(self, token, state):
+        new_reference = BNFReferenceNode(is_internal=True)
+        state.node.add(new_reference)
+        self.push(BNFParserState.INTERNAL_REFERENCE_INITIAL, new_reference)
+
+    def exit_internal_reference(self, token, state):
+        self.pop()
+
+    # Non-internal BNFReferenceNodes. e.g. "<length>"
+    def enter_new_reference(self, token, state):
+        new_reference = BNFReferenceNode()
+        state.node.add(new_reference)
+        self.push(BNFParserState.REFERENCE_INITIAL, new_reference)
+
+    def exit_reference(self, token, state):
+        self.pop()
+
+    # BNFRepetitionModifier. e.g. {A,B}
+    def enter_new_repetition_modifier(self, token, state):
+        new_repetition_modifier = BNFRepetitionModifier()
+        state.node.last.multiplier.add(new_repetition_modifier)
+        self.push(BNFParserState.REPETITION_MODIFIER_INITIAL, new_repetition_modifier)
+
+    def exit_repetition_modifier(self, token, state):
+        self.pop()
+
+    # BNFReferenceNode.RangeAttribute. e.g. [0,inf]
+    def enter_range_attribute(self, token, state):
+        new_range_attribute = BNFReferenceNode.RangeAttribute()
+        state.node.add_attribute(new_range_attribute)
+        self.push(BNFParserState.REFERENCE_RANGE_INITIAL, new_range_attribute)
+
+    def exit_range_attribute(self, token, state):
+        self.pop()
+
+    # MARK: Parsing Thunks.
+
+    def parse_UNKNOWN_GROUPING_INITIAL(self, token, state):
+        if token.name == BNFToken.LSQUARE:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            self.enter_new_grouping(token, state)
+            return
+
+        if token.name == BNFToken.LTLT:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            self.enter_new_internal_reference(token, state)
+            return
+
+        if token.name == BNFToken.LT:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            self.enter_new_reference(token, state)
+            return
+
+        if token.name == BNFToken.ID:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            state.node.add(BNFKeywordNode(token.value))
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_UNKNOWN_GROUPING_SEEN_TERM(self, token, state):
+        if token.name == BNFToken.RSQUARE:
+            self.exit_grouping(token, state)
+            return
+
+        if token.name == BNF_EOF_TOKEN:
+            self.exit_initial_grouping(token, state)
+            return
+
+        if token.name == BNFToken.LSQUARE:
+            self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
+            self.enter_new_grouping(token, state)
+            return
+
+        if token.name == BNFToken.LTLT:
+            self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
+            self.enter_new_internal_reference(token, state)
+            return
+
+        if token.name == BNFToken.LT:
+            self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
+            self.enter_new_reference(token, state)
+            return
+
+        if token.name == BNFToken.ID:
+            self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
+            state.node.add(BNFKeywordNode(token.value))
+            return
+
+        if token.name in BNFParser.COMBINATOR_FOR_TOKEN:
+            self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_TERM_REQUIRED)
+            state.node.kind = BNFParser.COMBINATOR_FOR_TOKEN[token.name]
+            return
+
+        if token.name in BNFParser.SIMPLE_MULTIPLIERS:
+            state.node.last.multiplier.add(token.value)
+            return
+
+        if token.name == BNFToken.LBRACE:
+            self.enter_new_repetition_modifier(token, state)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_KNOWN_ORDERED_GROUPING(self, token, state):
+        if token.name == BNFToken.RSQUARE:
+            self.exit_grouping(token, state)
+            return
+
+        if token.name == BNF_EOF_TOKEN:
+            self.exit_initial_grouping(token, state)
+            return
+
+        if token.name == BNFToken.LSQUARE:
+            self.enter_new_grouping(token, state)
+            return
+
+        if token.name == BNFToken.LTLT:
+            self.enter_new_internal_reference(token, state)
+            return
+
+        if token.name == BNFToken.LT:
+            self.enter_new_reference(token, state)
+            return
+
+        if token.name == BNFToken.ID:
+            state.node.add(BNFKeywordNode(token.value))
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_KNOWN_COMBINATOR_GROUPING_TERM_REQUIRED(self, token, state):
+        if token.name == BNFToken.LSQUARE:
+            self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED)
+            self.enter_new_grouping(token, state)
+            return
+
+        if token.name == BNFToken.LTLT:
+            self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED)
+            self.enter_new_internal_reference(token, state)
+            return
+
+        if token.name == BNFToken.LT:
+            self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED)
+            self.enter_new_reference(token, state)
+            return
+
+        if token.name == BNFToken.ID:
+            self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED)
+            state.node.add(BNFKeywordNode(token.value))
+            return
+
+        if token.name == BNFToken.RSQUARE or token.name == EOF:
+            raise Exception(f"Unexpected token '{token}'. Groupings can't end in a combinator.")
+        raise self.unexpected(token, state)
+
+    def parse_KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED(self, token, state):
+        if token.name == BNFToken.RSQUARE:
+            self.exit_grouping(token, state)
+            return
+
+        if token.name == BNF_EOF_TOKEN:
+            self.exit_initial_grouping(token, state)
+            return
+
+        if token.name in BNFParser.COMBINATOR_FOR_TOKEN:
+            if state.node.kind == BNFParser.COMBINATOR_FOR_TOKEN[token.name]:
+                self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_TERM_REQUIRED)
+                return
+            raise Exception(f"Unexpected token '{token}'. Did you mean '{state.node.kind.name}'?.")
+
+        if token.name in BNFParser.SIMPLE_MULTIPLIERS:
+            state.node.last.multiplier.add(token.value)
+            return
+
+        if token.name == BNFToken.LBRACE:
+            self.enter_new_repetition_modifier(token, state)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REFERENCE_INITIAL(self, token, state):
+        if token.name == BNFToken.LT:
+            state.node.is_special = True
+            return
+
+        if token.name == BNFToken.ID:
+            self.transition_top(to=BNFParserState.REFERENCE_SEEN_ID)
+            state.node.name = token.value
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REFERENCE_SEEN_ID(self, token, state):
+        if token.name == BNFToken.ID:
+            state.node.add_attribute(token.value)
+            # Remain in BNFParserState.REFERENCE_SEEN_ID.
+            return
+
+        if token.name == BNFToken.LSQUARE:
+            self.enter_range_attribute(token, state)
+            return
+
+        if token.name == BNFToken.GT:
+            self.exit_reference(token, state)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_INTERNAL_REFERENCE_INITIAL(self, token, state):
+        if token.name == BNFToken.ID:
+            self.transition_top(to=BNFParserState.INTERNAL_REFERENCE_SEEN_ID)
+            state.node.name = token.value
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_INTERNAL_REFERENCE_SEEN_ID(self, token, state):
+        if token.name == BNFToken.ID:
+            state.node.add_attribute(token.value)
+            # Remain in BNFParserState.INTERNAL_REFERENCE_SEEN_ID.
+            return
+
+        if token.name == BNFToken.LSQUARE:
+            self.enter_range_attribute(token, state)
+            return
+
+        if token.name == BNFToken.GTGT:
+            self.exit_internal_reference(token, state)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REFERENCE_RANGE_INITIAL(self, token, state):
+        if token.name == BNFToken.INT or token.name == BNFToken.FLOAT or (token.name == BNFToken.ID and token.value == "inf"):
+            self.transition_top(to=BNFParserState.REFERENCE_RANGE_SEEN_MIN)
+            state.node.min = token.value
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REFERENCE_RANGE_SEEN_MIN(self, token, state):
+        if token.name == BNFToken.COMMA:
+            self.transition_top(to=BNFParserState.REFERENCE_RANGE_SEEN_MIN_AND_COMMA)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REFERENCE_RANGE_SEEN_MIN_AND_COMMA(self, token, state):
+        if token.name == BNFToken.INT or token.name == BNFToken.FLOAT or (token.name == BNFToken.ID and token.value == "inf"):
+            self.transition_top(to=BNFParserState.REFERENCE_RANGE_SEEN_MAX)
+            state.node.max = token.value
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REFERENCE_RANGE_SEEN_MAX(self, token, state):
+        if token.name == BNFToken.RSQUARE:
+            self.exit_range_attribute(token, state)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REPETITION_MODIFIER_INITIAL(self, token, state):
+        if token.name == BNFToken.INT:
+            self.transition_top(to=BNFParserState.REPETITION_MODIFIER_SEEN_MIN)
+            state.node.kind = BNFRepetitionModifier.Kind.EXACT
+            state.node.min = token.value
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REPETITION_MODIFIER_SEEN_MIN(self, token, state):
+        if token.name == BNFToken.COMMA:
+            self.transition_top(to=BNFParserState.REPETITION_MODIFIER_SEEN_MIN_AND_COMMA)
+            state.node.kind = BNFRepetitionModifier.Kind.AT_LEAST
+            return
+
+        if token.name == BNFToken.RBRACE:
+            self.exit_repetition_modifier(token, state)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REPETITION_MODIFIER_SEEN_MIN_AND_COMMA(self, token, state):
+        if token.name == BNFToken.INT:
+            self.transition_top(to=BNFParserState.REPETITION_MODIFIER_SEEN_MAX)
+            state.node.kind = BNFRepetitionModifier.Kind.BETWEEN
+            state.node.max = token.value
+            return
+
+        if token.name == BNFToken.RBRACE:
+            self.exit_repetition_modifier(token, state)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REPETITION_MODIFIER_SEEN_MAX(self, token, state):
+        if token.name == BNFToken.RBRACE:
+            self.exit_repetition_modifier(token, state)
+            return
+
+        raise self.unexpected(token, state)
 
 
 def main():
