@@ -179,7 +179,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 #endif
 
     if (m_destination == FetchOptions::Destination::Sharedworker)
-        m_userAgentForSharedWorker = scriptExecutionContext.userAgent(scriptRequest.url());
+        m_userAgentForSharedWorker = scriptExecutionContext.userAgent(m_url);
 
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);
