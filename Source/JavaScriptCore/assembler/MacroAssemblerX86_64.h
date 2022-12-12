@@ -2266,39 +2266,39 @@ public:
         switch (cond) {
         case DoubleEqualAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::Equal, left, right, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::Equal, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::Equal, left, right, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::Equal, right, left, dest);
             break;
         case DoubleNotEqualOrUnordered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::NotEqual, left, right, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::NotEqual, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::NotEqual, left, right, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::NotEqual, right, left, dest);
             break;
         case DoubleGreaterThanAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThan, left, right, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThan, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThan, left, right, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThan, right, left, dest);
             break;
         case DoubleGreaterThanOrEqualAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThanOrEqual, left, right, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThanOrEqual, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThanOrEqual, left, right, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThanOrEqual, right, left, dest);
             break;
         case DoubleLessThanAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThan, left, right, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThan, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThan, left, right, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThan, right, left, dest);
             break;
         case DoubleLessThanOrEqualAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThanOrEqual, left, right, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThanOrEqual, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThanOrEqual, left, right, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThanOrEqual, right, left, dest);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2314,16 +2314,16 @@ public:
         case Equal:
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpcmpeqb_rrr(left, right, dest);
+                m_assembler.vpcmpeqb_rrr(right, left, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpcmpeqw_rrr(left, right, dest);
+                m_assembler.vpcmpeqw_rrr(right, left, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpcmpeqd_rrr(left, right, dest);
+                m_assembler.vpcmpeqd_rrr(right, left, dest);
                 break;
             case SIMDLane::i64x2:
-                m_assembler.vpcmpeqq_rrr(left, right, dest);
+                m_assembler.vpcmpeqq_rrr(right, left, dest);
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
@@ -2340,17 +2340,18 @@ public:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector Above comparisons directly.");
             break;
         case AboveOrEqual:
+            // FIXME: these functions need to take scratch register since left can be dest.
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpmaxub_rrr(left, right, dest);
+                m_assembler.vpmaxub_rrr(right, left, dest);
                 m_assembler.vpcmpeqb_rrr(left, dest, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpmaxuw_rrr(left, right, dest);
+                m_assembler.vpmaxuw_rrr(right, left, dest);
                 m_assembler.vpcmpeqw_rrr(left, dest, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpmaxud_rrr(left, right, dest);
+                m_assembler.vpmaxud_rrr(right, left, dest);
                 m_assembler.vpcmpeqd_rrr(left, dest, dest);
                 break;
             case SIMDLane::i64x2:
@@ -2366,17 +2367,18 @@ public:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector Below comparisons directly.");
             break;
         case BelowOrEqual:
+            // FIXME: these functions need to take scratch register since left can be dest.
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpminub_rrr(left, right, dest);
+                m_assembler.vpminub_rrr(right, left, dest);
                 m_assembler.vpcmpeqb_rrr(left, dest, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpminuw_rrr(left, right, dest);
+                m_assembler.vpminuw_rrr(right, left, dest);
                 m_assembler.vpcmpeqw_rrr(left, dest, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpminud_rrr(left, right, dest);
+                m_assembler.vpminud_rrr(right, left, dest);
                 m_assembler.vpcmpeqd_rrr(left, dest, dest);
                 break;
             case SIMDLane::i64x2:
@@ -2387,47 +2389,6 @@ public:
             }
             break;
         case GreaterThan:
-            switch (simdInfo.lane) {
-            case SIMDLane::i8x16:
-                m_assembler.vpcmpgtb_rrr(left, right, dest);
-                break;
-            case SIMDLane::i16x8:
-                m_assembler.vpcmpgtw_rrr(left, right, dest);
-                break;
-            case SIMDLane::i32x4:
-                m_assembler.vpcmpgtd_rrr(left, right, dest);
-                break;
-            case SIMDLane::i64x2:
-                m_assembler.vpcmpgtq_rrr(left, right, dest);
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
-            }
-            break;
-        case GreaterThanOrEqual:
-            switch (simdInfo.lane) {
-            case SIMDLane::i8x16:
-                m_assembler.vpmaxsb_rrr(left, right, dest);
-                m_assembler.vpcmpeqb_rrr(left, dest, dest);
-                break;
-            case SIMDLane::i16x8:
-                m_assembler.vpmaxsw_rrr(left, right, dest);
-                m_assembler.vpcmpeqw_rrr(left, dest, dest);
-                break;
-            case SIMDLane::i32x4:
-                m_assembler.vpmaxsd_rrr(left, right, dest);
-                m_assembler.vpcmpeqd_rrr(left, dest, dest);
-                break;
-            case SIMDLane::i64x2:
-                // Intel doesn't support 64-bit packed maximum/minimum without AVX512, so this condition should have been transformed
-                // into a negated LessThan prior to reaching the macro assembler.
-                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector GreaterThanOrEqual comparisons directly.");
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
-            }
-            break;
-        case LessThan:
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
                 m_assembler.vpcmpgtb_rrr(right, left, dest);
@@ -2445,18 +2406,61 @@ public:
                 RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
             }
             break;
-        case LessThanOrEqual:
+        case GreaterThanOrEqual:
+            // FIXME: these functions need to take scratch register since left can be dest.
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpminsb_rrr(left, right, dest);
+                m_assembler.vpmaxsb_rrr(right, left, dest);
                 m_assembler.vpcmpeqb_rrr(left, dest, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpminsw_rrr(left, right, dest);
+                m_assembler.vpmaxsw_rrr(right, left, dest);
                 m_assembler.vpcmpeqw_rrr(left, dest, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpminsd_rrr(left, right, dest);
+                m_assembler.vpmaxsd_rrr(right, left, dest);
+                m_assembler.vpcmpeqd_rrr(left, dest, dest);
+                break;
+            case SIMDLane::i64x2:
+                // Intel doesn't support 64-bit packed maximum/minimum without AVX512, so this condition should have been transformed
+                // into a negated LessThan prior to reaching the macro assembler.
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector GreaterThanOrEqual comparisons directly.");
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
+            break;
+        case LessThan:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpcmpgtb_rrr(left, right, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpcmpgtw_rrr(left, right, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpcmpgtd_rrr(left, right, dest);
+                break;
+            case SIMDLane::i64x2:
+                m_assembler.vpcmpgtq_rrr(left, right, dest);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported SIMD lane for comparison");
+            }
+            break;
+        case LessThanOrEqual:
+            // FIXME: these functions need to take scratch register since left can be dest.
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                m_assembler.vpminsb_rrr(right, left, dest);
+                m_assembler.vpcmpeqb_rrr(left, dest, dest);
+                break;
+            case SIMDLane::i16x8:
+                m_assembler.vpminsw_rrr(right, left, dest);
+                m_assembler.vpcmpeqw_rrr(left, dest, dest);
+                break;
+            case SIMDLane::i32x4:
+                m_assembler.vpminsd_rrr(right, left, dest);
                 m_assembler.vpcmpeqd_rrr(left, dest, dest);
                 break;
             case SIMDLane::i64x2:
@@ -2490,22 +2494,22 @@ public:
 
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
-            m_assembler.vaddps_rrr(left, right, dest);
+            m_assembler.vaddps_rrr(right, left, dest);
             break;
         case SIMDLane::f64x2:
-            m_assembler.vaddpd_rrr(left, right, dest);
+            m_assembler.vaddpd_rrr(right, left, dest);
             break;
         case SIMDLane::i8x16:
-            m_assembler.vpaddb_rrr(left, right, dest);
+            m_assembler.vpaddb_rrr(right, left, dest);
             break;
         case SIMDLane::i16x8:
-            m_assembler.vpaddw_rrr(left, right, dest);
+            m_assembler.vpaddw_rrr(right, left, dest);
             break;
         case SIMDLane::i32x4:
-            m_assembler.vpaddd_rrr(left, right, dest);
+            m_assembler.vpaddd_rrr(right, left, dest);
             break;
         case SIMDLane::i64x2:
-            m_assembler.vpaddq_rrr(left, right, dest);
+            m_assembler.vpaddq_rrr(right, left, dest);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector add.");
@@ -2518,22 +2522,22 @@ public:
 
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
-            m_assembler.vsubps_rrr(left, right, dest);
+            m_assembler.vsubps_rrr(right, left, dest);
             break;
         case SIMDLane::f64x2:
-            m_assembler.vsubpd_rrr(left, right, dest);
+            m_assembler.vsubpd_rrr(right, left, dest);
             break;
         case SIMDLane::i8x16:
-            m_assembler.vpsubb_rrr(left, right, dest);
+            m_assembler.vpsubb_rrr(right, left, dest);
             break;
         case SIMDLane::i16x8:
-            m_assembler.vpsubw_rrr(left, right, dest);
+            m_assembler.vpsubw_rrr(right, left, dest);
             break;
         case SIMDLane::i32x4:
-            m_assembler.vpsubd_rrr(left, right, dest);
+            m_assembler.vpsubd_rrr(right, left, dest);
             break;
         case SIMDLane::i64x2:
-            m_assembler.vpsubq_rrr(left, right, dest);
+            m_assembler.vpsubq_rrr(right, left, dest);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector subtract.");
@@ -2546,16 +2550,16 @@ public:
 
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
-            m_assembler.vmulps_rrr(left, right, dest);
+            m_assembler.vmulps_rrr(right, left, dest);
             break;
         case SIMDLane::f64x2:
-            m_assembler.vmulpd_rrr(left, right, dest);
+            m_assembler.vmulpd_rrr(right, left, dest);
             break;
         case SIMDLane::i16x8:
-            m_assembler.vpmullw_rrr(left, right, dest);
+            m_assembler.vpmullw_rrr(right, left, dest);
             break;
         case SIMDLane::i32x4:
-            m_assembler.vpmulld_rrr(left, right, dest);
+            m_assembler.vpmulld_rrr(right, left, dest);
             break;
         case SIMDLane::i64x2:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("i64x2 multiply is not supported on Intel without AVX-512. This instruction should have been lowered before reaching the assembler.");
@@ -2571,10 +2575,10 @@ public:
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
-            m_assembler.vdivps_rrr(left, right, dest);
+            m_assembler.vdivps_rrr(right, left, dest);
             break;
         case SIMDLane::f64x2:
-            m_assembler.vdivpd_rrr(left, right, dest);
+            m_assembler.vdivpd_rrr(right, left, dest);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector divide.");
@@ -2734,28 +2738,28 @@ public:
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
-        m_assembler.vandps_rrr(left, right, dest);
+        m_assembler.vandps_rrr(right, left, dest);
     }
 
     void vectorAndnot(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
-        m_assembler.vandnps_rrr(left, right, dest);
+        m_assembler.vandnps_rrr(right, left, dest);
     }
 
     void vectorOr(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
-        m_assembler.vorps_rrr(left, right, dest);
+        m_assembler.vorps_rrr(right, left, dest);
     }
 
     void vectorXor(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
-        m_assembler.vxorps_rrr(left, right, dest);
+        m_assembler.vxorps_rrr(right, left, dest);
     }
 
     void moveZeroToVector(FPRegisterID dest)
@@ -2916,14 +2920,14 @@ public:
         case SIMDLane::i16x8:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
                 if (supportsAVXForSIMD())
-                    m_assembler.vpmovsxbw(input, dest);
+                    m_assembler.vpmovsxbw_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovsxbw(input, dest);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
             } else {
                 if (supportsAVXForSIMD())
-                    m_assembler.vpmovzxbw(input, dest);
+                    m_assembler.vpmovzxbw_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovzxbw(input, dest);
                 else
@@ -2933,14 +2937,14 @@ public:
         case SIMDLane::i32x4:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
                 if (supportsAVXForSIMD())
-                    m_assembler.vpmovsxwd(input, dest);
+                    m_assembler.vpmovsxwd_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovsxwd(input, dest);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
             } else {
                 if (supportsAVXForSIMD())
-                    m_assembler.vpmovzxwd(input, dest);
+                    m_assembler.vpmovzxwd_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovzxwd(input, dest);
                 else
@@ -2950,14 +2954,14 @@ public:
         case SIMDLane::i64x2:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
                 if (supportsAVXForSIMD())
-                    m_assembler.vpmovsxdq(input, dest);
+                    m_assembler.vpmovsxdq_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovsxdq(input, dest);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
             } else {
                 if (supportsAVXForSIMD())
-                    m_assembler.vpmovzxdq(input, dest);
+                    m_assembler.vpmovzxdq_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovzxdq(input, dest);
                 else
@@ -2972,7 +2976,7 @@ public:
     void vectorExtendHigh(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         if (supportsAVXForSIMD())
-            m_assembler.vupckhpd(dest, input, dest);
+            m_assembler.vupckhpd_rrr(dest, input, dest);
         else {
             if (input != dest)
                 m_assembler.movapd_rr(input, dest);
@@ -2984,19 +2988,15 @@ public:
     void vectorPromote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::f32x4);
-        if (supportsAVXForSIMD())
-            m_assembler.vcvtps2pd_rr(input, dest);
-        else
-            RELEASE_ASSERT_NOT_REACHED();
+        ASSERT(supportsAVXForSIMD());
+        m_assembler.vcvtps2pd_rr(input, dest);
     }
 
     void vectorDemote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::f64x2);
-        if (supportsAVXForSIMD())
-            m_assembler.vcvtpd2ps_rr(input, dest);
-        else
-            RELEASE_ASSERT_NOT_REACHED();
+        ASSERT(supportsAVXForSIMD());
+        m_assembler.vcvtpd2ps_rr(input, dest);
     }
 
     void vectorNarrow(SIMDInfo simdInfo, FPRegisterID lower, FPRegisterID upper, FPRegisterID dest, FPRegisterID)
@@ -3461,7 +3461,7 @@ public:
     void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
-        m_assembler.vpmaddwd_rrr(a, b, dest);
+        m_assembler.vpmaddwd_rrr(b, a, dest);
     }
 
     void vectorShuffle(TrustedImm64 immLow, TrustedImm64 immHigh, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { (void) immLow; (void) immHigh; (void) a; (void) b; (void) dest; }
