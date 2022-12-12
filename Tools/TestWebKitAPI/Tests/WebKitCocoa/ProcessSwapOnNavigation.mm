@@ -7848,6 +7848,18 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("!!window.PushSubscriptionOptions"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
     String mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement" : "Element", ".prototype");
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
+
+    // Confirm unstable Experimental settings are always off in Lockdown Mode.
+    EXPECT_EQ(runJSCheck("CSS.supports('contain-intrinsic-size: 10rem')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("CSS.supports('content-visibility: visible')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("CSS.supports('overflow-anchor:none')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("CSS.supports('text-justify: auto')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("!!navigator.contacts"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("!!navigator.requestCookieConsent"_s), false);
+    EXPECT_EQ(runJSCheck("!!window.CSSCounterStyleRule"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("!!window.DeprecationReportBody"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("!!window.Highlight"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+    EXPECT_EQ(runJSCheck("!!window.requestIdleCallback"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
 }
 
 @interface LockdownMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
@@ -7869,13 +7881,9 @@ static void configureLockdownWKWebViewConfiguration(WKWebViewConfiguration *conf
     config.preferences._mediaCaptureRequiresSecureConnection = NO;
     [config.preferences _setNotificationsEnabled:YES];
 
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
-        if ([feature.key isEqualToString:@"ModelElementEnabled"]
-            || [feature.key isEqualToString:@"PushAPIEnabled"]
-            || [feature.key isEqualToString:@"WebRTCEncodedTransformEnabled"]) {
-            [config.preferences _setEnabled:YES forFeature:feature];
-        }
-    }
+    // Turn on all experimental features to confirm they are properly turned off in Lockdown Mode.
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures])
+        [config.preferences _setEnabled:YES forFeature:feature];
 }
 
 TEST(ProcessSwap, NavigatingToLockdownMode)

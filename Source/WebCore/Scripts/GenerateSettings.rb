@@ -97,12 +97,14 @@ parsedPreferences.merge!(load(options[:debugPreferences]))
 parsedPreferences.merge!(load(options[:experimentalPreferences]))
 parsedPreferences.merge!(load(options[:internalPreferences]))
 
+parsedExperimentalPreferences = load(options[:experimentalPreferences])
 
 class Setting
   attr_accessor :name
   attr_accessor :options
   attr_accessor :type
   attr_accessor :defaultValues
+  attr_accessor :defaultValuesForModernWebKit
   attr_accessor :excludeFromInternalSettings
   attr_accessor :condition
   attr_accessor :onChange
@@ -115,6 +117,7 @@ class Setting
     @options = options
     @type = options["refinedType"] || options["type"]
     @defaultValues = options["defaultValue"]["WebCore"]
+    @defaultValuesForModernWebKit = options["defaultValue"]["WebKit"]
     @excludeFromInternalSettings = options["webcoreExcludeFromInternalSettings"] || false
     @condition = options["condition"]
     @onChange = options["webcoreOnChange"]
@@ -260,8 +263,10 @@ end
 
 class Settings
   attr_accessor :allSettingsSet
+  attr_accessor :unstableSettings
+  attr_accessor :unstableGlobalSettings
   
-  def initialize(parsedSettingsFromWebCore, parsedSettingsFromWebPreferences)
+  def initialize(parsedSettingsFromWebCore, parsedSettingsFromWebPreferences, parsedExperimentalPreferences)
     settings = []
     parsedSettingsFromWebPreferences.each do |name, options|
       # An empty "webcoreBinding" entry indicates this preference uses the default, which is bound to Settings.
@@ -275,6 +280,8 @@ class Settings
     end
 
     @allSettingsSet = SettingSet.new(settings)
+    @unstableSettings = unstableSettings(parsedExperimentalPreferences)
+    @unstableGlobalSettings = unstableGlobalSettings(parsedExperimentalPreferences)
   end
 
   def renderTemplate(template, outputDirectory)
@@ -289,9 +296,40 @@ class Settings
       f.write(output)
     end
   end
+
+  def unstableSettings(settings)
+    result = []
+    if settings
+      settings.each do |name, options|
+        if options["type"] == "bool" && !options["webcoreBinding"]
+          @defaultValue = options["defaultValue"]
+          if @defaultValue.include?("WebKit") && @defaultValue["WebKit"]["default"] == false
+            result << Setting.new(name, options)
+          end
+        end
+      end
+    end
+    result
+  end
+
+  def unstableGlobalSettings(settings)
+    result = []
+    if settings
+      settings.each do |name, options|
+        if options["type"] == "bool" && options["webcoreBinding"] == "DeprecatedGlobalSettings"
+          @defaultValue = options["defaultValue"]
+          if @defaultValue.include?("WebKit") && @defaultValue["WebKit"]["default"] == false
+            result << Setting.new(name, options)
+          end
+        end
+      end
+    end
+    result
+  end
+
 end
 
-settings = Settings.new(parsedSettings, parsedPreferences)
+settings = Settings.new(parsedSettings, parsedPreferences, parsedExperimentalPreferences)
 
 options[:templates].each do |template|
   settings.renderTemplate(template, options[:outputDirectory])
