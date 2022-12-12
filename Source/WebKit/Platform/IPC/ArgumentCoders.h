@@ -589,14 +589,14 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
             return std::nullopt;
 
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> vector;
+        vector.reserveInitialCapacity(*size);
         for (size_t i = 0; i < *size; ++i) {
             std::optional<T> element;
             decoder >> element;
             if (!element)
                 return std::nullopt;
-            vector.append(WTFMove(*element));
+            vector.uncheckedAppend(WTFMove(*element));
         }
-        vector.shrinkToFit();
         return vector;
     }
 };
