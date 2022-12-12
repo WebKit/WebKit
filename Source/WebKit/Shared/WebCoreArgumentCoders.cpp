@@ -66,6 +66,7 @@
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/NowPlayingInfo.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PromisedAttachmentInfo.h>
@@ -3097,7 +3098,7 @@ void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encode
     encoder << message.second;
 }
 
-std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMInstanceSession::Message>::decode(Decoder& decoder)
+std::optional<WebCore::CDMInstanceSession::Message> ArgumentCoder<WebCore::CDMInstanceSession::Message>::decode(Decoder& decoder)
 {
     WebCore::CDMInstanceSession::MessageType type;
     if (!decoder.decode(type))
@@ -3110,6 +3111,25 @@ std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMI
     return std::make_optional<WebCore::CDMInstanceSession::Message>({ type, WTFMove(*buffer) });
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
+
+void ArgumentCoder<WebCore::NowPlayingInfoArtwork>::encode(Encoder& encoder, const WebCore::NowPlayingInfoArtwork& artwork)
+{
+    encoder << artwork.src << artwork.mimeType;
+    // Encoder of RefPtr<Image> will automatically decode the image and convert it to a BitmapImage/ShareableBitmap.
+    encodeOptionalImage(encoder, artwork.image.get());
+}
+
+std::optional<WebCore::NowPlayingInfoArtwork> ArgumentCoder<WebCore::NowPlayingInfoArtwork>::decode(Decoder& decoder)
+{
+    auto src = decoder.template decode<String>();
+    auto mimeType = decoder.template decode<String>();
+
+    RefPtr<Image> image;
+    if (UNLIKELY(!decoder.isValid() || !decodeOptionalImage(decoder, image)))
+        return std::nullopt;
+
+    return { { WTFMove(*src), WTFMove(*mimeType), WTFMove(image) } };
+}
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 

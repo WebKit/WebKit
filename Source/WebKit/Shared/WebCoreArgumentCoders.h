@@ -175,6 +175,7 @@ struct ShareDataWithParsedURL;
 struct Length;
 struct GrammarDetail;
 struct MimeClassInfo;
+struct NowPlayingInfoArtwork;
 struct PasteboardImage;
 struct PasteboardURL;
 struct PluginInfo;
@@ -788,6 +789,11 @@ template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {
     static std::optional<WebCore::CDMInstanceSession::Message> decode(Decoder&);
 };
 #endif
+
+template<> struct ArgumentCoder<WebCore::NowPlayingInfoArtwork> {
+    static void encode(Encoder&, const WebCore::NowPlayingInfoArtwork&);
+    static std::optional<WebCore::NowPlayingInfoArtwork> decode(Decoder&);
+};
 
 #if HAVE(PASSKIT_INSTALLMENTS)
 template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {

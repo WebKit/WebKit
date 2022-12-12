@@ -390,10 +390,12 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         auto cfCurrentTime = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &nowPlayingInfo.currentTime));
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
     }
-    if (nowPlayingInfo.artwork && nowPlayingInfo.artwork->imageData) {
-        auto nsArtwork = nowPlayingInfo.artwork->imageData->makeContiguous()->createNSData();
-        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, nsArtwork.get());
-        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, nowPlayingInfo.artwork->mimeType.createCFString().get());
+    RetainPtr tiffImage = nowPlayingInfo.artwork && nowPlayingInfo.artwork->image ? nowPlayingInfo.artwork->image->tiffRepresentation() : nullptr;
+    if (tiffImage) {
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, tiffImage.get());
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, @"image/tiff");
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataWidth, [NSNumber numberWithFloat:nowPlayingInfo.artwork->image->width()]);
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkDataHeight, [NSNumber numberWithFloat:nowPlayingInfo.artwork->image->height()]);
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkIdentifier, String::number(nowPlayingInfo.artwork->src.hash()).createCFString().get());
     }
 

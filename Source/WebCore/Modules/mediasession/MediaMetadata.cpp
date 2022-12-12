@@ -72,21 +72,11 @@ void ArtworkImageLoader::requestImageResource()
 void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, &resource == m_cachedImage);
-    if (m_cachedImage->loadFailedOrCanceled() || m_cachedImage->errorOccurred() || !m_cachedImage->image() || !m_cachedImage->image()->data() || m_cachedImage->image()->data()->isEmpty()) {
+    if (m_cachedImage->loadFailedOrCanceled() || m_cachedImage->errorOccurred() || !m_cachedImage->image()) {
         m_callback(nullptr);
         return;
     }
-    // Sanitize the image by decoding it into a BitmapImage.
-    RefPtr<FragmentedSharedBuffer> bufferToSanitize = m_cachedImage->image()->data();
-    auto bitmapImage = BitmapImage::create();
-    bitmapImage->setData(WTFMove(bufferToSanitize), true);
-    auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!imageBuffer) {
-        m_callback(nullptr);
-        return;
-    }
-    imageBuffer->context().drawImage(bitmapImage.get(), FloatPoint::zero());
-    m_callback(bitmapImage.ptr());
+    m_callback(m_cachedImage->image());
 }
 
 ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& context, std::optional<MediaMetadataInit>&& init)

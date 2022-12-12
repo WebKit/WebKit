@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "Image.h"
 #include "MediaUniqueIdentifier.h"
-#include "SharedBuffer.h"
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 struct NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<FragmentedSharedBuffer> imageData;
+    RefPtr<Image> image;
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {
@@ -47,32 +47,7 @@ struct NowPlayingInfoArtwork {
     {
         return !(*this == other);
     }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<NowPlayingInfoArtwork> decode(Decoder&);
 };
-
-template<class Encoder> inline void NowPlayingInfoArtwork::encode(Encoder& encoder) const
-{
-    encoder << src << mimeType << imageData;
-}
-
-template<class Decoder> inline std::optional<NowPlayingInfoArtwork> NowPlayingInfoArtwork::decode(Decoder& decoder)
-{
-    String src;
-    if (!decoder.decode(src))
-        return { };
-
-    String mimeType;
-    if (!decoder.decode(mimeType))
-        return { };
-
-    RefPtr<FragmentedSharedBuffer> imageData;
-    if (!decoder.decode(imageData))
-        return { };
-
-    return NowPlayingInfoArtwork { WTFMove(src), WTFMove(mimeType), WTFMove(imageData) };
-}
 
 struct NowPlayingInfo {
     String title;
