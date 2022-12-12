@@ -4135,6 +4135,10 @@ bool WebPage::isParentProcessAWebBrowser() const
 
 static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferencesStore& store)
 {
+    // Disable unstable Experimental settings, even if the user enabled them for local use.
+    settings.disableUnstableFeaturesForModernWebKit();
+    Settings::disableGlobalUnstableFeaturesForModernWebKit();
+
     settings.setWebGLEnabled(false);
 #if ENABLE(WEBGL2)
     settings.setWebGL2Enabled(false);

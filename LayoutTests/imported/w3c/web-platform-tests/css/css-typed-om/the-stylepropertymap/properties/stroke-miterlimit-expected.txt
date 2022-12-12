@@ -1,7 +1,7 @@
 
 PASS Can set 'stroke-miterlimit' to CSS-wide keywords
 FAIL Can set 'stroke-miterlimit' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'stroke-miterlimit' to a number Invalid values
+FAIL Can set 'stroke-miterlimit' to a number assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'stroke-miterlimit' to a length throws TypeError
 PASS Setting 'stroke-miterlimit' to a percent throws TypeError
 PASS Setting 'stroke-miterlimit' to a time throws TypeError

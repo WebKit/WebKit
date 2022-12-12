@@ -4,7 +4,7 @@ FAIL Can set 'border-top-width' to var() references assert_equals: expected 2 bu
 PASS Can set 'border-top-width' to the 'thin' keyword
 PASS Can set 'border-top-width' to the 'medium' keyword
 PASS Can set 'border-top-width' to the 'thick' keyword
-FAIL Can set 'border-top-width' to a length Invalid values
+FAIL Can set 'border-top-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'border-top-width' to a percent throws TypeError
 PASS Setting 'border-top-width' to a time throws TypeError
 PASS Setting 'border-top-width' to an angle throws TypeError
@@ -17,7 +17,7 @@ FAIL Can set 'border-left-width' to var() references assert_equals: expected 2 b
 PASS Can set 'border-left-width' to the 'thin' keyword
 PASS Can set 'border-left-width' to the 'medium' keyword
 PASS Can set 'border-left-width' to the 'thick' keyword
-FAIL Can set 'border-left-width' to a length Invalid values
+FAIL Can set 'border-left-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'border-left-width' to a percent throws TypeError
 PASS Setting 'border-left-width' to a time throws TypeError
 PASS Setting 'border-left-width' to an angle throws TypeError
@@ -30,7 +30,7 @@ FAIL Can set 'border-right-width' to var() references assert_equals: expected 2 
 PASS Can set 'border-right-width' to the 'thin' keyword
 PASS Can set 'border-right-width' to the 'medium' keyword
 PASS Can set 'border-right-width' to the 'thick' keyword
-FAIL Can set 'border-right-width' to a length Invalid values
+FAIL Can set 'border-right-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'border-right-width' to a percent throws TypeError
 PASS Setting 'border-right-width' to a time throws TypeError
 PASS Setting 'border-right-width' to an angle throws TypeError
@@ -43,7 +43,7 @@ FAIL Can set 'border-bottom-width' to var() references assert_equals: expected 2
 PASS Can set 'border-bottom-width' to the 'thin' keyword
 PASS Can set 'border-bottom-width' to the 'medium' keyword
 PASS Can set 'border-bottom-width' to the 'thick' keyword
-FAIL Can set 'border-bottom-width' to a length Invalid values
+FAIL Can set 'border-bottom-width' to a length assert_equals: expected "px" but got "em"
 PASS Setting 'border-bottom-width' to a percent throws TypeError
 PASS Setting 'border-bottom-width' to a time throws TypeError
 PASS Setting 'border-bottom-width' to an angle throws TypeError

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "Settings.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 
@@ -146,6 +147,68 @@ Settings::Values Settings::Values::isolatedCopy() const
 
 Settings::~Settings()
 {
+}
+
+void Settings::disableUnstableFeaturesForModernWebKit()
+{
+<%- for @setting in @unstableSettings do -%>
+<%-   if @setting.condition -%>
+#if <%= @setting.condition %>
+<%-   end -%>
+<%-   if @setting.defaultValuesForModernWebKit.size() == 1 -%>
+    <%= @setting.setterFunctionName %>(false);
+<%-   else -%>
+<%-     @setting.defaultValuesForModernWebKit.each_with_index do |(key, value), index| -%>
+<%-       if index == 0 -%>
+#if <%= key %>
+<%-       elsif index != @setting.defaultValuesForModernWebKit.size() - 1 -%>
+#elif <%= key %>
+<%-       else -%>
+#else
+<%-       end -%>
+<%-       if value -%>
+    // Feature is stable on this platform. No need to disable.
+<%-       else -%>
+    <%= @setting.setterFunctionName %>(false);
+<%-       end -%>
+<%-     end -%>
+#endif
+<%-   end -%>
+<%-   if @setting.condition -%>
+#endif
+<%-   end -%>
+<%- end -%>
+}
+
+void Settings::disableGlobalUnstableFeaturesForModernWebKit()
+{
+<%- for @setting in @unstableGlobalSettings do -%>
+<%-   if @setting.condition -%>
+#if <%= @setting.condition %>
+<%-   end -%>
+<%-   if @setting.defaultValuesForModernWebKit.size() == 1 -%>
+    <%= @setting.options["webcoreBinding"] %>::<%= @setting.setterFunctionName %>(false);
+<%-   else -%>
+<%-     @setting.defaultValuesForModernWebKit.each_with_index do |(key, value), index| -%>
+<%-       if index == 0 -%>
+#if <%= key %>
+<%-       elsif index != @setting.defaultValuesForModernWebKit.size() - 1 -%>
+#elif <%= key %>
+<%-       else -%>
+#else
+<%-       end -%>
+<%-       if key != "ENABLE(EXPERIMENTAL_FEATURES)" && value -%>
+    // Feature is stable on this platform. No need to disable.
+<%-       else -%>
+    <%= @setting.options["webcoreBinding"] %>::<%= @setting.setterFunctionName %>(false);
+<%-       end -%>
+<%-     end -%>
+#endif
+<%-   end -%>
+<%-   if @setting.condition -%>
+#endif
+<%-   end -%>
+<%- end -%>
 }
 
 <%- for @condition in @allSettingsSet.conditions do -%>

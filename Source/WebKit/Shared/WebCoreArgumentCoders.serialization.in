@@ -1940,3 +1940,14 @@ struct WebCore::GraphicsContextGLAttributes {
   WebCore::StepsTimingFunction,
   WebCore::SpringTimingFunction
 }
+
+[RefCounted] class WebCore::TransformOperation subclasses {
+    WebCore::TranslateTransformOperation
+    WebCore::ScaleTransformOperation
+    WebCore::RotateTransformOperation
+    WebCore::SkewTransformOperation
+    WebCore::MatrixTransformOperation
+    WebCore::Matrix3DTransformOperation
+    WebCore::PerspectiveTransformOperation
+    WebCore::IdentityTransformOperation
+}

@@ -77,22 +77,6 @@
 
 namespace IPC {
 
-void ArgumentCoder<WebCore::AttributedString>::encode(Encoder& encoder, const WebCore::AttributedString& attributedString)
-{
-    encoder << attributedString.string << attributedString.documentAttributes;
-}
-
-std::optional<WebCore::AttributedString> ArgumentCoder<WebCore::AttributedString>::decode(Decoder& decoder)
-{
-    RetainPtr<NSAttributedString> attributedString;
-    if (!IPC::decode(decoder, attributedString))
-        return std::nullopt;
-    RetainPtr<NSDictionary> documentAttributes;
-    if (!IPC::decode(decoder, documentAttributes))
-        return std::nullopt;
-    return { { WTFMove(attributedString), WTFMove(documentAttributes) } };
-}
-
 #if ENABLE(APPLE_PAY)
 
 #if HAVE(PASSKIT_INSTALLMENTS)

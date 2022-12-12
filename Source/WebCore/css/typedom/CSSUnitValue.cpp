@@ -180,6 +180,7 @@ RefPtr<CSSValue> CSSUnitValue::toCSSValue() const
     return CSSPrimitiveValue::create(m_value, m_unit);
 }
 
+// FIXME: This function could be mostly generated from CSSProperties.json.
 static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value, CSSUnitType unit)
 {
     bool acceptsNegativeNumbers = true;
@@ -196,25 +197,62 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     case CSSPropertyWidows:
     case CSSPropertyColumnCount:
         return round(value) != value || value < 1;
+    case CSSPropertyAnimationDuration:
+    case CSSPropertyAnimationIterationCount:
+    case CSSPropertyBackgroundSize:
     case CSSPropertyBlockSize:
+    case CSSPropertyBorderBlockEndWidth:
+    case CSSPropertyBorderBlockStartWidth:
+    case CSSPropertyBorderBottomLeftRadius:
+    case CSSPropertyBorderBottomRightRadius:
+    case CSSPropertyBorderBottomWidth:
+    case CSSPropertyBorderImageOutset:
+    case CSSPropertyBorderImageSlice:
+    case CSSPropertyBorderImageWidth:
+    case CSSPropertyBorderInlineEndWidth:
+    case CSSPropertyBorderInlineStartWidth:
+    case CSSPropertyBorderLeftWidth:
+    case CSSPropertyBorderRightWidth:
+    case CSSPropertyBorderTopLeftRadius:
+    case CSSPropertyBorderTopRightRadius:
+    case CSSPropertyBorderTopWidth:
+    case CSSPropertyColumnGap:
     case CSSPropertyColumnRuleWidth:
+    case CSSPropertyColumnWidth:
+    case CSSPropertyFlexBasis:
     case CSSPropertyFlexGrow:
     case CSSPropertyFlexShrink:
     case CSSPropertyFontSize:
     case CSSPropertyFontSizeAdjust:
     case CSSPropertyFontStretch:
+    case CSSPropertyGridAutoColumns:
+    case CSSPropertyGridAutoRows:
     case CSSPropertyInlineSize:
+    case CSSPropertyLineHeight:
     case CSSPropertyMaxBlockSize:
     case CSSPropertyMaxInlineSize:
+    case CSSPropertyMaxHeight:
+    case CSSPropertyMaxWidth:
     case CSSPropertyMinBlockSize:
     case CSSPropertyMinInlineSize:
+    case CSSPropertyOutlineWidth:
     case CSSPropertyPerspective:
     case CSSPropertyR:
+    case CSSPropertyRowGap:
     case CSSPropertyRx:
     case CSSPropertyRy:
+    case CSSPropertyScrollPaddingBlockEnd:
+    case CSSPropertyScrollPaddingBlockStart:
+    case CSSPropertyScrollPaddingBottom:
+    case CSSPropertyScrollPaddingInlineEnd:
+    case CSSPropertyScrollPaddingInlineStart:
+    case CSSPropertyScrollPaddingLeft:
+    case CSSPropertyScrollPaddingRight:
+    case CSSPropertyScrollPaddingTop:
+    case CSSPropertyStrokeMiterlimit:
         return value < 0;
     case CSSPropertyFontWeight:
-        return value < 0 || value > 1000;
+        return value < 1 || value > 1000;
     default:
         return false;
     }

@@ -195,7 +195,7 @@ FAIL Can set 'border-block-start-width' to var() references assert_equals: expec
 FAIL Can set 'border-block-start-width' to the 'thin' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-start-width' to the 'medium' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-start-width' to the 'thick' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'border-block-start-width' to a length Invalid values
+FAIL Can set 'border-block-start-width' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'border-block-start-width' to a percent throws TypeError
 PASS Setting 'border-block-start-width' to a time throws TypeError
 PASS Setting 'border-block-start-width' to an angle throws TypeError
@@ -242,7 +242,7 @@ FAIL Can set 'border-block-end-width' to var() references assert_equals: expecte
 FAIL Can set 'border-block-end-width' to the 'thin' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-end-width' to the 'medium' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-end-width' to the 'thick' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'border-block-end-width' to a length Invalid values
+FAIL Can set 'border-block-end-width' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'border-block-end-width' to a percent throws TypeError
 PASS Setting 'border-block-end-width' to a time throws TypeError
 PASS Setting 'border-block-end-width' to an angle throws TypeError
@@ -289,7 +289,7 @@ FAIL Can set 'border-inline-start-width' to var() references assert_equals: expe
 FAIL Can set 'border-inline-start-width' to the 'thin' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-start-width' to the 'medium' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-start-width' to the 'thick' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'border-inline-start-width' to a length Invalid values
+FAIL Can set 'border-inline-start-width' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'border-inline-start-width' to a percent throws TypeError
 PASS Setting 'border-inline-start-width' to a time throws TypeError
 PASS Setting 'border-inline-start-width' to an angle throws TypeError
@@ -336,7 +336,7 @@ FAIL Can set 'border-inline-end-width' to var() references assert_equals: expect
 FAIL Can set 'border-inline-end-width' to the 'thin' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-end-width' to the 'medium' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-end-width' to the 'thick' keyword assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'border-inline-end-width' to a length Invalid values
+FAIL Can set 'border-inline-end-width' to a length assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Setting 'border-inline-end-width' to a percent throws TypeError
 PASS Setting 'border-inline-end-width' to a time throws TypeError
 PASS Setting 'border-inline-end-width' to an angle throws TypeError

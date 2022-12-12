@@ -1457,7 +1457,7 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
             ASSERT(!replacedThunk->callArityThunk);
             replacedThunk->callArityThunk = WTFMove(oldArityJITCodeRef);
 
-            RELEASE_ASSERT(oldJITCodeRef.code() == createJITCodeRef(vm.jitStubs->ctiNativeCall(vm)).code());
+            RELEASE_ASSERT(replacedThunk->callThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeCall(vm)).code());
             break;
 
         case JSC::CodeForConstruct:
@@ -1467,7 +1467,7 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
             ASSERT(!replacedThunk->constructArityThunk);
             replacedThunk->constructArityThunk = WTFMove(oldArityJITCodeRef);
 
-            RELEASE_ASSERT(oldJITCodeRef.code() == createJITCodeRef(vm.jitStubs->ctiNativeConstruct(vm)).code());
+            RELEASE_ASSERT(replacedThunk->constructThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeConstruct(vm)).code());
             break;
         }
 
