@@ -198,15 +198,17 @@ static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRtpStreamS
     if (const char* remoteId = gst_structure_get_string(structure, "remote-id"))
         stats.remoteId = String::fromLatin1(remoteId);
 
-    if (additionalStats) {
-        if (gst_structure_get_uint64(additionalStats, "frames-sent", &value))
-            stats.framesSent = value;
-        if (gst_structure_get_uint64(additionalStats, "frames-encoded", &value))
-            stats.framesEncoded = value;
-    }
+    if (!additionalStats)
+        return;
 
-    // FIXME
-    // stats.targetBitrate =
+    if (gst_structure_get_uint64(additionalStats, "frames-sent", &value))
+        stats.framesSent = value;
+    if (gst_structure_get_uint64(additionalStats, "frames-encoded", &value))
+        stats.framesEncoded = value;
+
+    double bitrate;
+    if (gst_structure_get_double(additionalStats, "bitrate", &bitrate))
+        stats.targetBitrate = bitrate;
 }
 
 static inline void fillRTCPeerConnectionStats(RTCStatsReport::PeerConnectionStats& stats, const GstStructure* structure)
