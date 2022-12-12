@@ -1933,3 +1933,10 @@ struct WebCore::GraphicsContextGLAttributes {
 #endif
 };
 #endif
+
+[RefCounted] class WebCore::TimingFunction subclasses {
+  WebCore::LinearTimingFunction,
+  WebCore::CubicBezierTimingFunction,
+  WebCore::StepsTimingFunction,
+  WebCore::SpringTimingFunction
+}

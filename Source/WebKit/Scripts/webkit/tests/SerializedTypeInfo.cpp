@@ -41,6 +41,7 @@
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
+#include <WebCore/TimingFunction.h>
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 

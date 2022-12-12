@@ -128,7 +128,6 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     
     encoder << keyValues;
     encoder << keyTimes;
-    
     encoder << timingFunctions;
 
     encoder << animations;

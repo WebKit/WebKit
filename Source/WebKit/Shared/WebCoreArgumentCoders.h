@@ -144,7 +144,6 @@ class FragmentedSharedBuffer;
 class StickyPositionViewportConstraints;
 class SystemImage;
 class TextCheckingRequestData;
-class TimingFunction;
 class TransformOperation;
 class UserStyleSheet;
 
@@ -562,11 +561,6 @@ template<> struct ArgumentCoder<WebCore::PixelBuffer> {
 template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
     static void encode(Encoder&, const RefPtr<WebCore::ReportBody>&);
     static std::optional<RefPtr<WebCore::ReportBody>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::TimingFunction> {
-    static void encode(Encoder&, const WebCore::TimingFunction&);
-    static std::optional<Ref<WebCore::TimingFunction>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::TransformOperation> {

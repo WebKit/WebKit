@@ -108,7 +108,6 @@
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
-#include <WebCore/TimingFunction.h>
 #include <WebCore/TransformOperation.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/TranslateTransformOperation.h>
@@ -1658,74 +1657,6 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
     case ViolationReportType::StandardReportingAPIViolation:
         ASSERT_NOT_REACHED();
         return std::nullopt;
-    }
-
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
-void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebCore::TimingFunction& timingFunction)
-{
-    encoder << timingFunction.type();
-
-    switch (timingFunction.type()) {
-    case TimingFunction::Type::LinearFunction:
-        encoder << downcast<LinearTimingFunction>(timingFunction);
-        break;
-
-    case TimingFunction::Type::CubicBezierFunction:
-        encoder << downcast<CubicBezierTimingFunction>(timingFunction);
-        break;
-
-    case TimingFunction::Type::StepsFunction:
-        encoder << downcast<StepsTimingFunction>(timingFunction);
-        break;
-
-    case TimingFunction::Type::SpringFunction:
-        encoder << downcast<SpringTimingFunction>(timingFunction);
-        break;
-    }
-}
-
-std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
-{
-    std::optional<TimingFunction::Type> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    switch (*type) {
-    case TimingFunction::Type::LinearFunction: {
-        std::optional<Ref<LinearTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
-
-    case TimingFunction::Type::CubicBezierFunction: {
-        std::optional<Ref<CubicBezierTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
-
-    case TimingFunction::Type::StepsFunction: {
-        std::optional<Ref<StepsTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
-
-    case TimingFunction::Type::SpringFunction: {
-        std::optional<Ref<SpringTimingFunction>> function;
-        decoder >> function;
-        if (!function)
-            return std::nullopt;
-        return WTFMove(*function);
-    }
     }
 
     ASSERT_NOT_REACHED();

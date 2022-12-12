@@ -27,7 +27,7 @@ import sys
 
 
 class SerializedType(object):
-    def __init__(self, struct_or_class, namespace, name, parent_class_name, members, condition, attributes):
+    def __init__(self, struct_or_class, namespace, name, parent_class_name, members, condition, attributes, other_metadata=None):
         self.struct_or_class = struct_or_class
         self.namespace = namespace
         self.name = name
@@ -42,6 +42,7 @@ class SerializedType(object):
         self.create_using = False
         self.populate_from_empty_constructor = False
         self.nested = False
+        self.members_are_subclasses = False
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -59,6 +60,11 @@ class SerializedType(object):
                 else:
                     if attribute == 'Nested':
                         self.nested = True
+                    elif attribute == 'RefCounted':
+                        self.return_ref = True
+        if other_metadata:
+            if other_metadata == 'subclasses':
+                self.members_are_subclasses = True
 
     def namespace_and_name(self):
         if self.namespace is None:
@@ -70,6 +76,14 @@ class SerializedType(object):
             return self.name
         return self.namespace_and_name()
 
+    def subclass_enum_name(self):
+        result = ""
+        if self.namespace:
+            result += self.namespace + "_"
+        return result + self.name + "_Subclass"
+
+    def function_name_for_enum(self):
+        return 'isValidEnum'
 
 class SerializedEnum(object):
     def __init__(self, namespace, name, underlying_type, valid_values, condition, attributes):
@@ -108,18 +122,19 @@ class SerializedEnum(object):
 
 
 class MemberVariable(object):
-    def __init__(self, type, name, condition, attributes):
+    def __init__(self, type, name, condition, attributes, namespace=None, is_subclass=False):
         self.type = type
         self.name = name
         self.condition = condition
         self.attributes = attributes
+        self.namespace = namespace
+        self.is_subclass = is_subclass
 
 
 class EnumMember(object):
     def __init__(self, name, condition):
         self.name = name
         self.condition = condition
-
 
 class ConditionalHeader(object):
     def __init__(self, header, condition):
@@ -286,6 +301,11 @@ def encode_type(type):
             result.append('    encoder << !!instance.' + member.name + ';')
             result.append('    if (!!instance.' + member.name + ')')
             result.append('        encoder << instance.' + member.name + ';')
+        elif member.is_subclass:
+            result.append('    if (auto* subclass = dynamicDowncast<' + member.namespace + "::" + member.name + '>(instance)) {')
+            result.append('        encoder << ' + type.subclass_enum_name() + "::" + member.name + ";")
+            result.append('        encoder << *subclass;')
+            result.append('    }')
         else:
             result.append('    encoder << instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ';')
             if 'ReturnEarlyIfTrue' in member.attributes:
@@ -293,6 +313,7 @@ def encode_type(type):
                 result.append('        return;')
         if member.condition is not None:
             result.append('#endif')
+
     return result
 
 
@@ -300,6 +321,14 @@ def decode_type(type):
     result = []
     if type.parent_class is not None:
         result = result + decode_type(type.parent_class)
+
+    if type.members_are_subclasses:
+        result.append('    std::optional<' + type.subclass_enum_name() + '> type;')
+        result.append('    decoder >> type;')
+        result.append('    if (!type)')
+        result.append('        return std::nullopt;')
+        result.append('')
+
     for member in type.members:
         if member.condition is not None:
             result.append('#if ' + member.condition)
@@ -315,6 +344,15 @@ def decode_type(type):
             if 'ReturnEarlyIfTrue' in member.attributes:
                 result.append('    if (*' + sanitized_variable_name + ')')
                 result.append('        return { ' + type.namespace_and_name() + ' { } };')
+        elif member.is_subclass:
+            result.append('    if (type == ' + type.subclass_enum_name() + "::" + member.name + ') {')
+            typename = member.namespace + "::" + member.name
+            result.append('        std::optional<Ref<' + typename + '>> result;')
+            result.append('        decoder >> result;')
+            result.append('        if (!result)')
+            result.append('            return std::nullopt;')
+            result.append('        return WTFMove(*result);')
+            result.append('    }')
         else:
             assert len(decodable_classes) == 0
             r = re.compile(r"SoftLinkedClass='(.*)'")
@@ -429,11 +467,22 @@ def generate_impl(serialized_types, serialized_enums, headers):
         result.append('')
         if type.condition is not None:
             result.append('#if ' + type.condition)
+
+        if type.members_are_subclasses:
+            result.append('enum class ' + type.subclass_enum_name() + " : uint8_t {")
+            for idx in range(0, len(type.members)):
+                member = type.members[idx]
+                if idx == len(type.members) - 1:
+                    result.append('    ' + member.name)
+                else:
+                    result.append('    ' + member.name + ',')
+            result.append('};')
         for encoder in type.encoders:
             result.append('')
             result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, const ' + type.namespace_and_name() + '& instance)')
             result.append('{')
-            result = result + check_type_members(type)
+            if not type.members_are_subclasses:
+                result = result + check_type_members(type)
             result = result + encode_type(type)
             result.append('}')
         result.append('')
@@ -443,19 +492,23 @@ def generate_impl(serialized_types, serialized_enums, headers):
             result.append('std::optional<' + type.namespace_and_name() + '> ArgumentCoder<' + type.namespace_and_name() + '>::decode(Decoder& decoder)')
         result.append('{')
         result = result + decode_type(type)
-        if type.populate_from_empty_constructor:
-            result.append('    ' + type.namespace_and_name() + ' result;')
-            for member in type.members:
-                if member.condition is not None:
-                    result.append('#if ' + member.condition)
-                result.append('    result.' + member.name + ' = WTFMove(*' + member.name + ');')
-                if member.condition is not None:
-                    result.append('#endif')
-            result.append('    return { WTFMove(result) };')
+        if not type.members_are_subclasses:
+            if type.populate_from_empty_constructor:
+                result.append('    ' + type.namespace_and_name() + ' result;')
+                for member in type.members:
+                    if member.condition is not None:
+                        result.append('#if ' + member.condition)
+                    result.append('    result.' + member.name + ' = WTFMove(*' + member.name + ');')
+                    if member.condition is not None:
+                        result.append('#endif')
+                result.append('    return { WTFMove(result) };')
+            else:
+                result.append('    return {')
+                result = result + construct_type(type, 2)
+                result.append('    };')
         else:
-            result.append('    return {')
-            result = result + construct_type(type, 2)
-            result.append('    };')
+            result.append('    ASSERT_NOT_REACHED();')
+            result.append('    return std::nullopt;')
         result.append('}')
         if type.condition is not None:
             result.append('')
@@ -464,6 +517,29 @@ def generate_impl(serialized_types, serialized_enums, headers):
     result.append('} // namespace IPC')
     result.append('')
     result.append('namespace WTF {')
+    for type in serialized_types:
+        if not type.members_are_subclasses:
+            continue
+        result.append('')
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+        result.append('template<> bool ' + type.function_name_for_enum() + '<IPC::' + type.subclass_enum_name() + ', void>(uint8_t value)')
+        result.append('{')
+        result.append('    switch (static_cast<IPC::' + type.subclass_enum_name() + '>(value)) {')
+        for member in type.members:
+            if member.condition is not None:
+                result.append('#if ' + member.condition)
+            result.append('    case IPC::' + type.subclass_enum_name() + '::' + member.name + ':')
+            if member.condition is not None:
+                result.append('#endif')
+        result.append('        return true;')
+        result.append('    default:')
+        result.append('        return false;')
+        result.append('    }')
+        result.append('}')
+        if type.condition is not None:
+            result.append('#endif')
+
     for enum in serialized_enums:
         if enum.underlying_type == 'bool':
             continue
@@ -524,6 +600,8 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
     result.append('{')
     result.append('    return {')
     for type in serialized_types:
+        if type.members_are_subclasses:
+            continue
         result.append('        { "' + type.namespace_unless_wtf_and_name() + '"_s, {')
         for member in type.members:
             result.append('            "' + member.type + '"_s,')
@@ -574,6 +652,7 @@ def parse_serialized_types(file, file_name):
     struct_or_class = None
     underlying_type = None
     parent_class_name = None
+    metadata = None
 
     for line in file:
         line = line.strip()
@@ -593,7 +672,7 @@ def parse_serialized_types(file, file_name):
             if underlying_type is not None:
                 serialized_enums.append(SerializedEnum(namespace, name, underlying_type, members, type_condition, attributes))
             else:
-                serialized_types.append(SerializedType(struct_or_class, namespace, name, parent_class_name, members, type_condition, attributes))
+                serialized_types.append(SerializedType(struct_or_class, namespace, name, parent_class_name, members, type_condition, attributes, metadata))
                 if namespace is not None and (attributes is None or 'CustomHeader' not in attributes and 'Nested' not in attributes):
                     if namespace == 'WebKit':
                         headers.append(ConditionalHeader('"' + name + '.h"', type_condition))
@@ -611,6 +690,7 @@ def parse_serialized_types(file, file_name):
             struct_or_class = None
             underlying_type = None
             parent_class_name = None
+            metadata = None
             continue
 
         match = re.search(r'headers?: (.*)', line)
@@ -642,9 +722,13 @@ def parse_serialized_types(file, file_name):
         if match:
             struct_or_class, namespace, name, parent_class_name = match.groups()
             continue
-        match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::(.*) {', line)
+        match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::([^\s]*) {', line)
         if match:
             attributes, struct_or_class, namespace, name = match.groups()
+            continue
+        match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*)\s+(.*) {', line)
+        if match:
+            attributes, struct_or_class, namespace, name, metadata = match.groups()
             continue
         match = re.search(r'(struct|class|alias) (.*)::(.*) {', line)
         if match:
@@ -661,6 +745,13 @@ def parse_serialized_types(file, file_name):
 
         if underlying_type is not None:
             members.append(EnumMember(line.strip(' ,'), member_condition))
+            continue
+        elif metadata == 'subclasses':
+            match = re.search(r'(.*)::(.*)', line.strip(' ,'))
+            if match:
+                subclass_namespace, subclass_name = match.groups()
+                subclass_member = MemberVariable("subclass", subclass_name, None, [], namespace=subclass_namespace, is_subclass=True)
+                members.append(subclass_member)
             continue
 
         match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
