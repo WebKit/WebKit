@@ -241,6 +241,10 @@
 #define HAVE_DLADDR 1
 #endif
 
+#if OS(WINDOWS)
+#define HAVE_ISDEBUGGERPRESENT 1
+#endif
+
 #if __has_include(<System/pthread_machdep.h>)
 #define HAVE_FAST_TLS 1
 
