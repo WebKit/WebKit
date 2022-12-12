@@ -233,7 +233,7 @@ void ProcessLauncher::launchProcess()
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
     };
 
-    Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), eventHandler = m_client->xpcEventHandler()] (xpc_object_t event) mutable {
+    Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), xpcEventHandler = m_client->xpcEventHandler()] (xpc_object_t event) mutable {
 
         if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
             RunLoop::main().dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr(event)] {
@@ -245,19 +245,20 @@ void ProcessLauncher::launchProcess()
             return;
         }
 
-        if (eventHandler) {
-            RunLoop::main().dispatch([eventHandler = eventHandler, event = OSObjectPtr(event)] {
-                eventHandler->handleXPCEvent(event.get());
+        if (xpcEventHandler) {
+            RunLoop::main().dispatch([xpcEventHandler = xpcEventHandler, event = OSObjectPtr(event)] {
+                xpcEventHandler->handleXPCEvent(event.get());
             });
         }
     };
 
-    xpc_connection_set_event_handler(m_xpcConnection.get(), makeBlockPtr(WTFMove(eventHandler)).get());
+    auto eventHandlerBlock = makeBlockPtr(WTFMove(eventHandler));
+    xpc_connection_set_event_handler(m_xpcConnection.get(), eventHandlerBlock.get());
 
     xpc_connection_resume(m_xpcConnection.get());
 
     if (UNLIKELY(m_launchOptions.shouldMakeProcessLaunchFailForTesting)) {
-        eventHandler(nullptr);
+        eventHandlerBlock(nullptr);
         return;
     }
 
