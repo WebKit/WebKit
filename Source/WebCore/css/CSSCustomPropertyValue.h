@@ -44,7 +44,7 @@ public:
 
     static Ref<CSSCustomPropertyValue> createUnresolved(const AtomString& name, Ref<CSSVariableReferenceValue>&& value)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
+        return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { std::in_place_type<Ref<CSSVariableReferenceValue>>, WTFMove(value) }));
     }
 
     static Ref<CSSCustomPropertyValue> createUnresolved(const AtomString& name, CSSValueID value)
@@ -56,7 +56,7 @@ public:
 
     static Ref<CSSCustomPropertyValue> createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&& value)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
+        return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { std::in_place_type<Ref<CSSVariableData>>, WTFMove(value) }));
     }
 
     static Ref<CSSCustomPropertyValue> createSyntaxLength(const AtomString& name, Length value)
