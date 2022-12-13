@@ -216,6 +216,7 @@ public:
     bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) override;
     RefPtr<NativeImage> nativeImageForCurrentTime() override;
 #endif
+    RefPtr<VideoFrame> videoFrameForCurrentTime() override;
 
     void updateEnabledVideoTrack();
     void updateEnabledAudioTrack();
