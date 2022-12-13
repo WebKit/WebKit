@@ -164,6 +164,7 @@ UIProcess/API/glib/WebKitNotificationProvider.cpp @no-unify
 UIProcess/API/glib/WebKitOptionMenu.cpp @no-unify
 UIProcess/API/glib/WebKitOptionMenuItem.cpp @no-unify
 UIProcess/API/glib/WebKitPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitPermissionStateQuery.cpp @no-unify
 UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 UIProcess/API/glib/WebKitPointerLockPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitPolicyDecision.cpp @no-unify

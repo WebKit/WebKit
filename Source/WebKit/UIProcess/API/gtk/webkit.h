@@ -66,6 +66,7 @@
 #include <webkit/WebKitOptionMenu.h>
 #include <webkit/WebKitOptionMenuItem.h>
 #include <webkit/WebKitPermissionRequest.h>
+#include <webkit/WebKitPermissionStateQuery.h>
 #include <webkit/WebKitPlugin.h>
 #include <webkit/WebKitPointerLockPermissionRequest.h>
 #include <webkit/WebKitPrintCustomWidget.h>

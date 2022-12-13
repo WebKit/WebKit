@@ -64,6 +64,7 @@
 #include <wpe/WebKitOptionMenu.h>
 #include <wpe/WebKitOptionMenuItem.h>
 #include <wpe/WebKitPermissionRequest.h>
+#include <wpe/WebKitPermissionStateQuery.h>
 #include <wpe/WebKitPlugin.h>
 #include <wpe/WebKitResponsePolicyDecision.h>
 #include <wpe/WebKitScriptDialog.h>

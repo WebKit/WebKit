@@ -29,6 +29,7 @@
 #include "WebKitMediaKeySystemPermissionRequestPrivate.h"
 #include "WebKitNavigationActionPrivate.h"
 #include "WebKitNotificationPermissionRequestPrivate.h"
+#include "WebKitPermissionStateQueryPrivate.h"
 #include "WebKitPointerLockPermissionRequestPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitUserMediaPermissionRequestPrivate.h"
@@ -377,6 +378,13 @@ private:
         webkitWebViewDidLosePointerLock(m_webView);
     }
 #endif
+
+    void queryPermission(const WTF::String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) final
+    {
+        auto* query = webkitPermissionStateQueryCreate(permissionName, origin, WTFMove(completionHandler));
+        webkitWebViewPermissionStateQuery(m_webView, query);
+        webkit_permission_state_query_unref(query);
+    }
 
     WebKitWebView* m_webView;
 #if ENABLE(POINTER_LOCK)

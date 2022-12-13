@@ -41,6 +41,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitNotification.h>
 #include <@API_INCLUDE_PREFIX@/WebKitOptionMenu.h>
 #include <@API_INCLUDE_PREFIX@/WebKitPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitPermissionStateQuery.h>
 #include <@API_INCLUDE_PREFIX@/WebKitPolicyDecision.h>
 #include <@API_INCLUDE_PREFIX@/WebKitScriptDialog.h>
 #include <@API_INCLUDE_PREFIX@/WebKitSettings.h>
@@ -49,8 +50,8 @@
 #include <@API_INCLUDE_PREFIX@/WebKitUserMessage.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebContext.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebResource.h>
-#include <@API_INCLUDE_PREFIX@/WebKitWebsitePolicies.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebViewSessionState.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebsitePolicies.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWindowProperties.h>
 
 #if PLATFORM(GTK)
@@ -374,15 +375,16 @@ struct _WebKitWebViewClass {
                                                 WebKitRectangle             *rectangle);
 #endif
 
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
+    gboolean   (* query_permission_state)      (WebKitWebView               *web_view,
+                                                WebKitPermissionStateQuery  *query);
 
 #if PLATFORM(WPE)
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
-    void (*_webkit_reserved5) (void);
 #endif
 };
 

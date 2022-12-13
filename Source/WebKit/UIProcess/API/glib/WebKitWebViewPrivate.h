@@ -99,6 +99,7 @@ void webkitWebViewMediaCaptureStateDidChange(WebKitWebView*, WebCore::MediaProdu
 void webkitWebViewSelectionDidChange(WebKitWebView*);
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView*, WebKit::InstallMissingMediaPluginsPermissionRequest&);
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
+void webkitWebViewPermissionStateQuery(WebKitWebView*, WebKitPermissionStateQuery*);
 
 #if PLATFORM(GTK)
 bool webkitWebViewEmitRunColorChooser(WebKitWebView*, WebKitColorChooserRequest*);
