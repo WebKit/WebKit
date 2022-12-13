@@ -325,7 +325,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
-        'Apple-Monterey-AppleSilicon-Release-Test262-Tests': [
+        'Apple-Ventura-AppleSilicon-Release-Test262-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

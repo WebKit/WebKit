@@ -36,6 +36,9 @@ WebKitBuildbot = function()
         "Apple-Ventura-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSVentura, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
         "Apple-Ventura-Release-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSVentura, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Release AppleSilicon"},
         "Apple-Ventura-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSVentura, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
+        "Apple-Ventura JSC": {platform: Dashboard.Platform.macOSVentura, heading: "JavaScript", combinedQueues: {
+            "Apple-Ventura-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
+        }},
         "Apple-Monterey-Release-Build": {platform: Dashboard.Platform.macOSMonterey, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Monterey-Debug-Build": {platform: Dashboard.Platform.macOSMonterey, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Monterey-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSMonterey, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
@@ -49,7 +52,6 @@ WebKitBuildbot = function()
         "Apple-Monterey JSC": {platform: Dashboard.Platform.macOSMonterey, heading: "JavaScript", combinedQueues: {
             "Apple-Monterey-Debug-Test262-Tests": {heading: "Debug Test262 (Tests)"},
             "Apple-Monterey-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
-            "Apple-Monterey-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
             "Apple-Monterey-AppleSilicon-Debug-JSC-Tests": {heading: "Debug arm64 JSC (Tests)"},
             "Apple-Monterey-AppleSilicon-Release-JSC-Tests": {heading: "Release arm64 JSC (Tests)"},
         }},
