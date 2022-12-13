@@ -1951,3 +1951,77 @@ struct WebCore::GraphicsContextGLAttributes {
     WebCore::PerspectiveTransformOperation
     WebCore::IdentityTransformOperation
 }
+
+struct WebCore::LengthSize {
+    WebCore::Length width;
+    WebCore::Length height;
+}
+
+class WebCore::SVGPathByteStream {
+    Vector<unsigned char> data();
+}
+
+header: <WebCore/BasicShapes.h>
+[Nested, CustomHeader] enum class WebCore::BasicShapeCenterCoordinate::Direction : uint8_t {
+    TopLeft,
+    BottomRight
+}
+
+[CustomHeader] class WebCore::BasicShapeCenterCoordinate {
+    WebCore::BasicShapeCenterCoordinate::Direction direction();
+    WebCore::Length length();
+}
+
+[Nested, CustomHeader] enum class WebCore::BasicShapeRadius::Type : uint8_t {
+    Value,
+    ClosestSide,
+    FarthestSide
+};
+
+[CustomHeader] class WebCore::BasicShapeRadius {
+    WebCore::Length value();
+    WebCore::BasicShapeRadius::Type type();
+}
+
+[Return=Ref, CustomHeader] class WebCore::BasicShapeCircle {
+    WebCore::BasicShapeCenterCoordinate centerX();
+    WebCore::BasicShapeCenterCoordinate centerY();
+    WebCore::BasicShapeRadius radius();
+}
+
+[Return=Ref, CustomHeader] class WebCore::BasicShapeEllipse {
+    WebCore::BasicShapeCenterCoordinate centerX();
+    WebCore::BasicShapeCenterCoordinate centerY();
+    WebCore::BasicShapeRadius radiusX();
+    WebCore::BasicShapeRadius radiusY();
+}
+
+[Return=Ref, CustomHeader] class WebCore::BasicShapePolygon {
+    WebCore::WindRule windRule();
+    Vector<WebCore::Length> values();
+}
+
+[Return=Ref, CustomHeader] class WebCore::BasicShapePath {
+    std::unique_ptr<WebCore::SVGPathByteStream> byteStream();
+    float zoom();
+    WebCore::WindRule windRule();
+}
+
+[Return=Ref, CustomHeader] class WebCore::BasicShapeInset {
+    WebCore::Length right();
+    WebCore::Length top();
+    WebCore::Length bottom();
+    WebCore::Length left();
+    WebCore::LengthSize topLeftRadius();
+    WebCore::LengthSize topRightRadius();
+    WebCore::LengthSize bottomRightRadius();
+    WebCore::LengthSize bottomLeftRadius();
+}
+
+[RefCounted, CustomHeader] class WebCore::BasicShape subclasses {
+    WebCore::BasicShapeCircle
+    WebCore::BasicShapeEllipse
+    WebCore::BasicShapePolygon
+    WebCore::BasicShapePath
+    WebCore::BasicShapeInset
+}

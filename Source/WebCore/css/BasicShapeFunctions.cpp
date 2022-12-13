@@ -42,7 +42,7 @@ namespace WebCore {
 
 static Ref<CSSPrimitiveValue> valueForCenterCoordinate(CSSValuePool& pool, const RenderStyle& style, const BasicShapeCenterCoordinate& center, BoxOrient orientation)
 {
-    if (center.direction() == BasicShapeCenterCoordinate::TopLeft)
+    if (center.direction() == BasicShapeCenterCoordinate::Direction::TopLeft)
         return pool.createValue(center.length(), style);
 
     CSSValueID keyword = orientation == BoxOrient::Horizontal ? CSSValueRight : CSSValueBottom;
@@ -53,11 +53,11 @@ static Ref<CSSPrimitiveValue> valueForCenterCoordinate(CSSValuePool& pool, const
 static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& style, CSSValuePool& pool, const BasicShapeRadius& radius)
 {
     switch (radius.type()) {
-    case BasicShapeRadius::Value:
+    case BasicShapeRadius::Type::Value:
         return pool.createValue(radius.value(), style);
-    case BasicShapeRadius::ClosestSide:
+    case BasicShapeRadius::Type::ClosestSide:
         return pool.createIdentifierValue(CSSValueClosestSide);
-    case BasicShapeRadius::FarthestSide:
+    case BasicShapeRadius::Type::FarthestSide:
         return pool.createIdentifierValue(CSSValueFarthestSide);
     }
 
@@ -191,36 +191,36 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthCon
     switch (keyword) {
     case CSSValueTop:
     case CSSValueLeft:
-        direction = BasicShapeCenterCoordinate::TopLeft;
+        direction = BasicShapeCenterCoordinate::Direction::TopLeft;
         break;
     case CSSValueRight:
     case CSSValueBottom:
-        direction = BasicShapeCenterCoordinate::BottomRight;
+        direction = BasicShapeCenterCoordinate::Direction::BottomRight;
         break;
     case CSSValueCenter:
-        direction = BasicShapeCenterCoordinate::TopLeft;
+        direction = BasicShapeCenterCoordinate::Direction::TopLeft;
         offset = Length(50, LengthType::Percent);
         break;
     default:
         ASSERT_NOT_REACHED();
-        direction = BasicShapeCenterCoordinate::TopLeft;
+        direction = BasicShapeCenterCoordinate::Direction::TopLeft;
         break;
     }
 
-    return BasicShapeCenterCoordinate(direction, offset);
+    return BasicShapeCenterCoordinate(direction, WTFMove(offset));
 }
 
 static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* radius)
 {
     if (!radius)
-        return BasicShapeRadius(BasicShapeRadius::ClosestSide);
+        return BasicShapeRadius(BasicShapeRadius::Type::ClosestSide);
 
     if (radius->isValueID()) {
         switch (radius->valueID()) {
         case CSSValueClosestSide:
-            return BasicShapeRadius(BasicShapeRadius::ClosestSide);
+            return BasicShapeRadius(BasicShapeRadius::Type::ClosestSide);
         case CSSValueFarthestSide:
-            return BasicShapeRadius(BasicShapeRadius::FarthestSide);
+            return BasicShapeRadius(BasicShapeRadius::Type::FarthestSide);
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -305,7 +305,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)
 {
     float offset = floatValueForLength(center.length(), boxDimension);
-    if (center.direction() == BasicShapeCenterCoordinate::TopLeft)
+    if (center.direction() == BasicShapeCenterCoordinate::Direction::TopLeft)
         return offset;
     return boxDimension - offset;
 }

@@ -2094,6 +2094,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     svg/SVGLengthValue.h
     svg/SVGParserUtilities.h
     svg/SVGParsingError.h
+    svg/SVGPathByteStream.h
+    svg/SVGPathConsumer.h
+    svg/SVGPathUtilities.h
     svg/SVGPreserveAspectRatioValue.h
     svg/SVGStringList.h
     svg/SVGTests.h
