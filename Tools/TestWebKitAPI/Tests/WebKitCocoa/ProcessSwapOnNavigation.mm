@@ -7841,6 +7841,7 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("!!window.FileSystemFileHandle"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // File System Access API.
     EXPECT_EQ(runJSCheck("!!window.RTCPeerConnection"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
     EXPECT_EQ(runJSCheck("!!window.RTCRtpScriptTransform"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Script Transform
+    EXPECT_EQ(runJSCheck("!!window.indexedDB"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // IndexedDB API
     EXPECT_EQ(runJSCheck("!!navigator.mediaDevices"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // GetUserMedia (Media Capture).
     EXPECT_EQ(runJSCheck("!!navigator.getUserMedia"_s), false); // Legacy GetUserMedia (currently always disabled).
     EXPECT_EQ(runJSCheck("!!window.MathMLElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
