@@ -52,8 +52,8 @@ static void printUsageAndTerminate(NSString *message)
     fprintf(stderr, "    Stream debug messages from webpushd\n");
     fprintf(stderr, "  --reconnect\n");
     fprintf(stderr, "    Reconnect after connection is lost\n");
-    fprintf(stderr, "  --push <target app identifier> <registration URL> <message>\n");
-    fprintf(stderr, "    Inject a test push messasge to the target app and registration URL\n");
+    fprintf(stderr, "  --push <target app identifier> <partition string> <registration URL> <message>\n");
+    fprintf(stderr, "    Inject a test push message to the target app, push partition, and registration URL\n");
     fprintf(stderr, "\n");
 
     exit(-1);
@@ -63,6 +63,10 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
 {
     NSString *appIdentifier = [enumerator nextObject];
     if (!appIdentifier)
+        return nullptr;
+
+    NSString *pushPartition = [enumerator nextObject];
+    if (!pushPartition)
         return nullptr;
 
     NSString *registrationString = [enumerator nextObject];
@@ -77,7 +81,7 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
     if (!message)
         return nullptr;
 
-    PushMessageForTesting pushMessage = { appIdentifier, registrationString, registrationURL, message };
+    PushMessageForTesting pushMessage = { appIdentifier, pushPartition, registrationURL, message };
     return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
 }
 
