@@ -39,6 +39,7 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import <pal/spi/mac/NSTextFinderSPI.h>
+#import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
@@ -148,6 +149,23 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     if (_impl)
         _impl->setUserInterfaceLayoutDirection(userInterfaceLayoutDirection);
 }
+
+#if USE(NSVIEW_SEMANTICCONTEXT)
+
+- (void)_setSemanticContext:(NSViewSemanticContext)semanticContext
+{
+    auto wasUsingFormSemanticContext = _impl ? _impl->useFormSemanticContext() : false;
+
+    [super _setSemanticContext:semanticContext];
+
+    if (!_impl)
+        return;
+
+    if (wasUsingFormSemanticContext != _impl->useFormSemanticContext())
+        _impl->semanticContextDidChange();
+}
+
+#endif
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)renewGState

@@ -29,11 +29,31 @@
 
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-@interface NSView () <CALayerDelegate> {
-}
+#if USE(APPLE_INTERNAL_SDK)
+#import <AppKit/NSView_Private.h>
+#else
+
+#if USE(NSVIEW_SEMANTICCONTEXT)
+
+typedef NS_ENUM(NSInteger, NSViewSemanticContext) {
+    NSViewSemanticContextForm = 8,
+};
+
+#endif
+
+@interface NSView ()
 
 - (NSView *)_findLastViewInKeyViewLoop;
 
+#if USE(NSVIEW_SEMANTICCONTEXT)
+@property (nonatomic, setter=_setSemanticContext:) NSViewSemanticContext _semanticContext;
+#endif
+
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+@interface NSView () <CALayerDelegate>
 @end
 
 @interface NSView (SubviewsIvar)

@@ -42,12 +42,14 @@
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
+#import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 
 static NSRect focusRingClipRect;
 static BOOL themeWindowHasKeyAppearance;
+static bool useFormSemanticContext;
 
 @interface WebCoreThemeWindow : NSWindow
 @end
@@ -697,9 +699,19 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& contr
     [themeView setAppearance:[NSAppearance currentAppearance]];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
+#if USE(NSVIEW_SEMANTICCONTEXT)
+    if (useFormSemanticContext)
+        [themeView _setSemanticContext:NSViewSemanticContextForm];
+#endif
+
     themeWindowHasKeyAppearance = !controlStates.states().contains(ControlStates::States::WindowInactive);
 
     return themeView;
+}
+
+void ThemeMac::setUseFormSemanticContext(bool use)
+{
+    useFormSemanticContext = use;
 }
 
 void ThemeMac::setFocusRingClipRect(const FloatRect& rect)

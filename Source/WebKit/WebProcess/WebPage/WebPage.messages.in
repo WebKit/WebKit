@@ -552,6 +552,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetUseSystemAppearance(bool useSystemAppearance)
 
+    SemanticContextDidChange(bool useFormSemanticContext)
+
     SetHeaderBannerHeightForTesting(int height)
     SetFooterBannerHeightForTesting(int height)
 

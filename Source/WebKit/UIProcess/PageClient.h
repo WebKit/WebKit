@@ -439,6 +439,8 @@ public:
     virtual CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const = 0;
 
     virtual WebCore::DestinationColorSpace colorSpace() = 0;
+
+    virtual bool useFormSemanticContext() const = 0;
     
     virtual NSView *viewForPresentingRevealPopover() const = 0;
 

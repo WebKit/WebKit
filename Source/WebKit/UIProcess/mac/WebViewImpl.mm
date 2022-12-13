@@ -5385,6 +5385,20 @@ bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()
     return false;
 }
 
+bool WebViewImpl::useFormSemanticContext() const
+{
+#if USE(NSVIEW_SEMANTICCONTEXT)
+    return [m_view _semanticContext] == NSViewSemanticContextForm;
+#else
+    return false;
+#endif
+}
+
+void WebViewImpl::semanticContextDidChange()
+{
+    m_page->semanticContextDidChange();
+}
+
 #if HAVE(TOUCH_BAR)
 
 NSTouchBar *WebViewImpl::makeTouchBar()

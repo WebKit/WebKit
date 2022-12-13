@@ -38,6 +38,7 @@ public:
 #endif
 
     static NSView *ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
+    WEBCORE_EXPORT static void setUseFormSemanticContext(bool);
     static void setFocusRingClipRect(const FloatRect&);
     static bool drawCellOrFocusRingWithViewIntoContext(NSCell *, GraphicsContext&, const FloatRect&, NSView *, bool drawButtonCell, bool drawFocusRing, float deviceScaleFactor);
 

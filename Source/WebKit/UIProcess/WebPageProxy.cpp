@@ -8638,6 +8638,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if PLATFORM(MAC)
     parameters.colorSpace = pageClient().colorSpace();
     parameters.useSystemAppearance = m_useSystemAppearance;
+    parameters.useFormSemanticContext = useFormSemanticContext();
 #endif
 
 #if ENABLE(META_VIEWPORT)
