@@ -207,13 +207,13 @@ static LineBuilder::LineInput::LineEndingEllipsisPolicy lineEndingEllipsisPolicy
     // We may have passed the line-clamp line with overflow visible.
     if (maximumNumberOfLines && numberOfLines < *maximumNumberOfLines) {
         // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
-        auto treatNextLineAsLastLine = *maximumNumberOfLines - numberOfLines == 1;
-        if (treatNextLineAsLastLine)
-            return LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
+        auto shouldApplyClampWhenApplicable = *maximumNumberOfLines - numberOfLines == 1;
+        if (shouldApplyClampWhenApplicable)
+            return LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
     }
     // Truncation is in effect when the block container has overflow other than visible.
     if (rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflows;
+        return LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
     return LineBuilder::LineInput::LineEndingEllipsisPolicy::No;
 }
 
@@ -250,12 +250,12 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
         auto ellipsisPolicy = lineEndingEllipsisPolicy(rootStyle, numberOfLines, maximumNumberOfLines);
-        auto contentIsTruncatedInBlockDirection = ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
         auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, ellipsisPolicy }, previousLine);
 
         firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
         auto isLastLine = (firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty());
-        if (contentIsTruncatedInBlockDirection && !isLastLine)
+        auto contentIsTruncatedInBlockDirection = (!isLastLine && ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection) || ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
+        if (contentIsTruncatedInBlockDirection)
             lineContent.lineNeedsTrailingEllipsis = true;
 
         auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints, blockLayoutState);
