@@ -159,18 +159,4 @@ PASS Setting font-feature-settings to normal should not prevent the font shortha
 PASS Setting font-feature-settings to normal should not prevent the font shorthand from serializing in computed style
 PASS Setting font-feature-settings to "sinf" should prevent the font shorthand from serializing in specified style
 PASS Setting font-feature-settings to "sinf" should prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to initial should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to initial should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to inherit should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to inherit should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to unset should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to unset should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to revert should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to revert should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to revert-layer should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to revert-layer should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to normal should not prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to normal should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to light should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to light should prevent the font shorthand from serializing in computed style
 

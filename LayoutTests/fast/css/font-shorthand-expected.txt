@@ -17,7 +17,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for '12px/24px serif':
 font-style: normal
@@ -37,7 +36,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'normal 12px serif':
 font-style: normal
@@ -57,7 +55,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'normal normal 12px serif':
 font-style: normal
@@ -77,7 +74,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'normal normal normal 12px serif':
 font-style: normal
@@ -97,7 +93,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'italic small-caps 12px/24px serif':
 font-style: italic
@@ -117,7 +112,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'italic bold 12px/24px serif':
 font-style: italic
@@ -137,7 +131,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'small-caps bold 14px/28px Arial, sans-serif':
 font-style: normal
@@ -157,7 +150,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'italic small-caps bold 14px/28px Arial, sans-serif':
 font-style: italic
@@ -177,7 +169,6 @@ font-variant-position: normal
 font-feature-settings: normal
 font-optical-sizing: auto
 font-variation-settings: normal
-font-palette: normal
 
 Font for 'italic small-caps bold 12px/24px':
 

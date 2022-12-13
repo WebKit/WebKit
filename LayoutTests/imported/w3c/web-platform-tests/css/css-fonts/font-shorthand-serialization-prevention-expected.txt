@@ -187,18 +187,4 @@ PASS Setting font-variation-settings to normal should not prevent the font short
 PASS Setting font-variation-settings to normal should not prevent the font shorthand from serializing in computed style
 PASS Setting font-variation-settings to "aaaa" 1 should prevent the font shorthand from serializing in specified style
 PASS Setting font-variation-settings to "aaaa" 1 should prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to initial should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to initial should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to inherit should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to inherit should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to unset should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to unset should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to revert should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to revert should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to revert-layer should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to revert-layer should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to normal should not prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to normal should not prevent the font shorthand from serializing in computed style
-PASS Setting font-palette to light should prevent the font shorthand from serializing in specified style
-PASS Setting font-palette to light should prevent the font shorthand from serializing in computed style
 
