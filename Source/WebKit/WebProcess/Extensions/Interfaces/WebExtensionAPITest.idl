@@ -69,4 +69,7 @@
     readonly attribute WebExtensionAPIWebNavigationEvent testWebNavigationEvent;
     void fireTestWebNavigationEvent(DOMString targetUrl);
 
+    // FIXME: Temporary Event for bring-up. Remove this.
+    readonly attribute WebExtensionAPIEvent testEvent;
+    void fireTestEvent();
 };

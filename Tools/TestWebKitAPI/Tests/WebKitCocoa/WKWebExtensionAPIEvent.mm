@@ -23,48 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPIEvent.h"
-#include "JSWebExtensionWrappable.h"
-#include "WebExtensionAPIObject.h"
-#include "WebExtensionEventListenerType.h"
-#include "WebPage.h"
+#import "WebExtensionUtilities.h"
 
-OBJC_CLASS JSValue;
+namespace TestWebKitAPI {
 
-namespace WebKit {
+TEST(WKWebExtensionAPIEvent, TestEventListener)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function listener() { browser.test.notifyPass('This listener should have been called.') }",
+        @"browser.test.assertFalse(browser.test.testEvent.hasListener(listener), 'Should not have listener')",
+        @"browser.test.testEvent.addListener(listener)",
 
-class WebExtensionAPIEvent : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIEvent, event);
+        // Test
+        @"browser.test.assertTrue(browser.test.testEvent.hasListener(listener), 'Should have listener')",
+        @"browser.test.testEvent.removeListener(listener)",
+        @"browser.test.assertFalse(browser.test.testEvent.hasListener(listener), 'Should not have listener')",
+        @"browser.test.testEvent.addListener(listener)",
 
-public:
-    using ListenerVector = Vector<RefPtr<WebExtensionCallbackHandler>>;
+        // Finish. The listener firing will indicate that the test passed.
+        @"browser.test.fireTestEvent()"
+    ]);
 
-    void invokeListeners();
-    void invokeListenersWithArgument(id argument);
-    void invokeListenersWithArgument(id argument1, id argument2);
-    void invokeListenersWithArgument(id argument1, id argument2, id argument3);
+    auto *manifest = @{ @"manifest_version": @3, @"background": @{ @"scripts": @[ @"background.js" ], @"persistent": @NO } };
 
-    const ListenerVector& listeners() const { return m_listeners; }
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
 
-    void addListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
-    void removeListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
-    bool hasListener(RefPtr<WebExtensionCallbackHandler>);
-
-    explicit WebExtensionAPIEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
-        : WebExtensionAPIObject(forMainWorld, runtime, context)
-    {
-        m_type = type;
-    }
-
-private:
-    WebExtensionEventListenerType m_type;
-    ListenerVector m_listeners;
-};
-
-} // namespace WebKit
+} // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
