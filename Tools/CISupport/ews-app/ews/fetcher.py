@@ -25,6 +25,7 @@ import logging
 import pytz
 import threading
 import time
+import traceback
 
 from ews.common.bugzilla import Bugzilla
 from ews.common.buildbot import Buildbot
@@ -50,7 +51,7 @@ class FetchLoop():
                 BugzillaPatchFetcher().fetch()
                 BugzillaPatchFetcher().fetch_commit_queue_patches()
             except Exception as e:
-                _log.error('Exception in BugzillaPatchFetcher: {}'.format(e))
+                _log.error('Exception in BugzillaPatchFetcher: {}\n{}'.format(e, traceback.format_exc()))
             time.sleep(self.interval)
 
 
