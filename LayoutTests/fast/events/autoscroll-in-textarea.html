@@ -56,7 +56,7 @@ if (window.eventSender) {
     eventSender.mouseUp();
 
     var log = document.getElementById("log");
-    var selectedText = window.getSelection().toString();
+    var selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
     if (selectedText.indexOf("k") != -1)
         log.innerText = "PASSED the selection did not jump down.";
     else
