@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "PlatformImageBufferShareableBackend.h"
 #include "RemoteDisplayListRecorder.h"
 
 namespace WebKit {
@@ -46,6 +47,8 @@ RemoteImageBuffer::~RemoteImageBuffer()
     // Volatile image buffers do not have contexts.
     if (this->volatilityState() == VolatilityState::Volatile)
         return;
+    if (!m_backend)
+        return;
     // Unwind the context's state stack before destruction, since calls to restore may not have
     // been flushed yet, or the web process may have terminated.
     while (context().stackSize())
@@ -56,6 +59,27 @@ void RemoteImageBuffer::setOwnershipIdentity(const ProcessIdentity& resourceOwne
 {
     if (m_backend)
         m_backend->setOwnershipIdentity(resourceOwner);
+}
+
+RefPtr<RemoteImageBuffer> RemoteImageBuffer::createTransfer(Ref<RemoteImageBuffer>&& existing, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+{
+    ASSERT(existing->hasOneRef());
+    auto context = WebCore::ImageBufferCreationContext { nullptr
+#if HAVE(IOSURFACE)
+        , &remoteRenderingBackend.ioSurfacePool()
+#endif
+    };
+    auto backend = existing->takeBackend();
+    backend->transferToNewContext(context);
+    auto* sharing = backend->toBackendSharing();
+    ASSERT(sharing && is<ImageBufferBackendHandleSharing>(sharing));
+
+    auto backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
+
+    auto imageBuffer = adoptRef(new RemoteImageBuffer(backend->parameters() , existing->backendInfo(), WTFMove(backend), remoteRenderingBackend, renderingResourceIdentifier));
+
+    remoteRenderingBackend.didCreateImageBufferBackend(WTFMove(backendHandle), renderingResourceIdentifier, *imageBuffer->m_remoteDisplayList.get());
+    return imageBuffer;
 }
 
 } // namespace WebKit

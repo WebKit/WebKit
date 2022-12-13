@@ -148,6 +148,7 @@ public:
     virtual void flushDrawingContext() { }
     virtual bool flushDrawingContextAsync() { return false; }
 
+    WEBCORE_EXPORT std::unique_ptr<ImageBufferBackend> takeBackend();
     WEBCORE_EXPORT IntSize backendSize() const;
 
     ImageBufferBackend* backend() const { return m_backend.get(); }
@@ -169,6 +170,7 @@ public:
     AffineTransform baseTransform() const { return m_backendInfo.baseTransform; }
     size_t memoryCost() const { return m_backendInfo.memoryCost; }
     size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }
+    const ImageBufferBackend::Info& backendInfo() { return m_backendInfo; }
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) const;

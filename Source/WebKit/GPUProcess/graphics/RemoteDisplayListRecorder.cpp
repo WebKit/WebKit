@@ -30,6 +30,7 @@
 
 #include "ImageBufferShareableAllocator.h"
 #include "RemoteDisplayListRecorderMessages.h"
+#include "RemoteImageBuffer.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FilterResults.h>
 

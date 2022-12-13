@@ -77,6 +77,8 @@ protected:
 
     void ensureNativeImagesHaveCopiedBackingStore() final;
 
+    void transferToNewContext(const ImageBufferCreationContext&) final;
+
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;
 

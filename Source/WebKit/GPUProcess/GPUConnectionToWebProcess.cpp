@@ -608,6 +608,14 @@ void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsConte
 }
 #endif
 
+RemoteRenderingBackend* GPUConnectionToWebProcess::remoteRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
+{
+    auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
+    if (it == m_remoteRenderingBackendMap.end())
+        return nullptr;
+    return it->value.get();
+}
+
 void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
