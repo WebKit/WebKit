@@ -395,9 +395,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (style.shapeOutside())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
-            // FIXME: We don't collect out-of-flow boxes from nested subtrees.
-            if (renderer.parent() != renderer.containingBlock())
-                return false;
             if (!renderer.parent()->style().isLeftToRightDirection() || !renderer.parent()->style().isHorizontalWritingMode())
                 return false;
             if (is<RenderLayerModelObject>(renderer.parent()) && downcast<RenderLayerModelObject>(*renderer.parent()).shouldPlaceVerticalScrollbarOnLeft())
