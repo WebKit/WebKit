@@ -208,7 +208,7 @@ IDBError MemoryIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
 
 #ifndef NDEBUG
     auto transaction = m_transactions.get(transactionIdentifier);
-    ASSERT(transaction->isWriting());
+    ASSERT_UNUSED(transaction, transaction->isWriting());
 #endif
 
     auto objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);

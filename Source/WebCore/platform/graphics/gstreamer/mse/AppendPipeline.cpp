@@ -248,7 +248,7 @@ void AppendPipeline::handleErrorConditionFromStreamingThread()
         m_sourceBufferPrivate.appendParsingFailed();
         return AbortableTaskQueue::Void();
     });
-#ifdef NDEBUG
+#if !ASSERT_ENABLED
     UNUSED_VARIABLE(response);
 #endif
     // The streaming thread has now been unblocked because we are aborting in the main thread.

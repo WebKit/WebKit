@@ -3881,7 +3881,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
             continue;
         default:
             auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(property, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
-            ASSERT(wrapperForProperty(resolvedProperty));
+            ASSERT_UNUSED(resolvedProperty, wrapperForProperty(resolvedProperty));
             break;
         }
     }

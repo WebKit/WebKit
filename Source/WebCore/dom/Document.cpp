@@ -785,14 +785,14 @@ void Document::removedLastRef()
         
         commonTeardown();
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         // We need to do this right now since selfOnlyDeref() can delete this.
         m_inRemovedLastRefFunction = false;
 #endif
         decrementReferencingNodeCount();
     } else {
         commonTeardown();
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         m_inRemovedLastRefFunction = false;
         m_deletionHasBegun = true;
 #endif

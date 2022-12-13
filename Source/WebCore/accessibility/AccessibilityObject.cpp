@@ -575,7 +575,7 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
         results.append(object);
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 static bool isTableComponent(AXCoreObject& axObject)
 {
     return axObject.isTable() || axObject.isTableColumn() || axObject.isTableRow() || axObject.isTableCell();

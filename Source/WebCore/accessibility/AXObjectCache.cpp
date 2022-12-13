@@ -1241,7 +1241,7 @@ void AXObjectCache::notificationPostTimerFired()
         if (note.first->isDetached() || !note.first->axObjectCache())
             continue;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         // Make sure none of the render views are in the process of being layed out.
         // Notifications should only be sent after the renderer has finished
         if (is<AccessibilityRenderObject>(*note.first)) {

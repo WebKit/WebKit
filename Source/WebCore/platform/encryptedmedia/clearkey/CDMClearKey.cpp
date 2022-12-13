@@ -257,11 +257,7 @@ CDMFactoryClearKey::~CDMFactoryClearKey() = default;
 
 std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM(const String& keySystem, const CDMPrivateClient&)
 {
-#ifdef NDEBUG
-    UNUSED_PARAM(keySystem);
-#else
-    ASSERT(supportsKeySystem(keySystem));
-#endif
+    ASSERT_UNUSED(keySystem, supportsKeySystem(keySystem));
     return makeUnique<CDMPrivateClearKey>();
 }
 
@@ -525,11 +521,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
 
 void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionId, const String&, LoadSessionCallback&& callback)
 {
-#ifdef NDEBUG
-    UNUSED_PARAM(sessionId);
-#endif
-
-    ASSERT(sessionId == m_sessionID);
+    ASSERT_UNUSED(sessionId, sessionId == m_sessionID);
     KeyStatusVector keyStatusVector = m_keyStore.convertToJSKeyStatusVector();
     callOnMainThread([weakThis = WeakPtr { *this }, callback = WTFMove(callback), &keyStatusVector]() mutable {
         if (!weakThis)
@@ -552,11 +544,7 @@ void CDMInstanceSessionClearKey::closeSession(const String&, CloseSessionCallbac
 
 void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&& callback)
 {
-#ifdef NDEBUG
-    UNUSED_PARAM(sessionId);
-#endif
-
-    ASSERT(sessionId == m_sessionID);
+    ASSERT_UNUSED(sessionId, sessionId == m_sessionID);
 
     auto dispatchCallback =
         [weakThis = WeakPtr { *this }, &callback](KeyStatusVector&& keyStatusVector, RefPtr<SharedBuffer>&& message, SuccessValue success) {
