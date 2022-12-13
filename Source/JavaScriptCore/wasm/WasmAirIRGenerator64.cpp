@@ -374,27 +374,27 @@ public:
                 switch (relOp.asRelationalCondition()) {
                 case MacroAssembler::NotEqual:
                     append(airOp, Arg::relCond(MacroAssembler::Equal), Arg::simdInfo(info), lhs, rhs, result);
-                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     break;
                 case MacroAssembler::Above:
                     append(airOp, Arg::relCond(MacroAssembler::BelowOrEqual), Arg::simdInfo(info), lhs, rhs, result);
-                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     break;
                 case MacroAssembler::Below:
                     append(airOp, Arg::relCond(MacroAssembler::AboveOrEqual), Arg::simdInfo(info), lhs, rhs, result);
-                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     break;
                 case MacroAssembler::GreaterThanOrEqual:
                     if (info.lane == SIMDLane::i64x2) {
                         append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), rhs, lhs, result);
-                        append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                        append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     } else
                         append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
                     break;
                 case MacroAssembler::LessThanOrEqual:
                     if (info.lane == SIMDLane::i64x2) {
                         append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), lhs, rhs, result);
-                        append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                        append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     } else
                         append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
                     break;
