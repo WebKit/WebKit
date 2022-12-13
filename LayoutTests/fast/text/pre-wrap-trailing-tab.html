@@ -28,6 +28,8 @@ for (var i = 0; i < tests.length; i++, letter = String.fromCharCode(letter.charC
     } else {
         tests[i].textContent = letter + '\t';
         window.getSelection().selectAllChildren(tests[i]);
+        getSelection().modify('extend', 'forward', 'character');
+        getSelection().modify('extend', 'backward', 'character');
         var endOffset = window.getSelection().getRangeAt(0).endOffset;
     }
     assertEqual('test ' + i, 2, endOffset);
