@@ -56,6 +56,7 @@ CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
 EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
+RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
@@ -3537,6 +3538,14 @@ class ReRunWebKitTests(RunWebKitTests):
 class RunWebKitTestsWithoutChange(RunWebKitTests):
     name = 'run-layout-tests-without-change'
 
+    def start(self):
+        api_key = os.getenv(RESULTS_SERVER_API_KEY)
+        if api_key:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = api_key
+        else:
+            self._addToLog('stdio', 'No API key for {} found'.format(RESULTS_DB_URL))
+        return super(RunWebKitTestsWithoutChange, self).start()
+
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
         self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree'), AnalyzeLayoutTestsResults()])
@@ -3562,6 +3571,17 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         super(RunWebKitTestsWithoutChange, self).setLayoutTestCommand()
+        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
+            self.setCommand(
+                self.command + [
+                    '--builder-name', self.getProperty('buildername', ''),
+                    '--build-number', self.getProperty('buildnumber', ''),
+                    '--buildbot-worker', self.getProperty('workername', ''),
+                    '--buildbot-master', CURRENT_HOSTNAME,
+                    '--report', RESULTS_DB_URL,
+                ]
+            )
+
         # In order to speed up testing, on the step that retries running the layout tests without change
         # only run the subset of tests that failed on the previous steps.
         # But only do that if the previous steps didn't exceed the test failure limit

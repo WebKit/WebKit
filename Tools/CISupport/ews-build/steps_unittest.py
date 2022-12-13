@@ -2277,6 +2277,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'layout-test-results/full_results.json'
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -2308,12 +2309,19 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging',
                                  '--exit-after-n-failures', '60',
-                                 '--skip-failing-tests'],
+                                 '--skip-failing-tests',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--report', 'https://results.webkit.org/'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
     def test_run_subtest_tests_success(self):
         self.configureStep()
@@ -2336,13 +2344,20 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--debug-rwt-logging',
                                  '--exit-after-n-failures', '60',
                                  '--skip-failing-tests',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--report', 'https://results.webkit.org/',
                                  '--skipped=always',
                                  'test1.html', 'test2.html', 'test3.html', 'test4.html', 'test5.html'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
     def test_run_subtest_tests_removes_skipped_that_fails(self):
         self.configureStep()
@@ -2365,13 +2380,20 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--debug-rwt-logging',
                                  '--exit-after-n-failures', '60',
                                  '--skip-failing-tests',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--report', 'https://results.webkit.org/',
                                  '--skipped=always',
                                  'test-was-skipped-patch-removed-expectation-but-still-fails.html'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
     def test_run_subtest_tests_fail(self):
         self.configureStep()
@@ -2394,14 +2416,21 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--debug-rwt-logging',
                                  '--exit-after-n-failures', '60',
                                  '--skip-failing-tests',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--report', 'https://results.webkit.org/',
                                  '--skipped=always',
                                  'test-fails-withpatch1.html', 'test-fails-withpatch2.html', 'test-pre-existent-failure1.html', 'test-pre-existent-failure2.html'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         )
             + ExpectShell.log('stdio', stdout='2 failures found.')
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
     def test_run_subtest_tests_limit_exceeded(self):
         self.configureStep()
@@ -2424,12 +2453,19 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging',
                                  '--exit-after-n-failures', '60',
-                                 '--skip-failing-tests'],
+                                 '--skip-failing-tests',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--report', 'https://results.webkit.org/'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
     def test_failure(self):
         self.configureStep()
@@ -2449,13 +2485,20 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--results-directory', 'layout-test-results',
                                  '--debug-rwt-logging',
                                  '--exit-after-n-failures', '60',
-                                 '--skip-failing-tests'],
+                                 '--skip-failing-tests',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--report', 'https://results.webkit.org/'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
 
 class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
