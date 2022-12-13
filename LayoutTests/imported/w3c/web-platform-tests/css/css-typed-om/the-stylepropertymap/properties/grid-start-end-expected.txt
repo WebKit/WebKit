@@ -1,7 +1,10 @@
 
-PASS Can set 'grid-row-start' to CSS-wide keywords
-FAIL Can set 'grid-row-start' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'grid-row-start' to the 'auto' keyword
+PASS Can set 'grid-row-start' to CSS-wide keywords: initial
+PASS Can set 'grid-row-start' to CSS-wide keywords: inherit
+PASS Can set 'grid-row-start' to CSS-wide keywords: unset
+PASS Can set 'grid-row-start' to CSS-wide keywords: revert
+FAIL Can set 'grid-row-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-row-start' to the 'auto' keyword: auto
 PASS Setting 'grid-row-start' to a length throws TypeError
 PASS Setting 'grid-row-start' to a percent throws TypeError
 PASS Setting 'grid-row-start' to a time throws TypeError
@@ -13,9 +16,12 @@ PASS Setting 'grid-row-start' to a transform throws TypeError
 PASS 'grid-row-start' does not supported '3'
 FAIL 'grid-row-start' does not supported 'span 2' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
 FAIL 'grid-row-start' does not supported '5 somegridarea span' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
-PASS Can set 'grid-row-end' to CSS-wide keywords
-FAIL Can set 'grid-row-end' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'grid-row-end' to the 'auto' keyword
+PASS Can set 'grid-row-end' to CSS-wide keywords: initial
+PASS Can set 'grid-row-end' to CSS-wide keywords: inherit
+PASS Can set 'grid-row-end' to CSS-wide keywords: unset
+PASS Can set 'grid-row-end' to CSS-wide keywords: revert
+FAIL Can set 'grid-row-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-row-end' to the 'auto' keyword: auto
 PASS Setting 'grid-row-end' to a length throws TypeError
 PASS Setting 'grid-row-end' to a percent throws TypeError
 PASS Setting 'grid-row-end' to a time throws TypeError
@@ -27,9 +33,12 @@ PASS Setting 'grid-row-end' to a transform throws TypeError
 PASS 'grid-row-end' does not supported '3'
 FAIL 'grid-row-end' does not supported 'span 2' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
 FAIL 'grid-row-end' does not supported '5 somegridarea span' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
-PASS Can set 'grid-column-start' to CSS-wide keywords
-FAIL Can set 'grid-column-start' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'grid-column-start' to the 'auto' keyword
+PASS Can set 'grid-column-start' to CSS-wide keywords: initial
+PASS Can set 'grid-column-start' to CSS-wide keywords: inherit
+PASS Can set 'grid-column-start' to CSS-wide keywords: unset
+PASS Can set 'grid-column-start' to CSS-wide keywords: revert
+FAIL Can set 'grid-column-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-column-start' to the 'auto' keyword: auto
 PASS Setting 'grid-column-start' to a length throws TypeError
 PASS Setting 'grid-column-start' to a percent throws TypeError
 PASS Setting 'grid-column-start' to a time throws TypeError
@@ -41,9 +50,12 @@ PASS Setting 'grid-column-start' to a transform throws TypeError
 PASS 'grid-column-start' does not supported '3'
 FAIL 'grid-column-start' does not supported 'span 2' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
 FAIL 'grid-column-start' does not supported '5 somegridarea span' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
-PASS Can set 'grid-column-end' to CSS-wide keywords
-FAIL Can set 'grid-column-end' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'grid-column-end' to the 'auto' keyword
+PASS Can set 'grid-column-end' to CSS-wide keywords: initial
+PASS Can set 'grid-column-end' to CSS-wide keywords: inherit
+PASS Can set 'grid-column-end' to CSS-wide keywords: unset
+PASS Can set 'grid-column-end' to CSS-wide keywords: revert
+FAIL Can set 'grid-column-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-column-end' to the 'auto' keyword: auto
 PASS Setting 'grid-column-end' to a length throws TypeError
 PASS Setting 'grid-column-end' to a percent throws TypeError
 PASS Setting 'grid-column-end' to a time throws TypeError

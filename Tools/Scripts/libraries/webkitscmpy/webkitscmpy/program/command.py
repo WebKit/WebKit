@@ -61,6 +61,7 @@ class FilteredCommand(Command):
     HASH_RES = (re.compile(r'^(?P<hash>[a-f0-9A-F]{8}[a-f0-9A-F]+)\s'), re.compile(r'(?P<hash>[a-f0-9A-F]{8}[a-f0-9A-F]+)'))
     IDENTIFIER_RES = (re.compile(r'^(?P<identifier>(\d+\.)?\d+@\S*)'), re.compile(r'(?P<identifier>(\d+\.)?\d+@\S*)'))
     NO_FILTER_RES = [re.compile(r'    Canonical link:'), re.compile(r'    git-svn-id:')]
+    DIFF_RE = re.compile(r'^diff --git ')
 
     REPLACE_MODE = 0
     APPEND_MODE = 1
@@ -252,6 +253,8 @@ class FilteredCommand(Command):
         try:
             line = log_output.stdout.readline()
             while line:
+                if cls.DIFF_RE.match(line):
+                    break
                 header = header_re.sub(
                     lambda match: replace_line(match, mode=cls.HEADER_MODE, **{'hash' if repository.is_git else 'revision': match.groups()[-1]}),
                     line,
@@ -299,6 +302,20 @@ class FilteredCommand(Command):
 
                 sys.stdout.write(line)
 
+                line = log_output.stdout.readline()
+
+            while line:
+                color = None
+                if line.startswith('+') and not line.startswith('+++'):
+                    color = Terminal.Text.green
+                elif line.startswith('-') and not line.startswith('---'):
+                    color = Terminal.Text.red
+
+                if color:
+                    with Terminal.Style(color=color).apply(sys.stdout):
+                        sys.stdout.write(line)
+                else:
+                    sys.stdout.write(line)
                 line = log_output.stdout.readline()
 
         finally:

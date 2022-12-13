@@ -1,8 +1,11 @@
 
-PASS Can set 'text-align' to CSS-wide keywords
-FAIL Can set 'text-align' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-align' to the 'center' keyword
-PASS Can set 'text-align' to the 'justify' keyword
+PASS Can set 'text-align' to CSS-wide keywords: initial
+PASS Can set 'text-align' to CSS-wide keywords: inherit
+PASS Can set 'text-align' to CSS-wide keywords: unset
+PASS Can set 'text-align' to CSS-wide keywords: revert
+FAIL Can set 'text-align' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-align' to the 'center' keyword: center
+PASS Can set 'text-align' to the 'justify' keyword: justify
 PASS Setting 'text-align' to a length throws TypeError
 PASS Setting 'text-align' to a percent throws TypeError
 PASS Setting 'text-align' to a time throws TypeError

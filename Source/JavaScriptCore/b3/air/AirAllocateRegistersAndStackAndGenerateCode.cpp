@@ -149,12 +149,17 @@ static ALWAYS_INLINE CCallHelpers::Address callFrameAddr(CCallHelpers& jit, intp
         return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
     }
 
+    if (isARM()) {
+        // For now, we can just solve this in the macro assembler ...
+        return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
+    }
+
     auto addr = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-    if (addr.isValidForm(Width64))
+    if (addr.isValidForm(registerWidth()))
         return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
     GPRReg reg = extendedOffsetAddrRegister();
     jit.move(CCallHelpers::TrustedImmPtr(offsetFromFP), reg);
-    jit.add64(GPRInfo::callFrameRegister, reg);
+    jit.addPtr(GPRInfo::callFrameRegister, reg);
     return CCallHelpers::Address(reg);
 }
 
@@ -176,7 +181,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
     intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
     JIT_COMMENT(*m_jit, "Flush(", tmp, ", ", reg, ", offset=", offset, ")");
     if (tmp.isGP())
-        m_jit->store64(reg.gpr(), callFrameAddr(*m_jit, offset));
+        m_jit->storeRegWord(reg.gpr(), callFrameAddr(*m_jit, offset));
     else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
         ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
         m_jit->storeDouble(reg.fpr(), callFrameAddr(*m_jit, offset));
@@ -212,7 +217,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
         JIT_COMMENT(*m_jit, "Alloc(", tmp, ", ", reg, ", role=", role, ")");
         intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
         if (tmp.bank() == GP)
-            m_jit->load64(callFrameAddr(*m_jit, offset), reg.gpr());
+            m_jit->loadRegWord(callFrameAddr(*m_jit, offset), reg.gpr());
         else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
             ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
             m_jit->loadDouble(callFrameAddr(*m_jit, offset), reg.fpr());
@@ -342,7 +347,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
 void GenerateAndAllocateRegisters::prepareForGeneration()
 {
     // We pessimistically assume we use all callee saves.
-    handleCalleeSaves(m_code, RegisterSetBuilder::calleeSaveRegisters());
+    handleCalleeSaves(m_code, RegisterSetBuilder::vmCalleeSaveRegisters());
     allocateEscapedStackSlots(m_code);
 
     insertBlocksForFlushAfterTerminalPatchpoints();
@@ -492,7 +497,11 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
     CompilerTimingScope timingScope("Air", "GenerateAndAllocateRegisters::generate");
 
+#if !CPU(ARM)
+    // On ARM, we still rely on the macro assembler to handle large immediates.
+    // On other platforms, we can use the macro scratch registers.
     DisallowMacroScratchRegisterUsage disallowScratch(*m_jit);
+#endif
 
     buildLiveRanges(*m_liveness);
 
@@ -623,9 +632,22 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             m_lateClobber = { };
             m_clobberedToClear = { };
 
-            bool needsToGenerate = ([&] () -> bool {
+            bool isOrdinaryMove = ([&] {
+                if (inst.kind.opcode == Move)
+                    return true;
+                if (inst.kind.opcode == MoveDouble)
+                    return true;
+                // on 32 bit, a Move32 doesn't have the same zero-extending
+                // semantics it does on 64-bit, so we can treat it exactly like
+                // a Move
+                if (is32Bit() && inst.kind.opcode == Move32)
+                    return true;
+                return false;
+            })();
+
+            bool needsToGenerate = ([&]() -> bool {
                 // FIXME: We should consider trying to figure out if we can also elide Mov32s
-                if (!(inst.kind.opcode == Move || inst.kind.opcode == MoveDouble))
+                if (!isOrdinaryMove)
                     return true;
 
                 ASSERT(inst.args.size() >= 2);

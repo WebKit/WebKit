@@ -178,6 +178,9 @@ bool AudioDestinationGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ERROR:
         notifyIsPlaying(false);
         break;
+    case GST_MESSAGE_LATENCY:
+        gst_bin_recalculate_latency(GST_BIN_CAST(m_pipeline.get()));
+        break;
     default:
         break;
     }

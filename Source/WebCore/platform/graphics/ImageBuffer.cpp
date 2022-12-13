@@ -206,6 +206,11 @@ void ImageBuffer::flushContext()
     }
 }
 
+std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
+{
+    return WTFMove(m_backend);
+}
+
 IntSize ImageBuffer::backendSize() const
 {
     if (auto* backend = ensureBackendCreated())

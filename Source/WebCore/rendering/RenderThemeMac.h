@@ -67,7 +67,7 @@ public:
     Color platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const final;
     Color platformDefaultButtonTextColor(OptionSet<StyleColorOptions>) const final;
 
-    ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return ScrollbarControlSize::Small; }
+    ScrollbarControlSize scrollbarControlSizeForPart(ControlPartType) final { return ScrollbarControlSize::Small; }
 
     int minimumMenuListSize(const RenderStyle&) const final;
 
@@ -85,7 +85,7 @@ public:
 
     IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
-    bool supportsMeter(ControlPart, const HTMLMeterElement&) const final;
+    bool supportsMeter(ControlPartType, const HTMLMeterElement&) const final;
 
     // Returns the repeat interval of the animation for the progress bar.
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
@@ -101,7 +101,7 @@ public:
 private:
     RenderThemeMac();
 
-    bool canPaint(const PaintInfo&, const Settings&, ControlPart) const final;
+    bool canPaint(const PaintInfo&, const Settings&, ControlPartType) const final;
 
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;

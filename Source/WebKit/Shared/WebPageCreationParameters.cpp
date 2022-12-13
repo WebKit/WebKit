@@ -88,6 +88,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << colorSpace;
     encoder << useSystemAppearance;
+    encoder << useFormSemanticContext;
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -351,6 +352,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     parameters.colorSpace = WTFMove(*colorSpace);
     if (!decoder.decode(parameters.useSystemAppearance))
+        return std::nullopt;
+    if (!decoder.decode(parameters.useFormSemanticContext))
         return std::nullopt;
 #endif
 

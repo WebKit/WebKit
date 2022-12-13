@@ -1,7 +1,10 @@
 
-FAIL Can set 'counter-set' to CSS-wide keywords Invalid property counter-set
-FAIL Can set 'counter-set' to var() references Invalid property counter-set
-FAIL Can set 'counter-set' to the 'none' keyword Invalid property counter-set
+FAIL Can set 'counter-set' to CSS-wide keywords: initial Invalid property counter-set
+FAIL Can set 'counter-set' to CSS-wide keywords: inherit Invalid property counter-set
+FAIL Can set 'counter-set' to CSS-wide keywords: unset Invalid property counter-set
+FAIL Can set 'counter-set' to CSS-wide keywords: revert Invalid property counter-set
+FAIL Can set 'counter-set' to var() references:  var(--A) Invalid property counter-set
+FAIL Can set 'counter-set' to the 'none' keyword: none Invalid property counter-set
 PASS Setting 'counter-set' to a length throws TypeError
 PASS Setting 'counter-set' to a percent throws TypeError
 PASS Setting 'counter-set' to a time throws TypeError

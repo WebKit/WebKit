@@ -528,7 +528,7 @@ void PeerConnectionBackend::disableICECandidateFiltering()
 
 void PeerConnectionBackend::validateSDP(const String& sdp) const
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     if (!m_shouldFilterICECandidates)
         return;
     sdp.split('\n', [](auto line) {

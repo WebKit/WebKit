@@ -115,11 +115,21 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
         return nullptr;
 
     if (!renderer.isInline()) {
-        // FIXME: See canUseForChild on out-of-flow nested boxes.
-        if (!renderer.isFloatingOrOutOfFlowPositioned() || renderer.parent() != renderer.containingBlock())
-            return nullptr;
-        if (auto* containingBlock = renderer.containingBlock(); containingBlock && is<RenderBlockFlow>(*containingBlock))
-            return downcast<RenderBlockFlow>(*containingBlock).modernLineLayout();
+        // IFC may contain block level boxes (floats and out-of-flow boxes).
+
+        auto adjustedContainingBlock = [&] {
+            RenderElement* containingBlock = nullptr;
+            if (renderer.isOutOfFlowPositioned()) {
+                // Here we are looking for the containing block as if the out-of-flow box was inflow (for static position purpose).
+                containingBlock = renderer.parent();
+                if (is<RenderInline>(containingBlock))
+                    containingBlock = containingBlock->containingBlock();
+            } else if (renderer.isFloating())
+                containingBlock = renderer.containingBlock();
+            return dynamicDowncast<RenderBlockFlow>(containingBlock);
+        };
+        if (auto* blockContainer = adjustedContainingBlock())
+            return blockContainer->modernLineLayout();
         return nullptr;
     }
 

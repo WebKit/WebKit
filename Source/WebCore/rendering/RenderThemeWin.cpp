@@ -308,15 +308,15 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
     return platformActiveSelectionForegroundColor(options);
 }
 
-bool RenderThemeWin::supportsFocus(ControlPart appearance) const
+bool RenderThemeWin::supportsFocus(ControlPartType appearance) const
 {
     switch (appearance) {
-        case PushButtonPart:
-        case ButtonPart:
-        case DefaultButtonPart:
-            return true;
-        default:
-            return false;
+    case ControlPartType::PushButton:
+    case ControlPartType::Button:
+    case ControlPartType::DefaultButton:
+        return true;
+    default:
+        return false;
     }
 }
 
@@ -329,45 +329,45 @@ unsigned RenderThemeWin::determineClassicState(const RenderObject& o, ControlSub
 {
     unsigned state = 0;
     switch (o.style().effectiveAppearance()) {
-        case PushButtonPart:
-        case ButtonPart:
-        case DefaultButtonPart:
-            state = DFCS_BUTTONPUSH;
-            if (!isEnabled(o))
-                state |= DFCS_INACTIVE;
-            else if (isPressed(o))
-                state |= DFCS_PUSHED;
-            break;
-        case RadioPart:
-        case CheckboxPart:
-            state = (o.style().effectiveAppearance() == RadioPart) ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK;
-            if (isChecked(o))
-                state |= DFCS_CHECKED;
-            if (!isEnabled(o))
-                state |= DFCS_INACTIVE;
-            else if (isPressed(o))
-                state |= DFCS_PUSHED;
-            break;
-        case MenulistPart:
-            state = DFCS_SCROLLCOMBOBOX;
-            if (!isEnabled(o))
-                state |= DFCS_INACTIVE;
-            else if (isPressed(o))
-                state |= DFCS_PUSHED;
-            break;
-        case InnerSpinButtonPart: {
-            bool isUpButton = subPart == SpinButtonUp;
-            state = isUpButton ? DFCS_SCROLLUP : DFCS_SCROLLDOWN;
-            if (!isEnabled(o) || isReadOnlyControl(o))
-                state |= DFCS_INACTIVE;
-            else if (isPressed(o) && isUpButton == isSpinUpButtonPartPressed(o))
-                state |= DFCS_PUSHED;
-            else if (isHovered(o) && isUpButton == isSpinUpButtonPartHovered(o))
-                state |= DFCS_HOT;
-            break;
-        }
-        default:
-            break;
+    case ControlPartType::PushButton:
+    case ControlPartType::Button:
+    case ControlPartType::DefaultButton:
+        state = DFCS_BUTTONPUSH;
+        if (!isEnabled(o))
+            state |= DFCS_INACTIVE;
+        else if (isPressed(o))
+            state |= DFCS_PUSHED;
+        break;
+    case ControlPartType::Radio:
+    case ControlPartType::Checkbox:
+        state = (o.style().effectiveAppearance() == ControlPartType::Radio) ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK;
+        if (isChecked(o))
+            state |= DFCS_CHECKED;
+        if (!isEnabled(o))
+            state |= DFCS_INACTIVE;
+        else if (isPressed(o))
+            state |= DFCS_PUSHED;
+        break;
+    case ControlPartType::Menulist:
+        state = DFCS_SCROLLCOMBOBOX;
+        if (!isEnabled(o))
+            state |= DFCS_INACTIVE;
+        else if (isPressed(o))
+            state |= DFCS_PUSHED;
+        break;
+    case ControlPartType::InnerSpinButton: {
+        bool isUpButton = subPart == SpinButtonUp;
+        state = isUpButton ? DFCS_SCROLLUP : DFCS_SCROLLDOWN;
+        if (!isEnabled(o) || isReadOnlyControl(o))
+            state |= DFCS_INACTIVE;
+        else if (isPressed(o) && isUpButton == isSpinUpButtonPartPressed(o))
+            state |= DFCS_PUSHED;
+        else if (isHovered(o) && isUpButton == isSpinUpButtonPartHovered(o))
+            state |= DFCS_HOT;
+        break;
+    }
+    default:
+        break;
     }
     return state;
 }
@@ -375,10 +375,10 @@ unsigned RenderThemeWin::determineClassicState(const RenderObject& o, ControlSub
 unsigned RenderThemeWin::determineState(const RenderObject& o)
 {
     unsigned result = TS_NORMAL;
-    ControlPart appearance = o.style().effectiveAppearance();
+    auto appearance = o.style().effectiveAppearance();
     if (!isEnabled(o))
         result = TS_DISABLED;
-    else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance || SearchFieldPart == appearance))
+    else if (isReadOnlyControl(o) && (ControlPartType::TextField == appearance || ControlPartType::TextArea == appearance || ControlPartType::SearchField == appearance))
         result = TFS_READONLY; // Readonly is supported on textfields.
     else if (isPressed(o)) // Active overrides hover and focused.
         result = TS_ACTIVE;
@@ -386,7 +386,7 @@ unsigned RenderThemeWin::determineState(const RenderObject& o)
         result = TS_FOCUSED;
     else if (isHovered(o))
         result = TS_HOVER;
-    if (isIndeterminate(o) && appearance == CheckboxPart)
+    if (isIndeterminate(o) && appearance == ControlPartType::Checkbox)
         result += 8;
     else if (isChecked(o))
         result += 4; // 4 unchecked states, 4 checked states.
@@ -440,50 +440,50 @@ ThemeData RenderThemeWin::getClassicThemeData(const RenderObject& o, ControlSubP
 {
     ThemeData result;
     switch (o.style().effectiveAppearance()) {
-        case PushButtonPart:
-        case ButtonPart:
-        case DefaultButtonPart:
-        case CheckboxPart:
-        case RadioPart:
-            result.m_part = DFC_BUTTON;
-            result.m_state = determineClassicState(o);
-            break;
-        case MenulistPart:
-            result.m_part = DFC_SCROLL;
-            result.m_state = determineClassicState(o);
-            break;
-        case MeterPart:
-            result.m_part = PP_BAR;
-            result.m_state = determineState(o);
-            break;
-        case SearchFieldPart:
-        case TextFieldPart:
-        case TextAreaPart:
-            result.m_part = TFP_TEXTFIELD;
-            result.m_state = determineState(o);
-            break;
-        case SliderHorizontalPart:
-            result.m_part = TKP_TRACK;
-            result.m_state = TS_NORMAL;
-            break;
-        case SliderVerticalPart:
-            result.m_part = TKP_TRACKVERT;
-            result.m_state = TS_NORMAL;
-            break;
-        case SliderThumbHorizontalPart:
-            result.m_part = TKP_THUMBBOTTOM;
-            result.m_state = determineSliderThumbState(o);
-            break;
-        case SliderThumbVerticalPart:
-            result.m_part = TKP_THUMBRIGHT;
-            result.m_state = determineSliderThumbState(o);
-            break;
-        case InnerSpinButtonPart:
-            result.m_part = DFC_SCROLL;
-            result.m_state = determineClassicState(o, subPart);
-            break;
-        default:
-            break;
+    case ControlPartType::PushButton:
+    case ControlPartType::Button:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Checkbox:
+    case ControlPartType::Radio:
+        result.m_part = DFC_BUTTON;
+        result.m_state = determineClassicState(o);
+        break;
+    case ControlPartType::Menulist:
+        result.m_part = DFC_SCROLL;
+        result.m_state = determineClassicState(o);
+        break;
+    case ControlPartType::Meter:
+        result.m_part = PP_BAR;
+        result.m_state = determineState(o);
+        break;
+    case ControlPartType::SearchField:
+    case ControlPartType::TextField:
+    case ControlPartType::TextArea:
+        result.m_part = TFP_TEXTFIELD;
+        result.m_state = determineState(o);
+        break;
+    case ControlPartType::SliderHorizontal:
+        result.m_part = TKP_TRACK;
+        result.m_state = TS_NORMAL;
+        break;
+    case ControlPartType::SliderVertical:
+        result.m_part = TKP_TRACKVERT;
+        result.m_state = TS_NORMAL;
+        break;
+    case ControlPartType::SliderThumbHorizontal:
+        result.m_part = TKP_THUMBBOTTOM;
+        result.m_state = determineSliderThumbState(o);
+        break;
+    case ControlPartType::SliderThumbVertical:
+        result.m_part = TKP_THUMBRIGHT;
+        result.m_state = determineSliderThumbState(o);
+        break;
+    case ControlPartType::InnerSpinButton:
+        result.m_part = DFC_SCROLL;
+        result.m_state = determineClassicState(o, subPart);
+        break;
+    default:
+        break;
     }
     return result;
 }
@@ -495,62 +495,62 @@ ThemeData RenderThemeWin::getThemeData(const RenderObject& o, ControlSubPart sub
 
     ThemeData result;
     switch (o.style().effectiveAppearance()) {
-        case PushButtonPart:
-        case ButtonPart:
-        case DefaultButtonPart:
-            result.m_part = BP_BUTTON;
-            result.m_state = determineButtonState(o);
-            break;
-        case CheckboxPart:
-            result.m_part = BP_CHECKBOX;
-            result.m_state = determineState(o);
-            break;
-        case MenulistPart:
-        case MenulistButtonPart: {
-            const bool isVistaOrLater = (windowsVersion() >= WindowsVista);
-            result.m_part = isVistaOrLater ? CP_DROPDOWNBUTTONRIGHT : CP_DROPDOWNBUTTON;
-            if (isVistaOrLater) {
-                result.m_state = TS_NORMAL;
-            } else
-                result.m_state = determineState(o);
-            break;
-        }
-        case MeterPart:
-            result.m_part = PP_BAR;
-            result.m_state = determineState(o);
-            break;
-        case RadioPart:
-            result.m_part = BP_RADIO;
-            result.m_state = determineState(o);
-            break;
-        case SearchFieldPart:
-        case TextFieldPart:
-        case TextAreaPart:
-            result.m_part = (windowsVersion() >= WindowsVista) ? EP_EDITBORDER_NOSCROLL : TFP_TEXTFIELD;
-            result.m_state = determineState(o);
-            break;
-        case SliderHorizontalPart:
-            result.m_part = TKP_TRACK;
+    case ControlPartType::PushButton:
+    case ControlPartType::Button:
+    case ControlPartType::DefaultButton:
+        result.m_part = BP_BUTTON;
+        result.m_state = determineButtonState(o);
+        break;
+    case ControlPartType::Checkbox:
+        result.m_part = BP_CHECKBOX;
+        result.m_state = determineState(o);
+        break;
+    case ControlPartType::Menulist:
+    case ControlPartType::MenulistButton: {
+        const bool isVistaOrLater = (windowsVersion() >= WindowsVista);
+        result.m_part = isVistaOrLater ? CP_DROPDOWNBUTTONRIGHT : CP_DROPDOWNBUTTON;
+        if (isVistaOrLater)
             result.m_state = TS_NORMAL;
-            break;
-        case SliderVerticalPart:
-            result.m_part = TKP_TRACKVERT;
-            result.m_state = TS_NORMAL;
-            break;
-        case SliderThumbHorizontalPart:
-            result.m_part = TKP_THUMBBOTTOM;
-            result.m_state = determineSliderThumbState(o);
-            break;
-        case SliderThumbVerticalPart:
-            result.m_part = TKP_THUMBRIGHT;
-            result.m_state = determineSliderThumbState(o);
-            break;
-        case InnerSpinButtonPart:
-            result.m_part = subPart == SpinButtonUp ? SPNP_UP : SPNP_DOWN;
-            result.m_state = determineSpinButtonState(o, subPart);
-            break;
-        default:
-            break;
+        else
+            result.m_state = determineState(o);
+        break;
+    }
+    case ControlPartType::Meter:
+        result.m_part = PP_BAR;
+        result.m_state = determineState(o);
+        break;
+    case ControlPartType::Radio:
+        result.m_part = BP_RADIO;
+        result.m_state = determineState(o);
+        break;
+    case ControlPartType::SearchField:
+    case ControlPartType::TextField:
+    case ControlPartType::TextArea:
+        result.m_part = (windowsVersion() >= WindowsVista) ? EP_EDITBORDER_NOSCROLL : TFP_TEXTFIELD;
+        result.m_state = determineState(o);
+        break;
+    case ControlPartType::SliderHorizontal:
+        result.m_part = TKP_TRACK;
+        result.m_state = TS_NORMAL;
+        break;
+    case ControlPartType::SliderVertical:
+        result.m_part = TKP_TRACKVERT;
+        result.m_state = TS_NORMAL;
+        break;
+    case ControlPartType::SliderThumbHorizontal:
+        result.m_part = TKP_THUMBBOTTOM;
+        result.m_state = determineSliderThumbState(o);
+        break;
+    case ControlPartType::SliderThumbVertical:
+        result.m_part = TKP_THUMBRIGHT;
+        result.m_state = determineSliderThumbState(o);
+        break;
+    case ControlPartType::InnerSpinButton:
+        result.m_part = subPart == SpinButtonUp ? SPNP_UP : SPNP_DOWN;
+        result.m_state = determineSpinButtonState(o, subPart);
+        break;
+    default:
+        break;
     }
 
     return result;
@@ -576,8 +576,8 @@ static void drawControl(GraphicsContext& context, const RenderObject& o, HANDLE 
         } else if (themeData.m_part == TKP_TRACK || themeData.m_part == TKP_TRACKVERT) {
             ::DrawEdge(hdc, &widgetRect, EDGE_SUNKEN, BF_RECT | BF_ADJUST);
             ::FillRect(hdc, &widgetRect, (HBRUSH)GetStockObject(GRAY_BRUSH));
-        } else if ((o.style().effectiveAppearance() == SliderThumbHorizontalPart
-        || o.style().effectiveAppearance() == SliderThumbVerticalPart)
+        } else if ((o.style().effectiveAppearance() == ControlPartType::SliderThumbHorizontal
+        || o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
         && (themeData.m_part == TKP_THUMBBOTTOM || themeData.m_part == TKP_THUMBTOP
         || themeData.m_part == TKP_THUMBLEFT || themeData.m_part == TKP_THUMBRIGHT)) {
             ::DrawEdge(hdc, &widgetRect, EDGE_RAISED, BF_RECT | BF_SOFT | BF_MIDDLE | BF_ADJUST);
@@ -601,7 +601,7 @@ static void drawControl(GraphicsContext& context, const RenderObject& o, HANDLE 
             }
         } else {
             // Push buttons, buttons, checkboxes and radios, and the dropdown arrow in menulists.
-            if (o.style().effectiveAppearance() == DefaultButtonPart) {
+            if (o.style().effectiveAppearance() == ControlPartType::DefaultButton) {
                 HBRUSH brush = ::GetSysColorBrush(COLOR_3DDKSHADOW);
                 ::FrameRect(hdc, &widgetRect, brush);
                 ::InflateRect(&widgetRect, -1, -1);
@@ -754,10 +754,10 @@ bool RenderThemeWin::paintSliderTrack(const RenderObject& o, const PaintInfo& i,
 {
     IntRect bounds = r;
     
-    if (o.style().effectiveAppearance() ==  SliderHorizontalPart) {
+    if (o.style().effectiveAppearance() ==  ControlPartType::SliderHorizontal) {
         bounds.setHeight(trackWidth);
         bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
-    } else if (o.style().effectiveAppearance() == SliderVerticalPart) {
+    } else if (o.style().effectiveAppearance() == ControlPartType::SliderVertical) {
         bounds.setWidth(trackWidth);
         bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
     }
@@ -777,11 +777,11 @@ const int sliderThumbHeight = 15;
 
 void RenderThemeWin::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    ControlPart part = style.effectiveAppearance();
-    if (part == SliderThumbVerticalPart) {
+    auto type = style.effectiveAppearance();
+    if (type == ControlPartType::SliderThumbVertical) {
         style.setWidth(Length(sliderThumbHeight, LengthType::Fixed));
         style.setHeight(Length(sliderThumbWidth, LengthType::Fixed));
-    } else if (part == SliderThumbHorizontalPart) {
+    } else if (type == ControlPartType::SliderThumbHorizontal) {
         style.setWidth(Length(sliderThumbWidth, LengthType::Fixed));
         style.setHeight(Length(sliderThumbHeight, LengthType::Fixed));
     }
@@ -1006,10 +1006,10 @@ void RenderThemeWin::adjustMeterStyle(RenderStyle& style, const Element*) const
     style.setBoxShadow(nullptr);
 }
 
-bool RenderThemeWin::supportsMeter(ControlPart part, const HTMLMeterElement&) const
+bool RenderThemeWin::supportsMeter(ControlPartType type, const HTMLMeterElement&) const
 {
-    switch (part) {
-    case MeterPart:
+    switch (type) {
+    case ControlPartType::Meter:
         return true;
     default:
         return false;

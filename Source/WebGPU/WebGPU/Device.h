@@ -127,6 +127,7 @@ private:
     void makeInvalid() { m_device = nil; }
 
     void loseTheDevice(WGPUDeviceLostReason);
+    void captureFrameIfNeeded() const;
 
     struct Error {
         WGPUErrorType type;

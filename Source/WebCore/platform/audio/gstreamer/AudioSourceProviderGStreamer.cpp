@@ -121,19 +121,22 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);
 
-    gst_bus_set_sync_handler(bus.get(), [](GstBus*, GstMessage* message, gpointer userData) -> GstBusSyncReply {
+    gst_bus_set_sync_handler(bus.get(), [](GstBus*, GstMessage* messageRef, gpointer userData) -> GstBusSyncReply {
+        auto message = adoptGRef(messageRef);
         auto* decodebin = GST_ELEMENT_CAST(userData);
-        if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_STREAM_COLLECTION || GST_MESSAGE_SRC(message) != GST_OBJECT_CAST(decodebin)) {
-            gst_message_unref(message);
+        if (GST_MESSAGE_TYPE(message.get()) == GST_MESSAGE_LATENCY) {
+            auto pipeline = adoptGRef(gst_element_get_parent(decodebin));
+            gst_bin_recalculate_latency(GST_BIN_CAST(pipeline.get()));
             return GST_BUS_DROP;
         }
 
-        GRefPtr<GstStreamCollection> collection;
-        gst_message_parse_stream_collection(message, &collection.outPtr());
-        if (!collection) {
-            gst_message_unref(message);
+        if (GST_MESSAGE_TYPE(message.get()) != GST_MESSAGE_STREAM_COLLECTION || GST_MESSAGE_SRC(message.get()) != GST_OBJECT_CAST(decodebin))
             return GST_BUS_DROP;
-        }
+
+        GRefPtr<GstStreamCollection> collection;
+        gst_message_parse_stream_collection(message.get(), &collection.outPtr());
+        if (!collection)
+            return GST_BUS_DROP;
 
         unsigned size = gst_stream_collection_get_size(collection.get());
         GList* streams = nullptr;
@@ -150,7 +153,6 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
             g_list_free(streams);
         }
 
-        gst_message_unref(message);
         return GST_BUS_DROP;
     }, gst_object_ref(decodebin), gst_object_unref);
 }

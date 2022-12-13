@@ -193,6 +193,8 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
     m_primitiveType = pipeline.primitiveType();
 
     [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
+    if (pipeline.depthStencilState())
+        [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
     [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
     [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
 }

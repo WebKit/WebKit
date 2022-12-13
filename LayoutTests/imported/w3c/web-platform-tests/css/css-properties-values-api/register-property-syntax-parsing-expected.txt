@@ -65,7 +65,7 @@ PASS syntax:'banana', initialValue:'banan\61' is valid
 PASS syntax:'banan\61', initialValue:'banana' is valid
 PASS syntax:'<custom-ident>', initialValue:'banan\61' is valid
 PASS syntax:'big | bigger | BIGGER', initialValue:'bigger' is valid
-FAIL syntax:'foo+|bar', initialValue:'foo foo foo' is valid Invalid property syntax definition.
+FAIL syntax:'foo+|bar', initialValue:'foo foo foo' is valid The given initial value does not parse for the given syntax.
 PASS syntax:'banana	', initialValue:'banana' is valid
 PASS syntax:'
 banana\r

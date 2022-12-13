@@ -1,8 +1,11 @@
 
-FAIL Can set 'scrollbar-gutter' to CSS-wide keywords Invalid property scrollbar-gutter
-FAIL Can set 'scrollbar-gutter' to var() references Invalid property scrollbar-gutter
-FAIL Can set 'scrollbar-gutter' to the 'auto' keyword Invalid property scrollbar-gutter
-FAIL Can set 'scrollbar-gutter' to the 'stable' keyword Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to CSS-wide keywords: initial Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to CSS-wide keywords: inherit Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to CSS-wide keywords: unset Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to CSS-wide keywords: revert Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to var() references:  var(--A) Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to the 'auto' keyword: auto Invalid property scrollbar-gutter
+FAIL Can set 'scrollbar-gutter' to the 'stable' keyword: stable Invalid property scrollbar-gutter
 PASS Setting 'scrollbar-gutter' to a length throws TypeError
 PASS Setting 'scrollbar-gutter' to a percent throws TypeError
 PASS Setting 'scrollbar-gutter' to a time throws TypeError

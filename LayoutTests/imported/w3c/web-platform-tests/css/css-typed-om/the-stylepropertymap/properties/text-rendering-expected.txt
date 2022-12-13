@@ -1,10 +1,13 @@
 
-PASS Can set 'text-rendering' to CSS-wide keywords
-FAIL Can set 'text-rendering' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-rendering' to the 'auto' keyword
-FAIL Can set 'text-rendering' to the 'optimizespeed' keyword assert_equals: expected "optimizespeed" but got "optimizeSpeed"
-FAIL Can set 'text-rendering' to the 'optimizelegibility' keyword assert_equals: expected "optimizelegibility" but got "optimizeLegibility"
-FAIL Can set 'text-rendering' to the 'geometricprecision' keyword assert_equals: expected "geometricprecision" but got "geometricPrecision"
+PASS Can set 'text-rendering' to CSS-wide keywords: initial
+PASS Can set 'text-rendering' to CSS-wide keywords: inherit
+PASS Can set 'text-rendering' to CSS-wide keywords: unset
+PASS Can set 'text-rendering' to CSS-wide keywords: revert
+FAIL Can set 'text-rendering' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-rendering' to the 'auto' keyword: auto
+FAIL Can set 'text-rendering' to the 'optimizespeed' keyword: optimizespeed assert_equals: expected "optimizespeed" but got "optimizeSpeed"
+FAIL Can set 'text-rendering' to the 'optimizelegibility' keyword: optimizelegibility assert_equals: expected "optimizelegibility" but got "optimizeLegibility"
+FAIL Can set 'text-rendering' to the 'geometricprecision' keyword: geometricprecision assert_equals: expected "geometricprecision" but got "geometricPrecision"
 PASS Setting 'text-rendering' to a length throws TypeError
 PASS Setting 'text-rendering' to a percent throws TypeError
 PASS Setting 'text-rendering' to a time throws TypeError

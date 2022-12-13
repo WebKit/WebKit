@@ -1,9 +1,18 @@
 
-PASS Can set 'text-underline-offset' to CSS-wide keywords
-FAIL Can set 'text-underline-offset' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-underline-offset' to the 'auto' keyword
-PASS Can set 'text-underline-offset' to a length
-FAIL Can set 'text-underline-offset' to a percent Invalid values
+PASS Can set 'text-underline-offset' to CSS-wide keywords: initial
+PASS Can set 'text-underline-offset' to CSS-wide keywords: inherit
+PASS Can set 'text-underline-offset' to CSS-wide keywords: unset
+PASS Can set 'text-underline-offset' to CSS-wide keywords: revert
+FAIL Can set 'text-underline-offset' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-underline-offset' to the 'auto' keyword: auto
+PASS Can set 'text-underline-offset' to a length: 0px
+PASS Can set 'text-underline-offset' to a length: -3.14em
+PASS Can set 'text-underline-offset' to a length: 3.14cm
+PASS Can set 'text-underline-offset' to a length: calc(0px + 0em)
+FAIL Can set 'text-underline-offset' to a percent: 0% Invalid values
+FAIL Can set 'text-underline-offset' to a percent: -3.14% Invalid values
+FAIL Can set 'text-underline-offset' to a percent: 3.14% Invalid values
+FAIL Can set 'text-underline-offset' to a percent: calc(0% + 0%) Invalid values
 PASS Setting 'text-underline-offset' to a time throws TypeError
 PASS Setting 'text-underline-offset' to an angle throws TypeError
 PASS Setting 'text-underline-offset' to a flexible length throws TypeError

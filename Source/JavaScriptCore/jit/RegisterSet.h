@@ -85,6 +85,8 @@ public:
 
     inline constexpr RegisterSetBuilder& remove(Reg reg)
     {
+
+
         ASSERT(!!reg);
         m_bits.clear(reg.index());
         m_upperBits.clear(reg.index());
@@ -120,6 +122,10 @@ public:
     {
         m_bits.exclude(other.m_bits);
         m_upperBits.exclude(other.m_upperBits);
+        // we have to filter the upper bits to maintain an invariant:
+        // m_upperBits & m_bits = m_upperBits
+        // that is, upper bits cannot be set without their matching lower bit
+        m_upperBits.filter(m_bits);
         return *this;
     }
 

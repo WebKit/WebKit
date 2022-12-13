@@ -1,10 +1,13 @@
 
-PASS Can set 'resize' to CSS-wide keywords
-FAIL Can set 'resize' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'resize' to the 'none' keyword
-PASS Can set 'resize' to the 'both' keyword
-PASS Can set 'resize' to the 'horizontal' keyword
-PASS Can set 'resize' to the 'vertical' keyword
+PASS Can set 'resize' to CSS-wide keywords: initial
+PASS Can set 'resize' to CSS-wide keywords: inherit
+PASS Can set 'resize' to CSS-wide keywords: unset
+PASS Can set 'resize' to CSS-wide keywords: revert
+FAIL Can set 'resize' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'resize' to the 'none' keyword: none
+PASS Can set 'resize' to the 'both' keyword: both
+PASS Can set 'resize' to the 'horizontal' keyword: horizontal
+PASS Can set 'resize' to the 'vertical' keyword: vertical
 PASS Setting 'resize' to a length throws TypeError
 PASS Setting 'resize' to a percent throws TypeError
 PASS Setting 'resize' to a time throws TypeError

@@ -362,7 +362,7 @@ static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points,
     CGContextStrokePath(context);
 }
 
-bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings, ControlPart) const
+bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings, ControlPartType) const
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (settings.iOSFormControlRefreshEnabled())
@@ -441,7 +441,7 @@ void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
 LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
 {
     // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
-    if (box.style().effectiveAppearance() == CheckboxPart || box.style().effectiveAppearance() == RadioPart) {
+    if (box.style().effectiveAppearance() == ControlPartType::Checkbox || box.style().effectiveAppearance() == ControlPartType::Radio) {
         float width = std::min(paintRect.width(), paintRect.height());
         float height = width;
         return enclosingLayoutRect(FloatRect(paintRect.x(), paintRect.y() + (box.height() - height) / 2, width, height)); // Vertically center the checkbox, like on desktop
@@ -452,9 +452,9 @@ LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutR
 
 int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 {
-    if (box.style().effectiveAppearance() == CheckboxPart || box.style().effectiveAppearance() == RadioPart)
+    if (box.style().effectiveAppearance() == ControlPartType::Checkbox || box.style().effectiveAppearance() == ControlPartType::Radio)
         return box.marginTop() + box.height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
-    if (box.style().effectiveAppearance() == MenulistPart)
+    if (box.style().effectiveAppearance() == ControlPartType::Menulist)
         return box.marginTop() + box.height() - 5; // This is to match AppKit. There might be a better way to calculate this though.
     return RenderTheme::baselinePosition(box);
 }
@@ -462,14 +462,14 @@ int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
-    if (style.effectiveAppearance() == PushButtonPart || style.effectiveAppearance() == MenulistButtonPart)
+    if (style.effectiveAppearance() == ControlPartType::PushButton || style.effectiveAppearance() == ControlPartType::MenulistButton)
         return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
 
-    if (style.effectiveAppearance() == TextFieldPart || style.effectiveAppearance() == TextAreaPart)
+    if (style.effectiveAppearance() == ControlPartType::TextField || style.effectiveAppearance() == ControlPartType::TextArea)
         return style.backgroundLayers() != userAgentStyle.backgroundLayers();
 
 #if ENABLE(DATALIST_ELEMENT)
-    if (style.effectiveAppearance() == ListButtonPart)
+    if (style.effectiveAppearance() == ControlPartType::ListButton)
         return style.hasContent() || style.hasEffectiveContentNone();
 #endif
 
@@ -678,7 +678,7 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style, cons
         padding = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
     }
 
-    if (style.effectiveAppearance() == MenulistButtonPart) {
+    if (style.effectiveAppearance() == ControlPartType::MenulistButton) {
         if (style.direction() == TextDirection::RTL)
             return { 0, 0, 0, static_cast<int>(padding + style.borderTopWidth()) };
         return { 0, static_cast<int>(padding + style.borderTopWidth()), 0, 0 };
@@ -686,18 +686,18 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style, cons
     return { 0, 0, 0, 0 };
 }
 
-static inline bool canAdjustBorderRadiusForAppearance(ControlPart appearance, const RenderBox& box)
+static inline bool canAdjustBorderRadiusForAppearance(ControlPartType appearance, const RenderBox& box)
 {
     switch (appearance) {
-    case NoControlPart:
+    case ControlPartType::NoControl:
 #if ENABLE(APPLE_PAY)
-    case ApplePayButtonPart:
+    case ControlPartType::ApplePayButton:
 #endif
         return false;
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    case SearchFieldPart:
+    case ControlPartType::SearchField:
         return !box.settings().iOSFormControlRefreshEnabled();
-    case MenulistButtonPart:
+    case ControlPartType::MenulistButton:
         return !box.style().hasExplicitlySetBorderRadius() && box.settings().iOSFormControlRefreshEnabled();
 #endif
     default:
@@ -962,7 +962,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
 
     bool isHorizontal = true;
     switch (style.effectiveAppearance()) {
-    case SliderHorizontalPart:
+    case ControlPartType::SliderHorizontal:
         isHorizontal = true;
         // Inset slightly so the thumb covers the edge.
         if (trackClip.width() > 2) {
@@ -972,7 +972,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
         trackClip.setHeight(static_cast<int>(kTrackThickness));
         trackClip.setY(rect.y() + rect.height() / 2 - kTrackThickness / 2);
         break;
-    case SliderVerticalPart:
+    case ControlPartType::SliderVertical:
         isHorizontal = false;
         // Inset slightly so the thumb covers the edge.
         if (trackClip.height() > 2) {
@@ -1035,7 +1035,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
 
 void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    if (style.effectiveAppearance() != SliderThumbHorizontalPart && style.effectiveAppearance() != SliderThumbVerticalPart)
+    if (style.effectiveAppearance() != ControlPartType::SliderThumbHorizontal && style.effectiveAppearance() != ControlPartType::SliderThumbVertical)
         return;
 
     // Enforce "border-radius: 50%".
@@ -1249,7 +1249,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
         style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), LengthType::Fixed));
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (style.effectiveAppearance() == ColorWellPart)
+    if (style.effectiveAppearance() == ControlPartType::ColorWell)
         return;
 #endif
 
@@ -1355,8 +1355,8 @@ bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
 {
     // FIXME: See if additional native controls can support box shadows.
     switch (style.effectiveAppearance()) {
-    case SliderThumbHorizontalPart:
-    case SliderThumbVerticalPart:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
         return true;
     default:
         return false;
@@ -2033,9 +2033,9 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
     return false;
 }
 
-bool RenderThemeIOS::supportsMeter(ControlPart part, const HTMLMeterElement& element) const
+bool RenderThemeIOS::supportsMeter(ControlPartType type, const HTMLMeterElement& element) const
 {
-    if (part == MeterPart)
+    if (type == ControlPartType::Meter)
         return element.document().settings().iOSFormControlRefreshEnabled();
 
     return false;
@@ -2162,7 +2162,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
     FloatRect tickRect;
     FloatRoundedRect::Radii tickCornerRadii(tickCornerRadius);
 
-    bool isHorizontal = box.style().effectiveAppearance() == SliderHorizontalPart;
+    bool isHorizontal = box.style().effectiveAppearance() == ControlPartType::SliderHorizontal;
     if (isHorizontal) {
         tickRect.setWidth(tickWidth);
         tickRect.setHeight(tickHeight);
@@ -2211,7 +2211,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     FloatRect trackClip = rect;
 
     switch (box.style().effectiveAppearance()) {
-    case SliderHorizontalPart:
+    case ControlPartType::SliderHorizontal:
         // Inset slightly so the thumb covers the edge.
         if (trackClip.width() > 2) {
             trackClip.setWidth(trackClip.width() - 2);
@@ -2220,7 +2220,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
         trackClip.setHeight(kTrackThickness);
         trackClip.setY(rect.y() + rect.height() / 2 - kTrackThickness / 2);
         break;
-    case SliderVerticalPart:
+    case ControlPartType::SliderVertical:
         isHorizontal = false;
         // Inset slightly so the thumb covers the edge.
         if (trackClip.height() > 2) {

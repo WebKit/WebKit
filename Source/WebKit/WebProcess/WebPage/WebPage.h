@@ -698,6 +698,9 @@ public:
 
     void setUseSystemAppearance(bool);
 
+    void setUseFormSemanticContext(bool);
+    void semanticContextDidChange(bool);
+
     void didEndMagnificationGesture();
 #endif
 

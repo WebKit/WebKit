@@ -1,27 +1,30 @@
 
-PASS Can set 'display' to CSS-wide keywords
-FAIL Can set 'display' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'display' to the 'none' keyword
-PASS Can set 'display' to the 'block' keyword
-PASS Can set 'display' to the 'inline' keyword
-PASS Can set 'display' to the 'flow-root' keyword
-PASS Can set 'display' to the 'table' keyword
-PASS Can set 'display' to the 'flex' keyword
-PASS Can set 'display' to the 'grid' keyword
-PASS Can set 'display' to the 'list-item' keyword
-PASS Can set 'display' to the 'table-row-group' keyword
-PASS Can set 'display' to the 'table-header-group' keyword
-PASS Can set 'display' to the 'table-footer-group' keyword
-PASS Can set 'display' to the 'table-row' keyword
-PASS Can set 'display' to the 'table-cell' keyword
-PASS Can set 'display' to the 'table-column-group' keyword
-PASS Can set 'display' to the 'table-column' keyword
-PASS Can set 'display' to the 'table-caption' keyword
-PASS Can set 'display' to the 'contents' keyword
-PASS Can set 'display' to the 'inline-block' keyword
-PASS Can set 'display' to the 'inline-table' keyword
-PASS Can set 'display' to the 'inline-flex' keyword
-PASS Can set 'display' to the 'inline-grid' keyword
+PASS Can set 'display' to CSS-wide keywords: initial
+PASS Can set 'display' to CSS-wide keywords: inherit
+PASS Can set 'display' to CSS-wide keywords: unset
+PASS Can set 'display' to CSS-wide keywords: revert
+FAIL Can set 'display' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'display' to the 'none' keyword: none
+PASS Can set 'display' to the 'block' keyword: block
+PASS Can set 'display' to the 'inline' keyword: inline
+PASS Can set 'display' to the 'flow-root' keyword: flow-root
+PASS Can set 'display' to the 'table' keyword: table
+PASS Can set 'display' to the 'flex' keyword: flex
+PASS Can set 'display' to the 'grid' keyword: grid
+PASS Can set 'display' to the 'list-item' keyword: list-item
+PASS Can set 'display' to the 'table-row-group' keyword: table-row-group
+PASS Can set 'display' to the 'table-header-group' keyword: table-header-group
+PASS Can set 'display' to the 'table-footer-group' keyword: table-footer-group
+PASS Can set 'display' to the 'table-row' keyword: table-row
+PASS Can set 'display' to the 'table-cell' keyword: table-cell
+PASS Can set 'display' to the 'table-column-group' keyword: table-column-group
+PASS Can set 'display' to the 'table-column' keyword: table-column
+PASS Can set 'display' to the 'table-caption' keyword: table-caption
+PASS Can set 'display' to the 'contents' keyword: contents
+PASS Can set 'display' to the 'inline-block' keyword: inline-block
+PASS Can set 'display' to the 'inline-table' keyword: inline-table
+PASS Can set 'display' to the 'inline-flex' keyword: inline-flex
+PASS Can set 'display' to the 'inline-grid' keyword: inline-grid
 PASS Setting 'display' to a length throws TypeError
 PASS Setting 'display' to a percent throws TypeError
 PASS Setting 'display' to a time throws TypeError

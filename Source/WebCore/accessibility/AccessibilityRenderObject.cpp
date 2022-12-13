@@ -125,7 +125,7 @@ AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     : AccessibilityNodeObject(renderer->node())
     , m_renderer(renderer)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_renderer->setHasAXObject(true);
 #endif
 }
@@ -146,7 +146,7 @@ void AccessibilityRenderObject::detachRemoteParts(AccessibilityDetachmentType de
     
     detachRemoteSVGRoot();
     
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     if (m_renderer)
         m_renderer->setHasAXObject(false);
 #endif
@@ -3392,7 +3392,7 @@ bool AccessibilityRenderObject::isApplePayButton() const
 {
     if (!m_renderer)
         return false;
-    return m_renderer->style().effectiveAppearance() == ApplePayButtonPart;
+    return m_renderer->style().effectiveAppearance() == ControlPartType::ApplePayButton;
 }
 
 ApplePayButtonType AccessibilityRenderObject::applePayButtonType() const

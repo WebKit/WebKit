@@ -3699,6 +3699,18 @@ RefPtr<NativeImage> MediaPlayerPrivateGStreamer::nativeImageForCurrentTime()
 }
 #endif // USE(GSTREAMER_GL)
 
+RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
+{
+    Locker sampleLocker { m_sampleMutex };
+
+    if (!GST_IS_SAMPLE(m_sample.get()))
+        return nullptr;
+
+    GRefPtr<GstSample> sample = m_sample;
+    auto size = getVideoResolutionFromCaps(gst_sample_get_caps(sample.get())).value_or(FloatSize { 0, 0 });
+    return VideoFrameGStreamer::create(WTFMove(sample), size);
+}
+
 void MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation orientation)
 {
     if (m_videoSourceOrientation == orientation)

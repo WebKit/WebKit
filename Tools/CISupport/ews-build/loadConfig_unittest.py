@@ -284,6 +284,18 @@ class TestPrioritizeBuilders(unittest.TestCase):
             [builder.name for builder in sorted_builders],
         )
 
+    def test_starvation_prioritize_commit_queue(self):
+        builders = [
+            self.MockBuilder('Commit-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=10)),
+            self.MockBuilder('Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=60)),
+            self.MockBuilder('Unsafe-Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=20)),
+        ]
+        sorted_builders = loadConfig.prioritizeBuilders(None, builders)
+        self.assertEqual(
+            ['Unsafe-Merge-Queue', 'Commit-Queue', 'Merge-Queue'],
+            [builder.name for builder in sorted_builders],
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

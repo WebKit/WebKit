@@ -1,9 +1,12 @@
 
-PASS Can set 'transform-style' to CSS-wide keywords
-FAIL Can set 'transform-style' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'transform-style' to the 'auto' keyword Invalid values
-PASS Can set 'transform-style' to the 'flat' keyword
-PASS Can set 'transform-style' to the 'preserve-3d' keyword
+PASS Can set 'transform-style' to CSS-wide keywords: initial
+PASS Can set 'transform-style' to CSS-wide keywords: inherit
+PASS Can set 'transform-style' to CSS-wide keywords: unset
+PASS Can set 'transform-style' to CSS-wide keywords: revert
+FAIL Can set 'transform-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'transform-style' to the 'auto' keyword: auto Invalid values
+PASS Can set 'transform-style' to the 'flat' keyword: flat
+PASS Can set 'transform-style' to the 'preserve-3d' keyword: preserve-3d
 PASS Setting 'transform-style' to a length throws TypeError
 PASS Setting 'transform-style' to a percent throws TypeError
 PASS Setting 'transform-style' to a time throws TypeError

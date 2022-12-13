@@ -1,18 +1,21 @@
 
-PASS Can set 'break-after' to CSS-wide keywords
-FAIL Can set 'break-after' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'break-after' to the 'auto' keyword
-PASS Can set 'break-after' to the 'avoid' keyword
-PASS Can set 'break-after' to the 'avoid-column' keyword
-PASS Can set 'break-after' to the 'avoid-page' keyword
-FAIL Can set 'break-after' to the 'avoid-region' keyword Invalid values
-PASS Can set 'break-after' to the 'column' keyword
-PASS Can set 'break-after' to the 'left' keyword
-PASS Can set 'break-after' to the 'page' keyword
-PASS Can set 'break-after' to the 'recto' keyword
-FAIL Can set 'break-after' to the 'region' keyword Invalid values
-PASS Can set 'break-after' to the 'right' keyword
-PASS Can set 'break-after' to the 'verso' keyword
+PASS Can set 'break-after' to CSS-wide keywords: initial
+PASS Can set 'break-after' to CSS-wide keywords: inherit
+PASS Can set 'break-after' to CSS-wide keywords: unset
+PASS Can set 'break-after' to CSS-wide keywords: revert
+FAIL Can set 'break-after' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'break-after' to the 'auto' keyword: auto
+PASS Can set 'break-after' to the 'avoid' keyword: avoid
+PASS Can set 'break-after' to the 'avoid-column' keyword: avoid-column
+PASS Can set 'break-after' to the 'avoid-page' keyword: avoid-page
+FAIL Can set 'break-after' to the 'avoid-region' keyword: avoid-region Invalid values
+PASS Can set 'break-after' to the 'column' keyword: column
+PASS Can set 'break-after' to the 'left' keyword: left
+PASS Can set 'break-after' to the 'page' keyword: page
+PASS Can set 'break-after' to the 'recto' keyword: recto
+FAIL Can set 'break-after' to the 'region' keyword: region Invalid values
+PASS Can set 'break-after' to the 'right' keyword: right
+PASS Can set 'break-after' to the 'verso' keyword: verso
 PASS Setting 'break-after' to a length throws TypeError
 PASS Setting 'break-after' to a percent throws TypeError
 PASS Setting 'break-after' to a time throws TypeError
@@ -21,20 +24,23 @@ PASS Setting 'break-after' to a flexible length throws TypeError
 PASS Setting 'break-after' to a number throws TypeError
 PASS Setting 'break-after' to a URL throws TypeError
 PASS Setting 'break-after' to a transform throws TypeError
-PASS Can set 'break-before' to CSS-wide keywords
-FAIL Can set 'break-before' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'break-before' to the 'auto' keyword
-PASS Can set 'break-before' to the 'avoid' keyword
-PASS Can set 'break-before' to the 'avoid-column' keyword
-PASS Can set 'break-before' to the 'avoid-page' keyword
-FAIL Can set 'break-before' to the 'avoid-region' keyword Invalid values
-PASS Can set 'break-before' to the 'column' keyword
-PASS Can set 'break-before' to the 'left' keyword
-PASS Can set 'break-before' to the 'page' keyword
-PASS Can set 'break-before' to the 'recto' keyword
-FAIL Can set 'break-before' to the 'region' keyword Invalid values
-PASS Can set 'break-before' to the 'right' keyword
-PASS Can set 'break-before' to the 'verso' keyword
+PASS Can set 'break-before' to CSS-wide keywords: initial
+PASS Can set 'break-before' to CSS-wide keywords: inherit
+PASS Can set 'break-before' to CSS-wide keywords: unset
+PASS Can set 'break-before' to CSS-wide keywords: revert
+FAIL Can set 'break-before' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'break-before' to the 'auto' keyword: auto
+PASS Can set 'break-before' to the 'avoid' keyword: avoid
+PASS Can set 'break-before' to the 'avoid-column' keyword: avoid-column
+PASS Can set 'break-before' to the 'avoid-page' keyword: avoid-page
+FAIL Can set 'break-before' to the 'avoid-region' keyword: avoid-region Invalid values
+PASS Can set 'break-before' to the 'column' keyword: column
+PASS Can set 'break-before' to the 'left' keyword: left
+PASS Can set 'break-before' to the 'page' keyword: page
+PASS Can set 'break-before' to the 'recto' keyword: recto
+FAIL Can set 'break-before' to the 'region' keyword: region Invalid values
+PASS Can set 'break-before' to the 'right' keyword: right
+PASS Can set 'break-before' to the 'verso' keyword: verso
 PASS Setting 'break-before' to a length throws TypeError
 PASS Setting 'break-before' to a percent throws TypeError
 PASS Setting 'break-before' to a time throws TypeError
@@ -43,13 +49,16 @@ PASS Setting 'break-before' to a flexible length throws TypeError
 PASS Setting 'break-before' to a number throws TypeError
 PASS Setting 'break-before' to a URL throws TypeError
 PASS Setting 'break-before' to a transform throws TypeError
-PASS Can set 'break-inside' to CSS-wide keywords
-FAIL Can set 'break-inside' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'break-inside' to the 'auto' keyword
-PASS Can set 'break-inside' to the 'avoid' keyword
-PASS Can set 'break-inside' to the 'avoid-column' keyword
-PASS Can set 'break-inside' to the 'avoid-page' keyword
-FAIL Can set 'break-inside' to the 'avoid-region' keyword Invalid values
+PASS Can set 'break-inside' to CSS-wide keywords: initial
+PASS Can set 'break-inside' to CSS-wide keywords: inherit
+PASS Can set 'break-inside' to CSS-wide keywords: unset
+PASS Can set 'break-inside' to CSS-wide keywords: revert
+FAIL Can set 'break-inside' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'break-inside' to the 'auto' keyword: auto
+PASS Can set 'break-inside' to the 'avoid' keyword: avoid
+PASS Can set 'break-inside' to the 'avoid-column' keyword: avoid-column
+PASS Can set 'break-inside' to the 'avoid-page' keyword: avoid-page
+FAIL Can set 'break-inside' to the 'avoid-region' keyword: avoid-region Invalid values
 PASS Setting 'break-inside' to a length throws TypeError
 PASS Setting 'break-inside' to a percent throws TypeError
 PASS Setting 'break-inside' to a time throws TypeError

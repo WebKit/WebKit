@@ -1,6 +1,9 @@
 
-FAIL Can set 'all' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'all' to var() references assert_equals: expected 2 but got 1
+FAIL Can set 'all' to CSS-wide keywords: initial assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'all' to CSS-wide keywords: inherit assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'all' to CSS-wide keywords: unset assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'all' to CSS-wide keywords: revert assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'all' to var() references:  var(--A) assert_equals: expected 2 but got 1
 PASS Setting 'all' to a length throws TypeError
 PASS Setting 'all' to a percent throws TypeError
 PASS Setting 'all' to a time throws TypeError

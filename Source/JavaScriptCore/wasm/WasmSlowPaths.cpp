@@ -1096,18 +1096,6 @@ extern "C" SlowPathReturnType slow_path_wasm_popcountll(const WasmInstruction* p
     WASM_RETURN_TWO(pc, result);
 }
 
-#if USE(JSVALUE32_64)
-// Note: All these div and rem ops perform exception checks in asm
-extern "C" int32_t slow_path_wasm_i32_div_s(int32_t a, int32_t b) { return a / b; }
-extern "C" uint32_t slow_path_wasm_i32_div_u(uint32_t a, uint32_t b) { return a / b; }
-extern "C" int32_t slow_path_wasm_i32_rem_s(int32_t a, int32_t b) { return a % b; }
-extern "C" uint32_t slow_path_wasm_i32_rem_u(uint32_t a, uint32_t b) { return a % b; }
-extern "C" int64_t slow_path_wasm_i64_div_s(int64_t a, int64_t b) { return a / b; }
-extern "C" uint64_t slow_path_wasm_i64_div_u(uint64_t a, uint64_t b) { return a / b; }
-extern "C" int64_t slow_path_wasm_i64_rem_s(int64_t a, int64_t b) { return a % b; }
-extern "C" uint64_t slow_path_wasm_i64_rem_u(uint64_t a, uint64_t b) { return a % b; }
-#endif
-
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(WEBASSEMBLY)

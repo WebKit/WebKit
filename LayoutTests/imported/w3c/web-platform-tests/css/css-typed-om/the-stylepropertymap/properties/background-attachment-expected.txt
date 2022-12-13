@@ -1,9 +1,12 @@
 
-PASS Can set 'background-attachment' to CSS-wide keywords
-FAIL Can set 'background-attachment' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'background-attachment' to the 'scroll' keyword
-PASS Can set 'background-attachment' to the 'fixed' keyword
-PASS Can set 'background-attachment' to the 'local' keyword
+PASS Can set 'background-attachment' to CSS-wide keywords: initial
+PASS Can set 'background-attachment' to CSS-wide keywords: inherit
+PASS Can set 'background-attachment' to CSS-wide keywords: unset
+PASS Can set 'background-attachment' to CSS-wide keywords: revert
+FAIL Can set 'background-attachment' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'background-attachment' to the 'scroll' keyword: scroll
+PASS Can set 'background-attachment' to the 'fixed' keyword: fixed
+PASS Can set 'background-attachment' to the 'local' keyword: local
 PASS Setting 'background-attachment' to a length throws TypeError
 PASS Setting 'background-attachment' to a percent throws TypeError
 PASS Setting 'background-attachment' to a time throws TypeError

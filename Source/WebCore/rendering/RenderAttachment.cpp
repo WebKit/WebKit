@@ -86,7 +86,7 @@ LayoutUnit RenderAttachment::baselinePosition(FontBaseline, bool, LineDirectionM
 
 bool RenderAttachment::shouldDrawBorder() const
 {
-    if (style().effectiveAppearance() == BorderlessAttachmentPart)
+    if (style().effectiveAppearance() == ControlPartType::BorderlessAttachment)
         return false;
     return m_shouldDrawBorder;
 }

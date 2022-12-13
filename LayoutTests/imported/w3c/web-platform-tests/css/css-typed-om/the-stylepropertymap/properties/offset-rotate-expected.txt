@@ -1,9 +1,15 @@
 
-PASS Can set 'offset-rotate' to CSS-wide keywords
-FAIL Can set 'offset-rotate' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'offset-rotate' to the 'auto' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'offset-rotate' to the 'reverse' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'offset-rotate' to an angle assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'offset-rotate' to CSS-wide keywords: initial
+PASS Can set 'offset-rotate' to CSS-wide keywords: inherit
+PASS Can set 'offset-rotate' to CSS-wide keywords: unset
+PASS Can set 'offset-rotate' to CSS-wide keywords: revert
+FAIL Can set 'offset-rotate' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'offset-rotate' to the 'auto' keyword: auto assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'offset-rotate' to the 'reverse' keyword: reverse assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'offset-rotate' to an angle: 0deg assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'offset-rotate' to an angle: 3.14rad assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'offset-rotate' to an angle: -3.14deg assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'offset-rotate' to an angle: calc(0rad + 0deg) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
 PASS Setting 'offset-rotate' to a length throws TypeError
 PASS Setting 'offset-rotate' to a percent throws TypeError
 PASS Setting 'offset-rotate' to a time throws TypeError

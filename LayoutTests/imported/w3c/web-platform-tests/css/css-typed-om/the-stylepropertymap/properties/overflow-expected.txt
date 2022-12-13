@@ -1,11 +1,14 @@
 
-PASS Can set 'overflow-x' to CSS-wide keywords
-FAIL Can set 'overflow-x' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'overflow-x' to the 'visible' keyword
-PASS Can set 'overflow-x' to the 'hidden' keyword
-PASS Can set 'overflow-x' to the 'clip' keyword
-PASS Can set 'overflow-x' to the 'scroll' keyword
-PASS Can set 'overflow-x' to the 'auto' keyword
+PASS Can set 'overflow-x' to CSS-wide keywords: initial
+PASS Can set 'overflow-x' to CSS-wide keywords: inherit
+PASS Can set 'overflow-x' to CSS-wide keywords: unset
+PASS Can set 'overflow-x' to CSS-wide keywords: revert
+FAIL Can set 'overflow-x' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overflow-x' to the 'visible' keyword: visible
+PASS Can set 'overflow-x' to the 'hidden' keyword: hidden
+PASS Can set 'overflow-x' to the 'clip' keyword: clip
+PASS Can set 'overflow-x' to the 'scroll' keyword: scroll
+PASS Can set 'overflow-x' to the 'auto' keyword: auto
 PASS Setting 'overflow-x' to a length throws TypeError
 PASS Setting 'overflow-x' to a percent throws TypeError
 PASS Setting 'overflow-x' to a time throws TypeError
@@ -14,13 +17,16 @@ PASS Setting 'overflow-x' to a flexible length throws TypeError
 PASS Setting 'overflow-x' to a number throws TypeError
 PASS Setting 'overflow-x' to a URL throws TypeError
 PASS Setting 'overflow-x' to a transform throws TypeError
-PASS Can set 'overflow-y' to CSS-wide keywords
-FAIL Can set 'overflow-y' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'overflow-y' to the 'visible' keyword
-PASS Can set 'overflow-y' to the 'hidden' keyword
-PASS Can set 'overflow-y' to the 'clip' keyword
-PASS Can set 'overflow-y' to the 'scroll' keyword
-PASS Can set 'overflow-y' to the 'auto' keyword
+PASS Can set 'overflow-y' to CSS-wide keywords: initial
+PASS Can set 'overflow-y' to CSS-wide keywords: inherit
+PASS Can set 'overflow-y' to CSS-wide keywords: unset
+PASS Can set 'overflow-y' to CSS-wide keywords: revert
+FAIL Can set 'overflow-y' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overflow-y' to the 'visible' keyword: visible
+PASS Can set 'overflow-y' to the 'hidden' keyword: hidden
+PASS Can set 'overflow-y' to the 'clip' keyword: clip
+PASS Can set 'overflow-y' to the 'scroll' keyword: scroll
+PASS Can set 'overflow-y' to the 'auto' keyword: auto
 PASS Setting 'overflow-y' to a length throws TypeError
 PASS Setting 'overflow-y' to a percent throws TypeError
 PASS Setting 'overflow-y' to a time throws TypeError

@@ -1,18 +1,36 @@
 
-PASS Can set 'x' to CSS-wide keywords
-FAIL Can set 'x' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'x' to a percent
-PASS Can set 'x' to a length
+PASS Can set 'x' to CSS-wide keywords: initial
+PASS Can set 'x' to CSS-wide keywords: inherit
+PASS Can set 'x' to CSS-wide keywords: unset
+PASS Can set 'x' to CSS-wide keywords: revert
+FAIL Can set 'x' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'x' to a percent: 0%
+PASS Can set 'x' to a percent: -3.14%
+PASS Can set 'x' to a percent: 3.14%
+PASS Can set 'x' to a percent: calc(0% + 0%)
+PASS Can set 'x' to a length: 0px
+PASS Can set 'x' to a length: -3.14em
+PASS Can set 'x' to a length: 3.14cm
+PASS Can set 'x' to a length: calc(0px + 0em)
 PASS Setting 'x' to a time throws TypeError
 PASS Setting 'x' to an angle throws TypeError
 PASS Setting 'x' to a flexible length throws TypeError
 FAIL Setting 'x' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'x' to a URL throws TypeError
 PASS Setting 'x' to a transform throws TypeError
-PASS Can set 'y' to CSS-wide keywords
-FAIL Can set 'y' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'y' to a percent
-PASS Can set 'y' to a length
+PASS Can set 'y' to CSS-wide keywords: initial
+PASS Can set 'y' to CSS-wide keywords: inherit
+PASS Can set 'y' to CSS-wide keywords: unset
+PASS Can set 'y' to CSS-wide keywords: revert
+FAIL Can set 'y' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'y' to a percent: 0%
+PASS Can set 'y' to a percent: -3.14%
+PASS Can set 'y' to a percent: 3.14%
+PASS Can set 'y' to a percent: calc(0% + 0%)
+PASS Can set 'y' to a length: 0px
+PASS Can set 'y' to a length: -3.14em
+PASS Can set 'y' to a length: 3.14cm
+PASS Can set 'y' to a length: calc(0px + 0em)
 PASS Setting 'y' to a time throws TypeError
 PASS Setting 'y' to an angle throws TypeError
 PASS Setting 'y' to a flexible length throws TypeError

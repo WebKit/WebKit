@@ -1,8 +1,11 @@
 
-PASS Can set 'vector-effect' to CSS-wide keywords
-FAIL Can set 'vector-effect' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'vector-effect' to the 'non-scaling-stroke' keyword
-PASS Can set 'vector-effect' to the 'none' keyword
+PASS Can set 'vector-effect' to CSS-wide keywords: initial
+PASS Can set 'vector-effect' to CSS-wide keywords: inherit
+PASS Can set 'vector-effect' to CSS-wide keywords: unset
+PASS Can set 'vector-effect' to CSS-wide keywords: revert
+FAIL Can set 'vector-effect' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'vector-effect' to the 'non-scaling-stroke' keyword: non-scaling-stroke
+PASS Can set 'vector-effect' to the 'none' keyword: none
 PASS Setting 'vector-effect' to a length throws TypeError
 PASS Setting 'vector-effect' to a percent throws TypeError
 PASS Setting 'vector-effect' to a time throws TypeError

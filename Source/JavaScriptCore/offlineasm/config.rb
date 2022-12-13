@@ -23,11 +23,11 @@
 
 buildProductsDirectory = ENV['BUILT_PRODUCTS_DIR'];
 headersFolderPath = ENV['WK_LIBRARY_HEADERS_FOLDER_PATH'];
-if buildProductsDirectory and File.exists?(buildProductsDirectory)
+if buildProductsDirectory and File.exist?(buildProductsDirectory)
     $: << "#{buildProductsDirectory}#{headersFolderPath}/WebKitAdditions/Scripts"
 end
 sdkRootDirectory = ENV['SDKROOT'];
-if sdkRootDirectory and File.exists?(sdkRootDirectory)
+if sdkRootDirectory and File.exist?(sdkRootDirectory)
     $: << "#{sdkRootDirectory}#{headersFolderPath}/WebKitAdditions/Scripts"
 end
 

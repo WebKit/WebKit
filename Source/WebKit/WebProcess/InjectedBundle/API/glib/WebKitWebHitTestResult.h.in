@@ -23,13 +23,17 @@
 #define WebKitWebHitTestResult_h
 
 #include <glib-object.h>
+#include <jsc/jsc.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitHitTestResult.h>
+#include <@API_INCLUDE_PREFIX@/WebKitScriptWorld.h>
 
+#if !ENABLE(2022_GLIB_API)
 #if PLATFORM(GTK)
 #include <webkitdom/webkitdom.h>
 #elif PLATFORM(WPE)
 #include <wpe/webkitdom.h>
+#endif
 #endif
 
 G_BEGIN_DECLS
@@ -61,10 +65,16 @@ struct _WebKitWebHitTestResultClass {
 };
 
 WEBKIT_API GType
-webkit_web_hit_test_result_get_type (void);
+webkit_web_hit_test_result_get_type    (void);
 
-WEBKIT_API WebKitDOMNode *
-webkit_web_hit_test_result_get_node (WebKitWebHitTestResult *hit_test_result);
+#if !ENABLE(2022_GLIB_API)
+WEBKIT_DEPRECATED_FOR(webkit_web_hit_test_result_get_js_node) WebKitDOMNode *
+webkit_web_hit_test_result_get_node    (WebKitWebHitTestResult *hit_test_result);
+#endif
+
+WEBKIT_API JSCValue *
+webkit_web_hit_test_result_get_js_node (WebKitWebHitTestResult *hit_test_result,
+                                        WebKitScriptWorld      *world);
 
 G_END_DECLS
 

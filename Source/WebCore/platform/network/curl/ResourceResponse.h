@@ -46,11 +46,9 @@ public:
     {
     }
 
-    ResourceResponse(const CurlResponse&);
+    ResourceResponse(CurlResponse&);
 
     void appendHTTPHeaderField(const String&);
-
-    void setCertificateInfo(CertificateInfo&&);
 
     bool shouldRedirect();
     bool isMovedPermanently() const;

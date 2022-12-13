@@ -1438,6 +1438,8 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
             return;
         }
 
+        RELEASE_LOG(Push, "Firing Push event");
+
         fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
             if (!connectionOrStatus.has_value()) {
                 callback(connectionOrStatus.error() == ShouldSkipEvent::Yes);
@@ -1453,6 +1455,8 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
             });
             terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
             connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+                if (!succeeded)
+                    RELEASE_LOG(Push, "Push event was not successfully handled");
                 if (terminateWorkerTimer->isActive()) {
                     worker->decrementFunctionalEventCounter();
                     terminateWorkerTimer->stop();

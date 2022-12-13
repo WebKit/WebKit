@@ -154,8 +154,10 @@ CachedResource::~CachedResource()
     ASSERT(!m_deleted);
     ASSERT(url().isNull() || !allowsCaching() || MemoryCache::singleton().resourceForRequest(resourceRequest(), sessionID()) != this);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_deleted = true;
+#endif
+#ifndef NDEBUG
     cachedResourceLeakCounter.decrement();
 #endif
 }

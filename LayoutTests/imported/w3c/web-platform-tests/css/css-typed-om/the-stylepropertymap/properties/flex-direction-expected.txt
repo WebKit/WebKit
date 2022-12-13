@@ -1,10 +1,13 @@
 
-PASS Can set 'flex-direction' to CSS-wide keywords
-FAIL Can set 'flex-direction' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'flex-direction' to the 'row' keyword
-PASS Can set 'flex-direction' to the 'row-reverse' keyword
-PASS Can set 'flex-direction' to the 'column' keyword
-PASS Can set 'flex-direction' to the 'column-reverse' keyword
+PASS Can set 'flex-direction' to CSS-wide keywords: initial
+PASS Can set 'flex-direction' to CSS-wide keywords: inherit
+PASS Can set 'flex-direction' to CSS-wide keywords: unset
+PASS Can set 'flex-direction' to CSS-wide keywords: revert
+FAIL Can set 'flex-direction' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'flex-direction' to the 'row' keyword: row
+PASS Can set 'flex-direction' to the 'row-reverse' keyword: row-reverse
+PASS Can set 'flex-direction' to the 'column' keyword: column
+PASS Can set 'flex-direction' to the 'column-reverse' keyword: column-reverse
 PASS Setting 'flex-direction' to a length throws TypeError
 PASS Setting 'flex-direction' to a percent throws TypeError
 PASS Setting 'flex-direction' to a time throws TypeError

@@ -2788,8 +2788,7 @@ static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedSt
             && description.kerning() == Kerning::Auto
             && description.featureSettings().isEmpty()
             && description.opticalSizing() == FontOpticalSizing::Enabled
-            && description.variationSettings().isEmpty()
-            && description.fontPalette().type == FontPalette::Type::Normal;
+            && description.variationSettings().isEmpty();
     };
 
     auto computedFont = CSSFontValue::create();

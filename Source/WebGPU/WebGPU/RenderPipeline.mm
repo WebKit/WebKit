@@ -149,6 +149,23 @@ static MTLPrimitiveType primitiveType(WGPUPrimitiveTopology topology)
     }
 }
 
+static MTLPrimitiveTopologyClass topologyType(WGPUPrimitiveTopology topology)
+{
+    switch (topology) {
+    case WGPUPrimitiveTopology_PointList:
+        return MTLPrimitiveTopologyClassPoint;
+    case WGPUPrimitiveTopology_LineStrip:
+        return MTLPrimitiveTopologyClassLine;
+    case WGPUPrimitiveTopology_TriangleList:
+    case WGPUPrimitiveTopology_LineList:
+    case WGPUPrimitiveTopology_TriangleStrip:
+        return MTLPrimitiveTopologyClassTriangle;
+    case WGPUPrimitiveTopology_Force32:
+        ASSERT_NOT_REACHED();
+        return MTLPrimitiveTopologyClassTriangle;
+    }
+}
+
 static std::optional<MTLIndexType> indexType(WGPUIndexFormat format)
 {
     switch (format) {
@@ -188,10 +205,6 @@ bool Device::validateRenderPipeline(const WGPURenderPipelineDescriptor& descript
             return false;
     }
 
-    // Does not support depth stencils.
-    if (descriptor.depthStencil)
-        return false;
-
     // Does not support multisampling
     if (descriptor.multisample.count > 1)
         return false;
@@ -200,6 +213,30 @@ bool Device::validateRenderPipeline(const WGPURenderPipelineDescriptor& descript
         return false;
 
     return true;
+}
+
+static MTLCompareFunction convertToMTLCompare(WGPUCompareFunction comparison)
+{
+    switch (comparison) {
+    case WGPUCompareFunction_Undefined:
+    case WGPUCompareFunction_Never:
+        return MTLCompareFunctionNever;
+    case WGPUCompareFunction_Less:
+        return MTLCompareFunctionLess;
+    case WGPUCompareFunction_LessEqual:
+        return MTLCompareFunctionLessEqual;
+    case WGPUCompareFunction_Greater:
+        return MTLCompareFunctionGreater;
+    case WGPUCompareFunction_GreaterEqual:
+        return MTLCompareFunctionGreaterEqual;
+    case WGPUCompareFunction_Equal:
+        return MTLCompareFunctionEqual;
+    case WGPUCompareFunction_NotEqual:
+        return MTLCompareFunctionNotEqual;
+    case WGPUCompareFunction_Always:
+    case WGPUCompareFunction_Force32:
+        return MTLCompareFunctionAlways;
+    }
 }
 
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
@@ -264,10 +301,21 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         }
     }
 
+    id<MTLDepthStencilState> mtlDepthStencilState = nil;
+    if (auto depthStencil = descriptor.depthStencil) {
+        mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = Texture::pixelFormat(depthStencil->format);
+
+        auto depthStencilState = [MTLDepthStencilDescriptor new];
+        depthStencilState.depthCompareFunction = convertToMTLCompare(depthStencil->depthCompare);
+        depthStencilState.depthWriteEnabled = depthStencil->depthWriteEnabled;
+        // FIXME: set stencil state
+        mtlDepthStencilState = [m_device newDepthStencilStateWithDescriptor:depthStencilState];
+    }
+
     if (descriptor.primitive.nextInChain)
         return RenderPipeline::createInvalid(*this);
 
-    // FIXME: need to set inputPrimitiveTopology based on GPUPrimitiveState.topology?
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = topologyType(descriptor.primitive.topology);
 
     // These properties are to be used by the render command encoder, not the render pipeline.
     // Therefore, the render pipeline stores these, and when the render command encoder is assigned
@@ -283,7 +331,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     if (!renderPipelineState)
         return RenderPipeline::createInvalid(*this);
 
-    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, *this);
+    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthStencilState, *this);
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
@@ -295,13 +343,14 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     });
 }
 
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, Device& device)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
     , m_primitiveType(primitiveType)
     , m_indexType(indexType)
     , m_frontFace(frontFace)
     , m_cullMode(cullMode)
+    , m_depthStencilState(depthStencilState)
 {
 }
 

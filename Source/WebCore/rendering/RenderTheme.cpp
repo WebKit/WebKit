@@ -85,66 +85,76 @@ RenderTheme::RenderTheme()
 {
 }
 
-ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, ControlPart autoAppearance) const
+ControlPartType RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, ControlPartType autoAppearance) const
 {
     if (!element)
-        return NoControlPart;
+        return ControlPartType::NoControl;
 
-    ControlPart part = style.effectiveAppearance();
-    if (part == autoAppearance)
-        return part;
+    auto type = style.effectiveAppearance();
+    if (type == autoAppearance)
+        return type;
 
     // Aliases of 'auto'.
     // https://drafts.csswg.org/css-ui-4/#typedef-appearance-compat-auto
-    if (part == AutoPart || part == SearchFieldPart || part == TextAreaPart || part == CheckboxPart || part == RadioPart || part == ListboxPart || part == MeterPart || part == ProgressBarPart
-        || part == SquareButtonPart || part == PushButtonPart || part == SliderHorizontalPart || part == MenulistPart) {
+    if (type == ControlPartType::Auto
+        || type == ControlPartType::SearchField
+        || type == ControlPartType::TextArea
+        || type == ControlPartType::Checkbox
+        || type == ControlPartType::Radio
+        || type == ControlPartType::Listbox
+        || type == ControlPartType::Meter
+        || type == ControlPartType::ProgressBar
+        || type == ControlPartType::SquareButton
+        || type == ControlPartType::PushButton
+        || type == ControlPartType::SliderHorizontal
+        || type == ControlPartType::Menulist) {
         style.setEffectiveAppearance(autoAppearance);
         return autoAppearance;
     }
 
     // The following keywords should work well for some element types
     // even if their default appearances are different from the keywords.
-    if (part == ButtonPart) {
-        if (autoAppearance == PushButtonPart || autoAppearance == SquareButtonPart)
-            return part;
+    if (type == ControlPartType::Button) {
+        if (autoAppearance == ControlPartType::PushButton || autoAppearance == ControlPartType::SquareButton)
+            return type;
         style.setEffectiveAppearance(autoAppearance);
         return autoAppearance;
     }
 
-    if (part == MenulistButtonPart) {
-        if (autoAppearance == MenulistPart)
-            return part;
+    if (type == ControlPartType::MenulistButton) {
+        if (autoAppearance == ControlPartType::Menulist)
+            return type;
         style.setEffectiveAppearance(autoAppearance);
         return autoAppearance;
     }
 
-    if (part == TextFieldPart) {
+    if (type == ControlPartType::TextField) {
         if (is<HTMLInputElement>(*element) && downcast<HTMLInputElement>(*element).isSearchField())
-            return part;
+            return type;
         style.setEffectiveAppearance(autoAppearance);
         return autoAppearance;
     }
 
-    return part;
+    return type;
 }
 
-static bool isAppearanceAllowedForAllElements(ControlPart part)
+static bool isAppearanceAllowedForAllElements(ControlPartType type)
 {
 #if ENABLE(APPLE_PAY)
-    if (part == ApplePayButtonPart)
+    if (type == ControlPartType::ApplePayButton)
         return true;
 #endif
 
-    UNUSED_PARAM(part);
+    UNUSED_PARAM(type);
     return false;
 }
 
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
-    ControlPart autoAppearance = autoAppearanceForElement(style, element);
-    auto part = adjustAppearanceForElement(style, element, autoAppearance);
+    auto autoAppearance = autoAppearanceForElement(style, element);
+    auto type = adjustAppearanceForElement(style, element, autoAppearance);
 
-    if (part == NoControlPart)
+    if (type == ControlPartType::NoControl)
         return;
 
     // Force inline and table display styles to be inline-block (except for table- which is block)
@@ -157,23 +167,23 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         style.setEffectiveDisplay(DisplayType::Block);
 
     if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
-        switch (part) {
-        case MenulistPart:
-            part = MenulistButtonPart;
+        switch (type) {
+        case ControlPartType::Menulist:
+            type = ControlPartType::MenulistButton;
             break;
         default:
-            part = NoControlPart;
+            type = ControlPartType::NoControl;
             break;
         }
 
-        style.setEffectiveAppearance(part);
+        style.setEffectiveAppearance(type);
     }
 
-    if (!isAppearanceAllowedForAllElements(part)
+    if (!isAppearanceAllowedForAllElements(type)
         && !userAgentAppearanceStyle
-        && autoAppearance == NoControlPart
+        && autoAppearance == ControlPartType::NoControl
         && !style.borderAndBackgroundEqual(RenderStyle::defaultStyle()))
-        style.setEffectiveAppearance(NoControlPart);
+        style.setEffectiveAppearance(ControlPartType::NoControl);
 
     if (!style.hasEffectiveAppearance())
         return;
@@ -182,20 +192,20 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         style.setBoxShadow(nullptr);
 
 #if USE(NEW_THEME)
-    switch (part) {
-    case CheckboxPart:
-    case InnerSpinButtonPart:
-    case RadioPart:
-    case PushButtonPart:
-    case SquareButtonPart:
+    switch (type) {
+    case ControlPartType::Checkbox:
+    case ControlPartType::InnerSpinButton:
+    case ControlPartType::Radio:
+    case ControlPartType::PushButton:
+    case ControlPartType::SquareButton:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
 #endif
-    case DefaultButtonPart:
-    case ButtonPart: {
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button: {
         // Border
         LengthBox borderBox(style.borderTopWidth(), style.borderRightWidth(), style.borderBottomWidth(), style.borderLeftWidth());
-        borderBox = Theme::singleton().controlBorder(part, style.fontCascade(), borderBox, style.effectiveZoom());
+        borderBox = Theme::singleton().controlBorder(type, style.fontCascade(), borderBox, style.effectiveZoom());
         if (borderBox.top().value() != static_cast<int>(style.borderTopWidth())) {
             if (borderBox.top().value())
                 style.setBorderTopWidth(borderBox.top().value());
@@ -224,32 +234,32 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         }
 
         // Padding
-        LengthBox paddingBox = Theme::singleton().controlPadding(part, style.fontCascade(), style.paddingBox(), style.effectiveZoom());
+        LengthBox paddingBox = Theme::singleton().controlPadding(type, style.fontCascade(), style.paddingBox(), style.effectiveZoom());
         if (paddingBox != style.paddingBox())
             style.setPaddingBox(WTFMove(paddingBox));
 
         // Whitespace
-        if (Theme::singleton().controlRequiresPreWhiteSpace(part))
+        if (Theme::singleton().controlRequiresPreWhiteSpace(type))
             style.setWhiteSpace(WhiteSpace::Pre);
 
         // Width / Height
         // The width and height here are affected by the zoom.
         // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
-        LengthSize controlSize = Theme::singleton().controlSize(part, style.fontCascade(), { style.width(), style.height() }, style.effectiveZoom());
+        LengthSize controlSize = Theme::singleton().controlSize(type, style.fontCascade(), { style.width(), style.height() }, style.effectiveZoom());
         if (controlSize.width != style.width())
             style.setWidth(WTFMove(controlSize.width));
         if (controlSize.height != style.height())
             style.setHeight(WTFMove(controlSize.height));
 
         // Min-Width / Min-Height
-        LengthSize minControlSize = Theme::singleton().minimumControlSize(part, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.effectiveZoom());
+        LengthSize minControlSize = Theme::singleton().minimumControlSize(type, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.effectiveZoom());
         if (minControlSize.width.value() > style.minWidth().value())
             style.setMinWidth(WTFMove(minControlSize.width));
         if (minControlSize.height.value() > style.minHeight().value())
             style.setMinHeight(WTFMove(minControlSize.height));
 
         // Font
-        if (auto themeFont = Theme::singleton().controlFont(part, style.fontCascade(), style.effectiveZoom())) {
+        if (auto themeFont = Theme::singleton().controlFont(type, style.fontCascade(), style.effectiveZoom())) {
             // If overriding the specified font with the theme font, also override the line height with the standard line height.
             style.setLineHeight(RenderStyle::initialLineHeight());
             if (style.setFontDescription(WTFMove(themeFont.value())))
@@ -258,7 +268,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 
         // Special style that tells enabled default buttons in active windows to use the ActiveButtonText color.
         // The active window part of the test has to be done at paint time since it's not triggered by a style change.
-        style.setInsideDefaultButton(part == DefaultButtonPart && element && !element->isDisabledFormControl());
+        style.setInsideDefaultButton(type == ControlPartType::DefaultButton && element && !element->isDisabledFormControl());
         break;
     }
     default:
@@ -267,64 +277,64 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 #endif
 
     // Call the appropriate style adjustment method based off the appearance value.
-    switch (part) {
+    switch (type) {
 #if !USE(NEW_THEME)
-    case CheckboxPart:
+    case ControlPartType::Checkbox:
         return adjustCheckboxStyle(style, element);
-    case RadioPart:
+    case ControlPartType::Radio:
         return adjustRadioStyle(style, element);
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
         return adjustColorWellStyle(style, element);
 #endif
-    case PushButtonPart:
-    case SquareButtonPart:
-    case DefaultButtonPart:
-    case ButtonPart:
+    case ControlPartType::PushButton:
+    case ControlPartType::SquareButton:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button:
         return adjustButtonStyle(style, element);
-    case InnerSpinButtonPart:
+    case ControlPartType::InnerSpinButton:
         return adjustInnerSpinButtonStyle(style, element);
 #endif
-    case TextFieldPart:
+    case ControlPartType::TextField:
         return adjustTextFieldStyle(style, element);
-    case TextAreaPart:
+    case ControlPartType::TextArea:
         return adjustTextAreaStyle(style, element);
-    case MenulistPart:
+    case ControlPartType::Menulist:
         return adjustMenuListStyle(style, element);
-    case MenulistButtonPart:
+    case ControlPartType::MenulistButton:
         return adjustMenuListButtonStyle(style, element);
-    case SliderHorizontalPart:
-    case SliderVerticalPart:
+    case ControlPartType::SliderHorizontal:
+    case ControlPartType::SliderVertical:
         return adjustSliderTrackStyle(style, element);
-    case SliderThumbHorizontalPart:
-    case SliderThumbVerticalPart:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
         return adjustSliderThumbStyle(style, element);
-    case SearchFieldPart:
+    case ControlPartType::SearchField:
         return adjustSearchFieldStyle(style, element);
-    case SearchFieldCancelButtonPart:
+    case ControlPartType::SearchFieldCancelButton:
         return adjustSearchFieldCancelButtonStyle(style, element);
-    case SearchFieldDecorationPart:
+    case ControlPartType::SearchFieldDecoration:
         return adjustSearchFieldDecorationPartStyle(style, element);
-    case SearchFieldResultsDecorationPart:
+    case ControlPartType::SearchFieldResultsDecoration:
         return adjustSearchFieldResultsDecorationPartStyle(style, element);
-    case SearchFieldResultsButtonPart:
+    case ControlPartType::SearchFieldResultsButton:
         return adjustSearchFieldResultsButtonStyle(style, element);
-    case ProgressBarPart:
+    case ControlPartType::ProgressBar:
         return adjustProgressBarStyle(style, element);
-    case MeterPart:
+    case ControlPartType::Meter:
         return adjustMeterStyle(style, element);
 #if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
+    case ControlPartType::ImageControlsButton:
         return adjustImageControlsButtonStyle(style, element);
 #endif
-    case CapsLockIndicatorPart:
+    case ControlPartType::CapsLockIndicator:
         return adjustCapsLockIndicatorStyle(style, element);
 #if ENABLE(APPLE_PAY)
-    case ApplePayButtonPart:
+    case ControlPartType::ApplePayButton:
         return adjustApplePayButtonStyle(style, element);
 #endif
 #if ENABLE(DATALIST_ELEMENT)
-    case ListButtonPart:
+    case ControlPartType::ListButton:
         return adjustListButtonStyle(style, element);
 #endif
     default:
@@ -332,14 +342,14 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     }
 }
 
-ControlPart RenderTheme::autoAppearanceForElement(RenderStyle& style, const Element* elementPtr) const
+ControlPartType RenderTheme::autoAppearanceForElement(RenderStyle& style, const Element* elementPtr) const
 {
     if (!elementPtr)
-        return NoControlPart;
+        return ControlPartType::NoControl;
 
 #if ENABLE(SERVICE_CONTROLS)
     if (isImageControl(*elementPtr))
-        return ImageControlsButtonPart;
+        return ControlPartType::ImageControlsButton;
 #endif
 
     Ref element = *elementPtr;
@@ -348,64 +358,64 @@ ControlPart RenderTheme::autoAppearanceForElement(RenderStyle& style, const Elem
         auto& input = downcast<HTMLInputElement>(element.get());
 
         if (input.isTextButton() || input.isUploadButton())
-            return PushButtonPart;
+            return ControlPartType::PushButton;
 
         if (input.isCheckbox())
-            return CheckboxPart;
+            return ControlPartType::Checkbox;
 
         if (input.isRadioButton())
-            return RadioPart;
+            return ControlPartType::Radio;
 
         if (input.isSearchField())
-            return SearchFieldPart;
+            return ControlPartType::SearchField;
 
         if (input.isDateField() || input.isDateTimeLocalField() || input.isMonthField() || input.isTimeField() || input.isWeekField()) {
 #if PLATFORM(IOS_FAMILY)
-            return MenulistButtonPart;
+            return ControlPartType::MenulistButton;
 #else
-            return TextFieldPart;
+            return ControlPartType::TextField;
 #endif
         }
 
 #if ENABLE(INPUT_TYPE_COLOR)
         if (input.isColorControl())
-            return ColorWellPart;
+            return ControlPartType::ColorWell;
 #endif
 
         if (input.isRangeControl())
-            return style.isHorizontalWritingMode() ? SliderHorizontalPart : SliderVerticalPart;
+            return style.isHorizontalWritingMode() ? ControlPartType::SliderHorizontal : ControlPartType::SliderVertical;
 
         if (input.isTextField())
-            return TextFieldPart;
+            return ControlPartType::TextField;
 
         // <input type=hidden|image|file>
-        return NoControlPart;
+        return ControlPartType::NoControl;
     }
 
     if (is<HTMLButtonElement>(element))
-        return ButtonPart;
+        return ControlPartType::Button;
 
     if (is<HTMLSelectElement>(element)) {
 #if PLATFORM(IOS_FAMILY)
-        return MenulistButtonPart;
+        return ControlPartType::MenulistButton;
 #else
         auto& select = downcast<HTMLSelectElement>(element.get());
-        return select.usesMenuList() ? MenulistPart : ListboxPart;
+        return select.usesMenuList() ? ControlPartType::Menulist : ControlPartType::Listbox;
 #endif
     }
 
     if (is<HTMLTextAreaElement>(element))
-        return TextAreaPart;
+        return ControlPartType::TextArea;
 
     if (is<HTMLMeterElement>(element))
-        return MeterPart;
+        return ControlPartType::Meter;
 
     if (is<HTMLProgressElement>(element))
-        return ProgressBarPart;
+        return ControlPartType::ProgressBar;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<HTMLAttachmentElement>(element))
-        return AttachmentPart;
+        return ControlPartType::Attachment;
 #endif
 
     if (element->isInUserAgentShadowTree()) {
@@ -413,37 +423,37 @@ ControlPart RenderTheme::autoAppearanceForElement(RenderStyle& style, const Elem
 
 #if ENABLE(DATALIST_ELEMENT)
         if (pseudo == ShadowPseudoIds::webkitListButton())
-            return ListButtonPart;
+            return ControlPartType::ListButton;
 #endif
 
         if (pseudo == ShadowPseudoIds::webkitCapsLockIndicator())
-            return CapsLockIndicatorPart;
+            return ControlPartType::CapsLockIndicator;
 
         if (pseudo == ShadowPseudoIds::webkitSearchCancelButton())
-            return SearchFieldCancelButtonPart;
+            return ControlPartType::SearchFieldCancelButton;
 
         if (is<SearchFieldResultsButtonElement>(element)) {
             if (!downcast<SearchFieldResultsButtonElement>(element.get()).canAdjustStyleForAppearance())
-                return NoControlPart;
+                return ControlPartType::NoControl;
 
             if (pseudo == ShadowPseudoIds::webkitSearchDecoration())
-                return SearchFieldDecorationPart;
+                return ControlPartType::SearchFieldDecoration;
 
             if (pseudo == ShadowPseudoIds::webkitSearchResultsDecoration())
-                return SearchFieldResultsDecorationPart;
+                return ControlPartType::SearchFieldResultsDecoration;
 
             if (pseudo == ShadowPseudoIds::webkitSearchResultsButton())
-                return SearchFieldResultsButtonPart;
+                return ControlPartType::SearchFieldResultsButton;
         }
 
         if (pseudo == ShadowPseudoIds::webkitSliderThumb())
-            return SliderThumbHorizontalPart;
+            return ControlPartType::SliderThumbHorizontal;
 
         if (pseudo == ShadowPseudoIds::webkitInnerSpinButton())
-            return InnerSpinButtonPart;
+            return ControlPartType::InnerSpinButton;
     }
 
-    return NoControlPart;
+    return ControlPartType::NoControl;
 }
 
 bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, const PaintInfo& paintInfo, const LayoutRect& rect)
@@ -459,9 +469,9 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     if (paintInfo.context().paintingDisabled())
         return false;
     
-    ControlPart part = box.style().effectiveAppearance();
+    auto type = box.style().effectiveAppearance();
 
-    if (UNLIKELY(!canPaint(paintInfo, box.settings(), part)))
+    if (UNLIKELY(!canPaint(paintInfo, box.settings(), type)))
         return false;
 
     IntRect integralSnappedRect = snappedIntRect(rect);
@@ -471,19 +481,19 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 #if USE(NEW_THEME)
     float pageScaleFactor = box.page().pageScaleFactor();
 
-    switch (part) {
-    case CheckboxPart:
-    case RadioPart:
-    case PushButtonPart:
-    case SquareButtonPart:
+    switch (type) {
+    case ControlPartType::Checkbox:
+    case ControlPartType::Radio:
+    case ControlPartType::PushButton:
+    case ControlPartType::SquareButton:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
 #endif
-    case DefaultButtonPart:
-    case ButtonPart:
-    case InnerSpinButtonPart:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button:
+    case ControlPartType::InnerSpinButton:
         updateControlStatesForRenderer(box, controlStates);
-        Theme::singleton().paint(part, controlStates, paintInfo.context(), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor, box.document().useSystemAppearance(), box.useDarkAppearance(), box.style().effectiveAccentColor());
+        Theme::singleton().paint(type, controlStates, paintInfo.context(), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor, box.document().useSystemAppearance(), box.useDarkAppearance(), box.style().effectiveAccentColor());
         return false;
     default:
         break;
@@ -493,68 +503,68 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 #endif
 
     // Call the appropriate paint method based off the appearance value.
-    switch (part) {
+    switch (type) {
 #if !USE(NEW_THEME)
-    case CheckboxPart:
+    case ControlPartType::Checkbox:
         return paintCheckbox(box, paintInfo, devicePixelSnappedRect);
-    case RadioPart:
+    case ControlPartType::Radio:
         return paintRadio(box, paintInfo, devicePixelSnappedRect);
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
         return paintColorWell(box, paintInfo, integralSnappedRect);
 #endif
-    case PushButtonPart:
-    case SquareButtonPart:
-    case DefaultButtonPart:
-    case ButtonPart:
+    case ControlPartType::PushButton:
+    case ControlPartType::SquareButton:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button:
         return paintButton(box, paintInfo, integralSnappedRect);
-    case InnerSpinButtonPart:
+    case ControlPartType::InnerSpinButton:
         return paintInnerSpinButton(box, paintInfo, integralSnappedRect);
 #endif
-    case MenulistPart:
+    case ControlPartType::Menulist:
         return paintMenuList(box, paintInfo, devicePixelSnappedRect);
-    case MeterPart:
+    case ControlPartType::Meter:
         return paintMeter(box, paintInfo, integralSnappedRect);
-    case ProgressBarPart:
+    case ControlPartType::ProgressBar:
         return paintProgressBar(box, paintInfo, integralSnappedRect);
-    case SliderHorizontalPart:
-    case SliderVerticalPart:
+    case ControlPartType::SliderHorizontal:
+    case ControlPartType::SliderVertical:
         return paintSliderTrack(box, paintInfo, integralSnappedRect);
-    case SliderThumbHorizontalPart:
-    case SliderThumbVerticalPart:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
         return paintSliderThumb(box, paintInfo, integralSnappedRect);
-    case MenulistButtonPart:
-    case TextFieldPart:
-    case TextAreaPart:
-    case ListboxPart:
+    case ControlPartType::MenulistButton:
+    case ControlPartType::TextField:
+    case ControlPartType::TextArea:
+    case ControlPartType::Listbox:
         return true;
-    case SearchFieldPart:
+    case ControlPartType::SearchField:
         return paintSearchField(box, paintInfo, integralSnappedRect);
-    case SearchFieldCancelButtonPart:
+    case ControlPartType::SearchFieldCancelButton:
         return paintSearchFieldCancelButton(box, paintInfo, integralSnappedRect);
-    case SearchFieldDecorationPart:
+    case ControlPartType::SearchFieldDecoration:
         return paintSearchFieldDecorationPart(box, paintInfo, integralSnappedRect);
-    case SearchFieldResultsDecorationPart:
+    case ControlPartType::SearchFieldResultsDecoration:
         return paintSearchFieldResultsDecorationPart(box, paintInfo, integralSnappedRect);
-    case SearchFieldResultsButtonPart:
+    case ControlPartType::SearchFieldResultsButton:
         return paintSearchFieldResultsButton(box, paintInfo, integralSnappedRect);
 #if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
+    case ControlPartType::ImageControlsButton:
         return paintImageControlsButton(box, paintInfo, integralSnappedRect);
 #endif
-    case CapsLockIndicatorPart:
+    case ControlPartType::CapsLockIndicator:
         return paintCapsLockIndicator(box, paintInfo, integralSnappedRect);
 #if ENABLE(APPLE_PAY)
-    case ApplePayButtonPart:
+    case ControlPartType::ApplePayButton:
         return paintApplePayButton(box, paintInfo, integralSnappedRect);
 #endif
 #if ENABLE(DATALIST_ELEMENT)
-    case ListButtonPart:
+    case ControlPartType::ListButton:
         return paintListButton(box, paintInfo, devicePixelSnappedRect);
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-    case AttachmentPart:
-    case BorderlessAttachmentPart:
+    case ControlPartType::Attachment:
+    case ControlPartType::BorderlessAttachment:
         return paintAttachment(box, paintInfo, integralSnappedRect);
 #endif
     default:
@@ -571,41 +581,41 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
 
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(rect);
-    return box.style().effectiveAppearance() != NoControlPart;
+    return box.style().effectiveAppearance() != ControlPartType::NoControl;
 #else
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
     // Call the appropriate paint method based off the appearance value.
     switch (box.style().effectiveAppearance()) {
-    case TextFieldPart:
+    case ControlPartType::TextField:
         return paintTextField(box, paintInfo, devicePixelSnappedRect);
-    case ListboxPart:
-    case TextAreaPart:
+    case ControlPartType::Listbox:
+    case ControlPartType::TextArea:
         return paintTextArea(box, paintInfo, devicePixelSnappedRect);
-    case MenulistButtonPart:
-    case SearchFieldPart:
+    case ControlPartType::MenulistButton:
+    case ControlPartType::SearchField:
         return true;
-    case CheckboxPart:
-    case RadioPart:
-    case PushButtonPart:
-    case SquareButtonPart:
+    case ControlPartType::Checkbox:
+    case ControlPartType::Radio:
+    case ControlPartType::PushButton:
+    case ControlPartType::SquareButton:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
 #endif
-    case DefaultButtonPart:
-    case ButtonPart:
-    case MenulistPart:
-    case MeterPart:
-    case ProgressBarPart:
-    case SliderHorizontalPart:
-    case SliderVerticalPart:
-    case SliderThumbHorizontalPart:
-    case SliderThumbVerticalPart:
-    case SearchFieldCancelButtonPart:
-    case SearchFieldDecorationPart:
-    case SearchFieldResultsDecorationPart:
-    case SearchFieldResultsButtonPart:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button:
+    case ControlPartType::Menulist:
+    case ControlPartType::Meter:
+    case ControlPartType::ProgressBar:
+    case ControlPartType::SliderHorizontal:
+    case ControlPartType::SliderVertical:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
+    case ControlPartType::SearchFieldCancelButton:
+    case ControlPartType::SearchFieldDecoration:
+    case ControlPartType::SearchFieldResultsDecoration:
+    case ControlPartType::SearchFieldResultsButton:
 #if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
+    case ControlPartType::ImageControlsButton:
 #endif
     default:
         break;
@@ -628,57 +638,57 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
 
     // Call the appropriate paint method based off the appearance value.
     switch (box.style().effectiveAppearance()) {
-    case MenulistButtonPart:
+    case ControlPartType::MenulistButton:
         paintMenuListButtonDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
-    case TextFieldPart:
+    case ControlPartType::TextField:
         paintTextFieldDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
-    case TextAreaPart:
+    case ControlPartType::TextArea:
         paintTextAreaDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
-    case CheckboxPart:
+    case ControlPartType::Checkbox:
         paintCheckboxDecorations(box, paintInfo, integralSnappedRect);
         break;
-    case RadioPart:
+    case ControlPartType::Radio:
         paintRadioDecorations(box, paintInfo, integralSnappedRect);
         break;
-    case PushButtonPart:
+    case ControlPartType::PushButton:
         paintPushButtonDecorations(box, paintInfo, integralSnappedRect);
         break;
-    case SquareButtonPart:
+    case ControlPartType::SquareButton:
         paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
         break;
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
         paintColorWellDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
 #endif
-    case ButtonPart:
+    case ControlPartType::Button:
         paintButtonDecorations(box, paintInfo, integralSnappedRect);
         break;
-    case MenulistPart:
+    case ControlPartType::Menulist:
         paintMenuListDecorations(box, paintInfo, integralSnappedRect);
         break;
-    case SliderThumbHorizontalPart:
-    case SliderThumbVerticalPart:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
         paintSliderThumbDecorations(box, paintInfo, integralSnappedRect);
         break;
-    case SearchFieldPart:
+    case ControlPartType::SearchField:
         paintSearchFieldDecorations(box, paintInfo, integralSnappedRect);
         break;
-    case MeterPart:
-    case ProgressBarPart:
-    case SliderHorizontalPart:
-    case SliderVerticalPart:
-    case ListboxPart:
-    case DefaultButtonPart:
-    case SearchFieldCancelButtonPart:
-    case SearchFieldDecorationPart:
-    case SearchFieldResultsDecorationPart:
-    case SearchFieldResultsButtonPart:
+    case ControlPartType::Meter:
+    case ControlPartType::ProgressBar:
+    case ControlPartType::SliderHorizontal:
+    case ControlPartType::SliderVertical:
+    case ControlPartType::Listbox:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::SearchFieldCancelButton:
+    case ControlPartType::SearchFieldDecoration:
+    case ControlPartType::SearchFieldResultsDecoration:
+    case ControlPartType::SearchFieldResultsButton:
 #if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
+    case ControlPartType::ImageControlsButton:
 #endif
     default:
         break;
@@ -808,30 +818,30 @@ int RenderTheme::baselinePosition(const RenderBox& box) const
 #endif
 }
 
-bool RenderTheme::isControlContainer(ControlPart appearance) const
+bool RenderTheme::isControlContainer(ControlPartType appearance) const
 {
     // There are more leaves than this, but we'll patch this function as we add support for
     // more controls.
-    return appearance != CheckboxPart && appearance != RadioPart;
+    return appearance != ControlPartType::Checkbox && appearance != ControlPartType::Radio;
 }
 
 bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
     switch (style.effectiveAppearance()) {
-    case PushButtonPart:
-    case SquareButtonPart:
+    case ControlPartType::PushButton:
+    case ControlPartType::SquareButton:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
 #endif
-    case DefaultButtonPart:
-    case ButtonPart:
-    case ListboxPart:
-    case MenulistPart:
-    case ProgressBarPart:
-    case MeterPart:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button:
+    case ControlPartType::Listbox:
+    case ControlPartType::Menulist:
+    case ControlPartType::ProgressBar:
+    case ControlPartType::Meter:
     // FIXME: SearchFieldPart should be included here when making search fields style-able.
-    case TextFieldPart:
-    case TextAreaPart:
+    case ControlPartType::TextField:
+    case ControlPartType::TextArea:
         // Test the style to see if the UA border and background match.
         return !style.borderAndBackgroundEqual(userAgentStyle);
     default:
@@ -852,7 +862,11 @@ void RenderTheme::adjustRepaintRect(const RenderObject& renderer, FloatRect& rec
 
 bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
 {
-    return (style.hasEffectiveAppearance() && style.effectiveAppearance() != TextFieldPart && style.effectiveAppearance() != TextAreaPart && style.effectiveAppearance() != MenulistButtonPart && style.effectiveAppearance() != ListboxPart);
+    return style.hasEffectiveAppearance()
+        && style.effectiveAppearance() != ControlPartType::TextField
+        && style.effectiveAppearance() != ControlPartType::TextArea
+        && style.effectiveAppearance() != ControlPartType::MenulistButton
+        && style.effectiveAppearance() != ControlPartType::Listbox;
 }
 
 bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States state) const
@@ -993,7 +1007,7 @@ bool RenderTheme::isDefault(const RenderObject& o) const
     if (!isActive(o))
         return false;
 
-    return o.style().effectiveAppearance() == DefaultButtonPart;
+    return o.style().effectiveAppearance() == ControlPartType::DefaultButton;
 }
 
 #if !USE(NEW_THEME)
@@ -1080,7 +1094,7 @@ IntSize RenderTheme::meterSizeForBounds(const RenderMeter&, const IntRect& bound
     return bounds.size();
 }
 
-bool RenderTheme::supportsMeter(ControlPart, const HTMLMeterElement&) const
+bool RenderTheme::supportsMeter(ControlPartType, const HTMLMeterElement&) const
 {
     return false;
 }
@@ -1162,11 +1176,11 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
 
     double min = input.minimum();
     double max = input.maximum();
-    ControlPart part = o.style().effectiveAppearance();
+    auto type = o.style().effectiveAppearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
-    if (part != SliderHorizontalPart && part != SliderVerticalPart)
+    if (type != ControlPartType::SliderHorizontal && type != ControlPartType::SliderVertical)
         return;
-    bool isHorizontal = part == SliderHorizontalPart;
+    bool isHorizontal = type == ControlPartType::SliderHorizontal;
 
     IntSize thumbSize;
     const RenderObject* thumbRenderer = input.sliderThumbElement()->renderer();

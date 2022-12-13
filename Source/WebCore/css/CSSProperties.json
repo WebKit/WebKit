@@ -821,8 +821,7 @@
                     {
                         "value": "font-variation-settings",
                         "enable-if": "ENABLE_VARIATION_FONTS"
-                    },
-                    "font-palette"
+                    }
                 ],
                 "custom-parser": true
             },

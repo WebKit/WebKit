@@ -24,7 +24,7 @@
 - path: wasm/stress
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/wast-tests/
-  cmd: runWebAssemblyWithHarness
+  cmd: runWebAssemblyWithHarness unless parseRunCommands
 - path: wasm/js-api/
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/noJIT/

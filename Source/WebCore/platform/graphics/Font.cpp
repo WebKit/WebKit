@@ -307,7 +307,7 @@ static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
             found = true;
         }
     }
-    ASSERT(found == static_cast<bool>(result));
+    ASSERT_UNUSED(found, found == static_cast<bool>(result));
 #endif
     return result;
 }

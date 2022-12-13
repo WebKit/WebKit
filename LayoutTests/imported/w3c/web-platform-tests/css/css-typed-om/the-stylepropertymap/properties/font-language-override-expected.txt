@@ -1,7 +1,10 @@
 
-FAIL Can set 'font-language-override' to CSS-wide keywords Invalid property font-language-override
-FAIL Can set 'font-language-override' to var() references Invalid property font-language-override
-FAIL Can set 'font-language-override' to the 'normal' keyword Invalid property font-language-override
+FAIL Can set 'font-language-override' to CSS-wide keywords: initial Invalid property font-language-override
+FAIL Can set 'font-language-override' to CSS-wide keywords: inherit Invalid property font-language-override
+FAIL Can set 'font-language-override' to CSS-wide keywords: unset Invalid property font-language-override
+FAIL Can set 'font-language-override' to CSS-wide keywords: revert Invalid property font-language-override
+FAIL Can set 'font-language-override' to var() references:  var(--A) Invalid property font-language-override
+FAIL Can set 'font-language-override' to the 'normal' keyword: normal Invalid property font-language-override
 PASS Setting 'font-language-override' to a length throws TypeError
 PASS Setting 'font-language-override' to a percent throws TypeError
 PASS Setting 'font-language-override' to a time throws TypeError

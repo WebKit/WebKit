@@ -1,7 +1,13 @@
 
-FAIL Can set 'line-height-step' to CSS-wide keywords Invalid property line-height-step
-FAIL Can set 'line-height-step' to var() references Invalid property line-height-step
-FAIL Can set 'line-height-step' to a length Invalid property line-height-step
+FAIL Can set 'line-height-step' to CSS-wide keywords: initial Invalid property line-height-step
+FAIL Can set 'line-height-step' to CSS-wide keywords: inherit Invalid property line-height-step
+FAIL Can set 'line-height-step' to CSS-wide keywords: unset Invalid property line-height-step
+FAIL Can set 'line-height-step' to CSS-wide keywords: revert Invalid property line-height-step
+FAIL Can set 'line-height-step' to var() references:  var(--A) Invalid property line-height-step
+FAIL Can set 'line-height-step' to a length: 0px Invalid property line-height-step
+FAIL Can set 'line-height-step' to a length: -3.14em Invalid property line-height-step
+FAIL Can set 'line-height-step' to a length: 3.14cm Invalid property line-height-step
+FAIL Can set 'line-height-step' to a length: calc(0px + 0em) Invalid property line-height-step
 PASS Setting 'line-height-step' to a percent throws TypeError
 PASS Setting 'line-height-step' to a time throws TypeError
 PASS Setting 'line-height-step' to an angle throws TypeError

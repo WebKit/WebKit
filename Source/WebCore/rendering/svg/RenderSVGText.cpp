@@ -192,7 +192,7 @@ static inline void checkLayoutAttributesConsistency(RenderSVGText* text, Vector<
 #ifndef NDEBUG
     Vector<SVGTextLayoutAttributes*> newLayoutAttributes;
     collectLayoutAttributes(text, newLayoutAttributes);
-    ASSERT(newLayoutAttributes == expectedLayoutAttributes);
+    ASSERT_UNUSED(expectedLayoutAttributes, newLayoutAttributes == expectedLayoutAttributes);
 #else
     UNUSED_PARAM(text);
     UNUSED_PARAM(expectedLayoutAttributes);

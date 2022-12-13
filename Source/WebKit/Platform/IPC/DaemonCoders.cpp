@@ -469,15 +469,4 @@ std::optional<WebCore::PushSubscriptionIdentifier> Coder<WebCore::PushSubscripti
     return WebCore::PushSubscriptionIdentifier::decode(decoder);
 }
 
-void Coder<WTF::UUID>::encode(Encoder& encoder, const WTF::UUID& instance)
-{
-    instance.encode(encoder);
-}
-
-std::optional<WTF::UUID>
-    Coder<WTF::UUID>::decode(Decoder& decoder)
-{
-    return UUID::decode(decoder);
-}
-
 }

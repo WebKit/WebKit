@@ -1,13 +1,16 @@
 
-PASS Can set 'text-decoration-line' to CSS-wide keywords
-FAIL Can set 'text-decoration-line' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-decoration-line' to the 'none' keyword
-PASS Can set 'text-decoration-line' to the 'underline' keyword
-PASS Can set 'text-decoration-line' to the 'overline' keyword
-PASS Can set 'text-decoration-line' to the 'line-through' keyword
-FAIL Can set 'text-decoration-line' to the 'blink' keyword assert_equals: expected "blink" but got "none"
-FAIL Can set 'text-decoration-line' to the 'spelling-error' keyword Invalid values
-FAIL Can set 'text-decoration-line' to the 'grammar-error' keyword Invalid values
+PASS Can set 'text-decoration-line' to CSS-wide keywords: initial
+PASS Can set 'text-decoration-line' to CSS-wide keywords: inherit
+PASS Can set 'text-decoration-line' to CSS-wide keywords: unset
+PASS Can set 'text-decoration-line' to CSS-wide keywords: revert
+FAIL Can set 'text-decoration-line' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-decoration-line' to the 'none' keyword: none
+PASS Can set 'text-decoration-line' to the 'underline' keyword: underline
+PASS Can set 'text-decoration-line' to the 'overline' keyword: overline
+PASS Can set 'text-decoration-line' to the 'line-through' keyword: line-through
+FAIL Can set 'text-decoration-line' to the 'blink' keyword: blink assert_equals: expected "blink" but got "none"
+FAIL Can set 'text-decoration-line' to the 'spelling-error' keyword: spelling-error Invalid values
+FAIL Can set 'text-decoration-line' to the 'grammar-error' keyword: grammar-error Invalid values
 PASS Setting 'text-decoration-line' to a length throws TypeError
 PASS Setting 'text-decoration-line' to a percent throws TypeError
 PASS Setting 'text-decoration-line' to a time throws TypeError

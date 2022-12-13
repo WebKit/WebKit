@@ -811,6 +811,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if PLATFORM(MAC)
     setUseSystemAppearance(parameters.useSystemAppearance);
+    setUseFormSemanticContext(parameters.useFormSemanticContext);
 #endif
 
     // If the page is created off-screen, its visibilityState should be prerender.
@@ -4188,7 +4189,10 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
 #if USE(SYSTEM_PREVIEW)
     settings.setSystemPreviewEnabled(false);
 #endif
-
+    settings.setFileReaderAPIEnabled(false);
+    settings.setFileSystemAccessEnabled(false);
+    settings.setIndexedDBAPIEnabled(false);
+    
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInLockdownModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInLockdownModeKey()));
     settings.setAllowedMediaVideoCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaVideoCodecIDsAllowedInLockdownModeKey()));

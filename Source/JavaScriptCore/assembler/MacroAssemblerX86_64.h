@@ -2808,6 +2808,10 @@ public:
                 RELEASE_ASSERT_NOT_REACHED();
             }
             return;
+        case SIMDLane::f32x4:
+        case SIMDLane::f64x2:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("f32 and f64 vector absolute value are not supported on x86, so this should have been expanded out prior to reaching the macro assembler.");
+            return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }

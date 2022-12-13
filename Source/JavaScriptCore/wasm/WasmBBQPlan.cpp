@@ -62,6 +62,8 @@ BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation> moduleInformation, uint32_t func
 
 bool BBQPlan::planGeneratesLoopOSREntrypoints(const ModuleInformation& moduleInformation)
 {
+    if constexpr (is32Bit())
+        return true;
     // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
     // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
     // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
@@ -136,7 +138,10 @@ void BBQPlan::work(CompilationEffort effort)
 
     CompilationContext context;
     Vector<UnlinkedWasmToWasmCall> unlinkedWasmToWasmCalls;
-    std::unique_ptr<TierUpCount> tierUp = makeUnique<TierUpCount>();
+    std::unique_ptr<TierUpCount> tierUp;
+#if !CPU(ARM) // We don't want to attempt tier up to OMG on ARM just yet. Not initialising this counter achieves just that.
+    tierUp = makeUnique<TierUpCount>();
+#endif
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, context, unlinkedWasmToWasmCalls, tierUp.get());
 
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
@@ -212,7 +217,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
 {
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
 
-    if (Options::useBBQTierUpChecks())
+    if (Options::useBBQTierUpChecks() && !isARM())
         m_tierUpCounts[functionIndex] = makeUnique<TierUpCount>();
     else
         m_tierUpCounts[functionIndex] = nullptr;

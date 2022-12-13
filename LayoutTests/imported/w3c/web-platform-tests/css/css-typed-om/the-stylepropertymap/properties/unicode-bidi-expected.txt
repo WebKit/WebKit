@@ -1,12 +1,15 @@
 
-PASS Can set 'unicode-bidi' to CSS-wide keywords
-FAIL Can set 'unicode-bidi' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'unicode-bidi' to the 'normal' keyword
-PASS Can set 'unicode-bidi' to the 'embed' keyword
-PASS Can set 'unicode-bidi' to the 'isolate' keyword
-PASS Can set 'unicode-bidi' to the 'bidi-override' keyword
-PASS Can set 'unicode-bidi' to the 'isolate-override' keyword
-PASS Can set 'unicode-bidi' to the 'plaintext' keyword
+PASS Can set 'unicode-bidi' to CSS-wide keywords: initial
+PASS Can set 'unicode-bidi' to CSS-wide keywords: inherit
+PASS Can set 'unicode-bidi' to CSS-wide keywords: unset
+PASS Can set 'unicode-bidi' to CSS-wide keywords: revert
+FAIL Can set 'unicode-bidi' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'unicode-bidi' to the 'normal' keyword: normal
+PASS Can set 'unicode-bidi' to the 'embed' keyword: embed
+PASS Can set 'unicode-bidi' to the 'isolate' keyword: isolate
+PASS Can set 'unicode-bidi' to the 'bidi-override' keyword: bidi-override
+PASS Can set 'unicode-bidi' to the 'isolate-override' keyword: isolate-override
+PASS Can set 'unicode-bidi' to the 'plaintext' keyword: plaintext
 PASS Setting 'unicode-bidi' to a length throws TypeError
 PASS Setting 'unicode-bidi' to a percent throws TypeError
 PASS Setting 'unicode-bidi' to a time throws TypeError

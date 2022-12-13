@@ -596,14 +596,17 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         switch (ellipsisPolicy) {
         case LineInput::LineEndingEllipsisPolicy::No:
             break;
-        case LineInput::LineEndingEllipsisPolicy::WhenContentOverflows: {
+        case LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
             if (m_line.contentLogicalWidth() > horizontalAvailableSpace) {
                 auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
                 auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
                 m_line.truncate(logicalRightForContentWithoutEllipsis);
             }
             break;
-        }
+        case LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
+            if (isLastLine)
+                break;
+            FALLTHROUGH;
         case LineInput::LineEndingEllipsisPolicy::Always: {
             auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
             if (m_line.contentLogicalWidth() && m_line.contentLogicalWidth() + ellipsisWidth > horizontalAvailableSpace) {

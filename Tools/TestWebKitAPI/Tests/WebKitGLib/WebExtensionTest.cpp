@@ -298,10 +298,7 @@ static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu
     }
 
     if (!g_strcmp0(pageURI, "ContextMenuTestNode")) {
-        WebKitDOMNode* node = webkit_web_hit_test_result_get_node(hitTestResult);
-        g_assert_true(WEBKIT_DOM_IS_NODE(node));
-        auto* frame = webkit_web_page_get_main_frame(page);
-        GRefPtr<JSCValue> jsNode = adoptGRef(webkit_frame_get_js_value_for_dom_object(frame, WEBKIT_DOM_OBJECT(node)));
+        GRefPtr<JSCValue> jsNode = adoptGRef(webkit_web_hit_test_result_get_js_node(hitTestResult, nullptr));
         webkit_context_menu_set_user_data(menu, serializeNode(jsNode.get()));
         return TRUE;
     }

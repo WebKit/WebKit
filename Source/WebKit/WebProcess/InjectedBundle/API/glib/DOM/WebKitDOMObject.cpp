@@ -15,6 +15,8 @@ enum {
 };
 #endif
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 G_DEFINE_TYPE(WebKitDOMObject, webkit_dom_object, G_TYPE_OBJECT)
 
 static void webkit_dom_object_init(WebKitDOMObject*)
@@ -51,3 +53,5 @@ static void webkit_dom_object_class_init(WebKitDOMObjectClass* klass)
             static_cast<GParamFlags>(G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB)));
 #endif
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS;

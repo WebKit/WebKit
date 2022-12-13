@@ -45,6 +45,7 @@
 
 namespace WebCore {
 
+struct ImageBufferCreationContext;
 class GraphicsContext;
 class GraphicsContextGL;
 #if HAVE(IOSURFACE)
@@ -142,6 +143,8 @@ public:
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
 
+    virtual void transferToNewContext(const ImageBufferCreationContext&) { }
+
     // Returns true on success.
     virtual bool setVolatile() { return true; }
     virtual SetNonVolatileResult setNonVolatile() { return SetNonVolatileResult::Valid; }
@@ -165,6 +168,8 @@ public:
     virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
     virtual void clearContents() { ASSERT_NOT_REACHED(); }
+
+    const Parameters& parameters() { return m_parameters; }
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);

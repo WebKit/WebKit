@@ -1,9 +1,12 @@
 
-PASS Can set 'font-kerning' to CSS-wide keywords
-FAIL Can set 'font-kerning' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'font-kerning' to the 'auto' keyword
-PASS Can set 'font-kerning' to the 'normal' keyword
-PASS Can set 'font-kerning' to the 'none' keyword
+PASS Can set 'font-kerning' to CSS-wide keywords: initial
+PASS Can set 'font-kerning' to CSS-wide keywords: inherit
+PASS Can set 'font-kerning' to CSS-wide keywords: unset
+PASS Can set 'font-kerning' to CSS-wide keywords: revert
+FAIL Can set 'font-kerning' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-kerning' to the 'auto' keyword: auto
+PASS Can set 'font-kerning' to the 'normal' keyword: normal
+PASS Can set 'font-kerning' to the 'none' keyword: none
 PASS Setting 'font-kerning' to a length throws TypeError
 PASS Setting 'font-kerning' to a percent throws TypeError
 PASS Setting 'font-kerning' to a time throws TypeError

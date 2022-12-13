@@ -93,6 +93,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/StyleInheritedData.h>
 #import <WebCore/TextIterator.h>
+#import <WebCore/ThemeMac.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -594,6 +595,17 @@ void WebPage::setBottomOverhangImage(WebImage* image)
 
     layer->setSize(image->size());
     layer->platformLayer().contents = (__bridge id)nativeImage->platformImage().get();
+}
+
+void WebPage::setUseFormSemanticContext(bool useFormSemanticContext)
+{
+    ThemeMac::setUseFormSemanticContext(useFormSemanticContext);
+}
+
+void WebPage::semanticContextDidChange(bool useFormSemanticContext)
+{
+    setUseFormSemanticContext(useFormSemanticContext);
+    m_page->scheduleRenderingUpdate({ });
 }
 
 void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)

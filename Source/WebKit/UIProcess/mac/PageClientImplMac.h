@@ -261,6 +261,8 @@ private:
     bool effectiveAppearanceIsDark() const override;
     bool effectiveUserInterfaceLevelIsElevated() const override;
 
+    bool useFormSemanticContext() const override;
+
     bool isTextRecognitionInFullscreenVideoEnabled() const final { return true; }
     void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle&, WebCore::FloatRect) final;
     void cancelTextRecognitionForVideoInElementFullscreen() final;

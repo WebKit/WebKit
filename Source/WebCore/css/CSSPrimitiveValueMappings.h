@@ -440,112 +440,112 @@ template<> inline CSSPrimitiveValue::operator CompositeOperator() const
     return CompositeOperator::Clear;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPartType e)
     : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     switch (e) {
-    case NoControlPart:
+    case ControlPartType::NoControl:
         m_value.valueID = CSSValueNone;
         break;
-    case AutoPart:
+    case ControlPartType::Auto:
         m_value.valueID = CSSValueAuto;
         break;
-    case CheckboxPart:
+    case ControlPartType::Checkbox:
         m_value.valueID = CSSValueCheckbox;
         break;
-    case RadioPart:
+    case ControlPartType::Radio:
         m_value.valueID = CSSValueRadio;
         break;
-    case PushButtonPart:
+    case ControlPartType::PushButton:
         m_value.valueID = CSSValuePushButton;
         break;
-    case SquareButtonPart:
+    case ControlPartType::SquareButton:
         m_value.valueID = CSSValueSquareButton;
         break;
-    case ButtonPart:
+    case ControlPartType::Button:
         m_value.valueID = CSSValueButton;
         break;
-    case DefaultButtonPart:
+    case ControlPartType::DefaultButton:
         m_value.valueID = CSSValueDefaultButton;
         break;
-    case ListboxPart:
+    case ControlPartType::Listbox:
         m_value.valueID = CSSValueListbox;
         break;
-    case MenulistPart:
+    case ControlPartType::Menulist:
         m_value.valueID = CSSValueMenulist;
         break;
-    case MenulistButtonPart:
+    case ControlPartType::MenulistButton:
         m_value.valueID = CSSValueMenulistButton;
         break;
-    case MeterPart:
+    case ControlPartType::Meter:
         m_value.valueID = CSSValueMeter;
         break;
-    case ProgressBarPart:
+    case ControlPartType::ProgressBar:
         m_value.valueID = CSSValueProgressBar;
         break;
-    case SliderHorizontalPart:
+    case ControlPartType::SliderHorizontal:
         m_value.valueID = CSSValueSliderHorizontal;
         break;
-    case SliderVerticalPart:
+    case ControlPartType::SliderVertical:
         m_value.valueID = CSSValueSliderVertical;
         break;
-    case SearchFieldPart:
+    case ControlPartType::SearchField:
         m_value.valueID = CSSValueSearchfield;
         break;
-    case TextFieldPart:
+    case ControlPartType::TextField:
         m_value.valueID = CSSValueTextfield;
         break;
-    case TextAreaPart:
+    case ControlPartType::TextArea:
         m_value.valueID = CSSValueTextarea;
         break;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    case AttachmentPart:
+    case ControlPartType::Attachment:
         m_value.valueID = CSSValueAttachment;
         break;
-    case BorderlessAttachmentPart:
+    case ControlPartType::BorderlessAttachment:
         m_value.valueID = CSSValueBorderlessAttachment;
         break;
 #endif
 #if ENABLE(APPLE_PAY)
-    case ApplePayButtonPart:
+    case ControlPartType::ApplePayButton:
         m_value.valueID = CSSValueApplePayButton;
         break;
 #endif
-    case CapsLockIndicatorPart:
+    case ControlPartType::CapsLockIndicator:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart:
+    case ControlPartType::ColorWell:
 #endif
 #if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
+    case ControlPartType::ImageControlsButton:
 #endif
-    case InnerSpinButtonPart:
+    case ControlPartType::InnerSpinButton:
 #if ENABLE(DATALIST_ELEMENT)
-    case ListButtonPart:
+    case ControlPartType::ListButton:
 #endif
-    case SearchFieldDecorationPart:
-    case SearchFieldResultsDecorationPart:
-    case SearchFieldResultsButtonPart:
-    case SearchFieldCancelButtonPart:
-    case SliderThumbHorizontalPart:
-    case SliderThumbVerticalPart:
+    case ControlPartType::SearchFieldDecoration:
+    case ControlPartType::SearchFieldResultsDecoration:
+    case ControlPartType::SearchFieldResultsButton:
+    case ControlPartType::SearchFieldCancelButton:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
         ASSERT_NOT_REACHED();
         m_value.valueID = CSSValueNone;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator ControlPart() const
+template<> inline CSSPrimitiveValue::operator ControlPartType() const
 {
     ASSERT(isValueID());
 
     if (m_value.valueID == CSSValueNone)
-        return NoControlPart;
+        return ControlPartType::NoControl;
 
     if (m_value.valueID == CSSValueAuto)
-        return AutoPart;
+        return ControlPartType::Auto;
 
-    return ControlPart(m_value.valueID - CSSValueCheckbox + CheckboxPart);
+    return ControlPartType(m_value.valueID - CSSValueCheckbox + static_cast<unsigned>(ControlPartType::Checkbox));
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BackfaceVisibility e)

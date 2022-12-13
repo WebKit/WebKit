@@ -1,8 +1,11 @@
 
-PASS Can set 'animation-name' to CSS-wide keywords
-FAIL Can set 'animation-name' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'animation-name' to the 'none' keyword
-FAIL Can set 'animation-name' to the 'custom-ident' keyword Invalid values
+PASS Can set 'animation-name' to CSS-wide keywords: initial
+PASS Can set 'animation-name' to CSS-wide keywords: inherit
+PASS Can set 'animation-name' to CSS-wide keywords: unset
+PASS Can set 'animation-name' to CSS-wide keywords: revert
+FAIL Can set 'animation-name' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'animation-name' to the 'none' keyword: none
+FAIL Can set 'animation-name' to the 'custom-ident' keyword: custom-ident Invalid values
 PASS Setting 'animation-name' to a length throws TypeError
 PASS Setting 'animation-name' to a percent throws TypeError
 PASS Setting 'animation-name' to a time throws TypeError

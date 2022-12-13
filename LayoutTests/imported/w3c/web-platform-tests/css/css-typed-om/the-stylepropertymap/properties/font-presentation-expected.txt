@@ -1,9 +1,12 @@
 
-FAIL Can set 'font-presentation' to CSS-wide keywords Invalid property font-presentation
-FAIL Can set 'font-presentation' to var() references Invalid property font-presentation
-FAIL Can set 'font-presentation' to the 'auto' keyword Invalid property font-presentation
-FAIL Can set 'font-presentation' to the 'text' keyword Invalid property font-presentation
-FAIL Can set 'font-presentation' to the 'emoji' keyword Invalid property font-presentation
+FAIL Can set 'font-presentation' to CSS-wide keywords: initial Invalid property font-presentation
+FAIL Can set 'font-presentation' to CSS-wide keywords: inherit Invalid property font-presentation
+FAIL Can set 'font-presentation' to CSS-wide keywords: unset Invalid property font-presentation
+FAIL Can set 'font-presentation' to CSS-wide keywords: revert Invalid property font-presentation
+FAIL Can set 'font-presentation' to var() references:  var(--A) Invalid property font-presentation
+FAIL Can set 'font-presentation' to the 'auto' keyword: auto Invalid property font-presentation
+FAIL Can set 'font-presentation' to the 'text' keyword: text Invalid property font-presentation
+FAIL Can set 'font-presentation' to the 'emoji' keyword: emoji Invalid property font-presentation
 PASS Setting 'font-presentation' to a length throws TypeError
 PASS Setting 'font-presentation' to a percent throws TypeError
 PASS Setting 'font-presentation' to a time throws TypeError

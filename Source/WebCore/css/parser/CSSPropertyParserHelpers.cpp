@@ -6569,13 +6569,7 @@ RefPtr<CSSValue> consumePerspective(CSSParserTokenRange& range, CSSParserMode cs
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-
-    if (auto parsedValue = consumeLength(range, cssParserMode, ValueRange::All)) {
-        if (!parsedValue->isNegative().value_or(false))
-            return parsedValue;
-    }
-
-    return nullptr;
+    return consumeLength(range, cssParserMode, ValueRange::NonNegative);
 }
 
 RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range)

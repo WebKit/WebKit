@@ -38,14 +38,17 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <wtf/HexNumber.h>
 
 static NSDictionary *messageDictionary(NSData *data, NSURL *registration)
 {
     return @{
         @"WebKitPushData" : data,
-        @"WebKitPushRegistrationURL" : registration
+        @"WebKitPushRegistrationURL" : registration,
+        @"WebKitPushPartition" : @"TestWebKitAPI"
     };
 }
 
@@ -188,6 +191,91 @@ TEST(PushAPI, firePushEvent)
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_FALSE(pushMessageSuccessful);
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+}
+
+@interface FirePushEventDataStoreDelegate : NSObject <_WKWebsiteDataStoreDelegate>
+@property (readwrite, copy) NSDictionary<NSString *, NSNumber *> *permissions;
+@property (readonly, copy) _WKNotificationData *mostRecentNotification;
+@end
+
+@implementation FirePushEventDataStoreDelegate
+- (NSDictionary<NSString *, NSNumber *> *)notificationPermissionsForWebsiteDataStore:(WKWebsiteDataStore *)dataStore
+{
+    return _permissions;
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore showNotification:(_WKNotificationData *)notificationData
+{
+    _mostRecentNotification = [notificationData retain];
+}
+
+- (void)dealloc
+{
+    [_mostRecentNotification release];
+    [super dealloc];
+}
+@end
+
+TEST(PushAPI, firePushEventDataStoreDelegate)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
+    delegate.get().permissions = @{
+        (NSString *)server.origin() : @YES
+    };
+    [configuration websiteDataStore]._delegate = delegate.get();
+
+    expectedMessage = "Ready"_s;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"Sweet Potatoes";
+    expectedMessage = "Received: Sweet Potatoes"_s;
+
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    done = false;
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    message = @"Rotten Potatoes";
+    expectedMessage = "Received: Rotten Potatoes"_s;
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_FALSE(pushMessageSuccessful);
+
+    EXPECT_TRUE([delegate.get().mostRecentNotification.title isEqualToString:@"notification"]);
+    EXPECT_TRUE([delegate.get().mostRecentNotification.body isEqualToString:@""]);
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }

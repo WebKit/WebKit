@@ -1,15 +1,18 @@
 
-PASS Can set 'dominant-baseline' to CSS-wide keywords
-FAIL Can set 'dominant-baseline' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'dominant-baseline' to the 'auto' keyword
-FAIL Can set 'dominant-baseline' to the 'text-bottom' keyword Invalid values
-PASS Can set 'dominant-baseline' to the 'alphabetic' keyword
-PASS Can set 'dominant-baseline' to the 'ideographic' keyword
-PASS Can set 'dominant-baseline' to the 'middle' keyword
-PASS Can set 'dominant-baseline' to the 'central' keyword
-PASS Can set 'dominant-baseline' to the 'mathematical' keyword
-PASS Can set 'dominant-baseline' to the 'hanging' keyword
-FAIL Can set 'dominant-baseline' to the 'text-top' keyword Invalid values
+PASS Can set 'dominant-baseline' to CSS-wide keywords: initial
+PASS Can set 'dominant-baseline' to CSS-wide keywords: inherit
+PASS Can set 'dominant-baseline' to CSS-wide keywords: unset
+PASS Can set 'dominant-baseline' to CSS-wide keywords: revert
+FAIL Can set 'dominant-baseline' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'dominant-baseline' to the 'auto' keyword: auto
+FAIL Can set 'dominant-baseline' to the 'text-bottom' keyword: text-bottom Invalid values
+PASS Can set 'dominant-baseline' to the 'alphabetic' keyword: alphabetic
+PASS Can set 'dominant-baseline' to the 'ideographic' keyword: ideographic
+PASS Can set 'dominant-baseline' to the 'middle' keyword: middle
+PASS Can set 'dominant-baseline' to the 'central' keyword: central
+PASS Can set 'dominant-baseline' to the 'mathematical' keyword: mathematical
+PASS Can set 'dominant-baseline' to the 'hanging' keyword: hanging
+FAIL Can set 'dominant-baseline' to the 'text-top' keyword: text-top Invalid values
 PASS Setting 'dominant-baseline' to a length throws TypeError
 PASS Setting 'dominant-baseline' to a percent throws TypeError
 PASS Setting 'dominant-baseline' to a time throws TypeError

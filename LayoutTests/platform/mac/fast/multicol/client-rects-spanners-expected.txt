@@ -28,8 +28,7 @@ layer at (0,0) size 800x600
           text run at (476,99) width 4: " "
         RenderText {#text} at (596,99) size 4x18
           text run at (596,99) width 4: " "
-        RenderText {#text} at (716,99) size 4x18
-          text run at (716,99) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (116,219) size 4x18
           text run at (116,219) width 4: " "
         RenderText {#text} at (216,219) size 4x18
@@ -42,8 +41,7 @@ layer at (0,0) size 800x600
           text run at (516,219) width 4: " "
         RenderText {#text} at (616,219) size 4x18
           text run at (616,219) width 4: " "
-        RenderText {#text} at (716,219) size 4x18
-          text run at (716,219) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (96,339) size 4x18
           text run at (96,339) width 4: " "
         RenderText {#text} at (196,339) size 4x18
@@ -56,8 +54,7 @@ layer at (0,0) size 800x600
           text run at (496,339) width 4: " "
         RenderText {#text} at (596,339) size 4x18
           text run at (596,339) width 4: " "
-        RenderText {#text} at (696,339) size 4x18
-          text run at (696,339) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 layer at (8,63) size 116x76
   RenderBlock {DIV} at (0,10) size 116x76 [color=#ADD8E6] [border: (3px solid #000000)]

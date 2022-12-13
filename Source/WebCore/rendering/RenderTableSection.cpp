@@ -1274,7 +1274,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             }
         } else {
             // The overflowing cells should be scarce to avoid adding a lot of cells to the HashSet.
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             unsigned totalRows = m_grid.size();
             unsigned totalCols = table()->columns().size();
             ASSERT(m_overflowingCells.size() < totalRows * totalCols * gMaxAllowedOverflowingCellRatioForFastPaintPath);

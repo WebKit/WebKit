@@ -1,30 +1,57 @@
 
-PASS Can set 'r' to CSS-wide keywords
-FAIL Can set 'r' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'r' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
-FAIL Can set 'r' to a length assert_equals: expected "px" but got "em"
+PASS Can set 'r' to CSS-wide keywords: initial
+PASS Can set 'r' to CSS-wide keywords: inherit
+PASS Can set 'r' to CSS-wide keywords: unset
+PASS Can set 'r' to CSS-wide keywords: revert
+FAIL Can set 'r' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'r' to a percent: 0%
+FAIL Can set 'r' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'r' to a percent: 3.14%
+FAIL Can set 'r' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'r' to a length: 0px
+PASS Can set 'r' to a length: -3.14em
+PASS Can set 'r' to a length: 3.14cm
+FAIL Can set 'r' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
 PASS Setting 'r' to a time throws TypeError
 PASS Setting 'r' to an angle throws TypeError
 PASS Setting 'r' to a flexible length throws TypeError
 FAIL Setting 'r' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'r' to a URL throws TypeError
 PASS Setting 'r' to a transform throws TypeError
-PASS Can set 'rx' to CSS-wide keywords
-FAIL Can set 'rx' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'rx' to the 'auto' keyword
-FAIL Can set 'rx' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
-FAIL Can set 'rx' to a length assert_equals: expected "px" but got "em"
+PASS Can set 'rx' to CSS-wide keywords: initial
+PASS Can set 'rx' to CSS-wide keywords: inherit
+PASS Can set 'rx' to CSS-wide keywords: unset
+PASS Can set 'rx' to CSS-wide keywords: revert
+FAIL Can set 'rx' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'rx' to the 'auto' keyword: auto
+PASS Can set 'rx' to a percent: 0%
+FAIL Can set 'rx' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'rx' to a percent: 3.14%
+FAIL Can set 'rx' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'rx' to a length: 0px
+PASS Can set 'rx' to a length: -3.14em
+PASS Can set 'rx' to a length: 3.14cm
+FAIL Can set 'rx' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
 PASS Setting 'rx' to a time throws TypeError
 PASS Setting 'rx' to an angle throws TypeError
 PASS Setting 'rx' to a flexible length throws TypeError
 FAIL Setting 'rx' to a number throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'rx' to a URL throws TypeError
 PASS Setting 'rx' to a transform throws TypeError
-PASS Can set 'ry' to CSS-wide keywords
-FAIL Can set 'ry' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'ry' to the 'auto' keyword
-FAIL Can set 'ry' to a percent assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
-FAIL Can set 'ry' to a length assert_equals: expected "px" but got "em"
+PASS Can set 'ry' to CSS-wide keywords: initial
+PASS Can set 'ry' to CSS-wide keywords: inherit
+PASS Can set 'ry' to CSS-wide keywords: unset
+PASS Can set 'ry' to CSS-wide keywords: revert
+FAIL Can set 'ry' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'ry' to the 'auto' keyword: auto
+PASS Can set 'ry' to a percent: 0%
+FAIL Can set 'ry' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'ry' to a percent: 3.14%
+FAIL Can set 'ry' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'ry' to a length: 0px
+PASS Can set 'ry' to a length: -3.14em
+PASS Can set 'ry' to a length: 3.14cm
+FAIL Can set 'ry' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
 PASS Setting 'ry' to a time throws TypeError
 PASS Setting 'ry' to an angle throws TypeError
 PASS Setting 'ry' to a flexible length throws TypeError

@@ -218,7 +218,7 @@ wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
     bieq a0, constexpr INT32_MIN, .throwIntegerOverflow
 
 .safe:
-    callDivRem(_slow_path_wasm_i32_div_s)
+    callDivRem(_i32_div_s)
     returni(ctx, r0)
 
 .throwDivisionByZero:
@@ -234,7 +234,7 @@ wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
 
     btiz a1, .throwDivisionByZero
 
-    callDivRem(_slow_path_wasm_i32_div_u)
+    callDivRem(_i32_div_u)
     returni(ctx, r0)
 
 .throwDivisionByZero:
@@ -254,7 +254,7 @@ wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
     jmp .return
 
 .safe:
-    callDivRem(_slow_path_wasm_i32_rem_s)
+    callDivRem(_i32_rem_s)
 
 .return:
     returni(ctx, r0)
@@ -269,7 +269,7 @@ wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
 
     btiz a1, .throwDivisionByZero
 
-    callDivRem(_slow_path_wasm_i32_rem_u)
+    callDivRem(_i32_rem_u)
     returni(ctx, r0)
 
 .throwDivisionByZero:
@@ -319,7 +319,7 @@ wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
     btiz a0, .throwIntegerOverflow
 
 .safe:
-    callDivRem(_slow_path_wasm_i64_div_s)
+    callDivRem(_i64_div_s)
     return2i(ctx, r1, r0)
 
 .throwDivisionByZero:
@@ -337,7 +337,7 @@ wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
     btiz a2, .throwDivisionByZero
 
 .nonZeroDivisor:
-    callDivRem(_slow_path_wasm_i64_div_u)
+    callDivRem(_i64_div_u)
     return2i(ctx, r1, r0)
 
 .throwDivisionByZero:
@@ -362,7 +362,7 @@ wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
     jmp .return
 
 .safe:
-    callDivRem(_slow_path_wasm_i64_rem_s)
+    callDivRem(_i64_rem_s)
 
 .return:
     return2i(ctx, r1, r0)
@@ -379,7 +379,7 @@ wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
     btiz a2, .throwDivisionByZero
 
 .nonZeroDivisor:
-    callDivRem(_slow_path_wasm_i64_rem_u)
+    callDivRem(_i64_rem_u)
     return2i(ctx, r1, r0)
 
 .throwDivisionByZero:

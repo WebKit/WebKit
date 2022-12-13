@@ -1,9 +1,12 @@
 
-PASS Can set 'text-orientation' to CSS-wide keywords
-FAIL Can set 'text-orientation' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'text-orientation' to the 'mixed' keyword
-PASS Can set 'text-orientation' to the 'upright' keyword
-PASS Can set 'text-orientation' to the 'sideways' keyword
+PASS Can set 'text-orientation' to CSS-wide keywords: initial
+PASS Can set 'text-orientation' to CSS-wide keywords: inherit
+PASS Can set 'text-orientation' to CSS-wide keywords: unset
+PASS Can set 'text-orientation' to CSS-wide keywords: revert
+FAIL Can set 'text-orientation' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-orientation' to the 'mixed' keyword: mixed
+PASS Can set 'text-orientation' to the 'upright' keyword: upright
+PASS Can set 'text-orientation' to the 'sideways' keyword: sideways
 PASS Setting 'text-orientation' to a length throws TypeError
 PASS Setting 'text-orientation' to a percent throws TypeError
 PASS Setting 'text-orientation' to a time throws TypeError

@@ -45,7 +45,7 @@ class StatusBubble(View):
     # Note: This list is sorted in the order of which bubbles appear in bugzilla.
     ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'wincairo', 'win',
                   'ios-wk2', 'mac-wk1', 'mac-wk2', 'mac-wk2-stress', 'mac-AS-debug-wk2', 'gtk-wk2', 'api-ios', 'api-mac', 'api-gtk',
-                  'bindings', 'jsc', 'jsc-armv7', 'jsc-armv7-tests', 'jsc-mips', 'jsc-mips-tests', 'jsc-i386', 'webkitperl', 'webkitpy', 'services']
+                  'bindings', 'jsc', 'jsc-arm64', 'jsc-armv7', 'jsc-armv7-tests', 'jsc-mips', 'jsc-mips-tests', 'jsc-i386', 'webkitperl', 'webkitpy', 'services']
 
     STEPS_TO_HIDE = ['^Archived built product$', '^Uploaded built product$', '^Transferred archive to S3$',
                      '^Archived test results$', '^Uploaded test results$', '^Extracted test results$',

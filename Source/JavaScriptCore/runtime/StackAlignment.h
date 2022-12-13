@@ -40,6 +40,15 @@ constexpr unsigned stackAlignmentRegisters()
 }
 static_assert(stackAlignmentRegisters() == 2, "LLInt, CLoop, and JIT rely on this");
 
+// The number of bytes the SP needs to be adjusted downwards to get an aligned SP after a function prologue.
+// I.e.: (callFrameRegister - stackAdjustmentForAlignment()) % stackAlignmentBytes() == 0 always;
+constexpr unsigned stackAdjustmentForAlignment()
+{
+    if (constexpr unsigned excess = sizeof(CallerFrameAndPC) % stackAlignmentBytes())
+        return stackAlignmentBytes() - excess;
+    return 0;
+}
+
 // Align argument count taking into account the CallFrameHeaderSize may be
 // an "unaligned" count of registers.
 inline unsigned roundArgumentCountToAlignFrame(unsigned argumentCount)

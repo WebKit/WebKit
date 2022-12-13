@@ -608,6 +608,7 @@
 )
 
 (allow mach-lookup (with telemetry) (global-name "com.apple.webkit.adattributiond.service"))
+(allow mach-lookup (with telemetry) (global-name "com.apple.webkit.webpushd.service"))
 
 ;; Access to MobileGestalt
 (deny mach-lookup 

@@ -1,14 +1,17 @@
 
-PASS Can set 'contain' to CSS-wide keywords
-FAIL Can set 'contain' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'contain' to the 'none' keyword
-PASS Can set 'contain' to the 'strict' keyword
-PASS Can set 'contain' to the 'content' keyword
-PASS Can set 'contain' to the 'size' keyword
-PASS Can set 'contain' to the 'layout' keyword
-PASS Can set 'contain' to the 'style' keyword
-PASS Can set 'contain' to the 'paint' keyword
-PASS Can set 'contain' to the 'inline-size' keyword
+PASS Can set 'contain' to CSS-wide keywords: initial
+PASS Can set 'contain' to CSS-wide keywords: inherit
+PASS Can set 'contain' to CSS-wide keywords: unset
+PASS Can set 'contain' to CSS-wide keywords: revert
+FAIL Can set 'contain' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'contain' to the 'none' keyword: none
+PASS Can set 'contain' to the 'strict' keyword: strict
+PASS Can set 'contain' to the 'content' keyword: content
+PASS Can set 'contain' to the 'size' keyword: size
+PASS Can set 'contain' to the 'layout' keyword: layout
+PASS Can set 'contain' to the 'style' keyword: style
+PASS Can set 'contain' to the 'paint' keyword: paint
+PASS Can set 'contain' to the 'inline-size' keyword: inline-size
 PASS Setting 'contain' to a length throws TypeError
 PASS Setting 'contain' to a percent throws TypeError
 PASS Setting 'contain' to a time throws TypeError

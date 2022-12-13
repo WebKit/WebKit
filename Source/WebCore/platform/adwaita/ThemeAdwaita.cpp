@@ -168,14 +168,14 @@ void ThemeAdwaita::paintArrow(GraphicsContext& graphicsContext, const FloatRect&
     graphicsContext.fillPath(path);
 }
 
-LengthSize ThemeAdwaita::controlSize(ControlPart part, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const
+LengthSize ThemeAdwaita::controlSize(ControlPartType type, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const
 {
     if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-        return Theme::controlSize(part, fontCascade, zoomedSize, zoomFactor);
+        return Theme::controlSize(type, fontCascade, zoomedSize, zoomFactor);
 
-    switch (part) {
-    case CheckboxPart:
-    case RadioPart: {
+    switch (type) {
+    case ControlPartType::Checkbox:
+    case ControlPartType::Radio: {
         LengthSize buttonSize = zoomedSize;
         if (buttonSize.width.isIntrinsicOrAuto())
             buttonSize.width = Length(12 * zoomFactor, LengthType::Fixed);
@@ -183,7 +183,7 @@ LengthSize ThemeAdwaita::controlSize(ControlPart part, const FontCascade& fontCa
             buttonSize.height = Length(12 * zoomFactor, LengthType::Fixed);
         return buttonSize;
     }
-    case InnerSpinButtonPart: {
+    case ControlPartType::InnerSpinButton: {
         LengthSize spinButtonSize = zoomedSize;
         if (spinButtonSize.width.isIntrinsicOrAuto())
             spinButtonSize.width = Length(static_cast<int>(arrowSize * zoomFactor), LengthType::Fixed);
@@ -195,10 +195,10 @@ LengthSize ThemeAdwaita::controlSize(ControlPart part, const FontCascade& fontCa
         break;
     }
 
-    return Theme::controlSize(part, fontCascade, zoomedSize, zoomFactor);
+    return Theme::controlSize(type, fontCascade, zoomedSize, zoomFactor);
 }
 
-LengthSize ThemeAdwaita::minimumControlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float) const
+LengthSize ThemeAdwaita::minimumControlSize(ControlPartType, const FontCascade&, const LengthSize& zoomedSize, float) const
 {
     if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
         return zoomedSize;
@@ -211,37 +211,37 @@ LengthSize ThemeAdwaita::minimumControlSize(ControlPart, const FontCascade&, con
     return minSize;
 }
 
-LengthBox ThemeAdwaita::controlBorder(ControlPart part, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const
+LengthBox ThemeAdwaita::controlBorder(ControlPartType type, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const
 {
-    switch (part) {
-    case PushButtonPart:
-    case DefaultButtonPart:
-    case ButtonPart:
-    case SquareButtonPart:
+    switch (type) {
+    case ControlPartType::PushButton:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button:
+    case ControlPartType::SquareButton:
         return zoomedBox;
     default:
         break;
     }
 
-    return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
+    return Theme::controlBorder(type, font, zoomedBox, zoomFactor);
 }
 
-void ThemeAdwaita::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float, ScrollView*, float, float, bool, bool useDarkAppearance, const Color& effectiveAccentColor)
+void ThemeAdwaita::paint(ControlPartType type, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float, ScrollView*, float, float, bool, bool useDarkAppearance, const Color& effectiveAccentColor)
 {
-    switch (part) {
-    case CheckboxPart:
+    switch (type) {
+    case ControlPartType::Checkbox:
         paintCheckbox(states, context, zoomedRect, useDarkAppearance, effectiveAccentColor);
         break;
-    case RadioPart:
+    case ControlPartType::Radio:
         paintRadio(states, context, zoomedRect, useDarkAppearance, effectiveAccentColor);
         break;
-    case PushButtonPart:
-    case DefaultButtonPart:
-    case ButtonPart:
-    case SquareButtonPart:
+    case ControlPartType::PushButton:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Button:
+    case ControlPartType::SquareButton:
         paintButton(states, context, zoomedRect, useDarkAppearance);
         break;
-    case InnerSpinButtonPart:
+    case ControlPartType::InnerSpinButton:
         paintSpinButton(states, context, zoomedRect, useDarkAppearance);
         break;
     default:

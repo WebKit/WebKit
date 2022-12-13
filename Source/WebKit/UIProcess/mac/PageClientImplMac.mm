@@ -998,6 +998,11 @@ bool PageClientImpl::effectiveUserInterfaceLevelIsElevated() const
     return m_impl->effectiveUserInterfaceLevelIsElevated();
 }
 
+bool PageClientImpl::useFormSemanticContext() const
+{
+    return m_impl->useFormSemanticContext();
+}
+
 void PageClientImpl::takeFocus(WebCore::FocusDirection direction)
 {
     m_impl->takeFocus(direction);

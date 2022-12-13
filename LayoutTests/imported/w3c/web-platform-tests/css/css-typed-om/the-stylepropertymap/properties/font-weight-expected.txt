@@ -1,11 +1,17 @@
 
-PASS Can set 'font-weight' to CSS-wide keywords
-FAIL Can set 'font-weight' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'font-weight' to the 'normal' keyword
-PASS Can set 'font-weight' to the 'bold' keyword
-PASS Can set 'font-weight' to the 'bolder' keyword
-PASS Can set 'font-weight' to the 'lighter' keyword
-FAIL Can set 'font-weight' to a number assert_approx_equals: expected 0 +/- 0.000001 but got 1
+PASS Can set 'font-weight' to CSS-wide keywords: initial
+PASS Can set 'font-weight' to CSS-wide keywords: inherit
+PASS Can set 'font-weight' to CSS-wide keywords: unset
+PASS Can set 'font-weight' to CSS-wide keywords: revert
+FAIL Can set 'font-weight' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-weight' to the 'normal' keyword: normal
+PASS Can set 'font-weight' to the 'bold' keyword: bold
+PASS Can set 'font-weight' to the 'bolder' keyword: bolder
+PASS Can set 'font-weight' to the 'lighter' keyword: lighter
+FAIL Can set 'font-weight' to a number: 0 assert_approx_equals: expected 0 +/- 0.000001 but got 1
+FAIL Can set 'font-weight' to a number: -3.14 assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+FAIL Can set 'font-weight' to a number: 3.14 assert_approx_equals: expected 3.14 +/- 0.000001 but got 3
+FAIL Can set 'font-weight' to a number: calc(2 + 3) assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
 PASS Setting 'font-weight' to a length throws TypeError
 PASS Setting 'font-weight' to a percent throws TypeError
 PASS Setting 'font-weight' to a time throws TypeError

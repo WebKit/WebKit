@@ -1,11 +1,14 @@
 
-PASS Can set 'white-space' to CSS-wide keywords
-FAIL Can set 'white-space' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'white-space' to the 'normal' keyword
-PASS Can set 'white-space' to the 'pre' keyword
-PASS Can set 'white-space' to the 'nowrap' keyword
-PASS Can set 'white-space' to the 'pre-wrap' keyword
-PASS Can set 'white-space' to the 'pre-line' keyword
+PASS Can set 'white-space' to CSS-wide keywords: initial
+PASS Can set 'white-space' to CSS-wide keywords: inherit
+PASS Can set 'white-space' to CSS-wide keywords: unset
+PASS Can set 'white-space' to CSS-wide keywords: revert
+FAIL Can set 'white-space' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'white-space' to the 'normal' keyword: normal
+PASS Can set 'white-space' to the 'pre' keyword: pre
+PASS Can set 'white-space' to the 'nowrap' keyword: nowrap
+PASS Can set 'white-space' to the 'pre-wrap' keyword: pre-wrap
+PASS Can set 'white-space' to the 'pre-line' keyword: pre-line
 PASS Setting 'white-space' to a length throws TypeError
 PASS Setting 'white-space' to a percent throws TypeError
 PASS Setting 'white-space' to a time throws TypeError

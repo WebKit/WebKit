@@ -28,8 +28,7 @@ layer at (0,0) size 800x600
           text run at (476,98) width 4: " "
         RenderText {#text} at (596,98) size 4x19
           text run at (596,98) width 4: " "
-        RenderText {#text} at (716,98) size 4x19
-          text run at (716,98) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (116,219) size 4x19
           text run at (116,219) width 4: " "
         RenderText {#text} at (206,219) size 4x19

@@ -46,7 +46,7 @@ void updateFrameSizeBasedOnStackSlotsImpl(Code& code, const Collection& collecti
     unsigned frameSize = 0;
     for (StackSlot* slot : collection)
         frameSize = std::max(frameSize, static_cast<unsigned>(-slot->offsetFromFP()));
-    code.setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize));
+    code.setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize) + stackAdjustmentForAlignment());
 }
 
 } // anonymous namespace
@@ -102,7 +102,7 @@ Vector<StackSlot*> allocateAndGetEscapedStackSlotsWithoutChangingFrameSize(Code&
 {
     // Allocate all of the escaped slots in order. This is kind of a crazy algorithm to allow for
     // the possibility of stack slots being assigned frame offsets before we even get here.
-    RELEASE_ASSERT(!code.frameSize());
+    RELEASE_ASSERT(code.frameSize() == stackAdjustmentForAlignment());
     Vector<StackSlot*> assignedEscapedStackSlots;
     Vector<StackSlot*> escapedStackSlotsWorklist;
     for (StackSlot* slot : code.stackSlots()) {

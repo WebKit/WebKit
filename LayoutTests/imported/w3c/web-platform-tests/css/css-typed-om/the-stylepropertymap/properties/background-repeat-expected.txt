@@ -1,12 +1,15 @@
 
-FAIL Can set 'background-position' to CSS-wide keywords assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'background-position' to var() references assert_equals: expected 2 but got 1
-FAIL Can set 'background-position' to the 'repeat-x' keyword Bad value for shorthand CSS property
-FAIL Can set 'background-position' to the 'repeat-y' keyword Bad value for shorthand CSS property
-FAIL Can set 'background-position' to the 'repeat' keyword Bad value for shorthand CSS property
-FAIL Can set 'background-position' to the 'space' keyword Bad value for shorthand CSS property
-FAIL Can set 'background-position' to the 'round' keyword Bad value for shorthand CSS property
-FAIL Can set 'background-position' to the 'no-repeat' keyword Bad value for shorthand CSS property
+FAIL Can set 'background-position' to CSS-wide keywords: initial assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to CSS-wide keywords: inherit assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to CSS-wide keywords: unset assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to CSS-wide keywords: revert assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'background-position' to var() references:  var(--A) assert_equals: expected 2 but got 1
+FAIL Can set 'background-position' to the 'repeat-x' keyword: repeat-x Bad value for shorthand CSS property
+FAIL Can set 'background-position' to the 'repeat-y' keyword: repeat-y Bad value for shorthand CSS property
+FAIL Can set 'background-position' to the 'repeat' keyword: repeat Bad value for shorthand CSS property
+FAIL Can set 'background-position' to the 'space' keyword: space Bad value for shorthand CSS property
+FAIL Can set 'background-position' to the 'round' keyword: round Bad value for shorthand CSS property
+FAIL Can set 'background-position' to the 'no-repeat' keyword: no-repeat Bad value for shorthand CSS property
 FAIL Setting 'background-position' to a length throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 FAIL Setting 'background-position' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'background-position' to a time throws TypeError

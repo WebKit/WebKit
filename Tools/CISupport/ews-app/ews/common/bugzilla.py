@@ -229,7 +229,6 @@ class BugzillaBeautifulSoup():
             self.browser.select_form(name="login")
             self.browser['Bugzilla_login'] = username
             self.browser['Bugzilla_password'] = password
-            self.browser.find_control("Bugzilla_restrictlogin").items[0].selected = False
             try:
                 response = self.browser.submit()
             except:

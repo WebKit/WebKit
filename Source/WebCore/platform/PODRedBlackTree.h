@@ -592,7 +592,7 @@ private:
 
 #endif
 
-#ifdef NDEBUG
+#ifdef ERROR_DISABLED
     void logIfVerbose(const char*) const { }
 #else
     void logIfVerbose(const char* output) const

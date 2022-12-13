@@ -36,8 +36,10 @@ namespace JSC { namespace Wasm {
 
 class OpcodeOrigin {
     WTF_FORBID_HEAP_ALLOCATION;
-public:
+
     OpcodeOrigin() = default;
+#if USE(JSVALUE64)
+public:
     OpcodeOrigin(OpType opcode, size_t offset)
     {
         ASSERT(static_cast<uint32_t>(offset) == offset);
@@ -56,6 +58,13 @@ public:
 private:
     static_assert(sizeof(void*) == sizeof(uint64_t), "this packing doesn't work if this isn't the case");
     uint64_t packedData { 0 };
+
+#elif USE(JSVALUE32_64)
+    void dump(PrintStream&) const;
+
+    OpType opcode() const { UNREACHABLE_FOR_PLATFORM(); }
+    size_t location() const { UNREACHABLE_FOR_PLATFORM(); }
+#endif
 };
 
 } } // namespace JSC::Wasm

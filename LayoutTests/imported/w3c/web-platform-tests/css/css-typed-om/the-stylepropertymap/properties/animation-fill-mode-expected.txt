@@ -1,10 +1,13 @@
 
-PASS Can set 'animation-fill-mode' to CSS-wide keywords
-FAIL Can set 'animation-fill-mode' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'animation-fill-mode' to the 'none' keyword
-PASS Can set 'animation-fill-mode' to the 'forwards' keyword
-PASS Can set 'animation-fill-mode' to the 'backwards' keyword
-PASS Can set 'animation-fill-mode' to the 'both' keyword
+PASS Can set 'animation-fill-mode' to CSS-wide keywords: initial
+PASS Can set 'animation-fill-mode' to CSS-wide keywords: inherit
+PASS Can set 'animation-fill-mode' to CSS-wide keywords: unset
+PASS Can set 'animation-fill-mode' to CSS-wide keywords: revert
+FAIL Can set 'animation-fill-mode' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'animation-fill-mode' to the 'none' keyword: none
+PASS Can set 'animation-fill-mode' to the 'forwards' keyword: forwards
+PASS Can set 'animation-fill-mode' to the 'backwards' keyword: backwards
+PASS Can set 'animation-fill-mode' to the 'both' keyword: both
 PASS Setting 'animation-fill-mode' to a length throws TypeError
 PASS Setting 'animation-fill-mode' to a percent throws TypeError
 PASS Setting 'animation-fill-mode' to a time throws TypeError

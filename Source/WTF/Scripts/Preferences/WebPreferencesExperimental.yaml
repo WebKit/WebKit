@@ -1284,7 +1284,7 @@ PermissionsAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)" : true
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)" : true
       default: false
     WebCore:
       default: false

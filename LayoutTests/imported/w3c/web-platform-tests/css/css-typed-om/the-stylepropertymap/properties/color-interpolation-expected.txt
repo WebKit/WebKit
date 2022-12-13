@@ -1,9 +1,12 @@
 
-PASS Can set 'color-interpolation' to CSS-wide keywords
-FAIL Can set 'color-interpolation' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'color-interpolation' to the 'auto' keyword
-FAIL Can set 'color-interpolation' to the 'srgb' keyword assert_equals: expected "srgb" but got "sRGB"
-FAIL Can set 'color-interpolation' to the 'linearrgb' keyword assert_equals: expected "linearrgb" but got "linearRGB"
+PASS Can set 'color-interpolation' to CSS-wide keywords: initial
+PASS Can set 'color-interpolation' to CSS-wide keywords: inherit
+PASS Can set 'color-interpolation' to CSS-wide keywords: unset
+PASS Can set 'color-interpolation' to CSS-wide keywords: revert
+FAIL Can set 'color-interpolation' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'color-interpolation' to the 'auto' keyword: auto
+FAIL Can set 'color-interpolation' to the 'srgb' keyword: srgb assert_equals: expected "srgb" but got "sRGB"
+FAIL Can set 'color-interpolation' to the 'linearrgb' keyword: linearrgb assert_equals: expected "linearrgb" but got "linearRGB"
 PASS Setting 'color-interpolation' to a length throws TypeError
 PASS Setting 'color-interpolation' to a percent throws TypeError
 PASS Setting 'color-interpolation' to a time throws TypeError

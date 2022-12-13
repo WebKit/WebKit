@@ -126,17 +126,6 @@ WASM_SLOW_PATH_HIDDEN_DECL(i64_trunc_sat_f64_u);
 WASM_SLOW_PATH_HIDDEN_DECL(i64_trunc_sat_f64_s);
 #endif
 
-#if USE(JSVALUE32_64)
-extern "C" int32_t slow_path_wasm_i32_div_s(int32_t a, int32_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" uint32_t slow_path_wasm_i32_div_u(uint32_t a, uint32_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" int32_t slow_path_wasm_i32_rem_s(int32_t a, int32_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" uint32_t slow_path_wasm_i32_rem_u(uint32_t a, uint32_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" int64_t slow_path_wasm_i64_div_s(int64_t a, int64_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" uint64_t slow_path_wasm_i64_div_u(uint64_t a, uint64_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" int64_t slow_path_wasm_i64_rem_s(int64_t a, int64_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" uint64_t slow_path_wasm_i64_rem_u(uint64_t a, uint64_t b) REFERENCED_FROM_ASM WTF_INTERNAL;
-#endif
-
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(WEBASSEMBLY)

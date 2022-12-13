@@ -96,10 +96,14 @@ void fastSetMaxSingleAllocationSize(size_t size)
     maxSingleAllocationSize = size;
 }
 
+#if ASSERT_ENABLED
 #define ASSERT_IS_WITHIN_LIMIT(size) do { \
         size_t size__ = (size); \
         ASSERT_WITH_MESSAGE((size__) <= maxSingleAllocationSize, "Requested size (%zu) exceeds max single allocation size set for testing (%zu)", (size__), maxSingleAllocationSize); \
     } while (false)
+#else
+#define ASSERT_IS_WITHIN_LIMIT(size)
+#endif // ASSERT_ENABLED
 
 #define FAIL_IF_EXCEEDS_LIMIT(size) do { \
         if (UNLIKELY((size) > maxSingleAllocationSize)) \

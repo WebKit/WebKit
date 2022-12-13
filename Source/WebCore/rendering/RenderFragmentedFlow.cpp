@@ -470,7 +470,7 @@ void RenderFragmentedFlow::removeRenderBoxFragmentInfo(RenderBox& box)
 #ifndef NDEBUG
     // We have to make sure we did not leave any RenderBoxFragmentInfo attached.
     for (auto& fragment : m_fragmentList)
-        ASSERT(!fragment->renderBoxFragmentInfo(&box));
+        ASSERT_UNUSED(fragment, !fragment->renderBoxFragmentInfo(&box));
 #endif
 
     m_fragmentRangeMap.remove(&box);

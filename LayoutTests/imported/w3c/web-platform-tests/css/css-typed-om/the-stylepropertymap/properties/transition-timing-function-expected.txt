@@ -1,13 +1,16 @@
 
-PASS Can set 'transition-timing-function' to CSS-wide keywords
-FAIL Can set 'transition-timing-function' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'transition-timing-function' to the 'linear' keyword
-PASS Can set 'transition-timing-function' to the 'ease' keyword
-PASS Can set 'transition-timing-function' to the 'ease-in' keyword
-PASS Can set 'transition-timing-function' to the 'ease-out' keyword
-PASS Can set 'transition-timing-function' to the 'ease-in-out' keyword
-FAIL Can set 'transition-timing-function' to the 'step-start' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Can set 'transition-timing-function' to the 'step-end' keyword assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Can set 'transition-timing-function' to CSS-wide keywords: initial
+PASS Can set 'transition-timing-function' to CSS-wide keywords: inherit
+PASS Can set 'transition-timing-function' to CSS-wide keywords: unset
+PASS Can set 'transition-timing-function' to CSS-wide keywords: revert
+FAIL Can set 'transition-timing-function' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'transition-timing-function' to the 'linear' keyword: linear
+PASS Can set 'transition-timing-function' to the 'ease' keyword: ease
+PASS Can set 'transition-timing-function' to the 'ease-in' keyword: ease-in
+PASS Can set 'transition-timing-function' to the 'ease-out' keyword: ease-out
+PASS Can set 'transition-timing-function' to the 'ease-in-out' keyword: ease-in-out
+FAIL Can set 'transition-timing-function' to the 'step-start' keyword: step-start assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'transition-timing-function' to the 'step-end' keyword: step-end assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 PASS Setting 'transition-timing-function' to a length throws TypeError
 PASS Setting 'transition-timing-function' to a percent throws TypeError
 PASS Setting 'transition-timing-function' to a time throws TypeError

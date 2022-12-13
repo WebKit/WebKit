@@ -1,16 +1,19 @@
 
-PASS Can set 'font-variant-east-asian' to CSS-wide keywords
-FAIL Can set 'font-variant-east-asian' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'font-variant-east-asian' to the 'normal' keyword
-PASS Can set 'font-variant-east-asian' to the 'jis78' keyword
-PASS Can set 'font-variant-east-asian' to the 'jis83' keyword
-PASS Can set 'font-variant-east-asian' to the 'jis90' keyword
-PASS Can set 'font-variant-east-asian' to the 'jis04' keyword
-PASS Can set 'font-variant-east-asian' to the 'simplified' keyword
-PASS Can set 'font-variant-east-asian' to the 'traditional' keyword
-PASS Can set 'font-variant-east-asian' to the 'full-width' keyword
-PASS Can set 'font-variant-east-asian' to the 'proportional-width' keyword
-PASS Can set 'font-variant-east-asian' to the 'ruby' keyword
+PASS Can set 'font-variant-east-asian' to CSS-wide keywords: initial
+PASS Can set 'font-variant-east-asian' to CSS-wide keywords: inherit
+PASS Can set 'font-variant-east-asian' to CSS-wide keywords: unset
+PASS Can set 'font-variant-east-asian' to CSS-wide keywords: revert
+FAIL Can set 'font-variant-east-asian' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-variant-east-asian' to the 'normal' keyword: normal
+PASS Can set 'font-variant-east-asian' to the 'jis78' keyword: jis78
+PASS Can set 'font-variant-east-asian' to the 'jis83' keyword: jis83
+PASS Can set 'font-variant-east-asian' to the 'jis90' keyword: jis90
+PASS Can set 'font-variant-east-asian' to the 'jis04' keyword: jis04
+PASS Can set 'font-variant-east-asian' to the 'simplified' keyword: simplified
+PASS Can set 'font-variant-east-asian' to the 'traditional' keyword: traditional
+PASS Can set 'font-variant-east-asian' to the 'full-width' keyword: full-width
+PASS Can set 'font-variant-east-asian' to the 'proportional-width' keyword: proportional-width
+PASS Can set 'font-variant-east-asian' to the 'ruby' keyword: ruby
 PASS Setting 'font-variant-east-asian' to a length throws TypeError
 PASS Setting 'font-variant-east-asian' to a percent throws TypeError
 PASS Setting 'font-variant-east-asian' to a time throws TypeError

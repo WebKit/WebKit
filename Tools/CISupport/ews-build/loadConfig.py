@@ -52,6 +52,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
         passwords = {}
     else:
         passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
+    results_server_api_key = passwords.get('results-server-api-key')
+    if results_server_api_key:
+        os.environ['RESULTS_SERVER_API_KEY'] = results_server_api_key
 
     checkWorkersAndBuildersForConsistency(config, config['workers'], config['builders'])
     checkValidSchedulers(config, config['schedulers'])
@@ -136,7 +139,7 @@ def prioritizeBuilders(buildmaster, builders):
     def key(b):
         request_time = yield b.getOldestRequestTime()
         return (
-            'build' not in b.name.lower(),
+            'build' not in b.name.lower() and 'unsafe' not in b.name.lower() and 'commit' not in b.name.lower(),
             bool(b.building) or bool(b.old_building),
             request_time or datetime.now(timezone.utc),
         )

@@ -53,16 +53,25 @@ void lowerMacros(Code& code)
 
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
 
-                unsigned offset = value->type() == Void ? 0 : 1;
+                unsigned resultCount = cCallResultCount(value);
+                ASSERT_IMPLIES(is64Bit(), resultCount <= 1);
+                
                 Vector<ShufflePair, 16> shufflePairs;
                 bool hasRegisterSource = false;
-                for (unsigned i = 1; i < destinations.size(); ++i) {
-                    Value* child = value->child(i);
-                    ShufflePair pair(inst.args[offset + i], destinations[i], widthForType(child->type()));
+                unsigned offset = 1;
+                auto addNextPair = [&](Width width) {
+                    ShufflePair pair(inst.args[offset + resultCount], destinations[offset], width);
                     shufflePairs.append(pair);
                     hasRegisterSource |= pair.src().isReg();
+                    ++offset;
+                };
+                for (unsigned i = 1; i < value->numChildren(); ++i) {
+                    Value* child = value->child(i);
+                    for (unsigned j = 0; j < cCallArgumentRegisterCount(child); j++)
+                        addNextPair(cCallArgumentRegisterWidth(child));
                 }
-
+                ASSERT(offset = inst.args.size());
+                
                 if (UNLIKELY(hasRegisterSource))
                     insertionSet.insertInst(instIndex, createShuffle(inst.origin, Vector<ShufflePair>(shufflePairs)));
                 else {
@@ -91,31 +100,37 @@ void lowerMacros(Code& code)
                 destinations[0] = inst.args[0];
 
                 // Save where the original instruction put its result.
-                Arg resultDst = value->type() == Void ? Arg() : inst.args[1];
+                Arg resultDst0 = resultCount >= 1 ? inst.args[1] : Arg();
+#if USE(JSVALUE32_64)
+                Arg resultDst1 = resultCount >= 2 ? inst.args[2] : Arg();
+#endif
 
                 inst = buildCCall(code, inst.origin, destinations);
                 if (oldKind.effects)
                     inst.kind.effects = true;
 
-                Tmp result = cCallResult(value->type());
                 switch (value->type().kind()) {
                 case Void:
                 case Tuple:
                     break;
                 case Float:
-                    insertionSet.insert(instIndex + 1, MoveFloat, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, MoveFloat, value, cCallResult(value, 0), resultDst0);
                     break;
                 case Double:
-                    insertionSet.insert(instIndex + 1, MoveDouble, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, MoveDouble, value, cCallResult(value, 0), resultDst0);
                     break;
                 case Int32:
-                    insertionSet.insert(instIndex + 1, Move32, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, Move32, value, cCallResult(value, 0), resultDst0);
                     break;
                 case Int64:
-                    insertionSet.insert(instIndex + 1, Move, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(value, 0), resultDst0);
+#if USE(JSVALUE32_64)
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(value, 1), resultDst1);
+#endif
                     break;
                 case V128:
-                    insertionSet.insert(instIndex + 1, MoveVector, value, result, resultDst);
+                    ASSERT(is64Bit());
+                    insertionSet.insert(instIndex + 1, MoveVector, value, cCallResult(value, 0), resultDst0);
                     break;
                 }
             };
@@ -255,6 +270,36 @@ void lowerMacros(Code& code)
                 inst = Inst();
             };
 
+            auto handleVectorAbs = [&] {
+                SIMDInfo simdInfo = inst.args[0].simdInfo();
+
+                if (!isX86() || !scalarTypeIsFloatingPoint(simdInfo.lane))
+                    return;
+
+                // Intel doesn't have a vector absolute-value instruction for floats, so we have to manually
+                // set the sign bit.
+
+                Tmp vec = inst.args[0].tmp();
+                Tmp dst = inst.args[1].tmp();
+                auto* origin = inst.origin;
+
+                Tmp fptmp = code.newTmp(FP);
+                Tmp gptmp = code.newTmp(GP);
+
+                if (simdInfo.lane == SIMDLane::f32x4) {
+                    insertionSet.insert(instIndex, Move, origin, Arg::imm(0x7fffffff), gptmp);
+                    insertionSet.insert(instIndex, Move32ToFloat, origin, gptmp, fptmp);
+                    insertionSet.insert(instIndex, VectorSplatFloat32, origin, fptmp, fptmp);
+                } else {
+                    insertionSet.insert(instIndex, Move, origin, Arg::bigImm(0x7fffffffffffffff), gptmp);
+                    insertionSet.insert(instIndex, Move64ToDouble, origin, gptmp, fptmp);
+                    insertionSet.insert(instIndex, VectorSplatFloat64, origin, fptmp, fptmp);
+                }
+                insertionSet.insert(instIndex, VectorAnd, origin, Arg::simdInfo(simdInfo), vec, fptmp, dst);
+
+                inst = Inst();
+            };
+
             auto handleVectorBitmask = [&] {
                 if (!isARM64())
                     return;
@@ -339,6 +384,9 @@ void lowerMacros(Code& code)
                 break;
             case VectorAnyTrue:
                 handleVectorAnyTrue();
+                break;
+            case VectorAbs:
+                handleVectorAbs();
                 break;
             case VectorMul:
                 handleVectorMul();

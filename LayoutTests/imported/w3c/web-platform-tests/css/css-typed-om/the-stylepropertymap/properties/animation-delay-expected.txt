@@ -1,7 +1,13 @@
 
-PASS Can set 'animation-delay' to CSS-wide keywords
-FAIL Can set 'animation-delay' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'animation-delay' to a time
+PASS Can set 'animation-delay' to CSS-wide keywords: initial
+PASS Can set 'animation-delay' to CSS-wide keywords: inherit
+PASS Can set 'animation-delay' to CSS-wide keywords: unset
+PASS Can set 'animation-delay' to CSS-wide keywords: revert
+FAIL Can set 'animation-delay' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'animation-delay' to a time: 0s
+PASS Can set 'animation-delay' to a time: -3.14ms
+PASS Can set 'animation-delay' to a time: 3.14s
+PASS Can set 'animation-delay' to a time: calc(0s + 0ms)
 PASS Setting 'animation-delay' to a length throws TypeError
 PASS Setting 'animation-delay' to a percent throws TypeError
 PASS Setting 'animation-delay' to an angle throws TypeError

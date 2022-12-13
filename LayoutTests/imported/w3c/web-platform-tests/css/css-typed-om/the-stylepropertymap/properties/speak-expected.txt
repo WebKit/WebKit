@@ -1,9 +1,12 @@
 
-FAIL Can set 'speak' to CSS-wide keywords Invalid property speak
-FAIL Can set 'speak' to var() references Invalid property speak
-FAIL Can set 'speak' to the 'auto' keyword Invalid property speak
-FAIL Can set 'speak' to the 'never' keyword Invalid property speak
-FAIL Can set 'speak' to the 'always' keyword Invalid property speak
+FAIL Can set 'speak' to CSS-wide keywords: initial Invalid property speak
+FAIL Can set 'speak' to CSS-wide keywords: inherit Invalid property speak
+FAIL Can set 'speak' to CSS-wide keywords: unset Invalid property speak
+FAIL Can set 'speak' to CSS-wide keywords: revert Invalid property speak
+FAIL Can set 'speak' to var() references:  var(--A) Invalid property speak
+FAIL Can set 'speak' to the 'auto' keyword: auto Invalid property speak
+FAIL Can set 'speak' to the 'never' keyword: never Invalid property speak
+FAIL Can set 'speak' to the 'always' keyword: always Invalid property speak
 PASS Setting 'speak' to a length throws TypeError
 PASS Setting 'speak' to a percent throws TypeError
 PASS Setting 'speak' to a time throws TypeError

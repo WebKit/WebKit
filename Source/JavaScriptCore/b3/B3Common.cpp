@@ -75,7 +75,7 @@ GPRReg extendedOffsetAddrRegister()
     RELEASE_ASSERT(isARM64() || isRISCV64());
 #if CPU(ARM64) || CPU(RISCV64)
     return MacroAssembler::linkRegister;
-#elif CPU(X86_64)
+#elif CPU(X86_64) || CPU(ARM)
     return GPRReg::InvalidGPRReg;
 #else
 #error Unhandled architecture.

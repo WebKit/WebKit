@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 WebKitDOMNode* wrap(WebCore::Node* node)
 {
     ASSERT(node);
@@ -57,5 +59,7 @@ WebKitDOMNode* wrap(WebCore::Node* node)
 
     return wrapNode(node);
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS;
 
 } // namespace WebKit

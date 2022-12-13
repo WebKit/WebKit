@@ -78,7 +78,7 @@ bool ResourceResponse::isAppendableHeader(const String &key)
     return false;
 }
 
-ResourceResponse::ResourceResponse(const CurlResponse& response)
+ResourceResponse::ResourceResponse(CurlResponse& response)
     : ResourceResponseBase()
 {
     setURL(response.url);
@@ -105,6 +105,7 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
 
     setMimeType(AtomString { extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase() });
     setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toAtomString());
+    setCertificateInfo(WTFMove(response.certificateInfo));
     setSource(ResourceResponse::Source::Network);
 }
 
@@ -143,11 +144,6 @@ void ResourceResponse::setStatusLine(StringView header)
         auto statusText = statusLine.substring(statusCodeEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
         setHTTPStatusText(statusText.toAtomString());
     }
-}
-
-void ResourceResponse::setCertificateInfo(CertificateInfo&& certificateInfo)
-{
-    m_certificateInfo = WTFMove(certificateInfo);
 }
 
 String ResourceResponse::platformSuggestedFilename() const

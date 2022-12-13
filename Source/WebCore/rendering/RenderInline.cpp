@@ -574,7 +574,7 @@ LayoutRect RenderInline::clippedOverflowRect(const RenderLayerModelObject* repai
         }
         return false;
     };
-    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || style().styleType() == PseudoId::FirstLetter || insideSelfPaintingInlineBox());
+    ASSERT_UNUSED(insideSelfPaintingInlineBox, !view().frameView().layoutContext().isPaintOffsetCacheEnabled() || style().styleType() == PseudoId::FirstLetter || insideSelfPaintingInlineBox());
 #endif
 
     auto knownEmpty = [&] {

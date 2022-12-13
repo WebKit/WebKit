@@ -61,8 +61,7 @@ module Wasm
 
     def self.generate_binary_op(op)
         <<-EOF
-template<>
-auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType lhs, ExpressionType rhs, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::add#{unprefixed_capitalized_name(op)}(ExpressionType lhs, ExpressionType rhs, ExpressionType& result) -> PartialResult
 {
     result = push();
     #{op.capitalized_name}::emit(this, result, lhs, rhs);
@@ -73,8 +72,7 @@ auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType lhs, ExpressionType rh
 
     def self.generate_unary_op(op)
         <<-EOF
-template<>
-auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType operand, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::add#{unprefixed_capitalized_name(op)}(ExpressionType operand, ExpressionType& result) -> PartialResult
 {
     result = push();
     #{op.capitalized_name}::emit(this, result, operand);
@@ -83,7 +81,7 @@ auto LLIntGenerator::addOp<#{op_type(op)}>(ExpressionType operand, ExpressionTyp
         EOF
     end
 
-    def self.op_type(op)
-        "OpType::#{op.unprefixed_name.gsub(/^.|[^a-z0-9]./) { |c| c[-1].upcase }}"
+    def self.unprefixed_capitalized_name(op)
+        op.unprefixed_name.gsub(/^.|[^a-z0-9]./) { |c| c[-1].upcase }
     end
 end

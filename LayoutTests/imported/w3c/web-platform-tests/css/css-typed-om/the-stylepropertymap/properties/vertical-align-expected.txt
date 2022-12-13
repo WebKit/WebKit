@@ -1,9 +1,18 @@
 
-PASS Can set 'vertical-align' to CSS-wide keywords
-FAIL Can set 'vertical-align' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'vertical-align' to the 'baseline' keyword
-PASS Can set 'vertical-align' to a length
-PASS Can set 'vertical-align' to a percent
+PASS Can set 'vertical-align' to CSS-wide keywords: initial
+PASS Can set 'vertical-align' to CSS-wide keywords: inherit
+PASS Can set 'vertical-align' to CSS-wide keywords: unset
+PASS Can set 'vertical-align' to CSS-wide keywords: revert
+FAIL Can set 'vertical-align' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'vertical-align' to the 'baseline' keyword: baseline
+PASS Can set 'vertical-align' to a length: 0px
+PASS Can set 'vertical-align' to a length: -3.14em
+PASS Can set 'vertical-align' to a length: 3.14cm
+PASS Can set 'vertical-align' to a length: calc(0px + 0em)
+PASS Can set 'vertical-align' to a percent: 0%
+PASS Can set 'vertical-align' to a percent: -3.14%
+PASS Can set 'vertical-align' to a percent: 3.14%
+PASS Can set 'vertical-align' to a percent: calc(0% + 0%)
 PASS Setting 'vertical-align' to a time throws TypeError
 PASS Setting 'vertical-align' to an angle throws TypeError
 PASS Setting 'vertical-align' to a flexible length throws TypeError

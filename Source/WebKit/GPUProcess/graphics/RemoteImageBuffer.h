@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class RemoteDisplayListRecorder;
+class RemoteRenderingBackend;
 
 class RemoteImageBuffer : public WebCore::ImageBuffer {
 public:
@@ -47,7 +48,7 @@ public:
             , &remoteRenderingBackend.ioSurfacePool()
 #endif
         };
-        
+
         auto imageBuffer = ImageBuffer::create<BackendType, RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
         if (!imageBuffer)
             return nullptr;
@@ -58,6 +59,8 @@ public:
         remoteRenderingBackend.didCreateImageBufferBackend(backend->createBackendHandle(), renderingResourceIdentifier, *imageBuffer->m_remoteDisplayList.get());
         return imageBuffer;
     }
+
+    static RefPtr<RemoteImageBuffer> createTransfer(Ref<RemoteImageBuffer>&&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
 
     RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, std::unique_ptr<WebCore::ImageBufferBackend>&&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
     ~RemoteImageBuffer();

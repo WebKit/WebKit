@@ -1,15 +1,17 @@
 
-PASS Can set 'clip-path' to CSS-wide keywords
-FAIL Can set 'clip-path' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'clip-path' to the 'none' keyword
-PASS Can set 'clip-path' to the 'fill-box' keyword
-PASS Can set 'clip-path' to the 'stroke-box' keyword
-PASS Can set 'clip-path' to the 'view-box' keyword
-PASS Can set 'clip-path' to the 'margin-box' keyword
-PASS Can set 'clip-path' to the 'border-box' keyword
-PASS Can set 'clip-path' to the 'padding-box' keyword
-PASS Can set 'clip-path' to the 'content-box' keyword
-PASS Can set 'clip-path' to a URL
+PASS Can set 'clip-path' to CSS-wide keywords: initial
+PASS Can set 'clip-path' to CSS-wide keywords: inherit
+PASS Can set 'clip-path' to CSS-wide keywords: unset
+PASS Can set 'clip-path' to CSS-wide keywords: revert
+FAIL Can set 'clip-path' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'clip-path' to the 'none' keyword: none
+PASS Can set 'clip-path' to the 'fill-box' keyword: fill-box
+PASS Can set 'clip-path' to the 'stroke-box' keyword: stroke-box
+PASS Can set 'clip-path' to the 'view-box' keyword: view-box
+PASS Can set 'clip-path' to the 'margin-box' keyword: margin-box
+PASS Can set 'clip-path' to the 'border-box' keyword: border-box
+PASS Can set 'clip-path' to the 'padding-box' keyword: padding-box
+PASS Can set 'clip-path' to the 'content-box' keyword: content-box
 PASS Setting 'clip-path' to a length throws TypeError
 PASS Setting 'clip-path' to a percent throws TypeError
 PASS Setting 'clip-path' to a time throws TypeError

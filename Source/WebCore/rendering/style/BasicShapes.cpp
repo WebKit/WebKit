@@ -49,7 +49,7 @@ namespace WebCore {
 
 void BasicShapeCenterCoordinate::updateComputedLength()
 {
-    if (m_direction == TopLeft) {
+    if (m_direction == BasicShapeCenterCoordinate::Direction::TopLeft) {
         m_computedLength = m_length.isUndefined() ? Length(0, LengthType::Fixed) : m_length;
         return;
     }
@@ -145,6 +145,18 @@ static const Path& cachedTransformedByteStreamPath(const SVGPathByteStream& stre
     return cache.get().get(SVGPathTransformedByteStream { stream, zoom, offset });
 }
 
+Ref<BasicShapeCircle> BasicShapeCircle::create(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&& radius)
+{
+    return adoptRef(*new BasicShapeCircle(WTFMove(centerX), WTFMove(centerY), WTFMove(radius)));
+}
+
+BasicShapeCircle::BasicShapeCircle(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&& radius)
+    : m_centerX(WTFMove(centerX))
+    , m_centerY(WTFMove(centerY))
+    , m_radius(WTFMove(radius))
+{
+}
+
 bool BasicShapeCircle::operator==(const BasicShape& other) const
 {
     if (type() != other.type())
@@ -158,7 +170,7 @@ bool BasicShapeCircle::operator==(const BasicShape& other) const
 
 float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight) const
 {
-    if (m_radius.type() == BasicShapeRadius::Value)
+    if (m_radius.type() == BasicShapeRadius::Type::Value)
         return floatValueForLength(m_radius.value(), std::hypot(boxWidth, boxHeight) / sqrtOfTwoFloat);
 
     float centerX = floatValueForCenterCoordinate(m_centerX, boxWidth);
@@ -166,10 +178,10 @@ float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight
 
     float widthDelta = std::abs(boxWidth - centerX);
     float heightDelta = std::abs(boxHeight - centerY);
-    if (m_radius.type() == BasicShapeRadius::ClosestSide)
+    if (m_radius.type() == BasicShapeRadius::Type::ClosestSide)
         return std::min(std::min(std::abs(centerX), widthDelta), std::min(std::abs(centerY), heightDelta));
 
-    // If radius.type() == BasicShapeRadius::FarthestSide.
+    // If radius.type() == BasicShapeRadius::Type::FarthestSide.
     return std::max(std::max(std::abs(centerX), widthDelta), std::max(std::abs(centerY), heightDelta));
 }
 
@@ -209,6 +221,19 @@ void BasicShapeCircle::dump(TextStream& ts) const
     ts.dumpProperty("radius", radius());
 }
 
+Ref<BasicShapeEllipse> BasicShapeEllipse::create(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&& radiusX, BasicShapeRadius&& radiusY)
+{
+    return adoptRef(*new BasicShapeEllipse(WTFMove(centerX), WTFMove(centerY), WTFMove(radiusX), WTFMove(radiusY)));
+}
+
+BasicShapeEllipse::BasicShapeEllipse(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&& radiusX, BasicShapeRadius&& radiusY)
+    : m_centerX(WTFMove(centerX))
+    , m_centerY(WTFMove(centerY))
+    , m_radiusX(WTFMove(radiusX))
+    , m_radiusY(WTFMove(radiusY))
+{
+}
+
 bool BasicShapeEllipse::operator==(const BasicShape& other) const
 {
     if (type() != other.type())
@@ -223,14 +248,14 @@ bool BasicShapeEllipse::operator==(const BasicShape& other) const
 
 float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight) const
 {
-    if (radius.type() == BasicShapeRadius::Value)
+    if (radius.type() == BasicShapeRadius::Type::Value)
         return floatValueForLength(radius.value(), std::abs(boxWidthOrHeight));
 
     float widthOrHeightDelta = std::abs(boxWidthOrHeight - center);
-    if (radius.type() == BasicShapeRadius::ClosestSide)
+    if (radius.type() == BasicShapeRadius::Type::ClosestSide)
         return std::min(std::abs(center), widthOrHeightDelta);
 
-    ASSERT(radius.type() == BasicShapeRadius::FarthestSide);
+    ASSERT(radius.type() == BasicShapeRadius::Type::FarthestSide);
     return std::max(std::abs(center), widthOrHeightDelta);
 }
 
@@ -259,8 +284,8 @@ Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, const Blending
     auto& otherEllipse = downcast<BasicShapeEllipse>(other);
     auto result = BasicShapeEllipse::create();
 
-    if (m_radiusX.type() != BasicShapeRadius::Value || otherEllipse.radiusX().type() != BasicShapeRadius::Value
-        || m_radiusY.type() != BasicShapeRadius::Value || otherEllipse.radiusY().type() != BasicShapeRadius::Value) {
+    if (m_radiusX.type() != BasicShapeRadius::Type::Value || otherEllipse.radiusX().type() != BasicShapeRadius::Type::Value
+        || m_radiusY.type() != BasicShapeRadius::Type::Value || otherEllipse.radiusY().type() != BasicShapeRadius::Type::Value) {
         result->setCenterX(otherEllipse.centerX());
         result->setCenterY(otherEllipse.centerY());
         result->setRadiusX(otherEllipse.radiusX());
@@ -281,6 +306,17 @@ void BasicShapeEllipse::dump(TextStream& ts) const
     ts.dumpProperty("center-y", centerY());
     ts.dumpProperty("radius-x", radiusX());
     ts.dumpProperty("radius-y", radiusY());
+}
+
+Ref<BasicShapePolygon> BasicShapePolygon::create(WindRule windRule, Vector<Length>&& values)
+{
+    return adoptRef(*new BasicShapePolygon(windRule, WTFMove(values)));
+}
+
+BasicShapePolygon::BasicShapePolygon(WindRule windRule, Vector<Length>&& values)
+    : m_windRule(windRule)
+    , m_values(WTFMove(values))
+{
 }
 
 bool BasicShapePolygon::operator==(const BasicShape& other) const
@@ -346,8 +382,20 @@ void BasicShapePolygon::dump(TextStream& ts) const
     ts.dumpProperty("path", values());
 }
 
+Ref<BasicShapePath> BasicShapePath::create(std::unique_ptr<SVGPathByteStream>&& byteStream, float zoom, WindRule windRule)
+{
+    return adoptRef(*new BasicShapePath(WTFMove(byteStream), zoom, windRule));
+}
+
 BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream)
     : m_byteStream(WTFMove(byteStream))
+{
+}
+
+BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream, float zoom, WindRule windRule)
+    : m_byteStream(WTFMove(byteStream))
+    , m_zoom(zoom)
+    , m_windRule(windRule)
 {
 }
 
@@ -392,6 +440,23 @@ void BasicShapePath::dump(TextStream& ts) const
 {
     ts.dumpProperty("wind-rule", windRule());
     // FIXME: print the byte stream?
+}
+
+Ref<BasicShapeInset> BasicShapeInset::create(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
+{
+    return adoptRef(*new BasicShapeInset(WTFMove(right), WTFMove(top), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
+}
+
+BasicShapeInset::BasicShapeInset(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
+    : m_right(WTFMove(right))
+    , m_top(WTFMove(top))
+    , m_bottom(WTFMove(bottom))
+    , m_left(WTFMove(left))
+    , m_topLeftRadius(WTFMove(topLeftRadius))
+    , m_topRightRadius(WTFMove(topRightRadius))
+    , m_bottomRightRadius(WTFMove(bottomRightRadius))
+    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
+{
 }
 
 bool BasicShapeInset::operator==(const BasicShape& other) const
@@ -466,9 +531,9 @@ void BasicShapeInset::dump(TextStream& ts) const
 static TextStream& operator<<(TextStream& ts, BasicShapeRadius::Type radiusType)
 {
     switch (radiusType) {
-    case BasicShapeRadius::Value: ts << "value"; break;
-    case BasicShapeRadius::ClosestSide: ts << "closest-side"; break;
-    case BasicShapeRadius::FarthestSide: ts << "farthest-side"; break;
+    case BasicShapeRadius::Type::Value: ts << "value"; break;
+    case BasicShapeRadius::Type::ClosestSide: ts << "closest-side"; break;
+    case BasicShapeRadius::Type::FarthestSide: ts << "farthest-side"; break;
     }
     return ts;
 }
@@ -482,7 +547,7 @@ TextStream& operator<<(TextStream& ts, const BasicShapeRadius& radius)
 
 TextStream& operator<<(TextStream& ts, const BasicShapeCenterCoordinate& coordinate)
 {
-    ts.dumpProperty("direction", coordinate.direction() == BasicShapeCenterCoordinate::TopLeft ? "top left" : "bottom right");
+    ts.dumpProperty("direction", coordinate.direction() == BasicShapeCenterCoordinate::Direction::TopLeft ? "top left" : "bottom right");
     ts.dumpProperty("length", coordinate.length());
     return ts;
 }

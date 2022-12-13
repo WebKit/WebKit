@@ -28,6 +28,7 @@
 
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
+#import "WebPushDaemonConnectionConfiguration.h"
 #import "WebPushDaemonConstants.h"
 #import <mach/mach_init.h>
 #import <mach/task.h>
@@ -177,15 +178,21 @@ void Connection::sendAuditToken()
         return;
     }
 
-    std::array<uint8_t, 42> encodedMessage;
-    encodedMessage.fill(0);
-    encodedMessage[1] = 1;
-    encodedMessage[2] = 32;
-    memcpy(&encodedMessage[10], &token, sizeof(token));
+    WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration;
+    configuration.useMockBundlesForTesting = true;
+
+    Vector<uint8_t> tokenVector;
+    tokenVector.resize(32);
+    memcpy(tokenVector.data(), &token, sizeof(token));
+    configuration.hostAppAuditTokenData = WTFMove(tokenVector);
+
+    WebKit::Daemon::Encoder encoder;
+    configuration.encode(encoder);
+
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-    xpc_dictionary_set_uint64(dictionary.get(), "message type", 6);
-    xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(WebKit::WebPushD::MessageType::UpdateConnectionConfiguration));
+    xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, WebKit::vectorToXPCData(encoder.takeBuffer()).get());
     xpc_connection_send_message(m_connection.get(), dictionary.get());
 }
 

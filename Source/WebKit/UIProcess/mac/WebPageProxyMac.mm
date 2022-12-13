@@ -318,12 +318,23 @@ void WebPageProxy::assistiveTechnologyMakeFirstResponder()
     pageClient().assistiveTechnologyMakeFirstResponder();
 }
 
-#if PLATFORM(MAC)
+bool WebPageProxy::useFormSemanticContext() const
+{
+    return pageClient().useFormSemanticContext();
+}
+
+void WebPageProxy::semanticContextDidChange()
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SemanticContextDidChange(useFormSemanticContext()));
+}
+
 WebCore::DestinationColorSpace WebPageProxy::colorSpace()
 {
     return pageClient().colorSpace();
 }
-#endif
 
 void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {

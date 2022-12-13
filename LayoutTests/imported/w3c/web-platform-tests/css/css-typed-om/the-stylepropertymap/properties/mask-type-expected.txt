@@ -1,8 +1,11 @@
 
-PASS Can set 'mask-type' to CSS-wide keywords
-FAIL Can set 'mask-type' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'mask-type' to the 'luminance' keyword
-PASS Can set 'mask-type' to the 'alpha' keyword
+PASS Can set 'mask-type' to CSS-wide keywords: initial
+PASS Can set 'mask-type' to CSS-wide keywords: inherit
+PASS Can set 'mask-type' to CSS-wide keywords: unset
+PASS Can set 'mask-type' to CSS-wide keywords: revert
+FAIL Can set 'mask-type' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'mask-type' to the 'luminance' keyword: luminance
+PASS Can set 'mask-type' to the 'alpha' keyword: alpha
 PASS Setting 'mask-type' to a length throws TypeError
 PASS Setting 'mask-type' to a percent throws TypeError
 PASS Setting 'mask-type' to a time throws TypeError

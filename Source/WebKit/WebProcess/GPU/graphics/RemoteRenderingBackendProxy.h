@@ -63,6 +63,7 @@ enum class RenderingMode : bool;
 namespace WebKit {
 
 class WebPage;
+class RemoteImageBufferProxy;
 
 class RemoteImageBufferProxyFlushState;
 
@@ -136,6 +137,12 @@ public:
     void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
     IPC::StreamClientConnection& streamConnection();
+
+    template<typename T, typename C>
+    void sendToStreamWithAsyncReply(T&& message, C&& completionHandler)
+    {
+        streamConnection().sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), renderingBackendIdentifier(), Seconds::infinity());
+    }
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 

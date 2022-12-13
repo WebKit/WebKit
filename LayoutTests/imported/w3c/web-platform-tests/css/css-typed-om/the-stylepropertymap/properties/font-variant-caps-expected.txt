@@ -1,13 +1,16 @@
 
-PASS Can set 'font-variant-caps' to CSS-wide keywords
-FAIL Can set 'font-variant-caps' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'font-variant-caps' to the 'normal' keyword
-PASS Can set 'font-variant-caps' to the 'small-caps' keyword
-PASS Can set 'font-variant-caps' to the 'all-small-caps' keyword
-PASS Can set 'font-variant-caps' to the 'petite-caps' keyword
-PASS Can set 'font-variant-caps' to the 'all-petite-caps' keyword
-PASS Can set 'font-variant-caps' to the 'unicase' keyword
-PASS Can set 'font-variant-caps' to the 'titling-caps' keyword
+PASS Can set 'font-variant-caps' to CSS-wide keywords: initial
+PASS Can set 'font-variant-caps' to CSS-wide keywords: inherit
+PASS Can set 'font-variant-caps' to CSS-wide keywords: unset
+PASS Can set 'font-variant-caps' to CSS-wide keywords: revert
+FAIL Can set 'font-variant-caps' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-variant-caps' to the 'normal' keyword: normal
+PASS Can set 'font-variant-caps' to the 'small-caps' keyword: small-caps
+PASS Can set 'font-variant-caps' to the 'all-small-caps' keyword: all-small-caps
+PASS Can set 'font-variant-caps' to the 'petite-caps' keyword: petite-caps
+PASS Can set 'font-variant-caps' to the 'all-petite-caps' keyword: all-petite-caps
+PASS Can set 'font-variant-caps' to the 'unicase' keyword: unicase
+PASS Can set 'font-variant-caps' to the 'titling-caps' keyword: titling-caps
 PASS Setting 'font-variant-caps' to a length throws TypeError
 PASS Setting 'font-variant-caps' to a percent throws TypeError
 PASS Setting 'font-variant-caps' to a time throws TypeError

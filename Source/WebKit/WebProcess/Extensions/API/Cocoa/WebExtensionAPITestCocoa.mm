@@ -31,6 +31,7 @@
 #import "WebExtensionAPITest.h"
 
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionEventListenerType.h"
 #import "WebProcess.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/ScriptCallStack.h>
@@ -198,6 +199,19 @@ void WebExtensionAPITest::fireTestWebNavigationEvent(NSString *urlString)
 
     WebExtensionAPIWebNavigationEvent& testEvent = testWebNavigationEvent();
     testEvent.invokeListenersWithArgument(@{ @"url": urlString }, targetURL);
+}
+
+WebExtensionAPIEvent& WebExtensionAPITest::testEvent()
+{
+    if (!m_event)
+        m_event = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::ActionOnClicked);
+
+    return *m_event;
+}
+
+void WebExtensionAPITest::fireTestEvent()
+{
+    testEvent().invokeListeners();
 }
 
 } // namespace WebKit

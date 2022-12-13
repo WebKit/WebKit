@@ -28,10 +28,7 @@
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
 #include "RemoteScrollingCoordinatorProxy.h"
-
-namespace WebCore {
-class WheelEventDeltaFilter;
-}
+#include <WebCore/WheelEventDeltaFilter.h>
 
 namespace WebKit {
 

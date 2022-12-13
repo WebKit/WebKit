@@ -1,16 +1,19 @@
 
-PASS Can set 'column-rule-style' to CSS-wide keywords
-FAIL Can set 'column-rule-style' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'column-rule-style' to the 'none' keyword
-PASS Can set 'column-rule-style' to the 'hidden' keyword
-PASS Can set 'column-rule-style' to the 'dotted' keyword
-PASS Can set 'column-rule-style' to the 'dashed' keyword
-PASS Can set 'column-rule-style' to the 'solid' keyword
-PASS Can set 'column-rule-style' to the 'double' keyword
-PASS Can set 'column-rule-style' to the 'groove' keyword
-PASS Can set 'column-rule-style' to the 'ridge' keyword
-PASS Can set 'column-rule-style' to the 'inset' keyword
-PASS Can set 'column-rule-style' to the 'outset' keyword
+PASS Can set 'column-rule-style' to CSS-wide keywords: initial
+PASS Can set 'column-rule-style' to CSS-wide keywords: inherit
+PASS Can set 'column-rule-style' to CSS-wide keywords: unset
+PASS Can set 'column-rule-style' to CSS-wide keywords: revert
+FAIL Can set 'column-rule-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'column-rule-style' to the 'none' keyword: none
+PASS Can set 'column-rule-style' to the 'hidden' keyword: hidden
+PASS Can set 'column-rule-style' to the 'dotted' keyword: dotted
+PASS Can set 'column-rule-style' to the 'dashed' keyword: dashed
+PASS Can set 'column-rule-style' to the 'solid' keyword: solid
+PASS Can set 'column-rule-style' to the 'double' keyword: double
+PASS Can set 'column-rule-style' to the 'groove' keyword: groove
+PASS Can set 'column-rule-style' to the 'ridge' keyword: ridge
+PASS Can set 'column-rule-style' to the 'inset' keyword: inset
+PASS Can set 'column-rule-style' to the 'outset' keyword: outset
 PASS Setting 'column-rule-style' to a length throws TypeError
 PASS Setting 'column-rule-style' to a percent throws TypeError
 PASS Setting 'column-rule-style' to a time throws TypeError

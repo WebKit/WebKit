@@ -205,9 +205,10 @@ class GitHubEWS(GitHub):
                           ['webkitperl', 'ios-wk2', 'api-mac', 'gtk-wk2', ''],
                           ['webkitpy', 'api-ios', 'mac-wk1', 'api-gtk', ''],
                           ['jsc', 'tv', 'mac-wk2', 'jsc-armv7', ''],
-                          ['services', 'tv-sim', 'mac-AS-debug-wk2', 'jsc-armv7-tests', ''],
-                          ['merge', 'watch', 'mac-wk2-stress', 'jsc-mips', ''],
-                          ['unsafe-merge', 'watch-sim', '', 'jsc-mips-tests', '']]
+                          ['jsc-arm64', 'tv-sim', 'mac-AS-debug-wk2', 'jsc-armv7-tests', ''],
+                          ['services', 'watch', 'mac-wk2-stress', 'jsc-mips', ''],
+                          ['merge', 'watch-sim', '', 'jsc-mips-tests', ''],
+                          ['unsafe-merge', '', '', '', '']]
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):

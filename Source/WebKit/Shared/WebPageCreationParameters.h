@@ -155,7 +155,8 @@ struct WebPageCreationParameters {
 
 #if PLATFORM(MAC)
     std::optional<WebCore::DestinationColorSpace> colorSpace;
-    bool useSystemAppearance;
+    bool useSystemAppearance { false };
+    bool useFormSemanticContext { false };
 #endif
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;

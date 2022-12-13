@@ -56,6 +56,7 @@ CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
 EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
+RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
@@ -2278,7 +2279,7 @@ class RunBindingsTests(shell.ShellCommand, AddToLogMixin):
         return {'step': message}
 
 
-class RunWebKitPerlTests(shell.ShellCommand):
+class RunWebKitPerlTests(shell.ShellCommandNewStyle):
     name = 'webkitperl-tests'
     description = ['webkitperl-tests running']
     descriptionDone = ['webkitperl-tests']
@@ -2312,7 +2313,7 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
         return shell.ShellCommand.evaluateCommand(self, cmd)
 
 
-class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
+class RunBuildWebKitOrgUnitTests(shell.ShellCommandNewStyle):
     name = 'build-webkit-org-unit-tests'
     description = ['build-webkit-unit-tests running']
     command = ['python3', 'runUnittests.py', 'build-webkit-org']
@@ -2320,16 +2321,13 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(RunBuildWebKitOrgUnitTests, self).__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
 
-    def start(self):
-        return shell.ShellCommand.start(self)
-
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {'step': 'Passed build.webkit.org unit tests'}
         return {'step': 'Failed build.webkit.org unit tests'}
 
 
-class RunEWSUnitTests(shell.ShellCommand):
+class RunEWSUnitTests(shell.ShellCommandNewStyle):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
     command = ['python3', 'runUnittests.py', 'ews-build']
@@ -2373,7 +2371,7 @@ class RunBuildbotCheckConfigForBuildWebKit(RunBuildbotCheckConfig):
     directory = 'build/Tools/CISupport/build-webkit-org'
 
 
-class RunResultsdbpyTests(shell.ShellCommand):
+class RunResultsdbpyTests(shell.ShellCommandNewStyle):
     name = 'resultsdbpy-unit-tests'
     description = ['resultsdbpy-unit-tests running']
     command = [
@@ -2393,7 +2391,7 @@ class RunResultsdbpyTests(shell.ShellCommand):
         return {'step': 'Failed resultsdbpy unit tests'}
 
 
-class WebKitPyTest(shell.ShellCommand, AddToLogMixin):
+class WebKitPyTest(shell.ShellCommandNewStyle, AddToLogMixin):
     language = 'python'
     descriptionDone = ['webkitpy-tests']
     flunkOnFailure = True
@@ -2402,10 +2400,10 @@ class WebKitPyTest(shell.ShellCommand, AddToLogMixin):
     def __init__(self, **kwargs):
         super(WebKitPyTest, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
-    def start(self):
+    def run(self):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer)
-        return shell.ShellCommand.start(self)
+        return super(WebKitPyTest, self).run()
 
     def setBuildSummary(self, build_summary):
         previous_build_summary = self.getProperty('build_summary', '')
@@ -3469,7 +3467,8 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 ExtractTestResults(identifier='rerun')])
             self.finished(WARNINGS)
         else:
-            if (second_results_failing_tests and len(tests_that_consistently_failed) == 0 and num_flaky_failures <= 10
+            if (first_results_failing_tests and second_results_failing_tests and len(tests_that_consistently_failed) == 0
+                    and num_flaky_failures <= 10
                     and not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit):
                 # This means that test failures in first and second run were different and limited.
                 pluralSuffix = 's' if len(flaky_failures) > 1 else ''
@@ -3478,8 +3477,11 @@ class ReRunWebKitTests(RunWebKitTests):
                     self.send_email_for_flaky_failure(flaky_failure)
                 self.descriptionDone = message
                 self.build.results = SUCCESS
+                self.setProperty('build_summary', message)
+                self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
+                                                    UploadTestResults(identifier='rerun'),
+                                                    ExtractTestResults(identifier='rerun')])
                 self.finished(WARNINGS)
-                self.build.buildFinished([message], SUCCESS)
                 return rc
 
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
@@ -3536,6 +3538,14 @@ class ReRunWebKitTests(RunWebKitTests):
 class RunWebKitTestsWithoutChange(RunWebKitTests):
     name = 'run-layout-tests-without-change'
 
+    def start(self):
+        api_key = os.getenv(RESULTS_SERVER_API_KEY)
+        if api_key:
+            self.workerEnvironment[RESULTS_SERVER_API_KEY] = api_key
+        else:
+            self._addToLog('stdio', 'No API key for {} found'.format(RESULTS_DB_URL))
+        return super(RunWebKitTestsWithoutChange, self).start()
+
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
         self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree'), AnalyzeLayoutTestsResults()])
@@ -3561,6 +3571,17 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         super(RunWebKitTestsWithoutChange, self).setLayoutTestCommand()
+        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
+            self.setCommand(
+                self.command + [
+                    '--builder-name', self.getProperty('buildername', ''),
+                    '--build-number', self.getProperty('buildnumber', ''),
+                    '--buildbot-worker', self.getProperty('workername', ''),
+                    '--buildbot-master', CURRENT_HOSTNAME,
+                    '--report', RESULTS_DB_URL,
+                ]
+            )
+
         # In order to speed up testing, on the step that retries running the layout tests without change
         # only run the subset of tests that failed on the previous steps.
         # But only do that if the previous steps didn't exceed the test failure limit

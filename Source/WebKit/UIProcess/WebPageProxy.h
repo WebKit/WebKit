@@ -1210,6 +1210,9 @@ public:
     void setUseSystemAppearance(bool);
     bool useSystemAppearance() const { return m_useSystemAppearance; }
 
+    bool useFormSemanticContext() const;
+    void semanticContextDidChange();
+
     WebCore::DestinationColorSpace colorSpace();
 #endif
 

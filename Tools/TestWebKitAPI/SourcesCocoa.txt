@@ -281,6 +281,7 @@ Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm
 Tests/WebKitCocoa/WKURLSchemeHandler-1.mm
 Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm
 Tests/WebKitCocoa/WKWebExtension.mm
+Tests/WebKitCocoa/WKWebExtensionAPIEvent.mm
 Tests/WebKitCocoa/WKWebExtensionAPIExtension.mm
 Tests/WebKitCocoa/WKWebExtensionAPINamespace.mm
 Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm

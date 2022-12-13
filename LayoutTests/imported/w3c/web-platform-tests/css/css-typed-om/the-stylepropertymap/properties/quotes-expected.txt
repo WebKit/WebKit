@@ -1,7 +1,10 @@
 
-PASS Can set 'quotes' to CSS-wide keywords
-FAIL Can set 'quotes' to var() references assert_equals: expected 2 but got 1
-PASS Can set 'quotes' to the 'none' keyword
+PASS Can set 'quotes' to CSS-wide keywords: initial
+PASS Can set 'quotes' to CSS-wide keywords: inherit
+PASS Can set 'quotes' to CSS-wide keywords: unset
+PASS Can set 'quotes' to CSS-wide keywords: revert
+FAIL Can set 'quotes' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'quotes' to the 'none' keyword: none
 PASS Setting 'quotes' to a length throws TypeError
 PASS Setting 'quotes' to a percent throws TypeError
 PASS Setting 'quotes' to a time throws TypeError

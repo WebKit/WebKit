@@ -26,7 +26,7 @@
 #include "config.h"
 #include "testb3.h"
 
-#if ENABLE(B3_JIT)
+#if ENABLE(B3_JIT) && !CPU(ARM)
 
 static const char* const dmbIsh = "dmb      ish";
 static const char* const dmbIshst = "dmb      ishst";

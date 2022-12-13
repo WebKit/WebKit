@@ -259,12 +259,12 @@ std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCusto
         return std::nullopt;
 
     auto appearance = shadowHostStyle->effectiveAppearance();
-    if (appearance == TextFieldPart) {
+    if (appearance == ControlPartType::TextField) {
         auto elementStyle = resolveStyle(resolutionContext);
         elementStyle.renderStyle->setDisplay(DisplayType::None);
         return elementStyle;
     }
-    if (appearance != SearchFieldPart) {
+    if (appearance != ControlPartType::SearchField) {
         SetForScope canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
         return resolveStyle(resolutionContext);
     }
@@ -331,7 +331,7 @@ std::optional<Style::ElementStyle> SearchFieldCancelButtonElement::resolveCustom
     auto& inputElement = downcast<HTMLInputElement>(*shadowHost());
     elementStyle.renderStyle->setVisibility(elementStyle.renderStyle->visibility() == Visibility::Hidden || inputElement.value().isEmpty() ? Visibility::Hidden : Visibility::Visible);
 
-    if (shadowHostStyle && shadowHostStyle->effectiveAppearance() == TextFieldPart)
+    if (shadowHostStyle && shadowHostStyle->effectiveAppearance() == ControlPartType::TextField)
         elementStyle.renderStyle->setDisplay(DisplayType::None);
 
     return elementStyle;

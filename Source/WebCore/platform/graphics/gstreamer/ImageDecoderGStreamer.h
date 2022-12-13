@@ -21,7 +21,7 @@
 
 #if USE(GSTREAMER) && ENABLE(VIDEO)
 
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "ImageDecoder.h"
 #include "MIMETypeRegistry.h"
 #include "SampleMap.h"
@@ -98,6 +98,7 @@ private:
 
         ~InnerDecoder()
         {
+            disconnectSimpleBusMessageCallback(m_pipeline.get());
             gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
         }
 

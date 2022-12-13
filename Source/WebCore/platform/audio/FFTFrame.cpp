@@ -282,7 +282,7 @@ void FFTFrame::addConstantGroupDelay(double sampleFrameDelay)
     }
 }
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !LOG_DISABLED
 void FFTFrame::print()
 {
     FFTFrame& frame = *this;
@@ -301,7 +301,7 @@ void FFTFrame::print()
     }
     LOG(WebAudio, "****\n");
 }
-#endif // NDEBUG
+#endif // NDEBUG && !LOG_DISABLED
 
 } // namespace WebCore
 

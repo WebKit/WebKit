@@ -1,7 +1,10 @@
 
-FAIL Can set 'd' to CSS-wide keywords Invalid property d
-FAIL Can set 'd' to var() references Invalid property d
-FAIL Can set 'd' to the 'none' keyword Invalid property d
+FAIL Can set 'd' to CSS-wide keywords: initial Invalid property d
+FAIL Can set 'd' to CSS-wide keywords: inherit Invalid property d
+FAIL Can set 'd' to CSS-wide keywords: unset Invalid property d
+FAIL Can set 'd' to CSS-wide keywords: revert Invalid property d
+FAIL Can set 'd' to var() references:  var(--A) Invalid property d
+FAIL Can set 'd' to the 'none' keyword: none Invalid property d
 PASS Setting 'd' to a length throws TypeError
 PASS Setting 'd' to a percent throws TypeError
 PASS Setting 'd' to a time throws TypeError

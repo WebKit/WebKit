@@ -83,7 +83,6 @@ constexpr std::pair<CSSPropertyID, CSSValueID> fontShorthandSubpropertiesResetTo
     { CSSPropertyFontOpticalSizing, CSSValueAuto },
     { CSSPropertyFontVariationSettings, CSSValueNormal },
 #endif
-    { CSSPropertyFontPalette, CSSValueNormal },
 };
 
 } // namespace WebCore
