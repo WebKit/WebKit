@@ -255,6 +255,36 @@ void lowerMacros(Code& code)
                 inst = Inst();
             };
 
+            auto handleVectorAbs = [&] {
+                SIMDInfo simdInfo = inst.args[0].simdInfo();
+
+                if (!isX86() || !scalarTypeIsFloatingPoint(simdInfo.lane))
+                    return;
+
+                // Intel doesn't have a vector absolute-value instruction for floats, so we have to manually
+                // set the sign bit.
+
+                Tmp vec = inst.args[0].tmp();
+                Tmp dst = inst.args[1].tmp();
+                auto* origin = inst.origin;
+
+                Tmp fptmp = code.newTmp(FP);
+                Tmp gptmp = code.newTmp(GP);
+
+                if (simdInfo.lane == SIMDLane::f32x4) {
+                    insertionSet.insert(instIndex, Move, origin, Arg::imm(0x7fffffff), gptmp);
+                    insertionSet.insert(instIndex, Move32ToFloat, origin, gptmp, fptmp);
+                    insertionSet.insert(instIndex, VectorSplatFloat32, origin, fptmp, fptmp);
+                } else {
+                    insertionSet.insert(instIndex, Move, origin, Arg::bigImm(0x7fffffffffffffff), gptmp);
+                    insertionSet.insert(instIndex, Move64ToDouble, origin, gptmp, fptmp);
+                    insertionSet.insert(instIndex, VectorSplatFloat64, origin, fptmp, fptmp);
+                }
+                insertionSet.insert(instIndex, VectorAnd, origin, Arg::simdInfo(simdInfo), vec, fptmp, dst);
+
+                inst = Inst();
+            };
+
             auto handleVectorBitmask = [&] {
                 if (!isARM64())
                     return;
@@ -339,6 +369,9 @@ void lowerMacros(Code& code)
                 break;
             case VectorAnyTrue:
                 handleVectorAnyTrue();
+                break;
+            case VectorAbs:
+                handleVectorAbs();
                 break;
             case VectorMul:
                 handleVectorMul();
