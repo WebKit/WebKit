@@ -2278,7 +2278,7 @@ class RunBindingsTests(shell.ShellCommand, AddToLogMixin):
         return {'step': message}
 
 
-class RunWebKitPerlTests(shell.ShellCommand):
+class RunWebKitPerlTests(shell.ShellCommandNewStyle):
     name = 'webkitperl-tests'
     description = ['webkitperl-tests running']
     descriptionDone = ['webkitperl-tests']
@@ -2312,7 +2312,7 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
         return shell.ShellCommand.evaluateCommand(self, cmd)
 
 
-class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
+class RunBuildWebKitOrgUnitTests(shell.ShellCommandNewStyle):
     name = 'build-webkit-org-unit-tests'
     description = ['build-webkit-unit-tests running']
     command = ['python3', 'runUnittests.py', 'build-webkit-org']
@@ -2320,16 +2320,13 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(RunBuildWebKitOrgUnitTests, self).__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
 
-    def start(self):
-        return shell.ShellCommand.start(self)
-
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {'step': 'Passed build.webkit.org unit tests'}
         return {'step': 'Failed build.webkit.org unit tests'}
 
 
-class RunEWSUnitTests(shell.ShellCommand):
+class RunEWSUnitTests(shell.ShellCommandNewStyle):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
     command = ['python3', 'runUnittests.py', 'ews-build']
@@ -2373,7 +2370,7 @@ class RunBuildbotCheckConfigForBuildWebKit(RunBuildbotCheckConfig):
     directory = 'build/Tools/CISupport/build-webkit-org'
 
 
-class RunResultsdbpyTests(shell.ShellCommand):
+class RunResultsdbpyTests(shell.ShellCommandNewStyle):
     name = 'resultsdbpy-unit-tests'
     description = ['resultsdbpy-unit-tests running']
     command = [
@@ -2393,7 +2390,7 @@ class RunResultsdbpyTests(shell.ShellCommand):
         return {'step': 'Failed resultsdbpy unit tests'}
 
 
-class WebKitPyTest(shell.ShellCommand, AddToLogMixin):
+class WebKitPyTest(shell.ShellCommandNewStyle, AddToLogMixin):
     language = 'python'
     descriptionDone = ['webkitpy-tests']
     flunkOnFailure = True
@@ -2402,10 +2399,10 @@ class WebKitPyTest(shell.ShellCommand, AddToLogMixin):
     def __init__(self, **kwargs):
         super(WebKitPyTest, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
-    def start(self):
+    def run(self):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer)
-        return shell.ShellCommand.start(self)
+        return super(WebKitPyTest, self).run()
 
     def setBuildSummary(self, build_summary):
         previous_build_summary = self.getProperty('build_summary', '')
