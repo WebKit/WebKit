@@ -223,8 +223,8 @@ public:
     bool hasEntirelyFixedBackground() const;
     bool hasAnyLocalBackground() const { return backgroundLayers().hasImageWithAttachment(FillAttachment::LocalBackground); }
 
-    bool hasAppearance() const { return appearance() != NoControlPart; }
-    bool hasEffectiveAppearance() const { return effectiveAppearance() != NoControlPart; }
+    bool hasAppearance() const { return appearance() != ControlPartType::NoControl; }
+    bool hasEffectiveAppearance() const { return effectiveAppearance() != ControlPartType::NoControl; }
 
     bool hasBackground() const;
     
@@ -522,8 +522,8 @@ public:
     float textStrokeWidth() const { return m_rareInheritedData->textStrokeWidth; }
     float opacity() const { return m_rareNonInheritedData->opacity; }
     bool hasOpacity() const { return m_rareNonInheritedData->opacity < 1; }
-    ControlPart appearance() const { return static_cast<ControlPart>(m_rareNonInheritedData->appearance); }
-    ControlPart effectiveAppearance() const { return static_cast<ControlPart>(m_rareNonInheritedData->effectiveAppearance); }
+    ControlPartType appearance() const { return static_cast<ControlPartType>(m_rareNonInheritedData->appearance); }
+    ControlPartType effectiveAppearance() const { return static_cast<ControlPartType>(m_rareNonInheritedData->effectiveAppearance); }
     AspectRatioType aspectRatioType() const { return static_cast<AspectRatioType>(m_rareNonInheritedData->aspectRatioType); }
     double aspectRatioWidth() const { return m_rareNonInheritedData->aspectRatioWidth; }
     double aspectRatioHeight() const { return m_rareNonInheritedData->aspectRatioHeight; }
@@ -1217,9 +1217,8 @@ public:
     void setAccentColor(const StyleColor& c) { SET_VAR(m_rareInheritedData, accentColor, c); SET_VAR(m_rareInheritedData, hasAutoAccentColor, false);  }
     void setHasAutoAccentColor() { SET_VAR(m_rareInheritedData, hasAutoAccentColor, true); SET_VAR(m_rareInheritedData, accentColor, currentColor()); }
     void setOpacity(float f) { float v = clampTo<float>(f, 0.f, 1.f); SET_VAR(m_rareNonInheritedData, opacity, v); }
-    static_assert(largestControlPart < 1 << appearanceBitWidth, "Control part must fit in storage bits");
-    void setAppearance(ControlPart a) { SET_VAR(m_rareNonInheritedData, appearance, a); SET_VAR(m_rareNonInheritedData, effectiveAppearance, a); }
-    void setEffectiveAppearance(ControlPart a) { SET_VAR(m_rareNonInheritedData, effectiveAppearance, a); }
+    void setAppearance(ControlPartType a) { SET_VAR(m_rareNonInheritedData, appearance, static_cast<unsigned>(a)); SET_VAR(m_rareNonInheritedData, effectiveAppearance, static_cast<unsigned>(a)); }
+    void setEffectiveAppearance(ControlPartType a) { SET_VAR(m_rareNonInheritedData, effectiveAppearance, static_cast<unsigned>(a)); }
     // For valid values of box-align see http://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#alignment
     void setBoxAlign(BoxAlignment a) { SET_NESTED_VAR(m_rareNonInheritedData, deprecatedFlexibleBox, align, static_cast<unsigned>(a)); }
     void setBoxDirection(BoxDirection d) { m_inheritedFlags.boxDirection = static_cast<unsigned>(d); }
@@ -1748,7 +1747,7 @@ public:
     static short initialHyphenationLimitLines() { return -1; }
     static const AtomString& initialHyphenationString() { return nullAtom(); }
     static Resize initialResize() { return Resize::None; }
-    static ControlPart initialAppearance() { return NoControlPart; }
+    static ControlPartType initialAppearance() { return ControlPartType::NoControl; }
     static AspectRatioType initialAspectRatioType() { return AspectRatioType::Auto; }
     static OptionSet<Containment> initialContainment() { return OptionSet<Containment> { }; }
     static OptionSet<Containment> strictContainment() { return OptionSet<Containment> { Containment::Size, Containment::Layout, Containment::Paint, Containment::Style }; }

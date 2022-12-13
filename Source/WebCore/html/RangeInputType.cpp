@@ -220,7 +220,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 
     bool isVertical = false;
     if (auto* renderer = element()->renderer())
-        isVertical = renderer->style().effectiveAppearance() == SliderVerticalPart;
+        isVertical = renderer->style().effectiveAppearance() == ControlPartType::SliderVertical;
 
     Decimal newValue;
     if (key == "Up"_s)

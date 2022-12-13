@@ -2257,6 +2257,7 @@ platform/graphics/filters/software/FETileSoftwareApplier.cpp
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp
 platform/graphics/filters/software/SourceAlphaSoftwareApplier.cpp
 platform/graphics/filters/software/SourceGraphicSoftwareApplier.cpp
+platform/graphics/formcontrols/ControlPartType.cpp
 platform/graphics/iso/ISOBox.cpp
 platform/graphics/iso/ISOOriginalFormatBox.cpp
 platform/graphics/iso/ISOProtectionSchemeInfoBox.cpp

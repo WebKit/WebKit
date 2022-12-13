@@ -981,7 +981,7 @@ Ref<Scrollbar> RenderListBox::createScrollbar()
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(*this, ScrollbarOrientation::Vertical, &selectElement());
     else {
-        widget = Scrollbar::createNativeScrollbar(*this, ScrollbarOrientation::Vertical, theme().scrollbarControlSizeForPart(ListboxPart));
+        widget = Scrollbar::createNativeScrollbar(*this, ScrollbarOrientation::Vertical, theme().scrollbarControlSizeForPart(ControlPartType::Listbox));
         didAddScrollbar(widget.get(), ScrollbarOrientation::Vertical);
         if (page().isMonitoringWheelEvents())
             scrollAnimator().setWheelEventTestMonitor(page().wheelEventTestMonitor());

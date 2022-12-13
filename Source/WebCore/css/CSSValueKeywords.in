@@ -849,7 +849,7 @@ after-white-space
 anywhere
 
 // -webkit-appearance
-// The order here must match the order in the ControlPart enum in ThemeTypes.h.
+// The order here must match the order in the ControlPartType enum in ThemeTypes.h.
 // All appearance values that should be accepted by the parser should be listed between 'checkbox' and 'textarea':
 checkbox
 radio

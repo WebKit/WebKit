@@ -30,56 +30,6 @@
 
 namespace WebCore {
 
-TextStream& operator<<(TextStream& ts, ControlPart controlPart)
-{
-    switch (controlPart) {
-    case NoControlPart: ts << "no-control-part"; break;
-    case AutoPart: ts << "auto-part"; break;
-    case CheckboxPart: ts << "checkbox-part"; break;
-    case RadioPart: ts << "radio-part"; break;
-    case PushButtonPart: ts << "push-button-part"; break;
-    case SquareButtonPart: ts << "square-button-part"; break;
-    case ButtonPart: ts << "button-part"; break;
-    case DefaultButtonPart: ts << "default-button-part"; break;
-    case InnerSpinButtonPart: ts << "inner-spin-button-part"; break;
-    case ListboxPart: ts << "listbox-part"; break;
-    case MenulistPart: ts << "menulist-part"; break;
-    case MenulistButtonPart: ts << "menulist-button-part"; break;
-    case MeterPart: ts << "meter-part"; break;
-    case ProgressBarPart: ts << "progress-bar-part"; break;
-    case SliderHorizontalPart: ts << "slider-horizontal-part"; break;
-    case SliderVerticalPart: ts << "slider-vertical-part"; break;
-    case SliderThumbHorizontalPart: ts << "slider-thumb-horizontal-part"; break;
-    case SliderThumbVerticalPart: ts << "slider-thumb-vertical-part"; break;
-    case SearchFieldPart: ts << "search-field-part"; break;
-    case SearchFieldDecorationPart: ts << "search-field-decoration-part"; break;
-    case SearchFieldResultsDecorationPart: ts << "search-field-results-decoration-part"; break;
-    case SearchFieldResultsButtonPart: ts << "search-field-results-button-part"; break;
-    case SearchFieldCancelButtonPart: ts << "search-field-cancel-button-part"; break;
-    case TextFieldPart: ts << "text-field-part"; break;
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart: ts << "image-controls-button-part"; break;
-#endif
-#if ENABLE(APPLE_PAY)
-    case ApplePayButtonPart: ts << "apple-pay-button-part"; break;
-#endif
-#if ENABLE(INPUT_TYPE_COLOR)
-    case ColorWellPart: ts << "color-well-part"; break;
-#endif
-#if ENABLE(DATALIST_ELEMENT)
-    case ListButtonPart: ts << "list-button-part"; break;
-#endif
-    case TextAreaPart: ts << "text-area-part"; break;
-#if ENABLE(ATTACHMENT_ELEMENT)
-    case AttachmentPart: ts << "attachment-part"; break;
-    case BorderlessAttachmentPart: ts << "borderless-attachment-part"; break;
-#endif
-    case CapsLockIndicatorPart: ts << "caps-lock-indicator-part"; break;
-    }
-
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, SelectionPart selectionPart)
 {
     switch (selectionPart) {

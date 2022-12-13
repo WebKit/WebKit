@@ -1777,6 +1777,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/SourceGraphic.h
     platform/graphics/filters/SpotLightSource.h
 
+    platform/graphics/formcontrols/ControlPartType.h
+
     platform/graphics/iso/ISOBox.h
     platform/graphics/iso/ISOOriginalFormatBox.h
     platform/graphics/iso/ISOProtectionSchemeInfoBox.h

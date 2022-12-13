@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
 private:
-    bool canPaint(const PaintInfo&, const Settings&, ControlPart) const final;
+    bool canPaint(const PaintInfo&, const Settings&, ControlPartType) const final;
 
     LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const override;
 
@@ -126,7 +126,7 @@ private:
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
 
-    bool supportsMeter(ControlPart, const HTMLMeterElement&) const final;
+    bool supportsMeter(ControlPartType, const HTMLMeterElement&) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
 #if ENABLE(DATALIST_ELEMENT)

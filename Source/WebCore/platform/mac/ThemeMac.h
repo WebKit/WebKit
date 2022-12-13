@@ -45,20 +45,20 @@ private:
     friend NeverDestroyed<ThemeMac>;
     ThemeMac() = default;
 
-    int baselinePositionAdjustment(ControlPart) const final;
+    int baselinePositionAdjustment(ControlPartType) const final;
 
-    std::optional<FontCascadeDescription> controlFont(ControlPart, const FontCascade&, float zoomFactor) const final;
+    std::optional<FontCascadeDescription> controlFont(ControlPartType, const FontCascade&, float zoomFactor) const final;
 
-    LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const final;
-    LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const final;
+    LengthSize controlSize(ControlPartType, const FontCascade&, const LengthSize&, float zoomFactor) const final;
+    LengthSize minimumControlSize(ControlPartType, const FontCascade&, const LengthSize&, float zoomFactor) const final;
 
-    LengthBox controlPadding(ControlPart, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
-    LengthBox controlBorder(ControlPart, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
+    LengthBox controlPadding(ControlPartType, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
+    LengthBox controlBorder(ControlPartType, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
 
-    bool controlRequiresPreWhiteSpace(ControlPart part) const final { return part == PushButtonPart; }
+    bool controlRequiresPreWhiteSpace(ControlPartType type) const final { return type == ControlPartType::PushButton; }
 
-    void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor) final;
-    void inflateControlPaintRect(ControlPart, const ControlStates&, FloatRect&, float zoomFactor) const final;
+    void paint(ControlPartType, ControlStates&, GraphicsContext&, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor) final;
+    void inflateControlPaintRect(ControlPartType, const ControlStates&, FloatRect&, float zoomFactor) const final;
 
     bool userPrefersReducedMotion() const final;
     bool userPrefersContrast() const final;
