@@ -3466,7 +3466,8 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 ExtractTestResults(identifier='rerun')])
             self.finished(WARNINGS)
         else:
-            if (second_results_failing_tests and len(tests_that_consistently_failed) == 0 and num_flaky_failures <= 10
+            if (first_results_failing_tests and second_results_failing_tests and len(tests_that_consistently_failed) == 0
+                    and num_flaky_failures <= 10
                     and not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit):
                 # This means that test failures in first and second run were different and limited.
                 pluralSuffix = 's' if len(flaky_failures) > 1 else ''
@@ -3475,8 +3476,11 @@ class ReRunWebKitTests(RunWebKitTests):
                     self.send_email_for_flaky_failure(flaky_failure)
                 self.descriptionDone = message
                 self.build.results = SUCCESS
+                self.setProperty('build_summary', message)
+                self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
+                                                    UploadTestResults(identifier='rerun'),
+                                                    ExtractTestResults(identifier='rerun')])
                 self.finished(WARNINGS)
-                self.build.buildFinished([message], SUCCESS)
                 return rc
 
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
