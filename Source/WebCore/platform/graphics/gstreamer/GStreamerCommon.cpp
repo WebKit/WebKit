@@ -481,6 +481,9 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
             break;
         }
+        case GST_MESSAGE_LATENCY:
+            gst_bin_recalculate_latency(GST_BIN_CAST(pipeline));
+            break;
         default:
             break;
         }

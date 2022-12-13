@@ -23,7 +23,6 @@
 #if USE(GSTREAMER) && ENABLE(VIDEO)
 
 #include "FloatSize.h"
-#include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
 #include "ImageGStreamer.h"
 #include "MediaSampleGStreamer.h"
@@ -367,6 +366,8 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
 {
     static Atomic<uint32_t> pipelineId;
     m_pipeline = gst_pipeline_new(makeString("image-decoder-", pipelineId.exchangeAdd(1)).utf8().data());
+
+    connectSimpleBusMessageCallback(m_pipeline.get());
 
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);
