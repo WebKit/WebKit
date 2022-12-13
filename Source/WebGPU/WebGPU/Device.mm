@@ -43,10 +43,66 @@
 #import "SwapChain.h"
 #import "Texture.h"
 #import <algorithm>
+#import <notify.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebGPU {
+
+struct GPUFrameCapture {
+    static void captureSingleFrameIfNeeded(id<MTLDevice> captureObject)
+    {
+        if (enabled) {
+            captureFrame(captureObject);
+            enabled = false;
+        }
+    }
+
+    static void registerForFrameCapture(id<MTLDevice> captureObject)
+    {
+        // Allow GPU frame capture "notifyutil -p com.apple.WebKit.WebGPU.CaptureFrame" when process is
+        // run with __XPC_METAL_CAPTURE_ENABLED=1
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            int captureFrameToken;
+            notify_register_dispatch("com.apple.WebKit.WebGPU.CaptureFrame", &captureFrameToken, dispatch_get_main_queue(), ^(int) {
+                enabled = true;
+            });
+
+            int captureFirstFrameToken;
+            notify_register_dispatch("com.apple.WebKit.WebGPU.ToggleCaptureFirstFrame", &captureFirstFrameToken, dispatch_get_main_queue(), ^(int) {
+                captureFirstFrame = !captureFirstFrame;
+            });
+        });
+
+        if (captureFirstFrame)
+            captureFrame(captureObject);
+    }
+private:
+    static void captureFrame(id<MTLDevice> captureObject)
+    {
+        MTLCaptureManager* captureManager = [MTLCaptureManager sharedCaptureManager];
+        if ([captureManager isCapturing])
+            return;
+
+        MTLCaptureDescriptor* captureDescriptor = [[MTLCaptureDescriptor alloc] init];
+        captureDescriptor.captureObject = captureObject;
+        captureDescriptor.destination = MTLCaptureDestinationGPUTraceDocument;
+        captureDescriptor.outputURL = [[NSFileManager.defaultManager temporaryDirectory] URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.gputrace", NSUUID.UUID.UUIDString]];
+
+        NSError *error;
+        if (![captureManager startCaptureWithDescriptor:captureDescriptor error:&error])
+            WTFLogAlways("Failed to start GPU frame capture at path %@, error %@", captureDescriptor.outputURL.absoluteString, error);
+        else
+            WTFLogAlways("Success starting GPU frame capture at path %@", captureDescriptor.outputURL.absoluteString);
+    }
+
+    static bool captureFirstFrame;
+    static bool enabled;
+};
+
+bool GPUFrameCapture::captureFirstFrame = false;
+bool GPUFrameCapture::enabled = false;
 
 Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
@@ -94,6 +150,8 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     UNUSED_VARIABLE(devices);
 #endif
 #endif
+
+    GPUFrameCapture::registerForFrameCapture(m_device);
 }
 
 Device::Device(Adapter& adapter)
@@ -194,6 +252,11 @@ void Device::generateAValidationError(String&& message)
             protectedThis->m_uncapturedErrorCallback(WGPUErrorType_Validation, WTFMove(message));
         });
     }
+}
+
+void Device::captureFrameIfNeeded() const
+{
+    GPUFrameCapture::captureSingleFrameIfNeeded(m_device);
 }
 
 bool Device::validatePopErrorScope() const

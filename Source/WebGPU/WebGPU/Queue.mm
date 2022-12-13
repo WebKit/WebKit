@@ -133,6 +133,9 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
     [commandBuffer commit];
     ++m_submittedCommandBufferCount;
+
+    if ([MTLCaptureManager sharedCaptureManager].isCapturing)
+        [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
 void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands)

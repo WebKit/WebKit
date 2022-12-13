@@ -70,6 +70,7 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
     if (descriptor.nextInChain)
         return CommandEncoder::createInvalid(*this);
 
+    captureFrameIfNeeded();
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
