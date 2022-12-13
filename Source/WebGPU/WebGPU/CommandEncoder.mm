@@ -133,10 +133,6 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
             return false;
     }
 
-    // FIXME: support depth/stencil
-    if (descriptor.depthStencilAttachment)
-        return false;
-
     // FIXME: support occlusion
     if (descriptor.occlusionQuerySet)
         return false;
@@ -184,7 +180,24 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         // mtlAttachment.resolveDepthPlane = 0;
     }
 
-    // FIXME: Depth + stencil texture support
+    if (const auto* attachment = descriptor.depthStencilAttachment) {
+        const auto& mtlAttachment = mtlDescriptor.depthAttachment;
+        ASSERT("FIXME: Add support for depthReadOnly" && !attachment->depthReadOnly);
+        mtlAttachment.clearDepth = attachment->clearDepth;
+        mtlAttachment.texture = fromAPI(attachment->view).texture();
+        mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
+        mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
+    }
+
+    if (const auto* attachment = descriptor.depthStencilAttachment) {
+        const auto& mtlAttachment = mtlDescriptor.stencilAttachment;
+        ASSERT("FIXME: Add support for stencilReadOnly" && !attachment->stencilReadOnly);
+        // FIXME: assign the correct stencil texture
+        // mtlAttachment.texture = fromAPI(attachment->view).texture();
+        mtlAttachment.clearStencil = attachment->clearStencil;
+        mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
+        mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);
+    }
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
 
