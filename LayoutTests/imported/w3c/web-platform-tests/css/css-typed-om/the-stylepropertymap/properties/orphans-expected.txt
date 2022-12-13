@@ -3,11 +3,11 @@ PASS Can set 'orphans' to CSS-wide keywords: initial
 PASS Can set 'orphans' to CSS-wide keywords: inherit
 PASS Can set 'orphans' to CSS-wide keywords: unset
 PASS Can set 'orphans' to CSS-wide keywords: revert
-FAIL Can set 'orphans' to var() references:  var(--A) assert_equals: expected 2 but got 1
-FAIL Can set 'orphans' to a number: 0 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'orphans' to a number: -3.14 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'orphans' to a number: 3.14 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'orphans' to a number: calc(2 + 3) assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
+PASS Can set 'orphans' to var() references:  var(--A)
+FAIL Can set 'orphans' to a number: 0 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'orphans' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'orphans' to a number: 3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'orphans' to a number: calc(2 + 3) assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 PASS Setting 'orphans' to a length throws TypeError
 PASS Setting 'orphans' to a percent throws TypeError
 PASS Setting 'orphans' to a time throws TypeError

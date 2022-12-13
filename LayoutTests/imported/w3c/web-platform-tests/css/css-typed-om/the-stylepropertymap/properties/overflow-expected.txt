@@ -3,7 +3,7 @@ PASS Can set 'overflow-x' to CSS-wide keywords: initial
 PASS Can set 'overflow-x' to CSS-wide keywords: inherit
 PASS Can set 'overflow-x' to CSS-wide keywords: unset
 PASS Can set 'overflow-x' to CSS-wide keywords: revert
-FAIL Can set 'overflow-x' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overflow-x' to var() references:  var(--A)
 PASS Can set 'overflow-x' to the 'visible' keyword: visible
 PASS Can set 'overflow-x' to the 'hidden' keyword: hidden
 PASS Can set 'overflow-x' to the 'clip' keyword: clip
@@ -21,7 +21,7 @@ PASS Can set 'overflow-y' to CSS-wide keywords: initial
 PASS Can set 'overflow-y' to CSS-wide keywords: inherit
 PASS Can set 'overflow-y' to CSS-wide keywords: unset
 PASS Can set 'overflow-y' to CSS-wide keywords: revert
-FAIL Can set 'overflow-y' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overflow-y' to var() references:  var(--A)
 PASS Can set 'overflow-y' to the 'visible' keyword: visible
 PASS Can set 'overflow-y' to the 'hidden' keyword: hidden
 PASS Can set 'overflow-y' to the 'clip' keyword: clip

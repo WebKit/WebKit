@@ -3,7 +3,7 @@ PASS Can set 'grid-row-start' to CSS-wide keywords: initial
 PASS Can set 'grid-row-start' to CSS-wide keywords: inherit
 PASS Can set 'grid-row-start' to CSS-wide keywords: unset
 PASS Can set 'grid-row-start' to CSS-wide keywords: revert
-FAIL Can set 'grid-row-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-row-start' to var() references:  var(--A)
 PASS Can set 'grid-row-start' to the 'auto' keyword: auto
 PASS Setting 'grid-row-start' to a length throws TypeError
 PASS Setting 'grid-row-start' to a percent throws TypeError
@@ -20,7 +20,7 @@ PASS Can set 'grid-row-end' to CSS-wide keywords: initial
 PASS Can set 'grid-row-end' to CSS-wide keywords: inherit
 PASS Can set 'grid-row-end' to CSS-wide keywords: unset
 PASS Can set 'grid-row-end' to CSS-wide keywords: revert
-FAIL Can set 'grid-row-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-row-end' to var() references:  var(--A)
 PASS Can set 'grid-row-end' to the 'auto' keyword: auto
 PASS Setting 'grid-row-end' to a length throws TypeError
 PASS Setting 'grid-row-end' to a percent throws TypeError
@@ -37,7 +37,7 @@ PASS Can set 'grid-column-start' to CSS-wide keywords: initial
 PASS Can set 'grid-column-start' to CSS-wide keywords: inherit
 PASS Can set 'grid-column-start' to CSS-wide keywords: unset
 PASS Can set 'grid-column-start' to CSS-wide keywords: revert
-FAIL Can set 'grid-column-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-column-start' to var() references:  var(--A)
 PASS Can set 'grid-column-start' to the 'auto' keyword: auto
 PASS Setting 'grid-column-start' to a length throws TypeError
 PASS Setting 'grid-column-start' to a percent throws TypeError
@@ -54,7 +54,7 @@ PASS Can set 'grid-column-end' to CSS-wide keywords: initial
 PASS Can set 'grid-column-end' to CSS-wide keywords: inherit
 PASS Can set 'grid-column-end' to CSS-wide keywords: unset
 PASS Can set 'grid-column-end' to CSS-wide keywords: revert
-FAIL Can set 'grid-column-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-column-end' to var() references:  var(--A)
 PASS Can set 'grid-column-end' to the 'auto' keyword: auto
 PASS Setting 'grid-column-end' to a length throws TypeError
 PASS Setting 'grid-column-end' to a percent throws TypeError

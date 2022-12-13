@@ -3,7 +3,7 @@ PASS Can set 'object-fit' to CSS-wide keywords: initial
 PASS Can set 'object-fit' to CSS-wide keywords: inherit
 PASS Can set 'object-fit' to CSS-wide keywords: unset
 PASS Can set 'object-fit' to CSS-wide keywords: revert
-FAIL Can set 'object-fit' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'object-fit' to var() references:  var(--A)
 PASS Can set 'object-fit' to the 'fill' keyword: fill
 PASS Can set 'object-fit' to the 'contain' keyword: contain
 PASS Can set 'object-fit' to the 'cover' keyword: cover

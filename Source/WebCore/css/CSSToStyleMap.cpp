@@ -554,8 +554,19 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
 
     // Retrieve the primitive value.
     auto& borderWidths = downcast<CSSPrimitiveValue>(value);
+    if (LIKELY(borderWidths.quadValue()))
+        return mapNinePieceImageQuad(*borderWidths.quadValue());
 
-    return mapNinePieceImageQuad(*borderWidths.quadValue());
+    // Values coming from CSS Type OM may not have been converted to a Quad yet.
+    if (!borderWidths.isNumber() && !borderWidths.isLength())
+        return LengthBox();
+
+    auto quad = Quad::create();
+    quad->setTop(&borderWidths);
+    quad->setRight(&borderWidths);
+    quad->setBottom(&borderWidths);
+    quad->setLeft(&borderWidths);
+    return mapNinePieceImageQuad(quad);
 }
 
 LengthBox CSSToStyleMap::mapNinePieceImageQuad(Quad& quad)

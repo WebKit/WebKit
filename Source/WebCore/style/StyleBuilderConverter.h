@@ -1199,21 +1199,30 @@ inline void BuilderConverter::createImplicitNamedGridLinesFromGridArea(const Nam
 
 inline Vector<GridTrackSize> BuilderConverter::convertGridTrackSizeList(BuilderState& builderState, const CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).isValueID() && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto);
-        return RenderStyle::initialGridAutoRows();
+    auto validateValueAndAppend = [&builderState](Vector<GridTrackSize>& trackSizes, const CSSValue& value) {
+        ASSERT(!value.isGridLineNamesValue());
+        ASSERT(!value.isGridAutoRepeatValue());
+        ASSERT(!value.isGridIntegerRepeatValue());
+        trackSizes.uncheckedAppend(convertGridTrackSize(builderState, value));
+    };
+
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->isValueID()) {
+            ASSERT(primitiveValue->valueID() == CSSValueAuto);
+            return RenderStyle::initialGridAutoRows();
+        }
+        // Values coming from CSS Typed OM may not have been converted to a CSSValueList yet.
+        Vector<GridTrackSize> trackSizes;
+        trackSizes.reserveInitialCapacity(1);
+        validateValueAndAppend(trackSizes, *primitiveValue);
+        return trackSizes;
     }
 
-    ASSERT(value.isValueList());
     auto& valueList = downcast<CSSValueList>(value);
     Vector<GridTrackSize> trackSizes;
     trackSizes.reserveInitialCapacity(valueList.length());
-    for (auto& currValue : valueList) {
-        ASSERT(!currValue->isGridLineNamesValue());
-        ASSERT(!currValue->isGridAutoRepeatValue());
-        ASSERT(!currValue->isGridIntegerRepeatValue());
-        trackSizes.uncheckedAppend(convertGridTrackSize(builderState, currValue));
-    }
+    for (auto& currentValue : valueList)
+        validateValueAndAppend(trackSizes, currentValue);
     return trackSizes;
 }
 
@@ -1731,15 +1740,27 @@ inline GapLength BuilderConverter::convertGapLength(BuilderState& builderState, 
 
 inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState&, const CSSValue& value)
 {
+    RefPtr<const CSSPrimitiveValue> modifierValue;
+    RefPtr<const CSSPrimitiveValue> angleValue;
+
+    if (auto* offsetRotateValue = dynamicDowncast<CSSOffsetRotateValue>(value)) {
+        modifierValue = offsetRotateValue->modifier();
+        angleValue = offsetRotateValue->angle();
+    } else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        // Values coming from CSSTypedOM didn't go through the parser and may not have been converted to a CSSOffsetRotateValue.
+        if (primitiveValue->valueID() == CSSValueAuto || primitiveValue->valueID() == CSSValueReverse)
+            modifierValue = primitiveValue;
+        else if (primitiveValue->isAngle())
+            angleValue = primitiveValue;
+    }
+
     bool hasAuto = false;
     float angleInDegrees = 0;
 
-    const auto& offsetRotateValue = downcast<CSSOffsetRotateValue>(value);
-
-    if (auto* angleValue = offsetRotateValue.angle())
+    if (angleValue)
         angleInDegrees = static_cast<float>(angleValue->computeDegrees());
 
-    if (auto* modifierValue = offsetRotateValue.modifier()) {
+    if (modifierValue) {
         switch (modifierValue->valueID()) {
         case CSSValueAuto:
             hasAuto = true;

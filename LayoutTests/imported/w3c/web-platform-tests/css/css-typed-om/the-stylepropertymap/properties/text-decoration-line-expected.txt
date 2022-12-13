@@ -3,7 +3,7 @@ PASS Can set 'text-decoration-line' to CSS-wide keywords: initial
 PASS Can set 'text-decoration-line' to CSS-wide keywords: inherit
 PASS Can set 'text-decoration-line' to CSS-wide keywords: unset
 PASS Can set 'text-decoration-line' to CSS-wide keywords: revert
-FAIL Can set 'text-decoration-line' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-decoration-line' to var() references:  var(--A)
 PASS Can set 'text-decoration-line' to the 'none' keyword: none
 PASS Can set 'text-decoration-line' to the 'underline' keyword: underline
 PASS Can set 'text-decoration-line' to the 'overline' keyword: overline

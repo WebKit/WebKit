@@ -3,12 +3,12 @@ PASS Can set 'z-index' to CSS-wide keywords: initial
 PASS Can set 'z-index' to CSS-wide keywords: inherit
 PASS Can set 'z-index' to CSS-wide keywords: unset
 PASS Can set 'z-index' to CSS-wide keywords: revert
-FAIL Can set 'z-index' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'z-index' to var() references:  var(--A)
 PASS Can set 'z-index' to the 'auto' keyword: auto
 FAIL Can set 'z-index' to a number: 0 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'z-index' to a number: -3.14 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'z-index' to a number: 3.14 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'z-index' to a number: calc(2 + 3) assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
+FAIL Can set 'z-index' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'z-index' to a number: 3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+FAIL Can set 'z-index' to a number: calc(2 + 3) assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 PASS Setting 'z-index' to a length throws TypeError
 PASS Setting 'z-index' to a percent throws TypeError
 PASS Setting 'z-index' to a time throws TypeError

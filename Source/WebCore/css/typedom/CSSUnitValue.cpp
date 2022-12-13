@@ -267,7 +267,7 @@ RefPtr<CSSValue> CSSUnitValue::toCSSValueWithProperty(CSSPropertyID propertyID) 
         auto sumNode = CSSCalcOperationNode::createSum(Vector { node.releaseNonNull() });
         if (!sumNode)
             return nullptr;
-        return CSSCalcValue::create(sumNode.releaseNonNull(), true /* allowsNegativePercentage */);
+        return CSSPrimitiveValue::create(CSSCalcValue::create(sumNode.releaseNonNull(), true /* allowsNegativePercentage */));
     }
     return toCSSValue();
 }

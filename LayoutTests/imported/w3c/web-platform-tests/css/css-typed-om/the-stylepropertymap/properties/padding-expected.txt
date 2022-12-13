@@ -3,15 +3,15 @@ PASS Can set 'padding-top' to CSS-wide keywords: initial
 PASS Can set 'padding-top' to CSS-wide keywords: inherit
 PASS Can set 'padding-top' to CSS-wide keywords: unset
 PASS Can set 'padding-top' to CSS-wide keywords: revert
-FAIL Can set 'padding-top' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-top' to var() references:  var(--A)
 PASS Can set 'padding-top' to a percent: 0%
 FAIL Can set 'padding-top' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'padding-top' to a percent: 3.14%
-FAIL Can set 'padding-top' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'padding-top' to a percent: calc(0% + 0%)
 PASS Can set 'padding-top' to a length: 0px
 PASS Can set 'padding-top' to a length: -3.14em
 PASS Can set 'padding-top' to a length: 3.14cm
-FAIL Can set 'padding-top' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'padding-top' to a length: calc(0px + 0em)
 PASS Setting 'padding-top' to a time throws TypeError
 PASS Setting 'padding-top' to an angle throws TypeError
 PASS Setting 'padding-top' to a flexible length throws TypeError
@@ -22,15 +22,15 @@ PASS Can set 'padding-left' to CSS-wide keywords: initial
 PASS Can set 'padding-left' to CSS-wide keywords: inherit
 PASS Can set 'padding-left' to CSS-wide keywords: unset
 PASS Can set 'padding-left' to CSS-wide keywords: revert
-FAIL Can set 'padding-left' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-left' to var() references:  var(--A)
 PASS Can set 'padding-left' to a percent: 0%
 FAIL Can set 'padding-left' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'padding-left' to a percent: 3.14%
-FAIL Can set 'padding-left' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'padding-left' to a percent: calc(0% + 0%)
 PASS Can set 'padding-left' to a length: 0px
 PASS Can set 'padding-left' to a length: -3.14em
 PASS Can set 'padding-left' to a length: 3.14cm
-FAIL Can set 'padding-left' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'padding-left' to a length: calc(0px + 0em)
 PASS Setting 'padding-left' to a time throws TypeError
 PASS Setting 'padding-left' to an angle throws TypeError
 PASS Setting 'padding-left' to a flexible length throws TypeError
@@ -41,15 +41,15 @@ PASS Can set 'padding-right' to CSS-wide keywords: initial
 PASS Can set 'padding-right' to CSS-wide keywords: inherit
 PASS Can set 'padding-right' to CSS-wide keywords: unset
 PASS Can set 'padding-right' to CSS-wide keywords: revert
-FAIL Can set 'padding-right' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-right' to var() references:  var(--A)
 PASS Can set 'padding-right' to a percent: 0%
 FAIL Can set 'padding-right' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'padding-right' to a percent: 3.14%
-FAIL Can set 'padding-right' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'padding-right' to a percent: calc(0% + 0%)
 PASS Can set 'padding-right' to a length: 0px
 PASS Can set 'padding-right' to a length: -3.14em
 PASS Can set 'padding-right' to a length: 3.14cm
-FAIL Can set 'padding-right' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'padding-right' to a length: calc(0px + 0em)
 PASS Setting 'padding-right' to a time throws TypeError
 PASS Setting 'padding-right' to an angle throws TypeError
 PASS Setting 'padding-right' to a flexible length throws TypeError
@@ -60,15 +60,15 @@ PASS Can set 'padding-bottom' to CSS-wide keywords: initial
 PASS Can set 'padding-bottom' to CSS-wide keywords: inherit
 PASS Can set 'padding-bottom' to CSS-wide keywords: unset
 PASS Can set 'padding-bottom' to CSS-wide keywords: revert
-FAIL Can set 'padding-bottom' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-bottom' to var() references:  var(--A)
 PASS Can set 'padding-bottom' to a percent: 0%
 FAIL Can set 'padding-bottom' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'padding-bottom' to a percent: 3.14%
-FAIL Can set 'padding-bottom' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'padding-bottom' to a percent: calc(0% + 0%)
 PASS Can set 'padding-bottom' to a length: 0px
 PASS Can set 'padding-bottom' to a length: -3.14em
 PASS Can set 'padding-bottom' to a length: 3.14cm
-FAIL Can set 'padding-bottom' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'padding-bottom' to a length: calc(0px + 0em)
 PASS Setting 'padding-bottom' to a time throws TypeError
 PASS Setting 'padding-bottom' to an angle throws TypeError
 PASS Setting 'padding-bottom' to a flexible length throws TypeError

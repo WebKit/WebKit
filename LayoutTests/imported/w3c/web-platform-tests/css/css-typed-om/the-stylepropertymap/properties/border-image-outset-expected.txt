@@ -3,15 +3,15 @@ PASS Can set 'border-image-outset' to CSS-wide keywords: initial
 PASS Can set 'border-image-outset' to CSS-wide keywords: inherit
 PASS Can set 'border-image-outset' to CSS-wide keywords: unset
 PASS Can set 'border-image-outset' to CSS-wide keywords: revert
-FAIL Can set 'border-image-outset' to var() references:  var(--A) assert_equals: expected 2 but got 1
-FAIL Can set 'border-image-outset' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-outset' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-outset' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-outset' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-image-outset' to a number: 0 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-outset' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-outset' to a number: 3.14 assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-image-outset' to a number: calc(2 + 3) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+PASS Can set 'border-image-outset' to var() references:  var(--A)
+PASS Can set 'border-image-outset' to a length: 0px
+FAIL Can set 'border-image-outset' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-image-outset' to a length: 3.14cm
+PASS Can set 'border-image-outset' to a length: calc(0px + 0em)
+PASS Can set 'border-image-outset' to a number: 0
+FAIL Can set 'border-image-outset' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-image-outset' to a number: 3.14
+PASS Can set 'border-image-outset' to a number: calc(2 + 3)
 PASS Setting 'border-image-outset' to a percent throws TypeError
 PASS Setting 'border-image-outset' to a time throws TypeError
 PASS Setting 'border-image-outset' to an angle throws TypeError

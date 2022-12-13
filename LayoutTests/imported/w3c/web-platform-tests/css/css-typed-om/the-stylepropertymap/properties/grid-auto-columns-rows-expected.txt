@@ -1,11 +1,9 @@
 
-Harness Error (FAIL), message = 2 duplicate test names: "Can set 'grid-auto-columns' to a flexible length: 0fr", "Can set 'grid-auto-rows' to a flexible length: 0fr"
-
 PASS Can set 'grid-auto-columns' to CSS-wide keywords: initial
 PASS Can set 'grid-auto-columns' to CSS-wide keywords: inherit
 PASS Can set 'grid-auto-columns' to CSS-wide keywords: unset
 PASS Can set 'grid-auto-columns' to CSS-wide keywords: revert
-FAIL Can set 'grid-auto-columns' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-columns' to var() references:  var(--A)
 PASS Can set 'grid-auto-columns' to the 'min-content' keyword: min-content
 PASS Can set 'grid-auto-columns' to the 'max-content' keyword: max-content
 PASS Can set 'grid-auto-columns' to the 'auto' keyword: auto
@@ -18,7 +16,7 @@ FAIL Can set 'grid-auto-columns' to a percent: -3.14% assert_equals: expected "C
 PASS Can set 'grid-auto-columns' to a percent: 3.14%
 PASS Can set 'grid-auto-columns' to a percent: calc(0% + 0%)
 PASS Can set 'grid-auto-columns' to a flexible length: 0fr
-PASS Can set 'grid-auto-columns' to a flexible length: 0fr
+PASS Can set 'grid-auto-columns' to a flexible length: 1fr
 FAIL Can set 'grid-auto-columns' to a flexible length: -3.14fr Invalid values
 PASS Setting 'grid-auto-columns' to a time throws TypeError
 PASS Setting 'grid-auto-columns' to an angle throws TypeError
@@ -31,7 +29,7 @@ PASS Can set 'grid-auto-rows' to CSS-wide keywords: initial
 PASS Can set 'grid-auto-rows' to CSS-wide keywords: inherit
 PASS Can set 'grid-auto-rows' to CSS-wide keywords: unset
 PASS Can set 'grid-auto-rows' to CSS-wide keywords: revert
-FAIL Can set 'grid-auto-rows' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-auto-rows' to var() references:  var(--A)
 PASS Can set 'grid-auto-rows' to the 'min-content' keyword: min-content
 PASS Can set 'grid-auto-rows' to the 'max-content' keyword: max-content
 PASS Can set 'grid-auto-rows' to the 'auto' keyword: auto
@@ -44,7 +42,7 @@ FAIL Can set 'grid-auto-rows' to a percent: -3.14% assert_equals: expected "CSSU
 PASS Can set 'grid-auto-rows' to a percent: 3.14%
 PASS Can set 'grid-auto-rows' to a percent: calc(0% + 0%)
 PASS Can set 'grid-auto-rows' to a flexible length: 0fr
-PASS Can set 'grid-auto-rows' to a flexible length: 0fr
+PASS Can set 'grid-auto-rows' to a flexible length: 1fr
 FAIL Can set 'grid-auto-rows' to a flexible length: -3.14fr Invalid values
 PASS Setting 'grid-auto-rows' to a time throws TypeError
 PASS Setting 'grid-auto-rows' to an angle throws TypeError

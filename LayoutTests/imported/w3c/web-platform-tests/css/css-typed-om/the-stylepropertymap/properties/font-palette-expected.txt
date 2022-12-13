@@ -3,7 +3,7 @@ PASS Can set 'font-palette' to CSS-wide keywords: initial
 PASS Can set 'font-palette' to CSS-wide keywords: inherit
 PASS Can set 'font-palette' to CSS-wide keywords: unset
 PASS Can set 'font-palette' to CSS-wide keywords: revert
-FAIL Can set 'font-palette' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-palette' to var() references:  var(--A)
 PASS Can set 'font-palette' to the 'normal' keyword: normal
 PASS Can set 'font-palette' to the 'light' keyword: light
 PASS Can set 'font-palette' to the 'dark' keyword: dark

@@ -3,7 +3,7 @@ PASS Can set 'x' to CSS-wide keywords: initial
 PASS Can set 'x' to CSS-wide keywords: inherit
 PASS Can set 'x' to CSS-wide keywords: unset
 PASS Can set 'x' to CSS-wide keywords: revert
-FAIL Can set 'x' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'x' to var() references:  var(--A)
 PASS Can set 'x' to a percent: 0%
 PASS Can set 'x' to a percent: -3.14%
 PASS Can set 'x' to a percent: 3.14%
@@ -22,7 +22,7 @@ PASS Can set 'y' to CSS-wide keywords: initial
 PASS Can set 'y' to CSS-wide keywords: inherit
 PASS Can set 'y' to CSS-wide keywords: unset
 PASS Can set 'y' to CSS-wide keywords: revert
-FAIL Can set 'y' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'y' to var() references:  var(--A)
 PASS Can set 'y' to a percent: 0%
 PASS Can set 'y' to a percent: -3.14%
 PASS Can set 'y' to a percent: 3.14%

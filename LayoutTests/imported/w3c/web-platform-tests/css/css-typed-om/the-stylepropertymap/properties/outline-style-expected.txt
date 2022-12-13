@@ -3,7 +3,7 @@ PASS Can set 'outline-style' to CSS-wide keywords: initial
 PASS Can set 'outline-style' to CSS-wide keywords: inherit
 PASS Can set 'outline-style' to CSS-wide keywords: unset
 PASS Can set 'outline-style' to CSS-wide keywords: revert
-FAIL Can set 'outline-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'outline-style' to var() references:  var(--A)
 PASS Can set 'outline-style' to the 'auto' keyword: auto
 PASS Can set 'outline-style' to the 'none' keyword: none
 PASS Can set 'outline-style' to the 'dotted' keyword: dotted

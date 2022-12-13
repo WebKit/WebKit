@@ -191,7 +191,7 @@ const gTestSyntaxExamples = {
       },
       {
         description: "one fraction",
-        input: new CSSUnitValue(0, 'fr')
+        input: new CSSUnitValue(1, 'fr')
       },
       {
         description: "negative fraction",
@@ -325,7 +325,7 @@ function testPropertyValid(propertyName, examples, specified, computed, descript
         assert_style_value_equals(computedResult, example.input,
           `Setting ${example.description} and getting its computed value`);
       }
-    }, `Can set '${propertyName}' to ${description}: ` + example.input);
+    }, `Can set '${propertyName}' to ${description}: ${example.input}`);
   }
 }
 

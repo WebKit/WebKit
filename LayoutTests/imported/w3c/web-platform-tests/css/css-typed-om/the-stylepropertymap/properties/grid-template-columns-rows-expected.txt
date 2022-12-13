@@ -3,7 +3,7 @@ PASS Can set 'grid-template-columns' to CSS-wide keywords: initial
 PASS Can set 'grid-template-columns' to CSS-wide keywords: inherit
 PASS Can set 'grid-template-columns' to CSS-wide keywords: unset
 PASS Can set 'grid-template-columns' to CSS-wide keywords: revert
-FAIL Can set 'grid-template-columns' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-template-columns' to var() references:  var(--A)
 PASS Can set 'grid-template-columns' to the 'none' keyword: none
 FAIL Setting 'grid-template-columns' to a length throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 FAIL Setting 'grid-template-columns' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
@@ -19,7 +19,7 @@ PASS Can set 'grid-template-rows' to CSS-wide keywords: initial
 PASS Can set 'grid-template-rows' to CSS-wide keywords: inherit
 PASS Can set 'grid-template-rows' to CSS-wide keywords: unset
 PASS Can set 'grid-template-rows' to CSS-wide keywords: revert
-FAIL Can set 'grid-template-rows' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'grid-template-rows' to var() references:  var(--A)
 PASS Can set 'grid-template-rows' to the 'none' keyword: none
 FAIL Setting 'grid-template-rows' to a length throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 FAIL Setting 'grid-template-rows' to a percent throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw

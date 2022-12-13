@@ -3,7 +3,7 @@ PASS Can set 'overflow-anchor' to CSS-wide keywords: initial
 PASS Can set 'overflow-anchor' to CSS-wide keywords: inherit
 PASS Can set 'overflow-anchor' to CSS-wide keywords: unset
 PASS Can set 'overflow-anchor' to CSS-wide keywords: revert
-FAIL Can set 'overflow-anchor' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overflow-anchor' to var() references:  var(--A)
 PASS Can set 'overflow-anchor' to the 'auto' keyword: auto
 PASS Can set 'overflow-anchor' to the 'none' keyword: none
 PASS Setting 'overflow-anchor' to a length throws TypeError

@@ -181,7 +181,7 @@ void CSSTransformValue::serialize(StringBuilder& builder, OptionSet<Serializatio
 
 RefPtr<CSSValue> CSSTransformValue::toCSSValue() const
 {
-    auto cssValueList = CSSValueList::createSpaceSeparated();
+    auto cssValueList = CSSTransformListValue::create();
     for (auto& component : m_components) {
         if (auto cssComponent = component->toCSSValue())
             cssValueList->append(cssComponent.releaseNonNull());

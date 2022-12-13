@@ -3,7 +3,7 @@ PASS Can set 'isolation' to CSS-wide keywords: initial
 PASS Can set 'isolation' to CSS-wide keywords: inherit
 PASS Can set 'isolation' to CSS-wide keywords: unset
 PASS Can set 'isolation' to CSS-wide keywords: revert
-FAIL Can set 'isolation' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'isolation' to var() references:  var(--A)
 PASS Can set 'isolation' to the 'auto' keyword: auto
 PASS Can set 'isolation' to the 'isolate' keyword: isolate
 PASS Setting 'isolation' to a length throws TypeError
