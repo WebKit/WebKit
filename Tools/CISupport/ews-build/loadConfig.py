@@ -139,7 +139,7 @@ def prioritizeBuilders(buildmaster, builders):
     def key(b):
         request_time = yield b.getOldestRequestTime()
         return (
-            'build' not in b.name.lower(),
+            'build' not in b.name.lower() and 'unsafe' not in b.name.lower() and 'commit' not in b.name.lower(),
             bool(b.building) or bool(b.old_building),
             request_time or datetime.now(timezone.utc),
         )
