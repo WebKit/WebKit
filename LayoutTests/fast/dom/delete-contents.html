@@ -1,7 +1,7 @@
 <!-- This test was derived from a real case inside the Mail application, bug 4598149-->
 
 <div id="mydiv">01234</div>
-
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 
 var txt = document.getElementById("mydiv").firstChild;
@@ -9,5 +9,7 @@ window.getSelection().setBaseAndExtent(txt, 0, txt, 5)
 var r = window.getSelection().getRangeAt(0);
 r.deleteContents();
 r.insertNode(document.createElement("div"));
+
+Markup.dump(mydiv);
 
 </script>
