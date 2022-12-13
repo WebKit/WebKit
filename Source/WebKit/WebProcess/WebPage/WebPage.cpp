@@ -4189,6 +4189,8 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
 #if USE(SYSTEM_PREVIEW)
     settings.setSystemPreviewEnabled(false);
 #endif
+    settings.setFileReaderAPIEnabled(false);
+    settings.setFileSystemAccessEnabled(false);
 
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInLockdownModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInLockdownModeKey()));
