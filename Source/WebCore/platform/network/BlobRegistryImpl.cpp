@@ -110,7 +110,7 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
     ASSERT(!length);
 }
 
-void BlobRegistryImpl::registerFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryImpl::registerFileBlobURL(const ScopedURL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -156,7 +156,7 @@ Ref<DataSegment> BlobRegistryImpl::createDataSegment(Vector<uint8_t>&& movedData
     return data;
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void BlobRegistryImpl::registerBlobURL(const ScopedURL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -186,12 +186,12 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobPa
     addBlobData(url.string(), WTFMove(blobData));
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const PolicyContainer& policyContainer)
+void BlobRegistryImpl::registerBlobURL(const ScopedURL& url, const ScopedURL& srcURL, const PolicyContainer& policyContainer)
 {
     registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, policyContainer);
 }
 
-void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer)
+void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const ScopedURL& url, const ScopedURL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -218,7 +218,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
     addBlobData(url.string(), WTFMove(backingFile));
 }
 
-void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType)
+void BlobRegistryImpl::registerBlobURLForSlice(const ScopedURL& url, const ScopedURL& srcURL, long long start, long long end, const String& contentType)
 {
     ASSERT(isMainThread());
     BlobData* originalData = getBlobDataFromURL(srcURL);
@@ -254,14 +254,14 @@ void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL
     addBlobData(url.string(), WTFMove(newData));
 }
 
-void BlobRegistryImpl::unregisterBlobURL(const URL& url)
+void BlobRegistryImpl::unregisterBlobURL(const ScopedURL& url)
 {
     ASSERT(isMainThread());
     if (m_blobReferences.remove(url.string()))
         m_blobs.remove(url.string());
 }
 
-BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
+BlobData* BlobRegistryImpl::getBlobDataFromURL(const ScopedURL& url) const
 {
     ASSERT(isMainThread());
     if (url.hasFragmentIdentifier())
@@ -269,7 +269,7 @@ BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
     return m_blobs.get(url.string());
 }
 
-unsigned long long BlobRegistryImpl::blobSize(const URL& url)
+unsigned long long BlobRegistryImpl::blobSize(const ScopedURL& url)
 {
     ASSERT(isMainThread());
     BlobData* data = getBlobDataFromURL(url);
@@ -370,7 +370,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<Strin
     });
 }
 
-void BlobRegistryImpl::writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler)
+void BlobRegistryImpl::writeBlobToFilePath(const ScopedURL& blobURL, const String& path, Function<void(bool success)>&& completionHandler)
 {
     Vector<BlobForFileWriting> blobsForWriting;
     if (!populateBlobsForFileWriting({ blobURL.string() }, blobsForWriting) || blobsForWriting.size() != 1) {
@@ -386,7 +386,7 @@ void BlobRegistryImpl::writeBlobToFilePath(const URL& blobURL, const String& pat
     });
 }
 
-Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& url) const
+Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const ScopedURL& url) const
 {
     auto* blobData = getBlobDataFromURL(url);
     if (!blobData)
@@ -408,14 +408,14 @@ void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobDat
         m_blobReferences.add(url);
 }
 
-void BlobRegistryImpl::registerBlobURLHandle(const URL& url)
+void BlobRegistryImpl::registerBlobURLHandle(const ScopedURL& url)
 {
     auto urlKey = url.stringWithoutFragmentIdentifier();
     if (m_blobs.contains(urlKey))
         m_blobReferences.add(urlKey);
 }
 
-void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url)
+void BlobRegistryImpl::unregisterBlobURLHandle(const ScopedURL& url)
 {
     auto urlKey = url.stringWithoutFragmentIdentifier();
     if (m_blobReferences.remove(urlKey))

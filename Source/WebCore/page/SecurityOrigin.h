@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class ScopedURL;
+
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
     enum Policy {
@@ -46,7 +48,7 @@ public:
         Ask
     };
 
-    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const ScopedURL&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> createOpaque();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
@@ -56,7 +58,7 @@ public:
     // be allowed to display their own file: URLs in order to perform reloads and same-document
     // navigations. This lets those documents specify the file path that should be allowed to be
     // displayed from their non-local origin.
-    static Ref<SecurityOrigin> createNonLocalWithAllowedFilePath(const URL&, const String& filePath);
+    static Ref<SecurityOrigin> createNonLocalWithAllowedFilePath(const ScopedURL&, const String& filePath);
 
     // Some URL schemes use nested URLs for their security context. For example,
     // filesystem URLs look like the following:
@@ -91,7 +93,7 @@ public:
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
     // Protocols like blob: and filesystem: fall into this latter category.
-    WEBCORE_EXPORT static bool isSecure(const URL&);
+    WEBCORE_EXPORT static bool isSecure(const ScopedURL&);
 
     // This method implements the "same origin-domain" algorithm from the HTML Standard:
     // https://html.spec.whatwg.org/#same-origin-domain
@@ -104,7 +106,7 @@ public:
     // Returns true if this SecurityOrigin can read content retrieved from
     // the given URL. For example, call this function before issuing
     // XMLHttpRequests.
-    WEBCORE_EXPORT bool canRequest(const URL&) const;
+    WEBCORE_EXPORT bool canRequest(const ScopedURL&) const;
 
     // Returns true if this SecurityOrigin can receive drag content from the
     // initiator. For example, call this function before allowing content to be
@@ -114,7 +116,7 @@ public:
     // Returns true if |document| can display content from the given URL (e.g.,
     // in an iframe or as an image). For example, web sites generally cannot
     // display content from the user's files system.
-    WEBCORE_EXPORT bool canDisplay(const URL&) const;
+    WEBCORE_EXPORT bool canDisplay(const ScopedURL&) const;
 
     // Returns true if this SecurityOrigin can load local resources, such
     // as images, iframes, and style sheets, and can link to local URLs.
@@ -215,10 +217,11 @@ public:
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static RefPtr<SecurityOrigin> decode(Decoder&);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> emptyOrigin();
 
 private:
     WEBCORE_EXPORT SecurityOrigin();
-    explicit SecurityOrigin(const URL&);
+    explicit SecurityOrigin(const ScopedURL&);
     explicit SecurityOrigin(const SecurityOrigin*);
 
     // FIXME: Rename this function to something more semantic.
@@ -306,5 +309,8 @@ inline void add(Hasher& hasher, const SecurityOrigin& origin)
 {
     add(hasher, origin.protocol(), origin.host(), origin.port());
 }
+
+static bool operator==(const SecurityOrigin& a, const SecurityOrigin& b) { return a.equal(&b); }
+inline bool operator!=(const SecurityOrigin& first, const SecurityOrigin& second) { return !(first == second); }
 
 } // namespace WebCore

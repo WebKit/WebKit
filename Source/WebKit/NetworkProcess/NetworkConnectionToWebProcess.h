@@ -71,6 +71,7 @@ class MockContentFilterSettings;
 enum class NetworkConnectionIntegrity : uint8_t;
 class ResourceError;
 class ResourceRequest;
+class ScopedURL;
 enum class ApplyTrackingPrevention : bool;
 enum class StorageAccessScope : bool;
 struct PolicyContainer;
@@ -245,17 +246,17 @@ private:
     void setRawCookie(const WebCore::Cookie&);
     void deleteCookie(const URL&, const String& cookieName, CompletionHandler<void()>&&);
 
-    void registerFileBlobURL(const URL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
-    void registerBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURLFromURL(const URL&, const URL& srcURL, WebCore::PolicyContainer&&);
-    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
-    void registerBlobURLForSlice(const URL&, const URL& srcURL, int64_t start, int64_t end, const String& contentType);
-    void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);
-    void unregisterBlobURL(const URL&);
+    void registerFileBlobURL(const WebCore::ScopedURL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
+    void registerBlobURL(const WebCore::ScopedURL&, Vector<WebCore::BlobPart>&&, const String& contentType);
+    void registerBlobURLFromURL(const WebCore::ScopedURL&, const WebCore::ScopedURL& srcURL, WebCore::PolicyContainer&&);
+    void registerBlobURLOptionallyFileBacked(const WebCore::ScopedURL&, const WebCore::ScopedURL& srcURL, const String& fileBackedPath, const String& contentType);
+    void registerBlobURLForSlice(const WebCore::ScopedURL&, const WebCore::ScopedURL& srcURL, int64_t start, int64_t end, const String& contentType);
+    void blobSize(const WebCore::ScopedURL&, CompletionHandler<void(uint64_t)>&&);
+    void unregisterBlobURL(const WebCore::ScopedURL&);
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
 
-    void registerBlobURLHandle(const URL&);
-    void unregisterBlobURLHandle(const URL&);
+    void registerBlobURLHandle(const WebCore::ScopedURL&);
+    void unregisterBlobURLHandle(const WebCore::ScopedURL&);
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 

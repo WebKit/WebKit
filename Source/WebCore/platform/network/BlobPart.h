@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/URL.h>
+#include "ScopedURL.h"
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ public:
     {
     }
 
-    BlobPart(const URL& url)
+    BlobPart(const ScopedURL& url)
         : m_type(Type::Blob)
         , m_url(url)
     {
@@ -67,7 +67,7 @@ public:
         return WTFMove(m_data);
     }
 
-    const URL& url() const
+    const ScopedURL& url() const
     {
         ASSERT(m_type == Type::Blob);
         return m_url;
@@ -81,7 +81,7 @@ public:
 private:
     Type m_type;
     Vector<uint8_t> m_data;
-    URL m_url;
+    ScopedURL m_url;
 };
 
 } // namespace WebCore

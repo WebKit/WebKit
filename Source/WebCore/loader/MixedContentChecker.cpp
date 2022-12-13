@@ -44,7 +44,7 @@
 namespace WebCore {
 
 // static
-bool MixedContentChecker::isMixedContent(SecurityOrigin& securityOrigin, const URL& url)
+bool MixedContentChecker::isMixedContent(SecurityOrigin& securityOrigin, const ScopedURL& url)
 {
     if (securityOrigin.protocol() != "https"_s)
         return false; // We only care about HTTPS security origins.

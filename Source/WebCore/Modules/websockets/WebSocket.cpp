@@ -50,6 +50,7 @@
 #include "MessageEvent.h"
 #include "MixedContentChecker.h"
 #include "ResourceLoadObserver.h"
+#include "ScopedURL.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -226,7 +227,7 @@ void WebSocket::failAsynchronously()
 ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& protocols)
 {
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
-    m_url = URL { url };
+    m_url = ScopedURL { url };
 
     ASSERT(scriptExecutionContext());
     auto& context = *scriptExecutionContext();
@@ -478,7 +479,7 @@ RefPtr<ThreadableWebSocketChannel> WebSocket::channel() const
     return m_channel;
 }
 
-const URL& WebSocket::url() const
+const ScopedURL& WebSocket::url() const
 {
     return m_url;
 }

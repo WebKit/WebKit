@@ -39,6 +39,7 @@ namespace WebCore {
 class SecurityOrigin;
 class SecurityOriginPolicy;
 class ContentSecurityPolicy;
+class ScopedURL;
 struct CrossOriginOpenerPolicy;
 struct PolicyContainer;
 enum class ReferrerPolicy : uint8_t;
@@ -74,7 +75,7 @@ public:
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 
-    bool isSecureTransitionTo(const URL&) const;
+    bool isSecureTransitionTo(const ScopedURL&) const;
 
     enum class SandboxFlagsSource : bool { CSP, Other };
     void enforceSandboxFlags(SandboxFlags, SandboxFlagsSource = SandboxFlagsSource::Other);

@@ -39,6 +39,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/ScopedURL.h>
 #include <wtf/Scope.h>
 
 #define LOAD_CHECKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkLoadChecker::" fmt, this, ##__VA_ARGS__)

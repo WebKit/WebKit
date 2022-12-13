@@ -32,6 +32,7 @@
 
 #include "BlobURL.h"
 #include "Document.h"
+#include "ScopedURL.h"
 #include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"
 
@@ -66,7 +67,7 @@ static const Document* blobOwner(const SecurityOrigin& blobOrigin)
     return nullptr;
 }
 
-URL BlobURL::getOriginURL(const URL& url)
+URL BlobURL::getOriginURL(const ScopedURL& url)
 {
     ASSERT(url.protocolIs(kBlobProtocol));
 
@@ -77,7 +78,7 @@ URL BlobURL::getOriginURL(const URL& url)
     return SecurityOrigin::extractInnerURL(url);
 }
 
-bool BlobURL::isSecureBlobURL(const URL& url)
+bool BlobURL::isSecureBlobURL(const ScopedURL& url)
 {
     ASSERT(url.protocolIs(kBlobProtocol));
 
@@ -86,7 +87,7 @@ bool BlobURL::isSecureBlobURL(const URL& url)
         if (auto* document = blobOwner(*origin))
             return document->isSecureContext();
     }
-    return SecurityOrigin::isSecure(url);
+    return false;
 }
 
 URL BlobURL::createBlobURL(StringView originString)

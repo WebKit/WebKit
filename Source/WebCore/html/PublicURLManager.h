@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class SecurityOrigin;
+class ScopedURL;
 class URLRegistry;
 class URLRegistrable;
 
@@ -45,7 +45,7 @@ public:
     static std::unique_ptr<PublicURLManager> create(ScriptExecutionContext*);
 
     void registerURL(const URL&, URLRegistrable&);
-    void revoke(const URL&);
+    void revoke(const ScopedURL&);
 
 private:
     // ActiveDOMObject API.
