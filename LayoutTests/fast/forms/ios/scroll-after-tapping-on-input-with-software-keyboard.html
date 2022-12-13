@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    height: 2000px;
+    margin: 0;
+}
+
+input {
+    position: absolute;
+    top: 90vh;
+    left: calc(50vw - 100px);
+    width: 200px;
+    font-size: 18px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests scrolling to reveal a text input on tap. To manually test, tap the input below without a hardware keyboard connected; the input field should be centered in the visible viewport.");
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    const input = document.querySelector("input");
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    shouldBeGreaterThanOrEqual("scrollY", "400");
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<input placeholder="Tap me" />
+</body>
+</html>
