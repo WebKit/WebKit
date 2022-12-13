@@ -1752,9 +1752,15 @@ void NetworkProcessProxy::getPendingPushMessages(PAL::SessionID sessionID, Compl
 void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const WebPushMessage& pushMessage, CompletionHandler<void(bool wasProcessed)>&& callback)
 {
     auto permission = PushPermissionState::Prompt;
-    auto permissions = WebNotificationManagerProxy::sharedServiceWorkerManager().notificationPermissions();
-    auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL).toString();
+    HashMap<String, bool> permissions;
 
+    if (auto *dataStore = websiteDataStoreFromSessionID(sessionID))
+        permissions = dataStore->client().notificationPermissions();
+
+    if (permissions.isEmpty())
+        permissions = WebNotificationManagerProxy::sharedServiceWorkerManager().notificationPermissions();
+
+    auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL).toString();
     if (auto it = permissions.find(origin); it != permissions.end())
         permission = it->value ? PushPermissionState::Granted : PushPermissionState::Denied;
 

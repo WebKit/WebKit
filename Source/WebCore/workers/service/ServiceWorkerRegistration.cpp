@@ -285,17 +285,20 @@ WebCoreOpaqueRoot root(ServiceWorkerRegistration* registration)
 void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, String&& title, NotificationOptions&& options, Ref<DeferredPromise>&& promise)
 {
     if (!m_activeWorker) {
+        RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: No active worker");
         promise->reject(Exception { TypeError, "Registration does not have an active worker"_s });
         return;
     }
 
     auto* client = context.notificationClient();
     if (!client) {
+        RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Registration not active");
         promise->reject(Exception { TypeError, "Registration not active"_s });
         return;
     }
 
     if (client->checkPermission(&context) != NotificationPermission::Granted) {
+        RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Client permission is not granted");
         promise->reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
         return;
     }
@@ -305,6 +308,7 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
 
     auto notificationResult = Notification::createForServiceWorker(context, WTFMove(title), WTFMove(options), m_registrationData.scopeURL);
     if (notificationResult.hasException()) {
+        RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Creating Notification had an exception");
         promise->reject(notificationResult.releaseException());
         return;
     }

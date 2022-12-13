@@ -98,7 +98,7 @@ void NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions(Co
 void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
 {
     CompletionHandler<void(Vector<WebPushMessage>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<WebPushMessage>&& messages) mutable {
-        LOG(Push, "Done getting push messages");
+        LOG(Push, "Done getting %u push messages", (unsigned)messages.size());
         completionHandler(WTFMove(messages));
     };
 

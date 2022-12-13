@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKFoundation.h>
+#import "config.h"
+#import "_WKNotificationDataInternal.h"
 
-@class WKSecurityOrigin;
-@class WKWebsiteDataStore;
-@class WKWebView;
-@class _WKNotificationData;
+#import <WebCore/NotificationData.h>
 
-WK_API_AVAILABLE(macos(10.15), ios(13.0))
-@protocol _WKWebsiteDataStoreDelegate <NSObject>
+static NSString *iconURLKey = @"iconURL";
+static NSString *tagKey = @"tag";
+static NSString *languageKey = @"language";
+static NSString *dataKey = @"data";
 
-@optional
-- (void)requestStorageSpace:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL quota:(NSUInteger)quota currentSize:(NSUInteger)currentSize spaceRequired:(NSUInteger)spaceRequired decisionHandler:(void (^)(unsigned long long quota))decisionHandler;
-- (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler;
-- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore openWindow:(NSURL *)url fromServiceWorkerOrigin:(WKSecurityOrigin *)serviceWorkerOrigin completionHandler:(void (^)(WKWebView *newWebView))completionHandler;
-- (NSDictionary<NSString *, NSNumber *> *)notificationPermissionsForWebsiteDataStore:(WKWebsiteDataStore *)dataStore;
-- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore showNotification:(_WKNotificationData *)notificationData;
+@implementation _WKNotificationData
+
+- (instancetype)initWithCoreData:(const WebCore::NotificationData&)coreData dataStore:(WKWebsiteDataStore *)dataStore
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _title = [(NSString *)coreData.title retain];
+    _body = [(NSString *)coreData.body retain];
+    _origin = [(NSString *)coreData.originString retain];
+    _identifier = [(NSString *)coreData.notificationID.toString() retain];
+    _userInfo = [coreData.dictionaryRepresentation() retain];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKNotificationData.class, self))
+        return;
+
+    [_title release];
+    [_body release];
+    [_origin release];
+    [_identifier release];
+    [_userInfo release];
+
+    [super dealloc];
+}
+
 @end

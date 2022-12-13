@@ -2120,6 +2120,9 @@ bool WebsiteDataStore::shouldMakeNextNetworkProcessLaunchFailForTesting()
 
 void WebsiteDataStore::showServiceWorkerNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData)
 {
+    if (m_client->showNotification(notificationData))
+        return;
+
     WebNotificationManagerProxy::sharedServiceWorkerManager().show(nullptr, connection, notificationData, nullptr);
 }
 

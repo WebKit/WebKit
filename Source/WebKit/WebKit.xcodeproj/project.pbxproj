@@ -1000,6 +1000,8 @@
 		511065FC23EC9572005443D6 /* WKContentWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = 511065FA23EC956B005443D6 /* WKContentWorld.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		511065FD23EC957B005443D6 /* WKContentWorldInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 511065FB23EC956B005443D6 /* WKContentWorldInternal.h */; };
 		5110AE0D133C16CB0072717A /* WKIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5110AE0B133C16CB0072717A /* WKIconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51130EC8294466AF00E076C5 /* _WKNotificationDataInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51130EC5294466AE00E076C5 /* _WKNotificationDataInternal.h */; };
+		51130ECA294466AF00E076C5 /* _WKNotificationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51130EC7294466AF00E076C5 /* _WKNotificationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511F7D411EB1BCF500E47B83 /* WebsiteDataStoreParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F7D401EB1BCEE00E47B83 /* WebsiteDataStoreParameters.h */; };
 		5120C8351E5B74B90025B250 /* _WKWebsiteDataStoreConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5120C8331E5B71570025B250 /* _WKWebsiteDataStoreConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512127C41908239A00DAF35C /* WebPasteboardOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = 512127C21908239A00DAF35C /* WebPasteboardOverrides.h */; };
@@ -4973,6 +4975,9 @@
 		511065FB23EC956B005443D6 /* WKContentWorldInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentWorldInternal.h; sourceTree = "<group>"; };
 		5110AE0A133C16CB0072717A /* WKIconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKIconDatabase.cpp; sourceTree = "<group>"; };
 		5110AE0B133C16CB0072717A /* WKIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKIconDatabase.h; sourceTree = "<group>"; };
+		51130EC5294466AE00E076C5 /* _WKNotificationDataInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKNotificationDataInternal.h; sourceTree = "<group>"; };
+		51130EC6294466AF00E076C5 /* _WKNotificationData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNotificationData.mm; sourceTree = "<group>"; };
+		51130EC7294466AF00E076C5 /* _WKNotificationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKNotificationData.h; sourceTree = "<group>"; };
 		511F7D3F1EB1BCEE00E47B83 /* WebsiteDataStoreParameters.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebsiteDataStoreParameters.serialization.in; sourceTree = "<group>"; };
 		511F7D401EB1BCEE00E47B83 /* WebsiteDataStoreParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataStoreParameters.h; sourceTree = "<group>"; };
 		5120C8331E5B71570025B250 /* _WKWebsiteDataStoreConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStoreConfiguration.h; sourceTree = "<group>"; };
@@ -10184,6 +10189,9 @@
 				F4DBC0BC276AA6A70001D169 /* _WKModalContainerInfo.h */,
 				F4DBC0BD276AA6A70001D169 /* _WKModalContainerInfo.mm */,
 				F4DBC0C0276AA6CA0001D169 /* _WKModalContainerInfoInternal.h */,
+				51130EC7294466AF00E076C5 /* _WKNotificationData.h */,
+				51130EC6294466AF00E076C5 /* _WKNotificationData.mm */,
+				51130EC5294466AE00E076C5 /* _WKNotificationDataInternal.h */,
 				9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */,
 				1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm */,
@@ -14497,6 +14505,8 @@
 				510F59111DDE297000412FF5 /* _WKLinkIconParameters.h in Headers */,
 				F4DBC0BE276AA6A70001D169 /* _WKModalContainerInfo.h in Headers */,
 				F4DBC0C1276AA6CA0001D169 /* _WKModalContainerInfoInternal.h in Headers */,
+				51130ECA294466AF00E076C5 /* _WKNotificationData.h in Headers */,
+				51130EC8294466AF00E076C5 /* _WKNotificationDataInternal.h in Headers */,
 				A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */,
 				A5C0F0A72000654D00536536 /* _WKNSWindowExtras.h in Headers */,
 				9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */,

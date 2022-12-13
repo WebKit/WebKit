@@ -126,7 +126,6 @@ DECLARE_CODER(WebCore::SecurityOriginData);
 DECLARE_CODER(WebKit::WebPushMessage);
 DECLARE_CODER(WebPushD::WebPushDaemonConnectionConfiguration);
 DECLARE_CODER(WTF::WallTime);
-DECLARE_CODER(WTF::UUID);
 
 #undef DECLARE_CODER
 
@@ -151,6 +150,19 @@ template<> struct Coder<WTF::URL> {
         if (!string)
             return std::nullopt;
         return { WTF::URL(WTFMove(*string)) };
+    }
+};
+
+template<> struct Coder<WTF::UUID> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const WTF::UUID& instance)
+    {
+        instance.encode(encoder);
+    }
+    template<typename Decoder>
+    static std::optional<WTF::UUID> decode(Decoder& decoder)
+    {
+        return UUID::decode(decoder);
     }
 };
 
